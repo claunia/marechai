@@ -249,4 +249,19 @@ public partial class Processors
             }
         }
     }
+
+    async Task OpenImportDialog()
+    {
+        IDialogReference dialog = await DialogService.ShowAsync<ProcessorImportDialog>(L["Import Processors"],
+                                                                                       new DialogOptions
+                                                                                       {
+                                                                                           MaxWidth  = MaxWidth.ExtraLarge,
+                                                                                           FullWidth = true
+                                                                                       });
+
+        DialogResult? result = await dialog.Result;
+
+        if(result is { Canceled: false })
+            await LoadProcessorsAsync();
+    }
 }

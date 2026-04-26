@@ -1,0 +1,870 @@
+@{
+    /******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2026 Natalia Portillo
+*******************************************************************************/
+}
+
+@using Marechai.ApiClient.Models
+@using Marechai.Services
+@using Marechai.Helpers
+@inject ProcessorsService ProcessorsService
+@inject InstructionSetsService InstructionSetsService
+@inject IStringLocalizer<ProcessorsService> L
+@inject IJSRuntime JsRuntime
+
+<MudDialog>
+    <DialogContent>
+        @if(!string.IsNullOrWhiteSpace(_errorMessage))
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+        }
+
+        @switch(_state)
+        {
+            case ImportState.Upload:
+                <MudStack Spacing="4">
+                    <MudText Typo="Typo.body1">@L["Upload a CSV file to import processors in bulk. Download the template first to see the expected format."]</MudText>
+
+                    <MudStack Row="true" Spacing="2">
+                        <MudButton Variant="Variant.Outlined"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.Download"
+                                   OnClick="DownloadTemplate">
+                            @L["Download Template"]
+                        </MudButton>
+                    </MudStack>
+
+                    <MudFileUpload T="IBrowserFile"
+                                   Accept=".csv"
+                                   FilesChanged="OnCsvFileSelected"
+                                   MaximumFileCount="1">
+                        <ActivatorContent>
+                            <MudButton Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       StartIcon="@Icons.Material.Filled.Upload"
+                                       Disabled="_isProcessing">
+                                @(_isProcessing ? L["Processing..."] : L["Upload CSV"])
+                            </MudButton>
+                        </ActivatorContent>
+                    </MudFileUpload>
+
+                    @if(_isProcessing)
+                    {
+                        <MudProgressLinear Indeterminate="true" Color="Color.Primary"/>
+                    }
+                </MudStack>
+                break;
+
+            case ImportState.Preview:
+                <MudStack Spacing="3">
+                    <MudAlert Severity="Severity.Info" Dense="true">
+                        @string.Format(L["{0} rows parsed. {1} auto-rejected (no company match, no instruction set match, or validation error). Selected rows will be REJECTED — unselected rows will be imported."], _importRows.Count, _importRows.Count(r => (r.CompanyMatch == CompanyMatchType.None && !string.IsNullOrWhiteSpace(r.CompanyInput)) || (r.InstructionSetMatch == InstructionSetMatchType.None && !string.IsNullOrWhiteSpace(r.InstructionSetInput)) || r.ValidationError is not null))
+                    </MudAlert>
+
+                    <MudDataGrid T="ProcessorImportRow"
+                                 Items="_importRows"
+                                 MultiSelection="true"
+                                 @bind-SelectedItems="_selectedItems"
+                                 Dense="true"
+                                 Hover="true"
+                                 Striped="true"
+                                 FixedHeader="true"
+                                 Height="400px">
+                        <Columns>
+                            <SelectColumn T="ProcessorImportRow"/>
+                            <TemplateColumn Title="@L["Name"]">
+                                <CellTemplate>
+                                    <div style="@(context.Item.IsDuplicate ? "background-color: #ffe0b2; padding: 4px 8px; border-radius: 4px;" : "")">
+                                        @if(context.Item.IsDuplicate)
+                                        {
+                                            <MudIcon Icon="@Icons.Material.Filled.Warning" Size="Size.Small" Color="Color.Warning" Class="mr-1" Title="@L["Duplicate processor name"]"/>
+                                        }
+                                        @context.Item.Name
+                                        @if(context.Item.ValidationError is not null)
+                                        {
+                                            <MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Small" Color="Color.Error" Class="ml-1" Title="@context.Item.ValidationError"/>
+                                        }
+                                    </div>
+                                </CellTemplate>
+                            </TemplateColumn>
+                            <TemplateColumn Title="@L["Company"]">
+                                <CellTemplate>
+                                    @{
+                                        string companyBgColor = context.Item.CompanyMatch switch
+                                        {
+                                            CompanyMatchType.Exact   => "#c8e6c9",
+                                            CompanyMatchType.Partial => "#fff9c4",
+                                            _                       => "#ffcdd2"
+                                        };
+                                    }
+                                    <div style="background-color: @companyBgColor; color: black; padding: 4px 8px; border-radius: 4px;">
+                                        @if(context.Item.CompanyMatch == CompanyMatchType.Partial && context.Item.MatchedCompanies.Count > 1)
+                                        {
+                                            <MudSelect T="CompanyDto"
+                                                       Value="context.Item.SelectedCompany"
+                                                       ValueChanged="(c) => OnCompanySelected(context.Item, c)"
+                                                       Dense="true"
+                                                       Margin="Margin.Dense"
+                                                       Variant="Variant.Text"
+                                                       ToStringFunc="@(c => c?.Name ?? "")">
+                                                @foreach(CompanyDto company in context.Item.MatchedCompanies)
+                                                {
+                                                    <MudSelectItem T="CompanyDto" Value="company">@company.Name</MudSelectItem>
+                                                }
+                                            </MudSelect>
+                                        }
+                                        else
+                                        {
+                                            @context.Item.CompanyDisplay
+                                        }
+                                    </div>
+                                </CellTemplate>
+                            </TemplateColumn>
+                            <TemplateColumn Title="@L["Instruction set"]">
+                                <CellTemplate>
+                                    @if(!string.IsNullOrWhiteSpace(context.Item.InstructionSetInput))
+                                    {
+                                        string isaBgColor = context.Item.InstructionSetMatch switch
+                                        {
+                                            InstructionSetMatchType.Exact   => "#c8e6c9",
+                                            InstructionSetMatchType.Partial => "#fff9c4",
+                                            _                              => "#ffcdd2"
+                                        };
+                                        <div style="background-color: @isaBgColor; color: black; padding: 4px 8px; border-radius: 4px;">
+                                            @if(context.Item.InstructionSetMatch == InstructionSetMatchType.Partial && context.Item.MatchedInstructionSets.Count > 1)
+                                            {
+                                                <MudSelect T="InstructionSetDto"
+                                                           Value="context.Item.SelectedInstructionSet"
+                                                           ValueChanged="(isa) => OnInstructionSetSelected(context.Item, isa)"
+                                                           Dense="true"
+                                                           Margin="Margin.Dense"
+                                                           Variant="Variant.Text"
+                                                           ToStringFunc="@(isa => isa?.Name ?? "")">
+                                                    @foreach(InstructionSetDto isa in context.Item.MatchedInstructionSets)
+                                                    {
+                                                        <MudSelectItem T="InstructionSetDto" Value="isa">@isa.Name</MudSelectItem>
+                                                    }
+                                                </MudSelect>
+                                            }
+                                            else
+                                            {
+                                                @context.Item.InstructionSetDisplay
+                                            }
+                                        </div>
+                                    }
+                                </CellTemplate>
+                            </TemplateColumn>
+                            <PropertyColumn Property="x => x.ModelCode" Title="@L["Model code"]"/>
+                            <TemplateColumn Title="@L["Introduced"]">
+                                <CellTemplate>
+                                    @if(context.Item.IntroducedYear is not null)
+                                    {
+                                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+                                            <MudText Typo="Typo.body2">@FormatImportDate(context.Item)</MudText>
+                                            <MudChip T="string" Size="Size.Small"
+                                                     Color="@(context.Item.IntroducedPrecision == 0 ? Color.Success : context.Item.IntroducedPrecision == 1 ? Color.Warning : Color.Info)"
+                                                     Style="white-space: normal; height: auto; overflow: visible; text-overflow: unset; padding: 2px 8px; font-size: 0.7rem;">
+                                                @(context.Item.IntroducedPrecision switch
+                                                {
+                                                    0 => L["Full date"],
+                                                    1 => L["Month and year only"],
+                                                    2 => L["Year only"],
+                                                    _ => ""
+                                                })
+                                            </MudChip>
+                                        </MudStack>
+                                    }
+                                </CellTemplate>
+                            </TemplateColumn>
+                            <TemplateColumn Title="@L["Speed (MHz)"]">
+                                <CellTemplate>
+                                    @(context.Item.Speed?.ToString("F1") ?? "")
+                                </CellTemplate>
+                            </TemplateColumn>
+                            <PropertyColumn Property="x => x.Package" Title="@L["Package"]"/>
+                            <PropertyColumn Property="x => x.ProcessNm" Title="@L["Process (nm)"]"/>
+                            <PropertyColumn Property="x => x.Cores" Title="@L["Cores"]"/>
+                            <PropertyColumn Property="x => x.Transistors" Title="@L["Transistors"]"/>
+                        </Columns>
+                    </MudDataGrid>
+                </MudStack>
+                break;
+
+            case ImportState.Importing:
+                <MudStack Spacing="3">
+                    <MudText Typo="Typo.body1">@string.Format(L["Importing {0} of {1}..."], _importedCount + _failedCount, _totalToImport)</MudText>
+                    <MudProgressLinear Value="_progressPercent" Color="Color.Primary" Rounded="true" Size="Size.Large">
+                        <ChildContent>
+                            <MudText Typo="Typo.body2" Style="color: white;">
+                                @($"{_progressPercent:F0}%")
+                            </MudText>
+                        </ChildContent>
+                    </MudProgressLinear>
+
+                    @if(_importRows.Count > 0)
+                    {
+                        <MudDataGrid T="ProcessorImportRow"
+                                     Items="_importRows"
+                                     Dense="true"
+                                     Hover="true"
+                                     FixedHeader="true"
+                                     Height="300px">
+                            <Columns>
+                                <TemplateColumn Title="@L["Name"]">
+                                    <CellTemplate>
+                                        @context.Item.Name
+                                        @if(context.Item.ImportError is not null)
+                                        {
+                                            <MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Small" Color="Color.Error" Class="ml-1" Title="@context.Item.ImportError"/>
+                                        }
+                                    </CellTemplate>
+                                </TemplateColumn>
+                                <TemplateColumn Title="@L["Company"]">
+                                    <CellTemplate>
+                                        @context.Item.CompanyDisplay
+                                    </CellTemplate>
+                                </TemplateColumn>
+                                <PropertyColumn Property="x => x.ModelCode" Title="@L["Model code"]"/>
+                            </Columns>
+                        </MudDataGrid>
+                    }
+                </MudStack>
+                break;
+
+            case ImportState.Complete:
+                <MudStack Spacing="3">
+                    <MudAlert Severity="Severity.Success" Dense="true">
+                        @string.Format(L["Import complete. {0} imported, {1} rejected, {2} failed."], _importedCount, _rejectedCount, _failedCount)
+                    </MudAlert>
+
+                    @if(_importRows.Count > 0)
+                    {
+                        <MudText Typo="Typo.body2">@L["The following items were not imported:"]</MudText>
+
+                        <MudDataGrid T="ProcessorImportRow"
+                                     Items="_importRows"
+                                     Dense="true"
+                                     Hover="true"
+                                     FixedHeader="true"
+                                     Height="300px">
+                            <Columns>
+                                <PropertyColumn Property="x => x.Name" Title="@L["Name"]"/>
+                                <TemplateColumn Title="@L["Company"]">
+                                    <CellTemplate>
+                                        @(context.Item.CompanyInput ?? "")
+                                    </CellTemplate>
+                                </TemplateColumn>
+                                <TemplateColumn Title="@L["Status"]">
+                                    <CellTemplate>
+                                        @if(context.Item.ImportError is not null)
+                                        {
+                                            <MudChip T="string" Color="Color.Error" Size="Size.Small"
+                                                     Style="white-space: normal; height: auto; overflow: visible; text-overflow: unset; padding: 8px 16px;">
+                                                @context.Item.ImportError
+                                            </MudChip>
+                                        }
+                                        else if(context.Item.ValidationError is not null)
+                                        {
+                                            <MudChip T="string" Color="Color.Warning" Size="Size.Small"
+                                                     Style="white-space: normal; height: auto; overflow: visible; text-overflow: unset; padding: 8px 16px;">
+                                                @context.Item.ValidationError
+                                            </MudChip>
+                                        }
+                                        else
+                                        {
+                                            <MudChip T="string" Color="Color.Default" Size="Size.Small">@L["Rejected"]</MudChip>
+                                        }
+                                    </CellTemplate>
+                                </TemplateColumn>
+                            </Columns>
+                        </MudDataGrid>
+
+                        <MudButton Variant="Variant.Outlined"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.Download"
+                                   OnClick="DownloadRejected">
+                            @L["Download Rejected"]
+                        </MudButton>
+                    }
+                </MudStack>
+                break;
+        }
+    </DialogContent>
+    <DialogActions>
+        @switch(_state)
+        {
+            case ImportState.Upload:
+                <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+                break;
+            case ImportState.Preview:
+                <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="StartImport"
+                           Disabled="_importRows.All(r => _selectedItems.Contains(r))">
+                    @L["Import"]
+                </MudButton>
+                break;
+            case ImportState.Importing:
+                break;
+            case ImportState.Complete:
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Close">@L["Close"]</MudButton>
+                break;
+        }
+    </DialogActions>
+</MudDialog>
+
+@code {
+    static readonly string[] CsvHeaders =
+    [
+        "Name", "Company", "ModelCode", "IntroducedYear", "IntroducedMonth", "IntroducedDay",
+        "InstructionSet", "Speed", "Package", "Process", "ProcessNm", "DieSize", "Transistors",
+        "Cores", "ThreadsPerCore", "DataBus", "AddressBus",
+        "Gprs", "GprSize", "Fprs", "FprSize", "SimdRegisters", "SimdSize",
+        "L1Instruction", "L1Data", "L2", "L3"
+    ];
+
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
+
+    string?                         _errorMessage;
+    bool                            _isProcessing;
+    ImportState                     _state = ImportState.Upload;
+    List<ProcessorImportRow>        _importRows = [];
+    HashSet<ProcessorImportRow>     _selectedItems = [];
+    List<CompanyDto>?               _allCompanies;
+    List<InstructionSetDto>?        _allInstructionSets;
+    Dictionary<string, List<CompanyDto>>?        _companySoundexMap;
+    Dictionary<string, List<InstructionSetDto>>? _isaSoundexMap;
+    List<ProcessorDto>?             _existingProcessors;
+    int                             _importedCount;
+    int                             _rejectedCount;
+    int                             _failedCount;
+    int                             _totalToImport;
+    double                          _progressPercent;
+
+    void Cancel() => MudDialog.Cancel();
+    void Close() => MudDialog.Close(DialogResult.Ok(true));
+
+    async Task DownloadTemplate()
+    {
+        string csv    = CsvParser.GenerateTemplate(CsvHeaders);
+        byte[] bytes  = System.Text.Encoding.UTF8.GetBytes(csv);
+        string base64 = Convert.ToBase64String(bytes);
+
+        await JsRuntime.InvokeVoidAsync("downloadFileFromBytes", "processor_import_template.csv", "text/csv", base64);
+    }
+
+    async Task OnCsvFileSelected(IBrowserFile file)
+    {
+        _isProcessing = true;
+        _errorMessage = null;
+        StateHasChanged();
+
+        try
+        {
+            using var stream = file.OpenReadStream(10 * 1024 * 1024);
+            using var reader = new System.IO.StreamReader(stream);
+            string csvContent = await reader.ReadToEndAsync();
+
+            List<Dictionary<string, string>> rows = CsvParser.Parse(csvContent);
+
+            if(rows.Count == 0)
+            {
+                _errorMessage = L["The CSV file is empty or has no data rows."];
+                _isProcessing = false;
+                StateHasChanged();
+
+                return;
+            }
+
+            _allCompanies       = await ProcessorsService.GetCompaniesAsync();
+            _allInstructionSets = await InstructionSetsService.GetAllAsync();
+            _existingProcessors = await ProcessorsService.GetAllAsync();
+
+            BuildCompanySoundexMap();
+            BuildInstructionSetSoundexMap();
+            _importRows = ParseRows(rows);
+            PreSelectRejections();
+
+            _state = ImportState.Preview;
+        }
+        catch(Exception ex)
+        {
+            _errorMessage = string.Format(L["Error reading CSV: {0}"], ex.Message);
+        }
+        finally
+        {
+            _isProcessing = false;
+            StateHasChanged();
+        }
+    }
+
+    void BuildCompanySoundexMap()
+    {
+        _companySoundexMap = new Dictionary<string, List<CompanyDto>>(StringComparer.OrdinalIgnoreCase);
+
+        if(_allCompanies is null)
+            return;
+
+        foreach(CompanyDto company in _allCompanies)
+        {
+            if(string.IsNullOrWhiteSpace(company.Name))
+                continue;
+
+            string code = Soundex.Generate(company.Name);
+
+            if(!_companySoundexMap.TryGetValue(code, out List<CompanyDto>? list))
+            {
+                list = [];
+                _companySoundexMap[code] = list;
+            }
+
+            list.Add(company);
+        }
+    }
+
+    void BuildInstructionSetSoundexMap()
+    {
+        _isaSoundexMap = new Dictionary<string, List<InstructionSetDto>>(StringComparer.OrdinalIgnoreCase);
+
+        if(_allInstructionSets is null)
+            return;
+
+        foreach(InstructionSetDto isa in _allInstructionSets)
+        {
+            if(string.IsNullOrWhiteSpace(isa.Name))
+                continue;
+
+            string code = Soundex.Generate(isa.Name);
+
+            if(!_isaSoundexMap.TryGetValue(code, out List<InstructionSetDto>? list))
+            {
+                list = [];
+                _isaSoundexMap[code] = list;
+            }
+
+            list.Add(isa);
+        }
+    }
+
+    List<ProcessorImportRow> ParseRows(List<Dictionary<string, string>> rows)
+    {
+        var result = new List<ProcessorImportRow>();
+
+        foreach(Dictionary<string, string> row in rows)
+        {
+            var importRow = new ProcessorImportRow
+            {
+                Name               = GetValue(row, "Name"),
+                CompanyInput       = GetValueOrNull(row, "Company"),
+                ModelCode          = GetValueOrNull(row, "ModelCode"),
+                InstructionSetInput = GetValueOrNull(row, "InstructionSet"),
+                Package            = GetValueOrNull(row, "Package"),
+                Process            = GetValueOrNull(row, "Process")
+            };
+
+            if(TryParseInt(row, "IntroducedYear", out int year))
+                importRow.IntroducedYear = year;
+
+            if(TryParseInt(row, "IntroducedMonth", out int month))
+                importRow.IntroducedMonth = month;
+
+            if(TryParseInt(row, "IntroducedDay", out int day))
+                importRow.IntroducedDay = day;
+
+            if(TryParseDouble(row, "Speed", out double speed))
+                importRow.Speed = speed;
+
+            if(TryParseFloat(row, "ProcessNm", out float processNm))
+                importRow.ProcessNm = processNm;
+
+            if(TryParseFloat(row, "DieSize", out float dieSize))
+                importRow.DieSize = dieSize;
+
+            if(TryParseLong(row, "Transistors", out long transistors))
+                importRow.Transistors = transistors;
+
+            if(TryParseInt(row, "Cores", out int cores))
+                importRow.Cores = cores;
+
+            if(TryParseInt(row, "ThreadsPerCore", out int threadsPerCore))
+                importRow.ThreadsPerCore = threadsPerCore;
+
+            if(TryParseInt(row, "DataBus", out int dataBus))
+                importRow.DataBus = dataBus;
+
+            if(TryParseInt(row, "AddressBus", out int addressBus))
+                importRow.AddressBus = addressBus;
+
+            if(TryParseInt(row, "Gprs", out int gprs))
+                importRow.Gprs = gprs;
+
+            if(TryParseInt(row, "GprSize", out int gprSize))
+                importRow.GprSize = gprSize;
+
+            if(TryParseInt(row, "Fprs", out int fprs))
+                importRow.Fprs = fprs;
+
+            if(TryParseInt(row, "FprSize", out int fprSize))
+                importRow.FprSize = fprSize;
+
+            if(TryParseInt(row, "SimdRegisters", out int simdRegisters))
+                importRow.SimdRegisters = simdRegisters;
+
+            if(TryParseInt(row, "SimdSize", out int simdSize))
+                importRow.SimdSize = simdSize;
+
+            if(TryParseFloat(row, "L1Instruction", out float l1i))
+                importRow.L1Instruction = l1i;
+
+            if(TryParseFloat(row, "L1Data", out float l1d))
+                importRow.L1Data = l1d;
+
+            if(TryParseFloat(row, "L2", out float l2))
+                importRow.L2 = l2;
+
+            if(TryParseFloat(row, "L3", out float l3))
+                importRow.L3 = l3;
+
+            // Validate
+            if(string.IsNullOrWhiteSpace(importRow.Name))
+                importRow.ValidationError = L["Name is required."];
+
+            // Match company
+            MatchCompany(importRow);
+
+            // Match instruction set
+            MatchInstructionSet(importRow);
+
+            // Check duplicates
+            if(_existingProcessors is not null &&
+               _existingProcessors.Any(p => string.Equals(p.Name, importRow.Name, StringComparison.OrdinalIgnoreCase)))
+            {
+                importRow.IsDuplicate = true;
+            }
+
+            result.Add(importRow);
+        }
+
+        return result;
+    }
+
+    void MatchCompany(ProcessorImportRow row)
+    {
+        if(string.IsNullOrWhiteSpace(row.CompanyInput))
+        {
+            row.CompanyMatch = CompanyMatchType.None;
+
+            return;
+        }
+
+        if(_allCompanies is null)
+        {
+            row.CompanyMatch = CompanyMatchType.None;
+
+            return;
+        }
+
+        // Try exact match first
+        CompanyDto? exact = _allCompanies.Find(c =>
+            string.Equals(c.Name, row.CompanyInput, StringComparison.OrdinalIgnoreCase));
+
+        if(exact is not null)
+        {
+            row.CompanyMatch     = CompanyMatchType.Exact;
+            row.MatchedCompanies = [exact];
+            row.SelectedCompany  = exact;
+
+            return;
+        }
+
+        // Try Soundex match
+        string inputSoundex = Soundex.Generate(row.CompanyInput);
+
+        if(_companySoundexMap is not null &&
+           _companySoundexMap.TryGetValue(inputSoundex, out List<CompanyDto>? matches) &&
+           matches.Count > 0)
+        {
+            row.CompanyMatch     = CompanyMatchType.Partial;
+            row.MatchedCompanies = [..matches.OrderBy(c => c.Name)];
+            row.SelectedCompany  = row.MatchedCompanies[0];
+
+            return;
+        }
+
+        row.CompanyMatch = CompanyMatchType.None;
+    }
+
+    void MatchInstructionSet(ProcessorImportRow row)
+    {
+        if(string.IsNullOrWhiteSpace(row.InstructionSetInput))
+        {
+            // ISA is optional — don't set to None (which would trigger auto-reject)
+            row.InstructionSetMatch = InstructionSetMatchType.None;
+
+            return;
+        }
+
+        if(_allInstructionSets is null)
+        {
+            row.InstructionSetMatch = InstructionSetMatchType.None;
+
+            return;
+        }
+
+        // Try exact match first
+        InstructionSetDto? exact = _allInstructionSets.Find(isa =>
+            string.Equals(isa.Name, row.InstructionSetInput, StringComparison.OrdinalIgnoreCase));
+
+        if(exact is not null)
+        {
+            row.InstructionSetMatch    = InstructionSetMatchType.Exact;
+            row.MatchedInstructionSets = [exact];
+            row.SelectedInstructionSet = exact;
+
+            return;
+        }
+
+        // Try Soundex match
+        string inputSoundex = Soundex.Generate(row.InstructionSetInput);
+
+        if(_isaSoundexMap is not null &&
+           _isaSoundexMap.TryGetValue(inputSoundex, out List<InstructionSetDto>? matches) &&
+           matches.Count > 0)
+        {
+            row.InstructionSetMatch    = InstructionSetMatchType.Partial;
+            row.MatchedInstructionSets = [..matches.OrderBy(isa => isa.Name)];
+            row.SelectedInstructionSet = row.MatchedInstructionSets[0];
+
+            return;
+        }
+
+        row.InstructionSetMatch = InstructionSetMatchType.None;
+    }
+
+    void PreSelectRejections()
+    {
+        _selectedItems = [];
+
+        foreach(ProcessorImportRow row in _importRows)
+        {
+            // Auto-reject: no company match when company was specified, no ISA match when ISA was specified, or validation error
+            if((row.CompanyMatch == CompanyMatchType.None && !string.IsNullOrWhiteSpace(row.CompanyInput)) ||
+               (row.InstructionSetMatch == InstructionSetMatchType.None && !string.IsNullOrWhiteSpace(row.InstructionSetInput)) ||
+               row.ValidationError is not null)
+            {
+                _selectedItems.Add(row);
+            }
+        }
+    }
+
+    void OnCompanySelected(ProcessorImportRow row, CompanyDto? company) => row.SelectedCompany = company;
+
+    void OnInstructionSetSelected(ProcessorImportRow row, InstructionSetDto? isa) => row.SelectedInstructionSet = isa;
+
+    async Task StartImport()
+    {
+        // Separate rejected from to-import
+        var toImport = _importRows.Where(r => !_selectedItems.Contains(r)).ToList();
+        var rejected = _importRows.Where(r => _selectedItems.Contains(r)).ToList();
+
+        _rejectedCount   = rejected.Count;
+        _importedCount   = 0;
+        _failedCount     = 0;
+        _totalToImport   = toImport.Count;
+        _progressPercent = 0;
+        _state           = ImportState.Importing;
+
+        // Keep only rejected/failed in _importRows for display during import
+        _importRows = [..rejected];
+        StateHasChanged();
+
+        foreach(ProcessorImportRow row in toImport)
+        {
+            var dto = new ProcessorDto
+            {
+                Name                = row.Name,
+                CompanyId           = row.SelectedCompany?.Id,
+                ModelCode           = row.ModelCode,
+                IntroducedPrecision = row.IntroducedPrecision,
+                Introduced          = row.IntroducedDate.HasValue ? new DateTimeOffset(row.IntroducedDate.Value) : null,
+                InstructionSetId    = row.SelectedInstructionSet?.Id,
+                Speed               = row.Speed,
+                Package             = row.Package,
+                Process             = row.Process,
+                ProcessNm           = row.ProcessNm,
+                DieSize             = row.DieSize,
+                Transistors         = row.Transistors,
+                Cores               = row.Cores,
+                ThreadsPerCore      = row.ThreadsPerCore,
+                DataBus             = row.DataBus,
+                AddressBus          = row.AddressBus,
+                Gprs                = row.Gprs,
+                GprSize             = row.GprSize,
+                Fprs                = row.Fprs,
+                FprSize             = row.FprSize,
+                SimdRegisters       = row.SimdRegisters,
+                SimdSize            = row.SimdSize,
+                L1Instruction       = row.L1Instruction,
+                L1Data              = row.L1Data,
+                L2                  = row.L2,
+                L3                  = row.L3
+            };
+
+            (long? id, string? error) = await ProcessorsService.CreateAsync(dto);
+
+            if(id is not null)
+            {
+                _importedCount++;
+            }
+            else
+            {
+                _failedCount++;
+                row.ImportError = error ?? L["Unknown error"];
+                _importRows.Add(row);
+            }
+
+            _progressPercent = (double)(_importedCount + _failedCount) / _totalToImport * 100;
+            StateHasChanged();
+            await Task.Delay(1); // Allow UI to update
+        }
+
+        _state = ImportState.Complete;
+        StateHasChanged();
+    }
+
+    async Task DownloadRejected()
+    {
+        var rows = new List<Dictionary<string, string>>();
+
+        foreach(ProcessorImportRow row in _importRows)
+        {
+            var dict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["Name"]            = row.Name,
+                ["Company"]         = row.CompanyInput ?? "",
+                ["ModelCode"]       = row.ModelCode ?? "",
+                ["IntroducedYear"]  = row.IntroducedYear?.ToString() ?? "",
+                ["IntroducedMonth"] = row.IntroducedMonth?.ToString() ?? "",
+                ["IntroducedDay"]   = row.IntroducedDay?.ToString() ?? "",
+                ["InstructionSet"]  = row.InstructionSetInput ?? "",
+                ["Speed"]           = row.Speed?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "",
+                ["Package"]         = row.Package ?? "",
+                ["Process"]         = row.Process ?? "",
+                ["ProcessNm"]       = row.ProcessNm?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "",
+                ["DieSize"]         = row.DieSize?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "",
+                ["Transistors"]     = row.Transistors?.ToString() ?? "",
+                ["Cores"]           = row.Cores?.ToString() ?? "",
+                ["ThreadsPerCore"]  = row.ThreadsPerCore?.ToString() ?? "",
+                ["DataBus"]         = row.DataBus?.ToString() ?? "",
+                ["AddressBus"]      = row.AddressBus?.ToString() ?? "",
+                ["Gprs"]            = row.Gprs?.ToString() ?? "",
+                ["GprSize"]         = row.GprSize?.ToString() ?? "",
+                ["Fprs"]            = row.Fprs?.ToString() ?? "",
+                ["FprSize"]         = row.FprSize?.ToString() ?? "",
+                ["SimdRegisters"]   = row.SimdRegisters?.ToString() ?? "",
+                ["SimdSize"]        = row.SimdSize?.ToString() ?? "",
+                ["L1Instruction"]   = row.L1Instruction?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "",
+                ["L1Data"]          = row.L1Data?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "",
+                ["L2"]              = row.L2?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "",
+                ["L3"]              = row.L3?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? ""
+            };
+
+            rows.Add(dict);
+        }
+
+        string csv    = CsvParser.Generate(CsvHeaders, rows);
+        byte[] bytes  = System.Text.Encoding.UTF8.GetBytes(csv);
+        string base64 = Convert.ToBase64String(bytes);
+
+        await JsRuntime.InvokeVoidAsync("downloadFileFromBytes", "processor_import_rejected.csv", "text/csv", base64);
+    }
+
+    static string FormatImportDate(ProcessorImportRow row)
+    {
+        if(row.IntroducedYear is null)
+            return "";
+
+        if(row.IntroducedMonth is null)
+            return row.IntroducedYear.Value.ToString();
+
+        if(row.IntroducedDay is null)
+            return $"{row.IntroducedMonth.Value:D2}/{row.IntroducedYear.Value}";
+
+        return $"{row.IntroducedDay.Value:D2}/{row.IntroducedMonth.Value:D2}/{row.IntroducedYear.Value}";
+    }
+
+    static string GetValue(Dictionary<string, string> row, string key) =>
+        row.TryGetValue(key, out string? val) ? val?.Trim() ?? "" : "";
+
+    static string? GetValueOrNull(Dictionary<string, string> row, string key)
+    {
+        if(!row.TryGetValue(key, out string? val))
+            return null;
+
+        string trimmed = val?.Trim() ?? "";
+
+        return string.IsNullOrEmpty(trimmed) ? null : trimmed;
+    }
+
+    static bool TryParseInt(Dictionary<string, string> row, string key, out int result)
+    {
+        result = 0;
+        string? val = GetValueOrNull(row, key);
+
+        return val is not null && int.TryParse(val, out result);
+    }
+
+    static bool TryParseFloat(Dictionary<string, string> row, string key, out float result)
+    {
+        result = 0;
+        string? val = GetValueOrNull(row, key);
+
+        return val is not null && float.TryParse(val, System.Globalization.NumberStyles.Float,
+                                                  System.Globalization.CultureInfo.InvariantCulture, out result);
+    }
+
+    static bool TryParseDouble(Dictionary<string, string> row, string key, out double result)
+    {
+        result = 0;
+        string? val = GetValueOrNull(row, key);
+
+        return val is not null && double.TryParse(val, System.Globalization.NumberStyles.Float,
+                                                   System.Globalization.CultureInfo.InvariantCulture, out result);
+    }
+
+    static bool TryParseLong(Dictionary<string, string> row, string key, out long result)
+    {
+        result = 0;
+        string? val = GetValueOrNull(row, key);
+
+        return val is not null && long.TryParse(val, out result);
+    }
+
+    enum ImportState
+    {
+        Upload,
+        Preview,
+        Importing,
+        Complete
+    }
+}
