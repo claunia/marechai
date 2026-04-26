@@ -12,7 +12,7 @@
         <MudIcon Icon="@Icons.Material.Filled.Apps" Size="Size.Large" Style="color: white;"/>
         <MudText Typo="Typo.h4" Style="color: white;">@L["Software Management"]</MudText>
     </MudStack>
-    <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);" Class="mt-2">@L["Manage software entries, versions, and variants."]</MudText>
+    <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);" Class="mt-2">@L["Manage software entries and versions."]</MudText>
 </MudPaper>
 
 @if(!string.IsNullOrWhiteSpace(_errorMessage))
@@ -59,7 +59,6 @@
                     <MudStack Row="true" Spacing="1">
                         <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditDialog(context.Item)" Title="@L["Edit"]"/>
                         <MudIconButton Icon="@Icons.Material.Filled.ListAlt" Size="Size.Small" OnClick="() => NavigateToVersions(context.Item)" Title="@L["Versions"]"/>
-                        <MudIconButton Icon="@Icons.Material.Filled.Style" Size="Size.Small" OnClick="() => NavigateToVariants(context.Item)" Title="@L["Variants"]"/>
                         <MudIconButton Icon="@Icons.Material.Filled.Screenshot" Size="Size.Small" OnClick="() => NavigateToScreenshots(context.Item)" Title="@L["Screenshots"]"/>
                         <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDelete(context.Item)" Title="@L["Delete"]"/>
                     </MudStack>

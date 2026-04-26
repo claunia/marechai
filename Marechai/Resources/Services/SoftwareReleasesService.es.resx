@@ -119,9 +119,6 @@
     <data name="Publisher" xml:space="preserve">
         <value>Editor</value>
     </data>
-    <data name="Variant" xml:space="preserve">
-        <value>Variante</value>
-    </data>
     <data name="Release date" xml:space="preserve">
         <value>Fecha de lanzamiento</value>
     </data>

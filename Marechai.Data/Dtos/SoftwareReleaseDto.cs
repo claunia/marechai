@@ -43,14 +43,6 @@ public class SoftwareReleaseDto : BaseDto<ulong>
     public ulong? SoftwareVersionId { get; set; }
     [JsonPropertyName("software_version")]
     public string? SoftwareVersion { get; set; }
-    [JsonPropertyName("variant_id")]
-    public ulong? VariantId { get; set; }
-    [JsonPropertyName("variant")]
-    public string? Variant { get; set; }
-    [JsonPropertyName("subvariant_id")]
-    public ulong? SubvariantId { get; set; }
-    [JsonPropertyName("subvariant")]
-    public string? Subvariant { get; set; }
     [JsonPropertyName("platform_id")]
     public ulong? PlatformId { get; set; }
     [JsonPropertyName("platform")]

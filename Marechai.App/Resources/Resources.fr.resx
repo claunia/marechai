@@ -1826,16 +1826,10 @@
   <data name="EditSoftwareDialog_Title" xml:space="preserve"><value>Modifier le logiciel</value></data>
   <data name="AddSoftwareVersionDialog_Title" xml:space="preserve"><value>Ajouter une version</value></data>
   <data name="EditSoftwareVersionDialog_Title" xml:space="preserve"><value>Modifier la version</value></data>
-  <data name="AddSoftwareVariantDialog_Title" xml:space="preserve"><value>Ajouter une variante</value></data>
-  <data name="EditSoftwareVariantDialog_Title" xml:space="preserve"><value>Modifier la variante</value></data>
-  <data name="AddSoftwareSubvariantDialog_Title" xml:space="preserve"><value>Ajouter une sous-variante</value></data>
-  <data name="EditSoftwareSubvariantDialog_Title" xml:space="preserve"><value>Modifier la sous-variante</value></data>
   <data name="AddSoftwareReleaseDialog_Title" xml:space="preserve"><value>Ajouter une sortie de logiciel</value></data>
   <data name="EditSoftwareReleaseDialog_Title" xml:space="preserve"><value>Modifier la sortie de logiciel</value></data>
   
   <data name="SoftwareVersionsForTitle" xml:space="preserve"><value>Versions pour : {0}</value></data>
-  <data name="SoftwareVariantsForTitle" xml:space="preserve"><value>Variantes pour : {0}</value></data>
-  <data name="SoftwareSubvariantsForTitle" xml:space="preserve"><value>Sous-variantes pour : {0}</value></data>
   
   <data name="FailedToLoadSoftwarePlatforms" xml:space="preserve"><value>Échec du chargement des plateformes logicielles.</value></data>
   <data name="FailedToDeleteSoftwarePlatform" xml:space="preserve"><value>Échec de la suppression de la plateforme logicielle.</value></data>
@@ -1849,12 +1843,6 @@
   <data name="FailedToLoadSoftwareVersions" xml:space="preserve"><value>Échec du chargement des versions de logiciels.</value></data>
   <data name="FailedToDeleteSoftwareVersion" xml:space="preserve"><value>Échec de la suppression de la version du logiciel.</value></data>
   <data name="FailedToSaveSoftwareVersion" xml:space="preserve"><value>Échec de l'enregistrement de la version du logiciel.</value></data>
-  <data name="FailedToLoadSoftwareVariants" xml:space="preserve"><value>Échec du chargement des variantes de logiciels.</value></data>
-  <data name="FailedToDeleteSoftwareVariant" xml:space="preserve"><value>Échec de la suppression de la variante du logiciel.</value></data>
-  <data name="FailedToSaveSoftwareVariant" xml:space="preserve"><value>Échec de l'enregistrement de la variante du logiciel.</value></data>
-  <data name="FailedToLoadSoftwareSubvariants" xml:space="preserve"><value>Échec du chargement des sous-variantes de logiciels.</value></data>
-  <data name="FailedToDeleteSoftwareSubvariant" xml:space="preserve"><value>Échec de la suppression de la sous-variante du logiciel.</value></data>
-  <data name="FailedToSaveSoftwareSubvariant" xml:space="preserve"><value>Échec de l'enregistrement de la sous-variante du logiciel.</value></data>
   <data name="FailedToLoadSoftwareReleases" xml:space="preserve"><value>Échec du chargement des sorties de logiciels.</value></data>
   <data name="FailedToDeleteSoftwareRelease" xml:space="preserve"><value>Échec de la suppression de la sortie du logiciel.</value></data>
   <data name="FailedToSaveSoftwareRelease" xml:space="preserve"><value>Échec de l'enregistrement de la sortie du logiciel.</value></data>
@@ -1990,8 +1978,6 @@
   <data name="AddLanguageLabel" xml:space="preserve"><value>Ajouter une langue</value></data>
   <data name="SoftwarePublisherLabel" xml:space="preserve"><value>Éditeur</value></data>
   <data name="SoftwareReleaseDateLabel" xml:space="preserve"><value>Date de publication</value></data>
-  <data name="SoftwareVariantLabel" xml:space="preserve"><value>Variante</value></data>
-  <data name="SoftwareSubvariantLabel" xml:space="preserve"><value>Sous-variante</value></data>
   <data name="SoftwareBarcodesLabel" xml:space="preserve"><value>Codes-barres</value></data>
   <data name="SoftwareProductCodesLabel" xml:space="preserve"><value>Codes produit</value></data>
   <data name="BarcodeCodeLabel" xml:space="preserve"><value>Code-barres</value></data>

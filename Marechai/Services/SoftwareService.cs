@@ -563,21 +563,6 @@ public class SoftwareService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<List<CompanyBySoftwareVariantDto>> GetCompaniesByVariantAsync(int variantId)
-    {
-        try
-        {
-            List<CompanyBySoftwareVariantDto>? companies =
-                await client.Software.Variants[variantId].Companies.GetAsync();
-
-            return companies ?? [];
-        }
-        catch
-        {
-            return [];
-        }
-    }
-
     public async Task<List<SoftwareVersionBySoftwareReleaseDto>> GetIncludedVersionsAsync(int releaseId)
     {
         try

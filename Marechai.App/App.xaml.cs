@@ -185,8 +185,6 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<SoftwareFamiliesService>();
         containerRegistry.RegisterSingleton<SoftwarePlatformsService>();
         containerRegistry.RegisterSingleton<SoftwareVersionsService>();
-        containerRegistry.RegisterSingleton<SoftwareVariantsService>();
-        containerRegistry.RegisterSingleton<SoftwareSubvariantsService>();
         containerRegistry.RegisterSingleton<SoftwareReleasesService>();
         containerRegistry.RegisterSingleton<SoftwareBrowsingService>();
         containerRegistry.RegisterSingleton<IComputersListFilterContext, ComputersListFilterContext>();
@@ -254,8 +252,6 @@ public partial class App : PrismApplication
         containerRegistry.Register<AdminSoftwareFamiliesViewModel>();
         containerRegistry.Register<AdminSoftwarePlatformsViewModel>();
         containerRegistry.Register<AdminSoftwareVersionsViewModel>();
-        containerRegistry.Register<AdminSoftwareVariantsViewModel>();
-        containerRegistry.Register<AdminSoftwareSubvariantsViewModel>();
         containerRegistry.Register<AdminSoftwareReleasesViewModel>();
         containerRegistry.Register<AdminSoftwareScreenshotsViewModel>();
         containerRegistry.Register<ScreenshotDetailViewModel>();
@@ -316,8 +312,6 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<AdminSoftwareFamiliesPage, AdminSoftwareFamiliesViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoftwarePlatformsPage, AdminSoftwarePlatformsViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoftwareVersionsPage, AdminSoftwareVersionsViewModel>();
-        containerRegistry.RegisterForNavigation<AdminSoftwareVariantsPage, AdminSoftwareVariantsViewModel>();
-        containerRegistry.RegisterForNavigation<AdminSoftwareSubvariantsPage, AdminSoftwareSubvariantsViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoftwareReleasesPage, AdminSoftwareReleasesViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoftwareScreenshotsPage, AdminSoftwareScreenshotsViewModel>();
         containerRegistry.RegisterForNavigation<ScreenshotDetailPage, ScreenshotDetailViewModel>();

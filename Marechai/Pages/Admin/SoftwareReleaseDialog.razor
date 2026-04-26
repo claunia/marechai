@@ -117,15 +117,6 @@
                                  Clearable="true"
                                  Class="mb-4"/>
 
-                <MudAutocomplete T="SoftwareVariantDto"
-                                 Label="@L["Variant"]"
-                                 @bind-Value="_selectedVariant"
-                                 SearchFunc="SearchVariants"
-                                 ToStringFunc="@(v => v?.Name ?? string.Empty)"
-                                 Variant="Variant.Outlined"
-                                 Clearable="true"
-                                 Class="mb-4"/>
-
                 <MudDatePicker @bind-Date="ReleaseDate"
                                Label="@L["Release date"]"
                                Variant="Variant.Outlined"
@@ -484,8 +475,6 @@
     List<LanguageBySoftwareReleaseDto>?      _releaseLanguages;
     CompanyDto?                              _selectedPublisher;
     List<CompanyDto>?                        _allCompanies;
-    SoftwareVariantDto?                      _selectedVariant;
-    List<SoftwareVariantDto>?                _allVariants;
     List<SoftwareBarcodeDto>?                _barcodes;
     string?                                  _newBarcodeCode;
     int                                      _newBarcodeType;
@@ -520,8 +509,6 @@
     [Parameter] public bool IsNew { get; set; }
     [Parameter] public int ReleaseId { get; set; }
     [Parameter] public int ParentVersionId { get; set; }
-    [Parameter] public int? VariantId { get; set; }
-    [Parameter] public int? SubvariantId { get; set; }
     [Parameter] public int? PlatformId { get; set; }
 
     [Parameter] public int? PublisherId { get; set; }
@@ -542,7 +529,6 @@
         _allUnM49       = await SoftwareReleasesService.GetAllUnM49Async();
         _allLanguages   = await SoftwareReleasesService.GetAllLanguagesAsync();
         _allCompanies   = await SoftwareReleasesService.GetAllCompaniesAsync();
-        _allVariants    = await SoftwareReleasesService.GetAllVariantsAsync();
         _allGpus        = await SoftwareReleasesService.GetAllGpusAsync();
         _allSoundSynths = await SoftwareReleasesService.GetAllSoundSynthsAsync();
 
@@ -565,9 +551,6 @@
 
         if(PublisherId is not null && _allCompanies is not null)
             _selectedPublisher = _allCompanies.Find(c => c.Id == PublisherId);
-
-        if(VariantId is not null && _allVariants is not null)
-            _selectedVariant = _allVariants.Find(v => v.Id == VariantId);
 
         // Pre-select software and version for non-compilation releases
         if(!_isCompilation && SoftwareId is not null && _allSoftwareForPicker is not null)
@@ -674,14 +657,6 @@
         IEnumerable<CompanyDto> results = _allCompanies ?? [];
         if(!string.IsNullOrWhiteSpace(value))
             results = _allCompanies?.Where(c => c.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ?? [];
-        return Task.FromResult(results);
-    }
-
-    Task<IEnumerable<SoftwareVariantDto>> SearchVariants(string? value, CancellationToken ct)
-    {
-        IEnumerable<SoftwareVariantDto> results = _allVariants ?? [];
-        if(!string.IsNullOrWhiteSpace(value))
-            results = _allVariants?.Where(v => v.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ?? [];
         return Task.FromResult(results);
     }
 
@@ -905,8 +880,6 @@
             IsCompilation = _isCompilation,
             SoftwareId   = _isCompilation ? null : (int?)_selectedSoftware?.Id,
             SoftwareVersionId = _isCompilation ? null : (int?)_selectedVersion?.Id,
-            VariantId    = _selectedVariant?.Id,
-            SubvariantId = SubvariantId,
             PlatformId   = _selectedPlatform?.Id,
             PublisherId  = _selectedPublisher?.Id,
             ReleaseDate  = ReleaseDate,

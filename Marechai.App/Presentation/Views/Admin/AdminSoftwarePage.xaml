@@ -87,9 +87,6 @@
                                                     <Button Content="{Binding Source={StaticResource Strings}, Path=VersionsButton}"
                                                             Command="{Binding DataContext.OpenVersionsCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
                                                             Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
-                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=VariantsButton}"
-                                                            Command="{Binding DataContext.OpenVariantsCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
-                                                            Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
                                                     <Button Content="{Binding Source={StaticResource Strings}, Path=DeleteButton}"
                                                             Command="{Binding DataContext.DeleteCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
                                                             Foreground="{ThemeResource SystemErrorTextColor}" Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />

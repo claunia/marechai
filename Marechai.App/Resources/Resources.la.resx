@@ -1722,16 +1722,10 @@
   <data name="EditSoftwareDialog_Title" xml:space="preserve"><value>Mutare programma</value></data>
   <data name="AddSoftwareVersionDialog_Title" xml:space="preserve"><value>Addere versionem</value></data>
   <data name="EditSoftwareVersionDialog_Title" xml:space="preserve"><value>Mutare versionem</value></data>
-  <data name="AddSoftwareVariantDialog_Title" xml:space="preserve"><value>Addere variantem</value></data>
-  <data name="EditSoftwareVariantDialog_Title" xml:space="preserve"><value>Mutare variantem</value></data>
-  <data name="AddSoftwareSubvariantDialog_Title" xml:space="preserve"><value>Addere subvariantem</value></data>
-  <data name="EditSoftwareSubvariantDialog_Title" xml:space="preserve"><value>Mutare subvariantem</value></data>
   <data name="AddSoftwareReleaseDialog_Title" xml:space="preserve"><value>Addere editionem programmatis</value></data>
   <data name="EditSoftwareReleaseDialog_Title" xml:space="preserve"><value>Mutare editionem programmatis</value></data>
   
   <data name="SoftwareVersionsForTitle" xml:space="preserve"><value>Versiones pro: {0}</value></data>
-  <data name="SoftwareVariantsForTitle" xml:space="preserve"><value>Variantes pro: {0}</value></data>
-  <data name="SoftwareSubvariantsForTitle" xml:space="preserve"><value>Subvariantes pro: {0}</value></data>
   
   <data name="FailedToLoadSoftwarePlatforms" xml:space="preserve"><value>Suggestus programmaticos onerare non potuit.</value></data>
   <data name="FailedToDeleteSoftwarePlatform" xml:space="preserve"><value>Suggestum programmaticum delere non potuit.</value></data>
@@ -1745,12 +1739,6 @@
   <data name="FailedToLoadSoftwareVersions" xml:space="preserve"><value>Versiones programmatum onerare non potuit.</value></data>
   <data name="FailedToDeleteSoftwareVersion" xml:space="preserve"><value>Versionem programmatis delere non potuit.</value></data>
   <data name="FailedToSaveSoftwareVersion" xml:space="preserve"><value>Versionem programmatis servare non potuit.</value></data>
-  <data name="FailedToLoadSoftwareVariants" xml:space="preserve"><value>Variantes programmatum onerare non potuit.</value></data>
-  <data name="FailedToDeleteSoftwareVariant" xml:space="preserve"><value>Variantem programmatis delere non potuit.</value></data>
-  <data name="FailedToSaveSoftwareVariant" xml:space="preserve"><value>Variantem programmatis servare non potuit.</value></data>
-  <data name="FailedToLoadSoftwareSubvariants" xml:space="preserve"><value>Subvariantes programmatum onerare non potuit.</value></data>
-  <data name="FailedToDeleteSoftwareSubvariant" xml:space="preserve"><value>Subvariantem programmatis delere non potuit.</value></data>
-  <data name="FailedToSaveSoftwareSubvariant" xml:space="preserve"><value>Subvariantem programmatis servare non potuit.</value></data>
   <data name="FailedToLoadSoftwareReleases" xml:space="preserve"><value>Editiones programmatum onerare non potuit.</value></data>
   <data name="FailedToDeleteSoftwareRelease" xml:space="preserve"><value>Editionem programmatis delere non potuit.</value></data>
   <data name="FailedToSaveSoftwareRelease" xml:space="preserve"><value>Editionem programmatis servare non potuit.</value></data>
@@ -1886,8 +1874,6 @@
   <data name="AddLanguageLabel" xml:space="preserve"><value>Linguam addere</value></data>
   <data name="SoftwarePublisherLabel" xml:space="preserve"><value>Editor</value></data>
   <data name="SoftwareReleaseDateLabel" xml:space="preserve"><value>Dies editionis</value></data>
-  <data name="SoftwareVariantLabel" xml:space="preserve"><value>Variatio</value></data>
-  <data name="SoftwareSubvariantLabel" xml:space="preserve"><value>Subvariatio</value></data>
   <data name="SoftwareBarcodesLabel" xml:space="preserve"><value>Codices striati</value></data>
   <data name="SoftwareProductCodesLabel" xml:space="preserve"><value>Codices productorum</value></data>
   <data name="BarcodeCodeLabel" xml:space="preserve"><value>Codex striatus</value></data>

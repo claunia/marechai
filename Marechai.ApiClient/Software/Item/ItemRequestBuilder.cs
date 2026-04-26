@@ -7,7 +7,6 @@ using Marechai.ApiClient.Software.Item.Compilations;
 using Marechai.ApiClient.Software.Item.Platforms;
 using Marechai.ApiClient.Software.Item.Releases;
 using Marechai.ApiClient.Software.Item.Screenshots;
-using Marechai.ApiClient.Software.Item.Variants;
 using Marechai.ApiClient.Software.Item.Versions;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
@@ -54,11 +53,6 @@ namespace Marechai.ApiClient.Software.Item
         public global::Marechai.ApiClient.Software.Item.Screenshots.ScreenshotsRequestBuilder Screenshots
         {
             get => new global::Marechai.ApiClient.Software.Item.Screenshots.ScreenshotsRequestBuilder(PathParameters, RequestAdapter);
-        }
-        /// <summary>The variants property</summary>
-        public global::Marechai.ApiClient.Software.Item.Variants.VariantsRequestBuilder Variants
-        {
-            get => new global::Marechai.ApiClient.Software.Item.Variants.VariantsRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The versions property</summary>
         public global::Marechai.ApiClient.Software.Item.Versions.VersionsRequestBuilder Versions

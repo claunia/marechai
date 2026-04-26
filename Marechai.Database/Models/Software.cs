@@ -12,7 +12,6 @@ public class Software : BaseModel<ulong>
     public         bool                             IsOperatingSystem { get; set; }
     public         bool                             IsGame            { get; set; }
     public virtual ICollection<SoftwareVersion>     Versions          { get; set; }
-    public virtual ICollection<SoftwareVariant>     Variants          { get; set; }
     public virtual ICollection<SoftwareCompanyRole> CompanyRoles      { get; set; }
     public virtual ICollection<SoftwareScreenshot>  Screenshots       { get; set; }
     public virtual ICollection<SoftwareRelease>             DirectReleases     { get; set; }

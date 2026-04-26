@@ -137,20 +137,6 @@
                     <td>@(((_release.ReleaseDatePrecision ?? 0) == 2 ? _release.ReleaseDate.Value.Year.ToString() : (_release.ReleaseDatePrecision ?? 0) == 1 ? _release.ReleaseDate.Value.ToString("MMMM yyyy") : _release.ReleaseDate.Value.DateTime.ToLongDateString()))</td>
                 </tr>
             }
-            @if(!string.IsNullOrEmpty(_release.Variant))
-            {
-                <tr>
-                    <td style="width: 33%; text-align: right;"><strong>@L["Variant"]</strong></td>
-                    <td>@_release.Variant</td>
-                </tr>
-            }
-            @if(!string.IsNullOrEmpty(_release.Subvariant))
-            {
-                <tr>
-                    <td style="width: 33%; text-align: right;"><strong>@L["Subvariant"]</strong></td>
-                    <td>@_release.Subvariant</td>
-                </tr>
-            }
             </tbody>
         </MudSimpleTable>
     </MudCardContent>

@@ -59,8 +59,6 @@ public static class Register
         services.AddScoped<SoftwareFamiliesService>();
         services.AddScoped<SoftwarePlatformsService>();
         services.AddScoped<SoftwareVersionsService>();
-        services.AddScoped<SoftwareVariantsService>();
-        services.AddScoped<SoftwareSubvariantsService>();
         services.AddScoped<SoftwareReleasesService>();
         services.AddScoped<AuthService>();
         services.AddScoped<UsersService>();

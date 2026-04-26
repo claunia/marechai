@@ -131,19 +131,6 @@ public partial class ReleaseView
             }
         }
 
-        // Companies from variant level
-        if(_release.VariantId.HasValue)
-        {
-            List<CompanyBySoftwareVariantDto> variantCompanies =
-                await Service.GetCompaniesByVariantAsync(_release.VariantId.Value);
-
-            foreach(CompanyBySoftwareVariantDto c in variantCompanies)
-            {
-                if(c.CompanyId.HasValue && seen.Add((c.CompanyId.Value, c.RoleId ?? "")))
-                    companies.Add((c.CompanyId.Value, c.Company ?? "", c.Role ?? ""));
-            }
-        }
-
         _aggregatedCompanies = companies.OrderBy(c => c.CompanyName).ToList();
     }
 

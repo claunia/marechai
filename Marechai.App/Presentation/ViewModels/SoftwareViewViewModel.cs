@@ -214,8 +214,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
                         ? string.Join(", ", release.Regions.Select(r => r.RegionName))
                         : null,
                     Publisher       = release.Publisher,
-                    ReleaseDate     = dateDisplay,
-                    Variant         = release.Variant
+                    ReleaseDate     = dateDisplay
                 };
 
                 Releases.Add(releaseItem);
@@ -354,5 +353,4 @@ public class ReleaseDisplayItem
     public string? Regions          { get; set; }
     public string? Publisher        { get; set; }
     public string? ReleaseDate     { get; set; }
-    public string? Variant         { get; set; }
 }

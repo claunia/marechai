@@ -39,12 +39,6 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
     private string? _platform;
 
     [ObservableProperty]
-    private string? _variant;
-
-    [ObservableProperty]
-    private string? _subvariant;
-
-    [ObservableProperty]
     private string? _regionsDisplay;
 
     [ObservableProperty]
@@ -73,12 +67,6 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
 
     [ObservableProperty]
     private Visibility _showPlatform = Visibility.Collapsed;
-
-    [ObservableProperty]
-    private Visibility _showVariant = Visibility.Collapsed;
-
-    [ObservableProperty]
-    private Visibility _showSubvariant = Visibility.Collapsed;
 
     [ObservableProperty]
     private Visibility _showRegions = Visibility.Collapsed;
@@ -188,8 +176,6 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
 
             VersionString      = release.SoftwareVersion;
             Platform           = release.Platform;
-            Variant            = release.Variant;
-            Subvariant         = release.Subvariant;
             RegionsDisplay     = release.Regions is { Count: > 0 }
                 ? string.Join(", ", release.Regions.Select(r => r.RegionName))
                 : null;
@@ -283,8 +269,6 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
     private void UpdateVisibilities()
     {
         ShowPlatform    = !string.IsNullOrEmpty(Platform) ? Visibility.Visible : Visibility.Collapsed;
-        ShowVariant     = !string.IsNullOrEmpty(Variant) ? Visibility.Visible : Visibility.Collapsed;
-        ShowSubvariant  = !string.IsNullOrEmpty(Subvariant) ? Visibility.Visible : Visibility.Collapsed;
         ShowRegions     = !string.IsNullOrEmpty(RegionsDisplay) ? Visibility.Visible : Visibility.Collapsed;
         ShowLanguages   = !string.IsNullOrEmpty(LanguagesDisplay) ? Visibility.Visible : Visibility.Collapsed;
         ShowRegionalTitle = !string.IsNullOrEmpty(RegionalTitle) ? Visibility.Visible : Visibility.Collapsed;
@@ -383,21 +367,6 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
                     if(companySet.Add(key))
                         companyDisplays.Add((c.Company ?? string.Empty, c.Role));
                 }
-            }
-        }
-
-        // 4. Companies from the variant
-        if(release.VariantId is > 0)
-        {
-            List<CompanyBySoftwareVariantDto> variantCompanies =
-                await _browsingService.GetCompaniesByVariantAsync(release.VariantId.Value);
-
-            foreach(CompanyBySoftwareVariantDto c in variantCompanies)
-            {
-                var key = (c.CompanyId ?? 0, c.RoleId ?? string.Empty);
-
-                if(companySet.Add(key))
-                    companyDisplays.Add((c.Company ?? string.Empty, c.Role));
             }
         }
 

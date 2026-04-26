@@ -83,7 +83,6 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
         AddCompanyRoleCommand       = new AsyncRelayCommand(AddCompanyRoleAsync);
         RemoveCompanyRoleByDisplayCommand = new AsyncRelayCommand<string>(RemoveCompanyRoleByDisplayAsync);
         OpenVersionsCommand = new RelayCommand<SoftwareDto>(OpenVersions);
-        OpenVariantsCommand = new RelayCommand<SoftwareDto>(OpenVariants);
 
         CheckAdminRole();
     }
@@ -97,7 +96,6 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand                AddCompanyRoleCommand { get; }
     public IAsyncRelayCommand<string>        RemoveCompanyRoleByDisplayCommand { get; }
     public IRelayCommand<SoftwareDto>        OpenVersionsCommand { get; }
-    public IRelayCommand<SoftwareDto>        OpenVariantsCommand { get; }
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
@@ -278,17 +276,6 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
             { NavParamKeys.SoftwareName, item.Name ?? string.Empty }
         };
         _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminSoftwareVersionsPage), parameters);
-    }
-
-    private void OpenVariants(SoftwareDto? item)
-    {
-        if(item?.Id == null) return;
-        var parameters = new NavigationParameters
-        {
-            { NavParamKeys.SoftwareId, item.Id.Value },
-            { NavParamKeys.SoftwareName, item.Name ?? string.Empty }
-        };
-        _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminSoftwareVariantsPage), parameters);
     }
 
     public void ApplyFilter()

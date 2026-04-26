@@ -31,7 +31,7 @@ namespace Marechai.Database.Models;
 public class StandaloneFile : BaseFile
 {
     [Required]
-    public virtual SoftwareVariant SoftwareVariant { get; set; }
+    public virtual SoftwareRelease SoftwareRelease { get; set; }
 
     public virtual ICollection<FileDataStreamsByStandaloneFile> DataStreams { get; set; }
 }

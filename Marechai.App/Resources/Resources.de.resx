@@ -1722,16 +1722,10 @@
   <data name="EditSoftwareDialog_Title" xml:space="preserve"><value>Software bearbeiten</value></data>
   <data name="AddSoftwareVersionDialog_Title" xml:space="preserve"><value>Version hinzufügen</value></data>
   <data name="EditSoftwareVersionDialog_Title" xml:space="preserve"><value>Version bearbeiten</value></data>
-  <data name="AddSoftwareVariantDialog_Title" xml:space="preserve"><value>Variante hinzufügen</value></data>
-  <data name="EditSoftwareVariantDialog_Title" xml:space="preserve"><value>Variante bearbeiten</value></data>
-  <data name="AddSoftwareSubvariantDialog_Title" xml:space="preserve"><value>Untervariante hinzufügen</value></data>
-  <data name="EditSoftwareSubvariantDialog_Title" xml:space="preserve"><value>Untervariante bearbeiten</value></data>
   <data name="AddSoftwareReleaseDialog_Title" xml:space="preserve"><value>Software-Veröffentlichung hinzufügen</value></data>
   <data name="EditSoftwareReleaseDialog_Title" xml:space="preserve"><value>Software-Veröffentlichung bearbeiten</value></data>
   
   <data name="SoftwareVersionsForTitle" xml:space="preserve"><value>Versionen für: {0}</value></data>
-  <data name="SoftwareVariantsForTitle" xml:space="preserve"><value>Varianten für: {0}</value></data>
-  <data name="SoftwareSubvariantsForTitle" xml:space="preserve"><value>Untervarianten für: {0}</value></data>
   
   <data name="FailedToLoadSoftwarePlatforms" xml:space="preserve"><value>Softwareplattformen konnten nicht geladen werden.</value></data>
   <data name="FailedToDeleteSoftwarePlatform" xml:space="preserve"><value>Softwareplattform konnte nicht gelöscht werden.</value></data>
@@ -1745,12 +1739,6 @@
   <data name="FailedToLoadSoftwareVersions" xml:space="preserve"><value>Softwareversionen konnten nicht geladen werden.</value></data>
   <data name="FailedToDeleteSoftwareVersion" xml:space="preserve"><value>Softwareversion konnte nicht gelöscht werden.</value></data>
   <data name="FailedToSaveSoftwareVersion" xml:space="preserve"><value>Softwareversion konnte nicht gespeichert werden.</value></data>
-  <data name="FailedToLoadSoftwareVariants" xml:space="preserve"><value>Softwarevarianten konnten nicht geladen werden.</value></data>
-  <data name="FailedToDeleteSoftwareVariant" xml:space="preserve"><value>Softwarevariante konnte nicht gelöscht werden.</value></data>
-  <data name="FailedToSaveSoftwareVariant" xml:space="preserve"><value>Softwarevariante konnte nicht gespeichert werden.</value></data>
-  <data name="FailedToLoadSoftwareSubvariants" xml:space="preserve"><value>Software-Untervarianten konnten nicht geladen werden.</value></data>
-  <data name="FailedToDeleteSoftwareSubvariant" xml:space="preserve"><value>Software-Untervariante konnte nicht gelöscht werden.</value></data>
-  <data name="FailedToSaveSoftwareSubvariant" xml:space="preserve"><value>Software-Untervariante konnte nicht gespeichert werden.</value></data>
   <data name="FailedToLoadSoftwareReleases" xml:space="preserve"><value>Software-Veröffentlichungen konnten nicht geladen werden.</value></data>
   <data name="FailedToDeleteSoftwareRelease" xml:space="preserve"><value>Software-Veröffentlichung konnte nicht gelöscht werden.</value></data>
   <data name="FailedToSaveSoftwareRelease" xml:space="preserve"><value>Software-Veröffentlichung konnte nicht gespeichert werden.</value></data>
@@ -1886,8 +1874,6 @@
   <data name="AddLanguageLabel" xml:space="preserve"><value>Sprache hinzufügen</value></data>
   <data name="SoftwarePublisherLabel" xml:space="preserve"><value>Herausgeber</value></data>
   <data name="SoftwareReleaseDateLabel" xml:space="preserve"><value>Veröffentlichungsdatum</value></data>
-  <data name="SoftwareVariantLabel" xml:space="preserve"><value>Variante</value></data>
-  <data name="SoftwareSubvariantLabel" xml:space="preserve"><value>Untervariante</value></data>
   <data name="SoftwareBarcodesLabel" xml:space="preserve"><value>Strichcodes</value></data>
   <data name="SoftwareProductCodesLabel" xml:space="preserve"><value>Produktcodes</value></data>
   <data name="BarcodeCodeLabel" xml:space="preserve"><value>Strichcode</value></data>

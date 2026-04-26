@@ -109,8 +109,6 @@ public partial class SoftwareReleases
                 IsCompilation     = data.IsCompilation,
                 SoftwareId        = data.SoftwareId,
                 SoftwareVersionId = data.SoftwareVersionId,
-                VariantId         = data.VariantId,
-                SubvariantId      = data.SubvariantId,
                 PlatformId        = data.PlatformId,
                 PublisherId       = data.PublisherId,
 
@@ -152,8 +150,6 @@ public partial class SoftwareReleases
             { x => x.IsCompilation, full.IsCompilation == true },
             { x => x.SoftwareId, full.SoftwareId },
             { x => x.SoftwareVersionId, full.SoftwareVersionId },
-            { x => x.VariantId, full.VariantId },
-            { x => x.SubvariantId, full.SubvariantId },
             { x => x.PlatformId, full.PlatformId },
             { x => x.PublisherId, full.PublisherId },
             { x => x.ReleaseDate, full.ReleaseDate?.DateTime },
@@ -179,8 +175,6 @@ public partial class SoftwareReleases
                 IsCompilation     = data.IsCompilation,
                 SoftwareId        = full.SoftwareId,
                 SoftwareVersionId = data.SoftwareVersionId,
-                VariantId         = data.VariantId,
-                SubvariantId      = data.SubvariantId,
                 PlatformId        = data.PlatformId,
 
                 ReleaseDatePrecision = data.ReleaseDatePrecision,

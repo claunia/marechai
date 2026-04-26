@@ -71,7 +71,6 @@
                 </CellTemplate>
             </TemplateColumn>
             <PropertyColumn Property="x => x.Publisher" Title="@L["Publisher"]"/>
-            <PropertyColumn Property="x => x.Variant" Title="@L["Variant"]"/>
             <TemplateColumn Title="@L["Release date"]" Sortable="true">
                 <CellTemplate>
                     @FormatDate(context.Item.ReleaseDate)

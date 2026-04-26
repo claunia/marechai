@@ -27,9 +27,6 @@ public partial class Software
     void NavigateToVersions(SoftwareDto software) =>
         NavigationManager.NavigateTo($"/admin/software/{software.Id}/versions");
 
-    void NavigateToVariants(SoftwareDto software) =>
-        NavigationManager.NavigateTo($"/admin/software/{software.Id}/variants");
-
     void NavigateToScreenshots(SoftwareDto software) =>
         NavigationManager.NavigateTo($"/admin/software/{software.Id}/screenshots");
 

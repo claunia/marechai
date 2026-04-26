@@ -58,10 +58,6 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
                                                                     Software          = r.Software.Name,
                                                                     SoftwareVersionId = r.SoftwareVersionId,
                                                                     SoftwareVersion   = r.SoftwareVersion.VersionString,
-                                                                    VariantId         = r.VariantId,
-                                                                    Variant           = r.Variant.Name,
-                                                                    SubvariantId      = r.SubvariantId,
-                                                                    Subvariant        = r.Subvariant.Name,
                                                                     PlatformId        = r.PlatformId,
                                                                     Platform          = r.Platform.Name,
                                                                     Regions           = r.Regions.Select(rg => new UnM49BySoftwareReleaseDto
@@ -99,10 +95,6 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
             Software          = r.Software.Name,
             SoftwareVersionId = r.SoftwareVersionId,
             SoftwareVersion   = r.SoftwareVersion.VersionString,
-            VariantId         = r.VariantId,
-            Variant           = r.Variant.Name,
-            SubvariantId      = r.SubvariantId,
-            Subvariant        = r.Subvariant.Name,
             PlatformId        = r.PlatformId,
             Platform          = r.Platform.Name,
             Regions           = r.Regions.Select(rg => new UnM49BySoftwareReleaseDto
@@ -141,10 +133,6 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
             Software          = r.Software.Name,
             SoftwareVersionId = r.SoftwareVersionId,
             SoftwareVersion   = r.SoftwareVersion.VersionString,
-            VariantId         = r.VariantId,
-            Variant           = r.Variant.Name,
-            SubvariantId      = r.SubvariantId,
-            Subvariant        = r.Subvariant.Name,
             PlatformId        = r.PlatformId,
             Platform          = r.Platform.Name,
             Regions           = r.Regions.Select(rg => new UnM49BySoftwareReleaseDto
@@ -180,10 +168,6 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
                                                                       Software          = r.Software.Name,
                                                                       SoftwareVersionId = r.SoftwareVersionId,
                                                                       SoftwareVersion   = r.SoftwareVersion.VersionString,
-                                                                      VariantId         = r.VariantId,
-                                                                      Variant           = r.Variant.Name,
-                                                                      SubvariantId      = r.SubvariantId,
-                                                                      Subvariant        = r.Subvariant.Name,
                                                                       PlatformId        = r.PlatformId,
                                                                       Platform          = r.Platform.Name,
                                                                       Regions           = r.Regions.Select(rg => new UnM49BySoftwareReleaseDto
@@ -230,8 +214,6 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
 
         model.Title             = dto.Title;
         model.SoftwareVersionId = dto.SoftwareVersionId;
-        model.VariantId         = dto.VariantId;
-        model.SubvariantId      = dto.SubvariantId;
         model.PlatformId        = dto.PlatformId;
         model.PublisherId       = dto.PublisherId;
         model.ReleaseDate       = dto.ReleaseDate;
@@ -269,8 +251,6 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
             IsCompilation     = dto.IsCompilation,
             SoftwareId        = dto.IsCompilation ? null : dto.SoftwareId,
             SoftwareVersionId = dto.IsCompilation ? null : dto.SoftwareVersionId,
-            VariantId         = dto.VariantId,
-            SubvariantId      = dto.SubvariantId,
             PlatformId        = dto.PlatformId,
             PublisherId       = dto.PublisherId,
             ReleaseDate       = dto.ReleaseDate,

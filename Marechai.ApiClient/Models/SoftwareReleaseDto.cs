@@ -78,16 +78,6 @@ namespace Marechai.ApiClient.Models
 #endif
         /// <summary>The software_version_id property</summary>
         public int? SoftwareVersionId { get; set; }
-        /// <summary>The subvariant property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Subvariant { get; set; }
-#nullable restore
-#else
-        public string Subvariant { get; set; }
-#endif
-        /// <summary>The subvariant_id property</summary>
-        public int? SubvariantId { get; set; }
         /// <summary>The title property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -96,16 +86,6 @@ namespace Marechai.ApiClient.Models
 #else
         public string Title { get; set; }
 #endif
-        /// <summary>The variant property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Variant { get; set; }
-#nullable restore
-#else
-        public string Variant { get; set; }
-#endif
-        /// <summary>The variant_id property</summary>
-        public int? VariantId { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.ApiClient.Models.SoftwareReleaseDto"/> and sets the default values.
         /// </summary>
@@ -145,11 +125,7 @@ namespace Marechai.ApiClient.Models
                 { "software_id", n => { SoftwareId = n.GetIntValue(); } },
                 { "software_version", n => { SoftwareVersion = n.GetStringValue(); } },
                 { "software_version_id", n => { SoftwareVersionId = n.GetIntValue(); } },
-                { "subvariant", n => { Subvariant = n.GetStringValue(); } },
-                { "subvariant_id", n => { SubvariantId = n.GetIntValue(); } },
                 { "title", n => { Title = n.GetStringValue(); } },
-                { "variant", n => { Variant = n.GetStringValue(); } },
-                { "variant_id", n => { VariantId = n.GetIntValue(); } },
             };
         }
         /// <summary>
@@ -173,11 +149,7 @@ namespace Marechai.ApiClient.Models
             writer.WriteIntValue("software_id", SoftwareId);
             writer.WriteStringValue("software_version", SoftwareVersion);
             writer.WriteIntValue("software_version_id", SoftwareVersionId);
-            writer.WriteStringValue("subvariant", Subvariant);
-            writer.WriteIntValue("subvariant_id", SubvariantId);
             writer.WriteStringValue("title", Title);
-            writer.WriteStringValue("variant", Variant);
-            writer.WriteIntValue("variant_id", VariantId);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

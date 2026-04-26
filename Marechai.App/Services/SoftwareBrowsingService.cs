@@ -400,23 +400,6 @@ public class SoftwareBrowsingService
         }
     }
 
-    public async Task<List<CompanyBySoftwareVariantDto>> GetCompaniesByVariantAsync(int variantId)
-    {
-        try
-        {
-            List<CompanyBySoftwareVariantDto> items =
-                await _apiClient.Software.Variants[variantId].Companies.GetAsync();
-
-            return items ?? [];
-        }
-        catch(Exception ex)
-        {
-            _logger.LogError(ex, "Error fetching companies for variant {VariantId}", variantId);
-
-            return [];
-        }
-    }
-
     public async Task<SoftwareVersionDto?> GetVersionByIdAsync(int versionId)
     {
         try

@@ -18,10 +18,6 @@ using Marechai.ApiClient.Software.Releases;
 using Marechai.ApiClient.Software.Requirements;
 using Marechai.ApiClient.Software.Roles;
 using Marechai.ApiClient.Software.Screenshots;
-using Marechai.ApiClient.Software.SubvariantLanguages;
-using Marechai.ApiClient.Software.Subvariants;
-using Marechai.ApiClient.Software.VariantLanguages;
-using Marechai.ApiClient.Software.Variants;
 using Marechai.ApiClient.Software.Versions;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
@@ -118,26 +114,6 @@ namespace Marechai.ApiClient.Software
         public global::Marechai.ApiClient.Software.Screenshots.ScreenshotsRequestBuilder Screenshots
         {
             get => new global::Marechai.ApiClient.Software.Screenshots.ScreenshotsRequestBuilder(PathParameters, RequestAdapter);
-        }
-        /// <summary>The subvariantLanguages property</summary>
-        public global::Marechai.ApiClient.Software.SubvariantLanguages.SubvariantLanguagesRequestBuilder SubvariantLanguages
-        {
-            get => new global::Marechai.ApiClient.Software.SubvariantLanguages.SubvariantLanguagesRequestBuilder(PathParameters, RequestAdapter);
-        }
-        /// <summary>The subvariants property</summary>
-        public global::Marechai.ApiClient.Software.Subvariants.SubvariantsRequestBuilder Subvariants
-        {
-            get => new global::Marechai.ApiClient.Software.Subvariants.SubvariantsRequestBuilder(PathParameters, RequestAdapter);
-        }
-        /// <summary>The variantLanguages property</summary>
-        public global::Marechai.ApiClient.Software.VariantLanguages.VariantLanguagesRequestBuilder VariantLanguages
-        {
-            get => new global::Marechai.ApiClient.Software.VariantLanguages.VariantLanguagesRequestBuilder(PathParameters, RequestAdapter);
-        }
-        /// <summary>The variants property</summary>
-        public global::Marechai.ApiClient.Software.Variants.VariantsRequestBuilder Variants
-        {
-            get => new global::Marechai.ApiClient.Software.Variants.VariantsRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The versions property</summary>
         public global::Marechai.ApiClient.Software.Versions.VersionsRequestBuilder Versions

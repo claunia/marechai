@@ -1862,16 +1862,10 @@
   <data name="EditSoftwareDialog_Title" xml:space="preserve"><value>Editar software</value></data>
   <data name="AddSoftwareVersionDialog_Title" xml:space="preserve"><value>Añadir versión</value></data>
   <data name="EditSoftwareVersionDialog_Title" xml:space="preserve"><value>Editar versión</value></data>
-  <data name="AddSoftwareVariantDialog_Title" xml:space="preserve"><value>Añadir variante</value></data>
-  <data name="EditSoftwareVariantDialog_Title" xml:space="preserve"><value>Editar variante</value></data>
-  <data name="AddSoftwareSubvariantDialog_Title" xml:space="preserve"><value>Añadir subvariante</value></data>
-  <data name="EditSoftwareSubvariantDialog_Title" xml:space="preserve"><value>Editar subvariante</value></data>
   <data name="AddSoftwareReleaseDialog_Title" xml:space="preserve"><value>Añadir lanzamiento de software</value></data>
   <data name="EditSoftwareReleaseDialog_Title" xml:space="preserve"><value>Editar lanzamiento de software</value></data>
   
   <data name="SoftwareVersionsForTitle" xml:space="preserve"><value>Versiones de: {0}</value></data>
-  <data name="SoftwareVariantsForTitle" xml:space="preserve"><value>Variantes de: {0}</value></data>
-  <data name="SoftwareSubvariantsForTitle" xml:space="preserve"><value>Subvariantes de: {0}</value></data>
   
   <data name="FailedToLoadSoftwarePlatforms" xml:space="preserve"><value>Error al cargar plataformas de software.</value></data>
   <data name="FailedToDeleteSoftwarePlatform" xml:space="preserve"><value>Error al eliminar plataforma de software.</value></data>
@@ -1885,12 +1879,6 @@
   <data name="FailedToLoadSoftwareVersions" xml:space="preserve"><value>Error al cargar versiones de software.</value></data>
   <data name="FailedToDeleteSoftwareVersion" xml:space="preserve"><value>Error al eliminar versión de software.</value></data>
   <data name="FailedToSaveSoftwareVersion" xml:space="preserve"><value>Error al guardar versión de software.</value></data>
-  <data name="FailedToLoadSoftwareVariants" xml:space="preserve"><value>Error al cargar variantes de software.</value></data>
-  <data name="FailedToDeleteSoftwareVariant" xml:space="preserve"><value>Error al eliminar variante de software.</value></data>
-  <data name="FailedToSaveSoftwareVariant" xml:space="preserve"><value>Error al guardar variante de software.</value></data>
-  <data name="FailedToLoadSoftwareSubvariants" xml:space="preserve"><value>Error al cargar subvariantes de software.</value></data>
-  <data name="FailedToDeleteSoftwareSubvariant" xml:space="preserve"><value>Error al eliminar subvariante de software.</value></data>
-  <data name="FailedToSaveSoftwareSubvariant" xml:space="preserve"><value>Error al guardar subvariante de software.</value></data>
   <data name="FailedToLoadSoftwareReleases" xml:space="preserve"><value>Error al cargar lanzamientos de software.</value></data>
   <data name="FailedToDeleteSoftwareRelease" xml:space="preserve"><value>Error al eliminar lanzamiento de software.</value></data>
   <data name="FailedToSaveSoftwareRelease" xml:space="preserve"><value>Error al guardar lanzamiento de software.</value></data>
@@ -2026,8 +2014,6 @@
   <data name="AddLanguageLabel" xml:space="preserve"><value>Añadir idioma</value></data>
   <data name="SoftwarePublisherLabel" xml:space="preserve"><value>Editor</value></data>
   <data name="SoftwareReleaseDateLabel" xml:space="preserve"><value>Fecha de publicación</value></data>
-  <data name="SoftwareVariantLabel" xml:space="preserve"><value>Variante</value></data>
-  <data name="SoftwareSubvariantLabel" xml:space="preserve"><value>Subvariante</value></data>
   <data name="SoftwareBarcodesLabel" xml:space="preserve"><value>Códigos de barras</value></data>
   <data name="SoftwareProductCodesLabel" xml:space="preserve"><value>Códigos de producto</value></data>
   <data name="BarcodeCodeLabel" xml:space="preserve"><value>Código de barras</value></data>

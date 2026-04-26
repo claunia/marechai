@@ -18,12 +18,6 @@ public class SoftwareRelease : BaseModel<ulong>
     public         ulong?          SoftwareVersionId { get; set; }
     public virtual SoftwareVersion SoftwareVersion   { get; set; }
 
-    public         ulong?          VariantId { get; set; }
-    public virtual SoftwareVariant Variant   { get; set; }
-
-    public         ulong?             SubvariantId { get; set; }
-    public virtual SoftwareSubvariant Subvariant   { get; set; }
-
     public         ulong?           PlatformId { get; set; }
     public virtual SoftwarePlatform Platform   { get; set; }
 

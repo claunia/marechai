@@ -126,10 +126,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<SoftwareFamily>                      SoftwareFamilies                    { get; set; }
     public virtual DbSet<Software>                            Softwares                           { get; set; }
     public virtual DbSet<SoftwareVersion>                     SoftwareVersions                    { get; set; }
-    public virtual DbSet<SoftwareVariant>                     SoftwareVariants                    { get; set; }
-    public virtual DbSet<SoftwareSubvariant>                  SoftwareSubvariants                 { get; set; }
-    public virtual DbSet<SoftwareVariantLanguage>             SoftwareVariantLanguages            { get; set; }
-    public virtual DbSet<SoftwareSubvariantLanguage>          SoftwareSubvariantLanguages         { get; set; }
     public virtual DbSet<SoftwarePlatform>                    SoftwarePlatforms                   { get; set; }
     public virtual DbSet<SoftwareRelease>                     SoftwareReleases                    { get; set; }
     public virtual DbSet<SoftwareBarcode>                     SoftwareBarcodes                    { get; set; }
@@ -139,7 +135,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<SoftwareCompanyRole>                 SoftwareCompanyRoles                { get; set; }
     public virtual DbSet<SoftwareRole>                        SoftwareRoles                       { get; set; }
     public virtual DbSet<CompanyBySoftwareVersion>            CompaniesBySoftwareVersions         { get; set; }
-    public virtual DbSet<CompanyBySoftwareVariant>            CompaniesBySoftwareVariants         { get; set; }
     public virtual DbSet<CompanyBySoftwareFamily>             CompaniesBySoftwareFamilies         { get; set; }
     public virtual DbSet<MinimumGpuBySoftwareRelease>        MinimumGpuBySoftwareRelease         { get; set; }
     public virtual DbSet<RecommendedGpuBySoftwareRelease>    RecommendedGpuBySoftwareRelease     { get; set; }
@@ -2203,48 +2198,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .OnDelete(DeleteBehavior.Restrict);
         });
 
-        modelBuilder.Entity<SoftwareVariant>(entity =>
-        {
-            entity.HasIndex(x => new
-                   {
-                       x.SoftwareId,
-                       x.Name
-                   })
-                  .IsUnique();
-
-            entity.HasOne(x => x.Software).WithMany(x => x.Variants).HasForeignKey(x => x.SoftwareId);
-        });
-
-        modelBuilder.Entity<SoftwareSubvariant>(entity =>
-        {
-            entity.HasIndex(x => new
-                   {
-                       x.VariantId,
-                       x.Name
-                   })
-                  .IsUnique();
-
-            entity.HasOne(x => x.Variant).WithMany(x => x.Subvariants).HasForeignKey(x => x.VariantId);
-        });
-
-        modelBuilder.Entity<SoftwareVariantLanguage>(entity =>
-        {
-            entity.HasKey(x => new
-            {
-                x.VariantId,
-                x.LanguageCode
-            });
-        });
-
-        modelBuilder.Entity<SoftwareSubvariantLanguage>(entity =>
-        {
-            entity.HasKey(x => new
-            {
-                x.SubvariantId,
-                x.LanguageCode
-            });
-        });
-
         modelBuilder.Entity<SoftwarePlatform>(entity => { entity.HasIndex(x => x.Name).IsUnique(); });
 
         modelBuilder.Entity<SoftwareRelease>(entity =>
@@ -2266,13 +2219,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .HasForeignKey(x => x.SoftwareId)
                   .IsRequired(false)
                   .OnDelete(DeleteBehavior.Restrict);
-
-            entity.HasOne(x => x.Variant).WithMany().HasForeignKey(x => x.VariantId).OnDelete(DeleteBehavior.SetNull);
-
-            entity.HasOne(x => x.Subvariant)
-                  .WithMany()
-                  .HasForeignKey(x => x.SubvariantId)
-                  .OnDelete(DeleteBehavior.SetNull);
 
             entity.HasOne(x => x.Platform)
                   .WithMany(x => x.SoftwareReleases)
@@ -2416,16 +2362,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
             entity.HasIndex(e => e.RoleId);
             entity.HasOne(d => d.SoftwareVersion).WithMany(p => p.Companies).HasForeignKey(d => d.SoftwareVersionId);
             entity.HasOne(d => d.Company).WithMany(p => p.SoftwareVersions).HasForeignKey(d => d.CompanyId);
-            entity.HasOne(d => d.Role).WithMany().HasForeignKey(d => d.RoleId);
-        });
-
-        modelBuilder.Entity<CompanyBySoftwareVariant>(entity =>
-        {
-            entity.HasIndex(e => e.SoftwareVariantId);
-            entity.HasIndex(e => e.CompanyId);
-            entity.HasIndex(e => e.RoleId);
-            entity.HasOne(d => d.SoftwareVariant).WithMany(p => p.Companies).HasForeignKey(d => d.SoftwareVariantId);
-            entity.HasOne(d => d.Company).WithMany(p => p.SoftwareVariants).HasForeignKey(d => d.CompanyId);
             entity.HasOne(d => d.Role).WithMany().HasForeignKey(d => d.RoleId);
         });
 

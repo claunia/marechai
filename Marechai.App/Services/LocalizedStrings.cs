@@ -667,8 +667,6 @@ public class LocalizedStrings
     public string SoftwareRegionLabel => _l["SoftwareRegionLabel"];
     public string SoftwarePublisherLabel => _l["SoftwarePublisherLabel"];
     public string SoftwareReleaseDateLabel => _l["SoftwareReleaseDateLabel"];
-    public string SoftwareVariantLabel => _l["SoftwareVariantLabel"];
-    public string SoftwareSubvariantLabel => _l["SoftwareSubvariantLabel"];
     public string SoftwareBarcodesLabel => _l["SoftwareBarcodesLabel"];
     public string SoftwareProductCodesLabel => _l["SoftwareProductCodesLabel"];
 

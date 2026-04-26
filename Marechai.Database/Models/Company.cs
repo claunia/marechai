@@ -99,6 +99,5 @@ public class Company : BaseModel<int>
     public virtual ICollection<SoftwareCompanyRole>      SoftwareRoles    { get; set; }
     public virtual ICollection<SoftwareRelease>          SoftwareReleases { get; set; }
     public virtual ICollection<CompanyBySoftwareVersion> SoftwareVersions { get; set; }
-    public virtual ICollection<CompanyBySoftwareVariant> SoftwareVariants  { get; set; }
     public virtual ICollection<CompanyBySoftwareFamily>  SoftwareFamilies2 { get; set; }
 }

@@ -9,8 +9,6 @@ public sealed class SoftwareReleaseDialogResult
     public bool      IsCompilation { get; set; }
     public int?      SoftwareId   { get; set; }
     public int?      SoftwareVersionId { get; set; }
-    public int?      VariantId    { get; set; }
-    public int?      SubvariantId { get; set; }
     public int?      PlatformId   { get; set; }
     public int?      PublisherId  { get; set; }
     public DateTime? ReleaseDate          { get; set; }

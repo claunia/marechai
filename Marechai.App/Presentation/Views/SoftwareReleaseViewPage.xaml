@@ -232,51 +232,6 @@
                         </StackPanel>
                     </Grid>
 
-                    <!-- Variant and Subvariant -->
-                    <Grid ColumnSpacing="16">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" /> <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <StackPanel Grid.Column="0"
-                                    Visibility="{Binding ShowVariant}"
-                                    Spacing="8">
-                            <TextBlock
-                                       Text="{Binding Source={StaticResource Strings}, Path=SoftwareVariantLabel}"
-                                       FontSize="12"
-                                       FontWeight="SemiBold"
-                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
-                            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="8"
-                                    Padding="16,12">
-                                <TextBlock Text="{Binding Variant}"
-                                           FontSize="14"
-                                           Foreground="{ThemeResource TextControlForeground}" />
-                            </Border>
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="1"
-                                    Visibility="{Binding ShowSubvariant}"
-                                    Spacing="8">
-                            <TextBlock
-                                       Text="{Binding Source={StaticResource Strings}, Path=SoftwareSubvariantLabel}"
-                                       FontSize="12"
-                                       FontWeight="SemiBold"
-                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
-                            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="8"
-                                    Padding="16,12">
-                                <TextBlock Text="{Binding Subvariant}"
-                                           FontSize="14"
-                                           Foreground="{ThemeResource TextControlForeground}" />
-                            </Border>
-                        </StackPanel>
-                    </Grid>
-
                     <!-- Included Software (compilations only) -->
                     <StackPanel Visibility="{Binding ShowIncludedVersions}"
                                 Spacing="12">
