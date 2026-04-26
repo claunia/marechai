@@ -184,4 +184,19 @@ public partial class People
             }
         }
     }
+
+    async Task OpenImportDialog()
+    {
+        IDialogReference dialog = await DialogService.ShowAsync<PersonImportDialog>(L["Import CSV"],
+                                                                                    new DialogOptions
+                                                                                    {
+                                                                                        MaxWidth  = MaxWidth.ExtraLarge,
+                                                                                        FullWidth = true
+                                                                                    });
+
+        DialogResult? result = await dialog.Result;
+
+        if(result is { Canceled: false })
+            await LoadPeopleAsync();
+    }
 }
