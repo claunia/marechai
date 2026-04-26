@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Marechai.Data;
 using Microsoft.AspNetCore.Components;
 
 namespace Marechai.Pages.Software;
@@ -80,6 +81,7 @@ public partial class View
 
         _companies = await Service.GetCompaniesAsync(Id);
         _versions  = await Service.GetVersionsAsync(Id);
+        _versions.Sort((a, b) => NaturalStringComparer.Instance.Compare(a.VersionString, b.VersionString));
 
         // Load all non-compilation releases for this software (flat list)
         _releases = await Service.GetReleasesBySoftwareAsync(Id);

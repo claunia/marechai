@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Marechai.ApiClient.Models;
 using Marechai.App.Navigation;
+using Marechai.Data;
 using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
 using Marechai.App.Services.Caching;
@@ -182,6 +183,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
 
             // Load versions (without nested releases)
             List<SoftwareVersionDto> versions = await _browsingService.GetVersionsAsync(softwareId);
+            versions.Sort((a, b) => NaturalStringComparer.Instance.Compare(a.VersionString, b.VersionString));
 
             foreach(SoftwareVersionDto version in versions)
             {
