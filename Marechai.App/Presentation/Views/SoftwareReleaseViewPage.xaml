@@ -48,6 +48,11 @@
                            FontSize="14"
                            Foreground="{ThemeResource SystemBaseMediumColor}"
                            Visibility="{Binding SoftwareName, Converter={StaticResource NullToVisibilityConverter}}" />
+                <TextBlock Text="{Binding RegionalTitle}"
+                           FontSize="13"
+                           FontStyle="Italic"
+                           Foreground="{ThemeResource SystemBaseMediumColor}"
+                           Visibility="{Binding ShowRegionalTitle}" />
             </StackPanel>
         </Grid>
 

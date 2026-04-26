@@ -179,6 +179,10 @@
                 {
                     <MudListItem T="SoftwareReleaseDto" Href="@($"/software/release/{release.Id}")" Icon="@Icons.Material.Filled.NewReleases">
                         <div class="d-flex flex-wrap align-center gap-2">
+                            @if(!string.IsNullOrEmpty(release.Title) && release.IsCompilation != true)
+                            {
+                                <MudText Typo="Typo.body2" Style="font-style: italic;">@release.Title</MudText>
+                            }
                             @if(!string.IsNullOrEmpty(release.SoftwareVersion))
                             {
                                 <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Primary">@release.SoftwareVersion</MudChip>
