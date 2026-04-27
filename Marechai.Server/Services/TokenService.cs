@@ -29,12 +29,14 @@ using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Marechai.Server.Services;
 
-public sealed class TokenService
+public sealed class TokenService(IConfiguration configuration)
 {
     public string CreateToken(IdentityUser user, IList<string> roles)
     {
@@ -45,7 +47,8 @@ public sealed class TokenService
     }
 
     JwtSecurityToken CreateJwtToken(List<Claim> claims, SigningCredentials credentials) =>
-        new("apiWithAuthBackend", "apiWithAuthBackend", claims, expires: null, signingCredentials: credentials);
+        new(configuration["Jwt:Issuer"], configuration["Jwt:Audience"], claims, expires: null,
+            signingCredentials: credentials);
 
     List<Claim> CreateClaims(IdentityUser user, IList<string> roles)
     {
@@ -73,7 +76,6 @@ public sealed class TokenService
     }
 
     SigningCredentials CreateSigningCredentials() =>
-        new(new SymmetricSecurityKey("!SomethingSecret!!SomethingSecret!!SomethingSecret!!SomethingSecret!"u8
-                                        .ToArray()),
+        new(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!)),
             SecurityAlgorithms.HmacSha256);
 }

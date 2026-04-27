@@ -218,12 +218,12 @@ file class Program
                         ValidateAudience         = true,
                         ValidateLifetime         = false,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer              = "apiWithAuthBackend",
-                        ValidAudience            = "apiWithAuthBackend",
+                        ValidIssuer              = builder.Configuration["Jwt:Issuer"],
+                        ValidAudience            = builder.Configuration["Jwt:Audience"],
                         IssuerSigningKey =
                             new
-                                SymmetricSecurityKey("!SomethingSecret!!SomethingSecret!!SomethingSecret!!SomethingSecret!"u8
-                                                        .ToArray())
+                                SymmetricSecurityKey(System.Text.Encoding.UTF8
+                                                          .GetBytes(builder.Configuration["Jwt:Key"]!))
                     };
                 });
 
