@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Screen Management" xml:space="preserve">
+        <value>Bildschirmverwaltung</value>
+        <comment>Screen Management</comment>
+    </data>
+    <data name="Manage screens, specifications, and supported resolutions." xml:space="preserve">
+        <value>Bildschirme verwalten.</value>
+        <comment>Manage screens, specifications, and supported resolutions.</comment>
+    </data>
+    <data name="Add Screen" xml:space="preserve">
+        <value>Bildschirm hinzufügen</value>
+        <comment>Add Screen</comment>
+    </data>
+    <data name="Edit Screen" xml:space="preserve">
+        <value>Bildschirm bearbeiten</value>
+        <comment>Edit Screen</comment>
+    </data>
+    <data name="Delete Screen" xml:space="preserve">
+        <value>Bildschirm löschen</value>
+        <comment>Delete Screen</comment>
+    </data>
+    <data name="Screen created successfully." xml:space="preserve">
+        <value>Bildschirm erstellt.</value>
+        <comment>Screen created successfully.</comment>
+    </data>
+    <data name="Screen updated successfully." xml:space="preserve">
+        <value>Bildschirm aktualisiert.</value>
+        <comment>Screen updated successfully.</comment>
+    </data>
+    <data name="Screen deleted successfully." xml:space="preserve">
+        <value>Bildschirm gelöscht.</value>
+        <comment>Screen deleted successfully.</comment>
+    </data>
+    <data name="Are you sure you want to delete screen '{0}'? This action cannot be undone." xml:space="preserve">
+        <value>Bildschirm '{0}' löschen?</value>
+        <comment>Are you sure you want to delete screen '{0}'? This action cannot be undone.</comment>
+    </data>
+    <data name="Diagonal" xml:space="preserve">
+        <value>Diagonale</value>
+        <comment>Diagonal</comment>
+    </data>
+    <data name="Diagonal is required." xml:space="preserve">
+        <value>Diagonale erforderlich.</value>
+        <comment>Diagonal is required.</comment>
+    </data>
+    <data name="Width" xml:space="preserve">
+        <value>Breite</value>
+        <comment>Width</comment>
+    </data>
+    <data name="Height" xml:space="preserve">
+        <value>Höhe</value>
+        <comment>Height</comment>
+    </data>
+    <data name="Effective colors" xml:space="preserve">
+        <value>Effektive Farben</value>
+        <comment>Effective colors</comment>
+    </data>
+    <data name="Screen type" xml:space="preserve">
+        <value>Bildschirmtyp</value>
+        <comment>Screen type</comment>
+    </data>
+    <data name="Native resolution" xml:space="preserve">
+        <value>Native Auflösung</value>
+        <comment>Native resolution</comment>
+    </data>
+    <data name="Native resolution is required." xml:space="preserve">
+        <value>Native Auflösung erforderlich.</value>
+        <comment>Native resolution is required.</comment>
+    </data>
+    <data name="Supported resolutions" xml:space="preserve">
+        <value>Unterstützte Auflösungen</value>
+        <comment>Supported resolutions</comment>
+    </data>
+    <data name="Search Resolution" xml:space="preserve">
+        <value>Auflösung suchen</value>
+        <comment>Search Resolution</comment>
+    </data>
+    <data name="Add Resolution" xml:space="preserve">
+        <value>Auflösung hinzufügen</value>
+        <comment>Add Resolution</comment>
+    </data>
+    <data name="Remove Resolution" xml:space="preserve">
+        <value>Auflösung entfernen</value>
+        <comment>Remove Resolution</comment>
+    </data>
+    <data name="Are you sure you want to remove resolution '{0}'? This action cannot be undone." xml:space="preserve">
+        <value>Auflösung '{0}' entfernen?</value>
+        <comment>Are you sure you want to remove resolution '{0}'? This action cannot be undone.</comment>
+    </data>
+    <data name="Failed to add resolution." xml:space="preserve">
+        <value>Auflösung konnte nicht hinzugefügt werden.</value>
+        <comment>Failed to add resolution.</comment>
+    </data>
+    <data name="Failed to remove resolution." xml:space="preserve">
+        <value>Auflösung konnte nicht entfernt werden.</value>
+        <comment>Failed to remove resolution.</comment>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Abbrechen</value>
+        <comment>Cancel</comment>
+    </data>
+    <data name="Save" xml:space="preserve">
+        <value>Speichern</value>
+        <comment>Save</comment>
+    </data>
+    <data name="Actions" xml:space="preserve">
+        <value>Aktionen</value>
+        <comment>Actions</comment>
+    </data>
+    <data name="{0} colors" xml:space="preserve">
+        <value>{0} Farben</value>
+        <comment>{0} colors</comment>
+    </data>
+    <data name="{0} grays" xml:space="preserve">
+        <value>{0} Graustufen</value>
+        <comment>{0} grays</comment>
+    </data>
+    <data name="{0} characters" xml:space="preserve">
+        <value>{0} Zeichen</value>
+        <comment>{0} characters</comment>
+    </data>
+    <data name="{0} colors from {1} palette" xml:space="preserve">
+        <value>{0} Farben aus {1}-Palette</value>
+        <comment>{0} colors from {1} palette</comment>
+    </data>
+    <data name="Date precision" xml:space="preserve">
+        <value>Datumsgenauigkeit</value>
+        <comment>Date precision</comment>
+    </data>
+    <data name="Full date" xml:space="preserve">
+        <value>Vollständiges Datum</value>
+        <comment>Full date</comment>
+    </data>
+    <data name="Month and year only" xml:space="preserve">
+        <value>Nur Monat und Jahr</value>
+        <comment>Month and year only</comment>
+    </data>
+    <data name="Year only" xml:space="preserve">
+        <value>Nur Jahr</value>
+        <comment>Year only</comment>
+    </data>
+</root>

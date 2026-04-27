@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Software" xml:space="preserve">
+        <value>Software</value>
+        <comment>Software</comment>
+    </data>
+    <data name="Here you can consult our database." xml:space="preserve">
+        <value>Hier können Sie unsere Datenbank durchsuchen.</value>
+        <comment>Here you can consult our database.</comment>
+    </data>
+    <data name="The database contains information about software related to computing history." xml:space="preserve">
+        <value>Die Datenbank enthält Informationen über Software zur Computergeschichte.</value>
+        <comment>The database contains information about software related to computing history.</comment>
+    </data>
+    <data name="There are {0} software titles in the database at this moment." xml:space="preserve">
+        <value>Derzeit {0} Softwaretitel in der Datenbank.</value>
+        <comment>There are {0} software titles in the database at this moment.</comment>
+    </data>
+    <data name="Search by companies" xml:space="preserve">
+        <value>Nach Unternehmen suchen</value>
+        <comment>Search by companies</comment>
+    </data>
+    <data name="All companies" xml:space="preserve">
+        <value>Alle Unternehmen</value>
+        <comment>All companies</comment>
+    </data>
+    <data name="Search software alphabetically" xml:space="preserve">
+        <value>Software alphabetisch suchen</value>
+        <comment>Search software alphabetically</comment>
+    </data>
+    <data name="All software" xml:space="preserve">
+        <value>Alle Software</value>
+        <comment>All software</comment>
+    </data>
+    <data name="Search software by platform" xml:space="preserve">
+        <value>Software nach Plattform suchen</value>
+        <comment>Search software by platform</comment>
+    </data>
+    <data name="Search software by year" xml:space="preserve">
+        <value>Software nach Jahr suchen</value>
+        <comment>Search software by year</comment>
+    </data>
+    <data name="Search results:" xml:space="preserve">
+        <value>Suchergebnisse:</value>
+        <comment>Search results:</comment>
+    </data>
+    <data name="Software starting with {0}" xml:space="preserve">
+        <value>Software, die mit {0} beginnt</value>
+        <comment>Software starting with {0}</comment>
+    </data>
+    <data name="Software from {0}" xml:space="preserve">
+        <value>Software von {0}</value>
+        <comment>Software from {0}</comment>
+    </data>
+    <data name="Software for {0}" xml:space="preserve">
+        <value>Software für {0}</value>
+        <comment>Software for {0}</comment>
+    </data>
+    <data name="{0} software titles found in the database." xml:space="preserve">
+        <value>{0} Softwaretitel gefunden.</value>
+        <comment>{0} software titles found in the database.</comment>
+    </data>
+    <data name="OS" xml:space="preserve">
+        <value>BS</value>
+        <comment>OS</comment>
+    </data>
+    <data name="Game" xml:space="preserve">
+        <value>Spiel</value>
+        <comment>Game</comment>
+    </data>
+    <data name="There is no software found in the database that starts with this letter." xml:space="preserve">
+        <value>Keine Software gefunden, die mit diesem Buchstaben beginnt.</value>
+        <comment>There is no software found in the database that starts with this letter.</comment>
+    </data>
+    <data name="There is no software found from this year." xml:space="preserve">
+        <value>Keine Software aus diesem Jahr gefunden.</value>
+        <comment>There is no software found from this year.</comment>
+    </data>
+    <data name="There is no software found for this platform." xml:space="preserve">
+        <value>Keine Software für diese Plattform gefunden.</value>
+        <comment>There is no software found for this platform.</comment>
+    </data>
+    <data name="Software not found." xml:space="preserve">
+        <value>Software nicht gefunden.</value>
+        <comment>Software not found.</comment>
+    </data>
+    <data name="General" xml:space="preserve">
+        <value>Allgemein</value>
+        <comment>General</comment>
+    </data>
+    <data name="Name" xml:space="preserve">
+        <value>Name</value>
+        <comment>Name</comment>
+    </data>
+    <data name="Family" xml:space="preserve">
+        <value>Familie</value>
+        <comment>Family</comment>
+    </data>
+    <data name="Operating System" xml:space="preserve">
+        <value>Betriebssystem</value>
+        <comment>Operating System</comment>
+    </data>
+    <data name="Yes" xml:space="preserve">
+        <value>Ja</value>
+        <comment>Yes</comment>
+    </data>
+    <data name="No" xml:space="preserve">
+        <value>Nein</value>
+        <comment>No</comment>
+    </data>
+    <data name="Companies" xml:space="preserve">
+        <value>Unternehmen</value>
+        <comment>Companies</comment>
+    </data>
+    <data name="Versions" xml:space="preserve">
+        <value>Versionen</value>
+        <comment>Versions</comment>
+    </data>
+    <data name="Codename" xml:space="preserve">
+        <value>Codename</value>
+        <comment>Codename</comment>
+    </data>
+    <data name="License" xml:space="preserve">
+        <value>Lizenz</value>
+        <comment>License</comment>
+    </data>
+    <data name="Releases" xml:space="preserve">
+        <value>Veröffentlichungen</value>
+        <comment>Releases</comment>
+    </data>
+    <data name="Screenshots" xml:space="preserve">
+        <value>Bildschirmfotos</value>
+        <comment>Screenshots</comment>
+    </data>
+    <data name="Release not found." xml:space="preserve">
+        <value>Veröffentlichung nicht gefunden.</value>
+        <comment>Release not found.</comment>
+    </data>
+    <data name="Software Release" xml:space="preserve">
+        <value>Softwareveröffentlichung</value>
+        <comment>Software Release</comment>
+    </data>
+    <data name="Version" xml:space="preserve">
+        <value>Version</value>
+        <comment>Version</comment>
+    </data>
+    <data name="Platform" xml:space="preserve">
+        <value>Plattform</value>
+        <comment>Platform</comment>
+    </data>
+    <data name="Region" xml:space="preserve">
+        <value>Region</value>
+        <comment>Region</comment>
+    </data>
+    <data name="Publisher" xml:space="preserve">
+        <value>Verleger</value>
+        <comment>Publisher</comment>
+    </data>
+    <data name="Release date" xml:space="preserve">
+        <value>Veröffentlichungsdatum</value>
+        <comment>Release date</comment>
+    </data>
+    <data name="Variant" xml:space="preserve">
+        <value>Variante</value>
+        <comment>Variant</comment>
+    </data>
+    <data name="Subvariant" xml:space="preserve">
+        <value>Untervariante</value>
+        <comment>Subvariant</comment>
+    </data>
+    <data name="Barcodes" xml:space="preserve">
+        <value>Barcodes</value>
+        <comment>Barcodes</comment>
+    </data>
+    <data name="Product codes" xml:space="preserve">
+        <value>Produktcodes</value>
+        <comment>Product codes</comment>
+    </data>
+    <data name="Minimum GPUs" xml:space="preserve">
+        <value>Mindest-GPUs</value>
+        <comment>Minimum GPUs</comment>
+    </data>
+    <data name="Recommended GPUs" xml:space="preserve">
+        <value>Empfohlene GPUs</value>
+        <comment>Recommended GPUs</comment>
+    </data>
+    <data name="Sound synthesizers" xml:space="preserve">
+        <value>Klangsynthesizer</value>
+        <comment>Sound synthesizers</comment>
+    </data>
+    <data name="Software Management" xml:space="preserve">
+        <value>Softwareverwaltung</value>
+        <comment>Software Management</comment>
+    </data>
+    <data name="Manage software entries, versions, and variants." xml:space="preserve">
+        <value>Software, Versionen und Varianten verwalten.</value>
+        <comment>Manage software entries, versions, and variants.</comment>
+    </data>
+    <data name="Add Software" xml:space="preserve">
+        <value>Software hinzufügen</value>
+        <comment>Add Software</comment>
+    </data>
+    <data name="Edit Software" xml:space="preserve">
+        <value>Software bearbeiten</value>
+        <comment>Edit Software</comment>
+    </data>
+    <data name="Delete Software" xml:space="preserve">
+        <value>Software löschen</value>
+        <comment>Delete Software</comment>
+    </data>
+    <data name="Software created successfully." xml:space="preserve">
+        <value>Software erfolgreich erstellt.</value>
+        <comment>Software created successfully.</comment>
+    </data>
+    <data name="Software updated successfully." xml:space="preserve">
+        <value>Software erfolgreich aktualisiert.</value>
+        <comment>Software updated successfully.</comment>
+    </data>
+    <data name="Software deleted successfully." xml:space="preserve">
+        <value>Software erfolgreich gelöscht.</value>
+        <comment>Software deleted successfully.</comment>
+    </data>
+    <data name="Are you sure you want to delete software '{0}'? This action cannot be undone." xml:space="preserve">
+        <value>Sind Sie sicher, dass Sie die Software '{0}' löschen möchten?</value>
+        <comment>Are you sure you want to delete software '{0}'? This action cannot be undone.</comment>
+    </data>
+    <data name="Failed to load software details." xml:space="preserve">
+        <value>Softwaredetails konnten nicht geladen werden.</value>
+        <comment>Failed to load software details.</comment>
+    </data>
+    <data name="Name is required." xml:space="preserve">
+        <value>Der Name ist erforderlich.</value>
+        <comment>Name is required.</comment>
+    </data>
+    <data name="Actions" xml:space="preserve">
+        <value>Aktionen</value>
+        <comment>Actions</comment>
+    </data>
+    <data name="Edit" xml:space="preserve">
+        <value>Bearbeiten</value>
+        <comment>Edit</comment>
+    </data>
+    <data name="Delete" xml:space="preserve">
+        <value>Löschen</value>
+        <comment>Delete</comment>
+    </data>
+    <data name="Variants" xml:space="preserve">
+        <value>Varianten</value>
+        <comment>Variants</comment>
+    </data>
+    <data name="Basic Info" xml:space="preserve">
+        <value>Grundinformationen</value>
+        <comment>Basic Info</comment>
+    </data>
+    <data name="Search Company" xml:space="preserve">
+        <value>Unternehmen suchen</value>
+        <comment>Search Company</comment>
+    </data>
+    <data name="Role" xml:space="preserve">
+        <value>Rolle</value>
+        <comment>Role</comment>
+    </data>
+    <data name="Add" xml:space="preserve">
+        <value>Hinzufügen</value>
+        <comment>Add</comment>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Abbrechen</value>
+        <comment>Cancel</comment>
+    </data>
+    <data name="Save" xml:space="preserve">
+        <value>Speichern</value>
+        <comment>Save</comment>
+    </data>
+    <data name="Back to Software" xml:space="preserve">
+        <value>Zurück zur Software</value>
+        <comment>Back to Software</comment>
+    </data>
+    <data name="Software Screenshot Management" xml:space="preserve">
+        <value>Bildschirmfotoverwaltung</value>
+        <comment>Software Screenshot Management</comment>
+    </data>
+    <data name="Manage software screenshots." xml:space="preserve">
+        <value>Bildschirmfotos verwalten.</value>
+        <comment>Manage software screenshots.</comment>
+    </data>
+    <data name="Upload Screenshot" xml:space="preserve">
+        <value>Bildschirmfoto hochladen</value>
+        <comment>Upload Screenshot</comment>
+    </data>
+    <data name="Delete Screenshot" xml:space="preserve">
+        <value>Bildschirmfoto löschen</value>
+        <comment>Delete Screenshot</comment>
+    </data>
+    <data name="Screenshot uploaded successfully." xml:space="preserve">
+        <value>Bildschirmfoto erfolgreich hochgeladen.</value>
+        <comment>Screenshot uploaded successfully.</comment>
+    </data>
+    <data name="Screenshot deleted successfully." xml:space="preserve">
+        <value>Bildschirmfoto erfolgreich gelöscht.</value>
+        <comment>Screenshot deleted successfully.</comment>
+    </data>
+    <data name="Failed to upload screenshot." xml:space="preserve">
+        <value>Bildschirmfoto-Upload fehlgeschlagen.</value>
+        <comment>Failed to upload screenshot.</comment>
+    </data>
+    <data name="Are you sure you want to delete this screenshot? This action cannot be undone." xml:space="preserve">
+        <value>Sind Sie sicher, dass Sie dieses Bildschirmfoto löschen möchten?</value>
+        <comment>Are you sure you want to delete this screenshot? This action cannot be undone.</comment>
+    </data>
+    <data name="No screenshots yet." xml:space="preserve">
+        <value>Noch keine Bildschirmfotos.</value>
+        <comment>No screenshots yet.</comment>
+    </data>
+    <data name="Compilations" xml:space="preserve">
+        <value>Compilations</value>
+        <comment>Compilations</comment>
+    </data>
+    <data name="Compilation" xml:space="preserve">
+        <value>Compilation</value>
+        <comment>Compilation</comment>
+    </data>
+    <data name="Included Software" xml:space="preserve">
+        <value>Enthaltene Software</value>
+        <comment>Included Software</comment>
+    </data>
+    <data name="In Collection" xml:space="preserve">
+        <value>In der Sammlung</value>
+        <comment>In Collection</comment>
+    </data>
+    <data name="Add to Collection" xml:space="preserve">
+        <value>Zur Sammlung hinzufügen</value>
+        <comment>Add to Collection</comment>
+    </data>
+    <data name="Date precision" xml:space="preserve">
+        <value>Datumsgenauigkeit</value>
+        <comment>Date precision</comment>
+    </data>
+    <data name="Full date" xml:space="preserve">
+        <value>Vollständiges Datum</value>
+        <comment>Full date</comment>
+    </data>
+    <data name="Month and year only" xml:space="preserve">
+        <value>Nur Monat und Jahr</value>
+        <comment>Month and year only</comment>
+    </data>
+    <data name="Year only" xml:space="preserve">
+        <value>Nur Jahr</value>
+        <comment>Year only</comment>
+    </data>
+    <data name="Description" xml:space="preserve">
+        <value>Description</value>
+        <comment>Description</comment>
+    </data>
+    <data name="Descriptions" xml:space="preserve">
+        <value>Descriptions</value>
+        <comment>Descriptions</comment>
+    </data>
+</root>

@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="News" xml:space="preserve">
+        <value>Neuigkeiten</value>
+        <comment>News</comment>
+    </data>
+    <data name="Hello {0}!" xml:space="preserve">
+        <value>Hallo {0}!</value>
+        <comment>Salutes logged-in user</comment>
+    </data>
+    <data name="Log out" xml:space="preserve">
+        <value>Abmelden</value>
+        <comment>Log out</comment>
+    </data>
+    <data name="Register" xml:space="preserve">
+        <value>Registrieren</value>
+        <comment>Register</comment>
+    </data>
+    <data name="Log in" xml:space="preserve">
+        <value>Anmelden</value>
+        <comment>Log in</comment>
+    </data>
+    <data name="About" xml:space="preserve">
+        <value>Über</value>
+        <comment>About</comment>
+    </data>
+    <data name="Contact" xml:space="preserve">
+        <value>Kontakt</value>
+        <comment>Contact</comment>
+    </data>
+    <data name="Companies" xml:space="preserve">
+        <value>Unternehmen</value>
+        <comment>Companies</comment>
+    </data>
+    <data name="Computers" xml:space="preserve">
+        <value>Computer</value>
+        <comment>Computers</comment>
+    </data>
+    <data name="Consoles" xml:space="preserve">
+        <value>Konsolen</value>
+        <comment>Videogame consoles</comment>
+    </data>
+    <data name="Books" xml:space="preserve">
+        <value>Bücher</value>
+        <comment>Books navigation link</comment>
+    </data>
+    <data name="Documents" xml:space="preserve">
+        <value>Dokumente</value>
+        <comment>Documents navigation link</comment>
+    </data>
+    <data name="Magazines" xml:space="preserve">
+        <value>Zeitschriften</value>
+        <comment>Magazines navigation link</comment>
+    </data>
+    <data name="Admin area" xml:space="preserve">
+        <value>Verwaltung</value>
+        <comment>Administration area</comment>
+    </data>
+    <data name="GPUs" xml:space="preserve">
+        <value>GPUs</value>
+        <comment>Graphics Processing Units navigation link</comment>
+    </data>
+    <data name="Processors" xml:space="preserve">
+        <value>Prozessoren</value>
+        <comment>Processors navigation link</comment>
+    </data>
+    <data name="Sound synthesizers" xml:space="preserve">
+        <value>Klangsynthesizer</value>
+        <comment>Sound synthesizers navigation link</comment>
+    </data>
+    <data name="People" xml:space="preserve">
+        <value>Personen</value>
+        <comment>People navigation link</comment>
+    </data>
+    <data name="Software" xml:space="preserve">
+        <value>Software</value>
+        <comment>Software navigation link</comment>
+    </data>
+    <data name="Administration" xml:space="preserve">
+        <value>Verwaltung</value>
+        <comment>Administration mode toggle button</comment>
+    </data>
+    <data name="Back to Navigation" xml:space="preserve">
+        <value>Zurück zur Navigation</value>
+        <comment>Return to normal navigation from admin mode</comment>
+    </data>
+    <data name="User Management" xml:space="preserve">
+        <value>Benutzerverwaltung</value>
+        <comment>User management admin link</comment>
+    </data>
+    <data name="GPU Management" xml:space="preserve">
+        <value>GPU-Verwaltung</value>
+        <comment>GPU management admin link</comment>
+    </data>
+    <data name="Processor Management" xml:space="preserve">
+        <value>Prozessorverwaltung</value>
+        <comment>Processor management admin link</comment>
+    </data>
+    <data name="Instruction Set Management" xml:space="preserve">
+        <value>Befehlssatzverwaltung</value>
+        <comment>Instruction set management admin link</comment>
+    </data>
+    <data name="Instruction Set Extension Management" xml:space="preserve">
+        <value>Befehlssatzerweiterungsverwaltung</value>
+        <comment>Instruction set extension management admin link</comment>
+    </data>
+    <data name="Resolution Management" xml:space="preserve">
+        <value>Auflösungsverwaltung</value>
+        <comment>Resolution management admin link</comment>
+    </data>
+    <data name="Screen Management" xml:space="preserve">
+        <value>Bildschirmverwaltung</value>
+        <comment>Screen management admin link</comment>
+    </data>
+    <data name="Sound Synth Management" xml:space="preserve">
+        <value>Klangsynthesizerverwaltung</value>
+        <comment>Sound synth management admin link</comment>
+    </data>
+    <data name="Machine Management" xml:space="preserve">
+        <value>Maschinenverwaltung</value>
+        <comment>Machine management admin link</comment>
+    </data>
+    <data name="Machine Family Management" xml:space="preserve">
+        <value>Maschinenfamilienverwaltung</value>
+        <comment>Machine family management admin link</comment>
+    </data>
+    <data name="People Management" xml:space="preserve">
+        <value>Personenverwaltung</value>
+        <comment>People management admin link</comment>
+    </data>
+    <data name="Book Management" xml:space="preserve">
+        <value>Bücherverwaltung</value>
+        <comment>Book management admin link</comment>
+    </data>
+    <data name="Document Management" xml:space="preserve">
+        <value>Dokumentenverwaltung</value>
+        <comment>Document management admin link</comment>
+    </data>
+    <data name="Magazine Management" xml:space="preserve">
+        <value>Zeitschriftenverwaltung</value>
+        <comment>Magazine management admin link</comment>
+    </data>
+    <data name="Software Management" xml:space="preserve">
+        <value>Softwareverwaltung</value>
+        <comment>Software management admin link</comment>
+    </data>
+    <data name="Software Family Management" xml:space="preserve">
+        <value>Softwarefamilienverwaltung</value>
+        <comment>Software family management admin link</comment>
+    </data>
+    <data name="Software Platform Management" xml:space="preserve">
+        <value>Softwareplattformverwaltung</value>
+        <comment>Software platform management admin link</comment>
+    </data>
+    <data name="Software Release Management" xml:space="preserve">
+        <value>Softwareveröffentlichungsverwaltung</value>
+        <comment>Software release management admin link</comment>
+    </data>
+</root>

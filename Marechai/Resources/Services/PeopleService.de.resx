@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="People" xml:space="preserve">
+        <value>Personen</value>
+        <comment>People</comment>
+    </data>
+    <data name="Here you can consult our database." xml:space="preserve">
+        <value>Hier können Sie unsere Datenbank durchsuchen.</value>
+        <comment>Here you can consult our database.</comment>
+    </data>
+    <data name="The database contains information about people related to computing history." xml:space="preserve">
+        <value>Informationen über Personen der Computergeschichte.</value>
+        <comment>The database contains information about people related to computing history.</comment>
+    </data>
+    <data name="There are {0} people in the database at this moment." xml:space="preserve">
+        <value>{0} Personen in der Datenbank.</value>
+        <comment>There are {0} people in the database at this moment.</comment>
+    </data>
+    <data name="Search people alphabetically" xml:space="preserve">
+        <value>Personen alphabetisch suchen</value>
+        <comment>Search people alphabetically</comment>
+    </data>
+    <data name="All people" xml:space="preserve">
+        <value>Alle Personen</value>
+        <comment>All people</comment>
+    </data>
+    <data name="Search people by birth year" xml:space="preserve">
+        <value>Personen nach Geburtsjahr suchen</value>
+        <comment>Search people by birth year</comment>
+    </data>
+    <data name="Search results:" xml:space="preserve">
+        <value>Suchergebnisse:</value>
+        <comment>Search results:</comment>
+    </data>
+    <data name="People starting with {0}" xml:space="preserve">
+        <value>Personen, die mit {0} beginnen</value>
+        <comment>People starting with {0}</comment>
+    </data>
+    <data name="People born in {0}" xml:space="preserve">
+        <value>Personen geboren im Jahr {0}</value>
+        <comment>People born in {0}</comment>
+    </data>
+    <data name="{0} people found in the database." xml:space="preserve">
+        <value>{0} Personen gefunden.</value>
+        <comment>{0} people found in the database.</comment>
+    </data>
+    <data name="There are no people found in the database that start with this letter." xml:space="preserve">
+        <value>Keine Personen gefunden.</value>
+        <comment>There are no people found in the database that start with this letter.</comment>
+    </data>
+    <data name="There are no people found born this year." xml:space="preserve">
+        <value>Keine in diesem Jahr geborenen Personen gefunden.</value>
+        <comment>There are no people found born this year.</comment>
+    </data>
+    <data name="Person not found." xml:space="preserve">
+        <value>Person nicht gefunden.</value>
+        <comment>Person not found.</comment>
+    </data>
+    <data name="General" xml:space="preserve">
+        <value>Allgemein</value>
+        <comment>General</comment>
+    </data>
+    <data name="Name" xml:space="preserve">
+        <value>Name</value>
+        <comment>Name</comment>
+    </data>
+    <data name="Surname" xml:space="preserve">
+        <value>Nachname</value>
+        <comment>Surname</comment>
+    </data>
+    <data name="Alias" xml:space="preserve">
+        <value>Alias</value>
+        <comment>Alias</comment>
+    </data>
+    <data name="Display name" xml:space="preserve">
+        <value>Anzeigename</value>
+        <comment>Display name</comment>
+    </data>
+    <data name="Birth date" xml:space="preserve">
+        <value>Geburtsdatum</value>
+        <comment>Birth date</comment>
+    </data>
+    <data name="Death date" xml:space="preserve">
+        <value>Todesdatum</value>
+        <comment>Death date</comment>
+    </data>
+    <data name="Country of birth" xml:space="preserve">
+        <value>Geburtsland</value>
+        <comment>Country of birth</comment>
+    </data>
+    <data name="Webpage" xml:space="preserve">
+        <value>Webseite</value>
+        <comment>Webpage</comment>
+    </data>
+    <data name="Twitter" xml:space="preserve">
+        <value>Twitter</value>
+        <comment>Twitter</comment>
+    </data>
+    <data name="Facebook" xml:space="preserve">
+        <value>Facebook</value>
+        <comment>Facebook</comment>
+    </data>
+    <data name="Companies" xml:space="preserve">
+        <value>Unternehmen</value>
+        <comment>Companies</comment>
+    </data>
+    <data name="Books" xml:space="preserve">
+        <value>Bücher</value>
+        <comment>Books</comment>
+    </data>
+    <data name="Documents" xml:space="preserve">
+        <value>Dokumente</value>
+        <comment>Documents</comment>
+    </data>
+    <data name="Magazines" xml:space="preserve">
+        <value>Zeitschriften</value>
+        <comment>Magazines</comment>
+    </data>
+    <data name="present" xml:space="preserve">
+        <value>Gegenwart</value>
+        <comment>present</comment>
+    </data>
+    <data name="People Management" xml:space="preserve">
+        <value>Personenverwaltung</value>
+        <comment>People Management</comment>
+    </data>
+    <data name="Manage people related to computing history." xml:space="preserve">
+        <value>Personen verwalten.</value>
+        <comment>Manage people related to computing history.</comment>
+    </data>
+    <data name="Add Person" xml:space="preserve">
+        <value>Person hinzufügen</value>
+        <comment>Add Person</comment>
+    </data>
+    <data name="Edit Person" xml:space="preserve">
+        <value>Person bearbeiten</value>
+        <comment>Edit Person</comment>
+    </data>
+    <data name="Delete Person" xml:space="preserve">
+        <value>Person löschen</value>
+        <comment>Delete Person</comment>
+    </data>
+    <data name="Name is required." xml:space="preserve">
+        <value>Der Name ist erforderlich.</value>
+        <comment>Name is required.</comment>
+    </data>
+    <data name="Person created successfully." xml:space="preserve">
+        <value>Person erstellt.</value>
+        <comment>Person created successfully.</comment>
+    </data>
+    <data name="Person updated successfully." xml:space="preserve">
+        <value>Person aktualisiert.</value>
+        <comment>Person updated successfully.</comment>
+    </data>
+    <data name="Person deleted successfully." xml:space="preserve">
+        <value>Person gelöscht.</value>
+        <comment>Person deleted successfully.</comment>
+    </data>
+    <data name="Are you sure you want to delete person '{0}'? This action cannot be undone." xml:space="preserve">
+        <value>Person '{0}' löschen?</value>
+        <comment>Are you sure you want to delete person '{0}'? This action cannot be undone.</comment>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Abbrechen</value>
+        <comment>Cancel</comment>
+    </data>
+    <data name="Save" xml:space="preserve">
+        <value>Speichern</value>
+        <comment>Save</comment>
+    </data>
+    <data name="Actions" xml:space="preserve">
+        <value>Aktionen</value>
+        <comment>Actions</comment>
+    </data>
+    <data name="Search Company" xml:space="preserve">
+        <value>Unternehmen suchen</value>
+        <comment>Search Company</comment>
+    </data>
+    <data name="Import CSV" xml:space="preserve">
+        <value>CSV importieren</value>
+        <comment>Import CSV</comment>
+    </data>
+    <data name="Upload a CSV file to import people in bulk. Download the template first to see the expected format." xml:space="preserve">
+        <value>CSV-Datei hochladen, um Personen zu importieren.</value>
+        <comment>Upload a CSV file to import people in bulk. Download the template first to see the expected format.</comment>
+    </data>
+    <data name="Download Template" xml:space="preserve">
+        <value>Vorlage herunterladen</value>
+        <comment>Download Template</comment>
+    </data>
+    <data name="Upload CSV" xml:space="preserve">
+        <value>CSV hochladen</value>
+        <comment>Upload CSV</comment>
+    </data>
+    <data name="Processing..." xml:space="preserve">
+        <value>Verarbeitung...</value>
+        <comment>Processing...</comment>
+    </data>
+    <data name="The CSV file is empty or has no data rows." xml:space="preserve">
+        <value>Die CSV-Datei ist leer oder enthält keine Datenzeilen.</value>
+        <comment>The CSV file is empty or has no data rows.</comment>
+    </data>
+    <data name="Error reading CSV: {0}" xml:space="preserve">
+        <value>Fehler beim Lesen der CSV-Datei: {0}</value>
+        <comment>Error reading CSV: {0}</comment>
+    </data>
+    <data name="{0} rows parsed. {1} auto-rejected (no country match or validation error). Selected rows will be REJECTED — unselected rows will be imported." xml:space="preserve">
+        <value>{0} Zeilen analysiert. {1} automatisch abgelehnt. Ausgewählte Zeilen werden ABGELEHNT.</value>
+        <comment>{0} rows parsed. {1} auto-rejected (no country match or validation error). Selected rows will be REJECTED — unselected rows will be imported.</comment>
+    </data>
+    <data name="Duplicate person" xml:space="preserve">
+        <value>Doppelte Person</value>
+        <comment>Duplicate person</comment>
+    </data>
+    <data name="Import" xml:space="preserve">
+        <value>Importieren</value>
+        <comment>Import</comment>
+    </data>
+    <data name="Importing {0} of {1}..." xml:space="preserve">
+        <value>Importiere {0} von {1}...</value>
+        <comment>Importing {0} of {1}...</comment>
+    </data>
+    <data name="Import complete. {0} imported, {1} rejected, {2} failed." xml:space="preserve">
+        <value>Import abgeschlossen. {0} importiert, {1} abgelehnt, {2} fehlgeschlagen.</value>
+        <comment>Import complete. {0} imported, {1} rejected, {2} failed.</comment>
+    </data>
+    <data name="The following items were not imported:" xml:space="preserve">
+        <value>Die folgenden Elemente wurden nicht importiert:</value>
+        <comment>The following items were not imported:</comment>
+    </data>
+    <data name="Download Rejected" xml:space="preserve">
+        <value>Abgelehnte herunterladen</value>
+        <comment>Download Rejected</comment>
+    </data>
+    <data name="Rejected" xml:space="preserve">
+        <value>Abgelehnt</value>
+        <comment>Rejected</comment>
+    </data>
+    <data name="Unknown error" xml:space="preserve">
+        <value>Unbekannter Fehler</value>
+        <comment>Unknown error</comment>
+    </data>
+    <data name="Close" xml:space="preserve">
+        <value>Schließen</value>
+        <comment>Close</comment>
+    </data>
+    <data name="Status" xml:space="preserve">
+        <value>Status</value>
+        <comment>Status</comment>
+    </data>
+    <data name="Date precision" xml:space="preserve">
+        <value>Datumsgenauigkeit</value>
+        <comment>Date precision</comment>
+    </data>
+    <data name="Full date" xml:space="preserve">
+        <value>Vollständiges Datum</value>
+        <comment>Full date</comment>
+    </data>
+    <data name="Month and year only" xml:space="preserve">
+        <value>Nur Monat und Jahr</value>
+        <comment>Month and year only</comment>
+    </data>
+    <data name="Year only" xml:space="preserve">
+        <value>Nur Jahr</value>
+        <comment>Year only</comment>
+    </data>
+</root>
