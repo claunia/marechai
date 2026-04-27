@@ -50,7 +50,7 @@ public class Startup(IConfiguration configuration)
 {
     readonly CultureInfo[] _supportedCultures =
     [
-        new("en-US"), new("es"), new("fr")
+        new("en-US"), new("es"), new("fr"), new("it")
     ];
 
     public IConfiguration Configuration { get; } = configuration;

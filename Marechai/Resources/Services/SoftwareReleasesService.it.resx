@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Software Release Management" xml:space="preserve">
+        <value>Gestione pubblicazioni software</value>
+        <comment>Software Release Management</comment>
+    </data>
+    <data name="Manage software releases." xml:space="preserve">
+        <value>Gestisci le pubblicazioni software.</value>
+        <comment>Manage software releases.</comment>
+    </data>
+    <data name="Add Release" xml:space="preserve">
+        <value>Aggiungi pubblicazione</value>
+        <comment>Add Release</comment>
+    </data>
+    <data name="Edit Release" xml:space="preserve">
+        <value>Modifica pubblicazione</value>
+        <comment>Edit Release</comment>
+    </data>
+    <data name="Delete Release" xml:space="preserve">
+        <value>Elimina pubblicazione</value>
+        <comment>Delete Release</comment>
+    </data>
+    <data name="Release created successfully." xml:space="preserve">
+        <value>Pubblicazione creata con successo.</value>
+        <comment>Release created successfully.</comment>
+    </data>
+    <data name="Release updated successfully." xml:space="preserve">
+        <value>Pubblicazione aggiornata con successo.</value>
+        <comment>Release updated successfully.</comment>
+    </data>
+    <data name="Release deleted successfully." xml:space="preserve">
+        <value>Pubblicazione eliminata con successo.</value>
+        <comment>Release deleted successfully.</comment>
+    </data>
+    <data name="Are you sure you want to delete release '{0}'? This action cannot be undone." xml:space="preserve">
+        <value>Sei sicuro di voler eliminare la pubblicazione &quot;{0}&quot;? Questa azione non può essere annullata.</value>
+        <comment>Are you sure you want to delete release '{0}'? This action cannot be undone.</comment>
+    </data>
+    <data name="Failed to load release details." xml:space="preserve">
+        <value>Caricamento dei dettagli della pubblicazione fallito.</value>
+        <comment>Failed to load release details.</comment>
+    </data>
+    <data name="Back to Versions" xml:space="preserve">
+        <value>Torna alle versioni</value>
+        <comment>Back to Versions</comment>
+    </data>
+    <data name="Platform" xml:space="preserve">
+        <value>Piattaforma</value>
+        <comment>Platform</comment>
+    </data>
+    <data name="Region" xml:space="preserve">
+        <value>Regione</value>
+        <comment>Region</comment>
+    </data>
+    <data name="Regions" xml:space="preserve">
+        <value>Regioni</value>
+        <comment>Regions</comment>
+    </data>
+    <data name="Add region" xml:space="preserve">
+        <value>Aggiungi regione</value>
+        <comment>Add region</comment>
+    </data>
+    <data name="Regional title" xml:space="preserve">
+        <value>Titolo regionale</value>
+        <comment>Regional title</comment>
+    </data>
+    <data name="Languages" xml:space="preserve">
+        <value>Lingue</value>
+        <comment>Languages</comment>
+    </data>
+    <data name="Add language" xml:space="preserve">
+        <value>Aggiungi lingua</value>
+        <comment>Add language</comment>
+    </data>
+    <data name="Add" xml:space="preserve">
+        <value>Aggiungi</value>
+        <comment>Add</comment>
+    </data>
+    <data name="Publisher" xml:space="preserve">
+        <value>Editore</value>
+        <comment>Publisher</comment>
+    </data>
+    <data name="Release date" xml:space="preserve">
+        <value>Data di pubblicazione</value>
+        <comment>Release date</comment>
+    </data>
+    <data name="Barcodes" xml:space="preserve">
+        <value>Codici a barre</value>
+        <comment>Barcodes</comment>
+    </data>
+    <data name="Barcode" xml:space="preserve">
+        <value>Codice a barre</value>
+        <comment>Barcode</comment>
+    </data>
+    <data name="Barcode type" xml:space="preserve">
+        <value>Tipo di codice a barre</value>
+        <comment>Barcode type</comment>
+    </data>
+    <data name="Product Codes" xml:space="preserve">
+        <value>Codici prodotto</value>
+        <comment>Product Codes</comment>
+    </data>
+    <data name="Product code" xml:space="preserve">
+        <value>Codice prodotto</value>
+        <comment>Product code</comment>
+    </data>
+    <data name="Issuer" xml:space="preserve">
+        <value>Emittente</value>
+        <comment>Issuer</comment>
+    </data>
+    <data name="Minimum GPUs" xml:space="preserve">
+        <value>GPU minime</value>
+        <comment>Minimum GPUs</comment>
+    </data>
+    <data name="Recommended GPUs" xml:space="preserve">
+        <value>GPU raccomandate</value>
+        <comment>Recommended GPUs</comment>
+    </data>
+    <data name="Search GPU" xml:space="preserve">
+        <value>Cerca GPU</value>
+        <comment>Search GPU</comment>
+    </data>
+    <data name="Sound Synths" xml:space="preserve">
+        <value>Sintetizzatori sonori</value>
+        <comment>Sound Synths</comment>
+    </data>
+    <data name="Search Sound Synth" xml:space="preserve">
+        <value>Cerca sintetizzatore sonoro</value>
+        <comment>Search Sound Synth</comment>
+    </data>
+    <data name="Actions" xml:space="preserve">
+        <value>Azioni</value>
+        <comment>Actions</comment>
+    </data>
+    <data name="Edit" xml:space="preserve">
+        <value>Modifica</value>
+        <comment>Edit</comment>
+    </data>
+    <data name="Delete" xml:space="preserve">
+        <value>Elimina</value>
+        <comment>Delete</comment>
+    </data>
+    <data name="Basic Info" xml:space="preserve">
+        <value>Informazioni di base</value>
+        <comment>Basic Info</comment>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Annulla</value>
+        <comment>Cancel</comment>
+    </data>
+    <data name="Save" xml:space="preserve">
+        <value>Salva</value>
+        <comment>Save</comment>
+    </data>
+    <data name="Title" xml:space="preserve">
+        <value>Titolo</value>
+        <comment>Title</comment>
+    </data>
+    <data name="Is Compilation" xml:space="preserve">
+        <value>È una compilazione</value>
+        <comment>Is Compilation</comment>
+    </data>
+    <data name="Included Software" xml:space="preserve">
+        <value>Software incluso</value>
+        <comment>Included Software</comment>
+    </data>
+    <data name="Search Software Version" xml:space="preserve">
+        <value>Cerca versione software</value>
+        <comment>Search Software Version</comment>
+    </data>
+    <data name="Optional. Used as the display name for compilation releases." xml:space="preserve">
+        <value>Opzionale. Utilizzato come nome visualizzato per le pubblicazioni di compilazione.</value>
+        <comment>Optional. Used as the display name for compilation releases.</comment>
+    </data>
+    <data name="Date precision" xml:space="preserve">
+        <value>Precisione della data</value>
+        <comment>Date precision</comment>
+    </data>
+    <data name="Full date" xml:space="preserve">
+        <value>Data completa</value>
+        <comment>Full date</comment>
+    </data>
+    <data name="Month and year only" xml:space="preserve">
+        <value>Solo mese e anno</value>
+        <comment>Month and year only</comment>
+    </data>
+    <data name="Year only" xml:space="preserve">
+        <value>Solo anno</value>
+        <comment>Year only</comment>
+    </data>
+    <data name="Software" xml:space="preserve">
+        <value>Software</value>
+        <comment>Software</comment>
+    </data>
+    <data name="Version (optional)" xml:space="preserve">
+        <value>Versione (opzionale)</value>
+        <comment>Version (optional)</comment>
+    </data>
+    <data name="Included Software Versions" xml:space="preserve">
+        <value>Versioni software incluse</value>
+        <comment>Included Software Versions</comment>
+    </data>
+    <data name="Included Software (versionless)" xml:space="preserve">
+        <value>Software incluso (senza versione)</value>
+        <comment>Included Software (versionless)</comment>
+    </data>
+    <data name="Search Software" xml:space="preserve">
+        <value>Cerca software</value>
+        <comment>Search Software</comment>
+    </data>
+    <data name="Releases" xml:space="preserve">
+        <value>Pubblicazioni</value>
+        <comment>Releases</comment>
+    </data>
+    <data name="Import CSV" xml:space="preserve">
+        <value>Importa CSV</value>
+        <comment>Import CSV</comment>
+    </data>
+    <data name="Upload a CSV file to import software releases in bulk. Download the template first to see the expected format." xml:space="preserve">
+        <value>Carica un file CSV per importare pubblicazioni software in blocco. Scarica prima il modello per vedere il formato previsto.</value>
+        <comment>Upload a CSV file to import software releases in bulk. Download the template first to see the expected format.</comment>
+    </data>
+    <data name="Download Template" xml:space="preserve">
+        <value>Scarica modello</value>
+        <comment>Download Template</comment>
+    </data>
+    <data name="Upload CSV" xml:space="preserve">
+        <value>Carica CSV</value>
+        <comment>Upload CSV</comment>
+    </data>
+    <data name="Processing..." xml:space="preserve">
+        <value>Elaborazione...</value>
+        <comment>Processing...</comment>
+    </data>
+    <data name="The CSV file is empty or has no data rows." xml:space="preserve">
+        <value>Il file CSV è vuoto o non contiene righe di dati.</value>
+        <comment>The CSV file is empty or has no data rows.</comment>
+    </data>
+    <data name="Error reading CSV: {0}" xml:space="preserve">
+        <value>Errore nella lettura del CSV: {0}</value>
+        <comment>Error reading CSV: {0}</comment>
+    </data>
+    <data name="{0} rows parsed. {1} auto-rejected (no publisher match, missing software, or validation error). Selected rows will be REJECTED — unselected rows will be imported." xml:space="preserve">
+        <value>{0} righe analizzate. {1} rifiutate automaticamente (nessuna corrispondenza editore, software mancante o errore di validazione). Le righe selezionate saranno RIFIUTATE — le righe non selezionate saranno importate.</value>
+        <comment>{0} rows parsed. {1} auto-rejected (no publisher match, missing software, or validation error). Selected rows will be REJECTED — unselected rows will be imported.</comment>
+    </data>
+    <data name="Duplicate release" xml:space="preserve">
+        <value>Pubblicazione duplicata</value>
+        <comment>Duplicate release</comment>
+    </data>
+    <data name="Invalid boolean value" xml:space="preserve">
+        <value>Valore booleano non valido</value>
+        <comment>Invalid boolean value</comment>
+    </data>
+    <data name="N/A (compilation)" xml:space="preserve">
+        <value>N/D (compilazione)</value>
+        <comment>N/A (compilation)</comment>
+    </data>
+    <data name="Importing {0} of {1}..." xml:space="preserve">
+        <value>Importazione {0} di {1}...</value>
+        <comment>Importing {0} of {1}...</comment>
+    </data>
+    <data name="Import complete. {0} imported, {1} rejected, {2} failed." xml:space="preserve">
+        <value>Importazione completata. {0} importati, {1} rifiutati, {2} falliti.</value>
+        <comment>Import complete. {0} imported, {1} rejected, {2} failed.</comment>
+    </data>
+    <data name="The following items were not imported:" xml:space="preserve">
+        <value>I seguenti elementi non sono stati importati:</value>
+        <comment>The following items were not imported:</comment>
+    </data>
+    <data name="Status" xml:space="preserve">
+        <value>Stato</value>
+        <comment>Status</comment>
+    </data>
+    <data name="Rejected" xml:space="preserve">
+        <value>Rifiutato</value>
+        <comment>Rejected</comment>
+    </data>
+    <data name="Download Rejected" xml:space="preserve">
+        <value>Scarica rifiutati</value>
+        <comment>Download Rejected</comment>
+    </data>
+    <data name="Import" xml:space="preserve">
+        <value>Importa</value>
+        <comment>Import</comment>
+    </data>
+    <data name="Close" xml:space="preserve">
+        <value>Chiudi</value>
+        <comment>Close</comment>
+    </data>
+    <data name="Invalid value for IsCompilation. Use y/n, yes/no, true/false, or 0/1." xml:space="preserve">
+        <value>Valore non valido per IsCompilation. Usa y/n, yes/no, true/false o 0/1.</value>
+        <comment>Invalid value for IsCompilation. Use y/n, yes/no, true/false, or 0/1.</comment>
+    </data>
+    <data name="Software is required for non-compilation releases." xml:space="preserve">
+        <value>Il software è obbligatorio per le pubblicazioni non compilative.</value>
+        <comment>Software is required for non-compilation releases.</comment>
+    </data>
+    <data name="Publisher is required." xml:space="preserve">
+        <value>L'editore è obbligatorio.</value>
+        <comment>Publisher is required.</comment>
+    </data>
+    <data name="Unknown error" xml:space="preserve">
+        <value>Errore sconosciuto</value>
+        <comment>Unknown error</comment>
+    </data>
+    <data name="Failed to create software '{0}': {1}" xml:space="preserve">
+        <value>Creazione del software &quot;{0}&quot; fallita: {1}</value>
+        <comment>Failed to create software '{0}': {1}</comment>
+    </data>
+    <data name="Failed to create platform '{0}': {1}" xml:space="preserve">
+        <value>Creazione della piattaforma &quot;{0}&quot; fallita: {1}</value>
+        <comment>Failed to create platform '{0}': {1}</comment>
+    </data>
+    <data name="* A new software or platform entry will be created with this name during import." xml:space="preserve">
+        <value>* Una nuova voce di software o piattaforma sarà creata con questo nome durante l'importazione.</value>
+        <comment>* A new software or platform entry will be created with this name during import.</comment>
+    </data>
+</root>
