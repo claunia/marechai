@@ -24,6 +24,7 @@
 *******************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
@@ -68,6 +69,13 @@ public partial class Profile
     string?   _avatarMessage;
     Severity  _avatarMessageSeverity = Severity.Info;
 
+    // ── Collection state ──
+    bool                               _isLoadingCollection;
+    List<CollectedBookDto>?            _myBooks;
+    List<CollectedDocumentDto>?        _myDocuments;
+    List<CollectedMachineDto>?         _myMachines;
+    List<CollectedSoftwareReleaseDto>? _myReleases;
+
     protected override async Task OnInitializedAsync()
     {
         _profile       = await AuthService.GetProfileAsync();
@@ -77,6 +85,9 @@ public partial class Profile
             PopulatePublicProfileFields();
 
         _isLoading = false;
+
+        // Load collection in background
+        _ = LoadCollectionAsync();
     }
 
     void PopulatePublicProfileFields()
@@ -255,5 +266,63 @@ public partial class Profile
 
         _isUploadingAvatar = false;
         StateHasChanged();
+    }
+
+    // ── Collection methods ──
+
+    async Task LoadCollectionAsync()
+    {
+        if(_profile?.UserName is null) return;
+
+        _isLoadingCollection = true;
+        StateHasChanged();
+
+        _myBooks     = await CollectionSvc.GetCollectedBooksAsync(_profile.UserName);
+        _myDocuments = await CollectionSvc.GetCollectedDocumentsAsync(_profile.UserName);
+        _myMachines  = await CollectionSvc.GetCollectedMachinesAsync(_profile.UserName);
+        _myReleases  = await CollectionSvc.GetCollectedSoftwareReleasesAsync(_profile.UserName);
+
+        _isLoadingCollection = false;
+        StateHasChanged();
+    }
+
+    async Task RemoveBookAsync(long? bookId)
+    {
+        if(bookId is null) return;
+
+        (bool success, _) = await CollectionSvc.RemoveBookFromCollectionAsync(bookId.Value);
+
+        if(success)
+            _myBooks?.RemoveAll(b => b.BookId == bookId);
+    }
+
+    async Task RemoveDocumentAsync(long? documentId)
+    {
+        if(documentId is null) return;
+
+        (bool success, _) = await CollectionSvc.RemoveDocumentFromCollectionAsync(documentId.Value);
+
+        if(success)
+            _myDocuments?.RemoveAll(d => d.DocumentId == documentId);
+    }
+
+    async Task RemoveMachineAsync(int? machineId)
+    {
+        if(machineId is null) return;
+
+        (bool success, _) = await CollectionSvc.RemoveMachineFromCollectionAsync(machineId.Value);
+
+        if(success)
+            _myMachines?.RemoveAll(m => m.MachineId == machineId);
+    }
+
+    async Task RemoveReleaseAsync(int? releaseId)
+    {
+        if(releaseId is null) return;
+
+        (bool success, _) = await CollectionSvc.RemoveSoftwareReleaseFromCollectionAsync(releaseId.Value);
+
+        if(success)
+            _myReleases?.RemoveAll(r => r.SoftwareReleaseId == releaseId);
     }
 }

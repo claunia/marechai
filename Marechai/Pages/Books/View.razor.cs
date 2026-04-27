@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Marechai.Pages.Books;
 
@@ -35,6 +36,7 @@ public partial class View
     BookDto                      _book;
     List<CompanyByBookDto>       _companies;
     long                         _id;
+    bool                         _isCollected;
     bool                         _loaded;
     List<BookByMachineFamilyDto> _machineFamilies;
     List<BookByMachineDto>       _machines;
@@ -42,6 +44,10 @@ public partial class View
     BookDto                      _previousBook;
     BookDto                      _sourceBook;
     DocumentSynopsisDto          _synopsis;
+    bool                         _togglingCollection;
+
+    [CascadingParameter]
+    Task<AuthenticationState> AuthState { get; set; }
 
     [Parameter]
     public long Id
@@ -87,7 +93,32 @@ public partial class View
 
         if(_book.SourceId.HasValue) _sourceBook = await Service.GetBookAsync(_book.SourceId.Value);
 
+        AuthenticationState authState = await AuthState;
+
+        if(authState.User.Identity?.IsAuthenticated == true)
+            _isCollected = await CollectionSvc.IsBookCollectedAsync(Id);
+
         _loaded = true;
         StateHasChanged();
+    }
+
+    async Task ToggleCollectionAsync()
+    {
+        _togglingCollection = true;
+
+        if(_isCollected)
+        {
+            (bool success, _) = await CollectionSvc.RemoveBookFromCollectionAsync(Id);
+
+            if(success) _isCollected = false;
+        }
+        else
+        {
+            (bool success, _) = await CollectionSvc.AddBookToCollectionAsync(Id);
+
+            if(success) _isCollected = true;
+        }
+
+        _togglingCollection = false;
     }
 }

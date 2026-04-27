@@ -34,6 +34,7 @@
 @inject IStringLocalizer<MachinesService> L
 @inject ApiAssetUrlProvider               Assets
 @inject MachinePhotosService              MachinePhotosService
+@inject CollectionService                 CollectionSvc
 
 @if(!_loaded)
 {
@@ -81,6 +82,18 @@
             <MudChip T="string" Color="Color.Warning" Variant="Variant.Filled">@L["PROTOTYPE"]</MudChip>
         }
         <MudText Typo="Typo.h4" Align="Align.Center" Style="color: white;">@_machine.Name</MudText>
+        <AuthorizeView>
+            <Authorized>
+                <MudButton Variant="Variant.Filled"
+                           Color="@(_isCollected ? Color.Success : Color.Default)"
+                           StartIcon="@(_isCollected ? Icons.Material.Filled.Bookmark : Icons.Material.Outlined.BookmarkBorder)"
+                           OnClick="ToggleCollectionAsync"
+                           Disabled="_togglingCollection"
+                           Size="Size.Small">
+                    @(_isCollected ? L["In Collection"] : L["Add to Collection"])
+                </MudButton>
+            </Authorized>
+        </AuthorizeView>
     </MudStack>
 </MudPaper>
 

@@ -75,7 +75,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<Forbidden>                           Forbidden                           { get; set; }
     public virtual DbSet<Gpu>                                 Gpus                                { get; set; }
     public virtual DbSet<GpusByMachine>                       GpusByMachine                       { get; set; }
-    public virtual DbSet<GpusByOwnedMachine>                  GpusByOwnedMachine                  { get; set; }
     public virtual DbSet<InstructionSet>                      InstructionSets                     { get; set; }
     public virtual DbSet<InstructionSetExtension>             InstructionSetExtensions            { get; set; }
     public virtual DbSet<InstructionSetExtensionsByProcessor> InstructionSetExtensionsByProcessor { get; set; }
@@ -105,11 +104,9 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<MediaFile>                           MediaFiles                          { get; set; }
     public virtual DbSet<MediaTagDump>                        MediaTagDumps                       { get; set; }
     public virtual DbSet<MemoryByMachine>                     MemoryByMachine                     { get; set; }
-    public virtual DbSet<MemoryByOwnedMachine>                MemoryByOwnedMachine                { get; set; }
     public virtual DbSet<MoneyDonation>                       MoneyDonations                      { get; set; }
     public virtual DbSet<News>                                News                                { get; set; }
     public virtual DbSet<OwnedMachine>                        OwnedMachines                       { get; set; }
-    public virtual DbSet<OwnedMachinePhoto>                   OwnedMachinePhotos                  { get; set; }
     public virtual DbSet<PeopleByBook>                        PeopleByBooks                       { get; set; }
     public virtual DbSet<PeopleByCompany>                     PeopleByCompanies                   { get; set; }
     public virtual DbSet<PeopleByDocument>                    PeopleByDocuments                   { get; set; }
@@ -117,7 +114,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<Person>                              People                              { get; set; }
     public virtual DbSet<Processor>                           Processors                          { get; set; }
     public virtual DbSet<ProcessorsByMachine>                 ProcessorsByMachine                 { get; set; }
-    public virtual DbSet<ProcessorsByOwnedMachine>            ProcessorsByOwnedMachine            { get; set; }
     public virtual DbSet<Resolution>                          Resolutions                         { get; set; }
     public virtual DbSet<ResolutionsByGpu>                    ResolutionsByGpu                    { get; set; }
     public virtual DbSet<ResolutionsByScreen>                 ResolutionsByScreen                 { get; set; }
@@ -147,11 +143,12 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<SoftwareScreenshot>                  SoftwareScreenshots                  { get; set; }
     public virtual DbSet<SoftwareDescription>                  SoftwareDescriptions                 { get; set; }
     public virtual DbSet<SoundByMachine>                      SoundByMachine                      { get; set; }
-    public virtual DbSet<SoundByOwnedMachine>                 SoundByOwnedMachine                 { get; set; }
     public virtual DbSet<SoundSynth>                          SoundSynths                         { get; set; }
     public virtual DbSet<StandaloneFile>                      StandaloneFiles                     { get; set; }
     public virtual DbSet<StorageByMachine>                    StorageByMachine                    { get; set; }
-    public virtual DbSet<StorageByOwnedMachine>               StorageByOwnedMachine               { get; set; }
+    public virtual DbSet<CollectedBook>                       CollectedBooks                      { get; set; }
+    public virtual DbSet<CollectedDocument>                   CollectedDocuments                  { get; set; }
+    public virtual DbSet<CollectedSoftwareRelease>            CollectedSoftwareReleases           { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -735,15 +732,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .HasConstraintName("fk_gpus_by_machine_machine");
         });
 
-        modelBuilder.Entity<GpusByOwnedMachine>(entity =>
-        {
-            entity.HasIndex(e => e.GpuId);
-
-            entity.HasIndex(e => e.OwnedMachineId);
-
-            entity.HasOne(d => d.OwnedMachine).WithMany(p => p.Gpus).HasForeignKey(d => d.OwnedMachineId);
-        });
-
         modelBuilder.Entity<InstructionSetExtension>(entity =>
         {
             entity.ToTable("instruction_set_extensions");
@@ -1037,81 +1025,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
             entity.HasOne(d => d.License).WithMany(p => p.Photos).OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<OwnedMachinePhoto>(entity =>
-        {
-            entity.HasIndex(e => e.Aperture);
-
-            entity.HasIndex(e => e.Author);
-
-            entity.HasIndex(e => e.CameraManufacturer);
-
-            entity.HasIndex(e => e.CameraModel);
-
-            entity.HasIndex(e => e.ColorSpace);
-
-            entity.HasIndex(e => e.Comments);
-
-            entity.HasIndex(e => e.Contrast);
-
-            entity.HasIndex(e => e.CreationDate);
-
-            entity.HasIndex(e => e.DigitalZoomRatio);
-
-            entity.HasIndex(e => e.ExifVersion);
-
-            entity.HasIndex(e => e.ExposureTime);
-
-            entity.HasIndex(e => e.ExposureMethod);
-
-            entity.HasIndex(e => e.ExposureProgram);
-
-            entity.HasIndex(e => e.Flash);
-
-            entity.HasIndex(e => e.Focal);
-
-            entity.HasIndex(e => e.FocalLength);
-
-            entity.HasIndex(e => e.FocalLengthEquivalent);
-
-            entity.HasIndex(e => e.HorizontalResolution);
-
-            entity.HasIndex(e => e.IsoRating);
-
-            entity.HasIndex(e => e.Lens);
-
-            entity.HasIndex(e => e.LightSource);
-
-            entity.HasIndex(e => e.MeteringMode);
-
-            entity.HasIndex(e => e.ResolutionUnit);
-
-            entity.HasIndex(e => e.Orientation);
-
-            entity.HasIndex(e => e.Saturation);
-
-            entity.HasIndex(e => e.SceneCaptureType);
-
-            entity.HasIndex(e => e.SensingMethod);
-
-            entity.HasIndex(e => e.Sharpness);
-
-            entity.HasIndex(e => e.SoftwareUsed);
-
-            entity.HasIndex(e => e.SubjectDistanceRange);
-
-            entity.HasIndex(e => e.UploadDate);
-
-            entity.HasIndex(e => e.VerticalResolution);
-
-            entity.HasIndex(e => e.WhiteBalance);
-
-            entity.HasOne(d => d.OwnedMachine).WithMany(p => p.Photos).OnDelete(DeleteBehavior.Cascade);
-
-            entity.HasOne(d => d.User).WithMany(p => p.OwnedMachinePhotos).OnDelete(DeleteBehavior.Cascade);
-
-            entity.HasOne(d => d.License).WithMany(p => p.OwnedMachinePhotos).OnDelete(DeleteBehavior.Cascade);
-        });
-
         modelBuilder.Entity<Magazine>(entity =>
         {
             entity.HasIndex(e => e.Title);
@@ -1220,21 +1133,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .WithMany(p => p.Memory)
                   .HasForeignKey(d => d.MachineId)
                   .HasConstraintName("fk_memory_by_machine_machine");
-        });
-
-        modelBuilder.Entity<MemoryByOwnedMachine>(entity =>
-        {
-            entity.HasIndex(e => e.OwnedMachineId);
-
-            entity.HasIndex(e => e.Size);
-
-            entity.HasIndex(e => e.Speed);
-
-            entity.HasIndex(e => e.Type);
-
-            entity.HasIndex(e => e.Usage);
-
-            entity.HasOne(d => d.OwnedMachine).WithMany(p => p.Memory).HasForeignKey(d => d.OwnedMachineId);
         });
 
         modelBuilder.Entity<MoneyDonation>(entity =>
@@ -1514,17 +1412,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .HasConstraintName("fk_processors_by_machine_processor");
         });
 
-        modelBuilder.Entity<ProcessorsByOwnedMachine>(entity =>
-        {
-            entity.HasIndex(e => e.OwnedMachineId);
-
-            entity.HasIndex(e => e.ProcessorId);
-
-            entity.HasIndex(e => e.Speed);
-
-            entity.HasOne(d => d.OwnedMachine).WithMany(p => p.Processors).HasForeignKey(d => d.OwnedMachineId);
-        });
-
         modelBuilder.Entity<Resolution>(entity =>
         {
             entity.ToTable("resolutions");
@@ -1653,15 +1540,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .HasConstraintName("fk_sound_by_machine_sound_synth");
         });
 
-        modelBuilder.Entity<SoundByOwnedMachine>(entity =>
-        {
-            entity.HasIndex(e => e.OwnedMachineId);
-
-            entity.HasIndex(e => e.SoundSynthId);
-
-            entity.HasOne(d => d.OwnedMachine).WithMany(p => p.Sound).HasForeignKey(d => d.OwnedMachineId);
-        });
-
         modelBuilder.Entity<SoundSynth>(entity =>
         {
             entity.ToTable("sound_synths");
@@ -1750,19 +1628,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .WithMany(p => p.Storage)
                   .HasForeignKey(d => d.MachineId)
                   .HasConstraintName("fk_storage_by_machine_machine");
-        });
-
-        modelBuilder.Entity<StorageByOwnedMachine>(entity =>
-        {
-            entity.HasIndex(e => e.Capacity);
-
-            entity.HasIndex(e => e.Interface);
-
-            entity.HasIndex(e => e.OwnedMachineId);
-
-            entity.HasIndex(e => e.Type);
-
-            entity.HasOne(d => d.OwnedMachine).WithMany(p => p.Storage).HasForeignKey(d => d.OwnedMachineId);
         });
 
         modelBuilder.Entity<License>(entity =>
@@ -2469,6 +2334,57 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .WithMany(x => x.CompilationReleases)
                   .HasForeignKey(x => x.SoftwareId)
                   .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<CollectedBook>(entity =>
+        {
+            entity.HasKey(e => new { e.UserId, e.BookId });
+
+            entity.HasIndex(e => e.BookId);
+
+            entity.HasOne(e => e.User)
+                  .WithMany(p => p.CollectedBooks)
+                  .HasForeignKey(e => e.UserId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Book)
+                  .WithMany(p => p.CollectedBy)
+                  .HasForeignKey(e => e.BookId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<CollectedDocument>(entity =>
+        {
+            entity.HasKey(e => new { e.UserId, e.DocumentId });
+
+            entity.HasIndex(e => e.DocumentId);
+
+            entity.HasOne(e => e.User)
+                  .WithMany(p => p.CollectedDocuments)
+                  .HasForeignKey(e => e.UserId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Document)
+                  .WithMany(p => p.CollectedBy)
+                  .HasForeignKey(e => e.DocumentId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<CollectedSoftwareRelease>(entity =>
+        {
+            entity.HasKey(e => new { e.UserId, e.SoftwareReleaseId });
+
+            entity.HasIndex(e => e.SoftwareReleaseId);
+
+            entity.HasOne(e => e.User)
+                  .WithMany(p => p.CollectedSoftwareReleases)
+                  .HasForeignKey(e => e.UserId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.SoftwareRelease)
+                  .WithMany(p => p.CollectedBy)
+                  .HasForeignKey(e => e.SoftwareReleaseId)
+                  .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

@@ -23,10 +23,28 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
-namespace Marechai.Database.Models;
+using System;
+using System.Text.Json.Serialization;
 
-public class OwnedMachinePhoto : BasePhoto
+namespace Marechai.Data.Dtos;
+
+public class CollectedSoftwareReleaseDto
 {
-    public virtual OwnedMachine OwnedMachine   { get; set; }
-    public         long         OwnedMachineId { get; set; }
+    [JsonPropertyName("software_release_id")]
+    public ulong SoftwareReleaseId { get; set; }
+
+    [JsonPropertyName("software_name")]
+    public string SoftwareName { get; set; }
+
+    [JsonPropertyName("version")]
+    public string? Version { get; set; }
+
+    [JsonPropertyName("title")]
+    public string? Title { get; set; }
+
+    [JsonPropertyName("platform")]
+    public string? Platform { get; set; }
+
+    [JsonPropertyName("collected_on")]
+    public DateTimeOffset CollectedOn { get; set; }
 }

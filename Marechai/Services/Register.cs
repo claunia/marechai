@@ -63,5 +63,6 @@ public static class Register
         services.AddScoped<AuthService>();
         services.AddScoped<UsersService>();
         services.AddScoped<ProfileService>();
+        services.AddScoped<CollectionService>();
     }
 }

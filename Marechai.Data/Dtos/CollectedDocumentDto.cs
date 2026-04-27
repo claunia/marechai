@@ -23,16 +23,22 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
-using System.ComponentModel;
+using System;
+using System.Text.Json.Serialization;
 
-namespace Marechai.Database.Models;
+namespace Marechai.Data.Dtos;
 
-public class SoundByOwnedMachine : BaseModel<long>
+public class CollectedDocumentDto
 {
-    public int  SoundSynthId   { get; set; }
-    public long OwnedMachineId { get; set; }
+    [JsonPropertyName("document_id")]
+    public long DocumentId { get; set; }
 
-    public virtual OwnedMachine OwnedMachine { get; set; }
-    [DisplayName("Sound synthetizer")]
-    public virtual SoundSynth SoundSynth { get; set; }
+    [JsonPropertyName("title")]
+    public string Title { get; set; }
+
+    [JsonPropertyName("published")]
+    public DateTimeOffset? Published { get; set; }
+
+    [JsonPropertyName("collected_on")]
+    public DateTimeOffset CollectedOn { get; set; }
 }

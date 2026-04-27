@@ -677,6 +677,69 @@ namespace Marechai.Database.Migrations
                     b.ToTable("browser_tests", (string)null);
                 });
 
+            modelBuilder.Entity("Marechai.Database.Models.CollectedBook", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<long>("BookId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<DateTime>("CreatedOn"));
+
+                    b.HasKey("UserId", "BookId");
+
+                    b.HasIndex("BookId");
+
+                    b.ToTable("CollectedBooks");
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.CollectedDocument", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<long>("DocumentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<DateTime>("CreatedOn"));
+
+                    b.HasKey("UserId", "DocumentId");
+
+                    b.HasIndex("DocumentId");
+
+                    b.ToTable("CollectedDocuments");
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.CollectedSoftwareRelease", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<ulong>("SoftwareReleaseId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<DateTime>("CreatedOn"));
+
+                    b.HasKey("UserId", "SoftwareReleaseId");
+
+                    b.HasIndex("SoftwareReleaseId");
+
+                    b.ToTable("CollectedSoftwareReleases");
+                });
+
             modelBuilder.Entity("Marechai.Database.Models.CompaniesByBook", b =>
                 {
                     b.Property<long>("Id")
@@ -2256,41 +2319,6 @@ namespace Marechai.Database.Migrations
                         .HasDatabaseName("idx_gpus_by_machine_machine");
 
                     b.ToTable("gpus_by_machine", (string)null);
-                });
-
-            modelBuilder.Entity("Marechai.Database.Models.GpusByOwnedMachine", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<DateTime>("CreatedOn"));
-
-                    b.Property<int>("GpuId")
-                        .HasColumnType("int(11)");
-
-                    b.Property<long>("OwnedMachineId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("UpdatedOn")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime(6)");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("UpdatedOn"));
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GpuId");
-
-                    b.HasIndex("OwnedMachineId");
-
-                    b.ToTable("GpusByOwnedMachine");
                 });
 
             modelBuilder.Entity("Marechai.Database.Models.InstructionSet", b =>
@@ -4168,56 +4196,6 @@ namespace Marechai.Database.Migrations
                     b.ToTable("memory_by_machine", (string)null);
                 });
 
-            modelBuilder.Entity("Marechai.Database.Models.MemoryByOwnedMachine", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<DateTime>("CreatedOn"));
-
-                    b.Property<long>("OwnedMachineId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("Size")
-                        .HasColumnType("bigint");
-
-                    b.Property<double>("Speed")
-                        .HasColumnType("double");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdatedOn")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime(6)");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("UpdatedOn"));
-
-                    b.Property<int>("Usage")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OwnedMachineId");
-
-                    b.HasIndex("Size");
-
-                    b.HasIndex("Speed");
-
-                    b.HasIndex("Type");
-
-                    b.HasIndex("Usage");
-
-                    b.ToTable("MemoryByOwnedMachine");
-                });
-
             modelBuilder.Entity("Marechai.Database.Models.MinimumGpuBySoftwareRelease", b =>
                 {
                     b.Property<ulong>("ReleaseId")
@@ -4422,214 +4400,6 @@ namespace Marechai.Database.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("OwnedMachines");
-                });
-
-            modelBuilder.Entity("Marechai.Database.Models.OwnedMachinePhoto", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<double?>("Aperture")
-                        .HasColumnType("double");
-
-                    b.Property<string>("Author")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("CameraManufacturer")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("CameraModel")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<ushort?>("ColorSpace")
-                        .HasColumnType("smallint unsigned");
-
-                    b.Property<string>("Comments")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<ushort?>("Contrast")
-                        .HasColumnType("smallint unsigned");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<DateTime>("CreatedOn"));
-
-                    b.Property<DateTime?>("CreationDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<double?>("DigitalZoomRatio")
-                        .HasColumnType("double");
-
-                    b.Property<string>("ExifVersion")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<ushort?>("ExposureMethod")
-                        .HasColumnType("smallint unsigned");
-
-                    b.Property<ushort?>("ExposureProgram")
-                        .HasColumnType("smallint unsigned");
-
-                    b.Property<double?>("ExposureTime")
-                        .HasColumnType("double");
-
-                    b.Property<ushort?>("Flash")
-                        .HasColumnType("smallint unsigned");
-
-                    b.Property<double?>("Focal")
-                        .HasColumnType("double");
-
-                    b.Property<double?>("FocalLength")
-                        .HasColumnType("double");
-
-                    b.Property<double?>("FocalLengthEquivalent")
-                        .HasColumnType("double");
-
-                    b.Property<double?>("HorizontalResolution")
-                        .HasColumnType("double");
-
-                    b.Property<ushort?>("IsoRating")
-                        .HasColumnType("smallint unsigned");
-
-                    b.Property<string>("Lens")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<int>("LicenseId")
-                        .HasColumnType("int");
-
-                    b.Property<ushort?>("LightSource")
-                        .HasColumnType("smallint unsigned");
-
-                    b.Property<ushort?>("MeteringMode")
-                        .HasColumnType("smallint unsigned");
-
-                    b.Property<ushort?>("Orientation")
-                        .HasColumnType("smallint unsigned");
-
-                    b.Property<string>("OriginalExtension")
-                        .HasColumnType("longtext");
-
-                    b.Property<long>("OwnedMachineId")
-                        .HasColumnType("bigint");
-
-                    b.Property<ushort?>("ResolutionUnit")
-                        .HasColumnType("smallint unsigned");
-
-                    b.Property<ushort?>("Saturation")
-                        .HasColumnType("smallint unsigned");
-
-                    b.Property<ushort?>("SceneCaptureType")
-                        .HasColumnType("smallint unsigned");
-
-                    b.Property<ushort?>("SensingMethod")
-                        .HasColumnType("smallint unsigned");
-
-                    b.Property<ushort?>("Sharpness")
-                        .HasColumnType("smallint unsigned");
-
-                    b.Property<string>("SoftwareUsed")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<ushort?>("SubjectDistanceRange")
-                        .HasColumnType("smallint unsigned");
-
-                    b.Property<DateTime>("UpdatedOn")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime(6)");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("UpdatedOn"));
-
-                    b.Property<DateTime>("UploadDate")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<double?>("VerticalResolution")
-                        .HasColumnType("double");
-
-                    b.Property<ushort?>("WhiteBalance")
-                        .HasColumnType("smallint unsigned");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Aperture");
-
-                    b.HasIndex("Author");
-
-                    b.HasIndex("CameraManufacturer");
-
-                    b.HasIndex("CameraModel");
-
-                    b.HasIndex("ColorSpace");
-
-                    b.HasIndex("Comments");
-
-                    b.HasIndex("Contrast");
-
-                    b.HasIndex("CreationDate");
-
-                    b.HasIndex("DigitalZoomRatio");
-
-                    b.HasIndex("ExifVersion");
-
-                    b.HasIndex("ExposureMethod");
-
-                    b.HasIndex("ExposureProgram");
-
-                    b.HasIndex("ExposureTime");
-
-                    b.HasIndex("Flash");
-
-                    b.HasIndex("Focal");
-
-                    b.HasIndex("FocalLength");
-
-                    b.HasIndex("FocalLengthEquivalent");
-
-                    b.HasIndex("HorizontalResolution");
-
-                    b.HasIndex("IsoRating");
-
-                    b.HasIndex("Lens");
-
-                    b.HasIndex("LicenseId");
-
-                    b.HasIndex("LightSource");
-
-                    b.HasIndex("MeteringMode");
-
-                    b.HasIndex("Orientation");
-
-                    b.HasIndex("OwnedMachineId");
-
-                    b.HasIndex("ResolutionUnit");
-
-                    b.HasIndex("Saturation");
-
-                    b.HasIndex("SceneCaptureType");
-
-                    b.HasIndex("SensingMethod");
-
-                    b.HasIndex("Sharpness");
-
-                    b.HasIndex("SoftwareUsed");
-
-                    b.HasIndex("SubjectDistanceRange");
-
-                    b.HasIndex("UploadDate");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("VerticalResolution");
-
-                    b.HasIndex("WhiteBalance");
-
-                    b.ToTable("OwnedMachinePhotos");
                 });
 
             modelBuilder.Entity("Marechai.Database.Models.PeopleByBook", b =>
@@ -5156,46 +4926,6 @@ namespace Marechai.Database.Migrations
                         .HasDatabaseName("idx_processors_by_machine_speed");
 
                     b.ToTable("processors_by_machine", (string)null);
-                });
-
-            modelBuilder.Entity("Marechai.Database.Models.ProcessorsByOwnedMachine", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<DateTime>("CreatedOn"));
-
-                    b.Property<long>("OwnedMachineId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("ProcessorId")
-                        .HasColumnType("int(11)");
-
-                    b.Property<float>("Speed")
-                        .HasColumnType("float");
-
-                    b.Property<DateTime>("UpdatedOn")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime(6)");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("UpdatedOn"));
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OwnedMachineId");
-
-                    b.HasIndex("ProcessorId");
-
-                    b.HasIndex("Speed");
-
-                    b.ToTable("ProcessorsByOwnedMachine");
                 });
 
             modelBuilder.Entity("Marechai.Database.Models.RecommendedGpuBySoftwareRelease", b =>
@@ -6004,41 +5734,6 @@ namespace Marechai.Database.Migrations
                     b.ToTable("sound_by_machine", (string)null);
                 });
 
-            modelBuilder.Entity("Marechai.Database.Models.SoundByOwnedMachine", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<DateTime>("CreatedOn"));
-
-                    b.Property<long>("OwnedMachineId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("SoundSynthId")
-                        .HasColumnType("int(11)");
-
-                    b.Property<DateTime>("UpdatedOn")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime(6)");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("UpdatedOn"));
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OwnedMachineId");
-
-                    b.HasIndex("SoundSynthId");
-
-                    b.ToTable("SoundByOwnedMachine");
-                });
-
             modelBuilder.Entity("Marechai.Database.Models.SoundSynth", b =>
                 {
                     b.Property<int>("Id")
@@ -6319,51 +6014,6 @@ namespace Marechai.Database.Migrations
                     b.ToTable("storage_by_machine", (string)null);
                 });
 
-            modelBuilder.Entity("Marechai.Database.Models.StorageByOwnedMachine", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("Capacity")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<DateTime>("CreatedOn"));
-
-                    b.Property<int>("Interface")
-                        .HasColumnType("int");
-
-                    b.Property<long>("OwnedMachineId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdatedOn")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime(6)");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("UpdatedOn"));
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Capacity");
-
-                    b.HasIndex("Interface");
-
-                    b.HasIndex("OwnedMachineId");
-
-                    b.HasIndex("Type");
-
-                    b.ToTable("StorageByOwnedMachine");
-                });
-
             modelBuilder.Entity("Marechai.Database.Models.UnM49", b =>
                 {
                     b.Property<short>("Id")
@@ -6635,6 +6285,63 @@ namespace Marechai.Database.Migrations
                     b.Navigation("Book");
 
                     b.Navigation("MachineFamily");
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.CollectedBook", b =>
+                {
+                    b.HasOne("Marechai.Database.Models.Book", "Book")
+                        .WithMany("CollectedBy")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Marechai.Database.Models.ApplicationUser", "User")
+                        .WithMany("CollectedBooks")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.CollectedDocument", b =>
+                {
+                    b.HasOne("Marechai.Database.Models.Document", "Document")
+                        .WithMany("CollectedBy")
+                        .HasForeignKey("DocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Marechai.Database.Models.ApplicationUser", "User")
+                        .WithMany("CollectedDocuments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Document");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.CollectedSoftwareRelease", b =>
+                {
+                    b.HasOne("Marechai.Database.Models.SoftwareRelease", "SoftwareRelease")
+                        .WithMany("CollectedBy")
+                        .HasForeignKey("SoftwareReleaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Marechai.Database.Models.ApplicationUser", "User")
+                        .WithMany("CollectedSoftwareReleases")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SoftwareRelease");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Marechai.Database.Models.CompaniesByBook", b =>
@@ -7109,25 +6816,6 @@ namespace Marechai.Database.Migrations
                     b.Navigation("Machine");
                 });
 
-            modelBuilder.Entity("Marechai.Database.Models.GpusByOwnedMachine", b =>
-                {
-                    b.HasOne("Marechai.Database.Models.Gpu", "Gpu")
-                        .WithMany()
-                        .HasForeignKey("GpuId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Marechai.Database.Models.OwnedMachine", "OwnedMachine")
-                        .WithMany("Gpus")
-                        .HasForeignKey("OwnedMachineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Gpu");
-
-                    b.Navigation("OwnedMachine");
-                });
-
             modelBuilder.Entity("Marechai.Database.Models.InstructionSetExtensionsByProcessor", b =>
                 {
                     b.HasOne("Marechai.Database.Models.InstructionSetExtension", "Extension")
@@ -7449,17 +7137,6 @@ namespace Marechai.Database.Migrations
                     b.Navigation("Machine");
                 });
 
-            modelBuilder.Entity("Marechai.Database.Models.MemoryByOwnedMachine", b =>
-                {
-                    b.HasOne("Marechai.Database.Models.OwnedMachine", "OwnedMachine")
-                        .WithMany("Memory")
-                        .HasForeignKey("OwnedMachineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("OwnedMachine");
-                });
-
             modelBuilder.Entity("Marechai.Database.Models.MinimumGpuBySoftwareRelease", b =>
                 {
                     b.HasOne("Marechai.Database.Models.Gpu", "Gpu")
@@ -7493,32 +7170,6 @@ namespace Marechai.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Machine");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Marechai.Database.Models.OwnedMachinePhoto", b =>
-                {
-                    b.HasOne("Marechai.Database.Models.License", "License")
-                        .WithMany("OwnedMachinePhotos")
-                        .HasForeignKey("LicenseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Marechai.Database.Models.OwnedMachine", "OwnedMachine")
-                        .WithMany("Photos")
-                        .HasForeignKey("OwnedMachineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Marechai.Database.Models.ApplicationUser", "User")
-                        .WithMany("OwnedMachinePhotos")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("License");
-
-                    b.Navigation("OwnedMachine");
 
                     b.Navigation("User");
                 });
@@ -7666,25 +7317,6 @@ namespace Marechai.Database.Migrations
                         .HasConstraintName("fk_processors_by_machine_processor");
 
                     b.Navigation("Machine");
-
-                    b.Navigation("Processor");
-                });
-
-            modelBuilder.Entity("Marechai.Database.Models.ProcessorsByOwnedMachine", b =>
-                {
-                    b.HasOne("Marechai.Database.Models.OwnedMachine", "OwnedMachine")
-                        .WithMany("Processors")
-                        .HasForeignKey("OwnedMachineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Marechai.Database.Models.Processor", "Processor")
-                        .WithMany()
-                        .HasForeignKey("ProcessorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("OwnedMachine");
 
                     b.Navigation("Processor");
                 });
@@ -8043,25 +7675,6 @@ namespace Marechai.Database.Migrations
                     b.Navigation("SoundSynth");
                 });
 
-            modelBuilder.Entity("Marechai.Database.Models.SoundByOwnedMachine", b =>
-                {
-                    b.HasOne("Marechai.Database.Models.OwnedMachine", "OwnedMachine")
-                        .WithMany("Sound")
-                        .HasForeignKey("OwnedMachineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Marechai.Database.Models.SoundSynth", "SoundSynth")
-                        .WithMany()
-                        .HasForeignKey("SoundSynthId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("OwnedMachine");
-
-                    b.Navigation("SoundSynth");
-                });
-
             modelBuilder.Entity("Marechai.Database.Models.SoundSynth", b =>
                 {
                     b.HasOne("Marechai.Database.Models.Company", "Company")
@@ -8112,17 +7725,6 @@ namespace Marechai.Database.Migrations
                         .HasConstraintName("fk_storage_by_machine_machine");
 
                     b.Navigation("Machine");
-                });
-
-            modelBuilder.Entity("Marechai.Database.Models.StorageByOwnedMachine", b =>
-                {
-                    b.HasOne("Marechai.Database.Models.OwnedMachine", "OwnedMachine")
-                        .WithMany("Storage")
-                        .HasForeignKey("OwnedMachineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("OwnedMachine");
                 });
 
             modelBuilder.Entity("Marechai.Database.Models.UnM49", b =>
@@ -8209,13 +7811,17 @@ namespace Marechai.Database.Migrations
                 {
                     b.Navigation("BookScans");
 
+                    b.Navigation("CollectedBooks");
+
+                    b.Navigation("CollectedDocuments");
+
+                    b.Navigation("CollectedSoftwareReleases");
+
                     b.Navigation("DocumentScans");
 
                     b.Navigation("Dumps");
 
                     b.Navigation("MagazineScans");
-
-                    b.Navigation("OwnedMachinePhotos");
 
                     b.Navigation("OwnedMachines");
 
@@ -8224,6 +7830,8 @@ namespace Marechai.Database.Migrations
 
             modelBuilder.Entity("Marechai.Database.Models.Book", b =>
                 {
+                    b.Navigation("CollectedBy");
+
                     b.Navigation("Companies");
 
                     b.Navigation("Derivates");
@@ -8278,6 +7886,8 @@ namespace Marechai.Database.Migrations
 
             modelBuilder.Entity("Marechai.Database.Models.Document", b =>
                 {
+                    b.Navigation("CollectedBy");
+
                     b.Navigation("Companies");
 
                     b.Navigation("MachineFamilies");
@@ -8341,8 +7951,6 @@ namespace Marechai.Database.Migrations
 
             modelBuilder.Entity("Marechai.Database.Models.License", b =>
                 {
-                    b.Navigation("OwnedMachinePhotos");
-
                     b.Navigation("Photos");
                 });
 
@@ -8450,21 +8058,6 @@ namespace Marechai.Database.Migrations
                     b.Navigation("DataStreams");
                 });
 
-            modelBuilder.Entity("Marechai.Database.Models.OwnedMachine", b =>
-                {
-                    b.Navigation("Gpus");
-
-                    b.Navigation("Memory");
-
-                    b.Navigation("Photos");
-
-                    b.Navigation("Processors");
-
-                    b.Navigation("Sound");
-
-                    b.Navigation("Storage");
-                });
-
             modelBuilder.Entity("Marechai.Database.Models.Person", b =>
                 {
                     b.Navigation("Books");
@@ -8533,6 +8126,8 @@ namespace Marechai.Database.Migrations
             modelBuilder.Entity("Marechai.Database.Models.SoftwareRelease", b =>
                 {
                     b.Navigation("Barcodes");
+
+                    b.Navigation("CollectedBy");
 
                     b.Navigation("IncludedSoftware");
 

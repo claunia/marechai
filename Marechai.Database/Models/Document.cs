@@ -37,4 +37,5 @@ public class Document : DocumentBase
     public virtual ICollection<DocumentsByMachineFamily> MachineFamilies { get; set; }
     public virtual ICollection<DocumentScan>             Scans           { get; set; }
     public virtual ICollection<DocumentSynopsis>          Synopses        { get; set; }
+    public virtual ICollection<CollectedDocument>         CollectedBy     { get; set; }
 }

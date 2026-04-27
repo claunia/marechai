@@ -24,6 +24,8 @@
 *******************************************************************************/
 
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.AspNetCore.Components;
 
@@ -31,8 +33,13 @@ namespace Marechai.Pages.Profile;
 
 public partial class View
 {
-    bool              _loaded;
-    PublicProfileDto? _profile;
+    List<CollectedBookDto>?            _collectedBooks;
+    List<CollectedDocumentDto>?        _collectedDocuments;
+    List<CollectedMachineDto>?         _collectedMachines;
+    List<CollectedSoftwareReleaseDto>? _collectedReleases;
+    bool                               _loaded;
+    PublicProfileDto?                  _profile;
+    UserCollectionSummaryDto?          _summary;
 
     [Parameter]
     public string Username { get; set; } = null!;
@@ -59,7 +66,17 @@ public partial class View
         }
 
         _profile = await Service.GetPublicProfileAsync(Username);
-        _loaded  = true;
+
+        if(_profile is not null)
+        {
+            _summary            = await CollectionSvc.GetCollectionSummaryAsync(Username);
+            _collectedBooks     = await CollectionSvc.GetCollectedBooksAsync(Username);
+            _collectedDocuments = await CollectionSvc.GetCollectedDocumentsAsync(Username);
+            _collectedMachines  = await CollectionSvc.GetCollectedMachinesAsync(Username);
+            _collectedReleases  = await CollectionSvc.GetCollectedSoftwareReleasesAsync(Username);
+        }
+
+        _loaded = true;
         StateHasChanged();
     }
 }

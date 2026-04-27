@@ -29,6 +29,7 @@
 @using Marechai.ApiClient.Models
 @inherits OwningComponentBase<ProfileService>
 @inject IStringLocalizer<ProfileService> L
+@inject CollectionService                CollectionSvc
 
 @if(!_loaded)
 {
@@ -76,6 +77,39 @@
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
                 <MudIcon Icon="@Icons.Material.Filled.LocationOn" Style="color: rgba(255,255,255,0.8); font-size: 18px;"/>
                 <MudText Typo="Typo.body2" Style="color: rgba(255,255,255,0.8);">@_profile.Location</MudText>
+            </MudStack>
+        }
+        @if(_summary is not null && (_summary.BookCount > 0 || _summary.DocumentCount > 0 || _summary.MachineCount > 0 || _summary.SoftwareReleaseCount > 0))
+        {
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Wrap="Wrap.Wrap" Justify="Justify.Center">
+                @if(_summary.BookCount > 0)
+                {
+                    <MudChip T="string" Color="Color.Default" Size="Size.Small" Icon="@Icons.Material.Filled.MenuBook"
+                             Style="color: white; background: rgba(255,255,255,0.2);">
+                        @_summary.BookCount @L["Books"]
+                    </MudChip>
+                }
+                @if(_summary.DocumentCount > 0)
+                {
+                    <MudChip T="string" Color="Color.Default" Size="Size.Small" Icon="@Icons.Material.Filled.Article"
+                             Style="color: white; background: rgba(255,255,255,0.2);">
+                        @_summary.DocumentCount @L["Documents"]
+                    </MudChip>
+                }
+                @if(_summary.MachineCount > 0)
+                {
+                    <MudChip T="string" Color="Color.Default" Size="Size.Small" Icon="@Icons.Material.Filled.Computer"
+                             Style="color: white; background: rgba(255,255,255,0.2);">
+                        @_summary.MachineCount @L["Machines"]
+                    </MudChip>
+                }
+                @if(_summary.SoftwareReleaseCount > 0)
+                {
+                    <MudChip T="string" Color="Color.Default" Size="Size.Small" Icon="@Icons.Material.Filled.Apps"
+                             Style="color: white; background: rgba(255,255,255,0.2);">
+                        @_summary.SoftwareReleaseCount @L["Software"]
+                    </MudChip>
+                }
             </MudStack>
         }
     </MudStack>
@@ -152,6 +186,119 @@
                     </MudStack>
                 </MudCardContent>
             </MudCard>
+        }
+
+        @* ── Collection Section ── *@
+        @if(_collectedBooks?.Count > 0)
+        {
+            <MudExpansionPanels Class="mb-4">
+                <MudExpansionPanel>
+                    <TitleContent>
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                            <MudIcon Icon="@Icons.Material.Filled.MenuBook" Color="Color.Primary"/>
+                            <MudText Typo="Typo.h6">@L["Books"]</MudText>
+                            <MudChip T="string" Color="Color.Primary" Size="Size.Small">@_collectedBooks.Count</MudChip>
+                        </MudStack>
+                    </TitleContent>
+                    <ChildContent>
+                        <MudList T="CollectedBookDto" Dense="true">
+                            @foreach(CollectedBookDto book in _collectedBooks)
+                            {
+                                <MudListItem T="CollectedBookDto" Href="@($"/book/{book.BookId}")">
+                                    <MudText Typo="Typo.body1">@book.Title</MudText>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    </ChildContent>
+                </MudExpansionPanel>
+            </MudExpansionPanels>
+        }
+
+        @if(_collectedDocuments?.Count > 0)
+        {
+            <MudExpansionPanels Class="mb-4">
+                <MudExpansionPanel>
+                    <TitleContent>
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                            <MudIcon Icon="@Icons.Material.Filled.Article" Color="Color.Primary"/>
+                            <MudText Typo="Typo.h6">@L["Documents"]</MudText>
+                            <MudChip T="string" Color="Color.Primary" Size="Size.Small">@_collectedDocuments.Count</MudChip>
+                        </MudStack>
+                    </TitleContent>
+                    <ChildContent>
+                        <MudList T="CollectedDocumentDto" Dense="true">
+                            @foreach(CollectedDocumentDto doc in _collectedDocuments)
+                            {
+                                <MudListItem T="CollectedDocumentDto" Href="@($"/document/{doc.DocumentId}")">
+                                    <MudText Typo="Typo.body1">@doc.Title</MudText>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    </ChildContent>
+                </MudExpansionPanel>
+            </MudExpansionPanels>
+        }
+
+        @if(_collectedMachines?.Count > 0)
+        {
+            <MudExpansionPanels Class="mb-4">
+                <MudExpansionPanel>
+                    <TitleContent>
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                            <MudIcon Icon="@Icons.Material.Filled.Computer" Color="Color.Primary"/>
+                            <MudText Typo="Typo.h6">@L["Machines"]</MudText>
+                            <MudChip T="string" Color="Color.Primary" Size="Size.Small">@_collectedMachines.Count</MudChip>
+                        </MudStack>
+                    </TitleContent>
+                    <ChildContent>
+                        <MudList T="CollectedMachineDto" Dense="true">
+                            @foreach(CollectedMachineDto machine in _collectedMachines)
+                            {
+                                <MudListItem T="CollectedMachineDto" Href="@($"/machine/{machine.MachineId}")">
+                                    <MudText Typo="Typo.body1">
+                                        @(machine.CompanyName is not null ? $"{machine.CompanyName} {machine.Name}" : machine.Name)
+                                    </MudText>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    </ChildContent>
+                </MudExpansionPanel>
+            </MudExpansionPanels>
+        }
+
+        @if(_collectedReleases?.Count > 0)
+        {
+            <MudExpansionPanels Class="mb-4">
+                <MudExpansionPanel>
+                    <TitleContent>
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                            <MudIcon Icon="@Icons.Material.Filled.Apps" Color="Color.Primary"/>
+                            <MudText Typo="Typo.h6">@L["Software"]</MudText>
+                            <MudChip T="string" Color="Color.Primary" Size="Size.Small">@_collectedReleases.Count</MudChip>
+                        </MudStack>
+                    </TitleContent>
+                    <ChildContent>
+                        <MudList T="CollectedSoftwareReleaseDto" Dense="true">
+                            @foreach(CollectedSoftwareReleaseDto release in _collectedReleases)
+                            {
+                                <MudListItem T="CollectedSoftwareReleaseDto" Href="@($"/software/release/{release.SoftwareReleaseId}")">
+                                    <MudText Typo="Typo.body1">
+                                        @release.SoftwareName
+                                        @if(!string.IsNullOrEmpty(release.Version))
+                                        {
+                                            <text> @release.Version</text>
+                                        }
+                                        @if(!string.IsNullOrEmpty(release.Platform))
+                                        {
+                                            <text> (@release.Platform)</text>
+                                        }
+                                    </MudText>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    </ChildContent>
+                </MudExpansionPanel>
+            </MudExpansionPanels>
         }
     </MudItem>
 </MudGrid>

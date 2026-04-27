@@ -30,6 +30,7 @@
 @inherits OwningComponentBase<DocumentsService>
 @inject IStringLocalizer<DocumentsService> L
 @inject ApiAssetUrlProvider                Assets
+@inject CollectionService                  CollectionSvc
 
 @if(!_loaded)
 {
@@ -52,6 +53,18 @@
     <MudStack AlignItems="AlignItems.Center" Spacing="3">
         <MudIcon Icon="@Icons.Material.Filled.Article" Size="Size.Large" Style="color: white;"/>
         <MudText Typo="Typo.h4" Align="Align.Center" Style="color: white; font-weight: 700;">@_document.Title</MudText>
+        <AuthorizeView>
+            <Authorized>
+                <MudButton Variant="Variant.Filled"
+                           Color="@(_isCollected ? Color.Success : Color.Default)"
+                           StartIcon="@(_isCollected ? Icons.Material.Filled.Bookmark : Icons.Material.Outlined.BookmarkBorder)"
+                           OnClick="ToggleCollectionAsync"
+                           Disabled="_togglingCollection"
+                           Size="Size.Small">
+                    @(_isCollected ? L["In Collection"] : L["Add to Collection"])
+                </MudButton>
+            </Authorized>
+        </AuthorizeView>
     </MudStack>
 </MudPaper>
 

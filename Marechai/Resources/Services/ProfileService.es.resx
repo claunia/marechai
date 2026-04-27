@@ -72,4 +72,16 @@
     <data name="Links" xml:space="preserve">
         <value>Enlaces</value>
     </data>
+    <data name="Books" xml:space="preserve">
+        <value>Libros</value>
+    </data>
+    <data name="Documents" xml:space="preserve">
+        <value>Documentos</value>
+    </data>
+    <data name="Machines" xml:space="preserve">
+        <value>Máquinas</value>
+    </data>
+    <data name="Software" xml:space="preserve">
+        <value>Software</value>
+    </data>
 </root>

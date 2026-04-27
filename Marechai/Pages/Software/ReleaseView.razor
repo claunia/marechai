@@ -29,6 +29,7 @@
 @using Marechai.ApiClient.Models
 @inherits OwningComponentBase<SoftwareService>
 @inject IStringLocalizer<SoftwareService> L
+@inject CollectionService                 CollectionSvc
 
 @if(!_loaded)
 {
@@ -67,6 +68,18 @@
                 <MudText Typo="Typo.subtitle1" Align="Align.Center" Style="color: rgba(255,255,255,0.7); font-style: italic;">@_release.Title</MudText>
             }
         }
+        <AuthorizeView>
+            <Authorized>
+                <MudButton Variant="Variant.Filled"
+                           Color="@(_isCollected ? Color.Success : Color.Default)"
+                           StartIcon="@(_isCollected ? Icons.Material.Filled.Bookmark : Icons.Material.Outlined.BookmarkBorder)"
+                           OnClick="ToggleCollectionAsync"
+                           Disabled="_togglingCollection"
+                           Size="Size.Small">
+                    @(_isCollected ? L["In Collection"] : L["Add to Collection"])
+                </MudButton>
+            </Authorized>
+        </AuthorizeView>
     </MudStack>
 </MudPaper>
 

@@ -23,19 +23,52 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
-using System.ComponentModel;
-using Marechai.Data;
+using System;
+using System.Text.Json.Serialization;
 
-namespace Marechai.Database.Models;
+namespace Marechai.Data.Dtos;
 
-public class MemoryByOwnedMachine : BaseModel<long>
+public class CollectedMachineDto
 {
-    public long        OwnedMachineId { get; set; }
-    public MemoryType  Type           { get; set; }
-    public MemoryUsage Usage          { get; set; }
-    public long        Size           { get; set; }
-    [DisplayName("Speed (Hz)")]
-    public double Speed { get; set; }
+    [JsonPropertyName("owned_machine_id")]
+    public long OwnedMachineId { get; set; }
 
-    public virtual OwnedMachine OwnedMachine { get; set; }
+    [JsonPropertyName("machine_id")]
+    public int MachineId { get; set; }
+
+    [JsonPropertyName("name")]
+    public string Name { get; set; }
+
+    [JsonPropertyName("company_name")]
+    public string? CompanyName { get; set; }
+
+    [JsonPropertyName("type")]
+    public int? Type { get; set; }
+
+    [JsonPropertyName("collected_on")]
+    public DateTimeOffset CollectedOn { get; set; }
+
+    [JsonPropertyName("acquisition_date")]
+    public DateTimeOffset? AcquisitionDate { get; set; }
+
+    [JsonPropertyName("acquisition_date_precision")]
+    public int AcquisitionDatePrecision { get; set; }
+
+    [JsonPropertyName("status")]
+    public int Status { get; set; }
+
+    [JsonPropertyName("trade")]
+    public bool Trade { get; set; }
+
+    [JsonPropertyName("boxed")]
+    public bool Boxed { get; set; }
+
+    [JsonPropertyName("manuals")]
+    public bool Manuals { get; set; }
+
+    [JsonPropertyName("serial_number")]
+    public string? SerialNumber { get; set; }
+
+    [JsonPropertyName("serial_number_visible")]
+    public bool SerialNumberVisible { get; set; }
 }

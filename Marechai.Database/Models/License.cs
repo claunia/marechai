@@ -54,5 +54,4 @@ public class License : BaseModel<int>
     [DataType(DataType.MultilineText)]
     public string Text { get;                                               set; }
     public virtual ICollection<MachinePhoto>      Photos             { get; set; }
-    public virtual ICollection<OwnedMachinePhoto> OwnedMachinePhotos { get; set; }
 }

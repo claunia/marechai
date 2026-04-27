@@ -23,16 +23,19 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
-using System.ComponentModel;
+using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Marechai.Database.Models;
 
-public class GpusByOwnedMachine : BaseModel<long>
+public class CollectedSoftwareRelease
 {
-    public int  GpuId          { get; set; }
-    public long OwnedMachineId { get; set; }
+    public string UserId            { get; set; }
+    public ulong  SoftwareReleaseId { get; set; }
 
-    [DisplayName("GPU")]
-    public virtual Gpu Gpu { get;                   set; }
-    public virtual OwnedMachine OwnedMachine { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public DateTime CreatedOn { get; set; }
+
+    public virtual ApplicationUser  User            { get; set; }
+    public virtual SoftwareRelease  SoftwareRelease { get; set; }
 }

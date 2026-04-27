@@ -26,9 +26,11 @@
 }
 
 @page "/account/profile"
+@using Marechai.ApiClient.Models
 @attribute [Authorize]
 @inject AuthService AuthService
 @inject NavigationManager Navigation
+@inject CollectionService CollectionSvc
 
 <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
     <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
@@ -338,6 +340,186 @@
                         }
                     </MudButton>
                 </MudStack>
+            </MudItem>
+        </MudGrid>
+    </MudTabPanel>
+
+    @* ── My Collection Tab ── *@
+    <MudTabPanel Text="My Collection" Icon="@Icons.Material.Filled.Collections">
+        <MudGrid Justify="Justify.Center" Class="pa-4">
+            <MudItem xs="12" sm="10" md="8">
+                @if(_isLoadingCollection)
+                {
+                    <div class="d-flex justify-center pa-8">
+                        <MudProgressCircular Color="Color.Primary" Indeterminate="true"/>
+                    </div>
+                }
+                else
+                {
+                    @* ── Books ── *@
+                    <MudText Typo="Typo.h6" Class="mb-2">
+                        <MudIcon Icon="@Icons.Material.Filled.MenuBook" Class="mr-1"/>
+                        Books (@(_myBooks?.Count ?? 0))
+                    </MudText>
+                    @if(_myBooks?.Count > 0)
+                    {
+                        <MudSimpleTable Elevation="1" Dense="true" Class="mb-4">
+                            <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th style="width: 120px;">Added</th>
+                                <th style="width: 80px;"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach(CollectedBookDto book in _myBooks)
+                            {
+                                <tr>
+                                    <td>
+                                        <MudLink Href="@($"/book/{book.BookId}")">@book.Title</MudLink>
+                                    </td>
+                                    <td>@book.CollectedOn?.Date.ToShortDateString()</td>
+                                    <td>
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                       Color="Color.Error" Size="Size.Small"
+                                                       OnClick="@(() => RemoveBookAsync(book.BookId))"/>
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </MudSimpleTable>
+                    }
+                    else
+                    {
+                        <MudAlert Severity="Severity.Info" Class="mb-4">No books in your collection yet.</MudAlert>
+                    }
+
+                    @* ── Documents ── *@
+                    <MudText Typo="Typo.h6" Class="mb-2">
+                        <MudIcon Icon="@Icons.Material.Filled.Article" Class="mr-1"/>
+                        Documents (@(_myDocuments?.Count ?? 0))
+                    </MudText>
+                    @if(_myDocuments?.Count > 0)
+                    {
+                        <MudSimpleTable Elevation="1" Dense="true" Class="mb-4">
+                            <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th style="width: 120px;">Added</th>
+                                <th style="width: 80px;"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach(CollectedDocumentDto doc in _myDocuments)
+                            {
+                                <tr>
+                                    <td>
+                                        <MudLink Href="@($"/document/{doc.DocumentId}")">@doc.Title</MudLink>
+                                    </td>
+                                    <td>@doc.CollectedOn?.Date.ToShortDateString()</td>
+                                    <td>
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                       Color="Color.Error" Size="Size.Small"
+                                                       OnClick="@(() => RemoveDocumentAsync(doc.DocumentId))"/>
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </MudSimpleTable>
+                    }
+                    else
+                    {
+                        <MudAlert Severity="Severity.Info" Class="mb-4">No documents in your collection yet.</MudAlert>
+                    }
+
+                    @* ── Machines ── *@
+                    <MudText Typo="Typo.h6" Class="mb-2">
+                        <MudIcon Icon="@Icons.Material.Filled.Computer" Class="mr-1"/>
+                        Machines (@(_myMachines?.Count ?? 0))
+                    </MudText>
+                    @if(_myMachines?.Count > 0)
+                    {
+                        <MudSimpleTable Elevation="1" Dense="true" Class="mb-4">
+                            <thead>
+                            <tr>
+                                <th>Machine</th>
+                                <th style="width: 120px;">Added</th>
+                                <th style="width: 80px;"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach(CollectedMachineDto machine in _myMachines)
+                            {
+                                <tr>
+                                    <td>
+                                        <MudLink Href="@($"/machine/{machine.MachineId}")">
+                                            @(machine.CompanyName is not null ? $"{machine.CompanyName} {machine.Name}" : machine.Name)
+                                        </MudLink>
+                                    </td>
+                                    <td>@machine.CollectedOn?.Date.ToShortDateString()</td>
+                                    <td>
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                       Color="Color.Error" Size="Size.Small"
+                                                       OnClick="@(() => RemoveMachineAsync(machine.MachineId))"/>
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </MudSimpleTable>
+                    }
+                    else
+                    {
+                        <MudAlert Severity="Severity.Info" Class="mb-4">No machines in your collection yet.</MudAlert>
+                    }
+
+                    @* ── Software Releases ── *@
+                    <MudText Typo="Typo.h6" Class="mb-2">
+                        <MudIcon Icon="@Icons.Material.Filled.Apps" Class="mr-1"/>
+                        Software (@(_myReleases?.Count ?? 0))
+                    </MudText>
+                    @if(_myReleases?.Count > 0)
+                    {
+                        <MudSimpleTable Elevation="1" Dense="true" Class="mb-4">
+                            <thead>
+                            <tr>
+                                <th>Software</th>
+                                <th style="width: 120px;">Added</th>
+                                <th style="width: 80px;"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach(CollectedSoftwareReleaseDto release in _myReleases)
+                            {
+                                <tr>
+                                    <td>
+                                        <MudLink Href="@($"/software/release/{release.SoftwareReleaseId}")">
+                                            @release.SoftwareName
+                                            @if(!string.IsNullOrEmpty(release.Version))
+                                            {
+                                                <text> @release.Version</text>
+                                            }
+                                            @if(!string.IsNullOrEmpty(release.Platform))
+                                            {
+                                                <text> (@release.Platform)</text>
+                                            }
+                                        </MudLink>
+                                    </td>
+                                    <td>@release.CollectedOn?.Date.ToShortDateString()</td>
+                                    <td>
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                       Color="Color.Error" Size="Size.Small"
+                                                       OnClick="@(() => RemoveReleaseAsync(release.SoftwareReleaseId))"/>
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </MudSimpleTable>
+                    }
+                    else
+                    {
+                        <MudAlert Severity="Severity.Info" Class="mb-4">No software in your collection yet.</MudAlert>
+                    }
+                }
             </MudItem>
         </MudGrid>
     </MudTabPanel>

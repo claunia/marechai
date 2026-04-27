@@ -39,4 +39,5 @@ public class SoftwareRelease : BaseModel<ulong>
     public virtual ICollection<SoundSynthBySoftwareRelease>         SupportedSoundSynths { get; set; }
     public virtual ICollection<SoftwareVersionBySoftwareRelease>    IncludedVersions     { get; set; }
     public virtual ICollection<SoftwareBySoftwareRelease>           IncludedSoftware     { get; set; }
+    public virtual ICollection<CollectedSoftwareRelease>            CollectedBy          { get; set; }
 }

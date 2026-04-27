@@ -28,15 +28,21 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Marechai.Pages.Machines;
 
 public partial class View
 {
     int              _id;
+    bool             _isCollected;
     bool             _loaded;
     MachineDto _machine;
     List<Guid>       _photos;
+    bool             _togglingCollection;
+
+    [CascadingParameter]
+    Task<AuthenticationState> AuthState { get; set; }
 
     [Parameter]
     public int Id
@@ -59,7 +65,32 @@ public partial class View
 
         _photos           = await MachinePhotosService.GetGuidsByMachineAsync(Id);
 
+        AuthenticationState authState = await AuthState;
+
+        if(authState.User.Identity?.IsAuthenticated == true)
+            _isCollected = await CollectionSvc.IsMachineCollectedAsync(Id);
+
         _loaded = true;
         StateHasChanged();
+    }
+
+    async Task ToggleCollectionAsync()
+    {
+        _togglingCollection = true;
+
+        if(_isCollected)
+        {
+            (bool success, _) = await CollectionSvc.RemoveMachineFromCollectionAsync(Id);
+
+            if(success) _isCollected = false;
+        }
+        else
+        {
+            (bool success, _) = await CollectionSvc.AddMachineToCollectionAsync(Id);
+
+            if(success) _isCollected = true;
+        }
+
+        _togglingCollection = false;
     }
 }

@@ -309,7 +309,7 @@ namespace Marechai.ApiClient
             ApiClientBuilder.RegisterDefaultDeserializer<FormParseNodeFactory>();
             if (string.IsNullOrEmpty(RequestAdapter.BaseUrl))
             {
-                RequestAdapter.BaseUrl = "http://localhost:5023";
+                RequestAdapter.BaseUrl = "http://localhost:5199";
             }
             PathParameters.TryAdd("baseurl", RequestAdapter.BaseUrl);
         }

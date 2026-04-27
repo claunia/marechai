@@ -23,17 +23,25 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
-using System.ComponentModel;
+using System;
+using System.Text.Json.Serialization;
 
-namespace Marechai.Database.Models;
+namespace Marechai.Data.Dtos;
 
-public class ProcessorsByOwnedMachine : BaseModel<long>
+public class CollectedBookDto
 {
-    public int  ProcessorId    { get; set; }
-    public long OwnedMachineId { get; set; }
-    [DisplayName("Speed (MHz)")]
-    public float Speed { get; set; }
+    [JsonPropertyName("book_id")]
+    public long BookId { get; set; }
 
-    public virtual OwnedMachine OwnedMachine { get; set; }
-    public virtual Processor    Processor    { get; set; }
+    [JsonPropertyName("title")]
+    public string Title { get; set; }
+
+    [JsonPropertyName("cover_url")]
+    public string? CoverUrl { get; set; }
+
+    [JsonPropertyName("published")]
+    public DateTimeOffset? Published { get; set; }
+
+    [JsonPropertyName("collected_on")]
+    public DateTimeOffset CollectedOn { get; set; }
 }

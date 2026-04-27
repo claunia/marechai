@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Marechai.Pages.Documents;
 
@@ -35,11 +36,16 @@ public partial class View
     List<CompanyByDocumentDto>       _companies;
     DocumentDto                      _document;
     long                             _id;
+    bool                             _isCollected;
     bool                             _loaded;
     List<DocumentByMachineFamilyDto> _machineFamilies;
     List<DocumentByMachineDto>       _machines;
     List<PersonByDocumentDto>        _people;
     DocumentSynopsisDto              _synopsis;
+    bool                             _togglingCollection;
+
+    [CascadingParameter]
+    Task<AuthenticationState> AuthState { get; set; }
 
     [Parameter]
     public long Id
@@ -81,7 +87,32 @@ public partial class View
         _machines        = await Service.GetMachinesByDocumentAsync(Id);
         _machineFamilies = await Service.GetMachineFamiliesByDocumentAsync(Id);
 
+        AuthenticationState authState = await AuthState;
+
+        if(authState.User.Identity?.IsAuthenticated == true)
+            _isCollected = await CollectionSvc.IsDocumentCollectedAsync(Id);
+
         _loaded = true;
         StateHasChanged();
+    }
+
+    async Task ToggleCollectionAsync()
+    {
+        _togglingCollection = true;
+
+        if(_isCollected)
+        {
+            (bool success, _) = await CollectionSvc.RemoveDocumentFromCollectionAsync(Id);
+
+            if(success) _isCollected = false;
+        }
+        else
+        {
+            (bool success, _) = await CollectionSvc.AddDocumentToCollectionAsync(Id);
+
+            if(success) _isCollected = true;
+        }
+
+        _togglingCollection = false;
     }
 }

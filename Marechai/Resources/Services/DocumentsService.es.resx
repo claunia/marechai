@@ -283,4 +283,10 @@
     <data name="Status" xml:space="preserve">
         <value>Estado</value>
     </data>
+    <data name="In Collection" xml:space="preserve">
+        <value>En colección</value>
+    </data>
+    <data name="Add to Collection" xml:space="preserve">
+        <value>Añadir a colección</value>
+    </data>
 </root>

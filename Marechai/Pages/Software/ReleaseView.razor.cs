@@ -30,6 +30,7 @@ using Humanizer;
 using Marechai.ApiClient.Models;
 using Marechai.Data;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Marechai.Pages.Software;
 
@@ -40,6 +41,7 @@ public partial class ReleaseView
     int                                                    _id;
     List<SoftwareVersionBySoftwareReleaseDto>               _includedVersions = [];
     List<SoftwareBySoftwareReleaseDto>                     _includedSoftware = [];
+    bool                                                   _isCollected;
     bool                                                   _loaded;
     List<GpuBySoftwareReleaseDto>                          _minimumGpus = [];
     List<SoftwareProductCodeDto>                           _productCodes = [];
@@ -47,6 +49,10 @@ public partial class ReleaseView
     SoftwareReleaseDto                                     _release;
     string                                                 _softwareName;
     List<SoundSynthBySoftwareReleaseDto>                   _soundSynths = [];
+    bool                                                   _togglingCollection;
+
+    [CascadingParameter]
+    Task<AuthenticationState> AuthState { get; set; }
 
     [Parameter]
     public int Id
@@ -109,8 +115,33 @@ public partial class ReleaseView
         // Aggregate companies from multiple levels
         await LoadAggregatedCompaniesAsync();
 
+        AuthenticationState authState = await AuthState;
+
+        if(authState.User.Identity?.IsAuthenticated == true)
+            _isCollected = await CollectionSvc.IsSoftwareReleaseCollectedAsync(Id);
+
         _loaded = true;
         StateHasChanged();
+    }
+
+    async Task ToggleCollectionAsync()
+    {
+        _togglingCollection = true;
+
+        if(_isCollected)
+        {
+            (bool success, _) = await CollectionSvc.RemoveSoftwareReleaseFromCollectionAsync(Id);
+
+            if(success) _isCollected = false;
+        }
+        else
+        {
+            (bool success, _) = await CollectionSvc.AddSoftwareReleaseToCollectionAsync(Id);
+
+            if(success) _isCollected = true;
+        }
+
+        _togglingCollection = false;
     }
 
     async Task LoadAggregatedCompaniesAsync()

@@ -23,18 +23,21 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
-using System.ComponentModel.DataAnnotations;
-using Marechai.Data;
+using System.Text.Json.Serialization;
 
-namespace Marechai.Database.Models;
+namespace Marechai.Data.Dtos;
 
-public class StorageByOwnedMachine : BaseModel<long>
+public class UserCollectionSummaryDto
 {
-    public long             OwnedMachineId { get; set; }
-    public StorageType      Type           { get; set; }
-    public StorageInterface Interface      { get; set; }
-    [Range(1, long.MaxValue)]
-    public long Capacity { get; set; }
+    [JsonPropertyName("book_count")]
+    public int BookCount { get; set; }
 
-    public virtual OwnedMachine OwnedMachine { get; set; }
+    [JsonPropertyName("document_count")]
+    public int DocumentCount { get; set; }
+
+    [JsonPropertyName("machine_count")]
+    public int MachineCount { get; set; }
+
+    [JsonPropertyName("software_release_count")]
+    public int SoftwareReleaseCount { get; set; }
 }
