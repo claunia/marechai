@@ -21,6 +21,9 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.11"/>
     <PackageVersion Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0"/>
     <PackageVersion Include="Pomelo.EntityFrameworkCore.MySql.Json.Microsoft" Version="9.0.0"/>
+    <!-- Unique to Marechai.MobyGames -->
+    <PackageVersion Include="HtmlAgilityPack" Version="1.12.1"/>
+    <PackageVersion Include="MySqlConnector" Version="2.4.0"/>
     <!-- Build infrastructure -->
     <PackageVersion Include="Packaging.Targets" Version="0.1.232"/>
     <!-- Unique to Marechai.Server.csproj -->

@@ -149,6 +149,12 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<CollectedBook>                       CollectedBooks                      { get; set; }
     public virtual DbSet<CollectedDocument>                   CollectedDocuments                  { get; set; }
     public virtual DbSet<CollectedSoftwareRelease>            CollectedSoftwareReleases           { get; set; }
+    public virtual DbSet<SoftwareGenre>                      SoftwareGenres                      { get; set; }
+    public virtual DbSet<GenreBySoftware>                    GenresBySoftware                    { get; set; }
+    public virtual DbSet<PeopleBySoftware>                   PeopleBySoftware                    { get; set; }
+    public virtual DbSet<SoftwareAttribute>                  SoftwareAttributes                  { get; set; }
+    public virtual DbSet<MobyGamesImportState>               MobyGamesImportStates               { get; set; }
+    public virtual DbSet<MobyGamesRejection>                 MobyGamesRejections                 { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -2385,6 +2391,63 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .WithMany(p => p.CollectedBy)
                   .HasForeignKey(e => e.SoftwareReleaseId)
                   .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<SoftwareGenre>(entity =>
+        {
+            entity.HasIndex(e => new { e.Name, e.Type }).IsUnique();
+        });
+
+        modelBuilder.Entity<GenreBySoftware>(entity =>
+        {
+            entity.HasKey(e => new { e.SoftwareId, e.GenreId });
+
+            entity.HasOne(e => e.Software)
+                  .WithMany(p => p.Genres)
+                  .HasForeignKey(e => e.SoftwareId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Genre)
+                  .WithMany(p => p.Softwares)
+                  .HasForeignKey(e => e.GenreId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<PeopleBySoftware>(entity =>
+        {
+            entity.HasIndex(e => new { e.SoftwareId, e.PersonId, e.Role }).IsUnique();
+
+            entity.HasOne(e => e.Software)
+                  .WithMany(p => p.Credits)
+                  .HasForeignKey(e => e.SoftwareId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Person)
+                  .WithMany()
+                  .HasForeignKey(e => e.PersonId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<SoftwareAttribute>(entity =>
+        {
+            entity.HasIndex(e => new { e.SoftwareReleaseId, e.Category, e.Key });
+
+            entity.HasOne(e => e.SoftwareRelease)
+                  .WithMany(p => p.Attributes)
+                  .HasForeignKey(e => e.SoftwareReleaseId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<MobyGamesImportState>(entity =>
+        {
+            entity.HasIndex(e => e.MobyGameId).IsUnique();
+            entity.HasIndex(e => e.Status);
+        });
+
+        modelBuilder.Entity<MobyGamesRejection>(entity =>
+        {
+            entity.HasIndex(e => e.MobyGameId);
+            entity.HasIndex(e => e.ReviewAction);
         });
     }
 }

@@ -1,0 +1,108 @@
+using System;
+using System.Threading.Tasks;
+using Marechai.Database.Models;
+using Marechai.MobyGames.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+
+namespace Marechai.MobyGames;
+
+class Program
+{
+    static async Task<int> Main(string[] args)
+    {
+        Console.WriteLine("\e[32;1mMarechai MobyGames HTML Import Tool\e[0m\n");
+
+        var config = new ConfigurationBuilder()
+                    .AddJsonFile("appsettings.json")
+                    .Build();
+
+        string marechaiConn = config.GetConnectionString("DefaultConnection");
+        string mobyConn     = config.GetConnectionString("MobyGamesSource");
+
+        if(string.IsNullOrEmpty(marechaiConn) || string.IsNullOrEmpty(mobyConn))
+        {
+            Console.WriteLine("\e[31;1mMissing connection strings in appsettings.json\e[0m");
+
+            return 1;
+        }
+
+        // Setup EF context factory
+        var optionsBuilder = new DbContextOptionsBuilder<MarechaiContext>();
+
+        optionsBuilder.UseLazyLoadingProxies()
+                      .UseMySql(marechaiConn,
+                                new MariaDbServerVersion(new Version(10, 5, 0)),
+                                b => b.UseMicrosoftJson().EnableStringComparisonTranslations());
+
+        var factory = new MarechaiContextFactory(optionsBuilder.Options);
+
+        var sourceDb        = new SourceDatabaseService(mobyConn);
+        var companyMatcher  = new CompanyMatcher(factory);
+        var personMatcher   = new PersonMatcher(factory);
+        var platformMatcher = new PlatformMatcher(factory);
+        var countryMatcher  = new CountryMatcher(factory);
+        var stateService    = new StateService(factory);
+        var importService   = new ImportService(factory, sourceDb, companyMatcher,
+                                                personMatcher, platformMatcher,
+                                                countryMatcher, stateService);
+
+        string command = args.Length > 0 ? args[0].ToLowerInvariant() : "import";
+
+        switch(command)
+        {
+            case "import":
+                int batchSize = config.GetValue("Import:BatchSize", 500);
+
+                for(int i = 0; i < args.Length - 1; i++)
+                {
+                    if(args[i] == "--batch-size" && int.TryParse(args[i + 1], out int bs))
+                        batchSize = bs;
+                }
+
+                // Determine batch number
+                var processed = await stateService.GetProcessedGameIdsAsync();
+                int batchNumber = (processed.Count / batchSize) + 1;
+
+                Console.WriteLine($"  Batch size: {batchSize}, Batch number: {batchNumber}");
+
+                int totalGames = await sourceDb.GetTotalGameCountAsync();
+                Console.WriteLine($"  Total games in source: {totalGames}");
+
+                await importService.RunBatchAsync(batchSize, batchNumber);
+
+                break;
+
+            case "status":
+                await stateService.PrintStatusAsync();
+
+                break;
+
+            case "reset":
+                string resetId = null;
+
+                for(int i = 0; i < args.Length - 1; i++)
+                {
+                    if(args[i] == "--game")
+                        resetId = args[i + 1];
+                }
+
+                if(!string.IsNullOrEmpty(resetId))
+                    await stateService.ResetGameAsync(resetId);
+                else
+                    Console.WriteLine("  Usage: reset --game <mobyGameId>");
+
+                break;
+
+            default:
+                Console.WriteLine("  Usage:");
+                Console.WriteLine("    import [--batch-size N]  Import next batch of games");
+                Console.WriteLine("    status                   Show import status counts");
+                Console.WriteLine("    reset --game <id>        Reset a game to unprocessed");
+
+                break;
+        }
+
+        return 0;
+    }
+}

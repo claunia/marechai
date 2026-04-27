@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>Marechai.MobyGames</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack"/>
+    <PackageReference Include="MySqlConnector"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies"/>
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql"/>
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql.Json.Microsoft"/>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Marechai.Database\Marechai.Database.csproj"/>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="appsettings.json" CopyToOutputDirectory="PreserveNewest"/>
+  </ItemGroup>
+</Project>

@@ -4,6 +4,7 @@ using Marechai.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Marechai.Database.Migrations
 {
     [DbContext(typeof(MarechaiContext))]
-    partial class MarechaiContextModelSnapshot : ModelSnapshot
+    [Migration("20260427164816_AddMobyGamesImportModels")]
+    partial class AddMobyGamesImportModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4247,10 +4250,8 @@ namespace Marechai.Database.Migrations
                         .HasMaxLength(1024)
                         .HasColumnType("varchar(1024)");
 
-                    b.Property<string>("MobyGameId")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("varchar(64)");
+                    b.Property<int>("MobyGameId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ProcessedOn")
                         .HasColumnType("datetime(6)");
@@ -4296,10 +4297,8 @@ namespace Marechai.Database.Migrations
                         .HasMaxLength(512)
                         .HasColumnType("varchar(512)");
 
-                    b.Property<string>("MobyGameId")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("varchar(64)");
+                    b.Property<int>("MobyGameId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Reason")
                         .IsRequired()

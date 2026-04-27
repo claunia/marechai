@@ -795,7 +795,11 @@ public enum ProductCodeIssuer : byte
     Ubisoft        = 5,
     Bethesda       = 6,
     Sega           = 7,
-    Amazon         = 8
+    Amazon         = 8,
+    [Display(Name = "PlayStation Network")]
+    PSN            = 9,
+    eBay           = 10,
+    Other          = 255
 }
 
 public enum BarcodeType : byte
@@ -865,4 +869,31 @@ public enum UnM49Type : byte
     SubRegion = 2,
     [Display(Name = "Country")]
     Country   = 3
+}
+
+public enum SoftwareGenreType : byte
+{
+    [Display(Name = "Genre")]
+    Genre       = 0,
+    [Display(Name = "Perspective")]
+    Perspective = 1,
+    [Display(Name = "Gameplay")]
+    Gameplay    = 2,
+    [Display(Name = "Setting")]
+    Setting     = 3
+}
+
+public enum MobyGamesImportStatus : byte
+{
+    Pending  = 0,
+    Imported = 1,
+    Rejected = 2,
+    Failed   = 3
+}
+
+public enum MobyGamesRejectionReview : byte
+{
+    Pending    = 0,
+    Confirmed  = 1,
+    Overridden = 2
 }
