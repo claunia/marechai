@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="News" xml:space="preserve">
+        <value>Actualités</value>
+        <comment>News</comment>
+    </data>
+    <data name="New computer in database" xml:space="preserve">
+        <value>Nouvel ordinateur dans la base de données</value>
+        <comment>New computer in database</comment>
+    </data>
+    <data name="New console in database" xml:space="preserve">
+        <value>Nouvelle console dans la base de données</value>
+        <comment>New console in database</comment>
+    </data>
+    <data name="New computer in collection" xml:space="preserve">
+        <value>Nouvel ordinateur dans la collection</value>
+        <comment>New computer in collection</comment>
+    </data>
+    <data name="New console in collection" xml:space="preserve">
+        <value>Nouvelle console dans la collection</value>
+        <comment>New console in collection</comment>
+    </data>
+    <data name="Updated computer in database" xml:space="preserve">
+        <value>Ordinateur mis à jour dans la base de données</value>
+        <comment>Updated computer in database</comment>
+    </data>
+    <data name="Updated console in database" xml:space="preserve">
+        <value>Console mise à jour dans la base de données</value>
+        <comment>Updated console in database</comment>
+    </data>
+    <data name="Updated computer in collection" xml:space="preserve">
+        <value>Ordinateur mis à jour dans la collection</value>
+        <comment>Updated computer in collection</comment>
+    </data>
+    <data name="Updated console in collection" xml:space="preserve">
+        <value>Console mise à jour dans la collection</value>
+        <comment>Updated console in collection</comment>
+    </data>
+    <data name="Loading..." xml:space="preserve">
+        <value>Chargement...</value>
+        <comment>Loading...</comment>
+    </data>
+    <data name="Date" xml:space="preserve">
+        <value>Date</value>
+        <comment>Date</comment>
+    </data>
+    <data name="Type" xml:space="preserve">
+        <value>Type</value>
+        <comment>Type</comment>
+    </data>
+    <data name="Affected ID" xml:space="preserve">
+        <value>ID affecté</value>
+        <comment>Affected ID</comment>
+    </data>
+    <data name="Delete news" xml:space="preserve">
+        <value>Supprimer l'actualité</value>
+        <comment>Delete news</comment>
+    </data>
+    <data name="Are you sure you want to delete the news type {0} from {1} that affect artifact ID {2}?" xml:space="preserve">
+        <value>Êtes-vous sûr de vouloir supprimer l'actualité de type {0} du {1} qui affecte l'artefact ID {2} ?</value>
+        <comment>Are you sure you want to delete the news type {0} from {1} that affect artifact ID {2}?</comment>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Annuler</value>
+        <comment>Cancel</comment>
+    </data>
+    <data name="New book in database" xml:space="preserve">
+        <value>Nouveau livre dans la base de données</value>
+        <comment>New book in database</comment>
+    </data>
+    <data name="Updated book in database" xml:space="preserve">
+        <value>Livre mis à jour dans la base de données</value>
+        <comment>Updated book in database</comment>
+    </data>
+    <data name="New document in database" xml:space="preserve">
+        <value>Nouveau document dans la base de données</value>
+        <comment>New document in database</comment>
+    </data>
+    <data name="Updated document in database" xml:space="preserve">
+        <value>Document mis à jour dans la base de données</value>
+        <comment>Updated document in database</comment>
+    </data>
+    <data name="New magazine in database" xml:space="preserve">
+        <value>Nouveau magazine dans la base de données</value>
+        <comment>New magazine in database</comment>
+    </data>
+    <data name="Updated magazine in database" xml:space="preserve">
+        <value>Magazine mis à jour dans la base de données</value>
+        <comment>Updated magazine in database</comment>
+    </data>
+    <data name="New person in database" xml:space="preserve">
+        <value>Nouvelle personne dans la base de données</value>
+        <comment>New person in database</comment>
+    </data>
+    <data name="Updated person in database" xml:space="preserve">
+        <value>Personne mise à jour dans la base de données</value>
+        <comment>Updated person in database</comment>
+    </data>
+    <data name="New software in database" xml:space="preserve">
+        <value>Nouveau logiciel dans la base de données</value>
+        <comment>New software in database</comment>
+    </data>
+    <data name="Updated software in database" xml:space="preserve">
+        <value>Logiciel mis à jour dans la base de données</value>
+        <comment>Updated software in database</comment>
+    </data>
+    <data name="New software version in database" xml:space="preserve">
+        <value>Nouvelle version de logiciel dans la base de données</value>
+        <comment>New software version in database</comment>
+    </data>
+    <data name="Updated software version in database" xml:space="preserve">
+        <value>Version de logiciel mise à jour dans la base de données</value>
+        <comment>Updated software version in database</comment>
+    </data>
+    <data name="New software release in database" xml:space="preserve">
+        <value>Nouvelle publication de logiciel dans la base de données</value>
+        <comment>New software release in database</comment>
+    </data>
+    <data name="Updated software release in database" xml:space="preserve">
+        <value>Publication de logiciel mise à jour dans la base de données</value>
+        <comment>Updated software release in database</comment>
+    </data>
+    <data name="New GPU in database" xml:space="preserve">
+        <value>Nouveau GPU dans la base de données</value>
+        <comment>New GPU in database</comment>
+    </data>
+    <data name="Updated GPU in database" xml:space="preserve">
+        <value>GPU mis à jour dans la base de données</value>
+        <comment>Updated GPU in database</comment>
+    </data>
+    <data name="New sound synthesizer in database" xml:space="preserve">
+        <value>Nouveau synthétiseur sonore dans la base de données</value>
+        <comment>New sound synthesizer in database</comment>
+    </data>
+    <data name="Updated sound synthesizer in database" xml:space="preserve">
+        <value>Synthétiseur sonore mis à jour dans la base de données</value>
+        <comment>Updated sound synthesizer in database</comment>
+    </data>
+    <data name="New processor in database" xml:space="preserve">
+        <value>Nouveau processeur dans la base de données</value>
+        <comment>New processor in database</comment>
+    </data>
+    <data name="Updated processor in database" xml:space="preserve">
+        <value>Processeur mis à jour dans la base de données</value>
+        <comment>Updated processor in database</comment>
+    </data>
+    <data name="Date precision" xml:space="preserve">
+        <value>Précision de la date</value>
+        <comment>Date precision</comment>
+    </data>
+    <data name="Full date" xml:space="preserve">
+        <value>Date complète</value>
+        <comment>Full date</comment>
+    </data>
+    <data name="Month and year only" xml:space="preserve">
+        <value>Mois et année uniquement</value>
+        <comment>Month and year only</comment>
+    </data>
+    <data name="Year only" xml:space="preserve">
+        <value>Année uniquement</value>
+        <comment>Year only</comment>
+    </data>
+</root>

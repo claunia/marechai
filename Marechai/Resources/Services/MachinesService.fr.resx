@@ -1,0 +1,517 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Loading..." xml:space="preserve">
+        <value>Chargement...</value>
+        <comment>Loading...</comment>
+    </data>
+    <data name="Machine not found in database" xml:space="preserve">
+        <value>Machine introuvable dans la base de données</value>
+        <comment>Machine not found in database</comment>
+    </data>
+    <data name="+info" xml:space="preserve">
+        <value>+info</value>
+        <comment>+info</comment>
+    </data>
+    <data name="PROTOTYPE" xml:space="preserve">
+        <value>PROTOTYPE</value>
+        <comment>PROTOTYPE</comment>
+    </data>
+    <data name="Introduction date" xml:space="preserve">
+        <value>Date d'introduction</value>
+        <comment>Introduction date</comment>
+    </data>
+    <data name="Family" xml:space="preserve">
+        <value>Famille</value>
+        <comment>Family</comment>
+    </data>
+    <data name="Model" xml:space="preserve">
+        <value>Modèle</value>
+        <comment>Model</comment>
+    </data>
+    <data name="Processors" xml:space="preserve">
+        <value>Processeurs</value>
+        <comment>Processors</comment>
+    </data>
+    <data name="{0} @{1}MHz ({2} bits)" xml:space="preserve">
+        <value>{0} à {1}MHz ({2} bits)</value>
+        <comment>{0} @{1}MHz ({2} bits)</comment>
+    </data>
+    <data name="{0} @{1}MHz" xml:space="preserve">
+        <value>{0} à {1}MHz</value>
+        <comment>{0} @{1}MHz</comment>
+    </data>
+    <data name="Manufacturer" xml:space="preserve">
+        <value>Fabricant</value>
+        <comment>Manufacturer</comment>
+    </data>
+    <data name="Instruction set" xml:space="preserve">
+        <value>Jeu d'instructions</value>
+        <comment>Instruction set</comment>
+    </data>
+    <data name="Nominal speed" xml:space="preserve">
+        <value>Vitesse nominale</value>
+        <comment>Nominal speed</comment>
+    </data>
+    <data name="Registers" xml:space="preserve">
+        <value>Registres</value>
+        <comment>Registers</comment>
+    </data>
+    <data name="{0} general purpose registers of {1} bits that can be used as floating point registers of {2} bits and SIMD registers of {3} bits." xml:space="preserve">
+        <value>{0} registres à usage général de {1} bits pouvant être utilisés comme registres à virgule flottante de {2} bits et registres SIMD de {3} bits.</value>
+        <comment>{0} general purpose registers of {1} bits that can be used as floating point registers of {2} bits and SIMD registers of {3} bits.</comment>
+    </data>
+    <data name="{0} general purpose registers of {1} bits that can be used as floating point registers of {2} bits." xml:space="preserve">
+        <value>{0} registres à usage général de {1} bits pouvant être utilisés comme registres à virgule flottante de {2} bits.</value>
+        <comment>{0} general purpose registers of {1} bits that can be used as floating point registers of {2} bits.</comment>
+    </data>
+    <data name="{0} general purpose registers of {1} bits that can be used as SIMD registers of {2} bits." xml:space="preserve">
+        <value>{0} registres à usage général de {1} bits pouvant être utilisés comme registres SIMD de {2} bits.</value>
+        <comment>{0} general purpose registers of {1} bits that can be used as SIMD registers of {2} bits.</comment>
+    </data>
+    <data name="{0} general purpose registers of {1} bits." xml:space="preserve">
+        <value>{0} registres à usage général de {1} bits.</value>
+        <comment>{0} general purpose registers of {1} bits.</comment>
+    </data>
+    <data name="{0} floating point registers of {1} bits that can be used as SIMD registers of {2} bits." xml:space="preserve">
+        <value>{0} registres à virgule flottante de {1} bits pouvant être utilisés comme registres SIMD de {2} bits.</value>
+        <comment>{0} floating point registers of {1} bits that can be used as SIMD registers of {2} bits.</comment>
+    </data>
+    <data name="{0} floating point registers of {1} bits." xml:space="preserve">
+        <value>{0} registres à virgule flottante de {1} bits.</value>
+        <comment>{0} floating point registers of {1} bits.</comment>
+    </data>
+    <data name="Single instruction, multiple data" xml:space="preserve">
+        <value>Instruction unique, données multiples</value>
+        <comment>Single instruction, multiple data</comment>
+    </data>
+    <data name="{0} SIMD registers of {1} bits." xml:space="preserve">
+        <value>{0} registres SIMD de {1} bits.</value>
+        <comment>{0} SIMD registers of {1} bits.</comment>
+    </data>
+    <data name="Multi-core" xml:space="preserve">
+        <value>Multicœur</value>
+        <comment>Multi-core</comment>
+    </data>
+    <data name="{0} cores." xml:space="preserve">
+        <value>{0} cœurs.</value>
+        <comment>{0} cores.</comment>
+    </data>
+    <data name="Simultaneous multithreading" xml:space="preserve">
+        <value>Multithreading simultané</value>
+        <comment>Simultaneous multithreading</comment>
+    </data>
+    <data name="{0} threads per core." xml:space="preserve">
+        <value>{0} fils d'exécution par cœur.</value>
+        <comment>{0} threads per core.</comment>
+    </data>
+    <data name="{0} threads." xml:space="preserve">
+        <value>{0} fils d'exécution.</value>
+        <comment>{0} threads.</comment>
+    </data>
+    <data name="Bus" xml:space="preserve">
+        <value>Bus</value>
+        <comment>Bus</comment>
+    </data>
+    <data name="{0}-bit data." xml:space="preserve">
+        <value>{0} bits de données.</value>
+        <comment>{0}-bit data.</comment>
+    </data>
+    <data name="{0}-bit address." xml:space="preserve">
+        <value>{0} bits d'adresse.</value>
+        <comment>{0}-bit address.</comment>
+    </data>
+    <data name="Cache" xml:space="preserve">
+        <value>Cache</value>
+        <comment>Cache</comment>
+    </data>
+    <data name="{0}KiB combined instruction-data L1" xml:space="preserve">
+        <value>{0} Kio de L1 combinée instructions-données</value>
+        <comment>{0}KiB combined instruction-data L1</comment>
+    </data>
+    <data name="{0}KiB instruction L1" xml:space="preserve">
+        <value>{0} Kio de L1 d'instructions</value>
+        <comment>{0}KiB instruction L1</comment>
+    </data>
+    <data name="{0}KiB data L1" xml:space="preserve">
+        <value>{0} Kio de L1 de données</value>
+        <comment>{0}KiB data L1</comment>
+    </data>
+    <data name="{0}KiB L2" xml:space="preserve">
+        <value>{0} Kio L2</value>
+        <comment>{0}KiB L2</comment>
+    </data>
+    <data name="{0}KiB L3" xml:space="preserve">
+        <value>{0} Kio L3</value>
+        <comment>{0}KiB L3</comment>
+    </data>
+    <data name="Package" xml:space="preserve">
+        <value>Boîtier</value>
+        <comment>Package</comment>
+    </data>
+    <data name="Manufacturing process" xml:space="preserve">
+        <value>Procédé de fabrication</value>
+        <comment>Manufacturing process</comment>
+    </data>
+    <data name="{0} @{1}µm" xml:space="preserve">
+        <value>{0} en {1}µm</value>
+        <comment>{0} @{1}µm</comment>
+    </data>
+    <data name="{0} @{1}nm" xml:space="preserve">
+        <value>{0} en {1}nm</value>
+        <comment>{0} @{1}nm</comment>
+    </data>
+    <data name="{0}µm" xml:space="preserve">
+        <value>{0}µm</value>
+        <comment>{0}µm</comment>
+    </data>
+    <data name="{0}nm" xml:space="preserve">
+        <value>{0}nm</value>
+        <comment>{0}nm</comment>
+    </data>
+    <data name="Die size" xml:space="preserve">
+        <value>Taille de la puce</value>
+        <comment>Die size</comment>
+    </data>
+    <data name="{0} mm²" xml:space="preserve">
+        <value>{0} mm²</value>
+        <comment>{0} mm²</comment>
+    </data>
+    <data name="Transistors" xml:space="preserve">
+        <value>Transistors</value>
+        <comment>Transistors</comment>
+    </data>
+    <data name="Memory" xml:space="preserve">
+        <value>Mémoire</value>
+        <comment>Memory</comment>
+    </data>
+    <data name="{0} GiB" xml:space="preserve">
+        <value>{0} Gio</value>
+        <comment>{0} GiB</comment>
+    </data>
+    <data name="{0} MiB" xml:space="preserve">
+        <value>{0} Mio</value>
+        <comment>{0} MiB</comment>
+    </data>
+    <data name="{0} KiB" xml:space="preserve">
+        <value>{0} Kio</value>
+        <comment>{0} KiB</comment>
+    </data>
+    <data name="{0} bytes" xml:space="preserve">
+        <value>{0} octets</value>
+        <comment>{0} bytes</comment>
+    </data>
+    <data name="Unknown size" xml:space="preserve">
+        <value>Taille inconnue</value>
+        <comment>Unknown size</comment>
+    </data>
+    <data name="{0} GHz" xml:space="preserve">
+        <value>{0} GHz</value>
+        <comment>{0} GHz</comment>
+    </data>
+    <data name="{0} MHz" xml:space="preserve">
+        <value>{0} MHz</value>
+        <comment>{0} MHz</comment>
+    </data>
+    <data name="{0} KHz" xml:space="preserve">
+        <value>{0} KHz</value>
+        <comment>{0} KHz</comment>
+    </data>
+    <data name="{0} Hz" xml:space="preserve">
+        <value>{0} Hz</value>
+        <comment>{0} Hz</comment>
+    </data>
+    <data name="unknown speed" xml:space="preserve">
+        <value>vitesse inconnue</value>
+        <comment>unknown speed</comment>
+    </data>
+    <data name="{0} of {1} memory ({2} at {3})" xml:space="preserve">
+        <value>{0} de mémoire {1} ({2} à {3})</value>
+        <comment>{0} of {1} memory ({2} at {3})</comment>
+    </data>
+    <data name="Graphics processing units" xml:space="preserve">
+        <value>Unités de traitement graphique</value>
+        <comment>Graphics processing units</comment>
+    </data>
+    <data name="Framebuffer" xml:space="preserve">
+        <value>Framebuffer</value>
+        <comment>Framebuffer</comment>
+    </data>
+    <data name="This machine directly draws pixels from software to a memory region that's converted to video output by a DAC or similar without using any specific graphics processing unit." xml:space="preserve">
+        <value>Cette machine dessine directement les pixels depuis le logiciel vers une zone mémoire convertie en sortie vidéo par un CNA ou similaire sans utiliser d'unité de traitement graphique spécifique.</value>
+        <comment>This machine directly draws pixels from software to a memory region that's converted to video output by a DAC or similar without using any specific graphics processing unit.</comment>
+    </data>
+    <data name="Sound synthesizers" xml:space="preserve">
+        <value>Synthétiseurs sonores</value>
+        <comment>Sound synthesizers</comment>
+    </data>
+    <data name="Software" xml:space="preserve">
+        <value>Logiciel</value>
+        <comment>Software</comment>
+    </data>
+    <data name="This machine directly sends data to a DAC or similar connected to the audio output." xml:space="preserve">
+        <value>Cette machine envoie directement des données à un CNA ou similaire connecté à la sortie audio.</value>
+        <comment>This machine directly sends data to a DAC or similar connected to the audio output.</comment>
+    </data>
+    <data name="Generators" xml:space="preserve">
+        <value>Générateurs</value>
+        <comment>Generators</comment>
+    </data>
+    <data name="{0} voices" xml:space="preserve">
+        <value>{0} voix</value>
+        <comment>{0} voices</comment>
+    </data>
+    <data name="{0} square wave" xml:space="preserve">
+        <value>{0} onde carrée</value>
+        <comment>{0} square wave</comment>
+    </data>
+    <data name="{0} white noise" xml:space="preserve">
+        <value>{0} bruit blanc</value>
+        <comment>{0} white noise</comment>
+    </data>
+    <data name="Sample rate" xml:space="preserve">
+        <value>Fréquence d'échantillonnage</value>
+        <comment>Sample rate</comment>
+    </data>
+    <data name="Storage" xml:space="preserve">
+        <value>Stockage</value>
+        <comment>Storage</comment>
+    </data>
+    <data name="{0} bits at {1} KHz" xml:space="preserve">
+        <value>{0} bits à {1} KHz</value>
+        <comment>{0} bits at {1} KHz</comment>
+    </data>
+    <data name="{0} bits at {1} Hz" xml:space="preserve">
+        <value>{0} bits à {1} Hz</value>
+        <comment>{0} bits at {1} Hz</comment>
+    </data>
+    <data name="{0} bits" xml:space="preserve">
+        <value>{0} bits</value>
+        <comment>{0} bits</comment>
+    </data>
+    <data name="Synthesizer type" xml:space="preserve">
+        <value>Type de synthétiseur</value>
+        <comment>Synthesizer type</comment>
+    </data>
+    <data name="{0} bps" xml:space="preserve">
+        <value>{0} bps</value>
+        <comment>{0} bps</comment>
+    </data>
+    <data name="Available {0} interface." xml:space="preserve">
+        <value>Interface {0} disponible.</value>
+        <comment>Available {0} interface.</comment>
+    </data>
+    <data name="{0} connected thru a {1} interface with a nominal capacity of {2}" xml:space="preserve">
+        <value>{0} connecté via une interface {1} avec une capacité nominale de {2}</value>
+        <comment>{0} connected thru a {1} interface with a nominal capacity of {2}</comment>
+    </data>
+    <data name="{0} connected thru a {1} interface" xml:space="preserve">
+        <value>{0} connecté via une interface {1}</value>
+        <comment>{0} connected thru a {1} interface</comment>
+    </data>
+    <data name="{0} with a nominal capacity of {1}" xml:space="preserve">
+        <value>{0} avec une capacité nominale de {1}</value>
+        <comment>{0} with a nominal capacity of {1}</comment>
+    </data>
+    <data name="Type" xml:space="preserve">
+        <value>Type</value>
+        <comment>Type</comment>
+    </data>
+    <data name="Introduced" xml:space="preserve">
+        <value>Introduite</value>
+        <comment>Introduced</comment>
+    </data>
+    <data name="Name" xml:space="preserve">
+        <value>Nom</value>
+        <comment>Name</comment>
+    </data>
+    <data name="Company" xml:space="preserve">
+        <value>Entreprise</value>
+        <comment>Company</comment>
+    </data>
+    <data name="Machines" xml:space="preserve">
+        <value>Machines</value>
+        <comment>Machines</comment>
+    </data>
+    <data name="Details" xml:space="preserve">
+        <value>Détails</value>
+        <comment>Details</comment>
+    </data>
+    <data name="Edit" xml:space="preserve">
+        <value>Modifier</value>
+        <comment>Edit</comment>
+    </data>
+    <data name="Delete" xml:space="preserve">
+        <value>Supprimer</value>
+        <comment>Delete</comment>
+    </data>
+    <data name="Delete machine" xml:space="preserve">
+        <value>Supprimer la machine</value>
+        <comment>Delete machine</comment>
+    </data>
+    <data name="Are you sure you want to delete {0} {1}?" xml:space="preserve">
+        <value>Êtes-vous sûr de vouloir supprimer {0} {1} ?</value>
+        <comment>Are you sure you want to delete {0} {1}?</comment>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Annuler</value>
+        <comment>Cancel</comment>
+    </data>
+    <data name="Machine details" xml:space="preserve">
+        <value>Détails de la machine</value>
+        <comment>Machine details</comment>
+    </data>
+    <data name="Back to list" xml:space="preserve">
+        <value>Retour à la liste</value>
+        <comment>Back to list</comment>
+    </data>
+    <data name="Save" xml:space="preserve">
+        <value>Enregistrer</value>
+        <comment>Save</comment>
+    </data>
+    <data name="Unknown (model)" xml:space="preserve">
+        <value>Inconnu</value>
+        <comment>Unknown, referring to a model</comment>
+    </data>
+    <data name="Unknown (introduction date)" xml:space="preserve">
+        <value>Inconnue</value>
+        <comment>Unknown, referring to an introduction date</comment>
+    </data>
+    <data name="None (family)" xml:space="preserve">
+        <value>Aucune</value>
+        <comment>No family assigned</comment>
+    </data>
+    <data name="Please enter a valid name." xml:space="preserve">
+        <value>Veuillez saisir un nom valide.</value>
+        <comment>Please enter a valid name.</comment>
+    </data>
+    <data name="Please enter a valid model." xml:space="preserve">
+        <value>Veuillez saisir un modèle valide.</value>
+        <comment>Please enter a valid model.</comment>
+    </data>
+    <data name="Please enter an introduction date." xml:space="preserve">
+        <value>Veuillez saisir une date d'introduction.</value>
+        <comment>Please enter an introduction date.</comment>
+    </data>
+    <data name="Name must contain less than 255 characters." xml:space="preserve">
+        <value>Le nom doit contenir moins de 255 caractères.</value>
+        <comment>Name must contain less than 255 characters.</comment>
+    </data>
+    <data name="Model must contain less than 50 characters." xml:space="preserve">
+        <value>Le modèle doit contenir moins de 50 caractères.</value>
+        <comment>Model must contain less than 50 characters.</comment>
+    </data>
+    <data name="Unknown (memory by machine speed)" xml:space="preserve">
+        <value>Inconnue</value>
+        <comment>Unknown, referring to memory speed</comment>
+    </data>
+    <data name="Unknown (processor by machine speed)" xml:space="preserve">
+        <value>Inconnue</value>
+        <comment>Unknown, referring to processor speed</comment>
+    </data>
+    <data name="Unknown (memory by machine size)" xml:space="preserve">
+        <value>Inconnu</value>
+        <comment>Unknown, referring to memory size</comment>
+    </data>
+    <data name="Unknown or empty (storage by machine nominal capacity)" xml:space="preserve">
+        <value>Inconnue ou vide</value>
+        <comment>Unknown, referring to storage nominal capacity</comment>
+    </data>
+    <data name="Add new (gpu by machine)" xml:space="preserve">
+        <value>Ajouter</value>
+        <comment>Add a new GPU to a machine</comment>
+    </data>
+    <data name="Add new (sound by machine)" xml:space="preserve">
+        <value>Ajouter</value>
+        <comment>Add a new sound synth to a machine</comment>
+    </data>
+    <data name="Add new (pocessor by machine)" xml:space="preserve">
+        <value>Ajouter</value>
+        <comment>Add a new processor to a machine</comment>
+    </data>
+    <data name="Add new (memory by machine)" xml:space="preserve">
+        <value>Ajouter</value>
+        <comment>Add a new memory to a machine</comment>
+    </data>
+    <data name="Add new (storage by machine)" xml:space="preserve">
+        <value>Ajouter</value>
+        <comment>Add a new storage to a machine</comment>
+    </data>
+    <data name="Date precision" xml:space="preserve">
+        <value>Précision de la date</value>
+        <comment>Date precision</comment>
+    </data>
+    <data name="Full date" xml:space="preserve">
+        <value>Date complète</value>
+        <comment>Full date</comment>
+    </data>
+    <data name="Month and year only" xml:space="preserve">
+        <value>Mois et année uniquement</value>
+        <comment>Month and year only</comment>
+    </data>
+    <data name="Year only" xml:space="preserve">
+        <value>Année uniquement</value>
+        <comment>Year only</comment>
+    </data>
+</root>

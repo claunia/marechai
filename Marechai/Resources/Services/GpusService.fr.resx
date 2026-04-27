@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Graphics Processing Units" xml:space="preserve">
+        <value>Unités de traitement graphique</value>
+        <comment>Graphics Processing Units</comment>
+    </data>
+    <data name="Graphical processing unit details" xml:space="preserve">
+        <value>Détails de l'unité de traitement graphique</value>
+        <comment>Graphical processing unit details</comment>
+    </data>
+    <data name="Company" xml:space="preserve">
+        <value>Entreprise</value>
+        <comment>Company</comment>
+    </data>
+    <data name="Name" xml:space="preserve">
+        <value>Nom</value>
+        <comment>Name</comment>
+    </data>
+    <data name="Model code" xml:space="preserve">
+        <value>Code modèle</value>
+        <comment>Model code</comment>
+    </data>
+    <data name="Model" xml:space="preserve">
+        <value>Modèle</value>
+        <comment>Model</comment>
+    </data>
+    <data name="Introduced" xml:space="preserve">
+        <value>Introduit le</value>
+        <comment>Introduced</comment>
+    </data>
+    <data name="Introduction date" xml:space="preserve">
+        <value>Date d'introduction</value>
+        <comment>Introduction date</comment>
+    </data>
+    <data name="Details" xml:space="preserve">
+        <value>Détails</value>
+        <comment>Details</comment>
+    </data>
+    <data name="Package" xml:space="preserve">
+        <value>Boîtier</value>
+        <comment>Package</comment>
+    </data>
+    <data name="Process" xml:space="preserve">
+        <value>Procédé</value>
+        <comment>Process</comment>
+    </data>
+    <data name="Process (nm)" xml:space="preserve">
+        <value>Taille du procédé en nm</value>
+        <comment>Process (nm)</comment>
+    </data>
+    <data name="Die size (mm²)" xml:space="preserve">
+        <value>Taille de la puce (mm²)</value>
+        <comment>Die size (mm²)</comment>
+    </data>
+    <data name="Die size" xml:space="preserve">
+        <value>Taille de la puce</value>
+        <comment>Die size</comment>
+    </data>
+    <data name="Transistors" xml:space="preserve">
+        <value>Transistors</value>
+        <comment>Transistors</comment>
+    </data>
+    <data name="Resolutions" xml:space="preserve">
+        <value>Résolutions</value>
+        <comment>Resolutions</comment>
+    </data>
+    <data name="Supported resolutions" xml:space="preserve">
+        <value>Résolutions supportées</value>
+        <comment>Supported resolutions</comment>
+    </data>
+    <data name="Width" xml:space="preserve">
+        <value>Largeur</value>
+        <comment>Width</comment>
+    </data>
+    <data name="Height" xml:space="preserve">
+        <value>Hauteur</value>
+        <comment>Height</comment>
+    </data>
+    <data name="Colors" xml:space="preserve">
+        <value>Couleurs</value>
+        <comment>Colors</comment>
+    </data>
+    <data name="Palette" xml:space="preserve">
+        <value>Palette</value>
+        <comment>Palette</comment>
+    </data>
+    <data name="Chars" xml:space="preserve">
+        <value>Caractères</value>
+        <comment>Chars</comment>
+    </data>
+    <data name="Grayscale" xml:space="preserve">
+        <value>Niveaux de gris</value>
+        <comment>Grayscale</comment>
+    </data>
+    <data name="Prototype" xml:space="preserve">
+        <value>Prototype</value>
+        <comment>Prototype</comment>
+    </data>
+    <data name="Manufacturer" xml:space="preserve">
+        <value>Fabricant</value>
+        <comment>Manufacturer</comment>
+    </data>
+    <data name="Manufacturing process" xml:space="preserve">
+        <value>Procédé de fabrication</value>
+        <comment>Manufacturing process</comment>
+    </data>
+    <data name="Computers" xml:space="preserve">
+        <value>Ordinateurs</value>
+        <comment>Computers</comment>
+    </data>
+    <data name="Consoles" xml:space="preserve">
+        <value>Consoles</value>
+        <comment>Consoles</comment>
+    </data>
+    <data name="Framebuffer" xml:space="preserve">
+        <value>Framebuffer</value>
+        <comment>Framebuffer</comment>
+    </data>
+    <data name="Software" xml:space="preserve">
+        <value>Logiciel</value>
+        <comment>Software</comment>
+    </data>
+    <data name="None" xml:space="preserve">
+        <value>Aucun</value>
+        <comment>None</comment>
+    </data>
+    <data name="No GPUs found" xml:space="preserve">
+        <value>Aucun GPU trouvé</value>
+        <comment>No GPUs found</comment>
+    </data>
+    <data name="Filter GPUs..." xml:space="preserve">
+        <value>Filtrer les GPUs...</value>
+        <comment>Filter GPUs...</comment>
+    </data>
+    <data name="{0} GPUs found in the database." xml:space="preserve">
+        <value>{0} GPUs trouvés dans la base de données.</value>
+        <comment>{0} GPUs found in the database.</comment>
+    </data>
+    <data name="{0} @{1}µm" xml:space="preserve">
+        <value>{0} @{1}µm</value>
+        <comment>{0} @{1}µm</comment>
+    </data>
+    <data name="{0} @{1}nm" xml:space="preserve">
+        <value>{0} @{1}nm</value>
+        <comment>{0} @{1}nm</comment>
+    </data>
+    <data name="{0}µm" xml:space="preserve">
+        <value>{0}µm</value>
+        <comment>{0}µm</comment>
+    </data>
+    <data name="{0}nm" xml:space="preserve">
+        <value>{0}nm</value>
+        <comment>{0}nm</comment>
+    </data>
+    <data name="{0} mm²" xml:space="preserve">
+        <value>{0} mm²</value>
+        <comment>{0} mm²</comment>
+    </data>
+    <data name="This machine directly draws pixels from software to a memory region that's converted to video output by a DAC or similar without using any specific graphics processing unit." xml:space="preserve">
+        <value>Cette machine dessine directement les pixels depuis le logiciel vers une zone mémoire convertie en sortie vidéo par un CNA ou similaire sans utiliser d'unité de traitement graphique spécifique.</value>
+        <comment>This machine directly draws pixels from software to a memory region that's converted to video output by a DAC or similar without using any specific graphics processing unit.</comment>
+    </data>
+    <data name="Unknown (company)" xml:space="preserve">
+        <value>Inconnu(e)</value>
+        <comment>Unknown, referring to a company</comment>
+    </data>
+    <data name="Unknown (model code)" xml:space="preserve">
+        <value>Inconnu</value>
+        <comment>Unknown, referring to a model code</comment>
+    </data>
+    <data name="Unknown (introduction date)" xml:space="preserve">
+        <value>Inconnue</value>
+        <comment>Unknown, referring to an introduction date</comment>
+    </data>
+    <data name="Unknown (package)" xml:space="preserve">
+        <value>Inconnu</value>
+        <comment>Unknown, referring to a chip package</comment>
+    </data>
+    <data name="Unknown (process)" xml:space="preserve">
+        <value>Inconnu</value>
+        <comment>Unknown, referring to the chip process</comment>
+    </data>
+    <data name="Unknown (process size)" xml:space="preserve">
+        <value>Inconnu</value>
+        <comment>Unknown, referring to the chip process size in nanometers</comment>
+    </data>
+    <data name="Unknown (die size)" xml:space="preserve">
+        <value>Inconnue</value>
+        <comment>Unknown, referring to the die size in square millimeters</comment>
+    </data>
+    <data name="Unknown (transistors)" xml:space="preserve">
+        <value>Inconnus</value>
+        <comment>Unknown, referring to the number of transistors</comment>
+    </data>
+    <data name="GPU Management" xml:space="preserve">
+        <value>Gestion des GPUs</value>
+        <comment>GPU Management</comment>
+    </data>
+    <data name="Manage GPUs, specifications, and supported resolutions." xml:space="preserve">
+        <value>Gérer les GPUs, spécifications et résolutions supportées.</value>
+        <comment>Manage GPUs, specifications, and supported resolutions.</comment>
+    </data>
+    <data name="Add GPU" xml:space="preserve">
+        <value>Ajouter un GPU</value>
+        <comment>Add GPU</comment>
+    </data>
+    <data name="Edit GPU" xml:space="preserve">
+        <value>Modifier le GPU</value>
+        <comment>Edit GPU</comment>
+    </data>
+    <data name="Delete GPU" xml:space="preserve">
+        <value>Supprimer le GPU</value>
+        <comment>Delete GPU</comment>
+    </data>
+    <data name="GPU created successfully." xml:space="preserve">
+        <value>GPU créé avec succès.</value>
+        <comment>GPU created successfully.</comment>
+    </data>
+    <data name="GPU updated successfully." xml:space="preserve">
+        <value>GPU mis à jour avec succès.</value>
+        <comment>GPU updated successfully.</comment>
+    </data>
+    <data name="GPU deleted successfully." xml:space="preserve">
+        <value>GPU supprimé avec succès.</value>
+        <comment>GPU deleted successfully.</comment>
+    </data>
+    <data name="Are you sure you want to delete GPU '{0}'? This action cannot be undone." xml:space="preserve">
+        <value>Êtes-vous sûr de vouloir supprimer le GPU « {0} » ? Cette action est irréversible.</value>
+        <comment>Are you sure you want to delete GPU '{0}'? This action cannot be undone.</comment>
+    </data>
+    <data name="Name is required." xml:space="preserve">
+        <value>Le nom est obligatoire.</value>
+        <comment>Name is required.</comment>
+    </data>
+    <data name="Add Resolution" xml:space="preserve">
+        <value>Ajouter une résolution</value>
+        <comment>Add Resolution</comment>
+    </data>
+    <data name="Search Resolution" xml:space="preserve">
+        <value>Rechercher une résolution</value>
+        <comment>Search Resolution</comment>
+    </data>
+    <data name="Search Company" xml:space="preserve">
+        <value>Rechercher une entreprise</value>
+        <comment>Search Company</comment>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Annuler</value>
+        <comment>Cancel</comment>
+    </data>
+    <data name="Save" xml:space="preserve">
+        <value>Enregistrer</value>
+        <comment>Save</comment>
+    </data>
+    <data name="Actions" xml:space="preserve">
+        <value>Actions</value>
+        <comment>Actions</comment>
+    </data>
+    <data name="{0} colors" xml:space="preserve">
+        <value>{0} couleurs</value>
+        <comment>{0} colors</comment>
+    </data>
+    <data name="{0} grays" xml:space="preserve">
+        <value>{0} niveaux de gris</value>
+        <comment>{0} grays</comment>
+    </data>
+    <data name="{0} characters" xml:space="preserve">
+        <value>{0} caractères</value>
+        <comment>{0} characters</comment>
+    </data>
+    <data name="{0} colors from {1} palette" xml:space="preserve">
+        <value>{0} couleurs sur une palette de {1}</value>
+        <comment>{0} colors from {1} palette</comment>
+    </data>
+    <data name="Import CSV" xml:space="preserve">
+        <value>Importer CSV</value>
+        <comment>Import CSV</comment>
+    </data>
+    <data name="Upload a CSV file to import GPUs in bulk. Download the template first to see the expected format." xml:space="preserve">
+        <value>Téléversez un fichier CSV pour importer des GPUs en masse. Téléchargez d'abord le modèle pour voir le format attendu.</value>
+        <comment>Upload a CSV file to import GPUs in bulk. Download the template first to see the expected format.</comment>
+    </data>
+    <data name="Download Template" xml:space="preserve">
+        <value>Télécharger le modèle</value>
+        <comment>Download Template</comment>
+    </data>
+    <data name="Upload CSV" xml:space="preserve">
+        <value>Téléverser CSV</value>
+        <comment>Upload CSV</comment>
+    </data>
+    <data name="Processing..." xml:space="preserve">
+        <value>Traitement...</value>
+        <comment>Processing...</comment>
+    </data>
+    <data name="The CSV file is empty or has no data rows." xml:space="preserve">
+        <value>Le fichier CSV est vide ou ne contient aucune ligne de données.</value>
+        <comment>The CSV file is empty or has no data rows.</comment>
+    </data>
+    <data name="Error reading CSV: {0}" xml:space="preserve">
+        <value>Erreur de lecture du CSV : {0}</value>
+        <comment>Error reading CSV: {0}</comment>
+    </data>
+    <data name="{0} rows parsed. {1} auto-rejected (no company match or validation error). Selected rows will be REJECTED — unselected rows will be imported." xml:space="preserve">
+        <value>{0} lignes analysées. {1} rejetées automatiquement (pas de correspondance d'entreprise ou erreur de validation). Les lignes sélectionnées seront REJETÉES — les lignes non sélectionnées seront importées.</value>
+        <comment>{0} rows parsed. {1} auto-rejected (no company match or validation error). Selected rows will be REJECTED — unselected rows will be imported.</comment>
+    </data>
+    <data name="Duplicate GPU name" xml:space="preserve">
+        <value>Nom de GPU en doublon</value>
+        <comment>Duplicate GPU name</comment>
+    </data>
+    <data name="Import" xml:space="preserve">
+        <value>Importer</value>
+        <comment>Import</comment>
+    </data>
+    <data name="Importing {0} of {1}..." xml:space="preserve">
+        <value>Importation de {0} sur {1}...</value>
+        <comment>Importing {0} of {1}...</comment>
+    </data>
+    <data name="Import complete. {0} imported, {1} rejected, {2} failed." xml:space="preserve">
+        <value>Importation terminée. {0} importés, {1} rejetés, {2} échoués.</value>
+        <comment>Import complete. {0} imported, {1} rejected, {2} failed.</comment>
+    </data>
+    <data name="The following items were not imported:" xml:space="preserve">
+        <value>Les éléments suivants n'ont pas été importés :</value>
+        <comment>The following items were not imported:</comment>
+    </data>
+    <data name="Status" xml:space="preserve">
+        <value>Statut</value>
+        <comment>Status</comment>
+    </data>
+    <data name="Rejected" xml:space="preserve">
+        <value>Rejeté</value>
+        <comment>Rejected</comment>
+    </data>
+    <data name="Download Rejected" xml:space="preserve">
+        <value>Télécharger les rejetés</value>
+        <comment>Download Rejected</comment>
+    </data>
+    <data name="Unknown error" xml:space="preserve">
+        <value>Erreur inconnue</value>
+        <comment>Unknown error</comment>
+    </data>
+    <data name="Close" xml:space="preserve">
+        <value>Fermer</value>
+        <comment>Close</comment>
+    </data>
+    <data name="Date precision" xml:space="preserve">
+        <value>Précision de la date</value>
+        <comment>Date precision</comment>
+    </data>
+    <data name="Full date" xml:space="preserve">
+        <value>Date complète</value>
+        <comment>Full date</comment>
+    </data>
+    <data name="Month and year only" xml:space="preserve">
+        <value>Mois et année uniquement</value>
+        <comment>Month and year only</comment>
+    </data>
+    <data name="Year only" xml:space="preserve">
+        <value>Année uniquement</value>
+        <comment>Year only</comment>
+    </data>
+</root>

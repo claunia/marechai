@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="User Management" xml:space="preserve">
+        <value>Gestion des utilisateurs</value>
+        <comment>User Management</comment>
+    </data>
+    <data name="Manage users, passwords, and role assignments." xml:space="preserve">
+        <value>Gérer les utilisateurs, mots de passe et attributions de rôles.</value>
+        <comment>Manage users, passwords, and role assignments.</comment>
+    </data>
+    <data name="Add User" xml:space="preserve">
+        <value>Ajouter un utilisateur</value>
+        <comment>Add User</comment>
+    </data>
+    <data name="{0} selected" xml:space="preserve">
+        <value>{0} sélectionné(s)</value>
+        <comment>{0} selected</comment>
+    </data>
+    <data name="Delete" xml:space="preserve">
+        <value>Supprimer</value>
+        <comment>Delete</comment>
+    </data>
+    <data name="Roles" xml:space="preserve">
+        <value>Rôles</value>
+        <comment>Roles</comment>
+    </data>
+    <data name="Lockout" xml:space="preserve">
+        <value>Verrouillage</value>
+        <comment>Lockout</comment>
+    </data>
+    <data name="Email" xml:space="preserve">
+        <value>E-mail</value>
+        <comment>Email</comment>
+    </data>
+    <data name="Username" xml:space="preserve">
+        <value>Nom d'utilisateur</value>
+        <comment>Username</comment>
+    </data>
+    <data name="Phone" xml:space="preserve">
+        <value>Téléphone</value>
+        <comment>Phone</comment>
+    </data>
+    <data name="Actions" xml:space="preserve">
+        <value>Actions</value>
+        <comment>Actions</comment>
+    </data>
+    <data name="Edit" xml:space="preserve">
+        <value>Modifier</value>
+        <comment>Edit</comment>
+    </data>
+    <data name="Change Password" xml:space="preserve">
+        <value>Changer le mot de passe</value>
+        <comment>Change Password</comment>
+    </data>
+    <data name="Manage Roles" xml:space="preserve">
+        <value>Gérer les rôles</value>
+        <comment>Manage Roles</comment>
+    </data>
+    <data name="Edit User" xml:space="preserve">
+        <value>Modifier l'utilisateur</value>
+        <comment>Edit User</comment>
+    </data>
+    <data name="Delete User" xml:space="preserve">
+        <value>Supprimer l'utilisateur</value>
+        <comment>Delete User</comment>
+    </data>
+    <data name="Delete Users" xml:space="preserve">
+        <value>Supprimer les utilisateurs</value>
+        <comment>Delete Users</comment>
+    </data>
+    <data name="Bulk Role Operation" xml:space="preserve">
+        <value>Opération de rôle en masse</value>
+        <comment>Bulk Role Operation</comment>
+    </data>
+    <data name="Bulk Lockout" xml:space="preserve">
+        <value>Verrouillage en masse</value>
+        <comment>Bulk Lockout</comment>
+    </data>
+    <data name="User created successfully." xml:space="preserve">
+        <value>Utilisateur créé avec succès.</value>
+        <comment>User created successfully.</comment>
+    </data>
+    <data name="User updated successfully." xml:space="preserve">
+        <value>Utilisateur mis à jour avec succès.</value>
+        <comment>User updated successfully.</comment>
+    </data>
+    <data name="Password changed successfully." xml:space="preserve">
+        <value>Mot de passe changé avec succès.</value>
+        <comment>Password changed successfully.</comment>
+    </data>
+    <data name="User deleted successfully." xml:space="preserve">
+        <value>Utilisateur supprimé avec succès.</value>
+        <comment>User deleted successfully.</comment>
+    </data>
+    <data name="Are you sure you want to delete user '{0}'? This action cannot be undone." xml:space="preserve">
+        <value>Êtes-vous sûr de vouloir supprimer l'utilisateur « {0} » ? Cette action est irréversible.</value>
+        <comment>Are you sure you want to delete user '{0}'? This action cannot be undone.</comment>
+    </data>
+    <data name="Are you sure you want to delete {0} user(s)? This action cannot be undone." xml:space="preserve">
+        <value>Êtes-vous sûr de vouloir supprimer {0} utilisateur(s) ? Cette action est irréversible.</value>
+        <comment>Are you sure you want to delete {0} user(s)? This action cannot be undone.</comment>
+    </data>
+    <data name="Deleted {0} user(s)." xml:space="preserve">
+        <value>{0} utilisateur(s) supprimé(s).</value>
+        <comment>Deleted {0} user(s).</comment>
+    </data>
+    <data name="{0} failed." xml:space="preserve">
+        <value>{0} échoué(s).</value>
+        <comment>{0} failed.</comment>
+    </data>
+    <data name="Role '{0}' added to {1} user(s)." xml:space="preserve">
+        <value>Rôle « {0} » ajouté à {1} utilisateur(s).</value>
+        <comment>Role '{0}' added to {1} user(s).</comment>
+    </data>
+    <data name="Role '{0}' removed from {1} user(s)." xml:space="preserve">
+        <value>Rôle « {0} » retiré de {1} utilisateur(s).</value>
+        <comment>Role '{0}' removed from {1} user(s).</comment>
+    </data>
+    <data name="Lockout enabled for {0} user(s)." xml:space="preserve">
+        <value>Verrouillage activé pour {0} utilisateur(s).</value>
+        <comment>Lockout enabled for {0} user(s).</comment>
+    </data>
+    <data name="Lockout disabled for {0} user(s)." xml:space="preserve">
+        <value>Verrouillage désactivé pour {0} utilisateur(s).</value>
+        <comment>Lockout disabled for {0} user(s).</comment>
+    </data>
+    <data name="Phone Number" xml:space="preserve">
+        <value>Numéro de téléphone</value>
+        <comment>Phone Number</comment>
+    </data>
+    <data name="Password" xml:space="preserve">
+        <value>Mot de passe</value>
+        <comment>Password</comment>
+    </data>
+    <data name="Confirm Password" xml:space="preserve">
+        <value>Confirmer le mot de passe</value>
+        <comment>Confirm Password</comment>
+    </data>
+    <data name="Email is required." xml:space="preserve">
+        <value>L'e-mail est obligatoire.</value>
+        <comment>Email is required.</comment>
+    </data>
+    <data name="Username is required." xml:space="preserve">
+        <value>Le nom d'utilisateur est obligatoire.</value>
+        <comment>Username is required.</comment>
+    </data>
+    <data name="Password is required." xml:space="preserve">
+        <value>Le mot de passe est obligatoire.</value>
+        <comment>Password is required.</comment>
+    </data>
+    <data name="Password confirmation is required." xml:space="preserve">
+        <value>La confirmation du mot de passe est obligatoire.</value>
+        <comment>Password confirmation is required.</comment>
+    </data>
+    <data name="Email and username are required." xml:space="preserve">
+        <value>L'e-mail et le nom d'utilisateur sont obligatoires.</value>
+        <comment>Email and username are required.</comment>
+    </data>
+    <data name="Password is required for new users." xml:space="preserve">
+        <value>Le mot de passe est obligatoire pour les nouveaux utilisateurs.</value>
+        <comment>Password is required for new users.</comment>
+    </data>
+    <data name="Passwords do not match." xml:space="preserve">
+        <value>Les mots de passe ne correspondent pas.</value>
+        <comment>Passwords do not match.</comment>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Annuler</value>
+        <comment>Cancel</comment>
+    </data>
+    <data name="Save" xml:space="preserve">
+        <value>Enregistrer</value>
+        <comment>Save</comment>
+    </data>
+    <data name="Changing password for {0}" xml:space="preserve">
+        <value>Changement du mot de passe pour {0}</value>
+        <comment>Changing password for {0}</comment>
+    </data>
+    <data name="New Password" xml:space="preserve">
+        <value>Nouveau mot de passe</value>
+        <comment>New Password</comment>
+    </data>
+    <data name="Minimum 6 characters" xml:space="preserve">
+        <value>Minimum 6 caractères</value>
+        <comment>Minimum 6 characters</comment>
+    </data>
+    <data name="Password must be at least 6 characters." xml:space="preserve">
+        <value>Le mot de passe doit contenir au moins 6 caractères.</value>
+        <comment>Password must be at least 6 characters.</comment>
+    </data>
+    <data name="Managing roles for {0}" xml:space="preserve">
+        <value>Gestion des rôles pour {0}</value>
+        <comment>Managing roles for {0}</comment>
+    </data>
+    <data name="Current Roles" xml:space="preserve">
+        <value>Rôles actuels</value>
+        <comment>Current Roles</comment>
+    </data>
+    <data name="No roles assigned." xml:space="preserve">
+        <value>Aucun rôle attribué.</value>
+        <comment>No roles assigned.</comment>
+    </data>
+    <data name="Add Role" xml:space="preserve">
+        <value>Ajouter un rôle</value>
+        <comment>Add Role</comment>
+    </data>
+    <data name="Select role" xml:space="preserve">
+        <value>Sélectionner un rôle</value>
+        <comment>Select role</comment>
+    </data>
+    <data name="Add" xml:space="preserve">
+        <value>Ajouter</value>
+        <comment>Add</comment>
+    </data>
+    <data name="Close" xml:space="preserve">
+        <value>Fermer</value>
+        <comment>Close</comment>
+    </data>
+    <data name="Apply role operation to {0} user(s)" xml:space="preserve">
+        <value>Appliquer l'opération de rôle à {0} utilisateur(s)</value>
+        <comment>Apply role operation to {0} user(s)</comment>
+    </data>
+    <data name="Add role" xml:space="preserve">
+        <value>Ajouter un rôle</value>
+        <comment>Add role</comment>
+    </data>
+    <data name="Remove role" xml:space="preserve">
+        <value>Supprimer le rôle</value>
+        <comment>Remove role</comment>
+    </data>
+    <data name="Apply" xml:space="preserve">
+        <value>Appliquer</value>
+        <comment>Apply</comment>
+    </data>
+    <data name="Update lockout setting for {0} user(s)" xml:space="preserve">
+        <value>Mettre à jour le paramètre de verrouillage pour {0} utilisateur(s)</value>
+        <comment>Update lockout setting for {0} user(s)</comment>
+    </data>
+    <data name="Enable lockout" xml:space="preserve">
+        <value>Activer le verrouillage</value>
+        <comment>Enable lockout</comment>
+    </data>
+    <data name="Disable lockout" xml:space="preserve">
+        <value>Désactiver le verrouillage</value>
+        <comment>Disable lockout</comment>
+    </data>
+    <data name="Delete confirm" xml:space="preserve">
+        <value>Supprimer</value>
+        <comment>Delete confirm</comment>
+    </data>
+    <data name="Date precision" xml:space="preserve">
+        <value>Précision de la date</value>
+        <comment>Date precision</comment>
+    </data>
+    <data name="Full date" xml:space="preserve">
+        <value>Date complète</value>
+        <comment>Full date</comment>
+    </data>
+    <data name="Month and year only" xml:space="preserve">
+        <value>Mois et année uniquement</value>
+        <comment>Month and year only</comment>
+    </data>
+    <data name="Year only" xml:space="preserve">
+        <value>Année uniquement</value>
+        <comment>Year only</comment>
+    </data>
+</root>

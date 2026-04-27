@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Sound synthesizers" xml:space="preserve">
+        <value>Synthétiseurs sonores</value>
+        <comment>Sound synthesizers</comment>
+    </data>
+    <data name="Sound synthesizer details" xml:space="preserve">
+        <value>Détails du synthétiseur sonore</value>
+        <comment>Sound synthesizer details</comment>
+    </data>
+    <data name="Company" xml:space="preserve">
+        <value>Entreprise</value>
+        <comment>Company</comment>
+    </data>
+    <data name="Name" xml:space="preserve">
+        <value>Nom</value>
+        <comment>Name</comment>
+    </data>
+    <data name="Model code" xml:space="preserve">
+        <value>Code modèle</value>
+        <comment>Model code</comment>
+    </data>
+    <data name="Model" xml:space="preserve">
+        <value>Modèle</value>
+        <comment>Model</comment>
+    </data>
+    <data name="Manufacturer" xml:space="preserve">
+        <value>Fabricant</value>
+        <comment>Manufacturer</comment>
+    </data>
+    <data name="Introduced" xml:space="preserve">
+        <value>Introduit le</value>
+        <comment>Introduced</comment>
+    </data>
+    <data name="Introduction date" xml:space="preserve">
+        <value>Date d'introduction</value>
+        <comment>Introduction date</comment>
+    </data>
+    <data name="Details" xml:space="preserve">
+        <value>Détails</value>
+        <comment>Details</comment>
+    </data>
+    <data name="Type" xml:space="preserve">
+        <value>Type</value>
+        <comment>Type</comment>
+    </data>
+    <data name="Synthesizer type" xml:space="preserve">
+        <value>Type de synthétiseur</value>
+        <comment>Synthesizer type</comment>
+    </data>
+    <data name="Generators" xml:space="preserve">
+        <value>Générateurs</value>
+        <comment>Generators</comment>
+    </data>
+    <data name="{0} voices" xml:space="preserve">
+        <value>{0} voix</value>
+        <comment>{0} voices</comment>
+    </data>
+    <data name="{0} square wave" xml:space="preserve">
+        <value>{0} onde carrée</value>
+        <comment>{0} square wave</comment>
+    </data>
+    <data name="{0} white noise" xml:space="preserve">
+        <value>{0} bruit blanc</value>
+        <comment>{0} white noise</comment>
+    </data>
+    <data name="Sample rate" xml:space="preserve">
+        <value>Fréquence d'échantillonnage</value>
+        <comment>Sample rate</comment>
+    </data>
+    <data name="{0} bits at {1} KHz" xml:space="preserve">
+        <value>{0} bits à {1} KHz</value>
+        <comment>{0} bits at {1} KHz</comment>
+    </data>
+    <data name="{0} bits at {1} Hz" xml:space="preserve">
+        <value>{0} bits à {1} Hz</value>
+        <comment>{0} bits at {1} Hz</comment>
+    </data>
+    <data name="{0} bits" xml:space="preserve">
+        <value>{0} bits</value>
+        <comment>{0} bits</comment>
+    </data>
+    <data name="{0} KHz" xml:space="preserve">
+        <value>{0} KHz</value>
+        <comment>{0} KHz</comment>
+    </data>
+    <data name="{0} Hz" xml:space="preserve">
+        <value>{0} Hz</value>
+        <comment>{0} Hz</comment>
+    </data>
+    <data name="Computers" xml:space="preserve">
+        <value>Ordinateurs</value>
+        <comment>Computers</comment>
+    </data>
+    <data name="Consoles" xml:space="preserve">
+        <value>Consoles</value>
+        <comment>Consoles</comment>
+    </data>
+    <data name="Software" xml:space="preserve">
+        <value>Logiciels</value>
+        <comment>Software</comment>
+    </data>
+    <data name="This machine directly sends data to a DAC or similar connected to the audio output." xml:space="preserve">
+        <value>Cette machine envoie directement des données à un CNA ou similaire connecté à la sortie audio.</value>
+        <comment>This machine directly sends data to a DAC or similar connected to the audio output.</comment>
+    </data>
+    <data name="No sound synthesizers found" xml:space="preserve">
+        <value>Aucun synthétiseur sonore trouvé</value>
+        <comment>No sound synthesizers found</comment>
+    </data>
+    <data name="Filter sound synthesizers..." xml:space="preserve">
+        <value>Filtrer les synthétiseurs sonores...</value>
+        <comment>Filter sound synthesizers...</comment>
+    </data>
+    <data name="{0} sound synthesizers found in the database." xml:space="preserve">
+        <value>{0} synthétiseurs sonores trouvés dans la base de données.</value>
+        <comment>{0} sound synthesizers found in the database.</comment>
+    </data>
+    <data name="Unknown (company)" xml:space="preserve">
+        <value>Inconnue</value>
+        <comment>Unknown, referring to a company</comment>
+    </data>
+    <data name="Unknown (model code)" xml:space="preserve">
+        <value>Inconnu</value>
+        <comment>Unknown, referring to a model code</comment>
+    </data>
+    <data name="Unknown (introduction date)" xml:space="preserve">
+        <value>Inconnue</value>
+        <comment>Unknown, referring to an introduction date</comment>
+    </data>
+    <data name="Unknown (voices)" xml:space="preserve">
+        <value>Inconnues</value>
+        <comment>Unknown, referring to voices</comment>
+    </data>
+    <data name="Unknown (sample rate)" xml:space="preserve">
+        <value>Inconnue</value>
+        <comment>Unknown, referring to a sample rate</comment>
+    </data>
+    <data name="Unknown (sample resolution)" xml:space="preserve">
+        <value>Inconnue</value>
+        <comment>Unknown, referring to a sample resolution</comment>
+    </data>
+    <data name="Unknown (square wave channels)" xml:space="preserve">
+        <value>Inconnus</value>
+        <comment>Unknown, referring to square wave channels</comment>
+    </data>
+    <data name="Unknown (white noise channels)" xml:space="preserve">
+        <value>Inconnus</value>
+        <comment>Unknown, referring to white noise channels</comment>
+    </data>
+    <data name="Unknown (type)" xml:space="preserve">
+        <value>Inconnu</value>
+        <comment>Unknown, referring to a type</comment>
+    </data>
+    <data name="Sound Synth Management" xml:space="preserve">
+        <value>Gestion des synthétiseurs sonores</value>
+        <comment>Sound Synth Management</comment>
+    </data>
+    <data name="Manage sound synthesizers, specifications, and properties." xml:space="preserve">
+        <value>Gérer les synthétiseurs sonores, spécifications et propriétés.</value>
+        <comment>Manage sound synthesizers, specifications, and properties.</comment>
+    </data>
+    <data name="Add Sound Synth" xml:space="preserve">
+        <value>Ajouter un synthétiseur sonore</value>
+        <comment>Add Sound Synth</comment>
+    </data>
+    <data name="Edit Sound Synth" xml:space="preserve">
+        <value>Modifier le synthétiseur sonore</value>
+        <comment>Edit Sound Synth</comment>
+    </data>
+    <data name="Delete Sound Synth" xml:space="preserve">
+        <value>Supprimer le synthétiseur sonore</value>
+        <comment>Delete Sound Synth</comment>
+    </data>
+    <data name="Sound synth created successfully." xml:space="preserve">
+        <value>Synthétiseur sonore créé avec succès.</value>
+        <comment>Sound synth created successfully.</comment>
+    </data>
+    <data name="Sound synth updated successfully." xml:space="preserve">
+        <value>Synthétiseur sonore mis à jour avec succès.</value>
+        <comment>Sound synth updated successfully.</comment>
+    </data>
+    <data name="Sound synth deleted successfully." xml:space="preserve">
+        <value>Synthétiseur sonore supprimé avec succès.</value>
+        <comment>Sound synth deleted successfully.</comment>
+    </data>
+    <data name="Are you sure you want to delete sound synth '{0}'? This action cannot be undone." xml:space="preserve">
+        <value>Êtes-vous sûr de vouloir supprimer le synthétiseur sonore « {0} » ? Cette action est irréversible.</value>
+        <comment>Are you sure you want to delete sound synth '{0}'? This action cannot be undone.</comment>
+    </data>
+    <data name="Name is required." xml:space="preserve">
+        <value>Le nom est obligatoire.</value>
+        <comment>Name is required.</comment>
+    </data>
+    <data name="Search Company" xml:space="preserve">
+        <value>Rechercher une entreprise</value>
+        <comment>Search Company</comment>
+    </data>
+    <data name="Voices" xml:space="preserve">
+        <value>Voix</value>
+        <comment>Voices</comment>
+    </data>
+    <data name="Frequency" xml:space="preserve">
+        <value>Fréquence</value>
+        <comment>Frequency</comment>
+    </data>
+    <data name="Depth" xml:space="preserve">
+        <value>Profondeur</value>
+        <comment>Depth</comment>
+    </data>
+    <data name="Square wave" xml:space="preserve">
+        <value>Onde carrée</value>
+        <comment>Square wave</comment>
+    </data>
+    <data name="White noise" xml:space="preserve">
+        <value>Bruit blanc</value>
+        <comment>White noise</comment>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Annuler</value>
+        <comment>Cancel</comment>
+    </data>
+    <data name="Save" xml:space="preserve">
+        <value>Enregistrer</value>
+        <comment>Save</comment>
+    </data>
+    <data name="Actions" xml:space="preserve">
+        <value>Actions</value>
+        <comment>Actions</comment>
+    </data>
+    <data name="Date precision" xml:space="preserve">
+        <value>Précision de la date</value>
+        <comment>Date precision</comment>
+    </data>
+    <data name="Full date" xml:space="preserve">
+        <value>Date complète</value>
+        <comment>Full date</comment>
+    </data>
+    <data name="Month and year only" xml:space="preserve">
+        <value>Mois et année uniquement</value>
+        <comment>Month and year only</comment>
+    </data>
+    <data name="Year only" xml:space="preserve">
+        <value>Année uniquement</value>
+        <comment>Year only</comment>
+    </data>
+    <data name="Import CSV" xml:space="preserve">
+        <value>Importer CSV</value>
+        <comment>Import CSV</comment>
+    </data>
+    <data name="Import Sound Synths" xml:space="preserve">
+        <value>Importer des synthétiseurs sonores</value>
+        <comment>Import Sound Synths</comment>
+    </data>
+    <data name="Upload a CSV file to import sound synthesizers in bulk. Download the template first to see the expected format." xml:space="preserve">
+        <value>Téléversez un fichier CSV pour importer des synthétiseurs sonores en masse. Téléchargez d'abord le modèle pour voir le format attendu.</value>
+        <comment>Upload a CSV file to import sound synthesizers in bulk. Download the template first to see the expected format.</comment>
+    </data>
+    <data name="Download Template" xml:space="preserve">
+        <value>Télécharger le modèle</value>
+        <comment>Download Template</comment>
+    </data>
+    <data name="Upload CSV" xml:space="preserve">
+        <value>Téléverser CSV</value>
+        <comment>Upload CSV</comment>
+    </data>
+    <data name="Processing..." xml:space="preserve">
+        <value>Traitement...</value>
+        <comment>Processing...</comment>
+    </data>
+    <data name="The CSV file is empty or has no data rows." xml:space="preserve">
+        <value>Le fichier CSV est vide ou ne contient aucune ligne de données.</value>
+        <comment>The CSV file is empty or has no data rows.</comment>
+    </data>
+    <data name="Error reading CSV: {0}" xml:space="preserve">
+        <value>Erreur de lecture du CSV : {0}</value>
+        <comment>Error reading CSV: {0}</comment>
+    </data>
+    <data name="{0} rows parsed. {1} auto-rejected (no company match or validation error). Selected rows will be REJECTED — unselected rows will be imported." xml:space="preserve">
+        <value>{0} lignes analysées. {1} rejetées automatiquement (pas de correspondance d'entreprise ou erreur de validation). Les lignes sélectionnées seront REJETÉES — les lignes non sélectionnées seront importées.</value>
+        <comment>{0} rows parsed. {1} auto-rejected (no company match or validation error). Selected rows will be REJECTED — unselected rows will be imported.</comment>
+    </data>
+    <data name="Duplicate sound synth name" xml:space="preserve">
+        <value>Nom de synthétiseur sonore en doublon</value>
+        <comment>Duplicate sound synth name</comment>
+    </data>
+    <data name="Import" xml:space="preserve">
+        <value>Importer</value>
+        <comment>Import</comment>
+    </data>
+    <data name="Importing {0} of {1}..." xml:space="preserve">
+        <value>Importation de {0} sur {1}...</value>
+        <comment>Importing {0} of {1}...</comment>
+    </data>
+    <data name="Import complete. {0} imported, {1} rejected, {2} failed." xml:space="preserve">
+        <value>Importation terminée. {0} importés, {1} rejetés, {2} échoués.</value>
+        <comment>Import complete. {0} imported, {1} rejected, {2} failed.</comment>
+    </data>
+    <data name="The following items were not imported:" xml:space="preserve">
+        <value>Les éléments suivants n'ont pas été importés :</value>
+        <comment>The following items were not imported:</comment>
+    </data>
+    <data name="Rejected" xml:space="preserve">
+        <value>Rejeté</value>
+        <comment>Rejected</comment>
+    </data>
+    <data name="Download Rejected" xml:space="preserve">
+        <value>Télécharger les rejetés</value>
+        <comment>Download Rejected</comment>
+    </data>
+    <data name="Unknown error" xml:space="preserve">
+        <value>Erreur inconnue</value>
+        <comment>Unknown error</comment>
+    </data>
+    <data name="Close" xml:space="preserve">
+        <value>Fermer</value>
+        <comment>Close</comment>
+    </data>
+    <data name="Introduced" xml:space="preserve">
+        <value>Introduit</value>
+        <comment>Introduced</comment>
+    </data>
+    <data name="Status" xml:space="preserve">
+        <value>Statut</value>
+        <comment>Status</comment>
+    </data>
+</root>
