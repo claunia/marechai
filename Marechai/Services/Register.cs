@@ -62,5 +62,6 @@ public static class Register
         services.AddScoped<SoftwareReleasesService>();
         services.AddScoped<AuthService>();
         services.AddScoped<UsersService>();
+        services.AddScoped<ProfileService>();
     }
 }

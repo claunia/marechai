@@ -34,6 +34,7 @@ using Marechai.ApiClient.PeopleByMagazine;
 using Marechai.ApiClient.Processor;
 using Marechai.ApiClient.Processors;
 using Marechai.ApiClient.ProcessorsByMachine;
+using Marechai.ApiClient.Profile;
 using Marechai.ApiClient.Resolutions;
 using Marechai.ApiClient.ResolutionsByGpu;
 using Marechai.ApiClient.ResolutionsByScreen;
@@ -232,6 +233,11 @@ namespace Marechai.ApiClient
         public global::Marechai.ApiClient.ProcessorsByMachine.ProcessorsByMachineRequestBuilder ProcessorsByMachine
         {
             get => new global::Marechai.ApiClient.ProcessorsByMachine.ProcessorsByMachineRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The profile property</summary>
+        public global::Marechai.ApiClient.Profile.ProfileRequestBuilder Profile
+        {
+            get => new global::Marechai.ApiClient.Profile.ProfileRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The resolutions property</summary>
         public global::Marechai.ApiClient.Resolutions.ResolutionsRequestBuilder Resolutions

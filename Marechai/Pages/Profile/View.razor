@@ -1,0 +1,157 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2026 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/profile/{Username}"
+@using Marechai.ApiClient.Models
+@inherits OwningComponentBase<ProfileService>
+@inject IStringLocalizer<ProfileService> L
+
+@if(!_loaded)
+{
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+    </div>
+
+    return;
+}
+
+@if(_profile is null)
+{
+    <MudAlert Severity="Severity.Warning">@L["User not found."]</MudAlert>
+
+    return;
+}
+
+@* ── Hero Header ── *@
+<MudPaper Class="pa-6 mb-6" Elevation="0"
+          Style="background: linear-gradient(135deg, #1a237e 0%, #42a5f5 100%); border-radius: 16px;">
+    <MudStack AlignItems="AlignItems.Center" Spacing="3">
+        @if(!string.IsNullOrWhiteSpace(_profile.AvatarUrl))
+        {
+            <MudAvatar Size="Size.Large" Style="width: 128px; height: 128px; border: 3px solid white;">
+                <MudImage Src="@_profile.AvatarUrl" Alt="@DisplayName"/>
+            </MudAvatar>
+        }
+        else
+        {
+            <MudAvatar Size="Size.Large" Style="width: 128px; height: 128px; border: 3px solid white; background: rgba(255,255,255,0.2);">
+                <MudIcon Icon="@Icons.Material.Filled.Person" Style="color: white; font-size: 64px;"/>
+            </MudAvatar>
+        }
+        <MudText Typo="Typo.h4" Align="Align.Center" Style="color: white; font-weight: 700;">
+            @DisplayName
+        </MudText>
+        @if(!string.IsNullOrWhiteSpace(_profile.DisplayName))
+        {
+            <MudText Typo="Typo.subtitle1" Align="Align.Center" Style="color: rgba(255,255,255,0.8);">
+                @@@_profile.UserName
+            </MudText>
+        }
+        @if(!string.IsNullOrWhiteSpace(_profile.Location))
+        {
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+                <MudIcon Icon="@Icons.Material.Filled.LocationOn" Style="color: rgba(255,255,255,0.8); font-size: 18px;"/>
+                <MudText Typo="Typo.body2" Style="color: rgba(255,255,255,0.8);">@_profile.Location</MudText>
+            </MudStack>
+        }
+    </MudStack>
+</MudPaper>
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="12" md="8" lg="6">
+        @* ── Bio Card ── *@
+        @if(!string.IsNullOrWhiteSpace(_profile.Bio))
+        {
+            <MudCard Elevation="2" Class="mb-4 rounded-lg">
+                <MudCardContent>
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+                        <MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Primary"/>
+                        <MudText Typo="Typo.h6">@L["About"]</MudText>
+                    </MudStack>
+                    <MudText Typo="Typo.body1" Style="white-space: pre-wrap;">@_profile.Bio</MudText>
+                </MudCardContent>
+            </MudCard>
+        }
+
+        @* ── Links & Social Card ── *@
+        @if(HasLinks)
+        {
+            <MudCard Elevation="2" Class="mb-4 rounded-lg">
+                <MudCardContent>
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+                        <MudIcon Icon="@Icons.Material.Filled.Link" Color="Color.Primary"/>
+                        <MudText Typo="Typo.h6">@L["Links"]</MudText>
+                    </MudStack>
+                    <MudStack Spacing="2">
+                        @if(!string.IsNullOrWhiteSpace(_profile.Website))
+                        {
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                <MudIcon Icon="@Icons.Material.Filled.Language" Color="Color.Default"/>
+                                <MudLink Href="@_profile.Website" Target="_blank" Typo="Typo.body1">@_profile.Website</MudLink>
+                            </MudStack>
+                        }
+                        @if(!string.IsNullOrWhiteSpace(_profile.GitHub))
+                        {
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                <MudIcon Icon="@Icons.Custom.Brands.GitHub" Color="Color.Default"/>
+                                <MudLink Href="@($"https://github.com/{_profile.GitHub}")" Target="_blank" Typo="Typo.body1">@_profile.GitHub</MudLink>
+                            </MudStack>
+                        }
+                        @if(!string.IsNullOrWhiteSpace(_profile.Twitter))
+                        {
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                <MudIcon Icon="@Icons.Custom.Brands.X" Color="Color.Default"/>
+                                <MudLink Href="@($"https://x.com/{_profile.Twitter}")" Target="_blank" Typo="Typo.body1">@@@_profile.Twitter</MudLink>
+                            </MudStack>
+                        }
+                        @if(!string.IsNullOrWhiteSpace(_profile.Mastodon))
+                        {
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                <MudIcon Icon="@Icons.Material.Filled.Forum" Color="Color.Default"/>
+                                <MudText Typo="Typo.body1">@_profile.Mastodon</MudText>
+                            </MudStack>
+                        }
+                        @if(!string.IsNullOrWhiteSpace(_profile.Facebook))
+                        {
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                <MudIcon Icon="@Icons.Custom.Brands.Facebook" Color="Color.Default"/>
+                                <MudLink Href="@($"https://facebook.com/{_profile.Facebook}")" Target="_blank" Typo="Typo.body1">@_profile.Facebook</MudLink>
+                            </MudStack>
+                        }
+                        @if(!string.IsNullOrWhiteSpace(_profile.LinkedIn))
+                        {
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                <MudIcon Icon="@Icons.Custom.Brands.LinkedIn" Color="Color.Default"/>
+                                <MudLink Href="@($"https://linkedin.com/in/{_profile.LinkedIn}")" Target="_blank" Typo="Typo.body1">@_profile.LinkedIn</MudLink>
+                            </MudStack>
+                        }
+                    </MudStack>
+                </MudCardContent>
+            </MudCard>
+        }
+    </MudItem>
+</MudGrid>

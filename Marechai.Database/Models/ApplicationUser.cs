@@ -23,13 +23,49 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 
 namespace Marechai.Database.Models;
 
 public class ApplicationUser : IdentityUser
 {
+    [MaxLength(100)]
+    public string? DisplayName { get; set; }
+
+    [MaxLength(2000)]
+    public string? Bio { get; set; }
+
+    [MaxLength(500)]
+    public string? Website { get; set; }
+
+    [MaxLength(200)]
+    public string? Location { get; set; }
+
+    public bool UseGravatar { get; set; } = true;
+
+    public Guid? AvatarGuid { get; set; }
+
+    [MaxLength(10)]
+    public string? OriginalAvatarExtension { get; set; }
+
+    [MaxLength(100)]
+    public string? Twitter { get; set; }
+
+    [MaxLength(100)]
+    public string? GitHub { get; set; }
+
+    [MaxLength(200)]
+    public string? Mastodon { get; set; }
+
+    [MaxLength(200)]
+    public string? Facebook { get; set; }
+
+    [MaxLength(200)]
+    public string? LinkedIn { get; set; }
+
     public virtual ICollection<MachinePhoto>      Photos             { get; set; }
     public virtual ICollection<OwnedMachinePhoto> OwnedMachinePhotos { get; set; }
     public virtual ICollection<OwnedMachine>      OwnedMachines      { get; set; }

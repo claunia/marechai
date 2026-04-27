@@ -53,104 +53,292 @@
     return;
 }
 
-<MudGrid Justify="Justify.Center">
-    <MudItem xs="12" sm="8" md="6">
-        <MudPaper Elevation="2" Class="pa-6 rounded-lg">
-            @if(!string.IsNullOrWhiteSpace(_successMessage))
-            {
-                <MudAlert Severity="Severity.Success" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _successMessage = null">@_successMessage</MudAlert>
-            }
+<MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" Class="mb-4">
+    @* ── Account Settings Tab ── *@
+    <MudTabPanel Text="Account Settings" Icon="@Icons.Material.Filled.Settings">
+        <MudGrid Justify="Justify.Center" Class="pa-4">
+            <MudItem xs="12" sm="8" md="6">
+                @if(!string.IsNullOrWhiteSpace(_successMessage))
+                {
+                    <MudAlert Severity="Severity.Success" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _successMessage = null">@_successMessage</MudAlert>
+                }
 
-            @if(!string.IsNullOrWhiteSpace(_errorMessage))
-            {
-                <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
-            }
+                @if(!string.IsNullOrWhiteSpace(_errorMessage))
+                {
+                    <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+                }
 
-            @if(_isEditing)
-            {
-                <MudTextField @bind-Value="_editUserName"
-                              Label="Username"
+                @if(_isEditing)
+                {
+                    <MudTextField @bind-Value="_editUserName"
+                                  Label="Username"
+                                  Variant="Variant.Outlined"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.Person"
+                                  Class="mb-4"
+                                  Disabled="_isSaving"/>
+
+                    <MudTextField @bind-Value="_editEmail"
+                                  Label="Email"
+                                  Variant="Variant.Outlined"
+                                  InputType="InputType.Email"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.Email"
+                                  Class="mb-4"
+                                  Disabled="_isSaving"/>
+
+                    <MudTextField @bind-Value="_editPhoneNumber"
+                                  Label="Phone Number"
+                                  Variant="Variant.Outlined"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.Phone"
+                                  Class="mb-4"
+                                  Disabled="_isSaving"/>
+
+                    <MudStack Row="true" Spacing="2" Justify="Justify.FlexEnd">
+                        <MudButton Variant="Variant.Text" Color="Color.Default" OnClick="CancelEdit" Disabled="_isSaving">Cancel</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveProfileAsync" Disabled="_isSaving"
+                                   StartIcon="@(_isSaving ? null : Icons.Material.Filled.Save)">
+                            @if(_isSaving)
+                            {
+                                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
+                                <span>Saving...</span>
+                            }
+                            else
+                            {
+                                <span>Save</span>
+                            }
+                        </MudButton>
+                    </MudStack>
+                }
+                else
+                {
+                    <MudList T="string" Dense="true">
+                        <MudListItem T="string" Icon="@Icons.Material.Filled.Person">
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">Username</MudText>
+                            <MudText Typo="Typo.body1">@_profile.UserName</MudText>
+                        </MudListItem>
+                        <MudListItem T="string" Icon="@Icons.Material.Filled.Email">
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">Email</MudText>
+                            <MudText Typo="Typo.body1">@_profile.Email</MudText>
+                        </MudListItem>
+                        <MudListItem T="string" Icon="@Icons.Material.Filled.Phone">
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">Phone Number</MudText>
+                            <MudText Typo="Typo.body1">@(_profile.PhoneNumber ?? "—")</MudText>
+                        </MudListItem>
+                        <MudListItem T="string" Icon="@Icons.Material.Filled.Security">
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">Roles</MudText>
+                            <MudStack Row="true" Spacing="1" Class="mt-1">
+                                @if(_profile.Roles is { Count: > 0 })
+                                {
+                                    @foreach(string role in _profile.Roles)
+                                    {
+                                        <MudChip T="string" Size="Size.Small" Color="Color.Primary" Variant="Variant.Outlined">@role</MudChip>
+                                    }
+                                }
+                                else
+                                {
+                                    <MudText Typo="Typo.body2" Color="Color.Secondary">No roles assigned</MudText>
+                                }
+                            </MudStack>
+                        </MudListItem>
+                    </MudList>
+
+                    <MudDivider Class="my-4"/>
+
+                    <MudStack Row="true" Spacing="2" Justify="Justify.FlexEnd">
+                        <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="StartEdit"
+                                   StartIcon="@Icons.Material.Filled.Edit">Edit Account</MudButton>
+                        <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Href="/account/change-password"
+                                   StartIcon="@Icons.Material.Filled.Lock">Change Password</MudButton>
+                    </MudStack>
+                }
+            </MudItem>
+        </MudGrid>
+    </MudTabPanel>
+
+    @* ── Public Profile Tab ── *@
+    <MudTabPanel Text="Public Profile" Icon="@Icons.Material.Filled.Public">
+        <MudGrid Justify="Justify.Center" Class="pa-4">
+            <MudItem xs="12" sm="8" md="6">
+                @if(!string.IsNullOrWhiteSpace(_publicSuccessMessage))
+                {
+                    <MudAlert Severity="Severity.Success" Class="mb-4" ShowCloseIcon="true"
+                              CloseIconClicked="() => _publicSuccessMessage = null">@_publicSuccessMessage</MudAlert>
+                }
+
+                @if(!string.IsNullOrWhiteSpace(_publicErrorMessage))
+                {
+                    <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true"
+                              CloseIconClicked="() => _publicErrorMessage = null">@_publicErrorMessage</MudAlert>
+                }
+
+                @* ── Avatar Section ── *@
+                <MudText Typo="Typo.h6" Class="mb-2">Avatar</MudText>
+
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3" Class="mb-4">
+                    @if(!string.IsNullOrWhiteSpace(_publicProfile?.AvatarUrl))
+                    {
+                        <MudAvatar Size="Size.Large" Style="width: 96px; height: 96px;">
+                            <MudImage Src="@_publicProfile.AvatarUrl" Alt="Avatar"/>
+                        </MudAvatar>
+                    }
+                    else
+                    {
+                        <MudAvatar Size="Size.Large" Style="width: 96px; height: 96px;">
+                            <MudIcon Icon="@Icons.Material.Filled.Person" Style="font-size: 48px;"/>
+                        </MudAvatar>
+                    }
+
+                    <MudStack Spacing="1">
+                        <MudSwitch T="bool" @bind-Value="_editUseGravatar" Color="Color.Primary"
+                                   Label="Use Gravatar" Disabled="_isSavingPublic"/>
+
+                        @if(!_editUseGravatar)
+                        {
+                            <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center">
+                                <MudFileUpload T="IBrowserFile" Accept=".jpg,.jpeg,.png,.webp,.tiff,.tif,.bmp"
+                                               FilesChanged="OnAvatarFileSelected" MaximumFileCount="1">
+                                    <ActivatorContent>
+                                        <MudButton Variant="Variant.Outlined" Color="Color.Primary"
+                                                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                                                   Size="Size.Small" Disabled="_isUploadingAvatar">
+                                            Upload Avatar
+                                        </MudButton>
+                                    </ActivatorContent>
+                                </MudFileUpload>
+
+                                @if(_publicProfile?.AvatarGuid.HasValue == true)
+                                {
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Error" Size="Size.Small"
+                                               OnClick="DeleteAvatar" Disabled="_isUploadingAvatar">
+                                        Delete
+                                    </MudButton>
+                                }
+                            </MudStack>
+                        }
+                    </MudStack>
+                </MudStack>
+
+                @if(_isUploadingAvatar)
+                {
+                    <MudProgressLinear Indeterminate="true" Class="mb-4"/>
+                }
+
+                @if(!string.IsNullOrWhiteSpace(_avatarMessage))
+                {
+                    <MudAlert Severity="@_avatarMessageSeverity" Class="mb-4" ShowCloseIcon="true"
+                              CloseIconClicked="() => _avatarMessage = null">@_avatarMessage</MudAlert>
+                }
+
+                <MudDivider Class="my-4"/>
+
+                @* ── Profile Fields ── *@
+                <MudTextField @bind-Value="_editDisplayName"
+                              Label="Display Name"
+                              Variant="Variant.Outlined"
+                              HelperText="Shown instead of your username on your public profile."
+                              Counter="100" MaxLength="100"
+                              Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.Badge"
+                              Class="mb-4"
+                              Disabled="_isSavingPublic"/>
+
+                <MudTextField @bind-Value="_editBio"
+                              Label="Bio"
+                              Variant="Variant.Outlined"
+                              Lines="4"
+                              HelperText="Tell people about yourself."
+                              Counter="2000" MaxLength="2000"
+                              Class="mb-4"
+                              Disabled="_isSavingPublic"/>
+
+                <MudTextField @bind-Value="_editWebsite"
+                              Label="Website"
                               Variant="Variant.Outlined"
                               Adornment="Adornment.Start"
-                              AdornmentIcon="@Icons.Material.Filled.Person"
+                              AdornmentIcon="@Icons.Material.Filled.Language"
                               Class="mb-4"
-                              Disabled="_isSaving"/>
+                              Disabled="_isSavingPublic"/>
 
-                <MudTextField @bind-Value="_editEmail"
-                              Label="Email"
+                <MudTextField @bind-Value="_editLocation"
+                              Label="Location"
                               Variant="Variant.Outlined"
-                              InputType="InputType.Email"
+                              HelperText="City, country, etc."
                               Adornment="Adornment.Start"
-                              AdornmentIcon="@Icons.Material.Filled.Email"
+                              AdornmentIcon="@Icons.Material.Filled.LocationOn"
                               Class="mb-4"
-                              Disabled="_isSaving"/>
+                              Disabled="_isSavingPublic"/>
 
-                <MudTextField @bind-Value="_editPhoneNumber"
-                              Label="Phone Number"
+                <MudDivider Class="my-4"/>
+                <MudText Typo="Typo.h6" Class="mb-2">Social Links</MudText>
+
+                <MudTextField @bind-Value="_editTwitter"
+                              Label="Twitter / X"
                               Variant="Variant.Outlined"
+                              HelperText="@("Username (without @)")"
                               Adornment="Adornment.Start"
-                              AdornmentIcon="@Icons.Material.Filled.Phone"
+                              AdornmentIcon="@Icons.Custom.Brands.X"
                               Class="mb-4"
-                              Disabled="_isSaving"/>
+                              Disabled="_isSavingPublic"/>
+
+                <MudTextField @bind-Value="_editGitHub"
+                              Label="GitHub"
+                              Variant="Variant.Outlined"
+                              HelperText="Username"
+                              Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Custom.Brands.GitHub"
+                              Class="mb-4"
+                              Disabled="_isSavingPublic"/>
+
+                <MudTextField @bind-Value="_editMastodon"
+                              Label="Mastodon"
+                              Variant="Variant.Outlined"
+                              HelperText="@("user@instance.social")"
+                              Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.Forum"
+                              Class="mb-4"
+                              Disabled="_isSavingPublic"/>
+
+                <MudTextField @bind-Value="_editFacebook"
+                              Label="Facebook"
+                              Variant="Variant.Outlined"
+                              HelperText="Profile name or URL"
+                              Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Custom.Brands.Facebook"
+                              Class="mb-4"
+                              Disabled="_isSavingPublic"/>
+
+                <MudTextField @bind-Value="_editLinkedIn"
+                              Label="LinkedIn"
+                              Variant="Variant.Outlined"
+                              HelperText="Profile slug (e.g. john-doe)"
+                              Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Custom.Brands.LinkedIn"
+                              Class="mb-4"
+                              Disabled="_isSavingPublic"/>
 
                 <MudStack Row="true" Spacing="2" Justify="Justify.FlexEnd">
-                    <MudButton Variant="Variant.Text" Color="Color.Default" OnClick="CancelEdit" Disabled="_isSaving">Cancel</MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveProfileAsync" Disabled="_isSaving"
-                               StartIcon="@(_isSaving ? null : Icons.Material.Filled.Save)">
-                        @if(_isSaving)
+                    <MudButton Variant="Variant.Outlined" Color="Color.Default"
+                               Href="@($"/profile/{_profile?.UserName}")" Target="_blank"
+                               StartIcon="@Icons.Material.Filled.Visibility">
+                        View Public Profile
+                    </MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SavePublicProfileAsync"
+                               Disabled="_isSavingPublic"
+                               StartIcon="@(_isSavingPublic ? null : Icons.Material.Filled.Save)">
+                        @if(_isSavingPublic)
                         {
                             <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
                             <span>Saving...</span>
                         }
                         else
                         {
-                            <span>Save</span>
+                            <span>Save Public Profile</span>
                         }
                     </MudButton>
                 </MudStack>
-            }
-            else
-            {
-                <MudList T="string" Dense="true">
-                    <MudListItem T="string" Icon="@Icons.Material.Filled.Person">
-                        <MudText Typo="Typo.caption" Color="Color.Secondary">Username</MudText>
-                        <MudText Typo="Typo.body1">@_profile.UserName</MudText>
-                    </MudListItem>
-                    <MudListItem T="string" Icon="@Icons.Material.Filled.Email">
-                        <MudText Typo="Typo.caption" Color="Color.Secondary">Email</MudText>
-                        <MudText Typo="Typo.body1">@_profile.Email</MudText>
-                    </MudListItem>
-                    <MudListItem T="string" Icon="@Icons.Material.Filled.Phone">
-                        <MudText Typo="Typo.caption" Color="Color.Secondary">Phone Number</MudText>
-                        <MudText Typo="Typo.body1">@(_profile.PhoneNumber ?? "—")</MudText>
-                    </MudListItem>
-                    <MudListItem T="string" Icon="@Icons.Material.Filled.Security">
-                        <MudText Typo="Typo.caption" Color="Color.Secondary">Roles</MudText>
-                        <MudStack Row="true" Spacing="1" Class="mt-1">
-                            @if(_profile.Roles is { Count: > 0 })
-                            {
-                                @foreach(string role in _profile.Roles)
-                                {
-                                    <MudChip T="string" Size="Size.Small" Color="Color.Primary" Variant="Variant.Outlined">@role</MudChip>
-                                }
-                            }
-                            else
-                            {
-                                <MudText Typo="Typo.body2" Color="Color.Secondary">No roles assigned</MudText>
-                            }
-                        </MudStack>
-                    </MudListItem>
-                </MudList>
-
-                <MudDivider Class="my-4"/>
-
-                <MudStack Row="true" Spacing="2" Justify="Justify.FlexEnd">
-                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="StartEdit"
-                               StartIcon="@Icons.Material.Filled.Edit">Edit Profile</MudButton>
-                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Href="/account/change-password"
-                               StartIcon="@Icons.Material.Filled.Lock">Change Password</MudButton>
-                </MudStack>
-            }
-        </MudPaper>
-    </MudItem>
-</MudGrid>
+            </MudItem>
+        </MudGrid>
+    </MudTabPanel>
+</MudTabs>

@@ -27,6 +27,7 @@ using System;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.Extensions.Logging;
+using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.Services;
 
@@ -151,6 +152,79 @@ public sealed class AuthService(Marechai.ApiClient.Client             client,
             logger.LogError(ex, "Password change failed");
 
             return (false, "An error occurred while changing password.");
+        }
+    }
+
+    public async Task<PublicProfileDto?> GetPublicProfileAsync()
+    {
+        try
+        {
+            return await client.Auth.Me.PublicProfile.GetAsync();
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Error loading public profile");
+
+            return null;
+        }
+    }
+
+    public async Task<(bool Succeeded, string? ErrorMessage)> UpdatePublicProfileAsync(
+        UpdatePublicProfileRequest request)
+    {
+        try
+        {
+            await client.Auth.Me.PublicProfile.PutAsync(request);
+
+            return (true, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            logger.LogWarning(ex, "Public profile update failed");
+
+            return (false, ex.Detail ?? ex.Title ?? "Update failed.");
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Public profile update failed");
+
+            return (false, "An error occurred while updating public profile.");
+        }
+    }
+
+    public async Task<PublicProfileDto?> UploadAvatarAsync(MultipartBody body)
+    {
+        try
+        {
+            return await client.Auth.Me.Avatar.Upload.PostAsync(body);
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Avatar upload failed");
+
+            return null;
+        }
+    }
+
+    public async Task<(bool Succeeded, string? ErrorMessage)> DeleteAvatarAsync()
+    {
+        try
+        {
+            await client.Auth.Me.Avatar.DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            logger.LogWarning(ex, "Avatar delete failed");
+
+            return (false, ex.Detail ?? ex.Title ?? "Delete failed.");
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Avatar delete failed");
+
+            return (false, "An error occurred while deleting avatar.");
         }
     }
 }

@@ -23,25 +23,38 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Marechai.Data.Models;
 using Marechai.Database.Models;
+using Marechai.Helpers;
 using Marechai.Server.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace Marechai.Server.Controllers;
 
 [ApiController]
 [Route("auth")]
 public class AuthController
-    (UserManager<ApplicationUser> userManager, MarechaiContext context, TokenService tokenService) : ControllerBase
+    (UserManager<ApplicationUser> userManager, MarechaiContext context, TokenService tokenService,
+     IConfiguration               configuration) : ControllerBase
 {
+    static readonly HashSet<string> _allowedExtensions = [".jpg", ".jpeg", ".png", ".webp", ".tiff", ".tif", ".bmp"];
+
+    static readonly HashSet<string> _allowedContentTypes =
+    [
+        "image/jpeg", "image/png", "image/webp", "image/tiff", "image/bmp"
+    ];
+
+    readonly string _assetRootPath = configuration["AssetRootPath"]!;
     [HttpPost]
     [Route("login")]
     [ProducesResponseType(typeof(AuthResponse),
@@ -184,5 +197,195 @@ public class AuthController
         if(!result.Succeeded) return BadRequest(result.Errors);
 
         return NoContent();
+    }
+
+    [HttpGet]
+    [Route("me/public-profile")]
+    [Authorize]
+    [ProducesResponseType(typeof(PublicProfileDto), StatusCodes.Status200OK,
+                          Description = "Returns the current user's public profile.")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [Produces("application/json")]
+    public async Task<ActionResult<PublicProfileDto>> GetPublicProfile()
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        ApplicationUser user = await userManager.FindByIdAsync(userId);
+
+        if(user is null) return Unauthorized();
+
+        return Ok(ProfileController.MapToPublicProfile(user));
+    }
+
+    [HttpPut]
+    [Route("me/public-profile")]
+    [Authorize]
+    [ProducesResponseType(typeof(PublicProfileDto), StatusCodes.Status200OK,
+                          Description = "Updates the current user's public profile.")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    public async Task<ActionResult<PublicProfileDto>> UpdatePublicProfile(
+        [FromBody] UpdatePublicProfileRequest request)
+    {
+        if(!ModelState.IsValid) return BadRequest(ModelState);
+
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        ApplicationUser user = await userManager.FindByIdAsync(userId);
+
+        if(user is null) return Unauthorized();
+
+        user.DisplayName = request.DisplayName;
+        user.Bio         = request.Bio;
+        user.Website     = request.Website;
+        user.Location    = request.Location;
+        user.UseGravatar = request.UseGravatar;
+        user.Twitter     = request.Twitter;
+        user.GitHub      = request.GitHub;
+        user.Mastodon    = request.Mastodon;
+        user.Facebook    = request.Facebook;
+        user.LinkedIn    = request.LinkedIn;
+
+        IdentityResult result = await userManager.UpdateAsync(user);
+
+        if(!result.Succeeded) return BadRequest(result.Errors);
+
+        return Ok(ProfileController.MapToPublicProfile(user));
+    }
+
+    [HttpPost]
+    [Route("me/avatar/upload")]
+    [Authorize]
+    [RequestSizeLimit(50 * 1024 * 1024)]
+    [ProducesResponseType(typeof(PublicProfileDto), StatusCodes.Status200OK,
+                          Description = "Uploads a custom avatar for the current user.")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<PublicProfileDto>> UploadAvatarAsync(IFormFile file)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        if(file is null || file.Length == 0)
+            return BadRequest("No file provided.");
+
+        if(file.Length > 50 * 1024 * 1024)
+            return BadRequest("File exceeds 50 MB limit.");
+
+        string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
+
+        if(!_allowedExtensions.Contains(extension))
+            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP, TIFF, BMP.");
+
+        if(!string.IsNullOrEmpty(file.ContentType) &&
+           !_allowedContentTypes.Contains(file.ContentType.ToLowerInvariant()))
+            return BadRequest("Unsupported content type.");
+
+        ApplicationUser user = await userManager.FindByIdAsync(userId);
+
+        if(user is null) return Unauthorized();
+
+        // If avatar already exists, delete old files
+        if(user.AvatarGuid.HasValue)
+            DeleteAvatarFiles(user.AvatarGuid.Value);
+
+        Guid avatarGuid = Guid.NewGuid();
+
+        Photos.EnsureCreated(_assetRootPath, false, "avatars");
+
+        string originalsDir = Path.Combine(_assetRootPath, "photos", "avatars", "originals");
+        string originalPath = Path.Combine(originalsDir, $"{avatarGuid}{extension}");
+
+        await using(var fs = new FileStream(originalPath, FileMode.CreateNew, FileAccess.Write))
+        {
+            await file.CopyToAsync(fs);
+        }
+
+        string sourceFormat = extension.TrimStart('.');
+
+        _ = Task.Run(() =>
+        {
+            var photos = new Photos();
+            photos.ConversionWorker(_assetRootPath, avatarGuid, originalPath, sourceFormat, false, "avatars");
+        });
+
+        user.AvatarGuid              = avatarGuid;
+        user.OriginalAvatarExtension = sourceFormat;
+
+        await userManager.UpdateAsync(user);
+
+        return Ok(ProfileController.MapToPublicProfile(user));
+    }
+
+    [HttpDelete]
+    [Route("me/avatar")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent, Description = "Avatar deleted successfully.")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> DeleteAvatarAsync()
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        ApplicationUser user = await userManager.FindByIdAsync(userId);
+
+        if(user is null) return Unauthorized();
+
+        if(user.AvatarGuid.HasValue)
+            DeleteAvatarFiles(user.AvatarGuid.Value);
+
+        user.AvatarGuid              = null;
+        user.OriginalAvatarExtension = null;
+
+        await userManager.UpdateAsync(user);
+
+        return NoContent();
+    }
+
+    void DeleteAvatarFiles(Guid avatarGuid)
+    {
+        string photosRoot = Path.Combine(_assetRootPath, "photos", "avatars");
+
+        // Delete original
+        string originalsDir = Path.Combine(photosRoot, "originals");
+
+        if(Directory.Exists(originalsDir))
+        {
+            foreach(string f in Directory.GetFiles(originalsDir, $"{avatarGuid}.*"))
+                System.IO.File.Delete(f);
+        }
+
+        // Delete all generated variants
+        string[] formats = ["jpeg", "jp2k", "webp", "heif", "avif"];
+        string[] sizes   = ["hd", "1440p", "4k"];
+
+        foreach(string format in formats)
+        {
+            foreach(string size in sizes)
+            {
+                string fullPath  = Path.Combine(photosRoot, format, size, $"{avatarGuid}.*");
+                string thumbPath = Path.Combine(photosRoot, "thumbs", format, size, $"{avatarGuid}.*");
+
+                foreach(string f in Directory.GetFiles(Path.GetDirectoryName(fullPath)!,
+                                                       Path.GetFileName(fullPath)))
+                    System.IO.File.Delete(f);
+
+                string thumbDir = Path.GetDirectoryName(thumbPath)!;
+
+                if(Directory.Exists(thumbDir))
+                {
+                    foreach(string f in Directory.GetFiles(thumbDir, Path.GetFileName(thumbPath)))
+                        System.IO.File.Delete(f);
+                }
+            }
+        }
     }
 }
