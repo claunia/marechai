@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
-using Marechai.ApiClient.Software.Screenshots.Upload;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.Kiota.Abstractions;
 using MudBlazor;
 
 namespace Marechai.Pages.Admin;
@@ -35,7 +33,7 @@ public partial class SoftwareScreenshots
         _isLoading     = false;
     }
 
-    async Task OnFileSelected(IBrowserFile file)
+    async Task OnFileSelected(IBrowserFile? file)
     {
         if(file is null) return;
 
@@ -48,14 +46,8 @@ public partial class SoftwareScreenshots
             await stream.CopyToAsync(memStream);
             byte[] fileBytes = memStream.ToArray();
 
-            var body = new UploadPostRequestBody
-            {
-                File       = fileBytes,
-                SoftwareId = SoftwareId
-            };
-
             SoftwareScreenshotDto? result =
-                await SoftwareService.UploadScreenshotAsync(body);
+                await SoftwareService.UploadScreenshotAsync(SoftwareId, fileBytes, file.Name);
 
             if(result is not null)
             {

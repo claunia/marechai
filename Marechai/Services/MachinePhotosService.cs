@@ -25,14 +25,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Marechai.ApiClient.Machines.Photos.Upload;
 using Marechai.ApiClient.Models;
+using Microsoft.Kiota.Abstractions;
+using Microsoft.Kiota.Abstractions.Serialization;
 
 namespace Marechai.Services;
 
-public class MachinePhotosService(Marechai.ApiClient.Client client)
+public class MachinePhotosService(Marechai.ApiClient.Client client, IRequestAdapter requestAdapter)
 {
     public async Task<List<Guid>> GetGuidsByMachineAsync(int machineId)
     {
@@ -61,19 +63,45 @@ public class MachinePhotosService(Marechai.ApiClient.Client client)
     }
 
     public async Task<(MachinePhotoDto? photo, string? error)> UploadPhotoAsync(int    machineId, int licenseId,
-                                                                                string? source,   byte[] fileBytes)
+                                                                                string? source,   byte[] fileBytes,
+                                                                                string  fileName)
     {
         try
         {
-            var body = new UploadPostRequestBody
+            string contentType = Path.GetExtension(fileName)?.ToLowerInvariant() switch
             {
-                MachineId = machineId,
-                LicenseId = licenseId,
-                Source    = source,
-                File     = fileBytes
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png"            => "image/png",
+                ".webp"           => "image/webp",
+                ".tiff" or ".tif" => "image/tiff",
+                ".bmp"            => "image/bmp",
+                _                 => "application/octet-stream"
             };
 
-            MachinePhotoDto? result = await client.Machines.Photos.Upload.PostAsync(body);
+            var body = new MultipartBody();
+            body.AddOrReplacePart("file", contentType, new MemoryStream(fileBytes), fileName);
+            body.AddOrReplacePart("machineId", "text/plain", machineId.ToString());
+            body.AddOrReplacePart("licenseId", "text/plain", licenseId.ToString());
+
+            if(!string.IsNullOrEmpty(source))
+                body.AddOrReplacePart("source", "text/plain", source);
+
+            var pathParams = new Dictionary<string, object> { { "baseurl", requestAdapter.BaseUrl } };
+
+            var requestInfo = new RequestInformation(Method.POST,
+                "{+baseurl}/machines/photos/upload", pathParams);
+
+            requestInfo.Headers.TryAdd("Accept", "application/json");
+            requestInfo.SetContentFromParsable(requestAdapter, "multipart/form-data", body);
+
+            var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
+            {
+                { "400", ProblemDetails.CreateFromDiscriminatorValue },
+                { "401", ProblemDetails.CreateFromDiscriminatorValue }
+            };
+
+            MachinePhotoDto? result = await requestAdapter.SendAsync(requestInfo,
+                MachinePhotoDto.CreateFromDiscriminatorValue, errorMapping);
 
             return (result, null);
         }

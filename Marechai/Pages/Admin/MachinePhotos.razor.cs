@@ -99,7 +99,8 @@ public partial class MachinePhotos
             byte[] fileBytes = ms.ToArray();
 
             (MachinePhotoDto? photo, string? error) =
-                await MachinePhotosService.UploadPhotoAsync(MachineId, _selectedLicense.Id ?? 0, _sourceUrl, fileBytes);
+                await MachinePhotosService.UploadPhotoAsync(MachineId, _selectedLicense.Id ?? 0, _sourceUrl, fileBytes,
+                                                            _selectedFile.Name);
 
             if(photo is not null)
             {

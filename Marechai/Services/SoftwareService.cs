@@ -25,14 +25,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
-using Marechai.ApiClient.Software.Screenshots.Upload;
 using Microsoft.Kiota.Abstractions;
+using Microsoft.Kiota.Abstractions.Serialization;
 
 namespace Marechai.Services;
 
-public class SoftwareService(Marechai.ApiClient.Client client)
+public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter requestAdapter)
 {
     // ── CRUD methods ──
 
@@ -203,11 +204,53 @@ public class SoftwareService(Marechai.ApiClient.Client client)
 
     // ── Screenshot methods ──
 
-    public async Task<SoftwareScreenshotDto?> UploadScreenshotAsync(UploadPostRequestBody body)
+    public async Task<SoftwareScreenshotDto?> UploadScreenshotAsync(int     softwareId, byte[] fileBytes,
+                                                                     string  fileName,
+                                                                     ulong?  softwarePlatformId = null,
+                                                                     ulong?  softwareVersionId  = null,
+                                                                     string? caption             = null)
     {
         try
         {
-            return await client.Software.Screenshots.Upload.PostAsync(body);
+            string contentType = Path.GetExtension(fileName)?.ToLowerInvariant() switch
+            {
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png"            => "image/png",
+                ".webp"           => "image/webp",
+                ".tiff" or ".tif" => "image/tiff",
+                ".bmp"            => "image/bmp",
+                _                 => "application/octet-stream"
+            };
+
+            var body = new MultipartBody();
+            body.AddOrReplacePart("file", contentType, new MemoryStream(fileBytes), fileName);
+            body.AddOrReplacePart("softwareId", "text/plain", softwareId.ToString());
+
+            if(softwarePlatformId.HasValue)
+                body.AddOrReplacePart("softwarePlatformId", "text/plain", softwarePlatformId.Value.ToString());
+
+            if(softwareVersionId.HasValue)
+                body.AddOrReplacePart("softwareVersionId", "text/plain", softwareVersionId.Value.ToString());
+
+            if(!string.IsNullOrEmpty(caption))
+                body.AddOrReplacePart("caption", "text/plain", caption);
+
+            var pathParams = new Dictionary<string, object> { { "baseurl", requestAdapter.BaseUrl } };
+
+            var requestInfo = new RequestInformation(Method.POST,
+                "{+baseurl}/software/screenshots/upload", pathParams);
+
+            requestInfo.Headers.TryAdd("Accept", "application/json");
+            requestInfo.SetContentFromParsable(requestAdapter, "multipart/form-data", body);
+
+            var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
+            {
+                { "400", ProblemDetails.CreateFromDiscriminatorValue },
+                { "401", ProblemDetails.CreateFromDiscriminatorValue }
+            };
+
+            return await requestAdapter.SendAsync(requestInfo,
+                SoftwareScreenshotDto.CreateFromDiscriminatorValue, errorMapping);
         }
         catch
         {

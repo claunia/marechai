@@ -36,6 +36,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Abstractions.Serialization;
 using Microsoft.Kiota.Http.HttpClientLibrary;
@@ -70,7 +71,7 @@ public class Startup(IConfiguration configuration)
         services.AddScoped<JwtAuthenticationStateProvider>();
         services.AddScoped<AuthenticationStateProvider>(sp => sp.GetRequiredService<JwtAuthenticationStateProvider>());
 
-        services.AddScoped(sp =>
+        services.AddScoped<IRequestAdapter>(sp =>
         {
             TokenProvider tokenProvider = sp.GetRequiredService<TokenProvider>();
 
@@ -95,11 +96,11 @@ public class Startup(IConfiguration configuration)
             serializationWriterFactory.AddFactory(new TextSerializationWriterFactory());
             serializationWriterFactory.AddFactory(new FormSerializationWriterFactory());
 
-            var requestAdapter = new HttpClientRequestAdapter(authProvider, parseNodeRegistry,
-                                                              serializationWriterFactory, httpClient);
-
-            return new Marechai.ApiClient.Client(requestAdapter);
+            return new HttpClientRequestAdapter(authProvider, parseNodeRegistry,
+                                                serializationWriterFactory, httpClient);
         });
+
+        services.AddScoped(sp => new Marechai.ApiClient.Client(sp.GetRequiredService<IRequestAdapter>()));
 
         services.AddAuthorizationCore();
         services.AddRazorPages();
