@@ -474,6 +474,47 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
+    public async Task<List<SoftwareScreenshotDto>> GetScreenshotsBySoftwareAsync(int softwareId)
+    {
+        try
+        {
+            List<Guid?>? ids = await client.Software[softwareId].Screenshots.GetAsync();
+
+            if(ids is null or { Count: 0 }) return [];
+
+            var screenshots = new List<SoftwareScreenshotDto>();
+
+            foreach(Guid? id in ids)
+            {
+                if(!id.HasValue) continue;
+
+                SoftwareScreenshotDto? dto = await GetScreenshotDetailsAsync(id.Value);
+
+                if(dto is not null) screenshots.Add(dto);
+            }
+
+            return screenshots;
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> UpdateScreenshotAsync(Guid id, SoftwareScreenshotDto dto)
+    {
+        try
+        {
+            await client.Software.Screenshots[id.ToString()].PutAsync(dto);
+
+            return (true, null);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
     // ── Release detail methods ──
 
     public async Task<SoftwareVersionDto?> GetVersionByIdAsync(int versionId)

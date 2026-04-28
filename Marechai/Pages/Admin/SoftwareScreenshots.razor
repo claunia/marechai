@@ -1,5 +1,6 @@
 @page "/admin/software/{SoftwareId:int}/screenshots"
 @attribute [Authorize(Roles = "Admin, UberAdmin")]
+@using System.Linq
 @using Marechai.ApiClient.Models
 @using Marechai.Services
 @inject SoftwareService SoftwareService
@@ -65,25 +66,38 @@
         <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadDataAsync"/>
     </MudToolBar>
 
-    @if(_screenshotIds is { Count: > 0 })
+    @if(_screenshots is { Count: > 0 })
     {
         <MudGrid Class="mt-4">
-            @foreach(Guid? screenshotId in _screenshotIds)
+            @foreach(SoftwareScreenshotDto screenshot in _screenshots)
             {
-                @if(screenshotId.HasValue)
+                @if(screenshot.Id.HasValue)
                 {
                     <MudItem xs="12" sm="6" md="4" lg="3">
                         <MudCard>
-                            <MudCardContent Class="pa-2 d-flex justify-center">
-                                <MudImage Src="@($"{Assets.BaseUrl}/assets/photos/software-screenshots/webp/hd/{screenshotId.Value}.webp")"
-                                          Alt="@screenshotId.Value.ToString()" ObjectFit="ObjectFit.Contain" Class="rounded"
+                            <MudCardContent Class="pa-2 d-flex flex-column align-center">
+                                <MudImage Src="@($"{Assets.BaseUrl}/assets/photos/software-screenshots/webp/hd/{screenshot.Id.Value}.webp")"
+                                          Alt="@(screenshot.Caption ?? screenshot.Id.Value.ToString())" ObjectFit="ObjectFit.Contain" Class="rounded"
                                           Style="width: 100%; max-height: 150px;"/>
+                                <MudSelect T="SoftwarePlatformDto"
+                                           Value="@(_platforms?.FirstOrDefault(p => p.Id == screenshot.SoftwarePlatformId))"
+                                           ValueChanged="@(p => OnScreenshotPlatformChanged(screenshot, p))"
+                                           Label="@L["Platform"]" Variant="Variant.Outlined" Dense="true"
+                                           Clearable="true" Class="mt-2" Style="max-width: 250px;">
+                                    @if(_platforms is not null)
+                                    {
+                                        @foreach(SoftwarePlatformDto platform in _platforms)
+                                        {
+                                            <MudSelectItem T="SoftwarePlatformDto" Value="platform">@platform.Name</MudSelectItem>
+                                        }
+                                    }
+                                </MudSelect>
                             </MudCardContent>
                             <MudCardActions>
                                 <MudIconButton Icon="@Icons.Material.Filled.Delete"
                                                Size="Size.Small"
                                                Color="Color.Error"
-                                               OnClick="() => ConfirmDeleteScreenshot(screenshotId.Value)"
+                                               OnClick="() => ConfirmDeleteScreenshot(screenshot.Id.Value)"
                                                Title="@L["Delete"]"/>
                             </MudCardActions>
                         </MudCard>

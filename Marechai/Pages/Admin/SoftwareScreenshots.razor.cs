@@ -11,13 +11,13 @@ namespace Marechai.Pages.Admin;
 
 public partial class SoftwareScreenshots
 {
-    string?                    _errorMessage;
-    bool                       _isLoading = true;
-    List<SoftwarePlatformDto>? _platforms;
-    List<Guid?>?               _screenshotIds;
-    SoftwarePlatformDto?       _selectedPlatform;
-    string?                    _softwareName;
-    string?                    _successMessage;
+    string?                        _errorMessage;
+    bool                           _isLoading = true;
+    List<SoftwarePlatformDto>?     _platforms;
+    List<SoftwareScreenshotDto>?   _screenshots;
+    SoftwarePlatformDto?           _selectedPlatform;
+    string?                        _softwareName;
+    string?                        _successMessage;
 
     [Parameter] public int SoftwareId { get; set; }
 
@@ -31,9 +31,9 @@ public partial class SoftwareScreenshots
 
     async Task LoadDataAsync()
     {
-        _isLoading     = true;
-        _screenshotIds = await SoftwareService.GetScreenshotIdsAsync(SoftwareId);
-        _isLoading     = false;
+        _isLoading   = true;
+        _screenshots = await SoftwareService.GetScreenshotsBySoftwareAsync(SoftwareId);
+        _isLoading   = false;
     }
 
     async Task OnFileSelected(IBrowserFile? file)
@@ -106,5 +106,30 @@ public partial class SoftwareScreenshots
                 _errorMessage = errorMessage;
             }
         }
+    }
+
+    async Task OnScreenshotPlatformChanged(SoftwareScreenshotDto screenshot, SoftwarePlatformDto? platform)
+    {
+        int? newPlatformId = platform?.Id;
+
+        if(screenshot.SoftwarePlatformId == newPlatformId) return;
+
+        screenshot.SoftwarePlatformId = newPlatformId;
+        screenshot.PlatformName       = platform?.Name;
+
+        var dto = new SoftwareScreenshotDto
+        {
+            Id                 = screenshot.Id,
+            SoftwareId         = screenshot.SoftwareId,
+            SoftwarePlatformId = newPlatformId,
+            SoftwareVersionId  = screenshot.SoftwareVersionId,
+            Caption            = screenshot.Caption,
+            OriginalExtension  = screenshot.OriginalExtension
+        };
+
+        (bool succeeded, string? error) = await SoftwareService.UpdateScreenshotAsync(screenshot.Id!.Value, dto);
+
+        if(!succeeded)
+            _errorMessage = error;
     }
 }
