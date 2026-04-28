@@ -198,8 +198,10 @@ public partial class Profile
 
     // ── Avatar methods ──
 
-    async Task OnAvatarFileSelected(IBrowserFile file)
+    async Task OnAvatarFileSelected(IBrowserFile? file)
     {
+        if(file is null) return;
+
         _isUploadingAvatar = true;
         _avatarMessage     = null;
         StateHasChanged();
@@ -211,8 +213,18 @@ public partial class Profile
             await stream.CopyToAsync(ms);
             ms.Position = 0;
 
+            string contentType = Path.GetExtension(file.Name)?.ToLowerInvariant() switch
+            {
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png"            => "image/png",
+                ".webp"           => "image/webp",
+                ".tiff" or ".tif" => "image/tiff",
+                ".bmp"            => "image/bmp",
+                _                 => "application/octet-stream"
+            };
+
             var multipartBody = new MultipartBody();
-            multipartBody.AddOrReplacePart("file", "application/octet-stream", ms);
+            multipartBody.AddOrReplacePart("file", contentType, ms, file.Name);
 
             PublicProfileDto? result = await AuthService.UploadAvatarAsync(multipartBody);
 
