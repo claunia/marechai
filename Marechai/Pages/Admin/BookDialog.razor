@@ -814,8 +814,10 @@
 
     // --- Cover actions ---
 
-    async Task OnCoverFileSelected(IBrowserFile file)
+    async Task OnCoverFileSelected(IBrowserFile? file)
     {
+        if(file is null) return;
+
         _isUploadingCover = true;
         _coverMessage     = null;
         StateHasChanged();
@@ -827,8 +829,18 @@
             await stream.CopyToAsync(ms);
             ms.Position = 0;
 
+            string contentType = System.IO.Path.GetExtension(file.Name)?.ToLowerInvariant() switch
+            {
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png"            => "image/png",
+                ".webp"           => "image/webp",
+                ".tiff" or ".tif" => "image/tiff",
+                ".bmp"            => "image/bmp",
+                _                 => "application/octet-stream"
+            };
+
             var multipartBody = new Microsoft.Kiota.Abstractions.MultipartBody();
-            multipartBody.AddOrReplacePart("file", "application/octet-stream", ms);
+            multipartBody.AddOrReplacePart("file", contentType, ms, file.Name);
 
             BookDto? result = await BooksService.UploadCoverAsync(BookId, multipartBody);
 

@@ -373,8 +373,10 @@
         await JsRuntime.InvokeVoidAsync("downloadFileFromBytes", "processor_import_template.csv", "text/csv", base64);
     }
 
-    async Task OnCsvFileSelected(IBrowserFile file)
+    async Task OnCsvFileSelected(IBrowserFile? file)
     {
+        if(file is null) return;
+
         _isProcessing = true;
         _errorMessage = null;
         StateHasChanged();
