@@ -37,6 +37,17 @@
 }
 
 <MudPaper Elevation="2" Class="rounded-lg pa-4">
+    <MudSelect T="SoftwarePlatformDto" @bind-Value="_selectedPlatform"
+               Label="@L["Platform"]" Variant="Variant.Outlined" Dense="true"
+               Clearable="true" Class="mb-3" Style="max-width: 300px;">
+        @if(_platforms is not null)
+        {
+            @foreach(SoftwarePlatformDto platform in _platforms)
+            {
+                <MudSelectItem T="SoftwarePlatformDto" Value="platform">@platform.Name</MudSelectItem>
+            }
+        }
+    </MudSelect>
     <MudToolBar Dense="true">
         <MudFileUpload T="IBrowserFile"
                        Accept=".jpg,.jpeg,.png,.webp,.tiff,.tif,.bmp"

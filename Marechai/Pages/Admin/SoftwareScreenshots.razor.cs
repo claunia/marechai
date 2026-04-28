@@ -11,11 +11,13 @@ namespace Marechai.Pages.Admin;
 
 public partial class SoftwareScreenshots
 {
-    string?       _errorMessage;
-    bool          _isLoading = true;
-    List<Guid?>?  _screenshotIds;
-    string?       _softwareName;
-    string?       _successMessage;
+    string?                    _errorMessage;
+    bool                       _isLoading = true;
+    List<SoftwarePlatformDto>? _platforms;
+    List<Guid?>?               _screenshotIds;
+    SoftwarePlatformDto?       _selectedPlatform;
+    string?                    _softwareName;
+    string?                    _successMessage;
 
     [Parameter] public int SoftwareId { get; set; }
 
@@ -23,6 +25,7 @@ public partial class SoftwareScreenshots
     {
         SoftwareDto? software = await SoftwareService.GetSoftwareByIdAsync(SoftwareId);
         _softwareName = software?.Name;
+        _platforms    = await SoftwareService.GetPlatformsAsync();
         await LoadDataAsync();
     }
 
@@ -46,8 +49,12 @@ public partial class SoftwareScreenshots
             await stream.CopyToAsync(memStream);
             byte[] fileBytes = memStream.ToArray();
 
+            ulong? platformId = _selectedPlatform?.Id is not null
+                                   ? (ulong)_selectedPlatform.Id.Value
+                                   : null;
+
             SoftwareScreenshotDto? result =
-                await SoftwareService.UploadScreenshotAsync(SoftwareId, fileBytes, file.Name);
+                await SoftwareService.UploadScreenshotAsync(SoftwareId, fileBytes, file.Name, platformId);
 
             if(result is not null)
             {
