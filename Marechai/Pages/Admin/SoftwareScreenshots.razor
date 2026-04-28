@@ -6,6 +6,7 @@
 @inject IStringLocalizer<SoftwareService> L
 @inject IDialogService DialogService
 @inject NavigationManager NavigationManager
+@inject ApiAssetUrlProvider Assets
 
 <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" OnClick="@(() => NavigationManager.NavigateTo("/admin/software"))" Class="mb-4">@L["Back to Software"]</MudButton>
 
@@ -63,7 +64,9 @@
                     <MudItem xs="12" sm="6" md="4" lg="3">
                         <MudCard>
                             <MudCardContent Class="pa-2 d-flex justify-center">
-                                <MudText Typo="Typo.caption">@screenshotId.Value.ToString("N")[..8]...</MudText>
+                                <MudImage Src="@($"{Assets.BaseUrl}/assets/photos/software-screenshots/webp/hd/{screenshotId.Value}.webp")"
+                                          Alt="@screenshotId.Value.ToString()" ObjectFit="ObjectFit.Contain" Class="rounded"
+                                          Style="width: 100%; max-height: 150px;"/>
                             </MudCardContent>
                             <MudCardActions>
                                 <MudIconButton Icon="@Icons.Material.Filled.Delete"
