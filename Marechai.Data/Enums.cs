@@ -666,6 +666,8 @@ public enum SceneCaptureType : ushort
 
 public enum SensingMethod : ushort
 {
+    [Display(Name = "Unknown")]
+    Unknown = 0,
     [Display(Name = "Not defined")]
     Undefined = 1,
     [Display(Name = "One-chip color area")]
