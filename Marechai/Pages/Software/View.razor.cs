@@ -43,6 +43,7 @@ public partial class View
     List<SoftwareReleaseDto>                     _releases = [];
     List<SoftwareScreenshotDto>                  _screenshots = [];
     Dictionary<string, List<SoftwareScreenshotDto>> _screenshotsByPlatform = new();
+    SoftwareScreenshotDto?                       _fullscreenScreenshot;
     SoftwareDto                                 _software;
     List<SoftwareVersionDto>                    _versions = [];
 

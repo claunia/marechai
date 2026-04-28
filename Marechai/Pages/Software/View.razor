@@ -321,7 +321,7 @@
                     <div class="d-flex flex-wrap gap-3">
                         @foreach(SoftwareScreenshotDto screenshot in group.Value)
                         {
-                            <MudCard Elevation="1" Class="rounded-lg" Style="width: 200px;">
+                            <MudCard Elevation="1" Class="rounded-lg" Style="width: 200px; cursor: pointer;" @onclick="() => _fullscreenScreenshot = screenshot">
                                 <MudCardContent Class="pa-2">
                                     <MudImage Src="@($"{Assets.BaseUrl}/assets/photos/software-screenshots/webp/hd/{screenshot.Id}.webp")"
                                               Alt="@screenshot.Caption" ObjectFit="ObjectFit.Contain" Class="rounded"
@@ -338,4 +338,19 @@
             </ChildContent>
         </MudExpansionPanel>
     </MudExpansionPanels>
+}
+
+@if(_fullscreenScreenshot is not null)
+{
+    <MudOverlay Visible="true" DarkBackground="true" ZIndex="9999" OnClick="() => _fullscreenScreenshot = null">
+        <div class="d-flex flex-column align-center justify-center" style="width: 100vw; height: 100vh;">
+            <MudImage Src="@($"{Assets.BaseUrl}/assets/photos/software-screenshots/webp/4k/{_fullscreenScreenshot.Id}.webp")"
+                      Alt="@_fullscreenScreenshot.Caption" ObjectFit="ObjectFit.Contain"
+                      Style="max-width: 95vw; max-height: 90vh;"/>
+            @if(!string.IsNullOrEmpty(_fullscreenScreenshot.Caption))
+            {
+                <MudText Typo="Typo.subtitle1" Style="color: white;" Class="mt-2">@_fullscreenScreenshot.Caption</MudText>
+            }
+        </div>
+    </MudOverlay>
 }
