@@ -178,6 +178,56 @@
                         </ItemsControl>
                     </StackPanel>
 
+                    <!-- Credits -->
+                    <StackPanel Visibility="{Binding ShowCredits}"
+                                Spacing="12">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=SoftwareCreditsLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <ItemsControl ItemsSource="{Binding CreditGroups}"
+                                      HorizontalAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="12" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="{Binding Role}"
+                                                   FontSize="13"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                        <ItemsControl ItemsSource="{Binding People}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel Orientation="Vertical"
+                                                                Spacing="4" />
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                            BorderThickness="1"
+                                                            CornerRadius="8"
+                                                            Padding="16,8">
+                                                        <TextBlock Text="{Binding}"
+                                                                   FontSize="14"
+                                                                   Foreground="{ThemeResource TextControlForeground}" />
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
                     <!-- Versions and Releases -->
                     <StackPanel Visibility="{Binding ShowVersions}"
                                 Spacing="12">

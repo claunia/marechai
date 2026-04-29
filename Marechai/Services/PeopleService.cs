@@ -185,6 +185,20 @@ public class PeopleService(Marechai.ApiClient.Client client)
         }
     }
 
+    public async Task<List<PersonBySoftwareDto>> GetSoftwareByPersonAsync(int id)
+    {
+        try
+        {
+            List<PersonBySoftwareDto>? software = await client.People[id].Software.GetAsync();
+
+            return software ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
     public async Task<(long? id, string? error)> CreateAsync(PersonDto dto)
     {
         try

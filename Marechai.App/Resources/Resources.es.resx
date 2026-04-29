@@ -2052,4 +2052,8 @@
   <data name="SoftwareIsRequired" xml:space="preserve"><value>La selección de software es requerida para lanzamientos no compilación.</value></data>
   <data name="FailedToAddIncludedSoftware" xml:space="preserve"><value>Error al añadir software incluido</value></data>
   <data name="FailedToRemoveIncludedSoftware" xml:space="preserve"><value>Error al eliminar software incluido</value></data>
-<data name="DatePrecisionLabel" xml:space="preserve"><value>Precisión de fecha</value></data><data name="DatePrecisionFull" xml:space="preserve"><value>Fecha completa</value></data><data name="DatePrecisionMonthYear" xml:space="preserve"><value>Solo mes y año</value></data><data name="DatePrecisionYearOnly" xml:space="preserve"><value>Solo año</value></data></root>
+<data name="DatePrecisionLabel" xml:space="preserve"><value>Precisión de fecha</value></data><data name="DatePrecisionFull" xml:space="preserve"><value>Fecha completa</value></data><data name="DatePrecisionMonthYear" xml:space="preserve"><value>Solo mes y año</value></data><data name="DatePrecisionYearOnly" xml:space="preserve"><value>Solo año</value></data>  <data name="PersonSoftwareLabel" xml:space="preserve"><value>Software</value></data>
+  <data name="SoftwareCreditsLabel" xml:space="preserve"><value>Créditos</value></data>
+  <data name="PersonSoftwareLabel" xml:space="preserve"><value>Software</value></data>
+  <data name="SoftwareCreditsLabel" xml:space="preserve"><value>Créditos</value></data>
+</root>

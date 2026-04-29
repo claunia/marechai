@@ -195,6 +195,29 @@ public class PeopleController(MarechaiContext context) : ControllerBase
                       .ToListAsync()).OrderBy(p => p.Role)
            .ToList();
 
+    [HttpGet("{personId:int}/software")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<List<PersonBySoftwareDto>> GetSoftwareByPersonAsync(int personId) =>
+        (await context.PeopleBySoftware
+                      .Where(p => p.PersonId == personId)
+                      .Select(p => new PersonBySoftwareDto
+                       {
+                           Id           = p.Id,
+                           PersonId     = p.PersonId,
+                           SoftwareId   = p.SoftwareId,
+                           Role         = p.Role,
+                           SoftwareName = p.Software.Name,
+                           Name         = p.Person.Name,
+                           Surname      = p.Person.Surname,
+                           Alias        = p.Person.Alias,
+                           DisplayName  = p.Person.DisplayName
+                       })
+                      .ToListAsync()).OrderBy(p => p.SoftwareName)
+           .ThenBy(p => p.Role)
+           .ToList();
+
     [HttpGet("{personId:int}/companies")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]

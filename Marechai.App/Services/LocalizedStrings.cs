@@ -653,6 +653,7 @@ public class LocalizedStrings
     public string PersonBooksLabel => _l["PersonBooksLabel"];
     public string PersonDocumentsLabel => _l["PersonDocumentsLabel"];
     public string PersonMagazinesLabel => _l["PersonMagazinesLabel"];
+    public string PersonSoftwareLabel => _l["PersonSoftwareLabel"];
 
     // Software user-facing pages
     public string AllSoftwareButton => _l["AllSoftwareButton"];
@@ -660,6 +661,7 @@ public class LocalizedStrings
     public string SoftwareErrorInfoBar_Title => _l["SoftwareErrorInfoBar_Title"];
     public string SoftwareFamilyLabel => _l["SoftwareFamilyLabel"];
     public string SoftwareCompaniesLabel => _l["SoftwareCompaniesLabel"];
+    public string SoftwareCreditsLabel => _l["SoftwareCreditsLabel"];
     public string SoftwareVersionsLabel => _l["SoftwareVersionsLabel"];
     public string SoftwareIsOSLabel => _l["SoftwareIsOSLabel"];
     public string SoftwareIsGameLabel => _l["SoftwareIsGameLabel"];

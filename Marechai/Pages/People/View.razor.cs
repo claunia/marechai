@@ -39,6 +39,7 @@ public partial class View
     bool                      _loaded;
     List<PersonByMagazineDto> _magazines;
     PersonDto                 _person;
+    List<PersonBySoftwareDto> _softwareCredits;
 
     [Parameter]
     public int Id
@@ -78,6 +79,7 @@ public partial class View
         _books     = await Service.GetBooksByPersonAsync(Id);
         _documents = await Service.GetDocumentsByPersonAsync(Id);
         _magazines = await Service.GetMagazinesByPersonAsync(Id);
+        _softwareCredits = await Service.GetSoftwareByPersonAsync(Id);
 
         _loaded = true;
         StateHasChanged();

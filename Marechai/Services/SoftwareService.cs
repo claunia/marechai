@@ -420,6 +420,20 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
+    public async Task<List<PersonBySoftwareDto>> GetCreditsBySoftwareAsync(int softwareId)
+    {
+        try
+        {
+            List<PersonBySoftwareDto>? credits = await client.Software[softwareId].Credits.GetAsync();
+
+            return credits ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
     public async Task<List<SoftwareVersionDto>> GetVersionsAsync(int softwareId)
     {
         try

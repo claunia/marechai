@@ -398,4 +398,27 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
 
         return Ok();
     }
+
+    [HttpGet("/software/{softwareId:ulong}/credits")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<List<PersonBySoftwareDto>> GetCreditsAsync(ulong softwareId) =>
+        (await context.PeopleBySoftware
+                      .Where(p => p.SoftwareId == softwareId)
+                      .Select(p => new PersonBySoftwareDto
+                       {
+                           Id           = p.Id,
+                           PersonId     = p.PersonId,
+                           SoftwareId   = p.SoftwareId,
+                           Role         = p.Role,
+                           SoftwareName = p.Software.Name,
+                           Name         = p.Person.Name,
+                           Surname      = p.Person.Surname,
+                           Alias        = p.Person.Alias,
+                           DisplayName  = p.Person.DisplayName
+                       })
+                      .ToListAsync()).OrderBy(p => p.Role)
+           .ThenBy(p => p.FullName)
+           .ToList();
 }

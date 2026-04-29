@@ -532,4 +532,28 @@ public class SoftwareBrowsingService
             return null;
         }
     }
+
+    public async Task<List<PersonBySoftwareDto>> GetCreditsAsync(int softwareId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching credits for software {SoftwareId} from API", softwareId);
+
+            List<PersonBySoftwareDto>? credits = await _apiClient.Software[softwareId].Credits.GetAsync();
+
+            if(credits == null) return [];
+
+            _logger.LogInformation("Successfully fetched {Count} credits for software {SoftwareId}",
+                                   credits.Count,
+                                   softwareId);
+
+            return credits;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching credits for software {SoftwareId} from API", softwareId);
+
+            return [];
+        }
+    }
 }

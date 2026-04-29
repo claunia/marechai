@@ -100,6 +100,9 @@ public partial class PersonViewViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private Visibility _showMagazines = Visibility.Collapsed;
 
+    [ObservableProperty]
+    private Visibility _showSoftware = Visibility.Collapsed;
+
     public PersonViewViewModel(ILogger<PersonViewViewModel> logger,         IRegionManager  regionManager,
                                PeopleService               peopleService, IStringLocalizer localizer)
     {
@@ -113,6 +116,7 @@ public partial class PersonViewViewModel : ObservableObject, IRegionAware
     public ObservableCollection<string> Books     { get; } = [];
     public ObservableCollection<string> Documents { get; } = [];
     public ObservableCollection<string> Magazines { get; } = [];
+    public ObservableCollection<string> SoftwareCredits { get; } = [];
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => false;
 
@@ -170,6 +174,7 @@ public partial class PersonViewViewModel : ObservableObject, IRegionAware
             Books.Clear();
             Documents.Clear();
             Magazines.Clear();
+            SoftwareCredits.Clear();
 
             PersonDto? person = await _peopleService.GetPersonByIdAsync(personId);
 
@@ -202,7 +207,8 @@ public partial class PersonViewViewModel : ObservableObject, IRegionAware
             Task<List<PersonByBookDto>>     booksTask      = _peopleService.GetBooksByPersonAsync(personId);
             Task<List<PersonByDocumentDto>> documentsTask  = _peopleService.GetDocumentsByPersonAsync(personId);
             Task<List<PersonByMagazineDto>> magazinesTask  = _peopleService.GetMagazinesByPersonAsync(personId);
-            await Task.WhenAll(companiesTask, booksTask, documentsTask, magazinesTask);
+            Task<List<PersonBySoftwareDto>> softwareTask   = _peopleService.GetSoftwareByPersonAsync(personId);
+            await Task.WhenAll(companiesTask, booksTask, documentsTask, magazinesTask, softwareTask);
 
             // Populate companies
             foreach(PersonByCompanyDto company in companiesTask.Result)
@@ -252,6 +258,15 @@ public partial class PersonViewViewModel : ObservableObject, IRegionAware
                 Magazines.Add(display);
             }
 
+            // Populate software credits
+            foreach(PersonBySoftwareDto credit in softwareTask.Result)
+            {
+                string name    = credit.SoftwareName ?? string.Empty;
+                string? role   = credit.Role;
+                string display = !string.IsNullOrEmpty(role) ? $"{name} ({role})" : name;
+                SoftwareCredits.Add(display);
+            }
+
             UpdateVisibilities();
             IsDataLoaded = true;
             IsLoading    = false;
@@ -279,5 +294,6 @@ public partial class PersonViewViewModel : ObservableObject, IRegionAware
         ShowBooks       = Books.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowDocuments   = Documents.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowMagazines   = Magazines.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+        ShowSoftware    = SoftwareCredits.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 }

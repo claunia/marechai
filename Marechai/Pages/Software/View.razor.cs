@@ -37,6 +37,8 @@ public partial class View
 {
     List<SoftwareCompanyRoleDto>                 _companies = [];
     List<SoftwareReleaseDto>                     _compilations = [];
+    List<PersonBySoftwareDto>                    _credits = [];
+    Dictionary<string, List<PersonBySoftwareDto>> _creditsByRole = new();
     string?                                      _description;
     int                                         _id;
     bool                                        _loaded;
@@ -86,6 +88,14 @@ public partial class View
 
         _companies = await Service.GetCompaniesAsync(Id);
         _versions  = await Service.GetVersionsAsync(Id);
+
+        // Load credits
+        _credits = await Service.GetCreditsBySoftwareAsync(Id);
+
+        _creditsByRole = _credits
+                        .GroupBy(c => c.Role ?? "Other")
+                        .OrderBy(g => g.Key)
+                        .ToDictionary(g => g.Key, g => g.ToList());
 
         // Load description with language fallback to English
         _description = await Service.GetDescriptionTextAsync(Id);

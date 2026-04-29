@@ -74,6 +74,9 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     private Visibility _showScreenshots = Visibility.Collapsed;
 
     [ObservableProperty]
+    private Visibility _showCredits = Visibility.Collapsed;
+
+    [ObservableProperty]
     private string _descriptionHtml = string.Empty;
 
     [ObservableProperty]
@@ -102,6 +105,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     public ObservableCollection<VersionDisplayItem>       Versions            { get; } = [];
     public ObservableCollection<ReleaseDisplayItem>       Releases            { get; } = [];
     public ObservableCollection<ScreenshotPlatformGroup>  ScreenshotGroups    { get; } = [];
+    public ObservableCollection<CreditGroupDisplayItem>   CreditGroups        { get; } = [];
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => false;
 
@@ -166,6 +170,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
             ErrorMessage = string.Empty;
             Companies.Clear();
             Versions.Clear();
+            CreditGroups.Clear();
 
             SoftwareDto? software = await _browsingService.GetSoftwareByIdAsync(softwareId);
 
@@ -192,6 +197,26 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
                 string? role   = company.Role;
                 string display = !string.IsNullOrEmpty(role) ? $"{name} ({role})" : name;
                 Companies.Add(display);
+            }
+
+            // Load credits
+            List<PersonBySoftwareDto> credits = await _browsingService.GetCreditsAsync(softwareId);
+
+            var creditsByRole = credits
+                               .GroupBy(c => c.Role ?? "Other")
+                               .OrderBy(g => g.Key);
+
+            foreach(var group in creditsByRole)
+            {
+                var item = new CreditGroupDisplayItem { Role = group.Key };
+
+                foreach(PersonBySoftwareDto credit in group)
+                {
+                    string fullName = credit.DisplayName ?? credit.Alias ?? $"{credit.Name} {credit.Surname}".Trim();
+                    item.People.Add(fullName);
+                }
+
+                CreditGroups.Add(item);
             }
 
             // Load versions (without nested releases)
@@ -351,6 +376,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
         ShowOsBadge     = IsOperatingSystem ? Visibility.Visible : Visibility.Collapsed;
         ShowGameBadge   = IsGame ? Visibility.Visible : Visibility.Collapsed;
         ShowScreenshots = ScreenshotGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+        ShowCredits     = CreditGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowDescription = HasDescription ? Visibility.Visible : Visibility.Collapsed;
     }
 
@@ -397,4 +423,11 @@ public class ReleaseDisplayItem
     public string? Regions          { get; set; }
     public string? Publisher        { get; set; }
     public string? ReleaseDate     { get; set; }
+}
+
+[Bindable]
+public class CreditGroupDisplayItem
+{
+    public string                      Role   { get; set; } = string.Empty;
+    public ObservableCollection<string> People { get; } = [];
 }

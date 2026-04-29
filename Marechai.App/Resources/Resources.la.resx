@@ -1912,4 +1912,8 @@
   <data name="SoftwareIsRequired" xml:space="preserve"><value>Selectio programmatis necessaria est pro editionibus non compilationis.</value></data>
   <data name="FailedToAddIncludedSoftware" xml:space="preserve"><value>Error addendi programma inclusum</value></data>
   <data name="FailedToRemoveIncludedSoftware" xml:space="preserve"><value>Error removendi programma inclusum</value></data>
-<data name="DatePrecisionLabel" xml:space="preserve"><value>Praecisio diei</value></data><data name="DatePrecisionFull" xml:space="preserve"><value>Dies plenus</value></data><data name="DatePrecisionMonthYear" xml:space="preserve"><value>Mensis et annus tantum</value></data><data name="DatePrecisionYearOnly" xml:space="preserve"><value>Annus tantum</value></data></root>
+<data name="DatePrecisionLabel" xml:space="preserve"><value>Praecisio diei</value></data><data name="DatePrecisionFull" xml:space="preserve"><value>Dies plenus</value></data><data name="DatePrecisionMonthYear" xml:space="preserve"><value>Mensis et annus tantum</value></data><data name="DatePrecisionYearOnly" xml:space="preserve"><value>Annus tantum</value></data>  <data name="PersonSoftwareLabel" xml:space="preserve"><value>Software</value></data>
+  <data name="SoftwareCreditsLabel" xml:space="preserve"><value>Credita</value></data>
+  <data name="PersonSoftwareLabel" xml:space="preserve"><value>Software</value></data>
+  <data name="SoftwareCreditsLabel" xml:space="preserve"><value>Credita</value></data>
+</root>

@@ -1912,4 +1912,8 @@
   <data name="SoftwareIsRequired" xml:space="preserve"><value>Softwareauswahl ist für Nicht-Kompilationsveröffentlichungen erforderlich.</value></data>
   <data name="FailedToAddIncludedSoftware" xml:space="preserve"><value>Fehler beim Hinzufügen der enthaltenen Software</value></data>
   <data name="FailedToRemoveIncludedSoftware" xml:space="preserve"><value>Fehler beim Entfernen der enthaltenen Software</value></data>
-<data name="DatePrecisionLabel" xml:space="preserve"><value>Datumsgenauigkeit</value></data><data name="DatePrecisionFull" xml:space="preserve"><value>Vollständiges Datum</value></data><data name="DatePrecisionMonthYear" xml:space="preserve"><value>Nur Monat und Jahr</value></data><data name="DatePrecisionYearOnly" xml:space="preserve"><value>Nur Jahr</value></data></root>
+<data name="DatePrecisionLabel" xml:space="preserve"><value>Datumsgenauigkeit</value></data><data name="DatePrecisionFull" xml:space="preserve"><value>Vollständiges Datum</value></data><data name="DatePrecisionMonthYear" xml:space="preserve"><value>Nur Monat und Jahr</value></data><data name="DatePrecisionYearOnly" xml:space="preserve"><value>Nur Jahr</value></data>  <data name="PersonSoftwareLabel" xml:space="preserve"><value>Software</value></data>
+  <data name="SoftwareCreditsLabel" xml:space="preserve"><value>Credits</value></data>
+  <data name="PersonSoftwareLabel" xml:space="preserve"><value>Software</value></data>
+  <data name="SoftwareCreditsLabel" xml:space="preserve"><value>Credits</value></data>
+</root>

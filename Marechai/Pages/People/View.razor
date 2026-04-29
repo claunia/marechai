@@ -291,3 +291,33 @@
     </MudExpansionPanel>
 </MudExpansionPanels>
 }
+
+@* ── Software Credits Card ── *@
+@if(_softwareCredits.Count > 0)
+{
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel>
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.Code" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Software"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="@(_softwareCredits.Count > 0 ? Color.Success : Color.Error)">@_softwareCredits.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="PersonBySoftwareDto" Dense="true">
+                @foreach(PersonBySoftwareDto credit in _softwareCredits)
+                {
+                    <MudListItem T="PersonBySoftwareDto" Href="@($"/software/{credit.SoftwareId}")" Icon="@Icons.Material.Filled.Code">
+                        @credit.SoftwareName
+                        @if(!string.IsNullOrEmpty(credit.Role))
+                        {
+                            <MudText Typo="Typo.caption" Color="Color.Secondary" Class="ml-2" Style="display: inline;">— @L[credit.Role]</MudText>
+                        }
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+}

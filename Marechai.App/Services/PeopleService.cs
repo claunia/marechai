@@ -207,4 +207,20 @@ public class PeopleService
             return [];
         }
     }
+
+    public async Task<List<PersonBySoftwareDto>> GetSoftwareByPersonAsync(int personId)
+    {
+        try
+        {
+            List<PersonBySoftwareDto>? software = await _apiClient.People[personId].Software.GetAsync();
+
+            return software ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching software credits for person {PersonId}", personId);
+
+            return [];
+        }
+    }
 }

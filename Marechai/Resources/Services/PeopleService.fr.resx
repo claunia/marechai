@@ -326,4 +326,188 @@
         <value>Année uniquement</value>
         <comment>Year only</comment>
     </data>
+    <data name="Software" xml:space="preserve">
+        <value>Logiciel</value>
+        <comment>Software</comment>
+    </data>
+    <data name="Design" xml:space="preserve">
+        <value>Conception</value>
+        <comment>Design</comment>
+    </data>
+    <data name="Program" xml:space="preserve">
+        <value>Programmation</value>
+        <comment>Program</comment>
+    </data>
+    <data name="Graphics Design" xml:space="preserve">
+        <value>Conception graphique</value>
+        <comment>Graphics Design</comment>
+    </data>
+    <data name="Levels" xml:space="preserve">
+        <value>Niveaux</value>
+        <comment>Levels</comment>
+    </data>
+    <data name="Music and FX" xml:space="preserve">
+        <value>Musique et effets</value>
+        <comment>Music and FX</comment>
+    </data>
+    <data name="Written by" xml:space="preserve">
+        <value>Écrit par</value>
+        <comment>Written by</comment>
+    </data>
+    <data name="Directed by" xml:space="preserve">
+        <value>Réalisé par</value>
+        <comment>Directed by</comment>
+    </data>
+    <data name="Developed by" xml:space="preserve">
+        <value>Développé par</value>
+        <comment>Developed by</comment>
+    </data>
+    <data name="Cast" xml:space="preserve">
+        <value>Distribution</value>
+        <comment>Cast</comment>
+    </data>
+    <data name="Special Thanks" xml:space="preserve">
+        <value>Remerciements spéciaux</value>
+        <comment>Special Thanks</comment>
+    </data>
+    <data name="Code (Kod)" xml:space="preserve">
+        <value>Code (Kod)</value>
+        <comment>Code (Kod)</comment>
+    </data>
+    <data name="Music (Muzyka)" xml:space="preserve">
+        <value>Musique (Muzyka)</value>
+        <comment>Music (Muzyka)</comment>
+    </data>
+    <data name="Fonts (Fonty)" xml:space="preserve">
+        <value>Polices (Fonty)</value>
+        <comment>Fonts (Fonty)</comment>
+    </data>
+    <data name="Designer" xml:space="preserve">
+        <value>Concepteur</value>
+        <comment>Designer</comment>
+    </data>
+    <data name="Programmer" xml:space="preserve">
+        <value>Programmeur</value>
+        <comment>Programmer</comment>
+    </data>
+    <data name="Producer" xml:space="preserve">
+        <value>Producteur</value>
+        <comment>Producer</comment>
+    </data>
+    <data name="Director" xml:space="preserve">
+        <value>Directeur</value>
+        <comment>Director</comment>
+    </data>
+    <data name="Artist" xml:space="preserve">
+        <value>Artiste</value>
+        <comment>Artist</comment>
+    </data>
+    <data name="Writer" xml:space="preserve">
+        <value>Auteur</value>
+        <comment>Writer</comment>
+    </data>
+    <data name="Composer" xml:space="preserve">
+        <value>Compositeur</value>
+        <comment>Composer</comment>
+    </data>
+    <data name="Tester" xml:space="preserve">
+        <value>Testeur</value>
+        <comment>Tester</comment>
+    </data>
+    <data name="QA" xml:space="preserve">
+        <value>Assurance qualité</value>
+        <comment>QA</comment>
+    </data>
+    <data name="Software" xml:space="preserve">
+        <value>Logiciel</value>
+        <comment>Software</comment>
+    </data>
+    <data name="Design" xml:space="preserve">
+        <value>Conception</value>
+        <comment>Design</comment>
+    </data>
+    <data name="Program" xml:space="preserve">
+        <value>Programmation</value>
+        <comment>Program</comment>
+    </data>
+    <data name="Graphics Design" xml:space="preserve">
+        <value>Conception graphique</value>
+        <comment>Graphics Design</comment>
+    </data>
+    <data name="Levels" xml:space="preserve">
+        <value>Niveaux</value>
+        <comment>Levels</comment>
+    </data>
+    <data name="Music and FX" xml:space="preserve">
+        <value>Musique et effets</value>
+        <comment>Music and FX</comment>
+    </data>
+    <data name="Written by" xml:space="preserve">
+        <value>Écrit par</value>
+        <comment>Written by</comment>
+    </data>
+    <data name="Directed by" xml:space="preserve">
+        <value>Réalisé par</value>
+        <comment>Directed by</comment>
+    </data>
+    <data name="Developed by" xml:space="preserve">
+        <value>Développé par</value>
+        <comment>Developed by</comment>
+    </data>
+    <data name="Cast" xml:space="preserve">
+        <value>Distribution</value>
+        <comment>Cast</comment>
+    </data>
+    <data name="Special Thanks" xml:space="preserve">
+        <value>Remerciements spéciaux</value>
+        <comment>Special Thanks</comment>
+    </data>
+    <data name="Code (Kod)" xml:space="preserve">
+        <value>Code (Kod)</value>
+        <comment>Code (Kod)</comment>
+    </data>
+    <data name="Music (Muzyka)" xml:space="preserve">
+        <value>Musique (Muzyka)</value>
+        <comment>Music (Muzyka)</comment>
+    </data>
+    <data name="Fonts (Fonty)" xml:space="preserve">
+        <value>Polices (Fonty)</value>
+        <comment>Fonts (Fonty)</comment>
+    </data>
+    <data name="Designer" xml:space="preserve">
+        <value>Concepteur</value>
+        <comment>Designer</comment>
+    </data>
+    <data name="Programmer" xml:space="preserve">
+        <value>Programmeur</value>
+        <comment>Programmer</comment>
+    </data>
+    <data name="Producer" xml:space="preserve">
+        <value>Producteur</value>
+        <comment>Producer</comment>
+    </data>
+    <data name="Director" xml:space="preserve">
+        <value>Directeur</value>
+        <comment>Director</comment>
+    </data>
+    <data name="Artist" xml:space="preserve">
+        <value>Artiste</value>
+        <comment>Artist</comment>
+    </data>
+    <data name="Writer" xml:space="preserve">
+        <value>Auteur</value>
+        <comment>Writer</comment>
+    </data>
+    <data name="Composer" xml:space="preserve">
+        <value>Compositeur</value>
+        <comment>Composer</comment>
+    </data>
+    <data name="Tester" xml:space="preserve">
+        <value>Testeur</value>
+        <comment>Tester</comment>
+    </data>
+    <data name="QA" xml:space="preserve">
+        <value>Assurance qualité</value>
+        <comment>QA</comment>
+    </data>
 </root>

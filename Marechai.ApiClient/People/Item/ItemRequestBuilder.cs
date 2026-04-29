@@ -5,6 +5,7 @@ using Marechai.ApiClient.People.Item.Books;
 using Marechai.ApiClient.People.Item.Companies;
 using Marechai.ApiClient.People.Item.Documents;
 using Marechai.ApiClient.People.Item.Magazines;
+using Marechai.ApiClient.People.Item.Software;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
 using Microsoft.Kiota.Abstractions;
@@ -40,6 +41,11 @@ namespace Marechai.ApiClient.People.Item
         public global::Marechai.ApiClient.People.Item.Magazines.MagazinesRequestBuilder Magazines
         {
             get => new global::Marechai.ApiClient.People.Item.Magazines.MagazinesRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The software property</summary>
+        public global::Marechai.ApiClient.People.Item.Software.SoftwareRequestBuilder Software
+        {
+            get => new global::Marechai.ApiClient.People.Item.Software.SoftwareRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.ApiClient.People.Item.ItemRequestBuilder"/> and sets the default values.
