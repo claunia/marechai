@@ -167,8 +167,10 @@
 </MudCard>
 
 @* ── Companies Card ── *@
+@if(_companies.Count > 0)
+{
 <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-    <MudExpansionPanel Disabled="@(_companies.Count == 0)">
+    <MudExpansionPanel>
         <TitleContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                 <MudIcon Icon="@Icons.Material.Filled.Business" Color="Color.Primary"/>
@@ -198,10 +200,13 @@
         </ChildContent>
     </MudExpansionPanel>
 </MudExpansionPanels>
+}
 
 @* ── Books Card ── *@
+@if(_books.Count > 0)
+{
 <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-    <MudExpansionPanel Disabled="@(_books.Count == 0)">
+    <MudExpansionPanel>
         <TitleContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                 <MudIcon Icon="@Icons.Material.Filled.Book" Color="Color.Primary"/>
@@ -225,10 +230,13 @@
         </ChildContent>
     </MudExpansionPanel>
 </MudExpansionPanels>
+}
 
 @* ── Documents Card ── *@
+@if(_documents.Count > 0)
+{
 <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-    <MudExpansionPanel Disabled="@(_documents.Count == 0)">
+    <MudExpansionPanel>
         <TitleContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                 <MudIcon Icon="@Icons.Material.Filled.Article" Color="Color.Primary"/>
@@ -252,10 +260,13 @@
         </ChildContent>
     </MudExpansionPanel>
 </MudExpansionPanels>
+}
 
 @* ── Magazines Card ── *@
+@if(_magazines.Count > 0)
+{
 <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-    <MudExpansionPanel Disabled="@(_magazines.Count == 0)">
+    <MudExpansionPanel>
         <TitleContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                 <MudIcon Icon="@Icons.Material.Filled.MenuBook" Color="Color.Primary"/>
@@ -279,3 +290,4 @@
         </ChildContent>
     </MudExpansionPanel>
 </MudExpansionPanels>
+}
