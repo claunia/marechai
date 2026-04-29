@@ -12,23 +12,15 @@ namespace Marechai.Database.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "GpusByOwnedMachine");
-
-            migrationBuilder.DropTable(
-                name: "MemoryByOwnedMachine");
-
-            migrationBuilder.DropTable(
-                name: "OwnedMachinePhotos");
-
-            migrationBuilder.DropTable(
-                name: "ProcessorsByOwnedMachine");
-
-            migrationBuilder.DropTable(
-                name: "SoundByOwnedMachine");
-
-            migrationBuilder.DropTable(
-                name: "StorageByOwnedMachine");
+            // Drop tables idempotently (may not exist on production)
+            migrationBuilder.Sql("SET FOREIGN_KEY_CHECKS=0;");
+            migrationBuilder.Sql("DROP TABLE IF EXISTS `GpusByOwnedMachine`;");
+            migrationBuilder.Sql("DROP TABLE IF EXISTS `MemoryByOwnedMachine`;");
+            migrationBuilder.Sql("DROP TABLE IF EXISTS `OwnedMachinePhotos`;");
+            migrationBuilder.Sql("DROP TABLE IF EXISTS `ProcessorsByOwnedMachine`;");
+            migrationBuilder.Sql("DROP TABLE IF EXISTS `SoundByOwnedMachine`;");
+            migrationBuilder.Sql("DROP TABLE IF EXISTS `StorageByOwnedMachine`;");
+            migrationBuilder.Sql("SET FOREIGN_KEY_CHECKS=1;");
 
             migrationBuilder.CreateTable(
                 name: "CollectedBooks",

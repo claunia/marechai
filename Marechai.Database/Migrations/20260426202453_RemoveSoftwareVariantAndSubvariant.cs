@@ -12,66 +12,57 @@ namespace Marechai.Database.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_SoftwareReleases_SoftwareSubvariants_SubvariantId",
-                table: "SoftwareReleases");
+            // Drop idempotently — objects may not exist on all environments
+            migrationBuilder.Sql("SET FOREIGN_KEY_CHECKS=0;");
+            migrationBuilder.Sql("ALTER TABLE `SoftwareReleases` DROP FOREIGN KEY IF EXISTS `FK_SoftwareReleases_SoftwareSubvariants_SubvariantId`;");
+            migrationBuilder.Sql("ALTER TABLE `SoftwareReleases` DROP FOREIGN KEY IF EXISTS `FK_SoftwareReleases_SoftwareVariants_VariantId`;");
+            migrationBuilder.Sql("ALTER TABLE `StandaloneFiles` DROP FOREIGN KEY IF EXISTS `FK_StandaloneFiles_SoftwareVariants_SoftwareVariantId`;");
+            migrationBuilder.Sql("DROP TABLE IF EXISTS `CompaniesBySoftwareVariants`;");
+            migrationBuilder.Sql("DROP TABLE IF EXISTS `SoftwareSubvariantLanguages`;");
+            migrationBuilder.Sql("DROP TABLE IF EXISTS `SoftwareVariantLanguages`;");
+            migrationBuilder.Sql("DROP TABLE IF EXISTS `SoftwareSubvariants`;");
+            migrationBuilder.Sql("DROP TABLE IF EXISTS `SoftwareVariants`;");
+            migrationBuilder.Sql("ALTER TABLE `SoftwareReleases` DROP INDEX IF EXISTS `IX_SoftwareReleases_SubvariantId`;");
+            migrationBuilder.Sql("ALTER TABLE `SoftwareReleases` DROP INDEX IF EXISTS `IX_SoftwareReleases_VariantId`;");
+            migrationBuilder.Sql("ALTER TABLE `SoftwareReleases` DROP COLUMN IF EXISTS `SubvariantId`;");
+            migrationBuilder.Sql("ALTER TABLE `SoftwareReleases` DROP COLUMN IF EXISTS `VariantId`;");
+            migrationBuilder.Sql("SET FOREIGN_KEY_CHECKS=1;");
 
-            migrationBuilder.DropForeignKey(
-                name: "FK_SoftwareReleases_SoftwareVariants_VariantId",
-                table: "SoftwareReleases");
+            // Rename column/index — use raw SQL to handle already-renamed case
+            migrationBuilder.Sql(@"
+                SET @col_exists = (SELECT COUNT(*) FROM information_schema.COLUMNS
+                    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'StandaloneFiles' AND COLUMN_NAME = 'SoftwareVariantId');
+                SET @sql = IF(@col_exists > 0,
+                    'ALTER TABLE `StandaloneFiles` CHANGE COLUMN `SoftwareVariantId` `SoftwareReleaseId` bigint(20) unsigned NOT NULL',
+                    'SELECT 1');
+                PREPARE stmt FROM @sql;
+                EXECUTE stmt;
+                DEALLOCATE PREPARE stmt;
+            ");
 
-            migrationBuilder.DropForeignKey(
-                name: "FK_StandaloneFiles_SoftwareVariants_SoftwareVariantId",
-                table: "StandaloneFiles");
+            migrationBuilder.Sql(@"
+                SET @idx_exists = (SELECT COUNT(*) FROM information_schema.STATISTICS
+                    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'StandaloneFiles' AND INDEX_NAME = 'IX_StandaloneFiles_SoftwareVariantId');
+                SET @sql = IF(@idx_exists > 0,
+                    'ALTER TABLE `StandaloneFiles` RENAME INDEX `IX_StandaloneFiles_SoftwareVariantId` TO `IX_StandaloneFiles_SoftwareReleaseId`',
+                    'SELECT 1');
+                PREPARE stmt FROM @sql;
+                EXECUTE stmt;
+                DEALLOCATE PREPARE stmt;
+            ");
 
-            migrationBuilder.DropTable(
-                name: "CompaniesBySoftwareVariants");
-
-            migrationBuilder.DropTable(
-                name: "SoftwareSubvariantLanguages");
-
-            migrationBuilder.DropTable(
-                name: "SoftwareVariantLanguages");
-
-            migrationBuilder.DropTable(
-                name: "SoftwareSubvariants");
-
-            migrationBuilder.DropTable(
-                name: "SoftwareVariants");
-
-            migrationBuilder.DropIndex(
-                name: "IX_SoftwareReleases_SubvariantId",
-                table: "SoftwareReleases");
-
-            migrationBuilder.DropIndex(
-                name: "IX_SoftwareReleases_VariantId",
-                table: "SoftwareReleases");
-
-            migrationBuilder.DropColumn(
-                name: "SubvariantId",
-                table: "SoftwareReleases");
-
-            migrationBuilder.DropColumn(
-                name: "VariantId",
-                table: "SoftwareReleases");
-
-            migrationBuilder.RenameColumn(
-                name: "SoftwareVariantId",
-                table: "StandaloneFiles",
-                newName: "SoftwareReleaseId");
-
-            migrationBuilder.RenameIndex(
-                name: "IX_StandaloneFiles_SoftwareVariantId",
-                table: "StandaloneFiles",
-                newName: "IX_StandaloneFiles_SoftwareReleaseId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_StandaloneFiles_SoftwareReleases_SoftwareReleaseId",
-                table: "StandaloneFiles",
-                column: "SoftwareReleaseId",
-                principalTable: "SoftwareReleases",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+            // Add FK if not exists
+            migrationBuilder.Sql(@"
+                SET @fk_exists = (SELECT COUNT(*) FROM information_schema.TABLE_CONSTRAINTS
+                    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'StandaloneFiles'
+                    AND CONSTRAINT_NAME = 'FK_StandaloneFiles_SoftwareReleases_SoftwareReleaseId');
+                SET @sql = IF(@fk_exists = 0,
+                    'ALTER TABLE `StandaloneFiles` ADD CONSTRAINT `FK_StandaloneFiles_SoftwareReleases_SoftwareReleaseId` FOREIGN KEY (`SoftwareReleaseId`) REFERENCES `SoftwareReleases` (`Id`) ON DELETE CASCADE',
+                    'SELECT 1');
+                PREPARE stmt FROM @sql;
+                EXECUTE stmt;
+                DEALLOCATE PREPARE stmt;
+            ");
         }
 
         /// <inheritdoc />

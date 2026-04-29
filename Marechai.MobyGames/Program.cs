@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Marechai.Database;
 using Marechai.Database.Models;
 using Marechai.MobyGames.Services;
 using Microsoft.EntityFrameworkCore;
@@ -31,8 +32,9 @@ class Program
         var optionsBuilder = new DbContextOptionsBuilder<MarechaiContext>();
 
         optionsBuilder.UseLazyLoadingProxies()
+                      .AddInterceptors(new MariaDb12CollationInterceptor())
                       .UseMySql(marechaiConn,
-                                new MariaDbServerVersion(new Version(10, 5, 0)),
+                                new MariaDbServerVersion(new Version(12, 0, 2)),
                                 b => b.UseMicrosoftJson().EnableStringComparisonTranslations()
                                         .UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
 

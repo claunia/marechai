@@ -167,10 +167,11 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
 
         optionsBuilder
            .UseMySql(configuration.GetConnectionString("DefaultConnection"),
-                     new MariaDbServerVersion(new Version(10, 5, 0)),
+                     new MariaDbServerVersion(new Version(12, 0, 2)),
                      b => b.UseMicrosoftJson()
                              .UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery))
-           .UseLazyLoadingProxies();
+           .UseLazyLoadingProxies()
+           .AddInterceptors(new MariaDb12CollationInterceptor());
     }
 
     public async Task<int> SaveChangesWithUserAsync(string userId)

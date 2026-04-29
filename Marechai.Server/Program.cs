@@ -244,11 +244,12 @@ file class Program
                 });
 
         builder.Services.AddDbContextFactory<MarechaiContext>(options => options.UseLazyLoadingProxies()
+                                                                 .AddInterceptors(new MariaDb12CollationInterceptor())
                                                                  .UseMySql(builder.Configuration
                                                                               .GetConnectionString("DefaultConnection"),
                                                                            new
                                                                                MariaDbServerVersion(new System.
-                                                                                   Version(10, 5, 0)),
+                                                                                   Version(12, 0, 2)),
                                                                            b => b.UseMicrosoftJson()
                                                                                     .EnableStringComparisonTranslations()
                                                                                     .UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
