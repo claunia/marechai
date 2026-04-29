@@ -189,6 +189,26 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
                                                                   })
                                                                  .FirstOrDefaultAsync();
 
+    [HttpGet("{releaseId:ulong}/attributes")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<SoftwareAttributeDto>> GetAttributesAsync(ulong releaseId) => context.SoftwareAttributes
+       .Where(a => a.SoftwareReleaseId == releaseId)
+       .Select(a => new SoftwareAttributeDto
+        {
+            Id                = a.Id,
+            SoftwareReleaseId = a.SoftwareReleaseId,
+            Category          = a.Category,
+            Key               = a.Key,
+            Value             = a.Value,
+            PlatformName      = a.SoftwareRelease.Platform.Name,
+            RegionNames       = string.Join(", ", a.SoftwareRelease.Regions.Select(r => r.UnM49.Name))
+        })
+       .OrderBy(a => a.Category)
+       .ThenBy(a => a.Key)
+       .ToListAsync();
+
     [HttpPut("{id:ulong}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]

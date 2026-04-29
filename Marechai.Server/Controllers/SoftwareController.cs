@@ -438,6 +438,44 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
         return Ok();
     }
 
+    [HttpGet("/software/{softwareId:ulong}/genres")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<SoftwareGenreDto>> GetGenresAsync(ulong softwareId) => context.GenresBySoftware
+       .Where(gs => gs.SoftwareId == softwareId)
+       .Select(gs => new SoftwareGenreDto
+        {
+            Id       = gs.Genre.Id,
+            Name     = gs.Genre.Name,
+            Type     = (int)gs.Genre.Type,
+            TypeName = gs.Genre.Type.ToString()
+        })
+       .OrderBy(g => g.Type)
+       .ThenBy(g => g.Name)
+       .ToListAsync();
+
+    [HttpGet("/software/{softwareId:ulong}/attributes")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<SoftwareAttributeDto>> GetAttributesAsync(ulong softwareId) => context.SoftwareAttributes
+       .Where(a => a.SoftwareRelease.SoftwareId == softwareId)
+       .Select(a => new SoftwareAttributeDto
+        {
+            Id                = a.Id,
+            SoftwareReleaseId = a.SoftwareReleaseId,
+            Category          = a.Category,
+            Key               = a.Key,
+            Value             = a.Value,
+            PlatformName      = a.SoftwareRelease.Platform.Name,
+            RegionNames       = string.Join(", ", a.SoftwareRelease.Regions.Select(r => r.UnM49.Name))
+        })
+       .OrderBy(a => a.PlatformName)
+       .ThenBy(a => a.Category)
+       .ThenBy(a => a.Key)
+       .ToListAsync();
+
     [HttpGet("/software/{softwareId:ulong}/credits")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]

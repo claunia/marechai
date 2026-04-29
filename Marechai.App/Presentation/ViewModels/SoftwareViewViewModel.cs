@@ -106,6 +106,18 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     public ObservableCollection<ReleaseDisplayItem>       Releases            { get; } = [];
     public ObservableCollection<ScreenshotPlatformGroup>  ScreenshotGroups    { get; } = [];
     public ObservableCollection<CreditGroupDisplayItem>   CreditGroups        { get; } = [];
+    public ObservableCollection<GenreTypeGroupItem>       GenreGroups         { get; } = [];
+    public ObservableCollection<SpecPlatformGroupItem>    SpecGroups          { get; } = [];
+    public ObservableCollection<RatingItem>               Ratings             { get; } = [];
+
+    [ObservableProperty]
+    private Visibility _showGenres = Visibility.Collapsed;
+
+    [ObservableProperty]
+    private Visibility _showSpecs = Visibility.Collapsed;
+
+    [ObservableProperty]
+    private Visibility _showRatings = Visibility.Collapsed;
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => false;
 
@@ -218,6 +230,66 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
 
                 CreditGroups.Add(item);
             }
+
+            // Load genres
+            GenreGroups.Clear();
+            List<SoftwareGenreDto> genres = await _browsingService.GetGenresAsync(softwareId);
+
+            var genresByType = genres
+                              .GroupBy(g => g.TypeName ?? "Genre")
+                              .OrderBy(g => g.Key);
+
+            foreach(var group in genresByType)
+            {
+                var genreGroup = new GenreTypeGroupItem { TypeName = _localizer[group.Key] };
+
+                foreach(SoftwareGenreDto genre in group.OrderBy(g => g.Name))
+                    genreGroup.Genres.Add(genre.Name ?? string.Empty);
+
+                GenreGroups.Add(genreGroup);
+            }
+
+            ShowGenres = GenreGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+
+            // Load attributes (specs + ratings)
+            SpecGroups.Clear();
+            Ratings.Clear();
+            List<SoftwareAttributeDto> attributes = await _browsingService.GetAttributesAsync(softwareId);
+
+            var specs = attributes
+                       .Where(a => a.Category == "Spec")
+                       .GroupBy(s => s.PlatformName ?? "Unknown")
+                       .OrderBy(g => g.Key);
+
+            foreach(var platformGroup in specs)
+            {
+                var specGroup = new SpecPlatformGroupItem { PlatformName = platformGroup.Key };
+
+                foreach(SoftwareAttributeDto spec in platformGroup)
+                {
+                    specGroup.Specs.Add(new SpecItem
+                    {
+                        Key   = _localizer[spec.Key ?? string.Empty],
+                        Value = spec.Value ?? string.Empty
+                    });
+                }
+
+                SpecGroups.Add(specGroup);
+            }
+
+            ShowSpecs = SpecGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+
+            foreach(SoftwareAttributeDto rating in attributes.Where(a => a.Category == "Rating"))
+            {
+                Ratings.Add(new RatingItem
+                {
+                    System       = rating.Key ?? string.Empty,
+                    Rating       = rating.Value ?? string.Empty,
+                    PlatformName = rating.PlatformName ?? string.Empty
+                });
+            }
+
+            ShowRatings = Ratings.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
 
             // Load versions (without nested releases)
             List<SoftwareVersionDto> versions = await _browsingService.GetVersionsAsync(softwareId);
@@ -430,4 +502,33 @@ public class CreditGroupDisplayItem
 {
     public string                      Role   { get; set; } = string.Empty;
     public ObservableCollection<string> People { get; } = [];
+}
+
+[Bindable]
+public class GenreTypeGroupItem
+{
+    public string                      TypeName { get; set; } = string.Empty;
+    public ObservableCollection<string> Genres  { get; } = [];
+}
+
+[Bindable]
+public class SpecPlatformGroupItem
+{
+    public string                          PlatformName { get; set; } = string.Empty;
+    public ObservableCollection<SpecItem>  Specs        { get; } = [];
+}
+
+[Bindable]
+public class SpecItem
+{
+    public string Key   { get; set; } = string.Empty;
+    public string Value { get; set; } = string.Empty;
+}
+
+[Bindable]
+public class RatingItem
+{
+    public string System       { get; set; } = string.Empty;
+    public string Rating       { get; set; } = string.Empty;
+    public string PlatformName { get; set; } = string.Empty;
 }

@@ -433,4 +433,53 @@
     <data name="There are no companies in the database." xml:space="preserve">
         <value>Non ci sono aziende nel database.</value>
     </data>
+    <!--Genre,specificationandratingdisplay-->
+    <data name="Genres" xml:space="preserve">
+        <value>Generi</value>
+    </data>
+    <data name="Genre" xml:space="preserve">
+        <value>Genere</value>
+    </data>
+    <data name="Perspective" xml:space="preserve">
+        <value>Prospettiva</value>
+    </data>
+    <data name="Gameplay" xml:space="preserve">
+        <value>Giocabilità</value>
+    </data>
+    <data name="Setting" xml:space="preserve">
+        <value>Ambientazione</value>
+    </data>
+    <data name="Specifications" xml:space="preserve">
+        <value>Specifiche</value>
+    </data>
+    <data name="Ratings" xml:space="preserve">
+        <value>Classificazioni</value>
+    </data>
+    <data name="Business Model" xml:space="preserve">
+        <value>Modello di business</value>
+    </data>
+    <data name="Media Type" xml:space="preserve">
+        <value>Tipo di supporto</value>
+    </data>
+    <data name="Video Modes" xml:space="preserve">
+        <value>Modalità video</value>
+    </data>
+    <data name="Sound" xml:space="preserve">
+        <value>Suono</value>
+    </data>
+    <data name="Players" xml:space="preserve">
+        <value>Giocatori</value>
+    </data>
+    <data name="Notes" xml:space="preserve">
+        <value>Note</value>
+    </data>
+    <data name="Number of Players" xml:space="preserve">
+        <value>Numero di giocatori</value>
+    </data>
+    <data name="Controller Support" xml:space="preserve">
+        <value>Supporto controller</value>
+    </data>
+    <data name="Input Devices Supported" xml:space="preserve">
+        <value>Dispositivi di input supportati</value>
+    </data>
 </root>

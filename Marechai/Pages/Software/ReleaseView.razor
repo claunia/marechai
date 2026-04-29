@@ -414,3 +414,46 @@
         </ChildContent>
     </MudExpansionPanel>
 </MudExpansionPanels>
+
+@* ── Specifications Card ── *@
+@if(_releaseSpecs.Count > 0)
+{
+<MudCard Elevation="2" Class="mb-4 rounded-lg">
+    <MudCardContent>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+            <MudIcon Icon="@Icons.Material.Filled.Settings" Color="Color.Primary"/>
+            <MudText Typo="Typo.h6">@L["Specifications"]</MudText>
+        </MudStack>
+        <MudSimpleTable Elevation="0" Dense="true">
+            <tbody>
+            @foreach(SoftwareAttributeDto spec in _releaseSpecs)
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L[spec.Key]</strong></td>
+                    <td>@spec.Value</td>
+                </tr>
+            }
+            </tbody>
+        </MudSimpleTable>
+    </MudCardContent>
+</MudCard>
+}
+
+@* ── Ratings Card ── *@
+@if(_releaseRatings.Count > 0)
+{
+<MudCard Elevation="2" Class="mb-4 rounded-lg">
+    <MudCardContent>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+            <MudIcon Icon="@Icons.Material.Filled.Star" Color="Color.Primary"/>
+            <MudText Typo="Typo.h6">@L["Ratings"]</MudText>
+        </MudStack>
+        <div class="d-flex flex-wrap gap-2">
+            @foreach(SoftwareAttributeDto rating in _releaseRatings)
+            {
+                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Warning">@rating.Key: @rating.Value</MudChip>
+            }
+        </div>
+    </MudCardContent>
+</MudCard>
+}

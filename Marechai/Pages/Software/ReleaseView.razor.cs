@@ -38,6 +38,9 @@ namespace Marechai.Pages.Software;
 public partial class ReleaseView
 {
     List<(int CompanyId, string CompanyName, string Role)> _aggregatedCompanies = [];
+    List<SoftwareAttributeDto>                             _releaseAttributes = [];
+    List<SoftwareAttributeDto>                             _releaseSpecs = [];
+    List<SoftwareAttributeDto>                             _releaseRatings = [];
     List<SoftwareBarcodeDto>                               _barcodes = [];
     int                                                    _id;
     List<SoftwareVersionBySoftwareReleaseDto>               _includedVersions = [];
@@ -115,6 +118,11 @@ public partial class ReleaseView
         _minimumGpus     = await Service.GetMinimumGpusAsync(Id);
         _recommendedGpus = await Service.GetRecommendedGpusAsync(Id);
         _soundSynths     = await Service.GetSoundSynthsAsync(Id);
+
+        // Load attributes for this release
+        _releaseAttributes = await Service.GetReleaseAttributesAsync(Id);
+        _releaseSpecs      = _releaseAttributes.Where(a => a.Category == "Spec").ToList();
+        _releaseRatings    = _releaseAttributes.Where(a => a.Category == "Rating").ToList();
 
         // Load covers for this release
         List<Guid?> coverIds = await Service.GetCoverIdsByReleaseAsync(Id);

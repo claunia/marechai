@@ -40,6 +40,13 @@ public partial class View
     List<PersonBySoftwareDto>                    _credits = [];
     Dictionary<string, List<PersonBySoftwareDto>> _creditsByRole = new();
     string?                                      _description;
+    List<SoftwareGenreDto>                       _genres = [];
+    Dictionary<string, List<SoftwareGenreDto>>   _genresByType = new();
+    List<SoftwareAttributeDto>                   _attributes = [];
+    List<SoftwareAttributeDto>                   _specs = [];
+    List<SoftwareAttributeDto>                   _ratings = [];
+    Dictionary<string, List<SoftwareAttributeDto>> _specsByPlatform = new();
+    Dictionary<string, List<SoftwareAttributeDto>> _ratingsByPlatform = new();
     int                                         _id;
     bool                                        _loaded;
     List<SoftwareReleaseDto>                     _releases = [];
@@ -96,6 +103,30 @@ public partial class View
                         .GroupBy(c => c.Role ?? "Other")
                         .OrderBy(g => g.Key)
                         .ToDictionary(g => g.Key, g => g.ToList());
+
+        // Load genres
+        _genres = await Service.GetGenresAsync(Id);
+
+        _genresByType = _genres
+                       .GroupBy(g => g.TypeName ?? "Genre")
+                       .OrderBy(g => g.Key)
+                       .ToDictionary(g => g.Key, g => g.OrderBy(x => x.Name).ToList());
+
+        // Load attributes (specs + ratings)
+        _attributes = await Service.GetAttributesAsync(Id);
+
+        _specs   = _attributes.Where(a => a.Category == "Spec").ToList();
+        _ratings = _attributes.Where(a => a.Category == "Rating").ToList();
+
+        _specsByPlatform = _specs
+                          .GroupBy(s => s.PlatformName ?? "Unknown")
+                          .OrderBy(g => g.Key)
+                          .ToDictionary(g => g.Key, g => g.ToList());
+
+        _ratingsByPlatform = _ratings
+                            .GroupBy(r => r.PlatformName ?? "Unknown")
+                            .OrderBy(g => g.Key)
+                            .ToDictionary(g => g.Key, g => g.ToList());
 
         // Load description with language fallback to English
         _description = await Service.GetDescriptionTextAsync(Id);

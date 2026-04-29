@@ -556,4 +556,52 @@ public class SoftwareBrowsingService
             return [];
         }
     }
+
+    public async Task<List<SoftwareGenreDto>> GetGenresAsync(int softwareId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching genres for software {SoftwareId} from API", softwareId);
+
+            List<SoftwareGenreDto>? genres = await _apiClient.Software[softwareId].Genres.GetAsync();
+
+            if(genres == null) return [];
+
+            _logger.LogInformation("Successfully fetched {Count} genres for software {SoftwareId}",
+                                   genres.Count,
+                                   softwareId);
+
+            return genres;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching genres for software {SoftwareId} from API", softwareId);
+
+            return [];
+        }
+    }
+
+    public async Task<List<SoftwareAttributeDto>> GetAttributesAsync(int softwareId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching attributes for software {SoftwareId} from API", softwareId);
+
+            List<SoftwareAttributeDto>? attributes = await _apiClient.Software[softwareId].Attributes.GetAsync();
+
+            if(attributes == null) return [];
+
+            _logger.LogInformation("Successfully fetched {Count} attributes for software {SoftwareId}",
+                                   attributes.Count,
+                                   softwareId);
+
+            return attributes;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching attributes for software {SoftwareId} from API", softwareId);
+
+            return [];
+        }
+    }
 }
