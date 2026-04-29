@@ -284,7 +284,7 @@ public class SoftwareScreenshotsController(MarechaiContext context, IConfigurati
         DeleteFilesByPattern(Path.Combine(photosRoot, "originals"), $"{guidStr}.*");
 
         // Delete all format/resolution variants (full + thumbnails)
-        string[] formats     = ["jpeg", "jp2k", "webp", "heif", "avif"];
+        string[] formats     = ["jpeg", "webp", "heif", "avif"];
         string[] resolutions = ["hd", "1440p", "4k"];
 
         foreach(string format in formats)
@@ -292,7 +292,6 @@ public class SoftwareScreenshotsController(MarechaiContext context, IConfigurati
             string ext = format switch
             {
                 "jpeg" => ".jpg",
-                "jp2k" => ".jp2",
                 "webp" => ".webp",
                 "heif" => ".heic",
                 "avif" => ".avif",

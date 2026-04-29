@@ -364,7 +364,7 @@ public class AuthController
         }
 
         // Delete all generated variants
-        string[] formats = ["jpeg", "jp2k", "webp", "heif", "avif"];
+        string[] formats = ["jpeg", "webp", "heif", "avif"];
         string[] sizes   = ["hd", "1440p", "4k"];
 
         foreach(string format in formats)

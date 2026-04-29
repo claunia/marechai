@@ -57,13 +57,6 @@ public class Photos
         paths.Add(Path.Combine(itemPhotosRoot, "jpeg", "1440p"));
         paths.Add(Path.Combine(itemPhotosRoot, "jpeg", "4k"));
 
-        paths.Add(Path.Combine(itemThumbsRoot, "jp2k", "hd"));
-        paths.Add(Path.Combine(itemThumbsRoot, "jp2k", "1440p"));
-        paths.Add(Path.Combine(itemThumbsRoot, "jp2k", "4k"));
-        paths.Add(Path.Combine(itemPhotosRoot, "jp2k", "hd"));
-        paths.Add(Path.Combine(itemPhotosRoot, "jp2k", "1440p"));
-        paths.Add(Path.Combine(itemPhotosRoot, "jp2k", "4k"));
-
         paths.Add(Path.Combine(itemThumbsRoot, "webp", "hd"));
         paths.Add(Path.Combine(itemThumbsRoot, "webp", "1440p"));
         paths.Add(Path.Combine(itemThumbsRoot, "webp", "4k"));
@@ -195,11 +188,6 @@ public class Photos
                 outputPath = Path.Combine(outputPath, $"{id}.jpg");
 
                 return ConvertUsingImageMagick(originalPath, outputPath, width, height);
-            case "jp2k":
-                outputPath = Path.Combine(outputPath, $"{id}.jp2");
-
-                return ConvertUsingImageMagick(originalPath, outputPath, width, height);
-
             case "webp":
                 outputPath = Path.Combine(outputPath, $"{id}.webp");
 
@@ -376,12 +364,6 @@ public class Photos
             new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JPEG", "4k",    false, scan, item); FinishedRenderingJpeg4K?.Invoke(r); }),
             new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JPEG", "1440p", false, scan, item); FinishedRenderingJpeg1440?.Invoke(r); }),
             new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JPEG", "hd",    false, scan, item); FinishedRenderingJpegHd?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JP2K", "4k",    true,  scan, item); FinishedRenderingJp2k4kThumbnail?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JP2K", "1440p", true,  scan, item); FinishedRenderingJp2k1440Thumbnail?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JP2K", "hd",    true,  scan, item); FinishedRenderingJp2kHdThumbnail?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JP2K", "4k",    false, scan, item); FinishedRenderingJp2k4k?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JP2K", "1440p", false, scan, item); FinishedRenderingJp2k1440?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JP2K", "hd",    false, scan, item); FinishedRenderingJp2kHd?.Invoke(r); }),
             new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "WEBP", "4k",    true,  scan, item); FinishedRenderingWebp4kThumbnail?.Invoke(r); }),
             new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "WEBP", "1440p", true,  scan, item); FinishedRenderingWebp1440Thumbnail?.Invoke(r); }),
             new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "WEBP", "hd",    true,  scan, item); FinishedRenderingWebpHdThumbnail?.Invoke(r); }),
@@ -423,12 +405,6 @@ public class Photos
     public event ConversionFinished FinishedRenderingJpegHd;
     public event ConversionFinished FinishedRenderingJpeg1440;
     public event ConversionFinished FinishedRenderingJpeg4K;
-    public event ConversionFinished FinishedRenderingJp2kHdThumbnail;
-    public event ConversionFinished FinishedRenderingJp2k1440Thumbnail;
-    public event ConversionFinished FinishedRenderingJp2k4kThumbnail;
-    public event ConversionFinished FinishedRenderingJp2kHd;
-    public event ConversionFinished FinishedRenderingJp2k1440;
-    public event ConversionFinished FinishedRenderingJp2k4k;
     public event ConversionFinished FinishedRenderingWebpHdThumbnail;
     public event ConversionFinished FinishedRenderingWebp1440Thumbnail;
     public event ConversionFinished FinishedRenderingWebp4kThumbnail;

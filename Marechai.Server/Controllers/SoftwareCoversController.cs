@@ -249,7 +249,7 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
 
         DeleteFilesByPattern(Path.Combine(photosRoot, "originals"), $"{guidStr}.*");
 
-        string[] formats     = ["jpeg", "jp2k", "webp", "heif", "avif", "jxl"];
+        string[] formats     = ["jpeg", "webp", "heif", "avif", "jxl"];
         string[] resolutions = ["hd", "1440p", "4k"];
 
         foreach(string format in formats)
@@ -257,7 +257,6 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
             string ext = format switch
             {
                 "jpeg" => ".jpg",
-                "jp2k" => ".jp2",
                 "webp" => ".webp",
                 "heif" => ".heic",
                 "avif" => ".avif",

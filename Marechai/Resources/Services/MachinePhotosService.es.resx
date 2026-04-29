@@ -275,30 +275,6 @@
     <value>Convirtiendo foto a JPEG con una resolución 4K...</value>
         <comment>Converting photo to JPEG with a 4K resolution...</comment>
   </data>
-    <data name="Converting photo to JPEG2000 with an HD resolution (thumbnail)..." xml:space="preserve">
-    <value>Convirtiendo foto a JPEG2000 con una resolución HD (miniatura)...</value>
-        <comment>Converting photo to JPEG2000 with an HD resolution (thumbnail)...</comment>
-  </data>
-    <data name="Converting photo to JPEG2000 with a 1440p resolution (thumbnail)..." xml:space="preserve">
-    <value>Convirtiendo foto a JPEG2000 con una resolución 1440p (miniatura)...</value>
-        <comment>Converting photo to JPEG2000 with a 1440p resolution (thumbnail)...</comment>
-  </data>
-    <data name="Converting photo to JPEG2000 with a 4K resolution (thumbnail)..." xml:space="preserve">
-    <value>Convirtiendo foto a JPEG2000 con una resolución 4K (miniatura)...</value>
-        <comment>Converting photo to JPEG2000 with a 4K resolution (thumbnail)...</comment>
-  </data>
-    <data name="Converting photo to JPEG2000 with an HD resolution..." xml:space="preserve">
-    <value>Convirtiendo foto a JPEG2000 con una resolución HD...</value>
-        <comment>Converting photo to JPEG2000 with an HD resolution...</comment>
-  </data>
-    <data name="Converting photo to JPEG2000 with a 1440p resolution..." xml:space="preserve">
-    <value>AAAConvirtiendo foto a JPEG2000 con una resolución 1440p...</value>
-        <comment>Converting photo to JPEG2000 with a 1440p resolution...</comment>
-  </data>
-    <data name="Converting photo to JPEG2000 with a 4K resolution..." xml:space="preserve">
-    <value>Convirtiendo foto a JPEG2000 con una resolución 4K...</value>
-        <comment>Converting photo to JPEG2000 with a 4K resolution...</comment>
-  </data>
     <data name="Converting photo to WebP with an HD resolution (thumbnail)..." xml:space="preserve">
     <value>Convirtiendo foto a WebP con una resolución HD (miniatura)...</value>
         <comment>Converting photo to WebP with an HD resolution (thumbnail)...</comment>
