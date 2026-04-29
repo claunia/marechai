@@ -80,7 +80,13 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
             FamilyId          = s.FamilyId,
             Family            = s.Family.Name,
             IsOperatingSystem = s.IsOperatingSystem,
-            IsGame            = s.IsGame
+            IsGame            = s.IsGame,
+            FrontCoverId = context.SoftwareCovers
+                                  .Where(c2 => (c2.Release.SoftwareId == s.Id ||
+                                                 c2.Release.SoftwareVersion.SoftwareId == s.Id) &&
+                                                c2.Type == SoftwareCoverType.Front)
+                                  .Select(c2 => (Guid?)c2.Id)
+                                  .FirstOrDefault()
         })
        .ToListAsync();
 
@@ -101,7 +107,13 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
             FamilyId          = s.FamilyId,
             Family            = s.Family.Name,
             IsOperatingSystem = s.IsOperatingSystem,
-            IsGame            = s.IsGame
+            IsGame            = s.IsGame,
+            FrontCoverId = context.SoftwareCovers
+                                  .Where(c => (c.Release.SoftwareId == s.Id ||
+                                                c.Release.SoftwareVersion.SoftwareId == s.Id) &&
+                                               c.Type == SoftwareCoverType.Front)
+                                  .Select(c => (Guid?)c.Id)
+                                  .FirstOrDefault()
         })
        .ToListAsync();
 
@@ -120,7 +132,13 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
             FamilyId          = s.FamilyId,
             Family            = s.Family.Name,
             IsOperatingSystem = s.IsOperatingSystem,
-            IsGame            = s.IsGame
+            IsGame            = s.IsGame,
+            FrontCoverId = context.SoftwareCovers
+                                  .Where(c => (c.Release.SoftwareId == s.Id ||
+                                                c.Release.SoftwareVersion.SoftwareId == s.Id) &&
+                                               c.Type == SoftwareCoverType.Front)
+                                  .Select(c => (Guid?)c.Id)
+                                  .FirstOrDefault()
         })
        .ToListAsync();
 
@@ -192,7 +210,13 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
                                                              FamilyId          = s.FamilyId,
                                                              Family            = s.Family.Name,
                                                              IsOperatingSystem = s.IsOperatingSystem,
-                                                             IsGame            = s.IsGame
+                                                             IsGame            = s.IsGame,
+                                                             FrontCoverId = context.SoftwareCovers
+                                                                                   .Where(c => (c.Release.SoftwareId == s.Id ||
+                                                                                                 c.Release.SoftwareVersion.SoftwareId == s.Id) &&
+                                                                                                c.Type == SoftwareCoverType.Front)
+                                                                                   .Select(c => (Guid?)c.Id)
+                                                                                   .FirstOrDefault()
                                                          })
                                                         .ToListAsync();
 

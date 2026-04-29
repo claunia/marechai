@@ -51,7 +51,23 @@
 @* ── Hero Header ── *@
 <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
     <MudStack AlignItems="AlignItems.Center" Spacing="3">
-        <MudIcon Icon="@Icons.Material.Filled.NewReleases" Size="Size.Large" Style="color: white;"/>
+        @if(_heroCover is not null)
+        {
+            <picture>
+                <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/jxl/hd/@(_heroCover.Id).jxl, @(Assets.BaseUrl)/assets/photos/software-covers/jxl/1440p/@(_heroCover.Id).jxl 2x, @(Assets.BaseUrl)/assets/photos/software-covers/jxl/4k/@(_heroCover.Id).jxl 3x" type="image/jxl">
+                <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/avif/hd/@(_heroCover.Id).avif, @(Assets.BaseUrl)/assets/photos/software-covers/avif/1440p/@(_heroCover.Id).avif 2x, @(Assets.BaseUrl)/assets/photos/software-covers/avif/4k/@(_heroCover.Id).avif 3x" type="image/avif">
+                <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/heif/hd/@(_heroCover.Id).heic, @(Assets.BaseUrl)/assets/photos/software-covers/heif/1440p/@(_heroCover.Id).heic 2x, @(Assets.BaseUrl)/assets/photos/software-covers/heif/4k/@(_heroCover.Id).heic 3x" type="image/heic">
+                <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/webp/hd/@(_heroCover.Id).webp, @(Assets.BaseUrl)/assets/photos/software-covers/webp/1440p/@(_heroCover.Id).webp 2x, @(Assets.BaseUrl)/assets/photos/software-covers/webp/4k/@(_heroCover.Id).webp 3x" type="image/webp">
+                <img alt="@(!string.IsNullOrEmpty(_softwareName) ? _softwareName : _release.Title)"
+                     src="@(Assets.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(_heroCover.Id).jpg"
+                     srcset="@(Assets.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(_heroCover.Id).jpg, @(Assets.BaseUrl)/assets/photos/software-covers/jpeg/1440p/@(_heroCover.Id).jpg 2x, @(Assets.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(_heroCover.Id).jpg 3x"
+                     style="max-height: 256px; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);"/>
+            </picture>
+        }
+        else
+        {
+            <MudIcon Icon="@Icons.Material.Filled.NewReleases" Size="Size.Large" Style="color: white;"/>
+        }
         @if(_release.IsCompilation == true)
         {
             <MudText Typo="Typo.h4" Align="Align.Center" Style="color: white; font-weight: 700;">@(!string.IsNullOrEmpty(_release.Title) ? _release.Title : L["Compilation"])</MudText>

@@ -56,6 +56,7 @@ public partial class ReleaseView
     List<SoftwareCoverDto>                                 _covers = [];
     Dictionary<string, List<SoftwareCoverDto>>              _coversByType = new();
     SoftwareCoverDto?                                      _fullscreenCover;
+    SoftwareCoverDto?                                      _heroCover;
     bool                                                   _togglingCollection;
 
     [CascadingParameter]
@@ -142,6 +143,12 @@ public partial class ReleaseView
                         .GroupBy(c => c.TypeName ?? "Other")
                         .OrderBy(g => g.Key)
                         .ToDictionary(g => g.Key, g => g.ToList());
+
+        // Pick a random front cover for the hero header
+        var frontCovers = _covers.Where(c => c.Type == 0).ToList();
+
+        if(frontCovers.Count > 0)
+            _heroCover = frontCovers[Random.Shared.Next(frontCovers.Count)];
 
         // Aggregate companies from multiple levels
         await LoadAggregatedCompaniesAsync();

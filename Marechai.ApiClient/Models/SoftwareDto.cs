@@ -24,6 +24,8 @@ namespace Marechai.ApiClient.Models
 #endif
         /// <summary>The family_id property</summary>
         public int? FamilyId { get; set; }
+        /// <summary>The front_cover_id property</summary>
+        public Guid? FrontCoverId { get; set; }
         /// <summary>The id property</summary>
         public int? Id { get; set; }
         /// <summary>The is_game property</summary>
@@ -65,6 +67,7 @@ namespace Marechai.ApiClient.Models
             {
                 { "family", n => { Family = n.GetStringValue(); } },
                 { "family_id", n => { FamilyId = n.GetIntValue(); } },
+                { "front_cover_id", n => { FrontCoverId = n.GetGuidValue(); } },
                 { "id", n => { Id = n.GetIntValue(); } },
                 { "is_game", n => { IsGame = n.GetBoolValue(); } },
                 { "is_operating_system", n => { IsOperatingSystem = n.GetBoolValue(); } },
@@ -80,6 +83,7 @@ namespace Marechai.ApiClient.Models
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("family", Family);
             writer.WriteIntValue("family_id", FamilyId);
+            writer.WriteGuidValue("front_cover_id", FrontCoverId);
             writer.WriteIntValue("id", Id);
             writer.WriteBoolValue("is_game", IsGame);
             writer.WriteBoolValue("is_operating_system", IsOperatingSystem);

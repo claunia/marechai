@@ -56,6 +56,7 @@ public partial class View
     List<SoftwareCoverDto>                       _covers = [];
     Dictionary<string, List<SoftwareCoverDto>>    _coversByRelease = new();
     SoftwareCoverDto?                            _fullscreenCover;
+    SoftwareCoverDto?                            _heroCover;
     SoftwareDto                                 _software;
     List<SoftwareVersionDto>                    _versions = [];
 
@@ -152,6 +153,12 @@ public partial class View
                             })
                            .OrderBy(g => g.Key)
                            .ToDictionary(g => g.Key, g => g.OrderBy(c => c.Type).ToList());
+
+        // Pick a random front cover for the hero header
+        var frontCovers = _covers.Where(c => c.Type == 0).ToList();
+
+        if(frontCovers.Count > 0)
+            _heroCover = frontCovers[Random.Shared.Next(frontCovers.Count)];
 
         // Load compilations that include this software
         _compilations = await Service.GetCompilationsForSoftwareAsync(Id);

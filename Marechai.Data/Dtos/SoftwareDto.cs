@@ -23,6 +23,7 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
@@ -41,4 +42,6 @@ public class SoftwareDto : BaseDto<ulong>
     public bool IsOperatingSystem { get; set; }
     [JsonPropertyName("is_game")]
     public bool IsGame { get; set; }
+    [JsonPropertyName("front_cover_id")]
+    public Guid? FrontCoverId { get; set; }
 }
