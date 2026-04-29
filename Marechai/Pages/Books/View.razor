@@ -194,8 +194,10 @@
 }
 
 @* ── People Card ── *@
+@if(_people.Count > 0)
+{
 <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-    <MudExpansionPanel Disabled="@(_people.Count == 0)">
+    <MudExpansionPanel>
         <TitleContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                 <MudIcon Icon="@Icons.Material.Filled.People" Color="Color.Primary"/>
@@ -219,10 +221,13 @@
         </ChildContent>
     </MudExpansionPanel>
 </MudExpansionPanels>
+}
 
 @* ── Companies Card ── *@
+@if(_companies.Count > 0)
+{
 <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-    <MudExpansionPanel Disabled="@(_companies.Count == 0)">
+    <MudExpansionPanel>
         <TitleContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                 <MudIcon Icon="@Icons.Material.Filled.Business" Color="Color.Primary"/>
@@ -246,10 +251,13 @@
         </ChildContent>
     </MudExpansionPanel>
 </MudExpansionPanels>
+}
 
 @* ── Machines Card ── *@
+@if(_machines.Count > 0)
+{
 <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-    <MudExpansionPanel Disabled="@(_machines.Count == 0)">
+    <MudExpansionPanel>
         <TitleContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                 <MudIcon Icon="@Icons.Material.Filled.Computer" Color="Color.Primary"/>
@@ -269,10 +277,13 @@
         </ChildContent>
     </MudExpansionPanel>
 </MudExpansionPanels>
+}
 
 @* ── Machine Families Card ── *@
+@if(_machineFamilies.Count > 0)
+{
 <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-    <MudExpansionPanel Disabled="@(_machineFamilies.Count == 0)">
+    <MudExpansionPanel>
         <TitleContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                 <MudIcon Icon="@Icons.Material.Filled.DevicesOther" Color="Color.Primary"/>
@@ -292,6 +303,7 @@
         </ChildContent>
     </MudExpansionPanel>
 </MudExpansionPanels>
+}
 
 @* ── Previous Edition / Source Book ── *@
 @if(_previousBook != null)
