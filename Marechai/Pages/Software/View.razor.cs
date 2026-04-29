@@ -121,12 +121,14 @@ public partial class View
         _specsByPlatform = _specs
                           .GroupBy(s => s.PlatformName ?? "Unknown")
                           .OrderBy(g => g.Key)
-                          .ToDictionary(g => g.Key, g => g.ToList());
+                          .ToDictionary(g => g.Key,
+                                        g => g.DistinctBy(s => (s.Key, s.Value)).ToList());
 
         _ratingsByPlatform = _ratings
                             .GroupBy(r => r.PlatformName ?? "Unknown")
                             .OrderBy(g => g.Key)
-                            .ToDictionary(g => g.Key, g => g.ToList());
+                            .ToDictionary(g => g.Key,
+                                          g => g.DistinctBy(r => (r.Key, r.Value)).ToList());
 
         // Load description with language fallback to English
         _description = await Service.GetDescriptionTextAsync(Id);

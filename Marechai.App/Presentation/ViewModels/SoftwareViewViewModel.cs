@@ -258,6 +258,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
 
             var specs = attributes
                        .Where(a => a.Category == "Spec")
+                       .DistinctBy(a => (a.PlatformName, a.Key, a.Value))
                        .GroupBy(s => s.PlatformName ?? "Unknown")
                        .OrderBy(g => g.Key);
 
@@ -279,7 +280,9 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
 
             ShowSpecs = SpecGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
 
-            foreach(SoftwareAttributeDto rating in attributes.Where(a => a.Category == "Rating"))
+            foreach(SoftwareAttributeDto rating in attributes.Where(a => a.Category == "Rating")
+                                                                      .DistinctBy(a => (a.PlatformName, a.Key,
+                                                                                         a.Value)))
             {
                 Ratings.Add(new RatingItem
                 {

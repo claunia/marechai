@@ -264,13 +264,15 @@
 }
 
 @* ── Barcodes Card ── *@
+@if(_barcodes.Count > 0)
+{
 <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-    <MudExpansionPanel Disabled="@(_barcodes.Count == 0)">
+    <MudExpansionPanel>
         <TitleContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                 <MudIcon Icon="@Icons.Material.Filled.QrCode" Color="Color.Primary"/>
                 <MudText Typo="Typo.h6">@L["Barcodes"]</MudText>
-                <MudChip T="string" Size="Size.Small" Color="@(_barcodes.Count > 0 ? Color.Success : Color.Error)">@_barcodes.Count</MudChip>
+                <MudChip T="string" Size="Size.Small" Color="Color.Success">@_barcodes.Count</MudChip>
             </MudStack>
         </TitleContent>
         <ChildContent>
@@ -289,15 +291,18 @@
         </ChildContent>
     </MudExpansionPanel>
 </MudExpansionPanels>
+}
 
 @* ── Product Codes Card ── *@
+@if(_productCodes.Count > 0)
+{
 <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-    <MudExpansionPanel Disabled="@(_productCodes.Count == 0)">
+    <MudExpansionPanel>
         <TitleContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                 <MudIcon Icon="@Icons.Material.Filled.Pin" Color="Color.Primary"/>
                 <MudText Typo="Typo.h6">@L["Product codes"]</MudText>
-                <MudChip T="string" Size="Size.Small" Color="@(_productCodes.Count > 0 ? Color.Success : Color.Error)">@_productCodes.Count</MudChip>
+                <MudChip T="string" Size="Size.Small" Color="Color.Success">@_productCodes.Count</MudChip>
             </MudStack>
         </TitleContent>
         <ChildContent>
@@ -316,15 +321,18 @@
         </ChildContent>
     </MudExpansionPanel>
 </MudExpansionPanels>
+}
 
 @* ── Companies Card ── *@
+@if(_aggregatedCompanies.Count > 0)
+{
 <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-    <MudExpansionPanel Disabled="@(_aggregatedCompanies.Count == 0)">
+    <MudExpansionPanel>
         <TitleContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                 <MudIcon Icon="@Icons.Material.Filled.Business" Color="Color.Primary"/>
                 <MudText Typo="Typo.h6">@L["Companies"]</MudText>
-                <MudChip T="string" Size="Size.Small" Color="@(_aggregatedCompanies.Count > 0 ? Color.Success : Color.Error)">@_aggregatedCompanies.Count</MudChip>
+                <MudChip T="string" Size="Size.Small" Color="Color.Success">@_aggregatedCompanies.Count</MudChip>
             </MudStack>
         </TitleContent>
         <ChildContent>
@@ -343,15 +351,18 @@
         </ChildContent>
     </MudExpansionPanel>
 </MudExpansionPanels>
+}
 
 @* ── Minimum GPUs Card ── *@
+@if(_minimumGpus.Count > 0)
+{
 <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-    <MudExpansionPanel Disabled="@(_minimumGpus.Count == 0)">
+    <MudExpansionPanel>
         <TitleContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                 <MudIcon Icon="@Icons.Material.Filled.Tv" Color="Color.Primary"/>
                 <MudText Typo="Typo.h6">@L["Minimum GPUs"]</MudText>
-                <MudChip T="string" Size="Size.Small" Color="@(_minimumGpus.Count > 0 ? Color.Success : Color.Error)">@_minimumGpus.Count</MudChip>
+                <MudChip T="string" Size="Size.Small" Color="Color.Success">@_minimumGpus.Count</MudChip>
             </MudStack>
         </TitleContent>
         <ChildContent>
@@ -366,15 +377,18 @@
         </ChildContent>
     </MudExpansionPanel>
 </MudExpansionPanels>
+}
 
 @* ── Recommended GPUs Card ── *@
+@if(_recommendedGpus.Count > 0)
+{
 <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-    <MudExpansionPanel Disabled="@(_recommendedGpus.Count == 0)">
+    <MudExpansionPanel>
         <TitleContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                 <MudIcon Icon="@Icons.Material.Filled.Tv" Color="Color.Primary"/>
                 <MudText Typo="Typo.h6">@L["Recommended GPUs"]</MudText>
-                <MudChip T="string" Size="Size.Small" Color="@(_recommendedGpus.Count > 0 ? Color.Success : Color.Error)">@_recommendedGpus.Count</MudChip>
+                <MudChip T="string" Size="Size.Small" Color="Color.Success">@_recommendedGpus.Count</MudChip>
             </MudStack>
         </TitleContent>
         <ChildContent>
@@ -389,15 +403,18 @@
         </ChildContent>
     </MudExpansionPanel>
 </MudExpansionPanels>
+}
 
 @* ── Sound Synthesizers Card ── *@
+@if(_soundSynths.Count > 0)
+{
 <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-    <MudExpansionPanel Disabled="@(_soundSynths.Count == 0)">
+    <MudExpansionPanel>
         <TitleContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                 <MudIcon Icon="@Icons.Material.Filled.MusicNote" Color="Color.Primary"/>
                 <MudText Typo="Typo.h6">@L["Sound synthesizers"]</MudText>
-                <MudChip T="string" Size="Size.Small" Color="@(_soundSynths.Count > 0 ? Color.Success : Color.Error)">@_soundSynths.Count</MudChip>
+                <MudChip T="string" Size="Size.Small" Color="Color.Success">@_soundSynths.Count</MudChip>
             </MudStack>
         </TitleContent>
         <ChildContent>
@@ -412,6 +429,7 @@
         </ChildContent>
     </MudExpansionPanel>
 </MudExpansionPanels>
+}
 
 @* ── Specifications Card ── *@
 @if(_releaseSpecs.Count > 0)
