@@ -66,6 +66,44 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
                                                                  m.FirstPublication.Value.Year > 1000)
                                                      .MaxAsync(m => m.FirstPublication.Value.Year);
 
+    [HttpGet("companies")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<CompanyDto>> GetCompaniesAsync() => context.CompaniesByMagazines
+                                                                .Select(cm => cm.Company)
+                                                                .Distinct()
+                                                                .Include(c => c.Logos)
+                                                                .OrderBy(c => c.Name)
+                                                                .Select(c => new CompanyDto
+                                                                 {
+                                                                     Id = c.Id,
+                                                                     LastLogo =
+                                                                         c.Logos.OrderByDescending(l => l.Year)
+                                                                          .FirstOrDefault()
+                                                                          .Guid,
+                                                                     Name = c.Name
+                                                                 })
+                                                                .ToListAsync();
+
+    [HttpGet("companies/letter/{c}")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<CompanyDto>> GetCompaniesByLetterAsync(char c) => context.CompaniesByMagazines
+       .Select(cm => cm.Company)
+       .Distinct()
+       .Include(c => c.Logos)
+       .Where(co => EF.Functions.Like(co.Name, $"{c}%"))
+       .OrderBy(co => co.Name)
+       .Select(co => new CompanyDto
+        {
+            Id       = co.Id,
+            LastLogo = co.Logos.OrderByDescending(l => l.Year).FirstOrDefault().Guid,
+            Name     = co.Name
+        })
+       .ToListAsync();
+
     [HttpGet("by-letter/{c}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]

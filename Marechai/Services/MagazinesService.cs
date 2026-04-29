@@ -75,6 +75,34 @@ public class MagazinesService(Marechai.ApiClient.Client client)
         }
     }
 
+    public async Task<List<CompanyDto>> GetCompaniesAsync()
+    {
+        try
+        {
+            List<CompanyDto>? companies = await client.Magazines.Companies.GetAsync();
+
+            return companies ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<CompanyDto>> GetCompaniesByLetterAsync(char c)
+    {
+        try
+        {
+            List<CompanyDto>? companies = await client.Magazines.Companies.Letter[c.ToString()].GetAsync();
+
+            return companies ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
     public async Task<List<MagazineDto>> GetMagazinesByLetterAsync(char c)
     {
         try

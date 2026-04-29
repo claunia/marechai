@@ -55,15 +55,15 @@
     </MudStack>
     <MudStack Spacing="1" AlignItems="AlignItems.Center">
         <div class="d-flex flex-wrap justify-center gap-1">
-            @foreach(char c in "QWERTYUIOP") { <MudChip T="string" Href="@($"/companies/{c}")">@c</MudChip> }
+            @foreach(char c in "QWERTYUIOP") { <MudChip T="string" Href="@($"/magazines/companies/{c}")">@c</MudChip> }
         </div>
         <div class="d-flex flex-wrap justify-center gap-1">
-            @foreach(char c in "ASDFGHJKL") { <MudChip T="string" Href="@($"/companies/{c}")">@c</MudChip> }
+            @foreach(char c in "ASDFGHJKL") { <MudChip T="string" Href="@($"/magazines/companies/{c}")">@c</MudChip> }
         </div>
         <div class="d-flex flex-wrap justify-center gap-1">
-            @foreach(char c in "ZXCVBNM") { <MudChip T="string" Href="@($"/companies/{c}")">@c</MudChip> }
+            @foreach(char c in "ZXCVBNM") { <MudChip T="string" Href="@($"/magazines/companies/{c}")">@c</MudChip> }
         </div>
-        <MudChip T="string" Href="/companies" Color="Color.Primary" Class="mt-1">@L["All companies"]</MudChip>
+        <MudChip T="string" Href="/magazines/companies" Color="Color.Primary" Class="mt-1">@L["All companies"]</MudChip>
     </MudStack>
 </MudPaper>
 

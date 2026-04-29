@@ -339,4 +339,19 @@
     <data name="Add to Collection" xml:space="preserve">
         <value>Añadir a colección</value>
     </data>
+    <data name="Book publishers" xml:space="preserve">
+        <value>Editoriales de libros</value>
+    </data>
+    <data name="Companies which name starts with {0}." xml:space="preserve">
+        <value>Compañías cuyo nombre empieza por {0}.</value>
+    </data>
+    <data name="{0} companies found in the database." xml:space="preserve">
+        <value>{0} compañías encontradas en la base de datos.</value>
+    </data>
+    <data name="Filter companies..." xml:space="preserve">
+        <value>Filtrar compañías...</value>
+    </data>
+    <data name="There are no companies in the database." xml:space="preserve">
+        <value>No hay compañías en la base de datos.</value>
+    </data>
 </root>

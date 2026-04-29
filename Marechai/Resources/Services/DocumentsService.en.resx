@@ -342,4 +342,19 @@
     <data name="Status" xml:space="preserve">
         <value>Status</value>
     </data>
+    <data name="Document publishers" xml:space="preserve">
+        <value>Document publishers</value>
+    </data>
+    <data name="Companies which name starts with {0}." xml:space="preserve">
+        <value>Companies which name starts with {0}.</value>
+    </data>
+    <data name="{0} companies found in the database." xml:space="preserve">
+        <value>{0} companies found in the database.</value>
+    </data>
+    <data name="Filter companies..." xml:space="preserve">
+        <value>Filter companies...</value>
+    </data>
+    <data name="There are no companies in the database." xml:space="preserve">
+        <value>There are no companies in the database.</value>
+    </data>
 </root>

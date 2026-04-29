@@ -75,6 +75,34 @@ public class BooksService(Marechai.ApiClient.Client client)
         }
     }
 
+    public async Task<List<CompanyDto>> GetCompaniesAsync()
+    {
+        try
+        {
+            List<CompanyDto>? companies = await client.Books.Companies.GetAsync();
+
+            return companies ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<CompanyDto>> GetCompaniesByLetterAsync(char c)
+    {
+        try
+        {
+            List<CompanyDto>? companies = await client.Books.Companies.Letter[c.ToString()].GetAsync();
+
+            return companies ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
     public async Task<List<BookDto>> GetBooksByLetterAsync(char c)
     {
         try

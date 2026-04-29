@@ -378,4 +378,19 @@
         <value>Fehler beim Lesen der CSV-Datei: {0}</value>
         <comment>Error reading CSV: {0}</comment>
     </data>
+    <data name="Magazine publishers" xml:space="preserve">
+        <value>Zeitschriftenverlage</value>
+    </data>
+    <data name="Companies which name starts with {0}." xml:space="preserve">
+        <value>Unternehmen, deren Name mit {0} beginnt.</value>
+    </data>
+    <data name="{0} companies found in the database." xml:space="preserve">
+        <value>{0} Unternehmen in der Datenbank gefunden.</value>
+    </data>
+    <data name="Filter companies..." xml:space="preserve">
+        <value>Unternehmen filtern...</value>
+    </data>
+    <data name="There are no companies in the database." xml:space="preserve">
+        <value>Es gibt keine Unternehmen in der Datenbank.</value>
+    </data>
 </root>
