@@ -64,8 +64,17 @@
                 <div class="d-flex align-center gap-3">
                     @if(book.CoverGuid.HasValue)
                     {
-                        <MudImage Src="@($"{Assets.BaseUrl}/assets/photos/book-covers/webp/hd/{book.CoverGuid}.webp")"
-                                  Alt="@book.Title" Height="48" ObjectFit="ObjectFit.Contain" Class="rounded"/>
+                        <picture>
+                            <source srcset="@(Assets.BaseUrl)/assets/photos/book-covers/jxl/hd/@(book.CoverGuid).jxl, @(Assets.BaseUrl)/assets/photos/book-covers/jxl/1440p/@(book.CoverGuid).jxl 2x, @(Assets.BaseUrl)/assets/photos/book-covers/jxl/4k/@(book.CoverGuid).jxl 3x" type="image/jxl">
+                            <source srcset="@(Assets.BaseUrl)/assets/photos/book-covers/avif/hd/@(book.CoverGuid).avif, @(Assets.BaseUrl)/assets/photos/book-covers/avif/1440p/@(book.CoverGuid).avif 2x, @(Assets.BaseUrl)/assets/photos/book-covers/avif/4k/@(book.CoverGuid).avif 3x" type="image/avif">
+                            <source srcset="@(Assets.BaseUrl)/assets/photos/book-covers/heif/hd/@(book.CoverGuid).heic, @(Assets.BaseUrl)/assets/photos/book-covers/heif/1440p/@(book.CoverGuid).heic 2x, @(Assets.BaseUrl)/assets/photos/book-covers/heif/4k/@(book.CoverGuid).heic 3x" type="image/heic">
+                            <source srcset="@(Assets.BaseUrl)/assets/photos/book-covers/webp/hd/@(book.CoverGuid).webp, @(Assets.BaseUrl)/assets/photos/book-covers/webp/1440p/@(book.CoverGuid).webp 2x, @(Assets.BaseUrl)/assets/photos/book-covers/webp/4k/@(book.CoverGuid).webp 3x" type="image/webp">
+                            <source srcset="@(Assets.BaseUrl)/assets/photos/book-covers/jp2k/hd/@(book.CoverGuid).jp2, @(Assets.BaseUrl)/assets/photos/book-covers/jp2k/1440p/@(book.CoverGuid).jp2 2x, @(Assets.BaseUrl)/assets/photos/book-covers/jp2k/4k/@(book.CoverGuid).jp2 3x" type="image/jp2">
+                            <img alt="@book.Title" height="48"
+                                 src="@(Assets.BaseUrl)/assets/photos/book-covers/jpeg/hd/@(book.CoverGuid).jpg"
+                                 srcset="@(Assets.BaseUrl)/assets/photos/book-covers/jpeg/hd/@(book.CoverGuid).jpg, @(Assets.BaseUrl)/assets/photos/book-covers/jpeg/1440p/@(book.CoverGuid).jpg 2x, @(Assets.BaseUrl)/assets/photos/book-covers/jpeg/4k/@(book.CoverGuid).jpg 3x"
+                                 style="object-fit: contain; border-radius: 4px;"/>
+                        </picture>
                     }
                     <div>
                         <MudText Typo="Typo.body1">@book.Title</MudText>

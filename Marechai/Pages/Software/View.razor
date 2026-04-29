@@ -323,9 +323,17 @@
                         {
                             <MudCard Elevation="1" Class="rounded-lg" Style="width: 200px; cursor: pointer;" @onclick="() => _fullscreenScreenshot = screenshot">
                                 <MudCardContent Class="pa-2">
-                                    <MudImage Src="@($"{Assets.BaseUrl}/assets/photos/software-screenshots/webp/hd/{screenshot.Id}.webp")"
-                                              Alt="@screenshot.Caption" ObjectFit="ObjectFit.Contain" Class="rounded"
-                                              Style="width: 100%; max-height: 150px;"/>
+                                    <picture>
+                                        <source srcset="@(Assets.BaseUrl)/assets/photos/software-screenshots/jxl/hd/@(screenshot.Id).jxl, @(Assets.BaseUrl)/assets/photos/software-screenshots/jxl/1440p/@(screenshot.Id).jxl 2x, @(Assets.BaseUrl)/assets/photos/software-screenshots/jxl/4k/@(screenshot.Id).jxl 3x" type="image/jxl">
+                                        <source srcset="@(Assets.BaseUrl)/assets/photos/software-screenshots/avif/hd/@(screenshot.Id).avif, @(Assets.BaseUrl)/assets/photos/software-screenshots/avif/1440p/@(screenshot.Id).avif 2x, @(Assets.BaseUrl)/assets/photos/software-screenshots/avif/4k/@(screenshot.Id).avif 3x" type="image/avif">
+                                        <source srcset="@(Assets.BaseUrl)/assets/photos/software-screenshots/heif/hd/@(screenshot.Id).heic, @(Assets.BaseUrl)/assets/photos/software-screenshots/heif/1440p/@(screenshot.Id).heic 2x, @(Assets.BaseUrl)/assets/photos/software-screenshots/heif/4k/@(screenshot.Id).heic 3x" type="image/heic">
+                                        <source srcset="@(Assets.BaseUrl)/assets/photos/software-screenshots/webp/hd/@(screenshot.Id).webp, @(Assets.BaseUrl)/assets/photos/software-screenshots/webp/1440p/@(screenshot.Id).webp 2x, @(Assets.BaseUrl)/assets/photos/software-screenshots/webp/4k/@(screenshot.Id).webp 3x" type="image/webp">
+                                        <source srcset="@(Assets.BaseUrl)/assets/photos/software-screenshots/jp2k/hd/@(screenshot.Id).jp2, @(Assets.BaseUrl)/assets/photos/software-screenshots/jp2k/1440p/@(screenshot.Id).jp2 2x, @(Assets.BaseUrl)/assets/photos/software-screenshots/jp2k/4k/@(screenshot.Id).jp2 3x" type="image/jp2">
+                                        <img alt="@screenshot.Caption"
+                                             src="@(Assets.BaseUrl)/assets/photos/software-screenshots/jpeg/hd/@(screenshot.Id).jpg"
+                                             srcset="@(Assets.BaseUrl)/assets/photos/software-screenshots/jpeg/hd/@(screenshot.Id).jpg, @(Assets.BaseUrl)/assets/photos/software-screenshots/jpeg/1440p/@(screenshot.Id).jpg 2x, @(Assets.BaseUrl)/assets/photos/software-screenshots/jpeg/4k/@(screenshot.Id).jpg 3x"
+                                             style="width: 100%; max-height: 150px; object-fit: contain; border-radius: 4px;"/>
+                                    </picture>
                                     @if(!string.IsNullOrEmpty(screenshot.Caption))
                                     {
                                         <MudText Typo="Typo.caption" Align="Align.Center" Class="mt-1">@screenshot.Caption</MudText>
@@ -344,9 +352,16 @@
 {
     <MudOverlay Visible="true" DarkBackground="true" ZIndex="9999" OnClick="() => _fullscreenScreenshot = null">
         <div class="d-flex flex-column align-center justify-center" style="width: 100vw; height: 100vh;">
-            <MudImage Src="@($"{Assets.BaseUrl}/assets/photos/software-screenshots/webp/4k/{_fullscreenScreenshot.Id}.webp")"
-                      Alt="@_fullscreenScreenshot.Caption" ObjectFit="ObjectFit.Contain"
-                      Style="max-width: 95vw; max-height: 90vh;"/>
+            <picture>
+                <source srcset="@(Assets.BaseUrl)/assets/photos/software-screenshots/jxl/4k/@(_fullscreenScreenshot.Id).jxl" type="image/jxl">
+                <source srcset="@(Assets.BaseUrl)/assets/photos/software-screenshots/avif/4k/@(_fullscreenScreenshot.Id).avif" type="image/avif">
+                <source srcset="@(Assets.BaseUrl)/assets/photos/software-screenshots/heif/4k/@(_fullscreenScreenshot.Id).heic" type="image/heic">
+                <source srcset="@(Assets.BaseUrl)/assets/photos/software-screenshots/webp/4k/@(_fullscreenScreenshot.Id).webp" type="image/webp">
+                <source srcset="@(Assets.BaseUrl)/assets/photos/software-screenshots/jp2k/4k/@(_fullscreenScreenshot.Id).jp2" type="image/jp2">
+                <img alt="@_fullscreenScreenshot.Caption"
+                     src="@(Assets.BaseUrl)/assets/photos/software-screenshots/jpeg/4k/@(_fullscreenScreenshot.Id).jpg"
+                     style="max-width: 95vw; max-height: 90vh; object-fit: contain;"/>
+            </picture>
             @if(!string.IsNullOrEmpty(_fullscreenScreenshot.Caption))
             {
                 <MudText Typo="Typo.subtitle1" Style="color: white;" Class="mt-2">@_fullscreenScreenshot.Caption</MudText>

@@ -113,12 +113,12 @@
                             <picture>
                                     <source srcset="@(Assets.BaseUrl)/assets/flags/countries/@($"{_company.CountryId:D3}").svg" type="image/svg+xml">
                                     <source srcset="@(Assets.BaseUrl)/assets/flags/countries/webp/1x/@($"{_company.CountryId:D3}").webp,
-        @(Assets.BaseUrl)/assets/flags/countries/webp/1x/@($"{_company.CountryId:D3}").webp 2x,
-        @(Assets.BaseUrl)/assets/flags/countries/webp/1x/@($"{_company.CountryId:D3}").webp 3x" type="image/webp">
+        @(Assets.BaseUrl)/assets/flags/countries/webp/2x/@($"{_company.CountryId:D3}").webp 2x,
+        @(Assets.BaseUrl)/assets/flags/countries/webp/3x/@($"{_company.CountryId:D3}").webp 3x" type="image/webp">
                                     <img alt="" height="32" src="@(Assets.BaseUrl)/assets/flags/countries/png/1x/@($"{_company.CountryId:D3}").png"
                                          srcset="@(Assets.BaseUrl)/assets/flags/countries/png/1x/@($"{_company.CountryId:D3}").png,
-                                 @(Assets.BaseUrl)/assets/flags/countries/png/1x/@($"{_company.CountryId:D3}").png 2x,
-                                 @(Assets.BaseUrl)/assets/flags/countries/png/1x/@($"{_company.CountryId:D3}").webp 3x"/>
+                                 @(Assets.BaseUrl)/assets/flags/countries/png/2x/@($"{_company.CountryId:D3}").png 2x,
+                                 @(Assets.BaseUrl)/assets/flags/countries/png/3x/@($"{_company.CountryId:D3}").png 3x"/>
                             </picture>
                             @L[_company.Country]
                         </MudLink>
@@ -264,12 +264,12 @@
                             <picture>
                                 <source srcset="@(Assets.BaseUrl)/assets/logos/@(logo.Guid).svg" type="image/svg+xml">
                                 <source srcset="@(Assets.BaseUrl)/assets/logos/webp/1x/@(logo.Guid).webp,
-    @(Assets.BaseUrl)/assets/logos/webp/1x/@(logo.Guid).webp 2x,
-    @(Assets.BaseUrl)/assets/logos/webp/1x/@(logo.Guid).webp 3x" type="image/webp">
+    @(Assets.BaseUrl)/assets/logos/webp/2x/@(logo.Guid).webp 2x,
+    @(Assets.BaseUrl)/assets/logos/webp/3x/@(logo.Guid).webp 3x" type="image/webp">
                                 <img alt="" height="auto" src="@(Assets.BaseUrl)/assets/logos/png/1x/@(logo.Guid).png"
                                      srcset="@(Assets.BaseUrl)/assets/logos/png/1x/@(logo.Guid).png,
-                             @(Assets.BaseUrl)/assets/logos/png/1x/@(logo.Guid).png 2x,
-                             @(Assets.BaseUrl)/assets/logos/png/1x/@(logo.Guid).webp 3x" style="max-height: 200px; max-width: 280px"
+                             @(Assets.BaseUrl)/assets/logos/png/2x/@(logo.Guid).png 2x,
+                             @(Assets.BaseUrl)/assets/logos/png/3x/@(logo.Guid).png 3x" style="max-height: 200px; max-width: 280px"
                                      width="auto"/>
                             </picture>
                             @if(logo.Year.HasValue)

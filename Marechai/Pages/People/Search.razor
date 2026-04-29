@@ -64,9 +64,17 @@
                 <div class="d-flex align-center gap-3">
                     @if(person.Photo.HasValue && person.Photo.Value != Guid.Empty)
                     {
-                        <MudImage Src="@($"{Assets.BaseUrl}/assets/photos/people/webp/hd/{person.Photo}.webp")"
-                                  Alt="@(person.DisplayName ?? person.Alias ?? $"{person.Name} {person.Surname}".Trim())"
-                                  Height="48" ObjectFit="ObjectFit.Contain" Class="rounded"/>
+                        <picture>
+                            <source srcset="@(Assets.BaseUrl)/assets/photos/people/jxl/hd/@(person.Photo).jxl, @(Assets.BaseUrl)/assets/photos/people/jxl/1440p/@(person.Photo).jxl 2x, @(Assets.BaseUrl)/assets/photos/people/jxl/4k/@(person.Photo).jxl 3x" type="image/jxl">
+                            <source srcset="@(Assets.BaseUrl)/assets/photos/people/avif/hd/@(person.Photo).avif, @(Assets.BaseUrl)/assets/photos/people/avif/1440p/@(person.Photo).avif 2x, @(Assets.BaseUrl)/assets/photos/people/avif/4k/@(person.Photo).avif 3x" type="image/avif">
+                            <source srcset="@(Assets.BaseUrl)/assets/photos/people/heif/hd/@(person.Photo).heic, @(Assets.BaseUrl)/assets/photos/people/heif/1440p/@(person.Photo).heic 2x, @(Assets.BaseUrl)/assets/photos/people/heif/4k/@(person.Photo).heic 3x" type="image/heic">
+                            <source srcset="@(Assets.BaseUrl)/assets/photos/people/webp/hd/@(person.Photo).webp, @(Assets.BaseUrl)/assets/photos/people/webp/1440p/@(person.Photo).webp 2x, @(Assets.BaseUrl)/assets/photos/people/webp/4k/@(person.Photo).webp 3x" type="image/webp">
+                            <source srcset="@(Assets.BaseUrl)/assets/photos/people/jp2k/hd/@(person.Photo).jp2, @(Assets.BaseUrl)/assets/photos/people/jp2k/1440p/@(person.Photo).jp2 2x, @(Assets.BaseUrl)/assets/photos/people/jp2k/4k/@(person.Photo).jp2 3x" type="image/jp2">
+                            <img alt="@(person.DisplayName ?? person.Alias ?? $"{person.Name} {person.Surname}".Trim())" height="48"
+                                 src="@(Assets.BaseUrl)/assets/photos/people/jpeg/hd/@(person.Photo).jpg"
+                                 srcset="@(Assets.BaseUrl)/assets/photos/people/jpeg/hd/@(person.Photo).jpg, @(Assets.BaseUrl)/assets/photos/people/jpeg/1440p/@(person.Photo).jpg 2x, @(Assets.BaseUrl)/assets/photos/people/jpeg/4k/@(person.Photo).jpg 3x"
+                                 style="object-fit: contain; border-radius: 4px;"/>
+                        </picture>
                     }
                     <div>
                         <MudText Typo="Typo.body1">@(person.DisplayName ?? person.Alias ?? $"{person.Name} {person.Surname}".Trim())</MudText>

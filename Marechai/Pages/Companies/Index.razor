@@ -55,12 +55,12 @@
             <picture>
                     <source srcset="@(Assets.BaseUrl)/assets/flags/countries/@($"{CountryId:D3}").svg" type="image/svg+xml">
                     <source srcset="@(Assets.BaseUrl)/assets/flags/countries/webp/1x/@($"{CountryId:D3}").webp,
-        @(Assets.BaseUrl)/assets/flags/countries/webp/1x/@($"{CountryId:D3}").webp 2x,
-        @(Assets.BaseUrl)/assets/flags/countries/webp/1x/@($"{CountryId:D3}").webp 3x" type="image/webp">
+        @(Assets.BaseUrl)/assets/flags/countries/webp/2x/@($"{CountryId:D3}").webp 2x,
+        @(Assets.BaseUrl)/assets/flags/countries/webp/3x/@($"{CountryId:D3}").webp 3x" type="image/webp">
                     <img alt="" height="32" src="@(Assets.BaseUrl)/assets/flags/countries/png/1x/@($"{CountryId:D3}").png"
                          srcset="@(Assets.BaseUrl)/assets/flags/countries/png/1x/@($"{CountryId:D3}").png,
-                                 @(Assets.BaseUrl)/assets/flags/countries/png/1x/@($"{CountryId:D3}").png 2x,
-                                 @(Assets.BaseUrl)/assets/flags/countries/png/1x/@($"{CountryId:D3}").webp 3x"/>
+                                 @(Assets.BaseUrl)/assets/flags/countries/png/2x/@($"{CountryId:D3}").png 2x,
+                                 @(Assets.BaseUrl)/assets/flags/countries/png/3x/@($"{CountryId:D3}").png 3x"/>
                 </picture>
         </MudStack>
     }
