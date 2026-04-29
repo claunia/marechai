@@ -64,9 +64,25 @@ public class MachineFamiliesController(MarechaiContext context) : ControllerBase
                                                               {
                                                                   Id        = m.Id,
                                                                   CompanyId = m.CompanyId,
+                                                                  Company   = m.Company.Name,
                                                                   Name      = m.Name
                                                               })
                                                              .FirstOrDefaultAsync();
+
+    [HttpGet("{id:int}/machines")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<MachineDto>> GetMachinesAsync(int id) => context.Machines
+       .Where(m => m.FamilyId == id)
+       .OrderBy(m => m.Name)
+       .Select(m => new MachineDto
+        {
+            Id   = m.Id,
+            Name = m.Name,
+            Type = m.Type
+        })
+       .ToListAsync();
 
     [HttpPut("{id:int}")]
     [Authorize(Roles = "Admin,UberAdmin")]

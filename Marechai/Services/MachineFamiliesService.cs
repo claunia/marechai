@@ -126,4 +126,18 @@ public class MachineFamiliesService(Marechai.ApiClient.Client client)
             return [];
         }
     }
+
+    public async Task<List<MachineDto>> GetMachinesAsync(int id)
+    {
+        try
+        {
+            List<MachineDto>? machines = await client.MachineFamilies[id].Machines.GetAsync();
+
+            return machines ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
 }
