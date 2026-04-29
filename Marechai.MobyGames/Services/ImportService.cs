@@ -216,12 +216,32 @@ public class ImportService
             if(int.TryParse(input, out int choice) && choice >= 1 && choice <= existingByName.Count)
             {
                 software = await context.Softwares.FindAsync(existingByName[choice - 1].Id);
+
+                context.News.Add(new News
+                {
+                    AddedId = (long)software.Id,
+                    Date    = DateTime.UtcNow,
+                    Type    = NewsType.UpdatedSoftwareInDb,
+                    Name    = software.Name
+                });
+
+                await context.SaveChangesAsync();
                 Console.WriteLine($"    Linked to existing Software ID: {software.Id}");
             }
             else
             {
                 software = new Software { Name = game.Name, IsGame = true };
                 context.Softwares.Add(software);
+                await context.SaveChangesAsync();
+
+                context.News.Add(new News
+                {
+                    AddedId = (long)software.Id,
+                    Date    = DateTime.UtcNow,
+                    Type    = NewsType.NewSoftwareInDb,
+                    Name    = game.Name
+                });
+
                 await context.SaveChangesAsync();
                 Console.WriteLine($"    Created new Software ID: {software.Id}");
             }
@@ -230,6 +250,16 @@ public class ImportService
         {
             software = new Software { Name = game.Name, IsGame = true };
             context.Softwares.Add(software);
+            await context.SaveChangesAsync();
+
+            context.News.Add(new News
+            {
+                AddedId = (long)software.Id,
+                Date    = DateTime.UtcNow,
+                Type    = NewsType.NewSoftwareInDb,
+                Name    = game.Name
+            });
+
             await context.SaveChangesAsync();
         }
 
