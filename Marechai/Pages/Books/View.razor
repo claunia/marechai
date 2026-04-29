@@ -209,7 +209,7 @@
             <MudList T="PersonByBookDto" Dense="true">
                 @foreach(PersonByBookDto person in _people)
                 {
-                    <MudListItem T="PersonByBookDto" Icon="@Icons.Material.Filled.Person">
+                    <MudListItem T="PersonByBookDto" Href="@($"/person/{person.PersonId}")" Icon="@Icons.Material.Filled.Person">
                         @(person.DisplayName ?? person.Alias ?? $"{person.Name} {person.Surname}".Trim())
                         @if(!string.IsNullOrEmpty(person.Role))
                         {
