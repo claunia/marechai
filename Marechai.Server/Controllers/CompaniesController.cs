@@ -218,6 +218,125 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
                                                                       })
                                                                      .ToListAsync();
 
+    [HttpGet("{id:int}/gpus")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<GpuDto>> GetGpusAsync(int id) => context.Gpus.Where(g => g.CompanyId == id)
+                                                              .OrderBy(g => g.Name)
+                                                              .Select(g => new GpuDto
+                                                               {
+                                                                   Id   = g.Id,
+                                                                   Name = g.Name
+                                                               })
+                                                              .ToListAsync();
+
+    [HttpGet("{id:int}/sound-synths")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<SoundSynthDto>> GetSoundSynthsAsync(int id) => context.SoundSynths
+       .Where(s => s.CompanyId == id)
+       .OrderBy(s => s.Name)
+       .Select(s => new SoundSynthDto
+        {
+            Id   = s.Id,
+            Name = s.Name
+        })
+       .ToListAsync();
+
+    [HttpGet("{id:int}/processors")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<ProcessorDto>> GetProcessorsAsync(int id) => context.Processors
+       .Where(p => p.CompanyId == id)
+       .OrderBy(p => p.Name)
+       .Select(p => new ProcessorDto
+        {
+            Id   = p.Id,
+            Name = p.Name
+        })
+       .ToListAsync();
+
+    [HttpGet("{id:int}/machine-families")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<MachineFamilyDto>> GetMachineFamiliesAsync(int id) => context.MachineFamilies
+       .Where(f => f.CompanyId == id)
+       .OrderBy(f => f.Name)
+       .Select(f => new MachineFamilyDto
+        {
+            Id   = f.Id,
+            Name = f.Name
+        })
+       .ToListAsync();
+
+    [HttpGet("{id:int}/books")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<BookDto>> GetBooksAsync(int id) => context.CompaniesByBooks
+       .Where(cb => cb.CompanyId == id)
+       .Select(cb => cb.Book)
+       .Distinct()
+       .OrderBy(b => b.Title)
+       .Select(b => new BookDto
+        {
+            Id    = b.Id,
+            Title = b.Title
+        })
+       .ToListAsync();
+
+    [HttpGet("{id:int}/documents")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<DocumentDto>> GetDocumentsAsync(int id) => context.CompaniesByDocuments
+       .Where(cd => cd.CompanyId == id)
+       .Select(cd => cd.Document)
+       .Distinct()
+       .OrderBy(d => d.Title)
+       .Select(d => new DocumentDto
+        {
+            Id    = d.Id,
+            Title = d.Title
+        })
+       .ToListAsync();
+
+    [HttpGet("{id:int}/magazines")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<MagazineDto>> GetMagazinesAsync(int id) => context.CompaniesByMagazines
+       .Where(cm => cm.CompanyId == id)
+       .Select(cm => cm.Magazine)
+       .Distinct()
+       .OrderBy(m => m.Title)
+       .Select(m => new MagazineDto
+        {
+            Id    = m.Id,
+            Title = m.Title
+        })
+       .ToListAsync();
+
+    [HttpGet("{id:int}/software")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<SoftwareDto>> GetSoftwareAsync(int id) => context.SoftwareCompanyRoles
+       .Where(sr => sr.CompanyId == id)
+       .Select(sr => sr.Software)
+       .Distinct()
+       .OrderBy(s => s.Name)
+       .Select(s => new SoftwareDto
+        {
+            Id   = s.Id,
+            Name = s.Name
+        })
+       .ToListAsync();
+
     [HttpGet("{id:int}/description/text")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]

@@ -336,6 +336,240 @@
 </MudExpansionPanels>
 }
 
+@* ── Machine Families Card ── *@
+@if(_machineFamilies.Count > 0)
+{
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel>
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.AccountTree" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Machine families"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="Color.Success">@_machineFamilies.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="MachineFamilyDto" Dense="true">
+                @foreach(MachineFamilyDto family in _machineFamilies)
+                {
+                    <MudListItem T="MachineFamilyDto" Href="@($"/machine-family/{family.Id}")" Icon="@Icons.Material.Filled.AccountTree">
+                        @family.Name
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+}
+
+@* ── GPUs Card ── *@
+@if(_gpus.Count > 0)
+{
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel>
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.Panorama" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["GPUs"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="Color.Success">@_gpus.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="GpuDto" Dense="true">
+                @foreach(GpuDto gpu in _gpus)
+                {
+                    <MudListItem T="GpuDto" Href="@($"/gpu/{gpu.Id}")" Icon="@Icons.Material.Filled.Panorama">
+                        @gpu.Name
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+}
+
+@* ── Processors Card ── *@
+@if(_processors.Count > 0)
+{
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel>
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.Memory" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Processors"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="Color.Success">@_processors.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="ProcessorDto" Dense="true">
+                @foreach(ProcessorDto processor in _processors)
+                {
+                    <MudListItem T="ProcessorDto" Href="@($"/processor/{processor.Id}")" Icon="@Icons.Material.Filled.Memory">
+                        @processor.Name
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+}
+
+@* ── Sound Synthesizers Card ── *@
+@if(_soundSynths.Count > 0)
+{
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel>
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.MusicNote" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Sound synthesizers"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="Color.Success">@_soundSynths.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="SoundSynthDto" Dense="true">
+                @foreach(SoundSynthDto synth in _soundSynths)
+                {
+                    <MudListItem T="SoundSynthDto" Href="@($"/soundsynth/{synth.Id}")" Icon="@Icons.Material.Filled.MusicNote">
+                        @synth.Name
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+}
+
+@* ── Software Card ── *@
+@if(_software.Count > 0)
+{
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel>
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.Apps" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Software"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="Color.Success">@_software.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="SoftwareDto" Dense="true">
+                @foreach(SoftwareDto sw in _software)
+                {
+                    <MudListItem T="SoftwareDto" Href="@($"/software/{sw.Id}")" Icon="@Icons.Material.Filled.Apps">
+                        @sw.Name
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+}
+
+@* ── Books Card ── *@
+@if(_books.Count > 0)
+{
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel>
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.MenuBook" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Books"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="Color.Success">@_books.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="BookDto" Dense="true">
+                @foreach(BookDto book in _books)
+                {
+                    <MudListItem T="BookDto" Href="@($"/book/{book.Id}")" Icon="@Icons.Material.Filled.MenuBook">
+                        @book.Title
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+}
+
+@* ── Documents Card ── *@
+@if(_documents.Count > 0)
+{
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel>
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.Article" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Documents"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="Color.Success">@_documents.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="DocumentDto" Dense="true">
+                @foreach(DocumentDto document in _documents)
+                {
+                    <MudListItem T="DocumentDto" Href="@($"/document/{document.Id}")" Icon="@Icons.Material.Filled.Article">
+                        @document.Title
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+}
+
+@* ── Magazines Card ── *@
+@if(_magazines.Count > 0)
+{
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel>
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.Newspaper" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Magazines"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="Color.Success">@_magazines.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="MagazineDto" Dense="true">
+                @foreach(MagazineDto magazine in _magazines)
+                {
+                    <MudListItem T="MagazineDto" Href="@($"/magazine/{magazine.Id}")" Icon="@Icons.Material.Filled.Newspaper">
+                        @magazine.Title
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+}
+
+@* ── People Card ── *@
+@if(_people.Count > 0)
+{
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel>
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.People" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["People"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="Color.Success">@_people.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="PersonByCompanyDto" Dense="true">
+                @foreach(PersonByCompanyDto person in _people)
+                {
+                    <MudListItem T="PersonByCompanyDto" Href="@($"/person/{person.PersonId}")" Icon="@Icons.Material.Filled.Person">
+                        @(person.DisplayName ?? person.Alias ?? $"{person.Name} {person.Surname}")
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+}
+
 @* ── Description Card ── *@
 @if(!string.IsNullOrWhiteSpace(_description))
 {

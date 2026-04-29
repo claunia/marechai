@@ -260,4 +260,130 @@ public class CompaniesService(Marechai.ApiClient.Client client, IStringLocalizer
             return [];
         }
     }
+
+    public async Task<List<GpuDto>> GetGpusAsync(int id)
+    {
+        try
+        {
+            List<GpuDto>? gpus = await client.Companies[id].Gpus.GetAsync();
+
+            return gpus ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<SoundSynthDto>> GetSoundSynthsAsync(int id)
+    {
+        try
+        {
+            List<SoundSynthDto>? synths = await client.Companies[id].SoundSynths.GetAsync();
+
+            return synths ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<ProcessorDto>> GetProcessorsAsync(int id)
+    {
+        try
+        {
+            List<ProcessorDto>? processors = await client.Companies[id].Processors.GetAsync();
+
+            return processors ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<MachineFamilyDto>> GetMachineFamiliesAsync(int id)
+    {
+        try
+        {
+            List<MachineFamilyDto>? families = await client.Companies[id].MachineFamilies.GetAsync();
+
+            return families ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<BookDto>> GetBooksAsync(int id)
+    {
+        try
+        {
+            List<BookDto>? books = await client.Companies[id].Books.GetAsync();
+
+            return books ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<DocumentDto>> GetDocumentsAsync(int id)
+    {
+        try
+        {
+            List<DocumentDto>? documents = await client.Companies[id].Documents.GetAsync();
+
+            return documents ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<MagazineDto>> GetMagazinesAsync(int id)
+    {
+        try
+        {
+            List<MagazineDto>? magazines = await client.Companies[id].Magazines.GetAsync();
+
+            return magazines ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<SoftwareDto>> GetSoftwareAsync(int id)
+    {
+        try
+        {
+            List<SoftwareDto>? software = await client.Companies[id].Software.GetAsync();
+
+            return software ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<PersonByCompanyDto>> GetPeopleAsync(int id)
+    {
+        try
+        {
+            List<PersonByCompanyDto>? people = await client.Companies[id].People.GetAsync();
+
+            return people ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
 }

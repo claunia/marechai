@@ -34,15 +34,24 @@ namespace Marechai.Pages.Companies;
 
 public partial class View
 {
-    CompanyDto          _company;
-    List<MachineDto>    _computers;
-    List<MachineDto>    _consoles;
-    string              _description;
-    int                 _id;
-    bool                _loaded;
+    CompanyDto           _company;
+    List<MachineDto>     _computers;
+    List<MachineDto>     _consoles;
+    string               _description;
+    List<GpuDto>         _gpus;
+    List<SoundSynthDto>  _soundSynths;
+    List<ProcessorDto>   _processors;
+    List<MachineFamilyDto> _machineFamilies;
+    List<BookDto>        _books;
+    List<DocumentDto>    _documents;
+    List<MagazineDto>    _magazines;
+    List<SoftwareDto>    _software;
+    List<PersonByCompanyDto> _people;
+    int                  _id;
+    bool                 _loaded;
     List<CompanyLogoDto> _logos;
-    int                 _selectedIndex;
-    CompanyDto          _soldTo;
+    int                  _selectedIndex;
+    CompanyDto           _soldTo;
 
     [Parameter]
     public int Id
@@ -71,8 +80,17 @@ public partial class View
         _company = await Service.GetAsync(Id);
         List<MachineDto> machines = await Service.GetMachinesAsync(Id);
 
-        _computers = machines.Where(m => m.Type == (int)MachineType.Computer).ToList();
-        _consoles  = machines.Where(m => m.Type == (int)MachineType.Console).ToList();
+        _computers       = machines.Where(m => m.Type == (int)MachineType.Computer).ToList();
+        _consoles        = machines.Where(m => m.Type == (int)MachineType.Console).ToList();
+        _gpus            = await Service.GetGpusAsync(Id);
+        _soundSynths     = await Service.GetSoundSynthsAsync(Id);
+        _processors      = await Service.GetProcessorsAsync(Id);
+        _machineFamilies = await Service.GetMachineFamiliesAsync(Id);
+        _books           = await Service.GetBooksAsync(Id);
+        _documents       = await Service.GetDocumentsAsync(Id);
+        _magazines       = await Service.GetMagazinesAsync(Id);
+        _software        = await Service.GetSoftwareAsync(Id);
+        _people          = await Service.GetPeopleAsync(Id);
 
         _description = await Service.GetDescriptionTextAsync(Id);
         _soldTo      = await Service.GetSoldToAsync(_company.SoldToId);
