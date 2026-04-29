@@ -40,7 +40,7 @@ public class Photos
     {
         List<string> paths = [];
 
-        string photosRoot             = Path.Combine(assetRootPath,    scan ? "scan" : "photos");
+        string photosRoot             = Path.Combine(assetRootPath,    scan ? "scans" : "photos");
         string itemPhotosRoot         = Path.Combine(photosRoot,     item);
         string itemThumbsRoot         = Path.Combine(itemPhotosRoot, "thumbs");
         string itemOriginalPhotosRoot = Path.Combine(itemPhotosRoot, "originals");
@@ -85,7 +85,45 @@ public class Photos
         paths.Add(Path.Combine(itemPhotosRoot, "avif", "1440p"));
         paths.Add(Path.Combine(itemPhotosRoot, "avif", "4k"));
 
+        paths.Add(Path.Combine(itemThumbsRoot, "jxl", "hd"));
+        paths.Add(Path.Combine(itemThumbsRoot, "jxl", "1440p"));
+        paths.Add(Path.Combine(itemThumbsRoot, "jxl", "4k"));
+        paths.Add(Path.Combine(itemPhotosRoot, "jxl", "hd"));
+        paths.Add(Path.Combine(itemPhotosRoot, "jxl", "1440p"));
+        paths.Add(Path.Combine(itemPhotosRoot, "jxl", "4k"));
+
         foreach(string path in paths.Where(path => !Directory.Exists(path))) Directory.CreateDirectory(path);
+    }
+
+    public static void BackfillJxl(string assetRootPath, bool scan, string item)
+    {
+        string photosRoot     = Path.Combine(assetRootPath, scan ? "scans" : "photos");
+        string itemPhotosRoot = Path.Combine(photosRoot,    item);
+        string originalsRoot  = Path.Combine(itemPhotosRoot, "originals");
+
+        if(!Directory.Exists(originalsRoot)) return;
+
+        foreach(string originalFile in Directory.GetFiles(originalsRoot))
+        {
+            string fileNameWithoutExt = Path.GetFileNameWithoutExtension(originalFile);
+
+            if(!Guid.TryParse(fileNameWithoutExt, out Guid id)) continue;
+
+            string sourceFormat = Path.GetExtension(originalFile).TrimStart('.');
+
+            // Check if JXL hd thumbnail already exists — if so, assume all variants exist
+            string checkPath = Path.Combine(itemPhotosRoot, "thumbs", "jxl", "hd", $"{id}.jxl");
+
+            if(File.Exists(checkPath)) continue;
+
+            Console.WriteLine("Backfilling JXL for {0}...", id);
+
+            foreach(string resolution in new[] { "hd", "1440p", "4k" })
+            {
+                Convert(assetRootPath, id, originalFile, sourceFormat, "JXL", resolution, true,  scan, item);
+                Convert(assetRootPath, id, originalFile, sourceFormat, "JXL", resolution, false, scan, item);
+            }
+        }
     }
 
     public static bool Convert(string assetRootPath,  Guid   id,         string originalPath, string sourceFormat,
@@ -194,6 +232,29 @@ public class Photos
                 File.Delete(tmpPath);
 
                 return ret;
+
+            case "jxl":
+                outputPath = Path.Combine(outputPath, $"{id}.jxl");
+
+                tmpPath = Path.GetTempFileName();
+                File.Delete(tmpPath);
+                tmpPath += ".png";
+
+                // cjxl does not resize
+                ret = ConvertUsingImageMagick(originalPath, tmpPath, width, height);
+
+                if(!ret)
+                {
+                    File.Delete(tmpPath);
+
+                    return ret;
+                }
+
+                ret = ConvertToJxl(tmpPath, outputPath);
+
+                File.Delete(tmpPath);
+
+                return ret;
             default:
                 return false;
         }
@@ -268,6 +329,42 @@ public class Photos
         }
     }
 
+    public static bool ConvertToJxl(string originalPath, string outputPath)
+    {
+        var jxl = new Process
+        {
+            StartInfo =
+            {
+                FileName               = "cjxl",
+                CreateNoWindow         = true,
+                RedirectStandardError  = true,
+                RedirectStandardOutput = true,
+                ArgumentList =
+                {
+                    originalPath,
+                    outputPath,
+                    "--effort",
+                    "7",
+                    "--num_threads",
+                    "4"
+                }
+            }
+        };
+
+        try
+        {
+            jxl.Start();
+            jxl.StandardOutput.ReadToEnd();
+            jxl.WaitForExit();
+
+            return jxl.ExitCode == 0;
+        }
+        catch(Exception)
+        {
+            return false;
+        }
+    }
+
     public void ConversionWorker(string assetRootPath, Guid id, string originalFilePath, string sourceFormat, bool scan,
                                  string item)
     {
@@ -302,7 +399,13 @@ public class Photos
             new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "AVIF", "hd",    true,  scan, item); FinishedRenderingAvifHdThumbnail?.Invoke(r); }),
             new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "AVIF", "4k",    false, scan, item); FinishedRenderingAvif4K?.Invoke(r); }),
             new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "AVIF", "1440p", false, scan, item); FinishedRenderingAvif1440?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "AVIF", "hd",    false, scan, item); FinishedRenderingAvifHd?.Invoke(r); })
+            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "AVIF", "hd",    false, scan, item); FinishedRenderingAvifHd?.Invoke(r); }),
+            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JXL",  "4k",    true,  scan, item); FinishedRenderingJxl4kThumbnail?.Invoke(r); }),
+            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JXL",  "1440p", true,  scan, item); FinishedRenderingJxl1440Thumbnail?.Invoke(r); }),
+            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JXL",  "hd",    true,  scan, item); FinishedRenderingJxlHdThumbnail?.Invoke(r); }),
+            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JXL",  "4k",    false, scan, item); FinishedRenderingJxl4K?.Invoke(r); }),
+            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JXL",  "1440p", false, scan, item); FinishedRenderingJxl1440?.Invoke(r); }),
+            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JXL",  "hd",    false, scan, item); FinishedRenderingJxlHd?.Invoke(r); })
         ];
 
         foreach(Task thread in pool) thread.Start();
@@ -344,4 +447,10 @@ public class Photos
     public event ConversionFinished FinishedRenderingAvifHd;
     public event ConversionFinished FinishedRenderingAvif1440;
     public event ConversionFinished FinishedRenderingAvif4K;
+    public event ConversionFinished FinishedRenderingJxlHdThumbnail;
+    public event ConversionFinished FinishedRenderingJxl1440Thumbnail;
+    public event ConversionFinished FinishedRenderingJxl4kThumbnail;
+    public event ConversionFinished FinishedRenderingJxlHd;
+    public event ConversionFinished FinishedRenderingJxl1440;
+    public event ConversionFinished FinishedRenderingJxl4K;
 }

@@ -166,10 +166,24 @@ file class Program
         start = DateTime.Now;
         Console.WriteLine("\e[31;1mEnsuring photo folders exist...\e[0m");
         Photos.EnsureCreated(assetRootPath, false, "machines");
+        Photos.EnsureCreated(assetRootPath, false, "people");
+        Photos.EnsureCreated(assetRootPath, false, "software-screenshots");
         Console.WriteLine("\e[31;1mEnsuring scan folders exist...\e[0m");
         Photos.EnsureCreated(assetRootPath, true, "books");
         Photos.EnsureCreated(assetRootPath, true, "documents");
         Photos.EnsureCreated(assetRootPath, true, "magazines");
+        end = DateTime.Now;
+
+        Console.WriteLine("\e[31;1mTook \e[32;1m{0} seconds\e[31;1m...\e[0m", (end - start).TotalSeconds);
+
+        start = DateTime.Now;
+        Console.WriteLine("\e[31;1mBackfilling missing JPEG-XL variants...\e[0m");
+        Photos.BackfillJxl(assetRootPath, false, "machines");
+        Photos.BackfillJxl(assetRootPath, false, "people");
+        Photos.BackfillJxl(assetRootPath, false, "software-screenshots");
+        Photos.BackfillJxl(assetRootPath, true,  "books");
+        Photos.BackfillJxl(assetRootPath, true,  "documents");
+        Photos.BackfillJxl(assetRootPath, true,  "magazines");
         end = DateTime.Now;
 
         Console.WriteLine("\e[31;1mTook \e[32;1m{0} seconds\e[31;1m...\e[0m", (end - start).TotalSeconds);
