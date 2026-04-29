@@ -602,4 +602,19 @@
         <value>Assurance qualité</value>
         <comment>QA</comment>
     </data>
+    <data name="Software companies" xml:space="preserve">
+        <value>Sociétés de logiciels</value>
+    </data>
+    <data name="Companies which name starts with {0}." xml:space="preserve">
+        <value>Sociétés dont le nom commence par {0}.</value>
+    </data>
+    <data name="{0} companies found in the database." xml:space="preserve">
+        <value>{0} sociétés trouvées dans la base de données.</value>
+    </data>
+    <data name="Filter companies..." xml:space="preserve">
+        <value>Filtrer les sociétés...</value>
+    </data>
+    <data name="There are no companies in the database." xml:space="preserve">
+        <value>Il n'y a pas de sociétés dans la base de données.</value>
+    </data>
 </root>

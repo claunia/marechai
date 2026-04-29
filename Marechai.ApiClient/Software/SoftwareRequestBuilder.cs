@@ -5,6 +5,7 @@ using Marechai.ApiClient.Software.Barcodes;
 using Marechai.ApiClient.Software.ByLetter;
 using Marechai.ApiClient.Software.ByPlatform;
 using Marechai.ApiClient.Software.ByYear;
+using Marechai.ApiClient.Software.Companies;
 using Marechai.ApiClient.Software.CompanyRoles;
 using Marechai.ApiClient.Software.Count;
 using Marechai.ApiClient.Software.Covers;
@@ -55,6 +56,11 @@ namespace Marechai.ApiClient.Software
         public global::Marechai.ApiClient.Software.ByYear.ByYearRequestBuilder ByYear
         {
             get => new global::Marechai.ApiClient.Software.ByYear.ByYearRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The companies property</summary>
+        public global::Marechai.ApiClient.Software.Companies.CompaniesRequestBuilder Companies
+        {
+            get => new global::Marechai.ApiClient.Software.Companies.CompaniesRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The companyRoles property</summary>
         public global::Marechai.ApiClient.Software.CompanyRoles.CompanyRolesRequestBuilder CompanyRoles

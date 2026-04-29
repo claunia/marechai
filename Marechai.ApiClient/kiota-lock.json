@@ -1,6 +1,6 @@
 {
-  "descriptionHash": "AA5A6E3EB592C897FEAE9DA37A0E1BB2B1CE59659DB56600E53E31A0205CCF53023A70CDF69D8560CA30FFE16AA5B51CCF482C28B898D68ACAE2C6AA0AA2FE4A",
-  "descriptionLocation": "../../../../../tmp/marechai-openapi.json",
+  "descriptionHash": "721507CC91FDCB14348A464D1B9C49BE9289C232A98E915886E4E8811CD8BE57325D17A1307AB4909B91B2B2919159E3A8123D6739EB8ACFFBBD09B26EA3A441",
+  "descriptionLocation": "../../../../../tmp/openapi-software.json",
   "lockFileVersion": "1.0.0",
   "kiotaVersion": "1.31.1",
   "clientClassName": "Client",
