@@ -919,3 +919,12 @@ public enum SoftwareCoverType : byte
     [Display(Name = "Other")]
     Other       = 7
 }
+
+public enum MobyGamesCoverDownloadStatus : byte
+{
+    Pending    = 0,
+    Downloaded = 1,
+    Failed     = 2,
+    Skipped    = 3,
+    NoRelease  = 4
+}

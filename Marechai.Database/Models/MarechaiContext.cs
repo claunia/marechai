@@ -156,6 +156,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<SoftwareAttribute>                  SoftwareAttributes                  { get; set; }
     public virtual DbSet<MobyGamesImportState>               MobyGamesImportStates               { get; set; }
     public virtual DbSet<MobyGamesRejection>                 MobyGamesRejections                 { get; set; }
+    public virtual DbSet<MobyGamesCoverDownloadState>        MobyGamesCoverDownloadStates        { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

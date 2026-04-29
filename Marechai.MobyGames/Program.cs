@@ -74,6 +74,68 @@ class Program
 
                 break;
 
+            case "download-covers":
+            {
+                int coverBatchSize = config.GetValue("Import:BatchSize", 500);
+                int delayMs        = config.GetValue("MobyGames:DelayMs", 2000);
+                string assetRoot   = config.GetValue<string>("MobyGames:AssetRootPath");
+                bool dryRun        = false;
+
+                for(int i = 0; i < args.Length; i++)
+                {
+                    if(args[i] == "--batch-size" && i + 1 < args.Length && int.TryParse(args[i + 1], out int cbs))
+                        coverBatchSize = cbs;
+
+                    if(args[i] == "--delay-ms" && i + 1 < args.Length && int.TryParse(args[i + 1], out int dms))
+                        delayMs = dms;
+
+                    if(args[i] == "--dry-run")
+                        dryRun = true;
+                }
+
+                if(!dryRun && string.IsNullOrEmpty(assetRoot))
+                {
+                    Console.WriteLine("\e[31;1mMissing MobyGames:AssetRootPath in appsettings.json\e[0m");
+
+                    return 1;
+                }
+
+                MobyGamesHttpClient httpClient = null;
+
+                if(!dryRun)
+                {
+                    httpClient = new MobyGamesHttpClient(delayMs);
+
+                    // Ensure output directories exist
+                    ImageConverter.EnsureDirectoriesCreated(assetRoot);
+                }
+
+                var coverStateService = new CoverStateService(factory);
+
+                var coverDownloadService = new CoverDownloadService(
+                    factory, sourceDb, platformMatcher, countryMatcher,
+                    coverStateService, httpClient, assetRoot ?? "");
+
+                try
+                {
+                    await coverDownloadService.RunAsync(coverBatchSize, dryRun);
+                }
+                finally
+                {
+                    httpClient?.Dispose();
+                }
+
+                break;
+            }
+
+            case "cover-status":
+            {
+                var coverStateService2 = new CoverStateService(factory);
+                await coverStateService2.PrintCoverStatusAsync();
+
+                break;
+            }
+
             case "status":
                 await stateService.PrintStatusAsync();
 
@@ -97,9 +159,12 @@ class Program
 
             default:
                 Console.WriteLine("  Usage:");
-                Console.WriteLine("    import [--batch-size N]  Import next batch of games");
-                Console.WriteLine("    status                   Show import status counts");
-                Console.WriteLine("    reset --game <id>        Reset a game to unprocessed");
+                Console.WriteLine("    import [--batch-size N]                       Import next batch of games");
+                Console.WriteLine("    download-covers [--batch-size N] [--delay-ms N] [--dry-run]");
+                Console.WriteLine("                                                  Download covers for imported games");
+                Console.WriteLine("    status                                        Show import status counts");
+                Console.WriteLine("    cover-status                                  Show cover download status counts");
+                Console.WriteLine("    reset --game <id>                             Reset a game to unprocessed");
 
                 break;
         }
