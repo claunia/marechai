@@ -274,4 +274,7 @@
     <data name="Descriptions" xml:space="preserve">
         <value>Descriptions</value>
     </data>
+    <data name="Covers" xml:space="preserve">
+        <value>Covers</value>
+    </data>
 </root>

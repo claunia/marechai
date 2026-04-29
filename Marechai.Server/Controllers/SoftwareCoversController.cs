@@ -1,0 +1,291 @@
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2026 Natalia Portillo
+*******************************************************************************/
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Marechai.Data;
+using Marechai.Data.Dtos;
+using Marechai.Database.Models;
+using Marechai.Helpers;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+
+namespace Marechai.Server.Controllers;
+
+[Route("/software/covers")]
+[ApiController]
+public class SoftwareCoversController(MarechaiContext context, IConfiguration configuration) : ControllerBase
+{
+    static readonly HashSet<string> _allowedExtensions = [".jpg", ".jpeg", ".png", ".webp", ".tiff", ".tif", ".bmp"];
+
+    static readonly HashSet<string> _allowedContentTypes =
+    [
+        "image/jpeg", "image/png", "image/webp", "image/tiff", "image/bmp"
+    ];
+
+    readonly string _assetRootPath = configuration["AssetRootPath"]!;
+
+    [HttpGet("/software/releases/{releaseId}/covers")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public Task<List<Guid>> GetGuidsByReleaseAsync(ulong releaseId) =>
+        context.SoftwareCovers
+               .Where(c => c.SoftwareReleaseId == releaseId)
+               .Select(c => c.Id)
+               .ToListAsync();
+
+    [HttpGet("/software/{softwareId}/covers")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public Task<List<SoftwareCoverDto>> GetBySoftwareAsync(ulong softwareId) =>
+        context.SoftwareCovers
+               .Where(c => c.Release.SoftwareId == softwareId)
+               .OrderBy(c => c.Type)
+               .ThenBy(c => c.Release.PlatformId)
+               .Select(c => new SoftwareCoverDto
+                {
+                    Id                = c.Id,
+                    SoftwareReleaseId = c.SoftwareReleaseId,
+                    ReleaseTitle      = c.Release.Title,
+                    Type              = (int)c.Type,
+                    TypeName          = c.Type.ToString(),
+                    Caption           = c.Caption,
+                    OriginalExtension = c.OriginalExtension,
+                    PlatformName      = c.Release.Platform != null ? c.Release.Platform.Name : null,
+                    RegionNames = c.Release.Regions != null
+                                      ? string.Join(", ", c.Release.Regions.Select(r => r.UnM49.Name))
+                                      : null
+                })
+               .ToListAsync();
+
+    [HttpGet("{id:Guid}")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<SoftwareCoverDto>> GetAsync(Guid id)
+    {
+        SoftwareCoverDto? dto = await context.SoftwareCovers
+                                             .Where(c => c.Id == id)
+                                             .Select(c => new SoftwareCoverDto
+                                              {
+                                                  Id                = c.Id,
+                                                  SoftwareReleaseId = c.SoftwareReleaseId,
+                                                  ReleaseTitle      = c.Release.Title,
+                                                  Type              = (int)c.Type,
+                                                  TypeName          = c.Type.ToString(),
+                                                  Caption           = c.Caption,
+                                                  OriginalExtension = c.OriginalExtension,
+                                                  PlatformName = c.Release.Platform != null
+                                                                     ? c.Release.Platform.Name
+                                                                     : null,
+                                                  RegionNames = c.Release.Regions != null
+                                                                    ? string.Join(", ",
+                                                                        c.Release.Regions.Select(r => r.UnM49.Name))
+                                                                    : null
+                                              })
+                                             .FirstOrDefaultAsync();
+
+        if(dto is null) return NotFound();
+
+        return Ok(dto);
+    }
+
+    [HttpPost("upload")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [RequestSizeLimit(50 * 1024 * 1024)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<SoftwareCoverDto>> UploadAsync(IFormFile                    file,
+                                                                   [FromForm] ulong             releaseId,
+                                                                   [FromForm] SoftwareCoverType type,
+                                                                   [FromForm] string?           caption)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        if(file is null || file.Length == 0)
+            return BadRequest("No file provided.");
+
+        if(file.Length > 50 * 1024 * 1024)
+            return BadRequest("File exceeds 50 MB limit.");
+
+        string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
+
+        if(!_allowedExtensions.Contains(extension))
+            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP, TIFF, BMP.");
+
+        if(!string.IsNullOrEmpty(file.ContentType) &&
+           !_allowedContentTypes.Contains(file.ContentType.ToLowerInvariant()))
+            return BadRequest("Unsupported content type.");
+
+        bool releaseExists = await context.SoftwareReleases.AnyAsync(r => r.Id == (ulong)releaseId);
+
+        if(!releaseExists)
+            return BadRequest("Referenced software release does not exist.");
+
+        using var ms = new MemoryStream();
+        await file.CopyToAsync(ms);
+        ms.Position = 0;
+
+        var model = new SoftwareCover
+        {
+            Id                = Guid.NewGuid(),
+            SoftwareReleaseId = releaseId,
+            Type              = type,
+            Caption           = caption,
+            OriginalExtension = extension.TrimStart('.')
+        };
+
+        Photos.EnsureCreated(_assetRootPath, false, "software-covers");
+
+        string originalsDir = Path.Combine(_assetRootPath, "photos", "software-covers", "originals");
+        string originalPath = Path.Combine(originalsDir, $"{model.Id}{extension}");
+
+        ms.Position = 0;
+
+        await using(var fs = new FileStream(originalPath, FileMode.CreateNew, FileAccess.Write))
+        {
+            await ms.CopyToAsync(fs);
+        }
+
+        string sourceFormat = extension.TrimStart('.');
+
+        _ = Task.Run(() =>
+        {
+            var photos = new Photos();
+
+            photos.ConversionWorker(_assetRootPath, model.Id, originalPath, sourceFormat, false, "software-covers");
+        });
+
+        await context.SoftwareCovers.AddAsync(model);
+        await context.SaveChangesWithUserAsync(userId);
+
+        return Ok(new SoftwareCoverDto
+        {
+            Id                = model.Id,
+            SoftwareReleaseId = model.SoftwareReleaseId,
+            Type              = (int)model.Type,
+            TypeName          = model.Type.ToString(),
+            Caption           = model.Caption,
+            OriginalExtension = model.OriginalExtension
+        });
+    }
+
+    [HttpPut("{id:Guid}")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult> UpdateAsync(Guid id, [FromBody] SoftwareCoverDto dto)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        SoftwareCover model = await context.SoftwareCovers.FindAsync(id);
+
+        if(model is null) return NotFound();
+
+        model.Caption = dto.Caption;
+        model.Type    = (SoftwareCoverType)dto.Type;
+
+        await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
+    }
+
+    [HttpDelete("{id:Guid}")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult> DeleteAsync(Guid id)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        SoftwareCover model = await context.SoftwareCovers.FindAsync(id);
+
+        if(model is null) return NotFound();
+
+        context.SoftwareCovers.Remove(model);
+        await context.SaveChangesWithUserAsync(userId);
+
+        string photosRoot = Path.Combine(_assetRootPath, "photos", "software-covers");
+        string guidStr    = id.ToString();
+
+        DeleteFilesByPattern(Path.Combine(photosRoot, "originals"), $"{guidStr}.*");
+
+        string[] formats     = ["jpeg", "jp2k", "webp", "heif", "avif", "jxl"];
+        string[] resolutions = ["hd", "1440p", "4k"];
+
+        foreach(string format in formats)
+        {
+            string ext = format switch
+            {
+                "jpeg" => ".jpg",
+                "jp2k" => ".jp2",
+                "webp" => ".webp",
+                "heif" => ".heic",
+                "avif" => ".avif",
+                "jxl"  => ".jxl",
+                _      => $".{format}"
+            };
+
+            foreach(string res in resolutions)
+            {
+                string fullPath  = Path.Combine(photosRoot, format, res, $"{guidStr}{ext}");
+                string thumbPath = Path.Combine(photosRoot, "thumbs", format, res, $"{guidStr}{ext}");
+
+                if(System.IO.File.Exists(fullPath))
+                    System.IO.File.Delete(fullPath);
+
+                if(System.IO.File.Exists(thumbPath))
+                    System.IO.File.Delete(thumbPath);
+            }
+        }
+
+        return Ok();
+    }
+
+    static void DeleteFilesByPattern(string directory, string pattern)
+    {
+        if(!System.IO.Directory.Exists(directory)) return;
+
+        foreach(string file in System.IO.Directory.GetFiles(directory, pattern))
+            System.IO.File.Delete(file);
+    }
+}

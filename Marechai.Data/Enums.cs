@@ -899,3 +899,23 @@ public enum MobyGamesRejectionReview : byte
     Confirmed  = 1,
     Overridden = 2
 }
+
+public enum SoftwareCoverType : byte
+{
+    [Display(Name = "Front Cover")]
+    Front       = 0,
+    [Display(Name = "Back Cover")]
+    Back        = 1,
+    [Display(Name = "Inside Cover (Front)")]
+    InsideFront = 2,
+    [Display(Name = "Inside Cover (Back)")]
+    InsideBack  = 3,
+    [Display(Name = "Media")]
+    Media       = 4,
+    [Display(Name = "Spine")]
+    Spine       = 5,
+    [Display(Name = "Manual")]
+    Manual      = 6,
+    [Display(Name = "Other")]
+    Other       = 7
+}

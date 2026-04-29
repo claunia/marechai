@@ -168,6 +168,7 @@ file class Program
         Photos.EnsureCreated(assetRootPath, false, "machines");
         Photos.EnsureCreated(assetRootPath, false, "people");
         Photos.EnsureCreated(assetRootPath, false, "software-screenshots");
+    Photos.EnsureCreated(assetRootPath, false, "software-covers");
         Console.WriteLine("\e[31;1mEnsuring scan folders exist...\e[0m");
         Photos.EnsureCreated(assetRootPath, true, "books");
         Photos.EnsureCreated(assetRootPath, true, "documents");
@@ -181,6 +182,7 @@ file class Program
         Photos.BackfillJxl(assetRootPath, false, "machines");
         Photos.BackfillJxl(assetRootPath, false, "people");
         Photos.BackfillJxl(assetRootPath, false, "software-screenshots");
+    Photos.BackfillJxl(assetRootPath, false, "software-covers");
         Photos.BackfillJxl(assetRootPath, true,  "books");
         Photos.BackfillJxl(assetRootPath, true,  "documents");
         Photos.BackfillJxl(assetRootPath, true,  "magazines");

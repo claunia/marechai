@@ -41,4 +41,5 @@ public class SoftwareRelease : BaseModel<ulong>
     public virtual ICollection<SoftwareBySoftwareRelease>           IncludedSoftware     { get; set; }
     public virtual ICollection<CollectedSoftwareRelease>            CollectedBy          { get; set; }
     public virtual ICollection<SoftwareAttribute>                   Attributes           { get; set; }
+    public virtual ICollection<SoftwareCover>                       Covers               { get; set; }
 }

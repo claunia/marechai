@@ -23,6 +23,7 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -49,6 +50,9 @@ public partial class ReleaseView
     SoftwareReleaseDto                                     _release;
     string                                                 _softwareName;
     List<SoundSynthBySoftwareReleaseDto>                   _soundSynths = [];
+    List<SoftwareCoverDto>                                 _covers = [];
+    Dictionary<string, List<SoftwareCoverDto>>              _coversByType = new();
+    SoftwareCoverDto?                                      _fullscreenCover;
     bool                                                   _togglingCollection;
 
     [CascadingParameter]
@@ -111,6 +115,25 @@ public partial class ReleaseView
         _minimumGpus     = await Service.GetMinimumGpusAsync(Id);
         _recommendedGpus = await Service.GetRecommendedGpusAsync(Id);
         _soundSynths     = await Service.GetSoundSynthsAsync(Id);
+
+        // Load covers for this release
+        List<Guid?> coverIds = await Service.GetCoverIdsByReleaseAsync(Id);
+        _covers = [];
+
+        foreach(Guid? coverId in coverIds)
+        {
+            if(coverId.HasValue && coverId.Value != Guid.Empty)
+            {
+                SoftwareCoverDto? detail = await Service.GetCoverDetailsAsync(coverId.Value);
+
+                if(detail != null) _covers.Add(detail);
+            }
+        }
+
+        _coversByType = _covers
+                        .GroupBy(c => c.TypeName ?? "Other")
+                        .OrderBy(g => g.Key)
+                        .ToDictionary(g => g.Key, g => g.ToList());
 
         // Aggregate companies from multiple levels
         await LoadAggregatedCompaniesAsync();

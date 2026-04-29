@@ -771,4 +771,46 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
             return (false, ex.Message);
         }
     }
+
+    // ── Cover methods ──
+
+    public async Task<List<SoftwareCoverDto>> GetCoversBySoftwareAsync(int softwareId)
+    {
+        try
+        {
+            List<SoftwareCoverDto>? covers = await client.Software[softwareId].Covers.GetAsync();
+
+            return covers ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<Guid?>> GetCoverIdsByReleaseAsync(int releaseId)
+    {
+        try
+        {
+            List<Guid?>? ids = await client.Software.Releases[releaseId].Covers.GetAsync();
+
+            return ids ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<SoftwareCoverDto?> GetCoverDetailsAsync(Guid id)
+    {
+        try
+        {
+            return await client.Software.Covers[id.ToString()].GetAsync();
+        }
+        catch
+        {
+            return null;
+        }
+    }
 }

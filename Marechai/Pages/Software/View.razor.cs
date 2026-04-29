@@ -44,6 +44,9 @@ public partial class View
     List<SoftwareScreenshotDto>                  _screenshots = [];
     Dictionary<string, List<SoftwareScreenshotDto>> _screenshotsByPlatform = new();
     SoftwareScreenshotDto?                       _fullscreenScreenshot;
+    List<SoftwareCoverDto>                       _covers = [];
+    Dictionary<string, List<SoftwareCoverDto>>    _coversByRelease = new();
+    SoftwareCoverDto?                            _fullscreenCover;
     SoftwareDto                                 _software;
     List<SoftwareVersionDto>                    _versions = [];
 
@@ -90,6 +93,22 @@ public partial class View
 
         // Load all non-compilation releases for this software (flat list)
         _releases = await Service.GetReleasesBySoftwareAsync(Id);
+
+        // Load covers from all releases
+        _covers = await Service.GetCoversBySoftwareAsync(Id);
+
+        _coversByRelease = _covers
+                           .GroupBy(c =>
+                            {
+                                string label = c.PlatformName ?? "Unknown";
+
+                                if(!string.IsNullOrEmpty(c.RegionNames))
+                                    label += " — " + c.RegionNames;
+
+                                return label;
+                            })
+                           .OrderBy(g => g.Key)
+                           .ToDictionary(g => g.Key, g => g.OrderBy(c => c.Type).ToList());
 
         // Load compilations that include this software
         _compilations = await Service.GetCompilationsForSoftwareAsync(Id);

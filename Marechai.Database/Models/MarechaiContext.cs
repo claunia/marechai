@@ -141,6 +141,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<UnM49BySoftwareRelease>             UnM49BySoftwareRelease              { get; set; }
     public virtual DbSet<LanguageBySoftwareRelease>          LanguageBySoftwareRelease            { get; set; }
     public virtual DbSet<SoftwareScreenshot>                  SoftwareScreenshots                  { get; set; }
+    public virtual DbSet<SoftwareCover>                      SoftwareCovers                       { get; set; }
     public virtual DbSet<SoftwareDescription>                  SoftwareDescriptions                 { get; set; }
     public virtual DbSet<SoundByMachine>                      SoundByMachine                      { get; set; }
     public virtual DbSet<SoundSynth>                          SoundSynths                         { get; set; }
@@ -2117,6 +2118,16 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .WithMany(x => x.SoftwareReleases)
                   .HasForeignKey(x => x.PublisherId)
                   .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<SoftwareCover>(entity =>
+        {
+            entity.HasIndex(x => x.SoftwareReleaseId);
+
+            entity.HasOne(x => x.Release)
+                  .WithMany(x => x.Covers)
+                  .HasForeignKey(x => x.SoftwareReleaseId)
+                  .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<UnM49>(entity =>

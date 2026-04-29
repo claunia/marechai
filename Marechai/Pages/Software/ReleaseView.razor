@@ -30,6 +30,7 @@
 @inherits OwningComponentBase<SoftwareService>
 @inject IStringLocalizer<SoftwareService> L
 @inject CollectionService                 CollectionSvc
+@inject ApiAssetUrlProvider               Assets
 
 @if(!_loaded)
 {
@@ -82,6 +83,75 @@
         </AuthorizeView>
     </MudStack>
 </MudPaper>
+
+@* ── Covers Card ── *@
+@if(_covers.Count > 0)
+{
+    <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+        <MudExpansionPanel IsInitiallyExpanded="true">
+            <TitleContent>
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIcon Icon="@Icons.Material.Filled.Photo" Color="Color.Primary"/>
+                    <MudText Typo="Typo.h6">@L["Covers"]</MudText>
+                    <MudChip T="string" Size="Size.Small" Color="Color.Success">@_covers.Count</MudChip>
+                </MudStack>
+            </TitleContent>
+            <ChildContent>
+                @foreach(var group in _coversByType)
+                {
+                    <MudText Typo="Typo.subtitle1" Class="mt-3 mb-2"><strong>@group.Key</strong></MudText>
+                    <div class="d-flex flex-wrap gap-3">
+                        @foreach(SoftwareCoverDto cover in group.Value)
+                        {
+                            <MudCard Elevation="1" Class="rounded-lg" Style="width: 200px; cursor: pointer;" @onclick="() => _fullscreenCover = cover">
+                                <MudCardContent Class="pa-2">
+                                    <picture>
+                                        <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/jxl/hd/@(cover.Id).jxl, @(Assets.BaseUrl)/assets/photos/software-covers/jxl/1440p/@(cover.Id).jxl 2x, @(Assets.BaseUrl)/assets/photos/software-covers/jxl/4k/@(cover.Id).jxl 3x" type="image/jxl">
+                                        <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/avif/hd/@(cover.Id).avif, @(Assets.BaseUrl)/assets/photos/software-covers/avif/1440p/@(cover.Id).avif 2x, @(Assets.BaseUrl)/assets/photos/software-covers/avif/4k/@(cover.Id).avif 3x" type="image/avif">
+                                        <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/heif/hd/@(cover.Id).heic, @(Assets.BaseUrl)/assets/photos/software-covers/heif/1440p/@(cover.Id).heic 2x, @(Assets.BaseUrl)/assets/photos/software-covers/heif/4k/@(cover.Id).heic 3x" type="image/heic">
+                                        <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/webp/hd/@(cover.Id).webp, @(Assets.BaseUrl)/assets/photos/software-covers/webp/1440p/@(cover.Id).webp 2x, @(Assets.BaseUrl)/assets/photos/software-covers/webp/4k/@(cover.Id).webp 3x" type="image/webp">
+                                        <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/jp2k/hd/@(cover.Id).jp2, @(Assets.BaseUrl)/assets/photos/software-covers/jp2k/1440p/@(cover.Id).jp2 2x, @(Assets.BaseUrl)/assets/photos/software-covers/jp2k/4k/@(cover.Id).jp2 3x" type="image/jp2">
+                                        <img alt="@(cover.TypeName ?? cover.Caption)"
+                                             src="@(Assets.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(cover.Id).jpg"
+                                             srcset="@(Assets.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(cover.Id).jpg, @(Assets.BaseUrl)/assets/photos/software-covers/jpeg/1440p/@(cover.Id).jpg 2x, @(Assets.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(cover.Id).jpg 3x"
+                                             style="width: 100%; max-height: 250px; object-fit: contain; border-radius: 4px;"/>
+                                    </picture>
+                                    @if(!string.IsNullOrEmpty(cover.Caption))
+                                    {
+                                        <MudText Typo="Typo.caption" Align="Align.Center" Class="mt-1">@cover.Caption</MudText>
+                                    }
+                                </MudCardContent>
+                            </MudCard>
+                        }
+                    </div>
+                }
+            </ChildContent>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+}
+
+@if(_fullscreenCover is not null)
+{
+    <MudOverlay Visible="true" DarkBackground="true" ZIndex="9999" OnClick="() => _fullscreenCover = null">
+        <div class="d-flex flex-column align-center justify-center" style="width: 100vw; height: 100vh;">
+            <picture>
+                <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/jxl/4k/@(_fullscreenCover.Id).jxl" type="image/jxl">
+                <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/avif/4k/@(_fullscreenCover.Id).avif" type="image/avif">
+                <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/heif/4k/@(_fullscreenCover.Id).heic" type="image/heic">
+                <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/webp/4k/@(_fullscreenCover.Id).webp" type="image/webp">
+                <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/jp2k/4k/@(_fullscreenCover.Id).jp2" type="image/jp2">
+                <img alt="@(_fullscreenCover.TypeName ?? _fullscreenCover.Caption)"
+                     src="@(Assets.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(_fullscreenCover.Id).jpg"
+                     style="max-width: 95vw; max-height: 90vh; object-fit: contain;"/>
+            </picture>
+            <MudText Typo="Typo.subtitle1" Style="color: white;" Class="mt-2">@_fullscreenCover.TypeName</MudText>
+            @if(!string.IsNullOrEmpty(_fullscreenCover.Caption))
+            {
+                <MudText Typo="Typo.body2" Style="color: rgba(255,255,255,0.8);" Class="mt-1">@_fullscreenCover.Caption</MudText>
+            }
+        </div>
+    </MudOverlay>
+}
 
 @* ── General Information Card ── *@
 <MudCard Elevation="2" Class="mb-4 rounded-lg">

@@ -7,6 +7,7 @@ using Marechai.ApiClient.Software.ByPlatform;
 using Marechai.ApiClient.Software.ByYear;
 using Marechai.ApiClient.Software.CompanyRoles;
 using Marechai.ApiClient.Software.Count;
+using Marechai.ApiClient.Software.Covers;
 using Marechai.ApiClient.Software.Families;
 using Marechai.ApiClient.Software.Item;
 using Marechai.ApiClient.Software.MaximumYear;
@@ -64,6 +65,11 @@ namespace Marechai.ApiClient.Software
         public global::Marechai.ApiClient.Software.Count.CountRequestBuilder Count
         {
             get => new global::Marechai.ApiClient.Software.Count.CountRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The covers property</summary>
+        public global::Marechai.ApiClient.Software.Covers.CoversRequestBuilder Covers
+        {
+            get => new global::Marechai.ApiClient.Software.Covers.CoversRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The families property</summary>
         public global::Marechai.ApiClient.Software.Families.FamiliesRequestBuilder Families
