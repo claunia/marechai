@@ -130,13 +130,15 @@
 </MudCard>
 
 @* ── Companies Card ── *@
+@if(_companies.Count > 0)
+{
 <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-    <MudExpansionPanel Disabled="@(_companies.Count == 0)">
+    <MudExpansionPanel>
         <TitleContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                 <MudIcon Icon="@Icons.Material.Filled.Business" Color="Color.Primary"/>
                 <MudText Typo="Typo.h6">@L["Companies"]</MudText>
-                <MudChip T="string" Size="Size.Small" Color="@(_companies.Count > 0 ? Color.Success : Color.Error)">@_companies.Count</MudChip>
+                <MudChip T="string" Size="Size.Small" Color="Color.Success">@_companies.Count</MudChip>
             </MudStack>
         </TitleContent>
         <ChildContent>
@@ -155,6 +157,7 @@
         </ChildContent>
     </MudExpansionPanel>
 </MudExpansionPanels>
+}
 
 @* ── Credits Card ── *@
 @if(_credits.Count > 0)
@@ -187,13 +190,15 @@
 }
 
 @* ── Versions Card ── *@
+@if(_versions.Count > 0)
+{
 <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-    <MudExpansionPanel Disabled="@(_versions.Count == 0)">
+    <MudExpansionPanel>
         <TitleContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                 <MudIcon Icon="@Icons.Material.Filled.History" Color="Color.Primary"/>
                 <MudText Typo="Typo.h6">@L["Versions"]</MudText>
-                <MudChip T="string" Size="Size.Small" Color="@(_versions.Count > 0 ? Color.Success : Color.Error)">@_versions.Count</MudChip>
+                <MudChip T="string" Size="Size.Small" Color="Color.Success">@_versions.Count</MudChip>
             </MudStack>
         </TitleContent>
         <ChildContent>
@@ -223,15 +228,18 @@
         </ChildContent>
     </MudExpansionPanel>
 </MudExpansionPanels>
+}
 
 @* ── Releases Card (flat list) ── *@
+@if(_releases.Count > 0)
+{
 <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-    <MudExpansionPanel Disabled="@(_releases.Count == 0)">
+    <MudExpansionPanel>
         <TitleContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                 <MudIcon Icon="@Icons.Material.Filled.NewReleases" Color="Color.Primary"/>
                 <MudText Typo="Typo.h6">@L["Releases"]</MudText>
-                <MudChip T="string" Size="Size.Small" Color="@(_releases.Count > 0 ? Color.Success : Color.Error)">@_releases.Count</MudChip>
+                <MudChip T="string" Size="Size.Small" Color="Color.Success">@_releases.Count</MudChip>
             </MudStack>
         </TitleContent>
         <ChildContent>
@@ -281,6 +289,7 @@
         </ChildContent>
     </MudExpansionPanel>
 </MudExpansionPanels>
+}
 
 @* ── Compilations Card ── *@
 @if(_compilations.Count > 0)
