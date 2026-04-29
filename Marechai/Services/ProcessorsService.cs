@@ -117,30 +117,9 @@ public class ProcessorsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<ProcessorByMachineDto>? junctions =
-                await client.ProcessorsByMachine.ByProcessor[processorId].GetAsync();
+            List<MachineDto>? machines = await client.Processors[processorId].Machines.GetAsync();
 
-            if(junctions is null || junctions.Count == 0) return [];
-
-            var machines = new List<MachineDto>();
-
-            foreach(ProcessorByMachineDto junction in junctions)
-            {
-                if(!junction.MachineId.HasValue) continue;
-
-                try
-                {
-                    MachineDto? machine = await client.Machines[junction.MachineId.Value].Full.GetAsync();
-
-                    if(machine != null) machines.Add(machine);
-                }
-                catch
-                {
-                    // Skip machines that fail to load
-                }
-            }
-
-            return machines;
+            return machines ?? [];
         }
         catch
         {

@@ -20,27 +20,27 @@ namespace Marechai.ApiClient.Processors
     {
         /// <summary>Gets an item from the Marechai.ApiClient.processors.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
-        /// <returns>A <see cref="global::Marechai.ApiClient.Processors.Item.ProcessorsItemRequestBuilder"/></returns>
-        public global::Marechai.ApiClient.Processors.Item.ProcessorsItemRequestBuilder this[int position]
+        /// <returns>A <see cref="global::Marechai.ApiClient.Processors.Item.ItemRequestBuilder"/></returns>
+        public global::Marechai.ApiClient.Processors.Item.ItemRequestBuilder this[int position]
         {
             get
             {
                 var urlTplParams = new Dictionary<string, object>(PathParameters);
-                urlTplParams.Add("id", position);
-                return new global::Marechai.ApiClient.Processors.Item.ProcessorsItemRequestBuilder(urlTplParams, RequestAdapter);
+                urlTplParams.Add("%2Did", position);
+                return new global::Marechai.ApiClient.Processors.Item.ItemRequestBuilder(urlTplParams, RequestAdapter);
             }
         }
         /// <summary>Gets an item from the Marechai.ApiClient.processors.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
-        /// <returns>A <see cref="global::Marechai.ApiClient.Processors.Item.ProcessorsItemRequestBuilder"/></returns>
+        /// <returns>A <see cref="global::Marechai.ApiClient.Processors.Item.ItemRequestBuilder"/></returns>
         [Obsolete("This indexer is deprecated and will be removed in the next major version. Use the one with the typed parameter instead.")]
-        public global::Marechai.ApiClient.Processors.Item.ProcessorsItemRequestBuilder this[string position]
+        public global::Marechai.ApiClient.Processors.Item.ItemRequestBuilder this[string position]
         {
             get
             {
                 var urlTplParams = new Dictionary<string, object>(PathParameters);
-                if (!string.IsNullOrWhiteSpace(position)) urlTplParams.Add("id", position);
-                return new global::Marechai.ApiClient.Processors.Item.ProcessorsItemRequestBuilder(urlTplParams, RequestAdapter);
+                if (!string.IsNullOrWhiteSpace(position)) urlTplParams.Add("%2Did", position);
+                return new global::Marechai.ApiClient.Processors.Item.ItemRequestBuilder(urlTplParams, RequestAdapter);
             }
         }
         /// <summary>

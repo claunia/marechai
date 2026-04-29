@@ -20,27 +20,27 @@ namespace Marechai.ApiClient.SoundSynths
     {
         /// <summary>Gets an item from the Marechai.ApiClient.soundSynths.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
-        /// <returns>A <see cref="global::Marechai.ApiClient.SoundSynths.Item.SoundSynthsItemRequestBuilder"/></returns>
-        public global::Marechai.ApiClient.SoundSynths.Item.SoundSynthsItemRequestBuilder this[int position]
+        /// <returns>A <see cref="global::Marechai.ApiClient.SoundSynths.Item.ItemRequestBuilder"/></returns>
+        public global::Marechai.ApiClient.SoundSynths.Item.ItemRequestBuilder this[int position]
         {
             get
             {
                 var urlTplParams = new Dictionary<string, object>(PathParameters);
-                urlTplParams.Add("id", position);
-                return new global::Marechai.ApiClient.SoundSynths.Item.SoundSynthsItemRequestBuilder(urlTplParams, RequestAdapter);
+                urlTplParams.Add("%2Did", position);
+                return new global::Marechai.ApiClient.SoundSynths.Item.ItemRequestBuilder(urlTplParams, RequestAdapter);
             }
         }
         /// <summary>Gets an item from the Marechai.ApiClient.soundSynths.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
-        /// <returns>A <see cref="global::Marechai.ApiClient.SoundSynths.Item.SoundSynthsItemRequestBuilder"/></returns>
+        /// <returns>A <see cref="global::Marechai.ApiClient.SoundSynths.Item.ItemRequestBuilder"/></returns>
         [Obsolete("This indexer is deprecated and will be removed in the next major version. Use the one with the typed parameter instead.")]
-        public global::Marechai.ApiClient.SoundSynths.Item.SoundSynthsItemRequestBuilder this[string position]
+        public global::Marechai.ApiClient.SoundSynths.Item.ItemRequestBuilder this[string position]
         {
             get
             {
                 var urlTplParams = new Dictionary<string, object>(PathParameters);
-                if (!string.IsNullOrWhiteSpace(position)) urlTplParams.Add("id", position);
-                return new global::Marechai.ApiClient.SoundSynths.Item.SoundSynthsItemRequestBuilder(urlTplParams, RequestAdapter);
+                if (!string.IsNullOrWhiteSpace(position)) urlTplParams.Add("%2Did", position);
+                return new global::Marechai.ApiClient.SoundSynths.Item.ItemRequestBuilder(urlTplParams, RequestAdapter);
             }
         }
         /// <summary>

@@ -86,36 +86,13 @@ public class ProcessorsService
         {
             _logger.LogInformation("Fetching machines for Processor {ProcessorId}", processorId);
 
-            // Fetch from the processors-by-machine/by-processor/{processorId} endpoint
-            List<ProcessorByMachineDto>? processorMachineRelationships =
-                await _apiClient.ProcessorsByMachine.ByProcessor[processorId].GetAsync();
-
-            if(processorMachineRelationships == null || processorMachineRelationships.Count == 0) return [];
-
-            // Fetch full machine details for each to get Type information
-            var machines = new List<MachineDto>();
-
-            foreach(ProcessorByMachineDto pm in processorMachineRelationships)
-            {
-                if(pm.MachineId.HasValue)
-                {
-                    try
-                    {
-                        MachineDto? machine = await _apiClient.Machines[pm.MachineId.Value].GetAsync();
-                        if(machine != null) machines.Add(machine);
-                    }
-                    catch(Exception ex)
-                    {
-                        _logger.LogWarning(ex, "Failed to fetch machine {MachineId}", pm.MachineId);
-                    }
-                }
-            }
+            List<MachineDto>? machines = await _apiClient.Processors[processorId].Machines.GetAsync();
 
             _logger.LogInformation("Successfully fetched {Count} machines for Processor {ProcessorId}",
-                                   machines.Count,
+                                   machines?.Count ?? 0,
                                    processorId);
 
-            return machines;
+            return machines ?? [];
         }
         catch(Exception ex)
         {

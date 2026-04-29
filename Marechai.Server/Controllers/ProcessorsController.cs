@@ -84,6 +84,29 @@ public class ProcessorsController(MarechaiContext context) : ControllerBase
                                                          .ThenBy(p => p.Name)
                                                          .ToListAsync();
 
+    [HttpGet("{processorId:int}/machines")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<MachineDto>> GetMachinesByProcessorAsync(int processorId) =>
+        context.ProcessorsByMachine.Where(p => p.ProcessorId == processorId)
+               .Select(p => p.Machine)
+               .OrderBy(m => m.Company.Name)
+               .ThenBy(m => m.Name)
+               .Select(m => new MachineDto
+                {
+                    Id                  = m.Id,
+                    Company             = m.Company.Name,
+                    CompanyId           = m.Company.Id,
+                    Name                = m.Name,
+                    Model               = m.Model,
+                    Introduced          = m.Introduced,
+                    IntroducedPrecision = m.IntroducedPrecision,
+                    Type                = m.Type,
+                    FamilyId            = m.FamilyId
+                })
+               .ToListAsync();
+
     [HttpGet("/machines/{machineId:int}/processors")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]

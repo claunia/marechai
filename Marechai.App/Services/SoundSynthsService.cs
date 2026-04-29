@@ -86,36 +86,13 @@ public class SoundSynthsService
         {
             _logger.LogInformation("Fetching machines for Sound Synthesizer {SoundSynthId}", soundSynthId);
 
-            // Fetch from the sound-synths-by-machine/by-sound-synth/{soundSynthId} endpoint
-            List<SoundSynthByMachineDto>? soundSynthMachineRelationships =
-                await _apiClient.SoundSynthsByMachine.BySoundSynth[soundSynthId].GetAsync();
-
-            if(soundSynthMachineRelationships == null || soundSynthMachineRelationships.Count == 0) return [];
-
-            // Fetch full machine details for each to get Type information
-            var machines = new List<MachineDto>();
-
-            foreach(SoundSynthByMachineDto sm in soundSynthMachineRelationships)
-            {
-                if(sm.MachineId.HasValue)
-                {
-                    try
-                    {
-                        MachineDto? machine = await _apiClient.Machines[sm.MachineId.Value].GetAsync();
-                        if(machine != null) machines.Add(machine);
-                    }
-                    catch(Exception ex)
-                    {
-                        _logger.LogWarning(ex, "Failed to fetch machine {MachineId}", sm.MachineId);
-                    }
-                }
-            }
+            List<MachineDto>? machines = await _apiClient.SoundSynths[soundSynthId].Machines.GetAsync();
 
             _logger.LogInformation("Successfully fetched {Count} machines for Sound Synthesizer {SoundSynthId}",
-                                   machines.Count,
+                                   machines?.Count ?? 0,
                                    soundSynthId);
 
-            return machines;
+            return machines ?? [];
         }
         catch(Exception ex)
         {
