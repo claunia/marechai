@@ -45,7 +45,7 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
     private string? _languagesDisplay;
 
     [ObservableProperty]
-    private string? _regionalTitle;
+    private string? _title;
 
     [ObservableProperty]
     private string? _publisher;
@@ -75,7 +75,7 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
     private Visibility _showLanguages = Visibility.Collapsed;
 
     [ObservableProperty]
-    private Visibility _showRegionalTitle = Visibility.Collapsed;
+    private Visibility _showTitle = Visibility.Collapsed;
 
     [ObservableProperty]
     private Visibility _showPublisher = Visibility.Collapsed;
@@ -222,9 +222,9 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
                     ReleaseTitle = release.Software ?? _localizer["Software Release"];
                 }
 
-                // Show Title as regional title if set
+                // Show Title if set
                 if(!string.IsNullOrEmpty(release.Title))
-                    RegionalTitle = release.Title;
+                    Title = release.Title;
 
                 // Load software name for display
                 if(!string.IsNullOrEmpty(release.Software))
@@ -271,7 +271,7 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
         ShowPlatform    = !string.IsNullOrEmpty(Platform) ? Visibility.Visible : Visibility.Collapsed;
         ShowRegions     = !string.IsNullOrEmpty(RegionsDisplay) ? Visibility.Visible : Visibility.Collapsed;
         ShowLanguages   = !string.IsNullOrEmpty(LanguagesDisplay) ? Visibility.Visible : Visibility.Collapsed;
-        ShowRegionalTitle = !string.IsNullOrEmpty(RegionalTitle) ? Visibility.Visible : Visibility.Collapsed;
+        ShowTitle       = !string.IsNullOrEmpty(Title) ? Visibility.Visible : Visibility.Collapsed;
         ShowPublisher   = !string.IsNullOrEmpty(Publisher) ? Visibility.Visible : Visibility.Collapsed;
         ShowReleaseDate = !string.IsNullOrEmpty(ReleaseDateDisplay) ? Visibility.Visible : Visibility.Collapsed;
         ShowBarcodes    = Barcodes.Count > 0 ? Visibility.Visible : Visibility.Collapsed;

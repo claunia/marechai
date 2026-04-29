@@ -122,10 +122,7 @@
         <value>Region hinzufügen</value>
         <comment>Add region</comment>
     </data>
-    <data name="Regional title" xml:space="preserve">
-        <value>Regionaler Titel</value>
-        <comment>Regional title</comment>
-    </data>
+
     <data name="Languages" xml:space="preserve">
         <value>Sprachen</value>
         <comment>Languages</comment>

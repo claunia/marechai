@@ -106,8 +106,6 @@
     </data>
     <data name="Add region" xml:space="preserve">
         <value>Añadir región</value>
-    </data>    <data name="Regional title" xml:space="preserve">
-        <value>Título regional</value>
     </data>    <data name="Languages" xml:space="preserve">
         <value>Idiomas</value>
     </data>
