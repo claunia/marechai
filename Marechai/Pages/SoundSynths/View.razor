@@ -118,8 +118,10 @@
 </MudCard>
 
 @* ── Computers Card ── *@
+@if(_computers.Count > 0)
+{
 <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-    <MudExpansionPanel Disabled="@(_computers.Count == 0)">
+    <MudExpansionPanel>
         <TitleContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                 <MudIcon Icon="@Icons.Material.Filled.Computer" Color="Color.Primary"/>
@@ -139,10 +141,13 @@
         </ChildContent>
     </MudExpansionPanel>
 </MudExpansionPanels>
+}
 
 @* ── Consoles Card ── *@
+@if(_consoles.Count > 0)
+{
 <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-    <MudExpansionPanel Disabled="@(_consoles.Count == 0)">
+    <MudExpansionPanel>
         <TitleContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                 <MudIcon Icon="@Icons.Material.Filled.SportsEsports" Color="Color.Primary"/>
@@ -162,3 +167,4 @@
         </ChildContent>
     </MudExpansionPanel>
 </MudExpansionPanels>
+}
