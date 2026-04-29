@@ -2,6 +2,7 @@
 #pragma warning disable CS0618
 using Marechai.ApiClient.Computers.ByLetter;
 using Marechai.ApiClient.Computers.ByYear;
+using Marechai.ApiClient.Computers.Companies;
 using Marechai.ApiClient.Computers.Count;
 using Marechai.ApiClient.Computers.MaximumYear;
 using Marechai.ApiClient.Computers.MinimumYear;
@@ -31,6 +32,11 @@ namespace Marechai.ApiClient.Computers
         public global::Marechai.ApiClient.Computers.ByYear.ByYearRequestBuilder ByYear
         {
             get => new global::Marechai.ApiClient.Computers.ByYear.ByYearRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The companies property</summary>
+        public global::Marechai.ApiClient.Computers.Companies.CompaniesRequestBuilder Companies
+        {
+            get => new global::Marechai.ApiClient.Computers.Companies.CompaniesRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The count property</summary>
         public global::Marechai.ApiClient.Computers.Count.CountRequestBuilder Count

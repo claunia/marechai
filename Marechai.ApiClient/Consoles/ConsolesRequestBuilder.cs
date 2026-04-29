@@ -2,6 +2,7 @@
 #pragma warning disable CS0618
 using Marechai.ApiClient.Consoles.ByLetter;
 using Marechai.ApiClient.Consoles.ByYear;
+using Marechai.ApiClient.Consoles.Companies;
 using Marechai.ApiClient.Consoles.Count;
 using Marechai.ApiClient.Consoles.MaximumYear;
 using Marechai.ApiClient.Consoles.MinimumYear;
@@ -31,6 +32,11 @@ namespace Marechai.ApiClient.Consoles
         public global::Marechai.ApiClient.Consoles.ByYear.ByYearRequestBuilder ByYear
         {
             get => new global::Marechai.ApiClient.Consoles.ByYear.ByYearRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The companies property</summary>
+        public global::Marechai.ApiClient.Consoles.Companies.CompaniesRequestBuilder Companies
+        {
+            get => new global::Marechai.ApiClient.Consoles.Companies.CompaniesRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The count property</summary>
         public global::Marechai.ApiClient.Consoles.Count.CountRequestBuilder Count

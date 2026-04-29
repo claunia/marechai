@@ -23,6 +23,7 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
@@ -108,6 +109,34 @@ public class ComputersService(Marechai.ApiClient.Client client)
             List<MachineDto>? machines = await client.Computers.GetAsync();
 
             return machines ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<CompanyDto>> GetCompaniesAsync()
+    {
+        try
+        {
+            List<CompanyDto>? companies = await client.Computers.Companies.GetAsync();
+
+            return companies ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<CompanyDto>> GetCompaniesByLetterAsync(char c)
+    {
+        try
+        {
+            List<CompanyDto>? companies = await client.Computers.Companies.Letter[c.ToString()].GetAsync();
+
+            return companies ?? [];
         }
         catch
         {
