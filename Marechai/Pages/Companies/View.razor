@@ -285,13 +285,15 @@
 }
 
 @* ── Computers Card ── *@
+@if(_computers.Count > 0)
+{
 <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-    <MudExpansionPanel Disabled="@(_computers.Count == 0)">
+    <MudExpansionPanel>
         <TitleContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                 <MudIcon Icon="@Icons.Material.Filled.Computer" Color="Color.Primary"/>
                 <MudText Typo="Typo.h6">@L["Computers"]</MudText>
-                <MudChip T="string" Size="Size.Small" Color="@(_computers.Count > 0 ? Color.Success : Color.Error)">@_computers.Count</MudChip>
+                <MudChip T="string" Size="Size.Small" Color="Color.Success">@_computers.Count</MudChip>
             </MudStack>
         </TitleContent>
         <ChildContent>
@@ -306,15 +308,18 @@
         </ChildContent>
     </MudExpansionPanel>
 </MudExpansionPanels>
+}
 
 @* ── Consoles Card ── *@
+@if(_consoles.Count > 0)
+{
 <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-    <MudExpansionPanel Disabled="@(_consoles.Count == 0)">
+    <MudExpansionPanel>
         <TitleContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                 <MudIcon Icon="@Icons.Material.Filled.SportsEsports" Color="Color.Primary"/>
                 <MudText Typo="Typo.h6">@L["Consoles"]</MudText>
-                <MudChip T="string" Size="Size.Small" Color="@(_consoles.Count > 0 ? Color.Success : Color.Error)">@_consoles.Count</MudChip>
+                <MudChip T="string" Size="Size.Small" Color="Color.Success">@_consoles.Count</MudChip>
             </MudStack>
         </TitleContent>
         <ChildContent>
@@ -329,6 +334,7 @@
         </ChildContent>
     </MudExpansionPanel>
 </MudExpansionPanels>
+}
 
 @* ── Description Card ── *@
 @if(!string.IsNullOrWhiteSpace(_description))
