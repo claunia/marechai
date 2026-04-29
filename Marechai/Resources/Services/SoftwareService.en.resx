@@ -464,4 +464,172 @@
     <data name="Input Devices Supported" xml:space="preserve">
         <value>Input Devices Supported</value>
     </data>
+    <data name="Minimum OS Class Required" xml:space="preserve">
+        <value>Minimum OS Class Required</value>
+    </data>
+    <data name="Number of Offline Players" xml:space="preserve">
+        <value>Number of Offline Players</value>
+    </data>
+    <data name="Screen Orientation" xml:space="preserve">
+        <value>Screen Orientation</value>
+    </data>
+    <data name="Miscellaneous Attributes" xml:space="preserve">
+        <value>Miscellaneous Attributes</value>
+    </data>
+    <data name="Apple Rating" xml:space="preserve">
+        <value>Apple Rating</value>
+    </data>
+    <data name="Color Depth" xml:space="preserve">
+        <value>Color Depth</value>
+    </data>
+    <data name="ESRB Rating" xml:space="preserve">
+        <value>ESRB Rating</value>
+    </data>
+    <data name="Minimum CPU Class Required" xml:space="preserve">
+        <value>Minimum CPU Class Required</value>
+    </data>
+    <data name="Minimum RAM Required" xml:space="preserve">
+        <value>Minimum RAM Required</value>
+    </data>
+    <data name="Minimum Video Memory Required" xml:space="preserve">
+        <value>Minimum Video Memory Required</value>
+    </data>
+    <data name="Multiplayer Game Modes" xml:space="preserve">
+        <value>Multiplayer Game Modes</value>
+    </data>
+    <data name="Multiplayer Options" xml:space="preserve">
+        <value>Multiplayer Options</value>
+    </data>
+    <data name="Number of Online Players" xml:space="preserve">
+        <value>Number of Online Players</value>
+    </data>
+    <data name="Number of Players Supported" xml:space="preserve">
+        <value>Number of Players Supported</value>
+    </data>
+    <data name="PEGI Rating" xml:space="preserve">
+        <value>PEGI Rating</value>
+    </data>
+    <data name="USK Rating" xml:space="preserve">
+        <value>USK Rating</value>
+    </data>
+    <data name="Video Modes Supported" xml:space="preserve">
+        <value>Video Modes Supported</value>
+    </data>
+    <data name="Xbox/Windows Live" xml:space="preserve">
+        <value>Xbox/Windows Live</value>
+    </data>
+    <data name="1 Player" xml:space="preserve">
+        <value>1 Player</value>
+    </data>
+    <data name="1-2 Players" xml:space="preserve">
+        <value>1-2 Players</value>
+    </data>
+    <data name="1-4 Players" xml:space="preserve">
+        <value>1-4 Players</value>
+    </data>
+    <data name="16 Players" xml:space="preserve">
+        <value>16 Players</value>
+    </data>
+    <data name="256 MB" xml:space="preserve">
+        <value>256 MB</value>
+    </data>
+    <data name="3.5&quot; Floppy Disk" xml:space="preserve">
+        <value>3.5" Floppy Disk</value>
+    </data>
+    <data name="4-bit (16 greyscales),  8-bit (256 colors)" xml:space="preserve">
+        <value>4-bit (16 greyscales),  8-bit (256 colors)</value>
+    </data>
+    <data name="64 MB" xml:space="preserve">
+        <value>64 MB</value>
+    </data>
+    <data name="Achievements,  Content Download, Matchmaking, Online Multiplayer, Scoreboard/Leaderboard,  Voice Chat" xml:space="preserve">
+        <value>Achievements,  Content Download, Matchmaking, Online Multiplayer, Scoreboard/Leaderboard,  Voice Chat</value>
+    </data>
+    <data name="Amiga 500/2000" xml:space="preserve">
+        <value>Amiga 500/2000</value>
+    </data>
+    <data name="Android 2.1 (Eclair)" xml:space="preserve">
+        <value>Android 2.1 (Eclair)</value>
+    </data>
+    <data name="Android 4.0.3" xml:space="preserve">
+        <value>Android 4.0.3</value>
+    </data>
+    <data name="Blu-Ray Disc" xml:space="preserve">
+        <value>Blu-Ray Disc</value>
+    </data>
+    <data name="CD-ROM" xml:space="preserve">
+        <value>CD-ROM</value>
+    </data>
+    <data name="Co-Op,  Free-for-all / One-on-one (VS),  Team" xml:space="preserve">
+        <value>Co-Op,  Free-for-all / One-on-one (VS),  Team</value>
+    </data>
+    <data name="Commercial" xml:space="preserve">
+        <value>Commercial</value>
+    </data>
+    <data name="Download" xml:space="preserve">
+        <value>Download</value>
+    </data>
+    <data name="Freeware / Free-to-play / Public Domain" xml:space="preserve">
+        <value>Freeware / Free-to-play / Public Domain</value>
+    </data>
+    <data name="Game Center" xml:space="preserve">
+        <value>Game Center</value>
+    </data>
+    <data name="Game Center,  In-app/game/skill Purchase" xml:space="preserve">
+        <value>Game Center,  In-app/game/skill Purchase</value>
+    </data>
+    <data name="Google Play game services,  In-app/game/skill Purchase" xml:space="preserve">
+        <value>Google Play game services,  In-app/game/skill Purchase</value>
+    </data>
+    <data name="Hot Seat" xml:space="preserve">
+        <value>Hot Seat</value>
+    </data>
+    <data name="Intel Pentium III" xml:space="preserve">
+        <value>Intel Pentium III</value>
+    </data>
+    <data name="Internet" xml:space="preserve">
+        <value>Internet</value>
+    </data>
+    <data name="iOS 7.0" xml:space="preserve">
+        <value>iOS 7.0</value>
+    </data>
+    <data name="iPhone OS 3.1.2" xml:space="preserve">
+        <value>iPhone OS 3.1.2</value>
+    </data>
+    <data name="iPhone OS 3.2" xml:space="preserve">
+        <value>iPhone OS 3.2</value>
+    </data>
+    <data name="Joystick (Digital)" xml:space="preserve">
+        <value>Joystick (Digital)</value>
+    </data>
+    <data name="Landscape" xml:space="preserve">
+        <value>Landscape</value>
+    </data>
+    <data name="Mac OS X 10.6 (Snow Leopard)" xml:space="preserve">
+        <value>Mac OS X 10.6 (Snow Leopard)</value>
+    </data>
+    <data name="Mouse" xml:space="preserve">
+        <value>Mouse</value>
+    </data>
+    <data name="OCS/ECS" xml:space="preserve">
+        <value>OCS/ECS</value>
+    </data>
+    <data name="Palm OS 3.5" xml:space="preserve">
+        <value>Palm OS 3.5</value>
+    </data>
+    <data name="Portrait" xml:space="preserve">
+        <value>Portrait</value>
+    </data>
+    <data name="Separate black &amp; white and colour versions." xml:space="preserve">
+        <value>Separate black &amp; white and colour versions.</value>
+    </data>
+    <data name="Shareware" xml:space="preserve">
+        <value>Shareware</value>
+    </data>
+    <data name="Touch Screen" xml:space="preserve">
+        <value>Touch Screen</value>
+    </data>
+    <data name="Windows XP" xml:space="preserve">
+        <value>Windows XP</value>
+    </data>
 </root>

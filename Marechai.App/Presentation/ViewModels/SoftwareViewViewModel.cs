@@ -271,7 +271,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
                     specGroup.Specs.Add(new SpecItem
                     {
                         Key   = _localizer[spec.Key ?? string.Empty],
-                        Value = spec.Value ?? string.Empty
+                        Value = _localizer[spec.Value ?? string.Empty]
                     });
                 }
 
