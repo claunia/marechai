@@ -33,7 +33,8 @@ class Program
         optionsBuilder.UseLazyLoadingProxies()
                       .UseMySql(marechaiConn,
                                 new MariaDbServerVersion(new Version(10, 5, 0)),
-                                b => b.UseMicrosoftJson().EnableStringComparisonTranslations());
+                                b => b.UseMicrosoftJson().EnableStringComparisonTranslations()
+                                        .UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
 
         var factory = new MarechaiContextFactory(optionsBuilder.Options);
 

@@ -250,7 +250,8 @@ file class Program
                                                                                MariaDbServerVersion(new System.
                                                                                    Version(10, 5, 0)),
                                                                            b => b.UseMicrosoftJson()
-                                                                                    .EnableStringComparisonTranslations()));
+                                                                                    .EnableStringComparisonTranslations()
+                                                                                    .UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
 
         builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                .AddRoles<ApplicationRole>()

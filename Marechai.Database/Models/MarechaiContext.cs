@@ -167,7 +167,8 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
         optionsBuilder
            .UseMySql(configuration.GetConnectionString("DefaultConnection"),
                      new MariaDbServerVersion(new Version(10, 5, 0)),
-                     b => b.UseMicrosoftJson())
+                     b => b.UseMicrosoftJson()
+                             .UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery))
            .UseLazyLoadingProxies();
     }
 
