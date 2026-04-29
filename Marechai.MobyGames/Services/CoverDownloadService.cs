@@ -73,9 +73,12 @@ public class CoverDownloadService
         int skippedCount    = 0;
         int failedCount     = 0;
         int gamesProcessed  = 0;
+        bool aborted        = false;
 
         foreach(var game in importedGames.Take(batchSize))
         {
+            if(aborted) break;
+
             gamesProcessed++;
 
             // Fetch all chunks for this game from source DB
@@ -142,6 +145,8 @@ public class CoverDownloadService
 
             foreach(var group in coverGroups)
             {
+                if(aborted) break;
+
                 totalCovers += group.Covers.Count;
 
                 Console.WriteLine($"\n    Platform: {group.Platform}");
@@ -279,6 +284,15 @@ public class CoverDownloadService
                     }
 
                     // Download the original image
+                    // Check free disk space before downloading
+                    if(!HasSufficientDiskSpace(_assetRootPath))
+                    {
+                        Console.WriteLine("\n\n  \e[31;1mABORTING: Less than 100 MB free disk space on target volume.\e[0m\n");
+                        aborted = true;
+
+                        break;
+                    }
+
                     var    coverId       = Guid.NewGuid();
                     string originalsDir = Path.Combine(_assetRootPath, "photos", "software-covers", "originals");
                     string destBasePath = Path.Combine(originalsDir, coverId.ToString());
@@ -443,5 +457,22 @@ public class CoverDownloadService
             return SoftwareCoverType.Manual;
 
         return SoftwareCoverType.Other;
+    }
+
+    const long MinFreeSpaceBytes = 100 * 1024 * 1024; // 100 MB
+
+    static bool HasSufficientDiskSpace(string path)
+    {
+        try
+        {
+            var driveInfo = new DriveInfo(Path.GetPathRoot(Path.GetFullPath(path))!);
+
+            return driveInfo.AvailableFreeSpace > MinFreeSpaceBytes;
+        }
+        catch
+        {
+            // If we can't determine free space, allow continuing
+            return true;
+        }
     }
 }
