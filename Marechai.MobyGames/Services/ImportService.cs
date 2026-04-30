@@ -708,6 +708,7 @@ public class ImportService
         "Cutscenes by"             => "cut",
         "Motion Capture by"        => "moc",
         "Additional Sound by"      => "snd",
+        "Sound by"                 => "snd",
         "Package Design by"        => "pkg",
         "Voice Recording by"       => "vrc",
         "Game Engine by"           => "eng",
