@@ -171,6 +171,18 @@
         <value>Kopierschutz</value>
         <comment>Copy Protection</comment>
     </data>
+    <data name="Cutscenes" xml:space="preserve">
+        <value>Zwischensequenzen</value>
+        <comment>Cutscenes</comment>
+    </data>
+    <data name="Motion Capture" xml:space="preserve">
+        <value>Bewegungserfassung</value>
+        <comment>Motion Capture</comment>
+    </data>
+    <data name="Additional Sound" xml:space="preserve">
+        <value>Zusätzlicher Sound</value>
+        <comment>Additional Sound</comment>
+    </data>
     <data name="Release date" xml:space="preserve">
         <value>Veröffentlichungsdatum</value>
         <comment>Release date</comment>

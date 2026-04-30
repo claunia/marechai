@@ -684,6 +684,9 @@ public class ImportService
         "Additional Development by" => "dev",
         "Additional Graphics by"   => "gfx",
         "Copy Protection by"       => "cpy",
+        "Cutscenes by"             => "cut",
+        "Motion Capture by"        => "moc",
+        "Additional Sound by"      => "snd",
         _                          => null
     };
 }

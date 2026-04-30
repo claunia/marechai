@@ -734,6 +734,15 @@
   <data name="Copy Protection" xml:space="preserve">
     <value>Protección anticopia</value>
   </data>
+  <data name="Cutscenes" xml:space="preserve">
+    <value>Escenas cinemáticas</value>
+  </data>
+  <data name="Motion Capture" xml:space="preserve">
+    <value>Captura de movimiento</value>
+  </data>
+  <data name="Additional Sound" xml:space="preserve">
+    <value>Sonido adicional</value>
+  </data>
   <data name="Other" xml:space="preserve">
     <value>Otro</value>
   </data>
