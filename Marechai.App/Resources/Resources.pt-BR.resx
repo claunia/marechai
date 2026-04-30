@@ -1450,6 +1450,7 @@
   <data name="MachineScreensHeader" xml:space="preserve"><value>Telas</value></data>
   <data name="MachineMemoryHeader" xml:space="preserve"><value>Memória</value></data>
   <data name="MachineStorageHeader" xml:space="preserve"><value>Armazenamento</value></data>
+  <data name="MachineSoftwarePlatformsHeader" xml:space="preserve"><value>Plataformas de software</value></data>
   <data name="MachineCompanyRequired" xml:space="preserve"><value>Uma empresa deve ser selecionada.</value></data>
   <data name="MachineTypeUnknown" xml:space="preserve"><value>Desconhecido</value></data>
   <data name="MachineTypeComputer" xml:space="preserve"><value>Computador</value></data>

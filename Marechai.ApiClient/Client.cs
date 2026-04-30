@@ -41,6 +41,7 @@ using Marechai.ApiClient.ResolutionsByScreen;
 using Marechai.ApiClient.Screens;
 using Marechai.ApiClient.ScreensByMachine;
 using Marechai.ApiClient.Software;
+using Marechai.ApiClient.SoftwarePlatformsByMachine;
 using Marechai.ApiClient.SoundSynths;
 using Marechai.ApiClient.SoundSynthsByMachine;
 using Marechai.ApiClient.StorageByMachine;
@@ -269,6 +270,11 @@ namespace Marechai.ApiClient
         {
             get => new global::Marechai.ApiClient.Software.SoftwareRequestBuilder(PathParameters, RequestAdapter);
         }
+        /// <summary>The softwarePlatformsByMachine property</summary>
+        public global::Marechai.ApiClient.SoftwarePlatformsByMachine.SoftwarePlatformsByMachineRequestBuilder SoftwarePlatformsByMachine
+        {
+            get => new global::Marechai.ApiClient.SoftwarePlatformsByMachine.SoftwarePlatformsByMachineRequestBuilder(PathParameters, RequestAdapter);
+        }
         /// <summary>The soundSynths property</summary>
         public global::Marechai.ApiClient.SoundSynths.SoundSynthsRequestBuilder SoundSynths
         {
@@ -309,7 +315,7 @@ namespace Marechai.ApiClient
             ApiClientBuilder.RegisterDefaultDeserializer<FormParseNodeFactory>();
             if (string.IsNullOrEmpty(RequestAdapter.BaseUrl))
             {
-                RequestAdapter.BaseUrl = "http://localhost:5299";
+                RequestAdapter.BaseUrl = "http://localhost:5023";
             }
             PathParameters.TryAdd("baseurl", RequestAdapter.BaseUrl);
         }

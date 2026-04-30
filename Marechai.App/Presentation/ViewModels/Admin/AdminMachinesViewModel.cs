@@ -101,6 +101,13 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
     [ObservableProperty] private int _storageInterfaceIndex;
     [ObservableProperty] private long? _storageCapacity;
 
+    // --- Software Platform junction ---
+    [ObservableProperty] private ObservableCollection<SoftwarePlatformByMachineDto> _machineSoftwarePlatforms = [];
+    [ObservableProperty] private ObservableCollection<string> _machineSoftwarePlatformDisplays = [];
+    [ObservableProperty] private ObservableCollection<SoftwarePlatformDto> _availableSoftwarePlatforms = [];
+    [ObservableProperty] private SoftwarePlatformDto? _selectedAvailableSoftwarePlatform;
+    private List<SoftwarePlatformDto>? _allSoftwarePlatformsList;
+
     // --- Enum items for ComboBoxes ---
     public List<string> MemoryTypeItems { get; private set; } = [];
     public List<string> MemoryUsageItems { get; private set; } = [];
@@ -152,6 +159,8 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
         RemoveMemoryCommand    = new AsyncRelayCommand<string>(RemoveMemoryByDisplayAsync);
         AddStorageCommand      = new AsyncRelayCommand(AddStorageAsync);
         RemoveStorageCommand   = new AsyncRelayCommand<string>(RemoveStorageByDisplayAsync);
+        AddSoftwarePlatformCommand    = new AsyncRelayCommand(AddSoftwarePlatformAsync);
+        RemoveSoftwarePlatformCommand = new AsyncRelayCommand<string>(RemoveSoftwarePlatformByDisplayAsync);
         OpenPhotosCommand      = new RelayCommand<MachineDto>(OpenPhotos);
 
         CheckAdminRole();
@@ -177,6 +186,8 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand<string> RemoveMemoryCommand { get; }
     public IAsyncRelayCommand AddStorageCommand { get; }
     public IAsyncRelayCommand<string> RemoveStorageCommand { get; }
+    public IAsyncRelayCommand AddSoftwarePlatformCommand { get; }
+    public IAsyncRelayCommand<string> RemoveSoftwarePlatformCommand { get; }
     public IRelayCommand<MachineDto> OpenPhotosCommand { get; }
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
@@ -374,6 +385,9 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
 
         try { _allScreensList = await _apiClient.Screens.GetAsync(); }
         catch(Exception ex) { _logger.LogError(ex, "Error loading screens"); }
+
+        try { _allSoftwarePlatformsList = await _apiClient.Software.Platforms.GetAsync(); }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading software platforms"); }
     }
 
     // ======================== JUNCTION MANAGEMENT ========================
@@ -386,7 +400,8 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
             LoadMachineSoundsAsync(machineId),
             LoadMachineScreensAsync(machineId),
             LoadMachineMemoriesAsync(machineId),
-            LoadMachineStorageAsync(machineId)
+            LoadMachineStorageAsync(machineId),
+            LoadMachineSoftwarePlatformsAsync(machineId)
         );
     }
 
@@ -649,6 +664,46 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
         }
     }
 
+    // --- Software Platforms ---
+    private async Task LoadMachineSoftwarePlatformsAsync(int machineId)
+    {
+        MachineSoftwarePlatforms.Clear(); MachineSoftwarePlatformDisplays.Clear();
+        try
+        {
+            List<SoftwarePlatformByMachineDto>? items = await _apiClient.SoftwarePlatformsByMachine.ByMachine[machineId].GetAsync();
+            if(items != null) foreach(SoftwarePlatformByMachineDto sp in items)
+            {
+                MachineSoftwarePlatforms.Add(sp);
+                MachineSoftwarePlatformDisplays.Add(sp.Name ?? "?");
+            }
+        }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading software platforms for machine"); }
+        RefreshAvailable(_allSoftwarePlatformsList, MachineSoftwarePlatforms.Select(sp => sp.SoftwarePlatformId), AvailableSoftwarePlatforms);
+    }
+
+    private async Task AddSoftwarePlatformAsync()
+    {
+        if(_editingId == null || SelectedAvailableSoftwarePlatform?.Id == null) return;
+        try
+        {
+            await _apiClient.SoftwarePlatformsByMachine.PostAsync(new SoftwarePlatformByMachineDto { SoftwarePlatformId = SelectedAvailableSoftwarePlatform.Id, MachineId = _editingId });
+            SelectedAvailableSoftwarePlatform = null;
+            await LoadMachineSoftwarePlatformsAsync(_editingId.Value);
+        }
+        catch(Exception ex) { _logger.LogError(ex, "Error adding software platform"); ErrorMessage = _localizer["FailedToSaveMachine"]; HasError = true; }
+    }
+
+    private async Task RemoveSoftwarePlatformByDisplayAsync(string? display)
+    {
+        if(display == null || _editingId == null) return;
+        int idx = MachineSoftwarePlatformDisplays.IndexOf(display);
+        if(idx >= 0 && idx < MachineSoftwarePlatforms.Count && MachineSoftwarePlatforms[idx].Id.HasValue)
+        {
+            try { await _apiClient.SoftwarePlatformsByMachine[MachineSoftwarePlatforms[idx].Id.Value].DeleteAsync(); await LoadMachineSoftwarePlatformsAsync(_editingId.Value); }
+            catch(Exception ex) { _logger.LogError(ex, "Error removing software platform"); }
+        }
+    }
+
     // ======================== HELPERS ========================
 
     private static void RefreshAvailable<TDto>(List<TDto>? all, IEnumerable<int?> assignedIds, ObservableCollection<TDto> available)
@@ -663,11 +718,12 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
         {
             int? id = item switch
             {
-                GpuDto g       => g.Id,
-                ProcessorDto p => p.Id,
+                GpuDto g        => g.Id,
+                ProcessorDto p  => p.Id,
                 SoundSynthDto s => s.Id,
-                ScreenDto sc   => sc.Id,
-                _              => null
+                ScreenDto sc    => sc.Id,
+                SoftwarePlatformDto sp => sp.Id,
+                _               => null
             };
 
             if(id.HasValue && !ids.Contains(id.Value))
@@ -694,6 +750,7 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
         MachineScreens.Clear(); MachineScreenDisplays.Clear(); AvailableScreens.Clear(); SelectedAvailableScreen = null;
         MachineMemories.Clear(); MachineMemoryDisplays.Clear(); MemoryTypeIndex = 0; MemoryUsageIndex = 0; MemorySize = null; MemorySpeed = null;
         MachineStorage.Clear(); MachineStorageDisplays.Clear(); StorageTypeIndex = 0; StorageInterfaceIndex = 0; StorageCapacity = null;
+        MachineSoftwarePlatforms.Clear(); MachineSoftwarePlatformDisplays.Clear(); AvailableSoftwarePlatforms.Clear(); SelectedAvailableSoftwarePlatform = null;
         HasError = false; ErrorMessage = string.Empty;
     }
 

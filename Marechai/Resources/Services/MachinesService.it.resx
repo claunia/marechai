@@ -514,4 +514,19 @@
         <value>Solo anno</value>
         <comment>Year only</comment>
     </data>
+    <data name="Software Platforms" xml:space="preserve">
+        <value>Piattaforme software</value>
+    </data>
+    <data name="Search Software Platform" xml:space="preserve">
+        <value>Cerca piattaforma software</value>
+    </data>
+    <data name="Add Software Platform" xml:space="preserve">
+        <value>Aggiungi piattaforma software</value>
+    </data>
+    <data name="Remove Software Platform" xml:space="preserve">
+        <value>Rimuovi piattaforma software</value>
+    </data>
+    <data name="Are you sure you want to remove this software platform from the machine?" xml:space="preserve">
+        <value>Sei sicuro di voler rimuovere questa piattaforma software dalla macchina?</value>
+    </data>
 </root>

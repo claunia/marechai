@@ -400,6 +400,7 @@ public class LocalizedStrings
     public string MachineScreensHeader => _l["MachineScreensHeader"];
     public string MachineMemoryHeader => _l["MachineMemoryHeader"];
     public string MachineStorageHeader => _l["MachineStorageHeader"];
+    public string MachineSoftwarePlatformsHeader => _l["MachineSoftwarePlatformsHeader"];
 
     // Machine family management
     public string MachineFamilyManagementTitle => _l["MachineFamilyManagementTitle"];

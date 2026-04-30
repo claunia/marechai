@@ -35,11 +35,12 @@ public class Machine : BaseModel<int>
 {
     public Machine()
     {
-        Gpus       = new HashSet<GpusByMachine>();
-        Memory     = new HashSet<MemoryByMachine>();
-        Processors = new HashSet<ProcessorsByMachine>();
-        Sound      = new HashSet<SoundByMachine>();
-        Storage    = new HashSet<StorageByMachine>();
+        Gpus              = new HashSet<GpusByMachine>();
+        Memory            = new HashSet<MemoryByMachine>();
+        Processors        = new HashSet<ProcessorsByMachine>();
+        Sound             = new HashSet<SoundByMachine>();
+        Storage           = new HashSet<StorageByMachine>();
+        SoftwarePlatforms = new HashSet<SoftwarePlatformsByMachine>();
     }
 
     [Required]
@@ -67,7 +68,8 @@ public class Machine : BaseModel<int>
     public virtual ICollection<StorageByMachine>    Storage    { get; set; }
     public virtual ICollection<MachinePhoto>        Photos     { get; set; }
     public virtual ICollection<ScreensByMachine>    Screens    { get; set; }
-    public virtual ICollection<DocumentsByMachine>  Documents  { get; set; }
-    public virtual ICollection<BooksByMachine>      Books      { get; set; }
-    public virtual ICollection<MagazinesByMachine>  Magazines  { get; set; }
+    public virtual ICollection<DocumentsByMachine>          Documents         { get; set; }
+    public virtual ICollection<BooksByMachine>               Books             { get; set; }
+    public virtual ICollection<MagazinesByMachine>           Magazines         { get; set; }
+    public virtual ICollection<SoftwarePlatformsByMachine>   SoftwarePlatforms { get; set; }
 }

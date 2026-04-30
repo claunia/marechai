@@ -147,6 +147,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<SoundSynth>                          SoundSynths                         { get; set; }
     public virtual DbSet<StandaloneFile>                      StandaloneFiles                     { get; set; }
     public virtual DbSet<StorageByMachine>                    StorageByMachine                    { get; set; }
+    public virtual DbSet<SoftwarePlatformsByMachine>          SoftwarePlatformsByMachine          { get; set; }
     public virtual DbSet<CollectedBook>                       CollectedBooks                      { get; set; }
     public virtual DbSet<CollectedDocument>                   CollectedDocuments                  { get; set; }
     public virtual DbSet<CollectedSoftwareRelease>            CollectedSoftwareReleases           { get; set; }
@@ -2091,6 +2092,39 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
         });
 
         modelBuilder.Entity<SoftwarePlatform>(entity => { entity.HasIndex(x => x.Name).IsUnique(); });
+
+        modelBuilder.Entity<SoftwarePlatformsByMachine>(entity =>
+        {
+            entity.ToTable("software_platforms_by_machine");
+
+            entity.HasIndex(e => e.SoftwarePlatformId)
+                  .HasDatabaseName("idx_software_platforms_by_machine_software_platform");
+
+            entity.HasIndex(e => e.MachineId)
+                  .HasDatabaseName("idx_software_platforms_by_machine_machine");
+
+            entity.Property(e => e.Id)
+                  .HasColumnName("id")
+                  .HasColumnType("bigint(20)");
+
+            entity.Property(e => e.SoftwarePlatformId)
+                  .HasColumnName("software_platform")
+                  .HasColumnType("bigint(20) unsigned");
+
+            entity.Property(e => e.MachineId)
+                  .HasColumnName("machine")
+                  .HasColumnType("int(11)");
+
+            entity.HasOne(d => d.SoftwarePlatform)
+                  .WithMany(p => p.Machines)
+                  .HasForeignKey(d => d.SoftwarePlatformId)
+                  .HasConstraintName("fk_software_platforms_by_machine_software_platform");
+
+            entity.HasOne(d => d.Machine)
+                  .WithMany(p => p.SoftwarePlatforms)
+                  .HasForeignKey(d => d.MachineId)
+                  .HasConstraintName("fk_software_platforms_by_machine_machine");
+        });
 
         modelBuilder.Entity<SoftwareRelease>(entity =>
         {

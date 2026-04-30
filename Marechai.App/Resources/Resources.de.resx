@@ -1450,6 +1450,7 @@
   <data name="MachineScreensHeader" xml:space="preserve"><value>Bildschirme</value></data>
   <data name="MachineMemoryHeader" xml:space="preserve"><value>Speicher</value></data>
   <data name="MachineStorageHeader" xml:space="preserve"><value>Massenspeicher</value></data>
+  <data name="MachineSoftwarePlatformsHeader" xml:space="preserve"><value>Softwareplattformen</value></data>
   <data name="MachineCompanyRequired" xml:space="preserve"><value>Ein Unternehmen muss ausgewählt werden.</value></data>
   <data name="MachineTypeUnknown" xml:space="preserve"><value>Unbekannt</value></data>
   <data name="MachineTypeComputer" xml:space="preserve"><value>Computer</value></data>

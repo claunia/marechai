@@ -527,4 +527,70 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
             return (false, ex.Message);
         }
     }
+
+    // Software Platform junction management
+    public async Task<List<SoftwarePlatformByMachineDto>> GetSoftwarePlatformsByMachineAsync(int machineId)
+    {
+        try
+        {
+            List<SoftwarePlatformByMachineDto>? platforms =
+                await client.SoftwarePlatformsByMachine.ByMachine[machineId].GetAsync();
+
+            return platforms ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<SoftwarePlatformDto>> GetAllSoftwarePlatformsAsync()
+    {
+        try
+        {
+            List<SoftwarePlatformDto>? platforms = await client.Software.Platforms.GetAsync();
+
+            return platforms ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(long? id, string? error)> AddSoftwarePlatformToMachineAsync(SoftwarePlatformByMachineDto dto)
+    {
+        try
+        {
+            long? id = await client.SoftwarePlatformsByMachine.PostAsync(dto);
+
+            return (id, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> RemoveSoftwarePlatformFromMachineAsync(long id)
+    {
+        try
+        {
+            await client.SoftwarePlatformsByMachine[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
 }

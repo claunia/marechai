@@ -920,4 +920,20 @@
     <data name="Add to Collection" xml:space="preserve">
         <value>Añadir a colección</value>
     </data>
-<data name="Date precision" xml:space="preserve"><value>Precisión de fecha</value></data><data name="Full date" xml:space="preserve"><value>Fecha completa</value></data><data name="Month and year only" xml:space="preserve"><value>Solo mes y año</value></data><data name="Year only" xml:space="preserve"><value>Solo año</value></data></root>
+<data name="Date precision" xml:space="preserve"><value>Precisión de fecha</value></data><data name="Full date" xml:space="preserve"><value>Fecha completa</value></data><data name="Month and year only" xml:space="preserve"><value>Solo mes y año</value></data><data name="Year only" xml:space="preserve"><value>Solo año</value></data>
+    <data name="Software Platforms" xml:space="preserve">
+        <value>Plataformas de software</value>
+    </data>
+    <data name="Search Software Platform" xml:space="preserve">
+        <value>Buscar plataforma de software</value>
+    </data>
+    <data name="Add Software Platform" xml:space="preserve">
+        <value>Añadir plataforma de software</value>
+    </data>
+    <data name="Remove Software Platform" xml:space="preserve">
+        <value>Eliminar plataforma de software</value>
+    </data>
+    <data name="Are you sure you want to remove this software platform from the machine?" xml:space="preserve">
+        <value>¿Está seguro de que desea eliminar esta plataforma de software de la máquina?</value>
+    </data>
+</root>

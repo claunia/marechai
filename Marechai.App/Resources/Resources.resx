@@ -1794,6 +1794,7 @@
   <data name="MachineScreensHeader" xml:space="preserve"><value>Screens</value></data>
   <data name="MachineMemoryHeader" xml:space="preserve"><value>Memory</value></data>
   <data name="MachineStorageHeader" xml:space="preserve"><value>Storage</value></data>
+  <data name="MachineSoftwarePlatformsHeader" xml:space="preserve"><value>Software Platforms</value></data>
   <data name="MachineCompanyRequired" xml:space="preserve"><value>A company must be selected.</value></data>
   <data name="MachineTypeUnknown" xml:space="preserve"><value>Unknown</value></data>
   <data name="MachineTypeComputer" xml:space="preserve"><value>Computer</value></data>

@@ -1590,6 +1590,7 @@
   <data name="MachineScreensHeader" xml:space="preserve"><value>Pantallas</value></data>
   <data name="MachineMemoryHeader" xml:space="preserve"><value>Memoria</value></data>
   <data name="MachineStorageHeader" xml:space="preserve"><value>Almacenamiento</value></data>
+  <data name="MachineSoftwarePlatformsHeader" xml:space="preserve"><value>Plataformas de software</value></data>
   <data name="MachineCompanyRequired" xml:space="preserve"><value>Se debe seleccionar una empresa.</value></data>
   <data name="MachineTypeUnknown" xml:space="preserve"><value>Desconocido</value></data>
   <data name="MachineTypeComputer" xml:space="preserve"><value>Ordenador</value></data>

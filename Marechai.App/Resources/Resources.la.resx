@@ -1450,6 +1450,7 @@
   <data name="MachineScreensHeader" xml:space="preserve"><value>Scrinia</value></data>
   <data name="MachineMemoryHeader" xml:space="preserve"><value>Memoria</value></data>
   <data name="MachineStorageHeader" xml:space="preserve"><value>Repositorium</value></data>
+  <data name="MachineSoftwarePlatformsHeader" xml:space="preserve"><value>Programmatum suggestus</value></data>
   <data name="MachineCompanyRequired" xml:space="preserve"><value>Societas eligi debet.</value></data>
   <data name="MachineTypeUnknown" xml:space="preserve"><value>Ignotum</value></data>
   <data name="MachineTypeComputer" xml:space="preserve"><value>Computator</value></data>

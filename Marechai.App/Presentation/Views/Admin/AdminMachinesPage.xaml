@@ -151,6 +151,17 @@
                                             <TextBlock Grid.Column="0" Text="{Binding}" VerticalAlignment="Center" />
                                             <Button Grid.Column="1" Content="X" Command="{Binding DataContext.RemoveStorageCommand, ElementName=PageRoot}" CommandParameter="{Binding}" Foreground="{ThemeResource SystemErrorTextColor}" Style="{ThemeResource TextBlockButtonStyle}" Padding="6,2" />
                                         </Grid></DataTemplate></ItemsRepeater.ItemTemplate></ItemsRepeater>
+
+                                        <!-- Software Platforms -->
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=MachineSoftwarePlatformsHeader}" FontSize="14" FontWeight="SemiBold" Margin="0,8,0,0" />
+                                        <Grid ColumnSpacing="8"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                            <ComboBox Grid.Column="0" ItemsSource="{Binding AvailableSoftwarePlatforms}" SelectedItem="{Binding SelectedAvailableSoftwarePlatform, Mode=TwoWay}" DisplayMemberPath="Name" HorizontalAlignment="Stretch" />
+                                            <Button Grid.Column="1" Content="+" Command="{Binding AddSoftwarePlatformCommand}" VerticalAlignment="Bottom" Padding="10,6" />
+                                        </Grid>
+                                        <ItemsRepeater ItemsSource="{Binding MachineSoftwarePlatformDisplays}"><ItemsRepeater.ItemTemplate><DataTemplate><Grid Margin="0,2" ColumnSpacing="8"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="{Binding}" VerticalAlignment="Center" />
+                                            <Button Grid.Column="1" Content="X" Command="{Binding DataContext.RemoveSoftwarePlatformCommand, ElementName=PageRoot}" CommandParameter="{Binding}" Foreground="{ThemeResource SystemErrorTextColor}" Style="{ThemeResource TextBlockButtonStyle}" Padding="6,2" />
+                                        </Grid></DataTemplate></ItemsRepeater.ItemTemplate></ItemsRepeater>
                                         </StackPanel>
                                     </StackPanel>
                                 </ScrollViewer>

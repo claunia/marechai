@@ -327,6 +327,40 @@
                                OnClick="AddStorage">@L["Add Storage"]</MudButton>
                 </MudStack>
             </MudPaper>
+
+            @* Software Platforms *@
+            <MudDivider Class="my-4"/>
+            <MudText Typo="Typo.h6" Class="mb-2">@L["Software Platforms"]</MudText>
+
+            @if(_machineSoftwarePlatforms is { Count: > 0 })
+            {
+                <MudList T="SoftwarePlatformByMachineDto" Dense="true">
+                    @foreach(SoftwarePlatformByMachineDto sp in _machineSoftwarePlatforms)
+                    {
+                        <MudListItem T="SoftwarePlatformByMachineDto">
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                <MudText>@sp.Name</MudText>
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => RemoveSoftwarePlatform(sp)"/>
+                            </MudStack>
+                        </MudListItem>
+                    }
+                </MudList>
+            }
+
+            <MudPaper Class="pa-4 mt-2" Elevation="1">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudAutocomplete T="SoftwarePlatformDto"
+                                     Label="@L["Search Software Platform"]"
+                                     @bind-Value="_selectedSoftwarePlatform"
+                                     SearchFunc="SearchSoftwarePlatforms"
+                                     ToStringFunc="@(sp => sp?.Name ?? string.Empty)"
+                                     Variant="Variant.Outlined"
+                                     Clearable="true"
+                                     Style="flex: 1;"/>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                               OnClick="AddSoftwarePlatform" Disabled="@(_selectedSoftwarePlatform is null)">@L["Add Software Platform"]</MudButton>
+                </MudStack>
+            </MudPaper>
         }
     </DialogContent>
     <DialogActions>
@@ -343,18 +377,20 @@
     // Picker lists
     List<CompanyDto>?       _allCompanies;
     List<MachineFamilyDto>? _allFamilies;
-    List<GpuDto>?           _allGpus;
-    List<ProcessorDto>?     _allProcessors;
-    List<SoundSynthDto>?    _allSoundSynths;
-    List<ScreenDto>?        _allScreens;
+    List<GpuDto>?              _allGpus;
+    List<ProcessorDto>?        _allProcessors;
+    List<SoundSynthDto>?       _allSoundSynths;
+    List<ScreenDto>?           _allScreens;
+    List<SoftwarePlatformDto>? _allSoftwarePlatforms;
 
     // Junction lists
     List<GpuByMachineDto>?        _machineGpus;
     List<ProcessorByMachineDto>?  _machineProcessors;
     List<SoundSynthByMachineDto>? _machineSoundSynths;
     List<ScreenByMachineDto>?     _machineScreens;
-    List<MemoryByMachineDto>?     _machineMemory;
-    List<StorageByMachineDto>?    _machineStorage;
+    List<MemoryByMachineDto>?              _machineMemory;
+    List<StorageByMachineDto>?              _machineStorage;
+    List<SoftwarePlatformByMachineDto>?     _machineSoftwarePlatforms;
 
     // Junction picker state
     GpuDto?        _selectedGpu;
@@ -362,6 +398,7 @@
     float?         _processorSpeed;
     SoundSynthDto? _selectedSoundSynth;
     ScreenDto?     _selectedScreen;
+    SoftwarePlatformDto? _selectedSoftwarePlatform;
 
     // Memory inline creation state
     int     _memoryType;
@@ -430,17 +467,19 @@
 
         if(!IsNew)
         {
-            _allGpus        = await MachinesService.GetAllGpusAsync();
-            _allProcessors  = await MachinesService.GetAllProcessorsAsync();
-            _allSoundSynths = await MachinesService.GetAllSoundSynthsAsync();
-            _allScreens     = await MachinesService.GetAllScreensAsync();
+            _allGpus              = await MachinesService.GetAllGpusAsync();
+            _allProcessors        = await MachinesService.GetAllProcessorsAsync();
+            _allSoundSynths       = await MachinesService.GetAllSoundSynthsAsync();
+            _allScreens           = await MachinesService.GetAllScreensAsync();
+            _allSoftwarePlatforms = await MachinesService.GetAllSoftwarePlatformsAsync();
 
-            _machineGpus        = await MachinesService.GetGpusByMachineAsync(MachineId);
-            _machineProcessors  = await MachinesService.GetProcessorsByMachineAsync(MachineId);
-            _machineSoundSynths = await MachinesService.GetSoundSynthsByMachineAsync(MachineId);
-            _machineScreens     = await MachinesService.GetScreensByMachineAsync(MachineId);
-            _machineMemory      = await MachinesService.GetMemoryByMachineAsync(MachineId);
-            _machineStorage     = await MachinesService.GetStorageByMachineAsync(MachineId);
+            _machineGpus              = await MachinesService.GetGpusByMachineAsync(MachineId);
+            _machineProcessors        = await MachinesService.GetProcessorsByMachineAsync(MachineId);
+            _machineSoundSynths       = await MachinesService.GetSoundSynthsByMachineAsync(MachineId);
+            _machineScreens           = await MachinesService.GetScreensByMachineAsync(MachineId);
+            _machineMemory            = await MachinesService.GetMemoryByMachineAsync(MachineId);
+            _machineStorage           = await MachinesService.GetStorageByMachineAsync(MachineId);
+            _machineSoftwarePlatforms = await MachinesService.GetSoftwarePlatformsByMachineAsync(MachineId);
         }
     }
 
@@ -865,6 +904,71 @@
             if(succeeded)
             {
                 _machineStorage = await MachinesService.GetStorageByMachineAsync(MachineId);
+                StateHasChanged();
+            }
+            else
+            {
+                _validationError = error;
+            }
+        }
+    }
+
+    Task<IEnumerable<SoftwarePlatformDto>> SearchSoftwarePlatforms(string? value, CancellationToken ct)
+    {
+        HashSet<int?> assignedIds = _machineSoftwarePlatforms?.Select(sp => sp.SoftwarePlatformId).ToHashSet() ?? [];
+        IEnumerable<SoftwarePlatformDto> available = (_allSoftwarePlatforms ?? []).Where(sp => !assignedIds.Contains(sp.Id));
+
+        if(!string.IsNullOrWhiteSpace(value))
+            available = available.Where(sp => sp.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
+
+        return Task.FromResult(available);
+    }
+
+    async Task AddSoftwarePlatform()
+    {
+        if(_selectedSoftwarePlatform?.Id is null) return;
+
+        var dto = new SoftwarePlatformByMachineDto
+        {
+            SoftwarePlatformId = _selectedSoftwarePlatform.Id.Value,
+            MachineId          = MachineId
+        };
+
+        (long? id, string? error) = await MachinesService.AddSoftwarePlatformToMachineAsync(dto);
+
+        if(id is not null)
+        {
+            _machineSoftwarePlatforms = await MachinesService.GetSoftwarePlatformsByMachineAsync(MachineId);
+            _selectedSoftwarePlatform = null;
+            StateHasChanged();
+        }
+        else
+        {
+            _validationError = error;
+        }
+    }
+
+    async Task RemoveSoftwarePlatform(SoftwarePlatformByMachineDto sp)
+    {
+        if(sp.Id is null) return;
+
+        DialogParameters<DeleteConfirmDialog> parameters = new()
+        {
+            { x => x.ContentText, L["Are you sure you want to remove this software platform from the machine?"] }
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<DeleteConfirmDialog>(L["Remove Software Platform"], parameters,
+                                                                                     new DialogOptions { MaxWidth = MaxWidth.ExtraSmall, FullWidth = true });
+
+        DialogResult? result = await dialog.Result;
+
+        if(result is { Canceled: false })
+        {
+            (bool succeeded, string? error) = await MachinesService.RemoveSoftwarePlatformFromMachineAsync(sp.Id.Value);
+
+            if(succeeded)
+            {
+                _machineSoftwarePlatforms = await MachinesService.GetSoftwarePlatformsByMachineAsync(MachineId);
                 StateHasChanged();
             }
             else
