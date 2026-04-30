@@ -716,11 +716,15 @@ public class ImportService
         "Motion Capture by"        => "moc",
         "Additional Sound by"      => "snd",
         "Sound by"                 => "snd",
+        "Music by"                 => "snd",
         "Package Design by"        => "pkg",
         "Voice Recording by"       => "vrc",
         "Game Engine by"           => "eng",
         "Graphic Engine by"        => "eng",
         "Middleware by"            => "mdw",
+        "Testing by"               => "tst",
+        "Contributions by"         => "ctb",
+        "Fonts by"                 => "fnt",
         _                          => null
     };
 

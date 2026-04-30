@@ -49,7 +49,10 @@ public static class SoftwareRoles
             new() { Id = "pkg", Name = "Package Design",       Enabled = true },
             new() { Id = "vrc", Name = "Voice Recording",      Enabled = true },
             new() { Id = "eng", Name = "Game Engine",          Enabled = true },
-            new() { Id = "mdw", Name = "Middleware",            Enabled = true }
+            new() { Id = "mdw", Name = "Middleware",            Enabled = true },
+            new() { Id = "tst", Name = "Testing",               Enabled = true },
+            new() { Id = "ctb", Name = "Contributions",          Enabled = true },
+            new() { Id = "fnt", Name = "Fonts",                  Enabled = true }
         ];
 
         foreach(SoftwareRole role in roles)

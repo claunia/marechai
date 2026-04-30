@@ -289,6 +289,15 @@
     <data name="Middleware" xml:space="preserve">
         <value>Middleware</value>
     </data>
+    <data name="Testing" xml:space="preserve">
+        <value>Testing</value>
+    </data>
+    <data name="Contributions" xml:space="preserve">
+        <value>Contributions</value>
+    </data>
+    <data name="Fonts" xml:space="preserve">
+        <value>Fonts</value>
+    </data>
     <data name="Release date" xml:space="preserve">
         <value>Release date</value>
     </data>

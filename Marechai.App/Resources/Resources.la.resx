@@ -755,6 +755,15 @@
   <data name="Middleware" xml:space="preserve">
     <value>Middleware</value>
   </data>
+  <data name="Testing" xml:space="preserve">
+    <value>Probatio</value>
+  </data>
+  <data name="Contributions" xml:space="preserve">
+    <value>Contributiones</value>
+  </data>
+  <data name="Fonts" xml:space="preserve">
+    <value>Litterae</value>
+  </data>
   <data name="Other" xml:space="preserve">
     <value>Alia</value>
   </data>

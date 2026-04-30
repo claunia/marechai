@@ -199,6 +199,18 @@
         <value>Middleware</value>
         <comment>Middleware</comment>
     </data>
+    <data name="Testing" xml:space="preserve">
+        <value>Tests</value>
+        <comment>Testing</comment>
+    </data>
+    <data name="Contributions" xml:space="preserve">
+        <value>Beiträge</value>
+        <comment>Contributions</comment>
+    </data>
+    <data name="Fonts" xml:space="preserve">
+        <value>Schriftarten</value>
+        <comment>Fonts</comment>
+    </data>
     <data name="Release date" xml:space="preserve">
         <value>Veröffentlichungsdatum</value>
         <comment>Release date</comment>
