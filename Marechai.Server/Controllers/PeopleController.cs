@@ -207,7 +207,7 @@ public class PeopleController(MarechaiContext context) : ControllerBase
                            Id           = p.Id,
                            PersonId     = p.PersonId,
                            SoftwareId   = p.SoftwareId,
-                           Role         = p.Role,
+                           Role         = p.DocumentRole != null ? p.DocumentRole.Name : p.Role,
                            SoftwareName = p.Software.Name,
                            Name         = p.Person.Name,
                            Surname      = p.Person.Surname,

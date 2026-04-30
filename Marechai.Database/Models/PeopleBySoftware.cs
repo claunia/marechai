@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Marechai.Database.Models;
 
@@ -12,4 +13,9 @@ public class PeopleBySoftware : BaseModel<long>
     [Required]
     [StringLength(128)]
     public string Role { get; set; }
+
+    [Column(TypeName = "char(3)")]
+    public string RoleId { get; set; }
+
+    public virtual DocumentRole DocumentRole { get; set; }
 }

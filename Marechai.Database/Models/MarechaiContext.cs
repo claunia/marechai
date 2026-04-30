@@ -2474,6 +2474,12 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .WithMany()
                   .HasForeignKey(e => e.PersonId)
                   .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.DocumentRole)
+                  .WithMany()
+                  .HasForeignKey(e => e.RoleId)
+                  .IsRequired(false)
+                  .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<SoftwareAttribute>(entity =>

@@ -46,6 +46,7 @@ public class ImportService
         await using(var seedContext = await _contextFactory.CreateDbContextAsync())
         {
             SoftwareRoles.Seed(seedContext);
+            DocumentRoles.Seed(seedContext);
         }
 
         await _companyMatcher.LoadAsync();
@@ -381,7 +382,8 @@ public class ImportService
                     {
                         SoftwareId = software.Id,
                         PersonId   = person.Id,
-                        Role       = credit.Role
+                        Role       = credit.Role,
+                        RoleId     = MapCreditRole(credit.Role)
                     });
                 }
             }
@@ -711,5 +713,187 @@ public class ImportService
         "Game Engine by"           => "eng",
         "Middleware by"            => "mdw",
         _                          => null
+    };
+
+    /// <summary>
+    ///     Maps a MobyGames credit role string to a DocumentRole ID.
+    ///     Returns null for unmappable roles (character names, DLC names, etc.)
+    /// </summary>
+    static string MapCreditRole(string role) => role switch
+    {
+        // Acting / Voice
+        "Cast"                           => "act",
+        "Voice"                          => "vac",
+        "Voice Acting"                   => "vac",
+        "Voice Actors"                   => "vac",
+        "Voice Cast"                     => "vac",
+        "Voice Over"                     => "vac",
+        "Voice Talent"                   => "vac",
+
+        // Art / Graphics
+        "Art"                            => "art",
+        "Artist"                         => "art",
+        "Graphics"                       => "art",
+        "Graphics Design"                => "art",
+        "Graphic Design"                 => "art",
+        "Graphic Artist"                 => "art",
+        "Additional Art"                 => "art",
+        "Additional Graphics"            => "art",
+        "Concept Art"                    => "art",
+        "Background Art"                 => "art",
+        "Character Art"                  => "art",
+        "Pixel Art"                      => "art",
+
+        // Animation
+        "Animation"                      => "anm",
+        "Animator"                       => "anm",
+        "Animations"                     => "anm",
+        "Lead Animator"                  => "anm",
+
+        // Art Direction
+        "Art Director"                   => "adi",
+        "Art Direction"                  => "adi",
+
+        // Audio / Sound
+        "Audio"                          => "sds",
+        "Audio Director"                 => "sds",
+        "Audio Lead"                     => "sds",
+        "Audio Design"                   => "sds",
+        "Audio Engineering"              => "sds",
+        "Sound"                          => "sds",
+        "Sound Design"                   => "sds",
+        "Sound Designer"                 => "sds",
+        "Sound Effects"                  => "sds",
+        "Sound Engineering"              => "sds",
+        "SFX"                            => "sds",
+        "Additional Sound"               => "sds",
+        "Music and FX"                   => "sds",
+
+        // Music / Composition
+        "Music"                          => "cmp",
+        "Composer"                       => "cmp",
+        "Music Composition"              => "cmp",
+        "Original Music"                 => "cmp",
+        "Original Score"                 => "cmp",
+        "Soundtrack"                     => "cmp",
+        "Music (Muzyka)"                 => "cmp",
+
+        // Design
+        "Design"                         => "dsr",
+        "Designer"                       => "dsr",
+        "Game Design"                    => "dsr",
+        "Game Designer"                  => "dsr",
+        "Lead Designer"                  => "dsr",
+        "Level Design"                   => "dsr",
+        "Leveldesign"                    => "dsr",
+        "Levels"                         => "dsr",
+        "Level Designer"                 => "dsr",
+        "World Design"                   => "dsr",
+        "UI Design"                      => "dsr",
+        "Interface Design"               => "dsr",
+
+        // Direction
+        "Director"                       => "drt",
+        "Directed by"                    => "drt",
+        "Game Director"                  => "drt",
+        "Creative Director"              => "drt",
+
+        // Programming
+        "Program"                        => "prg",
+        "Programmer"                     => "prg",
+        "Programmers"                    => "prg",
+        "Programming"                    => "prg",
+        "Programmed by"                  => "prg",
+        "Lead Programmer"                => "prg",
+        "Additional Programming"         => "prg",
+        "Engine Programming"             => "prg",
+        "Tools Programming"              => "prg",
+        "Code"                           => "prg",
+        "Code (Kod)"                     => "prg",
+
+        // Production
+        "Producer"                       => "pro",
+        "Executive Producer"             => "pro",
+        "Associate Producer"             => "pro",
+        "Co-Producer"                    => "pro",
+        "Line Producer"                  => "pro",
+        "Production"                     => "prd",
+        "Production Lead"                => "pmn",
+        "Production Manager"             => "pmn",
+        "Production Management"          => "pmn",
+        "Product Manager"                => "pmn",
+
+        // Writing
+        "Writer"                         => "aus",
+        "Written by"                     => "aus",
+        "Story"                          => "aus",
+        "Scenario"                       => "aus",
+        "Script"                         => "aus",
+        "Screenwriter"                   => "aus",
+        "Dialogue"                       => "aud",
+        "Dialog"                         => "aud",
+
+        // QA / Testing
+        "Quality Assurance"              => "res",
+        "Quality Assurance Lead"         => "res",
+        "Quality Assurance Management"   => "res",
+        "QA"                             => "res",
+        "QA Lead"                        => "res",
+        "QA Manager"                     => "res",
+        "QA Testing"                     => "res",
+        "Testers"                        => "res",
+        "Testing"                        => "res",
+        "Test Manager"                   => "res",
+        "Betatesting"                    => "res",
+        "Beta Testing"                   => "res",
+        "Lead Tester"                    => "res",
+
+        // Lead roles
+        "Lead"                           => "led",
+        "Creative Lead"                  => "led",
+        "Technical Lead"                 => "tcd",
+        "Technical Director"             => "tcd",
+
+        // Creator
+        "Game Creator"                   => "cre",
+        "Creator"                        => "cre",
+        "Developed by"                   => "cre",
+
+        // Engineering
+        "Engineer"                       => "eng",
+        "Engineering"                    => "eng",
+
+        // Special Thanks
+        "Special Thanks"                 => "hnr",
+        "Thanks to"                      => "hnr",
+        "Special Thanks to"              => "hnr",
+
+        // Localization / Translation
+        "Localization"                   => "trl",
+        "Translation"                    => "trl",
+        "Translator"                     => "trl",
+        "Localization Management"        => "trl",
+
+        // Editing
+        "Editor"                         => "edt",
+        "Editing"                        => "edt",
+
+        // Narration
+        "Narrator"                       => "nrt",
+        "Narration"                      => "nrt",
+
+        // Other documented roles
+        "Illustrator"                    => "ill",
+        "Illustration"                   => "ill",
+        "Cover Art"                      => "cov",
+        "Cover Design"                   => "cov",
+        "Package Design"                 => "dsr",
+        "Manual"                         => "aut",
+        "Documentation"                  => "aut",
+        "Marketing"                      => "mrk",
+        "Public Relations"               => "mrk",
+
+        // Catch-all
+        _                                => null
     };
 }
