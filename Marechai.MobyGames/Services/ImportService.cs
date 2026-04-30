@@ -677,8 +677,9 @@ public class ImportService
         "Developed by"     => "dev",
         "Distributed by"   => "dis",
         "Localized by"     => "loc",
-        "Ported by"        => "por",
-        "Manufactured by"  => "mfg",
-        _                  => null
+        "Ported by"                => "por",
+        "Manufactured by"          => "mfg",
+        "Additional Development by" => "dev",
+        _                          => null
     };
 }
