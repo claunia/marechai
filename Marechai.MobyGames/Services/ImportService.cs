@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Marechai.Data;
 using Marechai.Database.Models;
+using Marechai.Database.Seeders;
 using Marechai.MobyGames.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,6 +42,11 @@ public class ImportService
     public async Task RunBatchAsync(int batchSize, int batchNumber)
     {
         Console.WriteLine("\n  Loading reference data...");
+
+        await using(var seedContext = await _contextFactory.CreateDbContextAsync())
+        {
+            SoftwareRoles.Seed(seedContext);
+        }
 
         await _companyMatcher.LoadAsync();
         await _personMatcher.LoadAsync();
@@ -695,10 +701,13 @@ public class ImportService
         "Licensed by"              => "lic",
         "Additional Development by" => "dev",
         "Additional Graphics by"   => "gfx",
+        "Graphics by"              => "gfx",
         "Copy Protection by"       => "cpy",
         "Cutscenes by"             => "cut",
         "Motion Capture by"        => "moc",
         "Additional Sound by"      => "snd",
+        "Package Design by"        => "pkg",
+        "Voice Recording by"       => "vrc",
         _                          => null
     };
 }

@@ -277,6 +277,12 @@
     <data name="Additional Sound" xml:space="preserve">
         <value>Additional Sound</value>
     </data>
+    <data name="Package Design" xml:space="preserve">
+        <value>Package Design</value>
+    </data>
+    <data name="Voice Recording" xml:space="preserve">
+        <value>Voice Recording</value>
+    </data>
     <data name="Release date" xml:space="preserve">
         <value>Release date</value>
     </data>

@@ -743,6 +743,12 @@
   <data name="Additional Sound" xml:space="preserve">
     <value>Sonus additus</value>
   </data>
+  <data name="Package Design" xml:space="preserve">
+    <value>Designatio involucri</value>
+  </data>
+  <data name="Voice Recording" xml:space="preserve">
+    <value>Registratio vocis</value>
+  </data>
   <data name="Other" xml:space="preserve">
     <value>Alia</value>
   </data>

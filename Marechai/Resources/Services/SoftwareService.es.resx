@@ -267,6 +267,14 @@
         <value>Sonido adicional</value>
         <comment>Additional Sound</comment>
     </data>
+    <data name="Package Design" xml:space="preserve">
+        <value>Diseño del empaque</value>
+        <comment>Package Design</comment>
+    </data>
+    <data name="Voice Recording" xml:space="preserve">
+        <value>Grabación de voces</value>
+        <comment>Voice Recording</comment>
+    </data>
     <data name="Release date" xml:space="preserve">
         <value>Fecha de lanzamiento</value>
         <comment>Release date</comment>

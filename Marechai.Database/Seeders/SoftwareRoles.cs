@@ -45,7 +45,9 @@ public static class SoftwareRoles
             new() { Id = "cpy", Name = "Copy Protection",     Enabled = true },
             new() { Id = "cut", Name = "Cutscenes",            Enabled = true },
             new() { Id = "moc", Name = "Motion Capture",       Enabled = true },
-            new() { Id = "snd", Name = "Additional Sound",     Enabled = true }
+            new() { Id = "snd", Name = "Additional Sound",     Enabled = true },
+            new() { Id = "pkg", Name = "Package Design",       Enabled = true },
+            new() { Id = "vrc", Name = "Voice Recording",      Enabled = true }
         ];
 
         foreach(SoftwareRole role in roles)

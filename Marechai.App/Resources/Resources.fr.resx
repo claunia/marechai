@@ -743,6 +743,12 @@
   <data name="Additional Sound" xml:space="preserve">
     <value>Son supplémentaire</value>
   </data>
+  <data name="Package Design" xml:space="preserve">
+    <value>Conception de l'emballage</value>
+  </data>
+  <data name="Voice Recording" xml:space="preserve">
+    <value>Enregistrement vocal</value>
+  </data>
   <data name="Other" xml:space="preserve">
     <value>Autre</value>
   </data>
