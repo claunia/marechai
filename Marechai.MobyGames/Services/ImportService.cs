@@ -131,6 +131,26 @@ public class ImportService
                     }
                 }
 
+                // Pre-validate: check for unrecognized company roles before importing
+                var unmatchedRoles = game.Releases
+                                        .SelectMany(r => r.CompanyRoles)
+                                        .Where(cr => MapRoleLabel(cr.Key) is null)
+                                        .ToList();
+
+                if(unmatchedRoles.Count > 0)
+                {
+                    foreach(var (roleLabel, companyName) in unmatchedRoles)
+                    {
+                        Console.WriteLine($"    WARNING: Unrecognized company role \"{roleLabel}\" " +
+                                          $"for company \"{companyName}\"");
+                    }
+
+                    Console.WriteLine("    Skipping game due to unrecognized company roles.");
+                    failed++;
+
+                    continue;
+                }
+
                 await ImportGameAsync(game, batchNumber);
                 imported++;
             }
@@ -523,14 +543,6 @@ public class ImportService
                 foreach(var (roleLabel, companyName) in release.CompanyRoles)
                 {
                     string roleId = MapRoleLabel(roleLabel);
-
-                    if(roleId is null)
-                    {
-                        Console.WriteLine($"    WARNING: Unrecognized company role \"{roleLabel}\" " +
-                                          $"for company \"{companyName}\" — skipping");
-
-                        continue;
-                    }
 
                     var (roleCompany, _) = await _companyMatcher.MatchOrCreateAsync(companyName);
 
