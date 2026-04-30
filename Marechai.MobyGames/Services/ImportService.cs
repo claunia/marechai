@@ -136,7 +136,7 @@ public class ImportService
             }
             catch(Exception ex)
             {
-                Console.WriteLine($"    ERROR: {ex.Message}");
+                Console.WriteLine($"    ERROR: {ex}");
                 await _stateService.MarkFailedAsync(gameId, ex.Message, batchNumber);
                 failed++;
             }

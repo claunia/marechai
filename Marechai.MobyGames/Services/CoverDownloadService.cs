@@ -339,7 +339,7 @@ public class CoverDownloadService
                     }
                     catch(Exception ex)
                     {
-                        Console.WriteLine($" \e[33mconversion warning: {ex.Message}\e[0m");
+                        Console.WriteLine($" \e[33mconversion warning: {ex}\e[0m");
                     }
 
                     // Update state
