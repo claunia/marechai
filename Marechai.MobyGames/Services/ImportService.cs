@@ -364,13 +364,20 @@ public class ImportService
             await ImportBasicReleaseAsync(context, software, game);
 
         // 6. Credits
+        var addedCredits = new HashSet<(ulong, int, string)>();
+
         foreach(var credit in game.Credits)
         {
             var person = await _personMatcher.MatchOrCreateAsync(credit.PersonName);
 
             if(person != null)
             {
-                // Check for duplicates
+                var key = (software.Id, person.Id, credit.Role);
+
+                if(!addedCredits.Add(key))
+                    continue;
+
+                // Check for duplicates in DB
                 bool exists = await context.PeopleBySoftware
                                           .AnyAsync(p => p.SoftwareId == software.Id &&
                                                          p.PersonId == person.Id &&
