@@ -47,7 +47,9 @@ public static class SoftwareRoles
             new() { Id = "moc", Name = "Motion Capture",       Enabled = true },
             new() { Id = "snd", Name = "Additional Sound",     Enabled = true },
             new() { Id = "pkg", Name = "Package Design",       Enabled = true },
-            new() { Id = "vrc", Name = "Voice Recording",      Enabled = true }
+            new() { Id = "vrc", Name = "Voice Recording",      Enabled = true },
+            new() { Id = "eng", Name = "Game Engine",          Enabled = true },
+            new() { Id = "mdw", Name = "Middleware",            Enabled = true }
         ];
 
         foreach(SoftwareRole role in roles)

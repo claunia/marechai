@@ -749,6 +749,12 @@
   <data name="Voice Recording" xml:space="preserve">
     <value>Enregistrement vocal</value>
   </data>
+  <data name="Game Engine" xml:space="preserve">
+    <value>Moteur de jeu</value>
+  </data>
+  <data name="Middleware" xml:space="preserve">
+    <value>Middleware</value>
+  </data>
   <data name="Other" xml:space="preserve">
     <value>Autre</value>
   </data>

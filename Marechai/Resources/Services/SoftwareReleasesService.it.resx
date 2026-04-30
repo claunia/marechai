@@ -191,6 +191,14 @@
         <value>Registrazione vocale</value>
         <comment>Voice Recording</comment>
     </data>
+    <data name="Game Engine" xml:space="preserve">
+        <value>Motore di gioco</value>
+        <comment>Game Engine</comment>
+    </data>
+    <data name="Middleware" xml:space="preserve">
+        <value>Middleware</value>
+        <comment>Middleware</comment>
+    </data>
     <data name="Release date" xml:space="preserve">
         <value>Data di pubblicazione</value>
         <comment>Release date</comment>

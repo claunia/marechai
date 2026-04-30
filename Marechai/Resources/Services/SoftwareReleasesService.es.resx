@@ -156,6 +156,12 @@
     <data name="Voice Recording" xml:space="preserve">
         <value>Grabación de voces</value>
     </data>
+    <data name="Game Engine" xml:space="preserve">
+        <value>Motor de juego</value>
+    </data>
+    <data name="Middleware" xml:space="preserve">
+        <value>Middleware</value>
+    </data>
     <data name="Release date" xml:space="preserve">
         <value>Fecha de lanzamiento</value>
     </data>

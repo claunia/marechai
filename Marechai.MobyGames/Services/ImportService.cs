@@ -708,6 +708,8 @@ public class ImportService
         "Additional Sound by"      => "snd",
         "Package Design by"        => "pkg",
         "Voice Recording by"       => "vrc",
+        "Game Engine by"           => "eng",
+        "Middleware by"            => "mdw",
         _                          => null
     };
 }
