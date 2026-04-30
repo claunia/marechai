@@ -163,6 +163,14 @@
         <value>Concédant</value>
         <comment>Licensor</comment>
     </data>
+    <data name="Additional Graphics" xml:space="preserve">
+        <value>Graphismes supplémentaires</value>
+        <comment>Additional Graphics</comment>
+    </data>
+    <data name="Copy Protection" xml:space="preserve">
+        <value>Protection contre la copie</value>
+        <comment>Copy Protection</comment>
+    </data>
     <data name="Release date" xml:space="preserve">
         <value>Date de publication</value>
         <comment>Release date</comment>

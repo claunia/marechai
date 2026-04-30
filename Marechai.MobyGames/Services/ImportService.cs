@@ -682,6 +682,8 @@ public class ImportService
         "Manufactured by"          => "mfg",
         "Licensed by"              => "lic",
         "Additional Development by" => "dev",
+        "Additional Graphics by"   => "gfx",
+        "Copy Protection by"       => "cpy",
         _                          => null
     };
 }

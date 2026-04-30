@@ -242,6 +242,14 @@
         <value>Lizenzgeber</value>
         <comment>Licensor</comment>
     </data>
+    <data name="Additional Graphics" xml:space="preserve">
+        <value>Zusätzliche Grafiken</value>
+        <comment>Additional Graphics</comment>
+    </data>
+    <data name="Copy Protection" xml:space="preserve">
+        <value>Kopierschutz</value>
+        <comment>Copy Protection</comment>
+    </data>
     <data name="Release date" xml:space="preserve">
         <value>Veröffentlichungsdatum</value>
         <comment>Release date</comment>

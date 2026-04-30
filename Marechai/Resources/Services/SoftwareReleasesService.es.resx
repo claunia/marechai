@@ -135,6 +135,12 @@
     <data name="Licensor" xml:space="preserve">
         <value>Licenciante</value>
     </data>
+    <data name="Additional Graphics" xml:space="preserve">
+        <value>Gráficos adicionales</value>
+    </data>
+    <data name="Copy Protection" xml:space="preserve">
+        <value>Protección anticopia</value>
+    </data>
     <data name="Release date" xml:space="preserve">
         <value>Fecha de lanzamiento</value>
     </data>

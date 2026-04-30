@@ -728,6 +728,12 @@
   <data name="Licensor" xml:space="preserve">
     <value>Licensor</value>
   </data>
+  <data name="Additional Graphics" xml:space="preserve">
+    <value>Additional Graphics</value>
+  </data>
+  <data name="Copy Protection" xml:space="preserve">
+    <value>Copy Protection</value>
+  </data>
   <data name="Other" xml:space="preserve">
     <value>Other</value>
   </data>
