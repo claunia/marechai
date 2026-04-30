@@ -270,7 +270,8 @@ public class ImportService
             {
                 SoftwareId   = software.Id,
                 LanguageCode = "eng",
-                Text         = game.Description
+                Text         = game.Description,
+                Html         = game.DescriptionHtml
             });
         }
 

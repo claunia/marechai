@@ -14,8 +14,9 @@ public class ParsedGame
     public string                ReleaseDate { get; set; }
     public List<string>          Platforms   { get; set; } = [];
     public List<ParsedGenre>     Genres      { get; set; } = [];
-    public string                Description { get; set; }
-    public List<string>          Groups      { get; set; } = [];
+    public string                Description     { get; set; }
+    public string                DescriptionHtml { get; set; }
+    public List<string>          Groups          { get; set; } = [];
 
     // From Credits tab
     public List<ParsedCredit> Credits { get; set; } = [];

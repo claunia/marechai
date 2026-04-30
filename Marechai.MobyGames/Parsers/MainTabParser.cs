@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using HtmlAgilityPack;
 using Marechai.MobyGames.Models;
+using ReverseMarkdown;
 
 namespace Marechai.MobyGames.Parsers;
 
@@ -141,13 +142,12 @@ public static class MainTabParser
 
         if(descH2 is null) return;
 
-        // Collect text nodes and br tags between Description h2 and the next h2 or sideBarLinks div
-        var    sibling     = descH2.NextSibling;
-        var    parts       = new List<string>();
+        // Collect all HTML nodes between the Description h2 and the next h2 or sideBarLinks div
+        var sibling  = descH2.NextSibling;
+        var htmlParts = new List<string>();
 
         while(sibling != null)
         {
-            // Stop at next structural element
             if(sibling.NodeType == HtmlNodeType.Element)
             {
                 string tag = sibling.Name.ToLowerInvariant();
@@ -155,29 +155,62 @@ public static class MainTabParser
                 if(tag is "h2") break;
 
                 if(sibling.GetAttributeValue("class", "").Contains("sideBarLinks")) break;
-
-                if(tag == "br")
-                {
-                    parts.Add("\n");
-                }
-                else if(tag == "i" || tag == "b" || tag == "em" || tag == "strong" || tag == "a")
-                {
-                    parts.Add(WebUtility.HtmlDecode(sibling.InnerText));
-                }
-                else
-                {
-                    parts.Add(WebUtility.HtmlDecode(sibling.InnerText));
-                }
-            }
-            else if(sibling.NodeType == HtmlNodeType.Text)
-            {
-                parts.Add(WebUtility.HtmlDecode(sibling.InnerText));
             }
 
+            htmlParts.Add(sibling.OuterHtml);
             sibling = sibling.NextSibling;
         }
 
-        game.Description = string.Join("", parts).Trim();
+        string rawHtml = string.Join("", htmlParts).Trim();
+
+        if(string.IsNullOrWhiteSpace(rawHtml)) return;
+
+        // Parse the collected HTML to strip links and images
+        var descDoc = new HtmlDocument();
+        descDoc.LoadHtml($"<div>{rawHtml}</div>");
+
+        // Replace <a> tags with their inner content (keep text, remove link)
+        var anchors = descDoc.DocumentNode.SelectNodes("//a");
+
+        if(anchors != null)
+        {
+            foreach(var anchor in anchors)
+            {
+                var parent = anchor.ParentNode;
+                // Insert all children before the anchor, then remove it
+                foreach(var child in anchor.ChildNodes.ToList())
+                    parent.InsertBefore(child, anchor);
+
+                parent.RemoveChild(anchor);
+            }
+        }
+
+        // Remove <img> and <picture> elements entirely
+        var images = descDoc.DocumentNode.SelectNodes("//img|//picture");
+
+        if(images != null)
+        {
+            foreach(var img in images)
+                img.Remove();
+        }
+
+        // Get the cleaned HTML (unwrap the wrapper div)
+        string cleanedHtml = descDoc.DocumentNode.FirstChild.InnerHtml.Trim();
+
+        if(string.IsNullOrWhiteSpace(cleanedHtml)) return;
+
+        game.DescriptionHtml = cleanedHtml;
+
+        // Convert to Markdown for the text column
+        var converter = new Converter(new Config
+        {
+            UnknownTags         = Config.UnknownTagsOption.PassThrough,
+            GithubFlavored      = true,
+            SmartHrefHandling   = true,
+            RemoveComments      = true
+        });
+
+        game.Description = converter.Convert(cleanedHtml).Trim();
     }
 
     static void ParseGroups(HtmlDocument doc, ParsedGame game)
