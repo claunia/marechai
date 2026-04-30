@@ -679,6 +679,7 @@ public class ImportService
         "Localized by"     => "loc",
         "Ported by"                => "por",
         "Manufactured by"          => "mfg",
+        "Licensed by"              => "lic",
         "Additional Development by" => "dev",
         _                          => null
     };
