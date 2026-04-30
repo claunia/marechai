@@ -707,6 +707,30 @@
   <data name="ManufacturerText" xml:space="preserve">
     <value>Manufacturer</value>
   </data>
+  <data name="Developer" xml:space="preserve">
+    <value>Developer</value>
+  </data>
+  <data name="Publisher" xml:space="preserve">
+    <value>Publisher</value>
+  </data>
+  <data name="Distributor" xml:space="preserve">
+    <value>Distributor</value>
+  </data>
+  <data name="Porter" xml:space="preserve">
+    <value>Porter</value>
+  </data>
+  <data name="Localizer" xml:space="preserve">
+    <value>Localizer</value>
+  </data>
+  <data name="Manufacturer" xml:space="preserve">
+    <value>Manufacturer</value>
+  </data>
+  <data name="Licensor" xml:space="preserve">
+    <value>Licensor</value>
+  </data>
+  <data name="Other" xml:space="preserve">
+    <value>Other</value>
+  </data>
   <data name="ModelCodeText" xml:space="preserve">
     <value>Model Code</value>
   </data>

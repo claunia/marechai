@@ -236,7 +236,7 @@
                         @company.Company
                         @if(!string.IsNullOrEmpty(company.Role))
                         {
-                            <MudText Typo="Typo.caption" Color="Color.Secondary" Class="ml-2" Style="display: inline;">— @company.Role</MudText>
+                            <MudText Typo="Typo.caption" Color="Color.Secondary" Class="ml-2" Style="display: inline;">— @L[company.Role]</MudText>
                         }
                     </MudListItem>
                 }

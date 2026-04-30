@@ -241,8 +241,26 @@
     <data name="Region" xml:space="preserve">
         <value>Region</value>
     </data>
+    <data name="Developer" xml:space="preserve">
+        <value>Developer</value>
+    </data>
     <data name="Publisher" xml:space="preserve">
         <value>Publisher</value>
+    </data>
+    <data name="Distributor" xml:space="preserve">
+        <value>Distributor</value>
+    </data>
+    <data name="Porter" xml:space="preserve">
+        <value>Porter</value>
+    </data>
+    <data name="Localizer" xml:space="preserve">
+        <value>Localizer</value>
+    </data>
+    <data name="Manufacturer" xml:space="preserve">
+        <value>Manufacturer</value>
+    </data>
+    <data name="Licensor" xml:space="preserve">
+        <value>Licensor</value>
     </data>
     <data name="Release date" xml:space="preserve">
         <value>Release date</value>

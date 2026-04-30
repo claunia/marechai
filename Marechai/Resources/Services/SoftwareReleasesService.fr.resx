@@ -135,9 +135,33 @@
         <value>Ajouter</value>
         <comment>Add</comment>
     </data>
+    <data name="Developer" xml:space="preserve">
+        <value>Développeur</value>
+        <comment>Developer</comment>
+    </data>
     <data name="Publisher" xml:space="preserve">
         <value>Éditeur</value>
         <comment>Publisher</comment>
+    </data>
+    <data name="Distributor" xml:space="preserve">
+        <value>Distributeur</value>
+        <comment>Distributor</comment>
+    </data>
+    <data name="Porter" xml:space="preserve">
+        <value>Porteur</value>
+        <comment>Porter</comment>
+    </data>
+    <data name="Localizer" xml:space="preserve">
+        <value>Localisateur</value>
+        <comment>Localizer</comment>
+    </data>
+    <data name="Manufacturer" xml:space="preserve">
+        <value>Fabricant</value>
+        <comment>Manufacturer</comment>
+    </data>
+    <data name="Licensor" xml:space="preserve">
+        <value>Concédant</value>
+        <comment>Licensor</comment>
     </data>
     <data name="Release date" xml:space="preserve">
         <value>Date de publication</value>

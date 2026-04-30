@@ -114,8 +114,26 @@
     </data>    <data name="Add" xml:space="preserve">
         <value>Añadir</value>
     </data>
+    <data name="Developer" xml:space="preserve">
+        <value>Desarrollador</value>
+    </data>
     <data name="Publisher" xml:space="preserve">
         <value>Editor</value>
+    </data>
+    <data name="Distributor" xml:space="preserve">
+        <value>Distribuidor</value>
+    </data>
+    <data name="Porter" xml:space="preserve">
+        <value>Portador</value>
+    </data>
+    <data name="Localizer" xml:space="preserve">
+        <value>Localizador</value>
+    </data>
+    <data name="Manufacturer" xml:space="preserve">
+        <value>Fabricante</value>
+    </data>
+    <data name="Licensor" xml:space="preserve">
+        <value>Licenciante</value>
     </data>
     <data name="Release date" xml:space="preserve">
         <value>Fecha de lanzamiento</value>

@@ -373,7 +373,8 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
         // Sort by company name and add to collection
         foreach((string company, string? role) in companyDisplays.OrderBy(c => c.company))
         {
-            string display = !string.IsNullOrEmpty(role) ? $"{company} ({role})" : company;
+            string localizedRole = !string.IsNullOrEmpty(role) ? _localizer[role] : null;
+            string display = !string.IsNullOrEmpty(localizedRole) ? $"{company} ({localizedRole})" : company;
             Companies.Add(display);
         }
     }

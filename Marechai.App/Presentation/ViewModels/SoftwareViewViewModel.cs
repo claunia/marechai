@@ -207,7 +207,8 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
             {
                 string name    = company.Company ?? string.Empty;
                 string? role   = company.Role;
-                string display = !string.IsNullOrEmpty(role) ? $"{name} ({role})" : name;
+                string localizedRole = !string.IsNullOrEmpty(role) ? _localizer[role] : null;
+                string display = !string.IsNullOrEmpty(localizedRole) ? $"{name} ({localizedRole})" : name;
                 Companies.Add(display);
             }
 
@@ -220,7 +221,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
 
             foreach(var group in creditsByRole)
             {
-                var item = new CreditGroupDisplayItem { Role = group.Key };
+                var item = new CreditGroupDisplayItem { Role = _localizer[group.Key] };
 
                 foreach(PersonBySoftwareDto credit in group)
                 {

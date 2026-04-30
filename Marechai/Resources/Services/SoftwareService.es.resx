@@ -219,9 +219,33 @@
         <value>Región</value>
         <comment>Region</comment>
     </data>
+    <data name="Developer" xml:space="preserve">
+        <value>Desarrollador</value>
+        <comment>Developer</comment>
+    </data>
     <data name="Publisher" xml:space="preserve">
         <value>Editor</value>
         <comment>Publisher</comment>
+    </data>
+    <data name="Distributor" xml:space="preserve">
+        <value>Distribuidor</value>
+        <comment>Distributor</comment>
+    </data>
+    <data name="Porter" xml:space="preserve">
+        <value>Portador</value>
+        <comment>Porter</comment>
+    </data>
+    <data name="Localizer" xml:space="preserve">
+        <value>Localizador</value>
+        <comment>Localizer</comment>
+    </data>
+    <data name="Manufacturer" xml:space="preserve">
+        <value>Fabricante</value>
+        <comment>Manufacturer</comment>
+    </data>
+    <data name="Licensor" xml:space="preserve">
+        <value>Licenciante</value>
+        <comment>Licensor</comment>
     </data>
     <data name="Release date" xml:space="preserve">
         <value>Fecha de lanzamiento</value>
