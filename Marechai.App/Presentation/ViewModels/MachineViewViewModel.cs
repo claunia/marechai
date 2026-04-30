@@ -38,6 +38,7 @@ using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
 using Marechai.App.Services.Caching;
 using Marechai.Data;
+using Microsoft.Extensions.Configuration;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Imaging;
 
@@ -46,6 +47,7 @@ namespace Marechai.App.Presentation.ViewModels;
 public partial class MachineViewViewModel : ObservableObject, IRegionAware
 {
     private readonly ComputersService              _computersService;
+    private readonly IConfiguration                _configuration;
     private readonly ImageSourceFactory            _imageSourceFactory;
     private readonly IStringLocalizer              _localizer;
     private readonly ILogger<MachineViewViewModel> _logger;
@@ -114,11 +116,15 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
     private Visibility _showSoundSynthesizers = Visibility.Collapsed;
 
     [ObservableProperty]
+    private Visibility _showSoftware = Visibility.Collapsed;
+
+    [ObservableProperty]
     private Visibility _showStorage = Visibility.Collapsed;
 
     public MachineViewViewModel(ILogger<MachineViewViewModel> logger,             IRegionManager     regionManager,
                                 ComputersService              computersService,   MachinePhotoCache  photoCache,
-                                IStringLocalizer              localizer,          ImageSourceFactory imageSourceFactory)
+                                IStringLocalizer              localizer,          ImageSourceFactory imageSourceFactory,
+                                IConfiguration                configuration)
     {
         _logger             = logger;
         _regionManager      = regionManager;
@@ -126,6 +132,7 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
         _photoCache         = photoCache;
         _localizer          = localizer;
         _imageSourceFactory = imageSourceFactory;
+        _configuration      = configuration;
     }
 
     public ObservableCollection<ProcessorDisplayItem>        Processors        { get; } = [];
@@ -133,6 +140,7 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
     public ObservableCollection<GpuDisplayItem>              Gpus              { get; } = [];
     public ObservableCollection<SoundSynthesizerDisplayItem> SoundSynthesizers { get; } = [];
     public ObservableCollection<StorageDisplayItem>          Storage           { get; } = [];
+    public ObservableCollection<SoftwareListItem>            Software          { get; } = [];
     public ObservableCollection<PhotoCarouselDisplayItem>    Photos            { get; } = [];
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
@@ -241,6 +249,22 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
         return Task.CompletedTask;
     }
 
+    [RelayCommand]
+    public Task NavigateToSoftware(SoftwareListItem? sw)
+    {
+        if(sw is null) return Task.CompletedTask;
+
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.SoftwareId, sw.Id },
+            { NavParamKeys.NavigationSource, nameof(MachineViewViewModel) }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(SoftwareViewPage), parameters);
+
+        return Task.CompletedTask;
+    }
+
     /// <summary>
     ///     Sets the navigation source context from navigation parameters.
     /// </summary>
@@ -285,6 +309,7 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
             Gpus.Clear();
             SoundSynthesizers.Clear();
             Storage.Clear();
+            Software.Clear();
             Photos.Clear();
 
             _logger.LogInformation("Loading machine {MachineId}", machineId);
@@ -424,6 +449,30 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
                 }
             }
 
+            // Populate software
+            List<SoftwareDto> softwareList = await _computersService.GetSoftwareByMachineAsync(machineId);
+            string            baseUrl      = _configuration.GetSection("ApiClient:Url").Value;
+
+            foreach(SoftwareDto sw in softwareList)
+            {
+                int id = (int)(sw.Id ?? 0);
+
+                if(id == 0) continue;
+
+                Software.Add(new SoftwareListItem
+                {
+                    Id                = id,
+                    Name              = sw.Name ?? string.Empty,
+                    Family            = sw.Family,
+                    IsOperatingSystem = sw.IsOperatingSystem ?? false,
+                    IsGame            = sw.IsGame ?? false,
+                    FrontCoverId      = sw.FrontCoverId,
+                    CoverImageUrl     = sw.FrontCoverId.HasValue
+                                            ? $"{baseUrl}/assets/photos/software-covers/webp/hd/{sw.FrontCoverId}.webp"
+                                            : null
+                });
+            }
+
             // Populate photos
             List<Guid> photoIds = await _computersService.GetMachinePhotosAsync(machineId);
 
@@ -473,6 +522,7 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
         ShowGpus              = Gpus.Count              > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowSoundSynthesizers = SoundSynthesizers.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowStorage           = Storage.Count           > 0 ? Visibility.Visible : Visibility.Collapsed;
+        ShowSoftware          = Software.Count          > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowPhotos            = Photos.Count            > 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 

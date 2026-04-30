@@ -791,6 +791,9 @@
   <data name="StorageLabel" xml:space="preserve">
     <value>Repositorium</value>
   </data>
+  <data name="MachineSoftwareLabel" xml:space="preserve">
+    <value>Programma</value>
+  </data>
   <data name="PhotosLabel" xml:space="preserve">
     <value>Photographiae</value>
   </data>

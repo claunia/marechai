@@ -385,6 +385,142 @@
                         </ItemsControl>
                     </StackPanel>
 
+                    <!-- Software -->
+                    <StackPanel Visibility="{Binding ShowSoftware}"
+                                Spacing="12">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=MachineSoftwareLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <ItemsControl ItemsSource="{Binding Software}"
+                                      HorizontalAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="0"
+                                                HorizontalAlignment="Stretch" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Padding="0"
+                                            Margin="0,0,0,8"
+                                            MinHeight="70"
+                                            HorizontalContentAlignment="Stretch"
+                                            VerticalContentAlignment="Stretch"
+                                            HorizontalAlignment="Stretch"
+                                            Command="{Binding DataContext.NavigateToSoftwareCommand, ElementName=PageRoot}"
+                                            CommandParameter="{Binding}"
+                                            Background="Transparent"
+                                            BorderThickness="0">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Grid MinHeight="70"
+                                                      HorizontalAlignment="Stretch"
+                                                      VerticalAlignment="Stretch">
+                                                    <Border x:Name="SoftwareShadowBorder"
+                                                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                            BorderThickness="1"
+                                                            CornerRadius="8"
+                                                            Padding="16,12"
+                                                            Translation="0, 0, 4"
+                                                            VerticalAlignment="Stretch">
+                                                        <Border.Shadow>
+                                                            <ThemeShadow />
+                                                        </Border.Shadow>
+
+                                                        <Grid ColumnSpacing="16">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                            </Grid.ColumnDefinitions>
+
+                                                            <!-- Software Cover or Icon -->
+                                                            <Grid Grid.Column="0"
+                                                                  Width="48"
+                                                                  Height="48"
+                                                                  VerticalAlignment="Center">
+                                                                <Image Source="{Binding CoverImageUrl}"
+                                                                       Stretch="Uniform"
+                                                                       MaxWidth="48"
+                                                                       MaxHeight="48"
+                                                                       Visibility="{Binding HasCover, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                                                <FontIcon Glyph="&#xE74C;"
+                                                                          FontSize="28"
+                                                                          Foreground="{ThemeResource SystemAccentColor}"
+                                                                          HorizontalAlignment="Center"
+                                                                          VerticalAlignment="Center"
+                                                                          Visibility="{Binding HasCover, Converter={StaticResource InvertBoolToVisibilityConverter}}" />
+                                                            </Grid>
+
+                                                            <!-- Software Info -->
+                                                            <StackPanel Grid.Column="1"
+                                                                        Spacing="4"
+                                                                        VerticalAlignment="Center"
+                                                                        HorizontalAlignment="Stretch">
+                                                                <TextBlock Text="{Binding Name}"
+                                                                           FontSize="16"
+                                                                           FontWeight="SemiBold"
+                                                                           Foreground="{ThemeResource TextControlForeground}"
+                                                                           TextTrimming="CharacterEllipsis" />
+                                                                <StackPanel Orientation="Horizontal"
+                                                                            Spacing="12">
+                                                                    <StackPanel Orientation="Horizontal"
+                                                                                Spacing="6"
+                                                                                Visibility="{Binding Family, Converter={StaticResource NullToVisibilityConverter}}">
+                                                                        <FontIcon Glyph="&#xE8F1;"
+                                                                                  FontSize="13"
+                                                                                  Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                                                        <TextBlock Text="{Binding Family}"
+                                                                                   FontSize="13"
+                                                                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                                                    </StackPanel>
+                                                                </StackPanel>
+                                                            </StackPanel>
+
+                                                            <!-- Navigation Arrow -->
+                                                            <StackPanel Grid.Column="2"
+                                                                        VerticalAlignment="Center">
+                                                                <FontIcon Glyph="&#xE72A;"
+                                                                          FontSize="18"
+                                                                          Foreground="{ThemeResource SystemAccentColor}" />
+                                                            </StackPanel>
+                                                        </Grid>
+                                                    </Border>
+
+                                                    <VisualStateManager.VisualStateGroups>
+                                                        <VisualStateGroup x:Name="CommonStates">
+                                                            <VisualState x:Name="Normal" />
+                                                            <VisualState x:Name="PointerOver">
+                                                                <VisualState.Setters>
+                                                                    <Setter Target="SoftwareShadowBorder.Background"
+                                                                            Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                                                                    <Setter Target="SoftwareShadowBorder.Translation"
+                                                                            Value="0, -2, 8" />
+                                                                </VisualState.Setters>
+                                                            </VisualState>
+                                                            <VisualState x:Name="Pressed">
+                                                                <VisualState.Setters>
+                                                                    <Setter Target="SoftwareShadowBorder.Background"
+                                                                            Value="{ThemeResource CardBackgroundFillColorTertiaryBrush}" />
+                                                                    <Setter Target="SoftwareShadowBorder.Translation"
+                                                                            Value="0, 0, 2" />
+                                                                </VisualState.Setters>
+                                                            </VisualState>
+                                                        </VisualStateGroup>
+                                                    </VisualStateManager.VisualStateGroups>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
                     <!-- Photos Carousel (Last element before spacing) -->
                     <StackPanel Visibility="{Binding ShowPhotos}"
                                 Spacing="12">

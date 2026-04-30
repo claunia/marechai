@@ -338,6 +338,40 @@ public class MachinesController(MarechaiContext context) : ControllerBase
         return model;
     }
 
+    [HttpGet("{id:int}/software")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<SoftwareDto>> GetSoftwareByMachineAsync(int id)
+    {
+        IQueryable<ulong> platformIds = context.SoftwarePlatformsByMachine
+                                               .Where(sp => sp.MachineId == id)
+                                               .Select(sp => sp.SoftwarePlatformId);
+
+        return context.Softwares
+                      .Where(s => s.Versions.Any(v => v.Releases.Any(r => r.PlatformId != null &&
+                                                                          platformIds.Contains(r.PlatformId.Value)))
+                                || s.DirectReleases.Any(r => r.PlatformId != null &&
+                                                             platformIds.Contains(r.PlatformId.Value)))
+                      .OrderBy(s => s.Name)
+                      .Select(s => new SoftwareDto
+                       {
+                           Id                = s.Id,
+                           Name              = s.Name,
+                           FamilyId          = s.FamilyId,
+                           Family            = s.Family.Name,
+                           IsOperatingSystem = s.IsOperatingSystem,
+                           IsGame            = s.IsGame,
+                           FrontCoverId = context.SoftwareCovers
+                                                 .Where(c => (c.Release.SoftwareId == s.Id ||
+                                                               c.Release.SoftwareVersion.SoftwareId == s.Id) &&
+                                                              c.Type == SoftwareCoverType.Front)
+                                                 .Select(c => (Guid?)c.Id)
+                                                 .FirstOrDefault()
+                       })
+                      .ToListAsync();
+    }
+
     [HttpDelete("{id:int}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]

@@ -644,6 +644,57 @@
     </MudCard>
 }
 
+@* ── Software Card ── *@
+@if(_software is { Count: > 0 })
+{
+    <MudCard Elevation="2" Class="mb-4 rounded-lg">
+        <MudCardContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+                <MudIcon Icon="@Icons.Material.Filled.Apps" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Software"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="Color.Secondary">@_software.Count</MudChip>
+            </MudStack>
+            <MudList T="SoftwareDto" Dense="true">
+                @foreach(SoftwareDto sw in _software)
+                {
+                    <MudListItem T="SoftwareDto" Href="@($"/software/{sw.Id}")" Icon="@(sw.FrontCoverId.HasValue ? null : Icons.Material.Filled.Apps)">
+                        <div class="d-flex align-center gap-3">
+                            @if(sw.FrontCoverId.HasValue)
+                            {
+                                <picture>
+                                    <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/jxl/hd/@(sw.FrontCoverId).jxl, @(Assets.BaseUrl)/assets/photos/software-covers/jxl/1440p/@(sw.FrontCoverId).jxl 2x, @(Assets.BaseUrl)/assets/photos/software-covers/jxl/4k/@(sw.FrontCoverId).jxl 3x" type="image/jxl">
+                                    <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/avif/hd/@(sw.FrontCoverId).avif, @(Assets.BaseUrl)/assets/photos/software-covers/avif/1440p/@(sw.FrontCoverId).avif 2x, @(Assets.BaseUrl)/assets/photos/software-covers/avif/4k/@(sw.FrontCoverId).avif 3x" type="image/avif">
+                                    <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/heif/hd/@(sw.FrontCoverId).heic, @(Assets.BaseUrl)/assets/photos/software-covers/heif/1440p/@(sw.FrontCoverId).heic 2x, @(Assets.BaseUrl)/assets/photos/software-covers/heif/4k/@(sw.FrontCoverId).heic 3x" type="image/heic">
+                                    <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/webp/hd/@(sw.FrontCoverId).webp, @(Assets.BaseUrl)/assets/photos/software-covers/webp/1440p/@(sw.FrontCoverId).webp 2x, @(Assets.BaseUrl)/assets/photos/software-covers/webp/4k/@(sw.FrontCoverId).webp 3x" type="image/webp">
+                                    <img alt="@sw.Name" height="48"
+                                         src="@(Assets.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(sw.FrontCoverId).jpg"
+                                         srcset="@(Assets.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(sw.FrontCoverId).jpg, @(Assets.BaseUrl)/assets/photos/software-covers/jpeg/1440p/@(sw.FrontCoverId).jpg 2x, @(Assets.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(sw.FrontCoverId).jpg 3x"
+                                         style="object-fit: contain; border-radius: 4px;"/>
+                                </picture>
+                            }
+                            <div>
+                                <MudText Typo="Typo.body1">@sw.Name</MudText>
+                                @if(!string.IsNullOrEmpty(sw.Family))
+                                {
+                                    <MudText Typo="Typo.caption" Color="Color.Secondary">@sw.Family</MudText>
+                                }
+                            </div>
+                            @if(sw.IsOperatingSystem == true)
+                            {
+                                <MudChip T="string" Size="Size.Small" Color="Color.Info" Variant="Variant.Outlined">@L["OS"]</MudChip>
+                            }
+                            @if(sw.IsGame == true)
+                            {
+                                <MudChip T="string" Size="Size.Small" Color="Color.Success" Variant="Variant.Outlined">@L["Game"]</MudChip>
+                            }
+                        </div>
+                    </MudListItem>
+                }
+            </MudList>
+        </MudCardContent>
+    </MudCard>
+}
+
 @* ── Photos Card ── *@
 @if(_photos.Count > 0)
 {

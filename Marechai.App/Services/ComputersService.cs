@@ -265,4 +265,25 @@ public class ComputersService
             return null;
         }
     }
+
+    /// <summary>
+    ///     Fetches all software available for a machine's supported platforms
+    /// </summary>
+    public async Task<List<SoftwareDto>> GetSoftwareByMachineAsync(int machineId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching software for machine {MachineId} from API", machineId);
+
+            List<SoftwareDto>? software = await _apiClient.Machines[machineId].Software.GetAsync();
+
+            return software ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching software for machine {MachineId} from API", machineId);
+
+            return [];
+        }
+    }
 }

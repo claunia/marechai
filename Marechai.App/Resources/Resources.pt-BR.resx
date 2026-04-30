@@ -791,6 +791,9 @@
   <data name="StorageLabel" xml:space="preserve">
     <value>Armazenamento</value>
   </data>
+  <data name="MachineSoftwareLabel" xml:space="preserve">
+    <value>Software</value>
+  </data>
   <data name="PhotosLabel" xml:space="preserve">
     <value>Fotos</value>
   </data>

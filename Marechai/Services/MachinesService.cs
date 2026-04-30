@@ -528,6 +528,20 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
         }
     }
 
+    public async Task<List<SoftwareDto>> GetSoftwareByMachineAsync(int machineId)
+    {
+        try
+        {
+            List<SoftwareDto>? software = await client.Machines[machineId].Software.GetAsync();
+
+            return software ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
     // Software Platform junction management
     public async Task<List<SoftwarePlatformByMachineDto>> GetSoftwarePlatformsByMachineAsync(int machineId)
     {

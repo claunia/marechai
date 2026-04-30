@@ -6,6 +6,7 @@ using Marechai.ApiClient.Machines.Item.Memories;
 using Marechai.ApiClient.Machines.Item.Photos;
 using Marechai.ApiClient.Machines.Item.Processors;
 using Marechai.ApiClient.Machines.Item.Screens;
+using Marechai.ApiClient.Machines.Item.Software;
 using Marechai.ApiClient.Machines.Item.SoundSynths;
 using Marechai.ApiClient.Machines.Item.Storage;
 using Marechai.ApiClient.Models;
@@ -54,6 +55,11 @@ namespace Marechai.ApiClient.Machines.Item
         public global::Marechai.ApiClient.Machines.Item.Screens.ScreensRequestBuilder Screens
         {
             get => new global::Marechai.ApiClient.Machines.Item.Screens.ScreensRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The software property</summary>
+        public global::Marechai.ApiClient.Machines.Item.Software.SoftwareRequestBuilder Software
+        {
+            get => new global::Marechai.ApiClient.Machines.Item.Software.SoftwareRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The soundSynths property</summary>
         public global::Marechai.ApiClient.Machines.Item.SoundSynths.SoundSynthsRequestBuilder SoundSynths
