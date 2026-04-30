@@ -719,6 +719,7 @@ public class ImportService
         "Package Design by"        => "pkg",
         "Voice Recording by"       => "vrc",
         "Game Engine by"           => "eng",
+        "Graphic Engine by"        => "eng",
         "Middleware by"            => "mdw",
         _                          => null
     };
