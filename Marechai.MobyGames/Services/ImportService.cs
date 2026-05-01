@@ -346,6 +346,8 @@ public class ImportService
         }
 
         // 4. Company roles from Main tab (developers)
+        var addedCompanyRoles = new HashSet<(ulong, int, string)>();
+
         foreach(string devName in game.Developers)
         {
             if(string.IsNullOrWhiteSpace(devName)) continue;
@@ -354,26 +356,31 @@ public class ImportService
 
             if(devCompany != null)
             {
-                bool exists = await context.SoftwareCompanyRoles
-                                           .AnyAsync(r => r.SoftwareId == software.Id &&
-                                                          r.CompanyId == devCompany.Id &&
-                                                          r.RoleId == "dev");
+                var roleKey = (software.Id, devCompany.Id, "dev");
 
-                if(!exists)
+                if(addedCompanyRoles.Add(roleKey))
                 {
-                    context.SoftwareCompanyRoles.Add(new SoftwareCompanyRole
+                    bool exists = await context.SoftwareCompanyRoles
+                                               .AnyAsync(r => r.SoftwareId == software.Id &&
+                                                              r.CompanyId == devCompany.Id &&
+                                                              r.RoleId == "dev");
+
+                    if(!exists)
                     {
-                        SoftwareId = software.Id,
-                        CompanyId  = devCompany.Id,
-                        RoleId     = "dev"
-                    });
+                        context.SoftwareCompanyRoles.Add(new SoftwareCompanyRole
+                        {
+                            SoftwareId = software.Id,
+                            CompanyId  = devCompany.Id,
+                            RoleId     = "dev"
+                        });
+                    }
                 }
             }
         }
 
         // 5. Process releases from Releases tab (or create basic release from Main tab)
         if(game.Releases.Count > 0)
-            await ImportReleasesAsync(context, software, game);
+            await ImportReleasesAsync(context, software, game, addedCompanyRoles);
         else
             await ImportBasicReleaseAsync(context, software, game);
 
@@ -418,7 +425,8 @@ public class ImportService
         Console.WriteLine($"    Imported as Software ID: {software.Id}");
     }
 
-    async Task ImportReleasesAsync(MarechaiContext context, Software software, ParsedGame game)
+    async Task ImportReleasesAsync(MarechaiContext context, Software software, ParsedGame game,
+                                   HashSet<(ulong, int, string)> addedCompanyRoles)
     {
         // Group releases by platform
         var platformGroups = game.Releases.GroupBy(r => r.Platform ?? "Unknown");
@@ -530,19 +538,24 @@ public class ImportService
 
                     if(dist != null)
                     {
-                        bool exists = await context.SoftwareCompanyRoles
-                                                   .AnyAsync(r => r.SoftwareId == software.Id &&
-                                                                  r.CompanyId == dist.Id &&
-                                                                  r.RoleId == "dis");
+                        var roleKey = (software.Id, dist.Id, "dis");
 
-                        if(!exists)
+                        if(addedCompanyRoles.Add(roleKey))
                         {
-                            context.SoftwareCompanyRoles.Add(new SoftwareCompanyRole
+                            bool exists = await context.SoftwareCompanyRoles
+                                                       .AnyAsync(r => r.SoftwareId == software.Id &&
+                                                                      r.CompanyId == dist.Id &&
+                                                                      r.RoleId == "dis");
+
+                            if(!exists)
                             {
-                                SoftwareId = software.Id,
-                                CompanyId  = dist.Id,
-                                RoleId     = "dis"
-                            });
+                                context.SoftwareCompanyRoles.Add(new SoftwareCompanyRole
+                                {
+                                    SoftwareId = software.Id,
+                                    CompanyId  = dist.Id,
+                                    RoleId     = "dis"
+                                });
+                            }
                         }
                     }
                 }
@@ -553,19 +566,24 @@ public class ImportService
 
                     if(loc != null)
                     {
-                        bool exists = await context.SoftwareCompanyRoles
-                                                   .AnyAsync(r => r.SoftwareId == software.Id &&
-                                                                  r.CompanyId == loc.Id &&
-                                                                  r.RoleId == "loc");
+                        var roleKey = (software.Id, loc.Id, "loc");
 
-                        if(!exists)
+                        if(addedCompanyRoles.Add(roleKey))
                         {
-                            context.SoftwareCompanyRoles.Add(new SoftwareCompanyRole
+                            bool exists = await context.SoftwareCompanyRoles
+                                                       .AnyAsync(r => r.SoftwareId == software.Id &&
+                                                                      r.CompanyId == loc.Id &&
+                                                                      r.RoleId == "loc");
+
+                            if(!exists)
                             {
-                                SoftwareId = software.Id,
-                                CompanyId  = loc.Id,
-                                RoleId     = "loc"
-                            });
+                                context.SoftwareCompanyRoles.Add(new SoftwareCompanyRole
+                                {
+                                    SoftwareId = software.Id,
+                                    CompanyId  = loc.Id,
+                                    RoleId     = "loc"
+                                });
+                            }
                         }
                     }
                 }
@@ -579,19 +597,24 @@ public class ImportService
 
                     if(roleCompany != null)
                     {
-                        bool exists = await context.SoftwareCompanyRoles
-                                                   .AnyAsync(r => r.SoftwareId == software.Id &&
-                                                                  r.CompanyId == roleCompany.Id &&
-                                                                  r.RoleId == roleId);
+                        var roleKey = (software.Id, roleCompany.Id, roleId);
 
-                        if(!exists)
+                        if(addedCompanyRoles.Add(roleKey))
                         {
-                            context.SoftwareCompanyRoles.Add(new SoftwareCompanyRole
+                            bool exists = await context.SoftwareCompanyRoles
+                                                       .AnyAsync(r => r.SoftwareId == software.Id &&
+                                                                      r.CompanyId == roleCompany.Id &&
+                                                                      r.RoleId == roleId);
+
+                            if(!exists)
                             {
-                                SoftwareId = software.Id,
-                                CompanyId  = roleCompany.Id,
-                                RoleId     = roleId
-                            });
+                                context.SoftwareCompanyRoles.Add(new SoftwareCompanyRole
+                                {
+                                    SoftwareId = software.Id,
+                                    CompanyId  = roleCompany.Id,
+                                    RoleId     = roleId
+                                });
+                            }
                         }
                     }
                 }
