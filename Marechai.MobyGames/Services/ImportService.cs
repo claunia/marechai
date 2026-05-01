@@ -293,13 +293,20 @@ public class ImportService
         // 2. Description
         if(!string.IsNullOrWhiteSpace(game.Description))
         {
-            context.SoftwareDescriptions.Add(new SoftwareDescription
+            bool descExists = await context.SoftwareDescriptions
+                                           .AnyAsync(d => d.SoftwareId == software.Id &&
+                                                          d.LanguageCode == "eng");
+
+            if(!descExists)
             {
-                SoftwareId   = software.Id,
-                LanguageCode = "eng",
-                Text         = game.Description,
-                Html         = game.DescriptionHtml
-            });
+                context.SoftwareDescriptions.Add(new SoftwareDescription
+                {
+                    SoftwareId   = software.Id,
+                    LanguageCode = "eng",
+                    Text         = game.Description,
+                    Html         = game.DescriptionHtml
+                });
+            }
         }
 
         // 3. Genres
@@ -324,11 +331,18 @@ public class ImportService
                 await context.SaveChangesAsync();
             }
 
-            context.GenresBySoftware.Add(new GenreBySoftware
+            bool genreExists = await context.GenresBySoftware
+                                             .AnyAsync(g => g.SoftwareId == software.Id &&
+                                                            g.GenreId == dbGenre.Id);
+
+            if(!genreExists)
             {
-                SoftwareId = software.Id,
-                GenreId    = dbGenre.Id
-            });
+                context.GenresBySoftware.Add(new GenreBySoftware
+                {
+                    SoftwareId = software.Id,
+                    GenreId    = dbGenre.Id
+                });
+            }
         }
 
         // 4. Company roles from Main tab (developers)
@@ -486,11 +500,13 @@ public class ImportService
                 }
 
                 // Countries → UnM49 regions
+                var addedRegions = new HashSet<short>();
+
                 foreach(string country in release.Countries)
                 {
                     var region = _countryMatcher.Match(country);
 
-                    if(region != null)
+                    if(region != null && addedRegions.Add(region.Id))
                     {
                         bool exists = await context.UnM49BySoftwareRelease
                                                    .AnyAsync(u => u.SoftwareReleaseId == dbRelease.Id &&
