@@ -384,7 +384,7 @@ public enum StorageType
     MMC                   = 116,
     MMCmicro              = 117,
     RSMMC                 = 118,
-    MMCplus               = 118,
+    MMCplus               = 149,
     MMCmobile             = 119,
     eMMC                  = 120,
     MO120                 = 121,
