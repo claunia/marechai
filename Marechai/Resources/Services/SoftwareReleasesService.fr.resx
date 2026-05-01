@@ -211,6 +211,10 @@
         <value>Polices</value>
         <comment>Fonts</comment>
     </data>
+    <data name="Producer" xml:space="preserve">
+        <value>Producteur</value>
+        <comment>Producer</comment>
+    </data>
     <data name="Release date" xml:space="preserve">
         <value>Date de publication</value>
         <comment>Release date</comment>

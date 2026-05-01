@@ -211,6 +211,10 @@
         <value>Caratteri</value>
         <comment>Fonts</comment>
     </data>
+    <data name="Producer" xml:space="preserve">
+        <value>Produttore</value>
+        <comment>Producer</comment>
+    </data>
     <data name="Release date" xml:space="preserve">
         <value>Data di pubblicazione</value>
         <comment>Release date</comment>

@@ -171,6 +171,9 @@
     <data name="Fonts" xml:space="preserve">
         <value>Tipografía</value>
     </data>
+    <data name="Producer" xml:space="preserve">
+        <value>Productor</value>
+    </data>
     <data name="Release date" xml:space="preserve">
         <value>Fecha de lanzamiento</value>
     </data>

@@ -295,6 +295,10 @@
         <value>Tipografía</value>
         <comment>Fonts</comment>
     </data>
+    <data name="Producer" xml:space="preserve">
+        <value>Productor</value>
+        <comment>Producer</comment>
+    </data>
     <data name="Release date" xml:space="preserve">
         <value>Fecha de lanzamiento</value>
         <comment>Release date</comment>

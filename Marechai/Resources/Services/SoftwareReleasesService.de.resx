@@ -211,6 +211,10 @@
         <value>Schriftarten</value>
         <comment>Fonts</comment>
     </data>
+    <data name="Producer" xml:space="preserve">
+        <value>Produzent</value>
+        <comment>Producer</comment>
+    </data>
     <data name="Release date" xml:space="preserve">
         <value>Veröffentlichungsdatum</value>
         <comment>Release date</comment>

@@ -764,6 +764,8 @@ public class ImportService
         "Testing by"               => "tst",
         "Contributions by"         => "ctb",
         "Fonts by"                 => "fnt",
+        "Produced by"              => "prd",
+        "Voice Production by"      => "vrc",
         _                          => null
     };
 

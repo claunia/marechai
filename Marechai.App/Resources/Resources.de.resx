@@ -764,6 +764,9 @@
   <data name="Fonts" xml:space="preserve">
     <value>Schriftarten</value>
   </data>
+  <data name="Producer" xml:space="preserve">
+    <value>Produzent</value>
+  </data>
   <data name="Other" xml:space="preserve">
     <value>Sonstige</value>
   </data>
