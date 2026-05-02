@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Marechai.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 
@@ -37,6 +38,7 @@ public partial class View
     int              _id;
     string           _description;
     bool             _isCollected;
+    PhotoLightbox    _lightbox;
     bool             _loaded;
     MachineDto _machine;
     List<Guid>       _photos;

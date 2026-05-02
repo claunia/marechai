@@ -808,7 +808,7 @@
                 {
                     <MudItem xs="6" sm="4" md="3">
                         <MudCard Elevation="1" Class="rounded-lg">
-                            <MudCardContent Class="pa-2 d-flex justify-center">
+                            <MudCardContent Class="pa-2 d-flex justify-center" Style="cursor: pointer;" @onclick="() => _lightbox.Show(_photos, photo)">
                                 <picture>
                                     <source srcset="@(Assets.BaseUrl)/assets/photos/machines/thumbs/jxl/hd/@(photo).jxl, @(Assets.BaseUrl)/assets/photos/machines/thumbs/jxl/1440p/@(photo).jxl 2x, @(Assets.BaseUrl)/assets/photos/machines/thumbs/jxl/4k/@(photo).jxl 3x" type="image/jxl">
                                     <source srcset="@(Assets.BaseUrl)/assets/photos/machines/thumbs/avif/hd/@(photo).avif, @(Assets.BaseUrl)/assets/photos/machines/thumbs/avif/1440p/@(photo).avif 2x, @(Assets.BaseUrl)/assets/photos/machines/thumbs/avif/4k/@(photo).avif 3x" type="image/avif">
@@ -829,5 +829,7 @@
         </MudCardContent>
     </MudCard>
 }
+
+<PhotoLightbox @ref="_lightbox" BaseUrl="@Assets.BaseUrl" Category="machines"/>
 
 <img alt="" src="@($"{Assets.BaseUrl}/assets/photos/computers/{_machine.Id}.jpg")">

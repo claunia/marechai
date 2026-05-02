@@ -1,0 +1,133 @@
+@if(Visible)
+{
+    <div class="lightbox-overlay" @onclick="Close">
+        <div class="lightbox-content" @onclick:stopPropagation="true">
+            <MudIconButton Icon="@Icons.Material.Filled.Close"
+                           Color="Color.Inherit"
+                           Class="lightbox-close"
+                           OnClick="Close"/>
+
+            @if(_photoIds.Count > 1)
+            {
+                <MudIconButton Icon="@Icons.Material.Filled.ChevronLeft"
+                               Color="Color.Inherit"
+                               Class="lightbox-nav lightbox-prev"
+                               OnClick="Previous"/>
+            }
+
+            <picture>
+                <source srcset="@($"{BaseUrl}/assets/photos/{Category}/jxl/4k/{CurrentPhotoId}.jxl")" type="image/jxl">
+                <source srcset="@($"{BaseUrl}/assets/photos/{Category}/avif/4k/{CurrentPhotoId}.avif")" type="image/avif">
+                <source srcset="@($"{BaseUrl}/assets/photos/{Category}/webp/4k/{CurrentPhotoId}.webp")" type="image/webp">
+                <img alt="" src="@($"{BaseUrl}/assets/photos/{Category}/jpeg/4k/{CurrentPhotoId}.jpg")"
+                     class="lightbox-image"/>
+            </picture>
+
+            @if(_photoIds.Count > 1)
+            {
+                <MudIconButton Icon="@Icons.Material.Filled.ChevronRight"
+                               Color="Color.Inherit"
+                               Class="lightbox-nav lightbox-next"
+                               OnClick="Next"/>
+            }
+
+            @if(_photoIds.Count > 1)
+            {
+                <div class="lightbox-counter">
+                    @(_currentIndex + 1) / @_photoIds.Count
+                </div>
+            }
+        </div>
+    </div>
+}
+
+<style>
+    .lightbox-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    .lightbox-content {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        max-width: 95vw;
+        max-height: 95vh;
+        cursor: default;
+    }
+
+    .lightbox-image {
+        max-width: 90vw;
+        max-height: 90vh;
+        object-fit: contain;
+        border-radius: 4px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .lightbox-close {
+        position: absolute;
+        top: -48px;
+        right: -8px;
+        color: white !important;
+        z-index: 10000;
+    }
+
+    .lightbox-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        color: white !important;
+        background: rgba(255, 255, 255, 0.15) !important;
+        z-index: 10000;
+    }
+
+    .lightbox-nav:hover {
+        background: rgba(255, 255, 255, 0.3) !important;
+    }
+
+    .lightbox-prev {
+        left: -56px;
+    }
+
+    .lightbox-next {
+        right: -56px;
+    }
+
+    .lightbox-counter {
+        position: absolute;
+        bottom: -36px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.9rem;
+    }
+
+    @@media (max-width: 600px) {
+        .lightbox-prev {
+            left: 4px;
+        }
+
+        .lightbox-next {
+            right: 4px;
+        }
+
+        .lightbox-close {
+            top: 4px;
+            right: 4px;
+        }
+
+        .lightbox-counter {
+            bottom: 8px;
+        }
+    }
+</style>
