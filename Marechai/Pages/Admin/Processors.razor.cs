@@ -84,7 +84,7 @@ public partial class Processors
                 ModelCode        = data.ModelCode,
 
                 IntroducedPrecision = data.IntroducedPrecision,
-                Introduced       = data.Introduced.HasValue ? new DateTimeOffset(data.Introduced.Value) : null,
+                Introduced       = data.Introduced.HasValue ? new DateTimeOffset(data.Introduced.Value, TimeSpan.Zero) : null,
                 InstructionSetId = data.InstructionSetId,
                 Speed            = data.Speed,
                 Package          = data.Package,
@@ -131,7 +131,7 @@ public partial class Processors
             { x => x.Name, processor.Name },
             { x => x.CompanyId, processor.CompanyId },
             { x => x.ModelCode, processor.ModelCode },
-            { x => x.Introduced, processor.Introduced?.DateTime },
+            { x => x.Introduced, processor.Introduced?.UtcDateTime },
             { x => x.IntroducedPrecision, processor.IntroducedPrecision ?? 0 },
             { x => x.InstructionSetId, processor.InstructionSetId },
             { x => x.Speed, processor.Speed },
@@ -175,7 +175,7 @@ public partial class Processors
 
                 IntroducedPrecision = data.IntroducedPrecision,
                 ModelCode        = data.ModelCode,
-                Introduced       = data.Introduced.HasValue ? new DateTimeOffset(data.Introduced.Value) : null,
+                Introduced       = data.Introduced.HasValue ? new DateTimeOffset(data.Introduced.Value, TimeSpan.Zero) : null,
                 InstructionSetId = data.InstructionSetId,
                 Speed            = data.Speed,
                 Package          = data.Package,

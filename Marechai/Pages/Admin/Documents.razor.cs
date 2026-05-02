@@ -61,7 +61,7 @@ public partial class Documents
                 CountryId   = data.CountryId,
 
                 PublishedPrecision = data.PublishedPrecision,
-                Published   = data.Published.HasValue ? new DateTimeOffset(data.Published.Value) : null
+                Published   = data.Published.HasValue ? new DateTimeOffset(data.Published.Value, TimeSpan.Zero) : null
             };
 
             (long? id, string? errorMessage) = await DocumentsService.CreateAsync(dto);
@@ -95,7 +95,7 @@ public partial class Documents
             { x => x.NativeTitle, fullDocument.NativeTitle },
             { x => x.SortTitle, fullDocument.SortTitle },
             { x => x.CountryId, fullDocument.CountryId },
-            { x => x.Published, fullDocument.Published?.DateTime },
+            { x => x.Published, fullDocument.Published?.UtcDateTime },
             { x => x.PublishedPrecision, fullDocument.PublishedPrecision ?? 0 },
         };
 
@@ -119,7 +119,7 @@ public partial class Documents
 
                 PublishedPrecision = data.PublishedPrecision,
                 CountryId   = data.CountryId,
-                Published   = data.Published.HasValue ? new DateTimeOffset(data.Published.Value) : null
+                Published   = data.Published.HasValue ? new DateTimeOffset(data.Published.Value, TimeSpan.Zero) : null
             };
 
             (bool succeeded, string? errorMessage) = await DocumentsService.UpdateAsync(document.Id ?? 0, dto);

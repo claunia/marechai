@@ -113,7 +113,7 @@ public partial class SoftwareReleases
                 PublisherId       = data.PublisherId,
 
                 ReleaseDatePrecision = data.ReleaseDatePrecision,
-                ReleaseDate       = data.ReleaseDate.HasValue ? new DateTimeOffset(data.ReleaseDate.Value) : null
+                ReleaseDate       = data.ReleaseDate.HasValue ? new DateTimeOffset(data.ReleaseDate.Value, TimeSpan.Zero) : null
             };
 
             (int? id, string? errorMessage) = await SoftwareReleasesService.CreateAsync(dto);
@@ -152,7 +152,7 @@ public partial class SoftwareReleases
             { x => x.SoftwareVersionId, full.SoftwareVersionId },
             { x => x.PlatformId, full.PlatformId },
             { x => x.PublisherId, full.PublisherId },
-            { x => x.ReleaseDate, full.ReleaseDate?.DateTime },
+            { x => x.ReleaseDate, full.ReleaseDate?.UtcDateTime },
             { x => x.ReleaseDatePrecision, full.ReleaseDatePrecision ?? 0 },
         };
 
@@ -179,7 +179,7 @@ public partial class SoftwareReleases
 
                 ReleaseDatePrecision = data.ReleaseDatePrecision,
                 PublisherId       = data.PublisherId,
-                ReleaseDate       = data.ReleaseDate.HasValue ? new DateTimeOffset(data.ReleaseDate.Value) : null
+                ReleaseDate       = data.ReleaseDate.HasValue ? new DateTimeOffset(data.ReleaseDate.Value, TimeSpan.Zero) : null
             };
 
             (bool succeeded, string? errorMessage) = await SoftwareReleasesService.UpdateAsync(full.Id ?? 0, dto);

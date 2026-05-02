@@ -60,9 +60,9 @@ public partial class Magazines
                 SortTitle        = data.SortTitle,
                 Issn             = data.Issn,
                 CountryId        = data.CountryId,
-                Published        = data.Published.HasValue ? new DateTimeOffset(data.Published.Value) : null,
+                Published        = data.Published.HasValue ? new DateTimeOffset(data.Published.Value, TimeSpan.Zero) : null,
                 PublishedPrecision = data.PublishedPrecision,
-                FirstPublication = data.FirstPublication.HasValue ? new DateTimeOffset(data.FirstPublication.Value) : null,
+                FirstPublication = data.FirstPublication.HasValue ? new DateTimeOffset(data.FirstPublication.Value, TimeSpan.Zero) : null,
                 FirstPublicationPrecision = data.FirstPublicationPrecision
             };
 
@@ -95,9 +95,9 @@ public partial class Magazines
             { x => x.SortTitle, fullMagazine.SortTitle },
             { x => x.Issn, fullMagazine.Issn },
             { x => x.CountryId, fullMagazine.CountryId },
-            { x => x.Published, fullMagazine.Published?.DateTime },
+            { x => x.Published, fullMagazine.Published?.UtcDateTime },
             { x => x.PublishedPrecision, fullMagazine.PublishedPrecision ?? 0 },
-            { x => x.FirstPublication, fullMagazine.FirstPublication?.DateTime },
+            { x => x.FirstPublication, fullMagazine.FirstPublication?.UtcDateTime },
             { x => x.FirstPublicationPrecision, fullMagazine.FirstPublicationPrecision ?? 0 },
         };
 
@@ -120,9 +120,9 @@ public partial class Magazines
                 SortTitle        = data.SortTitle,
                 Issn             = data.Issn,
                 CountryId        = data.CountryId,
-                Published        = data.Published.HasValue ? new DateTimeOffset(data.Published.Value) : null,
+                Published        = data.Published.HasValue ? new DateTimeOffset(data.Published.Value, TimeSpan.Zero) : null,
                 PublishedPrecision = data.PublishedPrecision,
-                FirstPublication = data.FirstPublication.HasValue ? new DateTimeOffset(data.FirstPublication.Value) : null,
+                FirstPublication = data.FirstPublication.HasValue ? new DateTimeOffset(data.FirstPublication.Value, TimeSpan.Zero) : null,
                 FirstPublicationPrecision = data.FirstPublicationPrecision
             };
 

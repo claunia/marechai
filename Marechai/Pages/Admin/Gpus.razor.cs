@@ -82,7 +82,7 @@ public partial class Gpus
                 ModelCode   = data.ModelCode,
 
                 IntroducedPrecision = data.IntroducedPrecision,
-                Introduced  = data.Introduced.HasValue ? new DateTimeOffset(data.Introduced.Value) : null,
+                Introduced  = data.Introduced.HasValue ? new DateTimeOffset(data.Introduced.Value, TimeSpan.Zero) : null,
                 Package     = data.Package,
                 Process     = data.Process,
                 ProcessNm   = data.ProcessNm,
@@ -113,7 +113,7 @@ public partial class Gpus
             { x => x.Name, gpu.Name },
             { x => x.CompanyId, gpu.CompanyId },
             { x => x.ModelCode, gpu.ModelCode },
-            { x => x.Introduced, gpu.Introduced?.DateTime },
+            { x => x.Introduced, gpu.Introduced?.UtcDateTime },
             { x => x.IntroducedPrecision, gpu.IntroducedPrecision ?? 0 },
             { x => x.Package, gpu.Package },
             { x => x.Process, gpu.Process },
@@ -141,7 +141,7 @@ public partial class Gpus
 
                 IntroducedPrecision = data.IntroducedPrecision,
                 ModelCode   = data.ModelCode,
-                Introduced  = data.Introduced.HasValue ? new DateTimeOffset(data.Introduced.Value) : null,
+                Introduced  = data.Introduced.HasValue ? new DateTimeOffset(data.Introduced.Value, TimeSpan.Zero) : null,
                 Package     = data.Package,
                 Process     = data.Process,
                 ProcessNm   = data.ProcessNm,

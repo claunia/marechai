@@ -64,7 +64,7 @@ public partial class Books
                 CountryId   = data.CountryId,
 
                 PublishedPrecision = data.PublishedPrecision,
-                Published   = data.Published.HasValue ? new DateTimeOffset(data.Published.Value) : null,
+                Published   = data.Published.HasValue ? new DateTimeOffset(data.Published.Value, TimeSpan.Zero) : null,
                 PreviousId  = data.PreviousId,
                 SourceId    = data.SourceId
             };
@@ -100,7 +100,7 @@ public partial class Books
             { x => x.Edition, fullBook.Edition },
             { x => x.Pages, fullBook.Pages },
             { x => x.CountryId, fullBook.CountryId },
-            { x => x.Published, fullBook.Published?.DateTime },
+            { x => x.Published, fullBook.Published?.UtcDateTime },
             { x => x.PublishedPrecision, fullBook.PublishedPrecision ?? 0 },
             { x => x.PreviousId, fullBook.PreviousId },
             { x => x.SourceId, fullBook.SourceId },
@@ -130,7 +130,7 @@ public partial class Books
 
                 PublishedPrecision = data.PublishedPrecision,
                 CountryId   = data.CountryId,
-                Published   = data.Published.HasValue ? new DateTimeOffset(data.Published.Value) : null,
+                Published   = data.Published.HasValue ? new DateTimeOffset(data.Published.Value, TimeSpan.Zero) : null,
                 PreviousId  = data.PreviousId,
                 SourceId    = data.SourceId
             };

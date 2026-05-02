@@ -104,10 +104,10 @@ public partial class Companies
                 Name                  = data.Name,
                 LegalName             = data.LegalName,
                 Status                = data.Status,
-                Founded               = data.Founded.HasValue ? new DateTimeOffset(data.Founded.Value) : null,
+                Founded               = data.Founded.HasValue ? new DateTimeOffset(data.Founded.Value, TimeSpan.Zero) : null,
                 FoundedPrecision      = data.FoundedPrecision,
                 
-                Sold                  = data.Sold.HasValue ? new DateTimeOffset(data.Sold.Value) : null,
+                Sold                  = data.Sold.HasValue ? new DateTimeOffset(data.Sold.Value, TimeSpan.Zero) : null,
                 SoldPrecision         = data.SoldPrecision,
                 
                 SoldToId              = data.SoldToId,
@@ -144,10 +144,10 @@ public partial class Companies
             { x => x.Name, company.Name },
             { x => x.LegalName, company.LegalName },
             { x => x.StatusValue, company.Status ?? 0 },
-            { x => x.Founded, company.Founded?.DateTime },
+            { x => x.Founded, company.Founded?.UtcDateTime },
             { x => x.FoundedPrecision, company.FoundedPrecision ?? 0 },
             
-            { x => x.Sold, company.Sold?.DateTime },
+            { x => x.Sold, company.Sold?.UtcDateTime },
             { x => x.SoldPrecision, company.SoldPrecision ?? 0 },
             
             { x => x.SoldToId, company.SoldToId },
@@ -178,10 +178,10 @@ public partial class Companies
                 Name                  = data.Name,
                 LegalName             = data.LegalName,
                 Status                = data.Status,
-                Founded               = data.Founded.HasValue ? new DateTimeOffset(data.Founded.Value) : null,
+                Founded               = data.Founded.HasValue ? new DateTimeOffset(data.Founded.Value, TimeSpan.Zero) : null,
                 FoundedPrecision      = data.FoundedPrecision,
                 
-                Sold                  = data.Sold.HasValue ? new DateTimeOffset(data.Sold.Value) : null,
+                Sold                  = data.Sold.HasValue ? new DateTimeOffset(data.Sold.Value, TimeSpan.Zero) : null,
                 SoldPrecision         = data.SoldPrecision,
                 
                 SoldToId              = data.SoldToId,

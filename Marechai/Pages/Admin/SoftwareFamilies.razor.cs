@@ -56,7 +56,7 @@ public partial class SoftwareFamilies
                 ParentId   = data.ParentId,
 
                 IntroducedPrecision = data.IntroducedPrecision,
-                Introduced = data.Introduced.HasValue ? new DateTimeOffset(data.Introduced.Value) : null
+                Introduced = data.Introduced.HasValue ? new DateTimeOffset(data.Introduced.Value, TimeSpan.Zero) : null
             };
 
             (int? id, string? errorMessage) = await SoftwareFamiliesService.CreateAsync(dto);
@@ -90,7 +90,7 @@ public partial class SoftwareFamilies
             { x => x.FamilyId, full.Id ?? 0 },
             { x => x.Name, full.Name },
             { x => x.ParentId, full.ParentId },
-            { x => x.Introduced, full.Introduced?.DateTime },
+            { x => x.Introduced, full.Introduced?.UtcDateTime },
             { x => x.IntroducedPrecision, full.IntroducedPrecision ?? 0 },
         };
 
@@ -112,7 +112,7 @@ public partial class SoftwareFamilies
 
                 IntroducedPrecision = data.IntroducedPrecision,
                 ParentId   = data.ParentId,
-                Introduced = data.Introduced.HasValue ? new DateTimeOffset(data.Introduced.Value) : null
+                Introduced = data.Introduced.HasValue ? new DateTimeOffset(data.Introduced.Value, TimeSpan.Zero) : null
             };
 
             (bool succeeded, string? errorMessage) = await SoftwareFamiliesService.UpdateAsync(full.Id ?? 0, dto);
