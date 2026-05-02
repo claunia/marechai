@@ -86,6 +86,14 @@
         <value>Machines</value>
         <comment>Machines</comment>
     </data>
+    <data name="Computers" xml:space="preserve">
+        <value>Ordinateurs</value>
+        <comment>Computers</comment>
+    </data>
+    <data name="Consoles" xml:space="preserve">
+        <value>Consoles</value>
+        <comment>Videogame consoles</comment>
+    </data>
     <data name="Software" xml:space="preserve">
         <value>Logiciels</value>
         <comment>Software</comment>

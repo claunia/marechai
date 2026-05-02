@@ -23,8 +23,8 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
-using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.AspNetCore.Components;
@@ -34,6 +34,8 @@ namespace Marechai.Pages.Profile;
 public partial class View
 {
     List<CollectedBookDto>?            _collectedBooks;
+    List<CollectedMachineDto>?         _collectedComputers;
+    List<CollectedMachineDto>?         _collectedConsoles;
     List<CollectedDocumentDto>?        _collectedDocuments;
     List<CollectedMachineDto>?         _collectedMachines;
     List<CollectedSoftwareReleaseDto>? _collectedReleases;
@@ -73,6 +75,8 @@ public partial class View
             _collectedBooks     = await CollectionSvc.GetCollectedBooksAsync(Username);
             _collectedDocuments = await CollectionSvc.GetCollectedDocumentsAsync(Username);
             _collectedMachines  = await CollectionSvc.GetCollectedMachinesAsync(Username);
+            _collectedComputers = _collectedMachines?.Where(m => m.Type == 1).ToList();
+            _collectedConsoles  = _collectedMachines?.Where(m => m.Type == 2).ToList();
             _collectedReleases  = await CollectionSvc.GetCollectedSoftwareReleasesAsync(Username);
         }
 

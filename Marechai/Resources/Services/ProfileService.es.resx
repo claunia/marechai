@@ -81,6 +81,12 @@
     <data name="Machines" xml:space="preserve">
         <value>Máquinas</value>
     </data>
+    <data name="Computers" xml:space="preserve">
+        <value>Ordenadores</value>
+    </data>
+    <data name="Consoles" xml:space="preserve">
+        <value>Consolas</value>
+    </data>
     <data name="Software" xml:space="preserve">
         <value>Software</value>
     </data>

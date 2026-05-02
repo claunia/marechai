@@ -96,11 +96,18 @@
                         @_summary.DocumentCount @L["Documents"]
                     </MudChip>
                 }
-                @if(_summary.MachineCount > 0)
+                @if(_collectedComputers?.Count > 0)
                 {
                     <MudChip T="string" Color="Color.Default" Size="Size.Small" Icon="@Icons.Material.Filled.Computer"
                              Style="color: white; background: rgba(255,255,255,0.2);">
-                        @_summary.MachineCount @L["Machines"]
+                        @_collectedComputers.Count @L["Computers"]
+                    </MudChip>
+                }
+                @if(_collectedConsoles?.Count > 0)
+                {
+                    <MudChip T="string" Color="Color.Default" Size="Size.Small" Icon="@Icons.Material.Filled.SportsEsports"
+                             Style="color: white; background: rgba(255,255,255,0.2);">
+                        @_collectedConsoles.Count @L["Consoles"]
                     </MudChip>
                 }
                 @if(_summary.SoftwareReleaseCount > 0)
@@ -239,20 +246,47 @@
             </MudExpansionPanels>
         }
 
-        @if(_collectedMachines?.Count > 0)
+        @if(_collectedComputers?.Count > 0)
         {
             <MudExpansionPanels Class="mb-4">
                 <MudExpansionPanel>
                     <TitleContent>
                         <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                             <MudIcon Icon="@Icons.Material.Filled.Computer" Color="Color.Primary"/>
-                            <MudText Typo="Typo.h6">@L["Machines"]</MudText>
-                            <MudChip T="string" Color="Color.Primary" Size="Size.Small">@_collectedMachines.Count</MudChip>
+                            <MudText Typo="Typo.h6">@L["Computers"]</MudText>
+                            <MudChip T="string" Color="Color.Primary" Size="Size.Small">@_collectedComputers.Count</MudChip>
                         </MudStack>
                     </TitleContent>
                     <ChildContent>
                         <MudList T="CollectedMachineDto" Dense="true">
-                            @foreach(CollectedMachineDto machine in _collectedMachines)
+                            @foreach(CollectedMachineDto machine in _collectedComputers)
+                            {
+                                <MudListItem T="CollectedMachineDto" Href="@($"/machine/{machine.MachineId}")">
+                                    <MudText Typo="Typo.body1">
+                                        @(machine.CompanyName is not null ? $"{machine.CompanyName} {machine.Name}" : machine.Name)
+                                    </MudText>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    </ChildContent>
+                </MudExpansionPanel>
+            </MudExpansionPanels>
+        }
+
+        @if(_collectedConsoles?.Count > 0)
+        {
+            <MudExpansionPanels Class="mb-4">
+                <MudExpansionPanel>
+                    <TitleContent>
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                            <MudIcon Icon="@Icons.Material.Filled.SportsEsports" Color="Color.Primary"/>
+                            <MudText Typo="Typo.h6">@L["Consoles"]</MudText>
+                            <MudChip T="string" Color="Color.Primary" Size="Size.Small">@_collectedConsoles.Count</MudChip>
+                        </MudStack>
+                    </TitleContent>
+                    <ChildContent>
+                        <MudList T="CollectedMachineDto" Dense="true">
+                            @foreach(CollectedMachineDto machine in _collectedConsoles)
                             {
                                 <MudListItem T="CollectedMachineDto" Href="@($"/machine/{machine.MachineId}")">
                                     <MudText Typo="Typo.body1">
