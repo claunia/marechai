@@ -12,7 +12,7 @@ using System;
 namespace Marechai.ApiClient.Smartphones.MinimumYear
 {
     /// <summary>
-    /// Builds and executes requests for operations under \consoles\minimum-year
+    /// Builds and executes requests for operations under \smartphones\minimum-year
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class MinimumYearRequestBuilder : BaseRequestBuilder

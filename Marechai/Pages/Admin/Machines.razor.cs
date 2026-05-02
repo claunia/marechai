@@ -181,4 +181,23 @@ public partial class Machines
             }
         }
     }
+
+    async Task OpenDescriptionsDialog(MachineDto machine)
+    {
+        DialogParameters<MachineDescriptionDialog> parameters = new()
+        {
+            { x => x.MachineId, machine.Id ?? 0 },
+            { x => x.MachineName, machine.Name }
+        };
+
+        IDialogReference dialog =
+            await DialogService.ShowAsync<MachineDescriptionDialog>(L["Machine Descriptions"], parameters,
+                                                                     new DialogOptions
+                                                                     {
+                                                                         MaxWidth  = MaxWidth.Medium,
+                                                                         FullWidth = true
+                                                                     });
+
+        await dialog.Result;
+    }
 }

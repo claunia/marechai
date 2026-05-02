@@ -10,12 +10,12 @@ using System;
 namespace Marechai.ApiClient.Smartphones.ByYear
 {
     /// <summary>
-    /// Builds and executes requests for operations under \consoles\by-year
+    /// Builds and executes requests for operations under \smartphones\by-year
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class ByYearRequestBuilder : BaseRequestBuilder
     {
-        /// <summary>Gets an item from the Marechai.ApiClient.consoles.byYear.item collection</summary>
+        /// <summary>Gets an item from the Marechai.ApiClient.smartphones.byYear.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
         /// <returns>A <see cref="global::Marechai.ApiClient.Smartphones.ByYear.Item.WithYearItemRequestBuilder"/></returns>
         public global::Marechai.ApiClient.Smartphones.ByYear.Item.WithYearItemRequestBuilder this[int position]
@@ -27,7 +27,7 @@ namespace Marechai.ApiClient.Smartphones.ByYear
                 return new global::Marechai.ApiClient.Smartphones.ByYear.Item.WithYearItemRequestBuilder(urlTplParams, RequestAdapter);
             }
         }
-        /// <summary>Gets an item from the Marechai.ApiClient.consoles.byYear.item collection</summary>
+        /// <summary>Gets an item from the Marechai.ApiClient.smartphones.byYear.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
         /// <returns>A <see cref="global::Marechai.ApiClient.Smartphones.ByYear.Item.WithYearItemRequestBuilder"/></returns>
         [Obsolete("This indexer is deprecated and will be removed in the next major version. Use the one with the typed parameter instead.")]

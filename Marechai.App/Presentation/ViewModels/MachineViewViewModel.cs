@@ -28,6 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage.Streams;
@@ -55,6 +56,9 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
     private readonly MachinePhotoCache             _photoCache;
     [ObservableProperty]
     private string _companyName = string.Empty;
+
+    [ObservableProperty]
+    private string _descriptionHtml = string.Empty;
 
     [ObservableProperty]
     private string _errorMessage = string.Empty;
@@ -120,6 +124,19 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
 
     [ObservableProperty]
     private Visibility _showStorage = Visibility.Collapsed;
+
+    [ObservableProperty]
+    private Visibility _showDescription = Visibility.Collapsed;
+
+    /// <summary>
+    ///     Gets whether a description is available
+    /// </summary>
+    public bool HasDescription => !string.IsNullOrWhiteSpace(DescriptionHtml);
+
+    partial void OnDescriptionHtmlChanged(string value)
+    {
+        OnPropertyChanged(nameof(HasDescription));
+    }
 
     public MachineViewViewModel(ILogger<MachineViewViewModel> logger,             IRegionManager     regionManager,
                                 ComputersService              computersService,   MachinePhotoCache  photoCache,
@@ -478,6 +495,19 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
                 });
             }
 
+            // Load localized description
+            try
+            {
+                string langCode = GetIso639CodeFromCulture();
+                MachineDescriptionDto? desc = await _computersService.GetDescriptionAsync(machineId, langCode);
+
+                DescriptionHtml = desc?.Html ?? desc?.Markdown ?? string.Empty;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("Failed to load machine description: {Exception}", ex.Message);
+            }
+
             // Populate photos
             List<Guid> photoIds = await _computersService.GetMachinePhotosAsync(machineId);
 
@@ -529,6 +559,7 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
         ShowStorage           = Storage.Count           > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowSoftware          = Software.Count          > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowPhotos            = Photos.Count            > 0 ? Visibility.Visible : Visibility.Collapsed;
+        ShowDescription       = HasDescription ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private async Task LoadPhotoThumbnailAsync(PhotoCarouselDisplayItem photoItem)
@@ -543,5 +574,21 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
         {
             _logger.LogError(ex, "Error loading photo thumbnail {PhotoId}", photoItem.PhotoId);
         }
+    }
+
+    private static string GetIso639CodeFromCulture()
+    {
+        string twoLetter = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+
+        return twoLetter switch
+        {
+            "en" => "eng",
+            "es" => "spa",
+            "de" => "deu",
+            "fr" => "fra",
+            "la" => "lat",
+            "pt" => "por",
+            _    => "eng"
+        };
     }
 }

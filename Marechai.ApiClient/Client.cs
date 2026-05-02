@@ -96,11 +96,6 @@ namespace Marechai.ApiClient
         {
             get => new global::Marechai.ApiClient.Consoles.ConsolesRequestBuilder(PathParameters, RequestAdapter);
         }
-        /// <summary>The smartphones property</summary>
-        public global::Marechai.ApiClient.Smartphones.SmartphonesRequestBuilder Smartphones
-        {
-            get => new global::Marechai.ApiClient.Smartphones.SmartphonesRequestBuilder(PathParameters, RequestAdapter);
-        }
         /// <summary>The countries property</summary>
         public global::Marechai.ApiClient.Countries.CountriesRequestBuilder Countries
         {
@@ -270,6 +265,11 @@ namespace Marechai.ApiClient
         public global::Marechai.ApiClient.ScreensByMachine.ScreensByMachineRequestBuilder ScreensByMachine
         {
             get => new global::Marechai.ApiClient.ScreensByMachine.ScreensByMachineRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The smartphones property</summary>
+        public global::Marechai.ApiClient.Smartphones.SmartphonesRequestBuilder Smartphones
+        {
+            get => new global::Marechai.ApiClient.Smartphones.SmartphonesRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The software property</summary>
         public global::Marechai.ApiClient.Software.SoftwareRequestBuilder Software

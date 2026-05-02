@@ -149,6 +149,37 @@
     </MudCardContent>
 </MudCard>
 
+@* ── Description Card ── *@
+@if(!string.IsNullOrWhiteSpace(_description))
+{
+    <MudCard Elevation="2" Class="mb-4 rounded-lg">
+        <MudCardContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+                <MudIcon Icon="@Icons.Material.Filled.Description" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Description"]</MudText>
+            </MudStack>
+            <div style="color: var(--mud-palette-text-primary); overflow-wrap: break-word; word-break: break-word;">
+                <style>
+                    .machine-description, .machine-description * {
+                        color: inherit !important;
+                    }
+                    .machine-description img {
+                        max-width: 100%;
+                        height: auto;
+                    }
+                    .machine-description pre {
+                        overflow-x: auto;
+                        max-width: 100%;
+                    }
+                </style>
+                <div class="machine-description mud-typography mud-typography-body1" style="padding: 8px;">
+                    @((MarkupString)_description)
+                </div>
+            </div>
+        </MudCardContent>
+    </MudCard>
+}
+
 @* ── Processors Card ── *@
 @if(_machine.Processors.Count > 0)
 {

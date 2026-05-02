@@ -12,7 +12,7 @@ using System;
 namespace Marechai.ApiClient.Smartphones.MaximumYear
 {
     /// <summary>
-    /// Builds and executes requests for operations under \consoles\maximum-year
+    /// Builds and executes requests for operations under \smartphones\maximum-year
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class MaximumYearRequestBuilder : BaseRequestBuilder

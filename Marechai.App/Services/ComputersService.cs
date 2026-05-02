@@ -286,4 +286,26 @@ public class ComputersService
             return [];
         }
     }
+
+    /// <summary>
+    ///     Fetches a localized description for a machine
+    /// </summary>
+    public async Task<MachineDescriptionDto?> GetDescriptionAsync(int machineId, string languageCode)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching description for machine {MachineId} lang {Lang}", machineId, languageCode);
+
+            MachineDescriptionDto? desc = await _apiClient.Machines[machineId].Description.GetAsync(
+                config => config.QueryParameters.Lang = languageCode);
+
+            return desc;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching description for machine {MachineId}", machineId);
+
+            return null;
+        }
+    }
 }

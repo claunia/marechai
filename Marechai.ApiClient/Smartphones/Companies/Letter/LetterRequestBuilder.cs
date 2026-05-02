@@ -10,12 +10,12 @@ using System;
 namespace Marechai.ApiClient.Smartphones.Companies.Letter
 {
     /// <summary>
-    /// Builds and executes requests for operations under \consoles\companies\letter
+    /// Builds and executes requests for operations under \smartphones\companies\letter
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class LetterRequestBuilder : BaseRequestBuilder
     {
-        /// <summary>Gets an item from the Marechai.ApiClient.consoles.companies.letter.item collection</summary>
+        /// <summary>Gets an item from the Marechai.ApiClient.smartphones.companies.letter.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
         /// <returns>A <see cref="global::Marechai.ApiClient.Smartphones.Companies.Letter.Item.WithCItemRequestBuilder"/></returns>
         public global::Marechai.ApiClient.Smartphones.Companies.Letter.Item.WithCItemRequestBuilder this[string position]

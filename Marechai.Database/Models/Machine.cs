@@ -72,4 +72,5 @@ public class Machine : BaseModel<int>
     public virtual ICollection<BooksByMachine>               Books             { get; set; }
     public virtual ICollection<MagazinesByMachine>           Magazines         { get; set; }
     public virtual ICollection<SoftwarePlatformsByMachine>   SoftwarePlatforms { get; set; }
+    public virtual ICollection<MachineDescription>           Descriptions      { get; set; }
 }

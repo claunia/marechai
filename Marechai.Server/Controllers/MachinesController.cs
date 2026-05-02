@@ -401,4 +401,139 @@ public class MachinesController(MarechaiContext context) : ControllerBase
 
         return Ok();
     }
+
+    [HttpGet("{id:int}/description/text")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<string> GetDescriptionTextAsync(int id, [FromQuery] string lang = "eng")
+    {
+        MachineDescription description =
+            await context.MachineDescriptions.FirstOrDefaultAsync(d => d.MachineId == id && d.LanguageCode == lang);
+
+        // Fallback to English if requested language not found
+        if(description is null && lang != "eng")
+            description = await context.MachineDescriptions.FirstOrDefaultAsync(d => d.MachineId == id &&
+                              d.LanguageCode == "eng");
+
+        return description?.Html ?? description?.Text;
+    }
+
+    [HttpGet("{id:int}/descriptions")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<MachineDescriptionDto>> GetDescriptionsAsync(int id) => context.MachineDescriptions
+       .Where(d => d.MachineId == id)
+       .Select(d => new MachineDescriptionDto
+        {
+            Id           = d.Id,
+            MachineId    = d.MachineId,
+            Html         = d.Html,
+            Markdown     = d.Text,
+            LanguageCode = d.LanguageCode,
+            Language     = d.Language.ReferenceName
+        })
+       .ToListAsync();
+
+    [HttpGet("{id:int}/description")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<MachineDescriptionDto> GetDescriptionAsync(int id, [FromQuery] string lang = "eng")
+    {
+        MachineDescriptionDto description = await context.MachineDescriptions
+                                                         .Where(d => d.MachineId == id && d.LanguageCode == lang)
+                                                         .Select(d => new MachineDescriptionDto
+                                                          {
+                                                              Id           = d.Id,
+                                                              MachineId    = d.MachineId,
+                                                              Html         = d.Html,
+                                                              Markdown     = d.Text,
+                                                              LanguageCode = d.LanguageCode,
+                                                              Language     = d.Language.ReferenceName
+                                                          })
+                                                         .FirstOrDefaultAsync();
+
+        // Fallback to English if requested language not found
+        if(description is null && lang != "eng")
+            description = await context.MachineDescriptions
+                                       .Where(d => d.MachineId == id && d.LanguageCode == "eng")
+                                       .Select(d => new MachineDescriptionDto
+                                        {
+                                            Id           = d.Id,
+                                            MachineId    = d.MachineId,
+                                            Html         = d.Html,
+                                            Markdown     = d.Text,
+                                            LanguageCode = d.LanguageCode,
+                                            Language     = d.Language.ReferenceName
+                                        })
+                                       .FirstOrDefaultAsync();
+
+        return description;
+    }
+
+    [HttpPost("{id:int}/description")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<int>> CreateOrUpdateDescriptionAsync(
+        int id, [FromBody] MachineDescriptionDto description)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        MachineDescription current = await context.MachineDescriptions
+                                                  .FirstOrDefaultAsync(d => d.MachineId    == id &&
+                                                                            d.LanguageCode == description.LanguageCode);
+
+        if(current is null)
+        {
+            current = new MachineDescription
+            {
+                MachineId    = id,
+                LanguageCode = description.LanguageCode,
+                Html         = description.Html,
+                Text         = description.Markdown
+            };
+
+            await context.MachineDescriptions.AddAsync(current);
+        }
+        else
+        {
+            current.Html = description.Html;
+            current.Text = description.Markdown;
+        }
+
+        await context.SaveChangesWithUserAsync(userId);
+
+        return current.Id;
+    }
+
+    [HttpDelete("{id:int}/description/{languageCode}")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult> DeleteDescriptionAsync(int id, string languageCode)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        MachineDescription description = await context.MachineDescriptions
+                                                      .FirstOrDefaultAsync(d => d.MachineId    == id &&
+                                                                                d.LanguageCode == languageCode);
+
+        if(description is null) return NotFound();
+
+        context.MachineDescriptions.Remove(description);
+
+        await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
+    }
 }

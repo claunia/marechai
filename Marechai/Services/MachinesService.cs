@@ -607,4 +607,70 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
             return (false, ex.Message);
         }
     }
+
+    // Description management
+    public async Task<string?> GetDescriptionTextAsync(int id)
+    {
+        try
+        {
+            MachineDescriptionDto? desc = await client.Machines[id].Description.GetAsync();
+
+            return desc?.Html ?? desc?.Markdown;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public async Task<List<MachineDescriptionDto>> GetDescriptionsAsync(int machineId)
+    {
+        try
+        {
+            List<MachineDescriptionDto>? descriptions = await client.Machines[machineId].Descriptions.GetAsync();
+
+            return descriptions ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> CreateOrUpdateDescriptionAsync(int machineId,
+        MachineDescriptionDto dto)
+    {
+        try
+        {
+            await client.Machines[machineId].Description.PostAsync(dto);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> DeleteDescriptionAsync(int machineId, string languageCode)
+    {
+        try
+        {
+            await client.Machines[machineId].Description[languageCode].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
 }

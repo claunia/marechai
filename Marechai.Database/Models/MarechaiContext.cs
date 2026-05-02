@@ -85,6 +85,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<Log>                                 Log                                 { get; set; }
     public virtual DbSet<LogicalPartition>                    LogicalPartitions                   { get; set; }
     public virtual DbSet<Machine>                             Machines                            { get; set; }
+    public virtual DbSet<MachineDescription>                  MachineDescriptions                 { get; set; }
     public virtual DbSet<MachineFamily>                       MachineFamilies                     { get; set; }
     public virtual DbSet<MachinePhoto>                        MachinePhotos                       { get; set; }
     public virtual DbSet<Magazine>                            Magazines                           { get; set; }
@@ -934,6 +935,22 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .WithMany(p => p.Machines)
                   .HasForeignKey(d => d.FamilyId)
                   .HasConstraintName("fk_machines_family");
+        });
+
+        modelBuilder.Entity<MachineDescription>(entity =>
+        {
+            entity.HasIndex(e => e.Text).IsFullText();
+
+            entity.HasIndex(e => new { e.MachineId, e.LanguageCode })
+                  .IsUnique()
+                  .HasDatabaseName("idx_machine_descriptions_machine_language");
+
+            entity.Property(e => e.LanguageCode).UseCollation("utf8mb4_general_ci");
+
+            entity.HasOne(e => e.Language)
+                  .WithMany()
+                  .HasForeignKey(e => e.LanguageCode)
+                  .HasConstraintName("fk_machine_descriptions_language");
         });
 
         modelBuilder.Entity<OwnedMachine>(entity =>

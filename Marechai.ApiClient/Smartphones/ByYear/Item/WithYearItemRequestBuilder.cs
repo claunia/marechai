@@ -12,7 +12,7 @@ using System;
 namespace Marechai.ApiClient.Smartphones.ByYear.Item
 {
     /// <summary>
-    /// Builds and executes requests for operations under \consoles\by-year\{year}
+    /// Builds and executes requests for operations under \smartphones\by-year\{year}
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class WithYearItemRequestBuilder : BaseRequestBuilder

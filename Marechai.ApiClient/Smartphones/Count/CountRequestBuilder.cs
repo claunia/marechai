@@ -12,7 +12,7 @@ using System;
 namespace Marechai.ApiClient.Smartphones.Count
 {
     /// <summary>
-    /// Builds and executes requests for operations under \consoles\count
+    /// Builds and executes requests for operations under \smartphones\count
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class CountRequestBuilder : BaseRequestBuilder

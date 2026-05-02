@@ -35,6 +35,7 @@ namespace Marechai.Pages.Machines;
 public partial class View
 {
     int              _id;
+    string           _description;
     bool             _isCollected;
     bool             _loaded;
     MachineDto _machine;
@@ -66,6 +67,7 @@ public partial class View
 
         _photos           = await MachinePhotosService.GetGuidsByMachineAsync(Id);
         _software         = await Service.GetSoftwareByMachineAsync(Id);
+        _description      = await Service.GetDescriptionTextAsync(Id);
 
         AuthenticationState authState = await AuthState;
 

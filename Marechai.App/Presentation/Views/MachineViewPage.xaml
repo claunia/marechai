@@ -385,6 +385,17 @@
                         </ItemsControl>
                     </StackPanel>
 
+                    <!-- Description Section -->
+                    <StackPanel Visibility="{Binding ShowDescription}"
+                                Spacing="8"
+                                Margin="0,16,0,0">
+                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=DescriptionSectionTitle}"
+                                   FontSize="20"
+                                   FontWeight="SemiBold" />
+                        <WebView2 x:Name="DescriptionWebView"
+                                  MinHeight="200" />
+                    </StackPanel>
+
                     <!-- Software -->
                     <StackPanel Visibility="{Binding ShowSoftware}"
                                 Spacing="12">

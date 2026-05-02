@@ -12,7 +12,7 @@ using System;
 namespace Marechai.ApiClient.Smartphones.Companies.Letter.Item
 {
     /// <summary>
-    /// Builds and executes requests for operations under \consoles\companies\letter\{c}
+    /// Builds and executes requests for operations under \smartphones\companies\letter\{c}
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class WithCItemRequestBuilder : BaseRequestBuilder
