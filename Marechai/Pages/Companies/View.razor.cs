@@ -24,6 +24,7 @@
 *******************************************************************************/
 
 using System.Collections.Generic;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
@@ -78,6 +79,9 @@ public partial class View
             return;
         }
 
+        try
+        {
+
         _company = await Service.GetAsync(Id);
         List<MachineDto> machines = await Service.GetMachinesAsync(Id);
 
@@ -100,6 +104,11 @@ public partial class View
 
         _loaded = true;
         StateHasChanged();
+        }
+        catch(ObjectDisposedException)
+        {
+            // Component was disposed during async loading — ignore
+        }
     }
 
 }

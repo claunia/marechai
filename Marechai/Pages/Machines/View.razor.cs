@@ -63,6 +63,8 @@ public partial class View
     {
         if(_loaded) return;
 
+        try
+        {
         _machine = await Service.GetMachine(Id);
 
         _photos           = await MachinePhotosService.GetGuidsByMachineAsync(Id);
@@ -76,6 +78,11 @@ public partial class View
 
         _loaded = true;
         StateHasChanged();
+        }
+        catch(ObjectDisposedException)
+        {
+            // Component was disposed during async loading — ignore
+        }
     }
 
     async Task ToggleCollectionAsync()

@@ -44,11 +44,12 @@
                 }
             </MudSelect>
 
-            <MudTextField @bind-Value="_markdown"
-                          Label="Description (Markdown)"
-                          Variant="Variant.Outlined"
-                          Lines="10"
-                          Class="mb-4"/>
+            <MarkdownEditor @bind-Value="_markdown"
+                            @ref="_editor"
+                            SpellChecker="false"
+                            MinHeight="300px"
+                            MaxHeight="500px"
+                            Placeholder="Enter description in Markdown..."/>
 
             @if(!string.IsNullOrWhiteSpace(_errorMessage))
             {
@@ -75,6 +76,8 @@
     string? _successMessage;
 
     List<SoftwareDescriptionDto>? _descriptions;
+
+    MarkdownEditor _editor;
 
     static readonly (string Code, string Name)[] _availableLanguages =
     [
@@ -109,10 +112,13 @@
     static string GetLanguageName(string code) =>
         _availableLanguages.FirstOrDefault(l => l.Code == code).Name ?? code;
 
-    void EditDescription(SoftwareDescriptionDto desc)
+    async Task EditDescription(SoftwareDescriptionDto desc)
     {
         _selectedLanguage = desc.LanguageCode;
         _markdown         = desc.Markdown;
+
+        if(_editor is not null)
+            await _editor.SetValueAsync(_markdown);
     }
 
     async Task ConfirmDeleteDescription(SoftwareDescriptionDto desc)

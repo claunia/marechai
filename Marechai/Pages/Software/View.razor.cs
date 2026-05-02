@@ -84,6 +84,9 @@ public partial class View
             return;
         }
 
+        try
+        {
+
         _software = await Service.GetSoftwareByIdAsync(Id);
 
         if(_software is null)
@@ -186,5 +189,10 @@ public partial class View
 
         _loaded = true;
         StateHasChanged();
+        }
+        catch(ObjectDisposedException)
+        {
+            // Component was disposed during async loading — ignore
+        }
     }
 }

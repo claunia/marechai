@@ -16,6 +16,7 @@
     <PackageReference Include="Humanizer"/>
     <PackageReference Include="MudBlazor"/>
     <PackageReference Include="Markdig"/>
+    <PackageReference Include="PSC.Blazor.Components.MarkdownEditor"/>
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization"/>
     <PackageReference Include="Microsoft.Kiota.Abstractions"/>
     <PackageReference Include="Microsoft.Kiota.Http.HttpClientLibrary"/>
