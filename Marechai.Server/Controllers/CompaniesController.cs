@@ -29,6 +29,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
+using Markdig;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -494,13 +495,16 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
                                                   .FirstOrDefaultAsync(d => d.CompanyId    == id &&
                                                                             d.LanguageCode == description.LanguageCode);
 
+        MarkdownPipeline pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+        string             html     = Markdown.ToHtml(description.Markdown, pipeline);
+
         if(current is null)
         {
             current = new CompanyDescription
             {
                 CompanyId    = id,
                 LanguageCode = description.LanguageCode,
-                Html         = description.Html,
+                Html         = html,
                 Text         = description.Markdown
             };
 
@@ -508,7 +512,7 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
         }
         else
         {
-            current.Html = description.Html;
+            current.Html = html;
             current.Text = description.Markdown;
         }
 

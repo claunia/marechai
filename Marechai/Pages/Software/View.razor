@@ -92,8 +92,42 @@
             </MudStack>
             <div style="color: var(--mud-palette-text-primary); overflow-wrap: break-word; word-break: break-word;">
                 <style>
-                    .software-description, .software-description * {
-                        color: inherit !important;
+                    .software-description {
+                        color: inherit;
+                        line-height: 1.7;
+                    }
+                    .software-description h1 {
+                        font-size: 1.75rem;
+                        font-weight: 700;
+                        margin: 1.5rem 0 0.75rem;
+                    }
+                    .software-description h2 {
+                        font-size: 1.5rem;
+                        font-weight: 600;
+                        margin: 1.25rem 0 0.5rem;
+                    }
+                    .software-description h3 {
+                        font-size: 1.25rem;
+                        font-weight: 600;
+                        margin: 1rem 0 0.5rem;
+                    }
+                    .software-description h4, .software-description h5, .software-description h6 {
+                        font-size: 1.1rem;
+                        font-weight: 600;
+                        margin: 0.75rem 0 0.5rem;
+                    }
+                    .software-description p {
+                        margin: 0.5rem 0;
+                    }
+                    .software-description ul, .software-description ol {
+                        margin: 0.5rem 0;
+                        padding-left: 1.5rem;
+                    }
+                    .software-description li {
+                        margin: 0.25rem 0;
+                    }
+                    .software-description strong {
+                        font-weight: 700;
                     }
                     .software-description img {
                         max-width: 100%;
@@ -102,9 +136,38 @@
                     .software-description pre {
                         overflow-x: auto;
                         max-width: 100%;
+                        background: var(--mud-palette-surface);
+                        padding: 1rem;
+                        border-radius: 4px;
+                    }
+                    .software-description code {
+                        background: var(--mud-palette-surface);
+                        padding: 0.125rem 0.25rem;
+                        border-radius: 3px;
+                        font-size: 0.875em;
+                    }
+                    .software-description blockquote {
+                        border-left: 4px solid var(--mud-palette-primary);
+                        margin: 0.75rem 0;
+                        padding: 0.5rem 1rem;
+                        opacity: 0.85;
+                    }
+                    .software-description table {
+                        border-collapse: collapse;
+                        margin: 0.75rem 0;
+                        width: 100%;
+                    }
+                    .software-description th, .software-description td {
+                        border: 1px solid var(--mud-palette-lines-default);
+                        padding: 0.5rem;
+                    }
+                    .software-description hr {
+                        border: none;
+                        border-top: 1px solid var(--mud-palette-lines-default);
+                        margin: 1rem 0;
                     }
                 </style>
-                <div class="software-description mud-typography mud-typography-body1" style="padding: 8px;">
+                <div class="software-description" style="padding: 8px;">
                     @((MarkupString)_description)
                 </div>
             </div>

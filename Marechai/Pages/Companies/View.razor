@@ -606,8 +606,42 @@
             </MudStack>
             <div style="color: var(--mud-palette-text-primary); overflow-wrap: break-word; word-break: break-word;">
                 <style>
-                    .company-description, .company-description * {
-                        color: inherit !important;
+                    .company-description {
+                        color: inherit;
+                        line-height: 1.7;
+                    }
+                    .company-description h1 {
+                        font-size: 1.75rem;
+                        font-weight: 700;
+                        margin: 1.5rem 0 0.75rem;
+                    }
+                    .company-description h2 {
+                        font-size: 1.5rem;
+                        font-weight: 600;
+                        margin: 1.25rem 0 0.5rem;
+                    }
+                    .company-description h3 {
+                        font-size: 1.25rem;
+                        font-weight: 600;
+                        margin: 1rem 0 0.5rem;
+                    }
+                    .company-description h4, .company-description h5, .company-description h6 {
+                        font-size: 1.1rem;
+                        font-weight: 600;
+                        margin: 0.75rem 0 0.5rem;
+                    }
+                    .company-description p {
+                        margin: 0.5rem 0;
+                    }
+                    .company-description ul, .company-description ol {
+                        margin: 0.5rem 0;
+                        padding-left: 1.5rem;
+                    }
+                    .company-description li {
+                        margin: 0.25rem 0;
+                    }
+                    .company-description strong {
+                        font-weight: 700;
                     }
                     .company-description img {
                         max-width: 100%;
@@ -616,9 +650,38 @@
                     .company-description pre {
                         overflow-x: auto;
                         max-width: 100%;
+                        background: var(--mud-palette-surface);
+                        padding: 1rem;
+                        border-radius: 4px;
+                    }
+                    .company-description code {
+                        background: var(--mud-palette-surface);
+                        padding: 0.125rem 0.25rem;
+                        border-radius: 3px;
+                        font-size: 0.875em;
+                    }
+                    .company-description blockquote {
+                        border-left: 4px solid var(--mud-palette-primary);
+                        margin: 0.75rem 0;
+                        padding: 0.5rem 1rem;
+                        opacity: 0.85;
+                    }
+                    .company-description table {
+                        border-collapse: collapse;
+                        margin: 0.75rem 0;
+                        width: 100%;
+                    }
+                    .company-description th, .company-description td {
+                        border: 1px solid var(--mud-palette-lines-default);
+                        padding: 0.5rem;
+                    }
+                    .company-description hr {
+                        border: none;
+                        border-top: 1px solid var(--mud-palette-lines-default);
+                        margin: 1rem 0;
                     }
                 </style>
-                <div class="company-description mud-typography mud-typography-body1" style="padding: 8px;">
+                <div class="company-description" style="padding: 8px;">
                     @((MarkupString)_description)
                 </div>
             </div>
