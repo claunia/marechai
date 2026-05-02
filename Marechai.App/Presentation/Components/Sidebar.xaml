@@ -125,6 +125,18 @@
                         BorderThickness="0"
                         CornerRadius="0" />
 
+                <!-- Smartphones -->
+                <Button Content="{Binding SmartphonesButtonText}"
+                        Command="{Binding NavigateToSmartphonesCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
+
                 <!-- Documents -->
                 <Button Content="{Binding DocumentsButtonText}"
                         Command="{Binding NavigateToDocumentsCommand}"

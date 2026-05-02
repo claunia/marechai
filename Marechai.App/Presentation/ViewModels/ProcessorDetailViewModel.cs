@@ -34,6 +34,12 @@ public partial class ProcessorDetailViewModel : ObservableObject, IRegionAware
     private ObservableCollection<MachineItem> _consoles = [];
 
     [ObservableProperty]
+    private string _smartphonesFilterText = string.Empty;
+
+    [ObservableProperty]
+    private ObservableCollection<MachineItem> _smartphones = [];
+
+    [ObservableProperty]
     private string _errorMessage = string.Empty;
 
     [ObservableProperty]
@@ -43,10 +49,16 @@ public partial class ProcessorDetailViewModel : ObservableObject, IRegionAware
     private ObservableCollection<MachineItem> _filteredConsoles = [];
 
     [ObservableProperty]
+    private ObservableCollection<MachineItem> _filteredSmartphones = [];
+
+    [ObservableProperty]
     private bool _hasComputers;
 
     [ObservableProperty]
     private bool _hasConsoles;
+
+    [ObservableProperty]
+    private bool _hasSmartphones;
 
     [ObservableProperty]
     private bool _hasError;
@@ -82,6 +94,7 @@ public partial class ProcessorDetailViewModel : ObservableObject, IRegionAware
         SelectMachineCommand   = new AsyncRelayCommand<int>(SelectMachineAsync);
         ComputersFilterCommand = new RelayCommand(() => FilterComputers());
         ConsolesFilterCommand  = new RelayCommand(() => FilterConsoles());
+        SmartphonesFilterCommand = new RelayCommand(() => FilterSmartphones());
         Title = _localizer["Processor Details"];
     }
 
@@ -90,6 +103,7 @@ public partial class ProcessorDetailViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand SelectMachineCommand   { get; }
     public ICommand           ComputersFilterCommand { get; }
     public ICommand           ConsolesFilterCommand  { get; }
+    public ICommand           SmartphonesFilterCommand { get; }
 
     public string Title { get; }
 
@@ -155,6 +169,7 @@ public partial class ProcessorDetailViewModel : ObservableObject, IRegionAware
                 {
                     Computers.Clear();
                     Consoles.Clear();
+                    Smartphones.Clear();
 
                     foreach(MachineDto machine in machines)
                     {
@@ -166,19 +181,21 @@ public partial class ProcessorDetailViewModel : ObservableObject, IRegionAware
                             Year         = machine.Introduced?.Year ?? 0
                         };
 
-                        // Distinguish between computers and consoles based on Type
                         if(machine.Type == 2) // MachineType.Console
                             Consoles.Add(machineItem);
-                        else // MachineType.Computer or Unknown
+                        else if(machine.Type == 3) // MachineType.Smartphone
+                            Smartphones.Add(machineItem);
+                        else
                             Computers.Add(machineItem);
                     }
 
-                    HasComputers = Computers.Count > 0;
-                    HasConsoles  = Consoles.Count  > 0;
+                    HasComputers   = Computers.Count   > 0;
+                    HasConsoles    = Consoles.Count    > 0;
+                    HasSmartphones = Smartphones.Count > 0;
 
-                    // Initialize filtered collections
                     FilterComputers();
                     FilterConsoles();
+                    FilterSmartphones();
 
                     _logger.LogInformation("Loaded {ComputerCount} computers and {ConsoleCount} consoles for Processor {ProcessorId}",
                                            Computers.Count,
@@ -189,6 +206,7 @@ public partial class ProcessorDetailViewModel : ObservableObject, IRegionAware
                 {
                     HasComputers = false;
                     HasConsoles  = false;
+                    HasSmartphones = false;
                 }
             }
             catch(Exception ex)
@@ -196,6 +214,7 @@ public partial class ProcessorDetailViewModel : ObservableObject, IRegionAware
                 _logger.LogWarning(ex, "Failed to load machines for Processor {ProcessorId}", ProcessorId);
                 HasComputers = false;
                 HasConsoles  = false;
+                HasSmartphones = false;
             }
 
             IsDataLoaded = true;
@@ -263,6 +282,23 @@ public partial class ProcessorDetailViewModel : ObservableObject, IRegionAware
 
             FilteredConsoles.Clear();
             foreach(MachineItem console in filtered) FilteredConsoles.Add(console);
+        }
+    }
+
+    private void FilterSmartphones()
+    {
+        if(string.IsNullOrWhiteSpace(SmartphonesFilterText))
+        {
+            FilteredSmartphones.Clear();
+            foreach(MachineItem smartphone in Smartphones) FilteredSmartphones.Add(smartphone);
+        }
+        else
+        {
+            var filtered = Smartphones.Where(c => c.Name.Contains(SmartphonesFilterText, StringComparison.OrdinalIgnoreCase))
+                                      .ToList();
+
+            FilteredSmartphones.Clear();
+            foreach(MachineItem smartphone in filtered) FilteredSmartphones.Add(smartphone);
         }
     }
 

@@ -37,6 +37,7 @@ public partial class View
     CompanyDto           _company;
     List<MachineDto>     _computers;
     List<MachineDto>     _consoles;
+    List<MachineDto>     _smartphones;
     string               _description;
     List<GpuDto>         _gpus;
     List<SoundSynthDto>  _soundSynths;
@@ -82,6 +83,7 @@ public partial class View
 
         _computers       = machines.Where(m => m.Type == (int)MachineType.Computer).ToList();
         _consoles        = machines.Where(m => m.Type == (int)MachineType.Console).ToList();
+        _smartphones     = machines.Where(m => m.Type == (int)MachineType.Smartphone).ToList();
         _gpus            = await Service.GetGpusAsync(Id);
         _soundSynths     = await Service.GetSoundSynthsAsync(Id);
         _processors      = await Service.GetProcessorsAsync(Id);

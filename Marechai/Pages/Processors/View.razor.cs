@@ -36,6 +36,7 @@ public partial class View
 {
     List<MachineDto> _computers = [];
     List<MachineDto> _consoles  = [];
+    List<MachineDto> _smartphones = [];
     int              _id;
     bool             _loaded;
     ProcessorDto     _processor;
@@ -75,8 +76,9 @@ public partial class View
         }
 
         List<MachineDto> machines = await Service.GetMachinesByProcessorAsync(Id);
-        _computers = machines.Where(m => m.Type != (int)MachineType.Console).ToList();
+        _computers = machines.Where(m => m.Type == (int)MachineType.Computer).ToList();
         _consoles  = machines.Where(m => m.Type == (int)MachineType.Console).ToList();
+        _smartphones = machines.Where(m => m.Type == (int)MachineType.Smartphone).ToList();
 
         _loaded = true;
         StateHasChanged();

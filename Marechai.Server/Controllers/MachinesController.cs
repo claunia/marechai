@@ -123,6 +123,10 @@ public class MachinesController(MarechaiContext context) : ControllerBase
                 news.Type = NewsType.UpdatedConsoleInDb;
 
                 break;
+            case MachineType.Smartphone:
+                news.Type = NewsType.UpdatedSmartphoneInDb;
+
+                break;
             default:
                 news = null;
 
@@ -178,6 +182,10 @@ public class MachinesController(MarechaiContext context) : ControllerBase
                 break;
             case MachineType.Console:
                 news.Type = NewsType.NewConsoleInDb;
+
+                break;
+            case MachineType.Smartphone:
+                news.Type = NewsType.NewSmartphoneInDb;
 
                 break;
             default:

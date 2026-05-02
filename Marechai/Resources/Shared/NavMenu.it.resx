@@ -102,6 +102,10 @@
         <value>Console</value>
         <comment>Consoles</comment>
     </data>
+    <data name="Smartphones" xml:space="preserve">
+        <value>Smartphone</value>
+        <comment>Smartphones</comment>
+    </data>
     <data name="Books" xml:space="preserve">
         <value>Libri</value>
         <comment>Books</comment>

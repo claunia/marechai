@@ -205,3 +205,28 @@
     </MudExpansionPanel>
 </MudExpansionPanels>
 }
+
+@if(_smartphones.Count > 0)
+{
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel>
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.Smartphone" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Smartphones"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="@(_smartphones.Count > 0 ? Color.Success : Color.Error)">@_smartphones.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="MachineDto" Dense="true">
+                @foreach(MachineDto smartphone in _smartphones)
+                {
+                    <MudListItem T="MachineDto" Href="@($"/machine/{smartphone.Id}")" Icon="@Icons.Material.Filled.Smartphone">
+                        @smartphone.Company @smartphone.Name
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+}

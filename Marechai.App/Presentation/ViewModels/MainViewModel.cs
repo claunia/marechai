@@ -36,6 +36,7 @@ public partial class MainViewModel : ObservableObject
     public string CompaniesButtonText            => _localizer["CompaniesButton"];
     public string ComputersButtonText            => _localizer["ComputersButton"];
     public string ConsolesButtonText             => _localizer["ConsolesButton"];
+    public string SmartphonesButtonText           => _localizer["SmartphonesButton"];
     public string DocumentsButtonText            => _localizer["DocumentsButton"];
     public string DumpsButtonText                => _localizer["DumpsButton"];
     public string GpuButtonText                  => _localizer["GraphicalProcessingUnitsButton"];
@@ -95,6 +96,7 @@ public partial class MainViewModel : ObservableObject
         NavigateToCompaniesCommand                = new RelayCommand(() => NavigateTo(nameof(CompaniesPage)));
         NavigateToComputersCommand                = new RelayCommand(() => NavigateTo(nameof(ComputersPage)));
         NavigateToConsolesCommand                 = new RelayCommand(() => NavigateTo(nameof(ConsolesPage)));
+        NavigateToSmartphonesCommand              = new RelayCommand(() => NavigateTo(nameof(SmartphonesPage)));
         NavigateToDocumentsCommand                = new RelayCommand(() => NavigateTo(nameof(DocumentsPage)));
         NavigateToDumpsCommand                    = new RelayCommand(() => NavigateTo("dumps"));
         NavigateToGraphicalProcessingUnitsCommand = new RelayCommand(() => NavigateTo(nameof(GpuListPage)));
@@ -146,6 +148,7 @@ public partial class MainViewModel : ObservableObject
     public ICommand NavigateToCompaniesCommand                { get; }
     public ICommand NavigateToComputersCommand                { get; }
     public ICommand NavigateToConsolesCommand                 { get; }
+    public ICommand NavigateToSmartphonesCommand              { get; }
     public ICommand NavigateToDocumentsCommand                { get; }
     public ICommand NavigateToDumpsCommand                    { get; }
     public ICommand NavigateToGraphicalProcessingUnitsCommand { get; }

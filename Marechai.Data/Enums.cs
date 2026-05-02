@@ -59,8 +59,12 @@ public enum NewsType
     UpdatedGpuInDb              = 25,
     NewSoundSynthInDb           = 26,
     UpdatedSoundSynthInDb       = 27,
-    NewProcessorInDb            = 28,
-    UpdatedProcessorInDb        = 29
+    NewProcessorInDb                = 28,
+    UpdatedProcessorInDb            = 29,
+    NewSmartphoneInDb               = 30,
+    UpdatedSmartphoneInDb           = 31,
+    NewSmartphoneInCollection       = 32,
+    UpdatedSmartphoneInCollection   = 33
 }
 
 public enum StatusType
@@ -100,7 +104,9 @@ public enum MachineType
     /// <summary>Computer</summary>
     Computer = 1,
     /// <summary>Videogame console</summary>
-    Console = 2
+    Console = 2,
+    /// <summary>Smartphone</summary>
+    Smartphone = 3
 }
 
 public enum MemoryType

@@ -77,6 +77,9 @@
   <data name="ConsolesButton" xml:space="preserve">
     <value>Consoles</value>
   </data>
+  <data name="SmartphonesButton" xml:space="preserve">
+    <value>Smartphones</value>
+  </data>
   <data name="DocumentsButton" xml:space="preserve">
     <value>Documents</value>
   </data>
@@ -695,14 +698,26 @@
   <data name="ConsolesErrorInfoBar_Title" xml:space="preserve">
     <value>Unable to Load Consoles</value>
   </data>
+  <data name="SmartphonesErrorInfoBar_Title" xml:space="preserve">
+    <value>Unable to Load Smartphones</value>
+  </data>
   <data name="ConsolesLabel" xml:space="preserve">
     <value>consoles</value>
+  </data>
+  <data name="SmartphonesLabel" xml:space="preserve">
+    <value>smartphones</value>
   </data>
   <data name="AllConsolesButton" xml:space="preserve">
     <value>All Consoles</value>
   </data>
+  <data name="AllSmartphonesButton" xml:space="preserve">
+    <value>All Smartphones</value>
+  </data>
   <data name="ConsolesSearchBox_Placeholder" xml:space="preserve">
     <value>Search consoles...</value>
+  </data>
+  <data name="SmartphonesSearchBox_Placeholder" xml:space="preserve">
+    <value>Search smartphones...</value>
   </data>
   <data name="ManufacturerText" xml:space="preserve">
     <value>Manufacturer</value>

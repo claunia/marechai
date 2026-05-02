@@ -163,6 +163,10 @@
     <value>Consolas</value>
         <comment>Videogame consoles</comment>
   </data>
+    <data name="Smartphones" xml:space="preserve">
+    <value>Smartphones</value>
+        <comment>Smartphones</comment>
+  </data>
     <data name="Books" xml:space="preserve">
     <value>Libros</value>
         <comment>Books navigation link</comment>

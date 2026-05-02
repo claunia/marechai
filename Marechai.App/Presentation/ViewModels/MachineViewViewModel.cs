@@ -182,6 +182,11 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
 
                 break;
 
+            case nameof(SmartphonesListViewModel):
+                _regionManager.RequestNavigate(RegionNames.Content, nameof(SmartphonesListPage));
+
+                break;
+
             case nameof(ComputersListViewModel):
                 _regionManager.RequestNavigate(RegionNames.Content, nameof(ComputersListPage));
 

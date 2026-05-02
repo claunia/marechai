@@ -77,6 +77,9 @@
   <data name="ConsolesButton" xml:space="preserve">
     <value>Konsolen</value>
   </data>
+  <data name="SmartphonesButton" xml:space="preserve">
+    <value>Smartphones</value>
+  </data>
   <data name="DocumentsButton" xml:space="preserve">
     <value>Dokumente</value>
   </data>

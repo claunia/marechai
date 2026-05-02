@@ -119,6 +119,10 @@
                         {
                             <MudLink Href="@($"/consoles/year/{_machine.Introduced.Value.Year}")">@(((_machine.IntroducedPrecision ?? 0) == 2 ? _machine.Introduced.Value.Year.ToString() : (_machine.IntroducedPrecision ?? 0) == 1 ? _machine.Introduced.Value.ToString("MMMM yyyy") : _machine.Introduced.Value.DateTime.ToLongDateString()))</MudLink>
                         }
+                        else if(_machine.Type == (int)MachineType.Smartphone)
+                        {
+                            <MudLink Href="@($"/smartphones/year/{_machine.Introduced.Value.Year}")">@(((_machine.IntroducedPrecision ?? 0) == 2 ? _machine.Introduced.Value.Year.ToString() : (_machine.IntroducedPrecision ?? 0) == 1 ? _machine.Introduced.Value.ToString("MMMM yyyy") : _machine.Introduced.Value.DateTime.ToLongDateString()))</MudLink>
+                        }
                         else
                         {
                             @(((_machine.IntroducedPrecision ?? 0) == 2 ? _machine.Introduced.Value.Year.ToString() : (_machine.IntroducedPrecision ?? 0) == 1 ? _machine.Introduced.Value.ToString("MMMM yyyy") : _machine.Introduced.Value.DateTime.ToLongDateString()))

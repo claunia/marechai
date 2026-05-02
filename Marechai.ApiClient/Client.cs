@@ -40,6 +40,7 @@ using Marechai.ApiClient.ResolutionsByGpu;
 using Marechai.ApiClient.ResolutionsByScreen;
 using Marechai.ApiClient.Screens;
 using Marechai.ApiClient.ScreensByMachine;
+using Marechai.ApiClient.Smartphones;
 using Marechai.ApiClient.Software;
 using Marechai.ApiClient.SoftwarePlatformsByMachine;
 using Marechai.ApiClient.SoundSynths;
@@ -94,6 +95,11 @@ namespace Marechai.ApiClient
         public global::Marechai.ApiClient.Consoles.ConsolesRequestBuilder Consoles
         {
             get => new global::Marechai.ApiClient.Consoles.ConsolesRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The smartphones property</summary>
+        public global::Marechai.ApiClient.Smartphones.SmartphonesRequestBuilder Smartphones
+        {
+            get => new global::Marechai.ApiClient.Smartphones.SmartphonesRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The countries property</summary>
         public global::Marechai.ApiClient.Countries.CountriesRequestBuilder Countries

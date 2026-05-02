@@ -36,6 +36,7 @@ public partial class View
 {
     List<MachineDto>    _computers = [];
     List<MachineDto>    _consoles  = [];
+    List<MachineDto>    _smartphones = [];
     MachineFamilyDto    _family;
     int                 _id;
     bool                _loaded;
@@ -78,6 +79,7 @@ public partial class View
 
         _computers = machines.Where(m => m.Type == (int)MachineType.Computer).ToList();
         _consoles  = machines.Where(m => m.Type == (int)MachineType.Console).ToList();
+        _smartphones = machines.Where(m => m.Type == (int)MachineType.Smartphone).ToList();
 
         _loaded = true;
         StateHasChanged();

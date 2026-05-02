@@ -36,6 +36,7 @@ public partial class View
 {
     List<MachineDto>    _computers = [];
     List<MachineDto>    _consoles  = [];
+    List<MachineDto>    _smartphones = [];
     string              _displayName;
     GpuDto              _gpu;
     int                 _id;
@@ -101,10 +102,10 @@ public partial class View
                 _resolutions.Add(res);
         }
 
-        // Load machines and split by type
         List<MachineDto> machines = await Service.GetMachinesByGpuAsync(Id);
-        _computers = machines.Where(m => m.Type != (int)MachineType.Console).ToList();
+        _computers = machines.Where(m => m.Type == (int)MachineType.Computer).ToList();
         _consoles  = machines.Where(m => m.Type == (int)MachineType.Console).ToList();
+        _smartphones = machines.Where(m => m.Type == (int)MachineType.Smartphone).ToList();
 
         _loaded = true;
         StateHasChanged();

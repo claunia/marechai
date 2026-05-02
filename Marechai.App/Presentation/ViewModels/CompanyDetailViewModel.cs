@@ -49,6 +49,12 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
     private string _consolesFilterText = string.Empty;
 
     [ObservableProperty]
+    private ObservableCollection<CompanyDetailMachine> _smartphones = [];
+
+    [ObservableProperty]
+    private string _smartphonesFilterText = string.Empty;
+
+    [ObservableProperty]
     private string _errorMessage = string.Empty;
 
     [ObservableProperty]
@@ -56,6 +62,9 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
 
     [ObservableProperty]
     private ObservableCollection<CompanyDetailMachine> _filteredConsoles = [];
+
+    [ObservableProperty]
+    private ObservableCollection<CompanyDetailMachine> _filteredSmartphones = [];
 
     [ObservableProperty]
     private BitmapImage? _flagImageSource;
@@ -205,6 +214,26 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
                                                                                  .OrdinalIgnoreCase)));
 
         FilteredConsoles = filtered;
+    }
+
+    partial void OnSmartphonesFilterTextChanged(string value)
+    {
+        FilterSmartphones(value);
+    }
+
+    private void FilterSmartphones(string filterText)
+    {
+        ObservableCollection<CompanyDetailMachine> filtered = string.IsNullOrWhiteSpace(filterText)
+                                                                  ? new ObservableCollection<
+                                                                      CompanyDetailMachine>(Smartphones)
+                                                                  : new
+                                                                      ObservableCollection<
+                                                                          CompanyDetailMachine>(Smartphones.Where(c =>
+                                                                          c.Name.Contains(filterText,
+                                                                              StringComparison
+                                                                                 .OrdinalIgnoreCase)));
+
+        FilteredSmartphones = filtered;
     }
 
     private Task NavigateToMachineAsync(CompanyDetailMachine? machine)
@@ -506,12 +535,16 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
                 // Categorize by machine type enum
                 if(machine.Type == (int)MachineType.Computer)
                     Computers.Add(machineItem);
-                else if(machine.Type == (int)MachineType.Console) Consoles.Add(machineItem);
+                else if(machine.Type == (int)MachineType.Console)
+                    Consoles.Add(machineItem);
+                else if(machine.Type == (int)MachineType.Smartphone)
+                    Smartphones.Add(machineItem);
             }
 
             // Initialize filtered lists
-            FilteredComputers = new ObservableCollection<CompanyDetailMachine>(Computers);
-            FilteredConsoles  = new ObservableCollection<CompanyDetailMachine>(Consoles);
+            FilteredComputers   = new ObservableCollection<CompanyDetailMachine>(Computers);
+            FilteredConsoles    = new ObservableCollection<CompanyDetailMachine>(Consoles);
+            FilteredSmartphones = new ObservableCollection<CompanyDetailMachine>(Smartphones);
 
             // Load people associated with this company
             try

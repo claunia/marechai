@@ -169,6 +169,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<NewsService>();
         containerRegistry.RegisterSingleton<ComputersService>();
         containerRegistry.RegisterSingleton<ConsolesService>();
+        containerRegistry.RegisterSingleton<SmartphonesService>();
         containerRegistry.RegisterSingleton<CompaniesService>();
         containerRegistry.RegisterSingleton<CompanyDetailService>();
         containerRegistry.RegisterSingleton<CompanyLogosService>();
@@ -189,6 +190,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<SoftwareBrowsingService>();
         containerRegistry.RegisterSingleton<IComputersListFilterContext, ComputersListFilterContext>();
         containerRegistry.RegisterSingleton<IConsolesListFilterContext, ConsolesListFilterContext>();
+        containerRegistry.RegisterSingleton<ISmartphonesListFilterContext, SmartphonesListFilterContext>();
         containerRegistry.RegisterSingleton<IBooksListFilterContext, BooksListFilterContext>();
         containerRegistry.RegisterSingleton<IDocumentsListFilterContext, DocumentsListFilterContext>();
         containerRegistry.RegisterSingleton<IMagazinesListFilterContext, MagazinesListFilterContext>();
@@ -204,6 +206,8 @@ public partial class App : PrismApplication
         containerRegistry.Register<ComputersListViewModel>();
         containerRegistry.Register<ConsolesViewModel>();
         containerRegistry.Register<ConsolesListViewModel>();
+        containerRegistry.Register<SmartphonesViewModel>();
+        containerRegistry.Register<SmartphonesListViewModel>();
         containerRegistry.Register<CompaniesViewModel>();
         containerRegistry.Register<CompanyDetailViewModel>();
         containerRegistry.Register<BooksViewModel>();
@@ -264,6 +268,8 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<ComputersListPage, ComputersListViewModel>();
         containerRegistry.RegisterForNavigation<ConsolesPage, ConsolesViewModel>();
         containerRegistry.RegisterForNavigation<ConsolesListPage, ConsolesListViewModel>();
+        containerRegistry.RegisterForNavigation<SmartphonesPage, SmartphonesViewModel>();
+        containerRegistry.RegisterForNavigation<SmartphonesListPage, SmartphonesListViewModel>();
         containerRegistry.RegisterForNavigation<CompaniesPage, CompaniesViewModel>();
         containerRegistry.RegisterForNavigation<CompanyDetailPage, CompanyDetailViewModel>();
         containerRegistry.RegisterForNavigation<BooksPage, BooksViewModel>();

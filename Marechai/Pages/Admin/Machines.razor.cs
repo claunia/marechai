@@ -28,6 +28,7 @@ public partial class Machines
     {
         1 => L["Computer"],
         2 => L["Console"],
+        3 => L["Smartphone"],
         _ => L["Unknown"]
     };
 

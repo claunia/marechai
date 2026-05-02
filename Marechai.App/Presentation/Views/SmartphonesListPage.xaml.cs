@@ -1,0 +1,37 @@
+using Marechai.App.Presentation.ViewModels;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+
+namespace Marechai.App.Presentation.Views;
+
+/// <summary>
+///     Professional list view for displaying smartphones filtered by letter, year, or all.
+///     Features responsive layout, modern styling, and smooth navigation.
+/// </summary>
+public sealed partial class SmartphonesListPage : Page
+{
+    public SmartphonesListPage()
+    {
+        InitializeComponent();
+        Loaded             += SmartphonesListPage_Loaded;
+        DataContextChanged += SmartphonesListPage_DataContextChanged;
+    }
+
+    private void SmartphonesListPage_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+    {
+        if(DataContext is SmartphonesListViewModel vm)
+        {
+            // Load data when DataContext is set
+            vm.LoadData.Execute(null);
+        }
+    }
+
+    private void SmartphonesListPage_Loaded(object sender, RoutedEventArgs e)
+    {
+        if(DataContext is SmartphonesListViewModel vm)
+        {
+            // Load data when page is loaded (fallback)
+            vm.LoadData.Execute(null);
+        }
+    }
+}

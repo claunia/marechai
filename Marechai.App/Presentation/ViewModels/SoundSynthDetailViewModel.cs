@@ -36,6 +36,12 @@ public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
     private string _consolesFilterText = string.Empty;
 
     [ObservableProperty]
+    private string _smartphonesFilterText = string.Empty;
+
+    [ObservableProperty]
+    private ObservableCollection<MachineItem> _smartphones = [];
+
+    [ObservableProperty]
     private string _errorMessage = string.Empty;
 
     [ObservableProperty]
@@ -45,10 +51,16 @@ public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
     private ObservableCollection<MachineItem> _filteredConsoles = [];
 
     [ObservableProperty]
+    private ObservableCollection<MachineItem> _filteredSmartphones = [];
+
+    [ObservableProperty]
     private bool _hasComputers;
 
     [ObservableProperty]
     private bool _hasConsoles;
+
+    [ObservableProperty]
+    private bool _hasSmartphones;
 
     [ObservableProperty]
     private bool _hasError;
@@ -86,6 +98,7 @@ public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
         SelectMachineCommand   = new AsyncRelayCommand<int>(SelectMachineAsync);
         ComputersFilterCommand = new RelayCommand(() => FilterComputers());
         ConsolesFilterCommand  = new RelayCommand(() => FilterConsoles());
+        SmartphonesFilterCommand = new RelayCommand(() => FilterSmartphones());
 
         Title = _localizer["Sound Synthesizer Details"];
     }
@@ -95,6 +108,7 @@ public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand SelectMachineCommand   { get; }
     public ICommand           ComputersFilterCommand { get; }
     public ICommand           ConsolesFilterCommand  { get; }
+    public ICommand           SmartphonesFilterCommand { get; }
 
     public string Title { get; }
 
@@ -166,6 +180,7 @@ public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
                 {
                     Computers.Clear();
                     Consoles.Clear();
+                    Smartphones.Clear();
 
                     foreach(MachineDto machine in machines)
                     {
@@ -180,33 +195,34 @@ public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
                         // Distinguish between computers and consoles based on Type
                         if(machine.Type == 2) // MachineType.Console
                             Consoles.Add(machineItem);
+                        else if(machine.Type == 3) // MachineType.Smartphone
+                            Smartphones.Add(machineItem);
                         else // MachineType.Computer or Unknown
                             Computers.Add(machineItem);
                     }
 
-                    HasComputers = Computers.Count > 0;
-                    HasConsoles  = Consoles.Count  > 0;
+                    HasComputers   = Computers.Count   > 0;
+                    HasConsoles    = Consoles.Count    > 0;
+                    HasSmartphones = Smartphones.Count > 0;
 
                     // Initialize filtered collections
                     FilterComputers();
                     FilterConsoles();
-
-                    _logger.LogInformation("Loaded {ComputerCount} computers and {ConsoleCount} consoles for Sound Synthesizer {SoundSynthId}",
-                                           Computers.Count,
-                                           Consoles.Count,
-                                           SoundSynthId);
+                    FilterSmartphones();
                 }
                 else
                 {
-                    HasComputers = false;
-                    HasConsoles  = false;
+                    HasComputers   = false;
+                    HasConsoles    = false;
+                    HasSmartphones = false;
                 }
             }
             catch(Exception ex)
             {
                 _logger.LogWarning(ex, "Failed to load machines for Sound Synthesizer {SoundSynthId}", SoundSynthId);
-                HasComputers = false;
-                HasConsoles  = false;
+                HasComputers   = false;
+                HasConsoles    = false;
+                HasSmartphones = false;
             }
 
             IsDataLoaded = true;
@@ -261,6 +277,23 @@ public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
 
             FilteredConsoles.Clear();
             foreach(MachineItem console in filtered) FilteredConsoles.Add(console);
+        }
+    }
+
+    private void FilterSmartphones()
+    {
+        if(string.IsNullOrWhiteSpace(SmartphonesFilterText))
+        {
+            FilteredSmartphones.Clear();
+            foreach(MachineItem smartphone in Smartphones) FilteredSmartphones.Add(smartphone);
+        }
+        else
+        {
+            var filtered = Smartphones.Where(c => c.Name.Contains(SmartphonesFilterText, StringComparison.OrdinalIgnoreCase))
+                                      .ToList();
+
+            FilteredSmartphones.Clear();
+            foreach(MachineItem smartphone in filtered) FilteredSmartphones.Add(smartphone);
         }
     }
 

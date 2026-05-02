@@ -105,6 +105,22 @@ public class NewsController(MarechaiContext context) : ControllerBase
 
                     break;
 
+                case NewsType.NewSmartphoneInDb:
+                case NewsType.NewSmartphoneInCollection:
+                case NewsType.UpdatedSmartphoneInDb:
+                case NewsType.UpdatedSmartphoneInCollection:
+                    controller = "smartphones";
+
+                    if(string.IsNullOrEmpty(itemName))
+                    {
+                        Machine smartphone = context.Machines.Include(m => m.Company)
+                                                    .FirstOrDefault(m => m.Id == @new.AddedId);
+
+                        if(smartphone is not null) itemName = $"{smartphone.Company?.Name} {smartphone.Name}";
+                    }
+
+                    break;
+
                 case NewsType.NewMoneyDonation:
                     // TODO
                     continue;

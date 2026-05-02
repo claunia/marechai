@@ -36,6 +36,7 @@ public partial class View
 {
     List<MachineDto> _computers = [];
     List<MachineDto> _consoles  = [];
+    List<MachineDto> _smartphones = [];
     string           _displayName;
     int              _id;
     bool             _loaded;
@@ -78,8 +79,9 @@ public partial class View
         _displayName = _synth.Name == "DB_SOFTWARE" ? L["Software"] : _synth.Name;
 
         List<MachineDto> machines = await Service.GetMachinesBySoundSynthAsync(Id);
-        _computers = machines.Where(m => m.Type != (int)MachineType.Console).ToList();
+        _computers = machines.Where(m => m.Type == (int)MachineType.Computer).ToList();
         _consoles  = machines.Where(m => m.Type == (int)MachineType.Console).ToList();
+        _smartphones = machines.Where(m => m.Type == (int)MachineType.Smartphone).ToList();
 
         _loaded = true;
         StateHasChanged();

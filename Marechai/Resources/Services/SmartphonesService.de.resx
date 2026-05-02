@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Loading..." xml:space="preserve">
+        <value>Laden...</value>
+        <comment>Loading...</comment>
+    </data>
+    <data name="Here you can consult our database." xml:space="preserve">
+        <value>Hier können Sie unsere Datenbank durchsuchen.</value>
+        <comment>Here you can consult our database.</comment>
+    </data>
+    <data name="In this database you can find technical information as well as smartphones history, catalogued by companies, alphabetically and by release date." xml:space="preserve">
+        <value>Technische Informationen und Geschichte der Videospielkonsolen.</value>
+        <comment>In this database you can find technical information as well as smartphones history, catalogued by companies, alphabetically and by release date.</comment>
+    </data>
+    <data name="{0} smartphones actually catalogued in the database." xml:space="preserve">
+        <value>{0} Videospielkonsolen im Katalog.</value>
+        <comment>{0} smartphones actually catalogued in the database.</comment>
+    </data>
+    <data name="Search by companies" xml:space="preserve">
+        <value>Nach Unternehmen suchen</value>
+        <comment>Search by companies</comment>
+    </data>
+    <data name="All companies" xml:space="preserve">
+        <value>Alle Unternehmen</value>
+        <comment>All companies</comment>
+    </data>
+    <data name="Alphabetically search" xml:space="preserve">
+        <value>Alphabetische Suche</value>
+        <comment>Alphabetically search</comment>
+    </data>
+    <data name="All smartphones" xml:space="preserve">
+        <value>Alle Videospielkonsolen</value>
+        <comment>All smartphones</comment>
+    </data>
+    <data name="Search by year" xml:space="preserve">
+        <value>Nach Jahr suchen</value>
+        <comment>Search by year</comment>
+    </data>
+    <data name="Search results:" xml:space="preserve">
+        <value>Suchergebnisse:</value>
+        <comment>Search results:</comment>
+    </data>
+    <data name="Smartphones starting with {0}" xml:space="preserve">
+        <value>Videospielkonsolen, die mit {0} beginnen</value>
+        <comment>Smartphones starting with {0}</comment>
+    </data>
+    <data name="Smartphones introduced in {0}" xml:space="preserve">
+        <value>Videospielkonsolen eingeführt im Jahr {0}</value>
+        <comment>Smartphones introduced in {0}</comment>
+    </data>
+    <data name="{0} smartphones found in the database." xml:space="preserve">
+        <value>{0} Videospielkonsolen gefunden.</value>
+        <comment>{0} smartphones found in the database.</comment>
+    </data>
+    <data name="There are no smartphones found in the database that start with this letter." xml:space="preserve">
+        <value>Keine Videospielkonsolen gefunden, die mit diesem Buchstaben beginnen.</value>
+        <comment>There are no smartphones found in the database that start with this letter.</comment>
+    </data>
+    <data name="There are no smartphones found introduced this year." xml:space="preserve">
+        <value>Keine in diesem Jahr eingeführten Videospielkonsolen gefunden.</value>
+        <comment>There are no smartphones found introduced this year.</comment>
+    </data>
+    <data name="Date precision" xml:space="preserve">
+        <value>Datumsgenauigkeit</value>
+        <comment>Date precision</comment>
+    </data>
+    <data name="Full date" xml:space="preserve">
+        <value>Vollständiges Datum</value>
+        <comment>Full date</comment>
+    </data>
+    <data name="Month and year only" xml:space="preserve">
+        <value>Nur Monat und Jahr</value>
+        <comment>Month and year only</comment>
+    </data>
+    <data name="Year only" xml:space="preserve">
+        <value>Nur Jahr</value>
+        <comment>Year only</comment>
+    </data>
+</root>
