@@ -32,14 +32,14 @@ namespace Marechai.Services;
 
 public sealed class HttpAuthHandler(TokenProvider tokenProvider) : DelegatingHandler
 {
-    protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
-                                                           CancellationToken  cancellationToken)
+    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
+                                                                  CancellationToken  cancellationToken)
     {
-        string? token = tokenProvider.GetToken();
+        string? token = await tokenProvider.GetTokenAsync();
 
         if(!string.IsNullOrWhiteSpace(token))
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        return base.SendAsync(request, cancellationToken);
+        return await base.SendAsync(request, cancellationToken);
     }
 }

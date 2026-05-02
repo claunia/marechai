@@ -23,15 +23,48 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+
 namespace Marechai.Services;
 
-public sealed class TokenProvider
+public sealed class TokenProvider(ProtectedLocalStorage localStorage)
 {
-    string? _token;
+    const    string  StorageKey = "auth_token";
+    string? _cachedToken;
+    bool    _initialized;
 
-    public string? GetToken() => _token;
+    public async Task<string?> GetTokenAsync()
+    {
+        if(_initialized)
+            return _cachedToken;
 
-    public void SetToken(string token) => _token = token;
+        try
+        {
+            ProtectedBrowserStorageResult<string> result = await localStorage.GetAsync<string>(StorageKey);
+            _cachedToken = result.Success ? result.Value : null;
+        }
+        catch
+        {
+            _cachedToken = null;
+        }
 
-    public void RemoveToken() => _token = null;
+        _initialized = true;
+
+        return _cachedToken;
+    }
+
+    public async Task SetTokenAsync(string token)
+    {
+        _cachedToken = token;
+        _initialized = true;
+        await localStorage.SetAsync(StorageKey, token);
+    }
+
+    public async Task RemoveTokenAsync()
+    {
+        _cachedToken = null;
+        _initialized = true;
+        await localStorage.DeleteAsync(StorageKey);
+    }
 }

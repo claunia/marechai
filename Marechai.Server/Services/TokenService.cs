@@ -47,7 +47,8 @@ public sealed class TokenService(IConfiguration configuration)
     }
 
     JwtSecurityToken CreateJwtToken(List<Claim> claims, SigningCredentials credentials) =>
-        new(configuration["Jwt:Issuer"], configuration["Jwt:Audience"], claims, expires: null,
+        new(configuration["Jwt:Issuer"], configuration["Jwt:Audience"], claims,
+            expires: DateTime.UtcNow.AddHours(24),
             signingCredentials: credentials);
 
     List<Claim> CreateClaims(IdentityUser user, IList<string> roles)

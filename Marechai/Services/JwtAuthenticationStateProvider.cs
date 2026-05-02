@@ -23,6 +23,7 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -34,19 +35,27 @@ public sealed class JwtAuthenticationStateProvider(TokenProvider tokenProvider) 
 {
     static readonly JwtSecurityTokenHandler _handler = new();
 
-    public override Task<AuthenticationState> GetAuthenticationStateAsync()
+    public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        string? token = tokenProvider.GetToken();
+        string? token = await tokenProvider.GetTokenAsync();
 
         if(string.IsNullOrWhiteSpace(token))
-            return Task.FromResult(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity())));
+            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
 
         JwtSecurityToken jwtToken = _handler.ReadJwtToken(token);
+
+        // Check if the token has expired
+        if(jwtToken.ValidTo < DateTime.UtcNow)
+        {
+            await tokenProvider.RemoveTokenAsync();
+
+            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+        }
 
         var identity  = new ClaimsIdentity(jwtToken.Claims, "jwt");
         var principal = new ClaimsPrincipal(identity);
 
-        return Task.FromResult(new AuthenticationState(principal));
+        return new AuthenticationState(principal);
     }
 
     public void NotifyUserAuthentication()

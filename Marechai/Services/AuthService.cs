@@ -57,7 +57,7 @@ public sealed class AuthService(Marechai.ApiClient.Client             client,
             if(string.IsNullOrWhiteSpace(response.Token))
                 return (false, "No token received.");
 
-            tokenProvider.SetToken(response.Token);
+            await tokenProvider.SetTokenAsync(response.Token);
             authStateProvider.NotifyUserAuthentication();
 
             return (true, null);
@@ -76,9 +76,9 @@ public sealed class AuthService(Marechai.ApiClient.Client             client,
         }
     }
 
-    public void Logout()
+    public async Task LogoutAsync()
     {
-        tokenProvider.RemoveToken();
+        await tokenProvider.RemoveTokenAsync();
         authStateProvider.NotifyUserLogout();
     }
 
