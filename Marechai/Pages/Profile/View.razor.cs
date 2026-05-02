@@ -38,6 +38,7 @@ public partial class View
     List<CollectedMachineDto>?         _collectedConsoles;
     List<CollectedDocumentDto>?        _collectedDocuments;
     List<CollectedMachineDto>?         _collectedMachines;
+    List<CollectedMachineDto>?         _collectedSmartphones;
     List<CollectedSoftwareReleaseDto>? _collectedReleases;
     bool                               _loaded;
     PublicProfileDto?                  _profile;
@@ -75,8 +76,9 @@ public partial class View
             _collectedBooks     = await CollectionSvc.GetCollectedBooksAsync(Username);
             _collectedDocuments = await CollectionSvc.GetCollectedDocumentsAsync(Username);
             _collectedMachines  = await CollectionSvc.GetCollectedMachinesAsync(Username);
-            _collectedComputers = _collectedMachines?.Where(m => m.Type == 1).ToList();
-            _collectedConsoles  = _collectedMachines?.Where(m => m.Type == 2).ToList();
+            _collectedComputers   = _collectedMachines?.Where(m => m.Type == 1).ToList();
+            _collectedConsoles    = _collectedMachines?.Where(m => m.Type == 2).ToList();
+            _collectedSmartphones = _collectedMachines?.Where(m => m.Type == 3).ToList();
             _collectedReleases  = await CollectionSvc.GetCollectedSoftwareReleasesAsync(Username);
         }
 

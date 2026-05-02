@@ -300,6 +300,33 @@
             </MudExpansionPanels>
         }
 
+        @if(_collectedSmartphones?.Count > 0)
+        {
+            <MudExpansionPanels Class="mb-4">
+                <MudExpansionPanel>
+                    <TitleContent>
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                            <MudIcon Icon="@Icons.Material.Filled.Smartphone" Color="Color.Primary"/>
+                            <MudText Typo="Typo.h6">@L["Smartphones"]</MudText>
+                            <MudChip T="string" Color="Color.Primary" Size="Size.Small">@_collectedSmartphones.Count</MudChip>
+                        </MudStack>
+                    </TitleContent>
+                    <ChildContent>
+                        <MudList T="CollectedMachineDto" Dense="true">
+                            @foreach(CollectedMachineDto machine in _collectedSmartphones)
+                            {
+                                <MudListItem T="CollectedMachineDto" Href="@($"/machine/{machine.MachineId}")">
+                                    <MudText Typo="Typo.body1">
+                                        @(machine.CompanyName is not null ? $"{machine.CompanyName} {machine.Name}" : machine.Name)
+                                    </MudText>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    </ChildContent>
+                </MudExpansionPanel>
+            </MudExpansionPanels>
+        }
+
         @if(_collectedReleases?.Count > 0)
         {
             <MudExpansionPanels Class="mb-4">
