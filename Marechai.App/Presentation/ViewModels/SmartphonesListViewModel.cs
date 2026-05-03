@@ -145,6 +145,12 @@ public partial class SmartphonesListViewModel : ObservableObject
                 }
 
                 break;
+
+            case SmartphoneListFilterType.Prototype:
+                PageTitle         = _localizer["Prototype Smartphones"];
+                FilterDescription = _localizer["Showing prototype smartphones"];
+
+                break;
         }
     }
 
@@ -159,6 +165,9 @@ public partial class SmartphonesListViewModel : ObservableObject
 
                                                SmartphoneListFilterType.Year when int.TryParse(FilterValue, out int year) =>
                                                    await _smartphonesService.GetSmartphonesByYearAsync(year),
+
+                                               SmartphoneListFilterType.Prototype =>
+                                                   await _smartphonesService.GetPrototypesAsync(),
 
                                                _ => await _smartphonesService.GetAllSmartphonesAsync()
                                            };

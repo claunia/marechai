@@ -25,5 +25,6 @@ public enum SmartphoneListFilterType
 {
     All,
     Letter,
-    Year
+    Year,
+    Prototype
 }

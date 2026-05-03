@@ -63,6 +63,7 @@ public partial class ComputersViewModel : ObservableObject
         NavigateByLetterCommand     = new AsyncRelayCommand<char>(NavigateByLetterAsync);
         NavigateByYearCommand       = new AsyncRelayCommand<int>(NavigateByYearAsync);
         NavigateAllComputersCommand = new AsyncRelayCommand(NavigateAllComputersAsync);
+        NavigatePrototypesCommand   = new AsyncRelayCommand(NavigatePrototypesAsync);
         Title = _localizer["Computers"];
 
         InitializeLetters();
@@ -73,6 +74,7 @@ public partial class ComputersViewModel : ObservableObject
     public IAsyncRelayCommand<char> NavigateByLetterCommand     { get; }
     public IAsyncRelayCommand<int>  NavigateByYearCommand       { get; }
     public IAsyncRelayCommand       NavigateAllComputersCommand { get; }
+    public IAsyncRelayCommand       NavigatePrototypesCommand   { get; }
     public string                   Title                       { get; }
 
     /// <summary>
@@ -206,6 +208,28 @@ public partial class ComputersViewModel : ObservableObject
         catch(Exception ex)
         {
             _logger.LogError("Error navigating to all computers: {Exception}", ex.Message);
+            ErrorMessage = _localizer["Failed to navigate. Please try again."].Value;
+            HasError     = true;
+        }
+
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    ///     Navigates to prototype computers view
+    /// </summary>
+    private Task NavigatePrototypesAsync()
+    {
+        try
+        {
+            _logger.LogInformation("Navigating to prototype computers");
+            _filterContext.FilterType  = ComputerListFilterType.Prototype;
+            _filterContext.FilterValue = string.Empty;
+            _regionManager.RequestNavigate(RegionNames.Content, nameof(ComputersListPage));
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError("Error navigating to prototype computers: {Exception}", ex.Message);
             ErrorMessage = _localizer["Failed to navigate. Please try again."].Value;
             HasError     = true;
         }

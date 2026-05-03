@@ -64,6 +64,7 @@ public partial class Machines
                 Model      = data.Model,
                 CompanyId  = data.CompanyId,
                 Type       = data.Type,
+                Prototype  = data.Prototype,
                 Introduced = data.Introduced.HasValue ? new DateTimeOffset(data.Introduced.Value, TimeSpan.Zero) : null,
                 IntroducedPrecision = data.IntroducedPrecision,
                 FamilyId   = data.FamilyId
@@ -105,6 +106,7 @@ public partial class Machines
             { x => x.Type, fullMachine.Type ?? 0 },
             { x => x.Introduced, fullMachine.Introduced?.UtcDateTime },
             { x => x.IntroducedPrecision, fullMachine.IntroducedPrecision ?? 0 },
+            { x => x.Prototype, fullMachine.Prototype ?? false },
             { x => x.FamilyId, fullMachine.FamilyId }
         };
 
@@ -126,6 +128,7 @@ public partial class Machines
                 Model      = data.Model,
                 CompanyId  = data.CompanyId,
                 Type       = data.Type,
+                Prototype  = data.Prototype,
                 Introduced = data.Introduced.HasValue ? new DateTimeOffset(data.Introduced.Value, TimeSpan.Zero) : null,
                 IntroducedPrecision = data.IntroducedPrecision,
                 FamilyId   = data.FamilyId

@@ -6,6 +6,7 @@ using Marechai.ApiClient.Consoles.Companies;
 using Marechai.ApiClient.Consoles.Count;
 using Marechai.ApiClient.Consoles.MaximumYear;
 using Marechai.ApiClient.Consoles.MinimumYear;
+using Marechai.ApiClient.Consoles.Prototypes;
 using Marechai.ApiClient.Models;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
@@ -52,6 +53,11 @@ namespace Marechai.ApiClient.Consoles
         public global::Marechai.ApiClient.Consoles.MinimumYear.MinimumYearRequestBuilder MinimumYear
         {
             get => new global::Marechai.ApiClient.Consoles.MinimumYear.MinimumYearRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The prototypes property</summary>
+        public global::Marechai.ApiClient.Consoles.Prototypes.PrototypesRequestBuilder Prototypes
+        {
+            get => new global::Marechai.ApiClient.Consoles.Prototypes.PrototypesRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.ApiClient.Consoles.ConsolesRequestBuilder"/> and sets the default values.

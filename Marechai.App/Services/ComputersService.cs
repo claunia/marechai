@@ -172,6 +172,31 @@ public class ComputersService
     }
 
     /// <summary>
+    ///     Fetches prototype computers from the API
+    /// </summary>
+    public async Task<List<MachineDto>> GetPrototypesAsync()
+    {
+        try
+        {
+            _logger.LogInformation("Fetching prototype computers from API");
+
+            List<MachineDto> computers = await _apiClient.Computers.Prototypes.GetAsync();
+
+            if(computers == null) return [];
+
+            _logger.LogInformation("Successfully fetched {Count} prototype computers", computers.Count);
+
+            return computers;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching prototype computers from API");
+
+            return [];
+        }
+    }
+
+    /// <summary>
     ///     Fetches a single machine with full details by ID from the API
     /// </summary>
     public async Task<MachineDto?> GetMachineByIdAsync(int machineId)

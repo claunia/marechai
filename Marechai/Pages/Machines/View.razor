@@ -77,7 +77,7 @@
                 <MudText Typo="Typo.h3" Style="color: white; font-weight: 700;">@_machine.Company</MudText>
             </MudLink>
         }
-        @if(_machine.Introduced.HasValue && _machine.Introduced.Value.Year == 1000)
+        @if(_machine.Prototype == true)
         {
             <MudChip T="string" Color="Color.Warning" Variant="Variant.Filled">@L["PROTOTYPE"]</MudChip>
         }
@@ -106,7 +106,7 @@
         </MudStack>
         <MudSimpleTable Elevation="0" Dense="true">
             <tbody>
-            @if(_machine.Introduced.HasValue && _machine.Introduced.Value.Year != 1000)
+            @if(_machine.Introduced.HasValue && _machine.Prototype != true)
             {
                 <tr>
                     <td style="width: 33%; text-align: right;"><strong>@L["Introduction date"]</strong></td>

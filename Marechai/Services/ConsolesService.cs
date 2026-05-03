@@ -116,6 +116,20 @@ public class ConsolesService(Marechai.ApiClient.Client client)
         }
     }
 
+    public async Task<List<MachineDto>> GetPrototypesAsync()
+    {
+        try
+        {
+            List<MachineDto>? machines = await client.Consoles.Prototypes.GetAsync();
+
+            return machines ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
     public async Task<List<CompanyDto>> GetCompaniesAsync()
     {
         try

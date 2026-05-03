@@ -48,6 +48,9 @@ public class MachineDto : BaseDto<int>
     [JsonPropertyName("introduced_precision")]
     public DatePrecision IntroducedPrecision { get; set; }
 
+    [JsonPropertyName("prototype")]
+    public bool Prototype { get; set; }
+
     [JsonPropertyName("family_id")]
     public int? FamilyId { get; set; }
 
@@ -75,5 +78,5 @@ public class MachineDto : BaseDto<int>
 
     [JsonIgnore]
     public string IntroducedView =>
-        Introduced?.Year == 1000 ? "Prototype" : Introduced?.ToShortDateString() ?? "Unknown";
+        Prototype ? "Prototype" : Introduced?.ToShortDateString() ?? "Unknown";
 }

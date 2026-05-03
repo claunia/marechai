@@ -25,5 +25,6 @@ public enum ConsoleListFilterType
 {
     All,
     Letter,
-    Year
+    Year,
+    Prototype
 }

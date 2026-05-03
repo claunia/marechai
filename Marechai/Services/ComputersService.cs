@@ -116,6 +116,20 @@ public class ComputersService(Marechai.ApiClient.Client client)
         }
     }
 
+    public async Task<List<MachineDto>> GetPrototypesAsync()
+    {
+        try
+        {
+            List<MachineDto>? machines = await client.Computers.Prototypes.GetAsync();
+
+            return machines ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
     public async Task<List<CompanyDto>> GetCompaniesAsync()
     {
         try

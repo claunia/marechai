@@ -32,10 +32,16 @@
             <MudSelectItem T="int" Value="3">@L["Smartphone"]</MudSelectItem>
         </MudSelect>
 
+        <MudCheckBox @bind-Value="Prototype"
+                     Label="@L["Prototype"]"
+                     Color="Color.Warning"
+                     Class="mb-4"/>
+
         <MudDatePicker @bind-Date="Introduced"
                        Label="@L["Introduction date"]"
                        Variant="Variant.Outlined"
                        Clearable="true"
+                       Disabled="Prototype"
                        Class="mb-4"/>
 
         <MudSelect T="int" @bind-Value="IntroducedPrecision"
@@ -421,6 +427,7 @@
     [Parameter] public string?   Model      { get; set; }
     [Parameter] public int?      CompanyId  { get; set; }
     [Parameter] public int       Type       { get; set; }
+    [Parameter] public bool      Prototype  { get; set; }
     [Parameter] public DateTime? Introduced { get; set; }
     [Parameter] public int       IntroducedPrecision { get; set; }
     [Parameter] public int?      FamilyId   { get; set; }
@@ -996,7 +1003,8 @@
             Model      = Model,
             CompanyId  = _selectedCompany?.Id,
             Type       = Type,
-            Introduced = Introduced,
+            Prototype  = Prototype,
+            Introduced = Prototype ? null : Introduced,
             IntroducedPrecision = IntroducedPrecision,
             FamilyId   = _selectedFamily?.Id
         }));

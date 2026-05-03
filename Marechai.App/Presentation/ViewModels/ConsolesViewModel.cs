@@ -63,6 +63,7 @@ public partial class ConsolesViewModel : ObservableObject
         NavigateByLetterCommand    = new AsyncRelayCommand<char>(NavigateByLetterAsync);
         NavigateByYearCommand      = new AsyncRelayCommand<int>(NavigateByYearAsync);
         NavigateAllConsolesCommand = new AsyncRelayCommand(NavigateAllConsolesAsync);
+        NavigatePrototypesCommand  = new AsyncRelayCommand(NavigatePrototypesAsync);
         Title = _localizer["Consoles"];
 
         InitializeLetters();
@@ -73,6 +74,7 @@ public partial class ConsolesViewModel : ObservableObject
     public IAsyncRelayCommand<char> NavigateByLetterCommand    { get; }
     public IAsyncRelayCommand<int>  NavigateByYearCommand      { get; }
     public IAsyncRelayCommand       NavigateAllConsolesCommand { get; }
+    public IAsyncRelayCommand       NavigatePrototypesCommand  { get; }
     public string                   Title                      { get; }
 
     /// <summary>
@@ -208,6 +210,28 @@ public partial class ConsolesViewModel : ObservableObject
         catch(Exception ex)
         {
             _logger.LogError("Error navigating to all consoles: {Exception}", ex.Message);
+            ErrorMessage = _localizer["Failed to navigate. Please try again."].Value;
+            HasError     = true;
+        }
+
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    ///     Navigates to prototype consoles view
+    /// </summary>
+    private Task NavigatePrototypesAsync()
+    {
+        try
+        {
+            _logger.LogInformation("Navigating to prototype consoles");
+            _filterContext.FilterType  = ConsoleListFilterType.Prototype;
+            _filterContext.FilterValue = string.Empty;
+            _regionManager.RequestNavigate(RegionNames.Content, nameof(ConsolesListPage));
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError("Error navigating to prototype consoles: {Exception}", ex.Message);
             ErrorMessage = _localizer["Failed to navigate. Please try again."].Value;
             HasError     = true;
         }

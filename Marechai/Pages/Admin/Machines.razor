@@ -49,6 +49,14 @@
                     @FormatType(context.Item.Type)
                 </CellTemplate>
             </TemplateColumn>
+            <TemplateColumn Title="@L["Prototype"]" Sortable="true">
+                <CellTemplate>
+                    @if(context.Item.Prototype == true)
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.Science" Color="Color.Warning" Size="Size.Small"/>
+                    }
+                </CellTemplate>
+            </TemplateColumn>
             <TemplateColumn Title="@L["Introduction date"]" Sortable="true">
                 <CellTemplate>
                     @FormatDate(context.Item.Introduced)

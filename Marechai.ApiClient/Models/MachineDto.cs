@@ -90,6 +90,8 @@ namespace Marechai.ApiClient.Models
 #else
         public List<global::Marechai.ApiClient.Models.ProcessorDto> Processors { get; set; }
 #endif
+        /// <summary>The prototype property</summary>
+        public bool? Prototype { get; set; }
         /// <summary>The soundSynthesizers property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -147,6 +149,7 @@ namespace Marechai.ApiClient.Models
                 { "model", n => { Model = n.GetStringValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
                 { "processors", n => { Processors = n.GetCollectionOfObjectValues<global::Marechai.ApiClient.Models.ProcessorDto>(global::Marechai.ApiClient.Models.ProcessorDto.CreateFromDiscriminatorValue)?.AsList(); } },
+                { "prototype", n => { Prototype = n.GetBoolValue(); } },
                 { "soundSynthesizers", n => { SoundSynthesizers = n.GetCollectionOfObjectValues<global::Marechai.ApiClient.Models.SoundSynthDto>(global::Marechai.ApiClient.Models.SoundSynthDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "storage", n => { Storage = n.GetCollectionOfObjectValues<global::Marechai.ApiClient.Models.StorageDto>(global::Marechai.ApiClient.Models.StorageDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "type", n => { Type = n.GetIntValue(); } },
@@ -173,6 +176,7 @@ namespace Marechai.ApiClient.Models
             writer.WriteStringValue("model", Model);
             writer.WriteStringValue("name", Name);
             writer.WriteCollectionOfObjectValues<global::Marechai.ApiClient.Models.ProcessorDto>("processors", Processors);
+            writer.WriteBoolValue("prototype", Prototype);
             writer.WriteCollectionOfObjectValues<global::Marechai.ApiClient.Models.SoundSynthDto>("soundSynthesizers", SoundSynthesizers);
             writer.WriteCollectionOfObjectValues<global::Marechai.ApiClient.Models.StorageDto>("storage", Storage);
             writer.WriteIntValue("type", Type);

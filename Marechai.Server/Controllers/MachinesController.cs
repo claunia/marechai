@@ -58,6 +58,7 @@ public class MachinesController(MarechaiContext context) : ControllerBase
                                                             Model      = m.Model,
                                                             Introduced = m.Introduced,
                                                             IntroducedPrecision = m.IntroducedPrecision,
+                                                            Prototype  = m.Prototype,
                                                             Type       = m.Type,
                                                             Family     = m.Family.Name
                                                         })
@@ -77,6 +78,7 @@ public class MachinesController(MarechaiContext context) : ControllerBase
                                                             Model      = m.Model,
                                                             Introduced = m.Introduced,
                                                             IntroducedPrecision = m.IntroducedPrecision,
+                                                            Prototype  = m.Prototype,
                                                             Type       = m.Type,
                                                             FamilyId   = m.FamilyId
                                                         })
@@ -100,7 +102,8 @@ public class MachinesController(MarechaiContext context) : ControllerBase
         model.CompanyId  = dto.CompanyId;
         model.Name       = dto.Name;
         model.Model      = dto.Model;
-        model.Introduced = dto.Introduced;
+        model.Prototype  = dto.Prototype;
+        model.Introduced = dto.Prototype ? null : dto.Introduced;
         model.IntroducedPrecision = dto.IntroducedPrecision;
         model.Type       = dto.Type;
         model.FamilyId   = dto.FamilyId;
@@ -157,7 +160,8 @@ public class MachinesController(MarechaiContext context) : ControllerBase
             CompanyId  = dto.CompanyId,
             Name       = dto.Name,
             Model      = dto.Model,
-            Introduced = dto.Introduced,
+            Prototype  = dto.Prototype,
+            Introduced = dto.Prototype ? null : dto.Introduced,
             IntroducedPrecision = dto.IntroducedPrecision,
             Type       = dto.Type,
             FamilyId   = dto.FamilyId
@@ -217,9 +221,11 @@ public class MachinesController(MarechaiContext context) : ControllerBase
         var model = new MachineDto
         {
             Introduced = machine.Introduced,
+            IntroducedPrecision = machine.IntroducedPrecision,
             Name       = machine.Name,
             CompanyId  = machine.CompanyId,
             Model      = machine.Model,
+            Prototype  = machine.Prototype,
             Type       = machine.Type
         };
 

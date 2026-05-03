@@ -168,6 +168,31 @@ public class SmartphonesService
     }
 
     /// <summary>
+    ///     Fetches prototype smartphones from the API
+    /// </summary>
+    public async Task<List<MachineDto>> GetPrototypesAsync()
+    {
+        try
+        {
+            _logger.LogInformation("Fetching prototype smartphones from API");
+
+            List<MachineDto> smartphones = await _apiClient.Smartphones.Prototypes.GetAsync();
+
+            if(smartphones == null) return [];
+
+            _logger.LogInformation("Successfully fetched {Count} prototype smartphones", smartphones.Count);
+
+            return smartphones;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching prototype smartphones from API");
+
+            return [];
+        }
+    }
+
+    /// <summary>
     ///     Fetches a single machine with full details by ID from the API
     /// </summary>
     public async Task<MachineDto?> GetMachineByIdAsync(int machineId)

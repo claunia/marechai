@@ -7,6 +7,7 @@ using Marechai.ApiClient.Smartphones.Companies;
 using Marechai.ApiClient.Smartphones.Count;
 using Marechai.ApiClient.Smartphones.MaximumYear;
 using Marechai.ApiClient.Smartphones.MinimumYear;
+using Marechai.ApiClient.Smartphones.Prototypes;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
 using Microsoft.Kiota.Abstractions;
@@ -52,6 +53,11 @@ namespace Marechai.ApiClient.Smartphones
         public global::Marechai.ApiClient.Smartphones.MinimumYear.MinimumYearRequestBuilder MinimumYear
         {
             get => new global::Marechai.ApiClient.Smartphones.MinimumYear.MinimumYearRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The prototypes property</summary>
+        public global::Marechai.ApiClient.Smartphones.Prototypes.PrototypesRequestBuilder Prototypes
+        {
+            get => new global::Marechai.ApiClient.Smartphones.Prototypes.PrototypesRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.ApiClient.Smartphones.SmartphonesRequestBuilder"/> and sets the default values.

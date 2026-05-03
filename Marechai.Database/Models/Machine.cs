@@ -55,6 +55,7 @@ public class Machine : BaseModel<int>
     public DateTime? Introduced { get; set; }
     [DefaultValue(DatePrecision.Full)]
     public DatePrecision IntroducedPrecision { get; set; }
+    public bool Prototype { get; set; }
     public int? FamilyId { get;        set; }
     [StringLength(50)]
     public string Model { get; set; }

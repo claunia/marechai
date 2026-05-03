@@ -53,7 +53,7 @@ public class SmartphonesController(MarechaiContext context) : ControllerBase
     public Task<int> GetMinimumYearAsync() => context.Machines
                                                      .Where(t => t.Type == MachineType.Smartphone &&
                                                                  t.Introduced.HasValue            &&
-                                                                 t.Introduced.Value.Year > 1000)
+                                                                 !t.Prototype)
                                                      .MinAsync(t => t.Introduced.Value.Year);
 
     [HttpGet("maximum-year")]
@@ -63,7 +63,7 @@ public class SmartphonesController(MarechaiContext context) : ControllerBase
     public Task<int> GetMaximumYearAsync() => context.Machines
                                                      .Where(t => t.Type == MachineType.Smartphone &&
                                                                  t.Introduced.HasValue            &&
-                                                                 t.Introduced.Value.Year > 1000)
+                                                                 !t.Prototype)
                                                      .MaxAsync(t => t.Introduced.Value.Year);
 
     [HttpGet("by-letter/{c}")]
@@ -121,6 +121,24 @@ public class SmartphonesController(MarechaiContext context) : ControllerBase
                                                                        Introduced = m.Introduced
                                                                    })
                                                                   .ToListAsync();
+
+    [HttpGet("prototypes")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<MachineDto>> GetPrototypesAsync() => context.Machines.Include(m => m.Company)
+                                                                .Where(m => m.Type == MachineType.Smartphone &&
+                                                                            m.Prototype)
+                                                                .OrderBy(m => m.Company.Name)
+                                                                .ThenBy(m => m.Name)
+                                                                .Select(m => new MachineDto
+                                                                 {
+                                                                     Id        = m.Id,
+                                                                     Name      = m.Name,
+                                                                     Company   = m.Company.Name,
+                                                                     Prototype = m.Prototype
+                                                                 })
+                                                                .ToListAsync();
 
     [HttpGet("companies")]
     [AllowAnonymous]

@@ -35,6 +35,7 @@ public partial class Search
     char?            _character;
     List<MachineDto> _smartphones;
     bool             _loaded;
+    bool             _showPrototypes;
     string           _startingCharacter;
     int?             _year;
 
@@ -68,25 +69,35 @@ public partial class Search
     {
         if(_loaded) return;
 
-        _character = null;
+        _character      = null;
+        _showPrototypes = false;
 
-        if(!string.IsNullOrWhiteSpace(StartingCharacter) && StartingCharacter.Length == 1)
+        if(StartingCharacter == "prototypes")
         {
-            _character = StartingCharacter[0];
+            _showPrototypes = true;
+            _smartphones    = await Service.GetPrototypesAsync();
+        }
+        else
+        {
+            if(!string.IsNullOrWhiteSpace(StartingCharacter) && StartingCharacter.Length == 1)
+            {
+                _character = StartingCharacter[0];
 
-            // ToUpper()
-            if(_character >= 'a' && _character <= 'z') _character -= (char)32;
+                // ToUpper()
+                if(_character >= 'a' && _character <= 'z') _character -= (char)32;
 
-            // Check if not letter or number
-            if(_character < '0' || _character > '9' && _character < 'A' || _character > 'Z') _character = null;
+                // Check if not letter or number
+                if(_character < '0' || _character > '9' && _character < 'A' || _character > 'Z') _character = null;
+            }
+
+            if(_character.HasValue) _smartphones = await Service.GetSmartphonesByLetterAsync(_character.Value);
+
+            if(Year.HasValue && _smartphones is null) _smartphones = await Service.GetSmartphonesByYearAsync(Year.Value);
+
+            _smartphones ??= await Service.GetSmartphonesAsync();
         }
 
-        if(_character.HasValue) _smartphones = await Service.GetSmartphonesByLetterAsync(_character.Value);
-
-        if(Year.HasValue && _smartphones is null) _smartphones = await Service.GetSmartphonesByYearAsync(Year.Value);
-
-        _smartphones ??= await Service.GetSmartphonesAsync();
-        _loaded      =   true;
+        _loaded = true;
         StateHasChanged();
     }
 }

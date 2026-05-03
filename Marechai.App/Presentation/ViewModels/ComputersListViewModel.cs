@@ -161,6 +161,12 @@ public partial class ComputersListViewModel : ObservableObject
                 }
 
                 break;
+
+            case ComputerListFilterType.Prototype:
+                PageTitle         = _localizer["Prototype Computers"];
+                FilterDescription = _localizer["Showing prototype computers"];
+
+                break;
         }
     }
 
@@ -178,6 +184,9 @@ public partial class ComputersListViewModel : ObservableObject
 
                                              ComputerListFilterType.Year when int.TryParse(FilterValue, out int year) =>
                                                  await _computersService.GetComputersByYearAsync(year),
+
+                                             ComputerListFilterType.Prototype =>
+                                                 await _computersService.GetPrototypesAsync(),
 
                                              _ => await _computersService.GetAllComputersAsync()
                                          };

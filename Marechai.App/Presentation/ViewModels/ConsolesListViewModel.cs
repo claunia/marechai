@@ -159,6 +159,12 @@ public partial class ConsolesListViewModel : ObservableObject
                 }
 
                 break;
+
+            case ConsoleListFilterType.Prototype:
+                PageTitle         = _localizer["Prototype Consoles"];
+                FilterDescription = _localizer["Showing prototype consoles"];
+
+                break;
         }
     }
 
@@ -176,6 +182,9 @@ public partial class ConsolesListViewModel : ObservableObject
 
                                             ConsoleListFilterType.Year when int.TryParse(FilterValue, out int year) =>
                                                 await _consolesService.GetConsolesByYearAsync(year),
+
+                                            ConsoleListFilterType.Prototype =>
+                                                await _consolesService.GetPrototypesAsync(),
 
                                             _ => await _consolesService.GetAllConsolesAsync()
                                         };

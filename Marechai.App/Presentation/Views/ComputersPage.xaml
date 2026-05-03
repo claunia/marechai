@@ -130,6 +130,17 @@
                                 Command="{Binding NavigateAllComputersCommand}"
                                 Style="{StaticResource AccentButtonStyle}" />
 
+                        <!-- Prototypes Button -->
+                        <Button
+                                Content="{Binding Source={StaticResource Strings}, Path=PrototypeBadgeText}"
+                                Padding="16,12"
+                                HorizontalAlignment="Stretch"
+                                FontSize="16"
+                                FontWeight="SemiBold"
+                                Command="{Binding NavigatePrototypesCommand}"
+                                Background="{ThemeResource WarningFillColorTertiaryBrush}"
+                                Foreground="{ThemeResource WarningForegroundColorDefaultBrush}" />
+
                         <!-- Search Field (placeholder for future implementation) -->
                         <TextBox
                                  PlaceholderText="{Binding Source={StaticResource Strings}, Path=ComputersSearchBox_Placeholder}"

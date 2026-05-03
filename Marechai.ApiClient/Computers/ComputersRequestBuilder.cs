@@ -6,6 +6,7 @@ using Marechai.ApiClient.Computers.Companies;
 using Marechai.ApiClient.Computers.Count;
 using Marechai.ApiClient.Computers.MaximumYear;
 using Marechai.ApiClient.Computers.MinimumYear;
+using Marechai.ApiClient.Computers.Prototypes;
 using Marechai.ApiClient.Models;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
@@ -52,6 +53,11 @@ namespace Marechai.ApiClient.Computers
         public global::Marechai.ApiClient.Computers.MinimumYear.MinimumYearRequestBuilder MinimumYear
         {
             get => new global::Marechai.ApiClient.Computers.MinimumYear.MinimumYearRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The prototypes property</summary>
+        public global::Marechai.ApiClient.Computers.Prototypes.PrototypesRequestBuilder Prototypes
+        {
+            get => new global::Marechai.ApiClient.Computers.Prototypes.PrototypesRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.ApiClient.Computers.ComputersRequestBuilder"/> and sets the default values.

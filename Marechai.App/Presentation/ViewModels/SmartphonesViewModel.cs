@@ -63,6 +63,7 @@ public partial class SmartphonesViewModel : ObservableObject
         NavigateByLetterCommand        = new AsyncRelayCommand<char>(NavigateByLetterAsync);
         NavigateByYearCommand          = new AsyncRelayCommand<int>(NavigateByYearAsync);
         NavigateAllSmartphonesCommand  = new AsyncRelayCommand(NavigateAllSmartphonesAsync);
+        NavigatePrototypesCommand      = new AsyncRelayCommand(NavigatePrototypesAsync);
         Title = _localizer["Smartphones"];
 
         InitializeLetters();
@@ -73,6 +74,7 @@ public partial class SmartphonesViewModel : ObservableObject
     public IAsyncRelayCommand<char> NavigateByLetterCommand       { get; }
     public IAsyncRelayCommand<int>  NavigateByYearCommand         { get; }
     public IAsyncRelayCommand       NavigateAllSmartphonesCommand { get; }
+    public IAsyncRelayCommand       NavigatePrototypesCommand     { get; }
     public string                   Title                         { get; }
 
     private void InitializeLetters()
@@ -187,6 +189,28 @@ public partial class SmartphonesViewModel : ObservableObject
         catch(Exception ex)
         {
             _logger.LogError("Error navigating to all smartphones: {Exception}", ex.Message);
+            ErrorMessage = _localizer["Failed to navigate. Please try again."].Value;
+            HasError     = true;
+        }
+
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    ///     Navigates to prototype smartphones view
+    /// </summary>
+    private Task NavigatePrototypesAsync()
+    {
+        try
+        {
+            _logger.LogInformation("Navigating to prototype smartphones");
+            _filterContext.FilterType  = SmartphoneListFilterType.Prototype;
+            _filterContext.FilterValue = string.Empty;
+            _regionManager.RequestNavigate(RegionNames.Content, nameof(SmartphonesListPage));
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError("Error navigating to prototype smartphones: {Exception}", ex.Message);
             ErrorMessage = _localizer["Failed to navigate. Please try again."].Value;
             HasError     = true;
         }

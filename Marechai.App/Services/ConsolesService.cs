@@ -168,6 +168,31 @@ public class ConsolesService
     }
 
     /// <summary>
+    ///     Fetches prototype consoles from the API
+    /// </summary>
+    public async Task<List<MachineDto>> GetPrototypesAsync()
+    {
+        try
+        {
+            _logger.LogInformation("Fetching prototype consoles from API");
+
+            List<MachineDto> consoles = await _apiClient.Consoles.Prototypes.GetAsync();
+
+            if(consoles == null) return [];
+
+            _logger.LogInformation("Successfully fetched {Count} prototype consoles", consoles.Count);
+
+            return consoles;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching prototype consoles from API");
+
+            return [];
+        }
+    }
+
+    /// <summary>
     ///     Fetches a single machine with full details by ID from the API
     /// </summary>
     public async Task<MachineDto?> GetMachineByIdAsync(int machineId)

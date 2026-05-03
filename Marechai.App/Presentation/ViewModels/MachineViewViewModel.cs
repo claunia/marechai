@@ -354,11 +354,11 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
             FamilyName  = machine.FamilyName;
             ModelName   = machine.Model;
 
-            // Check if this is a prototype (year 1000 is used as placeholder for prototypes)
-            IsPrototype = machine.Introduced?.Year == 1000;
+            // Check if this is a prototype
+            IsPrototype = machine.Prototype == true;
 
             // Set introduction date if available and not a prototype
-            if(machine.Introduced.HasValue && machine.Introduced.Value.Year != 1000)
+            if(machine.Introduced.HasValue && !IsPrototype)
                 IntroductionDateDisplay = (machine.IntroducedPrecision ?? 0) == 2 ? $"{machine.Introduced.Value.Year}" : (machine.IntroducedPrecision ?? 0) == 1 ? machine.Introduced.Value.ToString("MMMM yyyy") : machine.Introduced.Value.DateTime.ToString("MMMM d, yyyy");
 
             // Populate processors
