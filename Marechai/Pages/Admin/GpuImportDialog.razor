@@ -97,12 +97,14 @@
                                     <div style="@(context.Item.IsDuplicate ? "background-color: #ffe0b2; padding: 4px 8px; border-radius: 4px;" : "")">
                                         @if(context.Item.IsDuplicate)
                                         {
-                                            <MudIcon Icon="@Icons.Material.Filled.Warning" Size="Size.Small" Color="Color.Warning" Class="mr-1" Title="@L["Duplicate GPU name"]"/>
+                                            <MudTooltip Text="@L["Duplicate GPU name"]"><MudIcon Icon="@Icons.Material.Filled.Warning" Size="Size.Small" Color="Color.Warning" Class="mr-1"/></MudTooltip>
+
                                         }
                                         @context.Item.Name
                                         @if(context.Item.ValidationError is not null)
                                         {
-                                            <MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Small" Color="Color.Error" Class="ml-1" Title="@context.Item.ValidationError"/>
+                                            <MudTooltip Text="@context.Item.ValidationError"><MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Small" Color="Color.Error" Class="ml-1"/></MudTooltip>
+
                                         }
                                     </div>
                                 </CellTemplate>
@@ -197,7 +199,8 @@
                                         @context.Item.Name
                                         @if(context.Item.ImportError is not null)
                                         {
-                                            <MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Small" Color="Color.Error" Class="ml-1" Title="@context.Item.ImportError"/>
+                                            <MudTooltip Text="@context.Item.ImportError"><MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Small" Color="Color.Error" Class="ml-1"/></MudTooltip>
+
                                         }
                                     </CellTemplate>
                                 </TemplateColumn>

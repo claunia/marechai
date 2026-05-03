@@ -54,8 +54,10 @@
             <TemplateColumn Title="@L["Actions"]" Sortable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
-                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditScreenDialog(context.Item)" Title="@L["Edit Screen"]"/>
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDeleteScreen(context.Item)" Title="@L["Delete Screen"]"/>
+                        <MudTooltip Text="@L["Edit Screen"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditScreenDialog(context.Item)"/></MudTooltip>
+
+                        <MudTooltip Text="@L["Delete Screen"]"><MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDeleteScreen(context.Item)"/></MudTooltip>
+
                     </MudStack>
                 </CellTemplate>
             </TemplateColumn>

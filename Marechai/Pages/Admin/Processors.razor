@@ -59,8 +59,10 @@
             <TemplateColumn Title="@L["Actions"]" Sortable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
-                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditProcessorDialog(context.Item)" Title="@L["Edit Processor"]"/>
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDeleteProcessor(context.Item)" Title="@L["Delete Processor"]"/>
+                        <MudTooltip Text="@L["Edit Processor"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditProcessorDialog(context.Item)"/></MudTooltip>
+
+                        <MudTooltip Text="@L["Delete Processor"]"><MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDeleteProcessor(context.Item)"/></MudTooltip>
+
                     </MudStack>
                 </CellTemplate>
             </TemplateColumn>

@@ -86,8 +86,10 @@
             <TemplateColumn Title="@L["Actions"]" Sortable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
-                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditDialog(context.Item)" Title="@L["Edit Resolution"]"/>
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDelete(context.Item)" Title="@L["Delete Resolution"]"/>
+                        <MudTooltip Text="@L["Edit Resolution"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditDialog(context.Item)"/></MudTooltip>
+
+                        <MudTooltip Text="@L["Delete Resolution"]"><MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDelete(context.Item)"/></MudTooltip>
+
                     </MudStack>
                 </CellTemplate>
             </TemplateColumn>

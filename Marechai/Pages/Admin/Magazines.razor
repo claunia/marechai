@@ -58,8 +58,10 @@
             <TemplateColumn Title="@L["Actions"]" Sortable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
-                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditMagazineDialog(context.Item)" Title="@L["Edit Magazine"]"/>
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDeleteMagazine(context.Item)" Title="@L["Delete Magazine"]"/>
+                        <MudTooltip Text="@L["Edit Magazine"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditMagazineDialog(context.Item)"/></MudTooltip>
+
+                        <MudTooltip Text="@L["Delete Magazine"]"><MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDeleteMagazine(context.Item)"/></MudTooltip>
+
                     </MudStack>
                 </CellTemplate>
             </TemplateColumn>

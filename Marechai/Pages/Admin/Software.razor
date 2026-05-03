@@ -57,11 +57,16 @@
             <TemplateColumn Title="@L["Actions"]" Sortable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
-                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditDialog(context.Item)" Title="@L["Edit"]"/>
-                        <MudIconButton Icon="@Icons.Material.Filled.Description" Size="Size.Small" OnClick="() => OpenDescriptionsDialog(context.Item)" Title="@L["Descriptions"]"/>
-                        <MudIconButton Icon="@Icons.Material.Filled.ListAlt" Size="Size.Small" OnClick="() => NavigateToVersions(context.Item)" Title="@L["Versions"]"/>
-                        <MudIconButton Icon="@Icons.Material.Filled.Screenshot" Size="Size.Small" OnClick="() => NavigateToScreenshots(context.Item)" Title="@L["Screenshots"]"/>
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDelete(context.Item)" Title="@L["Delete"]"/>
+                        <MudTooltip Text="@L["Edit"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditDialog(context.Item)"/></MudTooltip>
+
+                        <MudTooltip Text="@L["Descriptions"]"><MudIconButton Icon="@Icons.Material.Filled.Description" Size="Size.Small" OnClick="() => OpenDescriptionsDialog(context.Item)"/></MudTooltip>
+
+                        <MudTooltip Text="@L["Versions"]"><MudIconButton Icon="@Icons.Material.Filled.ListAlt" Size="Size.Small" OnClick="() => NavigateToVersions(context.Item)"/></MudTooltip>
+
+                        <MudTooltip Text="@L["Screenshots"]"><MudIconButton Icon="@Icons.Material.Filled.Screenshot" Size="Size.Small" OnClick="() => NavigateToScreenshots(context.Item)"/></MudTooltip>
+
+                        <MudTooltip Text="@L["Delete"]"><MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDelete(context.Item)"/></MudTooltip>
+
                     </MudStack>
                 </CellTemplate>
             </TemplateColumn>

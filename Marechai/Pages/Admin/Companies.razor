@@ -86,10 +86,14 @@
             <TemplateColumn Title="@L["Actions"]" Sortable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
-                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditCompanyDialog(context.Item)" Title="@L["Edit"]"/>
-                        <MudIconButton Icon="@Icons.Material.Filled.Description" Size="Size.Small" OnClick="() => OpenDescriptionsDialog(context.Item)" Title="@L["Descriptions"]"/>
-                        <MudIconButton Icon="@Icons.Material.Filled.Image" Size="Size.Small" OnClick="() => NavigateToLogos(context.Item)" Title="@L["Logos"]"/>
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDeleteCompany(context.Item)" Title="@L["Delete"]"/>
+                        <MudTooltip Text="@L["Edit"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditCompanyDialog(context.Item)"/></MudTooltip>
+
+                        <MudTooltip Text="@L["Descriptions"]"><MudIconButton Icon="@Icons.Material.Filled.Description" Size="Size.Small" OnClick="() => OpenDescriptionsDialog(context.Item)"/></MudTooltip>
+
+                        <MudTooltip Text="@L["Logos"]"><MudIconButton Icon="@Icons.Material.Filled.Image" Size="Size.Small" OnClick="() => NavigateToLogos(context.Item)"/></MudTooltip>
+
+                        <MudTooltip Text="@L["Delete"]"><MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDeleteCompany(context.Item)"/></MudTooltip>
+
                     </MudStack>
                 </CellTemplate>
             </TemplateColumn>

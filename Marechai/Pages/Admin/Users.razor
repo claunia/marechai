@@ -96,10 +96,14 @@
             <TemplateColumn Title="@L["Actions"]" Sortable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
-                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditUserDialog(context.Item)" Title="@L["Edit"]"/>
-                        <MudIconButton Icon="@Icons.Material.Filled.Lock" Size="Size.Small" OnClick="() => OpenChangePasswordDialog(context.Item)" Title="@L["Change Password"]"/>
-                        <MudIconButton Icon="@Icons.Material.Filled.Security" Size="Size.Small" OnClick="() => OpenManageRolesDialog(context.Item)" Title="@L["Manage Roles"]"/>
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDeleteUser(context.Item)" Title="@L["Delete"]"/>
+                        <MudTooltip Text="@L["Edit"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditUserDialog(context.Item)"/></MudTooltip>
+
+                        <MudTooltip Text="@L["Change Password"]"><MudIconButton Icon="@Icons.Material.Filled.Lock" Size="Size.Small" OnClick="() => OpenChangePasswordDialog(context.Item)"/></MudTooltip>
+
+                        <MudTooltip Text="@L["Manage Roles"]"><MudIconButton Icon="@Icons.Material.Filled.Security" Size="Size.Small" OnClick="() => OpenManageRolesDialog(context.Item)"/></MudTooltip>
+
+                        <MudTooltip Text="@L["Delete"]"><MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDeleteUser(context.Item)"/></MudTooltip>
+
                     </MudStack>
                 </CellTemplate>
             </TemplateColumn>

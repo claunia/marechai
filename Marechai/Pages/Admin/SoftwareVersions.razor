@@ -52,9 +52,12 @@
             <TemplateColumn Title="@L["Actions"]" Sortable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
-                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditDialog(context.Item)" Title="@L["Edit"]"/>
-                        <MudIconButton Icon="@Icons.Material.Filled.Album" Size="Size.Small" OnClick="() => NavigateToReleases(context.Item)" Title="@L["Releases"]"/>
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDelete(context.Item)" Title="@L["Delete"]"/>
+                        <MudTooltip Text="@L["Edit"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditDialog(context.Item)"/></MudTooltip>
+
+                        <MudTooltip Text="@L["Releases"]"><MudIconButton Icon="@Icons.Material.Filled.Album" Size="Size.Small" OnClick="() => NavigateToReleases(context.Item)"/></MudTooltip>
+
+                        <MudTooltip Text="@L["Delete"]"><MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDelete(context.Item)"/></MudTooltip>
+
                     </MudStack>
                 </CellTemplate>
             </TemplateColumn>

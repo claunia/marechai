@@ -53,8 +53,10 @@
             <TemplateColumn Title="@L["Actions"]" Sortable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
-                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditSoundSynthDialog(context.Item)" Title="@L["Edit Sound Synth"]"/>
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDeleteSoundSynth(context.Item)" Title="@L["Delete Sound Synth"]"/>
+                        <MudTooltip Text="@L["Edit Sound Synth"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditSoundSynthDialog(context.Item)"/></MudTooltip>
+
+                        <MudTooltip Text="@L["Delete Sound Synth"]"><MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDeleteSoundSynth(context.Item)"/></MudTooltip>
+
                     </MudStack>
                 </CellTemplate>
             </TemplateColumn>

@@ -67,10 +67,10 @@
             <TemplateColumn Title="@L["Actions"]" Sortable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
-                        <MudIconButton Icon="@Icons.Material.Filled.PhotoLibrary" Size="Size.Small" Color="Color.Info" Href="@($"/admin/machines/{context.Item.Id}/photos")" Title="@L["Photos"]"/>
-                        <MudIconButton Icon="@Icons.Material.Filled.Description" Size="Size.Small" OnClick="() => OpenDescriptionsDialog(context.Item)" Title="@L["Descriptions"]"/>
-                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditMachineDialog(context.Item)" Title="@L["Edit Machine"]"/>
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDeleteMachine(context.Item)" Title="@L["Delete Machine"]"/>
+                        <MudTooltip Text="@L["Photos"]"><MudIconButton Icon="@Icons.Material.Filled.PhotoLibrary" Size="Size.Small" Color="Color.Info" Href="@($"/admin/machines/{context.Item.Id}/photos")"/></MudTooltip>
+                        <MudTooltip Text="@L["Descriptions"]"><MudIconButton Icon="@Icons.Material.Filled.Description" Size="Size.Small" OnClick="() => OpenDescriptionsDialog(context.Item)"/></MudTooltip>
+                        <MudTooltip Text="@L["Edit Machine"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditMachineDialog(context.Item)"/></MudTooltip>
+                        <MudTooltip Text="@L["Delete Machine"]"><MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDeleteMachine(context.Item)"/></MudTooltip>
                     </MudStack>
                 </CellTemplate>
             </TemplateColumn>
