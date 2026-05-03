@@ -156,7 +156,8 @@
 
     string FormatResolution(ResolutionByScreenDto res)
     {
-        ResolutionDto? r = res.Resolution?.ResolutionDto;
+        // Kiota composed type deserialization is broken for nested DTOs — look up from pre-loaded list
+        ResolutionDto? r = _allResolutions?.Find(x => x.Id == res.ResolutionId);
 
         if(r is null)
             return $"{res.ResolutionId}";
