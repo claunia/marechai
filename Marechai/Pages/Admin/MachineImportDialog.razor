@@ -1,0 +1,1740 @@
+@{
+    /******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2026 Natalia Portillo
+*******************************************************************************/
+}
+
+@using Marechai.ApiClient.Models
+@using Marechai.Services
+@using Marechai.Helpers
+@inject MachinesService MachinesService
+@inject MachineFamiliesService MachineFamiliesService
+@inject IStringLocalizer<MachinesService> L
+@inject IJSRuntime JsRuntime
+
+<style>
+    .black-select-text .mud-input-slot,
+    .black-select-text .mud-select-input,
+    .black-select-text input,
+    .black-select-text .mud-input {
+        color: black !important;
+    }
+</style>
+
+<MudDialog>
+    <DialogContent>
+        @if(!string.IsNullOrWhiteSpace(_errorMessage))
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+        }
+
+        @switch(_state)
+        {
+            case ImportState.Upload:
+                <MudStack Spacing="4">
+                    <MudText Typo="Typo.body1">@L["Upload a CSV file to import machines in bulk. Download the template first to see the expected format."]</MudText>
+
+                    <MudStack Row="true" Spacing="2">
+                        <MudButton Variant="Variant.Outlined"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.Download"
+                                   OnClick="DownloadTemplate">
+                            @L["Download Template"]
+                        </MudButton>
+                    </MudStack>
+
+                    <MudFileUpload T="IBrowserFile"
+                                   Accept=".csv"
+                                   FilesChanged="OnCsvFileSelected"
+                                   MaximumFileCount="1">
+                        <ActivatorContent>
+                            <MudButton Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       StartIcon="@Icons.Material.Filled.Upload"
+                                       Disabled="_isProcessing">
+                                @(_isProcessing ? L["Processing..."] : L["Upload CSV"])
+                            </MudButton>
+                        </ActivatorContent>
+                    </MudFileUpload>
+
+                    @if(_isProcessing)
+                    {
+                        <MudProgressLinear Indeterminate="true" Color="Color.Primary"/>
+                    }
+                </MudStack>
+                break;
+
+            case ImportState.Preview:
+                <MudStack Spacing="3">
+                    <MudAlert Severity="Severity.Info" Dense="true">
+                        @string.Format(L["{0} rows parsed. {1} auto-rejected. Selected rows will be REJECTED — unselected rows will be imported."], _importRows.Count, _autoRejectedCount)
+                    </MudAlert>
+
+                    <div style="overflow-x: auto;">
+                        <MudDataGrid T="MachineImportRow"
+                                     Items="_importRows"
+                                     MultiSelection="true"
+                                     @bind-SelectedItems="_selectedItems"
+                                     Dense="true"
+                                     Hover="true"
+                                     Striped="true"
+                                     FixedHeader="true"
+                                     Height="600px">
+                            <Columns>
+                                <SelectColumn T="MachineImportRow"/>
+
+                                @* Name column with duplicate detection *@
+                                <TemplateColumn Title="@L["Name"]">
+                                    <CellTemplate>
+                                        @{
+                                            string nameBgColor = context.Item.DuplicateType switch
+                                            {
+                                                MachineNameDuplicateType.ExactDuplicate  => "#ffcdd2",
+                                                MachineNameDuplicateType.SoundexDuplicate => "#ffe0b2",
+                                                _                                        => ""
+                                            };
+                                        }
+                                        <div style="@(string.IsNullOrEmpty(nameBgColor) ? "" : $"background-color: {nameBgColor}; color: black;") padding: 4px 8px; border-radius: 4px;">
+                                            @if(context.Item.DuplicateType == MachineNameDuplicateType.ExactDuplicate)
+                                            {
+                                                <MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Small" Color="Color.Error" Class="mr-1" Title="@L["Exact duplicate — will be rejected"]"/>
+                                            }
+                                            else if(context.Item.DuplicateType == MachineNameDuplicateType.SoundexDuplicate)
+                                            {
+                                                <MudIcon Icon="@Icons.Material.Filled.Warning" Size="Size.Small" Color="Color.Warning" Class="mr-1" Title="@L["Possible duplicate (similar name)"]"/>
+                                            }
+                                            @context.Item.Name
+                                            @if(context.Item.DuplicateType == MachineNameDuplicateType.ExactDuplicate)
+                                            {
+                                                <br/>
+                                                <MudText Typo="Typo.caption" Style="color: #b71c1c;">@string.Format(L["Exact duplicate of \"{0}\""], context.Item.DuplicateMatchedName)</MudText>
+                                            }
+                                            else if(context.Item.DuplicateType == MachineNameDuplicateType.SoundexDuplicate)
+                                            {
+                                                <br/>
+                                                <MudText Typo="Typo.caption" Style="color: #e65100;">@string.Format(L["Similar to: {0}"], context.Item.DuplicateMatchedName)</MudText>
+                                            }
+                                            @if(context.Item.ValidationError is not null)
+                                            {
+                                                <MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Small" Color="Color.Error" Class="ml-1" Title="@context.Item.ValidationError"/>
+                                            }
+                                        </div>
+                                    </CellTemplate>
+                                </TemplateColumn>
+
+                                @* Company column *@
+                                <TemplateColumn Title="@L["Company"]">
+                                    <CellTemplate>
+                                        @{
+                                            string companyBgColor = context.Item.CompanyMatch switch
+                                            {
+                                                CompanyMatchType.Exact   => "#c8e6c9",
+                                                CompanyMatchType.Partial => "#fff9c4",
+                                                _                       => "#ffcdd2"
+                                            };
+                                        }
+                                        <div style="background-color: @companyBgColor; color: black; padding: 4px 8px; border-radius: 4px;">
+                                            @if(context.Item.CompanyMatch == CompanyMatchType.Partial && context.Item.MatchedCompanies.Count > 1)
+                                            {
+                                                <MudSelect T="CompanyDto"
+                                                           Value="context.Item.SelectedCompany"
+                                                           ValueChanged="(c) => context.Item.SelectedCompany = c"
+                                                           Dense="true"
+                                                           Margin="Margin.Dense"
+                                                           Variant="Variant.Text"
+                                                           ToStringFunc="@(c => c?.Name ?? "")">
+                                                    @foreach(CompanyDto company in context.Item.MatchedCompanies)
+                                                    {
+                                                        <MudSelectItem T="CompanyDto" Value="company">@company.Name</MudSelectItem>
+                                                    }
+                                                </MudSelect>
+                                            }
+                                            else
+                                            {
+                                                @context.Item.CompanyDisplay
+                                            }
+                                        </div>
+                                    </CellTemplate>
+                                </TemplateColumn>
+
+                                @* Type column *@
+                                <TemplateColumn Title="@L["Type"]">
+                                    <CellTemplate>
+                                        @if(!string.IsNullOrWhiteSpace(context.Item.TypeInput))
+                                        {
+                                            string typeBgColor = context.Item.TypeMatch switch
+                                            {
+                                                MachineTypeMatchType.Exact   => "#c8e6c9",
+                                                MachineTypeMatchType.Partial => "#fff9c4",
+                                                _                           => "#ffcdd2"
+                                            };
+                                            <div style="background-color: @typeBgColor; color: black; padding: 4px 8px; border-radius: 4px;">
+                                                @context.Item.TypeDisplay
+                                            </div>
+                                        }
+                                    </CellTemplate>
+                                </TemplateColumn>
+
+                                <PropertyColumn Property="x => x.Model" Title="@L["Model"]"/>
+
+                                @* Family column *@
+                                <TemplateColumn Title="@L["Family"]" CellStyle="min-width: 300px;">
+                                    <CellTemplate>
+                                        @if(!string.IsNullOrWhiteSpace(context.Item.FamilyInput))
+                                        {
+                                            string familyBgColor = context.Item.FamilyMatch switch
+                                            {
+                                                MachineFamilyMatchType.Exact   => "#c8e6c9",
+                                                MachineFamilyMatchType.Partial => "#fff9c4",
+                                                MachineFamilyMatchType.New     => "#bbdefb",
+                                                _                             => "#ffcdd2"
+                                            };
+                                            <div style="background-color: @familyBgColor; color: black; padding: 4px 8px; border-radius: 4px;">
+                                                @if(context.Item.FamilyMatch is MachineFamilyMatchType.New or MachineFamilyMatchType.Partial && context.Item.MatchedFamilies.Count > 0)
+                                                {
+                                                    <MudSelect T="MachineFamilyDto"
+                                                               Value="context.Item.SelectedFamily"
+                                                               ValueChanged="(f) => OnFamilySelected(context.Item, f)"
+                                                               Dense="true"
+                                                               Margin="Margin.Dense"
+                                                               Variant="Variant.Text"
+                                                               Class="black-select-text"
+                                                               ToStringFunc="@(f => f == CreateNewFamilySentinel ? $"➕ Create new: {context.Item.FamilyInput}" : f?.Name ?? "")">
+                                                        <MudSelectItem T="MachineFamilyDto" Value="CreateNewFamilySentinel">@($"➕ Create new: {context.Item.FamilyInput}")</MudSelectItem>
+                                                        @foreach(MachineFamilyDto family in context.Item.MatchedFamilies)
+                                                        {
+                                                            <MudSelectItem T="MachineFamilyDto" Value="family">@family.Name</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                }
+                                                else if(context.Item.FamilyMatch == MachineFamilyMatchType.New)
+                                                {
+                                                    @($"➕ {context.Item.FamilyInput}")
+                                                }
+                                                else
+                                                {
+                                                    @context.Item.FamilyDisplay
+                                                }
+                                            </div>
+                                        }
+                                    </CellTemplate>
+                                </TemplateColumn>
+
+                                @* Introduced column *@
+                                <TemplateColumn Title="@L["Introduced"]">
+                                    <CellTemplate>
+                                        @if(context.Item.IsPrototype)
+                                        {
+                                            <MudChip T="string" Size="Size.Small" Color="Color.Warning"
+                                                     Style="white-space: normal; height: auto; overflow: visible; text-overflow: unset; padding: 2px 8px; font-size: 0.7rem;">
+                                                @L["Prototype"]
+                                            </MudChip>
+                                        }
+                                        else if(context.Item.IntroducedYear is not null)
+                                        {
+                                            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+                                                <MudText Typo="Typo.body2">@FormatImportDate(context.Item)</MudText>
+                                                <MudChip T="string" Size="Size.Small"
+                                                         Color="@(context.Item.IntroducedPrecision == 0 ? Color.Success : context.Item.IntroducedPrecision == 1 ? Color.Warning : Color.Info)"
+                                                         Style="white-space: normal; height: auto; overflow: visible; text-overflow: unset; padding: 2px 8px; font-size: 0.7rem;">
+                                                    @(context.Item.IntroducedPrecision switch
+                                                    {
+                                                        0 => L["Full date"],
+                                                        1 => L["Month and year only"],
+                                                        2 => L["Year only"],
+                                                        _ => ""
+                                                    })
+                                                </MudChip>
+                                            </MudStack>
+                                        }
+                                    </CellTemplate>
+                                </TemplateColumn>
+
+                                @* GPU column *@
+                                <TemplateColumn Title="@L["GPU"]">
+                                    <CellTemplate>
+                                        @if(!string.IsNullOrWhiteSpace(context.Item.GpuInput))
+                                        {
+                                            string gpuBgColor = context.Item.GpuMatch switch
+                                            {
+                                                GpuMatchType.Exact   => "#c8e6c9",
+                                                GpuMatchType.Partial => "#fff9c4",
+                                                _                    => "#ffcdd2"
+                                            };
+                                            <div style="background-color: @gpuBgColor; color: black; padding: 4px 8px; border-radius: 4px;">
+                                                @if(context.Item.GpuMatch == GpuMatchType.Partial && context.Item.MatchedGpus.Count > 1)
+                                                {
+                                                    <MudSelect T="GpuDto"
+                                                               Value="context.Item.SelectedGpu"
+                                                               ValueChanged="(g) => context.Item.SelectedGpu = g"
+                                                               Dense="true"
+                                                               Margin="Margin.Dense"
+                                                               Variant="Variant.Text"
+                                                               ToStringFunc="@(g => g?.Name ?? "")">
+                                                        @foreach(GpuDto gpu in context.Item.MatchedGpus)
+                                                        {
+                                                            <MudSelectItem T="GpuDto" Value="gpu">@gpu.Name</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                }
+                                                else
+                                                {
+                                                    @context.Item.GpuDisplay
+                                                }
+                                            </div>
+                                        }
+                                    </CellTemplate>
+                                </TemplateColumn>
+
+                                @* Processor column *@
+                                <TemplateColumn Title="@L["Processor"]">
+                                    <CellTemplate>
+                                        @if(!string.IsNullOrWhiteSpace(context.Item.ProcessorInput))
+                                        {
+                                            string procBgColor = context.Item.ProcessorMatch switch
+                                            {
+                                                ProcessorMatchType.Exact   => "#c8e6c9",
+                                                ProcessorMatchType.Partial => "#fff9c4",
+                                                _                         => "#ffcdd2"
+                                            };
+                                            <div style="background-color: @procBgColor; color: black; padding: 4px 8px; border-radius: 4px;">
+                                                @if(context.Item.ProcessorMatch == ProcessorMatchType.Partial && context.Item.MatchedProcessors.Count > 1)
+                                                {
+                                                    <MudSelect T="ProcessorDto"
+                                                               Value="context.Item.SelectedProcessor"
+                                                               ValueChanged="(p) => context.Item.SelectedProcessor = p"
+                                                               Dense="true"
+                                                               Margin="Margin.Dense"
+                                                               Variant="Variant.Text"
+                                                               ToStringFunc="@(p => p?.Name ?? "")">
+                                                        @foreach(ProcessorDto proc in context.Item.MatchedProcessors)
+                                                        {
+                                                            <MudSelectItem T="ProcessorDto" Value="proc">@proc.Name</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                }
+                                                else
+                                                {
+                                                    @context.Item.ProcessorDisplay
+                                                }
+                                            </div>
+                                        }
+                                    </CellTemplate>
+                                </TemplateColumn>
+
+                                @* Processor speed column *@
+                                <TemplateColumn Title="@L["CPU Speed"]">
+                                    <CellTemplate>
+                                        @(context.Item.ProcessorSpeed?.ToString("F1") ?? "")
+                                    </CellTemplate>
+                                </TemplateColumn>
+
+                                @* Sound synth column *@
+                                <TemplateColumn Title="@L["Sound synth"]">
+                                    <CellTemplate>
+                                        @if(!string.IsNullOrWhiteSpace(context.Item.SoundSynthInput))
+                                        {
+                                            string sndBgColor = context.Item.SoundSynthMatch switch
+                                            {
+                                                SoundSynthMatchType.Exact   => "#c8e6c9",
+                                                SoundSynthMatchType.Partial => "#fff9c4",
+                                                _                          => "#ffcdd2"
+                                            };
+                                            <div style="background-color: @sndBgColor; color: black; padding: 4px 8px; border-radius: 4px;">
+                                                @if(context.Item.SoundSynthMatch == SoundSynthMatchType.Partial && context.Item.MatchedSoundSynths.Count > 1)
+                                                {
+                                                    <MudSelect T="SoundSynthDto"
+                                                               Value="context.Item.SelectedSoundSynth"
+                                                               ValueChanged="(s) => context.Item.SelectedSoundSynth = s"
+                                                               Dense="true"
+                                                               Margin="Margin.Dense"
+                                                               Variant="Variant.Text"
+                                                               ToStringFunc="@(s => s?.Name ?? "")">
+                                                        @foreach(SoundSynthDto synth in context.Item.MatchedSoundSynths)
+                                                        {
+                                                            <MudSelectItem T="SoundSynthDto" Value="synth">@synth.Name</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                }
+                                                else
+                                                {
+                                                    @context.Item.SoundSynthDisplay
+                                                }
+                                            </div>
+                                        }
+                                    </CellTemplate>
+                                </TemplateColumn>
+
+                                @* Software platform column *@
+                                <TemplateColumn Title="@L["Software platform"]">
+                                    <CellTemplate>
+                                        @if(!string.IsNullOrWhiteSpace(context.Item.SoftwarePlatformInput))
+                                        {
+                                            string platBgColor = context.Item.SoftwarePlatformMatch switch
+                                            {
+                                                SoftwarePlatformMatchType.Exact   => "#c8e6c9",
+                                                SoftwarePlatformMatchType.Partial => "#fff9c4",
+                                                _                                => "#ffcdd2"
+                                            };
+                                            <div style="background-color: @platBgColor; color: black; padding: 4px 8px; border-radius: 4px;">
+                                                @if(context.Item.SoftwarePlatformMatch == SoftwarePlatformMatchType.Partial && context.Item.MatchedSoftwarePlatforms.Count > 1)
+                                                {
+                                                    <MudSelect T="SoftwarePlatformDto"
+                                                               Value="context.Item.SelectedSoftwarePlatform"
+                                                               ValueChanged="(sp) => context.Item.SelectedSoftwarePlatform = sp"
+                                                               Dense="true"
+                                                               Margin="Margin.Dense"
+                                                               Variant="Variant.Text"
+                                                               ToStringFunc="@(sp => sp?.Name ?? "")">
+                                                        @foreach(SoftwarePlatformDto plat in context.Item.MatchedSoftwarePlatforms)
+                                                        {
+                                                            <MudSelectItem T="SoftwarePlatformDto" Value="plat">@plat.Name</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                }
+                                                else
+                                                {
+                                                    @context.Item.SoftwarePlatformDisplay
+                                                }
+                                            </div>
+                                        }
+                                    </CellTemplate>
+                                </TemplateColumn>
+
+                                @* Memory columns (condensed) *@
+                                <TemplateColumn Title="@L["Work memory"]">
+                                    <CellTemplate>
+                                        @if(context.Item.HasWorkMemory)
+                                        {
+                                            <div style="@(!context.Item.WorkMemoryTypeValid ? "background-color: #ffcdd2; color: black; " : "")padding: 4px 8px; border-radius: 4px;"
+                                                 title="@($"Type: {context.Item.WorkMemoryTypeInput ?? "Unknown"}, Size: {context.Item.WorkMemorySize?.ToString() ?? "—"}, Speed: {context.Item.WorkMemorySpeed?.ToString("F1") ?? "—"}")">
+                                                @(context.Item.WorkMemoryTypeInput ?? "Unknown") / @(context.Item.WorkMemorySize?.ToString() ?? "—")
+                                            </div>
+                                        }
+                                    </CellTemplate>
+                                </TemplateColumn>
+
+                                <TemplateColumn Title="@L["Video memory"]">
+                                    <CellTemplate>
+                                        @if(context.Item.HasVideoMemory)
+                                        {
+                                            <div style="@(!context.Item.VideoMemoryTypeValid ? "background-color: #ffcdd2; color: black; " : "")padding: 4px 8px; border-radius: 4px;"
+                                                 title="@($"Type: {context.Item.VideoMemoryTypeInput ?? "Unknown"}, Size: {context.Item.VideoMemorySize?.ToString() ?? "—"}, Speed: {context.Item.VideoMemorySpeed?.ToString("F1") ?? "—"}")">
+                                                @(context.Item.VideoMemoryTypeInput ?? "Unknown") / @(context.Item.VideoMemorySize?.ToString() ?? "—")
+                                            </div>
+                                        }
+                                    </CellTemplate>
+                                </TemplateColumn>
+
+                                <TemplateColumn Title="@L["Sound memory"]">
+                                    <CellTemplate>
+                                        @if(context.Item.HasSoundMemory)
+                                        {
+                                            <div style="@(!context.Item.SoundMemoryTypeValid ? "background-color: #ffcdd2; color: black; " : "")padding: 4px 8px; border-radius: 4px;"
+                                                 title="@($"Type: {context.Item.SoundMemoryTypeInput ?? "Unknown"}, Size: {context.Item.SoundMemorySize?.ToString() ?? "—"}, Speed: {context.Item.SoundMemorySpeed?.ToString("F1") ?? "—"}")">
+                                                @(context.Item.SoundMemoryTypeInput ?? "Unknown") / @(context.Item.SoundMemorySize?.ToString() ?? "—")
+                                            </div>
+                                        }
+                                    </CellTemplate>
+                                </TemplateColumn>
+
+                                <TemplateColumn Title="@L["Unified memory"]">
+                                    <CellTemplate>
+                                        @if(context.Item.HasUnifiedMemory)
+                                        {
+                                            <div style="@(!context.Item.UnifiedMemoryTypeValid ? "background-color: #ffcdd2; color: black; " : "")padding: 4px 8px; border-radius: 4px;"
+                                                 title="@($"Type: {context.Item.UnifiedMemoryTypeInput ?? "Unknown"}, Size: {context.Item.UnifiedMemorySize?.ToString() ?? "—"}, Speed: {context.Item.UnifiedMemorySpeed?.ToString("F1") ?? "—"}")">
+                                                @(context.Item.UnifiedMemoryTypeInput ?? "Unknown") / @(context.Item.UnifiedMemorySize?.ToString() ?? "—")
+                                            </div>
+                                        }
+                                    </CellTemplate>
+                                </TemplateColumn>
+
+                                <TemplateColumn Title="@L["Firmware memory"]">
+                                    <CellTemplate>
+                                        @if(context.Item.HasFirmwareMemory)
+                                        {
+                                            <div style="@(!context.Item.FirmwareMemoryTypeValid ? "background-color: #ffcdd2; color: black; " : "")padding: 4px 8px; border-radius: 4px;"
+                                                 title="@($"Type: {context.Item.FirmwareMemoryTypeInput ?? "Unknown"}, Size: {context.Item.FirmwareMemorySize?.ToString() ?? "—"}, Speed: {context.Item.FirmwareMemorySpeed?.ToString("F1") ?? "—"}")">
+                                                @(context.Item.FirmwareMemoryTypeInput ?? "Unknown") / @(context.Item.FirmwareMemorySize?.ToString() ?? "—")
+                                            </div>
+                                        }
+                                    </CellTemplate>
+                                </TemplateColumn>
+                            </Columns>
+                        </MudDataGrid>
+                    </div>
+                </MudStack>
+                break;
+
+            case ImportState.Importing:
+                <MudStack Spacing="3">
+                    <MudText Typo="Typo.body1">@string.Format(L["Importing {0} of {1}..."], _importedCount + _failedCount, _totalToImport)</MudText>
+                    <MudProgressLinear Value="_progressPercent" Color="Color.Primary" Rounded="true" Size="Size.Large">
+                        <ChildContent>
+                            <MudText Typo="Typo.body2" Style="color: white;">
+                                @($"{_progressPercent:F0}%")
+                            </MudText>
+                        </ChildContent>
+                    </MudProgressLinear>
+
+                    @if(_importRows.Count > 0)
+                    {
+                        <MudDataGrid T="MachineImportRow"
+                                     Items="_importRows"
+                                     Dense="true"
+                                     Hover="true"
+                                     FixedHeader="true"
+                                     Height="500px">
+                            <Columns>
+                                <TemplateColumn Title="@L["Name"]">
+                                    <CellTemplate>
+                                        @context.Item.Name
+                                        @if(context.Item.ImportError is not null)
+                                        {
+                                            <MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Small" Color="Color.Error" Class="ml-1" Title="@context.Item.ImportError"/>
+                                        }
+                                    </CellTemplate>
+                                </TemplateColumn>
+                                <TemplateColumn Title="@L["Company"]">
+                                    <CellTemplate>
+                                        @context.Item.CompanyDisplay
+                                    </CellTemplate>
+                                </TemplateColumn>
+                                <TemplateColumn Title="@L["Type"]">
+                                    <CellTemplate>
+                                        @context.Item.TypeDisplay
+                                    </CellTemplate>
+                                </TemplateColumn>
+                            </Columns>
+                        </MudDataGrid>
+                    }
+                </MudStack>
+                break;
+
+            case ImportState.Complete:
+                <MudStack Spacing="3">
+                    <MudAlert Severity="Severity.Success" Dense="true">
+                        @string.Format(L["Import complete. {0} imported, {1} rejected, {2} failed."], _importedCount, _rejectedCount, _failedCount)
+                    </MudAlert>
+
+                    @if(_importRows.Count > 0)
+                    {
+                        <MudText Typo="Typo.body2">@L["The following items were not imported:"]</MudText>
+
+                        <MudDataGrid T="MachineImportRow"
+                                     Items="_importRows"
+                                     Dense="true"
+                                     Hover="true"
+                                     FixedHeader="true"
+                                     Height="500px">
+                            <Columns>
+                                <PropertyColumn Property="x => x.Name" Title="@L["Name"]"/>
+                                <TemplateColumn Title="@L["Company"]">
+                                    <CellTemplate>
+                                        @(context.Item.CompanyInput ?? "")
+                                    </CellTemplate>
+                                </TemplateColumn>
+                                <TemplateColumn Title="@L["Type"]">
+                                    <CellTemplate>
+                                        @(context.Item.TypeInput ?? "")
+                                    </CellTemplate>
+                                </TemplateColumn>
+                                <TemplateColumn Title="@L["Status"]">
+                                    <CellTemplate>
+                                        @if(context.Item.ImportError is not null)
+                                        {
+                                            <MudChip T="string" Color="Color.Error" Size="Size.Small"
+                                                     Style="white-space: normal; height: auto; overflow: visible; text-overflow: unset; padding: 8px 16px;">
+                                                @context.Item.ImportError
+                                            </MudChip>
+                                        }
+                                        else if(context.Item.ValidationError is not null)
+                                        {
+                                            <MudChip T="string" Color="Color.Warning" Size="Size.Small"
+                                                     Style="white-space: normal; height: auto; overflow: visible; text-overflow: unset; padding: 8px 16px;">
+                                                @context.Item.ValidationError
+                                            </MudChip>
+                                        }
+                                        else
+                                        {
+                                            <MudChip T="string" Color="Color.Default" Size="Size.Small">@L["Rejected"]</MudChip>
+                                        }
+                                    </CellTemplate>
+                                </TemplateColumn>
+                            </Columns>
+                        </MudDataGrid>
+
+                        <MudButton Variant="Variant.Outlined"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.Download"
+                                   OnClick="DownloadRejected">
+                            @L["Download Rejected"]
+                        </MudButton>
+                    }
+                </MudStack>
+                break;
+        }
+    </DialogContent>
+    <DialogActions>
+        @switch(_state)
+        {
+            case ImportState.Upload:
+                <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+                break;
+            case ImportState.Preview:
+                <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="StartImport"
+                           Disabled="_importRows.All(r => _selectedItems.Contains(r))">
+                    @L["Import"]
+                </MudButton>
+                break;
+            case ImportState.Importing:
+                break;
+            case ImportState.Complete:
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Close">@L["Close"]</MudButton>
+                break;
+        }
+    </DialogActions>
+</MudDialog>
+
+@code {
+    static readonly string[] CsvHeaders =
+    [
+        "Name", "Company", "Type", "Model", "Family",
+        "IntroducedYear", "IntroducedMonth", "IntroducedDay",
+        "Gpu", "Processor", "ProcessorSpeed", "SoundSynth", "SoftwarePlatform",
+        "WorkMemoryType", "WorkMemorySize", "WorkMemorySpeed",
+        "VideoMemoryType", "VideoMemorySize", "VideoMemorySpeed",
+        "SoundMemoryType", "SoundMemorySize", "SoundMemorySpeed",
+        "UnifiedMemoryType", "UnifiedMemorySize", "UnifiedMemorySpeed",
+        "FirmwareMemoryType", "FirmwareMemorySize", "FirmwareMemorySpeed"
+    ];
+
+    // Machine type words for Soundex matching
+    static readonly Dictionary<string, int> TypeWords = new(StringComparer.OrdinalIgnoreCase)
+    {
+        { "Computer", 1 },
+        { "Console", 2 },
+        { "Smartphone", 3 }
+    };
+
+    // MemoryType enum names for case-insensitive matching
+    static readonly string[] MemoryTypeNames = Enum.GetNames<Marechai.Data.MemoryType>();
+
+    // Sentinel MachineFamilyDto used in dropdown to represent "Create new family"
+    static readonly MachineFamilyDto CreateNewFamilySentinel = new() { Id = -1, Name = "➕ Create new" };
+
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
+
+    string?                         _errorMessage;
+    bool                            _isProcessing;
+    ImportState                     _state = ImportState.Upload;
+    List<MachineImportRow>          _importRows = [];
+    HashSet<MachineImportRow>       _selectedItems = [];
+    int                             _autoRejectedCount;
+
+    // Reference data
+    List<CompanyDto>?               _allCompanies;
+    List<MachineFamilyDto>?         _allFamilies;
+    List<GpuDto>?                   _allGpus;
+    List<ProcessorDto>?             _allProcessors;
+    List<SoundSynthDto>?            _allSoundSynths;
+    List<SoftwarePlatformDto>?      _allSoftwarePlatforms;
+    List<MachineDto>?               _existingMachines;
+
+    // Soundex maps
+    Dictionary<string, int>?                         _typeSoundexMap;
+
+    // Track families created during import to avoid duplicates across rows
+    Dictionary<string, int> _createdFamilies = new(StringComparer.OrdinalIgnoreCase);
+
+    // Import progress
+    int    _importedCount;
+    int    _rejectedCount;
+    int    _failedCount;
+    int    _totalToImport;
+    double _progressPercent;
+
+    void Cancel() => MudDialog.Cancel();
+    void Close() => MudDialog.Close(DialogResult.Ok(true));
+
+    async Task DownloadTemplate()
+    {
+        string csv    = CsvParser.GenerateTemplate(CsvHeaders);
+        byte[] bytes  = System.Text.Encoding.UTF8.GetBytes(csv);
+        string base64 = Convert.ToBase64String(bytes);
+
+        await JsRuntime.InvokeVoidAsync("downloadFileFromBytes", "machine_import_template.csv", "text/csv", base64);
+    }
+
+    async Task OnCsvFileSelected(IBrowserFile? file)
+    {
+        if(file is null) return;
+
+        _isProcessing = true;
+        _errorMessage = null;
+        StateHasChanged();
+
+        try
+        {
+            using var stream = file.OpenReadStream(10 * 1024 * 1024);
+            using var reader = new System.IO.StreamReader(stream);
+            string csvContent = await reader.ReadToEndAsync();
+
+            List<Dictionary<string, string>> rows = CsvParser.Parse(csvContent);
+
+            if(rows.Count == 0)
+            {
+                _errorMessage = L["The CSV file is empty or has no data rows."];
+                _isProcessing = false;
+                StateHasChanged();
+
+                return;
+            }
+
+            // Pre-fetch all reference data
+            _allCompanies         = await MachinesService.GetCompaniesAsync();
+            _allFamilies          = await MachinesService.GetFamiliesAsync();
+            _allGpus              = await MachinesService.GetAllGpusAsync();
+            _allProcessors        = await MachinesService.GetAllProcessorsAsync();
+            _allSoundSynths       = await MachinesService.GetAllSoundSynthsAsync();
+            _allSoftwarePlatforms = await MachinesService.GetAllSoftwarePlatformsAsync();
+            _existingMachines     = await MachinesService.GetAllAsync();
+
+            BuildTypeSoundexMap();
+            _importRows = ParseRows(rows);
+            PreSelectRejections();
+
+            _state = ImportState.Preview;
+        }
+        catch(Exception ex)
+        {
+            _errorMessage = string.Format(L["Error reading CSV: {0}"], ex.Message);
+        }
+        finally
+        {
+            _isProcessing = false;
+            StateHasChanged();
+        }
+    }
+
+    void BuildTypeSoundexMap()
+    {
+        // Type matching still uses Soundex — only 3 fixed words, Jaro-Winkler not needed
+        _typeSoundexMap = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+        foreach(KeyValuePair<string, int> kvp in TypeWords)
+        {
+            string code = Soundex.Generate(kvp.Key);
+            _typeSoundexMap.TryAdd(code, kvp.Value);
+        }
+    }
+
+    List<MachineImportRow> ParseRows(List<Dictionary<string, string>> rows)
+    {
+        var result = new List<MachineImportRow>();
+
+        foreach(Dictionary<string, string> row in rows)
+        {
+            var importRow = new MachineImportRow
+            {
+                Name                    = GetValue(row, "Name"),
+                CompanyInput            = GetValueOrNull(row, "Company"),
+                TypeInput               = GetValueOrNull(row, "Type"),
+                Model                   = GetValueOrNull(row, "Model"),
+                FamilyInput             = GetValueOrNull(row, "Family"),
+                GpuInput                = GetValueOrNull(row, "Gpu"),
+                ProcessorInput          = GetValueOrNull(row, "Processor"),
+                SoundSynthInput         = GetValueOrNull(row, "SoundSynth"),
+                SoftwarePlatformInput   = GetValueOrNull(row, "SoftwarePlatform"),
+                WorkMemoryTypeInput     = GetValueOrNull(row, "WorkMemoryType"),
+                VideoMemoryTypeInput    = GetValueOrNull(row, "VideoMemoryType"),
+                SoundMemoryTypeInput    = GetValueOrNull(row, "SoundMemoryType"),
+                UnifiedMemoryTypeInput  = GetValueOrNull(row, "UnifiedMemoryType"),
+                FirmwareMemoryTypeInput = GetValueOrNull(row, "FirmwareMemoryType")
+            };
+
+            // Parse numeric fields
+            if(TryParseInt(row, "IntroducedYear", out int year))
+                importRow.IntroducedYear = year;
+
+            if(TryParseInt(row, "IntroducedMonth", out int month))
+                importRow.IntroducedMonth = month;
+
+            if(TryParseInt(row, "IntroducedDay", out int day))
+                importRow.IntroducedDay = day;
+
+            if(TryParseDouble(row, "ProcessorSpeed", out double procSpeed))
+                importRow.ProcessorSpeed = procSpeed;
+
+            if(TryParseLong(row, "WorkMemorySize", out long workMemSize))
+                importRow.WorkMemorySize = workMemSize;
+
+            if(TryParseDouble(row, "WorkMemorySpeed", out double workMemSpeed))
+                importRow.WorkMemorySpeed = workMemSpeed;
+
+            if(TryParseLong(row, "VideoMemorySize", out long videoMemSize))
+                importRow.VideoMemorySize = videoMemSize;
+
+            if(TryParseDouble(row, "VideoMemorySpeed", out double videoMemSpeed))
+                importRow.VideoMemorySpeed = videoMemSpeed;
+
+            if(TryParseLong(row, "SoundMemorySize", out long soundMemSize))
+                importRow.SoundMemorySize = soundMemSize;
+
+            if(TryParseDouble(row, "SoundMemorySpeed", out double soundMemSpeed))
+                importRow.SoundMemorySpeed = soundMemSpeed;
+
+            if(TryParseLong(row, "UnifiedMemorySize", out long unifiedMemSize))
+                importRow.UnifiedMemorySize = unifiedMemSize;
+
+            if(TryParseDouble(row, "UnifiedMemorySpeed", out double unifiedMemSpeed))
+                importRow.UnifiedMemorySpeed = unifiedMemSpeed;
+
+            if(TryParseLong(row, "FirmwareMemorySize", out long firmwareMemSize))
+                importRow.FirmwareMemorySize = firmwareMemSize;
+
+            if(TryParseDouble(row, "FirmwareMemorySpeed", out double firmwareMemSpeed))
+                importRow.FirmwareMemorySpeed = firmwareMemSpeed;
+
+            // Validate required fields
+            if(string.IsNullOrWhiteSpace(importRow.Name))
+                importRow.ValidationError = L["Name is required."];
+            else if(string.IsNullOrWhiteSpace(importRow.CompanyInput))
+                importRow.ValidationError = L["Company is required."];
+            else if(string.IsNullOrWhiteSpace(importRow.TypeInput))
+                importRow.ValidationError = L["Type is required."];
+
+            // Match entities
+            MatchCompany(importRow);
+            MatchType(importRow);
+            MatchFamily(importRow);
+            MatchGpu(importRow);
+            MatchProcessor(importRow);
+            MatchSoundSynth(importRow);
+            MatchSoftwarePlatform(importRow);
+
+            // Validate memory types
+            ValidateMemoryType(importRow.WorkMemoryTypeInput, out bool workValid, out int workTypeVal);
+            importRow.WorkMemoryTypeValid = workValid;
+            importRow.WorkMemoryTypeValue = workTypeVal;
+
+            ValidateMemoryType(importRow.VideoMemoryTypeInput, out bool videoValid, out int videoTypeVal);
+            importRow.VideoMemoryTypeValid = videoValid;
+            importRow.VideoMemoryTypeValue = videoTypeVal;
+
+            ValidateMemoryType(importRow.SoundMemoryTypeInput, out bool soundValid, out int soundTypeVal);
+            importRow.SoundMemoryTypeValid = soundValid;
+            importRow.SoundMemoryTypeValue = soundTypeVal;
+
+            ValidateMemoryType(importRow.UnifiedMemoryTypeInput, out bool unifiedValid, out int unifiedTypeVal);
+            importRow.UnifiedMemoryTypeValid = unifiedValid;
+            importRow.UnifiedMemoryTypeValue = unifiedTypeVal;
+
+            ValidateMemoryType(importRow.FirmwareMemoryTypeInput, out bool firmwareValid, out int firmwareTypeVal);
+            importRow.FirmwareMemoryTypeValid = firmwareValid;
+            importRow.FirmwareMemoryTypeValue = firmwareTypeVal;
+
+            // Check duplicates against existing machines
+            CheckDuplicate(importRow);
+
+            result.Add(importRow);
+        }
+
+        return result;
+    }
+
+    void MatchCompany(MachineImportRow row)
+    {
+        if(string.IsNullOrWhiteSpace(row.CompanyInput))
+        {
+            row.CompanyMatch = CompanyMatchType.None;
+
+            return;
+        }
+
+        if(_allCompanies is null)
+        {
+            row.CompanyMatch = CompanyMatchType.None;
+
+            return;
+        }
+
+        CompanyDto? exact = _allCompanies.Find(c =>
+            string.Equals(c.Name, row.CompanyInput, StringComparison.OrdinalIgnoreCase));
+
+        if(exact is not null)
+        {
+            row.CompanyMatch     = CompanyMatchType.Exact;
+            row.MatchedCompanies = [exact];
+            row.SelectedCompany  = exact;
+
+            return;
+        }
+
+        // Jaro-Winkler fuzzy match
+        var jwMatches = JaroWinkler.FindMatches(row.CompanyInput, _allCompanies, c => c.Name, 0.85);
+
+        if(jwMatches.Count > 0)
+        {
+            row.CompanyMatch     = CompanyMatchType.Partial;
+            row.MatchedCompanies = [..jwMatches.Select(m => m.item)];
+            row.SelectedCompany  = row.MatchedCompanies[0];
+
+            return;
+        }
+
+        row.CompanyMatch = CompanyMatchType.None;
+    }
+
+    void MatchType(MachineImportRow row)
+    {
+        if(string.IsNullOrWhiteSpace(row.TypeInput))
+        {
+            row.TypeMatch = MachineTypeMatchType.None;
+
+            return;
+        }
+
+        // Try exact match first
+        foreach(KeyValuePair<string, int> kvp in TypeWords)
+        {
+            if(string.Equals(kvp.Key, row.TypeInput, StringComparison.OrdinalIgnoreCase))
+            {
+                row.TypeMatch   = MachineTypeMatchType.Exact;
+                row.MatchedType = kvp.Value;
+
+                return;
+            }
+        }
+
+        // Try Soundex match
+        string inputSoundex = Soundex.Generate(row.TypeInput);
+
+        if(_typeSoundexMap is not null &&
+           _typeSoundexMap.TryGetValue(inputSoundex, out int typeValue))
+        {
+            row.TypeMatch   = MachineTypeMatchType.Partial;
+            row.MatchedType = typeValue;
+
+            return;
+        }
+
+        row.TypeMatch = MachineTypeMatchType.None;
+    }
+
+    void MatchFamily(MachineImportRow row)
+    {
+        if(string.IsNullOrWhiteSpace(row.FamilyInput))
+        {
+            row.FamilyMatch = MachineFamilyMatchType.None;
+
+            return;
+        }
+
+        if(_allFamilies is null)
+        {
+            row.FamilyMatch = MachineFamilyMatchType.None;
+
+            return;
+        }
+
+        MachineFamilyDto? exact = _allFamilies.Find(f =>
+            string.Equals(f.Name, row.FamilyInput, StringComparison.OrdinalIgnoreCase));
+
+        if(exact is not null)
+        {
+            row.FamilyMatch     = MachineFamilyMatchType.Exact;
+            row.MatchedFamilies = [exact];
+            row.SelectedFamily  = exact;
+
+            return;
+        }
+
+        // Jaro-Winkler fuzzy match
+        var jwMatches = JaroWinkler.FindMatches(row.FamilyInput, _allFamilies, f => f.Name, 0.85);
+
+        if(jwMatches.Count > 0)
+        {
+            // Default to "Create new" but keep JW matches available in dropdown
+            row.FamilyMatch     = MachineFamilyMatchType.New;
+            row.MatchedFamilies = [..jwMatches.Select(m => m.item)];
+            row.SelectedFamily  = CreateNewFamilySentinel;
+
+            return;
+        }
+
+        row.FamilyMatch = MachineFamilyMatchType.New;
+    }
+
+    void MatchGpu(MachineImportRow row)
+    {
+        if(string.IsNullOrWhiteSpace(row.GpuInput))
+        {
+            row.GpuMatch = GpuMatchType.None;
+
+            return;
+        }
+
+        if(_allGpus is null)
+        {
+            row.GpuMatch = GpuMatchType.None;
+
+            return;
+        }
+
+        GpuDto? exact = _allGpus.Find(g =>
+            string.Equals(g.Name, row.GpuInput, StringComparison.OrdinalIgnoreCase));
+
+        if(exact is not null)
+        {
+            row.GpuMatch    = GpuMatchType.Exact;
+            row.MatchedGpus = [exact];
+            row.SelectedGpu = exact;
+
+            return;
+        }
+
+        // Contains match (handles e.g. "framebuffer" matching "DB_FRAMEBUFFER")
+        var containsMatches = _allGpus.Where(g =>
+            g.Name is not null &&
+            (g.Name.Contains(row.GpuInput, StringComparison.OrdinalIgnoreCase) ||
+             row.GpuInput.Contains(g.Name, StringComparison.OrdinalIgnoreCase))).ToList();
+
+        if(containsMatches.Count > 0)
+        {
+            row.GpuMatch    = GpuMatchType.Partial;
+            row.MatchedGpus = [..containsMatches.OrderBy(g => g.Name)];
+            row.SelectedGpu = row.MatchedGpus[0];
+
+            return;
+        }
+
+        // Jaro-Winkler fuzzy match
+        var jwMatches = JaroWinkler.FindMatches(row.GpuInput, _allGpus, g => g.Name, 0.85);
+
+        if(jwMatches.Count > 0)
+        {
+            row.GpuMatch    = GpuMatchType.Partial;
+            row.MatchedGpus = [..jwMatches.Select(m => m.item)];
+            row.SelectedGpu = row.MatchedGpus[0];
+
+            return;
+        }
+
+        row.GpuMatch = GpuMatchType.None;
+    }
+
+    void MatchProcessor(MachineImportRow row)
+    {
+        if(string.IsNullOrWhiteSpace(row.ProcessorInput))
+        {
+            row.ProcessorMatch = ProcessorMatchType.None;
+
+            return;
+        }
+
+        if(_allProcessors is null)
+        {
+            row.ProcessorMatch = ProcessorMatchType.None;
+
+            return;
+        }
+
+        ProcessorDto? exact = _allProcessors.Find(p =>
+            string.Equals(p.Name, row.ProcessorInput, StringComparison.OrdinalIgnoreCase));
+
+        if(exact is not null)
+        {
+            row.ProcessorMatch    = ProcessorMatchType.Exact;
+            row.MatchedProcessors = [exact];
+            row.SelectedProcessor = exact;
+
+            return;
+        }
+
+        // Jaro-Winkler fuzzy match
+        var jwMatches = JaroWinkler.FindMatches(row.ProcessorInput, _allProcessors, p => p.Name, 0.85);
+
+        if(jwMatches.Count > 0)
+        {
+            row.ProcessorMatch    = ProcessorMatchType.Partial;
+            row.MatchedProcessors = [..jwMatches.Select(m => m.item)];
+            row.SelectedProcessor = row.MatchedProcessors[0];
+
+            return;
+        }
+
+        row.ProcessorMatch = ProcessorMatchType.None;
+    }
+
+    void MatchSoundSynth(MachineImportRow row)
+    {
+        if(string.IsNullOrWhiteSpace(row.SoundSynthInput))
+        {
+            row.SoundSynthMatch = SoundSynthMatchType.None;
+
+            return;
+        }
+
+        if(_allSoundSynths is null)
+        {
+            row.SoundSynthMatch = SoundSynthMatchType.None;
+
+            return;
+        }
+
+        SoundSynthDto? exact = _allSoundSynths.Find(s =>
+            string.Equals(s.Name, row.SoundSynthInput, StringComparison.OrdinalIgnoreCase));
+
+        if(exact is not null)
+        {
+            row.SoundSynthMatch    = SoundSynthMatchType.Exact;
+            row.MatchedSoundSynths = [exact];
+            row.SelectedSoundSynth = exact;
+
+            return;
+        }
+
+        // Contains match (handles e.g. "software" matching "DB_SOFTWARE")
+        var containsMatches = _allSoundSynths.Where(s =>
+            s.Name is not null &&
+            (s.Name.Contains(row.SoundSynthInput, StringComparison.OrdinalIgnoreCase) ||
+             row.SoundSynthInput.Contains(s.Name, StringComparison.OrdinalIgnoreCase))).ToList();
+
+        if(containsMatches.Count > 0)
+        {
+            row.SoundSynthMatch    = SoundSynthMatchType.Partial;
+            row.MatchedSoundSynths = [..containsMatches.OrderBy(s => s.Name)];
+            row.SelectedSoundSynth = row.MatchedSoundSynths[0];
+
+            return;
+        }
+
+        // Jaro-Winkler fuzzy match
+        var jwMatches = JaroWinkler.FindMatches(row.SoundSynthInput, _allSoundSynths, s => s.Name, 0.85);
+
+        if(jwMatches.Count > 0)
+        {
+            row.SoundSynthMatch    = SoundSynthMatchType.Partial;
+            row.MatchedSoundSynths = [..jwMatches.Select(m => m.item)];
+            row.SelectedSoundSynth = row.MatchedSoundSynths[0];
+
+            return;
+        }
+
+        row.SoundSynthMatch = SoundSynthMatchType.None;
+    }
+
+    void MatchSoftwarePlatform(MachineImportRow row)
+    {
+        if(string.IsNullOrWhiteSpace(row.SoftwarePlatformInput))
+        {
+            row.SoftwarePlatformMatch = SoftwarePlatformMatchType.None;
+
+            return;
+        }
+
+        if(_allSoftwarePlatforms is null)
+        {
+            row.SoftwarePlatformMatch = SoftwarePlatformMatchType.None;
+
+            return;
+        }
+
+        SoftwarePlatformDto? exact = _allSoftwarePlatforms.Find(sp =>
+            string.Equals(sp.Name, row.SoftwarePlatformInput, StringComparison.OrdinalIgnoreCase));
+
+        if(exact is not null)
+        {
+            row.SoftwarePlatformMatch    = SoftwarePlatformMatchType.Exact;
+            row.MatchedSoftwarePlatforms = [exact];
+            row.SelectedSoftwarePlatform = exact;
+
+            return;
+        }
+
+        // Jaro-Winkler fuzzy match
+        var jwMatches = JaroWinkler.FindMatches(row.SoftwarePlatformInput, _allSoftwarePlatforms, sp => sp.Name, 0.85);
+
+        if(jwMatches.Count > 0)
+        {
+            row.SoftwarePlatformMatch    = SoftwarePlatformMatchType.Partial;
+            row.MatchedSoftwarePlatforms = [..jwMatches.Select(m => m.item)];
+            row.SelectedSoftwarePlatform = row.MatchedSoftwarePlatforms[0];
+
+            return;
+        }
+
+        row.SoftwarePlatformMatch = SoftwarePlatformMatchType.None;
+    }
+
+    static void ValidateMemoryType(string? input, out bool valid, out int typeValue)
+    {
+        typeValue = 0; // Unknown
+
+        if(string.IsNullOrWhiteSpace(input))
+        {
+            valid = true; // Empty = Unknown, valid
+
+            return;
+        }
+
+        if(Enum.TryParse<Marechai.Data.MemoryType>(input, true, out Marechai.Data.MemoryType parsed))
+        {
+            valid     = true;
+            typeValue = (int)parsed;
+
+            return;
+        }
+
+        valid = false;
+    }
+
+    void CheckDuplicate(MachineImportRow row)
+    {
+        if(string.IsNullOrWhiteSpace(row.Name) || _existingMachines is null)
+        {
+            row.DuplicateType = MachineNameDuplicateType.None;
+
+            return;
+        }
+
+        // Check exact duplicate
+        MachineDto? exactMatch = _existingMachines.Find(m => string.Equals(m.Name, row.Name, StringComparison.OrdinalIgnoreCase));
+
+        if(exactMatch is not null)
+        {
+            row.DuplicateType       = MachineNameDuplicateType.ExactDuplicate;
+            row.DuplicateMatchedName = exactMatch.Name;
+
+            return;
+        }
+
+        // Jaro-Winkler similarity check for possible duplicates
+        // Filter out model variants: names that share the same base text but differ in numbers/suffixes
+        // (e.g. "Power Macintosh 5400/120" vs "Power Macintosh 5300/100 LC")
+        var jwMatches = JaroWinkler.FindMatches(row.Name, _existingMachines, m => m.Name, 0.90);
+
+        if(jwMatches.Count > 0)
+        {
+            string inputLetters = LettersOnly(row.Name);
+
+            // Keep only matches where the letter-only skeletons are genuinely different
+            // If letter skeletons are very similar (JW >= 0.90), they're model variants → skip
+            var filtered = jwMatches.Where(m =>
+            {
+                string matchLetters = LettersOnly(m.item.Name);
+
+                return JaroWinkler.Similarity(inputLetters, matchLetters) < 0.90;
+            }).ToList();
+
+            if(filtered.Count > 0)
+            {
+                row.DuplicateType        = MachineNameDuplicateType.SoundexDuplicate;
+                row.DuplicateMatchedName = string.Join(", ", filtered.Select(m => m.item.Name).Take(3));
+
+                return;
+            }
+        }
+
+        row.DuplicateType = MachineNameDuplicateType.None;
+    }
+
+    static string LettersOnly(string? input)
+    {
+        if(string.IsNullOrWhiteSpace(input))
+            return "";
+
+        return new string(input.Where(char.IsLetter).ToArray());
+    }
+
+    void OnFamilySelected(MachineImportRow row, MachineFamilyDto? family)
+    {
+        row.SelectedFamily = family;
+
+        if(family == CreateNewFamilySentinel || family is null)
+            row.FamilyMatch = MachineFamilyMatchType.New;
+        else
+            row.FamilyMatch = MachineFamilyMatchType.Partial;
+    }
+
+    void PreSelectRejections()
+    {
+        _selectedItems = [];
+
+        foreach(MachineImportRow row in _importRows)
+        {
+            bool shouldReject = false;
+
+            // Validation error
+            if(row.ValidationError is not null)
+                shouldReject = true;
+
+            // No company match when company was specified
+            if(row.CompanyMatch == CompanyMatchType.None && !string.IsNullOrWhiteSpace(row.CompanyInput))
+                shouldReject = true;
+
+            // No type match
+            if(row.TypeMatch == MachineTypeMatchType.None && !string.IsNullOrWhiteSpace(row.TypeInput))
+                shouldReject = true;
+
+            // Red GPU (non-empty, no match)
+            if(row.GpuMatch == GpuMatchType.None && !string.IsNullOrWhiteSpace(row.GpuInput))
+                shouldReject = true;
+
+            // Red Processor (non-empty, no match)
+            if(row.ProcessorMatch == ProcessorMatchType.None && !string.IsNullOrWhiteSpace(row.ProcessorInput))
+                shouldReject = true;
+
+            // Red SoundSynth (non-empty, no match)
+            if(row.SoundSynthMatch == SoundSynthMatchType.None && !string.IsNullOrWhiteSpace(row.SoundSynthInput))
+                shouldReject = true;
+
+            // Red SoftwarePlatform (non-empty, no match)
+            if(row.SoftwarePlatformMatch == SoftwarePlatformMatchType.None &&
+               !string.IsNullOrWhiteSpace(row.SoftwarePlatformInput))
+                shouldReject = true;
+
+            // Invalid memory types
+            if(!row.WorkMemoryTypeValid || !row.VideoMemoryTypeValid || !row.SoundMemoryTypeValid ||
+               !row.UnifiedMemoryTypeValid || !row.FirmwareMemoryTypeValid)
+                shouldReject = true;
+
+            // Exact duplicate name
+            if(row.DuplicateType == MachineNameDuplicateType.ExactDuplicate)
+                shouldReject = true;
+
+            if(shouldReject)
+                _selectedItems.Add(row);
+        }
+
+        _autoRejectedCount = _selectedItems.Count;
+    }
+
+    async Task StartImport()
+    {
+        var toImport = _importRows.Where(r => !_selectedItems.Contains(r)).ToList();
+        var rejected = _importRows.Where(r => _selectedItems.Contains(r)).ToList();
+
+        _rejectedCount    = rejected.Count;
+        _importedCount    = 0;
+        _failedCount      = 0;
+        _totalToImport    = toImport.Count;
+        _progressPercent  = 0;
+        _createdFamilies  = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        _state            = ImportState.Importing;
+
+        _importRows = [..rejected];
+        StateHasChanged();
+
+        foreach(MachineImportRow row in toImport)
+        {
+            string? importError = await ImportSingleMachine(row);
+
+            if(importError is null)
+            {
+                _importedCount++;
+            }
+            else
+            {
+                _failedCount++;
+                row.ImportError = importError;
+                _importRows.Add(row);
+            }
+
+            _progressPercent = (double)(_importedCount + _failedCount) / _totalToImport * 100;
+            StateHasChanged();
+            await Task.Delay(1);
+        }
+
+        _state = ImportState.Complete;
+        StateHasChanged();
+    }
+
+    async Task<string?> ImportSingleMachine(MachineImportRow row)
+    {
+        // Step 0: Create family if needed
+        int? familyId = null;
+
+        if(row.FamilyMatch == MachineFamilyMatchType.New && !string.IsNullOrWhiteSpace(row.FamilyInput))
+        {
+            // Check if we already created this family in a previous row
+            if(_createdFamilies.TryGetValue(row.FamilyInput, out int existingFamilyId))
+            {
+                familyId = existingFamilyId;
+            }
+            else
+            {
+                var familyDto = new MachineFamilyDto
+                {
+                    Name      = row.FamilyInput,
+                    CompanyId = row.SelectedCompany?.Id
+                };
+
+                (long? newFamilyId, string? familyError) = await MachineFamiliesService.CreateAsync(familyDto);
+
+                if(newFamilyId is null)
+                    return string.Format(L["Failed to create family '{0}': {1}"], row.FamilyInput, familyError);
+
+                familyId = (int)newFamilyId.Value;
+                _createdFamilies[row.FamilyInput] = familyId.Value;
+            }
+        }
+        else if(row.FamilyMatch is MachineFamilyMatchType.Exact or MachineFamilyMatchType.Partial &&
+                row.SelectedFamily is not null && row.SelectedFamily != CreateNewFamilySentinel)
+        {
+            familyId = row.SelectedFamily.Id;
+        }
+
+        // Step 1: Create the machine
+        var dto = new MachineDto
+        {
+            Name                = row.Name,
+            Model               = row.Model,
+            CompanyId           = row.SelectedCompany?.Id,
+            Type                = row.MatchedType,
+            Prototype           = row.IsPrototype,
+            Introduced          = row.IntroducedDate.HasValue ? new DateTimeOffset(row.IntroducedDate.Value, TimeSpan.Zero) : null,
+            IntroducedPrecision = row.IntroducedPrecision,
+            FamilyId            = familyId
+        };
+
+        (long? machineId, string? createError) = await MachinesService.CreateAsync(dto);
+
+        if(machineId is null)
+            return createError ?? L["Failed to create machine"];
+
+        int id = (int)machineId.Value;
+
+        // Step 2: Create junction records with rollback on failure
+        var createdGpuIds       = new List<long>();
+        var createdProcessorIds = new List<long>();
+        var createdSoundIds     = new List<long>();
+        var createdMemoryIds    = new List<long>();
+        var createdPlatformIds  = new List<long>();
+
+        try
+        {
+            // GPU
+            if(row.SelectedGpu is not null)
+            {
+                var gpuDto = new GpuByMachineDto { GpuId = row.SelectedGpu.Id, MachineId = id };
+                (long? gpuJunctionId, string? gpuError) = await MachinesService.AddGpuToMachineAsync(gpuDto);
+
+                if(gpuJunctionId is null)
+                    throw new InvalidOperationException(gpuError ?? L["Failed to add GPU"]);
+
+                createdGpuIds.Add(gpuJunctionId.Value);
+            }
+
+            // Processor
+            if(row.SelectedProcessor is not null)
+            {
+                var procDto = new ProcessorByMachineDto
+                {
+                    ProcessorId = row.SelectedProcessor.Id,
+                    MachineId   = id,
+                    Speed       = row.ProcessorSpeed.HasValue ? (float)row.ProcessorSpeed.Value : null
+                };
+
+                (long? procJunctionId, string? procError) = await MachinesService.AddProcessorToMachineAsync(procDto);
+
+                if(procJunctionId is null)
+                    throw new InvalidOperationException(procError ?? L["Failed to add Processor"]);
+
+                createdProcessorIds.Add(procJunctionId.Value);
+            }
+
+            // Sound synth
+            if(row.SelectedSoundSynth is not null)
+            {
+                var sndDto = new SoundSynthByMachineDto
+                {
+                    SoundSynthId = row.SelectedSoundSynth.Id,
+                    MachineId    = id
+                };
+
+                (long? sndJunctionId, string? sndError) = await MachinesService.AddSoundSynthToMachineAsync(sndDto);
+
+                if(sndJunctionId is null)
+                    throw new InvalidOperationException(sndError ?? L["Failed to add Sound Synth"]);
+
+                createdSoundIds.Add(sndJunctionId.Value);
+            }
+
+            // Memory — Work
+            if(row.HasWorkMemory)
+            {
+                var memDto = new MemoryByMachineDto
+                {
+                    MachineId = id,
+                    Type      = row.WorkMemoryTypeValue,
+                    Usage     = 3, // Work
+                    Size      = row.WorkMemorySize,
+                    Speed     = row.WorkMemorySpeed
+                };
+
+                (long? memId, string? memError) = await MachinesService.AddMemoryToMachineAsync(memDto);
+
+                if(memId is null)
+                    throw new InvalidOperationException(memError ?? L["Failed to add Work memory"]);
+
+                createdMemoryIds.Add(memId.Value);
+            }
+
+            // Memory — Video
+            if(row.HasVideoMemory)
+            {
+                var memDto = new MemoryByMachineDto
+                {
+                    MachineId = id,
+                    Type      = row.VideoMemoryTypeValue,
+                    Usage     = 4, // Video
+                    Size      = row.VideoMemorySize,
+                    Speed     = row.VideoMemorySpeed
+                };
+
+                (long? memId, string? memError) = await MachinesService.AddMemoryToMachineAsync(memDto);
+
+                if(memId is null)
+                    throw new InvalidOperationException(memError ?? L["Failed to add Video memory"]);
+
+                createdMemoryIds.Add(memId.Value);
+            }
+
+            // Memory — Sound
+            if(row.HasSoundMemory)
+            {
+                var memDto = new MemoryByMachineDto
+                {
+                    MachineId = id,
+                    Type      = row.SoundMemoryTypeValue,
+                    Usage     = 5, // Sound
+                    Size      = row.SoundMemorySize,
+                    Speed     = row.SoundMemorySpeed
+                };
+
+                (long? memId, string? memError) = await MachinesService.AddMemoryToMachineAsync(memDto);
+
+                if(memId is null)
+                    throw new InvalidOperationException(memError ?? L["Failed to add Sound memory"]);
+
+                createdMemoryIds.Add(memId.Value);
+            }
+
+            // Memory — Unified
+            if(row.HasUnifiedMemory)
+            {
+                var memDto = new MemoryByMachineDto
+                {
+                    MachineId = id,
+                    Type      = row.UnifiedMemoryTypeValue,
+                    Usage     = 10, // Unified
+                    Size      = row.UnifiedMemorySize,
+                    Speed     = row.UnifiedMemorySpeed
+                };
+
+                (long? memId, string? memError) = await MachinesService.AddMemoryToMachineAsync(memDto);
+
+                if(memId is null)
+                    throw new InvalidOperationException(memError ?? L["Failed to add Unified memory"]);
+
+                createdMemoryIds.Add(memId.Value);
+            }
+
+            // Memory — Firmware
+            if(row.HasFirmwareMemory)
+            {
+                var memDto = new MemoryByMachineDto
+                {
+                    MachineId = id,
+                    Type      = row.FirmwareMemoryTypeValue,
+                    Usage     = 2, // Firmware
+                    Size      = row.FirmwareMemorySize,
+                    Speed     = row.FirmwareMemorySpeed
+                };
+
+                (long? memId, string? memError) = await MachinesService.AddMemoryToMachineAsync(memDto);
+
+                if(memId is null)
+                    throw new InvalidOperationException(memError ?? L["Failed to add Firmware memory"]);
+
+                createdMemoryIds.Add(memId.Value);
+            }
+
+            // Software platform
+            if(row.SelectedSoftwarePlatform is not null)
+            {
+                var platDto = new SoftwarePlatformByMachineDto
+                {
+                    SoftwarePlatformId = row.SelectedSoftwarePlatform.Id,
+                    MachineId          = id
+                };
+
+                (long? platJunctionId, string? platError) =
+                    await MachinesService.AddSoftwarePlatformToMachineAsync(platDto);
+
+                if(platJunctionId is null)
+                    throw new InvalidOperationException(platError ?? L["Failed to add Software Platform"]);
+
+                createdPlatformIds.Add(platJunctionId.Value);
+            }
+
+            return null; // Success
+        }
+        catch(Exception ex)
+        {
+            // Rollback all created junctions
+            foreach(long jid in createdPlatformIds)
+                await MachinesService.RemoveSoftwarePlatformFromMachineAsync(jid);
+
+            foreach(long jid in createdMemoryIds)
+                await MachinesService.RemoveMemoryFromMachineAsync(jid);
+
+            foreach(long jid in createdSoundIds)
+                await MachinesService.RemoveSoundSynthFromMachineAsync(jid);
+
+            foreach(long jid in createdProcessorIds)
+                await MachinesService.RemoveProcessorFromMachineAsync(jid);
+
+            foreach(long jid in createdGpuIds)
+                await MachinesService.RemoveGpuFromMachineAsync(jid);
+
+            // Delete the machine
+            await MachinesService.DeleteAsync(id);
+
+            return ex.Message;
+        }
+    }
+
+    async Task DownloadRejected()
+    {
+        var rows = new List<Dictionary<string, string>>();
+
+        foreach(MachineImportRow row in _importRows)
+        {
+            var dict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["Name"]               = row.Name,
+                ["Company"]            = row.CompanyInput ?? "",
+                ["Type"]               = row.TypeInput ?? "",
+                ["Model"]              = row.Model ?? "",
+                ["Family"]             = row.FamilyInput ?? "",
+                ["IntroducedYear"]     = row.IntroducedYear?.ToString() ?? "",
+                ["IntroducedMonth"]    = row.IntroducedMonth?.ToString() ?? "",
+                ["IntroducedDay"]      = row.IntroducedDay?.ToString() ?? "",
+                ["Gpu"]                = row.GpuInput ?? "",
+                ["Processor"]          = row.ProcessorInput ?? "",
+                ["ProcessorSpeed"]     = row.ProcessorSpeed?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "",
+                ["SoundSynth"]         = row.SoundSynthInput ?? "",
+                ["SoftwarePlatform"]   = row.SoftwarePlatformInput ?? "",
+                ["WorkMemoryType"]     = row.WorkMemoryTypeInput ?? "",
+                ["WorkMemorySize"]     = row.WorkMemorySize?.ToString() ?? "",
+                ["WorkMemorySpeed"]    = row.WorkMemorySpeed?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "",
+                ["VideoMemoryType"]    = row.VideoMemoryTypeInput ?? "",
+                ["VideoMemorySize"]    = row.VideoMemorySize?.ToString() ?? "",
+                ["VideoMemorySpeed"]   = row.VideoMemorySpeed?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "",
+                ["SoundMemoryType"]    = row.SoundMemoryTypeInput ?? "",
+                ["SoundMemorySize"]    = row.SoundMemorySize?.ToString() ?? "",
+                ["SoundMemorySpeed"]   = row.SoundMemorySpeed?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "",
+                ["UnifiedMemoryType"]  = row.UnifiedMemoryTypeInput ?? "",
+                ["UnifiedMemorySize"]  = row.UnifiedMemorySize?.ToString() ?? "",
+                ["UnifiedMemorySpeed"] = row.UnifiedMemorySpeed?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "",
+                ["FirmwareMemoryType"]  = row.FirmwareMemoryTypeInput ?? "",
+                ["FirmwareMemorySize"]  = row.FirmwareMemorySize?.ToString() ?? "",
+                ["FirmwareMemorySpeed"] = row.FirmwareMemorySpeed?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? ""
+            };
+
+            rows.Add(dict);
+        }
+
+        string csv    = CsvParser.Generate(CsvHeaders, rows);
+        byte[] bytes  = System.Text.Encoding.UTF8.GetBytes(csv);
+        string base64 = Convert.ToBase64String(bytes);
+
+        await JsRuntime.InvokeVoidAsync("downloadFileFromBytes", "machine_import_rejected.csv", "text/csv", base64);
+    }
+
+    static string FormatImportDate(MachineImportRow row)
+    {
+        if(row.IntroducedYear is null)
+            return "";
+
+        if(row.IntroducedMonth is null)
+            return row.IntroducedYear.Value.ToString();
+
+        if(row.IntroducedDay is null)
+            return $"{row.IntroducedMonth.Value:D2}/{row.IntroducedYear.Value}";
+
+        return $"{row.IntroducedDay.Value:D2}/{row.IntroducedMonth.Value:D2}/{row.IntroducedYear.Value}";
+    }
+
+    static string GetValue(Dictionary<string, string> row, string key) =>
+        row.TryGetValue(key, out string? val) ? val?.Trim() ?? "" : "";
+
+    static string? GetValueOrNull(Dictionary<string, string> row, string key)
+    {
+        if(!row.TryGetValue(key, out string? val))
+            return null;
+
+        string trimmed = val?.Trim() ?? "";
+
+        return string.IsNullOrEmpty(trimmed) ? null : trimmed;
+    }
+
+    static bool TryParseInt(Dictionary<string, string> row, string key, out int result)
+    {
+        result = 0;
+        string? val = GetValueOrNull(row, key);
+
+        return val is not null && int.TryParse(val, out result);
+    }
+
+    static bool TryParseDouble(Dictionary<string, string> row, string key, out double result)
+    {
+        result = 0;
+        string? val = GetValueOrNull(row, key);
+
+        return val is not null && double.TryParse(val, System.Globalization.NumberStyles.Float,
+                                                   System.Globalization.CultureInfo.InvariantCulture, out result);
+    }
+
+    static bool TryParseLong(Dictionary<string, string> row, string key, out long result)
+    {
+        result = 0;
+        string? val = GetValueOrNull(row, key);
+
+        return val is not null && long.TryParse(val, out result);
+    }
+
+    enum ImportState
+    {
+        Upload,
+        Preview,
+        Importing,
+        Complete
+    }
+}

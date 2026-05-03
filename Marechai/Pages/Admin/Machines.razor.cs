@@ -203,4 +203,15 @@ public partial class Machines
 
         await dialog.Result;
     }
+
+    async Task OpenImportDialog()
+    {
+        IDialogReference dialog = await DialogService.ShowAsync<MachineImportDialog>(L["Import CSV"],
+            new DialogOptions { MaxWidth = MaxWidth.ExtraLarge, FullWidth = true });
+
+        DialogResult? result = await dialog.Result;
+
+        if(result is { Canceled: false })
+            await LoadMachinesAsync();
+    }
 }
