@@ -60,6 +60,7 @@ public static class Register
         services.AddScoped<SoftwarePlatformsService>();
         services.AddScoped<SoftwareVersionsService>();
         services.AddScoped<SoftwareReleasesService>();
+        services.AddScoped<SmartphonesService>();
         services.AddScoped<AuthService>();
         services.AddScoped<UsersService>();
         services.AddScoped<ProfileService>();
