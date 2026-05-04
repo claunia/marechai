@@ -26,6 +26,7 @@
 using System;
 using System.Globalization;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using MudBlazor.Services;
 using Marechai.Services;
 using Marechai.Shared;
@@ -102,6 +103,11 @@ public class Startup(IConfiguration configuration)
 
         services.AddScoped(sp => new Marechai.ApiClient.Client(sp.GetRequiredService<IRequestAdapter>()));
 
+        services.AddHttpClient("Plausible", client =>
+        {
+            client.BaseAddress = new Uri("https://plausible.claunia.com");
+        });
+
         services.AddAuthorizationCore();
         services.AddRazorPages();
         services.AddServerSideBlazor();
@@ -147,6 +153,77 @@ public class Startup(IConfiguration configuration)
 
         app.UseEndpoints(endpoints =>
         {
+            endpoints.MapGet("/js/pa.js", async context =>
+            {
+                var clientFactory = context.RequestServices.GetRequiredService<IHttpClientFactory>();
+                var client        = clientFactory.CreateClient("Plausible");
+
+                HttpResponseMessage response;
+
+                try
+                {
+                    response = await client.GetAsync("/js/pa-v714IfTDuCkgEe0Q7qxoq.js");
+                }
+                catch
+                {
+                    context.Response.StatusCode = 502;
+
+                    return;
+                }
+
+                if(!response.IsSuccessStatusCode)
+                {
+                    context.Response.StatusCode = (int)response.StatusCode;
+
+                    return;
+                }
+
+                context.Response.ContentType              = "application/javascript";
+                context.Response.Headers["Cache-Control"] = "public, max-age=86400";
+
+                await response.Content.CopyToAsync(context.Response.Body);
+            });
+
+            endpoints.MapPost("/api/event", async context =>
+            {
+                var clientFactory = context.RequestServices.GetRequiredService<IHttpClientFactory>();
+                var client        = clientFactory.CreateClient("Plausible");
+
+                var proxyRequest = new HttpRequestMessage(HttpMethod.Post, "/api/event");
+                proxyRequest.Content = new StreamContent(context.Request.Body);
+
+                if(context.Request.ContentType != null)
+                {
+                    proxyRequest.Content.Headers.ContentType =
+                        MediaTypeHeaderValue.Parse(context.Request.ContentType);
+                }
+
+                if(context.Request.Headers.TryGetValue("User-Agent", out var ua))
+                    proxyRequest.Headers.TryAddWithoutValidation("User-Agent", ua.ToString());
+
+                proxyRequest.Headers.TryAddWithoutValidation("X-Forwarded-For",
+                    context.Request.Headers.TryGetValue("X-Forwarded-For", out var xff)
+                        ? xff.ToString()
+                        : context.Connection.RemoteIpAddress?.ToString());
+
+                HttpResponseMessage response;
+
+                try
+                {
+                    response = await client.SendAsync(proxyRequest);
+                }
+                catch
+                {
+                    context.Response.StatusCode = 502;
+
+                    return;
+                }
+
+                context.Response.StatusCode = (int)response.StatusCode;
+
+                await response.Content.CopyToAsync(context.Response.Body);
+            });
+
             endpoints.MapBlazorHub();
             endpoints.MapFallbackToPage("/_Host");
         });
