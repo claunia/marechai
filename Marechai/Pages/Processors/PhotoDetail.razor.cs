@@ -24,38 +24,28 @@
 *******************************************************************************/
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
-using Marechai.Data;
-using Marechai.Shared;
 using Microsoft.AspNetCore.Components;
 
 namespace Marechai.Pages.Processors;
 
-public partial class View
+public partial class PhotoDetail
 {
-    List<MachineDto> _computers = [];
-    List<MachineDto> _consoles  = [];
-    List<MachineDto> _smartphones = [];
-    string?          _description;
-    int              _id;
-    bool             _loaded;
-    PhotoLightbox    _lightbox;
-    List<Guid>       _photos = [];
-    ProcessorDto     _processor;
+    ProcessorPhotoDto _photo;
+    bool              _loaded;
+    Guid              _photoId;
 
     [Parameter]
-    public int Id
+    public string Id
     {
-        get => _id;
+        get => _photoId.ToString();
         set
         {
-            if(_id == value) return;
+            if(!Guid.TryParse(value, out Guid parsed) || _photoId == parsed) return;
 
-            _id     = value;
-            _loaded = false;
+            _photoId = parsed;
+            _loaded  = false;
         }
     }
 
@@ -63,32 +53,7 @@ public partial class View
     {
         if(_loaded) return;
 
-        if(Id <= 0)
-        {
-            _loaded = true;
-
-            return;
-        }
-
-        _processor = await Service.GetByIdAsync(Id);
-
-        if(_processor is null)
-        {
-            _loaded = true;
-            StateHasChanged();
-
-            return;
-        }
-
-        List<MachineDto> machines = await Service.GetMachinesByProcessorAsync(Id);
-        _computers = machines.Where(m => m.Type == (int)MachineType.Computer).ToList();
-        _consoles  = machines.Where(m => m.Type == (int)MachineType.Console).ToList();
-        _smartphones = machines.Where(m => m.Type == (int)MachineType.Smartphone).ToList();
-
-        _description = await Service.GetDescriptionTextAsync(Id);
-
-        _photos = await ProcessorPhotosService.GetGuidsByProcessorAsync(Id);
-
+        _photo  = await Service.GetAsync(_photoId);
         _loaded = true;
         StateHasChanged();
     }

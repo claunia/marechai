@@ -2,6 +2,7 @@
 #pragma warning disable CS0618
 using Marechai.ApiClient.Models;
 using Marechai.ApiClient.Processors.Item;
+using Marechai.ApiClient.Processors.Photos;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
 using Microsoft.Kiota.Abstractions;
@@ -18,6 +19,11 @@ namespace Marechai.ApiClient.Processors
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class ProcessorsRequestBuilder : BaseRequestBuilder
     {
+        /// <summary>The photos property</summary>
+        public global::Marechai.ApiClient.Processors.Photos.PhotosRequestBuilder Photos
+        {
+            get => new global::Marechai.ApiClient.Processors.Photos.PhotosRequestBuilder(PathParameters, RequestAdapter);
+        }
         /// <summary>Gets an item from the Marechai.ApiClient.processors.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
         /// <returns>A <see cref="global::Marechai.ApiClient.Processors.Item.ItemRequestBuilder"/></returns>

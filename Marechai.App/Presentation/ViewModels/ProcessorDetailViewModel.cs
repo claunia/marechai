@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -11,6 +12,7 @@ using Marechai.App.Navigation;
 using Marechai.App.Presentation.Models;
 using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
+using Marechai.App.Services.Caching;
 using Microsoft.UI.Xaml;
 
 namespace Marechai.App.Presentation.ViewModels;
@@ -18,8 +20,10 @@ namespace Marechai.App.Presentation.ViewModels;
 public partial class ProcessorDetailViewModel : ObservableObject, IRegionAware
 {
     private readonly CompaniesService                  _companiesService;
+    private readonly ImageSourceFactory                _imageSourceFactory;
     private readonly IStringLocalizer                  _localizer;
     private readonly ILogger<ProcessorDetailViewModel> _logger;
+    private readonly ProcessorPhotoCache               _processorPhotoCache;
     private readonly IRegionManager                    _regionManager;
     private readonly ProcessorsService                 _processorsService;
 
@@ -81,6 +85,11 @@ public partial class ProcessorDetailViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private bool _hasError;
 
+    public ObservableCollection<PhotoCarouselDisplayItem> Photos { get; } = [];
+
+    [ObservableProperty]
+    private Visibility _showPhotos = Visibility.Collapsed;
+
     [ObservableProperty]
     private bool _isDataLoaded;
 
@@ -98,15 +107,18 @@ public partial class ProcessorDetailViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private int _processorId;
 
-    public ProcessorDetailViewModel(ProcessorsService processorsService, CompaniesService companiesService,
-                                    IStringLocalizer  localizer,         ILogger<ProcessorDetailViewModel> logger,
-                                IRegionManager    regionManager)
+    public ProcessorDetailViewModel(ProcessorsService   processorsService, CompaniesService companiesService,
+                                    IStringLocalizer    localizer,         ILogger<ProcessorDetailViewModel> logger,
+                                    IRegionManager      regionManager,     ProcessorPhotoCache processorPhotoCache,
+                                    ImageSourceFactory  imageSourceFactory)
     {
         _processorsService     = processorsService;
         _companiesService      = companiesService;
         _localizer             = localizer;
         _logger                = logger;
         _regionManager         = regionManager;
+        _processorPhotoCache   = processorPhotoCache;
+        _imageSourceFactory    = imageSourceFactory;
         LoadData               = new AsyncRelayCommand(LoadDataAsync);
         GoBackCommand          = new AsyncRelayCommand(GoBackAsync);
         SelectMachineCommand   = new AsyncRelayCommand<int>(SelectMachineAsync);
@@ -250,6 +262,26 @@ public partial class ProcessorDetailViewModel : ObservableObject, IRegionAware
 
             ShowDescription = HasDescription ? Visibility.Visible : Visibility.Collapsed;
 
+            // Load photos
+            Photos.Clear();
+            List<Guid> photoIds = await _processorsService.GetProcessorPhotosAsync(ProcessorId);
+
+            if(photoIds.Count > 0)
+            {
+                foreach(Guid photoId in photoIds)
+                {
+                    var photoItem = new PhotoCarouselDisplayItem
+                    {
+                        PhotoId = photoId
+                    };
+
+                    _ = LoadPhotoThumbnailAsync(photoItem);
+                    Photos.Add(photoItem);
+                }
+            }
+
+            ShowPhotos = Photos.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+
             IsDataLoaded = true;
         }
         catch(Exception ex)
@@ -332,6 +364,19 @@ public partial class ProcessorDetailViewModel : ObservableObject, IRegionAware
 
             FilteredSmartphones.Clear();
             foreach(MachineItem smartphone in filtered) FilteredSmartphones.Add(smartphone);
+        }
+    }
+
+    private async Task LoadPhotoThumbnailAsync(PhotoCarouselDisplayItem photoItem)
+    {
+        try
+        {
+            Stream stream = await _processorPhotoCache.GetThumbnailAsync(photoItem.PhotoId);
+            photoItem.ThumbnailImageSource = await _imageSourceFactory.CreateBitmapImageSourceAsync(stream);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading Processor photo thumbnail {PhotoId}", photoItem.PhotoId);
         }
     }
 

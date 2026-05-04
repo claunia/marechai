@@ -38,6 +38,7 @@ public class Processor : BaseModel<int>
     {
         Descriptions             = new HashSet<ProcessorDescription>();
         InstructionSetExtensions = new HashSet<InstructionSetExtensionsByProcessor>();
+        Photos                   = new HashSet<ProcessorPhoto>();
         ProcessorsByMachine      = new HashSet<ProcessorsByMachine>();
     }
 
@@ -99,5 +100,6 @@ public class Processor : BaseModel<int>
     public virtual InstructionSet InstructionSet { get;                                             set; }
     public virtual ICollection<InstructionSetExtensionsByProcessor> InstructionSetExtensions { get; set; }
     public virtual ICollection<ProcessorDescription>               Descriptions             { get; set; }
+    public virtual ICollection<ProcessorPhoto>                     Photos                   { get; set; }
     public virtual ICollection<ProcessorsByMachine>                 ProcessorsByMachine      { get; set; }
 }

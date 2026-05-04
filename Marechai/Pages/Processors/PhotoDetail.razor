@@ -1,0 +1,410 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2026 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/processors/photo/{Id}"
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@using Humanizer
+@inherits OwningComponentBase<ProcessorPhotosService>
+@inject IStringLocalizer<ProcessorPhotosService> L
+@inject ApiAssetUrlProvider                      Assets
+
+@if(!_loaded)
+{
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+    </div>
+
+    return;
+}
+
+@if(_photo is null)
+{
+    <MudAlert Severity="Severity.Warning">@L["Photo not found"]</MudAlert>
+
+    return;
+}
+
+@* ── Hero Header ── *@
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); border-radius: 16px;">
+    <MudStack AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Filled.Photo" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Align="Align.Center" Style="color: white;">@_photo.ProcessorCompanyName @_photo.ProcessorName</MudText>
+        @if(!string.IsNullOrEmpty(_photo.Author))
+        {
+            <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.8);">@L["Photo by"] @_photo.Author</MudText>
+        }
+    </MudStack>
+</MudPaper>
+
+@* ── Photo Display Card ── *@
+<MudCard Elevation="2" Class="mb-4 rounded-lg">
+    <MudCardContent Class="d-flex justify-center pa-4">
+        <picture>
+            <source srcset="@(Assets.BaseUrl)/assets/photos/processors/jxl/4k/@(_photo.Id).jxl" type="image/jxl">
+            <source srcset="@(Assets.BaseUrl)/assets/photos/processors/avif/4k/@(_photo.Id).avif" type="image/avif">
+            <source srcset="@(Assets.BaseUrl)/assets/photos/processors/webp/4k/@(_photo.Id).webp" type="image/webp">
+            <img alt="@_photo.ProcessorName" src="@(Assets.BaseUrl)/assets/photos/processors/jpeg/4k/@(_photo.Id).jpg"
+                 style="max-width: 100%; max-height: 70vh; border-radius: 8px;"/>
+        </picture>
+    </MudCardContent>
+</MudCard>
+
+@* ── General Information Card ── *@
+<MudCard Elevation="2" Class="mb-4 rounded-lg">
+    <MudCardContent>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+            <MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Primary"/>
+            <MudText Typo="Typo.h6">@L["General"]</MudText>
+        </MudStack>
+        <MudSimpleTable Elevation="0" Dense="true">
+            <tbody>
+            <tr>
+                <td style="width: 33%; text-align: right;"><strong>@L["Processor"]</strong></td>
+                <td><MudLink Href="@($"/processor/{_photo.ProcessorId}")">@_photo.ProcessorCompanyName @_photo.ProcessorName</MudLink></td>
+            </tr>
+            @if(!string.IsNullOrEmpty(_photo.Author))
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Author"]</strong></td>
+                    <td>@_photo.Author</td>
+                </tr>
+            }
+            @if(!string.IsNullOrEmpty(_photo.LicenseName))
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["License"]</strong></td>
+                    <td>@_photo.LicenseName</td>
+                </tr>
+            }
+            @if(!string.IsNullOrEmpty(_photo.Source))
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Source"]</strong></td>
+                    <td>@_photo.Source</td>
+                </tr>
+            }
+            @if(_photo.CreationDate.HasValue)
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Creation date"]</strong></td>
+                    <td>@_photo.CreationDate.Value.ToString("MMMM d, yyyy HH:mm")</td>
+                </tr>
+            }
+            @if(_photo.UploadDate.HasValue)
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Upload date"]</strong></td>
+                    <td>@_photo.UploadDate.Value.ToString("MMMM d, yyyy HH:mm")</td>
+                </tr>
+            }
+            @if(!string.IsNullOrEmpty(_photo.OriginalExtension))
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Original format"]</strong></td>
+                    <td>@_photo.OriginalExtension</td>
+                </tr>
+            }
+            @if(!string.IsNullOrEmpty(_photo.Comments))
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Comments"]</strong></td>
+                    <td>@_photo.Comments</td>
+                </tr>
+            }
+            </tbody>
+        </MudSimpleTable>
+    </MudCardContent>
+</MudCard>
+
+@* ── Camera Settings Card ── *@
+@if(!string.IsNullOrEmpty(_photo.CameraManufacturer) || !string.IsNullOrEmpty(_photo.CameraModel) || !string.IsNullOrEmpty(_photo.Lens) ||
+    _photo.Aperture.HasValue || _photo.Exposure.HasValue || _photo.Iso.HasValue || _photo.FocalLength.HasValue)
+{
+    <MudCard Elevation="2" Class="mb-4 rounded-lg">
+        <MudCardContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+                <MudIcon Icon="@Icons.Material.Filled.CameraAlt" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Camera"]</MudText>
+            </MudStack>
+            <MudSimpleTable Elevation="0" Dense="true">
+                <tbody>
+                @if(!string.IsNullOrEmpty(_photo.CameraManufacturer))
+                {
+                    <tr>
+                        <td style="width: 33%; text-align: right;"><strong>@L["Manufacturer"]</strong></td>
+                        <td>@_photo.CameraManufacturer</td>
+                    </tr>
+                }
+                @if(!string.IsNullOrEmpty(_photo.CameraModel))
+                {
+                    <tr>
+                        <td style="width: 33%; text-align: right;"><strong>@L["Model"]</strong></td>
+                        <td>@_photo.CameraModel</td>
+                    </tr>
+                }
+                @if(!string.IsNullOrEmpty(_photo.Lens))
+                {
+                    <tr>
+                        <td style="width: 33%; text-align: right;"><strong>@L["Lens"]</strong></td>
+                        <td>@_photo.Lens</td>
+                    </tr>
+                }
+                @if(_photo.Aperture.HasValue)
+                {
+                    <tr>
+                        <td style="width: 33%; text-align: right;"><strong>@L["Aperture"]</strong></td>
+                        <td>f/@_photo.Aperture</td>
+                    </tr>
+                }
+                @if(_photo.Exposure.HasValue)
+                {
+                    <tr>
+                        <td style="width: 33%; text-align: right;"><strong>@L["Exposure"]</strong></td>
+                        <td>@(_photo.Exposure)s</td>
+                    </tr>
+                }
+                @if(_photo.Iso.HasValue)
+                {
+                    <tr>
+                        <td style="width: 33%; text-align: right;"><strong>@L["ISO"]</strong></td>
+                        <td>@_photo.Iso</td>
+                    </tr>
+                }
+                @if(_photo.FocalLength.HasValue)
+                {
+                    <tr>
+                        <td style="width: 33%; text-align: right;"><strong>@L["Focal length"]</strong></td>
+                        <td>@(_photo.FocalLength)mm</td>
+                    </tr>
+                }
+                @if(_photo.FocalEquivalent.HasValue)
+                {
+                    <tr>
+                        <td style="width: 33%; text-align: right;"><strong>@L["35mm equivalent"]</strong></td>
+                        <td>@(_photo.FocalEquivalent)mm</td>
+                    </tr>
+                }
+                @if(_photo.ExposureProgram.HasValue)
+                {
+                    <tr>
+                        <td style="width: 33%; text-align: right;"><strong>@L["Exposure program"]</strong></td>
+                        <td>@(((ExposureProgram)_photo.ExposureProgram.Value).Humanize())</td>
+                    </tr>
+                }
+                @if(_photo.ExposureMethod.HasValue)
+                {
+                    <tr>
+                        <td style="width: 33%; text-align: right;"><strong>@L["Exposure mode"]</strong></td>
+                        <td>@(((ExposureMode)_photo.ExposureMethod.Value).Humanize())</td>
+                    </tr>
+                }
+                @if(_photo.MeteringMode.HasValue)
+                {
+                    <tr>
+                        <td style="width: 33%; text-align: right;"><strong>@L["Metering mode"]</strong></td>
+                        <td>@(((MeteringMode)_photo.MeteringMode.Value).Humanize())</td>
+                    </tr>
+                }
+                @if(!string.IsNullOrEmpty(_photo.Software))
+                {
+                    <tr>
+                        <td style="width: 33%; text-align: right;"><strong>@L["Software"]</strong></td>
+                        <td>@_photo.Software</td>
+                    </tr>
+                }
+                </tbody>
+            </MudSimpleTable>
+        </MudCardContent>
+    </MudCard>
+}
+
+@* ── Flash & Lighting Card ── *@
+@if(_photo.Flash.HasValue || _photo.LightSource.HasValue || _photo.WhiteBalance.HasValue)
+{
+    <MudCard Elevation="2" Class="mb-4 rounded-lg">
+        <MudCardContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+                <MudIcon Icon="@Icons.Material.Filled.FlashOn" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Flash & Lighting"]</MudText>
+            </MudStack>
+            <MudSimpleTable Elevation="0" Dense="true">
+                <tbody>
+                @if(_photo.Flash.HasValue)
+                {
+                    <tr>
+                        <td style="width: 33%; text-align: right;"><strong>@L["Flash"]</strong></td>
+                        <td>@(((Flash)_photo.Flash.Value).Humanize())</td>
+                    </tr>
+                }
+                @if(_photo.LightSource.HasValue)
+                {
+                    <tr>
+                        <td style="width: 33%; text-align: right;"><strong>@L["Light source"]</strong></td>
+                        <td>@(((LightSource)_photo.LightSource.Value).Humanize())</td>
+                    </tr>
+                }
+                @if(_photo.WhiteBalance.HasValue)
+                {
+                    <tr>
+                        <td style="width: 33%; text-align: right;"><strong>@L["White balance"]</strong></td>
+                        <td>@(((WhiteBalance)_photo.WhiteBalance.Value).Humanize())</td>
+                    </tr>
+                }
+                </tbody>
+            </MudSimpleTable>
+        </MudCardContent>
+    </MudCard>
+}
+
+@* ── Image Properties Card ── *@
+@if(_photo.Colorspace.HasValue || _photo.Contrast.HasValue || _photo.Saturation.HasValue ||
+    _photo.Sharpness.HasValue || _photo.Orientation.HasValue || _photo.SceneCaptureType.HasValue ||
+    _photo.SensingMethod.HasValue || _photo.SubjectDistanceRange.HasValue)
+{
+    <MudCard Elevation="2" Class="mb-4 rounded-lg">
+        <MudCardContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+                <MudIcon Icon="@Icons.Material.Filled.Tune" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Image properties"]</MudText>
+            </MudStack>
+            <MudSimpleTable Elevation="0" Dense="true">
+                <tbody>
+                @if(_photo.Colorspace.HasValue)
+                {
+                    <tr>
+                        <td style="width: 33%; text-align: right;"><strong>@L["Color space"]</strong></td>
+                        <td>@(((ColorSpace)_photo.Colorspace.Value).Humanize())</td>
+                    </tr>
+                }
+                @if(_photo.Contrast.HasValue)
+                {
+                    <tr>
+                        <td style="width: 33%; text-align: right;"><strong>@L["Contrast"]</strong></td>
+                        <td>@(((Contrast)_photo.Contrast.Value).Humanize())</td>
+                    </tr>
+                }
+                @if(_photo.Saturation.HasValue)
+                {
+                    <tr>
+                        <td style="width: 33%; text-align: right;"><strong>@L["Saturation"]</strong></td>
+                        <td>@(((Saturation)_photo.Saturation.Value).Humanize())</td>
+                    </tr>
+                }
+                @if(_photo.Sharpness.HasValue)
+                {
+                    <tr>
+                        <td style="width: 33%; text-align: right;"><strong>@L["Sharpness"]</strong></td>
+                        <td>@(((Sharpness)_photo.Sharpness.Value).Humanize())</td>
+                    </tr>
+                }
+                @if(_photo.Orientation.HasValue)
+                {
+                    <tr>
+                        <td style="width: 33%; text-align: right;"><strong>@L["Orientation"]</strong></td>
+                        <td>@(((Marechai.Data.Orientation)_photo.Orientation.Value).Humanize())</td>
+                    </tr>
+                }
+                @if(_photo.SceneCaptureType.HasValue)
+                {
+                    <tr>
+                        <td style="width: 33%; text-align: right;"><strong>@L["Scene capture"]</strong></td>
+                        <td>@(((SceneCaptureType)_photo.SceneCaptureType.Value).Humanize())</td>
+                    </tr>
+                }
+                @if(_photo.SensingMethod.HasValue)
+                {
+                    <tr>
+                        <td style="width: 33%; text-align: right;"><strong>@L["Sensing method"]</strong></td>
+                        <td>@(((SensingMethod)_photo.SensingMethod.Value).Humanize())</td>
+                    </tr>
+                }
+                @if(_photo.SubjectDistanceRange.HasValue)
+                {
+                    <tr>
+                        <td style="width: 33%; text-align: right;"><strong>@L["Subject distance"]</strong></td>
+                        <td>@(((SubjectDistanceRange)_photo.SubjectDistanceRange.Value).Humanize())</td>
+                    </tr>
+                }
+                </tbody>
+            </MudSimpleTable>
+        </MudCardContent>
+    </MudCard>
+}
+
+@* ── Resolution Card ── *@
+@if(_photo.HorizontalResolution.HasValue || _photo.VerticalResolution.HasValue || _photo.ResolutionUnit.HasValue ||
+    _photo.DigitalZoom.HasValue || !string.IsNullOrEmpty(_photo.ExifVersion))
+{
+    <MudCard Elevation="2" Class="mb-4 rounded-lg">
+        <MudCardContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+                <MudIcon Icon="@Icons.Material.Filled.AspectRatio" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Resolution"]</MudText>
+            </MudStack>
+            <MudSimpleTable Elevation="0" Dense="true">
+                <tbody>
+                @if(_photo.HorizontalResolution.HasValue)
+                {
+                    <tr>
+                        <td style="width: 33%; text-align: right;"><strong>@L["Horizontal"]</strong></td>
+                        <td>@_photo.HorizontalResolution DPI</td>
+                    </tr>
+                }
+                @if(_photo.VerticalResolution.HasValue)
+                {
+                    <tr>
+                        <td style="width: 33%; text-align: right;"><strong>@L["Vertical"]</strong></td>
+                        <td>@_photo.VerticalResolution DPI</td>
+                    </tr>
+                }
+                @if(_photo.ResolutionUnit.HasValue)
+                {
+                    <tr>
+                        <td style="width: 33%; text-align: right;"><strong>@L["Unit"]</strong></td>
+                        <td>@(((ResolutionUnit)_photo.ResolutionUnit.Value).Humanize())</td>
+                    </tr>
+                }
+                @if(_photo.DigitalZoom.HasValue)
+                {
+                    <tr>
+                        <td style="width: 33%; text-align: right;"><strong>@L["Digital zoom"]</strong></td>
+                        <td>@(_photo.DigitalZoom)x</td>
+                    </tr>
+                }
+                @if(!string.IsNullOrEmpty(_photo.ExifVersion))
+                {
+                    <tr>
+                        <td style="width: 33%; text-align: right;"><strong>@L["EXIF version"]</strong></td>
+                        <td>@_photo.ExifVersion</td>
+                    </tr>
+                }
+                </tbody>
+            </MudSimpleTable>
+        </MudCardContent>
+    </MudCard>
+}

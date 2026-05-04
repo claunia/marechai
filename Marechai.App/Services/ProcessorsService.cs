@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Marechai.App.Services;
@@ -121,6 +122,31 @@ public class ProcessorsService
             _logger.LogError(ex, "Error fetching description for processor {ProcessorId}", processorId);
 
             return null;
+        }
+    }
+
+    /// <summary>
+    ///     Fetches photo IDs for a processor
+    /// </summary>
+    public async Task<List<Guid>> GetProcessorPhotosAsync(int processorId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching photos for Processor {ProcessorId}", processorId);
+
+            List<Guid?> photoIds = await _apiClient.Processors[processorId].Photos.GetAsync();
+
+            if(photoIds == null) return [];
+
+            _logger.LogInformation("Successfully fetched {Count} photos for Processor {ProcessorId}", photoIds.Count, processorId);
+
+            return photoIds.Where(id => id.HasValue).Select(id => id!.Value).ToList();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogWarning(ex, "Error fetching photos for Processor {ProcessorId}", processorId);
+
+            return [];
         }
     }
 }

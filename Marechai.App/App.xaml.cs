@@ -163,6 +163,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<CompanyLogoCache>();
         containerRegistry.RegisterSingleton<MachinePhotoCache>();
         containerRegistry.RegisterSingleton<GpuPhotoCache>();
+        containerRegistry.RegisterSingleton<ProcessorPhotoCache>();
         containerRegistry.RegisterSingleton<BookCoverCache>();
         containerRegistry.RegisterSingleton<SoftwareScreenshotCache>();
         containerRegistry.RegisterSingleton<ImageSourceFactory>(
