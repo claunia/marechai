@@ -166,6 +166,7 @@ file class Program
         start = DateTime.Now;
         Console.WriteLine("\e[31;1mEnsuring photo folders exist...\e[0m");
         Photos.EnsureCreated(assetRootPath, false, "machines");
+        Photos.EnsureCreated(assetRootPath, false, "gpus");
         Photos.EnsureCreated(assetRootPath, false, "people");
         Photos.EnsureCreated(assetRootPath, false, "software-screenshots");
     Photos.EnsureCreated(assetRootPath, false, "software-covers");
@@ -180,6 +181,7 @@ file class Program
         start = DateTime.Now;
         Console.WriteLine("\e[31;1mBackfilling missing JPEG-XL variants...\e[0m");
         Photos.BackfillJxl(assetRootPath, false, "machines");
+        Photos.BackfillJxl(assetRootPath, false, "gpus");
         Photos.BackfillJxl(assetRootPath, false, "people");
         Photos.BackfillJxl(assetRootPath, false, "software-screenshots");
     Photos.BackfillJxl(assetRootPath, false, "software-covers");

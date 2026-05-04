@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Marechai.App.Services;
@@ -179,6 +180,31 @@ public class GpusService
             _logger.LogError(ex, "Error fetching description for GPU {GpuId}", gpuId);
 
             return null;
+        }
+    }
+
+    /// <summary>
+    ///     Fetches photo IDs for a GPU
+    /// </summary>
+    public async Task<List<Guid>> GetGpuPhotosAsync(int gpuId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching photos for GPU {GpuId}", gpuId);
+
+            List<Guid?> photoIds = await _apiClient.Gpus[gpuId].Photos.GetAsync();
+
+            if(photoIds == null) return [];
+
+            _logger.LogInformation("Successfully fetched {Count} photos for GPU {GpuId}", photoIds.Count, gpuId);
+
+            return photoIds.Where(id => id.HasValue).Select(id => id!.Value).ToList();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogWarning(ex, "Error fetching photos for GPU {GpuId}", gpuId);
+
+            return [];
         }
     }
 }

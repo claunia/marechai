@@ -43,6 +43,7 @@ public static class Register
         services.AddScoped<MachinesService>();
         services.AddScoped<MachineFamiliesService>();
         services.AddScoped<MachinePhotosService>();
+        services.AddScoped<GpuPhotosService>();
         services.AddScoped<GpusService>();
         services.AddScoped<InstructionSetsService>();
         services.AddScoped<InstructionSetExtensionsService>();

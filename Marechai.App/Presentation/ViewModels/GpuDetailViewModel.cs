@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -11,6 +12,7 @@ using Marechai.App.Navigation;
 using Marechai.App.Presentation.Models;
 using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
+using Marechai.App.Services.Caching;
 using Microsoft.UI.Xaml;
 
 namespace Marechai.App.Presentation.ViewModels;
@@ -18,7 +20,9 @@ namespace Marechai.App.Presentation.ViewModels;
 public partial class GpuDetailViewModel : ObservableObject, IRegionAware
 {
     private readonly CompaniesService            _companiesService;
+    private readonly GpuPhotoCache               _gpuPhotoCache;
     private readonly GpusService                 _gpusService;
+    private readonly ImageSourceFactory          _imageSourceFactory;
     private readonly IStringLocalizer            _localizer;
     private readonly ILogger<GpuDetailViewModel> _logger;
     private readonly IRegionManager              _regionManager;
@@ -74,6 +78,11 @@ public partial class GpuDetailViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private Visibility _showDescription = Visibility.Collapsed;
 
+    [ObservableProperty]
+    private Visibility _showPhotos = Visibility.Collapsed;
+
+    public ObservableCollection<PhotoCarouselDisplayItem> Photos { get; } = [];
+
     /// <summary>
     ///     Gets whether a description is available
     /// </summary>
@@ -101,13 +110,16 @@ public partial class GpuDetailViewModel : ObservableObject, IRegionAware
     private ObservableCollection<ResolutionItem> _resolutions = [];
 
     public GpuDetailViewModel(GpusService gpusService, CompaniesService companiesService, IStringLocalizer localizer,
-                              ILogger<GpuDetailViewModel> logger, IRegionManager regionManager)
+                              ILogger<GpuDetailViewModel> logger, IRegionManager regionManager,
+                              GpuPhotoCache gpuPhotoCache, ImageSourceFactory imageSourceFactory)
     {
         _gpusService           = gpusService;
         _companiesService      = companiesService;
         _localizer             = localizer;
         _logger                = logger;
         _regionManager         = regionManager;
+        _gpuPhotoCache         = gpuPhotoCache;
+        _imageSourceFactory    = imageSourceFactory;
         LoadData               = new AsyncRelayCommand(LoadDataAsync);
         GoBackCommand          = new AsyncRelayCommand(GoBackAsync);
         SelectMachineCommand   = new AsyncRelayCommand<int>(SelectMachineAsync);
@@ -298,6 +310,27 @@ public partial class GpuDetailViewModel : ObservableObject, IRegionAware
 
             ShowDescription = HasDescription ? Visibility.Visible : Visibility.Collapsed;
 
+            // Load photos
+            Photos.Clear();
+            List<Guid> photoIds = await _gpusService.GetGpuPhotosAsync(GpuId);
+
+            if(photoIds.Count > 0)
+            {
+                foreach(Guid photoId in photoIds)
+                {
+                    var photoItem = new PhotoCarouselDisplayItem
+                    {
+                        PhotoId = photoId
+                    };
+
+                    _ = LoadPhotoThumbnailAsync(photoItem);
+
+                    Photos.Add(photoItem);
+                }
+            }
+
+            ShowPhotos = Photos.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+
             IsDataLoaded = true;
         }
         catch(Exception ex)
@@ -367,6 +400,20 @@ public partial class GpuDetailViewModel : ObservableObject, IRegionAware
 
             FilteredSmartphones.Clear();
             foreach(MachineItem smartphone in filtered) FilteredSmartphones.Add(smartphone);
+        }
+    }
+
+    private async Task LoadPhotoThumbnailAsync(PhotoCarouselDisplayItem photoItem)
+    {
+        try
+        {
+            Stream stream = await _gpuPhotoCache.GetThumbnailAsync(photoItem.PhotoId);
+
+            photoItem.ThumbnailImageSource = await _imageSourceFactory.CreateBitmapImageSourceAsync(stream);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading GPU photo thumbnail {PhotoId}", photoItem.PhotoId);
         }
     }
 

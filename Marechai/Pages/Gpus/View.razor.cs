@@ -23,11 +23,13 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Marechai.Data;
+using Marechai.Shared;
 using Microsoft.AspNetCore.Components;
 
 namespace Marechai.Pages.Gpus;
@@ -41,7 +43,9 @@ public partial class View
     string              _displayName;
     GpuDto              _gpu;
     int                 _id;
+    PhotoLightbox       _lightbox;
     bool                _loaded;
+    List<Guid>          _photos      = [];
     List<ResolutionDto> _resolutions = [];
 
     [Parameter]
@@ -109,6 +113,8 @@ public partial class View
         _smartphones = machines.Where(m => m.Type == (int)MachineType.Smartphone).ToList();
 
         _description = await Service.GetDescriptionTextAsync(Id);
+
+        _photos = await GpuPhotosService.GetGuidsByGpuAsync(Id);
 
         _loaded = true;
         StateHasChanged();
