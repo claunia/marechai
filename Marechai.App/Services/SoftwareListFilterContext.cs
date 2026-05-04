@@ -17,5 +17,6 @@ public enum SoftwareListFilterType
     All,
     Letter,
     Year,
-    Platform
+    Platform,
+    Spec
 }

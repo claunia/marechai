@@ -32,12 +32,13 @@ namespace Marechai.Pages.Software;
 
 public partial class Index
 {
-    int                       _count;
+    int                                        _count;
     Dictionary<string, List<SoftwareGenreDto>> _genresByType;
-    bool                      _loaded;
-    int                       _maxYear;
-    int                       _minYear;
-    List<SoftwarePlatformDto> _platforms = [];
+    bool                                       _loaded;
+    int                                        _maxYear;
+    int                                        _minYear;
+    List<SoftwarePlatformDto>                  _platforms  = [];
+    List<SoftwareSpecKeyDto>                   _specsByKey = [];
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -52,6 +53,8 @@ public partial class Index
 
         _genresByType = genres.GroupBy(g => g.TypeName ?? "Genre")
                               .ToDictionary(g => g.Key, g => g.ToList());
+
+        _specsByKey = await Service.GetSpecificationsAsync();
 
         _loaded = true;
         StateHasChanged();

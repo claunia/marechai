@@ -270,7 +270,7 @@
                 <div class="d-flex flex-wrap gap-2 mb-2">
                     @foreach(SoftwareAttributeDto rating in platformGroup.Value)
                     {
-                        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Warning">@rating.Key: @rating.Value</MudChip>
+                        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Warning">@L[rating.Key]: @L[rating.Value]</MudChip>
                     }
                 </div>
             }

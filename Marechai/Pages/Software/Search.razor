@@ -30,6 +30,7 @@
 @page "/software/letter/{StartingCharacter}"
 @page "/software/platform/{PlatformId:int}"
 @page "/software/genre/{GenreId:int}"
+@page "/software/spec"
 @using Marechai.ApiClient.Models
 @inherits OwningComponentBase<SoftwareService>
 @inject IStringLocalizer<SoftwareService> L
@@ -61,6 +62,10 @@
     else if(GenreId.HasValue && !string.IsNullOrEmpty(_genreName))
     {
         <MudText Typo="Typo.h6" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Software in genre {0}"], L[_genreName])</MudText>
+    }
+    else if(!string.IsNullOrEmpty(SpecKey) && !string.IsNullOrEmpty(SpecValue))
+    {
+        <MudText Typo="Typo.h6" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Software with {0}: {1}"], L[SpecKey], L[SpecValue])</MudText>
     }
 </MudPaper>
 
@@ -122,5 +127,9 @@ else
     else if(GenreId.HasValue)
     {
         <MudAlert Severity="Severity.Info">@L["There is no software found for this genre."]</MudAlert>
+    }
+    else if(!string.IsNullOrEmpty(SpecKey) && !string.IsNullOrEmpty(SpecValue))
+    {
+        <MudAlert Severity="Severity.Info">@L["There is no software found with this specification."]</MudAlert>
     }
 }

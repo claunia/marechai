@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Marechai.App.Models;
 using Marechai.App.Navigation;
 using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
@@ -60,6 +61,12 @@ public partial class SoftwareViewModel : ObservableObject
     [ObservableProperty]
     private ObservableCollection<SoftwarePlatformDto> _platformsList = [];
 
+    [ObservableProperty]
+    private string _specificationsGridTitle = string.Empty;
+
+    [ObservableProperty]
+    private ObservableCollection<SoftwareSpecGroup> _specificationGroups = [];
+
     public SoftwareViewModel(SoftwareBrowsingService      browsingService, IStringLocalizer localizer,
                              ILogger<SoftwareViewModel>    logger,          IRegionManager   regionManager,
                              ISoftwareListFilterContext    filterContext)
@@ -74,19 +81,21 @@ public partial class SoftwareViewModel : ObservableObject
         NavigateByLetterCommand     = new AsyncRelayCommand<char>(NavigateByLetterAsync);
         NavigateByYearCommand       = new AsyncRelayCommand<int>(NavigateByYearAsync);
         NavigateByPlatformCommand   = new AsyncRelayCommand<SoftwarePlatformDto>(NavigateByPlatformAsync);
+        NavigateBySpecCommand       = new AsyncRelayCommand<SoftwareSpecValueItem>(NavigateBySpecAsync);
         NavigateAllSoftwareCommand  = new AsyncRelayCommand(NavigateAllSoftwareAsync);
         Title = _localizer["Software"];
 
         InitializeLetters();
     }
 
-    public IAsyncRelayCommand                       LoadData                   { get; }
-    public ICommand                                 GoBackCommand              { get; }
-    public IAsyncRelayCommand<char>                 NavigateByLetterCommand    { get; }
-    public IAsyncRelayCommand<int>                  NavigateByYearCommand      { get; }
-    public IAsyncRelayCommand<SoftwarePlatformDto>  NavigateByPlatformCommand  { get; }
-    public IAsyncRelayCommand                       NavigateAllSoftwareCommand { get; }
-    public string                                   Title                      { get; }
+    public IAsyncRelayCommand                         LoadData                   { get; }
+    public ICommand                                   GoBackCommand              { get; }
+    public IAsyncRelayCommand<char>                   NavigateByLetterCommand    { get; }
+    public IAsyncRelayCommand<int>                    NavigateByYearCommand      { get; }
+    public IAsyncRelayCommand<SoftwarePlatformDto>    NavigateByPlatformCommand  { get; }
+    public IAsyncRelayCommand<SoftwareSpecValueItem>  NavigateBySpecCommand      { get; }
+    public IAsyncRelayCommand                         NavigateAllSoftwareCommand { get; }
+    public string                                     Title                      { get; }
 
     private void InitializeLetters()
     {
@@ -105,12 +114,14 @@ public partial class SoftwareViewModel : ObservableObject
             IsDataLoaded = false;
             YearsList.Clear();
             PlatformsList.Clear();
+            SpecificationGroups.Clear();
 
             Task<int>                        countTask     = _browsingService.GetSoftwareCountAsync();
             Task<int>                        minYearTask   = _browsingService.GetMinimumYearAsync();
             Task<int>                        maxYearTask   = _browsingService.GetMaximumYearAsync();
             Task<List<SoftwarePlatformDto>>  platformsTask = _browsingService.GetAllPlatformsAsync();
-            await Task.WhenAll(countTask, minYearTask, maxYearTask, platformsTask);
+            Task<List<SoftwareSpecKeyDto>>   specsTask     = _browsingService.GetSpecificationsAsync();
+            await Task.WhenAll(countTask, minYearTask, maxYearTask, platformsTask, specsTask);
 
             SoftwareCount = countTask.Result;
             MinimumYear   = minYearTask.Result;
@@ -132,6 +143,35 @@ public partial class SoftwareViewModel : ObservableObject
                 PlatformsGridTitle = _localizer["Browse by Platform"];
 
                 foreach(SoftwarePlatformDto platform in platforms) PlatformsList.Add(platform);
+            }
+
+            List<SoftwareSpecKeyDto> specs = specsTask.Result;
+
+            if(specs.Count > 0)
+            {
+                SpecificationsGridTitle = _localizer["Browse by Specifications"];
+
+                foreach(SoftwareSpecKeyDto spec in specs)
+                {
+                    var values = new ObservableCollection<SoftwareSpecValueItem>();
+
+                    foreach(string val in spec.Values ?? [])
+                    {
+                        values.Add(new SoftwareSpecValueItem
+                        {
+                            Key          = spec.Key ?? string.Empty,
+                            Value        = val,
+                            DisplayValue = _localizer[val]
+                        });
+                    }
+
+                    SpecificationGroups.Add(new SoftwareSpecGroup
+                    {
+                        Key        = spec.Key ?? string.Empty,
+                        DisplayKey = _localizer[spec.Key ?? string.Empty],
+                        Values     = values
+                    });
+                }
             }
 
             if(SoftwareCount == 0)
@@ -213,6 +253,27 @@ public partial class SoftwareViewModel : ObservableObject
         catch(Exception ex)
         {
             _logger.LogError("Error navigating to platform software: {Exception}", ex.Message);
+            ErrorMessage = _localizer["Failed to navigate. Please try again."].Value;
+            HasError     = true;
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private Task NavigateBySpecAsync(SoftwareSpecValueItem? specItem)
+    {
+        if(specItem is null) return Task.CompletedTask;
+
+        try
+        {
+            _logger.LogInformation("Navigating to software by spec: {Key}={Value}", specItem.Key, specItem.Value);
+            _filterContext.FilterType  = SoftwareListFilterType.Spec;
+            _filterContext.FilterValue = $"{specItem.Key}|{specItem.Value}";
+            _regionManager.RequestNavigate(RegionNames.Content, nameof(SoftwareListPage));
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError("Error navigating to spec software: {Exception}", ex.Message);
             ErrorMessage = _localizer["Failed to navigate. Please try again."].Value;
             HasError     = true;
         }

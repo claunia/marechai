@@ -5,6 +5,7 @@ using Marechai.ApiClient.Software.Barcodes;
 using Marechai.ApiClient.Software.ByGenre;
 using Marechai.ApiClient.Software.ByLetter;
 using Marechai.ApiClient.Software.ByPlatform;
+using Marechai.ApiClient.Software.BySpec;
 using Marechai.ApiClient.Software.ByYear;
 using Marechai.ApiClient.Software.Companies;
 using Marechai.ApiClient.Software.CompanyRoles;
@@ -22,6 +23,7 @@ using Marechai.ApiClient.Software.Releases;
 using Marechai.ApiClient.Software.Requirements;
 using Marechai.ApiClient.Software.Roles;
 using Marechai.ApiClient.Software.Screenshots;
+using Marechai.ApiClient.Software.Specifications;
 using Marechai.ApiClient.Software.Versions;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
@@ -59,6 +61,11 @@ namespace Marechai.ApiClient.Software
         {
             get => new global::Marechai.ApiClient.Software.ByPlatform.ByPlatformRequestBuilder(PathParameters, RequestAdapter);
         }
+        /// <summary>The bySpec property</summary>
+        public global::Marechai.ApiClient.Software.BySpec.BySpecRequestBuilder BySpec
+        {
+            get => new global::Marechai.ApiClient.Software.BySpec.BySpecRequestBuilder(PathParameters, RequestAdapter);
+        }
         /// <summary>The byYear property</summary>
         public global::Marechai.ApiClient.Software.ByYear.ByYearRequestBuilder ByYear
         {
@@ -90,9 +97,9 @@ namespace Marechai.ApiClient.Software
             get => new global::Marechai.ApiClient.Software.Families.FamiliesRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The genres property</summary>
-        public global::Marechai.ApiClient.Software.Genres.AllGenresRequestBuilder Genres
+        public global::Marechai.ApiClient.Software.Genres.GenresRequestBuilder Genres
         {
-            get => new global::Marechai.ApiClient.Software.Genres.AllGenresRequestBuilder(PathParameters, RequestAdapter);
+            get => new global::Marechai.ApiClient.Software.Genres.GenresRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The maximumYear property</summary>
         public global::Marechai.ApiClient.Software.MaximumYear.MaximumYearRequestBuilder MaximumYear
@@ -138,6 +145,11 @@ namespace Marechai.ApiClient.Software
         public global::Marechai.ApiClient.Software.Screenshots.ScreenshotsRequestBuilder Screenshots
         {
             get => new global::Marechai.ApiClient.Software.Screenshots.ScreenshotsRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The specifications property</summary>
+        public global::Marechai.ApiClient.Software.Specifications.SpecificationsRequestBuilder Specifications
+        {
+            get => new global::Marechai.ApiClient.Software.Specifications.SpecificationsRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The versions property</summary>
         public global::Marechai.ApiClient.Software.Versions.VersionsRequestBuilder Versions

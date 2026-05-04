@@ -159,6 +159,18 @@ public partial class SoftwareListViewModel : ObservableObject, IRegionAware
                 FilterDescription = _localizer["Showing software for the selected platform"];
 
                 break;
+
+            case SoftwareListFilterType.Spec:
+                if(!string.IsNullOrEmpty(FilterValue) && FilterValue.Contains('|'))
+                {
+                    string[] parts    = FilterValue.Split('|', 2);
+                    string   specKey  = parts[0];
+                    string   specVal  = parts[1];
+                    PageTitle         = $"{_localizer[specKey]}: {_localizer[specVal]}";
+                    FilterDescription = string.Format(_localizer["Showing software with {0}: {1}"], _localizer[specKey], _localizer[specVal]);
+                }
+
+                break;
         }
     }
 
@@ -177,6 +189,12 @@ public partial class SoftwareListViewModel : ObservableObject, IRegionAware
                                              SoftwareListFilterType.Platform
                                                  when int.TryParse(FilterValue, out int platformId) =>
                                                  await _browsingService.GetSoftwareByPlatformAsync(platformId),
+
+                                             SoftwareListFilterType.Spec
+                                                 when FilterValue.Contains('|') =>
+                                                 await _browsingService.GetSoftwareBySpecAsync(
+                                                     FilterValue.Split('|', 2)[0],
+                                                     FilterValue.Split('|', 2)[1]),
 
                                              _ => await _browsingService.GetAllSoftwareAsync()
                                          };

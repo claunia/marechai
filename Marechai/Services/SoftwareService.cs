@@ -450,6 +450,38 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
+    public async Task<List<SoftwareSpecKeyDto>> GetSpecificationsAsync()
+    {
+        try
+        {
+            List<SoftwareSpecKeyDto>? specs = await client.Software.Specifications.GetAsync();
+
+            return specs ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<SoftwareDto>> GetSoftwareBySpecAsync(string key, string value)
+    {
+        try
+        {
+            List<SoftwareDto>? software = await client.Software.BySpec.GetAsync(config =>
+            {
+                config.QueryParameters.Key   = key;
+                config.QueryParameters.Value = value;
+            });
+
+            return software ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
     // ── Detail methods ──
 
     public async Task<SoftwareDto?> GetSoftwareByIdAsync(int id)

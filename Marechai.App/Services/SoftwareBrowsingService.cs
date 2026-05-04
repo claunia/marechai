@@ -166,6 +166,55 @@ public class SoftwareBrowsingService
         }
     }
 
+    public async Task<List<SoftwareSpecKeyDto>> GetSpecificationsAsync()
+    {
+        try
+        {
+            _logger.LogInformation("Fetching software specifications from API");
+
+            List<SoftwareSpecKeyDto> specs = await _apiClient.Software.Specifications.GetAsync();
+
+            if(specs == null) return [];
+
+            _logger.LogInformation("Successfully fetched {Count} specification keys", specs.Count);
+
+            return specs;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching software specifications from API");
+
+            return [];
+        }
+    }
+
+    public async Task<List<SoftwareDto>> GetSoftwareBySpecAsync(string key, string value)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching software by spec {Key}={Value} from API", key, value);
+
+            List<SoftwareDto> software = await _apiClient.Software.BySpec.GetAsync(config =>
+            {
+                config.QueryParameters.Key   = key;
+                config.QueryParameters.Value = value;
+            });
+
+            if(software == null) return [];
+
+            _logger.LogInformation("Successfully fetched {Count} software for spec {Key}={Value}",
+                software.Count, key, value);
+
+            return software;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching software by spec {Key}={Value} from API", key, value);
+
+            return [];
+        }
+    }
+
     public async Task<SoftwareDto?> GetSoftwareByIdAsync(int softwareId)
     {
         try

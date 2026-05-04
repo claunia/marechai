@@ -123,6 +123,26 @@
     </MudPaper>
 }
 
+@if(_specsByKey?.Count > 0)
+{
+    <MudPaper Elevation="2" Class="pa-4 mb-4 rounded-lg">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+            <MudIcon Icon="@Icons.Material.Filled.Settings" Color="Color.Secondary" Size="Size.Small"/>
+            <MudText Typo="Typo.subtitle1">@L["Search software by specifications"]</MudText>
+        </MudStack>
+        @foreach(var specKey in _specsByKey)
+        {
+            <MudText Typo="Typo.subtitle2" Class="mt-2 mb-1"><strong>@L[specKey.Key]</strong></MudText>
+            <div class="d-flex flex-wrap gap-1">
+                @foreach(string specValue in specKey.Values)
+                {
+                    <MudChip T="string" Href="@($"/software/spec?key={Uri.EscapeDataString(specKey.Key)}&value={Uri.EscapeDataString(specValue)}")">@L[specValue]</MudChip>
+                }
+            </div>
+        }
+    </MudPaper>
+}
+
 <MudPaper Elevation="2" Class="pa-4 mb-4 rounded-lg">
     <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
         <MudIcon Icon="@Icons.Material.Filled.CalendarMonth" Color="Color.Secondary" Size="Size.Small"/>

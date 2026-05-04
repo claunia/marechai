@@ -119,6 +119,41 @@
                         </ItemsRepeater>
                     </StackPanel>
 
+                    <!-- Specifications Section -->
+                    <StackPanel Spacing="12"
+                                Visibility="{Binding SpecificationsGridTitle, Converter={StaticResource StringToVisibilityConverter}}">
+                        <TextBlock Text="{Binding SpecificationsGridTitle}"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                        <ItemsRepeater ItemsSource="{Binding SpecificationGroups}">
+                            <ItemsRepeater.Layout>
+                                <StackLayout Spacing="12" />
+                            </ItemsRepeater.Layout>
+                            <ItemsRepeater.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Spacing="8">
+                                        <TextBlock Text="{Binding DisplayKey}"
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                        <ItemsRepeater ItemsSource="{Binding Values}"
+                                                       Layout="{StaticResource SpecValuesGridLayout}">
+                                            <ItemsRepeater.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Content="{Binding DisplayValue}"
+                                                            Command="{Binding DataContext.NavigateBySpecCommand, ElementName=PageRoot}"
+                                                            CommandParameter="{Binding}"
+                                                            Style="{StaticResource KeyboardKeyButtonStyle}" />
+                                                </DataTemplate>
+                                            </ItemsRepeater.ItemTemplate>
+                                        </ItemsRepeater>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsRepeater.ItemTemplate>
+                        </ItemsRepeater>
+                    </StackPanel>
+
                     <!-- Years Grid Section -->
                     <StackPanel Spacing="12">
                         <TextBlock Text="{Binding YearsGridTitle}"
@@ -324,6 +359,12 @@
                            MinItemWidth="54"
                            MinItemHeight="44"
                            MaximumRowsOrColumns="10" />
+
+        <UniformGridLayout x:Key="SpecValuesGridLayout"
+                           ItemsStretch="Fill"
+                           MinItemWidth="80"
+                           MinItemHeight="44"
+                           MaximumRowsOrColumns="6" />
 
     </Page.Resources>
 

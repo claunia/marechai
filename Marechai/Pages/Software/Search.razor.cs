@@ -95,6 +95,12 @@ public partial class Search
         }
     }
 
+    [SupplyParameterFromQuery(Name = "key")]
+    public string SpecKey { get; set; }
+
+    [SupplyParameterFromQuery(Name = "value")]
+    public string SpecValue { get; set; }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if(_loaded) return;
@@ -133,6 +139,9 @@ public partial class Search
             List<SoftwareGenreDto> genres = await Service.GetAllGenresAsync();
             _genreName = genres.FirstOrDefault(g => g.Id == GenreId.Value)?.Name;
         }
+
+        if(!string.IsNullOrEmpty(SpecKey) && !string.IsNullOrEmpty(SpecValue) && _software is null)
+            _software = await Service.GetSoftwareBySpecAsync(SpecKey, SpecValue);
 
         _software ??= await Service.GetAllSoftwareAsync();
         _loaded   =   true;

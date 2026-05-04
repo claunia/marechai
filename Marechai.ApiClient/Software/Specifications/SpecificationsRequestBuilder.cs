@@ -9,41 +9,41 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
 using System;
-namespace Marechai.ApiClient.Consoles.Prototypes
+namespace Marechai.ApiClient.Software.Specifications
 {
     /// <summary>
-    /// Builds and executes requests for operations under \consoles\prototypes
+    /// Builds and executes requests for operations under \software\specifications
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class PrototypesRequestBuilder : BaseRequestBuilder
+    public partial class SpecificationsRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
-        /// Instantiates a new <see cref="global::Marechai.ApiClient.Consoles.Prototypes.PrototypesRequestBuilder"/> and sets the default values.
+        /// Instantiates a new <see cref="global::Marechai.ApiClient.Software.Specifications.SpecificationsRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public PrototypesRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/consoles/prototypes", pathParameters)
+        public SpecificationsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/specifications", pathParameters)
         {
         }
         /// <summary>
-        /// Instantiates a new <see cref="global::Marechai.ApiClient.Consoles.Prototypes.PrototypesRequestBuilder"/> and sets the default values.
+        /// Instantiates a new <see cref="global::Marechai.ApiClient.Software.Specifications.SpecificationsRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public PrototypesRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/consoles/prototypes", rawUrl)
+        public SpecificationsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/specifications", rawUrl)
         {
         }
-        /// <returns>A List&lt;global::Marechai.ApiClient.Models.MachineDto&gt;</returns>
+        /// <returns>A List&lt;global::Marechai.ApiClient.Models.SoftwareSpecKeyDto&gt;</returns>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
         /// <exception cref="global::Marechai.ApiClient.Models.ProblemDetails">When receiving a 400 status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<List<global::Marechai.ApiClient.Models.MachineDto>?> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<List<global::Marechai.ApiClient.Models.SoftwareSpecKeyDto>?> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<List<global::Marechai.ApiClient.Models.MachineDto>> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<List<global::Marechai.ApiClient.Models.SoftwareSpecKeyDto>> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             var requestInfo = ToGetRequestInformation(requestConfiguration);
@@ -51,7 +51,7 @@ namespace Marechai.ApiClient.Consoles.Prototypes
             {
                 { "400", global::Marechai.ApiClient.Models.ProblemDetails.CreateFromDiscriminatorValue },
             };
-            var collectionResult = await RequestAdapter.SendCollectionAsync<global::Marechai.ApiClient.Models.MachineDto>(requestInfo, global::Marechai.ApiClient.Models.MachineDto.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
+            var collectionResult = await RequestAdapter.SendCollectionAsync<global::Marechai.ApiClient.Models.SoftwareSpecKeyDto>(requestInfo, global::Marechai.ApiClient.Models.SoftwareSpecKeyDto.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
             return collectionResult?.AsList();
         }
         /// <returns>A <see cref="RequestInformation"/></returns>
@@ -73,18 +73,18 @@ namespace Marechai.ApiClient.Consoles.Prototypes
         /// <summary>
         /// Returns a request builder with the provided arbitrary URL. Using this method means any other path or query parameters are ignored.
         /// </summary>
-        /// <returns>A <see cref="global::Marechai.ApiClient.Consoles.Prototypes.PrototypesRequestBuilder"/></returns>
+        /// <returns>A <see cref="global::Marechai.ApiClient.Software.Specifications.SpecificationsRequestBuilder"/></returns>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
-        public global::Marechai.ApiClient.Consoles.Prototypes.PrototypesRequestBuilder WithUrl(string rawUrl)
+        public global::Marechai.ApiClient.Software.Specifications.SpecificationsRequestBuilder WithUrl(string rawUrl)
         {
-            return new global::Marechai.ApiClient.Consoles.Prototypes.PrototypesRequestBuilder(rawUrl, RequestAdapter);
+            return new global::Marechai.ApiClient.Software.Specifications.SpecificationsRequestBuilder(rawUrl, RequestAdapter);
         }
         /// <summary>
         /// Configuration for the request such as headers, query parameters, and middleware options.
         /// </summary>
         [Obsolete("This class is deprecated. Please use the generic RequestConfiguration class generated by the generator.")]
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class PrototypesRequestBuilderGetRequestConfiguration : RequestConfiguration<DefaultQueryParameters>
+        public partial class SpecificationsRequestBuilderGetRequestConfiguration : RequestConfiguration<DefaultQueryParameters>
         {
         }
     }

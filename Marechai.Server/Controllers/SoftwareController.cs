@@ -507,6 +507,60 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
         })
        .ToListAsync();
 
+    [HttpGet("specifications")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<List<SoftwareSpecKeyDto>> GetSpecificationsAsync()
+    {
+        var raw = await context.SoftwareAttributes
+                               .Where(a => a.Category == "Spec")
+                               .Select(a => new { a.Key, a.Value })
+                               .Distinct()
+                               .ToListAsync();
+
+        return raw.GroupBy(a => a.Key)
+                  .OrderBy(g => g.Key)
+                  .Select(g => new SoftwareSpecKeyDto
+                   {
+                       Key    = g.Key,
+                       Values = g.Select(a => a.Value).OrderBy(v => v).ToList()
+                   })
+                  .ToList();
+    }
+
+    [HttpGet("by-spec")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<SoftwareDto>> GetSoftwareBySpecAsync([FromQuery] string key, [FromQuery] string value) =>
+        context.Softwares
+               .Where(s => s.Versions.Any(v => v.Releases.Any(r => r.Attributes
+                                                                     .Any(a => a.Category == "Spec" &&
+                                                                              a.Key   == key         &&
+                                                                              a.Value == value)))
+                         || s.DirectReleases.Any(r => r.Attributes
+                                                       .Any(a => a.Category == "Spec" &&
+                                                                  a.Key   == key       &&
+                                                                  a.Value == value)))
+               .OrderBy(s => s.Name)
+               .Select(s => new SoftwareDto
+                {
+                    Id                = s.Id,
+                    Name              = s.Name,
+                    FamilyId          = s.FamilyId,
+                    Family            = s.Family.Name,
+                    IsOperatingSystem = s.IsOperatingSystem,
+                    IsGame            = s.IsGame,
+                    FrontCoverId = context.SoftwareCovers
+                                          .Where(c => (c.Release.SoftwareId == s.Id ||
+                                                        c.Release.SoftwareVersion.SoftwareId == s.Id) &&
+                                                       c.Type == SoftwareCoverType.Front)
+                                          .Select(c => (Guid?)c.Id)
+                                          .FirstOrDefault()
+                })
+               .ToListAsync();
+
     [HttpGet("/software/{softwareId:ulong}/genres")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
