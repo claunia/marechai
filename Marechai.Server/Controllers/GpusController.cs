@@ -54,6 +54,7 @@ public class GpusController(MarechaiContext context) : ControllerBase
                                                     {
                                                         Id         = g.Id,
                                                         Company    = g.Company.Name,
+                                                        CompanyId  = g.CompanyId,
                                                         Introduced = g.Introduced,
                                                         IntroducedPrecision = g.IntroducedPrecision,
                                                         ModelCode  = g.ModelCode,
