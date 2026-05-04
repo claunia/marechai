@@ -101,4 +101,26 @@ public class SoundSynthsService
             return [];
         }
     }
+
+    /// <summary>
+    ///     Fetches a localized description for a sound synthesizer
+    /// </summary>
+    public async Task<SoundSynthDescriptionDto?> GetDescriptionAsync(int soundSynthId, string languageCode)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching description for sound synth {SoundSynthId} lang {Lang}", soundSynthId, languageCode);
+
+            SoundSynthDescriptionDto? desc = await _apiClient.SoundSynths[soundSynthId].Description.GetAsync(
+                config => config.QueryParameters.Lang = languageCode);
+
+            return desc;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching description for sound synth {SoundSynthId}", soundSynthId);
+
+            return null;
+        }
+    }
 }

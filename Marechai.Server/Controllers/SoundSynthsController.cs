@@ -31,6 +31,7 @@ using System.Threading.Tasks;
 using Marechai.Data;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
+using Markdig;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -244,6 +245,144 @@ public class SoundSynthsController(MarechaiContext context) : ControllerBase
         if(item is null) return NotFound();
 
         context.SoundSynths.Remove(item);
+
+        await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
+    }
+
+    [HttpGet("{id:int}/description/text")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<string> GetDescriptionTextAsync(int id, [FromQuery] string lang = "eng")
+    {
+        SoundSynthDescription description =
+            await context.SoundSynthDescriptions.FirstOrDefaultAsync(d => d.SoundSynthId == id && d.LanguageCode == lang);
+
+        // Fallback to English if requested language not found
+        if(description is null && lang != "eng")
+            description = await context.SoundSynthDescriptions.FirstOrDefaultAsync(d => d.SoundSynthId == id &&
+                              d.LanguageCode == "eng");
+
+        return description?.Html ?? description?.Text;
+    }
+
+    [HttpGet("{id:int}/descriptions")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<SoundSynthDescriptionDto>> GetDescriptionsAsync(int id) => context.SoundSynthDescriptions
+       .Where(d => d.SoundSynthId == id)
+       .Select(d => new SoundSynthDescriptionDto
+        {
+            Id           = d.Id,
+            SoundSynthId = d.SoundSynthId,
+            Html         = d.Html,
+            Markdown     = d.Text,
+            LanguageCode = d.LanguageCode,
+            Language     = d.Language.ReferenceName
+        })
+       .ToListAsync();
+
+    [HttpGet("{id:int}/description")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<SoundSynthDescriptionDto> GetDescriptionAsync(int id, [FromQuery] string lang = "eng")
+    {
+        SoundSynthDescriptionDto description = await context.SoundSynthDescriptions
+                                                         .Where(d => d.SoundSynthId == id && d.LanguageCode == lang)
+                                                         .Select(d => new SoundSynthDescriptionDto
+                                                          {
+                                                              Id           = d.Id,
+                                                              SoundSynthId = d.SoundSynthId,
+                                                              Html         = d.Html,
+                                                              Markdown     = d.Text,
+                                                              LanguageCode = d.LanguageCode,
+                                                              Language     = d.Language.ReferenceName
+                                                          })
+                                                         .FirstOrDefaultAsync();
+
+        // Fallback to English if requested language not found
+        if(description is null && lang != "eng")
+            description = await context.SoundSynthDescriptions
+                                       .Where(d => d.SoundSynthId == id && d.LanguageCode == "eng")
+                                       .Select(d => new SoundSynthDescriptionDto
+                                        {
+                                            Id           = d.Id,
+                                            SoundSynthId = d.SoundSynthId,
+                                            Html         = d.Html,
+                                            Markdown     = d.Text,
+                                            LanguageCode = d.LanguageCode,
+                                            Language     = d.Language.ReferenceName
+                                        })
+                                       .FirstOrDefaultAsync();
+
+        return description;
+    }
+
+    [HttpPost("{id:int}/description")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<int>> CreateOrUpdateDescriptionAsync(
+        int id, [FromBody] SoundSynthDescriptionDto description)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        SoundSynthDescription current = await context.SoundSynthDescriptions
+                                                  .FirstOrDefaultAsync(d => d.SoundSynthId    == id &&
+                                                                            d.LanguageCode == description.LanguageCode);
+
+        MarkdownPipeline pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+        string             html     = Markdown.ToHtml(description.Markdown, pipeline);
+
+        if(current is null)
+        {
+            current = new SoundSynthDescription
+            {
+                SoundSynthId = id,
+                LanguageCode = description.LanguageCode,
+                Html         = html,
+                Text         = description.Markdown
+            };
+
+            await context.SoundSynthDescriptions.AddAsync(current);
+        }
+        else
+        {
+            current.Html = html;
+            current.Text = description.Markdown;
+        }
+
+        await context.SaveChangesWithUserAsync(userId);
+
+        return current.Id;
+    }
+
+    [HttpDelete("{id:int}/description/{languageCode}")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult> DeleteDescriptionAsync(int id, string languageCode)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        SoundSynthDescription description = await context.SoundSynthDescriptions
+                                                      .FirstOrDefaultAsync(d => d.SoundSynthId    == id &&
+                                                                                d.LanguageCode == languageCode);
+
+        if(description is null) return NotFound();
+
+        context.SoundSynthDescriptions.Remove(description);
 
         await context.SaveChangesWithUserAsync(userId);
 

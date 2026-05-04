@@ -1,0 +1,185 @@
+@using Marechai.ApiClient.Models
+
+<MudDialog>
+    <DialogContent>
+        @if(_isLoading)
+        {
+            <div class="d-flex justify-center pa-4">
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true"/>
+            </div>
+        }
+        else
+        {
+            <MudText Typo="Typo.subtitle1" Class="mb-4">Manage descriptions for <strong>@SoundSynthName</strong></MudText>
+
+            @if(_descriptions is { Count: > 0 })
+            {
+                <MudText Typo="Typo.subtitle2" Class="mb-2">Existing Translations</MudText>
+                <MudList T="SoundSynthDescriptionDto" Dense="true" Class="mb-4">
+                    @foreach(SoundSynthDescriptionDto desc in _descriptions)
+                    {
+                        <MudListItem T="SoundSynthDescriptionDto">
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                <MudChip T="string" Size="Size.Small" Color="Color.Primary" Variant="Variant.Outlined">@GetLanguageName(desc.LanguageCode)</MudChip>
+                                <MudStack Row="true" Spacing="1">
+                                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => EditDescription(desc)"/>
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDeleteDescription(desc)"/>
+                                </MudStack>
+                            </MudStack>
+                        </MudListItem>
+                    }
+                </MudList>
+            }
+
+            <MudDivider Class="my-4"/>
+
+            <MudSelect T="string"
+                       @bind-Value="_selectedLanguage"
+                       Label="Language"
+                       Variant="Variant.Outlined"
+                       Class="mb-4">
+                @foreach(var lang in _availableLanguages)
+                {
+                    <MudSelectItem T="string" Value="@lang.Code">@lang.Name</MudSelectItem>
+                }
+            </MudSelect>
+
+            <MarkdownEditor @bind-Value="_markdown"
+                            @ref="_editor"
+                            SpellChecker="false"
+                            MinHeight="300px"
+                            MaxHeight="500px"
+                            Placeholder="Enter description in Markdown..."/>
+
+            @if(!string.IsNullOrWhiteSpace(_errorMessage))
+            {
+                <MudAlert Severity="Severity.Error" Class="mt-2" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+            }
+
+            @if(!string.IsNullOrWhiteSpace(_successMessage))
+            {
+                <MudAlert Severity="Severity.Success" Class="mt-2" ShowCloseIcon="true" CloseIconClicked="() => _successMessage = null">@_successMessage</MudAlert>
+            }
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Close">Close</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="SaveDescription" Disabled="@(string.IsNullOrWhiteSpace(_selectedLanguage) || string.IsNullOrWhiteSpace(_markdown))">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    bool    _isLoading = true;
+    string? _selectedLanguage;
+    string? _markdown;
+    string? _errorMessage;
+    string? _successMessage;
+
+    List<SoundSynthDescriptionDto>? _descriptions;
+
+    MarkdownEditor _editor;
+
+    static readonly (string Code, string Name)[] _availableLanguages =
+    [
+        ("eng", "English"),
+        ("spa", "Spanish"),
+        ("deu", "German"),
+        ("fra", "French"),
+        ("ita", "Italian"),
+        ("lat", "Latin"),
+        ("por", "Portuguese")
+    ];
+
+    [CascadingParameter]
+    IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter] public int    SoundSynthId   { get; set; }
+    [Parameter] public string SoundSynthName { get; set; } = string.Empty;
+
+    [Inject] SoundSynthsService SoundSynthsService { get; set; } = null!;
+    [Inject] IDialogService     DialogService      { get; set; } = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDescriptions();
+        _isLoading = false;
+    }
+
+    async Task LoadDescriptions()
+    {
+        _descriptions = await SoundSynthsService.GetDescriptionsAsync(SoundSynthId);
+    }
+
+    static string GetLanguageName(string code) =>
+        _availableLanguages.FirstOrDefault(l => l.Code == code).Name ?? code;
+
+    async Task EditDescription(SoundSynthDescriptionDto desc)
+    {
+        _selectedLanguage = desc.LanguageCode;
+        _markdown         = desc.Markdown;
+
+        if(_editor is not null)
+            await _editor.SetValueAsync(_markdown);
+    }
+
+    async Task ConfirmDeleteDescription(SoundSynthDescriptionDto desc)
+    {
+        DialogParameters<DeleteConfirmDialog> parameters = new()
+        {
+            { x => x.ContentText, $"Delete the {GetLanguageName(desc.LanguageCode)} description?" }
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<DeleteConfirmDialog>("Delete Description", parameters,
+                                                                                     new DialogOptions
+                                                                                     {
+                                                                                         MaxWidth = MaxWidth.ExtraSmall,
+                                                                                         FullWidth = true
+                                                                                     });
+
+        DialogResult? result = await dialog.Result;
+
+        if(result is { Canceled: false })
+        {
+            (bool succeeded, string? error) = await SoundSynthsService.DeleteDescriptionAsync(SoundSynthId, desc.LanguageCode);
+
+            if(succeeded)
+            {
+                _successMessage = "Description deleted.";
+                await LoadDescriptions();
+            }
+            else
+            {
+                _errorMessage = error ?? "Failed to delete description.";
+            }
+        }
+    }
+
+    async Task SaveDescription()
+    {
+        if(string.IsNullOrWhiteSpace(_selectedLanguage) || string.IsNullOrWhiteSpace(_markdown))
+            return;
+
+        var dto = new SoundSynthDescriptionDto
+        {
+            SoundSynthId = SoundSynthId,
+            LanguageCode = _selectedLanguage,
+            Markdown     = _markdown
+        };
+
+        (bool succeeded, string? error) = await SoundSynthsService.CreateOrUpdateDescriptionAsync(SoundSynthId, dto);
+
+        if(succeeded)
+        {
+            _successMessage   = "Description saved.";
+            _markdown         = null;
+            _selectedLanguage = null;
+            await LoadDescriptions();
+        }
+        else
+        {
+            _errorMessage = error ?? "Failed to save description.";
+        }
+    }
+
+    void Close() => MudDialog.Cancel();
+}

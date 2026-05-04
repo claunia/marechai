@@ -37,6 +37,7 @@ public partial class View
     List<MachineDto> _computers = [];
     List<MachineDto> _consoles  = [];
     List<MachineDto> _smartphones = [];
+    string?          _description;
     string           _displayName;
     int              _id;
     bool             _loaded;
@@ -82,6 +83,8 @@ public partial class View
         _computers = machines.Where(m => m.Type == (int)MachineType.Computer).ToList();
         _consoles  = machines.Where(m => m.Type == (int)MachineType.Console).ToList();
         _smartphones = machines.Where(m => m.Type == (int)MachineType.Smartphone).ToList();
+
+        _description = await Service.GetDescriptionTextAsync(Id);
 
         _loaded = true;
         StateHasChanged();

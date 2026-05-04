@@ -362,6 +362,22 @@ file class Program
                 end = DateTime.Now;
 
                 Console.WriteLine("\e[31;1mTook \e[32;1m{0} seconds\e[31;1m...\e[0m", (end - start).TotalSeconds);
+
+                start = DateTime.Now;
+                Console.WriteLine("\e[31;1mRendering markdown in sound synth descriptions...\e[0m");
+
+                foreach(SoundSynthDescription soundSynthDescription in
+                        context.SoundSynthDescriptions.Where(sd => sd.Html == null))
+                {
+                    soundSynthDescription.Html = Markdown.ToHtml(soundSynthDescription.Text, pipeline);
+                    context.Update(soundSynthDescription);
+                }
+
+                context.SaveChanges();
+
+                end = DateTime.Now;
+
+                Console.WriteLine("\e[31;1mTook \e[32;1m{0} seconds\e[31;1m...\e[0m", (end - start).TotalSeconds);
             }
             catch(Exception ex)
             {

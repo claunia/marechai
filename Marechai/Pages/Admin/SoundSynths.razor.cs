@@ -190,4 +190,20 @@ public partial class SoundSynths
             }
         }
     }
+
+    async Task OpenDescriptionsDialog(SoundSynthDto soundSynth)
+    {
+        DialogParameters<SoundSynthDescriptionDialog> parameters = new()
+        {
+            { x => x.SoundSynthId, soundSynth.Id ?? 0 },
+            { x => x.SoundSynthName, soundSynth.Name }
+        };
+
+        await DialogService.ShowAsync<SoundSynthDescriptionDialog>(L["Sound Synth Descriptions"], parameters,
+                                                                    new DialogOptions
+                                                                    {
+                                                                        MaxWidth  = MaxWidth.Medium,
+                                                                        FullWidth = true
+                                                                    });
+    }
 }

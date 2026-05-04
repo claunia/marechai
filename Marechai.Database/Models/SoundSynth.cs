@@ -35,6 +35,7 @@ public class SoundSynth : BaseModel<int>
 {
     public SoundSynth()
     {
+        Descriptions                = new HashSet<SoundSynthDescription>();
         SoundByMachine              = new HashSet<SoundByMachine>();
         SupportedBySoftwareReleases = new HashSet<SoundSynthBySoftwareRelease>();
     }
@@ -68,6 +69,7 @@ public class SoundSynth : BaseModel<int>
     public int? Type { get;       set; }
 
     public virtual Company                                  Company                     { get; set; }
+    public virtual ICollection<SoundSynthDescription>       Descriptions                { get; set; }
     public virtual ICollection<SoundByMachine>              SoundByMachine              { get; set; }
     public virtual ICollection<SoundSynthBySoftwareRelease> SupportedBySoftwareReleases { get; set; }
 }

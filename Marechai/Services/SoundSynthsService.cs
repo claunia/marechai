@@ -140,4 +140,70 @@ public class SoundSynthsService(Marechai.ApiClient.Client client)
             return [];
         }
     }
+
+    // Description management
+    public async Task<string?> GetDescriptionTextAsync(int id)
+    {
+        try
+        {
+            SoundSynthDescriptionDto? desc = await client.SoundSynths[id].Description.GetAsync();
+
+            return desc?.Html ?? desc?.Markdown;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public async Task<List<SoundSynthDescriptionDto>> GetDescriptionsAsync(int soundSynthId)
+    {
+        try
+        {
+            List<SoundSynthDescriptionDto>? descriptions = await client.SoundSynths[soundSynthId].Descriptions.GetAsync();
+
+            return descriptions ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> CreateOrUpdateDescriptionAsync(int soundSynthId,
+        SoundSynthDescriptionDto dto)
+    {
+        try
+        {
+            await client.SoundSynths[soundSynthId].Description.PostAsync(dto);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> DeleteDescriptionAsync(int soundSynthId, string languageCode)
+    {
+        try
+        {
+            await client.SoundSynths[soundSynthId].Description[languageCode].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
 }
