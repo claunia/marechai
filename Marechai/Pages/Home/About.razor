@@ -25,6 +25,7 @@
 *******************************************************************************/
 }
 @page "/about"
+@inject IStringLocalizer<About> L
 
 <MudContainer MaxWidth="MaxWidth.Medium">
 
@@ -33,7 +34,7 @@
               Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
         <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
             <MudIcon Icon="@Icons.Material.Filled.Museum" Size="Size.Large" Style="color: white;" />
-            <MudText Typo="Typo.h4" Style="color: white;">About Marechai</MudText>
+            <MudText Typo="Typo.h4" Style="color: white;">@L["About Marechai"]</MudText>
         </MudStack>
     </MudPaper>
 
@@ -42,12 +43,10 @@
         <MudCardContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-2">
                 <MudIcon Icon="@Icons.Material.Filled.Groups" Color="Color.Primary" />
-                <MudText Typo="Typo.h6">Who Are We</MudText>
+                <MudText Typo="Typo.h6">@L["Who Are We"]</MudText>
             </MudStack>
             <MudText Typo="Typo.body1">
-                We are a community united by a single purpose: <b>to safeguard the history of computing and ensure it remains accessible for generations to come</b>.<br/>
-                From this mission emerged two complementary projects — <b>Marechai</b>, our living compendium of computing artifacts, and the <a href="https://www.aaru.app"><b>Aaru Data Preservation Suite</b></a>, dedicated to the accurate preservation of digital media.<br/>
-                Together, they protect not only the machines themselves, but also the stories, people, and ideas behind them.
+                @((MarkupString)L["Who Are We Body"].Value)
             </MudText>
         </MudCardContent>
     </MudCard>
@@ -57,12 +56,10 @@
         <MudCardContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-2">
                 <MudIcon Icon="@Icons.Material.Filled.Storage" Color="Color.Primary" />
-                <MudText Typo="Typo.h6">What Is Marechai</MudText>
+                <MudText Typo="Typo.h6">@L["What Is Marechai"]</MudText>
             </MudStack>
             <MudText Typo="Typo.body1">
-                Marechai is an ever‑growing <b>archive of the world’s computing heritage</b>. We document and classify everything that shaped the digital age:
-                computers, consoles, smartphones, books, magazines, documents, software, components, peripherals, and the people and companies who built it all.<br/>
-                Our goal is ambitious but essential: <b>to preserve as much knowledge as possible before it fades into obscurity</b>.
+                @((MarkupString)L["What Is Marechai Body"].Value)
             </MudText>
         </MudCardContent>
     </MudCard>
@@ -72,14 +69,10 @@
         <MudCardContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-2">
                 <MudIcon Icon="@Icons.Material.Filled.Public" Color="Color.Primary" />
-                <MudText Typo="Typo.h6">Why Not Wikipedia</MudText>
+                <MudText Typo="Typo.h6">@L["Why Not Wikipedia"]</MudText>
             </MudStack>
             <MudText Typo="Typo.body1">
-                Wikipedia is an extraordinary encyclopedia, but Marechai serves a different purpose.<br/>
-                Where Wikipedia focuses on standalone articles, Marechai focuses on <b>relationships</b>:
-                what runs on what, who worked where, how technologies evolved, and how artifacts connect across time.<br/>
-                We also emphasize <b>visual preservation</b>, storing more photos, covers, and screenshots than a traditional encyclopedia.<br/>
-                Marechai is not just information — it is <b>context, structure, and memory</b>.
+                @((MarkupString)L["Why Not Wikipedia Body"].Value)
             </MudText>
         </MudCardContent>
     </MudCard>
@@ -89,13 +82,10 @@
         <MudCardContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-2">
                 <MudIcon Icon="@Icons.Material.Filled.LockOpen" Color="Color.Primary" />
-                <MudText Typo="Typo.h6">Is the Material Free</MudText>
+                <MudText Typo="Typo.h6">@L["Is the Material Free"]</MudText>
             </MudStack>
             <MudText Typo="Typo.body1">
-                Our intention is always to keep Marechai’s content <b>free and accessible</b>.<br/>
-                When we incorporate external material, we only use content that can be legally reused and always credit its source.<br/>
-                Material created by us is released under <b>open‑source licenses</b>, so it can be freely used and shared.<br/>
-                Marechai’s source code is publicly available on GitHub, and we plan to open the database as soon as it becomes feasible.
+                @((MarkupString)L["Is the Material Free Body"].Value)
             </MudText>
         </MudCardContent>
     </MudCard>
@@ -105,11 +95,10 @@
         <MudCardContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-2">
                 <MudIcon Icon="@Icons.Material.Filled.Api" Color="Color.Primary" />
-                <MudText Typo="Typo.h6">Do You Provide API Access</MudText>
+                <MudText Typo="Typo.h6">@L["Do You Provide API Access"]</MudText>
             </MudStack>
             <MudText Typo="Typo.body1">
-                Not at the moment. We are evaluating the possibility, but the project is currently funded by a single individual,
-                and unrestricted API access could create unsustainable server costs. It remains a long‑term goal.
+                @L["API Access Body"]
             </MudText>
         </MudCardContent>
     </MudCard>
@@ -119,15 +108,13 @@
         <MudCardContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-2">
                 <MudIcon Icon="@Icons.Material.Filled.VolunteerActivism" Color="Color.Primary" />
-                <MudText Typo="Typo.h6">How Can I Help</MudText>
+                <MudText Typo="Typo.h6">@L["How Can I Help"]</MudText>
             </MudStack>
             <MudText Typo="Typo.body1">
-                The most direct way to support the project is by joining the Patreon of our lead developer and server maintainer:
-                <a href="https://patreon.com/claunia" target="_blank">https://patreon.com/claunia</a>.
+                @((MarkupString)L["How Can I Help Body 1"].Value)
             </MudText>
             <MudText Typo="Typo.body1" Class="mt-2">
-                We are also developing a contribution system that will allow the community to submit corrections, upload photos,
-                expand entries, and help curate the archive. There is no release date yet, but it is an important part of our roadmap.
+                @L["How Can I Help Body 2"]
             </MudText>
         </MudCardContent>
     </MudCard>
@@ -137,13 +124,10 @@
         <MudCardContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-2">
                 <MudIcon Icon="@Icons.Material.Filled.QuestionAnswer" Color="Color.Primary" />
-                <MudText Typo="Typo.h6">Why Another Site</MudText>
+                <MudText Typo="Typo.h6">@L["Why Another Site"]</MudText>
             </MudStack>
             <MudText Typo="Typo.body1">
-                Many sites focus exclusively on video games. Marechai’s mission is broader:
-                <b>to document the entire landscape of computing</b>, from entertainment to productivity to development tools.<br/>
-                Word processors, spreadsheets, compilers, utilities — even software like WinRAR — all deserve to be preserved and understood.<br/>
-                Computing history is far richer than gaming alone.
+                @((MarkupString)L["Why Another Site Body"].Value)
             </MudText>
         </MudCardContent>
     </MudCard>
@@ -153,12 +137,10 @@
         <MudCardContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-2">
                 <MudIcon Icon="@Icons.Material.Filled.Person" Color="Color.Primary" />
-                <MudText Typo="Typo.h6">Founder</MudText>
+                <MudText Typo="Typo.h6">@L["Founder"]</MudText>
             </MudStack>
             <MudText Typo="Typo.body1">
-                Marechai was founded by <b>Nat Portillo</b>, whose long‑standing dedication to digital preservation made this project possible.<br/>
-                More information can be found at:
-                <a href="https://www.natportillo.es" target="_blank">https://www.natportillo.es</a>.
+                @((MarkupString)L["Founder Body"].Value)
             </MudText>
         </MudCardContent>
     </MudCard>
@@ -168,17 +150,13 @@
         <MudCardContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-2">
                 <MudIcon Icon="@Icons.Material.Filled.Copyright" Color="Color.Primary" />
-                <MudText Typo="Typo.h6">Copyright & Licensing</MudText>
+                <MudText Typo="Typo.h6">@L["Copyright & Licensing"]</MudText>
             </MudStack>
             <MudText Typo="Typo.body1">
-                Where applicable, all data and information are released under a <b>Creative Commons Zero</b> license.<br/>
-                Where not applicable by law, all rights are reserved to <b>Natalia Portillo</b>.<br/>
-                Some rights belong to their respective authors and are used under fair use.<br/>
-                Photos, covers, and screenshots belong to their original creators and are attributed whenever possible.
+                @((MarkupString)L["Copyright Body"].Value)
             </MudText>
             <MudText Typo="Typo.body2" Class="mt-2">
-                This site uses only the cookies strictly necessary for operation and does not share information with third parties.<br/>
-                All data remains within the European Union.
+                @((MarkupString)L["Copyright Cookies"].Value)
             </MudText>
         </MudCardContent>
     </MudCard>
@@ -188,14 +166,14 @@
         <MudCardContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-2">
                 <MudIcon Icon="@Icons.Material.Filled.Favorite" Color="Color.Primary" />
-                <MudText Typo="Typo.h6">Dedication</MudText>
+                <MudText Typo="Typo.h6">@L["Dedication"]</MudText>
             </MudStack>
             <MudText Typo="Typo.body1">
-                This work is lovingly dedicated to:
+                @L["Dedication Intro"]
             </MudText>
             <MudList Dense="true" Class="mt-2" T="string">
-                <MudListItem Text='Tata Suárez — for always believing in me as the "crazy granddaughter with computers".' />
-                <MudListItem Text="Jhenn García — for your unconditional love as a sister." />
+                <MudListItem Text="@L["Dedication Tata"].Value" />
+                <MudListItem Text="@L["Dedication Jhenn"].Value" />
             </MudList>
         </MudCardContent>
     </MudCard>

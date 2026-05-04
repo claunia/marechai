@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ReSharper disable MarkupTextTypo -->
+<root>
+    <!--
+      Microsoft ResX Schema
+
+      Version 2.0
+
+      The primary goals of this format is to allow a simple XML format
+      that is mostly human readable. The generation and parsing of the
+      various data types are done through the TypeConverter classes
+      associated with the data types.
+
+      Example:
+
+      ... ado.net/XML headers & schema ...
+      <resheader name="resmimetype">text/microsoft-resx</resheader>
+      <resheader name="version">2.0</resheader>
+      <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+      <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+      <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+      <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+      <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+          <value>[base64 mime encoded serialized .NET Framework object]</value>
+      </data>
+      <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+          <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+          <comment>This is a comment</comment>
+      </data>
+
+      There are any number of "resheader" rows that contain simple
+      name/value pairs.
+
+      Each data row contains a name, and value. The row also contains a
+      type or mimetype. Type corresponds to a .NET class that support
+      text/value conversion through the TypeConverter architecture.
+      Classes that don't support this are serialized and stored with the
+      mimetype set.
+
+      The mimetype is used for serialized objects, and tells the
+      ResXResourceReader how to depersist the object. This is currently not
+      extensible. For a given mimetype the value must be set accordingly:
+
+      Note - application/x-microsoft.net.object.binary.base64 is the format
+      that the ResXResourceWriter will generate, however the reader can
+      read any of the formats listed below.
+
+      mimetype: application/x-microsoft.net.object.binary.base64
+      value   : The object must be serialized with
+              : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+              : and then encoded with base64 encoding.
+
+      mimetype: application/x-microsoft.net.object.soap.base64
+      value   : The object must be serialized with
+              : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+              : and then encoded with base64 encoding.
+
+      mimetype: application/x-microsoft.net.object.bytearray.base64
+      value   : The object must be serialized into a byte array
+              : using a System.ComponentModel.TypeConverter
+              : and then encoded with base64 encoding.
+      -->
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root"
+                xmlns="">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="About Marechai" xml:space="preserve">
+        <value>À propos de Marechai</value>
+    </data>
+    <data name="Who Are We" xml:space="preserve">
+        <value>Qui sommes-nous</value>
+    </data>
+    <data name="Who Are We Body" xml:space="preserve">
+        <value>Nous sommes une communauté unie par un seul objectif : &lt;b&gt;préserver l'histoire de l'informatique et garantir qu'elle reste accessible pour les générations à venir&lt;/b&gt;.&lt;br/&gt;De cette mission sont nés deux projets complémentaires — &lt;b&gt;Marechai&lt;/b&gt;, notre compendium vivant d'artefacts informatiques, et l'&lt;a href="https://www.aaru.app"&gt;&lt;b&gt;Aaru Data Preservation Suite&lt;/b&gt;&lt;/a&gt;, dédié à la préservation fidèle des supports numériques.&lt;br/&gt;Ensemble, ils protègent non seulement les machines elles-mêmes, mais aussi les histoires, les personnes et les idées qui les sous-tendent.</value>
+    </data>
+    <data name="What Is Marechai" xml:space="preserve">
+        <value>Qu'est-ce que Marechai</value>
+    </data>
+    <data name="What Is Marechai Body" xml:space="preserve">
+        <value>Marechai est une &lt;b&gt;archive en constante expansion du patrimoine informatique mondial&lt;/b&gt;. Nous documentons et classifions tout ce qui a façonné l'ère numérique : ordinateurs, consoles, smartphones, livres, magazines, documents, logiciels, composants, périphériques, ainsi que les personnes et les entreprises qui ont tout construit.&lt;br/&gt;Notre objectif est ambitieux mais essentiel : &lt;b&gt;préserver autant de connaissances que possible avant qu'elles ne sombrent dans l'oubli&lt;/b&gt;.</value>
+    </data>
+    <data name="Why Not Wikipedia" xml:space="preserve">
+        <value>Pourquoi pas Wikipédia</value>
+    </data>
+    <data name="Why Not Wikipedia Body" xml:space="preserve">
+        <value>Wikipédia est une encyclopédie extraordinaire, mais Marechai a un objectif différent.&lt;br/&gt;Là où Wikipédia se concentre sur des articles indépendants, Marechai se concentre sur les &lt;b&gt;relations&lt;/b&gt; : ce qui fonctionne sur quoi, qui a travaillé où, comment les technologies ont évolué et comment les artefacts sont connectés à travers le temps.&lt;br/&gt;Nous mettons également l'accent sur la &lt;b&gt;préservation visuelle&lt;/b&gt;, en stockant plus de photos, couvertures et captures d'écran qu'une encyclopédie traditionnelle.&lt;br/&gt;Marechai n'est pas seulement de l'information — c'est du &lt;b&gt;contexte, de la structure et de la mémoire&lt;/b&gt;.</value>
+    </data>
+    <data name="Is the Material Free" xml:space="preserve">
+        <value>Le contenu est-il libre</value>
+    </data>
+    <data name="Is the Material Free Body" xml:space="preserve">
+        <value>Notre intention est de toujours garder le contenu de Marechai &lt;b&gt;libre et accessible&lt;/b&gt;.&lt;br/&gt;Lorsque nous incorporons du matériel externe, nous n'utilisons que du contenu pouvant être légalement réutilisé et en créditons toujours la source.&lt;br/&gt;Le matériel créé par nous est publié sous &lt;b&gt;licences open source&lt;/b&gt;, afin qu'il puisse être librement utilisé et partagé.&lt;br/&gt;Le code source de Marechai est publiquement disponible sur GitHub, et nous prévoyons d'ouvrir la base de données dès que cela sera réalisable.</value>
+    </data>
+    <data name="Do You Provide API Access" xml:space="preserve">
+        <value>Proposez-vous un accès API</value>
+    </data>
+    <data name="API Access Body" xml:space="preserve">
+        <value>Pas pour le moment. Nous évaluons la possibilité, mais le projet est actuellement financé par une seule personne, et un accès API illimité pourrait engendrer des coûts de serveur insoutenables. Cela reste un objectif à long terme.</value>
+    </data>
+    <data name="How Can I Help" xml:space="preserve">
+        <value>Comment puis-je aider</value>
+    </data>
+    <data name="How Can I Help Body 1" xml:space="preserve">
+        <value>La façon la plus directe de soutenir le projet est de rejoindre le Patreon de notre développeuse principale et administratrice du serveur : &lt;a href="https://patreon.com/claunia" target="_blank"&gt;https://patreon.com/claunia&lt;/a&gt;.</value>
+    </data>
+    <data name="How Can I Help Body 2" xml:space="preserve">
+        <value>Nous développons également un système de contribution qui permettra à la communauté de soumettre des corrections, télécharger des photos, enrichir les entrées et aider à la curation de l'archive. Il n'y a pas encore de date de sortie, mais c'est une partie importante de notre feuille de route.</value>
+    </data>
+    <data name="Why Another Site" xml:space="preserve">
+        <value>Pourquoi un autre site</value>
+    </data>
+    <data name="Why Another Site Body" xml:space="preserve">
+        <value>De nombreux sites se concentrent exclusivement sur les jeux vidéo. La mission de Marechai est plus large : &lt;b&gt;documenter l'ensemble du paysage informatique&lt;/b&gt;, du divertissement à la productivité en passant par les outils de développement.&lt;br/&gt;Traitements de texte, tableurs, compilateurs, utilitaires — même des logiciels comme WinRAR — tous méritent d'être préservés et compris.&lt;br/&gt;L'histoire de l'informatique est bien plus riche que le seul jeu vidéo.</value>
+    </data>
+    <data name="Founder" xml:space="preserve">
+        <value>Fondatrice</value>
+    </data>
+    <data name="Founder Body" xml:space="preserve">
+        <value>Marechai a été fondé par &lt;b&gt;Nat Portillo&lt;/b&gt;, dont le dévouement de longue date à la préservation numérique a rendu ce projet possible.&lt;br/&gt;Plus d'informations sur : &lt;a href="https://www.natportillo.es" target="_blank"&gt;https://www.natportillo.es&lt;/a&gt;.</value>
+    </data>
+    <data name="Copyright &amp; Licensing" xml:space="preserve">
+        <value>Droits d'auteur et licences</value>
+    </data>
+    <data name="Copyright Body" xml:space="preserve">
+        <value>Dans la mesure du possible, toutes les données et informations sont publiées sous licence &lt;b&gt;Creative Commons Zero&lt;/b&gt;.&lt;br/&gt;Lorsque la loi ne le permet pas, tous les droits sont réservés à &lt;b&gt;Natalia Portillo&lt;/b&gt;.&lt;br/&gt;Certains droits appartiennent à leurs auteurs respectifs et sont utilisés dans le cadre du fair use.&lt;br/&gt;Les photos, couvertures et captures d'écran appartiennent à leurs créateurs originaux et sont attribuées chaque fois que possible.</value>
+    </data>
+    <data name="Copyright Cookies" xml:space="preserve">
+        <value>Ce site utilise uniquement les cookies strictement nécessaires à son fonctionnement et ne partage aucune information avec des tiers.&lt;br/&gt;Toutes les données restent au sein de l'Union européenne.</value>
+    </data>
+    <data name="Dedication" xml:space="preserve">
+        <value>Dédicace</value>
+    </data>
+    <data name="Dedication Intro" xml:space="preserve">
+        <value>Ce travail est dédié avec amour à :</value>
+    </data>
+    <data name="Dedication Tata" xml:space="preserve">
+        <value>Tata Suárez — pour avoir toujours cru en moi comme la « petite-fille folle des ordinateurs ».</value>
+    </data>
+    <data name="Dedication Jhenn" xml:space="preserve">
+        <value>Jhenn García — pour ton amour inconditionnel en tant que sœur.</value>
+    </data>
+</root>
