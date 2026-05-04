@@ -217,4 +217,70 @@ public class GpusService(Marechai.ApiClient.Client client)
             return [];
         }
     }
+
+    // Description management
+    public async Task<string?> GetDescriptionTextAsync(int id)
+    {
+        try
+        {
+            GpuDescriptionDto? desc = await client.Gpus[id].Description.GetAsync();
+
+            return desc?.Html ?? desc?.Markdown;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public async Task<List<GpuDescriptionDto>> GetDescriptionsAsync(int gpuId)
+    {
+        try
+        {
+            List<GpuDescriptionDto>? descriptions = await client.Gpus[gpuId].Descriptions.GetAsync();
+
+            return descriptions ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> CreateOrUpdateDescriptionAsync(int gpuId,
+        GpuDescriptionDto dto)
+    {
+        try
+        {
+            await client.Gpus[gpuId].Description.PostAsync(dto);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> DeleteDescriptionAsync(int gpuId, string languageCode)
+    {
+        try
+        {
+            await client.Gpus[gpuId].Description[languageCode].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
 }

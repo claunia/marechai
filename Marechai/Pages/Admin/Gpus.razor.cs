@@ -214,4 +214,20 @@ public partial class Gpus
         if(result is { Canceled: false })
             await LoadGpusAsync();
     }
+
+    async Task OpenDescriptionsDialog(GpuDto gpu)
+    {
+        DialogParameters<GpuDescriptionDialog> parameters = new()
+        {
+            { x => x.GpuId, gpu.Id ?? 0 },
+            { x => x.GpuName, gpu.Name }
+        };
+
+        await DialogService.ShowAsync<GpuDescriptionDialog>(L["GPU Descriptions"], parameters,
+                                                             new DialogOptions
+                                                             {
+                                                                 MaxWidth  = MaxWidth.Medium,
+                                                                 FullWidth = true
+                                                             });
+    }
 }

@@ -394,6 +394,22 @@ file class Program
                 end = DateTime.Now;
 
                 Console.WriteLine("\e[31;1mTook \e[32;1m{0} seconds\e[31;1m...\e[0m", (end - start).TotalSeconds);
+
+                start = DateTime.Now;
+                Console.WriteLine("\e[31;1mRendering markdown in GPU descriptions...\e[0m");
+
+                foreach(GpuDescription gpuDescription in
+                        context.GpuDescriptions.Where(gd => gd.Html == null))
+                {
+                    gpuDescription.Html = Markdown.ToHtml(gpuDescription.Text, pipeline);
+                    context.Update(gpuDescription);
+                }
+
+                context.SaveChanges();
+
+                end = DateTime.Now;
+
+                Console.WriteLine("\e[31;1mTook \e[32;1m{0} seconds\e[31;1m...\e[0m", (end - start).TotalSeconds);
             }
             catch(Exception ex)
             {

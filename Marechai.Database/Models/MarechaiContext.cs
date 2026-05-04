@@ -89,6 +89,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<MachineFamily>                       MachineFamilies                     { get; set; }
     public virtual DbSet<SoundSynthDescription>               SoundSynthDescriptions              { get; set; }
     public virtual DbSet<ProcessorDescription>                ProcessorDescriptions               { get; set; }
+    public virtual DbSet<GpuDescription>                      GpuDescriptions                     { get; set; }
     public virtual DbSet<MachinePhoto>                        MachinePhotos                       { get; set; }
     public virtual DbSet<Magazine>                            Magazines                           { get; set; }
     public virtual DbSet<MagazineIssue>                       MagazineIssues                      { get; set; }
@@ -1656,6 +1657,22 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .WithMany()
                   .HasForeignKey(e => e.LanguageCode)
                   .HasConstraintName("fk_processor_descriptions_language");
+        });
+
+        modelBuilder.Entity<GpuDescription>(entity =>
+        {
+            entity.HasIndex(e => e.Text).IsFullText();
+
+            entity.HasIndex(e => new { e.GpuId, e.LanguageCode })
+                  .IsUnique()
+                  .HasDatabaseName("idx_gpu_descriptions_gpu_language");
+
+            entity.Property(e => e.LanguageCode).UseCollation("utf8mb4_general_ci");
+
+            entity.HasOne(e => e.Language)
+                  .WithMany()
+                  .HasForeignKey(e => e.LanguageCode)
+                  .HasConstraintName("fk_gpu_descriptions_language");
         });
 
         modelBuilder.Entity<StorageByMachine>(entity =>

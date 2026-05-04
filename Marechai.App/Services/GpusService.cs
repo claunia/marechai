@@ -159,4 +159,26 @@ public class GpusService
             return null;
         }
     }
+
+    /// <summary>
+    ///     Fetches a localized description for a GPU
+    /// </summary>
+    public async Task<GpuDescriptionDto?> GetDescriptionAsync(int gpuId, string languageCode)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching description for GPU {GpuId} lang {Lang}", gpuId, languageCode);
+
+            GpuDescriptionDto? desc = await _apiClient.Gpus[gpuId].Description.GetAsync(
+                config => config.QueryParameters.Lang = languageCode);
+
+            return desc;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching description for GPU {GpuId}", gpuId);
+
+            return null;
+        }
+    }
 }
