@@ -378,6 +378,22 @@ file class Program
                 end = DateTime.Now;
 
                 Console.WriteLine("\e[31;1mTook \e[32;1m{0} seconds\e[31;1m...\e[0m", (end - start).TotalSeconds);
+
+                start = DateTime.Now;
+                Console.WriteLine("\e[31;1mRendering markdown in processor descriptions...\e[0m");
+
+                foreach(ProcessorDescription processorDescription in
+                        context.ProcessorDescriptions.Where(pd => pd.Html == null))
+                {
+                    processorDescription.Html = Markdown.ToHtml(processorDescription.Text, pipeline);
+                    context.Update(processorDescription);
+                }
+
+                context.SaveChanges();
+
+                end = DateTime.Now;
+
+                Console.WriteLine("\e[31;1mTook \e[32;1m{0} seconds\e[31;1m...\e[0m", (end - start).TotalSeconds);
             }
             catch(Exception ex)
             {

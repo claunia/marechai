@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -10,6 +11,7 @@ using Marechai.App.Navigation;
 using Marechai.App.Presentation.Models;
 using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
+using Microsoft.UI.Xaml;
 
 namespace Marechai.App.Presentation.ViewModels;
 
@@ -59,6 +61,22 @@ public partial class ProcessorDetailViewModel : ObservableObject, IRegionAware
 
     [ObservableProperty]
     private bool _hasSmartphones;
+
+    [ObservableProperty]
+    private string _descriptionHtml = string.Empty;
+
+    [ObservableProperty]
+    private Visibility _showDescription = Visibility.Collapsed;
+
+    /// <summary>
+    ///     Gets whether a description is available
+    /// </summary>
+    public bool HasDescription => !string.IsNullOrWhiteSpace(DescriptionHtml);
+
+    partial void OnDescriptionHtmlChanged(string value)
+    {
+        OnPropertyChanged(nameof(HasDescription));
+    }
 
     [ObservableProperty]
     private bool _hasError;
@@ -217,6 +235,21 @@ public partial class ProcessorDetailViewModel : ObservableObject, IRegionAware
                 HasSmartphones = false;
             }
 
+            // Load localized description
+            try
+            {
+                string langCode = GetIso639CodeFromCulture();
+                ProcessorDescriptionDto? desc = await _processorsService.GetDescriptionAsync(ProcessorId, langCode);
+
+                DescriptionHtml = desc?.Html ?? desc?.Markdown ?? string.Empty;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("Failed to load processor description: {Exception}", ex.Message);
+            }
+
+            ShowDescription = HasDescription ? Visibility.Visible : Visibility.Collapsed;
+
             IsDataLoaded = true;
         }
         catch(Exception ex)
@@ -344,5 +377,21 @@ public partial class ProcessorDetailViewModel : ObservableObject, IRegionAware
 
             _ = LoadData.ExecuteAsync(null);
         }
+    }
+
+    private static string GetIso639CodeFromCulture()
+    {
+        string twoLetter = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+
+        return twoLetter switch
+        {
+            "en" => "eng",
+            "es" => "spa",
+            "de" => "deu",
+            "fr" => "fra",
+            "la" => "lat",
+            "pt" => "por",
+            _    => "eng"
+        };
     }
 }

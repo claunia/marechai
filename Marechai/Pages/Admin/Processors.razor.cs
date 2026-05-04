@@ -264,4 +264,20 @@ public partial class Processors
         if(result is { Canceled: false })
             await LoadProcessorsAsync();
     }
+
+    async Task OpenDescriptionsDialog(ProcessorDto processor)
+    {
+        DialogParameters<ProcessorDescriptionDialog> parameters = new()
+        {
+            { x => x.ProcessorId, processor.Id ?? 0 },
+            { x => x.ProcessorName, processor.Name }
+        };
+
+        await DialogService.ShowAsync<ProcessorDescriptionDialog>(L["Processor Descriptions"], parameters,
+                                                                   new DialogOptions
+                                                                   {
+                                                                       MaxWidth  = MaxWidth.Medium,
+                                                                       FullWidth = true
+                                                                   });
+    }
 }

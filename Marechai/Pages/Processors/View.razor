@@ -251,6 +251,38 @@
     </MudCardContent>
 </MudCard>
 
+@* ── Description Card ── *@
+@if(!string.IsNullOrWhiteSpace(_description))
+{
+    <MudCard Elevation="2" Class="mb-4 rounded-lg">
+        <MudCardContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+                <MudIcon Icon="@Icons.Material.Filled.Description" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Description"]</MudText>
+            </MudStack>
+            <div style="color: var(--mud-palette-text-primary); overflow-wrap: break-word;">
+                <style>
+                    .processor-description { line-height: 1.7; color: inherit; }
+                    .processor-description h1 { font-size: 1.75rem; margin: 1.5rem 0 0.75rem; }
+                    .processor-description h2 { font-size: 1.5rem; margin: 1.25rem 0 0.5rem; }
+                    .processor-description h3 { font-size: 1.25rem; margin: 1rem 0 0.5rem; }
+                    .processor-description p { margin: 0.5rem 0; }
+                    .processor-description ul, .processor-description ol { margin: 0.5rem 0; padding-left: 1.5rem; }
+                    .processor-description li { margin: 0.25rem 0; }
+                    .processor-description pre { background: var(--mud-palette-surface); padding: 1rem; overflow-x: auto; }
+                    .processor-description code { background: var(--mud-palette-surface); padding: 0.125rem 0.25rem; }
+                    .processor-description blockquote { border-left: 4px solid var(--mud-palette-primary); padding: 0.5rem 1rem; }
+                    .processor-description table { border-collapse: collapse; width: 100%; }
+                    .processor-description th, .processor-description td { border: 1px solid var(--mud-palette-lines-default); padding: 0.5rem; }
+                </style>
+                <div class="processor-description" style="padding: 8px;">
+                    @((MarkupString)_description)
+                </div>
+            </div>
+        </MudCardContent>
+    </MudCard>
+}
+
 @* ── Computers Card ── *@
 @if(_computers.Count > 0)
 {

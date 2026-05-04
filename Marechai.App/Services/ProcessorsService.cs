@@ -101,4 +101,26 @@ public class ProcessorsService
             return [];
         }
     }
+
+    /// <summary>
+    ///     Fetches a localized description for a processor
+    /// </summary>
+    public async Task<ProcessorDescriptionDto?> GetDescriptionAsync(int processorId, string languageCode)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching description for processor {ProcessorId} lang {Lang}", processorId, languageCode);
+
+            ProcessorDescriptionDto? desc = await _apiClient.Processors[processorId].Description.GetAsync(
+                config => config.QueryParameters.Lang = languageCode);
+
+            return desc;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching description for processor {ProcessorId}", processorId);
+
+            return null;
+        }
+    }
 }

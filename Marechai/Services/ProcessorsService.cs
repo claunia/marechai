@@ -192,4 +192,70 @@ public class ProcessorsService(Marechai.ApiClient.Client client)
             return (false, ex.Message);
         }
     }
+
+    // Description management
+    public async Task<string?> GetDescriptionTextAsync(int id)
+    {
+        try
+        {
+            ProcessorDescriptionDto? desc = await client.Processors[id].Description.GetAsync();
+
+            return desc?.Html ?? desc?.Markdown;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public async Task<List<ProcessorDescriptionDto>> GetDescriptionsAsync(int processorId)
+    {
+        try
+        {
+            List<ProcessorDescriptionDto>? descriptions = await client.Processors[processorId].Descriptions.GetAsync();
+
+            return descriptions ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> CreateOrUpdateDescriptionAsync(int processorId,
+        ProcessorDescriptionDto dto)
+    {
+        try
+        {
+            await client.Processors[processorId].Description.PostAsync(dto);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> DeleteDescriptionAsync(int processorId, string languageCode)
+    {
+        try
+        {
+            await client.Processors[processorId].Description[languageCode].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
 }

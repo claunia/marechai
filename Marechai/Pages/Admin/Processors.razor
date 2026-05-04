@@ -61,6 +61,8 @@
                     <MudStack Row="true" Spacing="1">
                         <MudTooltip Text="@L["Edit Processor"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditProcessorDialog(context.Item)"/></MudTooltip>
 
+                        <MudTooltip Text="@L["Descriptions"]"><MudIconButton Icon="@Icons.Material.Filled.Description" Size="Size.Small" OnClick="() => OpenDescriptionsDialog(context.Item)"/></MudTooltip>
+
                         <MudTooltip Text="@L["Delete Processor"]"><MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDeleteProcessor(context.Item)"/></MudTooltip>
 
                     </MudStack>
