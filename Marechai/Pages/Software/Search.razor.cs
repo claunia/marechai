@@ -34,6 +34,8 @@ namespace Marechai.Pages.Software;
 public partial class Search
 {
     char?           _character;
+    int?            _genreId;
+    string          _genreName;
     bool            _loaded;
     int?            _platformId;
     string          _platformName;
@@ -80,6 +82,19 @@ public partial class Search
         }
     }
 
+    [Parameter]
+    public int? GenreId
+    {
+        get => _genreId;
+        set
+        {
+            if(_genreId == value) return;
+
+            _genreId = value;
+            _loaded  = false;
+        }
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if(_loaded) return;
@@ -108,6 +123,15 @@ public partial class Search
             // Get platform name from first result or from platforms list
             List<SoftwarePlatformDto> platforms = await Service.GetPlatformsAsync();
             _platformName = platforms.FirstOrDefault(p => p.Id == PlatformId.Value)?.Name;
+        }
+
+        if(GenreId.HasValue && _software is null)
+        {
+            _software = await Service.GetSoftwareByGenreAsync(GenreId.Value);
+
+            // Get genre name from the genres list
+            List<SoftwareGenreDto> genres = await Service.GetAllGenresAsync();
+            _genreName = genres.FirstOrDefault(g => g.Id == GenreId.Value)?.Name;
         }
 
         _software ??= await Service.GetAllSoftwareAsync();

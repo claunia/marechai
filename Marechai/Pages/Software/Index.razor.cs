@@ -24,6 +24,7 @@
 *******************************************************************************/
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 
@@ -32,6 +33,7 @@ namespace Marechai.Pages.Software;
 public partial class Index
 {
     int                       _count;
+    Dictionary<string, List<SoftwareGenreDto>> _genresByType;
     bool                      _loaded;
     int                       _maxYear;
     int                       _minYear;
@@ -45,6 +47,11 @@ public partial class Index
         _minYear  = await Service.GetMinimumYearAsync();
         _maxYear  = await Service.GetMaximumYearAsync();
         _platforms = await Service.GetPlatformsAsync();
+
+        List<SoftwareGenreDto> genres = await Service.GetAllGenresAsync();
+
+        _genresByType = genres.GroupBy(g => g.TypeName ?? "Genre")
+                              .ToDictionary(g => g.Key, g => g.ToList());
 
         _loaded = true;
         StateHasChanged();

@@ -103,6 +103,26 @@
     </MudPaper>
 }
 
+@if(_genresByType?.Count > 0)
+{
+    <MudPaper Elevation="2" Class="pa-4 mb-4 rounded-lg">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+            <MudIcon Icon="@Icons.Material.Filled.Category" Color="Color.Secondary" Size="Size.Small"/>
+            <MudText Typo="Typo.subtitle1">@L["Search software by genre"]</MudText>
+        </MudStack>
+        @foreach(var genreType in _genresByType)
+        {
+            <MudText Typo="Typo.subtitle2" Class="mt-2 mb-1"><strong>@L[genreType.Key]</strong></MudText>
+            <div class="d-flex flex-wrap gap-1">
+                @foreach(SoftwareGenreDto genre in genreType.Value)
+                {
+                    <MudChip T="string" Href="@($"/software/genre/{genre.Id}")">@L[genre.Name]</MudChip>
+                }
+            </div>
+        }
+    </MudPaper>
+}
+
 <MudPaper Elevation="2" Class="pa-4 mb-4 rounded-lg">
     <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
         <MudIcon Icon="@Icons.Material.Filled.CalendarMonth" Color="Color.Secondary" Size="Size.Small"/>

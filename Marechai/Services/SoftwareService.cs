@@ -408,6 +408,34 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
+    public async Task<List<SoftwareGenreDto>> GetAllGenresAsync()
+    {
+        try
+        {
+            List<SoftwareGenreDto>? genres = await client.Software.Genres.GetAsync();
+
+            return genres ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<SoftwareDto>> GetSoftwareByGenreAsync(int genreId)
+    {
+        try
+        {
+            List<SoftwareDto>? software = await client.Software.ByGenre[genreId].GetAsync();
+
+            return software ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
     public async Task<List<SoftwareDto>> GetAllSoftwareAsync()
     {
         try

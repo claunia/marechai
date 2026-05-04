@@ -466,6 +466,47 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
         return Ok();
     }
 
+    [HttpGet("genres")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<SoftwareGenreDto>> GetAllGenresAsync() => context.SoftwareGenres
+       .Where(g => g.Softwares.Any())
+       .OrderBy(g => g.Type)
+       .ThenBy(g => g.Name)
+       .Select(g => new SoftwareGenreDto
+        {
+            Id       = g.Id,
+            Name     = g.Name,
+            Type     = (int)g.Type,
+            TypeName = g.Type.ToString()
+        })
+       .ToListAsync();
+
+    [HttpGet("by-genre/{genreId:int}")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<SoftwareDto>> GetSoftwareByGenreAsync(int genreId) => context.Softwares
+       .Where(s => s.Genres.Any(g => g.GenreId == genreId))
+       .OrderBy(s => s.Name)
+       .Select(s => new SoftwareDto
+        {
+            Id                = s.Id,
+            Name              = s.Name,
+            FamilyId          = s.FamilyId,
+            Family            = s.Family.Name,
+            IsOperatingSystem = s.IsOperatingSystem,
+            IsGame            = s.IsGame,
+            FrontCoverId = context.SoftwareCovers
+                                  .Where(c => (c.Release.SoftwareId == s.Id ||
+                                                c.Release.SoftwareVersion.SoftwareId == s.Id) &&
+                                               c.Type == SoftwareCoverType.Front)
+                                  .Select(c => (Guid?)c.Id)
+                                  .FirstOrDefault()
+        })
+       .ToListAsync();
+
     [HttpGet("/software/{softwareId:ulong}/genres")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]

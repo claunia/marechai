@@ -2,6 +2,7 @@
 #pragma warning disable CS0618
 using Marechai.ApiClient.Models;
 using Marechai.ApiClient.Software.Barcodes;
+using Marechai.ApiClient.Software.ByGenre;
 using Marechai.ApiClient.Software.ByLetter;
 using Marechai.ApiClient.Software.ByPlatform;
 using Marechai.ApiClient.Software.ByYear;
@@ -10,6 +11,7 @@ using Marechai.ApiClient.Software.CompanyRoles;
 using Marechai.ApiClient.Software.Count;
 using Marechai.ApiClient.Software.Covers;
 using Marechai.ApiClient.Software.Families;
+using Marechai.ApiClient.Software.Genres;
 using Marechai.ApiClient.Software.Item;
 using Marechai.ApiClient.Software.MaximumYear;
 using Marechai.ApiClient.Software.MinimumYear;
@@ -41,6 +43,11 @@ namespace Marechai.ApiClient.Software
         public global::Marechai.ApiClient.Software.Barcodes.BarcodesRequestBuilder Barcodes
         {
             get => new global::Marechai.ApiClient.Software.Barcodes.BarcodesRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The byGenre property</summary>
+        public global::Marechai.ApiClient.Software.ByGenre.ByGenreRequestBuilder ByGenre
+        {
+            get => new global::Marechai.ApiClient.Software.ByGenre.ByGenreRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The byLetter property</summary>
         public global::Marechai.ApiClient.Software.ByLetter.ByLetterRequestBuilder ByLetter
@@ -81,6 +88,11 @@ namespace Marechai.ApiClient.Software
         public global::Marechai.ApiClient.Software.Families.FamiliesRequestBuilder Families
         {
             get => new global::Marechai.ApiClient.Software.Families.FamiliesRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The genres property</summary>
+        public global::Marechai.ApiClient.Software.Genres.AllGenresRequestBuilder Genres
+        {
+            get => new global::Marechai.ApiClient.Software.Genres.AllGenresRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The maximumYear property</summary>
         public global::Marechai.ApiClient.Software.MaximumYear.MaximumYearRequestBuilder MaximumYear
