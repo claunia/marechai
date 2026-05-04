@@ -910,4 +910,351 @@
     <data name="Windows XP" xml:space="preserve">
         <value>Windows XP</value>
     </data>
+    <!-- Genre search UI -->
+    <data name="Search software by genre" xml:space="preserve">
+        <value>Rechercher un logiciel par genre</value>
+        <comment>Search software by genre</comment>
+    </data>
+    <data name="Software in genre {0}" xml:space="preserve">
+        <value>Logiciels du genre {0}</value>
+        <comment>Software in genre</comment>
+    </data>
+    <data name="There is no software found for this genre." xml:space="preserve">
+        <value>Aucun logiciel trouvé pour ce genre.</value>
+        <comment>No software found for genre</comment>
+    </data>
+    <!-- Genre names -->
+    <data name="Puzzle" xml:space="preserve">
+        <value>Puzzle</value>
+    </data>
+    <data name="Fixed / flip-screen" xml:space="preserve">
+        <value>Écran fixe</value>
+    </data>
+    <data name="Action" xml:space="preserve">
+        <value>Action</value>
+    </data>
+    <data name="Side view" xml:space="preserve">
+        <value>Vue de côté</value>
+    </data>
+    <data name="Platform" xml:space="preserve">
+        <value>Plates-formes</value>
+    </data>
+    <data name="World War II" xml:space="preserve">
+        <value>Seconde Guerre mondiale</value>
+    </data>
+    <data name="Licensed" xml:space="preserve">
+        <value>Sous licence</value>
+    </data>
+    <data name="Role-Playing (RPG)" xml:space="preserve">
+        <value>Jeu de rôle (RPG)</value>
+    </data>
+    <data name="Bird's-eye view" xml:space="preserve">
+        <value>Vue aérienne</value>
+    </data>
+    <data name="Isometric" xml:space="preserve">
+        <value>Isométrique</value>
+    </data>
+    <data name="Real-time" xml:space="preserve">
+        <value>Temps réel</value>
+    </data>
+    <data name="Action RPG" xml:space="preserve">
+        <value>Action RPG</value>
+    </data>
+    <data name="Hack and slash" xml:space="preserve">
+        <value>Hack and slash</value>
+    </data>
+    <data name="Point and select" xml:space="preserve">
+        <value>Pointer et cliquer</value>
+    </data>
+    <data name="Fantasy" xml:space="preserve">
+        <value>Fantaisie</value>
+    </data>
+    <data name="DLC / add-on" xml:space="preserve">
+        <value>DLC / extension</value>
+    </data>
+    <data name="Other" xml:space="preserve">
+        <value>Autre</value>
+    </data>
+    <data name="Adventure" xml:space="preserve">
+        <value>Aventure</value>
+    </data>
+    <data name="1st-person" xml:space="preserve">
+        <value>Première personne</value>
+    </data>
+    <data name="Hidden object" xml:space="preserve">
+        <value>Objets cachés</value>
+    </data>
+    <data name="Classical antiquity" xml:space="preserve">
+        <value>Antiquité classique</value>
+    </data>
+    <data name="Europe" xml:space="preserve">
+        <value>Europe</value>
+    </data>
+    <data name="2D scrolling" xml:space="preserve">
+        <value>Défilement 2D</value>
+    </data>
+    <data name="Shooter" xml:space="preserve">
+        <value>Tir</value>
+    </data>
+    <data name="Direct control" xml:space="preserve">
+        <value>Contrôle direct</value>
+    </data>
+    <data name="Naval / watercraft" xml:space="preserve">
+        <value>Naval / embarcations</value>
+    </data>
+    <data name="Strategy / tactics" xml:space="preserve">
+        <value>Stratégie / tactique</value>
+    </data>
+    <data name="Board game" xml:space="preserve">
+        <value>Jeu de société</value>
+    </data>
+    <data name="Chess" xml:space="preserve">
+        <value>Échecs</value>
+    </data>
+    <data name="Top-down" xml:space="preserve">
+        <value>Vue de dessus</value>
+    </data>
+    <data name="Turn-based" xml:space="preserve">
+        <value>Tour par tour</value>
+    </data>
+    <data name="Full Motion Video (FMV)" xml:space="preserve">
+        <value>Vidéo plein écran (FMV)</value>
+    </data>
+    <data name="Timed input" xml:space="preserve">
+        <value>Entrée chronométrée</value>
+    </data>
+    <data name="Horror" xml:space="preserve">
+        <value>Horreur</value>
+    </data>
+    <data name="Special edition" xml:space="preserve">
+        <value>Édition spéciale</value>
+    </data>
+    <data name="Extra content / game" xml:space="preserve">
+        <value>Contenu supplémentaire / jeu</value>
+    </data>
+    <data name="Physical extras" xml:space="preserve">
+        <value>Extras physiques</value>
+    </data>
+    <data name="Managerial / business simulation" xml:space="preserve">
+        <value>Simulation de gestion</value>
+    </data>
+    <data name="Time management" xml:space="preserve">
+        <value>Gestion du temps</value>
+    </data>
+    <data name="3rd-person (Other)" xml:space="preserve">
+        <value>Troisième personne (autre)</value>
+    </data>
+    <data name="Arcade" xml:space="preserve">
+        <value>Arcade</value>
+    </data>
+    <data name="Map / level" xml:space="preserve">
+        <value>Carte / niveau</value>
+    </data>
+    <data name="Sports" xml:space="preserve">
+        <value>Sports</value>
+    </data>
+    <data name="Anime / manga" xml:space="preserve">
+        <value>Anime / manga</value>
+    </data>
+    <data name="Fishing" xml:space="preserve">
+        <value>Pêche</value>
+    </data>
+    <data name="Everyone" xml:space="preserve">
+        <value>Tout public</value>
+    </data>
+    <data name="Currency" xml:space="preserve">
+        <value>Monnaie</value>
+    </data>
+    <data name="Item" xml:space="preserve">
+        <value>Objet</value>
+    </data>
+    <data name="Story / mission" xml:space="preserve">
+        <value>Histoire / mission</value>
+    </data>
+    <data name="Player unit" xml:space="preserve">
+        <value>Unité de joueur</value>
+    </data>
+    <data name="Customization / outfit / skin" xml:space="preserve">
+        <value>Personnalisation / tenue / skin</value>
+    </data>
+    <data name="Digital extras" xml:space="preserve">
+        <value>Extras numériques</value>
+    </data>
+    <data name="Simulation" xml:space="preserve">
+        <value>Simulation</value>
+    </data>
+    <data name="Game show / trivia / quiz" xml:space="preserve">
+        <value>Jeu télévisé / quiz</value>
+    </data>
+    <data name="Tactical RPG" xml:space="preserve">
+        <value>RPG tactique</value>
+    </data>
+    <data name="Behind view" xml:space="preserve">
+        <value>Vue arrière</value>
+    </data>
+    <data name="Golf" xml:space="preserve">
+        <value>Golf</value>
+    </data>
+    <data name="Live action" xml:space="preserve">
+        <value>Prise de vues réelles</value>
+    </data>
+    <data name="City building / construction simulation" xml:space="preserve">
+        <value>Construction de villes</value>
+    </data>
+    <data name="Text parser" xml:space="preserve">
+        <value>Analyseur de texte</value>
+    </data>
+    <data name="Sci-fi / futuristic" xml:space="preserve">
+        <value>Science-fiction / futuriste</value>
+    </data>
+    <data name="Graphic adventure" xml:space="preserve">
+        <value>Aventure graphique</value>
+    </data>
+    <data name="Racing / driving" xml:space="preserve">
+        <value>Course / conduite</value>
+    </data>
+    <data name="Vehicle simulator" xml:space="preserve">
+        <value>Simulateur de véhicules</value>
+    </data>
+    <data name="Automobile" xml:space="preserve">
+        <value>Automobile</value>
+    </data>
+    <data name="Track racing" xml:space="preserve">
+        <value>Course sur circuit</value>
+    </data>
+    <data name="Stealth" xml:space="preserve">
+        <value>Infiltration</value>
+    </data>
+    <data name="Puzzle elements" xml:space="preserve">
+        <value>Éléments de puzzle</value>
+    </data>
+    <data name="Comedy" xml:space="preserve">
+        <value>Comédie</value>
+    </data>
+    <data name="Detective / mystery" xml:space="preserve">
+        <value>Détective / mystère</value>
+    </data>
+    <data name="Spy / espionage" xml:space="preserve">
+        <value>Espionnage</value>
+    </data>
+    <data name="Text-based / spreadsheet" xml:space="preserve">
+        <value>Textuel / tableur</value>
+    </data>
+    <data name="Interactive fiction / text adventure" xml:space="preserve">
+        <value>Fiction interactive / aventure textuelle</value>
+    </data>
+    <data name="Teen" xml:space="preserve">
+        <value>Adolescent</value>
+    </data>
+    <data name="Regional differences" xml:space="preserve">
+        <value>Différences régionales</value>
+    </data>
+    <data name="Helicopter" xml:space="preserve">
+        <value>Hélicoptère</value>
+    </data>
+    <data name="Beat 'em up / brawler" xml:space="preserve">
+        <value>Beat 'em up / bagarreur</value>
+    </data>
+    <data name="Contemporary" xml:space="preserve">
+        <value>Contemporain</value>
+    </data>
+    <data name="Extras" xml:space="preserve">
+        <value>Extras</value>
+    </data>
+    <data name="Educational" xml:space="preserve">
+        <value>Éducatif</value>
+    </data>
+    <data name="Pre-school / toddler" xml:space="preserve">
+        <value>Maternelle / tout-petit</value>
+    </data>
+    <data name="Motion control" xml:space="preserve">
+        <value>Contrôle de mouvement</value>
+    </data>
+    <data name="Western" xml:space="preserve">
+        <value>Western</value>
+    </data>
+    <data name="Everyone 10+" xml:space="preserve">
+        <value>Tout public 10+</value>
+    </data>
+    <data name="Audio game" xml:space="preserve">
+        <value>Jeu audio</value>
+    </data>
+    <data name="Mini-games" xml:space="preserve">
+        <value>Mini-jeux</value>
+    </data>
+    <data name="Party game" xml:space="preserve">
+        <value>Jeu de fête</value>
+    </data>
+    <data name="War" xml:space="preserve">
+        <value>Guerre</value>
+    </data>
+    <data name="Word construction" xml:space="preserve">
+        <value>Construction de mots</value>
+    </data>
+    <data name="RPG elements" xml:space="preserve">
+        <value>Éléments de RPG</value>
+    </data>
+    <data name="Basketball" xml:space="preserve">
+        <value>Basketball</value>
+    </data>
+    <data name="Space flight" xml:space="preserve">
+        <value>Vol spatial</value>
+    </data>
+    <data name="Falling block puzzle" xml:space="preserve">
+        <value>Puzzle de blocs</value>
+    </data>
+    <data name="Cards / tiles" xml:space="preserve">
+        <value>Cartes / tuiles</value>
+    </data>
+    <data name="Tile matching puzzle" xml:space="preserve">
+        <value>Puzzle d'association</value>
+    </data>
+    <data name="Compilation" xml:space="preserve">
+        <value>Compilation</value>
+    </data>
+    <data name="Casino / gambling" xml:space="preserve">
+        <value>Casino / jeux d'argent</value>
+    </data>
+    <data name="Free-roaming camera" xml:space="preserve">
+        <value>Caméra libre</value>
+    </data>
+    <data name="Meditative / zen" xml:space="preserve">
+        <value>Méditatif / zen</value>
+    </data>
+    <data name="Romance" xml:space="preserve">
+        <value>Romance</value>
+    </data>
+    <data name="Boxing" xml:space="preserve">
+        <value>Boxe</value>
+    </data>
+    <data name="Math / logic" xml:space="preserve">
+        <value>Mathématiques / logique</value>
+    </data>
+    <data name="Typing" xml:space="preserve">
+        <value>Dactylographie</value>
+    </data>
+    <data name="Medieval" xml:space="preserve">
+        <value>Médiéval</value>
+    </data>
+    <data name="Reading / writing" xml:space="preserve">
+        <value>Lecture / écriture</value>
+    </data>
+    <data name="Bowling" xml:space="preserve">
+        <value>Bowling</value>
+    </data>
+    <data name="Football (American)" xml:space="preserve">
+        <value>Football américain</value>
+    </data>
+    <data name="Survival horror" xml:space="preserve">
+        <value>Horreur de survie</value>
+    </data>
+    <data name="Pool / snooker" xml:space="preserve">
+        <value>Billard</value>
+    </data>
+    <data name="Thriller" xml:space="preserve">
+        <value>Thriller</value>
+    </data>
+    <data name="Metroidvania" xml:space="preserve">
+        <value>Metroidvania</value>
+    </data>
 </root>

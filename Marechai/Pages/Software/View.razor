@@ -223,7 +223,7 @@
             <div class="d-flex flex-wrap gap-2 mb-2">
                 @foreach(SoftwareGenreDto genre in genreType.Value)
                 {
-                    <MudChip T="string" Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary">@genre.Name</MudChip>
+                    <MudChip T="string" Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary" Href="@($"/software/genre/{genre.Id}")">@L[genre.Name]</MudChip>
                 }
             </div>
         }
