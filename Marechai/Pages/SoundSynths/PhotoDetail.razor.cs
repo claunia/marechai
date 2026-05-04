@@ -24,39 +24,28 @@
 *******************************************************************************/
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
-using Marechai.Data;
-using Marechai.Shared;
 using Microsoft.AspNetCore.Components;
 
 namespace Marechai.Pages.SoundSynths;
 
-public partial class View
+public partial class PhotoDetail
 {
-    List<MachineDto> _computers = [];
-    List<MachineDto> _consoles  = [];
-    List<MachineDto> _smartphones = [];
-    string?          _description;
-    string           _displayName;
-    int              _id;
-    bool             _loaded;
-    List<Guid>       _photos = [];
-    PhotoLightbox    _lightbox;
-    SoundSynthDto    _synth;
+    SoundSynthPhotoDto _photo;
+    bool               _loaded;
+    Guid               _photoId;
 
     [Parameter]
-    public int Id
+    public string Id
     {
-        get => _id;
+        get => _photoId.ToString();
         set
         {
-            if(_id == value) return;
+            if(!Guid.TryParse(value, out Guid parsed) || _photoId == parsed) return;
 
-            _id     = value;
-            _loaded = false;
+            _photoId = parsed;
+            _loaded  = false;
         }
     }
 
@@ -64,34 +53,7 @@ public partial class View
     {
         if(_loaded) return;
 
-        if(Id <= 0)
-        {
-            _loaded = true;
-
-            return;
-        }
-
-        _synth = await Service.GetByIdAsync(Id);
-
-        if(_synth is null)
-        {
-            _loaded = true;
-            StateHasChanged();
-
-            return;
-        }
-
-        _displayName = _synth.Name == "DB_SOFTWARE" ? L["Software"] : _synth.Name;
-
-        List<MachineDto> machines = await Service.GetMachinesBySoundSynthAsync(Id);
-        _computers = machines.Where(m => m.Type == (int)MachineType.Computer).ToList();
-        _consoles  = machines.Where(m => m.Type == (int)MachineType.Console).ToList();
-        _smartphones = machines.Where(m => m.Type == (int)MachineType.Smartphone).ToList();
-
-        _description = await Service.GetDescriptionTextAsync(Id);
-
-        _photos = await SoundSynthPhotosService.GetGuidsBySoundSynthAsync(Id);
-
+        _photo  = await Service.GetAsync(_photoId);
         _loaded = true;
         StateHasChanged();
     }

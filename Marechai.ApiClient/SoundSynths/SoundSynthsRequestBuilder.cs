@@ -2,6 +2,7 @@
 #pragma warning disable CS0618
 using Marechai.ApiClient.Models;
 using Marechai.ApiClient.SoundSynths.Item;
+using Marechai.ApiClient.SoundSynths.Photos;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
 using Microsoft.Kiota.Abstractions;
@@ -18,6 +19,11 @@ namespace Marechai.ApiClient.SoundSynths
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class SoundSynthsRequestBuilder : BaseRequestBuilder
     {
+        /// <summary>The photos property</summary>
+        public global::Marechai.ApiClient.SoundSynths.Photos.PhotosRequestBuilder Photos
+        {
+            get => new global::Marechai.ApiClient.SoundSynths.Photos.PhotosRequestBuilder(PathParameters, RequestAdapter);
+        }
         /// <summary>Gets an item from the Marechai.ApiClient.soundSynths.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
         /// <returns>A <see cref="global::Marechai.ApiClient.SoundSynths.Item.ItemRequestBuilder"/></returns>

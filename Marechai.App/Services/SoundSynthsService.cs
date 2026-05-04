@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Marechai.App.Services;
@@ -74,6 +75,27 @@ public class SoundSynthsService
             _logger.LogError(ex, "Error fetching Sound Synthesizer {SoundSynthId} from API", soundSynthId);
 
             return null;
+        }
+    }
+
+    /// <summary>
+    ///     Fetches photo IDs for a specific Sound Synthesizer
+    /// </summary>
+    public async Task<List<Guid>> GetSoundSynthPhotosAsync(int soundSynthId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching photos for Sound Synthesizer {SoundSynthId}", soundSynthId);
+
+            List<Guid?>? guids = await _apiClient.SoundSynths[soundSynthId].Photos.GetAsync();
+
+            return guids?.Where(g => g.HasValue).Select(g => g!.Value).ToList() ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching photos for Sound Synthesizer {SoundSynthId}", soundSynthId);
+
+            return [];
         }
     }
 

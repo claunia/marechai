@@ -1,0 +1,196 @@
+@{
+    /******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2026 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/admin/sound-synths/{SoundSynthId:int}/photos"
+@attribute [Authorize(Roles = "Admin, UberAdmin")]
+@using Marechai.ApiClient.Models
+@inject SoundSynthPhotosService SoundSynthPhotosService
+@inject SoundSynthsService SoundSynthsService
+@inject IStringLocalizer<SoundSynthPhotosService> L
+@inject IDialogService DialogService
+@inject NavigationManager NavigationManager
+@inject ApiAssetUrlProvider Assets
+
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #2e7d32 0%, #66bb6a 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Filled.PhotoLibrary" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Style="color: white;">@L["Sound Synth Photos"]</MudText>
+    </MudStack>
+    <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);" Class="mt-2">
+        @if(!string.IsNullOrWhiteSpace(_soundSynthName))
+        {
+            @string.Format(L["Manage photos for sound synth '{0}'."], _soundSynthName)
+        }
+        else
+        {
+            @L["Manage photos for this sound synth."]
+        }
+    </MudText>
+</MudPaper>
+
+<MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" Class="mb-4"
+           OnClick="@(() => NavigationManager.NavigateTo("/admin/soundsynths"))">
+    @L["Back to Sound Synths"]
+</MudButton>
+
+@if(!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+}
+
+@if(!string.IsNullOrWhiteSpace(_successMessage))
+{
+    <MudAlert Severity="Severity.Success" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _successMessage = null">@_successMessage</MudAlert>
+}
+
+@if(_isLoading)
+{
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+    </div>
+    return;
+}
+
+@* ── Upload Section ── *@
+<MudPaper Elevation="2" Class="pa-4 mb-6 rounded-lg">
+    <MudText Typo="Typo.h6" Class="mb-3">@L["Upload Photo"]</MudText>
+    <MudStack Spacing="3">
+        <MudSelect T="LicenseDto" @bind-Value="_selectedLicense"
+                   Label="@L["License"]"
+                   Variant="Variant.Outlined"
+                   ToStringFunc="@(l => l?.Name ?? string.Empty)"
+                   Required="true"
+                   RequiredError="@L["License is required."]">
+            @if(_licenses is not null)
+            {
+                @foreach(LicenseDto license in _licenses)
+                {
+                    <MudSelectItem T="LicenseDto" Value="license">@license.Name</MudSelectItem>
+                }
+            }
+        </MudSelect>
+
+        <MudTextField @bind-Value="_sourceUrl"
+                      Label="@L["Source URL"]"
+                      Variant="Variant.Outlined"/>
+
+        <MudFileUpload T="IBrowserFile" Accept=".jpg,.jpeg,.png,.webp,.tiff,.tif,.bmp"
+                       FilesChanged="OnFileSelected" MaximumFileCount="1">
+            <ActivatorContent>
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.AttachFile">
+                    @if(_selectedFile is not null)
+                    {
+                        @_selectedFile.Name
+                    }
+                    else
+                    {
+                        @L["Select File"]
+                    }
+                </MudButton>
+            </ActivatorContent>
+        </MudFileUpload>
+
+        <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                   OnClick="UploadPhoto"
+                   Disabled="_isUploading || _selectedFile is null || _selectedLicense is null">
+            @if(_isUploading)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
+                @L["Uploading..."]
+            }
+            else
+            {
+                @L["Upload"]
+            }
+        </MudButton>
+    </MudStack>
+</MudPaper>
+
+@* ── Photos Grid ── *@
+<MudPaper Elevation="2" Class="rounded-lg">
+    <MudToolBar Dense="true">
+        <MudText Typo="Typo.h6">@L["Photos"]</MudText>
+        @if(_photos is not null)
+        {
+            <MudChip T="string" Size="Size.Small" Color="Color.Secondary" Class="ml-2">@_photos.Count</MudChip>
+        }
+        <MudSpacer/>
+        <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadPhotosAsync"/>
+    </MudToolBar>
+
+    @if(_photos is null || _photos.Count == 0)
+    {
+        <MudAlert Severity="Severity.Info" Class="ma-4">@L["No photos found for this sound synth."]</MudAlert>
+    }
+    else
+    {
+        <MudGrid Class="pa-4">
+            @foreach(SoundSynthPhotoDto photo in _photos)
+            {
+                <MudItem xs="12" sm="6" md="4" lg="3">
+                    <MudCard Elevation="1" Class="rounded-lg">
+                        <MudCardContent Class="pa-2 d-flex justify-center">
+                            <picture>
+                                <source srcset="@(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/jxl/hd/@(photo.Id).jxl, @(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/jxl/1440p/@(photo.Id).jxl 2x, @(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/jxl/4k/@(photo.Id).jxl 3x" type="image/jxl">
+                                <source srcset="@(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/avif/hd/@(photo.Id).avif, @(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/avif/1440p/@(photo.Id).avif 2x, @(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/avif/4k/@(photo.Id).avif 3x" type="image/avif">
+                                <source srcset="@(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/webp/hd/@(photo.Id).webp, @(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/webp/1440p/@(photo.Id).webp 2x, @(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/webp/4k/@(photo.Id).webp 3x" type="image/webp">
+                                <img alt="" height="auto" src="@(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/jpeg/hd/@(photo.Id).jpg"
+                                     srcset="@(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/jpeg/hd/@(photo.Id).jpg, @(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/jpeg/1440p/@(photo.Id).jpg 2x, @(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/jpeg/4k/@(photo.Id).jpg 3x"
+                                     style="max-height: 256px; max-width: 100%; border-radius: 8px;" width="auto"/>
+                            </picture>
+                        </MudCardContent>
+                        <MudCardContent Class="pa-2">
+                            @if(!string.IsNullOrWhiteSpace(photo.CameraManufacturer) || !string.IsNullOrWhiteSpace(photo.CameraModel))
+                            {
+                                <MudText Typo="Typo.body2" Class="text-truncate">
+                                    <MudIcon Icon="@Icons.Material.Filled.CameraAlt" Size="Size.Small" Class="mr-1"/>
+                                    @($"{photo.CameraManufacturer} {photo.CameraModel}".Trim())
+                                </MudText>
+                            }
+                            @if(!string.IsNullOrWhiteSpace(photo.LicenseName))
+                            {
+                                <MudText Typo="Typo.caption" Color="Color.Secondary">@photo.LicenseName</MudText>
+                            }
+                            @if(photo.UploadDate is not null)
+                            {
+                                <MudText Typo="Typo.caption">@photo.UploadDate.Value.Date.ToShortDateString()</MudText>
+                            }
+                        </MudCardContent>
+                        <MudCardActions>
+                            <MudButton Href="@($"/sound-synths/photo/{photo.Id}")" Target="_blank" Variant="Variant.Text" Color="Color.Primary" Size="Size.Small"
+                                       StartIcon="@Icons.Material.Filled.ZoomIn">@L["Details"]</MudButton>
+                            <MudButton Variant="Variant.Text" Color="Color.Error" Size="Size.Small"
+                                       StartIcon="@Icons.Material.Filled.Delete"
+                                       OnClick="() => ConfirmDeletePhoto(photo)">@L["Delete"]</MudButton>
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
+            }
+        </MudGrid>
+    }
+</MudPaper>

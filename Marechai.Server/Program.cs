@@ -168,6 +168,7 @@ file class Program
         Photos.EnsureCreated(assetRootPath, false, "machines");
         Photos.EnsureCreated(assetRootPath, false, "gpus");
         Photos.EnsureCreated(assetRootPath, false, "processors");
+        Photos.EnsureCreated(assetRootPath, false, "sound-synths");
         Photos.EnsureCreated(assetRootPath, false, "people");
         Photos.EnsureCreated(assetRootPath, false, "software-screenshots");
     Photos.EnsureCreated(assetRootPath, false, "software-covers");
@@ -184,6 +185,7 @@ file class Program
         Photos.BackfillJxl(assetRootPath, false, "machines");
         Photos.BackfillJxl(assetRootPath, false, "gpus");
         Photos.BackfillJxl(assetRootPath, false, "processors");
+        Photos.BackfillJxl(assetRootPath, false, "sound-synths");
         Photos.BackfillJxl(assetRootPath, false, "people");
         Photos.BackfillJxl(assetRootPath, false, "software-screenshots");
     Photos.BackfillJxl(assetRootPath, false, "software-covers");

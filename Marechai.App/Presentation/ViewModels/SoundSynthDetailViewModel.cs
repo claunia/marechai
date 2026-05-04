@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -12,6 +13,7 @@ using Marechai.App.Navigation;
 using Marechai.App.Presentation.Models;
 using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
+using Marechai.App.Services.Caching;
 using Marechai.Data;
 using Microsoft.UI.Xaml;
 
@@ -20,9 +22,11 @@ namespace Marechai.App.Presentation.ViewModels;
 public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
 {
     private readonly CompaniesService                   _companiesService;
+    private readonly ImageSourceFactory                  _imageSourceFactory;
     private readonly IStringLocalizer                   _localizer;
     private readonly ILogger<SoundSynthDetailViewModel> _logger;
     private readonly IRegionManager                     _regionManager;
+    private readonly SoundSynthPhotoCache               _soundSynthPhotoCache;
     private readonly SoundSynthsService                 _soundSynthsService;
 
     [ObservableProperty]
@@ -70,6 +74,11 @@ public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private Visibility _showDescription = Visibility.Collapsed;
 
+    [ObservableProperty]
+    private Visibility _showPhotos = Visibility.Collapsed;
+
+    public ObservableCollection<PhotoCarouselDisplayItem> Photos { get; } = [];
+
     /// <summary>
     ///     Gets whether a description is available
     /// </summary>
@@ -104,13 +113,16 @@ public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
 
     public SoundSynthDetailViewModel(SoundSynthsService soundSynthsService, CompaniesService companiesService,
                                      IStringLocalizer   localizer,          ILogger<SoundSynthDetailViewModel> logger,
-                                 IRegionManager     regionManager)
+                                 IRegionManager     regionManager,
+                                 SoundSynthPhotoCache soundSynthPhotoCache, ImageSourceFactory imageSourceFactory)
     {
         _soundSynthsService    = soundSynthsService;
         _companiesService      = companiesService;
         _localizer             = localizer;
         _logger                = logger;
         _regionManager         = regionManager;
+        _soundSynthPhotoCache  = soundSynthPhotoCache;
+        _imageSourceFactory    = imageSourceFactory;
         LoadData               = new AsyncRelayCommand(LoadDataAsync);
         GoBackCommand          = new AsyncRelayCommand(GoBackAsync);
         SelectMachineCommand   = new AsyncRelayCommand<int>(SelectMachineAsync);
@@ -258,6 +270,27 @@ public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
 
             ShowDescription = HasDescription ? Visibility.Visible : Visibility.Collapsed;
 
+            // Load photos
+            Photos.Clear();
+            List<Guid> photoIds = await _soundSynthsService.GetSoundSynthPhotosAsync(SoundSynthId);
+
+            if(photoIds.Count > 0)
+            {
+                foreach(Guid photoId in photoIds)
+                {
+                    var photoItem = new PhotoCarouselDisplayItem
+                    {
+                        PhotoId = photoId
+                    };
+
+                    _ = LoadPhotoThumbnailAsync(photoItem);
+
+                    Photos.Add(photoItem);
+                }
+            }
+
+            ShowPhotos = Photos.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+
             IsDataLoaded = true;
         }
         catch(Exception ex)
@@ -327,6 +360,20 @@ public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
 
             FilteredSmartphones.Clear();
             foreach(MachineItem smartphone in filtered) FilteredSmartphones.Add(smartphone);
+        }
+    }
+
+    private async Task LoadPhotoThumbnailAsync(PhotoCarouselDisplayItem photoItem)
+    {
+        try
+        {
+            Stream stream = await _soundSynthPhotoCache.GetThumbnailAsync(photoItem.PhotoId);
+
+            photoItem.ThumbnailImageSource = await _imageSourceFactory.CreateBitmapImageSourceAsync(stream);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading sound synth photo thumbnail {PhotoId}", photoItem.PhotoId);
         }
     }
 

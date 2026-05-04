@@ -196,6 +196,38 @@
                                   MinHeight="200" />
                     </StackPanel>
 
+                    <!-- Photos Carousel -->
+                    <StackPanel Visibility="{Binding ShowPhotos}"
+                                Spacing="12">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=PhotosLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <controls:Carousel ItemsSource="{Binding Photos}"
+                                        Height="280"
+                                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="8"
+                                        HorizontalAlignment="Stretch">
+                            <controls:Carousel.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center">
+                                        <Image Source="{Binding ThumbnailImageSource}"
+                                               Stretch="Uniform"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               MaxWidth="256"
+                                               MaxHeight="256" />
+                                    </Grid>
+                                </DataTemplate>
+                            </controls:Carousel.ItemTemplate>
+                        </controls:Carousel>
+                    </StackPanel>
+
                     <!-- Computers Section -->
                     <StackPanel Visibility="{Binding HasComputers}"
                                 Spacing="8">
