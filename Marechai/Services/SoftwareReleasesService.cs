@@ -629,6 +629,120 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
         }
     }
 
+    // ── Paged / count methods ──
+
+    public async Task<List<SoftwareReleaseDto>> GetPagedAsync(int skip, int take, string search = null)
+    {
+        try
+        {
+            List<SoftwareReleaseDto> releases = await client.Software.Releases.GetAsync(config =>
+            {
+                config.QueryParameters.Skip   = skip;
+                config.QueryParameters.Take   = take;
+                config.QueryParameters.Search = search;
+            });
+
+            return releases ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<int> GetCountAsync(string search = null)
+    {
+        try
+        {
+            int? count = await client.Software.Releases.Count.GetAsync(config =>
+            {
+                config.QueryParameters.Search = search;
+            });
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
+
+    public async Task<List<SoftwareReleaseDto>> GetPagedByVersionAsync(int versionId, int skip, int take,
+                                                                       string search = null)
+    {
+        try
+        {
+            List<SoftwareReleaseDto> releases =
+                await client.Software.Versions[versionId].Releases.GetAsync(config =>
+                {
+                    config.QueryParameters.Skip   = skip;
+                    config.QueryParameters.Take   = take;
+                    config.QueryParameters.Search = search;
+                });
+
+            return releases ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<int> GetCountByVersionAsync(int versionId, string search = null)
+    {
+        try
+        {
+            int? count = await client.Software.Versions[versionId].Releases.Count.GetAsync(config =>
+            {
+                config.QueryParameters.Search = search;
+            });
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
+
+    public async Task<List<SoftwareReleaseDto>> GetPagedBySoftwareAsync(int softwareId, int skip, int take,
+                                                                        string search = null)
+    {
+        try
+        {
+            List<SoftwareReleaseDto> releases =
+                await client.Software[softwareId].Releases.GetAsync(config =>
+                {
+                    config.QueryParameters.Skip   = skip;
+                    config.QueryParameters.Take   = take;
+                    config.QueryParameters.Search = search;
+                });
+
+            return releases ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<int> GetCountBySoftwareAsync(int softwareId, string search = null)
+    {
+        try
+        {
+            int? count = await client.Software[softwareId].Releases.Count.GetAsync(config =>
+            {
+                config.QueryParameters.Search = search;
+            });
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
+
     // ── Versionless compilation junction methods ──
 
     public async Task<List<SoftwareBySoftwareReleaseDto>> GetIncludedSoftwareAsync(int releaseId)

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.AspNetCore.Components;
@@ -9,14 +10,14 @@ namespace Marechai.Pages.Admin;
 
 public partial class SoftwareReleases
 {
-    string                    _errorMessage;
-    bool                       _isLoading = true;
-    int?                       _parentSoftwareId;
-    List<SoftwareReleaseDto>  _releases;
-    string                    _successMessage;
-    string                    _versionName;
-    bool                       _isVersionContext;
-    bool                       _isSoftwareContext;
+    string                            _errorMessage;
+    int?                              _parentSoftwareId;
+    string                            _searchText;
+    string                            _successMessage;
+    string                            _versionName;
+    bool                              _isVersionContext;
+    bool                              _isSoftwareContext;
+    MudDataGrid<SoftwareReleaseDto>   _dataGrid;
 
     [Parameter] public int VersionId  { get; set; }
     [Parameter] public int SoftwareId { get; set; }
@@ -36,22 +37,46 @@ public partial class SoftwareReleases
         {
             _parentSoftwareId = SoftwareId;
         }
-
-        await LoadDataAsync();
     }
 
-    async Task LoadDataAsync()
+    async Task<GridData<SoftwareReleaseDto>> ServerReload(GridState<SoftwareReleaseDto> state,
+                                                          CancellationToken              cancellationToken)
     {
-        _isLoading = true;
+        int skip = state.Page * state.PageSize;
+        int take = state.PageSize;
+
+        Task<int>                        countTask;
+        Task<List<SoftwareReleaseDto>>   dataTask;
 
         if(_isVersionContext)
-            _releases = await SoftwareReleasesService.GetByVersionAsync(VersionId);
+        {
+            countTask = SoftwareReleasesService.GetCountByVersionAsync(VersionId, _searchText);
+            dataTask  = SoftwareReleasesService.GetPagedByVersionAsync(VersionId, skip, take, _searchText);
+        }
         else if(_isSoftwareContext)
-            _releases = await SoftwareReleasesService.GetBySoftwareAsync(SoftwareId);
+        {
+            countTask = SoftwareReleasesService.GetCountBySoftwareAsync(SoftwareId, _searchText);
+            dataTask  = SoftwareReleasesService.GetPagedBySoftwareAsync(SoftwareId, skip, take, _searchText);
+        }
         else
-            _releases = await SoftwareReleasesService.GetAllAsync();
+        {
+            countTask = SoftwareReleasesService.GetCountAsync(_searchText);
+            dataTask  = SoftwareReleasesService.GetPagedAsync(skip, take, _searchText);
+        }
 
-        _isLoading = false;
+        await Task.WhenAll(countTask, dataTask);
+
+        return new GridData<SoftwareReleaseDto>
+        {
+            Items      = dataTask.Result,
+            TotalItems = countTask.Result
+        };
+    }
+
+    async Task OnSearch(string text)
+    {
+        _searchText = text;
+        await _dataGrid.ReloadServerData();
     }
 
     static string FormatDate(DateTimeOffset? date, int? precision = 0)
@@ -120,7 +145,7 @@ public partial class SoftwareReleases
             if(id is not null)
             {
                 _successMessage = L["Release created successfully."];
-                await LoadDataAsync();
+                await _dataGrid.ReloadServerData();
             }
             else
             {
@@ -186,7 +211,7 @@ public partial class SoftwareReleases
             if(succeeded)
             {
                 _successMessage = L["Release updated successfully."];
-                await LoadDataAsync();
+                await _dataGrid.ReloadServerData();
             }
             else
             {
@@ -208,7 +233,7 @@ public partial class SoftwareReleases
         DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
-            await LoadDataAsync();
+            await _dataGrid.ReloadServerData();
     }
 
     async Task ConfirmDelete(SoftwareReleaseDto release)
@@ -241,7 +266,7 @@ public partial class SoftwareReleases
             if(succeeded)
             {
                 _successMessage = L["Release deleted successfully."];
-                await LoadDataAsync();
+                await _dataGrid.ReloadServerData();
             }
             else
             {

@@ -42,117 +42,211 @@ namespace Marechai.Server.Controllers;
 [ApiController]
 public class SoftwareReleasesController(MarechaiContext context) : ControllerBase
 {
+    [HttpGet("count")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetReleasesCountAsync([FromQuery] string search = null)
+    {
+        IQueryable<SoftwareRelease> query = context.SoftwareReleases;
+
+        if(!string.IsNullOrWhiteSpace(search))
+            query = query.Where(r => (r.Title != null && r.Title.Contains(search)) ||
+                                     (r.Software != null && r.Software.Name.Contains(search)) ||
+                                     (r.Platform != null && r.Platform.Name.Contains(search)) ||
+                                     (r.Publisher != null && r.Publisher.Name.Contains(search)));
+
+        return query.CountAsync();
+    }
+
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<SoftwareReleaseDto>> GetAsync() => context.SoftwareReleases
-                                                               .OrderBy(r => r.Software != null ? r.Software.Name : r.Title)
-                                                               .ThenBy(r => r.SoftwareVersion != null ? r.SoftwareVersion.VersionString : null)
-                                                               .Select(r => new SoftwareReleaseDto
-                                                                {
-                                                                    Id                = r.Id,
-                                                                    Title             = r.Title,
-                                                                    IsCompilation     = r.IsCompilation,
-                                                                    SoftwareId        = r.SoftwareId,
-                                                                    Software          = r.Software.Name,
-                                                                    SoftwareVersionId = r.SoftwareVersionId,
-                                                                    SoftwareVersion   = r.SoftwareVersion.VersionString,
-                                                                    PlatformId        = r.PlatformId,
-                                                                    Platform          = r.Platform.Name,
-                                                                    Regions           = r.Regions.Select(rg => new UnM49BySoftwareReleaseDto
-                                                                    {
-                                                                        SoftwareReleaseId = rg.SoftwareReleaseId,
-                                                                        UnM49Id           = rg.UnM49Id,
-                                                                        RegionName        = rg.UnM49.Name
-                                                                    }).ToList(),
-                                                                    Languages         = r.Languages.Select(lg => new LanguageBySoftwareReleaseDto
-                                                                    {
-                                                                        SoftwareReleaseId = lg.SoftwareReleaseId,
-                                                                        LanguageCode      = lg.LanguageCode,
-                                                                        Language          = lg.Language.ReferenceName
-                                                                    }).ToList(),
-                                                                    PublisherId       = r.PublisherId,
-                                                                    Publisher         = r.Publisher.Name,
-                                                                    ReleaseDate       = r.ReleaseDate,
-                                                                    ReleaseDatePrecision = r.ReleaseDatePrecision
-                                                                })
-                                                               .ToListAsync();
+    public Task<List<SoftwareReleaseDto>> GetAsync([FromQuery] int? skip   = null, [FromQuery] int? take = null,
+                                                   [FromQuery] string search = null)
+    {
+        IQueryable<SoftwareRelease> query = context.SoftwareReleases;
+
+        if(!string.IsNullOrWhiteSpace(search))
+            query = query.Where(r => (r.Title != null && r.Title.Contains(search)) ||
+                                     (r.Software != null && r.Software.Name.Contains(search)) ||
+                                     (r.Platform != null && r.Platform.Name.Contains(search)) ||
+                                     (r.Publisher != null && r.Publisher.Name.Contains(search)));
+
+        query = query.OrderBy(r => r.Software != null ? r.Software.Name : r.Title)
+                     .ThenBy(r => r.SoftwareVersion != null ? r.SoftwareVersion.VersionString : null);
+
+        if(skip.HasValue) query = query.Skip(skip.Value);
+        if(take.HasValue) query = query.Take(take.Value);
+
+        return query.Select(r => new SoftwareReleaseDto
+                     {
+                         Id                = r.Id,
+                         Title             = r.Title,
+                         IsCompilation     = r.IsCompilation,
+                         SoftwareId        = r.SoftwareId,
+                         Software          = r.Software.Name,
+                         SoftwareVersionId = r.SoftwareVersionId,
+                         SoftwareVersion   = r.SoftwareVersion.VersionString,
+                         PlatformId        = r.PlatformId,
+                         Platform          = r.Platform.Name,
+                         Regions           = r.Regions.Select(rg => new UnM49BySoftwareReleaseDto
+                         {
+                             SoftwareReleaseId = rg.SoftwareReleaseId,
+                             UnM49Id           = rg.UnM49Id,
+                             RegionName        = rg.UnM49.Name
+                         }).ToList(),
+                         Languages         = r.Languages.Select(lg => new LanguageBySoftwareReleaseDto
+                         {
+                             SoftwareReleaseId = lg.SoftwareReleaseId,
+                             LanguageCode      = lg.LanguageCode,
+                             Language          = lg.Language.ReferenceName
+                         }).ToList(),
+                         PublisherId       = r.PublisherId,
+                         Publisher         = r.Publisher.Name,
+                         ReleaseDate       = r.ReleaseDate,
+                         ReleaseDatePrecision = r.ReleaseDatePrecision
+                     })
+                    .ToListAsync();
+    }
+
+    [HttpGet("/software/versions/{versionId:ulong}/releases/count")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetReleasesCountByVersionAsync(ulong versionId, [FromQuery] string search = null)
+    {
+        IQueryable<SoftwareRelease> query = context.SoftwareReleases.Where(r => r.SoftwareVersionId == versionId);
+
+        if(!string.IsNullOrWhiteSpace(search))
+            query = query.Where(r => (r.Title != null && r.Title.Contains(search)) ||
+                                     (r.Platform != null && r.Platform.Name.Contains(search)) ||
+                                     (r.Publisher != null && r.Publisher.Name.Contains(search)));
+
+        return query.CountAsync();
+    }
 
     [HttpGet("/software/versions/{versionId:ulong}/releases")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<SoftwareReleaseDto>> GetByVersionAsync(ulong versionId) => context.SoftwareReleases
-       .Where(r => r.SoftwareVersionId == versionId)
-       .OrderBy(r => r.ReleaseDate)
-       .Select(r => new SoftwareReleaseDto
-        {
-            Id                = r.Id,
-            Title             = r.Title,
-            IsCompilation     = r.IsCompilation,
-            SoftwareId        = r.SoftwareId,
-            Software          = r.Software.Name,
-            SoftwareVersionId = r.SoftwareVersionId,
-            SoftwareVersion   = r.SoftwareVersion.VersionString,
-            PlatformId        = r.PlatformId,
-            Platform          = r.Platform.Name,
-            Regions           = r.Regions.Select(rg => new UnM49BySoftwareReleaseDto
-            {
-                SoftwareReleaseId = rg.SoftwareReleaseId,
-                UnM49Id           = rg.UnM49Id,
-                RegionName        = rg.UnM49.Name
-            }).ToList(),
-            Languages         = r.Languages.Select(lg => new LanguageBySoftwareReleaseDto
-            {
-                SoftwareReleaseId = lg.SoftwareReleaseId,
-                LanguageCode      = lg.LanguageCode,
-                Language          = lg.Language.ReferenceName
-            }).ToList(),
-            PublisherId       = r.PublisherId,
-            Publisher         = r.Publisher.Name,
-            ReleaseDate       = r.ReleaseDate,
-            ReleaseDatePrecision = r.ReleaseDatePrecision
-        })
-       .ToListAsync();
+    public Task<List<SoftwareReleaseDto>> GetByVersionAsync(ulong versionId, [FromQuery] int? skip   = null,
+                                                            [FromQuery] int?    take   = null,
+                                                            [FromQuery] string  search = null)
+    {
+        IQueryable<SoftwareRelease> query = context.SoftwareReleases.Where(r => r.SoftwareVersionId == versionId);
+
+        if(!string.IsNullOrWhiteSpace(search))
+            query = query.Where(r => (r.Title != null && r.Title.Contains(search)) ||
+                                     (r.Platform != null && r.Platform.Name.Contains(search)) ||
+                                     (r.Publisher != null && r.Publisher.Name.Contains(search)));
+
+        query = query.OrderBy(r => r.ReleaseDate);
+
+        if(skip.HasValue) query = query.Skip(skip.Value);
+        if(take.HasValue) query = query.Take(take.Value);
+
+        return query.Select(r => new SoftwareReleaseDto
+                     {
+                         Id                = r.Id,
+                         Title             = r.Title,
+                         IsCompilation     = r.IsCompilation,
+                         SoftwareId        = r.SoftwareId,
+                         Software          = r.Software.Name,
+                         SoftwareVersionId = r.SoftwareVersionId,
+                         SoftwareVersion   = r.SoftwareVersion.VersionString,
+                         PlatformId        = r.PlatformId,
+                         Platform          = r.Platform.Name,
+                         Regions           = r.Regions.Select(rg => new UnM49BySoftwareReleaseDto
+                         {
+                             SoftwareReleaseId = rg.SoftwareReleaseId,
+                             UnM49Id           = rg.UnM49Id,
+                             RegionName        = rg.UnM49.Name
+                         }).ToList(),
+                         Languages         = r.Languages.Select(lg => new LanguageBySoftwareReleaseDto
+                         {
+                             SoftwareReleaseId = lg.SoftwareReleaseId,
+                             LanguageCode      = lg.LanguageCode,
+                             Language          = lg.Language.ReferenceName
+                         }).ToList(),
+                         PublisherId       = r.PublisherId,
+                         Publisher         = r.Publisher.Name,
+                         ReleaseDate       = r.ReleaseDate,
+                         ReleaseDatePrecision = r.ReleaseDatePrecision
+                     })
+                    .ToListAsync();
+    }
+
+    [HttpGet("/software/{softwareId:ulong}/releases/count")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetReleasesCountBySoftwareAsync(ulong softwareId, [FromQuery] string search = null)
+    {
+        IQueryable<SoftwareRelease> query = context.SoftwareReleases
+                                                   .Where(r => r.SoftwareId == softwareId && !r.IsCompilation);
+
+        if(!string.IsNullOrWhiteSpace(search))
+            query = query.Where(r => (r.Title != null && r.Title.Contains(search)) ||
+                                     (r.Platform != null && r.Platform.Name.Contains(search)) ||
+                                     (r.Publisher != null && r.Publisher.Name.Contains(search)));
+
+        return query.CountAsync();
+    }
 
     [HttpGet("/software/{softwareId:ulong}/releases")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<SoftwareReleaseDto>> GetBySoftwareAsync(ulong softwareId) => context.SoftwareReleases
-       .Where(r => r.SoftwareId == softwareId && !r.IsCompilation)
-       .OrderBy(r => r.SoftwareVersion.VersionString)
-       .ThenBy(r => r.ReleaseDate)
-       .Select(r => new SoftwareReleaseDto
-        {
-            Id                = r.Id,
-            Title             = r.Title,
-            IsCompilation     = r.IsCompilation,
-            SoftwareId        = r.SoftwareId,
-            Software          = r.Software.Name,
-            SoftwareVersionId = r.SoftwareVersionId,
-            SoftwareVersion   = r.SoftwareVersion.VersionString,
-            PlatformId        = r.PlatformId,
-            Platform          = r.Platform.Name,
-            Regions           = r.Regions.Select(rg => new UnM49BySoftwareReleaseDto
-            {
-                SoftwareReleaseId = rg.SoftwareReleaseId,
-                UnM49Id           = rg.UnM49Id,
-                RegionName        = rg.UnM49.Name
-            }).ToList(),
-            Languages         = r.Languages.Select(lg => new LanguageBySoftwareReleaseDto
-            {
-                SoftwareReleaseId = lg.SoftwareReleaseId,
-                LanguageCode      = lg.LanguageCode,
-                Language          = lg.Language.ReferenceName
-            }).ToList(),
-            PublisherId       = r.PublisherId,
-            Publisher         = r.Publisher.Name,
-            ReleaseDate       = r.ReleaseDate,
-            ReleaseDatePrecision = r.ReleaseDatePrecision
-        })
-       .ToListAsync();
+    public Task<List<SoftwareReleaseDto>> GetBySoftwareAsync(ulong softwareId, [FromQuery] int? skip   = null,
+                                                             [FromQuery] int?    take   = null,
+                                                             [FromQuery] string  search = null)
+    {
+        IQueryable<SoftwareRelease> query = context.SoftwareReleases
+                                                   .Where(r => r.SoftwareId == softwareId && !r.IsCompilation);
+
+        if(!string.IsNullOrWhiteSpace(search))
+            query = query.Where(r => (r.Title != null && r.Title.Contains(search)) ||
+                                     (r.Platform != null && r.Platform.Name.Contains(search)) ||
+                                     (r.Publisher != null && r.Publisher.Name.Contains(search)));
+
+        query = query.OrderBy(r => r.SoftwareVersion.VersionString)
+                     .ThenBy(r => r.ReleaseDate);
+
+        if(skip.HasValue) query = query.Skip(skip.Value);
+        if(take.HasValue) query = query.Take(take.Value);
+
+        return query.Select(r => new SoftwareReleaseDto
+                     {
+                         Id                = r.Id,
+                         Title             = r.Title,
+                         IsCompilation     = r.IsCompilation,
+                         SoftwareId        = r.SoftwareId,
+                         Software          = r.Software.Name,
+                         SoftwareVersionId = r.SoftwareVersionId,
+                         SoftwareVersion   = r.SoftwareVersion.VersionString,
+                         PlatformId        = r.PlatformId,
+                         Platform          = r.Platform.Name,
+                         Regions           = r.Regions.Select(rg => new UnM49BySoftwareReleaseDto
+                         {
+                             SoftwareReleaseId = rg.SoftwareReleaseId,
+                             UnM49Id           = rg.UnM49Id,
+                             RegionName        = rg.UnM49.Name
+                         }).ToList(),
+                         Languages         = r.Languages.Select(lg => new LanguageBySoftwareReleaseDto
+                         {
+                             SoftwareReleaseId = lg.SoftwareReleaseId,
+                             LanguageCode      = lg.LanguageCode,
+                             Language          = lg.Language.ReferenceName
+                         }).ToList(),
+                         PublisherId       = r.PublisherId,
+                         Publisher         = r.Publisher.Name,
+                         ReleaseDate       = r.ReleaseDate,
+                         ReleaseDatePrecision = r.ReleaseDatePrecision
+                     })
+                    .ToListAsync();
+    }
 
     [HttpGet("{id:ulong}")]
     [AllowAnonymous]
