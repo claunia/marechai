@@ -262,7 +262,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            await client.Software.Screenshots[screenshotId.ToString()].DeleteAsync();
+            await client.Software.Screenshots[screenshotId].DeleteAsync();
 
             return (true, null);
         }
@@ -613,7 +613,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            return await client.Software.Screenshots[id.ToString()].GetAsync();
+            return await client.Software.Screenshots[id].GetAsync();
         }
         catch
         {
@@ -652,7 +652,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            await client.Software.Screenshots[id.ToString()].PutAsync(dto);
+            await client.Software.Screenshots[id].PutAsync(dto);
 
             return (true, null);
         }
@@ -953,7 +953,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            return await client.Software.Covers[id.ToString()].GetAsync();
+            return await client.Software.Covers[id].GetAsync();
         }
         catch
         {

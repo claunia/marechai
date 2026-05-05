@@ -54,7 +54,7 @@ public class ProcessorPhotosService(Marechai.ApiClient.Client client, IRequestAd
     {
         try
         {
-            return await client.Processors.Photos[id.ToString()].GetAsync();
+            return await client.Processors.Photos[id].GetAsync();
         }
         catch
         {
@@ -115,7 +115,7 @@ public class ProcessorPhotosService(Marechai.ApiClient.Client client, IRequestAd
     {
         try
         {
-            await client.Processors.Photos[id.ToString()].DeleteAsync();
+            await client.Processors.Photos[id].DeleteAsync();
 
             return (true, null);
         }

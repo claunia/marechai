@@ -54,7 +54,7 @@ public class SoundSynthPhotosService(Marechai.ApiClient.Client client, IRequestA
     {
         try
         {
-            return await client.SoundSynths.Photos[id.ToString()].GetAsync();
+            return await client.SoundSynths.Photos[id].GetAsync();
         }
         catch
         {
@@ -115,7 +115,7 @@ public class SoundSynthPhotosService(Marechai.ApiClient.Client client, IRequestA
     {
         try
         {
-            await client.SoundSynths.Photos[id.ToString()].DeleteAsync();
+            await client.SoundSynths.Photos[id].DeleteAsync();
 
             return (true, null);
         }

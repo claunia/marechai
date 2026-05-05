@@ -54,7 +54,7 @@ public class GpuPhotosService(Marechai.ApiClient.Client client, IRequestAdapter 
     {
         try
         {
-            return await client.Gpus.Photos[id.ToString()].GetAsync();
+            return await client.Gpus.Photos[id].GetAsync();
         }
         catch
         {
@@ -115,7 +115,7 @@ public class GpuPhotosService(Marechai.ApiClient.Client client, IRequestAdapter 
     {
         try
         {
-            await client.Gpus.Photos[id.ToString()].DeleteAsync();
+            await client.Gpus.Photos[id].DeleteAsync();
 
             return (true, null);
         }

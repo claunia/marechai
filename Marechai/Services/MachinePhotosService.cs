@@ -54,7 +54,7 @@ public class MachinePhotosService(Marechai.ApiClient.Client client, IRequestAdap
     {
         try
         {
-            return await client.Machines.Photos[id.ToString()].GetAsync();
+            return await client.Machines.Photos[id].GetAsync();
         }
         catch
         {
@@ -115,7 +115,7 @@ public class MachinePhotosService(Marechai.ApiClient.Client client, IRequestAdap
     {
         try
         {
-            await client.Machines.Photos[id.ToString()].DeleteAsync();
+            await client.Machines.Photos[id].DeleteAsync();
 
             return (true, null);
         }
