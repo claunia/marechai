@@ -29,7 +29,7 @@
 @using Marechai.ApiClient.Models
 @inherits OwningComponentBase<PeopleService>
 @inject IStringLocalizer<PeopleService> L
-@inject ApiAssetUrlProvider            Assets
+@inject ApiAssetUrlProvider            AssetUrls
 
 @if(!_loaded)
 {
@@ -53,13 +53,13 @@
         @if(_person.Photo.HasValue && _person.Photo.Value != Guid.Empty)
         {
             <picture>
-                <source srcset="@(Assets.BaseUrl)/assets/photos/people/jxl/hd/@(_person.Photo).jxl, @(Assets.BaseUrl)/assets/photos/people/jxl/1440p/@(_person.Photo).jxl 2x, @(Assets.BaseUrl)/assets/photos/people/jxl/4k/@(_person.Photo).jxl 3x" type="image/jxl">
-                <source srcset="@(Assets.BaseUrl)/assets/photos/people/avif/hd/@(_person.Photo).avif, @(Assets.BaseUrl)/assets/photos/people/avif/1440p/@(_person.Photo).avif 2x, @(Assets.BaseUrl)/assets/photos/people/avif/4k/@(_person.Photo).avif 3x" type="image/avif">
-                <source srcset="@(Assets.BaseUrl)/assets/photos/people/heif/hd/@(_person.Photo).heic, @(Assets.BaseUrl)/assets/photos/people/heif/1440p/@(_person.Photo).heic 2x, @(Assets.BaseUrl)/assets/photos/people/heif/4k/@(_person.Photo).heic 3x" type="image/heic">
-                <source srcset="@(Assets.BaseUrl)/assets/photos/people/webp/hd/@(_person.Photo).webp, @(Assets.BaseUrl)/assets/photos/people/webp/1440p/@(_person.Photo).webp 2x, @(Assets.BaseUrl)/assets/photos/people/webp/4k/@(_person.Photo).webp 3x" type="image/webp">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/people/jxl/hd/@(_person.Photo).jxl, @(AssetUrls.BaseUrl)/assets/photos/people/jxl/1440p/@(_person.Photo).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/people/jxl/4k/@(_person.Photo).jxl 3x" type="image/jxl">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/people/avif/hd/@(_person.Photo).avif, @(AssetUrls.BaseUrl)/assets/photos/people/avif/1440p/@(_person.Photo).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/people/avif/4k/@(_person.Photo).avif 3x" type="image/avif">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/people/heif/hd/@(_person.Photo).heic, @(AssetUrls.BaseUrl)/assets/photos/people/heif/1440p/@(_person.Photo).heic 2x, @(AssetUrls.BaseUrl)/assets/photos/people/heif/4k/@(_person.Photo).heic 3x" type="image/heic">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/people/webp/hd/@(_person.Photo).webp, @(AssetUrls.BaseUrl)/assets/photos/people/webp/1440p/@(_person.Photo).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/people/webp/4k/@(_person.Photo).webp 3x" type="image/webp">
                 <img alt="@(_person.DisplayName ?? _person.Alias ?? $"{_person.Name} {_person.Surname}".Trim())" height="200"
-                     src="@(Assets.BaseUrl)/assets/photos/people/jpeg/hd/@(_person.Photo).jpg"
-                     srcset="@(Assets.BaseUrl)/assets/photos/people/jpeg/hd/@(_person.Photo).jpg, @(Assets.BaseUrl)/assets/photos/people/jpeg/1440p/@(_person.Photo).jpg 2x, @(Assets.BaseUrl)/assets/photos/people/jpeg/4k/@(_person.Photo).jpg 3x"
+                     src="@(AssetUrls.BaseUrl)/assets/photos/people/jpeg/hd/@(_person.Photo).jpg"
+                     srcset="@(AssetUrls.BaseUrl)/assets/photos/people/jpeg/hd/@(_person.Photo).jpg, @(AssetUrls.BaseUrl)/assets/photos/people/jpeg/1440p/@(_person.Photo).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/people/jpeg/4k/@(_person.Photo).jpg 3x"
                      style="object-fit: contain; border-radius: 4px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));" />
             </picture>
         }
@@ -130,9 +130,9 @@
                         @if(_person.CountryId.HasValue)
                         {
                             <picture>
-                                <source srcset="@(Assets.BaseUrl)/assets/flags/countries/@($"{_person.CountryId:D3}").svg" type="image/svg+xml">
-                                <source srcset="@(Assets.BaseUrl)/assets/flags/countries/webp/1x/@($"{_person.CountryId:D3}").webp" type="image/webp">
-                                <img alt="" height="32" src="@(Assets.BaseUrl)/assets/flags/countries/png/1x/@($"{_person.CountryId:D3}").png"/>
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/flags/countries/@($"{_person.CountryId:D3}").svg" type="image/svg+xml">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/flags/countries/webp/1x/@($"{_person.CountryId:D3}").webp" type="image/webp">
+                                <img alt="" height="32" src="@(AssetUrls.BaseUrl)/assets/flags/countries/png/1x/@($"{_person.CountryId:D3}").png"/>
                             </picture>
                         }
                         @L[_person.Country]

@@ -32,7 +32,7 @@
 @using Marechai.Data
 @inherits OwningComponentBase<MachinesService>
 @inject IStringLocalizer<MachinesService> L
-@inject ApiAssetUrlProvider               Assets
+@inject ApiAssetUrlProvider               AssetUrls
 @inject MachinePhotosService              MachinePhotosService
 @inject CollectionService                 CollectionSvc
 
@@ -59,14 +59,14 @@
         {
             <MudLink Href="@($"/company/{_machine.CompanyId}")">
                 <picture>
-                    <source srcset="@(Assets.BaseUrl)/assets/logos/@(_machine.CompanyLogo).svg" type="image/svg+xml">
-                    <source srcset="@(Assets.BaseUrl)/assets/logos/webp/1x/@(_machine.CompanyLogo).webp,
-    @(Assets.BaseUrl)/assets/logos/webp/2x/@(_machine.CompanyLogo).webp 2x,
-    @(Assets.BaseUrl)/assets/logos/webp/3x/@(_machine.CompanyLogo).webp 3x" type="image/webp">
-                    <img alt="@_machine.Company" height="auto" src="@(Assets.BaseUrl)/assets/logos/png/1x/@(_machine.CompanyLogo).png"
-                         srcset="@(Assets.BaseUrl)/assets/logos/png/1x/@(_machine.CompanyLogo).png,
-                             @(Assets.BaseUrl)/assets/logos/png/2x/@(_machine.CompanyLogo).png 2x,
-                             @(Assets.BaseUrl)/assets/logos/png/3x/@(_machine.CompanyLogo).png 3x"
+                    <source srcset="@(AssetUrls.BaseUrl)/assets/logos/@(_machine.CompanyLogo).svg" type="image/svg+xml">
+                    <source srcset="@(AssetUrls.BaseUrl)/assets/logos/webp/1x/@(_machine.CompanyLogo).webp,
+    @(AssetUrls.BaseUrl)/assets/logos/webp/2x/@(_machine.CompanyLogo).webp 2x,
+    @(AssetUrls.BaseUrl)/assets/logos/webp/3x/@(_machine.CompanyLogo).webp 3x" type="image/webp">
+                    <img alt="@_machine.Company" height="auto" src="@(AssetUrls.BaseUrl)/assets/logos/png/1x/@(_machine.CompanyLogo).png"
+                         srcset="@(AssetUrls.BaseUrl)/assets/logos/png/1x/@(_machine.CompanyLogo).png,
+                             @(AssetUrls.BaseUrl)/assets/logos/png/2x/@(_machine.CompanyLogo).png 2x,
+                             @(AssetUrls.BaseUrl)/assets/logos/png/3x/@(_machine.CompanyLogo).png 3x"
                          style="max-height: 128px; max-width: 200px; filter: drop-shadow(0 0 4px rgba(255,255,255,0.9)) drop-shadow(0 0 8px rgba(255,255,255,0.6));" width="auto"/>
                 </picture>
             </MudLink>
@@ -760,13 +760,13 @@
                             @if(sw.FrontCoverId.HasValue)
                             {
                                 <picture>
-                                    <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/jxl/hd/@(sw.FrontCoverId).jxl, @(Assets.BaseUrl)/assets/photos/software-covers/jxl/1440p/@(sw.FrontCoverId).jxl 2x, @(Assets.BaseUrl)/assets/photos/software-covers/jxl/4k/@(sw.FrontCoverId).jxl 3x" type="image/jxl">
-                                    <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/avif/hd/@(sw.FrontCoverId).avif, @(Assets.BaseUrl)/assets/photos/software-covers/avif/1440p/@(sw.FrontCoverId).avif 2x, @(Assets.BaseUrl)/assets/photos/software-covers/avif/4k/@(sw.FrontCoverId).avif 3x" type="image/avif">
-                                    <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/heif/hd/@(sw.FrontCoverId).heic, @(Assets.BaseUrl)/assets/photos/software-covers/heif/1440p/@(sw.FrontCoverId).heic 2x, @(Assets.BaseUrl)/assets/photos/software-covers/heif/4k/@(sw.FrontCoverId).heic 3x" type="image/heic">
-                                    <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/webp/hd/@(sw.FrontCoverId).webp, @(Assets.BaseUrl)/assets/photos/software-covers/webp/1440p/@(sw.FrontCoverId).webp 2x, @(Assets.BaseUrl)/assets/photos/software-covers/webp/4k/@(sw.FrontCoverId).webp 3x" type="image/webp">
+                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/hd/@(sw.FrontCoverId).jxl, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/1440p/@(sw.FrontCoverId).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(sw.FrontCoverId).jxl 3x" type="image/jxl">
+                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/hd/@(sw.FrontCoverId).avif, @(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/1440p/@(sw.FrontCoverId).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(sw.FrontCoverId).avif 3x" type="image/avif">
+                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/heif/hd/@(sw.FrontCoverId).heic, @(AssetUrls.BaseUrl)/assets/photos/software-covers/heif/1440p/@(sw.FrontCoverId).heic 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/heif/4k/@(sw.FrontCoverId).heic 3x" type="image/heic">
+                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/hd/@(sw.FrontCoverId).webp, @(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/1440p/@(sw.FrontCoverId).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(sw.FrontCoverId).webp 3x" type="image/webp">
                                     <img alt="@sw.Name" height="48"
-                                         src="@(Assets.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(sw.FrontCoverId).jpg"
-                                         srcset="@(Assets.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(sw.FrontCoverId).jpg, @(Assets.BaseUrl)/assets/photos/software-covers/jpeg/1440p/@(sw.FrontCoverId).jpg 2x, @(Assets.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(sw.FrontCoverId).jpg 3x"
+                                         src="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(sw.FrontCoverId).jpg"
+                                         srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(sw.FrontCoverId).jpg, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/1440p/@(sw.FrontCoverId).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(sw.FrontCoverId).jpg 3x"
                                          style="object-fit: contain; border-radius: 4px;"/>
                                 </picture>
                             }
@@ -810,12 +810,12 @@
                         <MudCard Elevation="1" Class="rounded-lg">
                             <MudCardContent Class="pa-2 d-flex justify-center" Style="cursor: pointer;" @onclick="() => _lightbox.Show(_photos, photo)">
                                 <picture>
-                                    <source srcset="@(Assets.BaseUrl)/assets/photos/machines/thumbs/jxl/hd/@(photo).jxl, @(Assets.BaseUrl)/assets/photos/machines/thumbs/jxl/1440p/@(photo).jxl 2x, @(Assets.BaseUrl)/assets/photos/machines/thumbs/jxl/4k/@(photo).jxl 3x" type="image/jxl">
-                                    <source srcset="@(Assets.BaseUrl)/assets/photos/machines/thumbs/avif/hd/@(photo).avif, @(Assets.BaseUrl)/assets/photos/machines/thumbs/avif/1440p/@(photo).avif 2x, @(Assets.BaseUrl)/assets/photos/machines/thumbs/avif/4k/@(photo).avif 3x" type="image/avif">
-                                    <source srcset="@(Assets.BaseUrl)/assets/photos/machines/thumbs/heif/hd/@(photo).heic, @(Assets.BaseUrl)/assets/photos/machines/thumbs/heif/1440p/@(photo).heic 2x, @(Assets.BaseUrl)/assets/photos/machines/thumbs/heif/4k/@(photo).heic 3x" type="image/heic">
-                                    <source srcset="@(Assets.BaseUrl)/assets/photos/machines/thumbs/webp/hd/@(photo).webp, @(Assets.BaseUrl)/assets/photos/machines/thumbs/webp/1440p/@(photo).webp 2x, @(Assets.BaseUrl)/assets/photos/machines/thumbs/webp/4k/@(photo).webp 3x" type="image/webp">
-                                    <img alt="" height="auto" src="@(Assets.BaseUrl)/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg"
-                                         srcset="@(Assets.BaseUrl)/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg, @(Assets.BaseUrl)/assets/photos/machines/thumbs/jpeg/1440p/@(photo).jpg 2x, @(Assets.BaseUrl)/assets/photos/machines/thumbs/jpeg/4k/@(photo).jpg 3x"
+                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/machines/thumbs/jxl/hd/@(photo).jxl, @(AssetUrls.BaseUrl)/assets/photos/machines/thumbs/jxl/1440p/@(photo).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/machines/thumbs/jxl/4k/@(photo).jxl 3x" type="image/jxl">
+                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/machines/thumbs/avif/hd/@(photo).avif, @(AssetUrls.BaseUrl)/assets/photos/machines/thumbs/avif/1440p/@(photo).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/machines/thumbs/avif/4k/@(photo).avif 3x" type="image/avif">
+                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/machines/thumbs/heif/hd/@(photo).heic, @(AssetUrls.BaseUrl)/assets/photos/machines/thumbs/heif/1440p/@(photo).heic 2x, @(AssetUrls.BaseUrl)/assets/photos/machines/thumbs/heif/4k/@(photo).heic 3x" type="image/heic">
+                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/machines/thumbs/webp/hd/@(photo).webp, @(AssetUrls.BaseUrl)/assets/photos/machines/thumbs/webp/1440p/@(photo).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/machines/thumbs/webp/4k/@(photo).webp 3x" type="image/webp">
+                                    <img alt="" height="auto" src="@(AssetUrls.BaseUrl)/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg"
+                                         srcset="@(AssetUrls.BaseUrl)/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg, @(AssetUrls.BaseUrl)/assets/photos/machines/thumbs/jpeg/1440p/@(photo).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/machines/thumbs/jpeg/4k/@(photo).jpg 3x"
                                          style="max-height: 256px; max-width: 100%; border-radius: 8px;" width="auto"/>
                                 </picture>
                             </MudCardContent>
@@ -830,6 +830,6 @@
     </MudCard>
 }
 
-<PhotoLightbox @ref="_lightbox" BaseUrl="@Assets.BaseUrl" Category="machines"/>
+<PhotoLightbox @ref="_lightbox" BaseUrl="@AssetUrls.BaseUrl" Category="machines"/>
 
-<img alt="" src="@($"{Assets.BaseUrl}/assets/photos/computers/{_machine.Id}.jpg")">
+<img alt="" src="@($"{AssetUrls.BaseUrl}/assets/photos/computers/{_machine.Id}.jpg")">

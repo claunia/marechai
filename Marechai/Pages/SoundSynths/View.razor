@@ -32,7 +32,7 @@
 @inherits OwningComponentBase<SoundSynthsService>
 @inject IStringLocalizer<SoundSynthsService> L
 @inject SoundSynthPhotosService SoundSynthPhotosService
-@inject ApiAssetUrlProvider Assets
+@inject ApiAssetUrlProvider AssetUrls
 
 @if(!_loaded)
 {
@@ -230,11 +230,11 @@
                         <MudCard Elevation="1" Class="rounded-lg">
                             <MudCardContent Class="pa-2 d-flex justify-center" @onclick="() => _lightbox.Show(_photos, photo)" Style="cursor: pointer;">
                                 <picture>
-                                    <source srcset="@(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/jxl/hd/@(photo).jxl, @(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/jxl/1440p/@(photo).jxl 2x, @(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/jxl/4k/@(photo).jxl 3x" type="image/jxl">
-                                    <source srcset="@(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/avif/hd/@(photo).avif, @(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/avif/1440p/@(photo).avif 2x, @(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/avif/4k/@(photo).avif 3x" type="image/avif">
-                                    <source srcset="@(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/webp/hd/@(photo).webp, @(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/webp/1440p/@(photo).webp 2x, @(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/webp/4k/@(photo).webp 3x" type="image/webp">
-                                    <img alt="" height="auto" src="@(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/jpeg/hd/@(photo).jpg"
-                                         srcset="@(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/jpeg/hd/@(photo).jpg, @(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/jpeg/1440p/@(photo).jpg 2x, @(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/jpeg/4k/@(photo).jpg 3x"
+                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/jxl/hd/@(photo).jxl, @(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/jxl/1440p/@(photo).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/jxl/4k/@(photo).jxl 3x" type="image/jxl">
+                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/avif/hd/@(photo).avif, @(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/avif/1440p/@(photo).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/avif/4k/@(photo).avif 3x" type="image/avif">
+                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/webp/hd/@(photo).webp, @(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/webp/1440p/@(photo).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/webp/4k/@(photo).webp 3x" type="image/webp">
+                                    <img alt="" height="auto" src="@(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/jpeg/hd/@(photo).jpg"
+                                         srcset="@(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/jpeg/hd/@(photo).jpg, @(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/jpeg/1440p/@(photo).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/jpeg/4k/@(photo).jpg 3x"
                                          style="max-height: 256px; max-width: 100%; border-radius: 8px;" width="auto"/>
                                 </picture>
                             </MudCardContent>
@@ -249,7 +249,7 @@
         </MudCardContent>
     </MudCard>
 
-    <PhotoLightbox @ref="_lightbox" BaseUrl="@Assets.BaseUrl" Category="sound-synths"/>
+    <PhotoLightbox @ref="_lightbox" BaseUrl="@AssetUrls.BaseUrl" Category="sound-synths"/>
 }
 
 @* ── Computers Card ── *@

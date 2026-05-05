@@ -32,7 +32,7 @@
 @inject CompanyLogosService CompanyLogosService
 @inject IDialogService DialogService
 @inject NavigationManager NavigationManager
-@inject ApiAssetUrlProvider Assets
+@inject ApiAssetUrlProvider AssetUrls
 
 <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
     <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
@@ -90,14 +90,14 @@
                     <MudCard Elevation="2">
                         <div style="display: flex; justify-content: center; align-items: center; padding: 16px; min-height: 180px; background: #f5f5f5;">
                             <picture>
-                                <source srcset="@(Assets.BaseUrl)/assets/logos/@(logo.Guid).svg" type="image/svg+xml">
-                                <source srcset="@(Assets.BaseUrl)/assets/logos/webp/1x/@(logo.Guid).webp,
-                                                @(Assets.BaseUrl)/assets/logos/webp/2x/@(logo.Guid).webp 2x,
-                                                @(Assets.BaseUrl)/assets/logos/webp/3x/@(logo.Guid).webp 3x" type="image/webp">
-                                <img alt="Logo" src="@(Assets.BaseUrl)/assets/logos/png/1x/@(logo.Guid).png"
-                                     srcset="@(Assets.BaseUrl)/assets/logos/png/1x/@(logo.Guid).png,
-                                             @(Assets.BaseUrl)/assets/logos/png/2x/@(logo.Guid).png 2x,
-                                             @(Assets.BaseUrl)/assets/logos/png/3x/@(logo.Guid).png 3x"
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/logos/@(logo.Guid).svg" type="image/svg+xml">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/logos/webp/1x/@(logo.Guid).webp,
+                                                @(AssetUrls.BaseUrl)/assets/logos/webp/2x/@(logo.Guid).webp 2x,
+                                                @(AssetUrls.BaseUrl)/assets/logos/webp/3x/@(logo.Guid).webp 3x" type="image/webp">
+                                <img alt="Logo" src="@(AssetUrls.BaseUrl)/assets/logos/png/1x/@(logo.Guid).png"
+                                     srcset="@(AssetUrls.BaseUrl)/assets/logos/png/1x/@(logo.Guid).png,
+                                             @(AssetUrls.BaseUrl)/assets/logos/png/2x/@(logo.Guid).png 2x,
+                                             @(AssetUrls.BaseUrl)/assets/logos/png/3x/@(logo.Guid).png 3x"
                                      style="max-height: 150px; max-width: 100%;"/>
                             </picture>
                         </div>

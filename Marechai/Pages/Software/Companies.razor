@@ -30,7 +30,7 @@
 @using Marechai.ApiClient.Models
 @inherits OwningComponentBase<SoftwareService>
 @inject IStringLocalizer<SoftwareService> L
-@inject ApiAssetUrlProvider             Assets
+@inject ApiAssetUrlProvider             AssetUrls
 
 @if(_companies is null)
 {
@@ -71,14 +71,14 @@
                             @if(company.LastLogo != null)
                             {
                                 <picture>
-                                    <source srcset="@(Assets.BaseUrl)/assets/logos/@(company.LastLogo).svg" type="image/svg+xml">
-                                    <source srcset="@(Assets.BaseUrl)/assets/logos/thumbs/webp/1x/@(company.LastLogo).webp,
-@(Assets.BaseUrl)/assets/logos/thumbs/webp/2x/@(company.LastLogo).webp 2x,
-@(Assets.BaseUrl)/assets/logos/thumbs/webp/3x/@(company.LastLogo).webp 3x" type="image/webp">
-                                    <img alt="" height="auto" src="@(Assets.BaseUrl)/assets/logos/thumbs/png/1x/@(company.LastLogo).png"
-                                         srcset="@(Assets.BaseUrl)/assets/logos/thumbs/png/1x/@(company.LastLogo).png,
-                     @(Assets.BaseUrl)/assets/logos/thumbs/png/2x/@(company.LastLogo).png 2x,
-                     @(Assets.BaseUrl)/assets/logos/thumbs/png/3x/@(company.LastLogo).png 3x" style="max-height: 48px; max-width: 200px"
+                                    <source srcset="@(AssetUrls.BaseUrl)/assets/logos/@(company.LastLogo).svg" type="image/svg+xml">
+                                    <source srcset="@(AssetUrls.BaseUrl)/assets/logos/thumbs/webp/1x/@(company.LastLogo).webp,
+@(AssetUrls.BaseUrl)/assets/logos/thumbs/webp/2x/@(company.LastLogo).webp 2x,
+@(AssetUrls.BaseUrl)/assets/logos/thumbs/webp/3x/@(company.LastLogo).webp 3x" type="image/webp">
+                                    <img alt="" height="auto" src="@(AssetUrls.BaseUrl)/assets/logos/thumbs/png/1x/@(company.LastLogo).png"
+                                         srcset="@(AssetUrls.BaseUrl)/assets/logos/thumbs/png/1x/@(company.LastLogo).png,
+                     @(AssetUrls.BaseUrl)/assets/logos/thumbs/png/2x/@(company.LastLogo).png 2x,
+                     @(AssetUrls.BaseUrl)/assets/logos/thumbs/png/3x/@(company.LastLogo).png 3x" style="max-height: 48px; max-width: 200px"
                                          width="auto"/>
                                 </picture>
                             }

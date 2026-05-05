@@ -31,7 +31,7 @@
 @inherits OwningComponentBase<ProcessorsService>
 @inject IStringLocalizer<ProcessorsService> L
 @inject ProcessorPhotosService ProcessorPhotosService
-@inject ApiAssetUrlProvider Assets
+@inject ApiAssetUrlProvider AssetUrls
 
 @if(!_loaded)
 {
@@ -274,11 +274,11 @@
                                           @onclick="() => _lightbox.Show(_photos, photo)">
 
                                 <picture>
-                                    <source srcset="@(Assets.BaseUrl)/assets/photos/processors/thumbs/jxl/hd/@(photo).jxl, @(Assets.BaseUrl)/assets/photos/processors/thumbs/jxl/1440p/@(photo).jxl 2x, @(Assets.BaseUrl)/assets/photos/processors/thumbs/jxl/4k/@(photo).jxl 3x" type="image/jxl">
-                                    <source srcset="@(Assets.BaseUrl)/assets/photos/processors/thumbs/avif/hd/@(photo).avif, @(Assets.BaseUrl)/assets/photos/processors/thumbs/avif/1440p/@(photo).avif 2x, @(Assets.BaseUrl)/assets/photos/processors/thumbs/avif/4k/@(photo).avif 3x" type="image/avif">
-                                    <source srcset="@(Assets.BaseUrl)/assets/photos/processors/thumbs/webp/hd/@(photo).webp, @(Assets.BaseUrl)/assets/photos/processors/thumbs/webp/1440p/@(photo).webp 2x, @(Assets.BaseUrl)/assets/photos/processors/thumbs/webp/4k/@(photo).webp 3x" type="image/webp">
-                                    <img alt="" src="@(Assets.BaseUrl)/assets/photos/processors/thumbs/jpeg/hd/@(photo).jpg"
-                                         srcset="@(Assets.BaseUrl)/assets/photos/processors/thumbs/jpeg/hd/@(photo).jpg, @(Assets.BaseUrl)/assets/photos/processors/thumbs/jpeg/1440p/@(photo).jpg 2x, @(Assets.BaseUrl)/assets/photos/processors/thumbs/jpeg/4k/@(photo).jpg 3x"
+                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/processors/thumbs/jxl/hd/@(photo).jxl, @(AssetUrls.BaseUrl)/assets/photos/processors/thumbs/jxl/1440p/@(photo).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/processors/thumbs/jxl/4k/@(photo).jxl 3x" type="image/jxl">
+                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/processors/thumbs/avif/hd/@(photo).avif, @(AssetUrls.BaseUrl)/assets/photos/processors/thumbs/avif/1440p/@(photo).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/processors/thumbs/avif/4k/@(photo).avif 3x" type="image/avif">
+                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/processors/thumbs/webp/hd/@(photo).webp, @(AssetUrls.BaseUrl)/assets/photos/processors/thumbs/webp/1440p/@(photo).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/processors/thumbs/webp/4k/@(photo).webp 3x" type="image/webp">
+                                    <img alt="" src="@(AssetUrls.BaseUrl)/assets/photos/processors/thumbs/jpeg/hd/@(photo).jpg"
+                                         srcset="@(AssetUrls.BaseUrl)/assets/photos/processors/thumbs/jpeg/hd/@(photo).jpg, @(AssetUrls.BaseUrl)/assets/photos/processors/thumbs/jpeg/1440p/@(photo).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/processors/thumbs/jpeg/4k/@(photo).jpg 3x"
                                          style="max-height: 256px; max-width: 100%; border-radius: 8px;"/>
                                 </picture>
                             </MudCardContent>
@@ -296,7 +296,7 @@
     </MudCard>
 }
 
-<PhotoLightbox @ref="_lightbox" BaseUrl="@Assets.BaseUrl" Category="processors"/>
+<PhotoLightbox @ref="_lightbox" BaseUrl="@AssetUrls.BaseUrl" Category="processors"/>
 
 @* ── Description Card ── *@
 @if(!string.IsNullOrWhiteSpace(_description))

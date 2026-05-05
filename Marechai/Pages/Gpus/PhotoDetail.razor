@@ -31,7 +31,7 @@
 @using Humanizer
 @inherits OwningComponentBase<GpuPhotosService>
 @inject IStringLocalizer<GpuPhotosService> L
-@inject ApiAssetUrlProvider                Assets
+@inject ApiAssetUrlProvider                AssetUrls
 
 @if(!_loaded)
 {
@@ -65,10 +65,10 @@
 <MudCard Elevation="2" Class="mb-4 rounded-lg">
     <MudCardContent Class="d-flex justify-center pa-4">
         <picture>
-            <source srcset="@(Assets.BaseUrl)/assets/photos/gpus/jxl/4k/@(_photo.Id).jxl" type="image/jxl">
-            <source srcset="@(Assets.BaseUrl)/assets/photos/gpus/avif/4k/@(_photo.Id).avif" type="image/avif">
-            <source srcset="@(Assets.BaseUrl)/assets/photos/gpus/webp/4k/@(_photo.Id).webp" type="image/webp">
-            <img alt="@_photo.GpuName" src="@(Assets.BaseUrl)/assets/photos/gpus/jpeg/4k/@(_photo.Id).jpg"
+            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/gpus/jxl/4k/@(_photo.Id).jxl" type="image/jxl">
+            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/gpus/avif/4k/@(_photo.Id).avif" type="image/avif">
+            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/gpus/webp/4k/@(_photo.Id).webp" type="image/webp">
+            <img alt="@_photo.GpuName" src="@(AssetUrls.BaseUrl)/assets/photos/gpus/jpeg/4k/@(_photo.Id).jpg"
                  style="max-width: 100%; max-height: 70vh; border-radius: 8px;"/>
         </picture>
     </MudCardContent>

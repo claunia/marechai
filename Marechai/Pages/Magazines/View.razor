@@ -29,7 +29,7 @@
 @using Marechai.ApiClient.Models
 @inherits OwningComponentBase<MagazinesService>
 @inject IStringLocalizer<MagazinesService> L
-@inject ApiAssetUrlProvider                Assets
+@inject ApiAssetUrlProvider                AssetUrls
 
 @if(!_loaded)
 {
@@ -104,9 +104,9 @@
                         @if(_magazine.CountryId.HasValue)
                         {
                             <picture>
-                                <source srcset="@(Assets.BaseUrl)/assets/flags/countries/@($"{_magazine.CountryId:D3}").svg" type="image/svg+xml">
-                                <source srcset="@(Assets.BaseUrl)/assets/flags/countries/webp/1x/@($"{_magazine.CountryId:D3}").webp" type="image/webp">
-                                <img alt="" height="32" src="@(Assets.BaseUrl)/assets/flags/countries/png/1x/@($"{_magazine.CountryId:D3}").png"/>
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/flags/countries/@($"{_magazine.CountryId:D3}").svg" type="image/svg+xml">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/flags/countries/webp/1x/@($"{_magazine.CountryId:D3}").webp" type="image/webp">
+                                <img alt="" height="32" src="@(AssetUrls.BaseUrl)/assets/flags/countries/png/1x/@($"{_magazine.CountryId:D3}").png"/>
                             </picture>
                         }
                         @L[_magazine.Country]

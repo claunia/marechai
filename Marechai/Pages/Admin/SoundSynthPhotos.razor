@@ -33,7 +33,7 @@
 @inject IStringLocalizer<SoundSynthPhotosService> L
 @inject IDialogService DialogService
 @inject NavigationManager NavigationManager
-@inject ApiAssetUrlProvider Assets
+@inject ApiAssetUrlProvider AssetUrls
 
 <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #2e7d32 0%, #66bb6a 100%); border-radius: 16px;">
     <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
@@ -157,11 +157,11 @@
                     <MudCard Elevation="1" Class="rounded-lg">
                         <MudCardContent Class="pa-2 d-flex justify-center">
                             <picture>
-                                <source srcset="@(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/jxl/hd/@(photo.Id).jxl, @(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/jxl/1440p/@(photo.Id).jxl 2x, @(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/jxl/4k/@(photo.Id).jxl 3x" type="image/jxl">
-                                <source srcset="@(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/avif/hd/@(photo.Id).avif, @(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/avif/1440p/@(photo.Id).avif 2x, @(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/avif/4k/@(photo.Id).avif 3x" type="image/avif">
-                                <source srcset="@(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/webp/hd/@(photo.Id).webp, @(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/webp/1440p/@(photo.Id).webp 2x, @(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/webp/4k/@(photo.Id).webp 3x" type="image/webp">
-                                <img alt="" height="auto" src="@(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/jpeg/hd/@(photo.Id).jpg"
-                                     srcset="@(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/jpeg/hd/@(photo.Id).jpg, @(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/jpeg/1440p/@(photo.Id).jpg 2x, @(Assets.BaseUrl)/assets/photos/sound-synths/thumbs/jpeg/4k/@(photo.Id).jpg 3x"
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/jxl/hd/@(photo.Id).jxl, @(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/jxl/1440p/@(photo.Id).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/jxl/4k/@(photo.Id).jxl 3x" type="image/jxl">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/avif/hd/@(photo.Id).avif, @(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/avif/1440p/@(photo.Id).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/avif/4k/@(photo.Id).avif 3x" type="image/avif">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/webp/hd/@(photo.Id).webp, @(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/webp/1440p/@(photo.Id).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/webp/4k/@(photo.Id).webp 3x" type="image/webp">
+                                <img alt="" height="auto" src="@(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/jpeg/hd/@(photo.Id).jpg"
+                                     srcset="@(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/jpeg/hd/@(photo.Id).jpg, @(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/jpeg/1440p/@(photo.Id).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/jpeg/4k/@(photo.Id).jpg 3x"
                                      style="max-height: 256px; max-width: 100%; border-radius: 8px;" width="auto"/>
                             </picture>
                         </MudCardContent>

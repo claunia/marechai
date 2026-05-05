@@ -29,7 +29,7 @@
 @using Marechai.ApiClient.Models
 @inherits OwningComponentBase<SoftwareService>
 @inject IStringLocalizer<SoftwareService> L
-@inject ApiAssetUrlProvider               Assets
+@inject ApiAssetUrlProvider               AssetUrls
 
 @if(!_loaded)
 {
@@ -53,13 +53,13 @@
         @if(_heroCover is not null)
         {
             <picture>
-                <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/jxl/hd/@(_heroCover.Id).jxl, @(Assets.BaseUrl)/assets/photos/software-covers/jxl/1440p/@(_heroCover.Id).jxl 2x, @(Assets.BaseUrl)/assets/photos/software-covers/jxl/4k/@(_heroCover.Id).jxl 3x" type="image/jxl">
-                <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/avif/hd/@(_heroCover.Id).avif, @(Assets.BaseUrl)/assets/photos/software-covers/avif/1440p/@(_heroCover.Id).avif 2x, @(Assets.BaseUrl)/assets/photos/software-covers/avif/4k/@(_heroCover.Id).avif 3x" type="image/avif">
-                <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/heif/hd/@(_heroCover.Id).heic, @(Assets.BaseUrl)/assets/photos/software-covers/heif/1440p/@(_heroCover.Id).heic 2x, @(Assets.BaseUrl)/assets/photos/software-covers/heif/4k/@(_heroCover.Id).heic 3x" type="image/heic">
-                <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/webp/hd/@(_heroCover.Id).webp, @(Assets.BaseUrl)/assets/photos/software-covers/webp/1440p/@(_heroCover.Id).webp 2x, @(Assets.BaseUrl)/assets/photos/software-covers/webp/4k/@(_heroCover.Id).webp 3x" type="image/webp">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/hd/@(_heroCover.Id).jxl, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/1440p/@(_heroCover.Id).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(_heroCover.Id).jxl 3x" type="image/jxl">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/hd/@(_heroCover.Id).avif, @(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/1440p/@(_heroCover.Id).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(_heroCover.Id).avif 3x" type="image/avif">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/heif/hd/@(_heroCover.Id).heic, @(AssetUrls.BaseUrl)/assets/photos/software-covers/heif/1440p/@(_heroCover.Id).heic 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/heif/4k/@(_heroCover.Id).heic 3x" type="image/heic">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/hd/@(_heroCover.Id).webp, @(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/1440p/@(_heroCover.Id).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(_heroCover.Id).webp 3x" type="image/webp">
                 <img alt="@_software.Name"
-                     src="@(Assets.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(_heroCover.Id).jpg"
-                     srcset="@(Assets.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(_heroCover.Id).jpg, @(Assets.BaseUrl)/assets/photos/software-covers/jpeg/1440p/@(_heroCover.Id).jpg 2x, @(Assets.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(_heroCover.Id).jpg 3x"
+                     src="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(_heroCover.Id).jpg"
+                     srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(_heroCover.Id).jpg, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/1440p/@(_heroCover.Id).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(_heroCover.Id).jpg 3x"
                      style="max-height: 256px; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);"/>
             </picture>
         }
@@ -513,13 +513,13 @@
                             <MudCard Elevation="1" Class="rounded-lg" Style="width: 200px; cursor: pointer;" @onclick="() => _fullscreenCover = cover">
                                 <MudCardContent Class="pa-2">
                                     <picture>
-                                        <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/jxl/hd/@(cover.Id).jxl, @(Assets.BaseUrl)/assets/photos/software-covers/jxl/1440p/@(cover.Id).jxl 2x, @(Assets.BaseUrl)/assets/photos/software-covers/jxl/4k/@(cover.Id).jxl 3x" type="image/jxl">
-                                        <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/avif/hd/@(cover.Id).avif, @(Assets.BaseUrl)/assets/photos/software-covers/avif/1440p/@(cover.Id).avif 2x, @(Assets.BaseUrl)/assets/photos/software-covers/avif/4k/@(cover.Id).avif 3x" type="image/avif">
-                                        <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/heif/hd/@(cover.Id).heic, @(Assets.BaseUrl)/assets/photos/software-covers/heif/1440p/@(cover.Id).heic 2x, @(Assets.BaseUrl)/assets/photos/software-covers/heif/4k/@(cover.Id).heic 3x" type="image/heic">
-                                        <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/webp/hd/@(cover.Id).webp, @(Assets.BaseUrl)/assets/photos/software-covers/webp/1440p/@(cover.Id).webp 2x, @(Assets.BaseUrl)/assets/photos/software-covers/webp/4k/@(cover.Id).webp 3x" type="image/webp">
+                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/hd/@(cover.Id).jxl, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/1440p/@(cover.Id).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(cover.Id).jxl 3x" type="image/jxl">
+                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/hd/@(cover.Id).avif, @(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/1440p/@(cover.Id).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(cover.Id).avif 3x" type="image/avif">
+                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/heif/hd/@(cover.Id).heic, @(AssetUrls.BaseUrl)/assets/photos/software-covers/heif/1440p/@(cover.Id).heic 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/heif/4k/@(cover.Id).heic 3x" type="image/heic">
+                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/hd/@(cover.Id).webp, @(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/1440p/@(cover.Id).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(cover.Id).webp 3x" type="image/webp">
                                         <img alt="@(cover.TypeName ?? cover.Caption)"
-                                             src="@(Assets.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(cover.Id).jpg"
-                                             srcset="@(Assets.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(cover.Id).jpg, @(Assets.BaseUrl)/assets/photos/software-covers/jpeg/1440p/@(cover.Id).jpg 2x, @(Assets.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(cover.Id).jpg 3x"
+                                             src="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(cover.Id).jpg"
+                                             srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(cover.Id).jpg, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/1440p/@(cover.Id).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(cover.Id).jpg 3x"
                                              style="width: 100%; max-height: 250px; object-fit: contain; border-radius: 4px;"/>
                                     </picture>
                                     <MudText Typo="Typo.caption" Align="Align.Center" Class="mt-1"><strong>@cover.TypeName</strong></MudText>
@@ -542,12 +542,12 @@
     <MudOverlay Visible="true" DarkBackground="true" ZIndex="9999" OnClick="() => _fullscreenCover = null">
         <div class="d-flex flex-column align-center justify-center" style="width: 100vw; height: 100vh;">
             <picture>
-                <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/jxl/4k/@(_fullscreenCover.Id).jxl" type="image/jxl">
-                <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/avif/4k/@(_fullscreenCover.Id).avif" type="image/avif">
-                <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/heif/4k/@(_fullscreenCover.Id).heic" type="image/heic">
-                <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/webp/4k/@(_fullscreenCover.Id).webp" type="image/webp">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(_fullscreenCover.Id).jxl" type="image/jxl">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(_fullscreenCover.Id).avif" type="image/avif">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/heif/4k/@(_fullscreenCover.Id).heic" type="image/heic">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(_fullscreenCover.Id).webp" type="image/webp">
                 <img alt="@(_fullscreenCover.TypeName ?? _fullscreenCover.Caption)"
-                     src="@(Assets.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(_fullscreenCover.Id).jpg"
+                     src="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(_fullscreenCover.Id).jpg"
                      style="max-width: 95vw; max-height: 90vh; object-fit: contain;"/>
             </picture>
             <MudText Typo="Typo.subtitle1" Style="color: white;" Class="mt-2">@_fullscreenCover.TypeName</MudText>
@@ -581,13 +581,13 @@
                             <MudCard Elevation="1" Class="rounded-lg" Style="width: 200px; cursor: pointer;" @onclick="() => _fullscreenScreenshot = screenshot">
                                 <MudCardContent Class="pa-2">
                                     <picture>
-                                        <source srcset="@(Assets.BaseUrl)/assets/photos/software-screenshots/jxl/hd/@(screenshot.Id).jxl, @(Assets.BaseUrl)/assets/photos/software-screenshots/jxl/1440p/@(screenshot.Id).jxl 2x, @(Assets.BaseUrl)/assets/photos/software-screenshots/jxl/4k/@(screenshot.Id).jxl 3x" type="image/jxl">
-                                        <source srcset="@(Assets.BaseUrl)/assets/photos/software-screenshots/avif/hd/@(screenshot.Id).avif, @(Assets.BaseUrl)/assets/photos/software-screenshots/avif/1440p/@(screenshot.Id).avif 2x, @(Assets.BaseUrl)/assets/photos/software-screenshots/avif/4k/@(screenshot.Id).avif 3x" type="image/avif">
-                                        <source srcset="@(Assets.BaseUrl)/assets/photos/software-screenshots/heif/hd/@(screenshot.Id).heic, @(Assets.BaseUrl)/assets/photos/software-screenshots/heif/1440p/@(screenshot.Id).heic 2x, @(Assets.BaseUrl)/assets/photos/software-screenshots/heif/4k/@(screenshot.Id).heic 3x" type="image/heic">
-                                        <source srcset="@(Assets.BaseUrl)/assets/photos/software-screenshots/webp/hd/@(screenshot.Id).webp, @(Assets.BaseUrl)/assets/photos/software-screenshots/webp/1440p/@(screenshot.Id).webp 2x, @(Assets.BaseUrl)/assets/photos/software-screenshots/webp/4k/@(screenshot.Id).webp 3x" type="image/webp">
+                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jxl/hd/@(screenshot.Id).jxl, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jxl/1440p/@(screenshot.Id).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jxl/4k/@(screenshot.Id).jxl 3x" type="image/jxl">
+                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/avif/hd/@(screenshot.Id).avif, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/avif/1440p/@(screenshot.Id).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/avif/4k/@(screenshot.Id).avif 3x" type="image/avif">
+                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/heif/hd/@(screenshot.Id).heic, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/heif/1440p/@(screenshot.Id).heic 2x, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/heif/4k/@(screenshot.Id).heic 3x" type="image/heic">
+                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/webp/hd/@(screenshot.Id).webp, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/webp/1440p/@(screenshot.Id).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/webp/4k/@(screenshot.Id).webp 3x" type="image/webp">
                                         <img alt="@screenshot.Caption"
-                                             src="@(Assets.BaseUrl)/assets/photos/software-screenshots/jpeg/hd/@(screenshot.Id).jpg"
-                                             srcset="@(Assets.BaseUrl)/assets/photos/software-screenshots/jpeg/hd/@(screenshot.Id).jpg, @(Assets.BaseUrl)/assets/photos/software-screenshots/jpeg/1440p/@(screenshot.Id).jpg 2x, @(Assets.BaseUrl)/assets/photos/software-screenshots/jpeg/4k/@(screenshot.Id).jpg 3x"
+                                             src="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/hd/@(screenshot.Id).jpg"
+                                             srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/hd/@(screenshot.Id).jpg, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/1440p/@(screenshot.Id).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/4k/@(screenshot.Id).jpg 3x"
                                              style="width: 100%; max-height: 150px; object-fit: contain; border-radius: 4px;"/>
                                     </picture>
                                     @if(!string.IsNullOrEmpty(screenshot.Caption))
@@ -609,12 +609,12 @@
     <MudOverlay Visible="true" DarkBackground="true" ZIndex="9999" OnClick="() => _fullscreenScreenshot = null">
         <div class="d-flex flex-column align-center justify-center" style="width: 100vw; height: 100vh;">
             <picture>
-                <source srcset="@(Assets.BaseUrl)/assets/photos/software-screenshots/jxl/4k/@(_fullscreenScreenshot.Id).jxl" type="image/jxl">
-                <source srcset="@(Assets.BaseUrl)/assets/photos/software-screenshots/avif/4k/@(_fullscreenScreenshot.Id).avif" type="image/avif">
-                <source srcset="@(Assets.BaseUrl)/assets/photos/software-screenshots/heif/4k/@(_fullscreenScreenshot.Id).heic" type="image/heic">
-                <source srcset="@(Assets.BaseUrl)/assets/photos/software-screenshots/webp/4k/@(_fullscreenScreenshot.Id).webp" type="image/webp">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jxl/4k/@(_fullscreenScreenshot.Id).jxl" type="image/jxl">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/avif/4k/@(_fullscreenScreenshot.Id).avif" type="image/avif">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/heif/4k/@(_fullscreenScreenshot.Id).heic" type="image/heic">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/webp/4k/@(_fullscreenScreenshot.Id).webp" type="image/webp">
                 <img alt="@_fullscreenScreenshot.Caption"
-                     src="@(Assets.BaseUrl)/assets/photos/software-screenshots/jpeg/4k/@(_fullscreenScreenshot.Id).jpg"
+                     src="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/4k/@(_fullscreenScreenshot.Id).jpg"
                      style="max-width: 95vw; max-height: 90vh; object-fit: contain;"/>
             </picture>
             @if(!string.IsNullOrEmpty(_fullscreenScreenshot.Caption))

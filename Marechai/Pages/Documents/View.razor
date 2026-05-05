@@ -29,7 +29,7 @@
 @using Marechai.ApiClient.Models
 @inherits OwningComponentBase<DocumentsService>
 @inject IStringLocalizer<DocumentsService> L
-@inject ApiAssetUrlProvider                Assets
+@inject ApiAssetUrlProvider                AssetUrls
 @inject CollectionService                  CollectionSvc
 
 @if(!_loaded)
@@ -103,9 +103,9 @@
                         @if(_document.CountryId.HasValue)
                         {
                             <picture>
-                                <source srcset="@(Assets.BaseUrl)/assets/flags/countries/@($"{_document.CountryId:D3}").svg" type="image/svg+xml">
-                                <source srcset="@(Assets.BaseUrl)/assets/flags/countries/webp/1x/@($"{_document.CountryId:D3}").webp" type="image/webp">
-                                <img alt="" height="32" src="@(Assets.BaseUrl)/assets/flags/countries/png/1x/@($"{_document.CountryId:D3}").png"/>
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/flags/countries/@($"{_document.CountryId:D3}").svg" type="image/svg+xml">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/flags/countries/webp/1x/@($"{_document.CountryId:D3}").webp" type="image/webp">
+                                <img alt="" height="32" src="@(AssetUrls.BaseUrl)/assets/flags/countries/png/1x/@($"{_document.CountryId:D3}").png"/>
                             </picture>
                         }
                         @L[_document.Country]

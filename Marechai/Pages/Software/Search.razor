@@ -34,7 +34,7 @@
 @using Marechai.ApiClient.Models
 @inherits OwningComponentBase<SoftwareService>
 @inject IStringLocalizer<SoftwareService> L
-@inject ApiAssetUrlProvider               Assets
+@inject ApiAssetUrlProvider               AssetUrls
 
 @if(_software is null)
 {
@@ -80,13 +80,13 @@
                     @if(sw.FrontCoverId.HasValue)
                     {
                         <picture>
-                            <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/jxl/hd/@(sw.FrontCoverId).jxl, @(Assets.BaseUrl)/assets/photos/software-covers/jxl/1440p/@(sw.FrontCoverId).jxl 2x, @(Assets.BaseUrl)/assets/photos/software-covers/jxl/4k/@(sw.FrontCoverId).jxl 3x" type="image/jxl">
-                            <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/avif/hd/@(sw.FrontCoverId).avif, @(Assets.BaseUrl)/assets/photos/software-covers/avif/1440p/@(sw.FrontCoverId).avif 2x, @(Assets.BaseUrl)/assets/photos/software-covers/avif/4k/@(sw.FrontCoverId).avif 3x" type="image/avif">
-                            <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/heif/hd/@(sw.FrontCoverId).heic, @(Assets.BaseUrl)/assets/photos/software-covers/heif/1440p/@(sw.FrontCoverId).heic 2x, @(Assets.BaseUrl)/assets/photos/software-covers/heif/4k/@(sw.FrontCoverId).heic 3x" type="image/heic">
-                            <source srcset="@(Assets.BaseUrl)/assets/photos/software-covers/webp/hd/@(sw.FrontCoverId).webp, @(Assets.BaseUrl)/assets/photos/software-covers/webp/1440p/@(sw.FrontCoverId).webp 2x, @(Assets.BaseUrl)/assets/photos/software-covers/webp/4k/@(sw.FrontCoverId).webp 3x" type="image/webp">
+                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/hd/@(sw.FrontCoverId).jxl, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/1440p/@(sw.FrontCoverId).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(sw.FrontCoverId).jxl 3x" type="image/jxl">
+                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/hd/@(sw.FrontCoverId).avif, @(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/1440p/@(sw.FrontCoverId).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(sw.FrontCoverId).avif 3x" type="image/avif">
+                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/heif/hd/@(sw.FrontCoverId).heic, @(AssetUrls.BaseUrl)/assets/photos/software-covers/heif/1440p/@(sw.FrontCoverId).heic 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/heif/4k/@(sw.FrontCoverId).heic 3x" type="image/heic">
+                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/hd/@(sw.FrontCoverId).webp, @(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/1440p/@(sw.FrontCoverId).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(sw.FrontCoverId).webp 3x" type="image/webp">
                             <img alt="@sw.Name" height="48"
-                                 src="@(Assets.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(sw.FrontCoverId).jpg"
-                                 srcset="@(Assets.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(sw.FrontCoverId).jpg, @(Assets.BaseUrl)/assets/photos/software-covers/jpeg/1440p/@(sw.FrontCoverId).jpg 2x, @(Assets.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(sw.FrontCoverId).jpg 3x"
+                                 src="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(sw.FrontCoverId).jpg"
+                                 srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(sw.FrontCoverId).jpg, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/1440p/@(sw.FrontCoverId).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(sw.FrontCoverId).jpg 3x"
                                  style="object-fit: contain; border-radius: 4px;"/>
                         </picture>
                     }
