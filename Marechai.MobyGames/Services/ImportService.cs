@@ -385,7 +385,8 @@ public class ImportService
             await ImportBasicReleaseAsync(context, software, game);
 
         // 6. Credits
-        var addedCredits = new HashSet<(ulong, int, string)>();
+        var addedCredits = new HashSet<(ulong, int, string)>(
+            new CaseInsensitiveCreditComparer());
 
         foreach(var credit in game.Credits)
         {
@@ -965,4 +966,15 @@ public class ImportService
         // Catch-all
         _                                => null
     };
+}
+
+sealed class CaseInsensitiveCreditComparer : IEqualityComparer<(ulong, int, string)>
+{
+    public bool Equals((ulong, int, string) x, (ulong, int, string) y)
+        => x.Item1 == y.Item1 &&
+           x.Item2 == y.Item2 &&
+           string.Equals(x.Item3, y.Item3, StringComparison.OrdinalIgnoreCase);
+
+    public int GetHashCode((ulong, int, string) obj)
+        => HashCode.Combine(obj.Item1, obj.Item2, StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Item3));
 }
