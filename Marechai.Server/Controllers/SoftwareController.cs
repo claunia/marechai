@@ -514,7 +514,7 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
     public async Task<List<SoftwareSpecKeyDto>> GetSpecificationsAsync()
     {
         var raw = await context.SoftwareAttributes
-                               .Where(a => a.Category == "Spec")
+                               .Where(a => a.Category == "Spec" && a.Key != "Notes")
                                .Select(a => new { a.Key, a.Value })
                                .Distinct()
                                .ToListAsync();
@@ -533,8 +533,11 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<SoftwareDto>> GetSoftwareBySpecAsync([FromQuery] string key, [FromQuery] string value) =>
-        context.Softwares
+    public async Task<List<SoftwareDto>> GetSoftwareBySpecAsync([FromQuery] string key, [FromQuery] string value)
+    {
+        if(key == "Notes") return [];
+
+        return await context.Softwares
                .Where(s => s.Versions.Any(v => v.Releases.Any(r => r.Attributes
                                                                      .Any(a => a.Category == "Spec" &&
                                                                               a.Key   == key         &&
@@ -560,6 +563,7 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
                                           .FirstOrDefault()
                 })
                .ToListAsync();
+    }
 
     [HttpGet("/software/{softwareId:ulong}/genres")]
     [AllowAnonymous]
