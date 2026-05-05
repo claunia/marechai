@@ -67,14 +67,15 @@
                        FilesChanged="OnFileSelected"
                        Accept=".svg"
                        MaximumFileCount="1">
-            <ActivatorContent>
+            <CustomContent>
                 <MudButton Variant="Variant.Filled"
                            Color="Color.Primary"
                            StartIcon="@Icons.Material.Filled.Upload"
-                           Disabled="_isUploading">
+                           Disabled="_isUploading"
+                           OnClick="@context.OpenFilePickerAsync">
                     @(_isUploading ? "Uploading..." : "Upload SVG")
                 </MudButton>
-            </ActivatorContent>
+            </CustomContent>
         </MudFileUpload>
         <MudSpacer/>
         <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadLogosAsync"/>
@@ -87,7 +88,7 @@
             {
                 <MudItem xs="12" sm="6" md="4" lg="3">
                     <MudCard Elevation="2">
-                        <MudCardMedia Style="display: flex; justify-content: center; align-items: center; padding: 16px; min-height: 180px; background: #f5f5f5;">
+                        <div style="display: flex; justify-content: center; align-items: center; padding: 16px; min-height: 180px; background: #f5f5f5;">
                             <picture>
                                 <source srcset="@(Assets.BaseUrl)/assets/logos/@(logo.Guid).svg" type="image/svg+xml">
                                 <source srcset="@(Assets.BaseUrl)/assets/logos/webp/1x/@(logo.Guid).webp,
@@ -99,7 +100,7 @@
                                              @(Assets.BaseUrl)/assets/logos/png/3x/@(logo.Guid).png 3x"
                                      style="max-height: 150px; max-width: 100%;"/>
                             </picture>
-                        </MudCardMedia>
+                        </div>
                         <MudCardContent>
                             <MudText Typo="Typo.body2" Align="Align.Center">@(logo.Year?.ToString() ?? "Year unknown")</MudText>
                         </MudCardContent>

@@ -100,8 +100,9 @@
 
         <MudFileUpload T="IBrowserFile" Accept=".jpg,.jpeg,.png,.webp,.tiff,.tif,.bmp"
                        FilesChanged="OnFileSelected" MaximumFileCount="1">
-            <ActivatorContent>
-                <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.AttachFile">
+            <CustomContent>
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.AttachFile"
+                           OnClick="@context.OpenFilePickerAsync">
                     @if(_selectedFile is not null)
                     {
                         @_selectedFile.Name
@@ -111,7 +112,7 @@
                         @L["Select File"]
                     }
                 </MudButton>
-            </ActivatorContent>
+            </CustomContent>
         </MudFileUpload>
 
         <MudButton Variant="Variant.Filled" Color="Color.Primary"

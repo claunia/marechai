@@ -68,14 +68,15 @@
                                    Accept=".csv"
                                    FilesChanged="OnCsvFileSelected"
                                    MaximumFileCount="1">
-                        <ActivatorContent>
+                        <CustomContent>
                             <MudButton Variant="Variant.Filled"
                                        Color="Color.Primary"
                                        StartIcon="@Icons.Material.Filled.Upload"
-                                       Disabled="_isProcessing">
+                                       Disabled="_isProcessing"
+                                       OnClick="@context.OpenFilePickerAsync">
                                 @(_isProcessing ? L["Processing..."] : L["Upload CSV"])
                             </MudButton>
-                        </ActivatorContent>
+                        </CustomContent>
                     </MudFileUpload>
 
                     @if(_isProcessing)

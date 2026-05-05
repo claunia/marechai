@@ -201,13 +201,14 @@
                             <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center">
                                 <MudFileUpload T="IBrowserFile" Accept=".jpg,.jpeg,.png,.webp,.tiff,.tif,.bmp"
                                                FilesChanged="OnAvatarFileSelected" MaximumFileCount="1">
-                                    <ActivatorContent>
+                                    <CustomContent>
                                         <MudButton Variant="Variant.Outlined" Color="Color.Primary"
                                                    StartIcon="@Icons.Material.Filled.CloudUpload"
-                                                   Size="Size.Small" Disabled="_isUploadingAvatar">
+                                                   Size="Size.Small" Disabled="_isUploadingAvatar"
+                                                   OnClick="@context.OpenFilePickerAsync">
                                             Upload Avatar
                                         </MudButton>
-                                    </ActivatorContent>
+                                    </CustomContent>
                                 </MudFileUpload>
 
                                 @if(_publicProfile?.AvatarGuid.HasValue == true)

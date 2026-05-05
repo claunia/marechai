@@ -54,13 +54,14 @@
                        Accept=".jpg,.jpeg,.png,.webp,.tiff,.tif,.bmp"
                        FilesChanged="OnFileSelected"
                        MaximumFileCount="1">
-            <ActivatorContent>
+            <CustomContent>
                 <MudButton Variant="Variant.Filled"
                            Color="Color.Primary"
-                           StartIcon="@Icons.Material.Filled.Upload">
+                           StartIcon="@Icons.Material.Filled.Upload"
+                           OnClick="@context.OpenFilePickerAsync">
                     @L["Upload Screenshot"]
                 </MudButton>
-            </ActivatorContent>
+            </CustomContent>
         </MudFileUpload>
         <MudSpacer/>
         <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadDataAsync"/>
@@ -105,7 +106,7 @@
                                                Size="Size.Small"
                                                Color="Color.Error"
                                                OnClick="() => ConfirmDeleteScreenshot(screenshot.Id.Value)"
-                                               Title="@L["Delete"]"/>
+                                               title="@L["Delete"]"/>
                             </MudCardActions>
                         </MudCard>
                     </MudItem>
