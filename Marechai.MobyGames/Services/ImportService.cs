@@ -770,6 +770,7 @@ public class ImportService
         "Voice Recording by"       => "vrc",
         "Game Engine by"           => "eng",
         "Graphic Engine by"        => "eng",
+        "Sound Engine by"          => "eng",
         "Middleware by"            => "mdw",
         "Testing by"               => "tst",
         "Contributions by"         => "ctb",
