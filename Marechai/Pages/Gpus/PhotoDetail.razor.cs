@@ -37,16 +37,14 @@ public partial class PhotoDetail
     Guid        _photoId;
 
     [Parameter]
-    public string Id
-    {
-        get => _photoId.ToString();
-        set
-        {
-            if(!Guid.TryParse(value, out Guid parsed) || _photoId == parsed) return;
+    public string Id { get; set; }
 
-            _photoId = parsed;
-            _loaded  = false;
-        }
+    protected override void OnParametersSet()
+    {
+        if(!Guid.TryParse(Id, out Guid parsed) || _photoId == parsed) return;
+
+        _photoId = parsed;
+        _loaded  = false;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

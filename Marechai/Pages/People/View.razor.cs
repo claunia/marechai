@@ -35,23 +35,21 @@ public partial class View
     List<PersonByBookDto>     _books;
     List<PersonByCompanyDto>  _companies;
     List<PersonByDocumentDto> _documents;
-    int                       _id;
+    int                       _lastId;
     bool                      _loaded;
     List<PersonByMagazineDto> _magazines;
     PersonDto                 _person;
     List<PersonBySoftwareDto> _softwareCredits;
 
     [Parameter]
-    public int Id
-    {
-        get => _id;
-        set
-        {
-            if(_id == value) return;
+    public int Id { get; set; }
 
-            _id     = value;
-            _loaded = false;
-        }
+    protected override void OnParametersSet()
+    {
+        if(Id == _lastId) return;
+
+        _lastId = Id;
+        _loaded = false;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

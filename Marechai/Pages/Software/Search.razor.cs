@@ -34,72 +34,44 @@ namespace Marechai.Pages.Software;
 public partial class Search
 {
     char?           _character;
-    int?            _genreId;
-    string          _genreName;
+    int?            _lastGenreId;
+    int?            _lastPlatformId;
+    string          _lastStartingCharacter;
+    int?            _lastYear;
     bool            _loaded;
-    int?            _platformId;
+    string          _genreName;
     string          _platformName;
     List<SoftwareDto> _software;
-    string          _startingCharacter;
-    int?            _year;
 
     [Parameter]
-    public int? Year
-    {
-        get => _year;
-        set
-        {
-            if(_year == value) return;
-
-            _year   = value;
-            _loaded = false;
-        }
-    }
+    public int? Year { get; set; }
 
     [Parameter]
-    public string StartingCharacter
-    {
-        get => _startingCharacter;
-        set
-        {
-            if(_startingCharacter == value) return;
-
-            _startingCharacter = value;
-            _loaded            = false;
-        }
-    }
+    public string StartingCharacter { get; set; }
 
     [Parameter]
-    public int? PlatformId
-    {
-        get => _platformId;
-        set
-        {
-            if(_platformId == value) return;
-
-            _platformId = value;
-            _loaded     = false;
-        }
-    }
+    public int? PlatformId { get; set; }
 
     [Parameter]
-    public int? GenreId
-    {
-        get => _genreId;
-        set
-        {
-            if(_genreId == value) return;
-
-            _genreId = value;
-            _loaded  = false;
-        }
-    }
+    public int? GenreId { get; set; }
 
     [SupplyParameterFromQuery(Name = "key")]
     public string SpecKey { get; set; }
 
     [SupplyParameterFromQuery(Name = "value")]
     public string SpecValue { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if(Year == _lastYear && StartingCharacter == _lastStartingCharacter &&
+           PlatformId == _lastPlatformId && GenreId == _lastGenreId) return;
+
+        _lastYear              = Year;
+        _lastStartingCharacter = StartingCharacter;
+        _lastPlatformId        = PlatformId;
+        _lastGenreId           = GenreId;
+        _loaded                = false;
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

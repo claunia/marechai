@@ -38,19 +38,17 @@ public partial class Companies
     List<CompanyDto> _filteredCompanies;
     bool             _loaded;
     string           _searchText;
-    string           _startingCharacter;
+    string           _lastStartingCharacter;
 
     [Parameter]
-    public string StartingCharacter
-    {
-        get => _startingCharacter;
-        set
-        {
-            if(_startingCharacter == value) return;
+    public string StartingCharacter { get; set; }
 
-            _startingCharacter = value;
-            _loaded            = false;
-        }
+    protected override void OnParametersSet()
+    {
+        if(StartingCharacter == _lastStartingCharacter) return;
+
+        _lastStartingCharacter = StartingCharacter;
+        _loaded                = false;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

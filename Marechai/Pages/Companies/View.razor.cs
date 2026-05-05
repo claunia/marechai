@@ -49,23 +49,21 @@ public partial class View
     List<MagazineDto>    _magazines;
     List<SoftwareDto>    _software;
     List<PersonByCompanyDto> _people;
-    int                  _id;
+    int                  _lastId;
     bool                 _loaded;
     List<CompanyLogoDto> _logos;
     int                  _selectedIndex;
     CompanyDto           _soldTo;
 
     [Parameter]
-    public int Id
-    {
-        get => _id;
-        set
-        {
-            if(_id == value) return;
+    public int Id { get; set; }
 
-            _id     = value;
-            _loaded = false;
-        }
+    protected override void OnParametersSet()
+    {
+        if(Id == _lastId) return;
+
+        _lastId = Id;
+        _loaded = false;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

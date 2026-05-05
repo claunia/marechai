@@ -36,33 +36,22 @@ public partial class Search
     List<MachineDto> _consoles;
     bool             _loaded;
     bool             _showPrototypes;
-    string           _startingCharacter;
-    int?                   _year;
+    string           _lastStartingCharacter;
+    int?             _lastYear;
 
     [Parameter]
-    public int? Year
-    {
-        get => _year;
-        set
-        {
-            if(_year == value) return;
-
-            _year   = value;
-            _loaded = false;
-        }
-    }
+    public int? Year { get; set; }
 
     [Parameter]
-    public string StartingCharacter
-    {
-        get => _startingCharacter;
-        set
-        {
-            if(_startingCharacter == value) return;
+    public string StartingCharacter { get; set; }
 
-            _startingCharacter = value;
-            _loaded            = false;
-        }
+    protected override void OnParametersSet()
+    {
+        if(Year == _lastYear && StartingCharacter == _lastStartingCharacter) return;
+
+        _lastYear              = Year;
+        _lastStartingCharacter = StartingCharacter;
+        _loaded                = false;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

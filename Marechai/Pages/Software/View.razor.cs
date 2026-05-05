@@ -47,7 +47,7 @@ public partial class View
     List<SoftwareAttributeDto>                   _ratings = [];
     Dictionary<string, List<SoftwareAttributeDto>> _specsByPlatform = new();
     Dictionary<string, List<SoftwareAttributeDto>> _ratingsByPlatform = new();
-    int                                         _id;
+    int                                         _lastId;
     bool                                        _loaded;
     List<SoftwareReleaseDto>                     _releases = [];
     List<SoftwareScreenshotDto>                  _screenshots = [];
@@ -61,16 +61,14 @@ public partial class View
     List<SoftwareVersionDto>                    _versions = [];
 
     [Parameter]
-    public int Id
-    {
-        get => _id;
-        set
-        {
-            if(_id == value) return;
+    public int Id { get; set; }
 
-            _id     = value;
-            _loaded = false;
-        }
+    protected override void OnParametersSet()
+    {
+        if(Id == _lastId) return;
+
+        _lastId = Id;
+        _loaded = false;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

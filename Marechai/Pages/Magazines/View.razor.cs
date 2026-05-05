@@ -33,7 +33,7 @@ namespace Marechai.Pages.Magazines;
 public partial class View
 {
     List<CompanyByMagazineDto>       _companies;
-    long                             _id;
+    long                             _lastId;
     bool                             _loaded;
     List<MagazineByMachineFamilyDto> _machineFamilies;
     List<MagazineByMachineDto>       _machines;
@@ -42,16 +42,14 @@ public partial class View
     DocumentSynopsisDto              _synopsis;
 
     [Parameter]
-    public long Id
-    {
-        get => _id;
-        set
-        {
-            if(_id == value) return;
+    public long Id { get; set; }
 
-            _id     = value;
-            _loaded = false;
-        }
+    protected override void OnParametersSet()
+    {
+        if(Id == _lastId) return;
+
+        _lastId = Id;
+        _loaded = false;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

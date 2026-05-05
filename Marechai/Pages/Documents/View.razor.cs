@@ -35,7 +35,7 @@ public partial class View
 {
     List<CompanyByDocumentDto>       _companies;
     DocumentDto                      _document;
-    long                             _id;
+    long                             _lastId;
     bool                             _isCollected;
     bool                             _loaded;
     List<DocumentByMachineFamilyDto> _machineFamilies;
@@ -48,16 +48,14 @@ public partial class View
     Task<AuthenticationState> AuthState { get; set; }
 
     [Parameter]
-    public long Id
-    {
-        get => _id;
-        set
-        {
-            if(_id == value) return;
+    public long Id { get; set; }
 
-            _id     = value;
-            _loaded = false;
-        }
+    protected override void OnParametersSet()
+    {
+        if(Id == _lastId) return;
+
+        _lastId = Id;
+        _loaded = false;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

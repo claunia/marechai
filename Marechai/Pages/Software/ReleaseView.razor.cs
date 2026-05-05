@@ -42,7 +42,7 @@ public partial class ReleaseView
     List<SoftwareAttributeDto>                             _releaseSpecs = [];
     List<SoftwareAttributeDto>                             _releaseRatings = [];
     List<SoftwareBarcodeDto>                               _barcodes = [];
-    int                                                    _id;
+    int                                                    _lastId;
     List<SoftwareVersionBySoftwareReleaseDto>               _includedVersions = [];
     List<SoftwareBySoftwareReleaseDto>                     _includedSoftware = [];
     bool                                                   _isCollected;
@@ -63,16 +63,14 @@ public partial class ReleaseView
     Task<AuthenticationState> AuthState { get; set; }
 
     [Parameter]
-    public int Id
-    {
-        get => _id;
-        set
-        {
-            if(_id == value) return;
+    public int Id { get; set; }
 
-            _id     = value;
-            _loaded = false;
-        }
+    protected override void OnParametersSet()
+    {
+        if(Id == _lastId) return;
+
+        _lastId = Id;
+        _loaded = false;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

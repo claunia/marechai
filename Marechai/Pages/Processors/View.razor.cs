@@ -40,23 +40,21 @@ public partial class View
     List<MachineDto> _consoles  = [];
     List<MachineDto> _smartphones = [];
     string          _description;
-    int              _id;
+    int              _lastId;
     bool             _loaded;
     PhotoLightbox    _lightbox;
     List<Guid>       _photos = [];
     ProcessorDto     _processor;
 
     [Parameter]
-    public int Id
-    {
-        get => _id;
-        set
-        {
-            if(_id == value) return;
+    public int Id { get; set; }
 
-            _id     = value;
-            _loaded = false;
-        }
+    protected override void OnParametersSet()
+    {
+        if(Id == _lastId) return;
+
+        _lastId = Id;
+        _loaded = false;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

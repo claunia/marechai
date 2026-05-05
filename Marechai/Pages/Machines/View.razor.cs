@@ -35,7 +35,7 @@ namespace Marechai.Pages.Machines;
 
 public partial class View
 {
-    int              _id;
+    int              _lastId;
     string           _description;
     bool             _isCollected;
     PhotoLightbox    _lightbox;
@@ -49,16 +49,14 @@ public partial class View
     Task<AuthenticationState> AuthState { get; set; }
 
     [Parameter]
-    public int Id
-    {
-        get => _id;
-        set
-        {
-            if(_id == value) return;
+    public int Id { get; set; }
 
-            _id     = value;
-            _loaded = false;
-        }
+    protected override void OnParametersSet()
+    {
+        if(Id == _lastId) return;
+
+        _lastId = Id;
+        _loaded = false;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

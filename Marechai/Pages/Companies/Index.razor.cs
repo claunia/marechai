@@ -36,36 +36,25 @@ public partial class Index
     char?                  _character;
     List<CompanyDto> _companies;
     List<CompanyDto> _filteredCompanies;
-    int?                   _countryId;
+    int?                   _lastCountryId;
+    string                 _lastStartingCharacter;
     string                 _countryName;
     bool                   _loaded;
     string                 _searchText;
-    string                 _startingCharacter;
 
     [Parameter]
-    public int? CountryId
-    {
-        get => _countryId;
-        set
-        {
-            if(_countryId == value) return;
-
-            _countryId = value;
-            _loaded    = false;
-        }
-    }
+    public int? CountryId { get; set; }
 
     [Parameter]
-    public string StartingCharacter
-    {
-        get => _startingCharacter;
-        set
-        {
-            if(_startingCharacter == value) return;
+    public string StartingCharacter { get; set; }
 
-            _startingCharacter = value;
-            _loaded            = false;
-        }
+    protected override void OnParametersSet()
+    {
+        if(CountryId == _lastCountryId && StartingCharacter == _lastStartingCharacter) return;
+
+        _lastCountryId         = CountryId;
+        _lastStartingCharacter = StartingCharacter;
+        _loaded                = false;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
