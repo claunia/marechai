@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using MudBlazor;
@@ -33,22 +34,33 @@ namespace Marechai.Pages.Admin;
 
 public partial class Companies
 {
-    string          _errorMessage;
-    bool             _isLoading = true;
-    string          _successMessage;
-    List<CompanyDto> _companies;
+    string                    _errorMessage;
+    string                    _successMessage;
+    string                    _searchText;
+    MudDataGrid<CompanyDto>   _dataGrid;
 
-    protected override async Task OnInitializedAsync() => await LoadCompaniesAsync();
-
-    async Task LoadCompaniesAsync()
+    async Task<GridData<CompanyDto>> ServerReload(GridState<CompanyDto> state, CancellationToken cancellationToken)
     {
-        _isLoading = true;
-        _companies = await CompaniesService.GetAsync();
-        _isLoading = false;
+        int skip = state.Page * state.PageSize;
+        int take = state.PageSize;
+
+        Task<int>              countTask = CompaniesService.GetCountAsync(_searchText);
+        Task<List<CompanyDto>> dataTask  = CompaniesService.GetPagedAsync(skip, take, _searchText);
+
+        await Task.WhenAll(countTask, dataTask);
+
+        return new GridData<CompanyDto>
+        {
+            Items      = dataTask.Result,
+            TotalItems = countTask.Result
+        };
     }
 
-    Func<CompanyDto, bool> QuickFilter => company =>
-        true; // MudDataGrid built-in filtering handles this
+    async Task OnSearch(string text)
+    {
+        _searchText = text;
+        await _dataGrid.ReloadServerData();
+    }
 
     string GetStatusText(int? status) => status switch
     {
@@ -126,7 +138,7 @@ public partial class Companies
             if(id is not null)
             {
                 _successMessage = L["Company created successfully."];
-                await LoadCompaniesAsync();
+                await _dataGrid.ReloadServerData();
             }
             else
             {
@@ -200,7 +212,7 @@ public partial class Companies
             if(succeeded)
             {
                 _successMessage = L["Company updated successfully."];
-                await LoadCompaniesAsync();
+                await _dataGrid.ReloadServerData();
             }
             else
             {
@@ -236,7 +248,7 @@ public partial class Companies
             if(succeeded)
             {
                 _successMessage = L["Company deleted successfully."];
-                await LoadCompaniesAsync();
+                await _dataGrid.ReloadServerData();
             }
             else
             {

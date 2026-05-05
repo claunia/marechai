@@ -47,6 +47,42 @@ public class CompaniesService(Marechai.ApiClient.Client client)
         }
     }
 
+    public async Task<List<CompanyDto>> GetPagedAsync(int skip, int take, string search = null)
+    {
+        try
+        {
+            List<CompanyDto> companies = await client.Companies.GetAsync(config =>
+            {
+                config.QueryParameters.Skip   = skip;
+                config.QueryParameters.Take   = take;
+                config.QueryParameters.Search = search;
+            });
+
+            return companies ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<int> GetCountAsync(string search = null)
+    {
+        try
+        {
+            int? count = await client.Companies.Count.GetAsync(config =>
+            {
+                config.QueryParameters.Search = search;
+            });
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
+
     public async Task<CompanyDto> GetAsync(int id)
     {
         try

@@ -52,33 +52,27 @@
     <MudAlert Severity="Severity.Success" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _successMessage = null">@_successMessage</MudAlert>
 }
 
-@if(_isLoading)
-{
-    <div class="d-flex justify-center pa-8">
-        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
-    </div>
-
-    return;
-}
-
 <MudPaper Elevation="2" Class="rounded-lg">
     <MudToolBar Dense="true">
         <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="OpenAddCompanyDialog">@L["Add Company"]</MudButton>
         <MudSpacer/>
-        <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadCompaniesAsync"/>
+        <MudTextField T="string" ValueChanged="OnSearch" Placeholder="@L["Search by name..."]"
+                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
+                      IconSize="Size.Medium" Class="mt-0" DebounceInterval="300" Immediate="true"/>
+        <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="async () => await _dataGrid.ReloadServerData()"/>
     </MudToolBar>
 
-    <MudDataGrid Items="_companies" Dense="true" Hover="true" Striped="true" Filterable="true" QuickFilter="QuickFilter">
+    <MudDataGrid @ref="_dataGrid" T="CompanyDto" ServerData="ServerReload" Dense="true" Hover="true" Striped="true" RowsPerPage="25">
         <Columns>
             <PropertyColumn Property="x => x.Name" Title="@L["Name"]"/>
             <PropertyColumn Property="x => x.LegalName" Title="@L["Legal name"]"/>
             <PropertyColumn Property="x => x.Country" Title="@L["Country"]"/>
-            <TemplateColumn Title="@L["Status"]" Sortable="true" Filterable="true">
+            <TemplateColumn Title="@L["Status"]" Sortable="false">
                 <CellTemplate>
                     <MudChip T="string" Size="Size.Small" Color="@GetStatusColor(context.Item.Status)" Variant="Variant.Outlined">@GetStatusText(context.Item.Status)</MudChip>
                 </CellTemplate>
             </TemplateColumn>
-            <TemplateColumn Title="@L["Founded"]" Sortable="true">
+            <TemplateColumn Title="@L["Founded"]" Sortable="false">
                 <CellTemplate>
                     @FormatDate(context.Item.Founded, context.Item.FoundedPrecision)
                 </CellTemplate>
@@ -98,5 +92,8 @@
                 </CellTemplate>
             </TemplateColumn>
         </Columns>
+        <PagerContent>
+            <MudDataGridPager T="CompanyDto"/>
+        </PagerContent>
     </MudDataGrid>
 </MudPaper>
