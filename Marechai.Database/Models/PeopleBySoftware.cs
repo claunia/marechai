@@ -11,7 +11,7 @@ public class PeopleBySoftware : BaseModel<long>
     public virtual Person   Person     { get; set; }
 
     [Required]
-    [StringLength(128)]
+    [StringLength(256)]
     public string Role { get; set; }
 
     [Column(TypeName = "char(3)")]
