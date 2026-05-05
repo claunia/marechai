@@ -40,11 +40,11 @@ public class SourceDatabaseService
         await connection.OpenAsync();
 
         await using var cmd = new MySqlCommand(
-            "SELECT DISTINCT id FROM mobygames_raw ORDER BY id", connection);
+            "SELECT DISTINCT id FROM mobygames_raw", connection);
 
         await using var reader = await cmd.ExecuteReaderAsync();
 
-        while(await reader.ReadAsync() && ids.Count < batchSize)
+        while(await reader.ReadAsync())
         {
             string id = reader.GetString(0);
 
@@ -52,7 +52,9 @@ public class SourceDatabaseService
                 ids.Add(id);
         }
 
-        return ids;
+        ids.Sort(NaturalStringComparer.Instance);
+
+        return ids.Count > batchSize ? ids.GetRange(0, batchSize) : ids;
     }
 
     public async Task<List<MobyGamesRawRow>> GetRowsForGameAsync(string gameId)
