@@ -27,12 +27,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
-using Microsoft.Extensions.Localization;
 using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.Services;
 
-public class CompaniesService(Marechai.ApiClient.Client client, IStringLocalizer<CompaniesService> localizer)
+public class CompaniesService(Marechai.ApiClient.Client client)
 {
     public async Task<List<CompanyDto>> GetAsync()
     {

@@ -511,7 +511,7 @@ public class BooksService(Marechai.ApiClient.Client client)
         {
             return await client.Books[bookId].Cover.Upload.PostAsync(body);
         }
-        catch(ProblemDetails ex)
+        catch(ProblemDetails)
         {
             return null;
         }

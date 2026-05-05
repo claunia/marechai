@@ -9,7 +9,7 @@
                       Variant="Variant.Outlined"
                       Required="true"
                       RequiredError="@L["Extension is required."]"
-                      Validation="ValidateExtensionAsync"
+                      Validation="@(new Func<string, Task<string>>(ValidateExtensionAsync))"
                       Immediate="true"
                       Class="mb-4"/>
 

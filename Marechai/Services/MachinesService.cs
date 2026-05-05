@@ -27,12 +27,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
-using Microsoft.Extensions.Localization;
 using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.Services;
 
-public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<MachinesService> localizer)
+public class MachinesService(Marechai.ApiClient.Client client)
 {
     public async Task<MachineDto> GetMachine(int id)
     {

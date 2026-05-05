@@ -26,11 +26,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Services;
 
-public class NewsService(Marechai.ApiClient.Client client, IStringLocalizer<NewsService> localizer)
+public class NewsService(Marechai.ApiClient.Client client)
 {
     public async Task<List<NewsDto>> GetNewsAsync()
     {

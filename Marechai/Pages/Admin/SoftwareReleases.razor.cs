@@ -15,7 +15,6 @@ public partial class SoftwareReleases
     List<SoftwareReleaseDto>  _releases;
     string                    _successMessage;
     string                    _versionName;
-    string                    _softwareName;
     bool                       _isVersionContext;
     bool                       _isSoftwareContext;
 

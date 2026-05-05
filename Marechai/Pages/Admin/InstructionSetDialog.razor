@@ -9,7 +9,7 @@
                       Variant="Variant.Outlined"
                       Required="true"
                       RequiredError="@L["Name is required."]"
-                      Validation="ValidateNameAsync"
+                      Validation="@(new Func<string, Task<string>>(ValidateNameAsync))"
                       Immediate="true"
                       Class="mb-4"/>
 

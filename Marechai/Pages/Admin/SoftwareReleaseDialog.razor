@@ -464,13 +464,13 @@
 </MudDialog>
 
 @code {
-    string                                  _validationError;
+    string                                  _validationError = null;
     SoftwarePlatformDto                     _selectedPlatform;
     List<SoftwarePlatformDto>               _allPlatforms;
-    UnM49Dto?                                _selectedRegionToAdd;
+    UnM49Dto                                _selectedRegionToAdd;
     List<UnM49Dto>                          _allUnM49;
     List<UnM49BySoftwareReleaseDto>         _releaseRegions;
-    Iso639Dto?                               _selectedLanguageToAdd;
+    Iso639Dto                               _selectedLanguageToAdd;
     List<Iso639Dto>                         _allLanguages;
     List<LanguageBySoftwareReleaseDto>      _releaseLanguages;
     CompanyDto                              _selectedPublisher;
