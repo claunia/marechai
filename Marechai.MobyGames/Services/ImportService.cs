@@ -428,6 +428,8 @@ public class ImportService
     async Task ImportReleasesAsync(MarechaiContext context, Software software, ParsedGame game,
                                    HashSet<(ulong, int, string)> addedCompanyRoles)
     {
+        var addedProductCodes = new HashSet<(ProductCodeIssuer, string)>();
+
         // Group releases by platform
         var platformGroups = game.Releases.GroupBy(r => r.Platform ?? "Unknown");
 
@@ -498,6 +500,14 @@ public class ImportService
                         "eBay Item No."  => ProductCodeIssuer.eBay,
                         _                => ProductCodeIssuer.Other
                     };
+
+                    bool codeExists = await context.SoftwareProductCodes
+                                                   .AnyAsync(c => c.Issuer == issuer &&
+                                                                   c.Code == productCode.Code);
+
+                    if(codeExists) continue;
+
+                    if(!addedProductCodes.Add((issuer, productCode.Code))) continue;
 
                     context.SoftwareProductCodes.Add(new SoftwareProductCode
                     {
