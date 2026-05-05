@@ -47,7 +47,15 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<int> GetSoftwareCountAsync() => context.Softwares.CountAsync();
+    public Task<int> GetSoftwareCountAsync([FromQuery] string search = null)
+    {
+        IQueryable<Database.Models.Software> query = context.Softwares;
+
+        if(!string.IsNullOrWhiteSpace(search))
+            query = query.Where(s => s.Name.Contains(search));
+
+        return query.CountAsync();
+    }
 
     [HttpGet("minimum-year")]
     [AllowAnonymous]
@@ -203,23 +211,37 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<SoftwareDto>> GetAsync() => context.Softwares.OrderBy(s => s.Name)
-                                                        .Select(s => new SoftwareDto
-                                                         {
-                                                             Id                = s.Id,
-                                                             Name              = s.Name,
-                                                             FamilyId          = s.FamilyId,
-                                                             Family            = s.Family.Name,
-                                                             IsOperatingSystem = s.IsOperatingSystem,
-                                                             IsGame            = s.IsGame,
-                                                             FrontCoverId = context.SoftwareCovers
-                                                                                   .Where(c => (c.Release.SoftwareId == s.Id ||
-                                                                                                 c.Release.SoftwareVersion.SoftwareId == s.Id) &&
-                                                                                                c.Type == SoftwareCoverType.Front)
-                                                                                   .Select(c => (Guid?)c.Id)
-                                                                                   .FirstOrDefault()
-                                                         })
-                                                        .ToListAsync();
+    public Task<List<SoftwareDto>> GetAsync([FromQuery] int? skip   = null, [FromQuery] int? take = null,
+                                            [FromQuery] string search = null)
+    {
+        IQueryable<Database.Models.Software> query = context.Softwares;
+
+        if(!string.IsNullOrWhiteSpace(search))
+            query = query.Where(s => s.Name.Contains(search));
+
+        query = query.OrderBy(s => s.Name);
+
+        if(skip.HasValue) query = query.Skip(skip.Value);
+
+        if(take.HasValue) query = query.Take(take.Value);
+
+        return query.Select(s => new SoftwareDto
+                     {
+                         Id                = s.Id,
+                         Name              = s.Name,
+                         FamilyId          = s.FamilyId,
+                         Family            = s.Family.Name,
+                         IsOperatingSystem = s.IsOperatingSystem,
+                         IsGame            = s.IsGame,
+                         FrontCoverId = context.SoftwareCovers
+                                               .Where(c => (c.Release.SoftwareId == s.Id ||
+                                                             c.Release.SoftwareVersion.SoftwareId == s.Id) &&
+                                                            c.Type == SoftwareCoverType.Front)
+                                               .Select(c => (Guid?)c.Id)
+                                               .FirstOrDefault()
+                     })
+                    .ToListAsync();
+    }
 
     [HttpGet("{id:ulong}")]
     [AllowAnonymous]

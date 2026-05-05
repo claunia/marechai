@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using MudBlazor;
@@ -8,21 +9,33 @@ namespace Marechai.Pages.Admin;
 
 public partial class Software
 {
-    string            _errorMessage;
-    bool               _isLoading = true;
-    List<SoftwareDto> _softwareList;
-    string            _successMessage;
+    string                   _errorMessage;
+    string                   _searchText;
+    string                   _successMessage;
+    MudDataGrid<SoftwareDto> _dataGrid;
 
-    protected override async Task OnInitializedAsync() => await LoadDataAsync();
-
-    async Task LoadDataAsync()
+    async Task<GridData<SoftwareDto>> ServerReload(GridState<SoftwareDto> state, CancellationToken cancellationToken)
     {
-        _isLoading    = true;
-        _softwareList = await SoftwareService.GetAllSoftwareAsync();
-        _isLoading    = false;
+        int skip = state.Page * state.PageSize;
+        int take = state.PageSize;
+
+        Task<int>               countTask = SoftwareService.GetCountAsync(_searchText);
+        Task<List<SoftwareDto>> dataTask  = SoftwareService.GetPagedAsync(skip, take, _searchText);
+
+        await Task.WhenAll(countTask, dataTask);
+
+        return new GridData<SoftwareDto>
+        {
+            Items      = dataTask.Result,
+            TotalItems = countTask.Result
+        };
     }
 
-    Func<SoftwareDto, bool> QuickFilter => _ => true;
+    async Task OnSearch(string text)
+    {
+        _searchText = text;
+        await _dataGrid.ReloadServerData();
+    }
 
     void NavigateToVersions(SoftwareDto software) =>
         NavigationManager.NavigateTo($"/admin/software/{software.Id}/versions");
@@ -77,7 +90,7 @@ public partial class Software
             if(id is not null)
             {
                 _successMessage = L["Software created successfully."];
-                await LoadDataAsync();
+                await _dataGrid.ReloadServerData();
             }
             else
             {
@@ -133,7 +146,7 @@ public partial class Software
             if(succeeded)
             {
                 _successMessage = L["Software updated successfully."];
-                await LoadDataAsync();
+                await _dataGrid.ReloadServerData();
             }
             else
             {
@@ -170,7 +183,7 @@ public partial class Software
             if(succeeded)
             {
                 _successMessage = L["Software deleted successfully."];
-                await LoadDataAsync();
+                await _dataGrid.ReloadServerData();
             }
             else
             {

@@ -450,6 +450,42 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
+    public async Task<List<SoftwareDto>> GetPagedAsync(int skip, int take, string search = null)
+    {
+        try
+        {
+            List<SoftwareDto> software = await client.Software.GetAsync(config =>
+            {
+                config.QueryParameters.Skip   = skip;
+                config.QueryParameters.Take   = take;
+                config.QueryParameters.Search = search;
+            });
+
+            return software ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<int> GetCountAsync(string search = null)
+    {
+        try
+        {
+            int? count = await client.Software.Count.GetAsync(config =>
+            {
+                config.QueryParameters.Search = search;
+            });
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
+
     public async Task<List<SoftwareSpecKeyDto>> GetSpecificationsAsync()
     {
         try
