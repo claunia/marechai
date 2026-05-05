@@ -643,9 +643,6 @@
     <data name="Digital zoom" xml:space="preserve">
         <value>Zoom digital</value>
     </data>
-    <data name="EXIF version" xml:space="preserve">
-        <value>Versión EXIF</value>
-    </data>
     <data name="Exposure" xml:space="preserve">
         <value>Exposición</value>
     </data>

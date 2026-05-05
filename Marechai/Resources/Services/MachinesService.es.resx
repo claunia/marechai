@@ -704,10 +704,6 @@
         <value>Editar máquina</value>
         <comment>Button to edit a machine</comment>
     </data>
-    <data name="Delete Machine" xml:space="preserve">
-        <value>Eliminar máquina</value>
-        <comment>Button to delete a machine</comment>
-    </data>
     <data name="Machine created successfully." xml:space="preserve">
         <value>Máquina creada correctamente.</value>
         <comment>Success message after creating a machine</comment>
@@ -724,25 +720,13 @@
         <value>¿Está seguro de que desea eliminar la máquina '{0}'? Esta acción no se puede deshacer.</value>
         <comment>Delete confirmation message</comment>
     </data>
-    <data name="Name" xml:space="preserve">
-        <value>Nombre</value>
-        <comment>Machine name</comment>
-    </data>
     <data name="Name is required." xml:space="preserve">
         <value>El nombre es obligatorio.</value>
         <comment>Validation error for missing name</comment>
     </data>
-    <data name="Company" xml:space="preserve">
-        <value>Compañía</value>
-        <comment>Company</comment>
-    </data>
     <data name="Search Company" xml:space="preserve">
         <value>Buscar compañía</value>
         <comment>Autocomplete label for company search</comment>
-    </data>
-    <data name="Type" xml:space="preserve">
-        <value>Tipo</value>
-        <comment>Machine type</comment>
     </data>
     <data name="Unknown" xml:space="preserve">
         <value>Desconocido</value>
@@ -755,14 +739,6 @@
     <data name="Console" xml:space="preserve">
         <value>Consola</value>
         <comment>Console machine type</comment>
-    </data>
-    <data name="Cancel" xml:space="preserve">
-        <value>Cancelar</value>
-        <comment>Cancel button</comment>
-    </data>
-    <data name="Save" xml:space="preserve">
-        <value>Guardar</value>
-        <comment>Save button</comment>
     </data>
     <data name="Actions" xml:space="preserve">
         <value>Acciones</value>
@@ -812,10 +788,6 @@
         <value>¿Está seguro de que desea eliminar este procesador de la máquina?</value>
         <comment>Remove processor confirmation</comment>
     </data>
-    <data name="Sound Synthesizers" xml:space="preserve">
-        <value>Sintetizadores de sonido</value>
-        <comment>Sound synthesizers section</comment>
-    </data>
     <data name="Search Sound Synth" xml:space="preserve">
         <value>Buscar sintetizador de sonido</value>
         <comment>Autocomplete label for sound synth search</comment>
@@ -852,14 +824,6 @@
         <value>¿Está seguro de que desea eliminar esta pantalla de la máquina?</value>
         <comment>Remove screen confirmation</comment>
     </data>
-    <data name="Memory Type" xml:space="preserve">
-        <value>Tipo de memoria</value>
-        <comment>Memory type selector label</comment>
-    </data>
-    <data name="Memory Usage" xml:space="preserve">
-        <value>Uso de memoria</value>
-        <comment>Memory usage selector label</comment>
-    </data>
     <data name="Size (bytes)" xml:space="preserve">
         <value>Tamaño (bytes)</value>
         <comment>Memory size in bytes</comment>
@@ -880,18 +844,6 @@
         <value>¿Está seguro de que desea eliminar esta memoria de la máquina?</value>
         <comment>Remove memory confirmation</comment>
     </data>
-    <data name="Storage" xml:space="preserve">
-        <value>Almacenamiento</value>
-        <comment>Storage section</comment>
-    </data>
-    <data name="Storage Type" xml:space="preserve">
-        <value>Tipo de almacenamiento</value>
-        <comment>Storage type selector label</comment>
-    </data>
-    <data name="Storage Interface" xml:space="preserve">
-        <value>Interfaz de almacenamiento</value>
-        <comment>Storage interface selector label</comment>
-    </data>
     <data name="Capacity (bytes)" xml:space="preserve">
         <value>Capacidad (bytes)</value>
         <comment>Storage capacity in bytes</comment>
@@ -910,9 +862,6 @@
     </data>
     <data name="Manage Photos" xml:space="preserve">
         <value>Gestionar Fotos</value>
-    </data>
-    <data name="Photos" xml:space="preserve">
-        <value>Fotos</value>
     </data>
     <data name="In Collection" xml:space="preserve">
         <value>En colección</value>

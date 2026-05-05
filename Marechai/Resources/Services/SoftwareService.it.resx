@@ -752,9 +752,6 @@
     <data name="Side view" xml:space="preserve">
         <value>Vista laterale</value>
     </data>
-    <data name="Platform" xml:space="preserve">
-        <value>Piattaforme</value>
-    </data>
     <data name="World War II" xml:space="preserve">
         <value>Seconda guerra mondiale</value>
     </data>
@@ -1024,9 +1021,6 @@
     </data>
     <data name="Tile matching puzzle" xml:space="preserve">
         <value>Puzzle di abbinamento</value>
-    </data>
-    <data name="Compilation" xml:space="preserve">
-        <value>Compilazione</value>
     </data>
     <data name="Casino / gambling" xml:space="preserve">
         <value>Casinò / gioco d'azzardo</value>

@@ -222,9 +222,6 @@
     <data name="Basic Info" xml:space="preserve">
         <value>Información básica</value>
     </data>
-    <data name="Add" xml:space="preserve">
-        <value>Añadir</value>
-    </data>
     <data name="Cancel" xml:space="preserve">
         <value>Cancelar</value>
     </data>

@@ -295,10 +295,6 @@
         <value>Aplicar operación de rol a {0} usuario(s)</value>
         <comment>Bulk role dialog header, {0} is user count</comment>
     </data>
-    <data name="Add role" xml:space="preserve">
-        <value>Añadir rol</value>
-        <comment>Radio option to add a role</comment>
-    </data>
     <data name="Remove role" xml:space="preserve">
         <value>Eliminar rol</value>
         <comment>Radio option to remove a role</comment>

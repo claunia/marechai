@@ -298,10 +298,6 @@
         <value>Maschine suchen</value>
         <comment>Search Machine</comment>
     </data>
-    <data name="Machine Families" xml:space="preserve">
-        <value>Maschinenfamilien</value>
-        <comment>Machine Families</comment>
-    </data>
     <data name="Search Machine Family" xml:space="preserve">
         <value>Maschinenfamilie suchen</value>
         <comment>Search Machine Family</comment>

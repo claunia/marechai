@@ -259,10 +259,6 @@
         <value>Buscar compañía</value>
         <comment>Label for company autocomplete</comment>
     </data>
-    <data name="Model code" xml:space="preserve">
-        <value>Modelo</value>
-        <comment>Model code field label</comment>
-    </data>
     <data name="Voices" xml:space="preserve">
         <value>Voces</value>
         <comment>PCM voices field label</comment>
@@ -367,10 +363,6 @@
     <data name="Close" xml:space="preserve">
         <value>Cerrar</value>
         <comment>Button to close dialog</comment>
-    </data>
-    <data name="Introduced" xml:space="preserve">
-        <value>Introducido</value>
-        <comment>Introduced column header</comment>
     </data>
     <data name="Status" xml:space="preserve">
         <value>Estado</value>

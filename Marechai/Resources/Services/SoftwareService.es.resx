@@ -364,15 +364,6 @@
     <data name="Name is required." xml:space="preserve">
         <value>El nombre es obligatorio.</value>
     </data>
-    <data name="OS" xml:space="preserve">
-        <value>SO</value>
-    </data>
-    <data name="Game" xml:space="preserve">
-        <value>Juego</value>
-    </data>
-    <data name="Operating System" xml:space="preserve">
-        <value>Sistema operativo</value>
-    </data>
     <data name="Actions" xml:space="preserve">
         <value>Acciones</value>
     </data>
@@ -382,20 +373,11 @@
     <data name="Delete" xml:space="preserve">
         <value>Eliminar</value>
     </data>
-    <data name="Versions" xml:space="preserve">
-        <value>Versiones</value>
-    </data>
     <data name="Variants" xml:space="preserve">
         <value>Variantes</value>
     </data>
-    <data name="Screenshots" xml:space="preserve">
-        <value>Capturas de pantalla</value>
-    </data>
     <data name="Basic Info" xml:space="preserve">
         <value>Información básica</value>
-    </data>
-    <data name="Companies" xml:space="preserve">
-        <value>Compañías</value>
     </data>
     <data name="Search Company" xml:space="preserve">
         <value>Buscar compañía</value>
@@ -520,102 +502,6 @@
     <data name="Programmer" xml:space="preserve">
         <value>Programador</value>
         <comment>Programmer</comment>
-    </data>
-    <data name="Producer" xml:space="preserve">
-        <value>Productor</value>
-        <comment>Producer</comment>
-    </data>
-    <data name="Director" xml:space="preserve">
-        <value>Director</value>
-        <comment>Director</comment>
-    </data>
-    <data name="Artist" xml:space="preserve">
-        <value>Artista</value>
-        <comment>Artist</comment>
-    </data>
-    <data name="Writer" xml:space="preserve">
-        <value>Escritor</value>
-        <comment>Writer</comment>
-    </data>
-    <data name="Composer" xml:space="preserve">
-        <value>Compositor</value>
-        <comment>Composer</comment>
-    </data>
-    <data name="Tester" xml:space="preserve">
-        <value>Probador</value>
-        <comment>Tester</comment>
-    </data>
-    <data name="QA" xml:space="preserve">
-        <value>Control de calidad</value>
-        <comment>QA</comment>
-    </data>
-    <data name="Credits" xml:space="preserve">
-        <value>Créditos</value>
-        <comment>Credits</comment>
-    </data>
-    <data name="Design" xml:space="preserve">
-        <value>Diseño</value>
-        <comment>Design</comment>
-    </data>
-    <data name="Program" xml:space="preserve">
-        <value>Programación</value>
-        <comment>Program</comment>
-    </data>
-    <data name="Graphics Design" xml:space="preserve">
-        <value>Diseño gráfico</value>
-        <comment>Graphics Design</comment>
-    </data>
-    <data name="Levels" xml:space="preserve">
-        <value>Niveles</value>
-        <comment>Levels</comment>
-    </data>
-    <data name="Music and FX" xml:space="preserve">
-        <value>Música y efectos</value>
-        <comment>Music and FX</comment>
-    </data>
-    <data name="Written by" xml:space="preserve">
-        <value>Escrito por</value>
-        <comment>Written by</comment>
-    </data>
-    <data name="Directed by" xml:space="preserve">
-        <value>Dirigido por</value>
-        <comment>Directed by</comment>
-    </data>
-    <data name="Developed by" xml:space="preserve">
-        <value>Desarrollado por</value>
-        <comment>Developed by</comment>
-    </data>
-    <data name="Cast" xml:space="preserve">
-        <value>Reparto</value>
-        <comment>Cast</comment>
-    </data>
-    <data name="Special Thanks" xml:space="preserve">
-        <value>Agradecimientos especiales</value>
-        <comment>Special Thanks</comment>
-    </data>
-    <data name="Code (Kod)" xml:space="preserve">
-        <value>Código (Kod)</value>
-        <comment>Code (Kod)</comment>
-    </data>
-    <data name="Music (Muzyka)" xml:space="preserve">
-        <value>Música (Muzyka)</value>
-        <comment>Music (Muzyka)</comment>
-    </data>
-    <data name="Fonts (Fonty)" xml:space="preserve">
-        <value>Fuentes (Fonty)</value>
-        <comment>Fonts (Fonty)</comment>
-    </data>
-    <data name="Designer" xml:space="preserve">
-        <value>Diseñador</value>
-        <comment>Designer</comment>
-    </data>
-    <data name="Programmer" xml:space="preserve">
-        <value>Programador</value>
-        <comment>Programmer</comment>
-    </data>
-    <data name="Producer" xml:space="preserve">
-        <value>Productor</value>
-        <comment>Producer</comment>
     </data>
     <data name="Director" xml:space="preserve">
         <value>Director</value>
@@ -899,9 +785,6 @@
     <data name="Side view" xml:space="preserve">
         <value>Vista lateral</value>
     </data>
-    <data name="Platform" xml:space="preserve">
-        <value>Plataformas</value>
-    </data>
     <data name="World War II" xml:space="preserve">
         <value>Segunda Guerra Mundial</value>
     </data>
@@ -934,9 +817,6 @@
     </data>
     <data name="DLC / add-on" xml:space="preserve">
         <value>DLC / complemento</value>
-    </data>
-    <data name="Other" xml:space="preserve">
-        <value>Otro</value>
     </data>
     <data name="Adventure" xml:space="preserve">
         <value>Aventura</value>
@@ -1171,9 +1051,6 @@
     </data>
     <data name="Tile matching puzzle" xml:space="preserve">
         <value>Rompecabezas de emparejar fichas</value>
-    </data>
-    <data name="Compilation" xml:space="preserve">
-        <value>Compilación</value>
     </data>
     <data name="Casino / gambling" xml:space="preserve">
         <value>Casino / apuestas</value>

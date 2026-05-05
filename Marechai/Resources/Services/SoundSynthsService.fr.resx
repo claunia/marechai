@@ -378,10 +378,6 @@
         <value>Fermer</value>
         <comment>Close</comment>
     </data>
-    <data name="Introduced" xml:space="preserve">
-        <value>Introduit</value>
-        <comment>Introduced</comment>
-    </data>
     <data name="Status" xml:space="preserve">
         <value>Statut</value>
         <comment>Status</comment>

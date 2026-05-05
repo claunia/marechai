@@ -222,9 +222,6 @@
     <data name="Search Machine" xml:space="preserve">
         <value>Buscar máquina</value>
     </data>
-    <data name="Machine Families" xml:space="preserve">
-        <value>Familias de máquinas</value>
-    </data>
     <data name="Search Machine Family" xml:space="preserve">
         <value>Buscar familia de máquinas</value>
     </data>

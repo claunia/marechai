@@ -282,10 +282,6 @@
         <value>Applica operazione ruolo a {0} utente/i</value>
         <comment>Apply role operation to {0} user(s)</comment>
     </data>
-    <data name="Add role" xml:space="preserve">
-        <value>Aggiungi ruolo</value>
-        <comment>Add role</comment>
-    </data>
     <data name="Remove role" xml:space="preserve">
         <value>Rimuovi ruolo</value>
         <comment>Remove role</comment>
