@@ -108,6 +108,17 @@ public class Startup(IConfiguration configuration)
             client.BaseAddress = new Uri("https://plausible.claunia.com");
         });
 
+        string? nllbServeUrl = Configuration["NllbServe:Url"];
+
+        if(!string.IsNullOrWhiteSpace(nllbServeUrl))
+        {
+            services.AddHttpClient("NllbServe", client =>
+            {
+                client.BaseAddress = new Uri(nllbServeUrl);
+                client.Timeout     = TimeSpan.FromSeconds(120);
+            });
+        }
+
         services.AddAuthorizationCore();
         services.AddRazorPages();
         services.AddServerSideBlazor();

@@ -1,4 +1,5 @@
 @using Marechai.ApiClient.Models
+@using Marechai.Services
 
 <MudDialog>
     <DialogContent>
@@ -44,8 +45,29 @@
                 }
             </MudSelect>
 
+            @if(TranslationService.IsAvailable)
+            {
+                <MudButton StartIcon="@Icons.Material.Filled.Translate"
+                           Variant="Variant.Outlined"
+                           Color="Color.Secondary"
+                           Class="mb-4"
+                           OnClick="TranslateFromEnglish"
+                           Disabled="@(_isTranslating || string.IsNullOrWhiteSpace(_selectedLanguage) || _selectedLanguage == "eng" || !TranslationService.IsLanguageSupported(_selectedLanguage) || _descriptions?.Exists(d => d.LanguageCode == "eng") != true)">
+                    @if(_isTranslating)
+                    {
+                        <MudProgressLinear Color="Color.Secondary" Value="@(_translationTotal > 0 ? _translationCurrent * 100.0 / _translationTotal : 0)" Class="mr-2" Style="width: 100px; align-self: center;"/>
+                        <text>Translating @_translationCurrent / @_translationTotal...</text>
+                    }
+                    else
+                    {
+                        <text>Translate from English</text>
+                    }
+                </MudButton>
+            }
+
             <MarkdownEditor @bind-Value="_markdown"
                             @ref="_editor"
+                            @key="_editorKey"
                             SpellChecker="false"
                             MinHeight="300px"
                             MaxHeight="500px"
@@ -69,7 +91,10 @@
 </MudDialog>
 
 @code {
-    bool    _isLoading = true;
+    bool    _isLoading     = true;
+    bool    _isTranslating  = false;
+    int     _translationCurrent;
+    int     _translationTotal;
     string? _selectedLanguage;
     string? _markdown;
     string? _errorMessage;
@@ -78,6 +103,7 @@
     List<ProcessorDescriptionDto>? _descriptions;
 
     MarkdownEditor _editor;
+    int             _editorKey;
 
     static readonly (string Code, string Name)[] _availableLanguages =
     [
@@ -96,8 +122,9 @@
     [Parameter] public int    ProcessorId   { get; set; }
     [Parameter] public string ProcessorName { get; set; } = string.Empty;
 
-    [Inject] ProcessorsService ProcessorsService { get; set; } = null!;
-    [Inject] IDialogService    DialogService     { get; set; } = null!;
+    [Inject] ProcessorsService  ProcessorsService  { get; set; } = null!;
+    [Inject] IDialogService      DialogService      { get; set; } = null!;
+    [Inject] TranslationService  TranslationService { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -113,13 +140,11 @@
     static string GetLanguageName(string code) =>
         _availableLanguages.FirstOrDefault(l => l.Code == code).Name ?? code;
 
-    async Task EditDescription(ProcessorDescriptionDto desc)
+    void EditDescription(ProcessorDescriptionDto desc)
     {
         _selectedLanguage = desc.LanguageCode;
         _markdown         = desc.Markdown;
-
-        if(_editor is not null)
-            await _editor.SetValueAsync(_markdown);
+        _editorKey++;
     }
 
     async Task ConfirmDeleteDescription(ProcessorDescriptionDto desc)
@@ -178,6 +203,49 @@
         else
         {
             _errorMessage = error ?? "Failed to save description.";
+        }
+    }
+
+    async Task TranslateFromEnglish()
+    {
+        _isTranslating = true;
+        await InvokeAsync(StateHasChanged);
+
+        try
+        {
+            string? englishMarkdown = _descriptions?.FirstOrDefault(d => d.LanguageCode == "eng")?.Markdown;
+
+            if(string.IsNullOrWhiteSpace(englishMarkdown))
+            {
+                _errorMessage = "No English description found to translate from.";
+
+                return;
+            }
+
+            (string? translatedText, string? error) = await TranslationService.TranslateAsync(englishMarkdown, _selectedLanguage!,
+                new Progress<(int current, int total)>(p =>
+                {
+                    _translationCurrent = p.current;
+                    _translationTotal   = p.total;
+                    InvokeAsync(StateHasChanged);
+                }));
+
+            if(translatedText is not null)
+            {
+                _markdown       = translatedText;
+                _isTranslating  = false;
+                _successMessage = "Translation completed. Please review before saving.";
+                _editorKey++;
+            }
+            else
+            {
+                _errorMessage = error ?? "Translation failed.";
+            }
+        }
+        finally
+        {
+            _isTranslating = false;
+            await InvokeAsync(StateHasChanged);
         }
     }
 
