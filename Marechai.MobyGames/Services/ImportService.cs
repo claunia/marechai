@@ -776,6 +776,8 @@ public class ImportService
         "Fonts by"                 => "fnt",
         "Produced by"              => "prd",
         "Voice Production by"      => "vrc",
+        "Manual by"                => "doc",
+        "Additional Music by"      => "snd",
         _                          => null
     };
 
