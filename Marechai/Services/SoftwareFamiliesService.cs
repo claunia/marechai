@@ -37,7 +37,7 @@ public class SoftwareFamiliesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<SoftwareFamilyDto>? families = await client.Software.Families.GetAsync();
+            List<SoftwareFamilyDto> families = await client.Software.Families.GetAsync();
 
             return families ?? [];
         }
@@ -47,7 +47,7 @@ public class SoftwareFamiliesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<SoftwareFamilyDto?> GetByIdAsync(int id)
+    public async Task<SoftwareFamilyDto> GetByIdAsync(int id)
     {
         try
         {
@@ -59,7 +59,7 @@ public class SoftwareFamiliesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(int? id, string? error)> CreateAsync(SoftwareFamilyDto dto)
+    public async Task<(int? id, string error)> CreateAsync(SoftwareFamilyDto dto)
     {
         try
         {
@@ -77,7 +77,7 @@ public class SoftwareFamiliesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> UpdateAsync(int id, SoftwareFamilyDto dto)
+    public async Task<(bool succeeded, string error)> UpdateAsync(int id, SoftwareFamilyDto dto)
     {
         try
         {
@@ -95,7 +95,7 @@ public class SoftwareFamiliesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteAsync(int id)
+    public async Task<(bool succeeded, string error)> DeleteAsync(int id)
     {
         try
         {
@@ -119,7 +119,7 @@ public class SoftwareFamiliesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<CompanyBySoftwareFamilyDto>? companies =
+            List<CompanyBySoftwareFamilyDto> companies =
                 await client.Software.Families[familyId].Companies.GetAsync();
 
             return companies ?? [];
@@ -130,7 +130,7 @@ public class SoftwareFamiliesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(int? id, string? error)> AddCompanyRoleAsync(CompanyBySoftwareFamilyDto dto)
+    public async Task<(int? id, string error)> AddCompanyRoleAsync(CompanyBySoftwareFamilyDto dto)
     {
         try
         {
@@ -148,7 +148,7 @@ public class SoftwareFamiliesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemoveCompanyRoleAsync(int id)
+    public async Task<(bool succeeded, string error)> RemoveCompanyRoleAsync(int id)
     {
         try
         {
@@ -172,7 +172,7 @@ public class SoftwareFamiliesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<CompanyDto>? companies = await client.Companies.GetAsync();
+            List<CompanyDto> companies = await client.Companies.GetAsync();
 
             return companies ?? [];
         }
@@ -186,7 +186,7 @@ public class SoftwareFamiliesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<SoftwareRoleDto>? roles = await client.Software.Roles.Enabled.GetAsync();
+            List<SoftwareRoleDto> roles = await client.Software.Roles.Enabled.GetAsync();
 
             return roles ?? [];
         }

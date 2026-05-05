@@ -33,10 +33,10 @@ namespace Marechai.Pages.Admin;
 
 public partial class Screens
 {
-    string?          _errorMessage;
+    string          _errorMessage;
     bool             _isLoading = true;
-    string?          _successMessage;
-    List<ScreenDto>? _screens;
+    string          _successMessage;
+    List<ScreenDto> _screens;
 
     protected override async Task OnInitializedAsync() => await LoadScreensAsync();
 
@@ -51,7 +51,7 @@ public partial class Screens
 
     string FormatNativeResolution(ScreenDto screen)
     {
-        ResolutionDto? r = screen.NativeResolution?.ResolutionDto;
+        ResolutionDto r = screen.NativeResolution?.ResolutionDto;
 
         if(r is null)
             return string.Empty;
@@ -74,7 +74,7 @@ public partial class Screens
                                                                                   FullWidth = true
                                                                               });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: ScreenDialogResult data })
         {
@@ -88,7 +88,7 @@ public partial class Screens
                 NativeResolutionId = data.NativeResolutionId
             };
 
-            (long? id, string? errorMessage) = await ScreensService.CreateAsync(dto);
+            (long? id, string errorMessage) = await ScreensService.CreateAsync(dto);
 
             if(id is not null)
             {
@@ -123,7 +123,7 @@ public partial class Screens
                                                                                   FullWidth = true
                                                                               });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: ScreenDialogResult data })
         {
@@ -138,7 +138,7 @@ public partial class Screens
                 NativeResolutionId = data.NativeResolutionId
             };
 
-            (bool succeeded, string? errorMessage) = await ScreensService.UpdateAsync(screen.Id ?? 0, dto);
+            (bool succeeded, string errorMessage) = await ScreensService.UpdateAsync(screen.Id ?? 0, dto);
 
             if(succeeded)
             {
@@ -176,11 +176,11 @@ public partial class Screens
                                                                    FullWidth = true
                                                                });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? errorMessage) = await ScreensService.DeleteAsync(screen.Id ?? 0);
+            (bool succeeded, string errorMessage) = await ScreensService.DeleteAsync(screen.Id ?? 0);
 
             if(succeeded)
             {

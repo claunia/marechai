@@ -37,7 +37,7 @@ public class PeopleByCompanyService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<PersonByCompanyDto>? people = await client.Companies[companyId].People.GetAsync();
+            List<PersonByCompanyDto> people = await client.Companies[companyId].People.GetAsync();
 
             return people ?? [];
         }
@@ -47,7 +47,7 @@ public class PeopleByCompanyService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(long? id, string? error)> CreateAsync(PersonByCompanyDto dto)
+    public async Task<(long? id, string error)> CreateAsync(PersonByCompanyDto dto)
     {
         try
         {
@@ -65,7 +65,7 @@ public class PeopleByCompanyService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> UpdateAsync(long id, PersonByCompanyDto dto)
+    public async Task<(bool succeeded, string error)> UpdateAsync(long id, PersonByCompanyDto dto)
     {
         try
         {
@@ -83,7 +83,7 @@ public class PeopleByCompanyService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteAsync(long id)
+    public async Task<(bool succeeded, string error)> DeleteAsync(long id)
     {
         try
         {

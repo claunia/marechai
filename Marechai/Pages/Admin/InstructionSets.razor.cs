@@ -33,10 +33,10 @@ namespace Marechai.Pages.Admin;
 
 public partial class InstructionSets
 {
-    string?                   _errorMessage;
+    string                   _errorMessage;
     bool                      _isLoading = true;
-    List<InstructionSetDto>?  _items;
-    string?                   _successMessage;
+    List<InstructionSetDto>  _items;
+    string                   _successMessage;
 
     protected override async Task OnInitializedAsync() => await LoadItemsAsync();
 
@@ -64,7 +64,7 @@ public partial class InstructionSets
                                                                                           FullWidth = true
                                                                                       });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: InstructionSetDialogResult data })
         {
@@ -73,7 +73,7 @@ public partial class InstructionSets
                 Name = data.Name
             };
 
-            (int? id, string? errorMessage) = await InstructionSetsService.CreateAsync(dto);
+            (int? id, string errorMessage) = await InstructionSetsService.CreateAsync(dto);
 
             if(id is not null)
             {
@@ -104,7 +104,7 @@ public partial class InstructionSets
                                                                                           FullWidth = true
                                                                                       });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: InstructionSetDialogResult data })
         {
@@ -114,7 +114,7 @@ public partial class InstructionSets
                 Name = data.Name
             };
 
-            (bool succeeded, string? errorMessage) = await InstructionSetsService.UpdateAsync(item.Id ?? 0, dto);
+            (bool succeeded, string errorMessage) = await InstructionSetsService.UpdateAsync(item.Id ?? 0, dto);
 
             if(succeeded)
             {
@@ -148,11 +148,11 @@ public partial class InstructionSets
                                                                    FullWidth = true
                                                                });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? errorMessage) = await InstructionSetsService.DeleteAsync(item.Id ?? 0);
+            (bool succeeded, string errorMessage) = await InstructionSetsService.DeleteAsync(item.Id ?? 0);
 
             if(succeeded)
             {

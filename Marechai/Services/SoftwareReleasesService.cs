@@ -37,7 +37,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<SoftwareReleaseDto>? releases = await client.Software.Releases.GetAsync();
+            List<SoftwareReleaseDto> releases = await client.Software.Releases.GetAsync();
 
             return releases ?? [];
         }
@@ -51,7 +51,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<SoftwareReleaseDto>? releases =
+            List<SoftwareReleaseDto> releases =
                 await client.Software.Versions[versionId].Releases.GetAsync();
 
             return releases ?? [];
@@ -62,7 +62,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<SoftwareReleaseDto?> GetByIdAsync(int id)
+    public async Task<SoftwareReleaseDto> GetByIdAsync(int id)
     {
         try
         {
@@ -74,7 +74,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(int? id, string? error)> CreateAsync(SoftwareReleaseDto dto)
+    public async Task<(int? id, string error)> CreateAsync(SoftwareReleaseDto dto)
     {
         try
         {
@@ -92,7 +92,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> UpdateAsync(int id, SoftwareReleaseDto dto)
+    public async Task<(bool succeeded, string error)> UpdateAsync(int id, SoftwareReleaseDto dto)
     {
         try
         {
@@ -110,7 +110,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteAsync(int id)
+    public async Task<(bool succeeded, string error)> DeleteAsync(int id)
     {
         try
         {
@@ -134,7 +134,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<SoftwareBarcodeDto>? barcodes =
+            List<SoftwareBarcodeDto> barcodes =
                 await client.Software.Releases[releaseId].Barcodes.GetAsync();
 
             return barcodes ?? [];
@@ -145,7 +145,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(int? id, string? error)> AddBarcodeAsync(SoftwareBarcodeDto dto)
+    public async Task<(int? id, string error)> AddBarcodeAsync(SoftwareBarcodeDto dto)
     {
         try
         {
@@ -163,7 +163,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemoveBarcodeAsync(int id)
+    public async Task<(bool succeeded, string error)> RemoveBarcodeAsync(int id)
     {
         try
         {
@@ -187,7 +187,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<SoftwareProductCodeDto>? codes =
+            List<SoftwareProductCodeDto> codes =
                 await client.Software.Releases[releaseId].ProductCodes.GetAsync();
 
             return codes ?? [];
@@ -198,7 +198,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(int? id, string? error)> AddProductCodeAsync(SoftwareProductCodeDto dto)
+    public async Task<(int? id, string error)> AddProductCodeAsync(SoftwareProductCodeDto dto)
     {
         try
         {
@@ -216,7 +216,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemoveProductCodeAsync(int id)
+    public async Task<(bool succeeded, string error)> RemoveProductCodeAsync(int id)
     {
         try
         {
@@ -240,7 +240,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<GpuBySoftwareReleaseDto>? gpus =
+            List<GpuBySoftwareReleaseDto> gpus =
                 await client.Software.Releases[releaseId].MinimumGpus.GetAsync();
 
             return gpus ?? [];
@@ -251,7 +251,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> AddMinimumGpuAsync(GpuBySoftwareReleaseDto dto)
+    public async Task<(bool succeeded, string error)> AddMinimumGpuAsync(GpuBySoftwareReleaseDto dto)
     {
         try
         {
@@ -269,7 +269,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemoveMinimumGpuAsync(int releaseId, int gpuId)
+    public async Task<(bool succeeded, string error)> RemoveMinimumGpuAsync(int releaseId, int gpuId)
     {
         try
         {
@@ -293,7 +293,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<GpuBySoftwareReleaseDto>? gpus =
+            List<GpuBySoftwareReleaseDto> gpus =
                 await client.Software.Releases[releaseId].RecommendedGpus.GetAsync();
 
             return gpus ?? [];
@@ -304,7 +304,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> AddRecommendedGpuAsync(GpuBySoftwareReleaseDto dto)
+    public async Task<(bool succeeded, string error)> AddRecommendedGpuAsync(GpuBySoftwareReleaseDto dto)
     {
         try
         {
@@ -322,7 +322,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemoveRecommendedGpuAsync(int releaseId, int gpuId)
+    public async Task<(bool succeeded, string error)> RemoveRecommendedGpuAsync(int releaseId, int gpuId)
     {
         try
         {
@@ -346,7 +346,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<SoundSynthBySoftwareReleaseDto>? synths =
+            List<SoundSynthBySoftwareReleaseDto> synths =
                 await client.Software.Releases[releaseId].SoundSynths.GetAsync();
 
             return synths ?? [];
@@ -357,7 +357,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> AddSoundSynthAsync(SoundSynthBySoftwareReleaseDto dto)
+    public async Task<(bool succeeded, string error)> AddSoundSynthAsync(SoundSynthBySoftwareReleaseDto dto)
     {
         try
         {
@@ -375,7 +375,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemoveSoundSynthAsync(int releaseId, int soundSynthId)
+    public async Task<(bool succeeded, string error)> RemoveSoundSynthAsync(int releaseId, int soundSynthId)
     {
         try
         {
@@ -399,7 +399,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<SoftwareVersionDto>? versions = await client.Software.Versions.GetAsync();
+            List<SoftwareVersionDto> versions = await client.Software.Versions.GetAsync();
 
             return versions ?? [];
         }
@@ -413,7 +413,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<SoftwarePlatformDto>? platforms = await client.Software.Platforms.GetAsync();
+            List<SoftwarePlatformDto> platforms = await client.Software.Platforms.GetAsync();
 
             return platforms ?? [];
         }
@@ -427,7 +427,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<CompanyDto>? companies = await client.Companies.GetAsync();
+            List<CompanyDto> companies = await client.Companies.GetAsync();
 
             return companies ?? [];
         }
@@ -441,7 +441,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<UnM49Dto>? regions = await client.UnM49.GetAsync();
+            List<UnM49Dto> regions = await client.UnM49.GetAsync();
 
             return regions ?? [];
         }
@@ -455,7 +455,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<UnM49BySoftwareReleaseDto>? regions =
+            List<UnM49BySoftwareReleaseDto> regions =
                 await client.Software.Releases[releaseId].Regions.GetAsync();
 
             return regions ?? [];
@@ -466,7 +466,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> AddRegionToReleaseAsync(int releaseId, int regionId)
+    public async Task<(bool succeeded, string error)> AddRegionToReleaseAsync(int releaseId, int regionId)
     {
         try
         {
@@ -487,7 +487,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemoveRegionFromReleaseAsync(int releaseId, int regionId)
+    public async Task<(bool succeeded, string error)> RemoveRegionFromReleaseAsync(int releaseId, int regionId)
     {
         try
         {
@@ -509,7 +509,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<GpuDto>? gpus = await client.Gpus.GetAsync();
+            List<GpuDto> gpus = await client.Gpus.GetAsync();
 
             return gpus ?? [];
         }
@@ -523,7 +523,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<SoundSynthDto>? synths = await client.SoundSynths.GetAsync();
+            List<SoundSynthDto> synths = await client.SoundSynths.GetAsync();
 
             return synths ?? [];
         }
@@ -539,7 +539,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<SoftwareVersionBySoftwareReleaseDto>? versions =
+            List<SoftwareVersionBySoftwareReleaseDto> versions =
                 await client.Software.Releases[releaseId].Versions.GetAsync();
 
             return versions ?? [];
@@ -550,7 +550,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> AddIncludedVersionAsync(SoftwareVersionBySoftwareReleaseDto dto)
+    public async Task<(bool succeeded, string error)> AddIncludedVersionAsync(SoftwareVersionBySoftwareReleaseDto dto)
     {
         try
         {
@@ -568,7 +568,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemoveIncludedVersionAsync(int releaseId, int versionId)
+    public async Task<(bool succeeded, string error)> RemoveIncludedVersionAsync(int releaseId, int versionId)
     {
         try
         {
@@ -590,7 +590,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<SoftwareVersionDto>? versions = await client.Software.Versions.GetAsync();
+            List<SoftwareVersionDto> versions = await client.Software.Versions.GetAsync();
 
             return versions ?? [];
         }
@@ -604,7 +604,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<SoftwareReleaseDto>? compilations = await client.Software.Releases.Compilations.GetAsync();
+            List<SoftwareReleaseDto> compilations = await client.Software.Releases.Compilations.GetAsync();
 
             return compilations ?? [];
         }
@@ -618,7 +618,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<SoftwareReleaseDto>? releases =
+            List<SoftwareReleaseDto> releases =
                 await client.Software[softwareId].Releases.GetAsync();
 
             return releases ?? [];
@@ -635,7 +635,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<SoftwareBySoftwareReleaseDto>? software =
+            List<SoftwareBySoftwareReleaseDto> software =
                 await client.Software.Releases[releaseId].Software.GetAsync();
 
             return software ?? [];
@@ -646,7 +646,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> AddIncludedSoftwareAsync(SoftwareBySoftwareReleaseDto dto)
+    public async Task<(bool succeeded, string error)> AddIncludedSoftwareAsync(SoftwareBySoftwareReleaseDto dto)
     {
         try
         {
@@ -664,7 +664,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemoveIncludedSoftwareAsync(int releaseId, int softwareId)
+    public async Task<(bool succeeded, string error)> RemoveIncludedSoftwareAsync(int releaseId, int softwareId)
     {
         try
         {
@@ -686,7 +686,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<SoftwareDto>? software = await client.Software.GetAsync();
+            List<SoftwareDto> software = await client.Software.GetAsync();
 
             return software ?? [];
         }
@@ -700,7 +700,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<Iso639Dto>? languages = await client.Languages.GetAsync();
+            List<Iso639Dto> languages = await client.Languages.GetAsync();
 
             return languages ?? [];
         }
@@ -714,7 +714,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<LanguageBySoftwareReleaseDto>? languages =
+            List<LanguageBySoftwareReleaseDto> languages =
                 await client.Software.Releases[releaseId].Languages.GetAsync();
 
             return languages ?? [];
@@ -725,7 +725,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> AddLanguageToReleaseAsync(int releaseId, string languageCode)
+    public async Task<(bool succeeded, string error)> AddLanguageToReleaseAsync(int releaseId, string languageCode)
     {
         try
         {
@@ -746,7 +746,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemoveLanguageFromReleaseAsync(int releaseId,
+    public async Task<(bool succeeded, string error)> RemoveLanguageFromReleaseAsync(int releaseId,
                                                                                       string languageCode)
     {
         try

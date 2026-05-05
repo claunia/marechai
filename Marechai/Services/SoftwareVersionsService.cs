@@ -37,7 +37,7 @@ public class SoftwareVersionsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<SoftwareVersionDto>? versions = await client.Software.Versions.GetAsync();
+            List<SoftwareVersionDto> versions = await client.Software.Versions.GetAsync();
 
             return versions ?? [];
         }
@@ -51,7 +51,7 @@ public class SoftwareVersionsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<SoftwareVersionDto>? versions = await client.Software[softwareId].Versions.GetAsync();
+            List<SoftwareVersionDto> versions = await client.Software[softwareId].Versions.GetAsync();
 
             return versions ?? [];
         }
@@ -61,7 +61,7 @@ public class SoftwareVersionsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<SoftwareVersionDto?> GetByIdAsync(int id)
+    public async Task<SoftwareVersionDto> GetByIdAsync(int id)
     {
         try
         {
@@ -73,7 +73,7 @@ public class SoftwareVersionsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(int? id, string? error)> CreateAsync(SoftwareVersionDto dto)
+    public async Task<(int? id, string error)> CreateAsync(SoftwareVersionDto dto)
     {
         try
         {
@@ -91,7 +91,7 @@ public class SoftwareVersionsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> UpdateAsync(int id, SoftwareVersionDto dto)
+    public async Task<(bool succeeded, string error)> UpdateAsync(int id, SoftwareVersionDto dto)
     {
         try
         {
@@ -109,7 +109,7 @@ public class SoftwareVersionsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteAsync(int id)
+    public async Task<(bool succeeded, string error)> DeleteAsync(int id)
     {
         try
         {
@@ -133,7 +133,7 @@ public class SoftwareVersionsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<CompanyBySoftwareVersionDto>? companies =
+            List<CompanyBySoftwareVersionDto> companies =
                 await client.Software.Versions[versionId].Companies.GetAsync();
 
             return companies ?? [];
@@ -144,7 +144,7 @@ public class SoftwareVersionsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(int? id, string? error)> AddCompanyRoleAsync(CompanyBySoftwareVersionDto dto)
+    public async Task<(int? id, string error)> AddCompanyRoleAsync(CompanyBySoftwareVersionDto dto)
     {
         try
         {
@@ -162,7 +162,7 @@ public class SoftwareVersionsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemoveCompanyRoleAsync(int id)
+    public async Task<(bool succeeded, string error)> RemoveCompanyRoleAsync(int id)
     {
         try
         {
@@ -186,7 +186,7 @@ public class SoftwareVersionsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<CompanyDto>? companies = await client.Companies.GetAsync();
+            List<CompanyDto> companies = await client.Companies.GetAsync();
 
             return companies ?? [];
         }
@@ -200,7 +200,7 @@ public class SoftwareVersionsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<SoftwareRoleDto>? roles = await client.Software.Roles.Enabled.GetAsync();
+            List<SoftwareRoleDto> roles = await client.Software.Roles.Enabled.GetAsync();
 
             return roles ?? [];
         }
@@ -214,7 +214,7 @@ public class SoftwareVersionsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<LicenseDto>? licenses = await client.Licenses.GetAsync();
+            List<LicenseDto> licenses = await client.Licenses.GetAsync();
 
             return licenses ?? [];
         }

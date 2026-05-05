@@ -33,10 +33,10 @@ namespace Marechai.Pages.Admin;
 
 public partial class Gpus
 {
-    string?        _errorMessage;
+    string        _errorMessage;
     bool           _isLoading = true;
-    string?        _successMessage;
-    List<GpuDto>?  _gpus;
+    string        _successMessage;
+    List<GpuDto>  _gpus;
 
     protected override async Task OnInitializedAsync() => await LoadGpusAsync();
 
@@ -71,7 +71,7 @@ public partial class Gpus
                                                                                FullWidth = true
                                                                            });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: GpuDialogResult data })
         {
@@ -90,7 +90,7 @@ public partial class Gpus
                 Transistors = data.Transistors
             };
 
-            (long? id, string? errorMessage) = await GpusService.CreateAsync(dto);
+            (long? id, string errorMessage) = await GpusService.CreateAsync(dto);
 
             if(id is not null)
             {
@@ -129,7 +129,7 @@ public partial class Gpus
                                                                                FullWidth = true
                                                                            });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: GpuDialogResult data })
         {
@@ -149,7 +149,7 @@ public partial class Gpus
                 Transistors = data.Transistors
             };
 
-            (bool succeeded, string? errorMessage) = await GpusService.UpdateAsync(gpu.Id ?? 0, dto);
+            (bool succeeded, string errorMessage) = await GpusService.UpdateAsync(gpu.Id ?? 0, dto);
 
             if(succeeded)
             {
@@ -182,11 +182,11 @@ public partial class Gpus
                                                                    FullWidth = true
                                                                });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? errorMessage) = await GpusService.DeleteAsync(gpu.Id ?? 0);
+            (bool succeeded, string errorMessage) = await GpusService.DeleteAsync(gpu.Id ?? 0);
 
             if(succeeded)
             {
@@ -209,7 +209,7 @@ public partial class Gpus
                                                                                      FullWidth = true
                                                                                  });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
             await LoadGpusAsync();

@@ -122,17 +122,17 @@
 </MudDialog>
 
 @code {
-    string?                              _validationError;
-    SoftwareVersionDto?                  _selectedParentVersion;
-    List<SoftwareVersionDto>?            _allVersions;
-    LicenseDto?                          _selectedLicense;
-    List<LicenseDto>?                    _allLicenses;
-    CompanyDto?                          _selectedCompany;
-    List<CompanyDto>?                    _allCompanies;
-    SoftwareRoleDto?                     _selectedRole;
-    List<SoftwareRoleDto>?               _allRoles;
-    List<CompanyBySoftwareVersionDto>?   _companyRoles;
-    string?                              _companyRoleMessage;
+    string                              _validationError;
+    SoftwareVersionDto                  _selectedParentVersion;
+    List<SoftwareVersionDto>            _allVersions;
+    LicenseDto                          _selectedLicense;
+    List<LicenseDto>                    _allLicenses;
+    CompanyDto                          _selectedCompany;
+    List<CompanyDto>                    _allCompanies;
+    SoftwareRoleDto                     _selectedRole;
+    List<SoftwareRoleDto>               _allRoles;
+    List<CompanyBySoftwareVersionDto>   _companyRoles;
+    string                              _companyRoleMessage;
     Severity                             _companyRoleMessageSeverity;
 
     [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
@@ -141,8 +141,8 @@
     [Parameter] public int VersionId { get; set; }
     [Parameter] public int ParentSoftwareId { get; set; }
     [Parameter] public string VersionString { get; set; } = string.Empty;
-    [Parameter] public string? PublicVersion { get; set; }
-    [Parameter] public string? Codename { get; set; }
+    [Parameter] public string PublicVersion { get; set; }
+    [Parameter] public string Codename { get; set; }
     [Parameter] public int? ParentVersionId { get; set; }
     [Parameter] public int? LicenseId { get; set; }
 
@@ -167,7 +167,7 @@
         }
     }
 
-    Task<IEnumerable<SoftwareVersionDto>> SearchVersions(string? value, CancellationToken ct)
+    Task<IEnumerable<SoftwareVersionDto>> SearchVersions(string value, CancellationToken ct)
     {
         IEnumerable<SoftwareVersionDto> results = _allVersions ?? [];
 
@@ -182,7 +182,7 @@
         return Task.FromResult(results);
     }
 
-    Task<IEnumerable<LicenseDto>> SearchLicenses(string? value, CancellationToken ct)
+    Task<IEnumerable<LicenseDto>> SearchLicenses(string value, CancellationToken ct)
     {
         IEnumerable<LicenseDto> results = _allLicenses ?? [];
 
@@ -196,7 +196,7 @@
         return Task.FromResult(results);
     }
 
-    Task<IEnumerable<CompanyDto>> SearchCompanies(string? value, CancellationToken ct)
+    Task<IEnumerable<CompanyDto>> SearchCompanies(string value, CancellationToken ct)
     {
         IEnumerable<CompanyDto> results = _allCompanies ?? [];
 
@@ -221,7 +221,7 @@
             RoleId            = _selectedRole.Id
         };
 
-        (int? id, string? error) = await SoftwareVersionsService.AddCompanyRoleAsync(dto);
+        (int? id, string error) = await SoftwareVersionsService.AddCompanyRoleAsync(dto);
 
         if(id is not null)
         {
@@ -239,7 +239,7 @@
 
     async Task RemoveCompanyRole(CompanyBySoftwareVersionDto role)
     {
-        (bool succeeded, string? error) = await SoftwareVersionsService.RemoveCompanyRoleAsync(role.Id ?? 0);
+        (bool succeeded, string error) = await SoftwareVersionsService.RemoveCompanyRoleAsync(role.Id ?? 0);
 
         if(succeeded)
         {

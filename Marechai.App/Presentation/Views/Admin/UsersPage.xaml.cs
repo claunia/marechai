@@ -14,8 +14,8 @@ namespace Marechai.App.Presentation.Views.Admin;
 /// </summary>
 public sealed partial class UsersPage : Page
 {
-    private ContentDialog?  _currentOpenDialog;
-    private UsersViewModel? _currentViewModel;
+    private ContentDialog  _currentOpenDialog;
+    private UsersViewModel _currentViewModel;
 
     public UsersPage()
     {
@@ -52,7 +52,7 @@ public sealed partial class UsersPage : Page
         }
     }
 
-    private async void OnShowDialogRequested(object? sender, string dialogType)
+    private async void OnShowDialogRequested(object sender, string dialogType)
     {
         // Close any currently open dialog first
         if(_currentOpenDialog != null)
@@ -63,7 +63,7 @@ public sealed partial class UsersPage : Page
 
         if(DataContext is not UsersViewModel vm) return;
 
-        ContentDialog? dialog = null;
+        ContentDialog dialog = null;
 
         switch(dialogType)
         {

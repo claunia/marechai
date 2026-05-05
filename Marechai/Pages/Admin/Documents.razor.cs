@@ -8,10 +8,10 @@ namespace Marechai.Pages.Admin;
 
 public partial class Documents
 {
-    string?              _errorMessage;
+    string              _errorMessage;
     bool                 _isLoading = true;
-    string?              _successMessage;
-    List<DocumentDto>?   _documents;
+    string              _successMessage;
+    List<DocumentDto>   _documents;
 
     protected override async Task OnInitializedAsync() => await LoadDocumentsAsync();
 
@@ -49,7 +49,7 @@ public partial class Documents
                                                                                     FullWidth = true
                                                                                 });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: DocumentDialogResult data })
         {
@@ -64,7 +64,7 @@ public partial class Documents
                 Published   = data.Published.HasValue ? new DateTimeOffset(data.Published.Value, TimeSpan.Zero) : null
             };
 
-            (long? id, string? errorMessage) = await DocumentsService.CreateAsync(dto);
+            (long? id, string errorMessage) = await DocumentsService.CreateAsync(dto);
 
             if(id is not null)
             {
@@ -81,7 +81,7 @@ public partial class Documents
     async Task OpenEditDocumentDialog(DocumentDto document)
     {
         // Fetch full details by ID to get FK IDs (list endpoint may omit them)
-        DocumentDto? fullDocument = document.Id.HasValue
+        DocumentDto fullDocument = document.Id.HasValue
             ? await DocumentsService.GetDocumentAsync(document.Id.Value)
             : document;
 
@@ -106,7 +106,7 @@ public partial class Documents
                                                                                     FullWidth = true
                                                                                 });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: DocumentDialogResult data })
         {
@@ -122,7 +122,7 @@ public partial class Documents
                 Published   = data.Published.HasValue ? new DateTimeOffset(data.Published.Value, TimeSpan.Zero) : null
             };
 
-            (bool succeeded, string? errorMessage) = await DocumentsService.UpdateAsync(document.Id ?? 0, dto);
+            (bool succeeded, string errorMessage) = await DocumentsService.UpdateAsync(document.Id ?? 0, dto);
 
             if(succeeded)
             {
@@ -146,7 +146,7 @@ public partial class Documents
                 FullWidth = true
             });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
             await LoadDocumentsAsync();
@@ -173,11 +173,11 @@ public partial class Documents
                                                                    FullWidth = true
                                                                });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? errorMessage) = await DocumentsService.DeleteAsync(document.Id ?? 0);
+            (bool succeeded, string errorMessage) = await DocumentsService.DeleteAsync(document.Id ?? 0);
 
             if(succeeded)
             {

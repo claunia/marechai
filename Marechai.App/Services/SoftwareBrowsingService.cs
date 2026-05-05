@@ -215,13 +215,13 @@ public class SoftwareBrowsingService
         }
     }
 
-    public async Task<SoftwareDto?> GetSoftwareByIdAsync(int softwareId)
+    public async Task<SoftwareDto> GetSoftwareByIdAsync(int softwareId)
     {
         try
         {
             _logger.LogInformation("Fetching software {SoftwareId} from API", softwareId);
 
-            SoftwareDto? software = await _apiClient.Software[softwareId].GetAsync();
+            SoftwareDto software = await _apiClient.Software[softwareId].GetAsync();
 
             if(software == null)
             {
@@ -316,13 +316,13 @@ public class SoftwareBrowsingService
         }
     }
 
-    public async Task<SoftwareReleaseDto?> GetReleaseByIdAsync(int releaseId)
+    public async Task<SoftwareReleaseDto> GetReleaseByIdAsync(int releaseId)
     {
         try
         {
             _logger.LogInformation("Fetching release {ReleaseId} from API", releaseId);
 
-            SoftwareReleaseDto? release = await _apiClient.Software.Releases[releaseId].GetAsync();
+            SoftwareReleaseDto release = await _apiClient.Software.Releases[releaseId].GetAsync();
 
             if(release == null)
             {
@@ -449,7 +449,7 @@ public class SoftwareBrowsingService
         }
     }
 
-    public async Task<SoftwareVersionDto?> GetVersionByIdAsync(int versionId)
+    public async Task<SoftwareVersionDto> GetVersionByIdAsync(int versionId)
     {
         try
         {
@@ -479,7 +479,7 @@ public class SoftwareBrowsingService
         }
     }
 
-    public async Task<SoftwareScreenshotDto?> GetScreenshotDetailsAsync(Guid screenshotId)
+    public async Task<SoftwareScreenshotDto> GetScreenshotDetailsAsync(Guid screenshotId)
     {
         try
         {
@@ -497,7 +497,7 @@ public class SoftwareBrowsingService
     {
         try
         {
-            List<SoftwareVersionBySoftwareReleaseDto>? versions =
+            List<SoftwareVersionBySoftwareReleaseDto> versions =
                 await _apiClient.Software.Releases[releaseId].Versions.GetAsync();
 
             return versions ?? [];
@@ -514,7 +514,7 @@ public class SoftwareBrowsingService
     {
         try
         {
-            List<SoftwareReleaseDto>? compilations =
+            List<SoftwareReleaseDto> compilations =
                 await _apiClient.Software[softwareId].Compilations.GetAsync();
 
             return compilations ?? [];
@@ -531,7 +531,7 @@ public class SoftwareBrowsingService
     {
         try
         {
-            List<SoftwareReleaseDto>? releases =
+            List<SoftwareReleaseDto> releases =
                 await _apiClient.Software[softwareId].Releases.GetAsync();
 
             return releases ?? [];
@@ -548,7 +548,7 @@ public class SoftwareBrowsingService
     {
         try
         {
-            List<SoftwareBySoftwareReleaseDto>? software =
+            List<SoftwareBySoftwareReleaseDto> software =
                 await _apiClient.Software.Releases[releaseId].Software.GetAsync();
 
             return software ?? [];
@@ -561,7 +561,7 @@ public class SoftwareBrowsingService
         }
     }
 
-    public async Task<SoftwareDescriptionDto?> GetDescriptionAsync(int softwareId, string languageCode)
+    public async Task<SoftwareDescriptionDto> GetDescriptionAsync(int softwareId, string languageCode)
     {
         try
         {
@@ -569,7 +569,7 @@ public class SoftwareBrowsingService
                                    softwareId,
                                    languageCode);
 
-            SoftwareDescriptionDto? desc = await _apiClient.Software[softwareId].Description.GetAsync(
+            SoftwareDescriptionDto desc = await _apiClient.Software[softwareId].Description.GetAsync(
                                                config => config.QueryParameters.Lang = languageCode);
 
             return desc;
@@ -588,7 +588,7 @@ public class SoftwareBrowsingService
         {
             _logger.LogInformation("Fetching credits for software {SoftwareId} from API", softwareId);
 
-            List<PersonBySoftwareDto>? credits = await _apiClient.Software[softwareId].Credits.GetAsync();
+            List<PersonBySoftwareDto> credits = await _apiClient.Software[softwareId].Credits.GetAsync();
 
             if(credits == null) return [];
 
@@ -612,7 +612,7 @@ public class SoftwareBrowsingService
         {
             _logger.LogInformation("Fetching genres for software {SoftwareId} from API", softwareId);
 
-            List<SoftwareGenreDto>? genres = await _apiClient.Software[softwareId].Genres.GetAsync();
+            List<SoftwareGenreDto> genres = await _apiClient.Software[softwareId].Genres.GetAsync();
 
             if(genres == null) return [];
 
@@ -636,7 +636,7 @@ public class SoftwareBrowsingService
         {
             _logger.LogInformation("Fetching attributes for software {SoftwareId} from API", softwareId);
 
-            List<SoftwareAttributeDto>? attributes = await _apiClient.Software[softwareId].Attributes.GetAsync();
+            List<SoftwareAttributeDto> attributes = await _apiClient.Software[softwareId].Attributes.GetAsync();
 
             if(attributes == null) return [];
 

@@ -320,43 +320,43 @@
 </MudDialog>
 
 @code {
-    string?  _validationError;
+    string  _validationError;
 
     // Country picker
-    Iso31661NumericDto?       _selectedCountry;
-    List<Iso31661NumericDto>? _allCountries;
+    Iso31661NumericDto       _selectedCountry;
+    List<Iso31661NumericDto> _allCountries;
 
     // Synopsis state
-    string?                    _selectedLanguage;
+    string                    _selectedLanguage;
     string                     _synopsisText     = string.Empty;
     List<DocumentSynopsisDto>  _existingSynopses = [];
-    string?                    _synopsisMessage;
+    string                    _synopsisMessage;
     Severity                   _synopsisMessageSeverity = Severity.Info;
 
     // People junction
-    List<PersonByMagazineDto>? _magazinePeople;
-    PersonDto?                 _selectedPerson;
-    DocumentRoleDto?           _selectedPersonRole;
-    List<PersonDto>?           _allPeople;
+    List<PersonByMagazineDto> _magazinePeople;
+    PersonDto                 _selectedPerson;
+    DocumentRoleDto           _selectedPersonRole;
+    List<PersonDto>           _allPeople;
 
     // Companies junction
-    List<CompanyByMagazineDto>? _magazineCompanies;
-    CompanyDto?                 _selectedCompany;
-    DocumentRoleDto?            _selectedCompanyRole;
-    List<CompanyDto>?           _allCompanies;
+    List<CompanyByMagazineDto> _magazineCompanies;
+    CompanyDto                 _selectedCompany;
+    DocumentRoleDto            _selectedCompanyRole;
+    List<CompanyDto>           _allCompanies;
 
     // Roles
-    List<DocumentRoleDto>? _allRoles;
+    List<DocumentRoleDto> _allRoles;
 
     // Machines junction
-    List<MagazineByMachineDto>? _magazineMachines;
-    MachineDto?                 _selectedMachine;
-    List<MachineDto>?           _allMachines;
+    List<MagazineByMachineDto> _magazineMachines;
+    MachineDto                 _selectedMachine;
+    List<MachineDto>           _allMachines;
 
     // Machine Families junction
-    List<MagazineByMachineFamilyDto>? _magazineMachineFamilies;
-    MachineFamilyDto?                 _selectedMachineFamily;
-    List<MachineFamilyDto>?           _allMachineFamilies;
+    List<MagazineByMachineFamilyDto> _magazineMachineFamilies;
+    MachineFamilyDto                 _selectedMachineFamily;
+    List<MachineFamilyDto>           _allMachineFamilies;
 
     [CascadingParameter]
     IMudDialogInstance MudDialog { get; set; } = null!;
@@ -364,9 +364,9 @@
     [Parameter] public bool      IsNew            { get; set; }
     [Parameter] public long      MagazineId       { get; set; }
     [Parameter] public string    Title            { get; set; } = string.Empty;
-    [Parameter] public string?   NativeTitle      { get; set; }
-    [Parameter] public string?   SortTitle        { get; set; }
-    [Parameter] public string?   Issn             { get; set; }
+    [Parameter] public string   NativeTitle      { get; set; }
+    [Parameter] public string   SortTitle        { get; set; }
+    [Parameter] public string   Issn             { get; set; }
     [Parameter] public int?      CountryId        { get; set; }
     [Parameter] public DateTime? Published        { get; set; }
     [Parameter] public int       PublishedPrecision { get; set; }
@@ -403,7 +403,7 @@
 
     // --- Search functions ---
 
-    Task<IEnumerable<Iso31661NumericDto>> SearchCountries(string? value, CancellationToken ct)
+    Task<IEnumerable<Iso31661NumericDto>> SearchCountries(string value, CancellationToken ct)
     {
         IEnumerable<Iso31661NumericDto> results = _allCountries ?? [];
 
@@ -413,7 +413,7 @@
         return Task.FromResult(results);
     }
 
-    Task<IEnumerable<PersonDto>> SearchPeople(string? value, CancellationToken ct)
+    Task<IEnumerable<PersonDto>> SearchPeople(string value, CancellationToken ct)
     {
         IEnumerable<PersonDto> results = _allPeople ?? [];
 
@@ -429,7 +429,7 @@
         return Task.FromResult(results);
     }
 
-    Task<IEnumerable<CompanyDto>> SearchCompanies(string? value, CancellationToken ct)
+    Task<IEnumerable<CompanyDto>> SearchCompanies(string value, CancellationToken ct)
     {
         IEnumerable<CompanyDto> results = _allCompanies ?? [];
 
@@ -439,7 +439,7 @@
         return Task.FromResult(results);
     }
 
-    Task<IEnumerable<MachineDto>> SearchMachines(string? value, CancellationToken ct)
+    Task<IEnumerable<MachineDto>> SearchMachines(string value, CancellationToken ct)
     {
         IEnumerable<MachineDto> results = _allMachines ?? [];
 
@@ -449,7 +449,7 @@
         return Task.FromResult(results);
     }
 
-    Task<IEnumerable<MachineFamilyDto>> SearchMachineFamilies(string? value, CancellationToken ct)
+    Task<IEnumerable<MachineFamilyDto>> SearchMachineFamilies(string value, CancellationToken ct)
     {
         IEnumerable<MachineFamilyDto> results = _allMachineFamilies ?? [];
 
@@ -479,7 +479,7 @@
     static string FormatCompany(CompanyByMagazineDto c) =>
         string.IsNullOrWhiteSpace(c.Role) ? c.Company ?? string.Empty : $"{c.Company} ({c.Role})";
 
-    static string GetLanguageName(string? code) => code switch
+    static string GetLanguageName(string code) => code switch
     {
         "eng" => "English",
         "spa" => "Español",
@@ -490,7 +490,7 @@
         _     => code ?? "?"
     };
 
-    static string TruncateSynopsis(string? text) =>
+    static string TruncateSynopsis(string text) =>
         string.IsNullOrWhiteSpace(text)
             ? string.Empty
             : text.Length > 100 ? text[..100] + "..." : text;
@@ -514,7 +514,7 @@
             Text         = _synopsisText
         };
 
-        (long? id, string? error) = await MagazinesService.UpsertSynopsisAsync(MagazineId, dto);
+        (long? id, string error) = await MagazinesService.UpsertSynopsisAsync(MagazineId, dto);
 
         if(id is not null)
         {
@@ -535,7 +535,7 @@
         if(string.IsNullOrWhiteSpace(_selectedLanguage))
             return;
 
-        (bool succeeded, string? error) = await MagazinesService.DeleteSynopsisAsync(MagazineId, _selectedLanguage);
+        (bool succeeded, string error) = await MagazinesService.DeleteSynopsisAsync(MagazineId, _selectedLanguage);
 
         if(succeeded)
         {
@@ -566,7 +566,7 @@
             RoleId     = _selectedPersonRole.Id
         };
 
-        (long? id, string? error) = await MagazinesService.AddPersonToMagazineAsync(dto);
+        (long? id, string error) = await MagazinesService.AddPersonToMagazineAsync(dto);
 
         if(id is not null)
         {
@@ -581,7 +581,7 @@
     {
         if(person.Id is null) return;
 
-        (bool succeeded, string? error) = await MagazinesService.RemovePersonFromMagazineAsync(person.Id.Value);
+        (bool succeeded, string error) = await MagazinesService.RemovePersonFromMagazineAsync(person.Id.Value);
 
         if(succeeded)
         {
@@ -604,7 +604,7 @@
             RoleId     = _selectedCompanyRole.Id
         };
 
-        (long? id, string? error) = await MagazinesService.AddCompanyToMagazineAsync(dto);
+        (long? id, string error) = await MagazinesService.AddCompanyToMagazineAsync(dto);
 
         if(id is not null)
         {
@@ -619,7 +619,7 @@
     {
         if(company.Id is null) return;
 
-        (bool succeeded, string? error) = await MagazinesService.RemoveCompanyFromMagazineAsync(company.Id.Value);
+        (bool succeeded, string error) = await MagazinesService.RemoveCompanyFromMagazineAsync(company.Id.Value);
 
         if(succeeded)
         {
@@ -640,7 +640,7 @@
             MachineId  = (int?)_selectedMachine.Id
         };
 
-        (long? id, string? error) = await MagazinesService.AddMachineToMagazineAsync(dto);
+        (long? id, string error) = await MagazinesService.AddMachineToMagazineAsync(dto);
 
         if(id is not null)
         {
@@ -654,7 +654,7 @@
     {
         if(machine.Id is null) return;
 
-        (bool succeeded, string? error) = await MagazinesService.RemoveMachineFromMagazineAsync(machine.Id.Value);
+        (bool succeeded, string error) = await MagazinesService.RemoveMachineFromMagazineAsync(machine.Id.Value);
 
         if(succeeded)
         {
@@ -675,7 +675,7 @@
             MachineFamilyId = (int?)_selectedMachineFamily.Id
         };
 
-        (long? id, string? error) = await MagazinesService.AddMachineFamilyToMagazineAsync(dto);
+        (long? id, string error) = await MagazinesService.AddMachineFamilyToMagazineAsync(dto);
 
         if(id is not null)
         {
@@ -689,7 +689,7 @@
     {
         if(family.Id is null) return;
 
-        (bool succeeded, string? error) = await MagazinesService.RemoveMachineFamilyFromMagazineAsync(family.Id.Value);
+        (bool succeeded, string error) = await MagazinesService.RemoveMachineFamilyFromMagazineAsync(family.Id.Value);
 
         if(succeeded)
         {

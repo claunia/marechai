@@ -55,8 +55,8 @@ public partial class ReleaseView
     List<SoundSynthBySoftwareReleaseDto>                   _soundSynths = [];
     List<SoftwareCoverDto>                                 _covers = [];
     Dictionary<string, List<SoftwareCoverDto>>              _coversByType = new();
-    SoftwareCoverDto?                                      _fullscreenCover;
-    SoftwareCoverDto?                                      _heroCover;
+    SoftwareCoverDto                                      _fullscreenCover;
+    SoftwareCoverDto                                      _heroCover;
     bool                                                   _togglingCollection;
 
     [CascadingParameter]
@@ -99,7 +99,7 @@ public partial class ReleaseView
         // Get software name from version (versioned single releases) or software (versionless single releases)
         if(_release.SoftwareVersionId.HasValue)
         {
-            SoftwareVersionDto? version = await Service.GetVersionByIdAsync(_release.SoftwareVersionId.Value);
+            SoftwareVersionDto version = await Service.GetVersionByIdAsync(_release.SoftwareVersionId.Value);
             _softwareName = version?.Software;
         }
         else if(_release.IsCompilation == true)
@@ -133,7 +133,7 @@ public partial class ReleaseView
         {
             if(coverId.HasValue && coverId.Value != Guid.Empty)
             {
-                SoftwareCoverDto? detail = await Service.GetCoverDetailsAsync(coverId.Value);
+                SoftwareCoverDto detail = await Service.GetCoverDetailsAsync(coverId.Value);
 
                 if(detail != null) _covers.Add(detail);
             }

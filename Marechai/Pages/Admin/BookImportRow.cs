@@ -32,22 +32,22 @@ namespace Marechai.Pages.Admin;
 public sealed class BookImportRow
 {
     public string  Title        { get; set; } = "";
-    public string? NativeTitle  { get; set; }
-    public string? SortTitle    { get; set; }
-    public string? Isbn         { get; set; }
+    public string NativeTitle  { get; set; }
+    public string SortTitle    { get; set; }
+    public string Isbn         { get; set; }
     public int?    Edition      { get; set; }
     public int?    Pages        { get; set; }
     public int?    PublishedYear  { get; set; }
     public int?    PublishedMonth { get; set; }
     public int?    PublishedDay   { get; set; }
-    public string? CountryInput   { get; set; }
+    public string CountryInput   { get; set; }
 
     public List<Iso31661NumericDto>    MatchedCountries { get; set; } = [];
-    public Iso31661NumericDto?         SelectedCountry  { get; set; }
+    public Iso31661NumericDto         SelectedCountry  { get; set; }
     public CountryMatchType            CountryMatch     { get; set; } = CountryMatchType.None;
     public bool                        IsDuplicate      { get; set; }
-    public string?                     ImportError      { get; set; }
-    public string?                     ValidationError  { get; set; }
+    public string                     ImportError      { get; set; }
+    public string                     ValidationError  { get; set; }
 
     public DateTime? PublishedDate
     {

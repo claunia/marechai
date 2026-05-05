@@ -9,13 +9,13 @@ namespace Marechai.Pages.Admin;
 
 public partial class SoftwareReleases
 {
-    string?                    _errorMessage;
+    string                    _errorMessage;
     bool                       _isLoading = true;
     int?                       _parentSoftwareId;
-    List<SoftwareReleaseDto>?  _releases;
-    string?                    _successMessage;
-    string?                    _versionName;
-    string?                    _softwareName;
+    List<SoftwareReleaseDto>  _releases;
+    string                    _successMessage;
+    string                    _versionName;
+    string                    _softwareName;
     bool                       _isVersionContext;
     bool                       _isSoftwareContext;
 
@@ -29,7 +29,7 @@ public partial class SoftwareReleases
 
         if(_isVersionContext)
         {
-            SoftwareVersionDto? version = await SoftwareVersionsService.GetByIdAsync(VersionId);
+            SoftwareVersionDto version = await SoftwareVersionsService.GetByIdAsync(VersionId);
             _versionName      = version is not null ? $"{version.Software} - {version.VersionString}" : null;
             _parentSoftwareId = version?.SoftwareId;
         }
@@ -99,7 +99,7 @@ public partial class SoftwareReleases
                                                                       FullWidth = true
                                                                   });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: SoftwareReleaseDialogResult data })
         {
@@ -116,7 +116,7 @@ public partial class SoftwareReleases
                 ReleaseDate       = data.ReleaseDate.HasValue ? new DateTimeOffset(data.ReleaseDate.Value, TimeSpan.Zero) : null
             };
 
-            (int? id, string? errorMessage) = await SoftwareReleasesService.CreateAsync(dto);
+            (int? id, string errorMessage) = await SoftwareReleasesService.CreateAsync(dto);
 
             if(id is not null)
             {
@@ -132,7 +132,7 @@ public partial class SoftwareReleases
 
     async Task OpenEditDialog(SoftwareReleaseDto release)
     {
-        SoftwareReleaseDto? full = await SoftwareReleasesService.GetByIdAsync(release.Id ?? 0);
+        SoftwareReleaseDto full = await SoftwareReleasesService.GetByIdAsync(release.Id ?? 0);
 
         if(full is null)
         {
@@ -164,7 +164,7 @@ public partial class SoftwareReleases
                                                                       FullWidth = true
                                                                   });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: SoftwareReleaseDialogResult data })
         {
@@ -182,7 +182,7 @@ public partial class SoftwareReleases
                 ReleaseDate       = data.ReleaseDate.HasValue ? new DateTimeOffset(data.ReleaseDate.Value, TimeSpan.Zero) : null
             };
 
-            (bool succeeded, string? errorMessage) = await SoftwareReleasesService.UpdateAsync(full.Id ?? 0, dto);
+            (bool succeeded, string errorMessage) = await SoftwareReleasesService.UpdateAsync(full.Id ?? 0, dto);
 
             if(succeeded)
             {
@@ -206,7 +206,7 @@ public partial class SoftwareReleases
                                                                            FullWidth = true
                                                                        });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
             await LoadDataAsync();
@@ -233,11 +233,11 @@ public partial class SoftwareReleases
                                                                    FullWidth = true
                                                                });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? errorMessage) = await SoftwareReleasesService.DeleteAsync(release.Id ?? 0);
+            (bool succeeded, string errorMessage) = await SoftwareReleasesService.DeleteAsync(release.Id ?? 0);
 
             if(succeeded)
             {

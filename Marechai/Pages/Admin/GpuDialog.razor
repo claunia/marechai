@@ -121,13 +121,13 @@
 </MudDialog>
 
 @code {
-    CompanyDto?        _selectedCompany;
-    ResolutionDto?     _selectedResolution;
-    string?            _validationError;
+    CompanyDto        _selectedCompany;
+    ResolutionDto     _selectedResolution;
+    string            _validationError;
 
-    List<CompanyDto>?          _allCompanies;
-    List<ResolutionDto>?       _allResolutions;
-    List<ResolutionByGpuDto>?  _gpuResolutions;
+    List<CompanyDto>          _allCompanies;
+    List<ResolutionDto>       _allResolutions;
+    List<ResolutionByGpuDto>  _gpuResolutions;
 
     [CascadingParameter]
     IMudDialogInstance MudDialog { get; set; } = null!;
@@ -136,11 +136,11 @@
     [Parameter] public int       GpuId       { get; set; }
     [Parameter] public string    Name        { get; set; } = string.Empty;
     [Parameter] public int?      CompanyId   { get; set; }
-    [Parameter] public string?   ModelCode   { get; set; }
+    [Parameter] public string   ModelCode   { get; set; }
     [Parameter] public DateTime? Introduced  { get; set; }
     [Parameter] public int       IntroducedPrecision { get; set; }
-    [Parameter] public string?   Package     { get; set; }
-    [Parameter] public string?   Process     { get; set; }
+    [Parameter] public string   Package     { get; set; }
+    [Parameter] public string   Process     { get; set; }
     [Parameter] public float?    ProcessNm   { get; set; }
     [Parameter] public float?    DieSize     { get; set; }
     [Parameter] public long?     Transistors { get; set; }
@@ -160,7 +160,7 @@
             _gpuResolutions = await GpusService.GetResolutionsByGpuAsync(GpuId);
     }
 
-    Task<IEnumerable<CompanyDto>> SearchCompanies(string? value, CancellationToken ct)
+    Task<IEnumerable<CompanyDto>> SearchCompanies(string value, CancellationToken ct)
     {
         IEnumerable<CompanyDto> results = _allCompanies ?? [];
 
@@ -170,7 +170,7 @@
         return Task.FromResult(results);
     }
 
-    Task<IEnumerable<ResolutionDto>> SearchResolutions(string? value, CancellationToken ct)
+    Task<IEnumerable<ResolutionDto>> SearchResolutions(string value, CancellationToken ct)
     {
         HashSet<int?> assignedIds = _gpuResolutions?.Select(r => r.ResolutionId).ToHashSet() ?? [];
 
@@ -185,7 +185,7 @@
     string FormatResolution(ResolutionByGpuDto res)
     {
         // Kiota composed type deserialization is broken for nested DTOs — look up from pre-loaded list
-        ResolutionDto? r = _allResolutions?.Find(x => x.Id == res.ResolutionId);
+        ResolutionDto r = _allResolutions?.Find(x => x.Id == res.ResolutionId);
 
         if(r is null)
             return $"{res.ResolutionId}";
@@ -219,7 +219,7 @@
             ResolutionId = _selectedResolution.Id
         };
 
-        (long? id, string? error) = await GpusService.AddResolutionToGpuAsync(dto);
+        (long? id, string error) = await GpusService.AddResolutionToGpuAsync(dto);
 
         if(id is not null)
         {
@@ -252,11 +252,11 @@
                                                                                          FullWidth = true
                                                                                      });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? error) = await GpusService.RemoveResolutionFromGpuAsync(res.Id.Value);
+            (bool succeeded, string error) = await GpusService.RemoveResolutionFromGpuAsync(res.Id.Value);
 
             if(succeeded)
             {

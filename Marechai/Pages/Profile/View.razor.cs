@@ -33,16 +33,16 @@ namespace Marechai.Pages.Profile;
 
 public partial class View
 {
-    List<CollectedBookDto>?            _collectedBooks;
-    List<CollectedMachineDto>?         _collectedComputers;
-    List<CollectedMachineDto>?         _collectedConsoles;
-    List<CollectedDocumentDto>?        _collectedDocuments;
-    List<CollectedMachineDto>?         _collectedMachines;
-    List<CollectedMachineDto>?         _collectedSmartphones;
-    List<CollectedSoftwareReleaseDto>? _collectedReleases;
+    List<CollectedBookDto>            _collectedBooks;
+    List<CollectedMachineDto>         _collectedComputers;
+    List<CollectedMachineDto>         _collectedConsoles;
+    List<CollectedDocumentDto>        _collectedDocuments;
+    List<CollectedMachineDto>         _collectedMachines;
+    List<CollectedMachineDto>         _collectedSmartphones;
+    List<CollectedSoftwareReleaseDto> _collectedReleases;
     bool                               _loaded;
-    PublicProfileDto?                  _profile;
-    UserCollectionSummaryDto?          _summary;
+    PublicProfileDto                  _profile;
+    UserCollectionSummaryDto          _summary;
 
     [Parameter]
     public string Username { get; set; } = null!;

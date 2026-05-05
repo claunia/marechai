@@ -51,7 +51,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
     [Produces("application/json")]
     public async Task<ActionResult<UserCollectionSummaryDto>> GetCollectionSummaryAsync(string username)
     {
-        ApplicationUser? user = await userManager.FindByNameAsync(username);
+        ApplicationUser user = await userManager.FindByNameAsync(username);
 
         if(user is null) return NotFound();
 
@@ -73,7 +73,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
     [Produces("application/json")]
     public async Task<ActionResult<List<CollectedBookDto>>> GetCollectedBooksAsync(string username)
     {
-        ApplicationUser? user = await userManager.FindByNameAsync(username);
+        ApplicationUser user = await userManager.FindByNameAsync(username);
 
         if(user is null) return NotFound();
 
@@ -103,7 +103,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
     [Produces("application/json")]
     public async Task<ActionResult<List<CollectedDocumentDto>>> GetCollectedDocumentsAsync(string username)
     {
-        ApplicationUser? user = await userManager.FindByNameAsync(username);
+        ApplicationUser user = await userManager.FindByNameAsync(username);
 
         if(user is null) return NotFound();
 
@@ -130,7 +130,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
     [Produces("application/json")]
     public async Task<ActionResult<List<CollectedMachineDto>>> GetCollectedMachinesAsync(string username)
     {
-        ApplicationUser? user = await userManager.FindByNameAsync(username);
+        ApplicationUser user = await userManager.FindByNameAsync(username);
 
         if(user is null) return NotFound();
 
@@ -171,7 +171,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
     public async Task<ActionResult<List<CollectedSoftwareReleaseDto>>> GetCollectedSoftwareReleasesAsync(
         string username)
     {
-        ApplicationUser? user = await userManager.FindByNameAsync(username);
+        ApplicationUser user = await userManager.FindByNameAsync(username);
 
         if(user is null) return NotFound();
 
@@ -217,7 +217,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> IsBookCollectedAsync(long bookId)
     {
-        string? userId = User.FindFirstValue(ClaimTypes.Sid);
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
         if(userId is null) return Unauthorized();
 
         bool exists = await context.CollectedBooks.AnyAsync(c => c.UserId == userId && c.BookId == bookId);
@@ -232,7 +232,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> AddBookToCollectionAsync(long bookId)
     {
-        string? userId = User.FindFirstValue(ClaimTypes.Sid);
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
         if(userId is null) return Unauthorized();
 
         bool bookExists = await context.Set<Book>().AnyAsync(b => b.Id == bookId);
@@ -253,10 +253,10 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> RemoveBookFromCollectionAsync(long bookId)
     {
-        string? userId = User.FindFirstValue(ClaimTypes.Sid);
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
         if(userId is null) return Unauthorized();
 
-        CollectedBook? entry = await context.CollectedBooks
+        CollectedBook entry = await context.CollectedBooks
                                             .FirstOrDefaultAsync(c => c.UserId == userId && c.BookId == bookId);
 
         if(entry is null) return NotFound();
@@ -275,7 +275,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> IsDocumentCollectedAsync(long documentId)
     {
-        string? userId = User.FindFirstValue(ClaimTypes.Sid);
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
         if(userId is null) return Unauthorized();
 
         bool exists =
@@ -291,7 +291,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> AddDocumentToCollectionAsync(long documentId)
     {
-        string? userId = User.FindFirstValue(ClaimTypes.Sid);
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
         if(userId is null) return Unauthorized();
 
         bool documentExists = await context.Documents.AnyAsync(d => d.Id == documentId);
@@ -314,10 +314,10 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> RemoveDocumentFromCollectionAsync(long documentId)
     {
-        string? userId = User.FindFirstValue(ClaimTypes.Sid);
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
         if(userId is null) return Unauthorized();
 
-        CollectedDocument? entry = await context.CollectedDocuments
+        CollectedDocument entry = await context.CollectedDocuments
                                                 .FirstOrDefaultAsync(c => c.UserId == userId &&
                                                                           c.DocumentId == documentId);
 
@@ -337,7 +337,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> IsMachineCollectedAsync(int machineId)
     {
-        string? userId = User.FindFirstValue(ClaimTypes.Sid);
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
         if(userId is null) return Unauthorized();
 
         bool exists = await context.OwnedMachines.AnyAsync(c => c.UserId == userId && c.MachineId == machineId);
@@ -352,7 +352,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> AddMachineToCollectionAsync(int machineId)
     {
-        string? userId = User.FindFirstValue(ClaimTypes.Sid);
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
         if(userId is null) return Unauthorized();
 
         bool machineExists = await context.Machines.AnyAsync(m => m.Id == machineId);
@@ -383,10 +383,10 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> RemoveMachineFromCollectionAsync(int machineId)
     {
-        string? userId = User.FindFirstValue(ClaimTypes.Sid);
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
         if(userId is null) return Unauthorized();
 
-        OwnedMachine? entry = await context.OwnedMachines
+        OwnedMachine entry = await context.OwnedMachines
                                            .FirstOrDefaultAsync(c => c.UserId == userId && c.MachineId == machineId);
 
         if(entry is null) return NotFound();
@@ -405,7 +405,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> IsSoftwareReleaseCollectedAsync(ulong releaseId)
     {
-        string? userId = User.FindFirstValue(ClaimTypes.Sid);
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
         if(userId is null) return Unauthorized();
 
         bool exists =
@@ -422,7 +422,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> AddSoftwareReleaseToCollectionAsync(ulong releaseId)
     {
-        string? userId = User.FindFirstValue(ClaimTypes.Sid);
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
         if(userId is null) return Unauthorized();
 
         bool releaseExists = await context.SoftwareReleases.AnyAsync(r => r.Id == releaseId);
@@ -451,10 +451,10 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> RemoveSoftwareReleaseFromCollectionAsync(ulong releaseId)
     {
-        string? userId = User.FindFirstValue(ClaimTypes.Sid);
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
         if(userId is null) return Unauthorized();
 
-        CollectedSoftwareRelease? entry =
+        CollectedSoftwareRelease entry =
             await context.CollectedSoftwareReleases
                          .FirstOrDefaultAsync(c => c.UserId     == userId &&
                                                    c.SoftwareReleaseId == releaseId);

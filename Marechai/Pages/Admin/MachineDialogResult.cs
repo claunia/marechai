@@ -5,7 +5,7 @@ namespace Marechai.Pages.Admin;
 public sealed class MachineDialogResult
 {
     public string    Name       { get; set; } = null!;
-    public string?   Model      { get; set; }
+    public string   Model      { get; set; }
     public int?      CompanyId  { get; set; }
     public int       Type       { get; set; }
     public bool      Prototype  { get; set; }

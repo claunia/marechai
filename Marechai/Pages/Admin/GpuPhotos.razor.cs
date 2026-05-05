@@ -13,22 +13,22 @@ public partial class GpuPhotos
 {
     const long MaxFileSize = 50 * 1024 * 1024; // 50 MB
 
-    string?               _errorMessage;
+    string               _errorMessage;
     bool                  _isLoading = true;
     bool                  _isUploading;
-    List<LicenseDto>?     _licenses;
-    string?               _gpuName;
-    List<GpuPhotoDto>?    _photos;
-    IBrowserFile?         _selectedFile;
-    LicenseDto?           _selectedLicense;
-    string?               _sourceUrl;
-    string?               _successMessage;
+    List<LicenseDto>     _licenses;
+    string               _gpuName;
+    List<GpuPhotoDto>    _photos;
+    IBrowserFile         _selectedFile;
+    LicenseDto           _selectedLicense;
+    string               _sourceUrl;
+    string               _successMessage;
 
     [Parameter] public int GpuId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        GpuDto? gpu = await GpusService.GetByIdAsync(GpuId);
+        GpuDto gpu = await GpusService.GetByIdAsync(GpuId);
         _gpuName  = gpu?.Name;
         _licenses = await GpuPhotosService.GetAllLicensesAsync();
 
@@ -45,7 +45,7 @@ public partial class GpuPhotos
 
         foreach(Guid guid in guids)
         {
-            GpuPhotoDto? photo = await GpuPhotosService.GetAsync(guid);
+            GpuPhotoDto photo = await GpuPhotosService.GetAsync(guid);
 
             if(photo is not null)
                 photos.Add(photo);
@@ -73,7 +73,7 @@ public partial class GpuPhotos
             await stream.CopyToAsync(ms);
             byte[] fileBytes = ms.ToArray();
 
-            (GpuPhotoDto? photo, string? error) =
+            (GpuPhotoDto photo, string error) =
                 await GpuPhotosService.UploadPhotoAsync(GpuId, _selectedLicense.Id ?? 0, _sourceUrl, fileBytes,
                                                         _selectedFile.Name);
 
@@ -117,11 +117,11 @@ public partial class GpuPhotos
                                                                    FullWidth = true
                                                                });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? errorMessage) = await GpuPhotosService.DeletePhotoAsync(photo.Id ?? Guid.Empty);
+            (bool succeeded, string errorMessage) = await GpuPhotosService.DeletePhotoAsync(photo.Id ?? Guid.Empty);
 
             if(succeeded)
             {

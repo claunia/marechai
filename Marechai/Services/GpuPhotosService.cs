@@ -40,7 +40,7 @@ public class GpuPhotosService(Marechai.ApiClient.Client client, IRequestAdapter 
     {
         try
         {
-            List<Guid?>? guids = await client.Gpus[gpuId].Photos.GetAsync();
+            List<Guid?> guids = await client.Gpus[gpuId].Photos.GetAsync();
 
             return guids?.Where(g => g.HasValue).Select(g => g!.Value).ToList() ?? [];
         }
@@ -50,7 +50,7 @@ public class GpuPhotosService(Marechai.ApiClient.Client client, IRequestAdapter 
         }
     }
 
-    public async Task<GpuPhotoDto?> GetAsync(Guid id)
+    public async Task<GpuPhotoDto> GetAsync(Guid id)
     {
         try
         {
@@ -62,8 +62,8 @@ public class GpuPhotosService(Marechai.ApiClient.Client client, IRequestAdapter 
         }
     }
 
-    public async Task<(GpuPhotoDto? photo, string? error)> UploadPhotoAsync(int    gpuId,     int licenseId,
-                                                                            string? source,   byte[] fileBytes,
+    public async Task<(GpuPhotoDto photo, string error)> UploadPhotoAsync(int    gpuId,     int licenseId,
+                                                                            string source,   byte[] fileBytes,
                                                                             string  fileName)
     {
         try
@@ -100,7 +100,7 @@ public class GpuPhotosService(Marechai.ApiClient.Client client, IRequestAdapter 
                 { "401", ProblemDetails.CreateFromDiscriminatorValue }
             };
 
-            GpuPhotoDto? result = await requestAdapter.SendAsync(requestInfo,
+            GpuPhotoDto result = await requestAdapter.SendAsync(requestInfo,
                 GpuPhotoDto.CreateFromDiscriminatorValue, errorMapping);
 
             return (result, null);
@@ -111,7 +111,7 @@ public class GpuPhotosService(Marechai.ApiClient.Client client, IRequestAdapter 
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeletePhotoAsync(Guid id)
+    public async Task<(bool succeeded, string error)> DeletePhotoAsync(Guid id)
     {
         try
         {
@@ -129,7 +129,7 @@ public class GpuPhotosService(Marechai.ApiClient.Client client, IRequestAdapter 
     {
         try
         {
-            List<LicenseDto>? licenses = await client.Licenses.GetAsync();
+            List<LicenseDto> licenses = await client.Licenses.GetAsync();
 
             return licenses?.OrderBy(l => l.Name).ToList() ?? [];
         }

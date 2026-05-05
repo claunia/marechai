@@ -39,15 +39,15 @@ public enum InstructionSetMatchType
 public sealed class ProcessorImportRow
 {
     public string  Name         { get; set; } = "";
-    public string? CompanyInput { get; set; }
-    public string? ModelCode    { get; set; }
+    public string CompanyInput { get; set; }
+    public string ModelCode    { get; set; }
     public int?    IntroducedYear  { get; set; }
     public int?    IntroducedMonth { get; set; }
     public int?    IntroducedDay   { get; set; }
-    public string? InstructionSetInput { get; set; }
+    public string InstructionSetInput { get; set; }
     public double? Speed        { get; set; }
-    public string? Package      { get; set; }
-    public string? Process      { get; set; }
+    public string Package      { get; set; }
+    public string Process      { get; set; }
     public float?  ProcessNm    { get; set; }
     public float?  DieSize      { get; set; }
     public long?   Transistors  { get; set; }
@@ -67,16 +67,16 @@ public sealed class ProcessorImportRow
     public float?  L3           { get; set; }
 
     public List<CompanyDto>        MatchedCompanies       { get; set; } = [];
-    public CompanyDto?             SelectedCompany        { get; set; }
+    public CompanyDto             SelectedCompany        { get; set; }
     public CompanyMatchType        CompanyMatch           { get; set; } = CompanyMatchType.None;
 
     public List<InstructionSetDto> MatchedInstructionSets { get; set; } = [];
-    public InstructionSetDto?      SelectedInstructionSet { get; set; }
+    public InstructionSetDto      SelectedInstructionSet { get; set; }
     public InstructionSetMatchType InstructionSetMatch    { get; set; } = InstructionSetMatchType.None;
 
     public bool    IsDuplicate      { get; set; }
-    public string? ImportError      { get; set; }
-    public string? ValidationError  { get; set; }
+    public string ImportError      { get; set; }
+    public string ValidationError  { get; set; }
 
     public DateTime? IntroducedDate
     {

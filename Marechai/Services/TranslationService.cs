@@ -52,17 +52,17 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
 
     public bool IsAvailable => !string.IsNullOrWhiteSpace(configuration["NllbServe:Url"]);
 
-    public static bool IsLanguageSupported(string? iso639_3) =>
+    public static bool IsLanguageSupported(string iso639_3) =>
         iso639_3 is not null && _nllbLangMap.ContainsKey(iso639_3);
 
-    public async Task<(string? translatedText, string? error)> TranslateAsync(string text,
+    public async Task<(string translatedText, string error)> TranslateAsync(string text,
                                                                               string targetLanguageIso639_3,
-                                                                              IProgress<(int current, int total)>? progress = null)
+                                                                              IProgress<(int current, int total)> progress = null)
     {
         if(!IsAvailable)
             return (null, "Translation server is not configured.");
 
-        if(!_nllbLangMap.TryGetValue(targetLanguageIso639_3, out string? targetCode))
+        if(!_nllbLangMap.TryGetValue(targetLanguageIso639_3, out string targetCode))
             return (null, $"Language '{targetLanguageIso639_3}' is not supported for translation.");
 
         try
@@ -95,7 +95,7 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
                     continue;
                 }
 
-                (string? translated, string? error) = await TranslateChunkAsync(client, paragraph, targetCode);
+                (string translated, string error) = await TranslateChunkAsync(client, paragraph, targetCode);
 
                 if(error is not null)
                     return (null, error);
@@ -126,7 +126,7 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
         }
     }
 
-    async Task<(string? translated, string? error)> TranslateChunkAsync(HttpClient client, string chunk,
+    async Task<(string translated, string error)> TranslateChunkAsync(HttpClient client, string chunk,
                                                                         string targetCode)
     {
         var formData = new FormUrlEncodedContent(
@@ -146,7 +146,7 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
             return (null, $"Translation failed (HTTP {(int)response.StatusCode}).");
         }
 
-        NllbResponse? result = await response.Content.ReadFromJsonAsync<NllbResponse>();
+        NllbResponse result = await response.Content.ReadFromJsonAsync<NllbResponse>();
 
         if(result?.Translation is not { Count: > 0 })
             return (null, "Translation returned an empty result.");
@@ -157,6 +157,6 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
     sealed class NllbResponse
     {
         [JsonPropertyName("translation")]
-        public List<string>? Translation { get; set; }
+        public List<string> Translation { get; set; }
     }
 }

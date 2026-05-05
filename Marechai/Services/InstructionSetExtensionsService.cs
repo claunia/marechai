@@ -37,7 +37,7 @@ public class InstructionSetExtensionsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<InstructionSetExtensionDto>? extensions = await client.InstructionSetExtensions.GetAsync();
+            List<InstructionSetExtensionDto> extensions = await client.InstructionSetExtensions.GetAsync();
 
             return extensions ?? [];
         }
@@ -47,7 +47,7 @@ public class InstructionSetExtensionsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<InstructionSetExtensionDto?> GetByIdAsync(int id)
+    public async Task<InstructionSetExtensionDto> GetByIdAsync(int id)
     {
         try
         {
@@ -59,7 +59,7 @@ public class InstructionSetExtensionsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(int? id, string? error)> CreateAsync(InstructionSetExtensionDto dto)
+    public async Task<(int? id, string error)> CreateAsync(InstructionSetExtensionDto dto)
     {
         try
         {
@@ -77,7 +77,7 @@ public class InstructionSetExtensionsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> UpdateAsync(int id, InstructionSetExtensionDto dto)
+    public async Task<(bool succeeded, string error)> UpdateAsync(int id, InstructionSetExtensionDto dto)
     {
         try
         {
@@ -95,7 +95,7 @@ public class InstructionSetExtensionsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteAsync(int id)
+    public async Task<(bool succeeded, string error)> DeleteAsync(int id)
     {
         try
         {

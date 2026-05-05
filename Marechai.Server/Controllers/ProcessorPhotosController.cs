@@ -248,7 +248,7 @@ public class ProcessorPhotosController(MarechaiContext context, IConfiguration c
     public async Task<ActionResult<ProcessorPhotoDto>> UploadAsync(IFormFile            file,
                                                                    [FromForm] int       processorId,
                                                                    [FromForm] int       licenseId,
-                                                                   [FromForm] string?   source)
+                                                                   [FromForm] string   source)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 

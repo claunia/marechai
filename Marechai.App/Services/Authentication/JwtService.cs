@@ -9,9 +9,9 @@ namespace Marechai.App.Services.Authentication;
 public interface IJwtService
 {
     IEnumerable<string> GetRoles(string     token);
-    string?             GetUserId(string    token);
-    string?             GetUserName(string  token);
-    string?             GetEmail(string     token);
+    string             GetUserId(string    token);
+    string             GetUserName(string  token);
+    string             GetEmail(string     token);
     bool                IsTokenValid(string token);
 }
 
@@ -36,7 +36,7 @@ public sealed class JwtService : IJwtService
     }
 
     /// <inheritdoc />
-    public string? GetUserId(string token)
+    public string GetUserId(string token)
     {
         if(string.IsNullOrWhiteSpace(token)) return null;
 
@@ -54,7 +54,7 @@ public sealed class JwtService : IJwtService
     }
 
     /// <inheritdoc />
-    public string? GetUserName(string token)
+    public string GetUserName(string token)
     {
         if(string.IsNullOrWhiteSpace(token)) return null;
 
@@ -72,7 +72,7 @@ public sealed class JwtService : IJwtService
     }
 
     /// <inheritdoc />
-    public string? GetEmail(string token)
+    public string GetEmail(string token)
     {
         if(string.IsNullOrWhiteSpace(token)) return null;
 

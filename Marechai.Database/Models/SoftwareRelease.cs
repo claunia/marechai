@@ -8,7 +8,7 @@ namespace Marechai.Database.Models;
 
 public class SoftwareRelease : BaseModel<ulong>
 {
-    public string? Title { get; set; }
+    public string Title { get; set; }
 
     public bool IsCompilation { get; set; }
 

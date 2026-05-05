@@ -10,7 +10,7 @@ public sealed partial class AdminSoftwareScreenshotsPage : Page
         InitializeComponent();
     }
 
-    AdminSoftwareScreenshotsViewModel? ViewModel => DataContext as AdminSoftwareScreenshotsViewModel;
+    AdminSoftwareScreenshotsViewModel ViewModel => DataContext as AdminSoftwareScreenshotsViewModel;
 
     void SoftwareAutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
     {

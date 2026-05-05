@@ -6,13 +6,13 @@ public sealed class ProcessorDialogResult
 {
     public string    Name           { get; set; } = null!;
     public int?      CompanyId      { get; set; }
-    public string?   ModelCode      { get; set; }
+    public string   ModelCode      { get; set; }
     public DateTime? Introduced          { get; set; }
     public int       IntroducedPrecision     { get; set; }
     public int?      InstructionSetId { get; set; }
     public double?   Speed          { get; set; }
-    public string?   Package        { get; set; }
-    public string?   Process        { get; set; }
+    public string   Package        { get; set; }
+    public string   Process        { get; set; }
     public float?    ProcessNm      { get; set; }
     public float?    DieSize        { get; set; }
     public long?     Transistors    { get; set; }

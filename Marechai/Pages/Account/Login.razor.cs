@@ -30,10 +30,10 @@ namespace Marechai.Pages.Account;
 
 public partial class Login
 {
-    string? _email;
-    string? _errorMessage;
+    string _email;
+    string _errorMessage;
     bool    _isLoading;
-    string? _password;
+    string _password;
 
     async Task LoginAsync()
     {
@@ -54,7 +54,7 @@ public partial class Login
         _isLoading    = true;
         _errorMessage = null;
 
-        (bool succeeded, string? errorMessage) = await AuthService.LoginAsync(_email, _password);
+        (bool succeeded, string errorMessage) = await AuthService.LoginAsync(_email, _password);
 
         _isLoading = false;
 

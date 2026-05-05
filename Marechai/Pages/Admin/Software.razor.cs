@@ -8,10 +8,10 @@ namespace Marechai.Pages.Admin;
 
 public partial class Software
 {
-    string?            _errorMessage;
+    string            _errorMessage;
     bool               _isLoading = true;
-    List<SoftwareDto>? _softwareList;
-    string?            _successMessage;
+    List<SoftwareDto> _softwareList;
+    string            _successMessage;
 
     protected override async Task OnInitializedAsync() => await LoadDataAsync();
 
@@ -60,7 +60,7 @@ public partial class Software
                                                                                     FullWidth = true
                                                                                 });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: SoftwareDialogResult data })
         {
@@ -72,7 +72,7 @@ public partial class Software
                 IsGame            = data.IsGame
             };
 
-            (int? id, string? errorMessage) = await SoftwareService.CreateAsync(dto);
+            (int? id, string errorMessage) = await SoftwareService.CreateAsync(dto);
 
             if(id is not null)
             {
@@ -89,7 +89,7 @@ public partial class Software
     async Task OpenEditDialog(SoftwareDto software)
     {
         // Fetch full details for FK IDs
-        SoftwareDto? full = await SoftwareService.GetSoftwareByIdAsync(software.Id ?? 0);
+        SoftwareDto full = await SoftwareService.GetSoftwareByIdAsync(software.Id ?? 0);
 
         if(full is null)
         {
@@ -115,7 +115,7 @@ public partial class Software
                                                                                     FullWidth = true
                                                                                 });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: SoftwareDialogResult data })
         {
@@ -128,7 +128,7 @@ public partial class Software
                 IsGame            = data.IsGame
             };
 
-            (bool succeeded, string? errorMessage) = await SoftwareService.UpdateAsync(full.Id ?? 0, dto);
+            (bool succeeded, string errorMessage) = await SoftwareService.UpdateAsync(full.Id ?? 0, dto);
 
             if(succeeded)
             {
@@ -161,11 +161,11 @@ public partial class Software
                                                                    FullWidth = true
                                                                });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? errorMessage) = await SoftwareService.DeleteAsync(software.Id ?? 0);
+            (bool succeeded, string errorMessage) = await SoftwareService.DeleteAsync(software.Id ?? 0);
 
             if(succeeded)
             {

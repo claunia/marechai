@@ -79,7 +79,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<CompanyDto>? companies = await client.Documents.Companies.GetAsync();
+            List<CompanyDto> companies = await client.Documents.Companies.GetAsync();
 
             return companies ?? [];
         }
@@ -93,7 +93,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<CompanyDto>? companies = await client.Documents.Companies.Letter[c.ToString()].GetAsync();
+            List<CompanyDto> companies = await client.Documents.Companies.Letter[c.ToString()].GetAsync();
 
             return companies ?? [];
         }
@@ -107,7 +107,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<DocumentDto>? documents = await client.Documents.ByLetter[c.ToString()].GetAsync();
+            List<DocumentDto> documents = await client.Documents.ByLetter[c.ToString()].GetAsync();
 
             return documents ?? [];
         }
@@ -121,7 +121,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<DocumentDto>? documents = await client.Documents.ByYear[year].GetAsync();
+            List<DocumentDto> documents = await client.Documents.ByYear[year].GetAsync();
 
             return documents ?? [];
         }
@@ -135,7 +135,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<DocumentDto>? documents = await client.Documents.GetAsync();
+            List<DocumentDto> documents = await client.Documents.GetAsync();
 
             return documents ?? [];
         }
@@ -145,7 +145,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<DocumentDto?> GetDocumentAsync(long id)
+    public async Task<DocumentDto> GetDocumentAsync(long id)
     {
         try
         {
@@ -157,7 +157,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<DocumentSynopsisDto?> GetDocumentSynopsisAsync(long id)
+    public async Task<DocumentSynopsisDto> GetDocumentSynopsisAsync(long id)
     {
         try
         {
@@ -173,7 +173,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<PersonByDocumentDto>? people = await client.Documents[id].People.GetAsync();
+            List<PersonByDocumentDto> people = await client.Documents[id].People.GetAsync();
 
             return people ?? [];
         }
@@ -187,7 +187,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<CompanyByDocumentDto>? companies = await client.Documents[id].Companies.GetAsync();
+            List<CompanyByDocumentDto> companies = await client.Documents[id].Companies.GetAsync();
 
             return companies ?? [];
         }
@@ -201,7 +201,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<DocumentByMachineDto>? machines = await client.Documents[id].Machines.GetAsync();
+            List<DocumentByMachineDto> machines = await client.Documents[id].Machines.GetAsync();
 
             return machines ?? [];
         }
@@ -215,7 +215,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<DocumentByMachineFamilyDto>? families = await client.Documents[id].MachineFamilies.GetAsync();
+            List<DocumentByMachineFamilyDto> families = await client.Documents[id].MachineFamilies.GetAsync();
 
             return families ?? [];
         }
@@ -227,7 +227,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
 
     // --- CRUD methods ---
 
-    public async Task<(long? id, string? error)> CreateAsync(DocumentDto dto)
+    public async Task<(long? id, string error)> CreateAsync(DocumentDto dto)
     {
         try
         {
@@ -245,7 +245,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> UpdateAsync(long id, DocumentDto dto)
+    public async Task<(bool succeeded, string error)> UpdateAsync(long id, DocumentDto dto)
     {
         try
         {
@@ -263,7 +263,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteAsync(long id)
+    public async Task<(bool succeeded, string error)> DeleteAsync(long id)
     {
         try
         {
@@ -287,7 +287,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<DocumentSynopsisDto>? synopses = await client.Documents[documentId].Synopses.GetAsync();
+            List<DocumentSynopsisDto> synopses = await client.Documents[documentId].Synopses.GetAsync();
 
             return synopses ?? [];
         }
@@ -297,7 +297,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(long? id, string? error)> UpsertSynopsisAsync(long documentId, DocumentSynopsisDto dto)
+    public async Task<(long? id, string error)> UpsertSynopsisAsync(long documentId, DocumentSynopsisDto dto)
     {
         try
         {
@@ -315,7 +315,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteSynopsisAsync(long documentId, string languageCode)
+    public async Task<(bool succeeded, string error)> DeleteSynopsisAsync(long documentId, string languageCode)
     {
         try
         {
@@ -335,7 +335,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
 
     // --- People junction methods ---
 
-    public async Task<(long? id, string? error)> AddPersonToDocumentAsync(PersonByDocumentDto dto)
+    public async Task<(long? id, string error)> AddPersonToDocumentAsync(PersonByDocumentDto dto)
     {
         try
         {
@@ -353,7 +353,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemovePersonFromDocumentAsync(long id)
+    public async Task<(bool succeeded, string error)> RemovePersonFromDocumentAsync(long id)
     {
         try
         {
@@ -373,7 +373,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
 
     // --- Companies junction methods ---
 
-    public async Task<(long? id, string? error)> AddCompanyToDocumentAsync(CompanyByDocumentDto dto)
+    public async Task<(long? id, string error)> AddCompanyToDocumentAsync(CompanyByDocumentDto dto)
     {
         try
         {
@@ -391,7 +391,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemoveCompanyFromDocumentAsync(long id)
+    public async Task<(bool succeeded, string error)> RemoveCompanyFromDocumentAsync(long id)
     {
         try
         {
@@ -411,7 +411,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
 
     // --- Machines junction methods ---
 
-    public async Task<(long? id, string? error)> AddMachineToDocumentAsync(DocumentByMachineDto dto)
+    public async Task<(long? id, string error)> AddMachineToDocumentAsync(DocumentByMachineDto dto)
     {
         try
         {
@@ -429,7 +429,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemoveMachineFromDocumentAsync(long id)
+    public async Task<(bool succeeded, string error)> RemoveMachineFromDocumentAsync(long id)
     {
         try
         {
@@ -449,7 +449,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
 
     // --- Machine Families junction methods ---
 
-    public async Task<(long? id, string? error)> AddMachineFamilyToDocumentAsync(DocumentByMachineFamilyDto dto)
+    public async Task<(long? id, string error)> AddMachineFamilyToDocumentAsync(DocumentByMachineFamilyDto dto)
     {
         try
         {
@@ -467,7 +467,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemoveMachineFamilyFromDocumentAsync(long id)
+    public async Task<(bool succeeded, string error)> RemoveMachineFamilyFromDocumentAsync(long id)
     {
         try
         {
@@ -491,7 +491,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<DocumentRoleDto>? roles = await client.Documents.Roles.Enabled.GetAsync();
+            List<DocumentRoleDto> roles = await client.Documents.Roles.Enabled.GetAsync();
 
             return roles ?? [];
         }
@@ -505,7 +505,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<PersonDto>? people = await client.People.GetAsync();
+            List<PersonDto> people = await client.People.GetAsync();
 
             return people ?? [];
         }
@@ -519,7 +519,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<CompanyDto>? companies = await client.Companies.GetAsync();
+            List<CompanyDto> companies = await client.Companies.GetAsync();
 
             return companies ?? [];
         }
@@ -533,7 +533,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<MachineDto>? machines = await client.Machines.GetAsync();
+            List<MachineDto> machines = await client.Machines.GetAsync();
 
             return machines ?? [];
         }
@@ -547,7 +547,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<MachineFamilyDto>? families = await client.MachineFamilies.GetAsync();
+            List<MachineFamilyDto> families = await client.MachineFamilies.GetAsync();
 
             return families ?? [];
         }
@@ -561,7 +561,7 @@ public class DocumentsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<Iso31661NumericDto>? countries = await client.Iso31661Numeric.GetAsync();
+            List<Iso31661NumericDto> countries = await client.Iso31661Numeric.GetAsync();
 
             return countries ?? [];
         }

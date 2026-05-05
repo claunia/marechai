@@ -7,10 +7,10 @@ namespace Marechai.Pages.Admin;
 
 public partial class SoftwarePlatforms
 {
-    string?                    _errorMessage;
+    string                    _errorMessage;
     bool                       _isLoading = true;
-    List<SoftwarePlatformDto>? _platforms;
-    string?                    _successMessage;
+    List<SoftwarePlatformDto> _platforms;
+    string                    _successMessage;
 
     protected override async Task OnInitializedAsync() => await LoadDataAsync();
 
@@ -35,7 +35,7 @@ public partial class SoftwarePlatforms
                                                                                            FullWidth = true
                                                                                        });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: SoftwarePlatformDialogResult data })
         {
@@ -44,7 +44,7 @@ public partial class SoftwarePlatforms
                 Name = data.Name
             };
 
-            (int? id, string? errorMessage) = await SoftwarePlatformsService.CreateAsync(dto);
+            (int? id, string errorMessage) = await SoftwarePlatformsService.CreateAsync(dto);
 
             if(id is not null)
             {
@@ -73,7 +73,7 @@ public partial class SoftwarePlatforms
                                                                                            FullWidth = true
                                                                                        });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: SoftwarePlatformDialogResult data })
         {
@@ -83,7 +83,7 @@ public partial class SoftwarePlatforms
                 Name = data.Name
             };
 
-            (bool succeeded, string? errorMessage) =
+            (bool succeeded, string errorMessage) =
                 await SoftwarePlatformsService.UpdateAsync(platform.Id ?? 0, dto);
 
             if(succeeded)
@@ -117,11 +117,11 @@ public partial class SoftwarePlatforms
                                                                    FullWidth = true
                                                                });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? errorMessage) = await SoftwarePlatformsService.DeleteAsync(platform.Id ?? 0);
+            (bool succeeded, string errorMessage) = await SoftwarePlatformsService.DeleteAsync(platform.Id ?? 0);
 
             if(succeeded)
             {

@@ -79,7 +79,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<CompanyDto>? companies = await client.Magazines.Companies.GetAsync();
+            List<CompanyDto> companies = await client.Magazines.Companies.GetAsync();
 
             return companies ?? [];
         }
@@ -93,7 +93,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<CompanyDto>? companies = await client.Magazines.Companies.Letter[c.ToString()].GetAsync();
+            List<CompanyDto> companies = await client.Magazines.Companies.Letter[c.ToString()].GetAsync();
 
             return companies ?? [];
         }
@@ -107,7 +107,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<MagazineDto>? magazines = await client.Magazines.ByLetter[c.ToString()].GetAsync();
+            List<MagazineDto> magazines = await client.Magazines.ByLetter[c.ToString()].GetAsync();
 
             return magazines ?? [];
         }
@@ -121,7 +121,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<MagazineDto>? magazines = await client.Magazines.ByYear[year].GetAsync();
+            List<MagazineDto> magazines = await client.Magazines.ByYear[year].GetAsync();
 
             return magazines ?? [];
         }
@@ -135,7 +135,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<MagazineDto>? magazines = await client.Magazines.GetAsync();
+            List<MagazineDto> magazines = await client.Magazines.GetAsync();
 
             return magazines ?? [];
         }
@@ -145,7 +145,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<MagazineDto?> GetMagazineAsync(long id)
+    public async Task<MagazineDto> GetMagazineAsync(long id)
     {
         try
         {
@@ -157,7 +157,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<DocumentSynopsisDto?> GetMagazineSynopsisAsync(long id)
+    public async Task<DocumentSynopsisDto> GetMagazineSynopsisAsync(long id)
     {
         try
         {
@@ -173,7 +173,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<PersonByMagazineDto>? people = await client.Magazines[id].People.GetAsync();
+            List<PersonByMagazineDto> people = await client.Magazines[id].People.GetAsync();
 
             return people ?? [];
         }
@@ -187,7 +187,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<CompanyByMagazineDto>? companies = await client.Magazines[id].Companies.GetAsync();
+            List<CompanyByMagazineDto> companies = await client.Magazines[id].Companies.GetAsync();
 
             return companies ?? [];
         }
@@ -201,7 +201,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<MagazineByMachineDto>? machines = await client.Magazines[id].Machines.GetAsync();
+            List<MagazineByMachineDto> machines = await client.Magazines[id].Machines.GetAsync();
 
             return machines ?? [];
         }
@@ -215,7 +215,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<MagazineByMachineFamilyDto>? families = await client.Magazines[id].MachineFamilies.GetAsync();
+            List<MagazineByMachineFamilyDto> families = await client.Magazines[id].MachineFamilies.GetAsync();
 
             return families ?? [];
         }
@@ -227,7 +227,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
 
     // --- CRUD methods ---
 
-    public async Task<(long? id, string? error)> CreateAsync(MagazineDto dto)
+    public async Task<(long? id, string error)> CreateAsync(MagazineDto dto)
     {
         try
         {
@@ -245,7 +245,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> UpdateAsync(long id, MagazineDto dto)
+    public async Task<(bool succeeded, string error)> UpdateAsync(long id, MagazineDto dto)
     {
         try
         {
@@ -263,7 +263,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteAsync(long id)
+    public async Task<(bool succeeded, string error)> DeleteAsync(long id)
     {
         try
         {
@@ -287,7 +287,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<DocumentSynopsisDto>? synopses = await client.Magazines[magazineId].Synopses.GetAsync();
+            List<DocumentSynopsisDto> synopses = await client.Magazines[magazineId].Synopses.GetAsync();
 
             return synopses ?? [];
         }
@@ -297,7 +297,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(long? id, string? error)> UpsertSynopsisAsync(long magazineId, DocumentSynopsisDto dto)
+    public async Task<(long? id, string error)> UpsertSynopsisAsync(long magazineId, DocumentSynopsisDto dto)
     {
         try
         {
@@ -315,7 +315,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteSynopsisAsync(long magazineId, string languageCode)
+    public async Task<(bool succeeded, string error)> DeleteSynopsisAsync(long magazineId, string languageCode)
     {
         try
         {
@@ -335,7 +335,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
 
     // --- People junction methods ---
 
-    public async Task<(long? id, string? error)> AddPersonToMagazineAsync(PersonByMagazineDto dto)
+    public async Task<(long? id, string error)> AddPersonToMagazineAsync(PersonByMagazineDto dto)
     {
         try
         {
@@ -353,7 +353,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemovePersonFromMagazineAsync(long id)
+    public async Task<(bool succeeded, string error)> RemovePersonFromMagazineAsync(long id)
     {
         try
         {
@@ -373,7 +373,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
 
     // --- Companies junction methods ---
 
-    public async Task<(long? id, string? error)> AddCompanyToMagazineAsync(CompanyByMagazineDto dto)
+    public async Task<(long? id, string error)> AddCompanyToMagazineAsync(CompanyByMagazineDto dto)
     {
         try
         {
@@ -391,7 +391,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemoveCompanyFromMagazineAsync(long id)
+    public async Task<(bool succeeded, string error)> RemoveCompanyFromMagazineAsync(long id)
     {
         try
         {
@@ -411,7 +411,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
 
     // --- Machines junction methods ---
 
-    public async Task<(long? id, string? error)> AddMachineToMagazineAsync(MagazineByMachineDto dto)
+    public async Task<(long? id, string error)> AddMachineToMagazineAsync(MagazineByMachineDto dto)
     {
         try
         {
@@ -429,7 +429,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemoveMachineFromMagazineAsync(long id)
+    public async Task<(bool succeeded, string error)> RemoveMachineFromMagazineAsync(long id)
     {
         try
         {
@@ -449,7 +449,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
 
     // --- Machine Families junction methods ---
 
-    public async Task<(long? id, string? error)> AddMachineFamilyToMagazineAsync(MagazineByMachineFamilyDto dto)
+    public async Task<(long? id, string error)> AddMachineFamilyToMagazineAsync(MagazineByMachineFamilyDto dto)
     {
         try
         {
@@ -467,7 +467,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemoveMachineFamilyFromMagazineAsync(long id)
+    public async Task<(bool succeeded, string error)> RemoveMachineFamilyFromMagazineAsync(long id)
     {
         try
         {
@@ -491,7 +491,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<DocumentRoleDto>? roles = await client.Documents.Roles.Enabled.GetAsync();
+            List<DocumentRoleDto> roles = await client.Documents.Roles.Enabled.GetAsync();
 
             return roles ?? [];
         }
@@ -505,7 +505,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<PersonDto>? people = await client.People.GetAsync();
+            List<PersonDto> people = await client.People.GetAsync();
 
             return people ?? [];
         }
@@ -519,7 +519,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<CompanyDto>? companies = await client.Companies.GetAsync();
+            List<CompanyDto> companies = await client.Companies.GetAsync();
 
             return companies ?? [];
         }
@@ -533,7 +533,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<MachineDto>? machines = await client.Machines.GetAsync();
+            List<MachineDto> machines = await client.Machines.GetAsync();
 
             return machines ?? [];
         }
@@ -547,7 +547,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<MachineFamilyDto>? families = await client.MachineFamilies.GetAsync();
+            List<MachineFamilyDto> families = await client.MachineFamilies.GetAsync();
 
             return families ?? [];
         }
@@ -561,7 +561,7 @@ public class MagazinesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<Iso31661NumericDto>? countries = await client.Iso31661Numeric.GetAsync();
+            List<Iso31661NumericDto> countries = await client.Iso31661Numeric.GetAsync();
 
             return countries ?? [];
         }

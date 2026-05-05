@@ -37,7 +37,7 @@ public sealed class JwtAuthenticationStateProvider(TokenProvider tokenProvider) 
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        string? token = await tokenProvider.GetTokenAsync();
+        string token = await tokenProvider.GetTokenAsync();
 
         if(string.IsNullOrWhiteSpace(token))
             return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));

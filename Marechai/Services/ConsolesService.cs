@@ -78,7 +78,7 @@ public class ConsolesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<MachineDto>? machines = await client.Consoles.ByLetter[c.ToString()].GetAsync();
+            List<MachineDto> machines = await client.Consoles.ByLetter[c.ToString()].GetAsync();
 
             return machines ?? [];
         }
@@ -92,7 +92,7 @@ public class ConsolesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<MachineDto>? machines = await client.Consoles.ByYear[year].GetAsync();
+            List<MachineDto> machines = await client.Consoles.ByYear[year].GetAsync();
 
             return machines ?? [];
         }
@@ -106,7 +106,7 @@ public class ConsolesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<MachineDto>? machines = await client.Consoles.GetAsync();
+            List<MachineDto> machines = await client.Consoles.GetAsync();
 
             return machines ?? [];
         }
@@ -120,7 +120,7 @@ public class ConsolesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<MachineDto>? machines = await client.Consoles.Prototypes.GetAsync();
+            List<MachineDto> machines = await client.Consoles.Prototypes.GetAsync();
 
             return machines ?? [];
         }
@@ -134,7 +134,7 @@ public class ConsolesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<CompanyDto>? companies = await client.Consoles.Companies.GetAsync();
+            List<CompanyDto> companies = await client.Consoles.Companies.GetAsync();
 
             return companies ?? [];
         }
@@ -148,7 +148,7 @@ public class ConsolesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<CompanyDto>? companies = await client.Consoles.Companies.Letter[c.ToString()].GetAsync();
+            List<CompanyDto> companies = await client.Consoles.Companies.Letter[c.ToString()].GetAsync();
 
             return companies ?? [];
         }

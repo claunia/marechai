@@ -72,7 +72,7 @@ public class ProfileController(UserManager<ApplicationUser> userManager) : Contr
         OriginalAvatarExtension = user.OriginalAvatarExtension
     };
 
-    static string? GetAvatarUrl(ApplicationUser user)
+    static string GetAvatarUrl(ApplicationUser user)
     {
         if(user.UseGravatar)
         {

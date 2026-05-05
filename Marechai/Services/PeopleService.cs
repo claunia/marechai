@@ -79,7 +79,7 @@ public class PeopleService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<PersonDto>? people = await client.People.ByLetter[c.ToString()].GetAsync();
+            List<PersonDto> people = await client.People.ByLetter[c.ToString()].GetAsync();
 
             return people ?? [];
         }
@@ -93,7 +93,7 @@ public class PeopleService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<PersonDto>? people = await client.People.ByYear[year].GetAsync();
+            List<PersonDto> people = await client.People.ByYear[year].GetAsync();
 
             return people ?? [];
         }
@@ -107,7 +107,7 @@ public class PeopleService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<PersonDto>? people = await client.People.GetAsync();
+            List<PersonDto> people = await client.People.GetAsync();
 
             return people ?? [];
         }
@@ -117,7 +117,7 @@ public class PeopleService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<PersonDto?> GetPersonAsync(int id)
+    public async Task<PersonDto> GetPersonAsync(int id)
     {
         try
         {
@@ -133,7 +133,7 @@ public class PeopleService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<PersonByCompanyDto>? companies = await client.People[id].Companies.GetAsync();
+            List<PersonByCompanyDto> companies = await client.People[id].Companies.GetAsync();
 
             return companies ?? [];
         }
@@ -147,7 +147,7 @@ public class PeopleService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<PersonByBookDto>? books = await client.People[id].Books.GetAsync();
+            List<PersonByBookDto> books = await client.People[id].Books.GetAsync();
 
             return books ?? [];
         }
@@ -161,7 +161,7 @@ public class PeopleService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<PersonByDocumentDto>? documents = await client.People[id].Documents.GetAsync();
+            List<PersonByDocumentDto> documents = await client.People[id].Documents.GetAsync();
 
             return documents ?? [];
         }
@@ -175,7 +175,7 @@ public class PeopleService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<PersonByMagazineDto>? magazines = await client.People[id].Magazines.GetAsync();
+            List<PersonByMagazineDto> magazines = await client.People[id].Magazines.GetAsync();
 
             return magazines ?? [];
         }
@@ -189,7 +189,7 @@ public class PeopleService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<PersonBySoftwareDto>? software = await client.People[id].Software.GetAsync();
+            List<PersonBySoftwareDto> software = await client.People[id].Software.GetAsync();
 
             return software ?? [];
         }
@@ -199,7 +199,7 @@ public class PeopleService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(long? id, string? error)> CreateAsync(PersonDto dto)
+    public async Task<(long? id, string error)> CreateAsync(PersonDto dto)
     {
         try
         {
@@ -217,7 +217,7 @@ public class PeopleService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> UpdateAsync(int id, PersonDto dto)
+    public async Task<(bool succeeded, string error)> UpdateAsync(int id, PersonDto dto)
     {
         try
         {
@@ -235,7 +235,7 @@ public class PeopleService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteAsync(int id)
+    public async Task<(bool succeeded, string error)> DeleteAsync(int id)
     {
         try
         {
@@ -257,7 +257,7 @@ public class PeopleService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<Iso31661NumericDto>? countries = await client.Iso31661Numeric.GetAsync();
+            List<Iso31661NumericDto> countries = await client.Iso31661Numeric.GetAsync();
 
             return countries ?? [];
         }

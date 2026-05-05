@@ -317,14 +317,14 @@
 
     [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
 
-    string?                         _errorMessage;
+    string                         _errorMessage;
     bool                            _isProcessing;
     ImportState                     _state = ImportState.Upload;
     List<SoundSynthImportRow>       _importRows = [];
     HashSet<SoundSynthImportRow>    _selectedItems = [];
-    List<CompanyDto>?               _allCompanies;
-    Dictionary<string, List<CompanyDto>>? _companySoundexMap;
-    List<SoundSynthDto>?            _existingSoundSynths;
+    List<CompanyDto>               _allCompanies;
+    Dictionary<string, List<CompanyDto>> _companySoundexMap;
+    List<SoundSynthDto>            _existingSoundSynths;
     int                             _importedCount;
     int                             _rejectedCount;
     int                             _failedCount;
@@ -343,7 +343,7 @@
         await JsRuntime.InvokeVoidAsync("downloadFileFromBytes", "sound_synth_import_template.csv", "text/csv", base64);
     }
 
-    async Task OnCsvFileSelected(IBrowserFile? file)
+    async Task OnCsvFileSelected(IBrowserFile file)
     {
         if(file is null) return;
 
@@ -402,7 +402,7 @@
 
             string code = Soundex.Generate(company.Name);
 
-            if(!_companySoundexMap.TryGetValue(code, out List<CompanyDto>? list))
+            if(!_companySoundexMap.TryGetValue(code, out List<CompanyDto> list))
             {
                 list = [];
                 _companySoundexMap[code] = list;
@@ -489,7 +489,7 @@
         }
 
         // Try exact match first
-        CompanyDto? exact = _allCompanies.Find(c =>
+        CompanyDto exact = _allCompanies.Find(c =>
             string.Equals(c.Name, row.CompanyInput, StringComparison.OrdinalIgnoreCase));
 
         if(exact is not null)
@@ -505,7 +505,7 @@
         string inputSoundex = Soundex.Generate(row.CompanyInput);
 
         if(_companySoundexMap is not null &&
-           _companySoundexMap.TryGetValue(inputSoundex, out List<CompanyDto>? matches) &&
+           _companySoundexMap.TryGetValue(inputSoundex, out List<CompanyDto> matches) &&
            matches.Count > 0)
         {
             row.MatchType        = CompanyMatchType.Partial;
@@ -532,7 +532,7 @@
         }
     }
 
-    void OnCompanySelected(SoundSynthImportRow row, CompanyDto? company) => row.SelectedCompany = company;
+    void OnCompanySelected(SoundSynthImportRow row, CompanyDto company) => row.SelectedCompany = company;
 
     async Task StartImport()
     {
@@ -568,7 +568,7 @@
                 Type                = row.Type
             };
 
-            (long? id, string? error) = await SoundSynthsService.CreateAsync(dto);
+            (long? id, string error) = await SoundSynthsService.CreateAsync(dto);
 
             if(id is not null)
             {
@@ -637,11 +637,11 @@
     }
 
     static string GetValue(Dictionary<string, string> row, string key) =>
-        row.TryGetValue(key, out string? val) ? val?.Trim() ?? "" : "";
+        row.TryGetValue(key, out string val) ? val?.Trim() ?? "" : "";
 
-    static string? GetValueOrNull(Dictionary<string, string> row, string key)
+    static string GetValueOrNull(Dictionary<string, string> row, string key)
     {
-        if(!row.TryGetValue(key, out string? val))
+        if(!row.TryGetValue(key, out string val))
             return null;
 
         string trimmed = val?.Trim() ?? "";
@@ -652,7 +652,7 @@
     static bool TryParseInt(Dictionary<string, string> row, string key, out int result)
     {
         result = 0;
-        string? val = GetValueOrNull(row, key);
+        string val = GetValueOrNull(row, key);
 
         return val is not null && int.TryParse(val, out result);
     }
@@ -660,7 +660,7 @@
     static bool TryParseDouble(Dictionary<string, string> row, string key, out double result)
     {
         result = 0;
-        string? val = GetValueOrNull(row, key);
+        string val = GetValueOrNull(row, key);
 
         return val is not null && double.TryParse(val, System.Globalization.NumberStyles.Float,
                                                    System.Globalization.CultureInfo.InvariantCulture, out result);

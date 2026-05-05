@@ -8,10 +8,10 @@ namespace Marechai.Pages.Admin;
 
 public partial class Magazines
 {
-    string?              _errorMessage;
+    string              _errorMessage;
     bool                 _isLoading = true;
-    string?              _successMessage;
-    List<MagazineDto>?   _magazines;
+    string              _successMessage;
+    List<MagazineDto>   _magazines;
 
     protected override async Task OnInitializedAsync() => await LoadMagazinesAsync();
 
@@ -49,7 +49,7 @@ public partial class Magazines
                                                                                     FullWidth = true
                                                                                 });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: MagazineDialogResult data })
         {
@@ -66,7 +66,7 @@ public partial class Magazines
                 FirstPublicationPrecision = data.FirstPublicationPrecision
             };
 
-            (long? id, string? errorMessage) = await MagazinesService.CreateAsync(dto);
+            (long? id, string errorMessage) = await MagazinesService.CreateAsync(dto);
 
             if(id is not null)
             {
@@ -83,7 +83,7 @@ public partial class Magazines
     async Task OpenEditMagazineDialog(MagazineDto magazine)
     {
         // Fetch full details by ID to get FK IDs (list endpoint may omit them)
-        MagazineDto? fullMagazine = magazine.Id.HasValue ? await MagazinesService.GetMagazineAsync(magazine.Id.Value) : magazine;
+        MagazineDto fullMagazine = magazine.Id.HasValue ? await MagazinesService.GetMagazineAsync(magazine.Id.Value) : magazine;
         fullMagazine ??= magazine;
 
         DialogParameters<MagazineDialog> parameters = new()
@@ -108,7 +108,7 @@ public partial class Magazines
                                                                                     FullWidth = true
                                                                                 });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: MagazineDialogResult data })
         {
@@ -126,7 +126,7 @@ public partial class Magazines
                 FirstPublicationPrecision = data.FirstPublicationPrecision
             };
 
-            (bool succeeded, string? errorMessage) = await MagazinesService.UpdateAsync(magazine.Id ?? 0, dto);
+            (bool succeeded, string errorMessage) = await MagazinesService.UpdateAsync(magazine.Id ?? 0, dto);
 
             if(succeeded)
             {
@@ -160,11 +160,11 @@ public partial class Magazines
                                                                    FullWidth = true
                                                                });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? errorMessage) = await MagazinesService.DeleteAsync(magazine.Id ?? 0);
+            (bool succeeded, string errorMessage) = await MagazinesService.DeleteAsync(magazine.Id ?? 0);
 
             if(succeeded)
             {
@@ -188,7 +188,7 @@ public partial class Magazines
                 FullWidth = true
             });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
             await LoadMagazinesAsync();

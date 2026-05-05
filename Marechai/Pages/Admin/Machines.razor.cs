@@ -8,10 +8,10 @@ namespace Marechai.Pages.Admin;
 
 public partial class Machines
 {
-    string?            _errorMessage;
+    string            _errorMessage;
     bool               _isLoading = true;
-    string?            _successMessage;
-    List<MachineDto>?  _machines;
+    string            _successMessage;
+    List<MachineDto>  _machines;
 
     protected override async Task OnInitializedAsync() => await LoadMachinesAsync();
 
@@ -54,7 +54,7 @@ public partial class Machines
                                                                                    FullWidth = true
                                                                                });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: MachineDialogResult data })
         {
@@ -70,7 +70,7 @@ public partial class Machines
                 FamilyId   = data.FamilyId
             };
 
-            (long? id, string? errorMessage) = await MachinesService.CreateAsync(dto);
+            (long? id, string errorMessage) = await MachinesService.CreateAsync(dto);
 
             if(id is not null)
             {
@@ -87,7 +87,7 @@ public partial class Machines
     async Task OpenEditMachineDialog(MachineDto machine)
     {
         // List endpoint doesn't return CompanyId/FamilyId, fetch full details
-        MachineDto? fullMachine = await MachinesService.GetByIdAsync(machine.Id ?? 0);
+        MachineDto fullMachine = await MachinesService.GetByIdAsync(machine.Id ?? 0);
 
         if(fullMachine is null)
         {
@@ -117,7 +117,7 @@ public partial class Machines
                                                                                    FullWidth = true
                                                                                });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: MachineDialogResult data })
         {
@@ -134,7 +134,7 @@ public partial class Machines
                 FamilyId   = data.FamilyId
             };
 
-            (bool succeeded, string? errorMessage) = await MachinesService.UpdateAsync(machine.Id ?? 0, dto);
+            (bool succeeded, string errorMessage) = await MachinesService.UpdateAsync(machine.Id ?? 0, dto);
 
             if(succeeded)
             {
@@ -167,11 +167,11 @@ public partial class Machines
                                                                    FullWidth = true
                                                                });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? errorMessage) = await MachinesService.DeleteAsync(machine.Id ?? 0);
+            (bool succeeded, string errorMessage) = await MachinesService.DeleteAsync(machine.Id ?? 0);
 
             if(succeeded)
             {
@@ -209,7 +209,7 @@ public partial class Machines
         IDialogReference dialog = await DialogService.ShowAsync<MachineImportDialog>(L["Import CSV"],
             new DialogOptions { MaxWidth = MaxWidth.ExtraLarge, FullWidth = true });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
             await LoadMachinesAsync();

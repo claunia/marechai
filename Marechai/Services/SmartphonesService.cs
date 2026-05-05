@@ -78,7 +78,7 @@ public class SmartphonesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<MachineDto>? machines = await client.Smartphones.ByLetter[c.ToString()].GetAsync();
+            List<MachineDto> machines = await client.Smartphones.ByLetter[c.ToString()].GetAsync();
 
             return machines ?? [];
         }
@@ -92,7 +92,7 @@ public class SmartphonesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<MachineDto>? machines = await client.Smartphones.ByYear[year].GetAsync();
+            List<MachineDto> machines = await client.Smartphones.ByYear[year].GetAsync();
 
             return machines ?? [];
         }
@@ -106,7 +106,7 @@ public class SmartphonesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<MachineDto>? machines = await client.Smartphones.GetAsync();
+            List<MachineDto> machines = await client.Smartphones.GetAsync();
 
             return machines ?? [];
         }
@@ -120,7 +120,7 @@ public class SmartphonesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<MachineDto>? machines = await client.Smartphones.Prototypes.GetAsync();
+            List<MachineDto> machines = await client.Smartphones.Prototypes.GetAsync();
 
             return machines ?? [];
         }
@@ -134,7 +134,7 @@ public class SmartphonesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<CompanyDto>? companies = await client.Smartphones.Companies.GetAsync();
+            List<CompanyDto> companies = await client.Smartphones.Companies.GetAsync();
 
             return companies ?? [];
         }
@@ -148,7 +148,7 @@ public class SmartphonesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<CompanyDto>? companies = await client.Smartphones.Companies.Letter[c.ToString()].GetAsync();
+            List<CompanyDto> companies = await client.Smartphones.Companies.Letter[c.ToString()].GetAsync();
 
             return companies ?? [];
         }

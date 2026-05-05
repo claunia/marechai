@@ -13,22 +13,22 @@ public partial class SoundSynthPhotos
 {
     const long MaxFileSize = 50 * 1024 * 1024; // 50 MB
 
-    string?                    _errorMessage;
+    string                    _errorMessage;
     bool                       _isLoading = true;
     bool                       _isUploading;
-    List<LicenseDto>?          _licenses;
-    string?                    _soundSynthName;
-    List<SoundSynthPhotoDto>?  _photos;
-    IBrowserFile?              _selectedFile;
-    LicenseDto?                _selectedLicense;
-    string?                    _sourceUrl;
-    string?                    _successMessage;
+    List<LicenseDto>          _licenses;
+    string                    _soundSynthName;
+    List<SoundSynthPhotoDto>  _photos;
+    IBrowserFile              _selectedFile;
+    LicenseDto                _selectedLicense;
+    string                    _sourceUrl;
+    string                    _successMessage;
 
     [Parameter] public int SoundSynthId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        SoundSynthDto? synth = await SoundSynthsService.GetByIdAsync(SoundSynthId);
+        SoundSynthDto synth = await SoundSynthsService.GetByIdAsync(SoundSynthId);
         _soundSynthName = synth?.Name;
         _licenses       = await SoundSynthPhotosService.GetAllLicensesAsync();
 
@@ -45,7 +45,7 @@ public partial class SoundSynthPhotos
 
         foreach(Guid guid in guids)
         {
-            SoundSynthPhotoDto? photo = await SoundSynthPhotosService.GetAsync(guid);
+            SoundSynthPhotoDto photo = await SoundSynthPhotosService.GetAsync(guid);
 
             if(photo is not null)
                 photos.Add(photo);
@@ -73,7 +73,7 @@ public partial class SoundSynthPhotos
             await stream.CopyToAsync(ms);
             byte[] fileBytes = ms.ToArray();
 
-            (SoundSynthPhotoDto? photo, string? error) =
+            (SoundSynthPhotoDto photo, string error) =
                 await SoundSynthPhotosService.UploadPhotoAsync(SoundSynthId, _selectedLicense.Id ?? 0, _sourceUrl,
                                                                fileBytes, _selectedFile.Name);
 
@@ -117,11 +117,11 @@ public partial class SoundSynthPhotos
                                                                    FullWidth = true
                                                                });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? errorMessage) =
+            (bool succeeded, string errorMessage) =
                 await SoundSynthPhotosService.DeletePhotoAsync(photo.Id ?? Guid.Empty);
 
             if(succeeded)

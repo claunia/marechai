@@ -312,7 +312,7 @@
                     <MudAutocomplete T="int" @bind-Value="_storageType"
                                      Label="@L["Storage Type"]"
                                      SearchFunc="SearchStorageTypes"
-                                     ToStringFunc="@(i => StorageTypeNames.TryGetValue(i, out string? n) ? n : L["Unknown"])"
+                                     ToStringFunc="@(i => StorageTypeNames.TryGetValue(i, out string n) ? n : L["Unknown"])"
                                      Variant="Variant.Outlined"
                                      Style="flex: 1;"/>
                     <MudSelect T="int" @bind-Value="_storageInterface"
@@ -377,35 +377,35 @@
 </MudDialog>
 
 @code {
-    CompanyDto?       _selectedCompany;
-    MachineFamilyDto? _selectedFamily;
-    string?           _validationError;
+    CompanyDto       _selectedCompany;
+    MachineFamilyDto _selectedFamily;
+    string           _validationError;
 
     // Picker lists
-    List<CompanyDto>?       _allCompanies;
-    List<MachineFamilyDto>? _allFamilies;
-    List<GpuDto>?              _allGpus;
-    List<ProcessorDto>?        _allProcessors;
-    List<SoundSynthDto>?       _allSoundSynths;
-    List<ScreenDto>?           _allScreens;
-    List<SoftwarePlatformDto>? _allSoftwarePlatforms;
+    List<CompanyDto>       _allCompanies;
+    List<MachineFamilyDto> _allFamilies;
+    List<GpuDto>              _allGpus;
+    List<ProcessorDto>        _allProcessors;
+    List<SoundSynthDto>       _allSoundSynths;
+    List<ScreenDto>           _allScreens;
+    List<SoftwarePlatformDto> _allSoftwarePlatforms;
 
     // Junction lists
-    List<GpuByMachineDto>?        _machineGpus;
-    List<ProcessorByMachineDto>?  _machineProcessors;
-    List<SoundSynthByMachineDto>? _machineSoundSynths;
-    List<ScreenByMachineDto>?     _machineScreens;
-    List<MemoryByMachineDto>?              _machineMemory;
-    List<StorageByMachineDto>?              _machineStorage;
-    List<SoftwarePlatformByMachineDto>?     _machineSoftwarePlatforms;
+    List<GpuByMachineDto>        _machineGpus;
+    List<ProcessorByMachineDto>  _machineProcessors;
+    List<SoundSynthByMachineDto> _machineSoundSynths;
+    List<ScreenByMachineDto>     _machineScreens;
+    List<MemoryByMachineDto>              _machineMemory;
+    List<StorageByMachineDto>              _machineStorage;
+    List<SoftwarePlatformByMachineDto>     _machineSoftwarePlatforms;
 
     // Junction picker state
-    GpuDto?        _selectedGpu;
-    ProcessorDto?  _selectedProcessor;
+    GpuDto        _selectedGpu;
+    ProcessorDto  _selectedProcessor;
     float?         _processorSpeed;
-    SoundSynthDto? _selectedSoundSynth;
-    ScreenDto?     _selectedScreen;
-    SoftwarePlatformDto? _selectedSoftwarePlatform;
+    SoundSynthDto _selectedSoundSynth;
+    ScreenDto     _selectedScreen;
+    SoftwarePlatformDto _selectedSoftwarePlatform;
 
     // Memory inline creation state
     int     _memoryType;
@@ -424,7 +424,7 @@
     [Parameter] public bool      IsNew      { get; set; }
     [Parameter] public int       MachineId  { get; set; }
     [Parameter] public string    Name       { get; set; } = string.Empty;
-    [Parameter] public string?   Model      { get; set; }
+    [Parameter] public string   Model      { get; set; }
     [Parameter] public int?      CompanyId  { get; set; }
     [Parameter] public int       Type       { get; set; }
     [Parameter] public bool      Prototype  { get; set; }
@@ -463,7 +463,7 @@
             // Fallback: if family not found in list, fetch it individually and add to list
             if(_selectedFamily is null)
             {
-                MachineFamilyDto? family = await MachinesService.GetFamilyByIdAsync(FamilyId.Value);
+                MachineFamilyDto family = await MachinesService.GetFamilyByIdAsync(FamilyId.Value);
 
                 if(family is not null)
                 {
@@ -492,7 +492,7 @@
     }
 
     // Search functions
-    Task<IEnumerable<CompanyDto>> SearchCompanies(string? value, CancellationToken ct)
+    Task<IEnumerable<CompanyDto>> SearchCompanies(string value, CancellationToken ct)
     {
         IEnumerable<CompanyDto> results = _allCompanies ?? [];
 
@@ -502,7 +502,7 @@
         return Task.FromResult(results);
     }
 
-    Task<IEnumerable<MachineFamilyDto>> SearchFamilies(string? value, CancellationToken ct)
+    Task<IEnumerable<MachineFamilyDto>> SearchFamilies(string value, CancellationToken ct)
     {
         IEnumerable<MachineFamilyDto> results = _allFamilies ?? [];
 
@@ -512,7 +512,7 @@
         return Task.FromResult(results);
     }
 
-    Task<IEnumerable<GpuDto>> SearchGpus(string? value, CancellationToken ct)
+    Task<IEnumerable<GpuDto>> SearchGpus(string value, CancellationToken ct)
     {
         HashSet<int?> assignedIds = _machineGpus?.Select(g => g.GpuId).ToHashSet() ?? [];
         IEnumerable<GpuDto> available = (_allGpus ?? []).Where(g => !assignedIds.Contains(g.Id));
@@ -523,7 +523,7 @@
         return Task.FromResult(available);
     }
 
-    Task<IEnumerable<ProcessorDto>> SearchProcessors(string? value, CancellationToken ct)
+    Task<IEnumerable<ProcessorDto>> SearchProcessors(string value, CancellationToken ct)
     {
         IEnumerable<ProcessorDto> results = _allProcessors ?? [];
 
@@ -533,7 +533,7 @@
         return Task.FromResult(results);
     }
 
-    Task<IEnumerable<SoundSynthDto>> SearchSoundSynths(string? value, CancellationToken ct)
+    Task<IEnumerable<SoundSynthDto>> SearchSoundSynths(string value, CancellationToken ct)
     {
         HashSet<int?> assignedIds = _machineSoundSynths?.Select(s => s.SoundSynthId).ToHashSet() ?? [];
         IEnumerable<SoundSynthDto> available = (_allSoundSynths ?? []).Where(s => !assignedIds.Contains(s.Id));
@@ -544,7 +544,7 @@
         return Task.FromResult(available);
     }
 
-    Task<IEnumerable<ScreenDto>> SearchScreens(string? value, CancellationToken ct)
+    Task<IEnumerable<ScreenDto>> SearchScreens(string value, CancellationToken ct)
     {
         HashSet<int?> assignedIds = _machineScreens?.Select(s => s.ScreenId).ToHashSet() ?? [];
         IEnumerable<ScreenDto> available = (_allScreens ?? []).Where(s => !assignedIds.Contains(s.Id));
@@ -555,7 +555,7 @@
         return Task.FromResult(available);
     }
 
-    Task<IEnumerable<int>> SearchStorageTypes(string? value, CancellationToken ct)
+    Task<IEnumerable<int>> SearchStorageTypes(string value, CancellationToken ct)
     {
         IEnumerable<int> indices = StorageTypeNames.Keys;
 
@@ -575,7 +575,7 @@
 
     string FormatScreen(ScreenByMachineDto screen)
     {
-        ScreenDto? s = screen.Screen?.ScreenDto;
+        ScreenDto s = screen.Screen?.ScreenDto;
 
         return s is null ? $"Screen #{screen.ScreenId}" : FormatScreenDto(s);
     }
@@ -585,8 +585,8 @@
 
     string FormatMemory(MemoryByMachineDto mem)
     {
-        string type  = mem.Type.HasValue && MemoryTypeNames.TryGetValue(mem.Type.Value, out string? tn) ? tn : L["Unknown"];
-        string usage = mem.Usage.HasValue && MemoryUsageNames.TryGetValue(mem.Usage.Value, out string? un) ? un : L["Unknown"];
+        string type  = mem.Type.HasValue && MemoryTypeNames.TryGetValue(mem.Type.Value, out string tn) ? tn : L["Unknown"];
+        string usage = mem.Usage.HasValue && MemoryUsageNames.TryGetValue(mem.Usage.Value, out string un) ? un : L["Unknown"];
         string size  = mem.Size.HasValue ? FormatBytes(mem.Size.Value) : L["Unknown"];
 
         return $"{size} {type} ({usage})";
@@ -594,8 +594,8 @@
 
     string FormatStorage(StorageByMachineDto stor)
     {
-        string type = stor.Type.HasValue && StorageTypeNames.TryGetValue(stor.Type.Value, out string? tn) ? tn : L["Unknown"];
-        string iface = stor.Interface.HasValue && StorageInterfaceNames.TryGetValue(stor.Interface.Value, out string? ifn) ? ifn : L["Unknown"];
+        string type = stor.Type.HasValue && StorageTypeNames.TryGetValue(stor.Type.Value, out string tn) ? tn : L["Unknown"];
+        string iface = stor.Interface.HasValue && StorageInterfaceNames.TryGetValue(stor.Interface.Value, out string ifn) ? ifn : L["Unknown"];
         string capacity = stor.Capacity.HasValue ? FormatBytes(stor.Capacity.Value) : "";
 
         return string.IsNullOrEmpty(capacity) ? $"{type} ({iface})" : $"{type} ({iface}) - {capacity}";
@@ -615,7 +615,7 @@
         if(_selectedGpu is null) return;
 
         var dto = new GpuByMachineDto { GpuId = _selectedGpu.Id, MachineId = MachineId };
-        (long? id, string? error) = await MachinesService.AddGpuToMachineAsync(dto);
+        (long? id, string error) = await MachinesService.AddGpuToMachineAsync(dto);
 
         if(id is not null)
         {
@@ -641,11 +641,11 @@
         IDialogReference dialog = await DialogService.ShowAsync<DeleteConfirmDialog>(L["Remove GPU"], parameters,
                                                                                      new DialogOptions { MaxWidth = MaxWidth.ExtraSmall, FullWidth = true });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? error) = await MachinesService.RemoveGpuFromMachineAsync(gpu.Id.Value);
+            (bool succeeded, string error) = await MachinesService.RemoveGpuFromMachineAsync(gpu.Id.Value);
 
             if(succeeded)
             {
@@ -664,7 +664,7 @@
         if(_selectedProcessor is null) return;
 
         var dto = new ProcessorByMachineDto { ProcessorId = _selectedProcessor.Id, MachineId = MachineId, Speed = _processorSpeed };
-        (long? id, string? error) = await MachinesService.AddProcessorToMachineAsync(dto);
+        (long? id, string error) = await MachinesService.AddProcessorToMachineAsync(dto);
 
         if(id is not null)
         {
@@ -691,11 +691,11 @@
         IDialogReference dialog = await DialogService.ShowAsync<DeleteConfirmDialog>(L["Remove Processor"], parameters,
                                                                                      new DialogOptions { MaxWidth = MaxWidth.ExtraSmall, FullWidth = true });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? error) = await MachinesService.RemoveProcessorFromMachineAsync(proc.Id.Value);
+            (bool succeeded, string error) = await MachinesService.RemoveProcessorFromMachineAsync(proc.Id.Value);
 
             if(succeeded)
             {
@@ -714,7 +714,7 @@
         if(_selectedSoundSynth is null) return;
 
         var dto = new SoundSynthByMachineDto { SoundSynthId = _selectedSoundSynth.Id, MachineId = MachineId };
-        (long? id, string? error) = await MachinesService.AddSoundSynthToMachineAsync(dto);
+        (long? id, string error) = await MachinesService.AddSoundSynthToMachineAsync(dto);
 
         if(id is not null)
         {
@@ -740,11 +740,11 @@
         IDialogReference dialog = await DialogService.ShowAsync<DeleteConfirmDialog>(L["Remove Sound Synth"], parameters,
                                                                                      new DialogOptions { MaxWidth = MaxWidth.ExtraSmall, FullWidth = true });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? error) = await MachinesService.RemoveSoundSynthFromMachineAsync(synth.Id.Value);
+            (bool succeeded, string error) = await MachinesService.RemoveSoundSynthFromMachineAsync(synth.Id.Value);
 
             if(succeeded)
             {
@@ -763,7 +763,7 @@
         if(_selectedScreen is null) return;
 
         var dto = new ScreenByMachineDto { ScreenId = _selectedScreen.Id, MachineId = MachineId };
-        (long? id, string? error) = await MachinesService.AddScreenToMachineAsync(dto);
+        (long? id, string error) = await MachinesService.AddScreenToMachineAsync(dto);
 
         if(id is not null)
         {
@@ -789,11 +789,11 @@
         IDialogReference dialog = await DialogService.ShowAsync<DeleteConfirmDialog>(L["Remove Screen"], parameters,
                                                                                      new DialogOptions { MaxWidth = MaxWidth.ExtraSmall, FullWidth = true });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? error) = await MachinesService.RemoveScreenFromMachineAsync(screen.Id.Value);
+            (bool succeeded, string error) = await MachinesService.RemoveScreenFromMachineAsync(screen.Id.Value);
 
             if(succeeded)
             {
@@ -818,7 +818,7 @@
             Speed     = _memorySpeed
         };
 
-        (long? id, string? error) = await MachinesService.AddMemoryToMachineAsync(dto);
+        (long? id, string error) = await MachinesService.AddMemoryToMachineAsync(dto);
 
         if(id is not null)
         {
@@ -847,11 +847,11 @@
         IDialogReference dialog = await DialogService.ShowAsync<DeleteConfirmDialog>(L["Remove Memory"], parameters,
                                                                                      new DialogOptions { MaxWidth = MaxWidth.ExtraSmall, FullWidth = true });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? error) = await MachinesService.RemoveMemoryFromMachineAsync(mem.Id.Value);
+            (bool succeeded, string error) = await MachinesService.RemoveMemoryFromMachineAsync(mem.Id.Value);
 
             if(succeeded)
             {
@@ -875,7 +875,7 @@
             Capacity  = _storageCapacity
         };
 
-        (long? id, string? error) = await MachinesService.AddStorageToMachineAsync(dto);
+        (long? id, string error) = await MachinesService.AddStorageToMachineAsync(dto);
 
         if(id is not null)
         {
@@ -903,11 +903,11 @@
         IDialogReference dialog = await DialogService.ShowAsync<DeleteConfirmDialog>(L["Remove Storage"], parameters,
                                                                                      new DialogOptions { MaxWidth = MaxWidth.ExtraSmall, FullWidth = true });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? error) = await MachinesService.RemoveStorageFromMachineAsync(stor.Id.Value);
+            (bool succeeded, string error) = await MachinesService.RemoveStorageFromMachineAsync(stor.Id.Value);
 
             if(succeeded)
             {
@@ -921,7 +921,7 @@
         }
     }
 
-    Task<IEnumerable<SoftwarePlatformDto>> SearchSoftwarePlatforms(string? value, CancellationToken ct)
+    Task<IEnumerable<SoftwarePlatformDto>> SearchSoftwarePlatforms(string value, CancellationToken ct)
     {
         HashSet<int?> assignedIds = _machineSoftwarePlatforms?.Select(sp => sp.SoftwarePlatformId).ToHashSet() ?? [];
         IEnumerable<SoftwarePlatformDto> available = (_allSoftwarePlatforms ?? []).Where(sp => !assignedIds.Contains(sp.Id));
@@ -942,7 +942,7 @@
             MachineId          = MachineId
         };
 
-        (long? id, string? error) = await MachinesService.AddSoftwarePlatformToMachineAsync(dto);
+        (long? id, string error) = await MachinesService.AddSoftwarePlatformToMachineAsync(dto);
 
         if(id is not null)
         {
@@ -968,11 +968,11 @@
         IDialogReference dialog = await DialogService.ShowAsync<DeleteConfirmDialog>(L["Remove Software Platform"], parameters,
                                                                                      new DialogOptions { MaxWidth = MaxWidth.ExtraSmall, FullWidth = true });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? error) = await MachinesService.RemoveSoftwarePlatformFromMachineAsync(sp.Id.Value);
+            (bool succeeded, string error) = await MachinesService.RemoveSoftwarePlatformFromMachineAsync(sp.Id.Value);
 
             if(succeeded)
             {

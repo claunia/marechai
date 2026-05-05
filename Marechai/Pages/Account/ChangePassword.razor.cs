@@ -29,12 +29,12 @@ namespace Marechai.Pages.Account;
 
 public partial class ChangePassword
 {
-    string? _confirmPassword;
-    string? _currentPassword;
-    string? _errorMessage;
+    string _confirmPassword;
+    string _currentPassword;
+    string _errorMessage;
     bool    _isSaving;
-    string? _newPassword;
-    string? _successMessage;
+    string _newPassword;
+    string _successMessage;
 
     async Task ChangePasswordAsync()
     {
@@ -71,7 +71,7 @@ public partial class ChangePassword
 
         _isSaving = true;
 
-        (bool succeeded, string? errorMessage) = await AuthService.ChangePasswordAsync(_currentPassword, _newPassword);
+        (bool succeeded, string errorMessage) = await AuthService.ChangePasswordAsync(_currentPassword, _newPassword);
 
         _isSaving = false;
 

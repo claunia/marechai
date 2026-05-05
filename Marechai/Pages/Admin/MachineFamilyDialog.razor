@@ -34,10 +34,10 @@
 </MudDialog>
 
 @code {
-    CompanyDto? _selectedCompany;
-    string?     _validationError;
+    CompanyDto _selectedCompany;
+    string     _validationError;
 
-    List<CompanyDto>? _allCompanies;
+    List<CompanyDto> _allCompanies;
 
     [CascadingParameter]
     IMudDialogInstance MudDialog { get; set; } = null!;
@@ -57,7 +57,7 @@
             _selectedCompany = _allCompanies.Find(c => c.Id == CompanyId);
     }
 
-    Task<IEnumerable<CompanyDto>> SearchCompanies(string? value, CancellationToken ct)
+    Task<IEnumerable<CompanyDto>> SearchCompanies(string value, CancellationToken ct)
     {
         IEnumerable<CompanyDto> results = _allCompanies ?? [];
 

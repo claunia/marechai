@@ -37,7 +37,7 @@ public class ResolutionsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<ResolutionDto>? resolutions = await client.Resolutions.GetAsync();
+            List<ResolutionDto> resolutions = await client.Resolutions.GetAsync();
 
             return resolutions ?? [];
         }
@@ -47,7 +47,7 @@ public class ResolutionsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<ResolutionDto?> GetByIdAsync(int id)
+    public async Task<ResolutionDto> GetByIdAsync(int id)
     {
         try
         {
@@ -59,7 +59,7 @@ public class ResolutionsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(long? id, string? error)> CreateAsync(ResolutionDto dto)
+    public async Task<(long? id, string error)> CreateAsync(ResolutionDto dto)
     {
         try
         {
@@ -77,7 +77,7 @@ public class ResolutionsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> UpdateAsync(int id, ResolutionDto dto)
+    public async Task<(bool succeeded, string error)> UpdateAsync(int id, ResolutionDto dto)
     {
         try
         {
@@ -95,7 +95,7 @@ public class ResolutionsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteAsync(int id)
+    public async Task<(bool succeeded, string error)> DeleteAsync(int id)
     {
         try
         {

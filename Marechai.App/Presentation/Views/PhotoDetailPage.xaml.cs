@@ -59,15 +59,15 @@ public sealed partial class PhotoDetailPage : Page
     /// <summary>
     ///     Walks up the visual tree then searches descendants for an Image element.
     /// </summary>
-    private static Image? FindChildImage(DependencyObject? element)
+    private static Image FindChildImage(DependencyObject element)
     {
         while(element is not null)
         {
-            DependencyObject? parent = VisualTreeHelper.GetParent(element);
+            DependencyObject parent = VisualTreeHelper.GetParent(element);
 
             if(parent is not null)
             {
-                Image? img = FindImage(parent);
+                Image img = FindImage(parent);
 
                 if(img is not null)
                     return img;
@@ -79,7 +79,7 @@ public sealed partial class PhotoDetailPage : Page
         return null;
     }
 
-    private static Image? FindImage(DependencyObject parent)
+    private static Image FindImage(DependencyObject parent)
     {
         int count = VisualTreeHelper.GetChildrenCount(parent);
 
@@ -90,7 +90,7 @@ public sealed partial class PhotoDetailPage : Page
             if(child is Image img)
                 return img;
 
-            Image? result = FindImage(child);
+            Image result = FindImage(child);
 
             if(result is not null)
                 return result;

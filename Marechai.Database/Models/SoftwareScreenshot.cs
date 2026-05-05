@@ -40,7 +40,7 @@ public class SoftwareScreenshot : BaseModel<Guid>
     public         ulong?          SoftwareVersionId { get; set; }
     public virtual SoftwareVersion Version           { get; set; }
 
-    public string? Caption { get; set; }
+    public string Caption { get; set; }
 
     [Required]
     public string OriginalExtension { get; set; }

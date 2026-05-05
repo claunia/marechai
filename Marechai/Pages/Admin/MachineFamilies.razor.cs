@@ -8,10 +8,10 @@ namespace Marechai.Pages.Admin;
 
 public partial class MachineFamilies
 {
-    string?                  _errorMessage;
+    string                  _errorMessage;
     bool                     _isLoading = true;
-    string?                  _successMessage;
-    List<MachineFamilyDto>?  _families;
+    string                  _successMessage;
+    List<MachineFamilyDto>  _families;
 
     protected override async Task OnInitializedAsync() => await LoadDataAsync();
 
@@ -38,7 +38,7 @@ public partial class MachineFamilies
                                                                                          FullWidth = true
                                                                                      });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: MachineFamilyDialogResult data })
         {
@@ -48,7 +48,7 @@ public partial class MachineFamilies
                 CompanyId = data.CompanyId
             };
 
-            (long? id, string? errorMessage) = await MachineFamiliesService.CreateAsync(dto);
+            (long? id, string errorMessage) = await MachineFamiliesService.CreateAsync(dto);
 
             if(id is not null)
             {
@@ -65,7 +65,7 @@ public partial class MachineFamilies
     async Task OpenEditDialog(MachineFamilyDto family)
     {
         // List endpoint doesn't return CompanyId, fetch full details
-        MachineFamilyDto? fullFamily = await MachineFamiliesService.GetByIdAsync(family.Id ?? 0);
+        MachineFamilyDto fullFamily = await MachineFamiliesService.GetByIdAsync(family.Id ?? 0);
 
         if(fullFamily is null)
         {
@@ -89,7 +89,7 @@ public partial class MachineFamilies
                                                                                          FullWidth = true
                                                                                      });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: MachineFamilyDialogResult data })
         {
@@ -100,7 +100,7 @@ public partial class MachineFamilies
                 CompanyId = data.CompanyId
             };
 
-            (bool succeeded, string? errorMessage) = await MachineFamiliesService.UpdateAsync(family.Id ?? 0, dto);
+            (bool succeeded, string errorMessage) = await MachineFamiliesService.UpdateAsync(family.Id ?? 0, dto);
 
             if(succeeded)
             {
@@ -133,11 +133,11 @@ public partial class MachineFamilies
                                                                    FullWidth = true
                                                                });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? errorMessage) = await MachineFamiliesService.DeleteAsync(family.Id ?? 0);
+            (bool succeeded, string errorMessage) = await MachineFamiliesService.DeleteAsync(family.Id ?? 0);
 
             if(succeeded)
             {

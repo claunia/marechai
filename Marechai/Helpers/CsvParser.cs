@@ -75,7 +75,7 @@ public static class CsvParser
             var values = new string[headers.Length];
 
             for(int i = 0; i < headers.Length; i++)
-                values[i] = row.TryGetValue(headers[i], out string? val) ? val ?? "" : "";
+                values[i] = row.TryGetValue(headers[i], out string val) ? val ?? "" : "";
 
             sb.AppendLine(GenerateLine(values));
         }

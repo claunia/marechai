@@ -25,18 +25,18 @@
 </MudDialog>
 
 @code {
-    string? _validationError;
+    string _validationError;
 
     [CascadingParameter]
     IMudDialogInstance MudDialog { get; set; } = null!;
 
     [Parameter] public bool    IsNew        { get; set; }
     [Parameter] public string  Name         { get; set; } = string.Empty;
-    [Parameter] public string? OriginalName { get; set; }
+    [Parameter] public string OriginalName { get; set; }
 
     [Inject] InstructionSetsService InstructionSetsService { get; set; } = null!;
 
-    async Task<string?> ValidateNameAsync(string? value)
+    async Task<string> ValidateNameAsync(string value)
     {
         if(string.IsNullOrWhiteSpace(value))
             return L["Name is required."];

@@ -18,5 +18,5 @@ public partial class CompanyLogoDisplayItem : ObservableObject
     private int? _year;
 
     [ObservableProperty]
-    private BitmapImage? _logoSource;
+    private BitmapImage _logoSource;
 }

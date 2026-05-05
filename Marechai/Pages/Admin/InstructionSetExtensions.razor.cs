@@ -33,10 +33,10 @@ namespace Marechai.Pages.Admin;
 
 public partial class InstructionSetExtensions
 {
-    string?                            _errorMessage;
+    string                            _errorMessage;
     bool                               _isLoading = true;
-    List<InstructionSetExtensionDto>?  _items;
-    string?                            _successMessage;
+    List<InstructionSetExtensionDto>  _items;
+    string                            _successMessage;
 
     protected override async Task OnInitializedAsync() => await LoadItemsAsync();
 
@@ -64,7 +64,7 @@ public partial class InstructionSetExtensions
                                                                              FullWidth = true
                                                                          });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: InstructionSetExtensionDialogResult data })
         {
@@ -73,7 +73,7 @@ public partial class InstructionSetExtensions
                 Extension = data.Extension
             };
 
-            (int? id, string? errorMessage) = await InstructionSetExtensionsService.CreateAsync(dto);
+            (int? id, string errorMessage) = await InstructionSetExtensionsService.CreateAsync(dto);
 
             if(id is not null)
             {
@@ -104,7 +104,7 @@ public partial class InstructionSetExtensions
                                                                              FullWidth = true
                                                                          });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: InstructionSetExtensionDialogResult data })
         {
@@ -114,7 +114,7 @@ public partial class InstructionSetExtensions
                 Extension = data.Extension
             };
 
-            (bool succeeded, string? errorMessage) =
+            (bool succeeded, string errorMessage) =
                 await InstructionSetExtensionsService.UpdateAsync(item.Id ?? 0, dto);
 
             if(succeeded)
@@ -148,11 +148,11 @@ public partial class InstructionSetExtensions
                                                                    FullWidth = true
                                                                });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? errorMessage) = await InstructionSetExtensionsService.DeleteAsync(item.Id ?? 0);
+            (bool succeeded, string errorMessage) = await InstructionSetExtensionsService.DeleteAsync(item.Id ?? 0);
 
             if(succeeded)
             {

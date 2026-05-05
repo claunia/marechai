@@ -340,14 +340,14 @@
 
     [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
 
-    string?                                        _errorMessage;
+    string                                        _errorMessage;
     bool                                           _isProcessing;
     ImportState                                    _state = ImportState.Upload;
     List<PersonImportRow>                          _importRows = [];
     HashSet<PersonImportRow>                       _selectedItems = [];
-    List<Iso31661NumericDto>?                      _allCountries;
-    Dictionary<string, List<Iso31661NumericDto>>?  _countrySoundexMap;
-    List<PersonDto>?                               _existingPeople;
+    List<Iso31661NumericDto>                      _allCountries;
+    Dictionary<string, List<Iso31661NumericDto>>  _countrySoundexMap;
+    List<PersonDto>                               _existingPeople;
     int                                            _importedCount;
     int                                            _rejectedCount;
     int                                            _failedCount;
@@ -366,7 +366,7 @@
         await JsRuntime.InvokeVoidAsync("downloadFileFromBytes", "person_import_template.csv", "text/csv", base64);
     }
 
-    async Task OnCsvFileSelected(IBrowserFile? file)
+    async Task OnCsvFileSelected(IBrowserFile file)
     {
         if(file is null) return;
 
@@ -425,7 +425,7 @@
 
             string code = Soundex.Generate(country.Name);
 
-            if(!_countrySoundexMap.TryGetValue(code, out List<Iso31661NumericDto>? list))
+            if(!_countrySoundexMap.TryGetValue(code, out List<Iso31661NumericDto> list))
             {
                 list = [];
                 _countrySoundexMap[code] = list;
@@ -437,7 +437,7 @@
 
     static string NormalizeCountryInput(string input)
     {
-        return CountryAliases.TryGetValue(input.Trim(), out string? normalized) ? normalized : input.Trim();
+        return CountryAliases.TryGetValue(input.Trim(), out string normalized) ? normalized : input.Trim();
     }
 
     List<PersonImportRow> ParseRows(List<Dictionary<string, string>> rows)
@@ -517,7 +517,7 @@
         string normalized = NormalizeCountryInput(row.CountryInput);
 
         // Try exact match first (against normalized input)
-        Iso31661NumericDto? exact = _allCountries.Find(c =>
+        Iso31661NumericDto exact = _allCountries.Find(c =>
             string.Equals(c.Name, normalized, StringComparison.OrdinalIgnoreCase));
 
         if(exact is not null)
@@ -533,7 +533,7 @@
         string inputSoundex = Soundex.Generate(normalized);
 
         if(_countrySoundexMap is not null &&
-           _countrySoundexMap.TryGetValue(inputSoundex, out List<Iso31661NumericDto>? matches) &&
+           _countrySoundexMap.TryGetValue(inputSoundex, out List<Iso31661NumericDto> matches) &&
            matches.Count > 0)
         {
             row.CountryMatch     = CountryMatchType.Partial;
@@ -560,7 +560,7 @@
         }
     }
 
-    void OnCountrySelected(PersonImportRow row, Iso31661NumericDto? country) => row.SelectedCountry = country;
+    void OnCountrySelected(PersonImportRow row, Iso31661NumericDto country) => row.SelectedCountry = country;
 
     async Task StartImport()
     {
@@ -597,7 +597,7 @@
                 Facebook           = row.Facebook
             };
 
-            (long? id, string? error) = await PeopleService.CreateAsync(dto);
+            (long? id, string error) = await PeopleService.CreateAsync(dto);
 
             if(id is not null)
             {
@@ -668,11 +668,11 @@
     }
 
     static string GetValue(Dictionary<string, string> row, string key) =>
-        row.TryGetValue(key, out string? val) ? val?.Trim() ?? "" : "";
+        row.TryGetValue(key, out string val) ? val?.Trim() ?? "" : "";
 
-    static string? GetValueOrNull(Dictionary<string, string> row, string key)
+    static string GetValueOrNull(Dictionary<string, string> row, string key)
     {
-        if(!row.TryGetValue(key, out string? val))
+        if(!row.TryGetValue(key, out string val))
             return null;
 
         string trimmed = val?.Trim() ?? "";
@@ -683,7 +683,7 @@
     static bool TryParseInt(Dictionary<string, string> row, string key, out int result)
     {
         result = 0;
-        string? val = GetValueOrNull(row, key);
+        string val = GetValueOrNull(row, key);
 
         return val is not null && int.TryParse(val, out result);
     }

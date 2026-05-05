@@ -348,16 +348,16 @@
 
     [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
 
-    string?                         _errorMessage;
+    string                         _errorMessage;
     bool                            _isProcessing;
     ImportState                     _state = ImportState.Upload;
     List<ProcessorImportRow>        _importRows = [];
     HashSet<ProcessorImportRow>     _selectedItems = [];
-    List<CompanyDto>?               _allCompanies;
-    List<InstructionSetDto>?        _allInstructionSets;
-    Dictionary<string, List<CompanyDto>>?        _companySoundexMap;
-    Dictionary<string, List<InstructionSetDto>>? _isaSoundexMap;
-    List<ProcessorDto>?             _existingProcessors;
+    List<CompanyDto>               _allCompanies;
+    List<InstructionSetDto>        _allInstructionSets;
+    Dictionary<string, List<CompanyDto>>        _companySoundexMap;
+    Dictionary<string, List<InstructionSetDto>> _isaSoundexMap;
+    List<ProcessorDto>             _existingProcessors;
     int                             _importedCount;
     int                             _rejectedCount;
     int                             _failedCount;
@@ -376,7 +376,7 @@
         await JsRuntime.InvokeVoidAsync("downloadFileFromBytes", "processor_import_template.csv", "text/csv", base64);
     }
 
-    async Task OnCsvFileSelected(IBrowserFile? file)
+    async Task OnCsvFileSelected(IBrowserFile file)
     {
         if(file is null) return;
 
@@ -437,7 +437,7 @@
 
             string code = Soundex.Generate(company.Name);
 
-            if(!_companySoundexMap.TryGetValue(code, out List<CompanyDto>? list))
+            if(!_companySoundexMap.TryGetValue(code, out List<CompanyDto> list))
             {
                 list = [];
                 _companySoundexMap[code] = list;
@@ -461,7 +461,7 @@
 
             string code = Soundex.Generate(isa.Name);
 
-            if(!_isaSoundexMap.TryGetValue(code, out List<InstructionSetDto>? list))
+            if(!_isaSoundexMap.TryGetValue(code, out List<InstructionSetDto> list))
             {
                 list = [];
                 _isaSoundexMap[code] = list;
@@ -590,7 +590,7 @@
         }
 
         // Try exact match first
-        CompanyDto? exact = _allCompanies.Find(c =>
+        CompanyDto exact = _allCompanies.Find(c =>
             string.Equals(c.Name, row.CompanyInput, StringComparison.OrdinalIgnoreCase));
 
         if(exact is not null)
@@ -606,7 +606,7 @@
         string inputSoundex = Soundex.Generate(row.CompanyInput);
 
         if(_companySoundexMap is not null &&
-           _companySoundexMap.TryGetValue(inputSoundex, out List<CompanyDto>? matches) &&
+           _companySoundexMap.TryGetValue(inputSoundex, out List<CompanyDto> matches) &&
            matches.Count > 0)
         {
             row.CompanyMatch     = CompanyMatchType.Partial;
@@ -637,7 +637,7 @@
         }
 
         // Try exact match first
-        InstructionSetDto? exact = _allInstructionSets.Find(isa =>
+        InstructionSetDto exact = _allInstructionSets.Find(isa =>
             string.Equals(isa.Name, row.InstructionSetInput, StringComparison.OrdinalIgnoreCase));
 
         if(exact is not null)
@@ -653,7 +653,7 @@
         string inputSoundex = Soundex.Generate(row.InstructionSetInput);
 
         if(_isaSoundexMap is not null &&
-           _isaSoundexMap.TryGetValue(inputSoundex, out List<InstructionSetDto>? matches) &&
+           _isaSoundexMap.TryGetValue(inputSoundex, out List<InstructionSetDto> matches) &&
            matches.Count > 0)
         {
             row.InstructionSetMatch    = InstructionSetMatchType.Partial;
@@ -682,9 +682,9 @@
         }
     }
 
-    void OnCompanySelected(ProcessorImportRow row, CompanyDto? company) => row.SelectedCompany = company;
+    void OnCompanySelected(ProcessorImportRow row, CompanyDto company) => row.SelectedCompany = company;
 
-    void OnInstructionSetSelected(ProcessorImportRow row, InstructionSetDto? isa) => row.SelectedInstructionSet = isa;
+    void OnInstructionSetSelected(ProcessorImportRow row, InstructionSetDto isa) => row.SelectedInstructionSet = isa;
 
     async Task StartImport()
     {
@@ -735,7 +735,7 @@
                 L3                  = row.L3
             };
 
-            (long? id, string? error) = await ProcessorsService.CreateAsync(dto);
+            (long? id, string error) = await ProcessorsService.CreateAsync(dto);
 
             if(id is not null)
             {
@@ -819,11 +819,11 @@
     }
 
     static string GetValue(Dictionary<string, string> row, string key) =>
-        row.TryGetValue(key, out string? val) ? val?.Trim() ?? "" : "";
+        row.TryGetValue(key, out string val) ? val?.Trim() ?? "" : "";
 
-    static string? GetValueOrNull(Dictionary<string, string> row, string key)
+    static string GetValueOrNull(Dictionary<string, string> row, string key)
     {
-        if(!row.TryGetValue(key, out string? val))
+        if(!row.TryGetValue(key, out string val))
             return null;
 
         string trimmed = val?.Trim() ?? "";
@@ -834,7 +834,7 @@
     static bool TryParseInt(Dictionary<string, string> row, string key, out int result)
     {
         result = 0;
-        string? val = GetValueOrNull(row, key);
+        string val = GetValueOrNull(row, key);
 
         return val is not null && int.TryParse(val, out result);
     }
@@ -842,7 +842,7 @@
     static bool TryParseFloat(Dictionary<string, string> row, string key, out float result)
     {
         result = 0;
-        string? val = GetValueOrNull(row, key);
+        string val = GetValueOrNull(row, key);
 
         return val is not null && float.TryParse(val, System.Globalization.NumberStyles.Float,
                                                   System.Globalization.CultureInfo.InvariantCulture, out result);
@@ -851,7 +851,7 @@
     static bool TryParseDouble(Dictionary<string, string> row, string key, out double result)
     {
         result = 0;
-        string? val = GetValueOrNull(row, key);
+        string val = GetValueOrNull(row, key);
 
         return val is not null && double.TryParse(val, System.Globalization.NumberStyles.Float,
                                                    System.Globalization.CultureInfo.InvariantCulture, out result);
@@ -860,7 +860,7 @@
     static bool TryParseLong(Dictionary<string, string> row, string key, out long result)
     {
         result = 0;
-        string? val = GetValueOrNull(row, key);
+        string val = GetValueOrNull(row, key);
 
         return val is not null && long.TryParse(val, out result);
     }

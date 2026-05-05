@@ -40,7 +40,7 @@ public class ProcessorPhotosService(Marechai.ApiClient.Client client, IRequestAd
     {
         try
         {
-            List<Guid?>? guids = await client.Processors[processorId].Photos.GetAsync();
+            List<Guid?> guids = await client.Processors[processorId].Photos.GetAsync();
 
             return guids?.Where(g => g.HasValue).Select(g => g!.Value).ToList() ?? [];
         }
@@ -50,7 +50,7 @@ public class ProcessorPhotosService(Marechai.ApiClient.Client client, IRequestAd
         }
     }
 
-    public async Task<ProcessorPhotoDto?> GetAsync(Guid id)
+    public async Task<ProcessorPhotoDto> GetAsync(Guid id)
     {
         try
         {
@@ -62,8 +62,8 @@ public class ProcessorPhotosService(Marechai.ApiClient.Client client, IRequestAd
         }
     }
 
-    public async Task<(ProcessorPhotoDto? photo, string? error)> UploadPhotoAsync(int    processorId, int licenseId,
-                                                                                  string? source,     byte[] fileBytes,
+    public async Task<(ProcessorPhotoDto photo, string error)> UploadPhotoAsync(int    processorId, int licenseId,
+                                                                                  string source,     byte[] fileBytes,
                                                                                   string  fileName)
     {
         try
@@ -100,7 +100,7 @@ public class ProcessorPhotosService(Marechai.ApiClient.Client client, IRequestAd
                 { "401", ProblemDetails.CreateFromDiscriminatorValue }
             };
 
-            ProcessorPhotoDto? result = await requestAdapter.SendAsync(requestInfo,
+            ProcessorPhotoDto result = await requestAdapter.SendAsync(requestInfo,
                 ProcessorPhotoDto.CreateFromDiscriminatorValue, errorMapping);
 
             return (result, null);
@@ -111,7 +111,7 @@ public class ProcessorPhotosService(Marechai.ApiClient.Client client, IRequestAd
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeletePhotoAsync(Guid id)
+    public async Task<(bool succeeded, string error)> DeletePhotoAsync(Guid id)
     {
         try
         {
@@ -129,7 +129,7 @@ public class ProcessorPhotosService(Marechai.ApiClient.Client client, IRequestAd
     {
         try
         {
-            List<LicenseDto>? licenses = await client.Licenses.GetAsync();
+            List<LicenseDto> licenses = await client.Licenses.GetAsync();
 
             return licenses?.OrderBy(l => l.Name).ToList() ?? [];
         }

@@ -33,10 +33,10 @@ namespace Marechai.Pages.Admin;
 
 public partial class Resolutions
 {
-    string?              _errorMessage;
+    string              _errorMessage;
     bool                 _isLoading = true;
-    List<ResolutionDto>? _items;
-    string?              _successMessage;
+    List<ResolutionDto> _items;
+    string              _successMessage;
 
     protected override async Task OnInitializedAsync() => await LoadItemsAsync();
 
@@ -64,7 +64,7 @@ public partial class Resolutions
                                                                                       FullWidth = true
                                                                                   });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: ResolutionDialogResult data })
         {
@@ -78,7 +78,7 @@ public partial class Resolutions
                 Grayscale = data.Grayscale
             };
 
-            (long? id, string? errorMessage) = await ResolutionsService.CreateAsync(dto);
+            (long? id, string errorMessage) = await ResolutionsService.CreateAsync(dto);
 
             if(id is not null)
             {
@@ -113,7 +113,7 @@ public partial class Resolutions
                                                                                       FullWidth = true
                                                                                   });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: ResolutionDialogResult data })
         {
@@ -128,7 +128,7 @@ public partial class Resolutions
                 Grayscale = data.Grayscale
             };
 
-            (bool succeeded, string? errorMessage) = await ResolutionsService.UpdateAsync(item.Id ?? 0, dto);
+            (bool succeeded, string errorMessage) = await ResolutionsService.UpdateAsync(item.Id ?? 0, dto);
 
             if(succeeded)
             {
@@ -164,11 +164,11 @@ public partial class Resolutions
                                                                    FullWidth = true
                                                                });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? errorMessage) = await ResolutionsService.DeleteAsync(item.Id ?? 0);
+            (bool succeeded, string errorMessage) = await ResolutionsService.DeleteAsync(item.Id ?? 0);
 
             if(succeeded)
             {

@@ -37,7 +37,7 @@ public class SoundSynthsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<SoundSynthDto>? synths = await client.SoundSynths.GetAsync();
+            List<SoundSynthDto> synths = await client.SoundSynths.GetAsync();
 
             return synths ?? [];
         }
@@ -47,7 +47,7 @@ public class SoundSynthsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<SoundSynthDto?> GetByIdAsync(int id)
+    public async Task<SoundSynthDto> GetByIdAsync(int id)
     {
         try
         {
@@ -59,7 +59,7 @@ public class SoundSynthsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(long? id, string? error)> CreateAsync(SoundSynthDto dto)
+    public async Task<(long? id, string error)> CreateAsync(SoundSynthDto dto)
     {
         try
         {
@@ -77,7 +77,7 @@ public class SoundSynthsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> UpdateAsync(int id, SoundSynthDto dto)
+    public async Task<(bool succeeded, string error)> UpdateAsync(int id, SoundSynthDto dto)
     {
         try
         {
@@ -95,7 +95,7 @@ public class SoundSynthsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteAsync(int id)
+    public async Task<(bool succeeded, string error)> DeleteAsync(int id)
     {
         try
         {
@@ -117,7 +117,7 @@ public class SoundSynthsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<CompanyDto>? companies = await client.Companies.GetAsync();
+            List<CompanyDto> companies = await client.Companies.GetAsync();
 
             return companies ?? [];
         }
@@ -131,7 +131,7 @@ public class SoundSynthsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<MachineDto>? machines = await client.SoundSynths[soundSynthId].Machines.GetAsync();
+            List<MachineDto> machines = await client.SoundSynths[soundSynthId].Machines.GetAsync();
 
             return machines ?? [];
         }
@@ -142,11 +142,11 @@ public class SoundSynthsService(Marechai.ApiClient.Client client)
     }
 
     // Description management
-    public async Task<string?> GetDescriptionTextAsync(int id)
+    public async Task<string> GetDescriptionTextAsync(int id)
     {
         try
         {
-            SoundSynthDescriptionDto? desc = await client.SoundSynths[id].Description.GetAsync();
+            SoundSynthDescriptionDto desc = await client.SoundSynths[id].Description.GetAsync();
 
             return desc?.Html ?? desc?.Markdown;
         }
@@ -160,7 +160,7 @@ public class SoundSynthsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<SoundSynthDescriptionDto>? descriptions = await client.SoundSynths[soundSynthId].Descriptions.GetAsync();
+            List<SoundSynthDescriptionDto> descriptions = await client.SoundSynths[soundSynthId].Descriptions.GetAsync();
 
             return descriptions ?? [];
         }
@@ -170,7 +170,7 @@ public class SoundSynthsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> CreateOrUpdateDescriptionAsync(int soundSynthId,
+    public async Task<(bool succeeded, string error)> CreateOrUpdateDescriptionAsync(int soundSynthId,
         SoundSynthDescriptionDto dto)
     {
         try
@@ -189,7 +189,7 @@ public class SoundSynthsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteDescriptionAsync(int soundSynthId, string languageCode)
+    public async Task<(bool succeeded, string error)> DeleteDescriptionAsync(int soundSynthId, string languageCode)
     {
         try
         {

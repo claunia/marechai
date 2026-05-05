@@ -37,7 +37,7 @@ public class ProcessorsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<ProcessorDto>? processors = await client.Processors.GetAsync();
+            List<ProcessorDto> processors = await client.Processors.GetAsync();
 
             return processors ?? [];
         }
@@ -47,7 +47,7 @@ public class ProcessorsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<ProcessorDto?> GetByIdAsync(int id)
+    public async Task<ProcessorDto> GetByIdAsync(int id)
     {
         try
         {
@@ -59,7 +59,7 @@ public class ProcessorsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(long? id, string? error)> CreateAsync(ProcessorDto dto)
+    public async Task<(long? id, string error)> CreateAsync(ProcessorDto dto)
     {
         try
         {
@@ -77,7 +77,7 @@ public class ProcessorsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> UpdateAsync(int id, ProcessorDto dto)
+    public async Task<(bool succeeded, string error)> UpdateAsync(int id, ProcessorDto dto)
     {
         try
         {
@@ -95,7 +95,7 @@ public class ProcessorsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteAsync(int id)
+    public async Task<(bool succeeded, string error)> DeleteAsync(int id)
     {
         try
         {
@@ -117,7 +117,7 @@ public class ProcessorsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<MachineDto>? machines = await client.Processors[processorId].Machines.GetAsync();
+            List<MachineDto> machines = await client.Processors[processorId].Machines.GetAsync();
 
             return machines ?? [];
         }
@@ -131,7 +131,7 @@ public class ProcessorsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<CompanyDto>? companies = await client.Companies.GetAsync();
+            List<CompanyDto> companies = await client.Companies.GetAsync();
 
             return companies ?? [];
         }
@@ -145,7 +145,7 @@ public class ProcessorsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<InstructionSetExtensionByProcessorDto>? extensions =
+            List<InstructionSetExtensionByProcessorDto> extensions =
                 await client.Processor[processorId].InstructionSetExtensions.GetAsync();
 
             return extensions ?? [];
@@ -156,7 +156,7 @@ public class ProcessorsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(long? id, string? error)> AddExtensionToProcessorAsync(
+    public async Task<(long? id, string error)> AddExtensionToProcessorAsync(
         InstructionSetExtensionByProcessorDto dto)
     {
         try
@@ -175,7 +175,7 @@ public class ProcessorsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemoveExtensionFromProcessorAsync(int id)
+    public async Task<(bool succeeded, string error)> RemoveExtensionFromProcessorAsync(int id)
     {
         try
         {
@@ -194,11 +194,11 @@ public class ProcessorsService(Marechai.ApiClient.Client client)
     }
 
     // Description management
-    public async Task<string?> GetDescriptionTextAsync(int id)
+    public async Task<string> GetDescriptionTextAsync(int id)
     {
         try
         {
-            ProcessorDescriptionDto? desc = await client.Processors[id].Description.GetAsync();
+            ProcessorDescriptionDto desc = await client.Processors[id].Description.GetAsync();
 
             return desc?.Html ?? desc?.Markdown;
         }
@@ -212,7 +212,7 @@ public class ProcessorsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<ProcessorDescriptionDto>? descriptions = await client.Processors[processorId].Descriptions.GetAsync();
+            List<ProcessorDescriptionDto> descriptions = await client.Processors[processorId].Descriptions.GetAsync();
 
             return descriptions ?? [];
         }
@@ -222,7 +222,7 @@ public class ProcessorsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> CreateOrUpdateDescriptionAsync(int processorId,
+    public async Task<(bool succeeded, string error)> CreateOrUpdateDescriptionAsync(int processorId,
         ProcessorDescriptionDto dto)
     {
         try
@@ -241,7 +241,7 @@ public class ProcessorsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteDescriptionAsync(int processorId, string languageCode)
+    public async Task<(bool succeeded, string error)> DeleteDescriptionAsync(int processorId, string languageCode)
     {
         try
         {

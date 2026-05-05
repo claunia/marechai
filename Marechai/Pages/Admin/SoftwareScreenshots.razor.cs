@@ -11,19 +11,19 @@ namespace Marechai.Pages.Admin;
 
 public partial class SoftwareScreenshots
 {
-    string?                        _errorMessage;
+    string                        _errorMessage;
     bool                           _isLoading = true;
-    List<SoftwarePlatformDto>?     _platforms;
-    List<SoftwareScreenshotDto>?   _screenshots;
-    SoftwarePlatformDto?           _selectedPlatform;
-    string?                        _softwareName;
-    string?                        _successMessage;
+    List<SoftwarePlatformDto>     _platforms;
+    List<SoftwareScreenshotDto>   _screenshots;
+    SoftwarePlatformDto           _selectedPlatform;
+    string                        _softwareName;
+    string                        _successMessage;
 
     [Parameter] public int SoftwareId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        SoftwareDto? software = await SoftwareService.GetSoftwareByIdAsync(SoftwareId);
+        SoftwareDto software = await SoftwareService.GetSoftwareByIdAsync(SoftwareId);
         _softwareName = software?.Name;
         _platforms    = await SoftwareService.GetPlatformsAsync();
         await LoadDataAsync();
@@ -36,7 +36,7 @@ public partial class SoftwareScreenshots
         _isLoading   = false;
     }
 
-    async Task OnFileSelected(IBrowserFile? file)
+    async Task OnFileSelected(IBrowserFile file)
     {
         if(file is null) return;
 
@@ -53,7 +53,7 @@ public partial class SoftwareScreenshots
                                    ? (ulong)_selectedPlatform.Id.Value
                                    : null;
 
-            SoftwareScreenshotDto? result =
+            SoftwareScreenshotDto result =
                 await SoftwareService.UploadScreenshotAsync(SoftwareId, fileBytes, file.Name, platformId);
 
             if(result is not null)
@@ -90,11 +90,11 @@ public partial class SoftwareScreenshots
                                                                    FullWidth = true
                                                                });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? errorMessage) = await SoftwareService.DeleteScreenshotAsync(screenshotId);
+            (bool succeeded, string errorMessage) = await SoftwareService.DeleteScreenshotAsync(screenshotId);
 
             if(succeeded)
             {
@@ -108,7 +108,7 @@ public partial class SoftwareScreenshots
         }
     }
 
-    async Task OnScreenshotPlatformChanged(SoftwareScreenshotDto screenshot, SoftwarePlatformDto? platform)
+    async Task OnScreenshotPlatformChanged(SoftwareScreenshotDto screenshot, SoftwarePlatformDto platform)
     {
         int? newPlatformId = platform?.Id;
 
@@ -127,7 +127,7 @@ public partial class SoftwareScreenshots
             OriginalExtension  = screenshot.OriginalExtension
         };
 
-        (bool succeeded, string? error) = await SoftwareService.UpdateScreenshotAsync(screenshot.Id!.Value, dto);
+        (bool succeeded, string error) = await SoftwareService.UpdateScreenshotAsync(screenshot.Id!.Value, dto);
 
         if(!succeeded)
             _errorMessage = error;

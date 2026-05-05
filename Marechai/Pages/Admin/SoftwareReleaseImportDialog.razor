@@ -423,18 +423,18 @@
 
     [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
 
-    string?                                            _errorMessage;
+    string                                            _errorMessage;
     bool                                               _isProcessing;
     ImportState                                        _state = ImportState.Upload;
     List<SoftwareReleaseImportRow>                     _importRows = [];
     HashSet<SoftwareReleaseImportRow>                  _selectedItems = [];
-    List<CompanyDto>?                                  _allCompanies;
-    Dictionary<string, List<CompanyDto>>?              _companySoundexMap;
-    List<SoftwareDto>?                                 _allSoftware;
-    Dictionary<string, List<SoftwareDto>>?             _softwareSoundexMap;
-    List<SoftwarePlatformDto>?                         _allPlatforms;
-    Dictionary<string, List<SoftwarePlatformDto>>?     _platformSoundexMap;
-    List<SoftwareReleaseDto>?                          _existingReleases;
+    List<CompanyDto>                                  _allCompanies;
+    Dictionary<string, List<CompanyDto>>              _companySoundexMap;
+    List<SoftwareDto>                                 _allSoftware;
+    Dictionary<string, List<SoftwareDto>>             _softwareSoundexMap;
+    List<SoftwarePlatformDto>                         _allPlatforms;
+    Dictionary<string, List<SoftwarePlatformDto>>     _platformSoundexMap;
+    List<SoftwareReleaseDto>                          _existingReleases;
     int                                                _importedCount;
     int                                                _rejectedCount;
     int                                                _failedCount;
@@ -453,7 +453,7 @@
         await JsRuntime.InvokeVoidAsync("downloadFileFromBytes", "software_release_import_template.csv", "text/csv", base64);
     }
 
-    async Task OnCsvFileSelected(IBrowserFile? file)
+    async Task OnCsvFileSelected(IBrowserFile file)
     {
         if(file is null) return;
 
@@ -514,7 +514,7 @@
 
                 string code = Soundex.Generate(company.Name);
 
-                if(!_companySoundexMap.TryGetValue(code, out List<CompanyDto>? list))
+                if(!_companySoundexMap.TryGetValue(code, out List<CompanyDto> list))
                 {
                     list = [];
                     _companySoundexMap[code] = list;
@@ -536,7 +536,7 @@
 
                 string code = Soundex.Generate(sw.Name);
 
-                if(!_softwareSoundexMap.TryGetValue(code, out List<SoftwareDto>? list))
+                if(!_softwareSoundexMap.TryGetValue(code, out List<SoftwareDto> list))
                 {
                     list = [];
                     _softwareSoundexMap[code] = list;
@@ -558,7 +558,7 @@
 
                 string code = Soundex.Generate(plat.Name);
 
-                if(!_platformSoundexMap.TryGetValue(code, out List<SoftwarePlatformDto>? list))
+                if(!_platformSoundexMap.TryGetValue(code, out List<SoftwarePlatformDto> list))
                 {
                     list = [];
                     _platformSoundexMap[code] = list;
@@ -655,7 +655,7 @@
         string input = row.PublisherInput.Trim();
 
         // Try exact match first
-        CompanyDto? exact = _allCompanies.Find(c =>
+        CompanyDto exact = _allCompanies.Find(c =>
             string.Equals(c.Name, input, StringComparison.OrdinalIgnoreCase));
 
         if(exact is not null)
@@ -671,7 +671,7 @@
         string inputSoundex = Soundex.Generate(input);
 
         if(_companySoundexMap is not null &&
-           _companySoundexMap.TryGetValue(inputSoundex, out List<CompanyDto>? matches) &&
+           _companySoundexMap.TryGetValue(inputSoundex, out List<CompanyDto> matches) &&
            matches.Count > 0)
         {
             row.PublisherMatch     = CompanyMatchType.Partial;
@@ -699,7 +699,7 @@
         string input = row.SoftwareInput.Trim();
 
         // Try exact match first
-        SoftwareDto? exact = _allSoftware.Find(s =>
+        SoftwareDto exact = _allSoftware.Find(s =>
             string.Equals(s.Name, input, StringComparison.OrdinalIgnoreCase));
 
         if(exact is not null)
@@ -715,7 +715,7 @@
         string inputSoundex = Soundex.Generate(input);
 
         if(_softwareSoundexMap is not null &&
-           _softwareSoundexMap.TryGetValue(inputSoundex, out List<SoftwareDto>? matches) &&
+           _softwareSoundexMap.TryGetValue(inputSoundex, out List<SoftwareDto> matches) &&
            matches.Count > 0)
         {
             row.SoftwareMatch    = SoftwareMatchType.Partial;
@@ -744,7 +744,7 @@
         string input = row.PlatformInput.Trim();
 
         // Try exact match first
-        SoftwarePlatformDto? exact = _allPlatforms.Find(p =>
+        SoftwarePlatformDto exact = _allPlatforms.Find(p =>
             string.Equals(p.Name, input, StringComparison.OrdinalIgnoreCase));
 
         if(exact is not null)
@@ -760,7 +760,7 @@
         string inputSoundex = Soundex.Generate(input);
 
         if(_platformSoundexMap is not null &&
-           _platformSoundexMap.TryGetValue(inputSoundex, out List<SoftwarePlatformDto>? matches) &&
+           _platformSoundexMap.TryGetValue(inputSoundex, out List<SoftwarePlatformDto> matches) &&
            matches.Count > 0)
         {
             row.PlatformMatch    = PlatformMatchType.Partial;
@@ -801,9 +801,9 @@
         }
     }
 
-    void OnPublisherSelected(SoftwareReleaseImportRow row, CompanyDto? company)           => row.SelectedPublisher = company;
-    void OnSoftwareSelected(SoftwareReleaseImportRow row, SoftwareDto? software)          => row.SelectedSoftware  = software;
-    void OnPlatformSelected(SoftwareReleaseImportRow row, SoftwarePlatformDto? platform)  => row.SelectedPlatform  = platform;
+    void OnPublisherSelected(SoftwareReleaseImportRow row, CompanyDto company)           => row.SelectedPublisher = company;
+    void OnSoftwareSelected(SoftwareReleaseImportRow row, SoftwareDto software)          => row.SelectedSoftware  = software;
+    void OnPlatformSelected(SoftwareReleaseImportRow row, SoftwarePlatformDto platform)  => row.SelectedPlatform  = platform;
 
     async Task StartImport()
     {
@@ -844,7 +844,7 @@
                     else
                     {
                         var swDto = new SoftwareDto { Name = swName };
-                        (int? newSwId, string? swError) = await SoftwareService.CreateAsync(swDto);
+                        (int? newSwId, string swError) = await SoftwareService.CreateAsync(swDto);
 
                         if(newSwId is not null)
                         {
@@ -884,7 +884,7 @@
                     else
                     {
                         var platDto = new SoftwarePlatformDto { Name = platName };
-                        (int? newPlatId, string? platError) = await SoftwarePlatformsService.CreateAsync(platDto);
+                        (int? newPlatId, string platError) = await SoftwarePlatformsService.CreateAsync(platDto);
 
                         if(newPlatId is not null)
                         {
@@ -920,7 +920,7 @@
                 ReleaseDate          = row.ReleaseDate.HasValue ? new DateTimeOffset(row.ReleaseDate.Value) : null
             };
 
-            (int? id, string? error) = await SoftwareReleasesService.CreateAsync(dto);
+            (int? id, string error) = await SoftwareReleasesService.CreateAsync(dto);
 
             if(id is not null)
             {
@@ -993,11 +993,11 @@
     }
 
     static string GetValue(Dictionary<string, string> row, string key) =>
-        row.TryGetValue(key, out string? val) ? val?.Trim() ?? "" : "";
+        row.TryGetValue(key, out string val) ? val?.Trim() ?? "" : "";
 
-    static string? GetValueOrNull(Dictionary<string, string> row, string key)
+    static string GetValueOrNull(Dictionary<string, string> row, string key)
     {
-        if(!row.TryGetValue(key, out string? val))
+        if(!row.TryGetValue(key, out string val))
             return null;
 
         string trimmed = val?.Trim() ?? "";
@@ -1008,7 +1008,7 @@
     static bool TryParseInt(Dictionary<string, string> row, string key, out int result)
     {
         result = 0;
-        string? val = GetValueOrNull(row, key);
+        string val = GetValueOrNull(row, key);
 
         return val is not null && int.TryParse(val, out result);
     }

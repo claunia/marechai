@@ -33,11 +33,11 @@ namespace Marechai.Pages.Admin;
 
 public partial class Users
 {
-    string?              _errorMessage;
+    string              _errorMessage;
     bool                 _isLoading = true;
     HashSet<UserDto>     _selectedUsers = new();
-    string?              _successMessage;
-    List<UserDto>?       _users;
+    string              _successMessage;
+    List<UserDto>       _users;
 
     protected override async Task OnInitializedAsync() => await LoadUsersAsync();
 
@@ -64,11 +64,11 @@ public partial class Users
                                                                                 FullWidth = true
                                                                             });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: UserDialogResult data })
         {
-            (bool succeeded, string? errorMessage) =
+            (bool succeeded, string errorMessage) =
                 await UsersService.CreateAsync(data.Email, data.UserName, data.Password!, data.PhoneNumber);
 
             if(succeeded)
@@ -108,11 +108,11 @@ public partial class Users
                                                                                 FullWidth = true
                                                                             });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: UserDialogResult data })
         {
-            (bool succeeded, string? errorMessage) =
+            (bool succeeded, string errorMessage) =
                 await UsersService.UpdateAsync(user.Id, data.Email, data.UserName, data.PhoneNumber);
 
             if(succeeded)
@@ -143,11 +143,11 @@ public partial class Users
                                                                                     FullWidth = true
                                                                                 });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: string newPassword })
         {
-            (bool succeeded, string? errorMessage) = await UsersService.ChangePasswordAsync(user.Id, newPassword);
+            (bool succeeded, string errorMessage) = await UsersService.ChangePasswordAsync(user.Id, newPassword);
 
             if(succeeded)
             {
@@ -209,11 +209,11 @@ public partial class Users
                                                                                          FullWidth = true
                                                                                      });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? errorMessage) = await UsersService.DeleteAsync(user.Id);
+            (bool succeeded, string errorMessage) = await UsersService.DeleteAsync(user.Id);
 
             if(succeeded)
             {
@@ -244,13 +244,13 @@ public partial class Users
                                                                                          FullWidth = true
                                                                                      });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
             List<string> userIds = _selectedUsers.Select(u => u.Id).ToList();
 
-            (ApiClient.Models.BulkOperationResult? bulkResult, string? errorMessage) =
+            (ApiClient.Models.BulkOperationResult bulkResult, string errorMessage) =
                 await UsersService.BulkDeleteAsync(userIds);
 
             if(bulkResult != null)
@@ -293,13 +293,13 @@ public partial class Users
                                                                                     FullWidth = true
                                                                                 });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: BulkRoleDialogResult data })
         {
             List<string> userIds = _selectedUsers.Select(u => u.Id).ToList();
 
-            (ApiClient.Models.BulkOperationResult? bulkResult, string? errorMessage) = data.IsAdd
+            (ApiClient.Models.BulkOperationResult bulkResult, string errorMessage) = data.IsAdd
                 ? await UsersService.BulkAddRoleAsync(userIds, data.RoleName)
                 : await UsersService.BulkRemoveRoleAsync(userIds, data.RoleName);
 
@@ -341,13 +341,13 @@ public partial class Users
                                                                                        FullWidth = true
                                                                                    });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: bool enable })
         {
             List<string> userIds = _selectedUsers.Select(u => u.Id).ToList();
 
-            (ApiClient.Models.BulkOperationResult? bulkResult, string? errorMessage) =
+            (ApiClient.Models.BulkOperationResult bulkResult, string errorMessage) =
                 await UsersService.BulkSetLockoutAsync(userIds, enable);
 
             if(bulkResult != null)

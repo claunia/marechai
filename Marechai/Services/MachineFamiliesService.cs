@@ -37,7 +37,7 @@ public class MachineFamiliesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<MachineFamilyDto>? families = await client.MachineFamilies.GetAsync();
+            List<MachineFamilyDto> families = await client.MachineFamilies.GetAsync();
 
             return families ?? [];
         }
@@ -47,7 +47,7 @@ public class MachineFamiliesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<MachineFamilyDto?> GetByIdAsync(int id)
+    public async Task<MachineFamilyDto> GetByIdAsync(int id)
     {
         try
         {
@@ -59,7 +59,7 @@ public class MachineFamiliesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(long? id, string? error)> CreateAsync(MachineFamilyDto dto)
+    public async Task<(long? id, string error)> CreateAsync(MachineFamilyDto dto)
     {
         try
         {
@@ -77,7 +77,7 @@ public class MachineFamiliesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> UpdateAsync(int id, MachineFamilyDto dto)
+    public async Task<(bool succeeded, string error)> UpdateAsync(int id, MachineFamilyDto dto)
     {
         try
         {
@@ -95,7 +95,7 @@ public class MachineFamiliesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteAsync(int id)
+    public async Task<(bool succeeded, string error)> DeleteAsync(int id)
     {
         try
         {
@@ -117,7 +117,7 @@ public class MachineFamiliesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<CompanyDto>? companies = await client.Companies.GetAsync();
+            List<CompanyDto> companies = await client.Companies.GetAsync();
 
             return companies ?? [];
         }
@@ -131,7 +131,7 @@ public class MachineFamiliesService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<MachineDto>? machines = await client.MachineFamilies[id].Machines.GetAsync();
+            List<MachineDto> machines = await client.MachineFamilies[id].Machines.GetAsync();
 
             return machines ?? [];
         }

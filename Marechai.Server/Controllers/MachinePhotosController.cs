@@ -248,7 +248,7 @@ public class MachinePhotosController(MarechaiContext context, IConfiguration con
     public async Task<ActionResult<MachinePhotoDto>> UploadAsync(IFormFile            file,
                                                                  [FromForm] int       machineId,
                                                                  [FromForm] int       licenseId,
-                                                                 [FromForm] string?   source)
+                                                                 [FromForm] string   source)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 

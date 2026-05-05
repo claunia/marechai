@@ -654,7 +654,7 @@
 
     [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
 
-    string?                         _errorMessage;
+    string                         _errorMessage;
     bool                            _isProcessing;
     ImportState                     _state = ImportState.Upload;
     List<MachineImportRow>          _importRows = [];
@@ -662,16 +662,16 @@
     int                             _autoRejectedCount;
 
     // Reference data
-    List<CompanyDto>?               _allCompanies;
-    List<MachineFamilyDto>?         _allFamilies;
-    List<GpuDto>?                   _allGpus;
-    List<ProcessorDto>?             _allProcessors;
-    List<SoundSynthDto>?            _allSoundSynths;
-    List<SoftwarePlatformDto>?      _allSoftwarePlatforms;
-    List<MachineDto>?               _existingMachines;
+    List<CompanyDto>               _allCompanies;
+    List<MachineFamilyDto>         _allFamilies;
+    List<GpuDto>                   _allGpus;
+    List<ProcessorDto>             _allProcessors;
+    List<SoundSynthDto>            _allSoundSynths;
+    List<SoftwarePlatformDto>      _allSoftwarePlatforms;
+    List<MachineDto>               _existingMachines;
 
     // Soundex maps
-    Dictionary<string, int>?                         _typeSoundexMap;
+    Dictionary<string, int>                         _typeSoundexMap;
 
     // Track families created during import to avoid duplicates across rows
     Dictionary<string, int> _createdFamilies = new(StringComparer.OrdinalIgnoreCase);
@@ -695,7 +695,7 @@
         await JsRuntime.InvokeVoidAsync("downloadFileFromBytes", "machine_import_template.csv", "text/csv", base64);
     }
 
-    async Task OnCsvFileSelected(IBrowserFile? file)
+    async Task OnCsvFileSelected(IBrowserFile file)
     {
         if(file is null) return;
 
@@ -888,7 +888,7 @@
             return;
         }
 
-        CompanyDto? exact = _allCompanies.Find(c =>
+        CompanyDto exact = _allCompanies.Find(c =>
             string.Equals(c.Name, row.CompanyInput, StringComparison.OrdinalIgnoreCase));
 
         if(exact is not null)
@@ -967,7 +967,7 @@
             return;
         }
 
-        MachineFamilyDto? exact = _allFamilies.Find(f =>
+        MachineFamilyDto exact = _allFamilies.Find(f =>
             string.Equals(f.Name, row.FamilyInput, StringComparison.OrdinalIgnoreCase));
 
         if(exact is not null)
@@ -1011,7 +1011,7 @@
             return;
         }
 
-        GpuDto? exact = _allGpus.Find(g =>
+        GpuDto exact = _allGpus.Find(g =>
             string.Equals(g.Name, row.GpuInput, StringComparison.OrdinalIgnoreCase));
 
         if(exact is not null)
@@ -1069,7 +1069,7 @@
             return;
         }
 
-        ProcessorDto? exact = _allProcessors.Find(p =>
+        ProcessorDto exact = _allProcessors.Find(p =>
             string.Equals(p.Name, row.ProcessorInput, StringComparison.OrdinalIgnoreCase));
 
         if(exact is not null)
@@ -1112,7 +1112,7 @@
             return;
         }
 
-        SoundSynthDto? exact = _allSoundSynths.Find(s =>
+        SoundSynthDto exact = _allSoundSynths.Find(s =>
             string.Equals(s.Name, row.SoundSynthInput, StringComparison.OrdinalIgnoreCase));
 
         if(exact is not null)
@@ -1170,7 +1170,7 @@
             return;
         }
 
-        SoftwarePlatformDto? exact = _allSoftwarePlatforms.Find(sp =>
+        SoftwarePlatformDto exact = _allSoftwarePlatforms.Find(sp =>
             string.Equals(sp.Name, row.SoftwarePlatformInput, StringComparison.OrdinalIgnoreCase));
 
         if(exact is not null)
@@ -1197,7 +1197,7 @@
         row.SoftwarePlatformMatch = SoftwarePlatformMatchType.None;
     }
 
-    static void ValidateMemoryType(string? input, out bool valid, out int typeValue)
+    static void ValidateMemoryType(string input, out bool valid, out int typeValue)
     {
         typeValue = 0; // Unknown
 
@@ -1229,7 +1229,7 @@
         }
 
         // Check exact duplicate
-        MachineDto? exactMatch = _existingMachines.Find(m => string.Equals(m.Name, row.Name, StringComparison.OrdinalIgnoreCase));
+        MachineDto exactMatch = _existingMachines.Find(m => string.Equals(m.Name, row.Name, StringComparison.OrdinalIgnoreCase));
 
         if(exactMatch is not null)
         {
@@ -1269,7 +1269,7 @@
         row.DuplicateType = MachineNameDuplicateType.None;
     }
 
-    static string LettersOnly(string? input)
+    static string LettersOnly(string input)
     {
         if(string.IsNullOrWhiteSpace(input))
             return "";
@@ -1277,7 +1277,7 @@
         return new string(input.Where(char.IsLetter).ToArray());
     }
 
-    void OnFamilySelected(MachineImportRow row, MachineFamilyDto? family)
+    void OnFamilySelected(MachineImportRow row, MachineFamilyDto family)
     {
         row.SelectedFamily = family;
 
@@ -1358,7 +1358,7 @@
 
         foreach(MachineImportRow row in toImport)
         {
-            string? importError = await ImportSingleMachine(row);
+            string importError = await ImportSingleMachine(row);
 
             if(importError is null)
             {
@@ -1380,7 +1380,7 @@
         StateHasChanged();
     }
 
-    async Task<string?> ImportSingleMachine(MachineImportRow row)
+    async Task<string> ImportSingleMachine(MachineImportRow row)
     {
         // Step 0: Create family if needed
         int? familyId = null;
@@ -1400,7 +1400,7 @@
                     CompanyId = row.SelectedCompany?.Id
                 };
 
-                (long? newFamilyId, string? familyError) = await MachineFamiliesService.CreateAsync(familyDto);
+                (long? newFamilyId, string familyError) = await MachineFamiliesService.CreateAsync(familyDto);
 
                 if(newFamilyId is null)
                     return string.Format(L["Failed to create family '{0}': {1}"], row.FamilyInput, familyError);
@@ -1428,7 +1428,7 @@
             FamilyId            = familyId
         };
 
-        (long? machineId, string? createError) = await MachinesService.CreateAsync(dto);
+        (long? machineId, string createError) = await MachinesService.CreateAsync(dto);
 
         if(machineId is null)
             return createError ?? L["Failed to create machine"];
@@ -1448,7 +1448,7 @@
             if(row.SelectedGpu is not null)
             {
                 var gpuDto = new GpuByMachineDto { GpuId = row.SelectedGpu.Id, MachineId = id };
-                (long? gpuJunctionId, string? gpuError) = await MachinesService.AddGpuToMachineAsync(gpuDto);
+                (long? gpuJunctionId, string gpuError) = await MachinesService.AddGpuToMachineAsync(gpuDto);
 
                 if(gpuJunctionId is null)
                     throw new InvalidOperationException(gpuError ?? L["Failed to add GPU"]);
@@ -1466,7 +1466,7 @@
                     Speed       = row.ProcessorSpeed.HasValue ? (float)row.ProcessorSpeed.Value : null
                 };
 
-                (long? procJunctionId, string? procError) = await MachinesService.AddProcessorToMachineAsync(procDto);
+                (long? procJunctionId, string procError) = await MachinesService.AddProcessorToMachineAsync(procDto);
 
                 if(procJunctionId is null)
                     throw new InvalidOperationException(procError ?? L["Failed to add Processor"]);
@@ -1483,7 +1483,7 @@
                     MachineId    = id
                 };
 
-                (long? sndJunctionId, string? sndError) = await MachinesService.AddSoundSynthToMachineAsync(sndDto);
+                (long? sndJunctionId, string sndError) = await MachinesService.AddSoundSynthToMachineAsync(sndDto);
 
                 if(sndJunctionId is null)
                     throw new InvalidOperationException(sndError ?? L["Failed to add Sound Synth"]);
@@ -1503,7 +1503,7 @@
                     Speed     = row.WorkMemorySpeed
                 };
 
-                (long? memId, string? memError) = await MachinesService.AddMemoryToMachineAsync(memDto);
+                (long? memId, string memError) = await MachinesService.AddMemoryToMachineAsync(memDto);
 
                 if(memId is null)
                     throw new InvalidOperationException(memError ?? L["Failed to add Work memory"]);
@@ -1523,7 +1523,7 @@
                     Speed     = row.VideoMemorySpeed
                 };
 
-                (long? memId, string? memError) = await MachinesService.AddMemoryToMachineAsync(memDto);
+                (long? memId, string memError) = await MachinesService.AddMemoryToMachineAsync(memDto);
 
                 if(memId is null)
                     throw new InvalidOperationException(memError ?? L["Failed to add Video memory"]);
@@ -1543,7 +1543,7 @@
                     Speed     = row.SoundMemorySpeed
                 };
 
-                (long? memId, string? memError) = await MachinesService.AddMemoryToMachineAsync(memDto);
+                (long? memId, string memError) = await MachinesService.AddMemoryToMachineAsync(memDto);
 
                 if(memId is null)
                     throw new InvalidOperationException(memError ?? L["Failed to add Sound memory"]);
@@ -1563,7 +1563,7 @@
                     Speed     = row.UnifiedMemorySpeed
                 };
 
-                (long? memId, string? memError) = await MachinesService.AddMemoryToMachineAsync(memDto);
+                (long? memId, string memError) = await MachinesService.AddMemoryToMachineAsync(memDto);
 
                 if(memId is null)
                     throw new InvalidOperationException(memError ?? L["Failed to add Unified memory"]);
@@ -1583,7 +1583,7 @@
                     Speed     = row.FirmwareMemorySpeed
                 };
 
-                (long? memId, string? memError) = await MachinesService.AddMemoryToMachineAsync(memDto);
+                (long? memId, string memError) = await MachinesService.AddMemoryToMachineAsync(memDto);
 
                 if(memId is null)
                     throw new InvalidOperationException(memError ?? L["Failed to add Firmware memory"]);
@@ -1600,7 +1600,7 @@
                     MachineId          = id
                 };
 
-                (long? platJunctionId, string? platError) =
+                (long? platJunctionId, string platError) =
                     await MachinesService.AddSoftwarePlatformToMachineAsync(platDto);
 
                 if(platJunctionId is null)
@@ -1699,11 +1699,11 @@
     }
 
     static string GetValue(Dictionary<string, string> row, string key) =>
-        row.TryGetValue(key, out string? val) ? val?.Trim() ?? "" : "";
+        row.TryGetValue(key, out string val) ? val?.Trim() ?? "" : "";
 
-    static string? GetValueOrNull(Dictionary<string, string> row, string key)
+    static string GetValueOrNull(Dictionary<string, string> row, string key)
     {
-        if(!row.TryGetValue(key, out string? val))
+        if(!row.TryGetValue(key, out string val))
             return null;
 
         string trimmed = val?.Trim() ?? "";
@@ -1714,7 +1714,7 @@
     static bool TryParseInt(Dictionary<string, string> row, string key, out int result)
     {
         result = 0;
-        string? val = GetValueOrNull(row, key);
+        string val = GetValueOrNull(row, key);
 
         return val is not null && int.TryParse(val, out result);
     }
@@ -1722,7 +1722,7 @@
     static bool TryParseDouble(Dictionary<string, string> row, string key, out double result)
     {
         result = 0;
-        string? val = GetValueOrNull(row, key);
+        string val = GetValueOrNull(row, key);
 
         return val is not null && double.TryParse(val, System.Globalization.NumberStyles.Float,
                                                    System.Globalization.CultureInfo.InvariantCulture, out result);
@@ -1731,7 +1731,7 @@
     static bool TryParseLong(Dictionary<string, string> row, string key, out long result)
     {
         result = 0;
-        string? val = GetValueOrNull(row, key);
+        string val = GetValueOrNull(row, key);
 
         return val is not null && long.TryParse(val, out result);
     }

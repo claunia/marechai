@@ -306,14 +306,14 @@
 
     [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
 
-    string?                    _errorMessage;
+    string                    _errorMessage;
     bool                       _isProcessing;
     ImportState                _state = ImportState.Upload;
     List<GpuImportRow>         _importRows = [];
     HashSet<GpuImportRow>      _selectedItems = [];
-    List<CompanyDto>?          _allCompanies;
-    Dictionary<string, List<CompanyDto>>? _companySoundexMap;
-    List<GpuDto>?              _existingGpus;
+    List<CompanyDto>          _allCompanies;
+    Dictionary<string, List<CompanyDto>> _companySoundexMap;
+    List<GpuDto>              _existingGpus;
     int                        _importedCount;
     int                        _rejectedCount;
     int                        _failedCount;
@@ -389,7 +389,7 @@
 
             string code = Soundex.Generate(company.Name);
 
-            if(!_companySoundexMap.TryGetValue(code, out List<CompanyDto>? list))
+            if(!_companySoundexMap.TryGetValue(code, out List<CompanyDto> list))
             {
                 list = [];
                 _companySoundexMap[code] = list;
@@ -469,7 +469,7 @@
         }
 
         // Try exact match first
-        CompanyDto? exact = _allCompanies.Find(c =>
+        CompanyDto exact = _allCompanies.Find(c =>
             string.Equals(c.Name, row.CompanyInput, StringComparison.OrdinalIgnoreCase));
 
         if(exact is not null)
@@ -485,7 +485,7 @@
         string inputSoundex = Soundex.Generate(row.CompanyInput);
 
         if(_companySoundexMap is not null &&
-           _companySoundexMap.TryGetValue(inputSoundex, out List<CompanyDto>? matches) &&
+           _companySoundexMap.TryGetValue(inputSoundex, out List<CompanyDto> matches) &&
            matches.Count > 0)
         {
             row.MatchType        = CompanyMatchType.Partial;
@@ -509,7 +509,7 @@
         }
     }
 
-    void OnCompanySelected(GpuImportRow row, CompanyDto? company) => row.SelectedCompany = company;
+    void OnCompanySelected(GpuImportRow row, CompanyDto company) => row.SelectedCompany = company;
 
     async Task StartImport()
     {
@@ -544,7 +544,7 @@
                 Transistors         = row.Transistors
             };
 
-            (long? id, string? error) = await GpusService.CreateAsync(dto);
+            (long? id, string error) = await GpusService.CreateAsync(dto);
 
             if(id is not null)
             {
@@ -612,11 +612,11 @@
     }
 
     static string GetValue(Dictionary<string, string> row, string key) =>
-        row.TryGetValue(key, out string? val) ? val?.Trim() ?? "" : "";
+        row.TryGetValue(key, out string val) ? val?.Trim() ?? "" : "";
 
-    static string? GetValueOrNull(Dictionary<string, string> row, string key)
+    static string GetValueOrNull(Dictionary<string, string> row, string key)
     {
-        if(!row.TryGetValue(key, out string? val))
+        if(!row.TryGetValue(key, out string val))
             return null;
 
         string trimmed = val?.Trim() ?? "";
@@ -627,7 +627,7 @@
     static bool TryParseInt(Dictionary<string, string> row, string key, out int result)
     {
         result = 0;
-        string? val = GetValueOrNull(row, key);
+        string val = GetValueOrNull(row, key);
 
         return val is not null && int.TryParse(val, out result);
     }
@@ -635,7 +635,7 @@
     static bool TryParseFloat(Dictionary<string, string> row, string key, out float result)
     {
         result = 0;
-        string? val = GetValueOrNull(row, key);
+        string val = GetValueOrNull(row, key);
 
         return val is not null && float.TryParse(val, System.Globalization.NumberStyles.Float,
                                                   System.Globalization.CultureInfo.InvariantCulture, out result);
@@ -644,7 +644,7 @@
     static bool TryParseLong(Dictionary<string, string> row, string key, out long result)
     {
         result = 0;
-        string? val = GetValueOrNull(row, key);
+        string val = GetValueOrNull(row, key);
 
         return val is not null && long.TryParse(val, out result);
     }

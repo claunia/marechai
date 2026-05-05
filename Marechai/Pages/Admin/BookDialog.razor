@@ -374,53 +374,53 @@
 </MudDialog>
 
 @code {
-    string?  _validationError;
+    string  _validationError;
 
     // Country picker
-    Iso31661NumericDto?       _selectedCountry;
-    List<Iso31661NumericDto>? _allCountries;
+    Iso31661NumericDto       _selectedCountry;
+    List<Iso31661NumericDto> _allCountries;
 
     // Book pickers (Previous / Source)
-    BookDto?       _selectedPreviousBook;
-    BookDto?       _selectedSourceBook;
-    List<BookDto>? _allBooks;
+    BookDto       _selectedPreviousBook;
+    BookDto       _selectedSourceBook;
+    List<BookDto> _allBooks;
 
     // Synopsis state
-    string?                    _selectedLanguage;
+    string                    _selectedLanguage;
     string                     _synopsisText     = string.Empty;
     List<DocumentSynopsisDto>  _existingSynopses = [];
-    string?                    _synopsisMessage;
+    string                    _synopsisMessage;
     Severity                   _synopsisMessageSeverity = Severity.Info;
 
     // People junction
-    List<PersonByBookDto>? _bookPeople;
-    PersonDto?             _selectedPerson;
-    DocumentRoleDto?       _selectedPersonRole;
-    List<PersonDto>?       _allPeople;
+    List<PersonByBookDto> _bookPeople;
+    PersonDto             _selectedPerson;
+    DocumentRoleDto       _selectedPersonRole;
+    List<PersonDto>       _allPeople;
 
     // Companies junction
-    List<CompanyByBookDto>? _bookCompanies;
-    CompanyDto?             _selectedCompany;
-    DocumentRoleDto?        _selectedCompanyRole;
-    List<CompanyDto>?       _allCompanies;
+    List<CompanyByBookDto> _bookCompanies;
+    CompanyDto             _selectedCompany;
+    DocumentRoleDto        _selectedCompanyRole;
+    List<CompanyDto>       _allCompanies;
 
     // Roles
-    List<DocumentRoleDto>? _allRoles;
+    List<DocumentRoleDto> _allRoles;
 
     // Machines junction
-    List<BookByMachineDto>? _bookMachines;
-    MachineDto?             _selectedMachine;
-    List<MachineDto>?       _allMachines;
+    List<BookByMachineDto> _bookMachines;
+    MachineDto             _selectedMachine;
+    List<MachineDto>       _allMachines;
 
     // Machine Families junction
-    List<BookByMachineFamilyDto>? _bookMachineFamilies;
-    MachineFamilyDto?             _selectedMachineFamily;
-    List<MachineFamilyDto>?       _allMachineFamilies;
+    List<BookByMachineFamilyDto> _bookMachineFamilies;
+    MachineFamilyDto             _selectedMachineFamily;
+    List<MachineFamilyDto>       _allMachineFamilies;
 
     // Cover state
     bool     _hasCover;
     bool     _isUploadingCover;
-    string?  _coverMessage;
+    string  _coverMessage;
     Severity _coverMessageSeverity = Severity.Info;
 
     [CascadingParameter]
@@ -429,9 +429,9 @@
     [Parameter] public bool      IsNew      { get; set; }
     [Parameter] public long      BookId     { get; set; }
     [Parameter] public string    Title      { get; set; } = string.Empty;
-    [Parameter] public string?   NativeTitle { get; set; }
-    [Parameter] public string?   SortTitle  { get; set; }
-    [Parameter] public string?   Isbn       { get; set; }
+    [Parameter] public string   NativeTitle { get; set; }
+    [Parameter] public string   SortTitle  { get; set; }
+    [Parameter] public string   Isbn       { get; set; }
     [Parameter] public int?      Edition    { get; set; }
     [Parameter] public int?      Pages      { get; set; }
     [Parameter] public int?      CountryId  { get; set; }
@@ -462,7 +462,7 @@
 
             if(_selectedPreviousBook is null)
             {
-                BookDto? book = await BooksService.GetBookAsync(PreviousId.Value);
+                BookDto book = await BooksService.GetBookAsync(PreviousId.Value);
 
                 if(book is not null)
                 {
@@ -478,7 +478,7 @@
 
             if(_selectedSourceBook is null)
             {
-                BookDto? book = await BooksService.GetBookAsync(SourceId.Value);
+                BookDto book = await BooksService.GetBookAsync(SourceId.Value);
 
                 if(book is not null)
                 {
@@ -507,7 +507,7 @@
 
     // --- Search functions ---
 
-    Task<IEnumerable<Iso31661NumericDto>> SearchCountries(string? value, CancellationToken ct)
+    Task<IEnumerable<Iso31661NumericDto>> SearchCountries(string value, CancellationToken ct)
     {
         IEnumerable<Iso31661NumericDto> results = _allCountries ?? [];
 
@@ -517,7 +517,7 @@
         return Task.FromResult(results);
     }
 
-    Task<IEnumerable<BookDto>> SearchBooks(string? value, CancellationToken ct)
+    Task<IEnumerable<BookDto>> SearchBooks(string value, CancellationToken ct)
     {
         IEnumerable<BookDto> results = _allBooks ?? [];
 
@@ -527,7 +527,7 @@
         return Task.FromResult(results);
     }
 
-    Task<IEnumerable<PersonDto>> SearchPeople(string? value, CancellationToken ct)
+    Task<IEnumerable<PersonDto>> SearchPeople(string value, CancellationToken ct)
     {
         IEnumerable<PersonDto> results = _allPeople ?? [];
 
@@ -543,7 +543,7 @@
         return Task.FromResult(results);
     }
 
-    Task<IEnumerable<CompanyDto>> SearchCompanies(string? value, CancellationToken ct)
+    Task<IEnumerable<CompanyDto>> SearchCompanies(string value, CancellationToken ct)
     {
         IEnumerable<CompanyDto> results = _allCompanies ?? [];
 
@@ -553,7 +553,7 @@
         return Task.FromResult(results);
     }
 
-    Task<IEnumerable<MachineDto>> SearchMachines(string? value, CancellationToken ct)
+    Task<IEnumerable<MachineDto>> SearchMachines(string value, CancellationToken ct)
     {
         IEnumerable<MachineDto> results = _allMachines ?? [];
 
@@ -563,7 +563,7 @@
         return Task.FromResult(results);
     }
 
-    Task<IEnumerable<MachineFamilyDto>> SearchMachineFamilies(string? value, CancellationToken ct)
+    Task<IEnumerable<MachineFamilyDto>> SearchMachineFamilies(string value, CancellationToken ct)
     {
         IEnumerable<MachineFamilyDto> results = _allMachineFamilies ?? [];
 
@@ -593,7 +593,7 @@
     static string FormatCompany(CompanyByBookDto c) =>
         string.IsNullOrWhiteSpace(c.Role) ? c.Company ?? string.Empty : $"{c.Company} ({c.Role})";
 
-    static string GetLanguageName(string? code) => code switch
+    static string GetLanguageName(string code) => code switch
     {
         "eng" => "English",
         "spa" => "Español",
@@ -604,7 +604,7 @@
         _     => code ?? "?"
     };
 
-    static string TruncateSynopsis(string? text) =>
+    static string TruncateSynopsis(string text) =>
         string.IsNullOrWhiteSpace(text)
             ? string.Empty
             : text.Length > 100 ? text[..100] + "..." : text;
@@ -628,7 +628,7 @@
             Text         = _synopsisText
         };
 
-        (long? id, string? error) = await BooksService.UpsertSynopsisAsync(BookId, dto);
+        (long? id, string error) = await BooksService.UpsertSynopsisAsync(BookId, dto);
 
         if(id is not null)
         {
@@ -649,7 +649,7 @@
         if(string.IsNullOrWhiteSpace(_selectedLanguage))
             return;
 
-        (bool succeeded, string? error) = await BooksService.DeleteSynopsisAsync(BookId, _selectedLanguage);
+        (bool succeeded, string error) = await BooksService.DeleteSynopsisAsync(BookId, _selectedLanguage);
 
         if(succeeded)
         {
@@ -680,7 +680,7 @@
             RoleId   = _selectedPersonRole.Id
         };
 
-        (long? id, string? error) = await BooksService.AddPersonToBookAsync(dto);
+        (long? id, string error) = await BooksService.AddPersonToBookAsync(dto);
 
         if(id is not null)
         {
@@ -695,7 +695,7 @@
     {
         if(person.Id is null) return;
 
-        (bool succeeded, string? error) = await BooksService.RemovePersonFromBookAsync(person.Id.Value);
+        (bool succeeded, string error) = await BooksService.RemovePersonFromBookAsync(person.Id.Value);
 
         if(succeeded)
         {
@@ -718,7 +718,7 @@
             RoleId    = _selectedCompanyRole.Id
         };
 
-        (long? id, string? error) = await BooksService.AddCompanyToBookAsync(dto);
+        (long? id, string error) = await BooksService.AddCompanyToBookAsync(dto);
 
         if(id is not null)
         {
@@ -733,7 +733,7 @@
     {
         if(company.Id is null) return;
 
-        (bool succeeded, string? error) = await BooksService.RemoveCompanyFromBookAsync(company.Id.Value);
+        (bool succeeded, string error) = await BooksService.RemoveCompanyFromBookAsync(company.Id.Value);
 
         if(succeeded)
         {
@@ -754,7 +754,7 @@
             MachineId = (int?)_selectedMachine.Id
         };
 
-        (int? id, string? error) = await BooksService.AddMachineToBookAsync(dto);
+        (int? id, string error) = await BooksService.AddMachineToBookAsync(dto);
 
         if(id is not null)
         {
@@ -768,7 +768,7 @@
     {
         if(machine.Id is null) return;
 
-        (bool succeeded, string? error) = await BooksService.RemoveMachineFromBookAsync(machine.Id.Value);
+        (bool succeeded, string error) = await BooksService.RemoveMachineFromBookAsync(machine.Id.Value);
 
         if(succeeded)
         {
@@ -789,7 +789,7 @@
             MachineFamilyId = (int?)_selectedMachineFamily.Id
         };
 
-        (int? id, string? error) = await BooksService.AddMachineFamilyToBookAsync(dto);
+        (int? id, string error) = await BooksService.AddMachineFamilyToBookAsync(dto);
 
         if(id is not null)
         {
@@ -803,7 +803,7 @@
     {
         if(family.Id is null) return;
 
-        (bool succeeded, string? error) = await BooksService.RemoveMachineFamilyFromBookAsync(family.Id.Value);
+        (bool succeeded, string error) = await BooksService.RemoveMachineFamilyFromBookAsync(family.Id.Value);
 
         if(succeeded)
         {
@@ -814,7 +814,7 @@
 
     // --- Cover actions ---
 
-    async Task OnCoverFileSelected(IBrowserFile? file)
+    async Task OnCoverFileSelected(IBrowserFile file)
     {
         if(file is null) return;
 
@@ -842,7 +842,7 @@
             var multipartBody = new Microsoft.Kiota.Abstractions.MultipartBody();
             multipartBody.AddOrReplacePart("file", contentType, ms, file.Name);
 
-            BookDto? result = await BooksService.UploadCoverAsync(BookId, multipartBody);
+            BookDto result = await BooksService.UploadCoverAsync(BookId, multipartBody);
 
             if(result is not null)
             {
@@ -870,7 +870,7 @@
 
     async Task DeleteCover()
     {
-        (bool succeeded, string? error) = await BooksService.DeleteCoverAsync(BookId);
+        (bool succeeded, string error) = await BooksService.DeleteCoverAsync(BookId);
 
         if(succeeded)
         {

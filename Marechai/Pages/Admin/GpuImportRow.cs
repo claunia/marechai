@@ -39,23 +39,23 @@ public enum CompanyMatchType
 public sealed class GpuImportRow
 {
     public string              Name        { get; set; } = "";
-    public string?             CompanyInput { get; set; }
-    public string?             ModelCode   { get; set; }
+    public string             CompanyInput { get; set; }
+    public string             ModelCode   { get; set; }
     public int?                IntroducedYear  { get; set; }
     public int?                IntroducedMonth { get; set; }
     public int?                IntroducedDay   { get; set; }
-    public string?             Package     { get; set; }
-    public string?             Process     { get; set; }
+    public string             Package     { get; set; }
+    public string             Process     { get; set; }
     public float?              ProcessNm   { get; set; }
     public float?              DieSize     { get; set; }
     public long?               Transistors { get; set; }
 
     public List<CompanyDto>    MatchedCompanies { get; set; } = [];
-    public CompanyDto?         SelectedCompany  { get; set; }
+    public CompanyDto         SelectedCompany  { get; set; }
     public CompanyMatchType    MatchType        { get; set; } = CompanyMatchType.None;
     public bool                IsDuplicate      { get; set; }
-    public string?             ImportError      { get; set; }
-    public string?             ValidationError  { get; set; }
+    public string             ImportError      { get; set; }
+    public string             ValidationError  { get; set; }
 
     public DateTime? IntroducedDate
     {

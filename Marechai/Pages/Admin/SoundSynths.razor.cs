@@ -8,10 +8,10 @@ namespace Marechai.Pages.Admin;
 
 public partial class SoundSynths
 {
-    string?              _errorMessage;
+    string              _errorMessage;
     bool                 _isLoading = true;
-    string?              _successMessage;
-    List<SoundSynthDto>? _soundSynths;
+    string              _successMessage;
+    List<SoundSynthDto> _soundSynths;
 
     protected override async Task OnInitializedAsync() => await LoadSoundSynthsAsync();
 
@@ -46,7 +46,7 @@ public partial class SoundSynths
                                                                                       FullWidth = true
                                                                                   });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: SoundSynthDialogResult data })
         {
@@ -65,7 +65,7 @@ public partial class SoundSynths
                 Type       = data.Type
             };
 
-            (long? id, string? errorMessage) = await SoundSynthsService.CreateAsync(dto);
+            (long? id, string errorMessage) = await SoundSynthsService.CreateAsync(dto);
 
             if(id is not null)
             {
@@ -105,7 +105,7 @@ public partial class SoundSynths
                                                                                       FullWidth = true
                                                                                   });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: SoundSynthDialogResult data })
         {
@@ -125,7 +125,7 @@ public partial class SoundSynths
                 Type       = data.Type
             };
 
-            (bool succeeded, string? errorMessage) = await SoundSynthsService.UpdateAsync(soundSynth.Id ?? 0, dto);
+            (bool succeeded, string errorMessage) = await SoundSynthsService.UpdateAsync(soundSynth.Id ?? 0, dto);
 
             if(succeeded)
             {
@@ -148,7 +148,7 @@ public partial class SoundSynths
                                                                                             FullWidth = true
                                                                                         });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
             await LoadSoundSynthsAsync();
@@ -173,11 +173,11 @@ public partial class SoundSynths
                                                                    FullWidth = true
                                                                });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? errorMessage) = await SoundSynthsService.DeleteAsync(soundSynth.Id ?? 0);
+            (bool succeeded, string errorMessage) = await SoundSynthsService.DeleteAsync(soundSynth.Id ?? 0);
 
             if(succeeded)
             {

@@ -95,12 +95,12 @@
     bool    _isTranslating  = false;
     int     _translationCurrent;
     int     _translationTotal;
-    string? _selectedLanguage;
-    string? _markdown;
-    string? _errorMessage;
-    string? _successMessage;
+    string _selectedLanguage;
+    string _markdown;
+    string _errorMessage;
+    string _successMessage;
 
-    List<GpuDescriptionDto>? _descriptions;
+    List<GpuDescriptionDto> _descriptions;
 
     MarkdownEditor _editor;
     int             _editorKey;
@@ -161,11 +161,11 @@
                                                                                          FullWidth = true
                                                                                      });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? error) = await GpusService.DeleteDescriptionAsync(GpuId, desc.LanguageCode);
+            (bool succeeded, string error) = await GpusService.DeleteDescriptionAsync(GpuId, desc.LanguageCode);
 
             if(succeeded)
             {
@@ -191,7 +191,7 @@
             Markdown     = _markdown
         };
 
-        (bool succeeded, string? error) = await GpusService.CreateOrUpdateDescriptionAsync(GpuId, dto);
+        (bool succeeded, string error) = await GpusService.CreateOrUpdateDescriptionAsync(GpuId, dto);
 
         if(succeeded)
         {
@@ -213,7 +213,7 @@
 
         try
         {
-            string? englishMarkdown = _descriptions?.FirstOrDefault(d => d.LanguageCode == "eng")?.Markdown;
+            string englishMarkdown = _descriptions?.FirstOrDefault(d => d.LanguageCode == "eng")?.Markdown;
 
             if(string.IsNullOrWhiteSpace(englishMarkdown))
             {
@@ -222,7 +222,7 @@
                 return;
             }
 
-            (string? translatedText, string? error) = await TranslationService.TranslateAsync(englishMarkdown, _selectedLanguage!,
+            (string translatedText, string error) = await TranslationService.TranslateAsync(englishMarkdown, _selectedLanguage!,
                 new Progress<(int current, int total)>(p =>
                 {
                     _translationCurrent = p.current;

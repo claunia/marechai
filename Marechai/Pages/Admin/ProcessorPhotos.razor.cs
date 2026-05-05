@@ -13,22 +13,22 @@ public partial class ProcessorPhotos
 {
     const long MaxFileSize = 50 * 1024 * 1024; // 50 MB
 
-    string?                    _errorMessage;
+    string                    _errorMessage;
     bool                       _isLoading = true;
     bool                       _isUploading;
-    List<LicenseDto>?          _licenses;
-    string?                    _processorName;
-    List<ProcessorPhotoDto>?   _photos;
-    IBrowserFile?              _selectedFile;
-    LicenseDto?                _selectedLicense;
-    string?                    _sourceUrl;
-    string?                    _successMessage;
+    List<LicenseDto>          _licenses;
+    string                    _processorName;
+    List<ProcessorPhotoDto>   _photos;
+    IBrowserFile              _selectedFile;
+    LicenseDto                _selectedLicense;
+    string                    _sourceUrl;
+    string                    _successMessage;
 
     [Parameter] public int ProcessorId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        ProcessorDto? processor = await ProcessorsService.GetByIdAsync(ProcessorId);
+        ProcessorDto processor = await ProcessorsService.GetByIdAsync(ProcessorId);
         _processorName = processor?.Name;
         _licenses      = await ProcessorPhotosService.GetAllLicensesAsync();
 
@@ -45,7 +45,7 @@ public partial class ProcessorPhotos
 
         foreach(Guid guid in guids)
         {
-            ProcessorPhotoDto? photo = await ProcessorPhotosService.GetAsync(guid);
+            ProcessorPhotoDto photo = await ProcessorPhotosService.GetAsync(guid);
 
             if(photo is not null)
                 photos.Add(photo);
@@ -73,7 +73,7 @@ public partial class ProcessorPhotos
             await stream.CopyToAsync(ms);
             byte[] fileBytes = ms.ToArray();
 
-            (ProcessorPhotoDto? photo, string? error) =
+            (ProcessorPhotoDto photo, string error) =
                 await ProcessorPhotosService.UploadPhotoAsync(ProcessorId, _selectedLicense.Id ?? 0, _sourceUrl,
                                                               fileBytes, _selectedFile.Name);
 
@@ -117,11 +117,11 @@ public partial class ProcessorPhotos
                                                                    FullWidth = true
                                                                });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? errorMessage) =
+            (bool succeeded, string errorMessage) =
                 await ProcessorPhotosService.DeletePhotoAsync(photo.Id ?? Guid.Empty);
 
             if(succeeded)

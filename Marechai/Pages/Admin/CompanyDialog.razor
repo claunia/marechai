@@ -178,19 +178,19 @@
 </MudDialog>
 
 @code {
-    CompanyDto?          _selectedSoldToCompany;
-    Iso31661NumericDto?  _selectedCountry;
-    string?              _validationError;
-    PersonDto?   _selectedPerson;
-    string?      _newPersonPosition;
+    CompanyDto          _selectedSoldToCompany;
+    Iso31661NumericDto  _selectedCountry;
+    string              _validationError;
+    PersonDto   _selectedPerson;
+    string      _newPersonPosition;
     DateTime?    _newPersonStart;
     DateTime?    _newPersonEnd;
     bool         _newPersonOngoing;
 
-    List<Iso31661NumericDto>?  _countries;
-    List<CompanyDto>?          _allCompanies;
-    List<PersonByCompanyDto>?  _people;
-    List<PersonDto>?           _allPeople;
+    List<Iso31661NumericDto>  _countries;
+    List<CompanyDto>          _allCompanies;
+    List<PersonByCompanyDto>  _people;
+    List<PersonDto>           _allPeople;
 
     [CascadingParameter]
     IMudDialogInstance MudDialog { get; set; } = null!;
@@ -198,7 +198,7 @@
     [Parameter] public bool      IsNew                 { get; set; }
     [Parameter] public int       CompanyId             { get; set; }
     [Parameter] public string    Name                  { get; set; } = string.Empty;
-    [Parameter] public string?   LegalName             { get; set; }
+    [Parameter] public string   LegalName             { get; set; }
     [Parameter] public int       StatusValue           { get; set; }
     [Parameter] public DateTime? Founded               { get; set; }
     [Parameter] public int       FoundedPrecision      { get; set; }
@@ -206,13 +206,13 @@
     [Parameter] public int       SoldPrecision         { get; set; }
     [Parameter] public int?      SoldToId              { get; set; }
     [Parameter] public int?      CountryId             { get; set; }
-    [Parameter] public string?   Address               { get; set; }
-    [Parameter] public string?   City                  { get; set; }
-    [Parameter] public string?   Province              { get; set; }
-    [Parameter] public string?   PostalCode            { get; set; }
-    [Parameter] public string?   Website               { get; set; }
-    [Parameter] public string?   Twitter               { get; set; }
-    [Parameter] public string?   Facebook              { get; set; }
+    [Parameter] public string   Address               { get; set; }
+    [Parameter] public string   City                  { get; set; }
+    [Parameter] public string   Province              { get; set; }
+    [Parameter] public string   PostalCode            { get; set; }
+    [Parameter] public string   Website               { get; set; }
+    [Parameter] public string   Twitter               { get; set; }
+    [Parameter] public string   Facebook              { get; set; }
 
     [Inject] CompaniesService       CompaniesService       { get; set; } = null!;
     [Inject] PeopleService          PeopleService          { get; set; } = null!;
@@ -237,7 +237,7 @@
         }
     }
 
-    Task<IEnumerable<Iso31661NumericDto>> SearchCountries(string? value, CancellationToken ct)
+    Task<IEnumerable<Iso31661NumericDto>> SearchCountries(string value, CancellationToken ct)
     {
         IEnumerable<Iso31661NumericDto> results = _countries ?? [];
 
@@ -247,7 +247,7 @@
         return Task.FromResult(results);
     }
 
-    Task<IEnumerable<CompanyDto>> SearchCompanies(string? value, CancellationToken ct)
+    Task<IEnumerable<CompanyDto>> SearchCompanies(string value, CancellationToken ct)
     {
         IEnumerable<CompanyDto> results = _allCompanies ?? [];
 
@@ -257,7 +257,7 @@
         return Task.FromResult(results);
     }
 
-    Task<IEnumerable<PersonDto>> SearchPeople(string? value, CancellationToken ct)
+    Task<IEnumerable<PersonDto>> SearchPeople(string value, CancellationToken ct)
     {
         IEnumerable<PersonDto> results = _allPeople ?? [];
 
@@ -298,7 +298,7 @@
             Ongoing   = _newPersonOngoing
         };
 
-        (long? id, string? error) = await PeopleByCompanyService.CreateAsync(dto);
+        (long? id, string error) = await PeopleByCompanyService.CreateAsync(dto);
 
         if(id is not null)
         {
@@ -330,11 +330,11 @@
                                                                                          FullWidth = true
                                                                                      });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? error) = await PeopleByCompanyService.DeleteAsync(person.Id ?? 0);
+            (bool succeeded, string error) = await PeopleByCompanyService.DeleteAsync(person.Id ?? 0);
 
             if(succeeded)
             {

@@ -8,10 +8,10 @@ namespace Marechai.Pages.Admin;
 
 public partial class Books
 {
-    string?         _errorMessage;
+    string         _errorMessage;
     bool            _isLoading = true;
-    string?         _successMessage;
-    List<BookDto>?  _books;
+    string         _successMessage;
+    List<BookDto>  _books;
 
     protected override async Task OnInitializedAsync() => await LoadBooksAsync();
 
@@ -49,7 +49,7 @@ public partial class Books
                                                                                 FullWidth = true
                                                                             });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: BookDialogResult data })
         {
@@ -69,7 +69,7 @@ public partial class Books
                 SourceId    = data.SourceId
             };
 
-            (long? id, string? errorMessage) = await BooksService.CreateAsync(dto);
+            (long? id, string errorMessage) = await BooksService.CreateAsync(dto);
 
             if(id is not null)
             {
@@ -86,7 +86,7 @@ public partial class Books
     async Task OpenEditBookDialog(BookDto book)
     {
         // Fetch full details by ID to get FK IDs (list endpoint may omit them)
-        BookDto? fullBook = book.Id.HasValue ? await BooksService.GetBookAsync(book.Id.Value) : book;
+        BookDto fullBook = book.Id.HasValue ? await BooksService.GetBookAsync(book.Id.Value) : book;
         fullBook ??= book;
 
         DialogParameters<BookDialog> parameters = new()
@@ -114,7 +114,7 @@ public partial class Books
                                                                                 FullWidth = true
                                                                             });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: BookDialogResult data })
         {
@@ -135,7 +135,7 @@ public partial class Books
                 SourceId    = data.SourceId
             };
 
-            (bool succeeded, string? errorMessage) = await BooksService.UpdateAsync(book.Id ?? 0, dto);
+            (bool succeeded, string errorMessage) = await BooksService.UpdateAsync(book.Id ?? 0, dto);
 
             if(succeeded)
             {
@@ -159,7 +159,7 @@ public partial class Books
                 FullWidth = true
             });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
             await LoadBooksAsync();
@@ -185,11 +185,11 @@ public partial class Books
                                                                    FullWidth = true
                                                                });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? errorMessage) = await BooksService.DeleteAsync(book.Id ?? 0);
+            (bool succeeded, string errorMessage) = await BooksService.DeleteAsync(book.Id ?? 0);
 
             if(succeeded)
             {

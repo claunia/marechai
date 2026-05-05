@@ -32,7 +32,7 @@ namespace Marechai.Services;
 
 public sealed class ProfileService(Marechai.ApiClient.Client client, ILogger<ProfileService> logger)
 {
-    public async Task<PublicProfileDto?> GetPublicProfileAsync(string username)
+    public async Task<PublicProfileDto> GetPublicProfileAsync(string username)
     {
         try
         {

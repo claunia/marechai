@@ -37,7 +37,7 @@ public sealed class CollectionService(Client client, ILogger<CollectionService> 
 {
     // ── Public: view any user's collection ──
 
-    public async Task<UserCollectionSummaryDto?> GetCollectionSummaryAsync(string username)
+    public async Task<UserCollectionSummaryDto> GetCollectionSummaryAsync(string username)
     {
         try
         {
@@ -51,7 +51,7 @@ public sealed class CollectionService(Client client, ILogger<CollectionService> 
         }
     }
 
-    public async Task<List<CollectedBookDto>?> GetCollectedBooksAsync(string username)
+    public async Task<List<CollectedBookDto>> GetCollectedBooksAsync(string username)
     {
         try
         {
@@ -65,7 +65,7 @@ public sealed class CollectionService(Client client, ILogger<CollectionService> 
         }
     }
 
-    public async Task<List<CollectedDocumentDto>?> GetCollectedDocumentsAsync(string username)
+    public async Task<List<CollectedDocumentDto>> GetCollectedDocumentsAsync(string username)
     {
         try
         {
@@ -79,7 +79,7 @@ public sealed class CollectionService(Client client, ILogger<CollectionService> 
         }
     }
 
-    public async Task<List<CollectedMachineDto>?> GetCollectedMachinesAsync(string username)
+    public async Task<List<CollectedMachineDto>> GetCollectedMachinesAsync(string username)
     {
         try
         {
@@ -93,7 +93,7 @@ public sealed class CollectionService(Client client, ILogger<CollectionService> 
         }
     }
 
-    public async Task<List<CollectedSoftwareReleaseDto>?> GetCollectedSoftwareReleasesAsync(string username)
+    public async Task<List<CollectedSoftwareReleaseDto>> GetCollectedSoftwareReleasesAsync(string username)
     {
         try
         {
@@ -129,7 +129,7 @@ public sealed class CollectionService(Client client, ILogger<CollectionService> 
         }
     }
 
-    public async Task<(bool success, string? error)> AddBookToCollectionAsync(long bookId)
+    public async Task<(bool success, string error)> AddBookToCollectionAsync(long bookId)
     {
         try
         {
@@ -155,7 +155,7 @@ public sealed class CollectionService(Client client, ILogger<CollectionService> 
         }
     }
 
-    public async Task<(bool success, string? error)> RemoveBookFromCollectionAsync(long bookId)
+    public async Task<(bool success, string error)> RemoveBookFromCollectionAsync(long bookId)
     {
         try
         {
@@ -197,7 +197,7 @@ public sealed class CollectionService(Client client, ILogger<CollectionService> 
         }
     }
 
-    public async Task<(bool success, string? error)> AddDocumentToCollectionAsync(long documentId)
+    public async Task<(bool success, string error)> AddDocumentToCollectionAsync(long documentId)
     {
         try
         {
@@ -223,7 +223,7 @@ public sealed class CollectionService(Client client, ILogger<CollectionService> 
         }
     }
 
-    public async Task<(bool success, string? error)> RemoveDocumentFromCollectionAsync(long documentId)
+    public async Task<(bool success, string error)> RemoveDocumentFromCollectionAsync(long documentId)
     {
         try
         {
@@ -265,7 +265,7 @@ public sealed class CollectionService(Client client, ILogger<CollectionService> 
         }
     }
 
-    public async Task<(bool success, string? error)> AddMachineToCollectionAsync(int machineId)
+    public async Task<(bool success, string error)> AddMachineToCollectionAsync(int machineId)
     {
         try
         {
@@ -291,7 +291,7 @@ public sealed class CollectionService(Client client, ILogger<CollectionService> 
         }
     }
 
-    public async Task<(bool success, string? error)> RemoveMachineFromCollectionAsync(int machineId)
+    public async Task<(bool success, string error)> RemoveMachineFromCollectionAsync(int machineId)
     {
         try
         {
@@ -333,7 +333,7 @@ public sealed class CollectionService(Client client, ILogger<CollectionService> 
         }
     }
 
-    public async Task<(bool success, string? error)> AddSoftwareReleaseToCollectionAsync(int releaseId)
+    public async Task<(bool success, string error)> AddSoftwareReleaseToCollectionAsync(int releaseId)
     {
         try
         {
@@ -359,7 +359,7 @@ public sealed class CollectionService(Client client, ILogger<CollectionService> 
         }
     }
 
-    public async Task<(bool success, string? error)> RemoveSoftwareReleaseFromCollectionAsync(int releaseId)
+    public async Task<(bool success, string error)> RemoveSoftwareReleaseFromCollectionAsync(int releaseId)
     {
         try
         {

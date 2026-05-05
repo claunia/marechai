@@ -48,8 +48,8 @@
 </MudDialog>
 
 @code {
-    string?      _errorMessage;
-    string?      _selectedRole;
+    string      _errorMessage;
+    string      _selectedRole;
     List<string> _availableToAdd = [];
 
     [CascadingParameter]
@@ -79,7 +79,7 @@
     {
         if(string.IsNullOrWhiteSpace(_selectedRole)) return;
 
-        (bool succeeded, string? errorMessage) = await UsersService.AddRoleAsync(UserId, _selectedRole);
+        (bool succeeded, string errorMessage) = await UsersService.AddRoleAsync(UserId, _selectedRole);
 
         if(succeeded)
         {
@@ -95,7 +95,7 @@
 
     async Task RemoveRoleAsync(string role)
     {
-        (bool succeeded, string? errorMessage) = await UsersService.RemoveRoleAsync(UserId, role);
+        (bool succeeded, string errorMessage) = await UsersService.RemoveRoleAsync(UserId, role);
 
         if(succeeded)
         {

@@ -464,45 +464,45 @@
 </MudDialog>
 
 @code {
-    string?                                  _validationError;
-    SoftwarePlatformDto?                     _selectedPlatform;
-    List<SoftwarePlatformDto>?               _allPlatforms;
+    string                                  _validationError;
+    SoftwarePlatformDto                     _selectedPlatform;
+    List<SoftwarePlatformDto>               _allPlatforms;
     UnM49Dto?                                _selectedRegionToAdd;
-    List<UnM49Dto>?                          _allUnM49;
-    List<UnM49BySoftwareReleaseDto>?         _releaseRegions;
+    List<UnM49Dto>                          _allUnM49;
+    List<UnM49BySoftwareReleaseDto>         _releaseRegions;
     Iso639Dto?                               _selectedLanguageToAdd;
-    List<Iso639Dto>?                         _allLanguages;
-    List<LanguageBySoftwareReleaseDto>?      _releaseLanguages;
-    CompanyDto?                              _selectedPublisher;
-    List<CompanyDto>?                        _allCompanies;
-    List<SoftwareBarcodeDto>?                _barcodes;
-    string?                                  _newBarcodeCode;
+    List<Iso639Dto>                         _allLanguages;
+    List<LanguageBySoftwareReleaseDto>      _releaseLanguages;
+    CompanyDto                              _selectedPublisher;
+    List<CompanyDto>                        _allCompanies;
+    List<SoftwareBarcodeDto>                _barcodes;
+    string                                  _newBarcodeCode;
     int                                      _newBarcodeType;
 
-    List<SoftwareProductCodeDto>?            _productCodes;
-    string?                                  _newProductCode;
+    List<SoftwareProductCodeDto>            _productCodes;
+    string                                  _newProductCode;
     int                                      _newProductCodeIssuer;
-    List<GpuBySoftwareReleaseDto>?           _minimumGpus;
-    GpuDto?                                  _selectedMinGpu;
-    List<GpuBySoftwareReleaseDto>?           _recommendedGpus;
-    GpuDto?                                  _selectedRecGpu;
-    List<GpuDto>?                            _allGpus;
-    List<SoundSynthBySoftwareReleaseDto>?    _soundSynths;
-    SoundSynthDto?                           _selectedSoundSynth;
-    List<SoundSynthDto>?                     _allSoundSynths;
+    List<GpuBySoftwareReleaseDto>           _minimumGpus;
+    GpuDto                                  _selectedMinGpu;
+    List<GpuBySoftwareReleaseDto>           _recommendedGpus;
+    GpuDto                                  _selectedRecGpu;
+    List<GpuDto>                            _allGpus;
+    List<SoundSynthBySoftwareReleaseDto>    _soundSynths;
+    SoundSynthDto                           _selectedSoundSynth;
+    List<SoundSynthDto>                     _allSoundSynths;
 
     bool                                                _isCompilation;
-    List<SoftwareVersionBySoftwareReleaseDto>?           _includedVersions;
-    SoftwareVersionDto?                                  _selectedIncludedVersion;
-    List<SoftwareVersionDto>?                            _allVersionsForPicker;
+    List<SoftwareVersionBySoftwareReleaseDto>           _includedVersions;
+    SoftwareVersionDto                                  _selectedIncludedVersion;
+    List<SoftwareVersionDto>                            _allVersionsForPicker;
 
-    List<SoftwareBySoftwareReleaseDto>?                  _includedSoftware;
-    SoftwareDto?                                         _selectedIncludedSoftware;
-    List<SoftwareDto>?                                   _allSoftwareForPicker;
+    List<SoftwareBySoftwareReleaseDto>                  _includedSoftware;
+    SoftwareDto                                         _selectedIncludedSoftware;
+    List<SoftwareDto>                                   _allSoftwareForPicker;
 
-    SoftwareDto?                                         _selectedSoftware;
-    SoftwareVersionDto?                                  _selectedVersion;
-    List<SoftwareVersionDto>?                            _allVersionsForSelectedSoftware;
+    SoftwareDto                                         _selectedSoftware;
+    SoftwareVersionDto                                  _selectedVersion;
+    List<SoftwareVersionDto>                            _allVersionsForSelectedSoftware;
 
     [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
 
@@ -514,7 +514,7 @@
     [Parameter] public int? PublisherId { get; set; }
     [Parameter] public DateTime? ReleaseDate { get; set; }
     [Parameter] public int       ReleaseDatePrecision { get; set; }
-    [Parameter] public string? Title { get; set; }
+    [Parameter] public string Title { get; set; }
     [Parameter] public bool IsCompilation { get; set; }
     [Parameter] public int? SoftwareId { get; set; }
     [Parameter] public int? SoftwareVersionId { get; set; }
@@ -588,7 +588,7 @@
             _allVersionsForPicker = await SoftwareReleasesService.GetAllSoftwareVersionsForPickerAsync();
     }
 
-    Task<IEnumerable<SoftwarePlatformDto>> SearchPlatforms(string? value, CancellationToken ct)
+    Task<IEnumerable<SoftwarePlatformDto>> SearchPlatforms(string value, CancellationToken ct)
     {
         IEnumerable<SoftwarePlatformDto> results = _allPlatforms ?? [];
         if(!string.IsNullOrWhiteSpace(value))
@@ -596,7 +596,7 @@
         return Task.FromResult(results);
     }
 
-    Task<IEnumerable<UnM49Dto>> SearchRegions(string? value, CancellationToken ct)
+    Task<IEnumerable<UnM49Dto>> SearchRegions(string value, CancellationToken ct)
     {
         var assignedIds = new HashSet<int?>(_releaseRegions?.Select(r => r.UnM49Id) ?? []);
         IEnumerable<UnM49Dto> results = (_allUnM49 ?? []).Where(r => !assignedIds.Contains(r.Id));
@@ -624,9 +624,9 @@
         StateHasChanged();
     }
 
-    Task<IEnumerable<Iso639Dto>> SearchLanguages(string? value, CancellationToken ct)
+    Task<IEnumerable<Iso639Dto>> SearchLanguages(string value, CancellationToken ct)
     {
-        var assignedCodes = new HashSet<string?>(_releaseLanguages?.Select(l => l.LanguageCode) ?? []);
+        var assignedCodes = new HashSet<string>(_releaseLanguages?.Select(l => l.LanguageCode) ?? []);
         IEnumerable<Iso639Dto> results = (_allLanguages ?? []).Where(l => !assignedCodes.Contains(l.Id));
         if(!string.IsNullOrWhiteSpace(value))
             results = results.Where(l => l.ReferenceName?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
@@ -652,7 +652,7 @@
         StateHasChanged();
     }
 
-    Task<IEnumerable<CompanyDto>> SearchCompanies(string? value, CancellationToken ct)
+    Task<IEnumerable<CompanyDto>> SearchCompanies(string value, CancellationToken ct)
     {
         IEnumerable<CompanyDto> results = _allCompanies ?? [];
         if(!string.IsNullOrWhiteSpace(value))
@@ -660,7 +660,7 @@
         return Task.FromResult(results);
     }
 
-    Task<IEnumerable<GpuDto>> SearchGpus(string? value, CancellationToken ct)
+    Task<IEnumerable<GpuDto>> SearchGpus(string value, CancellationToken ct)
     {
         IEnumerable<GpuDto> results = _allGpus ?? [];
         if(!string.IsNullOrWhiteSpace(value))
@@ -668,7 +668,7 @@
         return Task.FromResult(results);
     }
 
-    Task<IEnumerable<SoundSynthDto>> SearchSoundSynths(string? value, CancellationToken ct)
+    Task<IEnumerable<SoundSynthDto>> SearchSoundSynths(string value, CancellationToken ct)
     {
         IEnumerable<SoundSynthDto> results = _allSoundSynths ?? [];
         if(!string.IsNullOrWhiteSpace(value))
@@ -683,7 +683,7 @@
         if(string.IsNullOrWhiteSpace(_newBarcodeCode)) return;
 
         var dto = new SoftwareBarcodeDto { ReleaseId = ReleaseId, Code = _newBarcodeCode.Trim(), Type = _newBarcodeType };
-        (int? id, string? _) = await SoftwareReleasesService.AddBarcodeAsync(dto);
+        (int? id, string _) = await SoftwareReleasesService.AddBarcodeAsync(dto);
 
         if(id is not null)
         {
@@ -705,7 +705,7 @@
         if(string.IsNullOrWhiteSpace(_newProductCode)) return;
 
         var dto = new SoftwareProductCodeDto { ReleaseId = ReleaseId, Code = _newProductCode.Trim(), Issuer = _newProductCodeIssuer };
-        (int? id, string? _) = await SoftwareReleasesService.AddProductCodeAsync(dto);
+        (int? id, string _) = await SoftwareReleasesService.AddProductCodeAsync(dto);
 
         if(id is not null)
         {
@@ -779,7 +779,7 @@
 
     // ── Included version management (compilations only) ──
 
-    Task<IEnumerable<SoftwareVersionDto>> SearchAllVersions(string? value, CancellationToken ct)
+    Task<IEnumerable<SoftwareVersionDto>> SearchAllVersions(string value, CancellationToken ct)
     {
         IEnumerable<SoftwareVersionDto> results = _allVersionsForPicker ?? [];
 
@@ -793,7 +793,7 @@
         return Task.FromResult(results);
     }
 
-    Task<IEnumerable<SoftwareDto>> SearchSoftware(string? value, CancellationToken ct)
+    Task<IEnumerable<SoftwareDto>> SearchSoftware(string value, CancellationToken ct)
     {
         IEnumerable<SoftwareDto> results = _allSoftwareForPicker ?? [];
 
@@ -804,7 +804,7 @@
         return Task.FromResult(results);
     }
 
-    Task<IEnumerable<SoftwareVersionDto>> SearchVersionsForSoftware(string? value, CancellationToken ct)
+    Task<IEnumerable<SoftwareVersionDto>> SearchVersionsForSoftware(string value, CancellationToken ct)
     {
         IEnumerable<SoftwareVersionDto> results = _allVersionsForSelectedSoftware ?? [];
 
@@ -828,7 +828,7 @@
             SoftwareVersionId = _selectedIncludedVersion.Id
         };
 
-        (bool succeeded, string? _) = await SoftwareReleasesService.AddIncludedVersionAsync(dto);
+        (bool succeeded, string _) = await SoftwareReleasesService.AddIncludedVersionAsync(dto);
 
         if(succeeded)
         {
@@ -855,7 +855,7 @@
             SoftwareId = _selectedIncludedSoftware.Id
         };
 
-        (bool succeeded, string? _) = await SoftwareReleasesService.AddIncludedSoftwareAsync(dto);
+        (bool succeeded, string _) = await SoftwareReleasesService.AddIncludedSoftwareAsync(dto);
 
         if(succeeded)
         {

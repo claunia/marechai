@@ -106,15 +106,15 @@
 </MudDialog>
 
 @code {
-    string?                        _validationError;
-    SoftwareFamilyDto?             _selectedFamily;
-    List<SoftwareFamilyDto>?       _allFamilies;
-    CompanyDto?                    _selectedCompany;
-    List<CompanyDto>?              _allCompanies;
-    SoftwareRoleDto?               _selectedRole;
-    List<SoftwareRoleDto>?         _allRoles;
-    List<SoftwareCompanyRoleDto>?  _companyRoles;
-    string?                        _companyRoleMessage;
+    string                        _validationError;
+    SoftwareFamilyDto             _selectedFamily;
+    List<SoftwareFamilyDto>       _allFamilies;
+    CompanyDto                    _selectedCompany;
+    List<CompanyDto>              _allCompanies;
+    SoftwareRoleDto               _selectedRole;
+    List<SoftwareRoleDto>         _allRoles;
+    List<SoftwareCompanyRoleDto>  _companyRoles;
+    string                        _companyRoleMessage;
     Severity                       _companyRoleMessageSeverity;
 
     [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
@@ -143,7 +143,7 @@
         }
     }
 
-    Task<IEnumerable<SoftwareFamilyDto>> SearchFamilies(string? value, CancellationToken ct)
+    Task<IEnumerable<SoftwareFamilyDto>> SearchFamilies(string value, CancellationToken ct)
     {
         IEnumerable<SoftwareFamilyDto> results = _allFamilies ?? [];
 
@@ -157,7 +157,7 @@
         return Task.FromResult(results);
     }
 
-    Task<IEnumerable<CompanyDto>> SearchCompanies(string? value, CancellationToken ct)
+    Task<IEnumerable<CompanyDto>> SearchCompanies(string value, CancellationToken ct)
     {
         IEnumerable<CompanyDto> results = _allCompanies ?? [];
 
@@ -182,7 +182,7 @@
             RoleId     = _selectedRole.Id
         };
 
-        (bool succeeded, string? error) = await SoftwareService.AddCompanyRoleAsync(dto);
+        (bool succeeded, string error) = await SoftwareService.AddCompanyRoleAsync(dto);
 
         if(succeeded)
         {
@@ -200,7 +200,7 @@
 
     async Task RemoveCompanyRole(SoftwareCompanyRoleDto role)
     {
-        (bool succeeded, string? error) = await SoftwareService.RemoveCompanyRoleAsync(
+        (bool succeeded, string error) = await SoftwareService.RemoveCompanyRoleAsync(
             role.SoftwareId ?? 0,
             role.CompanyId  ?? 0,
             role.RoleId     ?? string.Empty);

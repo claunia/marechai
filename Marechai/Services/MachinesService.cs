@@ -34,7 +34,7 @@ namespace Marechai.Services;
 
 public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<MachinesService> localizer)
 {
-    public async Task<MachineDto?> GetMachine(int id)
+    public async Task<MachineDto> GetMachine(int id)
     {
         try
         {
@@ -50,7 +50,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
     {
         try
         {
-            List<MachineDto>? machines = await client.Machines.GetAsync();
+            List<MachineDto> machines = await client.Machines.GetAsync();
 
             return machines ?? [];
         }
@@ -60,7 +60,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
         }
     }
 
-    public async Task<MachineDto?> GetByIdAsync(int id)
+    public async Task<MachineDto> GetByIdAsync(int id)
     {
         try
         {
@@ -72,7 +72,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
         }
     }
 
-    public async Task<(long? id, string? error)> CreateAsync(MachineDto dto)
+    public async Task<(long? id, string error)> CreateAsync(MachineDto dto)
     {
         try
         {
@@ -90,7 +90,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
         }
     }
 
-    public async Task<(bool succeeded, string? error)> UpdateAsync(int id, MachineDto dto)
+    public async Task<(bool succeeded, string error)> UpdateAsync(int id, MachineDto dto)
     {
         try
         {
@@ -108,7 +108,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteAsync(int id)
+    public async Task<(bool succeeded, string error)> DeleteAsync(int id)
     {
         try
         {
@@ -130,7 +130,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
     {
         try
         {
-            List<CompanyDto>? companies = await client.Companies.GetAsync();
+            List<CompanyDto> companies = await client.Companies.GetAsync();
 
             return companies ?? [];
         }
@@ -144,7 +144,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
     {
         try
         {
-            List<MachineFamilyDto>? families = await client.MachineFamilies.GetAsync();
+            List<MachineFamilyDto> families = await client.MachineFamilies.GetAsync();
 
             return families ?? [];
         }
@@ -154,7 +154,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
         }
     }
 
-    public async Task<MachineFamilyDto?> GetFamilyByIdAsync(int id)
+    public async Task<MachineFamilyDto> GetFamilyByIdAsync(int id)
     {
         try
         {
@@ -171,7 +171,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
     {
         try
         {
-            List<GpuByMachineDto>? gpus = await client.Machines.Gpus.ByMachine[machineId].GetAsync();
+            List<GpuByMachineDto> gpus = await client.Machines.Gpus.ByMachine[machineId].GetAsync();
 
             return gpus ?? [];
         }
@@ -185,7 +185,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
     {
         try
         {
-            List<GpuDto>? gpus = await client.Gpus.GetAsync();
+            List<GpuDto> gpus = await client.Gpus.GetAsync();
 
             return gpus ?? [];
         }
@@ -195,7 +195,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
         }
     }
 
-    public async Task<(long? id, string? error)> AddGpuToMachineAsync(GpuByMachineDto dto)
+    public async Task<(long? id, string error)> AddGpuToMachineAsync(GpuByMachineDto dto)
     {
         try
         {
@@ -213,7 +213,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemoveGpuFromMachineAsync(long id)
+    public async Task<(bool succeeded, string error)> RemoveGpuFromMachineAsync(long id)
     {
         try
         {
@@ -236,7 +236,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
     {
         try
         {
-            List<ProcessorByMachineDto>? processors = await client.ProcessorsByMachine.ByMachine[machineId].GetAsync();
+            List<ProcessorByMachineDto> processors = await client.ProcessorsByMachine.ByMachine[machineId].GetAsync();
 
             return processors ?? [];
         }
@@ -250,7 +250,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
     {
         try
         {
-            List<ProcessorDto>? processors = await client.Processors.GetAsync();
+            List<ProcessorDto> processors = await client.Processors.GetAsync();
 
             return processors ?? [];
         }
@@ -260,7 +260,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
         }
     }
 
-    public async Task<(long? id, string? error)> AddProcessorToMachineAsync(ProcessorByMachineDto dto)
+    public async Task<(long? id, string error)> AddProcessorToMachineAsync(ProcessorByMachineDto dto)
     {
         try
         {
@@ -278,7 +278,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemoveProcessorFromMachineAsync(long id)
+    public async Task<(bool succeeded, string error)> RemoveProcessorFromMachineAsync(long id)
     {
         try
         {
@@ -301,7 +301,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
     {
         try
         {
-            List<SoundSynthByMachineDto>? synths = await client.SoundSynthsByMachine.ByMachine[machineId].GetAsync();
+            List<SoundSynthByMachineDto> synths = await client.SoundSynthsByMachine.ByMachine[machineId].GetAsync();
 
             return synths ?? [];
         }
@@ -315,7 +315,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
     {
         try
         {
-            List<SoundSynthDto>? synths = await client.SoundSynths.GetAsync();
+            List<SoundSynthDto> synths = await client.SoundSynths.GetAsync();
 
             return synths ?? [];
         }
@@ -325,7 +325,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
         }
     }
 
-    public async Task<(long? id, string? error)> AddSoundSynthToMachineAsync(SoundSynthByMachineDto dto)
+    public async Task<(long? id, string error)> AddSoundSynthToMachineAsync(SoundSynthByMachineDto dto)
     {
         try
         {
@@ -343,7 +343,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemoveSoundSynthFromMachineAsync(long id)
+    public async Task<(bool succeeded, string error)> RemoveSoundSynthFromMachineAsync(long id)
     {
         try
         {
@@ -366,7 +366,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
     {
         try
         {
-            List<ScreenByMachineDto>? screens = await client.Machines[machineId].Screens.GetAsync();
+            List<ScreenByMachineDto> screens = await client.Machines[machineId].Screens.GetAsync();
 
             return screens ?? [];
         }
@@ -380,7 +380,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
     {
         try
         {
-            List<ScreenDto>? screens = await client.Screens.GetAsync();
+            List<ScreenDto> screens = await client.Screens.GetAsync();
 
             return screens ?? [];
         }
@@ -390,7 +390,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
         }
     }
 
-    public async Task<(long? id, string? error)> AddScreenToMachineAsync(ScreenByMachineDto dto)
+    public async Task<(long? id, string error)> AddScreenToMachineAsync(ScreenByMachineDto dto)
     {
         try
         {
@@ -408,7 +408,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemoveScreenFromMachineAsync(long id)
+    public async Task<(bool succeeded, string error)> RemoveScreenFromMachineAsync(long id)
     {
         try
         {
@@ -431,7 +431,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
     {
         try
         {
-            List<MemoryByMachineDto>? memory = await client.Machines[machineId].Memories.GetAsync();
+            List<MemoryByMachineDto> memory = await client.Machines[machineId].Memories.GetAsync();
 
             return memory ?? [];
         }
@@ -441,7 +441,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
         }
     }
 
-    public async Task<(long? id, string? error)> AddMemoryToMachineAsync(MemoryByMachineDto dto)
+    public async Task<(long? id, string error)> AddMemoryToMachineAsync(MemoryByMachineDto dto)
     {
         try
         {
@@ -459,7 +459,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemoveMemoryFromMachineAsync(long id)
+    public async Task<(bool succeeded, string error)> RemoveMemoryFromMachineAsync(long id)
     {
         try
         {
@@ -482,7 +482,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
     {
         try
         {
-            List<StorageByMachineDto>? storage = await client.Machines[machineId].Storage.GetAsync();
+            List<StorageByMachineDto> storage = await client.Machines[machineId].Storage.GetAsync();
 
             return storage ?? [];
         }
@@ -492,7 +492,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
         }
     }
 
-    public async Task<(long? id, string? error)> AddStorageToMachineAsync(StorageByMachineDto dto)
+    public async Task<(long? id, string error)> AddStorageToMachineAsync(StorageByMachineDto dto)
     {
         try
         {
@@ -510,7 +510,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemoveStorageFromMachineAsync(long id)
+    public async Task<(bool succeeded, string error)> RemoveStorageFromMachineAsync(long id)
     {
         try
         {
@@ -532,7 +532,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
     {
         try
         {
-            List<SoftwareDto>? software = await client.Machines[machineId].Software.GetAsync();
+            List<SoftwareDto> software = await client.Machines[machineId].Software.GetAsync();
 
             return software ?? [];
         }
@@ -547,7 +547,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
     {
         try
         {
-            List<SoftwarePlatformByMachineDto>? platforms =
+            List<SoftwarePlatformByMachineDto> platforms =
                 await client.SoftwarePlatformsByMachine.ByMachine[machineId].GetAsync();
 
             return platforms ?? [];
@@ -562,7 +562,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
     {
         try
         {
-            List<SoftwarePlatformDto>? platforms = await client.Software.Platforms.GetAsync();
+            List<SoftwarePlatformDto> platforms = await client.Software.Platforms.GetAsync();
 
             return platforms ?? [];
         }
@@ -572,7 +572,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
         }
     }
 
-    public async Task<(long? id, string? error)> AddSoftwarePlatformToMachineAsync(SoftwarePlatformByMachineDto dto)
+    public async Task<(long? id, string error)> AddSoftwarePlatformToMachineAsync(SoftwarePlatformByMachineDto dto)
     {
         try
         {
@@ -590,7 +590,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemoveSoftwarePlatformFromMachineAsync(long id)
+    public async Task<(bool succeeded, string error)> RemoveSoftwarePlatformFromMachineAsync(long id)
     {
         try
         {
@@ -609,11 +609,11 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
     }
 
     // Description management
-    public async Task<string?> GetDescriptionTextAsync(int id)
+    public async Task<string> GetDescriptionTextAsync(int id)
     {
         try
         {
-            MachineDescriptionDto? desc = await client.Machines[id].Description.GetAsync();
+            MachineDescriptionDto desc = await client.Machines[id].Description.GetAsync();
 
             return desc?.Html ?? desc?.Markdown;
         }
@@ -627,7 +627,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
     {
         try
         {
-            List<MachineDescriptionDto>? descriptions = await client.Machines[machineId].Descriptions.GetAsync();
+            List<MachineDescriptionDto> descriptions = await client.Machines[machineId].Descriptions.GetAsync();
 
             return descriptions ?? [];
         }
@@ -637,7 +637,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
         }
     }
 
-    public async Task<(bool succeeded, string? error)> CreateOrUpdateDescriptionAsync(int machineId,
+    public async Task<(bool succeeded, string error)> CreateOrUpdateDescriptionAsync(int machineId,
         MachineDescriptionDto dto)
     {
         try
@@ -656,7 +656,7 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteDescriptionAsync(int machineId, string languageCode)
+    public async Task<(bool succeeded, string error)> DeleteDescriptionAsync(int machineId, string languageCode)
     {
         try
         {

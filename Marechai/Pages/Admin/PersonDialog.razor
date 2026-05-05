@@ -94,10 +94,10 @@
 </MudDialog>
 
 @code {
-    Iso31661NumericDto? _selectedCountry;
-    string?             _validationError;
+    Iso31661NumericDto _selectedCountry;
+    string             _validationError;
 
-    List<Iso31661NumericDto>? _allCountries;
+    List<Iso31661NumericDto> _allCountries;
 
     [CascadingParameter]
     IMudDialogInstance MudDialog { get; set; } = null!;
@@ -105,17 +105,17 @@
     [Parameter] public bool      IsNew       { get; set; }
     [Parameter] public int       PersonId    { get; set; }
     [Parameter] public string    Name        { get; set; } = string.Empty;
-    [Parameter] public string?   Surname     { get; set; }
-    [Parameter] public string?   Alias       { get; set; }
-    [Parameter] public string?   DisplayName { get; set; }
+    [Parameter] public string   Surname     { get; set; }
+    [Parameter] public string   Alias       { get; set; }
+    [Parameter] public string   DisplayName { get; set; }
     [Parameter] public int?      CountryId   { get; set; }
     [Parameter] public DateTime? BirthDate   { get; set; }
     [Parameter] public int       BirthDatePrecision { get; set; }
     [Parameter] public DateTime? DeathDate   { get; set; }
     [Parameter] public int       DeathDatePrecision { get; set; }
-    [Parameter] public string?   Webpage     { get; set; }
-    [Parameter] public string?   Twitter     { get; set; }
-    [Parameter] public string?   Facebook    { get; set; }
+    [Parameter] public string   Webpage     { get; set; }
+    [Parameter] public string   Twitter     { get; set; }
+    [Parameter] public string   Facebook    { get; set; }
 
     [Inject] PeopleService PeopleService { get; set; } = null!;
 
@@ -135,7 +135,7 @@
         }
     }
 
-    Task<IEnumerable<Iso31661NumericDto>> SearchCountries(string? value, CancellationToken ct)
+    Task<IEnumerable<Iso31661NumericDto>> SearchCountries(string value, CancellationToken ct)
     {
         IEnumerable<Iso31661NumericDto> results = _allCountries ?? [];
 

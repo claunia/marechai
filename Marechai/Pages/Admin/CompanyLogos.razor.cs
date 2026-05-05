@@ -34,19 +34,19 @@ namespace Marechai.Pages.Admin;
 
 public partial class CompanyLogos
 {
-    string?               _companyName;
-    string?               _errorMessage;
+    string               _companyName;
+    string               _errorMessage;
     bool                  _isLoading = true;
     bool                  _isUploading;
-    List<CompanyLogoDto>? _logos;
-    string?               _successMessage;
+    List<CompanyLogoDto> _logos;
+    string               _successMessage;
 
     [Parameter]
     public int CompanyId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        CompanyDto? company = await CompaniesService.GetAsync(CompanyId);
+        CompanyDto company = await CompaniesService.GetAsync(CompanyId);
         _companyName = company?.Name;
         await LoadLogosAsync();
     }
@@ -71,7 +71,7 @@ public partial class CompanyLogos
             await stream.CopyToAsync(memoryStream);
             byte[] svgBytes = memoryStream.ToArray();
 
-            (CompanyLogoDto? logo, string? error) = await CompanyLogosService.UploadAsync(CompanyId, svgBytes, null);
+            (CompanyLogoDto logo, string error) = await CompanyLogosService.UploadAsync(CompanyId, svgBytes, null);
 
             if(logo is not null)
             {
@@ -108,13 +108,13 @@ public partial class CompanyLogos
                                                                                            FullWidth = true
                                                                                        });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
             int? newYear = result.Data as int?;
 
-            (bool succeeded, string? error) = await CompanyLogosService.ChangeYearAsync(logo.Id ?? 0, newYear);
+            (bool succeeded, string error) = await CompanyLogosService.ChangeYearAsync(logo.Id ?? 0, newYear);
 
             if(succeeded)
             {
@@ -142,11 +142,11 @@ public partial class CompanyLogos
                                                                                          FullWidth = true
                                                                                      });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? error) = await CompanyLogosService.DeleteAsync(logo.Id ?? 0);
+            (bool succeeded, string error) = await CompanyLogosService.DeleteAsync(logo.Id ?? 0);
 
             if(succeeded)
             {

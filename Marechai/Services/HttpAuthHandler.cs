@@ -35,7 +35,7 @@ public sealed class HttpAuthHandler(TokenProvider tokenProvider) : DelegatingHan
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
                                                                   CancellationToken  cancellationToken)
     {
-        string? token = await tokenProvider.GetTokenAsync();
+        string token = await tokenProvider.GetTokenAsync();
 
         if(!string.IsNullOrWhiteSpace(token))
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);

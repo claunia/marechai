@@ -12,7 +12,7 @@ public partial class SettingsViewModel : ObservableObject
 {
     private readonly IColorThemeService _colorThemeService;
     private readonly IStringLocalizer   _localizer;
-    private          IThemeService?     _themeService;
+    private          IThemeService     _themeService;
 
     [ObservableProperty]
     private List<ColorThemeOption> _availableColorThemes = new();

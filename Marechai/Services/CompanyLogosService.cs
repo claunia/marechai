@@ -40,7 +40,7 @@ public class CompanyLogosService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<CompanyLogoDto>? logos = await client.Companies[companyId].Logos.GetAsync();
+            List<CompanyLogoDto> logos = await client.Companies[companyId].Logos.GetAsync();
 
             return logos ?? [];
         }
@@ -50,7 +50,7 @@ public class CompanyLogosService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteAsync(int logoId)
+    public async Task<(bool succeeded, string error)> DeleteAsync(int logoId)
     {
         try
         {
@@ -68,7 +68,7 @@ public class CompanyLogosService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> ChangeYearAsync(int logoId, int? year)
+    public async Task<(bool succeeded, string error)> ChangeYearAsync(int logoId, int? year)
     {
         try
         {
@@ -91,7 +91,7 @@ public class CompanyLogosService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(CompanyLogoDto? logo, string? error)> UploadAsync(int companyId, byte[] svgBytes, int? year)
+    public async Task<(CompanyLogoDto logo, string error)> UploadAsync(int companyId, byte[] svgBytes, int? year)
     {
         try
         {
@@ -102,7 +102,7 @@ public class CompanyLogosService(Marechai.ApiClient.Client client)
                 Year      = year
             };
 
-            CompanyLogoDto? result = await client.Companies.Logos.Upload.PostAsync(body);
+            CompanyLogoDto result = await client.Companies.Logos.Upload.PostAsync(body);
 
             return (result, null);
         }

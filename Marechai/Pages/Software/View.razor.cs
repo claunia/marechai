@@ -39,7 +39,7 @@ public partial class View
     List<SoftwareReleaseDto>                     _compilations = [];
     List<PersonBySoftwareDto>                    _credits = [];
     Dictionary<string, List<PersonBySoftwareDto>> _creditsByRole = new();
-    string?                                      _description;
+    string                                      _description;
     List<SoftwareGenreDto>                       _genres = [];
     Dictionary<string, List<SoftwareGenreDto>>   _genresByType = new();
     List<SoftwareAttributeDto>                   _attributes = [];
@@ -52,11 +52,11 @@ public partial class View
     List<SoftwareReleaseDto>                     _releases = [];
     List<SoftwareScreenshotDto>                  _screenshots = [];
     Dictionary<string, List<SoftwareScreenshotDto>> _screenshotsByPlatform = new();
-    SoftwareScreenshotDto?                       _fullscreenScreenshot;
+    SoftwareScreenshotDto                       _fullscreenScreenshot;
     List<SoftwareCoverDto>                       _covers = [];
     Dictionary<string, List<SoftwareCoverDto>>    _coversByRelease = new();
-    SoftwareCoverDto?                            _fullscreenCover;
-    SoftwareCoverDto?                            _heroCover;
+    SoftwareCoverDto                            _fullscreenCover;
+    SoftwareCoverDto                            _heroCover;
     SoftwareDto                                 _software;
     List<SoftwareVersionDto>                    _versions = [];
 
@@ -175,7 +175,7 @@ public partial class View
         {
             if(id.HasValue && id.Value != Guid.Empty)
             {
-                SoftwareScreenshotDto? detail = await Service.GetScreenshotDetailsAsync(id.Value);
+                SoftwareScreenshotDto detail = await Service.GetScreenshotDetailsAsync(id.Value);
 
                 if(detail != null) _screenshots.Add(detail);
             }

@@ -39,26 +39,26 @@ public enum CountryMatchType
 public sealed class PersonImportRow
 {
     public string  Name        { get; set; } = "";
-    public string? Surname     { get; set; }
-    public string? Alias       { get; set; }
-    public string? DisplayName { get; set; }
-    public string? CountryInput { get; set; }
+    public string Surname     { get; set; }
+    public string Alias       { get; set; }
+    public string DisplayName { get; set; }
+    public string CountryInput { get; set; }
     public int?    BirthYear   { get; set; }
     public int?    BirthMonth  { get; set; }
     public int?    BirthDay    { get; set; }
     public int?    DeathYear   { get; set; }
     public int?    DeathMonth  { get; set; }
     public int?    DeathDay    { get; set; }
-    public string? Webpage     { get; set; }
-    public string? Twitter     { get; set; }
-    public string? Facebook    { get; set; }
+    public string Webpage     { get; set; }
+    public string Twitter     { get; set; }
+    public string Facebook    { get; set; }
 
     public List<Iso31661NumericDto>    MatchedCountries { get; set; } = [];
-    public Iso31661NumericDto?         SelectedCountry  { get; set; }
+    public Iso31661NumericDto         SelectedCountry  { get; set; }
     public CountryMatchType            CountryMatch     { get; set; } = CountryMatchType.None;
     public bool                        IsDuplicate      { get; set; }
-    public string?                     ImportError      { get; set; }
-    public string?                     ValidationError  { get; set; }
+    public string                     ImportError      { get; set; }
+    public string                     ValidationError  { get; set; }
 
     public DateTime? BirthDate
     {

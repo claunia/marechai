@@ -37,7 +37,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
 {
     // ── CRUD methods ──
 
-    public async Task<(int? id, string? error)> CreateAsync(SoftwareDto dto)
+    public async Task<(int? id, string error)> CreateAsync(SoftwareDto dto)
     {
         try
         {
@@ -55,7 +55,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
-    public async Task<(bool succeeded, string? error)> UpdateAsync(int id, SoftwareDto dto)
+    public async Task<(bool succeeded, string error)> UpdateAsync(int id, SoftwareDto dto)
     {
         try
         {
@@ -73,7 +73,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteAsync(int id)
+    public async Task<(bool succeeded, string error)> DeleteAsync(int id)
     {
         try
         {
@@ -97,7 +97,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareCompanyRoleDto>? roles = await client.Software[softwareId].CompanyRoles.GetAsync();
+            List<SoftwareCompanyRoleDto> roles = await client.Software[softwareId].CompanyRoles.GetAsync();
 
             return roles ?? [];
         }
@@ -107,7 +107,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
-    public async Task<(bool succeeded, string? error)> AddCompanyRoleAsync(SoftwareCompanyRoleDto dto)
+    public async Task<(bool succeeded, string error)> AddCompanyRoleAsync(SoftwareCompanyRoleDto dto)
     {
         try
         {
@@ -125,7 +125,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemoveCompanyRoleAsync(int softwareId, int companyId,
+    public async Task<(bool succeeded, string error)> RemoveCompanyRoleAsync(int softwareId, int companyId,
                                                                               string roleId)
     {
         try
@@ -150,7 +150,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareRoleDto>? roles = await client.Software.Roles.Enabled.GetAsync();
+            List<SoftwareRoleDto> roles = await client.Software.Roles.Enabled.GetAsync();
 
             return roles ?? [];
         }
@@ -164,7 +164,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<CompanyDto>? companies = await client.Companies.GetAsync();
+            List<CompanyDto> companies = await client.Companies.GetAsync();
 
             return companies ?? [];
         }
@@ -178,7 +178,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareFamilyDto>? families = await client.Software.Families.GetAsync();
+            List<SoftwareFamilyDto> families = await client.Software.Families.GetAsync();
 
             return families ?? [];
         }
@@ -192,7 +192,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<Iso31661NumericDto>? countries = await client.Iso31661Numeric.GetAsync();
+            List<Iso31661NumericDto> countries = await client.Iso31661Numeric.GetAsync();
 
             return countries ?? [];
         }
@@ -204,11 +204,11 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
 
     // ── Screenshot methods ──
 
-    public async Task<SoftwareScreenshotDto?> UploadScreenshotAsync(int     softwareId, byte[] fileBytes,
+    public async Task<SoftwareScreenshotDto> UploadScreenshotAsync(int     softwareId, byte[] fileBytes,
                                                                      string  fileName,
                                                                      ulong?  softwarePlatformId = null,
                                                                      ulong?  softwareVersionId  = null,
-                                                                     string? caption             = null)
+                                                                     string caption             = null)
     {
         try
         {
@@ -258,7 +258,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteScreenshotAsync(Guid screenshotId)
+    public async Task<(bool succeeded, string error)> DeleteScreenshotAsync(Guid screenshotId)
     {
         try
         {
@@ -324,7 +324,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwarePlatformDto>? platforms = await client.Software.Platforms.GetAsync();
+            List<SoftwarePlatformDto> platforms = await client.Software.Platforms.GetAsync();
 
             return platforms ?? [];
         }
@@ -340,7 +340,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<CompanyDto>? companies = await client.Software.Companies.GetAsync();
+            List<CompanyDto> companies = await client.Software.Companies.GetAsync();
 
             return companies ?? [];
         }
@@ -354,7 +354,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<CompanyDto>? companies = await client.Software.Companies.Letter[c.ToString()].GetAsync();
+            List<CompanyDto> companies = await client.Software.Companies.Letter[c.ToString()].GetAsync();
 
             return companies ?? [];
         }
@@ -370,7 +370,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareDto>? software = await client.Software.ByLetter[c.ToString()].GetAsync();
+            List<SoftwareDto> software = await client.Software.ByLetter[c.ToString()].GetAsync();
 
             return software ?? [];
         }
@@ -384,7 +384,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareDto>? software = await client.Software.ByYear[year].GetAsync();
+            List<SoftwareDto> software = await client.Software.ByYear[year].GetAsync();
 
             return software ?? [];
         }
@@ -398,7 +398,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareDto>? software = await client.Software.ByPlatform[platformId].GetAsync();
+            List<SoftwareDto> software = await client.Software.ByPlatform[platformId].GetAsync();
 
             return software ?? [];
         }
@@ -412,7 +412,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareGenreDto>? genres = await client.Software.Genres.GetAsync();
+            List<SoftwareGenreDto> genres = await client.Software.Genres.GetAsync();
 
             return genres ?? [];
         }
@@ -426,7 +426,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareDto>? software = await client.Software.ByGenre[genreId].GetAsync();
+            List<SoftwareDto> software = await client.Software.ByGenre[genreId].GetAsync();
 
             return software ?? [];
         }
@@ -440,7 +440,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareDto>? software = await client.Software.GetAsync();
+            List<SoftwareDto> software = await client.Software.GetAsync();
 
             return software ?? [];
         }
@@ -454,7 +454,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareSpecKeyDto>? specs = await client.Software.Specifications.GetAsync();
+            List<SoftwareSpecKeyDto> specs = await client.Software.Specifications.GetAsync();
 
             return specs ?? [];
         }
@@ -468,7 +468,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareDto>? software = await client.Software.BySpec.GetAsync(config =>
+            List<SoftwareDto> software = await client.Software.BySpec.GetAsync(config =>
             {
                 config.QueryParameters.Key   = key;
                 config.QueryParameters.Value = value;
@@ -484,7 +484,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
 
     // ── Detail methods ──
 
-    public async Task<SoftwareDto?> GetSoftwareByIdAsync(int id)
+    public async Task<SoftwareDto> GetSoftwareByIdAsync(int id)
     {
         try
         {
@@ -500,7 +500,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareCompanyRoleDto>? companies = await client.Software[softwareId].CompanyRoles.GetAsync();
+            List<SoftwareCompanyRoleDto> companies = await client.Software[softwareId].CompanyRoles.GetAsync();
 
             return companies ?? [];
         }
@@ -514,7 +514,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<PersonBySoftwareDto>? credits = await client.Software[softwareId].Credits.GetAsync();
+            List<PersonBySoftwareDto> credits = await client.Software[softwareId].Credits.GetAsync();
 
             return credits ?? [];
         }
@@ -528,7 +528,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareGenreDto>? genres = await client.Software[softwareId].Genres.GetAsync();
+            List<SoftwareGenreDto> genres = await client.Software[softwareId].Genres.GetAsync();
 
             return genres ?? [];
         }
@@ -542,7 +542,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareAttributeDto>? attributes = await client.Software[softwareId].Attributes.GetAsync();
+            List<SoftwareAttributeDto> attributes = await client.Software[softwareId].Attributes.GetAsync();
 
             return attributes ?? [];
         }
@@ -556,7 +556,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareAttributeDto>? attributes =
+            List<SoftwareAttributeDto> attributes =
                 await client.Software.Releases[releaseId].Attributes.GetAsync();
 
             return attributes ?? [];
@@ -571,7 +571,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareVersionDto>? versions = await client.Software[softwareId].Versions.GetAsync();
+            List<SoftwareVersionDto> versions = await client.Software[softwareId].Versions.GetAsync();
 
             return versions ?? [];
         }
@@ -585,7 +585,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareReleaseDto>? releases = await client.Software.Versions[versionId].Releases.GetAsync();
+            List<SoftwareReleaseDto> releases = await client.Software.Versions[versionId].Releases.GetAsync();
 
             return releases ?? [];
         }
@@ -599,7 +599,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<Guid?>? ids = await client.Software[softwareId].Screenshots.GetAsync();
+            List<Guid?> ids = await client.Software[softwareId].Screenshots.GetAsync();
 
             return ids ?? [];
         }
@@ -609,7 +609,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
-    public async Task<SoftwareScreenshotDto?> GetScreenshotDetailsAsync(Guid id)
+    public async Task<SoftwareScreenshotDto> GetScreenshotDetailsAsync(Guid id)
     {
         try
         {
@@ -625,7 +625,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<Guid?>? ids = await client.Software[softwareId].Screenshots.GetAsync();
+            List<Guid?> ids = await client.Software[softwareId].Screenshots.GetAsync();
 
             if(ids is null or { Count: 0 }) return [];
 
@@ -635,7 +635,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
             {
                 if(!id.HasValue) continue;
 
-                SoftwareScreenshotDto? dto = await GetScreenshotDetailsAsync(id.Value);
+                SoftwareScreenshotDto dto = await GetScreenshotDetailsAsync(id.Value);
 
                 if(dto is not null) screenshots.Add(dto);
             }
@@ -648,7 +648,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
-    public async Task<(bool succeeded, string? error)> UpdateScreenshotAsync(Guid id, SoftwareScreenshotDto dto)
+    public async Task<(bool succeeded, string error)> UpdateScreenshotAsync(Guid id, SoftwareScreenshotDto dto)
     {
         try
         {
@@ -664,7 +664,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
 
     // ── Release detail methods ──
 
-    public async Task<SoftwareVersionDto?> GetVersionByIdAsync(int versionId)
+    public async Task<SoftwareVersionDto> GetVersionByIdAsync(int versionId)
     {
         try
         {
@@ -676,7 +676,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
-    public async Task<SoftwareReleaseDto?> GetReleaseByIdAsync(int releaseId)
+    public async Task<SoftwareReleaseDto> GetReleaseByIdAsync(int releaseId)
     {
         try
         {
@@ -692,7 +692,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareBarcodeDto>? barcodes = await client.Software.Releases[releaseId].Barcodes.GetAsync();
+            List<SoftwareBarcodeDto> barcodes = await client.Software.Releases[releaseId].Barcodes.GetAsync();
 
             return barcodes ?? [];
         }
@@ -706,7 +706,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareProductCodeDto>? codes =
+            List<SoftwareProductCodeDto> codes =
                 await client.Software.Releases[releaseId].ProductCodes.GetAsync();
 
             return codes ?? [];
@@ -721,7 +721,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<GpuBySoftwareReleaseDto>? gpus =
+            List<GpuBySoftwareReleaseDto> gpus =
                 await client.Software.Releases[releaseId].MinimumGpus.GetAsync();
 
             return gpus ?? [];
@@ -736,7 +736,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<GpuBySoftwareReleaseDto>? gpus =
+            List<GpuBySoftwareReleaseDto> gpus =
                 await client.Software.Releases[releaseId].RecommendedGpus.GetAsync();
 
             return gpus ?? [];
@@ -751,7 +751,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoundSynthBySoftwareReleaseDto>? synths =
+            List<SoundSynthBySoftwareReleaseDto> synths =
                 await client.Software.Releases[releaseId].SoundSynths.GetAsync();
 
             return synths ?? [];
@@ -768,7 +768,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<CompanyBySoftwareVersionDto>? companies =
+            List<CompanyBySoftwareVersionDto> companies =
                 await client.Software.Versions[versionId].Companies.GetAsync();
 
             return companies ?? [];
@@ -783,7 +783,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<CompanyBySoftwareFamilyDto>? companies =
+            List<CompanyBySoftwareFamilyDto> companies =
                 await client.Software.Families[familyId].Companies.GetAsync();
 
             return companies ?? [];
@@ -798,7 +798,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareVersionBySoftwareReleaseDto>? versions =
+            List<SoftwareVersionBySoftwareReleaseDto> versions =
                 await client.Software.Releases[releaseId].Versions.GetAsync();
 
             return versions ?? [];
@@ -813,7 +813,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareReleaseDto>? compilations = await client.Software[softwareId].Compilations.GetAsync();
+            List<SoftwareReleaseDto> compilations = await client.Software[softwareId].Compilations.GetAsync();
 
             return compilations ?? [];
         }
@@ -827,7 +827,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareReleaseDto>? releases = await client.Software[softwareId].Releases.GetAsync();
+            List<SoftwareReleaseDto> releases = await client.Software[softwareId].Releases.GetAsync();
 
             return releases ?? [];
         }
@@ -841,7 +841,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareBySoftwareReleaseDto>? software =
+            List<SoftwareBySoftwareReleaseDto> software =
                 await client.Software.Releases[releaseId].Software.GetAsync();
 
             return software ?? [];
@@ -854,7 +854,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
 
     // ── Description methods ──
 
-    public async Task<string?> GetDescriptionTextAsync(int id)
+    public async Task<string> GetDescriptionTextAsync(int id)
     {
         try
         {
@@ -872,7 +872,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareDescriptionDto>? descriptions = await client.Software[softwareId].Descriptions.GetAsync();
+            List<SoftwareDescriptionDto> descriptions = await client.Software[softwareId].Descriptions.GetAsync();
 
             return descriptions ?? [];
         }
@@ -882,7 +882,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
-    public async Task<(bool succeeded, string? error)> CreateOrUpdateDescriptionAsync(int                    softwareId,
+    public async Task<(bool succeeded, string error)> CreateOrUpdateDescriptionAsync(int                    softwareId,
                                                                                       SoftwareDescriptionDto dto)
     {
         try
@@ -901,7 +901,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteDescriptionAsync(int softwareId, string languageCode)
+    public async Task<(bool succeeded, string error)> DeleteDescriptionAsync(int softwareId, string languageCode)
     {
         try
         {
@@ -925,7 +925,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareCoverDto>? covers = await client.Software[softwareId].Covers.GetAsync();
+            List<SoftwareCoverDto> covers = await client.Software[softwareId].Covers.GetAsync();
 
             return covers ?? [];
         }
@@ -939,7 +939,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<Guid?>? ids = await client.Software.Releases[releaseId].Covers.GetAsync();
+            List<Guid?> ids = await client.Software.Releases[releaseId].Covers.GetAsync();
 
             return ids ?? [];
         }
@@ -949,7 +949,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
-    public async Task<SoftwareCoverDto?> GetCoverDetailsAsync(Guid id)
+    public async Task<SoftwareCoverDto> GetCoverDetailsAsync(Guid id)
     {
         try
         {

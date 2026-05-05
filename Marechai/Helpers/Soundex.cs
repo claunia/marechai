@@ -37,7 +37,7 @@ public static class Soundex
         '5', '0', '1', '2', '6', '2', '3', '0', '1', '0', '2', '0', '2'
     ];
 
-    public static string Generate(string? input)
+    public static string Generate(string input)
     {
         if(string.IsNullOrWhiteSpace(input))
             return "0000";

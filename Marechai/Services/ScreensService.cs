@@ -37,7 +37,7 @@ public class ScreensService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<ScreenDto>? screens = await client.Screens.GetAsync();
+            List<ScreenDto> screens = await client.Screens.GetAsync();
 
             return screens ?? [];
         }
@@ -47,7 +47,7 @@ public class ScreensService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<ScreenDto?> GetByIdAsync(int id)
+    public async Task<ScreenDto> GetByIdAsync(int id)
     {
         try
         {
@@ -59,7 +59,7 @@ public class ScreensService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(long? id, string? error)> CreateAsync(ScreenDto dto)
+    public async Task<(long? id, string error)> CreateAsync(ScreenDto dto)
     {
         try
         {
@@ -77,7 +77,7 @@ public class ScreensService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> UpdateAsync(int id, ScreenDto dto)
+    public async Task<(bool succeeded, string error)> UpdateAsync(int id, ScreenDto dto)
     {
         try
         {
@@ -95,7 +95,7 @@ public class ScreensService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteAsync(int id)
+    public async Task<(bool succeeded, string error)> DeleteAsync(int id)
     {
         try
         {
@@ -117,7 +117,7 @@ public class ScreensService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<ResolutionByScreenDto>? resolutions = await client.Screens[screenId].Resolutions.GetAsync();
+            List<ResolutionByScreenDto> resolutions = await client.Screens[screenId].Resolutions.GetAsync();
 
             return resolutions ?? [];
         }
@@ -131,7 +131,7 @@ public class ScreensService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<ResolutionDto>? resolutions = await client.Resolutions.GetAsync();
+            List<ResolutionDto> resolutions = await client.Resolutions.GetAsync();
 
             return resolutions ?? [];
         }
@@ -141,7 +141,7 @@ public class ScreensService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(long? id, string? error)> AddResolutionToScreenAsync(ResolutionByScreenDto dto)
+    public async Task<(long? id, string error)> AddResolutionToScreenAsync(ResolutionByScreenDto dto)
     {
         try
         {
@@ -159,7 +159,7 @@ public class ScreensService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemoveResolutionFromScreenAsync(long id)
+    public async Task<(bool succeeded, string error)> RemoveResolutionFromScreenAsync(long id)
     {
         try
         {

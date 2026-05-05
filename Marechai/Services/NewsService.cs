@@ -36,7 +36,7 @@ public class NewsService(Marechai.ApiClient.Client client, IStringLocalizer<News
     {
         try
         {
-            List<NewsDto>? news = await client.News.Latest.GetAsync();
+            List<NewsDto> news = await client.News.Latest.GetAsync();
 
             return news ?? [];
         }

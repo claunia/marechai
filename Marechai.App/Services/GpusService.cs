@@ -47,13 +47,13 @@ public class GpusService
     /// <summary>
     ///     Fetches a single GPU by ID from the API
     /// </summary>
-    public async Task<GpuDto?> GetGpuByIdAsync(int gpuId)
+    public async Task<GpuDto> GetGpuByIdAsync(int gpuId)
     {
         try
         {
             _logger.LogInformation("Fetching GPU {GpuId} from API", gpuId);
 
-            GpuDto? gpu = await _apiClient.Gpus[gpuId].GetAsync();
+            GpuDto gpu = await _apiClient.Gpus[gpuId].GetAsync();
 
             if(gpu == null)
             {
@@ -131,13 +131,13 @@ public class GpusService
     /// <summary>
     ///     Fetches a single resolution by ID from the API
     /// </summary>
-    public async Task<ResolutionDto?> GetResolutionByIdAsync(int resolutionId)
+    public async Task<ResolutionDto> GetResolutionByIdAsync(int resolutionId)
     {
         try
         {
             _logger.LogInformation("Fetching resolution {ResolutionId} from API", resolutionId);
 
-            ResolutionDto? resolution = await _apiClient.Resolutions[resolutionId].GetAsync();
+            ResolutionDto resolution = await _apiClient.Resolutions[resolutionId].GetAsync();
 
             if(resolution == null)
             {
@@ -164,13 +164,13 @@ public class GpusService
     /// <summary>
     ///     Fetches a localized description for a GPU
     /// </summary>
-    public async Task<GpuDescriptionDto?> GetDescriptionAsync(int gpuId, string languageCode)
+    public async Task<GpuDescriptionDto> GetDescriptionAsync(int gpuId, string languageCode)
     {
         try
         {
             _logger.LogInformation("Fetching description for GPU {GpuId} lang {Lang}", gpuId, languageCode);
 
-            GpuDescriptionDto? desc = await _apiClient.Gpus[gpuId].Description.GetAsync(
+            GpuDescriptionDto desc = await _apiClient.Gpus[gpuId].Description.GetAsync(
                 config => config.QueryParameters.Lang = languageCode);
 
             return desc;

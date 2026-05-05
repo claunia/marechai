@@ -36,7 +36,7 @@ public sealed class AuthService(Marechai.ApiClient.Client             client,
                                 JwtAuthenticationStateProvider         authStateProvider,
                                 ILogger<AuthService>                   logger)
 {
-    public async Task<(bool Succeeded, string? ErrorMessage)> LoginAsync(string email, string password)
+    public async Task<(bool Succeeded, string ErrorMessage)> LoginAsync(string email, string password)
     {
         try
         {
@@ -46,7 +46,7 @@ public sealed class AuthService(Marechai.ApiClient.Client             client,
                 Password = password
             };
 
-            AuthResponse? response = await client.Auth.Login.PostAsync(request);
+            AuthResponse response = await client.Auth.Login.PostAsync(request);
 
             if(response is null)
                 return (false, "No response from server.");
@@ -82,7 +82,7 @@ public sealed class AuthService(Marechai.ApiClient.Client             client,
         authStateProvider.NotifyUserLogout();
     }
 
-    public async Task<UserDto?> GetProfileAsync()
+    public async Task<UserDto> GetProfileAsync()
     {
         try
         {
@@ -96,8 +96,8 @@ public sealed class AuthService(Marechai.ApiClient.Client             client,
         }
     }
 
-    public async Task<(bool Succeeded, string? ErrorMessage)> UpdateProfileAsync(string userName, string email,
-                                                                                  string? phoneNumber)
+    public async Task<(bool Succeeded, string ErrorMessage)> UpdateProfileAsync(string userName, string email,
+                                                                                  string phoneNumber)
     {
         try
         {
@@ -126,7 +126,7 @@ public sealed class AuthService(Marechai.ApiClient.Client             client,
         }
     }
 
-    public async Task<(bool Succeeded, string? ErrorMessage)> ChangePasswordAsync(string currentPassword,
+    public async Task<(bool Succeeded, string ErrorMessage)> ChangePasswordAsync(string currentPassword,
                                                                                    string newPassword)
     {
         try
@@ -155,7 +155,7 @@ public sealed class AuthService(Marechai.ApiClient.Client             client,
         }
     }
 
-    public async Task<PublicProfileDto?> GetPublicProfileAsync()
+    public async Task<PublicProfileDto> GetPublicProfileAsync()
     {
         try
         {
@@ -169,7 +169,7 @@ public sealed class AuthService(Marechai.ApiClient.Client             client,
         }
     }
 
-    public async Task<(bool Succeeded, string? ErrorMessage)> UpdatePublicProfileAsync(
+    public async Task<(bool Succeeded, string ErrorMessage)> UpdatePublicProfileAsync(
         UpdatePublicProfileRequest request)
     {
         try
@@ -192,7 +192,7 @@ public sealed class AuthService(Marechai.ApiClient.Client             client,
         }
     }
 
-    public async Task<PublicProfileDto?> UploadAvatarAsync(MultipartBody body)
+    public async Task<PublicProfileDto> UploadAvatarAsync(MultipartBody body)
     {
         try
         {
@@ -206,7 +206,7 @@ public sealed class AuthService(Marechai.ApiClient.Client             client,
         }
     }
 
-    public async Task<(bool Succeeded, string? ErrorMessage)> DeleteAvatarAsync()
+    public async Task<(bool Succeeded, string ErrorMessage)> DeleteAvatarAsync()
     {
         try
         {

@@ -38,7 +38,7 @@ public class CompaniesService(Marechai.ApiClient.Client client, IStringLocalizer
     {
         try
         {
-            List<CompanyDto>? companies = await client.Companies.GetAsync();
+            List<CompanyDto> companies = await client.Companies.GetAsync();
 
             return companies ?? [];
         }
@@ -48,7 +48,7 @@ public class CompaniesService(Marechai.ApiClient.Client client, IStringLocalizer
         }
     }
 
-    public async Task<CompanyDto?> GetAsync(int id)
+    public async Task<CompanyDto> GetAsync(int id)
     {
         try
         {
@@ -60,7 +60,7 @@ public class CompaniesService(Marechai.ApiClient.Client client, IStringLocalizer
         }
     }
 
-    public async Task<(int? id, string? error)> CreateAsync(CompanyDto dto)
+    public async Task<(int? id, string error)> CreateAsync(CompanyDto dto)
     {
         try
         {
@@ -78,7 +78,7 @@ public class CompaniesService(Marechai.ApiClient.Client client, IStringLocalizer
         }
     }
 
-    public async Task<(bool succeeded, string? error)> UpdateAsync(int id, CompanyDto dto)
+    public async Task<(bool succeeded, string error)> UpdateAsync(int id, CompanyDto dto)
     {
         try
         {
@@ -96,7 +96,7 @@ public class CompaniesService(Marechai.ApiClient.Client client, IStringLocalizer
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteAsync(int id)
+    public async Task<(bool succeeded, string error)> DeleteAsync(int id)
     {
         try
         {
@@ -118,7 +118,7 @@ public class CompaniesService(Marechai.ApiClient.Client client, IStringLocalizer
     {
         try
         {
-            List<MachineDto>? machines = await client.Companies[id].Machines.GetAsync();
+            List<MachineDto> machines = await client.Companies[id].Machines.GetAsync();
 
             return machines ?? [];
         }
@@ -128,7 +128,7 @@ public class CompaniesService(Marechai.ApiClient.Client client, IStringLocalizer
         }
     }
 
-    public async Task<string?> GetDescriptionTextAsync(int id)
+    public async Task<string> GetDescriptionTextAsync(int id)
     {
         try
         {
@@ -146,7 +146,7 @@ public class CompaniesService(Marechai.ApiClient.Client client, IStringLocalizer
     {
         try
         {
-            List<CompanyDescriptionDto>? descriptions = await client.Companies[companyId].Descriptions.GetAsync();
+            List<CompanyDescriptionDto> descriptions = await client.Companies[companyId].Descriptions.GetAsync();
 
             return descriptions ?? [];
         }
@@ -156,7 +156,7 @@ public class CompaniesService(Marechai.ApiClient.Client client, IStringLocalizer
         }
     }
 
-    public async Task<(bool succeeded, string? error)> CreateOrUpdateDescriptionAsync(int             companyId,
+    public async Task<(bool succeeded, string error)> CreateOrUpdateDescriptionAsync(int             companyId,
                                                                                       CompanyDescriptionDto dto)
     {
         try
@@ -175,7 +175,7 @@ public class CompaniesService(Marechai.ApiClient.Client client, IStringLocalizer
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteDescriptionAsync(int companyId, string languageCode)
+    public async Task<(bool succeeded, string error)> DeleteDescriptionAsync(int companyId, string languageCode)
     {
         try
         {
@@ -197,7 +197,7 @@ public class CompaniesService(Marechai.ApiClient.Client client, IStringLocalizer
     {
         try
         {
-            List<Iso31661NumericDto>? countries = await client.Iso31661Numeric.GetAsync();
+            List<Iso31661NumericDto> countries = await client.Iso31661Numeric.GetAsync();
 
             return countries ?? [];
         }
@@ -207,7 +207,7 @@ public class CompaniesService(Marechai.ApiClient.Client client, IStringLocalizer
         }
     }
 
-    public async Task<CompanyDto?> GetSoldToAsync(int? id)
+    public async Task<CompanyDto> GetSoldToAsync(int? id)
     {
         if(id is null) return null;
 
@@ -221,7 +221,7 @@ public class CompaniesService(Marechai.ApiClient.Client client, IStringLocalizer
         }
     }
 
-    public async Task<string?> GetCountryNameAsync(int id)
+    public async Task<string> GetCountryNameAsync(int id)
     {
         try
         {
@@ -237,7 +237,7 @@ public class CompaniesService(Marechai.ApiClient.Client client, IStringLocalizer
     {
         try
         {
-            List<CompanyDto>? companies = await client.Countries[countryId].Companies.GetAsync();
+            List<CompanyDto> companies = await client.Countries[countryId].Companies.GetAsync();
 
             return companies ?? [];
         }
@@ -251,7 +251,7 @@ public class CompaniesService(Marechai.ApiClient.Client client, IStringLocalizer
     {
         try
         {
-            List<CompanyDto>? companies = await client.Companies.Letter[id.ToString()].GetAsync();
+            List<CompanyDto> companies = await client.Companies.Letter[id.ToString()].GetAsync();
 
             return companies ?? [];
         }
@@ -265,7 +265,7 @@ public class CompaniesService(Marechai.ApiClient.Client client, IStringLocalizer
     {
         try
         {
-            List<GpuDto>? gpus = await client.Companies[id].Gpus.GetAsync();
+            List<GpuDto> gpus = await client.Companies[id].Gpus.GetAsync();
 
             return gpus ?? [];
         }
@@ -279,7 +279,7 @@ public class CompaniesService(Marechai.ApiClient.Client client, IStringLocalizer
     {
         try
         {
-            List<SoundSynthDto>? synths = await client.Companies[id].SoundSynths.GetAsync();
+            List<SoundSynthDto> synths = await client.Companies[id].SoundSynths.GetAsync();
 
             return synths ?? [];
         }
@@ -293,7 +293,7 @@ public class CompaniesService(Marechai.ApiClient.Client client, IStringLocalizer
     {
         try
         {
-            List<ProcessorDto>? processors = await client.Companies[id].Processors.GetAsync();
+            List<ProcessorDto> processors = await client.Companies[id].Processors.GetAsync();
 
             return processors ?? [];
         }
@@ -307,7 +307,7 @@ public class CompaniesService(Marechai.ApiClient.Client client, IStringLocalizer
     {
         try
         {
-            List<MachineFamilyDto>? families = await client.Companies[id].MachineFamilies.GetAsync();
+            List<MachineFamilyDto> families = await client.Companies[id].MachineFamilies.GetAsync();
 
             return families ?? [];
         }
@@ -321,7 +321,7 @@ public class CompaniesService(Marechai.ApiClient.Client client, IStringLocalizer
     {
         try
         {
-            List<BookDto>? books = await client.Companies[id].Books.GetAsync();
+            List<BookDto> books = await client.Companies[id].Books.GetAsync();
 
             return books ?? [];
         }
@@ -335,7 +335,7 @@ public class CompaniesService(Marechai.ApiClient.Client client, IStringLocalizer
     {
         try
         {
-            List<DocumentDto>? documents = await client.Companies[id].Documents.GetAsync();
+            List<DocumentDto> documents = await client.Companies[id].Documents.GetAsync();
 
             return documents ?? [];
         }
@@ -349,7 +349,7 @@ public class CompaniesService(Marechai.ApiClient.Client client, IStringLocalizer
     {
         try
         {
-            List<MagazineDto>? magazines = await client.Companies[id].Magazines.GetAsync();
+            List<MagazineDto> magazines = await client.Companies[id].Magazines.GetAsync();
 
             return magazines ?? [];
         }
@@ -363,7 +363,7 @@ public class CompaniesService(Marechai.ApiClient.Client client, IStringLocalizer
     {
         try
         {
-            List<SoftwareDto>? software = await client.Companies[id].Software.GetAsync();
+            List<SoftwareDto> software = await client.Companies[id].Software.GetAsync();
 
             return software ?? [];
         }
@@ -377,7 +377,7 @@ public class CompaniesService(Marechai.ApiClient.Client client, IStringLocalizer
     {
         try
         {
-            List<PersonByCompanyDto>? people = await client.Companies[id].People.GetAsync();
+            List<PersonByCompanyDto> people = await client.Companies[id].People.GetAsync();
 
             return people ?? [];
         }

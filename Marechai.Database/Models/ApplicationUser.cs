@@ -33,38 +33,38 @@ namespace Marechai.Database.Models;
 public class ApplicationUser : IdentityUser
 {
     [MaxLength(100)]
-    public string? DisplayName { get; set; }
+    public string DisplayName { get; set; }
 
     [MaxLength(2000)]
-    public string? Bio { get; set; }
+    public string Bio { get; set; }
 
     [MaxLength(500)]
-    public string? Website { get; set; }
+    public string Website { get; set; }
 
     [MaxLength(200)]
-    public string? Location { get; set; }
+    public string Location { get; set; }
 
     public bool UseGravatar { get; set; } = true;
 
     public Guid? AvatarGuid { get; set; }
 
     [MaxLength(10)]
-    public string? OriginalAvatarExtension { get; set; }
+    public string OriginalAvatarExtension { get; set; }
 
     [MaxLength(100)]
-    public string? Twitter { get; set; }
+    public string Twitter { get; set; }
 
     [MaxLength(100)]
-    public string? GitHub { get; set; }
+    public string GitHub { get; set; }
 
     [MaxLength(200)]
-    public string? Mastodon { get; set; }
+    public string Mastodon { get; set; }
 
     [MaxLength(200)]
-    public string? Facebook { get; set; }
+    public string Facebook { get; set; }
 
     [MaxLength(200)]
-    public string? LinkedIn { get; set; }
+    public string LinkedIn { get; set; }
 
     public virtual ICollection<MachinePhoto>              Photos                   { get; set; }
     public virtual ICollection<OwnedMachine>              OwnedMachines            { get; set; }

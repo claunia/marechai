@@ -86,7 +86,7 @@ public class SoftwareScreenshotsController(MarechaiContext context, IConfigurati
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<SoftwareScreenshotDto>> GetAsync(Guid id)
     {
-        SoftwareScreenshotDto? dto = await context.SoftwareScreenshots
+        SoftwareScreenshotDto dto = await context.SoftwareScreenshots
                                                   .Where(s => s.Id == id)
                                                   .Select(s => new SoftwareScreenshotDto
                                                    {
@@ -136,7 +136,7 @@ public class SoftwareScreenshotsController(MarechaiContext context, IConfigurati
                                                                        [FromForm] ulong     softwareId,
                                                                        [FromForm] ulong?    softwarePlatformId,
                                                                        [FromForm] ulong?    softwareVersionId,
-                                                                       [FromForm] string?   caption)
+                                                                       [FromForm] string   caption)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 

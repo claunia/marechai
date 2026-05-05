@@ -8,17 +8,17 @@ namespace Marechai.Pages.Admin;
 
 public partial class SoftwareVersions
 {
-    string?                    _errorMessage;
+    string                    _errorMessage;
     bool                       _isLoading = true;
-    string?                    _softwareName;
-    string?                    _successMessage;
-    List<SoftwareVersionDto>?  _versions;
+    string                    _softwareName;
+    string                    _successMessage;
+    List<SoftwareVersionDto>  _versions;
 
     [Parameter] public int SoftwareId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        SoftwareDto? software = await SoftwareService.GetSoftwareByIdAsync(SoftwareId);
+        SoftwareDto software = await SoftwareService.GetSoftwareByIdAsync(SoftwareId);
         _softwareName = software?.Name;
         await LoadDataAsync();
     }
@@ -48,7 +48,7 @@ public partial class SoftwareVersions
                                                                                            FullWidth = true
                                                                                        });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: SoftwareVersionDialogResult data })
         {
@@ -62,7 +62,7 @@ public partial class SoftwareVersions
                 LicenseId       = data.LicenseId
             };
 
-            (int? id, string? errorMessage) = await SoftwareVersionsService.CreateAsync(dto);
+            (int? id, string errorMessage) = await SoftwareVersionsService.CreateAsync(dto);
 
             if(id is not null)
             {
@@ -78,7 +78,7 @@ public partial class SoftwareVersions
 
     async Task OpenEditDialog(SoftwareVersionDto version)
     {
-        SoftwareVersionDto? full = await SoftwareVersionsService.GetByIdAsync(version.Id ?? 0);
+        SoftwareVersionDto full = await SoftwareVersionsService.GetByIdAsync(version.Id ?? 0);
 
         if(full is null)
         {
@@ -106,7 +106,7 @@ public partial class SoftwareVersions
                                                                                            FullWidth = true
                                                                                        });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: SoftwareVersionDialogResult data })
         {
@@ -121,7 +121,7 @@ public partial class SoftwareVersions
                 LicenseId       = data.LicenseId
             };
 
-            (bool succeeded, string? errorMessage) = await SoftwareVersionsService.UpdateAsync(full.Id ?? 0, dto);
+            (bool succeeded, string errorMessage) = await SoftwareVersionsService.UpdateAsync(full.Id ?? 0, dto);
 
             if(succeeded)
             {
@@ -154,11 +154,11 @@ public partial class SoftwareVersions
                                                                    FullWidth = true
                                                                });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? errorMessage) = await SoftwareVersionsService.DeleteAsync(version.Id ?? 0);
+            (bool succeeded, string errorMessage) = await SoftwareVersionsService.DeleteAsync(version.Id ?? 0);
 
             if(succeeded)
             {

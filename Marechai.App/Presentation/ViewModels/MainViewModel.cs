@@ -71,9 +71,9 @@ public partial class MainViewModel : ObservableObject
     public string BackToMainButtonText           => _localizer["BackToMainButton"];
 
     [ObservableProperty]
-    private string? _name;
+    private string _name;
     [ObservableProperty]
-    private NewsViewModel? _newsViewModel;
+    private NewsViewModel _newsViewModel;
     [ObservableProperty]
     private bool _sidebarContentVisible = true;
 
@@ -141,7 +141,7 @@ public partial class MainViewModel : ObservableObject
         UpdateAdminStatus();
     }
 
-    public string? Title { get; }
+    public string Title { get; }
 
     public ICommand NavigateToNewsCommand                     { get; }
     public ICommand NavigateToBooksCommand                    { get; }
@@ -215,13 +215,13 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    private void OnLoggedOut(object? sender, EventArgs e)
+    private void OnLoggedOut(object sender, EventArgs e)
     {
         UpdateLoginLogoutButtonText();
         UpdateAdminStatus();
     }
 
-    private void OnLoggedIn(object? sender, EventArgs e)
+    private void OnLoggedIn(object sender, EventArgs e)
     {
         UpdateLoginLogoutButtonText();
         UpdateAdminStatus();

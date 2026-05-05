@@ -8,10 +8,10 @@ namespace Marechai.Pages.Admin;
 
 public partial class People
 {
-    string?          _errorMessage;
+    string          _errorMessage;
     bool             _isLoading = true;
-    string?          _successMessage;
-    List<PersonDto>? _people;
+    string          _successMessage;
+    List<PersonDto> _people;
 
     protected override async Task OnInitializedAsync() => await LoadPeopleAsync();
 
@@ -46,7 +46,7 @@ public partial class People
                                                                                   FullWidth = true
                                                                               });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: PersonDialogResult data })
         {
@@ -66,7 +66,7 @@ public partial class People
                 Facebook    = data.Facebook
             };
 
-            (long? id, string? errorMessage) = await PeopleService.CreateAsync(dto);
+            (long? id, string errorMessage) = await PeopleService.CreateAsync(dto);
 
             if(id is not null)
             {
@@ -83,7 +83,7 @@ public partial class People
     async Task OpenEditPersonDialog(PersonDto person)
     {
         // Fetch full details by ID to get FK IDs (list endpoint may omit them)
-        PersonDto? fullPerson = person.Id.HasValue ? await PeopleService.GetPersonAsync(person.Id.Value) : person;
+        PersonDto fullPerson = person.Id.HasValue ? await PeopleService.GetPersonAsync(person.Id.Value) : person;
         fullPerson ??= person;
 
         DialogParameters<PersonDialog> parameters = new()
@@ -111,7 +111,7 @@ public partial class People
                                                                                   FullWidth = true
                                                                               });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: PersonDialogResult data })
         {
@@ -132,7 +132,7 @@ public partial class People
                 Facebook    = data.Facebook
             };
 
-            (bool succeeded, string? errorMessage) = await PeopleService.UpdateAsync(person.Id ?? 0, dto);
+            (bool succeeded, string errorMessage) = await PeopleService.UpdateAsync(person.Id ?? 0, dto);
 
             if(succeeded)
             {
@@ -167,11 +167,11 @@ public partial class People
                                                                    FullWidth = true
                                                                });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? errorMessage) = await PeopleService.DeleteAsync(person.Id ?? 0);
+            (bool succeeded, string errorMessage) = await PeopleService.DeleteAsync(person.Id ?? 0);
 
             if(succeeded)
             {
@@ -194,7 +194,7 @@ public partial class People
                                                                                         FullWidth = true
                                                                                     });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
             await LoadPeopleAsync();

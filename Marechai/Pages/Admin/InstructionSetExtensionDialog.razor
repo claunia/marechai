@@ -25,18 +25,18 @@
 </MudDialog>
 
 @code {
-    string? _validationError;
+    string _validationError;
 
     [CascadingParameter]
     IMudDialogInstance MudDialog { get; set; } = null!;
 
     [Parameter] public bool    IsNew             { get; set; }
     [Parameter] public string  Extension         { get; set; } = string.Empty;
-    [Parameter] public string? OriginalExtension { get; set; }
+    [Parameter] public string OriginalExtension { get; set; }
 
     [Inject] InstructionSetExtensionsService InstructionSetExtensionsService { get; set; } = null!;
 
-    async Task<string?> ValidateExtensionAsync(string? value)
+    async Task<string> ValidateExtensionAsync(string value)
     {
         if(string.IsNullOrWhiteSpace(value))
             return L["Extension is required."];

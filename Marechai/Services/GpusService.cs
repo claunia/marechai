@@ -37,7 +37,7 @@ public class GpusService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<GpuDto>? gpus = await client.Gpus.GetAsync();
+            List<GpuDto> gpus = await client.Gpus.GetAsync();
 
             return gpus ?? [];
         }
@@ -47,7 +47,7 @@ public class GpusService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<GpuDto?> GetByIdAsync(int id)
+    public async Task<GpuDto> GetByIdAsync(int id)
     {
         try
         {
@@ -59,7 +59,7 @@ public class GpusService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(long? id, string? error)> CreateAsync(GpuDto dto)
+    public async Task<(long? id, string error)> CreateAsync(GpuDto dto)
     {
         try
         {
@@ -77,7 +77,7 @@ public class GpusService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> UpdateAsync(int id, GpuDto dto)
+    public async Task<(bool succeeded, string error)> UpdateAsync(int id, GpuDto dto)
     {
         try
         {
@@ -95,7 +95,7 @@ public class GpusService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteAsync(int id)
+    public async Task<(bool succeeded, string error)> DeleteAsync(int id)
     {
         try
         {
@@ -117,7 +117,7 @@ public class GpusService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<ResolutionByGpuDto>? resolutions =
+            List<ResolutionByGpuDto> resolutions =
                 await client.ResolutionsByGpu.Gpus[gpuId].Resolutions.GetAsync();
 
             return resolutions ?? [];
@@ -132,7 +132,7 @@ public class GpusService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<ResolutionDto>? resolutions = await client.Resolutions.GetAsync();
+            List<ResolutionDto> resolutions = await client.Resolutions.GetAsync();
 
             return resolutions ?? [];
         }
@@ -142,7 +142,7 @@ public class GpusService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(long? id, string? error)> AddResolutionToGpuAsync(ResolutionByGpuDto dto)
+    public async Task<(long? id, string error)> AddResolutionToGpuAsync(ResolutionByGpuDto dto)
     {
         try
         {
@@ -160,7 +160,7 @@ public class GpusService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> RemoveResolutionFromGpuAsync(long id)
+    public async Task<(bool succeeded, string error)> RemoveResolutionFromGpuAsync(long id)
     {
         try
         {
@@ -178,7 +178,7 @@ public class GpusService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<ResolutionDto?> GetResolutionByIdAsync(int resolutionId)
+    public async Task<ResolutionDto> GetResolutionByIdAsync(int resolutionId)
     {
         try
         {
@@ -194,7 +194,7 @@ public class GpusService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<MachineDto>? machines = await client.Gpus[gpuId].Machines.GetAsync();
+            List<MachineDto> machines = await client.Gpus[gpuId].Machines.GetAsync();
 
             return machines ?? [];
         }
@@ -208,7 +208,7 @@ public class GpusService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<CompanyDto>? companies = await client.Companies.GetAsync();
+            List<CompanyDto> companies = await client.Companies.GetAsync();
 
             return companies ?? [];
         }
@@ -219,11 +219,11 @@ public class GpusService(Marechai.ApiClient.Client client)
     }
 
     // Description management
-    public async Task<string?> GetDescriptionTextAsync(int id)
+    public async Task<string> GetDescriptionTextAsync(int id)
     {
         try
         {
-            GpuDescriptionDto? desc = await client.Gpus[id].Description.GetAsync();
+            GpuDescriptionDto desc = await client.Gpus[id].Description.GetAsync();
 
             return desc?.Html ?? desc?.Markdown;
         }
@@ -237,7 +237,7 @@ public class GpusService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<GpuDescriptionDto>? descriptions = await client.Gpus[gpuId].Descriptions.GetAsync();
+            List<GpuDescriptionDto> descriptions = await client.Gpus[gpuId].Descriptions.GetAsync();
 
             return descriptions ?? [];
         }
@@ -247,7 +247,7 @@ public class GpusService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> CreateOrUpdateDescriptionAsync(int gpuId,
+    public async Task<(bool succeeded, string error)> CreateOrUpdateDescriptionAsync(int gpuId,
         GpuDescriptionDto dto)
     {
         try
@@ -266,7 +266,7 @@ public class GpusService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteDescriptionAsync(int gpuId, string languageCode)
+    public async Task<(bool succeeded, string error)> DeleteDescriptionAsync(int gpuId, string languageCode)
     {
         try
         {

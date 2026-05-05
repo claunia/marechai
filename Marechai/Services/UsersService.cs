@@ -37,7 +37,7 @@ public sealed class UsersService(Marechai.ApiClient.Client client, ILogger<Users
     {
         try
         {
-            List<UserDto>? users = await client.Users.GetAsync();
+            List<UserDto> users = await client.Users.GetAsync();
 
             return users ?? [];
         }
@@ -49,8 +49,8 @@ public sealed class UsersService(Marechai.ApiClient.Client client, ILogger<Users
         }
     }
 
-    public async Task<(bool Succeeded, string? ErrorMessage)> CreateAsync(string email, string userName,
-                                                                          string password, string? phoneNumber)
+    public async Task<(bool Succeeded, string ErrorMessage)> CreateAsync(string email, string userName,
+                                                                          string password, string phoneNumber)
     {
         try
         {
@@ -80,8 +80,8 @@ public sealed class UsersService(Marechai.ApiClient.Client client, ILogger<Users
         }
     }
 
-    public async Task<(bool Succeeded, string? ErrorMessage)> UpdateAsync(string id, string email, string userName,
-                                                                          string? phoneNumber)
+    public async Task<(bool Succeeded, string ErrorMessage)> UpdateAsync(string id, string email, string userName,
+                                                                          string phoneNumber)
     {
         try
         {
@@ -110,7 +110,7 @@ public sealed class UsersService(Marechai.ApiClient.Client client, ILogger<Users
         }
     }
 
-    public async Task<(bool Succeeded, string? ErrorMessage)> DeleteAsync(string id)
+    public async Task<(bool Succeeded, string ErrorMessage)> DeleteAsync(string id)
     {
         try
         {
@@ -132,7 +132,7 @@ public sealed class UsersService(Marechai.ApiClient.Client client, ILogger<Users
         }
     }
 
-    public async Task<(bool Succeeded, string? ErrorMessage)> ChangePasswordAsync(string id, string newPassword)
+    public async Task<(bool Succeeded, string ErrorMessage)> ChangePasswordAsync(string id, string newPassword)
     {
         try
         {
@@ -163,7 +163,7 @@ public sealed class UsersService(Marechai.ApiClient.Client client, ILogger<Users
     {
         try
         {
-            List<string>? roles = await client.Users.Roles.GetAsync();
+            List<string> roles = await client.Users.Roles.GetAsync();
 
             return roles ?? [];
         }
@@ -175,7 +175,7 @@ public sealed class UsersService(Marechai.ApiClient.Client client, ILogger<Users
         }
     }
 
-    public async Task<(bool Succeeded, string? ErrorMessage)> AddRoleAsync(string id, string roleName)
+    public async Task<(bool Succeeded, string ErrorMessage)> AddRoleAsync(string id, string roleName)
     {
         try
         {
@@ -202,7 +202,7 @@ public sealed class UsersService(Marechai.ApiClient.Client client, ILogger<Users
         }
     }
 
-    public async Task<(bool Succeeded, string? ErrorMessage)> RemoveRoleAsync(string id, string roleName)
+    public async Task<(bool Succeeded, string ErrorMessage)> RemoveRoleAsync(string id, string roleName)
     {
         try
         {
@@ -224,7 +224,7 @@ public sealed class UsersService(Marechai.ApiClient.Client client, ILogger<Users
         }
     }
 
-    public async Task<(BulkOperationResult? Result, string? ErrorMessage)> BulkDeleteAsync(List<string> userIds)
+    public async Task<(BulkOperationResult Result, string ErrorMessage)> BulkDeleteAsync(List<string> userIds)
     {
         try
         {
@@ -233,7 +233,7 @@ public sealed class UsersService(Marechai.ApiClient.Client client, ILogger<Users
                 UserIds = userIds
             };
 
-            BulkOperationResult? result = await client.Users.BulkDelete.PostAsync(request);
+            BulkOperationResult result = await client.Users.BulkDelete.PostAsync(request);
 
             return (result, null);
         }
@@ -251,7 +251,7 @@ public sealed class UsersService(Marechai.ApiClient.Client client, ILogger<Users
         }
     }
 
-    public async Task<(BulkOperationResult? Result, string? ErrorMessage)> BulkAddRoleAsync(List<string> userIds,
+    public async Task<(BulkOperationResult Result, string ErrorMessage)> BulkAddRoleAsync(List<string> userIds,
         string roleName)
     {
         try
@@ -262,7 +262,7 @@ public sealed class UsersService(Marechai.ApiClient.Client client, ILogger<Users
                 RoleName = roleName
             };
 
-            BulkOperationResult? result = await client.Users.BulkAddRole.PostAsync(request);
+            BulkOperationResult result = await client.Users.BulkAddRole.PostAsync(request);
 
             return (result, null);
         }
@@ -280,7 +280,7 @@ public sealed class UsersService(Marechai.ApiClient.Client client, ILogger<Users
         }
     }
 
-    public async Task<(BulkOperationResult? Result, string? ErrorMessage)> BulkRemoveRoleAsync(List<string> userIds,
+    public async Task<(BulkOperationResult Result, string ErrorMessage)> BulkRemoveRoleAsync(List<string> userIds,
         string roleName)
     {
         try
@@ -291,7 +291,7 @@ public sealed class UsersService(Marechai.ApiClient.Client client, ILogger<Users
                 RoleName = roleName
             };
 
-            BulkOperationResult? result = await client.Users.BulkRemoveRole.PostAsync(request);
+            BulkOperationResult result = await client.Users.BulkRemoveRole.PostAsync(request);
 
             return (result, null);
         }
@@ -309,7 +309,7 @@ public sealed class UsersService(Marechai.ApiClient.Client client, ILogger<Users
         }
     }
 
-    public async Task<(BulkOperationResult? Result, string? ErrorMessage)> BulkSetLockoutAsync(List<string> userIds,
+    public async Task<(BulkOperationResult Result, string ErrorMessage)> BulkSetLockoutAsync(List<string> userIds,
         bool enable)
     {
         try
@@ -320,7 +320,7 @@ public sealed class UsersService(Marechai.ApiClient.Client client, ILogger<Users
                 Enable  = enable
             };
 
-            BulkOperationResult? result = await client.Users.BulkLockout.PostAsync(request);
+            BulkOperationResult result = await client.Users.BulkLockout.PostAsync(request);
 
             return (result, null);
         }

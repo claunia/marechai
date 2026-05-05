@@ -8,10 +8,10 @@ namespace Marechai.Pages.Admin;
 
 public partial class SoftwareFamilies
 {
-    string?                   _errorMessage;
-    List<SoftwareFamilyDto>?  _families;
+    string                   _errorMessage;
+    List<SoftwareFamilyDto>  _families;
     bool                      _isLoading = true;
-    string?                   _successMessage;
+    string                   _successMessage;
 
     protected override async Task OnInitializedAsync() => await LoadDataAsync();
 
@@ -46,7 +46,7 @@ public partial class SoftwareFamilies
                                                                                           FullWidth = true
                                                                                       });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: SoftwareFamilyDialogResult data })
         {
@@ -59,7 +59,7 @@ public partial class SoftwareFamilies
                 Introduced = data.Introduced.HasValue ? new DateTimeOffset(data.Introduced.Value, TimeSpan.Zero) : null
             };
 
-            (int? id, string? errorMessage) = await SoftwareFamiliesService.CreateAsync(dto);
+            (int? id, string errorMessage) = await SoftwareFamiliesService.CreateAsync(dto);
 
             if(id is not null)
             {
@@ -75,7 +75,7 @@ public partial class SoftwareFamilies
 
     async Task OpenEditDialog(SoftwareFamilyDto family)
     {
-        SoftwareFamilyDto? full = await SoftwareFamiliesService.GetByIdAsync(family.Id ?? 0);
+        SoftwareFamilyDto full = await SoftwareFamiliesService.GetByIdAsync(family.Id ?? 0);
 
         if(full is null)
         {
@@ -101,7 +101,7 @@ public partial class SoftwareFamilies
                                                                                           FullWidth = true
                                                                                       });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: SoftwareFamilyDialogResult data })
         {
@@ -115,7 +115,7 @@ public partial class SoftwareFamilies
                 Introduced = data.Introduced.HasValue ? new DateTimeOffset(data.Introduced.Value, TimeSpan.Zero) : null
             };
 
-            (bool succeeded, string? errorMessage) = await SoftwareFamiliesService.UpdateAsync(full.Id ?? 0, dto);
+            (bool succeeded, string errorMessage) = await SoftwareFamiliesService.UpdateAsync(full.Id ?? 0, dto);
 
             if(succeeded)
             {
@@ -148,11 +148,11 @@ public partial class SoftwareFamilies
                                                                    FullWidth = true
                                                                });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? errorMessage) = await SoftwareFamiliesService.DeleteAsync(family.Id ?? 0);
+            (bool succeeded, string errorMessage) = await SoftwareFamiliesService.DeleteAsync(family.Id ?? 0);
 
             if(succeeded)
             {

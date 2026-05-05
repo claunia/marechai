@@ -13,5 +13,5 @@ public partial class PhotoCarouselDisplayItem : ObservableObject
     public       Guid PhotoId { get; set; }
 
     [ObservableProperty]
-    private ImageSource? _thumbnailImageSource;
+    private ImageSource _thumbnailImageSource;
 }

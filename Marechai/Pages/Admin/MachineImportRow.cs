@@ -83,39 +83,39 @@ public sealed class MachineImportRow
 {
     // CSV fields
     public string  Name         { get; set; } = "";
-    public string? CompanyInput { get; set; }
-    public string? TypeInput    { get; set; }
-    public string? Model        { get; set; }
-    public string? FamilyInput  { get; set; }
+    public string CompanyInput { get; set; }
+    public string TypeInput    { get; set; }
+    public string Model        { get; set; }
+    public string FamilyInput  { get; set; }
     public int?    IntroducedYear  { get; set; }
     public int?    IntroducedMonth { get; set; }
     public int?    IntroducedDay   { get; set; }
-    public string? GpuInput     { get; set; }
-    public string? ProcessorInput    { get; set; }
+    public string GpuInput     { get; set; }
+    public string ProcessorInput    { get; set; }
     public double? ProcessorSpeed    { get; set; }
-    public string? SoundSynthInput   { get; set; }
-    public string? SoftwarePlatformInput { get; set; }
+    public string SoundSynthInput   { get; set; }
+    public string SoftwarePlatformInput { get; set; }
 
     // Memory fields
-    public string? WorkMemoryTypeInput    { get; set; }
+    public string WorkMemoryTypeInput    { get; set; }
     public long?   WorkMemorySize         { get; set; }
     public double? WorkMemorySpeed        { get; set; }
-    public string? VideoMemoryTypeInput   { get; set; }
+    public string VideoMemoryTypeInput   { get; set; }
     public long?   VideoMemorySize        { get; set; }
     public double? VideoMemorySpeed       { get; set; }
-    public string? SoundMemoryTypeInput   { get; set; }
+    public string SoundMemoryTypeInput   { get; set; }
     public long?   SoundMemorySize        { get; set; }
     public double? SoundMemorySpeed       { get; set; }
-    public string? UnifiedMemoryTypeInput { get; set; }
+    public string UnifiedMemoryTypeInput { get; set; }
     public long?   UnifiedMemorySize      { get; set; }
     public double? UnifiedMemorySpeed     { get; set; }
-    public string? FirmwareMemoryTypeInput { get; set; }
+    public string FirmwareMemoryTypeInput { get; set; }
     public long?   FirmwareMemorySize     { get; set; }
     public double? FirmwareMemorySpeed    { get; set; }
 
     // Company match state
     public List<CompanyDto>  MatchedCompanies { get; set; } = [];
-    public CompanyDto?       SelectedCompany  { get; set; }
+    public CompanyDto       SelectedCompany  { get; set; }
     public CompanyMatchType  CompanyMatch     { get; set; } = CompanyMatchType.None;
 
     // Machine type match state
@@ -124,27 +124,27 @@ public sealed class MachineImportRow
 
     // Family match state
     public List<MachineFamilyDto> MatchedFamilies { get; set; } = [];
-    public MachineFamilyDto?      SelectedFamily  { get; set; }
+    public MachineFamilyDto      SelectedFamily  { get; set; }
     public MachineFamilyMatchType FamilyMatch     { get; set; } = MachineFamilyMatchType.None;
 
     // GPU match state
     public List<GpuDto>  MatchedGpus { get; set; } = [];
-    public GpuDto?       SelectedGpu { get; set; }
+    public GpuDto       SelectedGpu { get; set; }
     public GpuMatchType  GpuMatch    { get; set; } = GpuMatchType.None;
 
     // Processor match state
     public List<ProcessorDto>  MatchedProcessors { get; set; } = [];
-    public ProcessorDto?       SelectedProcessor { get; set; }
+    public ProcessorDto       SelectedProcessor { get; set; }
     public ProcessorMatchType  ProcessorMatch    { get; set; } = ProcessorMatchType.None;
 
     // Sound synth match state
     public List<SoundSynthDto>  MatchedSoundSynths { get; set; } = [];
-    public SoundSynthDto?       SelectedSoundSynth { get; set; }
+    public SoundSynthDto       SelectedSoundSynth { get; set; }
     public SoundSynthMatchType  SoundSynthMatch    { get; set; } = SoundSynthMatchType.None;
 
     // Software platform match state
     public List<SoftwarePlatformDto>  MatchedSoftwarePlatforms { get; set; } = [];
-    public SoftwarePlatformDto?       SelectedSoftwarePlatform { get; set; }
+    public SoftwarePlatformDto       SelectedSoftwarePlatform { get; set; }
     public SoftwarePlatformMatchType  SoftwarePlatformMatch    { get; set; } = SoftwarePlatformMatchType.None;
 
     // Memory type validation
@@ -161,11 +161,11 @@ public sealed class MachineImportRow
 
     // Duplicate detection
     public MachineNameDuplicateType DuplicateType       { get; set; } = MachineNameDuplicateType.None;
-    public string?                  DuplicateMatchedName { get; set; }
+    public string                  DuplicateMatchedName { get; set; }
 
     // Import state
-    public string? ImportError     { get; set; }
-    public string? ValidationError { get; set; }
+    public string ImportError     { get; set; }
+    public string ValidationError { get; set; }
 
     public bool IsPrototype => IntroducedYear is null && IntroducedMonth is null && IntroducedDay is null;
 

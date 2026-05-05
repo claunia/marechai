@@ -31,10 +31,10 @@ namespace Marechai.Services;
 public sealed class TokenProvider(ProtectedLocalStorage localStorage)
 {
     const    string  StorageKey = "auth_token";
-    string? _cachedToken;
+    string _cachedToken;
     bool    _initialized;
 
-    public async Task<string?> GetTokenAsync()
+    public async Task<string> GetTokenAsync()
     {
         if(_initialized)
             return _cachedToken;

@@ -37,7 +37,7 @@ public class InstructionSetsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<InstructionSetDto>? sets = await client.InstructionSets.GetAsync();
+            List<InstructionSetDto> sets = await client.InstructionSets.GetAsync();
 
             return sets ?? [];
         }
@@ -47,7 +47,7 @@ public class InstructionSetsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<InstructionSetDto?> GetByIdAsync(int id)
+    public async Task<InstructionSetDto> GetByIdAsync(int id)
     {
         try
         {
@@ -59,7 +59,7 @@ public class InstructionSetsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(int? id, string? error)> CreateAsync(InstructionSetDto dto)
+    public async Task<(int? id, string error)> CreateAsync(InstructionSetDto dto)
     {
         try
         {
@@ -77,7 +77,7 @@ public class InstructionSetsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> UpdateAsync(int id, InstructionSetDto dto)
+    public async Task<(bool succeeded, string error)> UpdateAsync(int id, InstructionSetDto dto)
     {
         try
         {
@@ -95,7 +95,7 @@ public class InstructionSetsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteAsync(int id)
+    public async Task<(bool succeeded, string error)> DeleteAsync(int id)
     {
         try
         {

@@ -33,10 +33,10 @@ namespace Marechai.Pages.Admin;
 
 public partial class Companies
 {
-    string?          _errorMessage;
+    string          _errorMessage;
     bool             _isLoading = true;
-    string?          _successMessage;
-    List<CompanyDto>? _companies;
+    string          _successMessage;
+    List<CompanyDto> _companies;
 
     protected override async Task OnInitializedAsync() => await LoadCompaniesAsync();
 
@@ -95,7 +95,7 @@ public partial class Companies
                                                                                    FullWidth = true
                                                                                });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: CompanyDialogResult data })
         {
@@ -121,7 +121,7 @@ public partial class Companies
                 Facebook              = data.Facebook
             };
 
-            (int? id, string? errorMessage) = await CompaniesService.CreateAsync(dto);
+            (int? id, string errorMessage) = await CompaniesService.CreateAsync(dto);
 
             if(id is not null)
             {
@@ -168,7 +168,7 @@ public partial class Companies
                                                                                    FullWidth = true
                                                                                });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: CompanyDialogResult data })
         {
@@ -195,7 +195,7 @@ public partial class Companies
                 Facebook              = data.Facebook
             };
 
-            (bool succeeded, string? errorMessage) = await CompaniesService.UpdateAsync(company.Id ?? 0, dto);
+            (bool succeeded, string errorMessage) = await CompaniesService.UpdateAsync(company.Id ?? 0, dto);
 
             if(succeeded)
             {
@@ -227,11 +227,11 @@ public partial class Companies
                                                                                          FullWidth = true
                                                                                      });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? errorMessage) = await CompaniesService.DeleteAsync(company.Id ?? 0);
+            (bool succeeded, string errorMessage) = await CompaniesService.DeleteAsync(company.Id ?? 0);
 
             if(succeeded)
             {

@@ -39,7 +39,7 @@ public partial class View
     List<MachineDto> _computers = [];
     List<MachineDto> _consoles  = [];
     List<MachineDto> _smartphones = [];
-    string?          _description;
+    string          _description;
     string           _displayName;
     int              _id;
     bool             _loaded;

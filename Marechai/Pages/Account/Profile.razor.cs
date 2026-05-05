@@ -38,43 +38,43 @@ namespace Marechai.Pages.Account;
 public partial class Profile
 {
     // ── Account Settings state ──
-    string?  _editEmail;
-    string?  _editPhoneNumber;
-    string?  _editUserName;
-    string?  _errorMessage;
+    string  _editEmail;
+    string  _editPhoneNumber;
+    string  _editUserName;
+    string  _errorMessage;
     bool     _isEditing;
     bool     _isLoading = true;
     bool     _isSaving;
-    UserDto? _profile;
-    string?  _successMessage;
+    UserDto _profile;
+    string  _successMessage;
 
     // ── Public Profile state ──
-    PublicProfileDto? _publicProfile;
-    string?           _editDisplayName;
-    string?           _editBio;
-    string?           _editWebsite;
-    string?           _editLocation;
+    PublicProfileDto _publicProfile;
+    string           _editDisplayName;
+    string           _editBio;
+    string           _editWebsite;
+    string           _editLocation;
     bool              _editUseGravatar = true;
-    string?           _editTwitter;
-    string?           _editGitHub;
-    string?           _editMastodon;
-    string?           _editFacebook;
-    string?           _editLinkedIn;
+    string           _editTwitter;
+    string           _editGitHub;
+    string           _editMastodon;
+    string           _editFacebook;
+    string           _editLinkedIn;
     bool              _isSavingPublic;
-    string?           _publicSuccessMessage;
-    string?           _publicErrorMessage;
+    string           _publicSuccessMessage;
+    string           _publicErrorMessage;
 
     // ── Avatar state ──
     bool      _isUploadingAvatar;
-    string?   _avatarMessage;
+    string   _avatarMessage;
     Severity  _avatarMessageSeverity = Severity.Info;
 
     // ── Collection state ──
     bool                               _isLoadingCollection;
-    List<CollectedBookDto>?            _myBooks;
-    List<CollectedDocumentDto>?        _myDocuments;
-    List<CollectedMachineDto>?         _myMachines;
-    List<CollectedSoftwareReleaseDto>? _myReleases;
+    List<CollectedBookDto>            _myBooks;
+    List<CollectedDocumentDto>        _myDocuments;
+    List<CollectedMachineDto>         _myMachines;
+    List<CollectedSoftwareReleaseDto> _myReleases;
 
     protected override async Task OnInitializedAsync()
     {
@@ -140,7 +140,7 @@ public partial class Profile
         _isSaving     = true;
         _errorMessage = null;
 
-        (bool succeeded, string? errorMessage) =
+        (bool succeeded, string errorMessage) =
             await AuthService.UpdateProfileAsync(_editUserName, _editEmail, _editPhoneNumber);
 
         _isSaving = false;
@@ -178,7 +178,7 @@ public partial class Profile
             LinkedIn    = string.IsNullOrWhiteSpace(_editLinkedIn) ? null : _editLinkedIn.Trim()
         };
 
-        (bool succeeded, string? errorMessage) = await AuthService.UpdatePublicProfileAsync(request);
+        (bool succeeded, string errorMessage) = await AuthService.UpdatePublicProfileAsync(request);
 
         _isSavingPublic = false;
 
@@ -198,7 +198,7 @@ public partial class Profile
 
     // ── Avatar methods ──
 
-    async Task OnAvatarFileSelected(IBrowserFile? file)
+    async Task OnAvatarFileSelected(IBrowserFile file)
     {
         if(file is null) return;
 
@@ -226,7 +226,7 @@ public partial class Profile
             var multipartBody = new MultipartBody();
             multipartBody.AddOrReplacePart("file", contentType, ms, file.Name);
 
-            PublicProfileDto? result = await AuthService.UploadAvatarAsync(multipartBody);
+            PublicProfileDto result = await AuthService.UploadAvatarAsync(multipartBody);
 
             if(result is not null)
             {
@@ -259,7 +259,7 @@ public partial class Profile
         _avatarMessage     = null;
         StateHasChanged();
 
-        (bool succeeded, string? error) = await AuthService.DeleteAvatarAsync();
+        (bool succeeded, string error) = await AuthService.DeleteAvatarAsync();
 
         if(succeeded)
         {

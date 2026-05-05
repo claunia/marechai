@@ -10,9 +10,9 @@ public partial class BookListItem : ObservableObject
     public long    Id        { get; set; }
     public string  Title     { get; set; } = string.Empty;
     public int?    Year      { get; set; }
-    public string? Authors   { get; set; }
+    public string Authors   { get; set; }
     public Guid?   CoverGuid { get; set; }
 
     [ObservableProperty]
-    private ImageSource? _coverThumbnailSource;
+    private ImageSource _coverThumbnailSource;
 }

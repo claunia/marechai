@@ -45,11 +45,11 @@ public enum PlatformMatchType
 
 public sealed class SoftwareReleaseImportRow
 {
-    public string? Title              { get; set; }
-    public string? IsCompilationInput { get; set; }
-    public string? SoftwareInput      { get; set; }
-    public string? PlatformInput      { get; set; }
-    public string? PublisherInput     { get; set; }
+    public string Title              { get; set; }
+    public string IsCompilationInput { get; set; }
+    public string SoftwareInput      { get; set; }
+    public string PlatformInput      { get; set; }
+    public string PublisherInput     { get; set; }
     public int?    ReleaseYear        { get; set; }
     public int?    ReleaseMonth       { get; set; }
     public int?    ReleaseDay         { get; set; }
@@ -57,20 +57,20 @@ public sealed class SoftwareReleaseImportRow
     public bool? IsCompilation { get; set; }
 
     public List<CompanyDto>          MatchedPublishers { get; set; } = [];
-    public CompanyDto?               SelectedPublisher { get; set; }
+    public CompanyDto               SelectedPublisher { get; set; }
     public CompanyMatchType          PublisherMatch    { get; set; } = CompanyMatchType.None;
 
     public List<SoftwareDto>         MatchedSoftware   { get; set; } = [];
-    public SoftwareDto?              SelectedSoftware  { get; set; }
+    public SoftwareDto              SelectedSoftware  { get; set; }
     public SoftwareMatchType         SoftwareMatch     { get; set; } = SoftwareMatchType.New;
 
     public List<SoftwarePlatformDto> MatchedPlatforms  { get; set; } = [];
-    public SoftwarePlatformDto?      SelectedPlatform  { get; set; }
+    public SoftwarePlatformDto      SelectedPlatform  { get; set; }
     public PlatformMatchType         PlatformMatch     { get; set; } = PlatformMatchType.New;
 
     public bool    IsDuplicate      { get; set; }
-    public string? ImportError      { get; set; }
-    public string? ValidationError  { get; set; }
+    public string ImportError      { get; set; }
+    public string ValidationError  { get; set; }
 
     public DateTime? ReleaseDate
     {
@@ -143,7 +143,7 @@ public sealed class SoftwareReleaseImportRow
         }
     }
 
-    public static bool? ParseBoolean(string? input)
+    public static bool? ParseBoolean(string input)
     {
         if(string.IsNullOrWhiteSpace(input))
             return null;

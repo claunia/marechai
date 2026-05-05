@@ -26,9 +26,9 @@ public static class ServiceCollectionExtensions
     /// <returns>The updated <see cref="IServiceCollection" /> with the registered Kiota client.</returns>
     public static IServiceCollection AddKiotaClientV2<TClient>(this IServiceCollection services,
                                                                HostBuilderContext context,
-                                                               EndpointOptions? options = null, string? name = null,
+                                                               EndpointOptions options = null, string name = null,
                                                                Func<IHttpClientBuilder, EndpointOptions,
-                                                                   IHttpClientBuilder>? configure = null)
+                                                                   IHttpClientBuilder> configure = null)
         where TClient : class =>
         services.AddKiotaClientWithEndpointV2<TClient, EndpointOptions>(context, options, name, configure);
 
@@ -44,8 +44,8 @@ public static class ServiceCollectionExtensions
     /// <param name="configure">[Optional] A callback for configuring the endpoint.</param>
     /// <returns>The updated <see cref="IServiceCollection" /> with the registered Kiota client.</returns>
     public static IServiceCollection AddKiotaClientWithEndpointV2<TClient, TEndpoint>(
-        this IServiceCollection services, HostBuilderContext context, TEndpoint? options = null, string? name = null,
-        Func<IHttpClientBuilder, TEndpoint?, IHttpClientBuilder>? configure = null)
+        this IServiceCollection services, HostBuilderContext context, TEndpoint options = null, string name = null,
+        Func<IHttpClientBuilder, TEndpoint, IHttpClientBuilder> configure = null)
         where TClient : class where TEndpoint : EndpointOptions, new()
     {
         services.AddKiotaHandlers();

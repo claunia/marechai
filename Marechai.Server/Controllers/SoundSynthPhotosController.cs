@@ -248,7 +248,7 @@ public class SoundSynthPhotosController(MarechaiContext context, IConfiguration 
     public async Task<ActionResult<SoundSynthPhotoDto>> UploadAsync(IFormFile            file,
                                                                     [FromForm] int       soundSynthId,
                                                                     [FromForm] int       licenseId,
-                                                                    [FromForm] string?   source)
+                                                                    [FromForm] string   source)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 

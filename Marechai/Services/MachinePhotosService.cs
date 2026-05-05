@@ -40,7 +40,7 @@ public class MachinePhotosService(Marechai.ApiClient.Client client, IRequestAdap
     {
         try
         {
-            List<Guid?>? guids = await client.Machines[machineId].Photos.GetAsync();
+            List<Guid?> guids = await client.Machines[machineId].Photos.GetAsync();
 
             return guids?.Where(g => g.HasValue).Select(g => g!.Value).ToList() ?? [];
         }
@@ -50,7 +50,7 @@ public class MachinePhotosService(Marechai.ApiClient.Client client, IRequestAdap
         }
     }
 
-    public async Task<MachinePhotoDto?> GetAsync(Guid id)
+    public async Task<MachinePhotoDto> GetAsync(Guid id)
     {
         try
         {
@@ -62,8 +62,8 @@ public class MachinePhotosService(Marechai.ApiClient.Client client, IRequestAdap
         }
     }
 
-    public async Task<(MachinePhotoDto? photo, string? error)> UploadPhotoAsync(int    machineId, int licenseId,
-                                                                                string? source,   byte[] fileBytes,
+    public async Task<(MachinePhotoDto photo, string error)> UploadPhotoAsync(int    machineId, int licenseId,
+                                                                                string source,   byte[] fileBytes,
                                                                                 string  fileName)
     {
         try
@@ -100,7 +100,7 @@ public class MachinePhotosService(Marechai.ApiClient.Client client, IRequestAdap
                 { "401", ProblemDetails.CreateFromDiscriminatorValue }
             };
 
-            MachinePhotoDto? result = await requestAdapter.SendAsync(requestInfo,
+            MachinePhotoDto result = await requestAdapter.SendAsync(requestInfo,
                 MachinePhotoDto.CreateFromDiscriminatorValue, errorMapping);
 
             return (result, null);
@@ -111,7 +111,7 @@ public class MachinePhotosService(Marechai.ApiClient.Client client, IRequestAdap
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeletePhotoAsync(Guid id)
+    public async Task<(bool succeeded, string error)> DeletePhotoAsync(Guid id)
     {
         try
         {
@@ -129,7 +129,7 @@ public class MachinePhotosService(Marechai.ApiClient.Client client, IRequestAdap
     {
         try
         {
-            List<LicenseDto>? licenses = await client.Licenses.GetAsync();
+            List<LicenseDto> licenses = await client.Licenses.GetAsync();
 
             return licenses?.OrderBy(l => l.Name).ToList() ?? [];
         }

@@ -199,13 +199,13 @@ public class ComputersService
     /// <summary>
     ///     Fetches a single machine with full details by ID from the API
     /// </summary>
-    public async Task<MachineDto?> GetMachineByIdAsync(int machineId)
+    public async Task<MachineDto> GetMachineByIdAsync(int machineId)
     {
         try
         {
             _logger.LogInformation("Fetching machine {MachineId} from API", machineId);
 
-            MachineDto? machine = await _apiClient.Machines[machineId].Full.GetAsync();
+            MachineDto machine = await _apiClient.Machines[machineId].Full.GetAsync();
 
             if(machine == null)
             {
@@ -235,7 +235,7 @@ public class ComputersService
         {
             _logger.LogInformation("Fetching photos for machine {MachineId} from API", machineId);
 
-            List<Guid?>? photos = await _apiClient.Machines[machineId].Photos.GetAsync();
+            List<Guid?> photos = await _apiClient.Machines[machineId].Photos.GetAsync();
 
             if(photos == null || photos.Count == 0)
             {
@@ -264,13 +264,13 @@ public class ComputersService
     /// <summary>
     ///     Fetches detailed information for a specific photo from the API
     /// </summary>
-    public async Task<MachinePhotoDto?> GetMachinePhotoDetailsAsync(Guid photoId)
+    public async Task<MachinePhotoDto> GetMachinePhotoDetailsAsync(Guid photoId)
     {
         try
         {
             _logger.LogInformation("Fetching photo details for {PhotoId} from API", photoId);
 
-            MachinePhotoDto? photo = await _apiClient.Machines.Photos[photoId].GetAsync();
+            MachinePhotoDto photo = await _apiClient.Machines.Photos[photoId].GetAsync();
 
             if(photo == null)
             {
@@ -300,7 +300,7 @@ public class ComputersService
         {
             _logger.LogInformation("Fetching software for machine {MachineId} from API", machineId);
 
-            List<SoftwareDto>? software = await _apiClient.Machines[machineId].Software.GetAsync();
+            List<SoftwareDto> software = await _apiClient.Machines[machineId].Software.GetAsync();
 
             return software ?? [];
         }
@@ -315,13 +315,13 @@ public class ComputersService
     /// <summary>
     ///     Fetches a localized description for a machine
     /// </summary>
-    public async Task<MachineDescriptionDto?> GetDescriptionAsync(int machineId, string languageCode)
+    public async Task<MachineDescriptionDto> GetDescriptionAsync(int machineId, string languageCode)
     {
         try
         {
             _logger.LogInformation("Fetching description for machine {MachineId} lang {Lang}", machineId, languageCode);
 
-            MachineDescriptionDto? desc = await _apiClient.Machines[machineId].Description.GetAsync(
+            MachineDescriptionDto desc = await _apiClient.Machines[machineId].Description.GetAsync(
                 config => config.QueryParameters.Lang = languageCode);
 
             return desc;

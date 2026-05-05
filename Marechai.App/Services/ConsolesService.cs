@@ -195,13 +195,13 @@ public class ConsolesService
     /// <summary>
     ///     Fetches a single machine with full details by ID from the API
     /// </summary>
-    public async Task<MachineDto?> GetMachineByIdAsync(int machineId)
+    public async Task<MachineDto> GetMachineByIdAsync(int machineId)
     {
         try
         {
             _logger.LogInformation("Fetching machine {MachineId} from API", machineId);
 
-            MachineDto? machine = await _apiClient.Machines[machineId].Full.GetAsync();
+            MachineDto machine = await _apiClient.Machines[machineId].Full.GetAsync();
 
             if(machine == null)
             {

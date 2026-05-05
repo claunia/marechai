@@ -12,7 +12,7 @@ public interface IColorThemeService
 {
     string                CurrentColorTheme    { get; }
     IReadOnlyList<string> AvailableColorThemes { get; }
-    IThemeService?        ThemeService         { get; }
+    IThemeService        ThemeService         { get; }
     void                  ApplyColorTheme(string        themeName);
     void                  SetThemeService(IThemeService themeService);
     void                  ReapplyCurrentTheme();
@@ -31,7 +31,7 @@ public class ColorThemeService : IColorThemeService
 
     public string CurrentColorTheme { get; private set; } = DEFAULT_THEME;
 
-    public IThemeService? ThemeService => _themeService;
+    public IThemeService ThemeService => _themeService;
 
     public IReadOnlyList<string> AvailableColorThemes => new List<string>
     {

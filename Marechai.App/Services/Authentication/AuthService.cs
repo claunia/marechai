@@ -13,18 +13,18 @@ public sealed class AuthService
     (Client client, ITokenService tokenService, IStringLocalizer stringLocalizer) : IAuthenticationService
 {
     /// <inheritdoc />
-    public async ValueTask<bool> LoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials = null,
-                                            string?      provider = null, CancellationToken? cancellationToken = null)
+    public async ValueTask<bool> LoginAsync(IDispatcher dispatcher, IDictionary<string, string> credentials = null,
+                                            string      provider = null, CancellationToken? cancellationToken = null)
     {
         if(credentials is null) return false;
 
-        string? email =
+        string email =
             (credentials.FirstOrDefault(x => x.Key.Equals("Email", StringComparison.OrdinalIgnoreCase)).Value ??
              credentials.FirstOrDefault(x => x.Key.Equals("email",    StringComparison.OrdinalIgnoreCase)).Value ??
              credentials.FirstOrDefault(x => x.Key.Equals("Username", StringComparison.OrdinalIgnoreCase)).Value)
           ?.Trim();
 
-        string? password =
+        string password =
             (credentials.FirstOrDefault(x => x.Key.Equals("Password", StringComparison.OrdinalIgnoreCase)).Value ??
              credentials.FirstOrDefault(x => x.Key.Equals("password", StringComparison.OrdinalIgnoreCase)).Value)
           ?.Trim();
@@ -49,7 +49,7 @@ public sealed class AuthService
             Password = password
         };
 
-        AuthResponse? authResponse;
+        AuthResponse authResponse;
 
         try
         {
@@ -101,7 +101,7 @@ public sealed class AuthService
         IsAuthenticated(cancellationToken);
 
     /// <inheritdoc />
-    public async ValueTask<bool> LogoutAsync(IDispatcher? dispatcher, CancellationToken? cancellationToken = null)
+    public async ValueTask<bool> LogoutAsync(IDispatcher dispatcher, CancellationToken? cancellationToken = null)
     {
         tokenService.RemoveToken();
         LoggedOut?.Invoke(this, EventArgs.Empty);
@@ -121,6 +121,6 @@ public sealed class AuthService
     /// <inheritdoc />
     public string[] Providers { get; } = [];
     /// <inheritdoc />
-    public event EventHandler? LoggedOut;
-    public event EventHandler? LoggedIn;
+    public event EventHandler LoggedOut;
+    public event EventHandler LoggedIn;
 }

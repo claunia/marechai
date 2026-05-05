@@ -35,5 +35,5 @@ public class News : BaseModel<int>
     public NewsType Type { get; set; }
     [DisplayName("Affected ID")]
     public long AddedId { get; set; }
-    public string? Name { get; set; }
+    public string Name { get; set; }
 }

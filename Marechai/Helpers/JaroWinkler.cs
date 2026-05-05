@@ -35,7 +35,7 @@ public static class JaroWinkler
     const int    MaxPrefixLength     = 4;
 
     /// <summary>Returns a similarity score between 0.0 (no similarity) and 1.0 (identical).</summary>
-    public static double Similarity(string? s1, string? s2)
+    public static double Similarity(string s1, string s2)
     {
         if(string.IsNullOrEmpty(s1) || string.IsNullOrEmpty(s2))
             return 0.0;
@@ -126,14 +126,14 @@ public static class JaroWinkler
     public static List<(T item, double score)> FindMatches<T>(
         string             input,
         IEnumerable<T>     candidates,
-        Func<T, string?>   nameSelector,
+        Func<T, string>   nameSelector,
         double             threshold = 0.85)
     {
         var results = new List<(T item, double score)>();
 
         foreach(T candidate in candidates)
         {
-            string? name = nameSelector(candidate);
+            string name = nameSelector(candidate);
 
             if(string.IsNullOrWhiteSpace(name))
                 continue;

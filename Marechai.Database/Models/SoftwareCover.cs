@@ -38,7 +38,7 @@ public class SoftwareCover : BaseModel<Guid>
     [Required]
     public SoftwareCoverType Type { get; set; }
 
-    public string? Caption { get; set; }
+    public string Caption { get; set; }
 
     [Required]
     public string OriginalExtension { get; set; }

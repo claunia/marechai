@@ -33,10 +33,10 @@ namespace Marechai.Pages.Admin;
 
 public partial class Processors
 {
-    string?              _errorMessage;
+    string              _errorMessage;
     bool                 _isLoading = true;
-    string?              _successMessage;
-    List<ProcessorDto>?  _processors;
+    string              _successMessage;
+    List<ProcessorDto>  _processors;
 
     protected override async Task OnInitializedAsync() => await LoadProcessorsAsync();
 
@@ -73,7 +73,7 @@ public partial class Processors
                                                                                      FullWidth = true
                                                                                  });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: ProcessorDialogResult data })
         {
@@ -108,7 +108,7 @@ public partial class Processors
                 L3               = data.L3
             };
 
-            (long? id, string? errorMessage) = await ProcessorsService.CreateAsync(dto);
+            (long? id, string errorMessage) = await ProcessorsService.CreateAsync(dto);
 
             if(id is not null)
             {
@@ -163,7 +163,7 @@ public partial class Processors
                                                                                      FullWidth = true
                                                                                  });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false, Data: ProcessorDialogResult data })
         {
@@ -199,7 +199,7 @@ public partial class Processors
                 L3               = data.L3
             };
 
-            (bool succeeded, string? errorMessage) = await ProcessorsService.UpdateAsync(processor.Id ?? 0, dto);
+            (bool succeeded, string errorMessage) = await ProcessorsService.UpdateAsync(processor.Id ?? 0, dto);
 
             if(succeeded)
             {
@@ -232,11 +232,11 @@ public partial class Processors
                                                                    FullWidth = true
                                                                });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? errorMessage) = await ProcessorsService.DeleteAsync(processor.Id ?? 0);
+            (bool succeeded, string errorMessage) = await ProcessorsService.DeleteAsync(processor.Id ?? 0);
 
             if(succeeded)
             {
@@ -259,7 +259,7 @@ public partial class Processors
                                                                                            FullWidth = true
                                                                                        });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
             await LoadProcessorsAsync();

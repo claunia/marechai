@@ -37,7 +37,7 @@ public class SoftwarePlatformsService(Marechai.ApiClient.Client client)
     {
         try
         {
-            List<SoftwarePlatformDto>? platforms = await client.Software.Platforms.GetAsync();
+            List<SoftwarePlatformDto> platforms = await client.Software.Platforms.GetAsync();
 
             return platforms ?? [];
         }
@@ -47,7 +47,7 @@ public class SoftwarePlatformsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<SoftwarePlatformDto?> GetByIdAsync(int id)
+    public async Task<SoftwarePlatformDto> GetByIdAsync(int id)
     {
         try
         {
@@ -59,7 +59,7 @@ public class SoftwarePlatformsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(int? id, string? error)> CreateAsync(SoftwarePlatformDto dto)
+    public async Task<(int? id, string error)> CreateAsync(SoftwarePlatformDto dto)
     {
         try
         {
@@ -77,7 +77,7 @@ public class SoftwarePlatformsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> UpdateAsync(int id, SoftwarePlatformDto dto)
+    public async Task<(bool succeeded, string error)> UpdateAsync(int id, SoftwarePlatformDto dto)
     {
         try
         {
@@ -95,7 +95,7 @@ public class SoftwarePlatformsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteAsync(int id)
+    public async Task<(bool succeeded, string error)> DeleteAsync(int id)
     {
         try
         {

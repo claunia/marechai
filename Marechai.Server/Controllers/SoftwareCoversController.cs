@@ -93,7 +93,7 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<SoftwareCoverDto>> GetAsync(Guid id)
     {
-        SoftwareCoverDto? dto = await context.SoftwareCovers
+        SoftwareCoverDto dto = await context.SoftwareCovers
                                              .Where(c => c.Id == id)
                                              .Select(c => new SoftwareCoverDto
                                               {
@@ -128,7 +128,7 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
     public async Task<ActionResult<SoftwareCoverDto>> UploadAsync(IFormFile                    file,
                                                                    [FromForm] ulong             releaseId,
                                                                    [FromForm] SoftwareCoverType type,
-                                                                   [FromForm] string?           caption)
+                                                                   [FromForm] string           caption)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 

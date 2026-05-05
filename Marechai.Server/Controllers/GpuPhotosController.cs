@@ -248,7 +248,7 @@ public class GpuPhotosController(MarechaiContext context, IConfiguration configu
     public async Task<ActionResult<GpuPhotoDto>> UploadAsync(IFormFile            file,
                                                              [FromForm] int       gpuId,
                                                              [FromForm] int       licenseId,
-                                                             [FromForm] string?   source)
+                                                             [FromForm] string   source)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 

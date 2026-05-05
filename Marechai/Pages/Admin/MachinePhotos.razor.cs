@@ -38,22 +38,22 @@ public partial class MachinePhotos
 {
     const long MaxFileSize = 50 * 1024 * 1024; // 50 MB
 
-    string?               _errorMessage;
+    string               _errorMessage;
     bool                  _isLoading = true;
     bool                  _isUploading;
-    List<LicenseDto>?     _licenses;
-    string?               _machineName;
-    List<MachinePhotoDto>? _photos;
-    IBrowserFile?         _selectedFile;
-    LicenseDto?           _selectedLicense;
-    string?               _sourceUrl;
-    string?               _successMessage;
+    List<LicenseDto>     _licenses;
+    string               _machineName;
+    List<MachinePhotoDto> _photos;
+    IBrowserFile         _selectedFile;
+    LicenseDto           _selectedLicense;
+    string               _sourceUrl;
+    string               _successMessage;
 
     [Parameter] public int MachineId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        MachineDto? machine = await MachinesService.GetByIdAsync(MachineId);
+        MachineDto machine = await MachinesService.GetByIdAsync(MachineId);
         _machineName = machine?.Name;
         _licenses    = await MachinePhotosService.GetAllLicensesAsync();
 
@@ -70,7 +70,7 @@ public partial class MachinePhotos
 
         foreach(Guid guid in guids)
         {
-            MachinePhotoDto? photo = await MachinePhotosService.GetAsync(guid);
+            MachinePhotoDto photo = await MachinePhotosService.GetAsync(guid);
 
             if(photo is not null)
                 photos.Add(photo);
@@ -98,7 +98,7 @@ public partial class MachinePhotos
             await stream.CopyToAsync(ms);
             byte[] fileBytes = ms.ToArray();
 
-            (MachinePhotoDto? photo, string? error) =
+            (MachinePhotoDto photo, string error) =
                 await MachinePhotosService.UploadPhotoAsync(MachineId, _selectedLicense.Id ?? 0, _sourceUrl, fileBytes,
                                                             _selectedFile.Name);
 
@@ -142,11 +142,11 @@ public partial class MachinePhotos
                                                                    FullWidth = true
                                                                });
 
-        DialogResult? result = await dialog.Result;
+        DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
         {
-            (bool succeeded, string? errorMessage) = await MachinePhotosService.DeletePhotoAsync(photo.Id ?? Guid.Empty);
+            (bool succeeded, string errorMessage) = await MachinePhotosService.DeletePhotoAsync(photo.Id ?? Guid.Empty);
 
             if(succeeded)
             {

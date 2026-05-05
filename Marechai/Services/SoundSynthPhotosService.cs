@@ -40,7 +40,7 @@ public class SoundSynthPhotosService(Marechai.ApiClient.Client client, IRequestA
     {
         try
         {
-            List<Guid?>? guids = await client.SoundSynths[soundSynthId].Photos.GetAsync();
+            List<Guid?> guids = await client.SoundSynths[soundSynthId].Photos.GetAsync();
 
             return guids?.Where(g => g.HasValue).Select(g => g!.Value).ToList() ?? [];
         }
@@ -50,7 +50,7 @@ public class SoundSynthPhotosService(Marechai.ApiClient.Client client, IRequestA
         }
     }
 
-    public async Task<SoundSynthPhotoDto?> GetAsync(Guid id)
+    public async Task<SoundSynthPhotoDto> GetAsync(Guid id)
     {
         try
         {
@@ -62,8 +62,8 @@ public class SoundSynthPhotosService(Marechai.ApiClient.Client client, IRequestA
         }
     }
 
-    public async Task<(SoundSynthPhotoDto? photo, string? error)> UploadPhotoAsync(int    soundSynthId, int licenseId,
-                                                                                   string? source,      byte[] fileBytes,
+    public async Task<(SoundSynthPhotoDto photo, string error)> UploadPhotoAsync(int    soundSynthId, int licenseId,
+                                                                                   string source,      byte[] fileBytes,
                                                                                    string  fileName)
     {
         try
@@ -100,7 +100,7 @@ public class SoundSynthPhotosService(Marechai.ApiClient.Client client, IRequestA
                 { "401", ProblemDetails.CreateFromDiscriminatorValue }
             };
 
-            SoundSynthPhotoDto? result = await requestAdapter.SendAsync(requestInfo,
+            SoundSynthPhotoDto result = await requestAdapter.SendAsync(requestInfo,
                 SoundSynthPhotoDto.CreateFromDiscriminatorValue, errorMapping);
 
             return (result, null);
@@ -111,7 +111,7 @@ public class SoundSynthPhotosService(Marechai.ApiClient.Client client, IRequestA
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeletePhotoAsync(Guid id)
+    public async Task<(bool succeeded, string error)> DeletePhotoAsync(Guid id)
     {
         try
         {
@@ -129,7 +129,7 @@ public class SoundSynthPhotosService(Marechai.ApiClient.Client client, IRequestA
     {
         try
         {
-            List<LicenseDto>? licenses = await client.Licenses.GetAsync();
+            List<LicenseDto> licenses = await client.Licenses.GetAsync();
 
             return licenses?.OrderBy(l => l.Name).ToList() ?? [];
         }
