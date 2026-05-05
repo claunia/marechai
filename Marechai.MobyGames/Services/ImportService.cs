@@ -275,19 +275,113 @@ public class ImportService
         }
         else
         {
-            software = new Software { Name = game.Name, IsGame = true };
-            context.Softwares.Add(software);
-            await context.SaveChangesAsync();
+            // Fuzzy match: check for existing software with similar names
+            var fuzzyMatches = await FindFuzzySoftwareMatchesAsync(context, game.Name);
 
-            context.News.Add(new News
+            if(fuzzyMatches.Count > 0)
             {
-                AddedId = (long)software.Id,
-                Date    = DateTime.UtcNow,
-                Type    = NewsType.NewSoftwareInDb,
-                Name    = game.Name
-            });
+                string incomingYear = ExtractYear(game.ReleaseDate) ?? "(no date)";
 
-            await context.SaveChangesAsync();
+                if(incomingYear == "(no date)" && game.Releases.Count > 0)
+                {
+                    var firstRelDate = game.Releases
+                                           .Where(r => !string.IsNullOrWhiteSpace(r.ReleaseDate))
+                                           .Select(r => r.ReleaseDate)
+                                           .FirstOrDefault();
+
+                    if(firstRelDate != null)
+                        incomingYear = ExtractYear(firstRelDate) ?? "(no date)";
+                }
+
+                Console.WriteLine($"\n    POSSIBLE DUPLICATES for \"{game.Name}\":");
+                Console.WriteLine($"    Incoming game year: {incomingYear}, platforms: {string.Join(", ", game.Platforms)}");
+
+                for(int m = 0; m < fuzzyMatches.Count; m++)
+                {
+                    var match = fuzzyMatches[m];
+
+                    var releases = await context.SoftwareReleases
+                                                .Where(r => r.SoftwareId == match.Id)
+                                                .Select(r => new
+                                                {
+                                                    r.ReleaseDate,
+                                                    Platform = r.Platform != null ? r.Platform.Name : null
+                                                })
+                                                .ToListAsync();
+
+                    var years     = releases.Where(r => r.ReleaseDate.HasValue)
+                                            .Select(r => r.ReleaseDate.Value.Year.ToString())
+                                            .Distinct();
+                    var platforms = releases.Where(r => r.Platform != null)
+                                            .Select(r => r.Platform)
+                                            .Distinct();
+
+                    string yearStr     = years.Any()     ? string.Join("/", years)     : "no releases";
+                    string platformStr = platforms.Any() ? string.Join(", ", platforms) : "no platforms";
+
+                    Console.WriteLine($"      [{m + 1}] \"{match.Name}\" (ID: {match.Id}, " +
+                                      $"Score: {match.Score:F2}, Year(s): {yearStr}, Platforms: {platformStr})");
+                }
+
+                Console.Write("    [N]ew entry / [1-N] Link to existing / [S]kip: ");
+                string input = Console.ReadLine()?.Trim().ToUpperInvariant();
+
+                if(input == "S")
+                {
+                    Console.WriteLine("    Skipped.");
+
+                    return;
+                }
+
+                if(int.TryParse(input, out int choice) && choice >= 1 && choice <= fuzzyMatches.Count)
+                {
+                    software = await context.Softwares.FindAsync(fuzzyMatches[choice - 1].Id);
+
+                    context.News.Add(new News
+                    {
+                        AddedId = (long)software.Id,
+                        Date    = DateTime.UtcNow,
+                        Type    = NewsType.UpdatedSoftwareInDb,
+                        Name    = software.Name
+                    });
+
+                    await context.SaveChangesAsync();
+                    Console.WriteLine($"    Linked to existing Software ID: {software.Id}");
+                }
+                else
+                {
+                    software = new Software { Name = game.Name, IsGame = true };
+                    context.Softwares.Add(software);
+                    await context.SaveChangesAsync();
+
+                    context.News.Add(new News
+                    {
+                        AddedId = (long)software.Id,
+                        Date    = DateTime.UtcNow,
+                        Type    = NewsType.NewSoftwareInDb,
+                        Name    = game.Name
+                    });
+
+                    await context.SaveChangesAsync();
+                    Console.WriteLine($"    Created new Software ID: {software.Id}");
+                }
+            }
+            else
+            {
+                software = new Software { Name = game.Name, IsGame = true };
+                context.Softwares.Add(software);
+                await context.SaveChangesAsync();
+
+                context.News.Add(new News
+                {
+                    AddedId = (long)software.Id,
+                    Date    = DateTime.UtcNow,
+                    Type    = NewsType.NewSoftwareInDb,
+                    Name    = game.Name
+                });
+
+                await context.SaveChangesAsync();
+            }
         }
 
         // 2. Description
@@ -745,6 +839,124 @@ public class ImportService
             return year.ToString();
 
         return null;
+    }
+
+    async Task<List<(ulong Id, string Name, double Score)>> FindFuzzySoftwareMatchesAsync(
+        MarechaiContext context, string gameName)
+    {
+        var results = new List<(ulong Id, string Name, double Score)>();
+
+        // Normalize for comparison
+        string normalized = gameName.ToUpperInvariant();
+
+        // Load candidates that share a common prefix to limit DB load
+        // Use first two words for short first words, or first word if long enough
+        string[] words     = gameName.Split([' ', ':', '-'], StringSplitOptions.RemoveEmptyEntries);
+        string   prefix    = words.Length >= 2 && words[0].Length < 3
+                                 ? string.Join(" ", words.Take(2))
+                                 : words.Length > 0 ? words[0] : null;
+
+        if(string.IsNullOrWhiteSpace(prefix))
+            return results;
+
+        var candidates = await context.Softwares
+                                       .Where(s => s.Name.StartsWith(prefix))
+                                       .Select(s => new { s.Id, s.Name })
+                                       .ToListAsync();
+
+        foreach(var candidate in candidates)
+        {
+            if(string.Equals(candidate.Name, gameName, StringComparison.OrdinalIgnoreCase))
+                continue; // exact matches handled elsewhere
+
+            double score = 0;
+
+            string candNorm = candidate.Name.ToUpperInvariant();
+
+            // Prefix match: one name starts with the other
+            if(normalized.StartsWith(candNorm) || candNorm.StartsWith(normalized))
+            {
+                // Score based on length ratio — closer lengths = higher score
+                double lenRatio = (double)Math.Min(normalized.Length, candNorm.Length) /
+                                  Math.Max(normalized.Length, candNorm.Length);
+
+                score = 0.85 + 0.15 * lenRatio; // 0.85–1.0 range
+            }
+            else
+            {
+                score = JaroWinklerSimilarity(normalized, candNorm);
+            }
+
+            if(score >= 0.85)
+                results.Add(((ulong)candidate.Id, candidate.Name, score));
+        }
+
+        return results.OrderByDescending(r => r.Score).Take(10).ToList();
+    }
+
+    static double JaroWinklerSimilarity(string a, string b)
+    {
+        if(string.IsNullOrEmpty(a) || string.IsNullOrEmpty(b))
+            return 0.0;
+
+        if(string.Equals(a, b, StringComparison.OrdinalIgnoreCase))
+            return 1.0;
+
+        int matchWindow = Math.Max(a.Length, b.Length) / 2 - 1;
+
+        if(matchWindow < 0) matchWindow = 0;
+
+        var aMatched = new bool[a.Length];
+        var bMatched = new bool[b.Length];
+        int matches  = 0, transpositions = 0;
+
+        for(int i = 0; i < a.Length; i++)
+        {
+            int start = Math.Max(0, i - matchWindow);
+            int end   = Math.Min(i + matchWindow + 1, b.Length);
+
+            for(int j = start; j < end; j++)
+            {
+                if(bMatched[j] || a[i] != b[j]) continue;
+
+                aMatched[i] = true;
+                bMatched[j] = true;
+                matches++;
+
+                break;
+            }
+        }
+
+        if(matches == 0) return 0.0;
+
+        int k = 0;
+
+        for(int i = 0; i < a.Length; i++)
+        {
+            if(!aMatched[i]) continue;
+
+            while(!bMatched[k]) k++;
+
+            if(a[i] != b[k]) transpositions++;
+
+            k++;
+        }
+
+        double m    = matches;
+        double jaro = (m / a.Length + m / b.Length + (m - transpositions / 2.0) / m) / 3.0;
+
+        // Winkler prefix bonus
+        int prefixLen = 0;
+
+        for(int i = 0; i < Math.Min(Math.Min(a.Length, b.Length), 4); i++)
+        {
+            if(a[i] == b[i])
+                prefixLen++;
+            else
+                break;
+        }
+
+        return jaro + prefixLen * 0.1 * (1.0 - jaro);
     }
 
     /// <summary>
