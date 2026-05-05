@@ -429,6 +429,7 @@ public class ImportService
                                    HashSet<(ulong, int, string)> addedCompanyRoles)
     {
         var addedProductCodes = new HashSet<(ProductCodeIssuer, string)>();
+        var addedBarcodes     = new HashSet<string>();
 
         // Group releases by platform
         var platformGroups = game.Releases.GroupBy(r => r.Platform ?? "Unknown");
@@ -474,15 +475,16 @@ public class ImportService
                     bool exists = await context.SoftwareBarcodes
                                                .AnyAsync(b => b.Code == barcode.Code);
 
-                    if(!exists)
+                    if(exists) continue;
+
+                    if(!addedBarcodes.Add(barcode.Code)) continue;
+
+                    context.SoftwareBarcodes.Add(new SoftwareBarcode
                     {
-                        context.SoftwareBarcodes.Add(new SoftwareBarcode
-                        {
-                            ReleaseId = dbRelease.Id,
-                            Code      = barcode.Code,
-                            Type      = barcodeType
-                        });
-                    }
+                        ReleaseId = dbRelease.Id,
+                        Code      = barcode.Code,
+                        Type      = barcodeType
+                    });
                 }
 
                 // Product codes
