@@ -53,7 +53,7 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
         if(!string.IsNullOrWhiteSpace(search))
             query = query.Where(c => c.Name.Contains(search) || (c.LegalName != null && c.LegalName.Contains(search)));
 
-        query = query.OrderBy(c => c.Name);
+        query = query.OrderBy(c => MarechaiContext.NaturalSortKey(c.Name));
 
         if(skip.HasValue) query = query.Skip(skip.Value);
 
@@ -210,7 +210,7 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<MachineDto>> GetMachinesAsync(int id) => context.Machines.Where(m => m.CompanyId == id)
-                                                                     .OrderBy(m => m.Name)
+                                                                     .OrderBy(m => MarechaiContext.NaturalSortKey(m.Name))
                                                                      .Select(m => new MachineDto
                                                                       {
                                                                           Id   = m.Id,
@@ -224,7 +224,7 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<GpuDto>> GetGpusAsync(int id) => context.Gpus.Where(g => g.CompanyId == id)
-                                                              .OrderBy(g => g.Name)
+                                                              .OrderBy(g => MarechaiContext.NaturalSortKey(g.Name))
                                                               .Select(g => new GpuDto
                                                                {
                                                                    Id   = g.Id,
@@ -238,7 +238,7 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<SoundSynthDto>> GetSoundSynthsAsync(int id) => context.SoundSynths
        .Where(s => s.CompanyId == id)
-       .OrderBy(s => s.Name)
+       .OrderBy(s => MarechaiContext.NaturalSortKey(s.Name))
        .Select(s => new SoundSynthDto
         {
             Id   = s.Id,
@@ -252,7 +252,7 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<ProcessorDto>> GetProcessorsAsync(int id) => context.Processors
        .Where(p => p.CompanyId == id)
-       .OrderBy(p => p.Name)
+       .OrderBy(p => MarechaiContext.NaturalSortKey(p.Name))
        .Select(p => new ProcessorDto
         {
             Id   = p.Id,
@@ -266,7 +266,7 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<MachineFamilyDto>> GetMachineFamiliesAsync(int id) => context.MachineFamilies
        .Where(f => f.CompanyId == id)
-       .OrderBy(f => f.Name)
+       .OrderBy(f => MarechaiContext.NaturalSortKey(f.Name))
        .Select(f => new MachineFamilyDto
         {
             Id   = f.Id,
@@ -282,7 +282,7 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
        .Where(cb => cb.CompanyId == id)
        .Select(cb => cb.Book)
        .Distinct()
-       .OrderBy(b => b.Title)
+       .OrderBy(b => MarechaiContext.NaturalSortKey(b.Title))
        .Select(b => new BookDto
         {
             Id    = b.Id,
@@ -298,7 +298,7 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
        .Where(cd => cd.CompanyId == id)
        .Select(cd => cd.Document)
        .Distinct()
-       .OrderBy(d => d.Title)
+       .OrderBy(d => MarechaiContext.NaturalSortKey(d.Title))
        .Select(d => new DocumentDto
         {
             Id    = d.Id,
@@ -314,7 +314,7 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
        .Where(cm => cm.CompanyId == id)
        .Select(cm => cm.Magazine)
        .Distinct()
-       .OrderBy(m => m.Title)
+       .OrderBy(m => MarechaiContext.NaturalSortKey(m.Title))
        .Select(m => new MagazineDto
         {
             Id    = m.Id,
@@ -330,7 +330,7 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
        .Where(sr => sr.CompanyId == id)
        .Select(sr => sr.Software)
        .Distinct()
-       .OrderBy(s => s.Name)
+       .OrderBy(s => MarechaiContext.NaturalSortKey(s.Name))
        .Select(s => new SoftwareDto
         {
             Id   = s.Id,
@@ -379,7 +379,7 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<CompanyDto>> GetCompaniesByCountryAsync(int id) => context.Companies.Include(c => c.Logos)
        .Where(c => c.CountryId == id)
-       .OrderBy(c => c.Name)
+       .OrderBy(c => MarechaiContext.NaturalSortKey(c.Name))
        .Select(c => new CompanyDto
         {
             Id       = c.Id,
@@ -394,7 +394,7 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<CompanyDto>> GetCompaniesByLetterAsync(char id) => context.Companies.Include(c => c.Logos)
        .Where(c => EF.Functions.Like(c.Name, $"{id}%"))
-       .OrderBy(c => c.Name)
+       .OrderBy(c => MarechaiContext.NaturalSortKey(c.Name))
        .Select(c => new CompanyDto
         {
             Id       = c.Id,

@@ -81,7 +81,7 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<SoftwareDto>> GetSoftwareByLetterAsync(char c) => context.Softwares
        .Where(s => EF.Functions.Like(s.Name, $"{c}%"))
-       .OrderBy(s => s.Name)
+       .OrderBy(s => MarechaiContext.NaturalSortKey(s.Name))
        .Select(s => new SoftwareDto
         {
             Id                = s.Id,
@@ -108,7 +108,7 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
                                                            r.ReleaseDate.Value.Year == year))
                 || s.DirectReleases.Any(r => r.ReleaseDate != null &&
                                              r.ReleaseDate.Value.Year == year))
-       .OrderBy(s => s.Name)
+       .OrderBy(s => MarechaiContext.NaturalSortKey(s.Name))
        .Select(s => new SoftwareDto
         {
             Id                = s.Id,
@@ -133,7 +133,7 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
     public Task<List<SoftwareDto>> GetSoftwareByPlatformAsync(ulong platformId) => context.Softwares
        .Where(s => s.Versions.Any(v => v.Releases.Any(r => r.PlatformId == platformId))
                 || s.DirectReleases.Any(r => r.PlatformId == platformId))
-       .OrderBy(s => s.Name)
+       .OrderBy(s => MarechaiContext.NaturalSortKey(s.Name))
        .Select(s => new SoftwareDto
         {
             Id                = s.Id,
@@ -161,7 +161,7 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
                .Union(context.SoftwareReleases.Select(sr => sr.Publisher))
                .Distinct()
                .Include(c => c.Logos)
-               .OrderBy(c => c.Name)
+               .OrderBy(c => MarechaiContext.NaturalSortKey(c.Name))
                .Select(c => new CompanyDto
                 {
                     Id       = c.Id,
@@ -181,7 +181,7 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
                .Distinct()
                .Include(c => c.Logos)
                .Where(co => EF.Functions.Like(co.Name, $"{c}%"))
-               .OrderBy(co => co.Name)
+               .OrderBy(co => MarechaiContext.NaturalSortKey(co.Name))
                .Select(co => new CompanyDto
                 {
                     Id       = co.Id,
@@ -219,7 +219,7 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
         if(!string.IsNullOrWhiteSpace(search))
             query = query.Where(s => s.Name.Contains(search));
 
-        query = query.OrderBy(s => s.Name);
+        query = query.OrderBy(s => MarechaiContext.NaturalSortKey(s.Name));
 
         if(skip.HasValue) query = query.Skip(skip.Value);
 

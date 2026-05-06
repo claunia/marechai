@@ -74,7 +74,7 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
                                                                 .Select(cd => cd.Company)
                                                                 .Distinct()
                                                                 .Include(c => c.Logos)
-                                                                .OrderBy(c => c.Name)
+                                                                .OrderBy(c => MarechaiContext.NaturalSortKey(c.Name))
                                                                 .Select(c => new CompanyDto
                                                                  {
                                                                      Id = c.Id,
@@ -95,7 +95,7 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
        .Distinct()
        .Include(c => c.Logos)
        .Where(co => EF.Functions.Like(co.Name, $"{c}%"))
-       .OrderBy(co => co.Name)
+       .OrderBy(co => MarechaiContext.NaturalSortKey(co.Name))
        .Select(co => new CompanyDto
         {
             Id       = co.Id,
@@ -112,8 +112,8 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
        .Where(d =>
             (d.SortTitle != null && EF.Functions.Like(d.SortTitle, $"{c}%")) ||
             (d.SortTitle == null && EF.Functions.Like(d.Title, $"{c}%")))
-       .OrderBy(d => d.SortTitle)
-       .ThenBy(d => d.Title)
+       .OrderBy(d => MarechaiContext.NaturalSortKey(d.SortTitle))
+       .ThenBy(d => MarechaiContext.NaturalSortKey(d.Title))
        .ThenBy(d => d.Published)
        .Select(d => new DocumentDto
         {
@@ -134,8 +134,8 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<DocumentDto>> GetDocumentsByYearAsync(int year) => context.Documents
        .Where(d => d.Published != null && d.Published.Value.Year == year)
-       .OrderBy(d => d.SortTitle)
-       .ThenBy(d => d.Title)
+       .OrderBy(d => MarechaiContext.NaturalSortKey(d.SortTitle))
+       .ThenBy(d => MarechaiContext.NaturalSortKey(d.Title))
        .ThenBy(d => d.Published)
        .Select(d => new DocumentDto
         {
@@ -154,9 +154,9 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<DocumentDto>> GetAsync() => context.Documents.OrderBy(b => b.SortTitle)
+    public Task<List<DocumentDto>> GetAsync() => context.Documents.OrderBy(b => MarechaiContext.NaturalSortKey(b.SortTitle))
                                                         .ThenBy(b => b.Published)
-                                                        .ThenBy(b => b.Title)
+                                                        .ThenBy(b => MarechaiContext.NaturalSortKey(b.Title))
                                                         .Select(b => new DocumentDto
                                                          {
                                                              Id          = b.Id,

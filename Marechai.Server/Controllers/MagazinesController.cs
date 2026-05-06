@@ -74,7 +74,7 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
                                                                 .Select(cm => cm.Company)
                                                                 .Distinct()
                                                                 .Include(c => c.Logos)
-                                                                .OrderBy(c => c.Name)
+                                                                .OrderBy(c => MarechaiContext.NaturalSortKey(c.Name))
                                                                 .Select(c => new CompanyDto
                                                                  {
                                                                      Id = c.Id,
@@ -95,7 +95,7 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
        .Distinct()
        .Include(c => c.Logos)
        .Where(co => EF.Functions.Like(co.Name, $"{c}%"))
-       .OrderBy(co => co.Name)
+       .OrderBy(co => MarechaiContext.NaturalSortKey(co.Name))
        .Select(co => new CompanyDto
         {
             Id       = co.Id,
@@ -112,8 +112,8 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
        .Where(m =>
             (m.SortTitle != null && EF.Functions.Like(m.SortTitle, $"{c}%")) ||
             (m.SortTitle == null && EF.Functions.Like(m.Title, $"{c}%")))
-       .OrderBy(m => m.SortTitle)
-       .ThenBy(m => m.Title)
+       .OrderBy(m => MarechaiContext.NaturalSortKey(m.SortTitle))
+       .ThenBy(m => MarechaiContext.NaturalSortKey(m.Title))
        .ThenBy(m => m.FirstPublication)
        .Select(m => new MagazineDto
         {
@@ -135,8 +135,8 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<MagazineDto>> GetMagazinesByYearAsync(int year) => context.Magazines
        .Where(m => m.FirstPublication != null && m.FirstPublication.Value.Year == year)
-       .OrderBy(m => m.SortTitle)
-       .ThenBy(m => m.Title)
+       .OrderBy(m => MarechaiContext.NaturalSortKey(m.SortTitle))
+       .ThenBy(m => MarechaiContext.NaturalSortKey(m.Title))
        .ThenBy(m => m.FirstPublication)
        .Select(m => new MagazineDto
         {
@@ -156,9 +156,9 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<MagazineDto>> GetAsync() => context.Magazines.OrderBy(b => b.SortTitle)
+    public Task<List<MagazineDto>> GetAsync() => context.Magazines.OrderBy(b => MarechaiContext.NaturalSortKey(b.SortTitle))
                                                         .ThenBy(b => b.FirstPublication)
-                                                        .ThenBy(b => b.Title)
+                                                        .ThenBy(b => MarechaiContext.NaturalSortKey(b.Title))
                                                         .Select(b => new MagazineDto
                                                          {
                                                              Id               = b.Id,
@@ -177,7 +177,7 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<MagazineDto>> GetTitlesAsync() => context.Magazines.OrderBy(b => b.Title)
+    public Task<List<MagazineDto>> GetTitlesAsync() => context.Magazines.OrderBy(b => MarechaiContext.NaturalSortKey(b.Title))
                                                               .ThenBy(b => b.FirstPublication)
                                                               .Select(b => new MagazineDto
                                                                {

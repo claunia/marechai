@@ -86,7 +86,7 @@ public class BooksController(MarechaiContext context, IConfiguration configurati
                                                                 .Select(cb => cb.Company)
                                                                 .Distinct()
                                                                 .Include(c => c.Logos)
-                                                                .OrderBy(c => c.Name)
+                                                                .OrderBy(c => MarechaiContext.NaturalSortKey(c.Name))
                                                                 .Select(c => new CompanyDto
                                                                  {
                                                                      Id = c.Id,
@@ -107,7 +107,7 @@ public class BooksController(MarechaiContext context, IConfiguration configurati
        .Distinct()
        .Include(c => c.Logos)
        .Where(co => EF.Functions.Like(co.Name, $"{c}%"))
-       .OrderBy(co => co.Name)
+       .OrderBy(co => MarechaiContext.NaturalSortKey(co.Name))
        .Select(co => new CompanyDto
         {
             Id       = co.Id,
@@ -126,8 +126,8 @@ public class BooksController(MarechaiContext context, IConfiguration configurati
                                                                              EF.Functions.Like(b.SortTitle, $"{c}%")) ||
                                                                             (b.SortTitle == null &&
                                                                              EF.Functions.Like(b.Title, $"{c}%")))
-                                                                       .OrderBy(b => b.SortTitle)
-                                                                       .ThenBy(b => b.Title)
+                                                                       .OrderBy(b => MarechaiContext.NaturalSortKey(b.SortTitle))
+                                                                       .ThenBy(b => MarechaiContext.NaturalSortKey(b.Title))
                                                                        .ThenBy(b => b.Published)
                                                                        .Select(b => new BookDto
                                                                         {
@@ -154,8 +154,8 @@ public class BooksController(MarechaiContext context, IConfiguration configurati
     public Task<List<BookDto>> GetBooksByYearAsync(int year) => context.Books
                                                                        .Where(b => b.Published != null &&
                                                                                    b.Published.Value.Year == year)
-                                                                       .OrderBy(b => b.SortTitle)
-                                                                       .ThenBy(b => b.Title)
+                                                                       .OrderBy(b => MarechaiContext.NaturalSortKey(b.SortTitle))
+                                                                       .ThenBy(b => MarechaiContext.NaturalSortKey(b.Title))
                                                                        .ThenBy(b => b.Published)
                                                                        .Select(b => new BookDto
                                                                         {
@@ -179,9 +179,9 @@ public class BooksController(MarechaiContext context, IConfiguration configurati
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<BookDto>> GetAsync() => context.Books.OrderBy(b => b.SortTitle)
+    public Task<List<BookDto>> GetAsync() => context.Books.OrderBy(b => MarechaiContext.NaturalSortKey(b.SortTitle))
                                                     .ThenBy(b => b.Published)
-                                                    .ThenBy(b => b.Title)
+                                                    .ThenBy(b => MarechaiContext.NaturalSortKey(b.Title))
                                                     .Select(b => new BookDto
                                                      {
                                                          Id                     = b.Id,

@@ -78,10 +78,10 @@ public class PeopleController(MarechaiContext context) : ControllerBase
              EF.Functions.Like(p.Alias, $"{c}%")) ||
             (p.DisplayName == null && p.Alias == null &&
              EF.Functions.Like(p.Surname, $"{c}%")))
-        .OrderBy(p => p.DisplayName)
-        .ThenBy(p => p.Alias)
-        .ThenBy(p => p.Name)
-        .ThenBy(p => p.Surname)
+        .OrderBy(p => MarechaiContext.NaturalSortKey(p.DisplayName))
+        .ThenBy(p => MarechaiContext.NaturalSortKey(p.Alias))
+        .ThenBy(p => MarechaiContext.NaturalSortKey(p.Name))
+        .ThenBy(p => MarechaiContext.NaturalSortKey(p.Surname))
         .Select(p => new PersonDto
         {
             Id               = p.Id,
@@ -105,10 +105,10 @@ public class PeopleController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<PersonDto>> GetPeopleByYearAsync(int year) => context.People
         .Where(p => p.BirthDate > DateTime.MinValue && p.BirthDate.Year == year)
-        .OrderBy(p => p.DisplayName)
-        .ThenBy(p => p.Alias)
-        .ThenBy(p => p.Name)
-        .ThenBy(p => p.Surname)
+        .OrderBy(p => MarechaiContext.NaturalSortKey(p.DisplayName))
+        .ThenBy(p => MarechaiContext.NaturalSortKey(p.Alias))
+        .ThenBy(p => MarechaiContext.NaturalSortKey(p.Name))
+        .ThenBy(p => MarechaiContext.NaturalSortKey(p.Surname))
         .Select(p => new PersonDto
         {
             Id               = p.Id,
@@ -249,10 +249,10 @@ public class PeopleController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<PersonDto>> GetAsync() => context.People.OrderBy(p => p.DisplayName)
-                                                      .ThenBy(p => p.Alias)
-                                                      .ThenBy(p => p.Name)
-                                                      .ThenBy(p => p.Surname)
+    public Task<List<PersonDto>> GetAsync() => context.People.OrderBy(p => MarechaiContext.NaturalSortKey(p.DisplayName))
+                                                      .ThenBy(p => MarechaiContext.NaturalSortKey(p.Alias))
+                                                      .ThenBy(p => MarechaiContext.NaturalSortKey(p.Name))
+                                                      .ThenBy(p => MarechaiContext.NaturalSortKey(p.Surname))
                                                       .Select(p => new PersonDto
                                                        {
                                                            Id             = p.Id,

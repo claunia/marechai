@@ -368,7 +368,7 @@ public class MachinesController(MarechaiContext context) : ControllerBase
                                                                           platformIds.Contains(r.PlatformId.Value)))
                                 || s.DirectReleases.Any(r => r.PlatformId != null &&
                                                              platformIds.Contains(r.PlatformId.Value)))
-                      .OrderBy(s => s.Name)
+                      .OrderBy(s => MarechaiContext.NaturalSortKey(s.Name))
                       .Select(s => new SoftwareDto
                        {
                            Id                = s.Id,

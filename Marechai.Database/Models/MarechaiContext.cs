@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
 using Marechai.Data;
 using Marechai.Database.Schemas;
@@ -40,6 +41,13 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
 {
     readonly ValueConverter<string, byte[]> _hexToBytesConverter =
         new(v => HexStringToBytesConverter.StringToHex(v), v => HexStringToBytesConverter.HexToString(v));
+
+    /// <summary>
+    ///     Maps to the MariaDB NaturalSortKey() function for natural sorting of strings containing numeric segments.
+    ///     This method is for EF Core LINQ-to-SQL translation only and must not be called directly.
+    /// </summary>
+    [DbFunction("NaturalSortKey", Schema = null)]
+    public static string NaturalSortKey(string value) => throw new NotSupportedException("This method is for EF Core LINQ-to-SQL translation only.");
 
     public MarechaiContext() {}
 
@@ -258,6 +266,12 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        MethodInfo naturalSortKeyMethod = typeof(MarechaiContext).GetMethod(nameof(NaturalSortKey),
+            BindingFlags.Public | BindingFlags.Static,
+            [typeof(string)])!;
+
+        modelBuilder.HasDbFunction(naturalSortKeyMethod).HasName("NaturalSortKey");
 
         modelBuilder.Entity<Book>(entity =>
         {

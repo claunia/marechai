@@ -74,8 +74,8 @@ public class SmartphonesController(MarechaiContext context) : ControllerBase
                                                                                 .Where(m =>
                                                                                      m.Type == MachineType.Smartphone &&
                                                                                      EF.Functions.Like(m.Name, $"{c}%"))
-                                                                                .OrderBy(m => m.Company.Name)
-                                                                                .ThenBy(m => m.Name)
+                                                                                .OrderBy(m => MarechaiContext.NaturalSortKey(m.Company.Name))
+                                                                                .ThenBy(m => MarechaiContext.NaturalSortKey(m.Name))
                                                                                 .Select(m => new MachineDto
                                                                                  {
                                                                                      Id         = m.Id,
@@ -94,8 +94,8 @@ public class SmartphonesController(MarechaiContext context) : ControllerBase
                                                                                      m.Type == MachineType.Smartphone &&
                                                                                      m.Introduced != null &&
                                                                                      m.Introduced.Value.Year == year)
-                                                                                .OrderBy(m => m.Company.Name)
-                                                                                .ThenBy(m => m.Name)
+                                                                                .OrderBy(m => MarechaiContext.NaturalSortKey(m.Company.Name))
+                                                                                .ThenBy(m => MarechaiContext.NaturalSortKey(m.Name))
                                                                                 .Select(m => new MachineDto
                                                                                  {
                                                                                      Id         = m.Id,
@@ -111,8 +111,8 @@ public class SmartphonesController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<MachineDto>> GetSmartphonesAsync() => context.Machines.Include(m => m.Company)
                                                                   .Where(m => m.Type == MachineType.Smartphone)
-                                                                  .OrderBy(m => m.Company.Name)
-                                                                  .ThenBy(m => m.Name)
+                                                                  .OrderBy(m => MarechaiContext.NaturalSortKey(m.Company.Name))
+                                                                  .ThenBy(m => MarechaiContext.NaturalSortKey(m.Name))
                                                                   .Select(m => new MachineDto
                                                                    {
                                                                        Id         = m.Id,
@@ -129,8 +129,8 @@ public class SmartphonesController(MarechaiContext context) : ControllerBase
     public Task<List<MachineDto>> GetPrototypesAsync() => context.Machines.Include(m => m.Company)
                                                                 .Where(m => m.Type == MachineType.Smartphone &&
                                                                             m.Prototype)
-                                                                .OrderBy(m => m.Company.Name)
-                                                                .ThenBy(m => m.Name)
+                                                                .OrderBy(m => MarechaiContext.NaturalSortKey(m.Company.Name))
+                                                                .ThenBy(m => MarechaiContext.NaturalSortKey(m.Name))
                                                                 .Select(m => new MachineDto
                                                                  {
                                                                      Id        = m.Id,
@@ -149,7 +149,7 @@ public class SmartphonesController(MarechaiContext context) : ControllerBase
                                                                 .Select(m => m.Company)
                                                                 .Distinct()
                                                                 .Include(c => c.Logos)
-                                                                .OrderBy(c => c.Name)
+                                                                .OrderBy(c => MarechaiContext.NaturalSortKey(c.Name))
                                                                 .Select(c => new CompanyDto
                                                                  {
                                                                      Id = c.Id,
@@ -171,7 +171,7 @@ public class SmartphonesController(MarechaiContext context) : ControllerBase
        .Distinct()
        .Include(c => c.Logos)
        .Where(co => EF.Functions.Like(co.Name, $"{c}%"))
-       .OrderBy(co => co.Name)
+       .OrderBy(co => MarechaiContext.NaturalSortKey(co.Name))
        .Select(co => new CompanyDto
         {
             Id       = co.Id,
