@@ -128,10 +128,13 @@
                                                   DisplayMemberPath="Name" HorizontalAlignment="Stretch"
                                                   PlaceholderText="{Binding Source={StaticResource Strings}, Path=FamilyLabel}" />
 
-                                        <CheckBox Content="{Binding Source={StaticResource Strings}, Path=IsOperatingSystemLabel}"
-                                                  IsChecked="{Binding IsOperatingSystem, Mode=TwoWay}" />
-                                        <CheckBox Content="{Binding Source={StaticResource Strings}, Path=IsGameLabel}"
-                                                  IsChecked="{Binding IsGame, Mode=TwoWay}" />
+                                        <ComboBox SelectedIndex="{Binding Kind, Mode=TwoWay}"
+                                                  HorizontalAlignment="Stretch">
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsSoftwareLabel}" />
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=IsOperatingSystemLabel}" />
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=IsGameLabel}" />
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsDlcLabel}" />
+                                        </ComboBox>
 
                                         <!-- Company Roles (edit only) -->
                                         <StackPanel Visibility="{Binding IsEditingExisting, Converter={StaticResource BoolToVisibilityConverter}}" Spacing="8">

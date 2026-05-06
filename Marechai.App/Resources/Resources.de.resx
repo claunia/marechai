@@ -1932,6 +1932,8 @@
   <data name="SoftwareVersionsLabel" xml:space="preserve"><value>Versionen</value></data>
   <data name="SoftwareIsOSLabel" xml:space="preserve"><value>Betriebssystem</value></data>
   <data name="SoftwareIsGameLabel" xml:space="preserve"><value>Spiel</value></data>
+  <data name="SoftwareIsSoftwareLabel" xml:space="preserve"><value>Software</value></data>
+  <data name="SoftwareKindLabel" xml:space="preserve"><value>Art</value></data>
   <data name="Release not found" xml:space="preserve"><value>Veröffentlichung nicht gefunden</value></data>
   <data name="Software Release" xml:space="preserve"><value>Softwareveröffentlichung</value></data>
   <data name="SoftwarePlatformLabel" xml:space="preserve"><value>Plattform</value></data>

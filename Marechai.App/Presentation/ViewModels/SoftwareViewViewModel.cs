@@ -50,10 +50,13 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     private int? _successorId;
 
     [ObservableProperty]
-    private bool _isOperatingSystem;
+    private SoftwareKind _kind;
 
     [ObservableProperty]
-    private bool _isGame;
+    private string? _baseSoftware;
+
+    [ObservableProperty]
+    private int? _baseSoftwareId;
 
     [ObservableProperty]
     private string _errorMessage = string.Empty;
@@ -87,6 +90,15 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
 
     [ObservableProperty]
     private Visibility _showGameBadge = Visibility.Collapsed;
+
+    [ObservableProperty]
+    private Visibility _showSoftwareBadge = Visibility.Collapsed;
+
+    [ObservableProperty]
+    private Visibility _showDlcBadge = Visibility.Collapsed;
+
+    [ObservableProperty]
+    private Visibility _showBaseSoftware = Visibility.Collapsed;
 
     [ObservableProperty]
     private Visibility _showScreenshots = Visibility.Collapsed;
@@ -197,6 +209,22 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     }
 
     [RelayCommand]
+    public Task NavigateToBaseSoftware()
+    {
+        if(BaseSoftwareId is null) return Task.CompletedTask;
+
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.SoftwareId, BaseSoftwareId.Value },
+            { NavParamKeys.NavigationSource, nameof(SoftwareViewViewModel) }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(SoftwareViewPage), parameters);
+
+        return Task.CompletedTask;
+    }
+
+    [RelayCommand]
     public Task NavigateToRelease(ReleaseDisplayItem? release)
     {
         if(release is null) return Task.CompletedTask;
@@ -251,8 +279,9 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
             Predecessor       = software.Predecessor;
             SuccessorId       = software.SuccessorId;
             Successor         = software.Successor;
-            IsOperatingSystem = software.IsOperatingSystem ?? false;
-            IsGame            = software.IsGame ?? false;
+            Kind              = (SoftwareKind)(software.Kind ?? 0);
+            BaseSoftwareId    = software.BaseSoftwareId;
+            BaseSoftware      = software.BaseSoftware;
 
             // Load companies
             List<SoftwareCompanyRoleDto> companies = await _browsingService.GetCompaniesAsync(softwareId);
@@ -505,8 +534,11 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
         ShowSuccessor    = SuccessorId is not null && !string.IsNullOrEmpty(Successor) ? Visibility.Visible : Visibility.Collapsed;
         ShowCompanies   = Companies.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowVersions    = Versions.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
-        ShowOsBadge     = IsOperatingSystem ? Visibility.Visible : Visibility.Collapsed;
-        ShowGameBadge   = IsGame ? Visibility.Visible : Visibility.Collapsed;
+        ShowOsBadge       = Kind == SoftwareKind.OperatingSystem ? Visibility.Visible : Visibility.Collapsed;
+        ShowGameBadge     = Kind == SoftwareKind.Game ? Visibility.Visible : Visibility.Collapsed;
+        ShowSoftwareBadge = Kind == SoftwareKind.Software ? Visibility.Visible : Visibility.Collapsed;
+        ShowDlcBadge      = Kind == SoftwareKind.Dlc ? Visibility.Visible : Visibility.Collapsed;
+        ShowBaseSoftware  = BaseSoftwareId is not null && !string.IsNullOrEmpty(BaseSoftware) ? Visibility.Visible : Visibility.Collapsed;
         ShowScreenshots = ScreenshotGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowCredits     = CreditGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowDescription = HasDescription ? Visibility.Visible : Visibility.Collapsed;

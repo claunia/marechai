@@ -90,8 +90,7 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
             Name              = s.Name,
             FamilyId          = s.FamilyId,
             Family            = s.Family.Name,
-            IsOperatingSystem = s.IsOperatingSystem,
-            IsGame            = s.IsGame,
+            Kind              = s.Kind,
             FrontCoverId = context.SoftwareCovers
                                   .Where(c2 => (c2.Release.SoftwareId == s.Id ||
                                                  c2.Release.SoftwareVersion.SoftwareId == s.Id) &&
@@ -117,8 +116,7 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
             Name              = s.Name,
             FamilyId          = s.FamilyId,
             Family            = s.Family.Name,
-            IsOperatingSystem = s.IsOperatingSystem,
-            IsGame            = s.IsGame,
+            Kind              = s.Kind,
             FrontCoverId = context.SoftwareCovers
                                   .Where(c => (c.Release.SoftwareId == s.Id ||
                                                 c.Release.SoftwareVersion.SoftwareId == s.Id) &&
@@ -142,8 +140,7 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
             Name              = s.Name,
             FamilyId          = s.FamilyId,
             Family            = s.Family.Name,
-            IsOperatingSystem = s.IsOperatingSystem,
-            IsGame            = s.IsGame,
+            Kind              = s.Kind,
             FrontCoverId = context.SoftwareCovers
                                   .Where(c => (c.Release.SoftwareId == s.Id ||
                                                 c.Release.SoftwareVersion.SoftwareId == s.Id) &&
@@ -227,8 +224,8 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
         {
             "Name"              => sortDescending ? query.OrderByDescending(s => MarechaiContext.NaturalSortKey(s.Name))        : query.OrderBy(s => MarechaiContext.NaturalSortKey(s.Name)),
             "Family"            => sortDescending ? query.OrderByDescending(s => MarechaiContext.NaturalSortKey(s.Family.Name)) : query.OrderBy(s => MarechaiContext.NaturalSortKey(s.Family.Name)),
-            "IsOperatingSystem" => sortDescending ? query.OrderByDescending(s => s.IsOperatingSystem) : query.OrderBy(s => s.IsOperatingSystem),
-            "IsGame"            => sortDescending ? query.OrderByDescending(s => s.IsGame)            : query.OrderBy(s => s.IsGame),
+            "Kind"              => sortDescending ? query.OrderByDescending(s => s.Kind) : query.OrderBy(s => s.Kind),
+            "BaseSoftware"      => sortDescending ? query.OrderByDescending(s => MarechaiContext.NaturalSortKey(s.BaseSoftware.Name)) : query.OrderBy(s => MarechaiContext.NaturalSortKey(s.BaseSoftware.Name)),
             _                   => query.OrderBy(s => MarechaiContext.NaturalSortKey(s.Name))
         };
 
@@ -242,8 +239,7 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
                          Name              = s.Name,
                          FamilyId          = s.FamilyId,
                          Family            = s.Family.Name,
-                         IsOperatingSystem = s.IsOperatingSystem,
-                         IsGame            = s.IsGame,
+                         Kind              = s.Kind,
                          FrontCoverId = context.SoftwareCovers
                                                .Where(c => (c.Release.SoftwareId == s.Id ||
                                                              c.Release.SoftwareVersion.SoftwareId == s.Id) &&
@@ -275,8 +271,9 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
                                                                                   .Where(x => x.PredecessorId == s.Id)
                                                                                   .Select(x => x.Name)
                                                                                   .FirstOrDefault(),
-                                                               IsOperatingSystem = s.IsOperatingSystem,
-                                                               IsGame            = s.IsGame
+                                                               Kind              = s.Kind,
+                                                               BaseSoftwareId    = s.BaseSoftwareId,
+                                                               BaseSoftware      = s.BaseSoftware.Name
                                                            })
                                                           .FirstOrDefaultAsync();
 
@@ -298,8 +295,14 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
         model.Name              = dto.Name;
         model.FamilyId          = dto.FamilyId;
         model.PredecessorId     = dto.PredecessorId;
-        model.IsOperatingSystem = dto.IsOperatingSystem;
-        model.IsGame            = dto.IsGame;
+        model.Kind              = dto.Kind;
+        model.BaseSoftwareId    = dto.BaseSoftwareId;
+
+        if(model.Kind == SoftwareKind.Dlc && model.BaseSoftwareId is null)
+            return BadRequest("DLC / Addon software must have a base software.");
+
+        if(model.Kind != SoftwareKind.Dlc && model.BaseSoftwareId is not null)
+            return BadRequest("Only DLC / Addon software can have a base software.");
 
         await context.News.AddAsync(new News
         {
@@ -330,9 +333,15 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
             Name              = dto.Name,
             FamilyId          = dto.FamilyId,
             PredecessorId     = dto.PredecessorId,
-            IsOperatingSystem = dto.IsOperatingSystem,
-            IsGame            = dto.IsGame
+            Kind              = dto.Kind,
+            BaseSoftwareId    = dto.BaseSoftwareId
         };
+
+        if(model.Kind == SoftwareKind.Dlc && model.BaseSoftwareId is null)
+            return BadRequest("DLC / Addon software must have a base software.");
+
+        if(model.Kind != SoftwareKind.Dlc && model.BaseSoftwareId is not null)
+            return BadRequest("Only DLC / Addon software can have a base software.");
 
         await context.Softwares.AddAsync(model);
         await context.SaveChangesWithUserAsync(userId);
@@ -537,6 +546,7 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult> MergeAsync(ulong targetId, ulong sourceId, [FromQuery] string releaseTitle = null)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
@@ -552,6 +562,9 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
         Software source = await context.Softwares.FindAsync(sourceId);
 
         if(source is null) return NotFound("Source software not found.");
+
+        if((source.Kind == SoftwareKind.Dlc) != (target.Kind == SoftwareKind.Dlc))
+            return Conflict("Cannot merge DLC / Addon software with non-DLC software.");
 
         await using var transaction = await context.Database.BeginTransactionAsync();
 
@@ -770,6 +783,17 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
             foreach(Software successor in successorsOfSource)
                 successor.PredecessorId = targetId;
 
+            // 9d. Transfer base software: if target has no base software but source does, adopt it
+            if(target.BaseSoftwareId is null && source.BaseSoftwareId is not null)
+                target.BaseSoftwareId = source.BaseSoftwareId;
+
+            // 9e. Re-point any software that had source as base software to target
+            List<Software> addonsOfSource =
+                await context.Softwares.Where(s => s.BaseSoftwareId == sourceId && s.Id != targetId).ToListAsync();
+
+            foreach(Software addon in addonsOfSource)
+                addon.BaseSoftwareId = targetId;
+
             // Flush all changes before deleting the source to avoid FK violations
             await context.SaveChangesAsync();
 
@@ -788,6 +812,31 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
                               $"Merge failed: {ex.Message}");
         }
     }
+
+    [HttpGet("{id:ulong}/addons")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<SoftwareDto>> GetAddonsAsync(ulong id) => context.Softwares
+       .Where(s => s.BaseSoftwareId == id)
+       .OrderBy(s => MarechaiContext.NaturalSortKey(s.Name))
+       .Select(s => new SoftwareDto
+        {
+            Id                = s.Id,
+            Name              = s.Name,
+            FamilyId          = s.FamilyId,
+            Family            = s.Family.Name,
+            Kind              = s.Kind,
+            BaseSoftwareId    = s.BaseSoftwareId,
+            BaseSoftware      = s.BaseSoftware.Name,
+            FrontCoverId = context.SoftwareCovers
+                                  .Where(c => (c.Release.SoftwareId == s.Id ||
+                                                c.Release.SoftwareVersion.SoftwareId == s.Id) &&
+                                               c.Type == SoftwareCoverType.Front)
+                                  .Select(c => (Guid?)c.Id)
+                                  .FirstOrDefault()
+        })
+       .ToListAsync();
 
     [HttpGet("{id:ulong}/descriptions")]
     [AllowAnonymous]
@@ -958,8 +1007,7 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
             Name              = s.Name,
             FamilyId          = s.FamilyId,
             Family            = s.Family.Name,
-            IsOperatingSystem = s.IsOperatingSystem,
-            IsGame            = s.IsGame,
+            Kind              = s.Kind,
             FrontCoverId = context.SoftwareCovers
                                   .Where(c => (c.Release.SoftwareId == s.Id ||
                                                 c.Release.SoftwareVersion.SoftwareId == s.Id) &&
@@ -1015,8 +1063,7 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
                     Name              = s.Name,
                     FamilyId          = s.FamilyId,
                     Family            = s.Family.Name,
-                    IsOperatingSystem = s.IsOperatingSystem,
-                    IsGame            = s.IsGame,
+                    Kind              = s.Kind,
                     FrontCoverId = context.SoftwareCovers
                                           .Where(c => (c.Release.SoftwareId == s.Id ||
                                                         c.Release.SoftwareVersion.SoftwareId == s.Id) &&

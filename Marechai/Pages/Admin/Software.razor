@@ -39,14 +39,14 @@
         <Columns>
             <PropertyColumn Property="x => x.Name" Title="@L["Name"]"/>
             <PropertyColumn Property="x => x.Family" Title="@L["Family"]"/>
-            <PropertyColumn Property="x => x.IsOperatingSystem" Title="@L["OS"]">
+            <PropertyColumn Property="x => x.Kind" Title="@L["Kind"]">
                 <CellTemplate>
-                    @(context.Item.IsOperatingSystem == true ? "✓" : "✗")
-                </CellTemplate>
-            </PropertyColumn>
-            <PropertyColumn Property="x => x.IsGame" Title="@L["Game"]">
-                <CellTemplate>
-                    @(context.Item.IsGame == true ? "✓" : "✗")
+                    @(((Marechai.Data.SoftwareKind)(context.Item.Kind ?? 0)) switch
+                    {
+                        Marechai.Data.SoftwareKind.OperatingSystem => L["Operating System"],
+                        Marechai.Data.SoftwareKind.Game            => L["Game"],
+                        _                                          => L["Software"]
+                    })
                 </CellTemplate>
             </PropertyColumn>
             <TemplateColumn Title="@L["Actions"]" Sortable="false" Filterable="false">

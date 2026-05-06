@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Marechai.Data;
 
 namespace Marechai.Database.Models;
 
@@ -12,8 +13,10 @@ public class Software : BaseModel<ulong>
     public         ulong?                           PredecessorId     { get; set; }
     public virtual Software                         Predecessor       { get; set; }
     public virtual ICollection<Software>            Successors        { get; set; }
-    public         bool                             IsOperatingSystem { get; set; }
-    public         bool                             IsGame            { get; set; }
+    public         SoftwareKind                     Kind              { get; set; }
+    public         ulong?                           BaseSoftwareId    { get; set; }
+    public virtual Software                         BaseSoftware      { get; set; }
+    public virtual ICollection<Software>            Addons            { get; set; }
     public virtual ICollection<SoftwareVersion>     Versions          { get; set; }
     public virtual ICollection<SoftwareCompanyRole> CompanyRoles      { get; set; }
     public virtual ICollection<SoftwareScreenshot>  Screenshots       { get; set; }

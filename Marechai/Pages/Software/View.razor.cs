@@ -66,6 +66,7 @@ public partial class View
     SoftwarePromoArtDto                         _fullscreenPromo;
     List<SoftwareVideoDto>                      _videos = [];
     SoftwareDto                                 _software;
+    List<SoftwareDto>                           _addons = [];
     List<SoftwareVersionDto>                    _versions = [];
     List<SoftwareCriticReviewDto>               _criticReviews = [];
     CriticReviewSummaryDto                      _reviewSummary;
@@ -117,6 +118,7 @@ public partial class View
 
         _companies = await Service.GetCompaniesAsync(Id);
         _versions  = await Service.GetVersionsAsync(Id);
+        _addons    = await Service.GetAddonsAsync(Id);
 
         // Load credits
         _credits = await Service.GetCreditsBySoftwareAsync(Id);

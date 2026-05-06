@@ -666,6 +666,11 @@ public class LocalizedStrings
     public string SoftwareVersionsLabel => _l["SoftwareVersionsLabel"];
     public string SoftwareIsOSLabel => _l["SoftwareIsOSLabel"];
     public string SoftwareIsGameLabel => _l["SoftwareIsGameLabel"];
+    public string SoftwareIsDlcLabel => _l["SoftwareIsDlcLabel"];
+    public string SoftwareIsSoftwareLabel => _l["SoftwareIsSoftwareLabel"];
+    public string SoftwareKindLabel => _l["SoftwareKindLabel"];
+    public string BaseSoftwareLabel => _l["BaseSoftwareLabel"];
+    public string AddonsLabel => _l["AddonsLabel"];
     public string SoftwarePlatformLabel => _l["SoftwarePlatformLabel"];
     public string SoftwareRegionLabel => _l["SoftwareRegionLabel"];
     public string SoftwarePublisherLabel => _l["SoftwarePublisherLabel"];

@@ -46,10 +46,12 @@ public class SoftwareDto : BaseDto<ulong>
     public ulong? SuccessorId { get; set; }
     [JsonPropertyName("successor")]
     public string? Successor { get; set; }
-    [JsonPropertyName("is_operating_system")]
-    public bool IsOperatingSystem { get; set; }
-    [JsonPropertyName("is_game")]
-    public bool IsGame { get; set; }
+    [JsonPropertyName("kind")]
+    public SoftwareKind Kind { get; set; }
+    [JsonPropertyName("base_software_id")]
+    public ulong? BaseSoftwareId { get; set; }
+    [JsonPropertyName("base_software")]
+    public string? BaseSoftware { get; set; }
     [JsonPropertyName("front_cover_id")]
     public Guid? FrontCoverId { get; set; }
 }

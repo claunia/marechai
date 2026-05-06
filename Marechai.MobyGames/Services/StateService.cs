@@ -25,7 +25,8 @@ public class StateService
         return [..ids];
     }
 
-    public async Task MarkImportedAsync(string mobyGameId, int batchNumber, ulong softwareId)
+    public async Task MarkImportedAsync(string mobyGameId, int batchNumber, ulong softwareId,
+                                        int? mobyNumericId = null)
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
 
@@ -34,20 +35,22 @@ public class StateService
 
         if(existing != null)
         {
-            existing.Status      = MobyGamesImportStatus.Imported;
-            existing.ProcessedOn = DateTime.UtcNow;
-            existing.BatchNumber = batchNumber;
-            existing.SoftwareId  = softwareId;
+            existing.Status        = MobyGamesImportStatus.Imported;
+            existing.ProcessedOn   = DateTime.UtcNow;
+            existing.BatchNumber   = batchNumber;
+            existing.SoftwareId    = softwareId;
+            existing.MobyNumericId = mobyNumericId ?? existing.MobyNumericId;
         }
         else
         {
             context.MobyGamesImportStates.Add(new MobyGamesImportState
             {
-                MobyGameId   = mobyGameId,
-                Status       = MobyGamesImportStatus.Imported,
-                ProcessedOn  = DateTime.UtcNow,
-                BatchNumber  = batchNumber,
-                SoftwareId   = softwareId
+                MobyGameId     = mobyGameId,
+                Status         = MobyGamesImportStatus.Imported,
+                ProcessedOn    = DateTime.UtcNow,
+                BatchNumber    = batchNumber,
+                SoftwareId     = softwareId,
+                MobyNumericId  = mobyNumericId
             });
         }
 

@@ -20,6 +20,7 @@ public class ImportService
     readonly PlatformMatcher                   _platformMatcher;
     readonly CountryMatcher                    _countryMatcher;
     readonly StateService                      _stateService;
+    readonly MobyGamesHttpClient               _mobyHttpClient;
 
     public ImportService(
         IDbContextFactory<MarechaiContext> contextFactory,
@@ -28,7 +29,8 @@ public class ImportService
         PersonMatcher personMatcher,
         PlatformMatcher platformMatcher,
         CountryMatcher countryMatcher,
-        StateService stateService)
+        StateService stateService,
+        MobyGamesHttpClient mobyHttpClient = null)
     {
         _contextFactory  = contextFactory;
         _sourceDb        = sourceDb;
@@ -37,6 +39,7 @@ public class ImportService
         _platformMatcher = platformMatcher;
         _countryMatcher  = countryMatcher;
         _stateService    = stateService;
+        _mobyHttpClient  = mobyHttpClient;
     }
 
     public async Task RunBatchAsync(int batchSize, int batchNumber)
@@ -172,14 +175,67 @@ public class ImportService
         Console.WriteLine($"\n  Batch complete: {imported} imported, {rejected} rejected, {failed} failed");
     }
 
+    /// <summary>
+    ///     Imports a single game by its MobyGames slug (the id stored in mobygames_raw).
+    ///     Returns the Software ID if successful, null otherwise.
+    /// </summary>
+    public async Task<ulong?> ImportGameBySlugAsync(string slug)
+    {
+        // Ensure matchers are loaded
+        await _companyMatcher.LoadAsync();
+        await _personMatcher.LoadAsync();
+        await _platformMatcher.LoadAsync();
+        await _countryMatcher.LoadAsync();
+
+        var rows = await _sourceDb.GetRowsForGameAsync(slug);
+
+        if(rows.Count == 0)
+        {
+            Console.WriteLine($"    No data found in mobygames_raw for slug '{slug}'");
+
+            return null;
+        }
+
+        var game = GameAssembler.Assemble(slug, rows);
+
+        if(string.IsNullOrWhiteSpace(game.Name))
+        {
+            Console.WriteLine($"    No game name found for slug '{slug}'");
+
+            return null;
+        }
+
+        Console.WriteLine($"    Importing base game: {game.Name}");
+
+        await ImportGameAsync(game, 0);
+
+        // Look up the software ID we just created
+        await using var context = await _contextFactory.CreateDbContextAsync();
+
+        MobyGamesImportState state = await context.MobyGamesImportStates
+            .FirstOrDefaultAsync(s => s.MobyGameId == slug);
+
+        return state?.SoftwareId;
+    }
+
     async Task ImportGameAsync(ParsedGame game, int batchNumber)
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
 
+        // Determine Kind from genres
+        // Note: old MobyGames HTML uses &nbsp; (U+00A0) around the slash, so use Contains
+        bool isDlc = game.Genres.Any(g =>
+            (g.Name.Contains("DLC", StringComparison.OrdinalIgnoreCase) &&
+             g.Name.Contains("add-on", StringComparison.OrdinalIgnoreCase)) ||
+            (g.Type.Equals("Genre", StringComparison.OrdinalIgnoreCase) &&
+             g.Name.Equals("Add-on", StringComparison.OrdinalIgnoreCase)));
+
+        SoftwareKind kind = isDlc ? SoftwareKind.Dlc : SoftwareKind.Game;
+
         // 1. Check for existing Software with same name
         var existingByName = await context.Softwares
                                           .Where(s => s.Name == game.Name)
-                                          .Select(s => new { s.Id, s.Name, s.IsGame })
+                                          .Select(s => new { s.Id, s.Name, s.Kind })
                                           .ToListAsync();
 
         Software software;
@@ -257,7 +313,7 @@ public class ImportService
             }
             else
             {
-                software = new Software { Name = game.Name, IsGame = true };
+                software = new Software { Name = game.Name, Kind = kind };
                 context.Softwares.Add(software);
                 await context.SaveChangesAsync();
 
@@ -350,7 +406,7 @@ public class ImportService
                 }
                 else
                 {
-                    software = new Software { Name = game.Name, IsGame = true };
+                    software = new Software { Name = game.Name, Kind = kind };
                     context.Softwares.Add(software);
                     await context.SaveChangesAsync();
 
@@ -368,7 +424,7 @@ public class ImportService
             }
             else
             {
-                software = new Software { Name = game.Name, IsGame = true };
+                software = new Software { Name = game.Name, Kind = kind };
                 context.Softwares.Add(software);
                 await context.SaveChangesAsync();
 
@@ -401,6 +457,12 @@ public class ImportService
                     Html         = game.DescriptionHtml
                 });
             }
+        }
+
+        // 2b. Resolve base game for DLCs
+        if(isDlc && software.BaseSoftwareId is null && _mobyHttpClient is not null)
+        {
+            await ResolveDlcBaseGameAsync(context, software, game);
         }
 
         // 3. Genres
@@ -515,9 +577,17 @@ public class ImportService
         // 7. Specs and Ratings stored as SoftwareAttributes (need release IDs — done inside ImportReleasesAsync)
 
         await context.SaveChangesAsync();
-        await _stateService.MarkImportedAsync(game.MobyGameId, batchNumber, software.Id);
 
-        Console.WriteLine($"    Imported as Software ID: {software.Id}");
+        // Resolve MobyGames numeric ID for future lookups
+        int? mobyNumericId = null;
+
+        if(_mobyHttpClient is not null)
+            mobyNumericId = await _mobyHttpClient.ResolveNumericGameIdAsync(game.MobyGameId);
+
+        await _stateService.MarkImportedAsync(game.MobyGameId, batchNumber, software.Id, mobyNumericId);
+
+        Console.WriteLine($"    Imported as Software ID: {software.Id}" +
+                          (mobyNumericId is not null ? $" (MobyID: {mobyNumericId})" : ""));
     }
 
     async Task ImportReleasesAsync(MarechaiContext context, Software software, ParsedGame game,
@@ -1178,6 +1248,64 @@ public class ImportService
         // Catch-all
         _                                => null
     };
+
+    async Task ResolveDlcBaseGameAsync(MarechaiContext context, Software software, ParsedGame game)
+    {
+        try
+        {
+            // Resolve DLC's numeric ID from stored slug
+            int? dlcNumericId = game.BaseGameMobyId;
+
+            if(dlcNumericId is null)
+            {
+                // Try to resolve via slug redirect
+                int? resolved = await _mobyHttpClient!.ResolveNumericGameIdAsync(game.MobyGameId);
+
+                if(resolved is null)
+                {
+                    Console.WriteLine("    \u001b[33mWarning: Could not resolve DLC numeric ID for base game lookup\u001b[0m");
+
+                    return;
+                }
+
+                // Fetch new-site page and parse base game ID
+                string slug = game.MobyGameId.TrimStart('-');
+                string url  = $"https://www.mobygames.com/game/{resolved}/{slug}/";
+                string html = await _mobyHttpClient.FetchPageAsync(url);
+
+                dlcNumericId = Parsers.NewSiteMainPageParser.ParseBaseGameId(html);
+
+                if(dlcNumericId is null)
+                {
+                    Console.WriteLine("    \u001b[33mWarning: No base game found on MobyGames page\u001b[0m");
+
+                    return;
+                }
+            }
+
+            Console.WriteLine($"    Base game MobyGames ID: {dlcNumericId}");
+
+            // Look up base game in our DB by MobyGames numeric ID
+            MobyGamesImportState baseImportState = await context.MobyGamesImportStates
+                .FirstOrDefaultAsync(s => s.MobyNumericId == dlcNumericId);
+
+            if(baseImportState is not null)
+            {
+                software.BaseSoftwareId = (ulong)baseImportState.SoftwareId;
+                await context.SaveChangesAsync();
+                Console.WriteLine($"    Linked to base game Software ID: {baseImportState.SoftwareId}");
+            }
+            else
+            {
+                Console.WriteLine($"    \u001b[33mWarning: Base game (MobyGames ID {dlcNumericId}) not imported yet. " +
+                                  "Run import-dlc-relations after importing base games.\u001b[0m");
+            }
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"    \u001b[33mWarning: Error resolving base game: {ex.Message}\u001b[0m");
+        }
+    }
 }
 
 sealed class CaseInsensitiveCreditComparer : IEqualityComparer<(ulong, int, string)>

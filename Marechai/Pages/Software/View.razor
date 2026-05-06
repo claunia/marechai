@@ -74,13 +74,20 @@
         }
         <MudText Typo="Typo.h4" Align="Align.Center" Style="color: white; font-weight: 700;">@_software.Name</MudText>
         <div class="d-flex gap-2">
-            @if(_software.IsOperatingSystem == true)
+            @switch((Marechai.Data.SoftwareKind)(_software.Kind ?? 0))
             {
-                <MudChip T="string" Color="Color.Info" Variant="Variant.Filled" Size="Size.Small">@L["Operating System"]</MudChip>
-            }
-            @if(_software.IsGame == true)
-            {
-                <MudChip T="string" Color="Color.Success" Variant="Variant.Filled" Size="Size.Small">@L["Game"]</MudChip>
+                case Marechai.Data.SoftwareKind.OperatingSystem:
+                    <MudChip T="string" Color="Color.Info" Variant="Variant.Filled" Size="Size.Small">@L["Operating System"]</MudChip>
+                    break;
+                case Marechai.Data.SoftwareKind.Game:
+                    <MudChip T="string" Color="Color.Success" Variant="Variant.Filled" Size="Size.Small">@L["Game"]</MudChip>
+                    break;
+                case Marechai.Data.SoftwareKind.Dlc:
+                    <MudChip T="string" Color="Color.Warning" Variant="Variant.Filled" Size="Size.Small">@L["DLC / Addon"]</MudChip>
+                    break;
+                default:
+                    <MudChip T="string" Color="Color.Default" Variant="Variant.Filled" Size="Size.Small">@L["Software"]</MudChip>
+                    break;
             }
         </div>
 
@@ -256,13 +263,23 @@
                 </tr>
             }
             <tr>
-                <td style="width: 33%; text-align: right;"><strong>@L["Operating System"]</strong></td>
-                <td>@(_software.IsOperatingSystem == true ? L["Yes"] : L["No"])</td>
+                <td style="width: 33%; text-align: right;"><strong>@L["Kind"]</strong></td>
+                <td>@(((Marechai.Data.SoftwareKind)(_software.Kind ?? 0)) switch
+                    {
+                        Marechai.Data.SoftwareKind.OperatingSystem => L["Operating System"],
+                        Marechai.Data.SoftwareKind.Game            => L["Game"],
+                        Marechai.Data.SoftwareKind.Dlc             => L["DLC / Addon"],
+                        _                                          => L["Software"]
+                    })
+                </td>
             </tr>
-            <tr>
-                <td style="width: 33%; text-align: right;"><strong>@L["Game"]</strong></td>
-                <td>@(_software.IsGame == true ? L["Yes"] : L["No"])</td>
-            </tr>
+            @if(_software.BaseSoftwareId is not null && !string.IsNullOrEmpty(_software.BaseSoftware))
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right; padding-left: 2em;"><strong>@L["Base Software"]</strong></td>
+                    <td style="padding-left: 2em;"><MudLink Href="@($"/software/{_software.BaseSoftwareId}")">@_software.BaseSoftware</MudLink></td>
+                </tr>
+            }
             </tbody>
         </MudSimpleTable>
     </MudCardContent>
@@ -287,6 +304,27 @@
                 }
             </div>
         }
+    </MudCardContent>
+</MudCard>
+}
+
+@* ── Addons / DLC Card ── *@
+@if(_addons.Count > 0)
+{
+<MudCard Elevation="2" Class="mb-4 rounded-lg">
+    <MudCardContent>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+            <MudIcon Icon="@Icons.Material.Filled.Extension" Color="Color.Warning"/>
+            <MudText Typo="Typo.h6">@L["Addons"]</MudText>
+        </MudStack>
+        <MudList T="SoftwareDto" Dense="true">
+            @foreach(SoftwareDto addon in _addons)
+            {
+                <MudListItem T="SoftwareDto">
+                    <MudLink Href="@($"/software/{addon.Id}")">@addon.Name</MudLink>
+                </MudListItem>
+            }
+        </MudList>
     </MudCardContent>
 </MudCard>
 }

@@ -375,8 +375,7 @@ public class MachinesController(MarechaiContext context) : ControllerBase
                            Name              = s.Name,
                            FamilyId          = s.FamilyId,
                            Family            = s.Family.Name,
-                           IsOperatingSystem = s.IsOperatingSystem,
-                           IsGame            = s.IsGame,
+                           Kind              = s.Kind,
                            FrontCoverId = context.SoftwareCovers
                                                  .Where(c => (c.Release.SoftwareId == s.Id ||
                                                                c.Release.SoftwareVersion.SoftwareId == s.Id) &&

@@ -435,6 +435,36 @@ class Program
 
                 break;
 
+            case "import-dlc-relations":
+            {
+                int dlcBatchSize = 50;
+                int dlcDelayMs   = 2000;
+                bool dlcDryRun   = false;
+
+                for(int i = 1; i < args.Length - 1; i++)
+                {
+                    if(args[i] == "--batch-size" && int.TryParse(args[i + 1], out int bs))
+                        dlcBatchSize = bs;
+
+                    if(args[i] == "--delay-ms" && int.TryParse(args[i + 1], out int dm))
+                        dlcDelayMs = dm;
+                }
+
+                if(args.Contains("--dry-run")) dlcDryRun = true;
+
+                using var dlcHttpClient = new MobyGamesHttpClient(dlcDelayMs);
+
+                // Create a separate import service with HTTP client for numeric ID resolution
+                var dlcImportService = new ImportService(factory, sourceDb, companyMatcher,
+                                                         personMatcher, platformMatcher,
+                                                         countryMatcher, stateService, dlcHttpClient);
+
+                var dlcService = new DlcRelationService(factory, dlcHttpClient, dlcImportService, sourceDb);
+                await dlcService.RunAsync(dlcBatchSize, dlcDryRun);
+
+                break;
+            }
+
             default:
                 Console.WriteLine("  Usage:");
                 Console.WriteLine("    import [--batch-size N]                       Import next batch of games");
@@ -460,6 +490,8 @@ class Program
                 Console.WriteLine("    import-videos [--batch-size N] [--dry-run]");
                 Console.WriteLine("                                                  Import video links from scraped media pages");
                 Console.WriteLine("    video-status                                  Show video import status counts");
+                Console.WriteLine("    import-dlc-relations [--batch-size N] [--delay-ms N] [--dry-run]");
+                Console.WriteLine("                                                  Link DLC entries to their base games via MobyGames");
                 Console.WriteLine("    reset --game <id>                             Reset a game to unprocessed");
 
                 break;

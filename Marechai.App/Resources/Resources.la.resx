@@ -1932,6 +1932,8 @@
   <data name="SoftwareVersionsLabel" xml:space="preserve"><value>Versiones</value></data>
   <data name="SoftwareIsOSLabel" xml:space="preserve"><value>Systema operandi</value></data>
   <data name="SoftwareIsGameLabel" xml:space="preserve"><value>Ludus</value></data>
+  <data name="SoftwareIsSoftwareLabel" xml:space="preserve"><value>Programma</value></data>
+  <data name="SoftwareKindLabel" xml:space="preserve"><value>Genus</value></data>
   <data name="Release not found" xml:space="preserve"><value>Editio non inventa</value></data>
   <data name="Software Release" xml:space="preserve"><value>Editio programmatis</value></data>
   <data name="SoftwarePlatformLabel" xml:space="preserve"><value>Suggestum</value></data>

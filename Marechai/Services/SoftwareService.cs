@@ -603,6 +603,20 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
+    public async Task<List<SoftwareDto>> GetAddonsAsync(int softwareId)
+    {
+        try
+        {
+            List<SoftwareDto> addons = await client.Software[softwareId].Addons.GetAsync();
+
+            return addons ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
     public async Task<List<SoftwareAttributeDto>> GetAttributesAsync(int softwareId)
     {
         try

@@ -9,6 +9,7 @@ using Marechai.ApiClient.Models;
 using Marechai.App.Navigation;
 using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
+using Marechai.Data;
 using Microsoft.UI.Xaml.Data;
 
 namespace Marechai.App.Presentation.ViewModels;
@@ -208,8 +209,7 @@ public partial class SoftwareListViewModel : ObservableObject, IRegionAware
                     Id                = id,
                     Name              = sw.Name ?? string.Empty,
                     Family            = sw.Family,
-                    IsOperatingSystem = sw.IsOperatingSystem ?? false,
-                    IsGame            = sw.IsGame ?? false
+                    Kind              = (SoftwareKind)(sw.Kind ?? 0)
                 };
 
                 SoftwareList.Add(item);

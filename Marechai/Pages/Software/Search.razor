@@ -97,13 +97,20 @@
                             <MudText Typo="Typo.caption" Color="Color.Secondary">@sw.Family</MudText>
                         }
                     </div>
-                    @if(sw.IsOperatingSystem == true)
+                    @switch((Marechai.Data.SoftwareKind)(sw.Kind ?? 0))
                     {
-                        <MudChip T="string" Size="Size.Small" Color="Color.Info" Variant="Variant.Outlined">@L["OS"]</MudChip>
-                    }
-                    @if(sw.IsGame == true)
-                    {
-                        <MudChip T="string" Size="Size.Small" Color="Color.Success" Variant="Variant.Outlined">@L["Game"]</MudChip>
+                        case Marechai.Data.SoftwareKind.OperatingSystem:
+                            <MudChip T="string" Size="Size.Small" Color="Color.Info" Variant="Variant.Outlined">@L["OS"]</MudChip>
+                            break;
+                        case Marechai.Data.SoftwareKind.Game:
+                            <MudChip T="string" Size="Size.Small" Color="Color.Success" Variant="Variant.Outlined">@L["Game"]</MudChip>
+                            break;
+                        case Marechai.Data.SoftwareKind.Dlc:
+                            <MudChip T="string" Size="Size.Small" Color="Color.Warning" Variant="Variant.Outlined">@L["DLC / Addon"]</MudChip>
+                            break;
+                        default:
+                            <MudChip T="string" Size="Size.Small" Color="Color.Default" Variant="Variant.Outlined">@L["Software"]</MudChip>
+                            break;
                     }
                 </div>
             </MudListItem>

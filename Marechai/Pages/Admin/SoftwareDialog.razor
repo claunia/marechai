@@ -34,8 +34,21 @@
                                  Clearable="true"
                                  Class="mb-4"/>
 
-                <MudCheckBox T="bool" @bind-Value="IsOperatingSystem" Label="@L["Operating System"]" Class="mb-4"/>
-                <MudCheckBox T="bool" @bind-Value="IsGame" Label="@L["Game"]" Class="mb-4"/>
+                <MudSelect T="Marechai.Data.SoftwareKind" @bind-Value="Kind" Label="@L["Kind"]" Variant="Variant.Outlined" Class="mb-4">
+                    <MudSelectItem T="Marechai.Data.SoftwareKind" Value="Marechai.Data.SoftwareKind.Software">@L["Software"]</MudSelectItem>
+                    <MudSelectItem T="Marechai.Data.SoftwareKind" Value="Marechai.Data.SoftwareKind.OperatingSystem">@L["Operating System"]</MudSelectItem>
+                    <MudSelectItem T="Marechai.Data.SoftwareKind" Value="Marechai.Data.SoftwareKind.Game">@L["Game"]</MudSelectItem>
+                    <MudSelectItem T="Marechai.Data.SoftwareKind" Value="Marechai.Data.SoftwareKind.Dlc">@L["DLC / Addon"]</MudSelectItem>
+                </MudSelect>
+
+                <MudAutocomplete T="SoftwareDto"
+                                 Label="@L["Base Software"]"
+                                 @bind-Value="_selectedBaseSoftware"
+                                 SearchFunc="SearchBaseSoftware"
+                                 ToStringFunc="@(s => s?.Name ?? string.Empty)"
+                                 Variant="Variant.Outlined"
+                                 Clearable="true"
+                                 Class="mb-4"/>
 
                 @if(!string.IsNullOrWhiteSpace(_validationError))
                 {
@@ -119,6 +132,7 @@
     SoftwareFamilyDto             _selectedFamily;
     List<SoftwareFamilyDto>       _allFamilies;
     SoftwareDto                   _selectedPredecessor;
+    SoftwareDto                   _selectedBaseSoftware;
     CompanyDto                    _selectedCompany;
     List<CompanyDto>              _allCompanies;
     SoftwareRoleDto               _selectedRole;
@@ -135,8 +149,9 @@
     [Parameter] public int? FamilyId { get; set; }
     [Parameter] public int? PredecessorId { get; set; }
     [Parameter] public string PredecessorName { get; set; }
-    [Parameter] public bool IsOperatingSystem { get; set; }
-    [Parameter] public bool IsGame { get; set; }
+    [Parameter] public int? BaseSoftwareId { get; set; }
+    [Parameter] public string BaseSoftwareName { get; set; }
+    [Parameter] public Marechai.Data.SoftwareKind Kind { get; set; }
 
     [Inject] SoftwareService SoftwareService { get; set; } = null!;
 
@@ -153,6 +168,15 @@
             {
                 Id   = PredecessorId,
                 Name = PredecessorName ?? string.Empty
+            };
+        }
+
+        if(BaseSoftwareId is not null)
+        {
+            _selectedBaseSoftware = new SoftwareDto
+            {
+                Id   = BaseSoftwareId,
+                Name = BaseSoftwareName ?? string.Empty
             };
         }
 
@@ -179,6 +203,20 @@
     }
 
     async Task<IEnumerable<SoftwareDto>> SearchPredecessors(string value, CancellationToken ct)
+    {
+        if(string.IsNullOrWhiteSpace(value))
+            return [];
+
+        List<SoftwareDto> results = await SoftwareService.SearchSoftwareAsync(value);
+
+        // Exclude current software from results to prevent self-reference
+        if(!IsNew && SoftwareId > 0)
+            results = results.Where(s => s.Id != SoftwareId).ToList();
+
+        return results;
+    }
+
+    async Task<IEnumerable<SoftwareDto>> SearchBaseSoftware(string value, CancellationToken ct)
     {
         if(string.IsNullOrWhiteSpace(value))
             return [];
@@ -267,8 +305,8 @@
             Name              = Name,
             FamilyId          = _selectedFamily?.Id,
             PredecessorId     = _selectedPredecessor?.Id,
-            IsOperatingSystem = IsOperatingSystem,
-            IsGame            = IsGame
+            BaseSoftwareId    = _selectedBaseSoftware?.Id,
+            Kind              = Kind
         }));
     }
 }

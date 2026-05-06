@@ -100,8 +100,8 @@ public partial class Software
                 Name              = data.Name,
                 FamilyId          = data.FamilyId,
                 PredecessorId     = data.PredecessorId,
-                IsOperatingSystem = data.IsOperatingSystem,
-                IsGame            = data.IsGame
+                BaseSoftwareId    = data.BaseSoftwareId,
+                Kind              = (int)data.Kind
             };
 
             (int? id, string errorMessage) = await SoftwareService.CreateAsync(dto);
@@ -138,8 +138,9 @@ public partial class Software
             { x => x.FamilyId, full.FamilyId },
             { x => x.PredecessorId, full.PredecessorId },
             { x => x.PredecessorName, full.Predecessor },
-            { x => x.IsOperatingSystem, full.IsOperatingSystem ?? false },
-            { x => x.IsGame, full.IsGame ?? false }
+            { x => x.BaseSoftwareId, full.BaseSoftwareId },
+            { x => x.BaseSoftwareName, full.BaseSoftware },
+            { x => x.Kind, (Marechai.Data.SoftwareKind)(full.Kind ?? 0) }
         };
 
         IDialogReference dialog = await DialogService.ShowAsync<SoftwareDialog>(L["Edit Software"], parameters,
@@ -159,8 +160,8 @@ public partial class Software
                 Name              = data.Name,
                 FamilyId          = data.FamilyId,
                 PredecessorId     = data.PredecessorId,
-                IsOperatingSystem = data.IsOperatingSystem,
-                IsGame            = data.IsGame
+                BaseSoftwareId    = data.BaseSoftwareId,
+                Kind              = (int)data.Kind
             };
 
             (bool succeeded, string errorMessage) = await SoftwareService.UpdateAsync(full.Id ?? 0, dto);

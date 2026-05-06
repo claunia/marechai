@@ -11,6 +11,7 @@ using Marechai.App.Navigation;
 using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
+using Marechai.Data;
 
 namespace Marechai.App.Presentation.ViewModels.Admin;
 
@@ -40,8 +41,8 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
 
     // Form
     [ObservableProperty] private string           _softwareName = string.Empty;
-    [ObservableProperty] private bool             _isOperatingSystem;
-    [ObservableProperty] private bool             _isGame;
+    [ObservableProperty] private int               _kind;
+    [ObservableProperty] private int?              _baseSoftwareId;
     [ObservableProperty] private SoftwareFamilyDto? _selectedFamily;
     [ObservableProperty] private string           _familySearchText = string.Empty;
     [ObservableProperty] private ObservableCollection<SoftwareFamilyDto> _familySuggestions = [];
@@ -201,8 +202,8 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
         EditPanelTitle    = _localizer["EditSoftwareDialog_Title"];
         IsEditingExisting = true;
         SoftwareName      = item.Name ?? string.Empty;
-        IsOperatingSystem = item.IsOperatingSystem ?? false;
-        IsGame            = item.IsGame ?? false;
+        Kind              = item.Kind ?? 0;
+        BaseSoftwareId    = item.BaseSoftwareId;
 
         if(item.FamilyId.HasValue && _allFamilies != null)
         {
@@ -255,8 +256,8 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
             {
                 Name              = SoftwareName,
                 FamilyId          = SelectedFamily?.Id,
-                IsOperatingSystem = IsOperatingSystem,
-                IsGame            = IsGame
+                BaseSoftwareId    = BaseSoftwareId,
+                Kind              = Kind
             };
 
             if(_editingId == null)
@@ -384,8 +385,8 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
     private void ClearForm()
     {
         SoftwareName      = string.Empty;
-        IsOperatingSystem = false;
-        IsGame            = false;
+        Kind              = 0;
+        BaseSoftwareId    = null;
         SelectedFamily    = null;
         FamilySearchText  = string.Empty;
         CompanyRoles.Clear();
