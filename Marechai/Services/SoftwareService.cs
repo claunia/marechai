@@ -469,6 +469,24 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
+    public async Task<List<SoftwareDto>> SearchSoftwareAsync(string search)
+    {
+        try
+        {
+            List<SoftwareDto> software = await client.Software.GetAsync(config =>
+            {
+                config.QueryParameters.Take   = 20;
+                config.QueryParameters.Search = search;
+            });
+
+            return software ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
     public async Task<int> GetCountAsync(string search = null)
     {
         try

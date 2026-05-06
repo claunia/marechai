@@ -195,6 +195,20 @@
                     <td>@_software.Family</td>
                 </tr>
             }
+            @if(_software.PredecessorId is not null && !string.IsNullOrEmpty(_software.Predecessor))
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right; padding-left: 2em;"><strong>@L["Predecessor"]</strong></td>
+                    <td style="padding-left: 2em;"><MudLink Href="@($"/software/{_software.PredecessorId}")">@_software.Predecessor</MudLink></td>
+                </tr>
+            }
+            @if(_software.SuccessorId is not null && !string.IsNullOrEmpty(_software.Successor))
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right; padding-left: 2em;"><strong>@L["Successor"]</strong></td>
+                    <td style="padding-left: 2em;"><MudLink Href="@($"/software/{_software.SuccessorId}")">@_software.Successor</MudLink></td>
+                </tr>
+            }
             <tr>
                 <td style="width: 33%; text-align: right;"><strong>@L["Operating System"]</strong></td>
                 <td>@(_software.IsOperatingSystem == true ? L["Yes"] : L["No"])</td>

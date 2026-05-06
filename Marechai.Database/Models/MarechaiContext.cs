@@ -2368,6 +2368,13 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .WithMany(x => x.Softwares)
                   .HasForeignKey(x => x.FamilyId)
                   .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasIndex(x => x.PredecessorId);
+
+            entity.HasOne(x => x.Predecessor)
+                  .WithMany(x => x.Successors)
+                  .HasForeignKey(x => x.PredecessorId)
+                  .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<SoftwareDescription>(entity =>

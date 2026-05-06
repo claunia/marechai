@@ -38,6 +38,18 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     private string? _family;
 
     [ObservableProperty]
+    private string? _predecessor;
+
+    [ObservableProperty]
+    private int? _predecessorId;
+
+    [ObservableProperty]
+    private string? _successor;
+
+    [ObservableProperty]
+    private int? _successorId;
+
+    [ObservableProperty]
     private bool _isOperatingSystem;
 
     [ObservableProperty]
@@ -57,6 +69,12 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
 
     [ObservableProperty]
     private Visibility _showFamily = Visibility.Collapsed;
+
+    [ObservableProperty]
+    private Visibility _showPredecessor = Visibility.Collapsed;
+
+    [ObservableProperty]
+    private Visibility _showSuccessor = Visibility.Collapsed;
 
     [ObservableProperty]
     private Visibility _showCompanies = Visibility.Collapsed;
@@ -147,6 +165,38 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     }
 
     [RelayCommand]
+    public Task NavigateToPredecessor()
+    {
+        if(PredecessorId is null) return Task.CompletedTask;
+
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.SoftwareId, PredecessorId.Value },
+            { NavParamKeys.NavigationSource, nameof(SoftwareViewViewModel) }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(SoftwareViewPage), parameters);
+
+        return Task.CompletedTask;
+    }
+
+    [RelayCommand]
+    public Task NavigateToSuccessor()
+    {
+        if(SuccessorId is null) return Task.CompletedTask;
+
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.SoftwareId, SuccessorId.Value },
+            { NavParamKeys.NavigationSource, nameof(SoftwareViewViewModel) }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(SoftwareViewPage), parameters);
+
+        return Task.CompletedTask;
+    }
+
+    [RelayCommand]
     public Task NavigateToRelease(ReleaseDisplayItem? release)
     {
         if(release is null) return Task.CompletedTask;
@@ -197,6 +247,10 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
 
             SoftwareName      = software.Name ?? string.Empty;
             Family            = software.Family;
+            PredecessorId     = software.PredecessorId;
+            Predecessor       = software.Predecessor;
+            SuccessorId       = software.SuccessorId;
+            Successor         = software.Successor;
             IsOperatingSystem = software.IsOperatingSystem ?? false;
             IsGame            = software.IsGame ?? false;
 
@@ -447,6 +501,8 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     private void UpdateVisibilities()
     {
         ShowFamily      = !string.IsNullOrEmpty(Family) ? Visibility.Visible : Visibility.Collapsed;
+        ShowPredecessor  = PredecessorId is not null && !string.IsNullOrEmpty(Predecessor) ? Visibility.Visible : Visibility.Collapsed;
+        ShowSuccessor    = SuccessorId is not null && !string.IsNullOrEmpty(Successor) ? Visibility.Visible : Visibility.Collapsed;
         ShowCompanies   = Companies.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowVersions    = Versions.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowOsBadge     = IsOperatingSystem ? Visibility.Visible : Visibility.Collapsed;

@@ -40,6 +40,26 @@ namespace Marechai.ApiClient.Models
 #else
         public string Name { get; set; }
 #endif
+        /// <summary>The predecessor property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? Predecessor { get; set; }
+#nullable restore
+#else
+        public string Predecessor { get; set; }
+#endif
+        /// <summary>The predecessor_id property</summary>
+        public int? PredecessorId { get; set; }
+        /// <summary>The successor property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? Successor { get; set; }
+#nullable restore
+#else
+        public string Successor { get; set; }
+#endif
+        /// <summary>The successor_id property</summary>
+        public int? SuccessorId { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.ApiClient.Models.SoftwareDto"/> and sets the default values.
         /// </summary>
@@ -72,6 +92,10 @@ namespace Marechai.ApiClient.Models
                 { "is_game", n => { IsGame = n.GetBoolValue(); } },
                 { "is_operating_system", n => { IsOperatingSystem = n.GetBoolValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
+                { "predecessor", n => { Predecessor = n.GetStringValue(); } },
+                { "predecessor_id", n => { PredecessorId = n.GetIntValue(); } },
+                { "successor", n => { Successor = n.GetStringValue(); } },
+                { "successor_id", n => { SuccessorId = n.GetIntValue(); } },
             };
         }
         /// <summary>
@@ -88,6 +112,10 @@ namespace Marechai.ApiClient.Models
             writer.WriteBoolValue("is_game", IsGame);
             writer.WriteBoolValue("is_operating_system", IsOperatingSystem);
             writer.WriteStringValue("name", Name);
+            writer.WriteStringValue("predecessor", Predecessor);
+            writer.WriteIntValue("predecessor_id", PredecessorId);
+            writer.WriteStringValue("successor", Successor);
+            writer.WriteIntValue("successor_id", SuccessorId);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

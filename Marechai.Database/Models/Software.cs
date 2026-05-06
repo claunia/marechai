@@ -9,6 +9,9 @@ public class Software : BaseModel<ulong>
     public string Name { get;                                                set; }
     public         ulong?                           FamilyId          { get; set; }
     public virtual SoftwareFamily                   Family            { get; set; }
+    public         ulong?                           PredecessorId     { get; set; }
+    public virtual Software                         Predecessor       { get; set; }
+    public virtual ICollection<Software>            Successors        { get; set; }
     public         bool                             IsOperatingSystem { get; set; }
     public         bool                             IsGame            { get; set; }
     public virtual ICollection<SoftwareVersion>     Versions          { get; set; }

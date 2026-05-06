@@ -38,6 +38,14 @@ public class SoftwareDto : BaseDto<ulong>
     public ulong? FamilyId { get; set; }
     [JsonPropertyName("family")]
     public string? Family { get; set; }
+    [JsonPropertyName("predecessor_id")]
+    public ulong? PredecessorId { get; set; }
+    [JsonPropertyName("predecessor")]
+    public string? Predecessor { get; set; }
+    [JsonPropertyName("successor_id")]
+    public ulong? SuccessorId { get; set; }
+    [JsonPropertyName("successor")]
+    public string? Successor { get; set; }
     [JsonPropertyName("is_operating_system")]
     public bool IsOperatingSystem { get; set; }
     [JsonPropertyName("is_game")]

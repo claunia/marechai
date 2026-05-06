@@ -87,6 +87,7 @@ public partial class Software
             {
                 Name              = data.Name,
                 FamilyId          = data.FamilyId,
+                PredecessorId     = data.PredecessorId,
                 IsOperatingSystem = data.IsOperatingSystem,
                 IsGame            = data.IsGame
             };
@@ -123,6 +124,8 @@ public partial class Software
             { x => x.SoftwareId, full.Id ?? 0 },
             { x => x.Name, full.Name },
             { x => x.FamilyId, full.FamilyId },
+            { x => x.PredecessorId, full.PredecessorId },
+            { x => x.PredecessorName, full.Predecessor },
             { x => x.IsOperatingSystem, full.IsOperatingSystem ?? false },
             { x => x.IsGame, full.IsGame ?? false }
         };
@@ -143,6 +146,7 @@ public partial class Software
                 Id                = full.Id,
                 Name              = data.Name,
                 FamilyId          = data.FamilyId,
+                PredecessorId     = data.PredecessorId,
                 IsOperatingSystem = data.IsOperatingSystem,
                 IsGame            = data.IsGame
             };

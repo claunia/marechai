@@ -146,6 +146,48 @@
                         </Border>
                     </StackPanel>
 
+                    <!-- Predecessor -->
+                    <StackPanel Visibility="{Binding ShowPredecessor}"
+                                Spacing="8"
+                                Margin="24,0,0,0">
+                        <TextBlock
+                                   Text="Predecessor"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="16,12">
+                            <HyperlinkButton Content="{Binding Predecessor}"
+                                             Command="{Binding NavigateToPredecessorCommand}"
+                                             Padding="0"
+                                             FontSize="14" />
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Successor -->
+                    <StackPanel Visibility="{Binding ShowSuccessor}"
+                                Spacing="8"
+                                Margin="24,0,0,0">
+                        <TextBlock
+                                   Text="Successor"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="16,12">
+                            <HyperlinkButton Content="{Binding Successor}"
+                                             Command="{Binding NavigateToSuccessorCommand}"
+                                             Padding="0"
+                                             FontSize="14" />
+                        </Border>
+                    </StackPanel>
+
                     <!-- Companies -->
                     <StackPanel Visibility="{Binding ShowCompanies}"
                                 Spacing="12">

@@ -254,6 +254,16 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
                                                                Name              = s.Name,
                                                                FamilyId          = s.FamilyId,
                                                                Family            = s.Family.Name,
+                                                               PredecessorId     = s.PredecessorId,
+                                                               Predecessor       = s.Predecessor.Name,
+                                                               SuccessorId = context.Softwares
+                                                                                    .Where(x => x.PredecessorId == s.Id)
+                                                                                    .Select(x => (ulong?)x.Id)
+                                                                                    .FirstOrDefault(),
+                                                               Successor = context.Softwares
+                                                                                  .Where(x => x.PredecessorId == s.Id)
+                                                                                  .Select(x => x.Name)
+                                                                                  .FirstOrDefault(),
                                                                IsOperatingSystem = s.IsOperatingSystem,
                                                                IsGame            = s.IsGame
                                                            })
@@ -276,6 +286,7 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
 
         model.Name              = dto.Name;
         model.FamilyId          = dto.FamilyId;
+        model.PredecessorId     = dto.PredecessorId;
         model.IsOperatingSystem = dto.IsOperatingSystem;
         model.IsGame            = dto.IsGame;
 
@@ -307,6 +318,7 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
         {
             Name              = dto.Name,
             FamilyId          = dto.FamilyId,
+            PredecessorId     = dto.PredecessorId,
             IsOperatingSystem = dto.IsOperatingSystem,
             IsGame            = dto.IsGame
         };
@@ -673,6 +685,17 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
 
             foreach(MobyGamesCoverDownloadState state in coverStates)
                 state.SoftwareId = targetId;
+
+            // 9b. Transfer predecessor: if target has no predecessor but source does, adopt it
+            if(target.PredecessorId is null && source.PredecessorId is not null)
+                target.PredecessorId = source.PredecessorId;
+
+            // 9c. Re-point any software that had source as predecessor to target
+            List<Software> successorsOfSource =
+                await context.Softwares.Where(s => s.PredecessorId == sourceId && s.Id != targetId).ToListAsync();
+
+            foreach(Software successor in successorsOfSource)
+                successor.PredecessorId = targetId;
 
             // Flush all changes before deleting the source to avoid FK violations
             await context.SaveChangesAsync();
