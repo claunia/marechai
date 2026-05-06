@@ -145,5 +145,50 @@ public sealed class MobyGamesHttpClient : IDisposable
         return string.IsNullOrWhiteSpace(ext) ? "jpg" : ext;
     }
 
+    /// <summary>
+    ///     Convert a promo art thumbnail URL (/images/promo/s/...) to the large version (/images/promo/l/...).
+    /// </summary>
+    public static string GetLargePromoImageUrl(string thumbnailUrl)
+    {
+        if(string.IsNullOrWhiteSpace(thumbnailUrl)) return null;
+
+        string largeUrl = thumbnailUrl.Replace("/promo/s/", "/promo/l/");
+
+        if(!largeUrl.StartsWith("http"))
+            largeUrl = BaseUrl + largeUrl;
+
+        return largeUrl;
+    }
+
+    /// <summary>
+    ///     Resolve a MobyGames game slug to numeric ID by following the redirect.
+    ///     Returns null if the slug cannot be resolved.
+    /// </summary>
+    public async Task<int?> ResolveNumericGameIdAsync(string slug)
+    {
+        if(_delayMs > 0)
+            await Task.Delay(_delayMs);
+
+        string url = $"{BaseUrl}/game/{slug}";
+
+        try
+        {
+            using var response = await _client.GetAsync(url);
+            string    finalUrl = response.RequestMessage?.RequestUri?.ToString();
+
+            if(string.IsNullOrWhiteSpace(finalUrl)) return null;
+
+            var match = System.Text.RegularExpressions.Regex.Match(finalUrl, @"/game/(\d+)/");
+
+            return match.Success ? int.Parse(match.Groups[1].Value) : null;
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"\e[33m  Warning: Error resolving slug '{slug}': {ex.Message}\e[0m");
+
+            return null;
+        }
+    }
+
     public void Dispose() => _client?.Dispose();
 }

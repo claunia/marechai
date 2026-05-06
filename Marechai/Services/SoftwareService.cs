@@ -1372,4 +1372,20 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
             return null;
         }
     }
+
+    // ── Promo Art ──
+
+    public async Task<List<SoftwarePromoArtDto>> GetPromoArtBySoftwareAsync(int softwareId)
+    {
+        try
+        {
+            var result = await client.Software[softwareId].PromoArt.GetAsync();
+
+            return result ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
 }

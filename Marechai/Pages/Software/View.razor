@@ -839,6 +839,75 @@
     </MudOverlay>
 }
 
+@* ── Promo Art Card ── *@
+@if(_promoArt.Count > 0)
+{
+    <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+        <MudExpansionPanel>
+            <TitleContent>
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIcon Icon="@Icons.Material.Filled.Campaign" Color="Color.Primary"/>
+                    <MudText Typo="Typo.h6">@L["Promo Art"]</MudText>
+                    <MudChip T="string" Size="Size.Small" Color="Color.Success">@_promoArt.Count</MudChip>
+                </MudStack>
+            </TitleContent>
+            <ChildContent>
+                @foreach(var group in _promoArtByGroup)
+                {
+                    <MudText Typo="Typo.subtitle1" Class="mt-3 mb-2"><strong>@L[group.Key]</strong></MudText>
+                    <div class="d-flex flex-wrap gap-3">
+                        @foreach(SoftwarePromoArtDto promo in group.Value)
+                        {
+                            <MudCard Elevation="1" Class="rounded-lg" Style="width: 200px; cursor: pointer;"
+                                     @onclick="() => _fullscreenPromo = promo">
+                                <MudCardContent Class="pa-2">
+                                    <picture>
+                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/jxl/hd/@(promo.Id).jxl, @(AssetUrls.BaseUrl)/assets/photos/software-promo-art/jxl/1440p/@(promo.Id).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/software-promo-art/jxl/4k/@(promo.Id).jxl 3x" type="image/jxl">
+                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/avif/hd/@(promo.Id).avif, @(AssetUrls.BaseUrl)/assets/photos/software-promo-art/avif/1440p/@(promo.Id).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/software-promo-art/avif/4k/@(promo.Id).avif 3x" type="image/avif">
+                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/webp/hd/@(promo.Id).webp, @(AssetUrls.BaseUrl)/assets/photos/software-promo-art/webp/1440p/@(promo.Id).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/software-promo-art/webp/4k/@(promo.Id).webp 3x" type="image/webp">
+                                        <img alt="@(promo.Caption ?? promo.GroupName)"
+                                             src="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/jpeg/hd/@(promo.Id).jpg"
+                                             srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/jpeg/hd/@(promo.Id).jpg, @(AssetUrls.BaseUrl)/assets/photos/software-promo-art/jpeg/1440p/@(promo.Id).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/software-promo-art/jpeg/4k/@(promo.Id).jpg 3x"
+                                             style="width: 100%; height: auto; border-radius: 4px;"/>
+                                    </picture>
+                                    @if(!string.IsNullOrEmpty(promo.Caption))
+                                    {
+                                        <MudText Typo="Typo.caption" Align="Align.Center" Class="mt-1">@promo.Caption</MudText>
+                                    }
+                                </MudCardContent>
+                            </MudCard>
+                        }
+                    </div>
+                }
+            </ChildContent>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+}
+
+@if(_fullscreenPromo is not null)
+{
+    <MudOverlay Visible="true" DarkBackground="true" ZIndex="9999" OnClick="() => _fullscreenPromo = null">
+        <div class="d-flex flex-column align-center justify-center" style="width: 100vw; height: 100vh;">
+            <picture>
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/jxl/4k/@(_fullscreenPromo.Id).jxl" type="image/jxl">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/avif/4k/@(_fullscreenPromo.Id).avif" type="image/avif">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/webp/4k/@(_fullscreenPromo.Id).webp" type="image/webp">
+                <img alt="@(_fullscreenPromo.Caption ?? _fullscreenPromo.GroupName)"
+                     src="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/jpeg/4k/@(_fullscreenPromo.Id).jpg"
+                     style="max-width: 95vw; max-height: 90vh; object-fit: contain;"/>
+            </picture>
+            @if(!string.IsNullOrEmpty(_fullscreenPromo.GroupName))
+            {
+                <MudText Typo="Typo.subtitle1" Style="color: white;" Class="mt-2">@L[_fullscreenPromo.GroupName]</MudText>
+            }
+            @if(!string.IsNullOrEmpty(_fullscreenPromo.Caption))
+            {
+                <MudText Typo="Typo.body2" Style="color: rgba(255,255,255,0.8);" Class="mt-1">@_fullscreenPromo.Caption</MudText>
+            }
+        </div>
+    </MudOverlay>
+}
+
 @* ── Screenshots Card ── *@
 @if(_screenshots.Count > 0)
 {

@@ -94,4 +94,19 @@ public class SourceDatabaseService
 
         return System.Convert.ToInt32(result);
     }
+
+    public async Task InsertRowAsync(string gameId, int chunk, string body)
+    {
+        await using var connection = new MySqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        await using var cmd = new MySqlCommand(
+            "INSERT INTO mobygames_raw (id, chunk, body) VALUES (@id, @chunk, @body)", connection);
+
+        cmd.Parameters.AddWithValue("@id",    gameId);
+        cmd.Parameters.AddWithValue("@chunk", chunk);
+        cmd.Parameters.AddWithValue("@body",  body);
+
+        await cmd.ExecuteNonQueryAsync();
+    }
 }

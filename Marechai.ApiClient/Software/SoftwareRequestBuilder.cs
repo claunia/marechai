@@ -19,6 +19,7 @@ using Marechai.ApiClient.Software.MinimumYear;
 using Marechai.ApiClient.Software.OsCompatibility;
 using Marechai.ApiClient.Software.Platforms;
 using Marechai.ApiClient.Software.ProductCodes;
+using Marechai.ApiClient.Software.PromoArt;
 using Marechai.ApiClient.Software.Releases;
 using Marechai.ApiClient.Software.Requirements;
 using Marechai.ApiClient.Software.Roles;
@@ -125,6 +126,11 @@ namespace Marechai.ApiClient.Software
         public global::Marechai.ApiClient.Software.ProductCodes.ProductCodesRequestBuilder ProductCodes
         {
             get => new global::Marechai.ApiClient.Software.ProductCodes.ProductCodesRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The promoArt property</summary>
+        public global::Marechai.ApiClient.Software.PromoArt.PromoArtRequestBuilder PromoArt
+        {
+            get => new global::Marechai.ApiClient.Software.PromoArt.PromoArtRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The releases property</summary>
         public global::Marechai.ApiClient.Software.Releases.ReleasesRequestBuilder Releases

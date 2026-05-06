@@ -486,6 +486,9 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
         int compilationDuplicates =
             sourceCompilationReleaseIds.Count(rid => targetCompilationReleaseIds.Contains(rid));
 
+        // Count promo art
+        int promoArtCount = await context.SoftwarePromoArt.CountAsync(p => p.SoftwareId == sourceId);
+
         return new SoftwareMergePreviewDto
         {
             TargetId                       = targetId,
@@ -506,7 +509,8 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
             CreditsTotal                   = sourceCredits.Count,
             CreditsDuplicates              = creditsDuplicates,
             CompilationReferencesTotal     = sourceCompilationReleaseIds.Count,
-            CompilationReferencesDuplicates = compilationDuplicates
+            CompilationReferencesDuplicates = compilationDuplicates,
+            PromoArtCount                  = promoArtCount
         };
     }
 
@@ -589,6 +593,13 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
 
             foreach(SoftwareScreenshot screenshot in sourceScreenshots)
                 screenshot.SoftwareId = targetId;
+
+            // 4b. Re-parent SoftwarePromoArt (no dedup, Guid PK)
+            List<SoftwarePromoArt> sourcePromoArt =
+                await context.SoftwarePromoArt.Where(p => p.SoftwareId == sourceId).ToListAsync();
+
+            foreach(SoftwarePromoArt promo in sourcePromoArt)
+                promo.SoftwareId = targetId;
 
             // 5. Merge SoftwareDescriptions (unique on SoftwareId+LanguageCode)
             List<SoftwareDescription> sourceDescriptions =
@@ -695,6 +706,12 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
                 await context.MobyGamesCoverDownloadStates.Where(s => s.SoftwareId == sourceId).ToListAsync();
 
             foreach(MobyGamesCoverDownloadState state in coverStates)
+                state.SoftwareId = targetId;
+
+            List<MobyGamesPromoArtDownloadState> promoArtStates =
+                await context.MobyGamesPromoArtDownloadStates.Where(s => s.SoftwareId == sourceId).ToListAsync();
+
+            foreach(MobyGamesPromoArtDownloadState state in promoArtStates)
                 state.SoftwareId = targetId;
 
             // 9b. Transfer predecessor: if target has no predecessor but source does, adopt it

@@ -61,6 +61,9 @@ public partial class View
     Dictionary<string, List<SoftwareCoverDto>>    _coversByRelease = new();
     SoftwareCoverDto                            _fullscreenCover;
     SoftwareCoverDto                            _heroCover;
+    List<SoftwarePromoArtDto>                   _promoArt = [];
+    Dictionary<string, List<SoftwarePromoArtDto>> _promoArtByGroup = new();
+    SoftwarePromoArtDto                         _fullscreenPromo;
     SoftwareDto                                 _software;
     List<SoftwareVersionDto>                    _versions = [];
     List<SoftwareCriticReviewDto>               _criticReviews = [];
@@ -176,6 +179,14 @@ public partial class View
 
         if(frontCovers.Count > 0)
             _heroCover = frontCovers[Random.Shared.Next(frontCovers.Count)];
+
+        // Load promo art
+        _promoArt = await Service.GetPromoArtBySoftwareAsync(Id);
+
+        _promoArtByGroup = _promoArt
+                          .GroupBy(p => p.GroupName ?? "Other")
+                          .OrderBy(g => g.Key)
+                          .ToDictionary(g => g.Key, g => g.ToList());
 
         // Load compilations that include this software
         _compilations = await Service.GetCompilationsForSoftwareAsync(Id);

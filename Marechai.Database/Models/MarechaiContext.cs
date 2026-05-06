@@ -157,6 +157,8 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<LanguageBySoftwareRelease>          LanguageBySoftwareRelease            { get; set; }
     public virtual DbSet<SoftwareScreenshot>                  SoftwareScreenshots                  { get; set; }
     public virtual DbSet<SoftwareCover>                      SoftwareCovers                       { get; set; }
+    public virtual DbSet<SoftwarePromoArt>                   SoftwarePromoArt                     { get; set; }
+    public virtual DbSet<SoftwarePromoArtGroup>              SoftwarePromoArtGroups               { get; set; }
     public virtual DbSet<SoftwareDescription>                  SoftwareDescriptions                 { get; set; }
     public virtual DbSet<SoundByMachine>                      SoundByMachine                      { get; set; }
     public virtual DbSet<SoundSynth>                          SoundSynths                         { get; set; }
@@ -173,6 +175,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<MobyGamesImportState>               MobyGamesImportStates               { get; set; }
     public virtual DbSet<MobyGamesRejection>                 MobyGamesRejections                 { get; set; }
     public virtual DbSet<MobyGamesCoverDownloadState>        MobyGamesCoverDownloadStates        { get; set; }
+    public virtual DbSet<MobyGamesPromoArtDownloadState>    MobyGamesPromoArtDownloadStates     { get; set; }
     public virtual DbSet<SoftwareCriticReview>               SoftwareCriticReviews               { get; set; }
     public virtual DbSet<MobyGamesReviewImportState>         MobyGamesReviewImportStates         { get; set; }
     public virtual DbSet<SoftwareUserRating>                  SoftwareUserRatings                 { get; set; }
@@ -2820,6 +2823,34 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
         {
             entity.HasIndex(e => e.MobyGameId).IsUnique();
             entity.HasIndex(e => e.Status);
+        });
+
+        modelBuilder.Entity<SoftwarePromoArtGroup>(entity =>
+        {
+            entity.HasIndex(e => e.Name).IsUnique();
+        });
+
+        modelBuilder.Entity<SoftwarePromoArt>(entity =>
+        {
+            entity.HasIndex(e => e.SoftwareId);
+            entity.HasIndex(e => e.GroupId);
+
+            entity.HasOne(e => e.Software)
+                  .WithMany(p => p.PromoArt)
+                  .HasForeignKey(e => e.SoftwareId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Group)
+                  .WithMany(p => p.PromoArt)
+                  .HasForeignKey(e => e.GroupId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<MobyGamesPromoArtDownloadState>(entity =>
+        {
+            entity.HasIndex(e => e.PromoPageUrl).IsUnique();
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => e.MobyGameId);
         });
 
         modelBuilder.Entity<MobyGamesRejection>(entity =>

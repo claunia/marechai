@@ -25,4 +25,5 @@ public class Software : BaseModel<ulong>
     public virtual ICollection<SoftwareCriticReview>        CriticReviews       { get; set; }
     public virtual ICollection<SoftwareUserRating>          UserRatings         { get; set; }
     public virtual ICollection<SoftwareUserReview>          UserReviews         { get; set; }
+    public virtual ICollection<SoftwarePromoArt>            PromoArt            { get; set; }
 }

@@ -168,6 +168,97 @@ class Program
                 break;
             }
 
+            case "scrape-promo-pages":
+            {
+                int promoBatchSize = config.GetValue("Import:BatchSize", 500);
+                int delayMs        = config.GetValue("MobyGames:DelayMs", 2000);
+                bool dryRun        = false;
+
+                for(int i = 0; i < args.Length; i++)
+                {
+                    if(args[i] == "--batch-size" && i + 1 < args.Length && int.TryParse(args[i + 1], out int pbs))
+                        promoBatchSize = pbs;
+                    if(args[i] == "--delay-ms" && i + 1 < args.Length && int.TryParse(args[i + 1], out int dms))
+                        delayMs = dms;
+                    if(args[i] == "--dry-run")
+                        dryRun = true;
+                }
+
+                MobyGamesHttpClient promoHttpClient = null;
+
+                if(!dryRun)
+                    promoHttpClient = new MobyGamesHttpClient(delayMs);
+
+                var promoScraper = new PromoArtScraper(factory, sourceDb, promoHttpClient);
+
+                try
+                {
+                    await promoScraper.RunAsync(promoBatchSize, dryRun);
+                }
+                finally
+                {
+                    promoHttpClient?.Dispose();
+                }
+
+                break;
+            }
+
+            case "download-promo-art":
+            {
+                int promoBatchSize = config.GetValue("Import:BatchSize", 500);
+                int delayMs        = config.GetValue("MobyGames:DelayMs", 2000);
+                string assetRoot   = config.GetValue<string>("MobyGames:AssetRootPath");
+                bool dryRun        = false;
+
+                for(int i = 0; i < args.Length; i++)
+                {
+                    if(args[i] == "--batch-size" && i + 1 < args.Length && int.TryParse(args[i + 1], out int pbs))
+                        promoBatchSize = pbs;
+                    if(args[i] == "--delay-ms" && i + 1 < args.Length && int.TryParse(args[i + 1], out int dms))
+                        delayMs = dms;
+                    if(args[i] == "--dry-run")
+                        dryRun = true;
+                }
+
+                if(!dryRun && string.IsNullOrEmpty(assetRoot))
+                {
+                    Console.WriteLine("\e[31;1mMissing MobyGames:AssetRootPath in appsettings.json\e[0m");
+                    return 1;
+                }
+
+                MobyGamesHttpClient promoHttpClient2 = null;
+
+                if(!dryRun)
+                {
+                    promoHttpClient2 = new MobyGamesHttpClient(delayMs);
+                    ImageConverter.EnsureDirectoriesCreated(assetRoot, "software-promo-art");
+                }
+
+                var promoStateService = new PromoArtStateService(factory);
+
+                var promoDownloadService = new PromoArtDownloadService(
+                    factory, sourceDb, promoStateService, promoHttpClient2, assetRoot ?? "");
+
+                try
+                {
+                    await promoDownloadService.RunAsync(promoBatchSize, dryRun);
+                }
+                finally
+                {
+                    promoHttpClient2?.Dispose();
+                }
+
+                break;
+            }
+
+            case "promo-art-status":
+            {
+                var promoStateService2 = new PromoArtStateService(factory);
+                await promoStateService2.PrintPromoArtStatusAsync();
+
+                break;
+            }
+
             case "status":
                 await stateService.PrintStatusAsync();
 
@@ -199,6 +290,11 @@ class Program
                 Console.WriteLine("    status                                        Show import status counts");
                 Console.WriteLine("    cover-status                                  Show cover download status counts");
                 Console.WriteLine("    review-status                                 Show review import status counts");
+                Console.WriteLine("    scrape-promo-pages [--batch-size N] [--delay-ms N] [--dry-run]");
+                Console.WriteLine("                                                  Scrape promo art pages from new MobyGames");
+                Console.WriteLine("    download-promo-art [--batch-size N] [--delay-ms N] [--dry-run]");
+                Console.WriteLine("                                                  Download promo art images for scraped games");
+                Console.WriteLine("    promo-art-status                              Show promo art download status counts");
                 Console.WriteLine("    reset --game <id>                             Reset a game to unprocessed");
 
                 break;

@@ -9,14 +9,17 @@ namespace Marechai.MobyGames.Services;
 
 public static class ImageConverter
 {
-    const string ItemName = "software-covers";
+    const string DefaultItemName = "software-covers";
 
-    public static void EnsureDirectoriesCreated(string assetRootPath)
+    public static void EnsureDirectoriesCreated(string assetRootPath) =>
+        EnsureDirectoriesCreated(assetRootPath, DefaultItemName);
+
+    public static void EnsureDirectoriesCreated(string assetRootPath, string itemName)
     {
         List<string> paths = [];
 
         string photosRoot             = Path.Combine(assetRootPath, "photos");
-        string itemPhotosRoot         = Path.Combine(photosRoot,    ItemName);
+        string itemPhotosRoot         = Path.Combine(photosRoot,    itemName);
         string itemThumbsRoot         = Path.Combine(itemPhotosRoot, "thumbs");
         string itemOriginalPhotosRoot = Path.Combine(itemPhotosRoot, "originals");
 
@@ -37,7 +40,11 @@ public static class ImageConverter
         foreach(string path in paths.Where(path => !Directory.Exists(path))) Directory.CreateDirectory(path);
     }
 
-    public static void ConvertAll(string assetRootPath, Guid id, string originalFilePath, string sourceFormat)
+    public static void ConvertAll(string assetRootPath, Guid id, string originalFilePath, string sourceFormat) =>
+        ConvertAll(assetRootPath, id, originalFilePath, sourceFormat, DefaultItemName);
+
+    public static void ConvertAll(string assetRootPath, Guid id, string originalFilePath, string sourceFormat,
+                                  string itemName)
     {
         string[] formats     = ["JPEG", "WEBP", "HEIF", "AVIF", "JXL"];
         string[] resolutions = ["hd", "1440p", "4k"];
@@ -53,8 +60,8 @@ public static class ImageConverter
 
                 pool.Add(new Task(() =>
                 {
-                    bool thumbResult = Convert(assetRootPath, id, originalFilePath, sourceFormat, f, r, true);
-                    bool fullResult  = Convert(assetRootPath, id, originalFilePath, sourceFormat, f, r, false);
+                    bool thumbResult = Convert(assetRootPath, id, originalFilePath, sourceFormat, f, r, true, itemName);
+                    bool fullResult  = Convert(assetRootPath, id, originalFilePath, sourceFormat, f, r, false, itemName);
 
                     if(!thumbResult)
                         Console.WriteLine($"\e[33m    Warning: {f} {r} thumbnail conversion failed\e[0m");
@@ -71,13 +78,13 @@ public static class ImageConverter
     }
 
     static bool Convert(string assetRootPath, Guid id, string originalPath, string sourceFormat,
-                        string outputFormat,  string resolution, bool thumbnail)
+                        string outputFormat,  string resolution, bool thumbnail, string itemName = DefaultItemName)
     {
         outputFormat = outputFormat.ToLowerInvariant();
         resolution   = resolution.ToLowerInvariant();
         sourceFormat = sourceFormat.ToLowerInvariant();
 
-        string outputPath = Path.Combine(assetRootPath, "photos", ItemName);
+        string outputPath = Path.Combine(assetRootPath, "photos", itemName);
 
         int width, height;
 

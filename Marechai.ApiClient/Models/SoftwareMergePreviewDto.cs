@@ -38,6 +38,8 @@ namespace Marechai.ApiClient.Models
         public int? GenresDuplicates { get; set; }
         /// <summary>The genres_total property</summary>
         public int? GenresTotal { get; set; }
+        /// <summary>The promo_art_count property</summary>
+        public int? PromoArtCount { get; set; }
         /// <summary>The screenshots_count property</summary>
         public int? ScreenshotsCount { get; set; }
         /// <summary>The source_id property</summary>
@@ -107,6 +109,7 @@ namespace Marechai.ApiClient.Models
                 { "direct_releases_without_title_count", n => { DirectReleasesWithoutTitleCount = n.GetIntValue(); } },
                 { "genres_duplicates", n => { GenresDuplicates = n.GetIntValue(); } },
                 { "genres_total", n => { GenresTotal = n.GetIntValue(); } },
+                { "promo_art_count", n => { PromoArtCount = n.GetIntValue(); } },
                 { "screenshots_count", n => { ScreenshotsCount = n.GetIntValue(); } },
                 { "source_id", n => { SourceId = n.GetIntValue(); } },
                 { "source_name", n => { SourceName = n.GetStringValue(); } },
@@ -135,6 +138,7 @@ namespace Marechai.ApiClient.Models
             writer.WriteIntValue("direct_releases_without_title_count", DirectReleasesWithoutTitleCount);
             writer.WriteIntValue("genres_duplicates", GenresDuplicates);
             writer.WriteIntValue("genres_total", GenresTotal);
+            writer.WriteIntValue("promo_art_count", PromoArtCount);
             writer.WriteIntValue("screenshots_count", ScreenshotsCount);
             writer.WriteIntValue("source_id", SourceId);
             writer.WriteStringValue("source_name", SourceName);
