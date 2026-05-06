@@ -996,4 +996,38 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
             return null;
         }
     }
+
+    public async Task<SoftwareMergePreviewDto> GetMergePreviewAsync(int targetId, int sourceId)
+    {
+        try
+        {
+            return await client.Software[targetId].MergePreview[sourceId].GetAsync();
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public async Task<(bool succeeded, string error)> MergeSoftwareAsync(int targetId, int sourceId,
+                                                                         string releaseTitle)
+    {
+        try
+        {
+            await client.Software[targetId].Merge[sourceId].PostAsync(config =>
+            {
+                config.QueryParameters.ReleaseTitle = releaseTitle;
+            });
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
 }

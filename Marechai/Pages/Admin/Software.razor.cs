@@ -40,6 +40,9 @@ public partial class Software
     void NavigateToVersions(SoftwareDto software) =>
         NavigationManager.NavigateTo($"/admin/software/{software.Id}/versions");
 
+    void NavigateToReleases(SoftwareDto software) =>
+        NavigationManager.NavigateTo($"/admin/software/{software.Id}/releases");
+
     void NavigateToScreenshots(SoftwareDto software) =>
         NavigationManager.NavigateTo($"/admin/software/{software.Id}/screenshots");
 
@@ -152,6 +155,30 @@ public partial class Software
             {
                 _errorMessage = errorMessage;
             }
+        }
+    }
+
+    async Task OpenMergeDialog(SoftwareDto software)
+    {
+        DialogParameters<SoftwareMergeDialog> parameters = new()
+        {
+            { x => x.SourceId, (int)(software.Id ?? 0) },
+            { x => x.SourceName, software.Name }
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<SoftwareMergeDialog>(L["Merge Software"], parameters,
+                                                                                     new DialogOptions
+                                                                                     {
+                                                                                         MaxWidth  = MaxWidth.Medium,
+                                                                                         FullWidth = true
+                                                                                     });
+
+        DialogResult result = await dialog.Result;
+
+        if(result is { Canceled: false })
+        {
+            _successMessage = string.Format(L["Software '{0}' merged successfully."], software.Name);
+            await _dataGrid.ReloadServerData();
         }
     }
 

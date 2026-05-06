@@ -349,6 +349,350 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
         return Ok();
     }
 
+    [HttpGet("{targetId:ulong}/merge-preview/{sourceId:ulong}")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<SoftwareMergePreviewDto>> GetMergePreviewAsync(ulong targetId, ulong sourceId)
+    {
+        if(targetId == sourceId) return BadRequest("Cannot merge a software entry into itself.");
+
+        Software target = await context.Softwares.FindAsync(targetId);
+
+        if(target is null) return NotFound("Target software not found.");
+
+        Software source = await context.Softwares.FindAsync(sourceId);
+
+        if(source is null) return NotFound("Source software not found.");
+
+        // Extract suggested release title from name difference
+        string suggestedTitle = source.Name;
+
+        if(source.Name.StartsWith(target.Name, StringComparison.OrdinalIgnoreCase) &&
+           source.Name.Length > target.Name.Length)
+        {
+            suggestedTitle = source.Name[target.Name.Length..].TrimStart(' ', ':', '-', '(').TrimEnd(')').Trim();
+
+            if(string.IsNullOrWhiteSpace(suggestedTitle)) suggestedTitle = source.Name;
+        }
+
+        // Count versions
+        int versionsCount = await context.SoftwareVersions.CountAsync(v => v.SoftwareId == sourceId);
+
+        // Count direct releases
+        int directReleasesCount =
+            await context.SoftwareReleases.CountAsync(r => r.SoftwareId == sourceId);
+
+        int directReleasesWithoutTitleCount =
+            await context.SoftwareReleases.CountAsync(r => r.SoftwareId == sourceId &&
+                                                           (r.Title == null || r.Title == ""));
+
+        // Count company roles and duplicates
+        List<SoftwareCompanyRole> sourceCompanyRoles =
+            await context.SoftwareCompanyRoles.Where(cr => cr.SoftwareId == sourceId).ToListAsync();
+
+        HashSet<(int, string)> targetCompanyRoleKeys = (await context.SoftwareCompanyRoles
+                                                                     .Where(cr => cr.SoftwareId == targetId)
+                                                                     .Select(cr => new { cr.CompanyId, cr.RoleId })
+                                                                     .ToListAsync())
+           .Select(cr => (cr.CompanyId, cr.RoleId))
+           .ToHashSet();
+
+        int companyRolesDuplicates =
+            sourceCompanyRoles.Count(cr => targetCompanyRoleKeys.Contains((cr.CompanyId, cr.RoleId)));
+
+        // Count screenshots
+        int screenshotsCount = await context.SoftwareScreenshots.CountAsync(s => s.SoftwareId == sourceId);
+
+        // Count descriptions and duplicates
+        List<string> sourceDescriptionLangs = await context.SoftwareDescriptions
+                                                           .Where(d => d.SoftwareId == sourceId)
+                                                           .Select(d => d.LanguageCode)
+                                                           .ToListAsync();
+
+        List<string> targetDescriptionLangs = await context.SoftwareDescriptions
+                                                           .Where(d => d.SoftwareId == targetId)
+                                                           .Select(d => d.LanguageCode)
+                                                           .ToListAsync();
+
+        int descriptionsDuplicates = sourceDescriptionLangs.Count(sl => targetDescriptionLangs.Contains(sl));
+
+        // Count genres and duplicates
+        List<int> sourceGenreIds =
+            await context.GenresBySoftware.Where(g => g.SoftwareId == sourceId).Select(g => g.GenreId).ToListAsync();
+
+        HashSet<int> targetGenreIds =
+            (await context.GenresBySoftware.Where(g => g.SoftwareId == targetId).Select(g => g.GenreId).ToListAsync())
+           .ToHashSet();
+
+        int genresDuplicates = sourceGenreIds.Count(gid => targetGenreIds.Contains(gid));
+
+        // Count credits and duplicates
+        var sourceCredits = await context.PeopleBySoftware
+                                         .Where(p => p.SoftwareId == sourceId)
+                                         .Select(p => new { p.PersonId, p.Role })
+                                         .ToListAsync();
+
+        var targetCredits = await context.PeopleBySoftware
+                                         .Where(p => p.SoftwareId == targetId)
+                                         .Select(p => new { p.PersonId, p.Role })
+                                         .ToListAsync();
+
+        // MariaDB comparison is case-insensitive; replicate that here
+        HashSet<(int, string)> targetCreditKeys = targetCredits
+                                                 .Select(c => (c.PersonId, c.Role.ToLowerInvariant()))
+                                                 .ToHashSet();
+
+        int creditsDuplicates =
+            sourceCredits.Count(c => targetCreditKeys.Contains((c.PersonId, c.Role.ToLowerInvariant())));
+
+        // Count compilation references and duplicates
+        List<ulong> sourceCompilationReleaseIds = await context.SoftwareBySoftwareRelease
+                                                               .Where(s => s.SoftwareId == sourceId)
+                                                               .Select(s => s.ReleaseId)
+                                                               .ToListAsync();
+
+        HashSet<ulong> targetCompilationReleaseIds = (await context.SoftwareBySoftwareRelease
+                                                                   .Where(s => s.SoftwareId == targetId)
+                                                                   .Select(s => s.ReleaseId)
+                                                                   .ToListAsync())
+           .ToHashSet();
+
+        int compilationDuplicates =
+            sourceCompilationReleaseIds.Count(rid => targetCompilationReleaseIds.Contains(rid));
+
+        return new SoftwareMergePreviewDto
+        {
+            TargetId                       = targetId,
+            TargetName                     = target.Name,
+            SourceId                       = sourceId,
+            SourceName                     = source.Name,
+            SuggestedReleaseTitle          = suggestedTitle,
+            VersionsCount                  = versionsCount,
+            DirectReleasesCount            = directReleasesCount,
+            DirectReleasesWithoutTitleCount = directReleasesWithoutTitleCount,
+            CompanyRolesTotal              = sourceCompanyRoles.Count,
+            CompanyRolesDuplicates         = companyRolesDuplicates,
+            ScreenshotsCount               = screenshotsCount,
+            DescriptionsTotal              = sourceDescriptionLangs.Count,
+            DescriptionsDuplicates         = descriptionsDuplicates,
+            GenresTotal                    = sourceGenreIds.Count,
+            GenresDuplicates               = genresDuplicates,
+            CreditsTotal                   = sourceCredits.Count,
+            CreditsDuplicates              = creditsDuplicates,
+            CompilationReferencesTotal     = sourceCompilationReleaseIds.Count,
+            CompilationReferencesDuplicates = compilationDuplicates
+        };
+    }
+
+    [HttpPost("{targetId:ulong}/merge/{sourceId:ulong}")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult> MergeAsync(ulong targetId, ulong sourceId, [FromQuery] string releaseTitle = null)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        if(targetId == sourceId) return BadRequest("Cannot merge a software entry into itself.");
+
+        Software target = await context.Softwares.FindAsync(targetId);
+
+        if(target is null) return NotFound("Target software not found.");
+
+        Software source = await context.Softwares.FindAsync(sourceId);
+
+        if(source is null) return NotFound("Source software not found.");
+
+        await using var transaction = await context.Database.BeginTransactionAsync();
+
+        try
+        {
+            // 1. Re-parent SoftwareVersions
+            List<SoftwareVersion> sourceVersions =
+                await context.SoftwareVersions.Where(v => v.SoftwareId == sourceId).ToListAsync();
+
+            foreach(SoftwareVersion version in sourceVersions)
+                version.SoftwareId = targetId;
+
+            // 2. Re-parent direct SoftwareReleases, set title on untitled ones
+            List<SoftwareRelease> sourceDirectReleases =
+                await context.SoftwareReleases.Where(r => r.SoftwareId == sourceId).ToListAsync();
+
+            foreach(SoftwareRelease release in sourceDirectReleases)
+            {
+                if(string.IsNullOrEmpty(release.Title) && !string.IsNullOrEmpty(releaseTitle))
+                    release.Title = releaseTitle;
+
+                release.SoftwareId = targetId;
+            }
+
+            // 3. Merge SoftwareCompanyRoles (composite PK — must remove+add)
+            List<SoftwareCompanyRole> sourceCompanyRoles =
+                await context.SoftwareCompanyRoles.Where(cr => cr.SoftwareId == sourceId).ToListAsync();
+
+            HashSet<(int, string)> targetCompanyRoleKeys = (await context.SoftwareCompanyRoles
+                                                                         .Where(cr => cr.SoftwareId == targetId)
+                                                                         .Select(cr => new { cr.CompanyId, cr.RoleId })
+                                                                         .ToListAsync())
+               .Select(cr => (cr.CompanyId, cr.RoleId))
+               .ToHashSet();
+
+            foreach(SoftwareCompanyRole cr in sourceCompanyRoles)
+            {
+                context.SoftwareCompanyRoles.Remove(cr);
+
+                if(!targetCompanyRoleKeys.Contains((cr.CompanyId, cr.RoleId)))
+                {
+                    context.SoftwareCompanyRoles.Add(new SoftwareCompanyRole
+                    {
+                        SoftwareId = targetId,
+                        CompanyId  = cr.CompanyId,
+                        RoleId     = cr.RoleId
+                    });
+
+                    targetCompanyRoleKeys.Add((cr.CompanyId, cr.RoleId));
+                }
+            }
+
+            // 4. Re-parent SoftwareScreenshots (no dedup, Guid PK)
+            List<SoftwareScreenshot> sourceScreenshots =
+                await context.SoftwareScreenshots.Where(s => s.SoftwareId == sourceId).ToListAsync();
+
+            foreach(SoftwareScreenshot screenshot in sourceScreenshots)
+                screenshot.SoftwareId = targetId;
+
+            // 5. Merge SoftwareDescriptions (unique on SoftwareId+LanguageCode)
+            List<SoftwareDescription> sourceDescriptions =
+                await context.SoftwareDescriptions.Where(d => d.SoftwareId == sourceId).ToListAsync();
+
+            HashSet<string> targetDescriptionLangs = (await context.SoftwareDescriptions
+                                                                   .Where(d => d.SoftwareId == targetId)
+                                                                   .Select(d => d.LanguageCode)
+                                                                   .ToListAsync())
+               .ToHashSet();
+
+            foreach(SoftwareDescription desc in sourceDescriptions)
+            {
+                if(targetDescriptionLangs.Contains(desc.LanguageCode))
+                    context.SoftwareDescriptions.Remove(desc);
+                else
+                {
+                    desc.SoftwareId = targetId;
+                    targetDescriptionLangs.Add(desc.LanguageCode);
+                }
+            }
+
+            // 6. Merge GenreBySoftware (composite PK — must remove+add)
+            List<GenreBySoftware> sourceGenres =
+                await context.GenresBySoftware.Where(g => g.SoftwareId == sourceId).ToListAsync();
+
+            HashSet<int> targetGenreIds =
+                (await context.GenresBySoftware.Where(g => g.SoftwareId == targetId).Select(g => g.GenreId)
+                              .ToListAsync())
+               .ToHashSet();
+
+            foreach(GenreBySoftware genre in sourceGenres)
+            {
+                context.GenresBySoftware.Remove(genre);
+
+                if(!targetGenreIds.Contains(genre.GenreId))
+                {
+                    context.GenresBySoftware.Add(new GenreBySoftware
+                    {
+                        SoftwareId = targetId,
+                        GenreId    = genre.GenreId
+                    });
+
+                    targetGenreIds.Add(genre.GenreId);
+                }
+            }
+
+            // 7. Merge PeopleBySoftware (unique on SoftwareId+PersonId+Role, case-insensitive)
+            List<PeopleBySoftware> sourceCredits =
+                await context.PeopleBySoftware.Where(p => p.SoftwareId == sourceId).ToListAsync();
+
+            HashSet<(int, string)> targetCreditKeys = (await context.PeopleBySoftware
+                                                                    .Where(p => p.SoftwareId == targetId)
+                                                                    .Select(p => new { p.PersonId, p.Role })
+                                                                    .ToListAsync())
+               .Select(c => (c.PersonId, c.Role.ToLowerInvariant()))
+               .ToHashSet();
+
+            foreach(PeopleBySoftware credit in sourceCredits)
+            {
+                if(targetCreditKeys.Contains((credit.PersonId, credit.Role.ToLowerInvariant())))
+                    context.PeopleBySoftware.Remove(credit);
+                else
+                {
+                    credit.SoftwareId = targetId;
+                    targetCreditKeys.Add((credit.PersonId, credit.Role.ToLowerInvariant()));
+                }
+            }
+
+            // 8. Merge SoftwareBySoftwareRelease compilation references (composite PK — must remove+add)
+            List<SoftwareBySoftwareRelease> sourceCompilationRefs =
+                await context.SoftwareBySoftwareRelease.Where(s => s.SoftwareId == sourceId).ToListAsync();
+
+            HashSet<ulong> targetCompilationReleaseIds = (await context.SoftwareBySoftwareRelease
+                                                                       .Where(s => s.SoftwareId == targetId)
+                                                                       .Select(s => s.ReleaseId)
+                                                                       .ToListAsync())
+               .ToHashSet();
+
+            foreach(SoftwareBySoftwareRelease compRef in sourceCompilationRefs)
+            {
+                context.SoftwareBySoftwareRelease.Remove(compRef);
+
+                if(!targetCompilationReleaseIds.Contains(compRef.ReleaseId))
+                {
+                    context.SoftwareBySoftwareRelease.Add(new SoftwareBySoftwareRelease
+                    {
+                        ReleaseId  = compRef.ReleaseId,
+                        SoftwareId = targetId
+                    });
+
+                    targetCompilationReleaseIds.Add(compRef.ReleaseId);
+                }
+            }
+
+            // 9. Update MobyGames tracking tables
+            List<MobyGamesImportState> importStates =
+                await context.MobyGamesImportStates.Where(s => s.SoftwareId == sourceId).ToListAsync();
+
+            foreach(MobyGamesImportState state in importStates)
+                state.SoftwareId = targetId;
+
+            List<MobyGamesCoverDownloadState> coverStates =
+                await context.MobyGamesCoverDownloadStates.Where(s => s.SoftwareId == sourceId).ToListAsync();
+
+            foreach(MobyGamesCoverDownloadState state in coverStates)
+                state.SoftwareId = targetId;
+
+            // Flush all changes before deleting the source to avoid FK violations
+            await context.SaveChangesAsync();
+
+            // 10. Delete source software
+            context.Softwares.Remove(source);
+            await context.SaveChangesAsync();
+
+            await transaction.CommitAsync();
+
+            return Ok();
+        }
+        catch(Exception ex)
+        {
+            // Transaction auto-rolls back on dispose if not committed
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                              $"Merge failed: {ex.Message}");
+        }
+    }
+
     [HttpGet("{id:ulong}/descriptions")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]

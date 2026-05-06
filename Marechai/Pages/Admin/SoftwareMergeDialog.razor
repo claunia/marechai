@@ -1,0 +1,129 @@
+@using Marechai.ApiClient.Models
+@using Marechai.Services
+@using System.Threading
+
+@inject IStringLocalizer<SoftwareService> L
+
+<MudDialog>
+    <DialogContent>
+        <MudText Typo="Typo.body1" Class="mb-4">
+            @string.Format(L["Merge \"{0}\" into another software entry. All releases, credits, genres, and other data will be moved to the target."], SourceName)
+        </MudText>
+
+        @* Step 1: Select target software *@
+        <MudAutocomplete T="SoftwareDto"
+                         Label="@L["Target Software"]"
+                         @bind-Value="_selectedTarget"
+                         SearchFunc="SearchSoftware"
+                         ToStringFunc="@(s => s?.Name ?? string.Empty)"
+                         Variant="Variant.Outlined"
+                         Clearable="true"
+                         DebounceInterval="300"
+                         MinCharacters="2"
+                         Class="mb-4"/>
+
+        @if(_selectedTarget is not null && _selectedTarget.Id == SourceId)
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4">@L["Cannot merge a software entry into itself."]</MudAlert>
+        }
+
+        @if(_isLoadingPreview)
+        {
+            <MudProgressLinear Indeterminate="true" Class="mb-4"/>
+        }
+
+        @if(!string.IsNullOrWhiteSpace(_errorMessage))
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4">@_errorMessage</MudAlert>
+        }
+
+        @* Step 2: Preview *@
+        @if(_preview is not null)
+        {
+            <MudPaper Class="pa-4 mb-4" Elevation="1">
+                <MudText Typo="Typo.h6" Class="mb-2">@L["Merge Preview"]</MudText>
+                <MudText Typo="Typo.body2" Class="mb-3">
+                    @string.Format(L["Merging \"{0}\" into \"{1}\""], _preview.SourceName, _preview.TargetName)
+                </MudText>
+
+                <MudSimpleTable Dense="true" Hover="true" Striped="true">
+                    <thead>
+                        <tr>
+                            <th>@L["Entity"]</th>
+                            <th>@L["Will Move"]</th>
+                            <th>@L["Duplicates (skipped)"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>@L["Versions"]</td>
+                            <td>@_preview.VersionsCount</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>@L["Direct Releases"]</td>
+                            <td>@_preview.DirectReleasesCount</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>@L["Company Roles"]</td>
+                            <td>@((_preview.CompanyRolesTotal ?? 0) - (_preview.CompanyRolesDuplicates ?? 0))</td>
+                            <td>@_preview.CompanyRolesDuplicates</td>
+                        </tr>
+                        <tr>
+                            <td>@L["Screenshots"]</td>
+                            <td>@_preview.ScreenshotsCount</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>@L["Descriptions"]</td>
+                            <td>@((_preview.DescriptionsTotal ?? 0) - (_preview.DescriptionsDuplicates ?? 0))</td>
+                            <td>@_preview.DescriptionsDuplicates</td>
+                        </tr>
+                        <tr>
+                            <td>@L["Genres"]</td>
+                            <td>@((_preview.GenresTotal ?? 0) - (_preview.GenresDuplicates ?? 0))</td>
+                            <td>@_preview.GenresDuplicates</td>
+                        </tr>
+                        <tr>
+                            <td>@L["Credits"]</td>
+                            <td>@((_preview.CreditsTotal ?? 0) - (_preview.CreditsDuplicates ?? 0))</td>
+                            <td>@_preview.CreditsDuplicates</td>
+                        </tr>
+                        <tr>
+                            <td>@L["Compilation References"]</td>
+                            <td>@((_preview.CompilationReferencesTotal ?? 0) - (_preview.CompilationReferencesDuplicates ?? 0))</td>
+                            <td>@_preview.CompilationReferencesDuplicates</td>
+                        </tr>
+                    </tbody>
+                </MudSimpleTable>
+            </MudPaper>
+
+            @if((_preview.DirectReleasesWithoutTitleCount ?? 0) > 0)
+            {
+                <MudTextField @bind-Value="_releaseTitle"
+                              Label="@string.Format(L["Title for {0} untitled release(s)"], _preview.DirectReleasesWithoutTitleCount)"
+                              HelperText="@L["This title will be assigned to releases that have no title."]"
+                              Variant="Variant.Outlined"
+                              Class="mb-4"/>
+            }
+
+            <MudAlert Severity="Severity.Warning" Class="mb-4">
+                @L["This action cannot be undone. The source software entry will be permanently deleted after merging."]
+            </MudAlert>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Warning"
+                   Variant="Variant.Filled"
+                   OnClick="ConfirmMerge"
+                   Disabled="@(_preview is null || _isMerging || (_selectedTarget is not null && _selectedTarget.Id == SourceId))">
+            @if(_isMerging)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
+            }
+            @L["Merge"]
+        </MudButton>
+    </DialogActions>
+</MudDialog>

@@ -58,7 +58,11 @@
 
                         <MudTooltip Text="@L["Versions"]"><MudIconButton Icon="@Icons.Material.Filled.ListAlt" Size="Size.Small" OnClick="() => NavigateToVersions(context.Item)"/></MudTooltip>
 
+                        <MudTooltip Text="@L["Releases"]"><MudIconButton Icon="@Icons.Material.Filled.NewReleases" Size="Size.Small" OnClick="() => NavigateToReleases(context.Item)"/></MudTooltip>
+
                         <MudTooltip Text="@L["Screenshots"]"><MudIconButton Icon="@Icons.Material.Filled.Screenshot" Size="Size.Small" OnClick="() => NavigateToScreenshots(context.Item)"/></MudTooltip>
+
+                        <MudTooltip Text="@L["Merge"]"><MudIconButton Icon="@Icons.Material.Filled.MergeType" Size="Size.Small" Color="Color.Warning" OnClick="() => OpenMergeDialog(context.Item)"/></MudTooltip>
 
                         <MudTooltip Text="@L["Delete"]"><MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDelete(context.Item)"/></MudTooltip>
 

@@ -10,6 +10,8 @@ using Marechai.ApiClient.Software.Item.Credits;
 using Marechai.ApiClient.Software.Item.Description;
 using Marechai.ApiClient.Software.Item.Descriptions;
 using Marechai.ApiClient.Software.Item.Genres;
+using Marechai.ApiClient.Software.Item.Merge;
+using Marechai.ApiClient.Software.Item.MergePreview;
 using Marechai.ApiClient.Software.Item.Platforms;
 using Marechai.ApiClient.Software.Item.Releases;
 using Marechai.ApiClient.Software.Item.Screenshots;
@@ -74,6 +76,16 @@ namespace Marechai.ApiClient.Software.Item
         public global::Marechai.ApiClient.Software.Item.Genres.GenresRequestBuilder Genres
         {
             get => new global::Marechai.ApiClient.Software.Item.Genres.GenresRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The merge property</summary>
+        public global::Marechai.ApiClient.Software.Item.Merge.MergeRequestBuilder Merge
+        {
+            get => new global::Marechai.ApiClient.Software.Item.Merge.MergeRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The mergePreview property</summary>
+        public global::Marechai.ApiClient.Software.Item.MergePreview.MergePreviewRequestBuilder MergePreview
+        {
+            get => new global::Marechai.ApiClient.Software.Item.MergePreview.MergePreviewRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The platforms property</summary>
         public global::Marechai.ApiClient.Software.Item.Platforms.PlatformsRequestBuilder Platforms
