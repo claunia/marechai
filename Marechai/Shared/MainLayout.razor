@@ -39,10 +39,20 @@
         <MudText Typo="Typo.h6" Class="ml-2">Marechai</MudText>
         <MudSpacer/>
         <LoginDisplay/>
-        <MudButton Href="/about" Color="Color.Inherit" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Info">@L["About"]</MudButton>
-        <MudButton Href="/contact" Color="Color.Inherit" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Email">@L["Contact"]</MudButton>
+        <MudHidden Breakpoint="Breakpoint.SmAndDown">
+            <MudButton Href="/about" Color="Color.Inherit" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Info">@L["About"]</MudButton>
+            <MudButton Href="/contact" Color="Color.Inherit" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Email">@L["Contact"]</MudButton>
+        </MudHidden>
+        <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
+            <MudTooltip Text="@L["About"]">
+                <MudIconButton Href="/about" Color="Color.Inherit" Icon="@Icons.Material.Filled.Info" aria-label="@L["About"]"/>
+            </MudTooltip>
+            <MudTooltip Text="@L["Contact"]">
+                <MudIconButton Href="/contact" Color="Color.Inherit" Icon="@Icons.Material.Filled.Email" aria-label="@L["Contact"]"/>
+            </MudTooltip>
+        </MudHidden>
     </MudAppBar>
-    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2" Variant="DrawerVariant.Mini" OpenMiniOnHover="true"
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2" Variant="DrawerVariant.Responsive" Breakpoint="Breakpoint.Md" OpenMiniOnHover="true"
                Style="@(_isAdminMode ? "background-color: #3e1216 !important;" : "")">
         <MudDrawerHeader>
             <MudStack AlignItems="AlignItems.Center" Row="true" Spacing="2">
