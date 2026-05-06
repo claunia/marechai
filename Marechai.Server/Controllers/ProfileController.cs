@@ -23,21 +23,26 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Marechai.Data.Dtos;
 using Marechai.Data.Models;
 using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Server.Controllers;
 
 [Route("profile")]
 [ApiController]
-public class ProfileController(UserManager<ApplicationUser> userManager) : ControllerBase
+public class ProfileController(UserManager<ApplicationUser> userManager, MarechaiContext context) : ControllerBase
 {
     [HttpGet("{username}")]
     [AllowAnonymous]
@@ -93,5 +98,71 @@ public class ProfileController(UserManager<ApplicationUser> userManager) : Contr
             return $"photos/avatars/thumbs/jpeg/hd/{user.AvatarGuid}.jpg";
 
         return null;
+    }
+
+    [HttpGet("{username}/reviews")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(List<SoftwareUserReviewDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<List<SoftwareUserReviewDto>>> GetUserReviewsAsync(string username)
+    {
+        ApplicationUser user = await userManager.FindByNameAsync(username);
+
+        if(user is null) return NotFound();
+
+        string callerId = User.FindFirstValue(ClaimTypes.Sid);
+        bool   isAdmin  = User.IsInRole("Admin") || User.IsInRole("UberAdmin");
+        bool   isSelf   = callerId == user.Id;
+
+        var query = context.SoftwareUserReviews.Where(r => r.UserId == user.Id);
+
+        // Non-admins and non-self can only see non-anonymous reviews
+        if(!isAdmin && !isSelf)
+            query = query.Where(r => !r.IsAnonymous);
+
+        var reviews = await query.OrderByDescending(r => r.CreatedOn)
+                                 .Select(r => new
+                                  {
+                                      r.Id,
+                                      r.UserId,
+                                      r.SoftwareId,
+                                      SoftwareName = r.Software.Name,
+                                      r.TheGood,
+                                      r.TheBad,
+                                      r.TheUgly,
+                                      r.IsAnonymous,
+                                      r.CreatedOn,
+                                      r.UpdatedOn,
+                                      ThumbsUp   = r.Votes.Count(v => v.IsUpvote),
+                                      ThumbsDown = r.Votes.Count(v => !v.IsUpvote)
+                                  })
+                                 .ToListAsync();
+
+        // Load ratings for user
+        var ratingsBySoftware = await context.SoftwareUserRatings
+                                             .Where(r => r.UserId == user.Id)
+                                             .ToDictionaryAsync(r => r.SoftwareId, r => r.Rating);
+
+        string avatarUrl = GetAvatarUrl(user);
+
+        return Ok(reviews.Select(r => new SoftwareUserReviewDto
+        {
+            Id           = r.Id,
+            UserId       = r.UserId,
+            UserName     = user.UserName,
+            DisplayName  = user.DisplayName,
+            AvatarUrl    = avatarUrl,
+            SoftwareId   = r.SoftwareId,
+            SoftwareName = r.SoftwareName,
+            TheGood      = r.TheGood,
+            TheBad       = r.TheBad,
+            TheUgly      = r.TheUgly,
+            IsAnonymous  = r.IsAnonymous,
+            Rating       = ratingsBySoftware.TryGetValue(r.SoftwareId, out float rating) ? rating : null,
+            ThumbsUp     = r.ThumbsUp,
+            ThumbsDown   = r.ThumbsDown,
+            CreatedOn    = r.CreatedOn,
+            UpdatedOn    = r.UpdatedOn
+        }).ToList());
     }
 }

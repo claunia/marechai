@@ -1,0 +1,24 @@
+@using Marechai.Data
+@inject IStringLocalizer<SoftwareService> L
+
+<MudDialog>
+    <DialogContent>
+        <MudStack Spacing="3">
+            <MudSelect T="ReviewReportReason" @bind-Value="_reason" Label="@L["Reason"]"
+                       Variant="Variant.Outlined" Required="true">
+                <MudSelectItem T="ReviewReportReason" Value="ReviewReportReason.Spam">@L["Spam"]</MudSelectItem>
+                <MudSelectItem T="ReviewReportReason" Value="ReviewReportReason.Offensive">@L["Offensive"]</MudSelectItem>
+                <MudSelectItem T="ReviewReportReason" Value="ReviewReportReason.Misleading">@L["Misleading"]</MudSelectItem>
+                <MudSelectItem T="ReviewReportReason" Value="ReviewReportReason.OffTopic">@L["Off-topic"]</MudSelectItem>
+                <MudSelectItem T="ReviewReportReason" Value="ReviewReportReason.Other">@L["Other"]</MudSelectItem>
+            </MudSelect>
+
+            <MudTextField T="string" @bind-Value="_explanation" Label="@L["Explanation (optional)"]"
+                          Variant="Variant.Outlined" Lines="3" MaxLength="2048"/>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="SubmitAsync">@L["Submit Report"]</MudButton>
+    </DialogActions>
+</MudDialog>

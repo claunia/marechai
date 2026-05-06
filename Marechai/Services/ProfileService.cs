@@ -24,6 +24,7 @@
 *******************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.Extensions.Logging;
@@ -43,6 +44,22 @@ public sealed class ProfileService(Marechai.ApiClient.Client client, ILogger<Pro
             logger.LogError(ex, "Error loading public profile for {Username}", username);
 
             return null;
+        }
+    }
+
+    public async Task<List<SoftwareUserReviewDto>> GetUserReviewsAsync(string username)
+    {
+        try
+        {
+            List<SoftwareUserReviewDto> reviews = await client.Profile[username].Reviews.GetAsync();
+
+            return reviews ?? [];
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Error loading reviews for {Username}", username);
+
+            return [];
         }
     }
 }

@@ -27,6 +27,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using Marechai.Data;
 using Marechai.Data.Dtos;
@@ -1088,5 +1090,526 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
                                 .OrderByDescending(p => p.AverageScore)
                                 .ToList()
         };
+    }
+
+    // ── User Ratings ──
+
+    [HttpGet("{id:ulong}/user-ratings/summary")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<UserReviewSummaryDto> GetUserReviewSummaryAsync(ulong id)
+    {
+        var ratings = await context.SoftwareUserRatings
+                                   .Where(r => r.SoftwareId == id)
+                                   .Select(r => r.Rating)
+                                   .ToListAsync();
+
+        int reviewCount = await context.SoftwareUserReviews.CountAsync(r => r.SoftwareId == id);
+
+        return new UserReviewSummaryDto
+        {
+            AverageRating = ratings.Count > 0 ? ratings.Average() : null,
+            TotalRatings  = ratings.Count,
+            TotalReviews  = reviewCount
+        };
+    }
+
+    [HttpGet("{id:ulong}/user-ratings/me")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<SoftwareUserRatingDto>> GetMyRatingAsync(ulong id)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        SoftwareUserRating rating =
+            await context.SoftwareUserRatings.FirstOrDefaultAsync(r => r.UserId == userId && r.SoftwareId == id);
+
+        if(rating is null) return NotFound();
+
+        return Ok(new SoftwareUserRatingDto
+        {
+            UserId     = rating.UserId,
+            SoftwareId = rating.SoftwareId,
+            Rating     = rating.Rating,
+            CreatedOn  = rating.CreatedOn,
+            UpdatedOn  = rating.UpdatedOn
+        });
+    }
+
+    [HttpPut("{id:ulong}/user-ratings/me")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UpsertMyRatingAsync(ulong id, [FromBody] SetRatingRequest dto)
+    {
+        if(dto.Rating < 0 || dto.Rating > 5)
+            return BadRequest("Rating must be between 0 and 5.");
+
+        // Snap to nearest 0.5
+        float snapped = MathF.Round(dto.Rating * 2f) / 2f;
+
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        SoftwareUserRating existing =
+            await context.SoftwareUserRatings.FirstOrDefaultAsync(r => r.UserId == userId && r.SoftwareId == id);
+
+        if(existing is not null)
+        {
+            existing.Rating = snapped;
+        }
+        else
+        {
+            context.SoftwareUserRatings.Add(new SoftwareUserRating
+            {
+                UserId     = userId,
+                SoftwareId = id,
+                Rating     = snapped
+            });
+        }
+
+        await context.SaveChangesAsync();
+
+        return Ok();
+    }
+
+    [HttpDelete("{id:ulong}/user-ratings/me")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> DeleteMyRatingAsync(ulong id)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        SoftwareUserRating rating =
+            await context.SoftwareUserRatings.FirstOrDefaultAsync(r => r.UserId == userId && r.SoftwareId == id);
+
+        if(rating is not null)
+        {
+            context.SoftwareUserRatings.Remove(rating);
+            await context.SaveChangesAsync();
+        }
+
+        return NoContent();
+    }
+
+    // ── User Reviews ──
+
+    [HttpGet("{id:ulong}/user-reviews")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<List<SoftwareUserReviewDto>> GetUserReviewsAsync(ulong id)
+    {
+        string callerId = User.FindFirstValue(ClaimTypes.Sid);
+        bool   isAdmin  = User.IsInRole("Admin") || User.IsInRole("UberAdmin");
+
+        var reviews = await context.SoftwareUserReviews
+                                   .Where(r => r.SoftwareId == id)
+                                   .OrderByDescending(r => r.CreatedOn)
+                                   .Select(r => new
+                                    {
+                                        r.Id,
+                                        r.UserId,
+                                        UserName    = r.User != null ? r.User.UserName : null,
+                                        DisplayName = r.User != null ? r.User.DisplayName : null,
+                                        r.User,
+                                        r.SoftwareId,
+                                        SoftwareName = r.Software.Name,
+                                        r.TheGood,
+                                        r.TheBad,
+                                        r.TheUgly,
+                                        r.IsAnonymous,
+                                        r.CreatedOn,
+                                        r.UpdatedOn,
+                                        ThumbsUp    = r.Votes.Count(v => v.IsUpvote),
+                                        ThumbsDown  = r.Votes.Count(v => !v.IsUpvote),
+                                        ReportCount = r.Reports.Count,
+                                        CallerVote  = callerId != null
+                                                          ? r.Votes
+                                                             .Where(v => v.UserId == callerId)
+                                                             .Select(v => (bool?)v.IsUpvote)
+                                                             .FirstOrDefault()
+                                                          : null
+                                    })
+                                   .ToListAsync();
+
+        // Also load ratings in batch for these users
+        var userIds    = reviews.Where(r => r.UserId != null).Select(r => r.UserId).Distinct().ToList();
+        var ratingsMap = await context.SoftwareUserRatings
+                                      .Where(r => r.SoftwareId == id && userIds.Contains(r.UserId))
+                                      .ToDictionaryAsync(r => r.UserId, r => r.Rating);
+
+        return reviews.Select(r =>
+        {
+            bool showIdentity = !r.IsAnonymous || isAdmin || r.UserId == callerId;
+
+            return new SoftwareUserReviewDto
+            {
+                Id              = r.Id,
+                UserId          = showIdentity ? r.UserId : null,
+                UserName        = showIdentity ? r.UserName : null,
+                DisplayName     = showIdentity ? r.DisplayName : null,
+                AvatarUrl       = showIdentity && r.User != null ? GetAvatarUrl(r.User) : null,
+                SoftwareId      = r.SoftwareId,
+                SoftwareName    = r.SoftwareName,
+                TheGood         = r.TheGood,
+                TheBad          = r.TheBad,
+                TheUgly         = r.TheUgly,
+                IsAnonymous     = r.IsAnonymous,
+                Rating          = r.UserId != null && ratingsMap.TryGetValue(r.UserId, out float rating) ? rating : null,
+                ThumbsUp        = r.ThumbsUp,
+                ThumbsDown      = r.ThumbsDown,
+                CurrentUserVote = r.CallerVote,
+                ReportCount     = isAdmin ? r.ReportCount : 0,
+                CreatedOn       = r.CreatedOn,
+                UpdatedOn       = r.UpdatedOn
+            };
+        }).ToList();
+    }
+
+    [HttpPost("{id:ulong}/user-reviews")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<SoftwareUserReviewDto>> CreateUserReviewAsync(ulong id,
+        [FromBody] SoftwareUserReviewDto dto)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        bool exists = await context.SoftwareUserReviews.AnyAsync(r => r.UserId == userId && r.SoftwareId == id);
+
+        if(exists) return Conflict("You have already reviewed this software.");
+
+        var review = new SoftwareUserReview
+        {
+            UserId      = userId,
+            SoftwareId  = id,
+            TheGood     = dto.TheGood,
+            TheBad      = dto.TheBad,
+            TheUgly     = dto.TheUgly,
+            IsAnonymous = dto.IsAnonymous
+        };
+
+        context.SoftwareUserReviews.Add(review);
+
+        // Also upsert rating if provided
+        if(dto.Rating is >= 0 and <= 5)
+        {
+            SoftwareUserRating existingRating =
+                await context.SoftwareUserRatings.FirstOrDefaultAsync(r => r.UserId == userId && r.SoftwareId == id);
+
+            if(existingRating is not null)
+                existingRating.Rating = dto.Rating.Value;
+            else
+                context.SoftwareUserRatings.Add(new SoftwareUserRating
+                {
+                    UserId     = userId,
+                    SoftwareId = id,
+                    Rating     = dto.Rating.Value
+                });
+        }
+
+        await context.SaveChangesAsync();
+
+        dto.Id = review.Id;
+
+        return CreatedAtAction(null, dto);
+    }
+
+    [HttpPut("{id:ulong}/user-reviews/{reviewId:long}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateUserReviewAsync(ulong id, long reviewId,
+                                                           [FromBody] SoftwareUserReviewDto dto)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        bool   isAdmin = User.IsInRole("Admin") || User.IsInRole("UberAdmin");
+
+        SoftwareUserReview review = await context.SoftwareUserReviews.FindAsync(reviewId);
+
+        if(review is null || review.SoftwareId != id) return NotFound();
+
+        if(review.UserId != userId && !isAdmin)
+            return Problem("You do not have permission to edit this review.", statusCode: StatusCodes.Status403Forbidden);
+
+        review.TheGood     = dto.TheGood;
+        review.TheBad      = dto.TheBad;
+        review.TheUgly     = dto.TheUgly;
+        review.IsAnonymous = dto.IsAnonymous;
+
+        // Also upsert the review author's rating if provided and this is the author editing
+        if(dto.Rating is >= 0 and <= 5 && review.UserId == userId)
+        {
+            SoftwareUserRating existingRating =
+                await context.SoftwareUserRatings.FirstOrDefaultAsync(r => r.UserId == userId && r.SoftwareId == id);
+
+            if(existingRating is not null)
+                existingRating.Rating = dto.Rating.Value;
+            else
+                context.SoftwareUserRatings.Add(new SoftwareUserRating
+                {
+                    UserId     = userId,
+                    SoftwareId = id,
+                    Rating     = dto.Rating.Value
+                });
+        }
+
+        await context.SaveChangesAsync();
+
+        return Ok();
+    }
+
+    [HttpDelete("{id:ulong}/user-reviews/{reviewId:long}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteUserReviewAsync(ulong id, long reviewId)
+    {
+        string userId  = User.FindFirstValue(ClaimTypes.Sid);
+        bool   isAdmin = User.IsInRole("Admin") || User.IsInRole("UberAdmin");
+
+        SoftwareUserReview review = await context.SoftwareUserReviews.FindAsync(reviewId);
+
+        if(review is null || review.SoftwareId != id) return NotFound();
+
+        if(review.UserId != userId && !isAdmin)
+            return Problem("You do not have permission to delete this review.", statusCode: StatusCodes.Status403Forbidden);
+
+        context.SoftwareUserReviews.Remove(review);
+        await context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    // ── Review Votes ──
+
+    [HttpPost("{id:ulong}/user-reviews/{reviewId:long}/vote")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> VoteOnReviewAsync(ulong id, long reviewId, [FromBody] SoftwareUserReviewVoteDto dto)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        SoftwareUserReview review = await context.SoftwareUserReviews.FindAsync(reviewId);
+
+        if(review is null || review.SoftwareId != id) return NotFound();
+
+        if(review.UserId == userId)
+            return Problem("You cannot vote on your own review.", statusCode: StatusCodes.Status403Forbidden);
+
+        SoftwareUserReviewVote existing =
+            await context.SoftwareUserReviewVotes.FirstOrDefaultAsync(v => v.UserId == userId && v.ReviewId == reviewId);
+
+        if(existing is not null)
+            existing.IsUpvote = dto.IsUpvote;
+        else
+            context.SoftwareUserReviewVotes.Add(new SoftwareUserReviewVote
+            {
+                UserId   = userId,
+                ReviewId = reviewId,
+                IsUpvote = dto.IsUpvote
+            });
+
+        await context.SaveChangesAsync();
+
+        return Ok();
+    }
+
+    [HttpDelete("{id:ulong}/user-reviews/{reviewId:long}/vote")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> RemoveVoteAsync(ulong id, long reviewId)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        SoftwareUserReviewVote vote =
+            await context.SoftwareUserReviewVotes.FirstOrDefaultAsync(v => v.UserId == userId && v.ReviewId == reviewId);
+
+        if(vote is not null)
+        {
+            context.SoftwareUserReviewVotes.Remove(vote);
+            await context.SaveChangesAsync();
+        }
+
+        return NoContent();
+    }
+
+    // ── Review Reports ──
+
+    [HttpPost("{id:ulong}/user-reviews/{reviewId:long}/report")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> ReportReviewAsync(ulong id, long reviewId,
+                                                       [FromBody] CreateReviewReportRequest dto)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        SoftwareUserReview review =
+            await context.SoftwareUserReviews.Include(r => r.Software).FirstOrDefaultAsync(r => r.Id == reviewId);
+
+        if(review is null || review.SoftwareId != id) return NotFound();
+
+        if(review.UserId == userId)
+            return Problem("You cannot report your own review.", statusCode: StatusCodes.Status403Forbidden);
+
+        bool alreadyReported =
+            await context.ReviewReports.AnyAsync(r => r.ReporterId == userId && r.ReviewId == reviewId);
+
+        if(alreadyReported) return Conflict("You have already reported this review.");
+
+        context.ReviewReports.Add(new ReviewReport
+        {
+            ReporterId  = userId,
+            ReviewId    = reviewId,
+            Reason      = dto.Reason,
+            Explanation = dto.Explanation
+        });
+
+        // Create admin notification
+        context.AdminNotifications.Add(new AdminNotification
+        {
+            Title            = "Review reported",
+            Message          = $"A review on \"{review.Software.Name}\" has been reported as {dto.Reason}.",
+            LinkUrl          = $"/software/{review.SoftwareId}",
+            LinkText         = review.Software.Name,
+            NotificationType = "ReviewReport"
+        });
+
+        await context.SaveChangesAsync();
+
+        return Created();
+    }
+
+    // ── Marechai Score ──
+
+    [HttpGet("{id:ulong}/marechai-score")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<MarechaiScoreDto> GetMarechaiScoreAsync(ulong id)
+    {
+        // Critic score: average of NormalizedScore (0-100), scaled to 0-10
+        double? criticAvg = await context.SoftwareCriticReviews
+                                         .Where(r => r.SoftwareId == id && r.NormalizedScore != null)
+                                         .Select(r => (double?)r.NormalizedScore)
+                                         .AverageAsync();
+
+        double? criticScore = criticAvg.HasValue ? Math.Round(criticAvg.Value / 10.0, 1) : null;
+
+        // User score: average of Rating (0-5), scaled to 0-10
+        double? userAvg = await context.SoftwareUserRatings
+                                       .Where(r => r.SoftwareId == id)
+                                       .Select(r => (double?)r.Rating)
+                                       .AverageAsync();
+
+        double? userScore = userAvg.HasValue ? Math.Round(userAvg.Value * 2.0, 1) : null;
+
+        // Marechai score: average of available components
+        double? marechaiScore = null;
+
+        if(criticScore.HasValue && userScore.HasValue)
+            marechaiScore = Math.Round((criticScore.Value + userScore.Value) / 2.0, 1);
+        else if(criticScore.HasValue)
+            marechaiScore = criticScore.Value;
+        else if(userScore.HasValue)
+            marechaiScore = userScore.Value;
+
+        // Rank
+        int?  rank       = null;
+        int   totalRanked = 0;
+
+        if(marechaiScore.HasValue)
+        {
+            // Count all software that have a score
+            var allScores = await context.Softwares
+                                         .Select(s => new
+                                          {
+                                              s.Id,
+                                              CriticAvg = s.CriticReviews
+                                                           .Where(r => r.NormalizedScore != null)
+                                                           .Select(r => (double?)r.NormalizedScore)
+                                                           .Average(),
+                                              UserAvg = s.UserRatings
+                                                         .Select(r => (double?)r.Rating)
+                                                         .Average()
+                                          })
+                                         .Where(s => s.CriticAvg != null || s.UserAvg != null)
+                                         .ToListAsync();
+
+            var ranked = allScores.Select(s =>
+            {
+                double? c = s.CriticAvg.HasValue ? s.CriticAvg.Value / 10.0 : null;
+                double? u = s.UserAvg.HasValue   ? s.UserAvg.Value * 2.0    : null;
+
+                double score;
+
+                if(c.HasValue && u.HasValue)
+                    score = (c.Value + u.Value) / 2.0;
+                else if(c.HasValue)
+                    score = c.Value;
+                else
+                    score = u!.Value;
+
+                return new { s.Id, Score = Math.Round(score, 1) };
+            }).OrderByDescending(s => s.Score).ThenBy(s => s.Id).ToList();
+
+            totalRanked = ranked.Count;
+            rank        = ranked.FindIndex(s => s.Id == id) + 1;
+
+            if(rank == 0) rank = null; // not found (shouldn't happen)
+        }
+
+        return new MarechaiScoreDto
+        {
+            CriticScore   = criticScore,
+            UserScore     = userScore,
+            MarechaiScore = marechaiScore,
+            Rank          = rank,
+            TotalRanked   = totalRanked
+        };
+    }
+
+    static string GetAvatarUrl(ApplicationUser user)
+    {
+        if(user is null) return null;
+
+        if(user.UseGravatar)
+        {
+            if(string.IsNullOrWhiteSpace(user.Email)) return null;
+
+            string email     = user.Email.Trim().ToLowerInvariant();
+            byte[] hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(email));
+
+            var sb = new StringBuilder(hashBytes.Length * 2);
+
+            foreach(byte b in hashBytes)
+                sb.Append(b.ToString("x2"));
+
+            return $"https://www.gravatar.com/avatar/{sb}?s=256&d=identicon";
+        }
+
+        if(user.AvatarGuid.HasValue)
+            return $"photos/avatars/thumbs/jpeg/hd/{user.AvatarGuid}.jpg";
+
+        return null;
     }
 }

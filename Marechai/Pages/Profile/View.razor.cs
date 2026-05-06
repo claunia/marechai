@@ -25,9 +25,11 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Marechai.Pages.Profile;
 
@@ -40,7 +42,9 @@ public partial class View
     List<CollectedMachineDto>         _collectedMachines;
     List<CollectedMachineDto>         _collectedSmartphones;
     List<CollectedSoftwareReleaseDto> _collectedReleases;
+    List<SoftwareUserReviewDto>       _userReviews;
     bool                               _loaded;
+    bool                               _isAdmin;
     PublicProfileDto                  _profile;
     UserCollectionSummaryDto          _summary;
 
@@ -80,6 +84,13 @@ public partial class View
             _collectedConsoles    = _collectedMachines?.Where(m => m.Type == 2).ToList();
             _collectedSmartphones = _collectedMachines?.Where(m => m.Type == 3).ToList();
             _collectedReleases  = await CollectionSvc.GetCollectedSoftwareReleasesAsync(Username);
+
+            // Load reviews
+            _userReviews = await Service.GetUserReviewsAsync(Username);
+
+            // Check admin status
+            AuthenticationState authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            _isAdmin = authState.User.IsInRole("Admin") || authState.User.IsInRole("UberAdmin");
         }
 
         _loaded = true;

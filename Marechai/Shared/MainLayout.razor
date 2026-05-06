@@ -25,6 +25,8 @@
 *******************************************************************************/
 }
 @inherits LayoutComponentBase
+@implements IDisposable
+@using Marechai.Services
 @inject StringLocalizer<NavMenu> L
 
 <MudThemeProvider Theme="_theme" IsDarkMode="true"/>
@@ -38,6 +40,14 @@
         <MudIcon Icon="@Icons.Material.Filled.Museum" Class="ml-2"/>
         <MudText Typo="Typo.h6" Class="ml-2">Marechai</MudText>
         <MudSpacer/>
+        <AuthorizeView Roles="Admin, UberAdmin">
+            <Authorized>
+                <MudBadge Content="@_unreadNotificationCount" Color="Color.Error" Overlap="true" Visible="@(_unreadNotificationCount > 0)">
+                    <MudIconButton Icon="@Icons.Material.Filled.Notifications" Color="Color.Inherit"
+                                   Href="/admin/notifications" aria-label="Notifications"/>
+                </MudBadge>
+            </Authorized>
+        </AuthorizeView>
         <LoginDisplay/>
         <MudHidden Breakpoint="Breakpoint.SmAndDown">
             <MudButton Href="/about" Color="Color.Inherit" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Info">@L["About"]</MudButton>
@@ -80,6 +90,34 @@
 @code {
     private bool _drawerOpen = true;
     private bool _isAdminMode;
+    private int  _unreadNotificationCount;
+    private System.Threading.Timer _notificationTimer;
+
+    [Inject] NotificationService NotificationService { get; set; }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if(firstRender)
+        {
+            _notificationTimer = new System.Threading.Timer(async _ =>
+            {
+                try
+                {
+                    _unreadNotificationCount = await NotificationService.GetUnreadCountAsync();
+                    await InvokeAsync(StateHasChanged);
+                }
+                catch
+                {
+                    // ignore
+                }
+            }, null, TimeSpan.Zero, TimeSpan.FromSeconds(60));
+        }
+    }
+
+    public void Dispose()
+    {
+        _notificationTimer?.Dispose();
+    }
 
     private readonly MudTheme _theme = new()
     {

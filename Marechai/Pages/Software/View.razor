@@ -27,9 +27,14 @@
 
 @page "/software/{Id:int}"
 @using Marechai.ApiClient.Models
+@using Marechai.Data
 @inherits OwningComponentBase<SoftwareService>
+@inject SoftwareService                   AuthService
 @inject IStringLocalizer<SoftwareService> L
 @inject ApiAssetUrlProvider               AssetUrls
+@inject AuthenticationStateProvider       AuthStateProvider
+@inject IDialogService                    DialogService
+@inject ISnackbar                         Snackbar
 
 @if(!_loaded)
 {
@@ -78,6 +83,47 @@
                 <MudChip T="string" Color="Color.Success" Variant="Variant.Filled" Size="Size.Small">@L["Game"]</MudChip>
             }
         </div>
+
+        @* ── Marechai Score ── *@
+        @if(_marechaiScore?.MarechaiScore is not null)
+        {
+            var score = _marechaiScore.MarechaiScore.Value;
+            var scoreColor = score >= 7.5 ? "#4caf50" : score >= 5.0 ? "#ff9800" : "#f44336";
+            <div style="display: flex; flex-direction: column; align-items: center; margin-top: 8px;">
+                <div style="width: 72px; height: 72px; border-radius: 50%; background: @scoreColor;
+                            display: flex; align-items: center; justify-content: center;
+                            box-shadow: 0 2px 12px rgba(0,0,0,0.3); border: 3px solid rgba(255,255,255,0.3);">
+                    <span style="color: white; font-size: 1.5rem; font-weight: 800;">@($"{score:F1}")</span>
+                </div>
+                <MudText Typo="Typo.caption" Style="color: rgba(255,255,255,0.9); margin-top: 4px;">@L["Marechai Score"]</MudText>
+                @if(_marechaiScore.Rank is not null)
+                {
+                    <MudText Typo="Typo.caption" Style="color: rgba(255,255,255,0.7);">
+                        @L["Ranked #{0} of {1}", _marechaiScore.Rank, _marechaiScore.TotalRanked]
+                    </MudText>
+                }
+            </div>
+        }
+
+        @* ── Aggregate User Rating ── *@
+        @if(_userReviewSummary?.AverageRating is not null)
+        {
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1" Style="margin-top: 8px;">
+                <HalfStarRating ReadOnly="true" Value="@((float)_userReviewSummary.AverageRating.Value)" Size="Size.Small"/>
+                <MudText Typo="Typo.body2" Style="color: rgba(255,255,255,0.9);">
+                    @($"{_userReviewSummary.AverageRating.Value:F1}") (@_userReviewSummary.TotalRatings @L["ratings"])
+                </MudText>
+            </MudStack>
+        }
+
+        @* ── Your Rating ── *@
+        @if(_isAuthenticated)
+        {
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1" Style="margin-top: 4px;">
+                <MudText Typo="Typo.caption" Style="color: rgba(255,255,255,0.8);">@L["Your Rating"]:</MudText>
+                <HalfStarRating Value="@_myRatingFloat" ValueChanged="OnMyRatingChanged" Size="Size.Small"/>
+            </MudStack>
+        }
     </MudStack>
 </MudPaper>
 
@@ -294,13 +340,13 @@
 }
 
 @* ── Critic Reviews Section ── *@
-@if(_criticReviews.Count > 0)
+@if(_criticReviews.Count > 0 || _userReviews.Count > 0)
 {
 <MudCard Elevation="2" Class="mb-4 rounded-lg">
     <MudCardContent>
         <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
             <MudIcon Icon="@Icons.Material.Filled.RateReview" Color="Color.Primary"/>
-            <MudText Typo="Typo.h6">Reviews</MudText>
+            <MudText Typo="Typo.h6">@L["Reviews"]</MudText>
         </MudStack>
 
         @* ── Aggregate scores ── *@
@@ -310,7 +356,7 @@
                 @if(_reviewSummary.AverageScore.HasValue)
                 {
                     <MudChip T="string" Size="Size.Large" Variant="Variant.Filled" Color="Color.Primary">
-                        Overall: @($"{_reviewSummary.AverageScore:F0}%") (@_reviewSummary.TotalReviews reviews)
+                        @L["Overall:"] @($"{_reviewSummary.AverageScore:F0}%") (@_reviewSummary.TotalReviews @L["reviews"])
                     </MudChip>
                 }
                 @if(_reviewSummary.ByPlatform is not null)
@@ -329,7 +375,9 @@
         }
 
         @* ── Critic Reviews table ── *@
-        <MudText Typo="Typo.subtitle1" Class="mb-2"><strong>Critic Reviews</strong></MudText>
+        @if(_criticReviews.Count > 0)
+        {
+        <MudText Typo="Typo.subtitle1" Class="mb-2"><strong>@L["Critic Reviews"]</strong></MudText>
         <MudExpansionPanels MultiExpansion="true" Elevation="0">
             @foreach(SoftwareCriticReviewDto review in _criticReviews)
             {
@@ -351,7 +399,7 @@
                                 }
                                 else
                                 {
-                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Default">Unscored</MudChip>
+                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Default">@L["Unscored"]</MudChip>
                                 }
                             </MudStack>
                         </MudStack>
@@ -375,16 +423,138 @@
                         }
                         @if(!string.IsNullOrWhiteSpace(review.ReviewUrl))
                         {
-                            <MudLink Href="@review.ReviewUrl" Target="_blank" Class="mt-2">Full Review</MudLink>
+                            <MudLink Href="@review.ReviewUrl" Target="_blank" Class="mt-2">@L["Full Review"]</MudLink>
                         }
                     </ChildContent>
                 </MudExpansionPanel>
             }
         </MudExpansionPanels>
+        }
 
-        @* ── User Reviews placeholder (Phase 2) ── *@
-        <MudText Typo="Typo.subtitle1" Class="mb-2 mt-4"><strong>User Reviews</strong></MudText>
-        <MudText Typo="Typo.body2" Color="Color.Primary" Class="mb-2">User reviews coming soon.</MudText>
+        @* ── User Reviews ── *@
+        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-2 mt-4">
+            <MudText Typo="Typo.subtitle1"><strong>@L["User Reviews"]</strong></MudText>
+            @if(_isAuthenticated)
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Edit"
+                           OnClick="OpenReviewDialog" Size="Size.Small">
+                    @(_myReview is not null ? L["Edit Review"] : L["Write Review"])
+                </MudButton>
+            }
+        </MudStack>
+
+        @if(_userReviews.Count == 0)
+        {
+            <MudText Typo="Typo.body2" Color="Color.Primary" Class="mb-2">@L["No reviews yet."]</MudText>
+        }
+
+        @foreach(SoftwareUserReviewDto userReview in _userReviews)
+        {
+            <MudPaper Class="pa-3 mb-3" Elevation="1" Style="border-radius: 8px;">
+                @* ── Review Header ── *@
+                <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-2">
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                        @if(!userReview.IsAnonymous.GetValueOrDefault() && !string.IsNullOrEmpty(userReview.UserName))
+                        {
+                            @if(!string.IsNullOrEmpty(userReview.AvatarUrl))
+                            {
+                                <MudAvatar Size="Size.Small">
+                                    <MudImage Src="@userReview.AvatarUrl" Alt="@userReview.DisplayName"/>
+                                </MudAvatar>
+                            }
+                            else
+                            {
+                                <MudAvatar Size="Size.Small" Color="Color.Primary">@(userReview.DisplayName?[..1] ?? "?")</MudAvatar>
+                            }
+                            <MudLink Href="@($"/profile/{userReview.UserName}")">@(userReview.DisplayName ?? userReview.UserName)</MudLink>
+                        }
+                        else
+                        {
+                            <MudAvatar Size="Size.Small" Color="Color.Default"><MudIcon Icon="@Icons.Material.Filled.Person"/></MudAvatar>
+                            <MudText Typo="Typo.body2" Color="Color.Secondary">@L["Anonymous"]</MudText>
+                            @if(_isAdmin && userReview.IsAnonymous.GetValueOrDefault())
+                            {
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Warning">@L["Anonymous"]</MudChip>
+                            }
+                        }
+                        @if(userReview.Rating.HasValue)
+                        {
+                            <HalfStarRating ReadOnly="true" Value="@userReview.Rating.Value" Size="Size.Small"/>
+                        }
+                    </MudStack>
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+                        <MudText Typo="Typo.caption" Color="Color.Secondary">@userReview.CreatedOn?.DateTime.ToString("d")</MudText>
+                        @* ── Admin actions ── *@
+                        @if(_isAdmin || userReview.UserId == _currentUserId)
+                        {
+                            <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditReviewDialog(userReview)"/>
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => DeleteReviewAsync(userReview)"/>
+                        }
+                        @if(_isAdmin && userReview.ReportCount > 0)
+                        {
+                            <MudBadge Content="@userReview.ReportCount" Color="Color.Error" Overlap="true">
+                                <MudIcon Icon="@Icons.Material.Filled.Flag" Color="Color.Warning" Size="Size.Small"/>
+                            </MudBadge>
+                        }
+                    </MudStack>
+                </MudStack>
+
+                @* ── Review Content (Good/Bad/Ugly) ── *@
+                @if(!string.IsNullOrWhiteSpace(userReview.TheGood))
+                {
+                    <MudStack Row="true" AlignItems="AlignItems.Start" Spacing="1" Class="mb-1">
+                        <MudIcon Icon="@Icons.Material.Filled.ThumbUp" Color="Color.Success" Size="Size.Small"/>
+                        <div>
+                            <MudText Typo="Typo.caption" Color="Color.Success"><strong>@L["The Good"]</strong></MudText>
+                            <MudText Typo="Typo.body2" Style="white-space: pre-wrap;">@userReview.TheGood</MudText>
+                        </div>
+                    </MudStack>
+                }
+                @if(!string.IsNullOrWhiteSpace(userReview.TheBad))
+                {
+                    <MudStack Row="true" AlignItems="AlignItems.Start" Spacing="1" Class="mb-1">
+                        <MudIcon Icon="@Icons.Material.Filled.ThumbDown" Color="Color.Error" Size="Size.Small"/>
+                        <div>
+                            <MudText Typo="Typo.caption" Color="Color.Error"><strong>@L["The Bad"]</strong></MudText>
+                            <MudText Typo="Typo.body2" Style="white-space: pre-wrap;">@userReview.TheBad</MudText>
+                        </div>
+                    </MudStack>
+                }
+                @if(!string.IsNullOrWhiteSpace(userReview.TheUgly))
+                {
+                    <MudStack Row="true" AlignItems="AlignItems.Start" Spacing="1" Class="mb-1">
+                        <MudIcon Icon="@Icons.Material.Filled.Warning" Color="Color.Warning" Size="Size.Small"/>
+                        <div>
+                            <MudText Typo="Typo.caption" Color="Color.Warning"><strong>@L["The Ugly"]</strong></MudText>
+                            <MudText Typo="Typo.body2" Style="white-space: pre-wrap;">@userReview.TheUgly</MudText>
+                        </div>
+                    </MudStack>
+                }
+
+                @* ── Voting + Report ── *@
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-2">
+                    <MudIconButton Icon="@Icons.Material.Filled.ThumbUp" Size="Size.Small"
+                                   Color="@(userReview.CurrentUserVote == true ? Color.Success : Color.Default)"
+                                   Disabled="@(!_isAuthenticated || userReview.UserId == _currentUserId)"
+                                   OnClick="() => VoteAsync(userReview, true)"
+                                   Title="@L["Helpful"]"/>
+                    <MudText Typo="Typo.caption">@userReview.ThumbsUp</MudText>
+
+                    <MudIconButton Icon="@Icons.Material.Filled.ThumbDown" Size="Size.Small"
+                                   Color="@(userReview.CurrentUserVote == false ? Color.Error : Color.Default)"
+                                   Disabled="@(!_isAuthenticated || userReview.UserId == _currentUserId)"
+                                   OnClick="() => VoteAsync(userReview, false)"
+                                   Title="@L["Not helpful"]"/>
+                    <MudText Typo="Typo.caption">@userReview.ThumbsDown</MudText>
+
+                    @if(_isAuthenticated && userReview.UserId != _currentUserId)
+                    {
+                        <MudIconButton Icon="@Icons.Material.Filled.Flag" Size="Size.Small" Color="Color.Default"
+                                       OnClick="() => OpenReportDialog(userReview)" Title="@L["Report"]"/>
+                    }
+                </MudStack>
+            </MudPaper>
+        }
     </MudCardContent>
 </MudCard>
 }

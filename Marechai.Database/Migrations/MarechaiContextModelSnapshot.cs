@@ -25,6 +25,64 @@ namespace Marechai.Database.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
+            modelBuilder.Entity("Marechai.Database.Models.AdminNotification", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<DateTime>("CreatedOn"));
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit(1)");
+
+                    b.Property<string>("LinkText")
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
+
+                    b.Property<string>("LinkUrl")
+                        .HasMaxLength(512)
+                        .HasColumnType("varchar(512)");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("varchar(1024)");
+
+                    b.Property<string>("NotificationType")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("varchar(64)");
+
+                    b.Property<string>("TargetUserId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("UpdatedOn"));
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TargetUserId");
+
+                    b.HasIndex("IsRead", "TargetUserId");
+
+                    b.ToTable("AdminNotifications");
+                });
+
             modelBuilder.Entity("Marechai.Database.Models.ApplicationRole", b =>
                 {
                     b.Property<string>("Id")
@@ -5970,6 +6028,62 @@ namespace Marechai.Database.Migrations
                     b.ToTable("ResolutionsByScreen");
                 });
 
+            modelBuilder.Entity("Marechai.Database.Models.ReviewReport", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<DateTime>("CreatedOn"));
+
+                    b.Property<string>("Explanation")
+                        .HasMaxLength(2048)
+                        .HasColumnType("varchar(2048)");
+
+                    b.Property<bool>("IsResolved")
+                        .HasColumnType("bit(1)");
+
+                    b.Property<int>("Reason")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReporterId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ResolvedByUserId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime?>("ResolvedOn")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<long>("ReviewId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("UpdatedOn"));
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsResolved");
+
+                    b.HasIndex("ResolvedByUserId");
+
+                    b.HasIndex("ReviewId");
+
+                    b.HasIndex("ReporterId", "ReviewId")
+                        .IsUnique();
+
+                    b.ToTable("ReviewReports");
+                });
+
             modelBuilder.Entity("Marechai.Database.Models.Screen", b =>
                 {
                     b.Property<int>("Id")
@@ -6730,6 +6844,110 @@ namespace Marechai.Database.Migrations
                     b.HasIndex("SoftwareVersionId");
 
                     b.ToTable("SoftwareScreenshots");
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.SoftwareUserRating", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<ulong>("SoftwareId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<DateTime>("CreatedOn"));
+
+                    b.Property<float>("Rating")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("UpdatedOn"));
+
+                    b.HasKey("UserId", "SoftwareId");
+
+                    b.HasIndex("SoftwareId");
+
+                    b.ToTable("SoftwareUserRatings");
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.SoftwareUserReview", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<DateTime>("CreatedOn"));
+
+                    b.Property<bool>("IsAnonymous")
+                        .HasColumnType("bit(1)");
+
+                    b.Property<ulong>("SoftwareId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.Property<string>("TheBad")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TheGood")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TheUgly")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("UpdatedOn"));
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SoftwareId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("UserId", "SoftwareId")
+                        .IsUnique();
+
+                    b.ToTable("SoftwareUserReviews");
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.SoftwareUserReviewVote", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<long>("ReviewId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<DateTime>("CreatedOn"));
+
+                    b.Property<bool>("IsUpvote")
+                        .HasColumnType("bit(1)");
+
+                    b.HasKey("UserId", "ReviewId");
+
+                    b.HasIndex("ReviewId");
+
+                    b.ToTable("SoftwareUserReviewVotes");
                 });
 
             modelBuilder.Entity("Marechai.Database.Models.SoftwareVersion", b =>
@@ -7545,6 +7763,16 @@ namespace Marechai.Database.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.AdminNotification", b =>
+                {
+                    b.HasOne("Marechai.Database.Models.ApplicationUser", "TargetUser")
+                        .WithMany()
+                        .HasForeignKey("TargetUserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("TargetUser");
                 });
 
             modelBuilder.Entity("Marechai.Database.Models.Audit", b =>
@@ -8905,6 +9133,31 @@ namespace Marechai.Database.Migrations
                     b.Navigation("Screen");
                 });
 
+            modelBuilder.Entity("Marechai.Database.Models.ReviewReport", b =>
+                {
+                    b.HasOne("Marechai.Database.Models.ApplicationUser", "Reporter")
+                        .WithMany("ReviewReports")
+                        .HasForeignKey("ReporterId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Marechai.Database.Models.ApplicationUser", "ResolvedBy")
+                        .WithMany()
+                        .HasForeignKey("ResolvedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Marechai.Database.Models.SoftwareUserReview", "Review")
+                        .WithMany("Reports")
+                        .HasForeignKey("ReviewId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Reporter");
+
+                    b.Navigation("ResolvedBy");
+
+                    b.Navigation("Review");
+                });
+
             modelBuilder.Entity("Marechai.Database.Models.Screen", b =>
                 {
                     b.HasOne("Marechai.Database.Models.Resolution", "NativeResolution")
@@ -9212,6 +9465,62 @@ namespace Marechai.Database.Migrations
                     b.Navigation("Version");
                 });
 
+            modelBuilder.Entity("Marechai.Database.Models.SoftwareUserRating", b =>
+                {
+                    b.HasOne("Marechai.Database.Models.Software", "Software")
+                        .WithMany("UserRatings")
+                        .HasForeignKey("SoftwareId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Marechai.Database.Models.ApplicationUser", "User")
+                        .WithMany("SoftwareRatings")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Software");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.SoftwareUserReview", b =>
+                {
+                    b.HasOne("Marechai.Database.Models.Software", "Software")
+                        .WithMany("UserReviews")
+                        .HasForeignKey("SoftwareId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Marechai.Database.Models.ApplicationUser", "User")
+                        .WithMany("SoftwareReviews")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Software");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.SoftwareUserReviewVote", b =>
+                {
+                    b.HasOne("Marechai.Database.Models.SoftwareUserReview", "Review")
+                        .WithMany("Votes")
+                        .HasForeignKey("ReviewId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Marechai.Database.Models.ApplicationUser", "User")
+                        .WithMany("ReviewVotes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Review");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Marechai.Database.Models.SoftwareVersion", b =>
                 {
                     b.HasOne("Marechai.Database.Models.License", "License")
@@ -9473,6 +9782,14 @@ namespace Marechai.Database.Migrations
                     b.Navigation("OwnedMachines");
 
                     b.Navigation("Photos");
+
+                    b.Navigation("ReviewReports");
+
+                    b.Navigation("ReviewVotes");
+
+                    b.Navigation("SoftwareRatings");
+
+                    b.Navigation("SoftwareReviews");
                 });
 
             modelBuilder.Entity("Marechai.Database.Models.Book", b =>
@@ -9771,6 +10088,10 @@ namespace Marechai.Database.Migrations
 
                     b.Navigation("Successors");
 
+                    b.Navigation("UserRatings");
+
+                    b.Navigation("UserReviews");
+
                     b.Navigation("Versions");
                 });
 
@@ -9822,6 +10143,13 @@ namespace Marechai.Database.Migrations
                     b.Navigation("Regions");
 
                     b.Navigation("SupportedSoundSynths");
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.SoftwareUserReview", b =>
+                {
+                    b.Navigation("Reports");
+
+                    b.Navigation("Votes");
                 });
 
             modelBuilder.Entity("Marechai.Database.Models.SoftwareVersion", b =>

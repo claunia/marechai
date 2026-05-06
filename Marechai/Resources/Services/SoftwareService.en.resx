@@ -957,4 +957,119 @@
     <data name="Metroidvania" xml:space="preserve">
         <value>Metroidvania</value>
     </data>
+    <!-- Reviews & Ratings -->
+    <data name="Reviews" xml:space="preserve">
+        <value>Reviews</value>
+    </data>
+    <data name="Critic Reviews" xml:space="preserve">
+        <value>Critic Reviews</value>
+    </data>
+    <data name="User Reviews" xml:space="preserve">
+        <value>User Reviews</value>
+    </data>
+    <data name="Unscored" xml:space="preserve">
+        <value>Unscored</value>
+    </data>
+    <data name="Full Review" xml:space="preserve">
+        <value>Full Review</value>
+    </data>
+    <data name="Overall:" xml:space="preserve">
+        <value>Overall:</value>
+    </data>
+    <data name="reviews" xml:space="preserve">
+        <value>reviews</value>
+    </data>
+    <data name="ratings" xml:space="preserve">
+        <value>ratings</value>
+    </data>
+    <data name="Marechai Score" xml:space="preserve">
+        <value>Marechai Score</value>
+    </data>
+    <data name="Ranked #{0} of {1}" xml:space="preserve">
+        <value>Ranked #{0} of {1}</value>
+    </data>
+    <data name="Your Rating" xml:space="preserve">
+        <value>Your Rating</value>
+    </data>
+    <data name="Write Review" xml:space="preserve">
+        <value>Write Review</value>
+    </data>
+    <data name="Edit Review" xml:space="preserve">
+        <value>Edit Review</value>
+    </data>
+    <data name="The Good" xml:space="preserve">
+        <value>The Good</value>
+    </data>
+    <data name="The Bad" xml:space="preserve">
+        <value>The Bad</value>
+    </data>
+    <data name="The Ugly" xml:space="preserve">
+        <value>The Ugly</value>
+    </data>
+    <data name="Anonymous" xml:space="preserve">
+        <value>Anonymous</value>
+    </data>
+    <data name="Post as anonymous" xml:space="preserve">
+        <value>Post as anonymous</value>
+    </data>
+    <data name="No reviews yet." xml:space="preserve">
+        <value>No reviews yet.</value>
+    </data>
+    <data name="Review deleted." xml:space="preserve">
+        <value>Review deleted.</value>
+    </data>
+    <data name="Are you sure you want to delete this review?" xml:space="preserve">
+        <value>Are you sure you want to delete this review?</value>
+    </data>
+    <data name="Helpful" xml:space="preserve">
+        <value>Helpful</value>
+    </data>
+    <data name="Not helpful" xml:space="preserve">
+        <value>Not helpful</value>
+    </data>
+    <data name="Report" xml:space="preserve">
+        <value>Report</value>
+    </data>
+    <data name="Report Review" xml:space="preserve">
+        <value>Report Review</value>
+    </data>
+    <data name="Reason" xml:space="preserve">
+        <value>Reason</value>
+    </data>
+    <data name="Spam" xml:space="preserve">
+        <value>Spam</value>
+    </data>
+    <data name="Offensive" xml:space="preserve">
+        <value>Offensive</value>
+    </data>
+    <data name="Misleading" xml:space="preserve">
+        <value>Misleading</value>
+    </data>
+    <data name="Off-topic" xml:space="preserve">
+        <value>Off-topic</value>
+    </data>
+    <data name="Other" xml:space="preserve">
+        <value>Other</value>
+    </data>
+    <data name="Explanation (optional)" xml:space="preserve">
+        <value>Explanation (optional)</value>
+    </data>
+    <data name="Submit Report" xml:space="preserve">
+        <value>Submit Report</value>
+    </data>
+    <data name="Report submitted. Thank you." xml:space="preserve">
+        <value>Report submitted. Thank you.</value>
+    </data>
+    <data name="Save" xml:space="preserve">
+        <value>Save</value>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Cancel</value>
+    </data>
+    <data name="Delete" xml:space="preserve">
+        <value>Delete</value>
+    </data>
+    <data name="Yes" xml:space="preserve">
+        <value>Yes</value>
+    </data>
 </root>

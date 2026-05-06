@@ -66,13 +66,17 @@ public class ApplicationUser : IdentityUser
     [MaxLength(200)]
     public string LinkedIn { get; set; }
 
-    public virtual ICollection<MachinePhoto>              Photos                   { get; set; }
-    public virtual ICollection<OwnedMachine>              OwnedMachines            { get; set; }
-    public virtual ICollection<CollectedBook>             CollectedBooks           { get; set; }
-    public virtual ICollection<CollectedDocument>         CollectedDocuments       { get; set; }
+    public virtual ICollection<MachinePhoto>              Photos                    { get; set; }
+    public virtual ICollection<OwnedMachine>              OwnedMachines             { get; set; }
+    public virtual ICollection<CollectedBook>             CollectedBooks            { get; set; }
+    public virtual ICollection<CollectedDocument>         CollectedDocuments        { get; set; }
     public virtual ICollection<CollectedSoftwareRelease>  CollectedSoftwareReleases { get; set; }
-    public virtual ICollection<Dump>                      Dumps                    { get; set; }
-    public virtual ICollection<BookScan>                  BookScans                { get; set; }
-    public virtual ICollection<DocumentScan>              DocumentScans            { get; set; }
-    public virtual ICollection<MagazineScan>              MagazineScans            { get; set; }
+    public virtual ICollection<Dump>                      Dumps                     { get; set; }
+    public virtual ICollection<BookScan>                  BookScans                 { get; set; }
+    public virtual ICollection<DocumentScan>              DocumentScans             { get; set; }
+    public virtual ICollection<MagazineScan>              MagazineScans             { get; set; }
+    public virtual ICollection<SoftwareUserRating>        SoftwareRatings           { get; set; }
+    public virtual ICollection<SoftwareUserReview>        SoftwareReviews           { get; set; }
+    public virtual ICollection<SoftwareUserReviewVote>    ReviewVotes               { get; set; }
+    public virtual ICollection<ReviewReport>              ReviewReports             { get; set; }
 }

@@ -175,6 +175,11 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<MobyGamesCoverDownloadState>        MobyGamesCoverDownloadStates        { get; set; }
     public virtual DbSet<SoftwareCriticReview>               SoftwareCriticReviews               { get; set; }
     public virtual DbSet<MobyGamesReviewImportState>         MobyGamesReviewImportStates         { get; set; }
+    public virtual DbSet<SoftwareUserRating>                  SoftwareUserRatings                 { get; set; }
+    public virtual DbSet<SoftwareUserReview>                  SoftwareUserReviews                 { get; set; }
+    public virtual DbSet<SoftwareUserReviewVote>              SoftwareUserReviewVotes             { get; set; }
+    public virtual DbSet<ReviewReport>                        ReviewReports                       { get; set; }
+    public virtual DbSet<AdminNotification>                   AdminNotifications                  { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -2850,6 +2855,90 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
         {
             entity.HasIndex(e => e.MobyGameId).IsUnique();
             entity.HasIndex(e => e.Status);
+        });
+
+        modelBuilder.Entity<SoftwareUserRating>(entity =>
+        {
+            entity.HasKey(e => new { e.UserId, e.SoftwareId });
+
+            entity.HasIndex(e => e.SoftwareId);
+
+            entity.HasOne(e => e.User)
+                  .WithMany(p => p.SoftwareRatings)
+                  .HasForeignKey(e => e.UserId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Software)
+                  .WithMany(p => p.UserRatings)
+                  .HasForeignKey(e => e.SoftwareId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<SoftwareUserReview>(entity =>
+        {
+            entity.HasIndex(e => new { e.UserId, e.SoftwareId }).IsUnique();
+            entity.HasIndex(e => e.SoftwareId);
+            entity.HasIndex(e => e.UserId);
+
+            entity.HasOne(e => e.User)
+                  .WithMany(p => p.SoftwareReviews)
+                  .HasForeignKey(e => e.UserId)
+                  .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(e => e.Software)
+                  .WithMany(p => p.UserReviews)
+                  .HasForeignKey(e => e.SoftwareId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<SoftwareUserReviewVote>(entity =>
+        {
+            entity.HasKey(e => new { e.UserId, e.ReviewId });
+
+            entity.HasIndex(e => e.ReviewId);
+
+            entity.HasOne(e => e.User)
+                  .WithMany(p => p.ReviewVotes)
+                  .HasForeignKey(e => e.UserId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Review)
+                  .WithMany(p => p.Votes)
+                  .HasForeignKey(e => e.ReviewId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<ReviewReport>(entity =>
+        {
+            entity.HasIndex(e => new { e.ReporterId, e.ReviewId }).IsUnique();
+            entity.HasIndex(e => e.ReviewId);
+            entity.HasIndex(e => e.IsResolved);
+
+            entity.HasOne(e => e.Reporter)
+                  .WithMany(p => p.ReviewReports)
+                  .HasForeignKey(e => e.ReporterId)
+                  .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(e => e.Review)
+                  .WithMany(p => p.Reports)
+                  .HasForeignKey(e => e.ReviewId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.ResolvedBy)
+                  .WithMany()
+                  .HasForeignKey(e => e.ResolvedByUserId)
+                  .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<AdminNotification>(entity =>
+        {
+            entity.HasIndex(e => new { e.IsRead, e.TargetUserId });
+            entity.HasIndex(e => e.TargetUserId);
+
+            entity.HasOne(e => e.TargetUser)
+                  .WithMany()
+                  .HasForeignKey(e => e.TargetUserId)
+                  .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

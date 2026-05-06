@@ -26,10 +26,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Marechai.Data;
+using Marechai.Pages.Admin;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
+using MudBlazor;
 
 namespace Marechai.Pages.Software;
 
@@ -61,6 +65,16 @@ public partial class View
     List<SoftwareVersionDto>                    _versions = [];
     List<SoftwareCriticReviewDto>               _criticReviews = [];
     CriticReviewSummaryDto                      _reviewSummary;
+
+    // User reviews & ratings
+    List<SoftwareUserReviewDto>                 _userReviews = [];
+    UserReviewSummaryDto                        _userReviewSummary;
+    MarechaiScoreDto                            _marechaiScore;
+    SoftwareUserReviewDto                       _myReview;
+    float                                       _myRatingFloat;
+    bool                                        _isAuthenticated;
+    bool                                        _isAdmin;
+    string                                      _currentUserId;
 
     [Parameter]
     public int Id { get; set; }
@@ -170,6 +184,24 @@ public partial class View
         _criticReviews = await Service.GetCriticReviewsAsync(Id);
         _reviewSummary = await Service.GetCriticReviewSummaryAsync(Id);
 
+        // Load auth state
+        AuthenticationState authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        _isAuthenticated = authState.User.Identity?.IsAuthenticated == true;
+        _currentUserId   = authState.User.FindFirst(ClaimTypes.Sid)?.Value;
+        _isAdmin         = authState.User.IsInRole("Admin") || authState.User.IsInRole("UberAdmin");
+
+        // Load user reviews, ratings, score
+        _userReviews       = await AuthService.GetUserReviewsAsync(Id);
+        _userReviewSummary = await AuthService.GetUserReviewSummaryAsync(Id);
+        _marechaiScore     = await AuthService.GetMarechaiScoreAsync(Id);
+
+        if(_isAuthenticated)
+        {
+            SoftwareUserRatingDto myRating = await AuthService.GetMyRatingAsync(Id);
+            _myRatingFloat = myRating is not null ? myRating.Rating.GetValueOrDefault() : 0;
+            _myReview    = _userReviews.FirstOrDefault(r => r.UserId == _currentUserId);
+        }
+
         // Load screenshots
         List<Guid?> screenshotIds = await Service.GetScreenshotIdsAsync(Id);
 
@@ -211,5 +243,159 @@ public partial class View
             (int)DatePrecision.YearOnly  => review.ReviewDate.Value.ToString("yyyy"),
             _                            => review.ReviewDate.Value.ToString("yyyy-MM-dd")
         };
+    }
+
+    async Task OnMyRatingChanged(float value)
+    {
+        _myRatingFloat = value;
+
+        if(value > 0)
+        {
+            (bool succeeded, string error) = await AuthService.SetMyRatingAsync(Id, value);
+
+            if(!succeeded)
+            {
+                Snackbar.Add(error ?? "Failed to save rating", Severity.Error);
+
+                return;
+            }
+        }
+        else
+        {
+            (bool succeeded, string error) = await AuthService.DeleteMyRatingAsync(Id);
+
+            if(!succeeded)
+            {
+                Snackbar.Add(error ?? "Failed to remove rating", Severity.Error);
+
+                return;
+            }
+        }
+
+        _userReviewSummary = await AuthService.GetUserReviewSummaryAsync(Id);
+        _marechaiScore     = await AuthService.GetMarechaiScoreAsync(Id);
+        StateHasChanged();
+    }
+
+    async Task OpenReviewDialog()
+    {
+        var parameters = new DialogParameters<UserReviewDialog>
+        {
+            { x => x.SoftwareId, Id },
+            { x => x.ExistingReview, _myReview },
+            { x => x.CurrentRating, _myRatingFloat }
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<UserReviewDialog>(
+            _myReview is not null ? L["Edit Review"] : L["Write Review"], parameters,
+            new DialogOptions { MaxWidth = MaxWidth.Medium, FullWidth = true });
+
+        DialogResult result = await dialog.Result;
+
+        if(result is { Canceled: false })
+        {
+            _userReviews       = await AuthService.GetUserReviewsAsync(Id);
+            _userReviewSummary = await AuthService.GetUserReviewSummaryAsync(Id);
+            _marechaiScore     = await AuthService.GetMarechaiScoreAsync(Id);
+            _myReview          = _userReviews.FirstOrDefault(r => r.UserId == _currentUserId);
+
+            SoftwareUserRatingDto myRating = await AuthService.GetMyRatingAsync(Id);
+            _myRatingFloat = myRating is not null ? myRating.Rating.GetValueOrDefault() : 0;
+
+            StateHasChanged();
+        }
+    }
+
+    async Task OpenEditReviewDialog(SoftwareUserReviewDto review)
+    {
+        var parameters = new DialogParameters<UserReviewDialog>
+        {
+            { x => x.SoftwareId, Id },
+            { x => x.ExistingReview, review },
+            { x => x.CurrentRating, review.Rating ?? 0f }
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<UserReviewDialog>(
+            L["Edit Review"], parameters,
+            new DialogOptions { MaxWidth = MaxWidth.Medium, FullWidth = true });
+
+        DialogResult result = await dialog.Result;
+
+        if(result is { Canceled: false })
+        {
+            _userReviews       = await AuthService.GetUserReviewsAsync(Id);
+            _userReviewSummary = await AuthService.GetUserReviewSummaryAsync(Id);
+            _marechaiScore     = await AuthService.GetMarechaiScoreAsync(Id);
+            _myReview          = _userReviews.FirstOrDefault(r => r.UserId == _currentUserId);
+            StateHasChanged();
+        }
+    }
+
+    async Task DeleteReviewAsync(SoftwareUserReviewDto review)
+    {
+        var parameters = new DialogParameters<DeleteConfirmDialog>
+        {
+            { x => x.ContentText, L["Are you sure you want to delete this review?"].Value }
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<DeleteConfirmDialog>(
+            L["Delete"], parameters, new DialogOptions { MaxWidth = MaxWidth.Small });
+
+        DialogResult dialogResult = await dialog.Result;
+        bool? confirmed = dialogResult is { Canceled: false };
+
+        if(confirmed != true) return;
+
+        (bool succeeded, string error) = await AuthService.DeleteUserReviewAsync(Id, review.Id.GetValueOrDefault());
+
+        if(succeeded)
+        {
+            Snackbar.Add(L["Review deleted."], Severity.Success);
+            _userReviews       = await AuthService.GetUserReviewsAsync(Id);
+            _userReviewSummary = await AuthService.GetUserReviewSummaryAsync(Id);
+            _marechaiScore     = await AuthService.GetMarechaiScoreAsync(Id);
+            _myReview          = _userReviews.FirstOrDefault(r => r.UserId == _currentUserId);
+            StateHasChanged();
+        }
+        else
+        {
+            Snackbar.Add(error ?? "Error", Severity.Error);
+        }
+    }
+
+    async Task VoteAsync(SoftwareUserReviewDto review, bool isUpvote)
+    {
+        // Toggle: if already voted the same way, remove vote
+        if(review.CurrentUserVote == isUpvote)
+        {
+            await AuthService.RemoveReviewVoteAsync(Id, review.Id.GetValueOrDefault());
+        }
+        else
+        {
+            await AuthService.VoteReviewAsync(Id, review.Id.GetValueOrDefault(), isUpvote);
+        }
+
+        _userReviews = await AuthService.GetUserReviewsAsync(Id);
+        StateHasChanged();
+    }
+
+    async Task OpenReportDialog(SoftwareUserReviewDto review)
+    {
+        var parameters = new DialogParameters<ReportReviewDialog>
+        {
+            { x => x.SoftwareId, Id },
+            { x => x.ReviewId, review.Id.GetValueOrDefault() }
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<ReportReviewDialog>(
+            L["Report Review"], parameters,
+            new DialogOptions { MaxWidth = MaxWidth.Small, FullWidth = true });
+
+        DialogResult result = await dialog.Result;
+
+        if(result is { Canceled: false })
+        {
+            Snackbar.Add(L["Report submitted. Thank you."], Severity.Success);
+        }
     }
 }

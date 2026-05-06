@@ -35,6 +35,14 @@ namespace Marechai.Services;
 
 public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter requestAdapter)
 {
+    static string ExtractErrorMessage(ApiException ex)
+    {
+        if(ex is ProblemDetails pd)
+            return pd.Detail ?? pd.Title ?? ex.Message;
+
+        return ex.Message;
+    }
+
     // ── CRUD methods ──
 
     public async Task<(int? id, string error)> CreateAsync(SoftwareDto dto)
@@ -47,7 +55,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
         catch(ApiException ex)
         {
-            return (null, ex.Message);
+            return (null, ExtractErrorMessage(ex));
         }
         catch(Exception ex)
         {
@@ -65,7 +73,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
         catch(ApiException ex)
         {
-            return (false, ex.Message);
+            return (false, ExtractErrorMessage(ex));
         }
         catch(Exception ex)
         {
@@ -83,7 +91,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
         catch(ApiException ex)
         {
-            return (false, ex.Message);
+            return (false, ExtractErrorMessage(ex));
         }
         catch(Exception ex)
         {
@@ -117,7 +125,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
         catch(ApiException ex)
         {
-            return (false, ex.Message);
+            return (false, ExtractErrorMessage(ex));
         }
         catch(Exception ex)
         {
@@ -136,7 +144,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
         catch(ApiException ex)
         {
-            return (false, ex.Message);
+            return (false, ExtractErrorMessage(ex));
         }
         catch(Exception ex)
         {
@@ -268,7 +276,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
         catch(ApiException ex)
         {
-            return (false, ex.Message);
+            return (false, ExtractErrorMessage(ex));
         }
         catch(Exception ex)
         {
@@ -950,7 +958,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
         catch(ApiException ex)
         {
-            return (false, ex.Message);
+            return (false, ExtractErrorMessage(ex));
         }
         catch(Exception ex)
         {
@@ -968,7 +976,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
         catch(ApiException ex)
         {
-            return (false, ex.Message);
+            return (false, ExtractErrorMessage(ex));
         }
         catch(Exception ex)
         {
@@ -1074,7 +1082,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
         catch(ApiException ex)
         {
-            return (false, ex.Message);
+            return (false, ExtractErrorMessage(ex));
         }
         catch(Exception ex)
         {
@@ -1092,7 +1100,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
         catch(ApiException ex)
         {
-            return (false, ex.Message);
+            return (false, ExtractErrorMessage(ex));
         }
         catch(Exception ex)
         {
@@ -1126,7 +1134,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
         catch(ApiException ex)
         {
-            return (false, ex.Message);
+            return (false, ExtractErrorMessage(ex));
         }
         catch(Exception ex)
         {
@@ -1155,6 +1163,209 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         try
         {
             return await client.Software[softwareId].CriticReviews.Summary.GetAsync();
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    // ── User Ratings ──
+
+    public async Task<UserReviewSummaryDto> GetUserReviewSummaryAsync(int softwareId)
+    {
+        try
+        {
+            return await client.Software[softwareId].UserRatings.Summary.GetAsync();
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public async Task<SoftwareUserRatingDto> GetMyRatingAsync(int softwareId)
+    {
+        try
+        {
+            return await client.Software[softwareId].UserRatings.Me.GetAsync();
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public async Task<(bool succeeded, string error)> SetMyRatingAsync(int softwareId, float rating)
+    {
+        try
+        {
+            await client.Software[softwareId].UserRatings.Me.PutAsync(new SetRatingRequest
+            {
+                Rating = rating
+            });
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string error)> DeleteMyRatingAsync(int softwareId)
+    {
+        try
+        {
+            await client.Software[softwareId].UserRatings.Me.DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    // ── User Reviews ──
+
+    public async Task<List<SoftwareUserReviewDto>> GetUserReviewsAsync(int softwareId)
+    {
+        try
+        {
+            List<SoftwareUserReviewDto> reviews = await client.Software[softwareId].UserReviews.GetAsync();
+
+            return reviews ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(SoftwareUserReviewDto review, string error)> CreateUserReviewAsync(int softwareId,
+        SoftwareUserReviewDto dto)
+    {
+        try
+        {
+            SoftwareUserReviewDto result = await client.Software[softwareId].UserReviews.PostAsync(dto);
+
+            return (result, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string error)> UpdateUserReviewAsync(int softwareId, long reviewId,
+        SoftwareUserReviewDto dto)
+    {
+        try
+        {
+            await client.Software[softwareId].UserReviews[reviewId].PutAsync(dto);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string error)> DeleteUserReviewAsync(int softwareId, long reviewId)
+    {
+        try
+        {
+            await client.Software[softwareId].UserReviews[reviewId].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    // ── Review Votes ──
+
+    public async Task<bool> VoteReviewAsync(int softwareId, long reviewId, bool isUpvote)
+    {
+        try
+        {
+            await client.Software[softwareId].UserReviews[reviewId].Vote.PostAsync(
+                new SoftwareUserReviewVoteDto { IsUpvote = isUpvote });
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public async Task<bool> RemoveReviewVoteAsync(int softwareId, long reviewId)
+    {
+        try
+        {
+            await client.Software[softwareId].UserReviews[reviewId].Vote.DeleteAsync();
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    // ── Review Reports ──
+
+    public async Task<(bool succeeded, string error)> ReportReviewAsync(int softwareId, long reviewId,
+        CreateReviewReportRequest dto)
+    {
+        try
+        {
+            await client.Software[softwareId].UserReviews[reviewId].Report.PostAsync(dto);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    // ── Marechai Score ──
+
+    public async Task<MarechaiScoreDto> GetMarechaiScoreAsync(int softwareId)
+    {
+        try
+        {
+            return await client.Software[softwareId].MarechaiScore.GetAsync();
         }
         catch
         {

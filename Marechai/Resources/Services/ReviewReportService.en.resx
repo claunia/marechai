@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root" xmlns="">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+    <resheader name="version"><value>2.0</value></resheader>
+    <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+    <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+    <data name="Review Reports" xml:space="preserve"><value>Review Reports</value></data>
+    <data name="No reports found." xml:space="preserve"><value>No reports found.</value></data>
+    <data name="Show resolved" xml:space="preserve"><value>Show resolved</value></data>
+    <data name="Reporter" xml:space="preserve"><value>Reporter</value></data>
+    <data name="Software" xml:space="preserve"><value>Software</value></data>
+    <data name="Reviewer" xml:space="preserve"><value>Reviewer</value></data>
+    <data name="Reason" xml:space="preserve"><value>Reason</value></data>
+    <data name="Status" xml:space="preserve"><value>Status</value></data>
+    <data name="Date" xml:space="preserve"><value>Date</value></data>
+    <data name="Resolve" xml:space="preserve"><value>Resolve</value></data>
+    <data name="Delete Report" xml:space="preserve"><value>Delete Report</value></data>
+    <data name="Resolved" xml:space="preserve"><value>Resolved</value></data>
+    <data name="Pending" xml:space="preserve"><value>Pending</value></data>
+    <data name="Report resolved." xml:space="preserve"><value>Report resolved.</value></data>
+    <data name="Report deleted." xml:space="preserve"><value>Report deleted.</value></data>
+    <data name="Spam" xml:space="preserve"><value>Spam</value></data>
+    <data name="Offensive" xml:space="preserve"><value>Offensive</value></data>
+    <data name="Misleading" xml:space="preserve"><value>Misleading</value></data>
+    <data name="Off-topic" xml:space="preserve"><value>Off-topic</value></data>
+    <data name="Other" xml:space="preserve"><value>Other</value></data>
+    <data name="Unknown" xml:space="preserve"><value>Unknown</value></data>
+</root>

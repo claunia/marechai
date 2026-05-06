@@ -23,4 +23,6 @@ public class Software : BaseModel<ulong>
     public virtual ICollection<GenreBySoftware>             Genres              { get; set; }
     public virtual ICollection<PeopleBySoftware>            Credits             { get; set; }
     public virtual ICollection<SoftwareCriticReview>        CriticReviews       { get; set; }
+    public virtual ICollection<SoftwareUserRating>          UserRatings         { get; set; }
+    public virtual ICollection<SoftwareUserReview>          UserReviews         { get; set; }
 }

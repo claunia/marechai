@@ -2,6 +2,7 @@
 #pragma warning disable CS0618
 using Marechai.ApiClient.Models;
 using Marechai.ApiClient.Profile.Item.Collection;
+using Marechai.ApiClient.Profile.Item.Reviews;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
 using Microsoft.Kiota.Abstractions;
@@ -22,6 +23,11 @@ namespace Marechai.ApiClient.Profile.Item
         public global::Marechai.ApiClient.Profile.Item.Collection.CollectionRequestBuilder Collection
         {
             get => new global::Marechai.ApiClient.Profile.Item.Collection.CollectionRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The reviews property</summary>
+        public global::Marechai.ApiClient.Profile.Item.Reviews.ReviewsRequestBuilder Reviews
+        {
+            get => new global::Marechai.ApiClient.Profile.Item.Reviews.ReviewsRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.ApiClient.Profile.Item.WithUsernameItemRequestBuilder"/> and sets the default values.

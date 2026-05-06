@@ -1,0 +1,71 @@
+@* Half-star rating component using SVG. Value range: 0.0–5.0 in 0.5 steps. *@
+
+<span class="half-star-rating" style="display: inline-flex; align-items: center; gap: 1px; cursor: @(ReadOnly ? "default" : "pointer"); font-size: @SizePx()px;">
+    @for(int star = 1; star <= 5; star++)
+    {
+        int s = star;
+        <svg width="1em" height="1em" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+             style="overflow: visible;">
+            @* Left half *@
+            <clipPath id="left-@_uid-@s">
+                <rect x="0" y="0" width="12" height="24"/>
+            </clipPath>
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"
+                  clip-path="url(#left-@_uid-@s)"
+                  fill="@(Value >= s - 0.5 ? "#ffd700" : "#555")"
+                  @onclick="() => OnClick(s, true)"
+                  @onclick:stopPropagation="true"/>
+            @* Right half *@
+            <clipPath id="right-@_uid-@s">
+                <rect x="12" y="0" width="12" height="24"/>
+            </clipPath>
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"
+                  clip-path="url(#right-@_uid-@s)"
+                  fill="@(Value >= s ? "#ffd700" : "#555")"
+                  @onclick="() => OnClick(s, false)"
+                  @onclick:stopPropagation="true"/>
+        </svg>
+    }
+</span>
+
+@code {
+    readonly string _uid = Guid.NewGuid().ToString("N")[..8];
+
+    /// <summary>Current rating value (0.0–5.0 in 0.5 steps).</summary>
+    [Parameter]
+    public float Value { get; set; }
+
+    /// <summary>Callback when value changes.</summary>
+    [Parameter]
+    public EventCallback<float> ValueChanged { get; set; }
+
+    /// <summary>If true, the rating is display-only.</summary>
+    [Parameter]
+    public bool ReadOnly { get; set; }
+
+    /// <summary>Size: Small, Medium, Large.</summary>
+    [Parameter]
+    public Size Size { get; set; } = Size.Small;
+
+    int SizePx() => Size switch
+    {
+        Size.Small  => 18,
+        Size.Medium => 24,
+        Size.Large  => 32,
+        _           => 20
+    };
+
+    async Task OnClick(int star, bool isLeft)
+    {
+        if(ReadOnly) return;
+
+        float newValue = isLeft ? star - 0.5f : star;
+
+        // Toggle off if clicking the same value
+        if(Math.Abs(Value - newValue) < 0.01f)
+            newValue = 0;
+
+        Value = newValue;
+        await ValueChanged.InvokeAsync(newValue);
+    }
+}

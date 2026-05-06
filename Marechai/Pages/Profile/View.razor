@@ -30,6 +30,7 @@
 @inherits OwningComponentBase<ProfileService>
 @inject IStringLocalizer<ProfileService> L
 @inject CollectionService                CollectionSvc
+@inject AuthenticationStateProvider       AuthStateProvider
 
 @if(!_loaded)
 {
@@ -357,6 +358,72 @@
                                 </MudListItem>
                             }
                         </MudList>
+                    </ChildContent>
+                </MudExpansionPanel>
+            </MudExpansionPanels>
+        }
+
+        @* ── Reviews Section ── *@
+        @if(_userReviews?.Count > 0)
+        {
+            <MudExpansionPanels Class="mb-4">
+                <MudExpansionPanel>
+                    <TitleContent>
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                            <MudIcon Icon="@Icons.Material.Filled.RateReview" Color="Color.Primary"/>
+                            <MudText Typo="Typo.h6">@L["Reviews"]</MudText>
+                            <MudChip T="string" Color="Color.Primary" Size="Size.Small">@_userReviews.Count</MudChip>
+                        </MudStack>
+                    </TitleContent>
+                    <ChildContent>
+                        @foreach(SoftwareUserReviewDto review in _userReviews)
+                        {
+                            <MudPaper Class="pa-3 mb-2" Elevation="1" Style="border-radius: 8px;">
+                                <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-2">
+                                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                        <MudLink Href="@($"/software/{review.SoftwareId}")">@review.SoftwareName</MudLink>
+                                        @if(review.Rating.HasValue)
+                                        {
+                                            <HalfStarRating ReadOnly="true" Value="@review.Rating.Value" Size="Size.Small"/>
+                                        }
+                                        @if(review.IsAnonymous.GetValueOrDefault() && _isAdmin)
+                                        {
+                                            <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Warning">@L["Anonymous"]</MudChip>
+                                        }
+                                    </MudStack>
+                                    <MudText Typo="Typo.caption" Color="Color.Secondary">@review.CreatedOn?.DateTime.ToString("d")</MudText>
+                                </MudStack>
+
+                                @if(!string.IsNullOrWhiteSpace(review.TheGood))
+                                {
+                                    <MudStack Row="true" AlignItems="AlignItems.Start" Spacing="1" Class="mb-1">
+                                        <MudIcon Icon="@Icons.Material.Filled.ThumbUp" Color="Color.Success" Size="Size.Small"/>
+                                        <MudText Typo="Typo.body2" Style="white-space: pre-wrap;">@review.TheGood</MudText>
+                                    </MudStack>
+                                }
+                                @if(!string.IsNullOrWhiteSpace(review.TheBad))
+                                {
+                                    <MudStack Row="true" AlignItems="AlignItems.Start" Spacing="1" Class="mb-1">
+                                        <MudIcon Icon="@Icons.Material.Filled.ThumbDown" Color="Color.Error" Size="Size.Small"/>
+                                        <MudText Typo="Typo.body2" Style="white-space: pre-wrap;">@review.TheBad</MudText>
+                                    </MudStack>
+                                }
+                                @if(!string.IsNullOrWhiteSpace(review.TheUgly))
+                                {
+                                    <MudStack Row="true" AlignItems="AlignItems.Start" Spacing="1" Class="mb-1">
+                                        <MudIcon Icon="@Icons.Material.Filled.Warning" Color="Color.Warning" Size="Size.Small"/>
+                                        <MudText Typo="Typo.body2" Style="white-space: pre-wrap;">@review.TheUgly</MudText>
+                                    </MudStack>
+                                }
+
+                                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-1">
+                                    <MudIcon Icon="@Icons.Material.Filled.ThumbUp" Size="Size.Small" Color="Color.Default"/>
+                                    <MudText Typo="Typo.caption">@review.ThumbsUp</MudText>
+                                    <MudIcon Icon="@Icons.Material.Filled.ThumbDown" Size="Size.Small" Color="Color.Default"/>
+                                    <MudText Typo="Typo.caption">@review.ThumbsDown</MudText>
+                                </MudStack>
+                            </MudPaper>
+                        }
                     </ChildContent>
                 </MudExpansionPanel>
             </MudExpansionPanels>

@@ -1,0 +1,111 @@
+@page "/admin/review-reports"
+@attribute [Authorize(Roles = "Admin, UberAdmin")]
+@using Marechai.ApiClient.Models
+@inject ReviewReportService ReportSvc
+@inject SoftwareService SoftwareSvc
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@inject IStringLocalizer<ReviewReportService> L
+
+<MudText Typo="Typo.h5" Class="mb-4">@L["Review Reports"]</MudText>
+
+<MudSwitch T="bool" @bind-Value="_showResolved" Label="@L["Show resolved"]" Color="Color.Primary" Class="mb-4"/>
+
+@if(_reports.Count == 0)
+{
+    <MudAlert Severity="Severity.Info">@L["No reports found."]</MudAlert>
+}
+else
+{
+    <MudTable Items="_reports" Hover="true" Dense="true" Striped="true">
+        <HeaderContent>
+            <MudTh>@L["Reporter"]</MudTh>
+            <MudTh>@L["Software"]</MudTh>
+            <MudTh>@L["Reviewer"]</MudTh>
+            <MudTh>@L["Reason"]</MudTh>
+            <MudTh>@L["Status"]</MudTh>
+            <MudTh>@L["Date"]</MudTh>
+            <MudTh></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>@context.ReporterName</MudTd>
+            <MudTd><MudLink Href="@($"/software/{context.SoftwareId}")">@context.SoftwareName</MudLink></MudTd>
+            <MudTd>@context.ReviewerName</MudTd>
+            <MudTd>@FormatReason(context.Reason)</MudTd>
+            <MudTd>
+                @if(context.IsResolved == true)
+                {
+                    <MudChip T="string" Size="Size.Small" Color="Color.Success">@L["Resolved"]</MudChip>
+                }
+                else
+                {
+                    <MudChip T="string" Size="Size.Small" Color="Color.Warning">@L["Pending"]</MudChip>
+                }
+            </MudTd>
+            <MudTd>@context.CreatedOn?.DateTime.ToString("g")</MudTd>
+            <MudTd>
+                <MudStack Row="true" Spacing="1">
+                    @if(context.IsResolved != true)
+                    {
+                        <MudButton Variant="Variant.Text" Color="Color.Success" Size="Size.Small"
+                                   OnClick="() => ResolveAsync(context)">@L["Resolve"]</MudButton>
+                    }
+                    <MudButton Variant="Variant.Text" Color="Color.Error" Size="Size.Small"
+                               OnClick="() => DeleteReportAsync(context)">@L["Delete Report"]</MudButton>
+                </MudStack>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+}
+
+@code {
+    List<ReviewReportDto> _reports      = [];
+    bool                  _showResolved;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(!firstRender) return;
+
+        await LoadReports();
+        StateHasChanged();
+    }
+
+    async Task LoadReports()
+    {
+        _reports = await ReportSvc.GetReportsAsync(_showResolved ? null : false);
+    }
+
+    string FormatReason(int? reason) => reason switch
+    {
+        0 => L["Spam"],
+        1 => L["Offensive"],
+        2 => L["Misleading"],
+        3 => L["Off-topic"],
+        4 => L["Other"],
+        _ => L["Unknown"]
+    };
+
+    async Task ResolveAsync(ReviewReportDto report)
+    {
+        bool success = await ReportSvc.ResolveReportAsync(report.Id.GetValueOrDefault());
+
+        if(success)
+        {
+            Snackbar.Add(L["Report resolved."], Severity.Success);
+            await LoadReports();
+            StateHasChanged();
+        }
+    }
+
+    async Task DeleteReportAsync(ReviewReportDto report)
+    {
+        bool success = await ReportSvc.DeleteReportAsync(report.Id.GetValueOrDefault());
+
+        if(success)
+        {
+            Snackbar.Add(L["Report deleted."], Severity.Success);
+            await LoadReports();
+            StateHasChanged();
+        }
+    }
+}

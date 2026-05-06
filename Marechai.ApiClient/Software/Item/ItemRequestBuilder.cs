@@ -11,11 +11,14 @@ using Marechai.ApiClient.Software.Item.CriticReviews;
 using Marechai.ApiClient.Software.Item.Description;
 using Marechai.ApiClient.Software.Item.Descriptions;
 using Marechai.ApiClient.Software.Item.Genres;
+using Marechai.ApiClient.Software.Item.MarechaiScore;
 using Marechai.ApiClient.Software.Item.Merge;
 using Marechai.ApiClient.Software.Item.MergePreview;
 using Marechai.ApiClient.Software.Item.Platforms;
 using Marechai.ApiClient.Software.Item.Releases;
 using Marechai.ApiClient.Software.Item.Screenshots;
+using Marechai.ApiClient.Software.Item.UserRatings;
+using Marechai.ApiClient.Software.Item.UserReviews;
 using Marechai.ApiClient.Software.Item.Versions;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
@@ -83,6 +86,11 @@ namespace Marechai.ApiClient.Software.Item
         {
             get => new global::Marechai.ApiClient.Software.Item.Genres.GenresRequestBuilder(PathParameters, RequestAdapter);
         }
+        /// <summary>The marechaiScore property</summary>
+        public global::Marechai.ApiClient.Software.Item.MarechaiScore.MarechaiScoreRequestBuilder MarechaiScore
+        {
+            get => new global::Marechai.ApiClient.Software.Item.MarechaiScore.MarechaiScoreRequestBuilder(PathParameters, RequestAdapter);
+        }
         /// <summary>The merge property</summary>
         public global::Marechai.ApiClient.Software.Item.Merge.MergeRequestBuilder Merge
         {
@@ -107,6 +115,16 @@ namespace Marechai.ApiClient.Software.Item
         public global::Marechai.ApiClient.Software.Item.Screenshots.ScreenshotsRequestBuilder Screenshots
         {
             get => new global::Marechai.ApiClient.Software.Item.Screenshots.ScreenshotsRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The userRatings property</summary>
+        public global::Marechai.ApiClient.Software.Item.UserRatings.UserRatingsRequestBuilder UserRatings
+        {
+            get => new global::Marechai.ApiClient.Software.Item.UserRatings.UserRatingsRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The userReviews property</summary>
+        public global::Marechai.ApiClient.Software.Item.UserReviews.UserReviewsRequestBuilder UserReviews
+        {
+            get => new global::Marechai.ApiClient.Software.Item.UserReviews.UserReviewsRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The versions property</summary>
         public global::Marechai.ApiClient.Software.Item.Versions.VersionsRequestBuilder Versions

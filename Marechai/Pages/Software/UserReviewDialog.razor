@@ -1,0 +1,28 @@
+@using Marechai.ApiClient.Models
+@inject IStringLocalizer<SoftwareService> L
+
+<MudDialog>
+    <DialogContent>
+        <MudStack Spacing="3">
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudText Typo="Typo.body1">@L["Your Rating"]:</MudText>
+                <HalfStarRating Value="@_ratingValue" ValueChanged="v => _ratingValue = v" Size="Size.Medium"/>
+            </MudStack>
+
+            <MudTextField T="string" @bind-Value="_theGood" Label="@L["The Good"]"
+                          Variant="Variant.Outlined" Lines="3" MaxLength="8192"/>
+
+            <MudTextField T="string" @bind-Value="_theBad" Label="@L["The Bad"]"
+                          Variant="Variant.Outlined" Lines="3" MaxLength="8192"/>
+
+            <MudTextField T="string" @bind-Value="_theUgly" Label="@L["The Ugly"]"
+                          Variant="Variant.Outlined" Lines="3" MaxLength="8192"/>
+
+            <MudCheckBox T="bool" @bind-Value="_isAnonymous" Label="@L["Post as anonymous"]"/>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="SubmitAsync">@L["Save"]</MudButton>
+    </DialogActions>
+</MudDialog>

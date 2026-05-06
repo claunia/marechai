@@ -1,0 +1,78 @@
+@page "/admin/notifications"
+@attribute [Authorize(Roles = "Admin, UberAdmin")]
+@using Marechai.ApiClient.Models
+@inject NotificationService NotificationSvc
+@inject IStringLocalizer<NotificationService> L
+
+<MudText Typo="Typo.h5" Class="mb-4">@L["Notifications"]</MudText>
+
+<MudStack Row="true" Spacing="2" Class="mb-4">
+    <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="MarkAllReadAsync" Size="Size.Small">@L["Mark all as read"]</MudButton>
+</MudStack>
+
+@if(_notifications.Count == 0)
+{
+    <MudAlert Severity="Severity.Info">@L["No new notifications"]</MudAlert>
+}
+else
+{
+    @foreach(AdminNotificationDto n in _notifications)
+    {
+        <MudPaper Class="pa-3 mb-2" Elevation="@(n.IsRead == true ? 0 : 2)"
+                  Style="@(n.IsRead != true ? "border-left: 4px solid var(--mud-palette-primary);" : "")">
+            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                <MudStack Spacing="0">
+                    <MudText Typo="Typo.body1"><strong>@n.Title</strong></MudText>
+                    <MudText Typo="Typo.body2">@n.Message</MudText>
+                    @if(!string.IsNullOrEmpty(n.LinkUrl))
+                    {
+                        <MudLink Href="@n.LinkUrl" Typo="Typo.caption">@(n.LinkText ?? n.LinkUrl)</MudLink>
+                    }
+                    <MudText Typo="Typo.caption" Color="Color.Secondary">@n.CreatedOn?.DateTime.ToString("g")</MudText>
+                </MudStack>
+                <MudStack Row="true" Spacing="1">
+                    @if(n.IsRead != true)
+                    {
+                        <MudIconButton Icon="@Icons.Material.Filled.MarkEmailRead" Size="Size.Small"
+                                       OnClick="() => MarkReadAsync(n)" Title="@L["Mark as read"]"/>
+                    }
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                   OnClick="() => DeleteAsync(n)"/>
+                </MudStack>
+            </MudStack>
+        </MudPaper>
+    }
+}
+
+@code {
+    List<AdminNotificationDto> _notifications = [];
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(!firstRender) return;
+
+        _notifications = await NotificationSvc.GetNotificationsAsync();
+        StateHasChanged();
+    }
+
+    async Task MarkReadAsync(AdminNotificationDto n)
+    {
+        await NotificationSvc.MarkAsReadAsync(n.Id.GetValueOrDefault());
+        _notifications = await NotificationSvc.GetNotificationsAsync();
+        StateHasChanged();
+    }
+
+    async Task MarkAllReadAsync()
+    {
+        await NotificationSvc.MarkAllAsReadAsync();
+        _notifications = await NotificationSvc.GetNotificationsAsync();
+        StateHasChanged();
+    }
+
+    async Task DeleteAsync(AdminNotificationDto n)
+    {
+        await NotificationSvc.DeleteNotificationAsync(n.Id.GetValueOrDefault());
+        _notifications = await NotificationSvc.GetNotificationsAsync();
+        StateHasChanged();
+    }
+}

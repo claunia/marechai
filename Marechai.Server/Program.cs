@@ -12,6 +12,7 @@ using Marechai.Server.Services;
 using Markdig;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
@@ -246,6 +247,37 @@ file class Program
                             new
                                 SymmetricSecurityKey(System.Text.Encoding.UTF8
                                                           .GetBytes(builder.Configuration["Jwt:Key"]!))
+                    };
+
+                    options.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents
+                    {
+                        OnChallenge = ctx =>
+                        {
+                            ctx.HandleResponse();
+                            ctx.Response.StatusCode  = 401;
+                            ctx.Response.ContentType = "application/problem+json";
+
+                            return ctx.Response.WriteAsJsonAsync(new
+                            {
+                                type   = "https://tools.ietf.org/html/rfc9110#section-15.5.2",
+                                title  = "Unauthorized",
+                                detail = "You must be logged in to perform this action.",
+                                status = 401
+                            });
+                        },
+                        OnForbidden = ctx =>
+                        {
+                            ctx.Response.StatusCode  = 403;
+                            ctx.Response.ContentType = "application/problem+json";
+
+                            return ctx.Response.WriteAsJsonAsync(new
+                            {
+                                type   = "https://tools.ietf.org/html/rfc9110#section-15.5.4",
+                                title  = "Forbidden",
+                                detail = "You do not have permission to perform this action.",
+                                status = 403
+                            });
+                        }
                     };
                 });
 
