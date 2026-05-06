@@ -224,25 +224,7 @@ public class Photos
             case "jxl":
                 outputPath = Path.Combine(outputPath, $"{id}.jxl");
 
-                tmpPath = Path.GetTempFileName();
-                File.Delete(tmpPath);
-                tmpPath += ".png";
-
-                // cjxl does not resize
-                ret = ConvertUsingImageMagick(originalPath, tmpPath, width, height);
-
-                if(!ret)
-                {
-                    File.Delete(tmpPath);
-
-                    return ret;
-                }
-
-                ret = ConvertToJxl(tmpPath, outputPath);
-
-                File.Delete(tmpPath);
-
-                return ret;
+                return ConvertUsingImageMagick(originalPath, outputPath, width, height);
             default:
                 return false;
         }
@@ -310,42 +292,6 @@ public class Photos
             avif.WaitForExit();
 
             return avif.ExitCode == 0;
-        }
-        catch(Exception)
-        {
-            return false;
-        }
-    }
-
-    public static bool ConvertToJxl(string originalPath, string outputPath)
-    {
-        var jxl = new Process
-        {
-            StartInfo =
-            {
-                FileName               = "cjxl",
-                CreateNoWindow         = true,
-                RedirectStandardError  = true,
-                RedirectStandardOutput = true,
-                ArgumentList =
-                {
-                    originalPath,
-                    outputPath,
-                    "--effort",
-                    "7",
-                    "--num_threads",
-                    "4"
-                }
-            }
-        };
-
-        try
-        {
-            jxl.Start();
-            jxl.StandardOutput.ReadToEnd();
-            jxl.WaitForExit();
-
-            return jxl.ExitCode == 0;
         }
         catch(Exception)
         {
