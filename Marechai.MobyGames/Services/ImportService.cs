@@ -232,6 +232,23 @@ public class ImportService
 
         SoftwareKind kind = isDlc ? SoftwareKind.Dlc : SoftwareKind.Game;
 
+        // Check if this is a compilation
+        bool isCompilation = game.Genres.Any(g =>
+            g.Name.Contains("Compilation", StringComparison.OrdinalIgnoreCase));
+
+        if(isCompilation)
+        {
+            if(game.CompilationGameSlugs.Count > 0 || game.UnresolvableCompilationGames.Count > 0)
+            {
+                await ImportCompilationAsync(context, game, batchNumber);
+
+                return;
+            }
+
+            Console.WriteLine("    WARNING: Compilation genre detected but no game links found in description. " +
+                              "Importing as regular game.");
+        }
+
         // 1. Check for existing Software with same name
         var existingByName = await context.Softwares
                                           .Where(s => s.Name == game.Name)
@@ -590,11 +607,220 @@ public class ImportService
                           (mobyNumericId is not null ? $" (MobyID: {mobyNumericId})" : ""));
     }
 
+    async Task ImportCompilationAsync(MarechaiContext context, ParsedGame game, int batchNumber)
+    {
+        Console.WriteLine($"    Compilation detected with {game.CompilationGameSlugs.Count} contained game(s):");
+
+        foreach(string slug in game.CompilationGameSlugs)
+            Console.WriteLine($"      - {slug}");
+
+        // Check for games that have no MobyGames entry (linked via /search/quick?game=)
+        if(game.UnresolvableCompilationGames.Count > 0)
+        {
+            Console.WriteLine($"    FAILED: {game.UnresolvableCompilationGames.Count} game(s) have no " +
+                              "MobyGames entry (linked via search URL, not /game/ URL):");
+
+            foreach(string name in game.UnresolvableCompilationGames)
+                Console.WriteLine($"      ? {name}");
+
+            await _stateService.MarkFailedAsync(game.MobyGameId,
+                $"Unresolvable games without MobyGames entries: {string.Join(", ", game.UnresolvableCompilationGames)}",
+                batchNumber);
+
+            return;
+        }
+
+        // Resolution phase: resolve all contained game slugs to Software IDs (atomic — all or nothing)
+        var containedSoftwareIds = new List<ulong>();
+
+        foreach(string slug in game.CompilationGameSlugs)
+        {
+            ulong? softwareId = await ResolveGameSlugToSoftwareIdAsync(context, slug);
+
+            if(softwareId is null)
+            {
+                Console.WriteLine($"    FAILED: Cannot resolve contained game '{slug}'. " +
+                                  "Skipping entire compilation.");
+
+                await _stateService.MarkFailedAsync(game.MobyGameId,
+                    $"Unresolvable contained game slug: {slug}", batchNumber);
+
+                return;
+            }
+
+            containedSoftwareIds.Add(softwareId.Value);
+            Console.WriteLine($"      Resolved '{slug}' → Software ID: {softwareId}");
+        }
+
+        // Creation phase: create compilation releases (no Software record)
+        List<SoftwareRelease> createdReleases;
+
+        if(game.Releases.Count > 0)
+            createdReleases = await ImportCompilationReleasesAsync(context, game, game.Name);
+        else
+            createdReleases = await ImportBasicCompilationReleaseAsync(context, game, game.Name);
+
+        if(createdReleases.Count == 0)
+        {
+            Console.WriteLine("    WARNING: No releases created for compilation.");
+            await _stateService.MarkFailedAsync(game.MobyGameId, "No releases created", batchNumber);
+
+            return;
+        }
+
+        // Add SoftwareBySoftwareRelease junction entries
+        foreach(var release in createdReleases)
+        {
+            foreach(ulong containedId in containedSoftwareIds)
+            {
+                context.SoftwareBySoftwareRelease.Add(new SoftwareBySoftwareRelease
+                {
+                    ReleaseId  = release.Id,
+                    SoftwareId = containedId
+                });
+            }
+        }
+
+        await context.SaveChangesAsync();
+
+        // Clean up any orphaned Software record with the same name as this compilation.
+        // This handles the case where a previous import (before compilation detection existed)
+        // created a Software for this compilation, then the game was reset and re-imported.
+        // ResetGameAsync deletes the import state but NOT the Software, so we can't rely
+        // on import state — we search by name instead.
+        var orphanedSoftware = await context.Softwares
+            .Where(s => s.Name == game.Name)
+            .ToListAsync();
+
+        foreach(var orphan in orphanedSoftware)
+        {
+            // Convert any releases on the orphaned Software to compilation releases
+            var existingReleases = await context.SoftwareReleases
+                .Where(r => r.SoftwareId == orphan.Id)
+                .ToListAsync();
+
+            foreach(var release in existingReleases)
+            {
+                release.IsCompilation = true;
+                release.Title         = game.Name;
+                release.SoftwareId    = null;
+
+                // Add junction entries for contained games
+                foreach(ulong containedId in containedSoftwareIds)
+                {
+                    bool junctionExists = await context.SoftwareBySoftwareRelease
+                        .AnyAsync(j => j.ReleaseId == release.Id && j.SoftwareId == containedId);
+
+                    if(!junctionExists)
+                    {
+                        context.SoftwareBySoftwareRelease.Add(new SoftwareBySoftwareRelease
+                        {
+                            ReleaseId  = release.Id,
+                            SoftwareId = containedId
+                        });
+                    }
+                }
+            }
+
+            // Clear SoftwareId from any import state referencing this orphan
+            var orphanStates = await context.MobyGamesImportStates
+                .Where(s => s.SoftwareId == orphan.Id)
+                .ToListAsync();
+
+            foreach(var state in orphanStates)
+                state.SoftwareId = null;
+
+            await context.SaveChangesAsync();
+
+            // Delete orphaned Software (company roles need explicit removal — no cascade configured)
+            var companyRoles = await context.SoftwareCompanyRoles
+                .Where(r => r.SoftwareId == orphan.Id)
+                .ToListAsync();
+
+            context.SoftwareCompanyRoles.RemoveRange(companyRoles);
+
+            context.Softwares.Remove(orphan);
+            await context.SaveChangesAsync();
+            Console.WriteLine($"    Cleaned up orphaned Software ID: {orphan.Id}");
+        }
+
+        // Mark as imported with no SoftwareId (compilations don't have a Software record)
+        await _stateService.MarkImportedAsync(game.MobyGameId, batchNumber, null);
+
+        Console.WriteLine($"    Imported as compilation with {createdReleases.Count} release(s), " +
+                          $"{containedSoftwareIds.Count} contained game(s)");
+    }
+
+    /// <summary>
+    ///     Resolves a MobyGames game slug to a Software ID in the local database.
+    ///     Tries all slug variants (with/without leading dash) in MobyGamesImportState,
+    ///     then attempts to import from mobygames_raw if not found.
+    /// </summary>
+    async Task<ulong?> ResolveGameSlugToSoftwareIdAsync(MarechaiContext context, string slug)
+    {
+        if(string.IsNullOrWhiteSpace(slug)) return null;
+
+        string trimmed = slug.TrimStart('-');
+
+        // Try all slug variants in MobyGamesImportState
+        string[] slugsToTry = [slug, $"-{slug}", trimmed, $"-{trimmed}"];
+
+        foreach(string trySlug in slugsToTry.Distinct())
+        {
+            MobyGamesImportState state = await context.MobyGamesImportStates
+                .FirstOrDefaultAsync(s => s.MobyGameId == trySlug &&
+                                          s.Status == MobyGamesImportStatus.Imported);
+
+            if(state?.SoftwareId is not null) return state.SoftwareId;
+        }
+
+        // Not found in import state — try importing from mobygames_raw
+        foreach(string trySlug in slugsToTry.Distinct())
+        {
+            var rows = await _sourceDb.GetRowsForGameAsync(trySlug);
+
+            if(rows.Count > 0)
+            {
+                Console.Write($"      Importing '{trySlug}' from mobygames_raw...");
+                ulong? importedId = await ImportGameBySlugAsync(trySlug);
+
+                if(importedId is not null)
+                {
+                    Console.WriteLine($" OK (ID: {importedId})");
+
+                    return importedId;
+                }
+
+                Console.WriteLine(" failed");
+            }
+        }
+
+        return null;
+    }
+
     async Task ImportReleasesAsync(MarechaiContext context, Software software, ParsedGame game,
                                    HashSet<(ulong, int, string)> addedCompanyRoles)
     {
+        await ImportReleasesInternalAsync(context, software?.Id, game, addedCompanyRoles,
+                                          false, null);
+    }
+
+    async Task<List<SoftwareRelease>> ImportCompilationReleasesAsync(
+        MarechaiContext context, ParsedGame game, string compilationTitle)
+    {
+        return await ImportReleasesInternalAsync(context, null, game,
+                                                 new HashSet<(ulong, int, string)>(),
+                                                 true, compilationTitle);
+    }
+
+    async Task<List<SoftwareRelease>> ImportReleasesInternalAsync(
+        MarechaiContext context, ulong? softwareId, ParsedGame game,
+        HashSet<(ulong, int, string)> addedCompanyRoles,
+        bool isCompilation, string compilationTitle)
+    {
         var addedProductCodes = new HashSet<(ProductCodeIssuer, string)>();
         var addedBarcodes     = new HashSet<string>();
+        var createdReleases   = new List<SoftwareRelease>();
 
         // Group releases by platform
         var platformGroups = game.Releases.GroupBy(r => r.Platform ?? "Unknown");
@@ -614,17 +840,18 @@ public class ImportService
 
                 var dbRelease = new SoftwareRelease
                 {
-                    SoftwareId           = software.Id,
+                    SoftwareId           = isCompilation ? null : softwareId,
                     PlatformId           = platform?.Id,
                     PublisherId          = publisher.Id,
                     ReleaseDate          = releaseDate,
                     ReleaseDatePrecision = precision,
-                    IsCompilation        = false,
-                    Title                = release.Comments
+                    IsCompilation        = isCompilation,
+                    Title                = isCompilation ? compilationTitle : release.Comments
                 };
 
                 context.SoftwareReleases.Add(dbRelease);
                 await context.SaveChangesAsync();
+                createdReleases.Add(dbRelease);
 
                 // Barcodes
                 foreach(var barcode in release.Barcodes)
@@ -708,19 +935,19 @@ public class ImportService
                     }
                 }
 
-                // Distributor/Localizer company roles on the software
-                if(!string.IsNullOrWhiteSpace(release.Distributor))
+                // Distributor/Localizer company roles on the software (skip for compilations)
+                if(softwareId.HasValue && !string.IsNullOrWhiteSpace(release.Distributor))
                 {
                     var (dist, _) = await _companyMatcher.MatchOrCreateAsync(release.Distributor);
 
                     if(dist != null)
                     {
-                        var roleKey = (software.Id, dist.Id, "dis");
+                        var roleKey = (softwareId.Value, dist.Id, "dis");
 
                         if(addedCompanyRoles.Add(roleKey))
                         {
                             bool exists = await context.SoftwareCompanyRoles
-                                                       .AnyAsync(r => r.SoftwareId == software.Id &&
+                                                       .AnyAsync(r => r.SoftwareId == softwareId.Value &&
                                                                       r.CompanyId == dist.Id &&
                                                                       r.RoleId == "dis");
 
@@ -728,7 +955,7 @@ public class ImportService
                             {
                                 context.SoftwareCompanyRoles.Add(new SoftwareCompanyRole
                                 {
-                                    SoftwareId = software.Id,
+                                    SoftwareId = softwareId.Value,
                                     CompanyId  = dist.Id,
                                     RoleId     = "dis"
                                 });
@@ -737,18 +964,18 @@ public class ImportService
                     }
                 }
 
-                if(!string.IsNullOrWhiteSpace(release.Localizer))
+                if(softwareId.HasValue && !string.IsNullOrWhiteSpace(release.Localizer))
                 {
                     var (loc, _) = await _companyMatcher.MatchOrCreateAsync(release.Localizer);
 
                     if(loc != null)
                     {
-                        var roleKey = (software.Id, loc.Id, "loc");
+                        var roleKey = (softwareId.Value, loc.Id, "loc");
 
                         if(addedCompanyRoles.Add(roleKey))
                         {
                             bool exists = await context.SoftwareCompanyRoles
-                                                       .AnyAsync(r => r.SoftwareId == software.Id &&
+                                                       .AnyAsync(r => r.SoftwareId == softwareId.Value &&
                                                                       r.CompanyId == loc.Id &&
                                                                       r.RoleId == "loc");
 
@@ -756,7 +983,7 @@ public class ImportService
                             {
                                 context.SoftwareCompanyRoles.Add(new SoftwareCompanyRole
                                 {
-                                    SoftwareId = software.Id,
+                                    SoftwareId = softwareId.Value,
                                     CompanyId  = loc.Id,
                                     RoleId     = "loc"
                                 });
@@ -766,6 +993,7 @@ public class ImportService
                 }
 
                 // Extra company roles from releases tab (e.g., "Ported by", etc.)
+                if(softwareId.HasValue)
                 foreach(var (roleLabel, companyName) in release.CompanyRoles)
                 {
                     string roleId = MapRoleLabel(roleLabel);
@@ -774,12 +1002,12 @@ public class ImportService
 
                     if(roleCompany != null)
                     {
-                        var roleKey = (software.Id, roleCompany.Id, roleId);
+                        var roleKey = (softwareId.Value, roleCompany.Id, roleId);
 
                         if(addedCompanyRoles.Add(roleKey))
                         {
                             bool exists = await context.SoftwareCompanyRoles
-                                                       .AnyAsync(r => r.SoftwareId == software.Id &&
+                                                       .AnyAsync(r => r.SoftwareId == softwareId.Value &&
                                                                       r.CompanyId == roleCompany.Id &&
                                                                       r.RoleId == roleId);
 
@@ -787,7 +1015,7 @@ public class ImportService
                             {
                                 context.SoftwareCompanyRoles.Add(new SoftwareCompanyRole
                                 {
-                                    SoftwareId = software.Id,
+                                    SoftwareId = softwareId.Value,
                                     CompanyId  = roleCompany.Id,
                                     RoleId     = roleId
                                 });
@@ -826,14 +1054,30 @@ public class ImportService
                 }
             }
         }
+
+        return createdReleases;
     }
 
     async Task ImportBasicReleaseAsync(MarechaiContext context, Software software, ParsedGame game)
     {
+        await ImportBasicReleaseInternalAsync(context, software?.Id, game, false, null);
+    }
+
+    async Task<List<SoftwareRelease>> ImportBasicCompilationReleaseAsync(
+        MarechaiContext context, ParsedGame game, string compilationTitle)
+    {
+        return await ImportBasicReleaseInternalAsync(context, null, game, true, compilationTitle);
+    }
+
+    async Task<List<SoftwareRelease>> ImportBasicReleaseInternalAsync(
+        MarechaiContext context, ulong? softwareId, ParsedGame game,
+        bool isCompilation, string compilationTitle)
+    {
         // Create one release per platform from Main tab data
         var (publisher, _) = await _companyMatcher.MatchOrCreateAsync(game.Publishers.FirstOrDefault());
+        var createdReleases = new List<SoftwareRelease>();
 
-        if(publisher is null) return;
+        if(publisher is null) return createdReleases;
 
         var (releaseDate, precision) = ParseDate(game.ReleaseDate);
 
@@ -843,16 +1087,20 @@ public class ImportService
 
             var dbRelease = new SoftwareRelease
             {
-                SoftwareId           = software.Id,
+                SoftwareId           = isCompilation ? null : softwareId,
                 PlatformId           = platform?.Id,
                 PublisherId          = publisher.Id,
                 ReleaseDate          = releaseDate,
                 ReleaseDatePrecision = precision,
-                IsCompilation        = false
+                IsCompilation        = isCompilation,
+                Title                = isCompilation ? compilationTitle : null
             };
 
             context.SoftwareReleases.Add(dbRelease);
+            createdReleases.Add(dbRelease);
         }
+
+        return createdReleases;
     }
 
     static (DateTime? date, DatePrecision precision) ParseDate(string dateStr)

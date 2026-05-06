@@ -25,7 +25,7 @@ public class StateService
         return [..ids];
     }
 
-    public async Task MarkImportedAsync(string mobyGameId, int batchNumber, ulong softwareId,
+    public async Task MarkImportedAsync(string mobyGameId, int batchNumber, ulong? softwareId,
                                         int? mobyNumericId = null)
     {
         await using var context = await _contextFactory.CreateDbContextAsync();

@@ -465,6 +465,30 @@ class Program
                 break;
             }
 
+            case "resolve-compilation-relations":
+            {
+                int  compBatchSize = 50;
+                bool compDryRun    = false;
+
+                for(int i = 1; i < args.Length - 1; i++)
+                {
+                    if(args[i] == "--batch-size" && int.TryParse(args[i + 1], out int bs))
+                        compBatchSize = bs;
+                }
+
+                if(args.Contains("--dry-run")) compDryRun = true;
+
+                // Create import service without HTTP client (local only)
+                var compImportService = new ImportService(factory, sourceDb, companyMatcher,
+                                                          personMatcher, platformMatcher,
+                                                          countryMatcher, stateService);
+
+                var compService = new CompilationRelationService(factory, sourceDb, compImportService);
+                await compService.RunAsync(compBatchSize, compDryRun);
+
+                break;
+            }
+
             default:
                 Console.WriteLine("  Usage:");
                 Console.WriteLine("    import [--batch-size N]                       Import next batch of games");
@@ -492,6 +516,8 @@ class Program
                 Console.WriteLine("    video-status                                  Show video import status counts");
                 Console.WriteLine("    import-dlc-relations [--batch-size N] [--delay-ms N] [--dry-run]");
                 Console.WriteLine("                                                  Link DLC entries to their base games via MobyGames");
+                Console.WriteLine("    resolve-compilation-relations [--batch-size N] [--dry-run]");
+                Console.WriteLine("                                                  Convert compilation Software to proper compilation releases");
                 Console.WriteLine("    reset --game <id>                             Reset a game to unprocessed");
 
                 break;

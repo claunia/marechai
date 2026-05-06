@@ -19,6 +19,19 @@ public class ParsedGame
     public string                DescriptionHtml { get; set; }
     public List<string>          Groups          { get; set; } = [];
 
+    /// <summary>
+    ///     Slugs of games contained in this compilation, extracted from description links.
+    ///     Only populated when genre is "Compilation".
+    /// </summary>
+    public List<string>          CompilationGameSlugs { get; set; } = [];
+
+    /// <summary>
+    ///     Names of games in this compilation that have no MobyGames entry
+    ///     (linked via /search/quick?game= instead of /game/). These make the
+    ///     compilation unresolvable.
+    /// </summary>
+    public List<string>          UnresolvableCompilationGames { get; set; } = [];
+
     // From Credits tab
     public List<ParsedCredit> Credits { get; set; } = [];
 
