@@ -214,9 +214,31 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
 
         if(userId is null) return Unauthorized();
 
-        SoftwareCover model = await context.SoftwareCovers.FindAsync(id);
+        SoftwareCover model = await context.SoftwareCovers
+                                           .Include(c => c.Release)
+                                           .ThenInclude(r => r.SoftwareVersion)
+                                           .FirstOrDefaultAsync(c => c.Id == id);
 
         if(model is null) return NotFound();
+
+        // Allow release reassignment only within the same software
+        if(dto.SoftwareReleaseId != 0 && (ulong)dto.SoftwareReleaseId != model.SoftwareReleaseId)
+        {
+            SoftwareRelease newRelease = await context.SoftwareReleases
+                                                      .Include(r => r.SoftwareVersion)
+                                                      .FirstOrDefaultAsync(r => r.Id == (ulong)dto.SoftwareReleaseId);
+
+            if(newRelease is null)
+                return BadRequest("Referenced software release does not exist.");
+
+            ulong? currentSoftwareId = model.Release.SoftwareId ?? model.Release.SoftwareVersion?.SoftwareId;
+            ulong? newSoftwareId     = newRelease.SoftwareId    ?? newRelease.SoftwareVersion?.SoftwareId;
+
+            if(currentSoftwareId != newSoftwareId)
+                return BadRequest("Release does not belong to the same software.");
+
+            model.SoftwareReleaseId = (ulong)dto.SoftwareReleaseId;
+        }
 
         model.Caption = dto.Caption;
         model.Type    = (SoftwareCoverType)dto.Type;

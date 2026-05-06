@@ -997,6 +997,88 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
+    public async Task<SoftwareCoverDto> UploadCoverAsync(ulong  releaseId, int    type, string caption,
+                                                          byte[] fileBytes, string fileName)
+    {
+        try
+        {
+            string contentType = Path.GetExtension(fileName)?.ToLowerInvariant() switch
+            {
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png"            => "image/png",
+                ".webp"           => "image/webp",
+                ".tiff" or ".tif" => "image/tiff",
+                ".bmp"            => "image/bmp",
+                _                 => "application/octet-stream"
+            };
+
+            var body = new MultipartBody();
+            body.AddOrReplacePart("file", contentType, new MemoryStream(fileBytes), fileName);
+            body.AddOrReplacePart("releaseId", "text/plain", releaseId.ToString());
+            body.AddOrReplacePart("type", "text/plain", type.ToString());
+
+            if(!string.IsNullOrEmpty(caption))
+                body.AddOrReplacePart("caption", "text/plain", caption);
+
+            var pathParams = new Dictionary<string, object> { { "baseurl", requestAdapter.BaseUrl } };
+
+            var requestInfo = new RequestInformation(Method.POST,
+                "{+baseurl}/software/covers/upload", pathParams);
+
+            requestInfo.Headers.TryAdd("Accept", "application/json");
+            requestInfo.SetContentFromParsable(requestAdapter, "multipart/form-data", body);
+
+            var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
+            {
+                { "400", ProblemDetails.CreateFromDiscriminatorValue },
+                { "401", ProblemDetails.CreateFromDiscriminatorValue }
+            };
+
+            return await requestAdapter.SendAsync(requestInfo,
+                SoftwareCoverDto.CreateFromDiscriminatorValue, errorMapping);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public async Task<(bool succeeded, string error)> UpdateCoverAsync(Guid id, SoftwareCoverDto dto)
+    {
+        try
+        {
+            await client.Software.Covers[id].PutAsync(dto);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string error)> DeleteCoverAsync(Guid id)
+    {
+        try
+        {
+            await client.Software.Covers[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
     public async Task<SoftwareMergePreviewDto> GetMergePreviewAsync(int targetId, int sourceId)
     {
         try

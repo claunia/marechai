@@ -1,0 +1,211 @@
+@page "/admin/software/{SoftwareId:int}/covers"
+@attribute [Authorize(Roles = "Admin, UberAdmin")]
+@using System.Linq
+@using Marechai.ApiClient.Models
+@using Marechai.Services
+@inject SoftwareService SoftwareService
+@inject IStringLocalizer<SoftwareService> L
+@inject IDialogService DialogService
+@inject NavigationManager NavigationManager
+@inject ApiAssetUrlProvider AssetUrls
+
+<MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" OnClick="@(() => NavigationManager.NavigateTo("/admin/software"))" Class="mb-4">@L["Back to Software"]</MudButton>
+
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #1565c0 0%, #42a5f5 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Filled.Image" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Style="color: white;">@L["Software Cover Management"]</MudText>
+    </MudStack>
+    <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);" Class="mt-2">@(_softwareName ?? L["Manage software covers."])</MudText>
+</MudPaper>
+
+@if(!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+}
+
+@if(!string.IsNullOrWhiteSpace(_successMessage))
+{
+    <MudAlert Severity="Severity.Success" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _successMessage = null">@_successMessage</MudAlert>
+}
+
+@if(_isLoading)
+{
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+    </div>
+    return;
+}
+
+@* ── Upload Section ── *@
+<MudPaper Elevation="2" Class="pa-4 mb-6 rounded-lg">
+    <MudText Typo="Typo.h6" Class="mb-3">@L["Upload Cover"]</MudText>
+    <MudStack Spacing="3">
+        <MudSelect T="SoftwareReleaseDto" @bind-Value="_selectedRelease"
+                   Label="@L["Release"]"
+                   Variant="Variant.Outlined"
+                   ToStringFunc="@(r => r is not null ? $"{r.Title} ({r.Platform})" : string.Empty)"
+                   Required="true"
+                   RequiredError="@L["Release is required."]">
+            @if(_releases is not null)
+            {
+                @foreach(SoftwareReleaseDto release in _releases)
+                {
+                    <MudSelectItem T="SoftwareReleaseDto" Value="release">@release.Title (@release.Platform)</MudSelectItem>
+                }
+            }
+        </MudSelect>
+
+        <MudSelect T="int?" @bind-Value="_selectedType"
+                   Label="@L["Cover Type"]"
+                   Variant="Variant.Outlined"
+                   Required="true"
+                   RequiredError="@L["Cover type is required."]">
+            <MudSelectItem T="int?" Value="0">@L["Front Cover"]</MudSelectItem>
+            <MudSelectItem T="int?" Value="1">@L["Back Cover"]</MudSelectItem>
+            <MudSelectItem T="int?" Value="2">@L["Inside Cover (Front)"]</MudSelectItem>
+            <MudSelectItem T="int?" Value="3">@L["Inside Cover (Back)"]</MudSelectItem>
+            <MudSelectItem T="int?" Value="4">@L["Media"]</MudSelectItem>
+            <MudSelectItem T="int?" Value="5">@L["Spine"]</MudSelectItem>
+            <MudSelectItem T="int?" Value="6">@L["Manual"]</MudSelectItem>
+            <MudSelectItem T="int?" Value="7">@L["Other"]</MudSelectItem>
+        </MudSelect>
+
+        <MudTextField @bind-Value="_caption"
+                      Label="@L["Caption"]"
+                      Variant="Variant.Outlined"/>
+
+        <MudFileUpload T="IBrowserFile" Accept=".jpg,.jpeg,.png,.webp,.tiff,.tif,.bmp"
+                       FilesChanged="OnFileSelected" MaximumFileCount="1">
+            <CustomContent>
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.AttachFile"
+                           OnClick="@context.OpenFilePickerAsync">
+                    @if(_selectedFile is not null)
+                    {
+                        @_selectedFile.Name
+                    }
+                    else
+                    {
+                        @L["Select File"]
+                    }
+                </MudButton>
+            </CustomContent>
+        </MudFileUpload>
+
+        <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                   OnClick="UploadCover"
+                   Disabled="_isUploading || _selectedFile is null || _selectedRelease is null || _selectedType is null">
+            @if(_isUploading)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
+                @L["Uploading..."]
+            }
+            else
+            {
+                @L["Upload"]
+            }
+        </MudButton>
+    </MudStack>
+</MudPaper>
+
+@* ── Covers Grid ── *@
+<MudPaper Elevation="2" Class="rounded-lg">
+    <MudToolBar Dense="true">
+        <MudText Typo="Typo.h6">@L["Covers"]</MudText>
+        @if(_covers is not null)
+        {
+            <MudChip T="string" Size="Size.Small" Color="Color.Secondary" Class="ml-2">@_covers.Count</MudChip>
+        }
+        <MudSpacer/>
+        <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadDataAsync"/>
+    </MudToolBar>
+
+    @if(_covers is null || _covers.Count == 0)
+    {
+        <MudAlert Severity="Severity.Info" Class="ma-4">@L["No covers found for this software."]</MudAlert>
+    }
+    else
+    {
+        <MudGrid Class="pa-4">
+            @foreach(SoftwareCoverDto cover in _covers)
+            {
+                <MudItem xs="12" sm="6" md="4" lg="3">
+                    <MudCard Elevation="1" Class="rounded-lg">
+                        <MudCardContent Class="pa-2 d-flex justify-center">
+                            <picture>
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/thumbs/jxl/hd/@(cover.Id).jxl, @(AssetUrls.BaseUrl)/assets/photos/software-covers/thumbs/jxl/1440p/@(cover.Id).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/thumbs/jxl/4k/@(cover.Id).jxl 3x" type="image/jxl">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/thumbs/avif/hd/@(cover.Id).avif, @(AssetUrls.BaseUrl)/assets/photos/software-covers/thumbs/avif/1440p/@(cover.Id).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/thumbs/avif/4k/@(cover.Id).avif 3x" type="image/avif">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/thumbs/heif/hd/@(cover.Id).heic, @(AssetUrls.BaseUrl)/assets/photos/software-covers/thumbs/heif/1440p/@(cover.Id).heic 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/thumbs/heif/4k/@(cover.Id).heic 3x" type="image/heic">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/thumbs/webp/hd/@(cover.Id).webp, @(AssetUrls.BaseUrl)/assets/photos/software-covers/thumbs/webp/1440p/@(cover.Id).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/thumbs/webp/4k/@(cover.Id).webp 3x" type="image/webp">
+                                <img alt="@(cover.Caption ?? cover.TypeName)"
+                                     src="@(AssetUrls.BaseUrl)/assets/photos/software-covers/thumbs/jpeg/hd/@(cover.Id).jpg"
+                                     srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/thumbs/jpeg/hd/@(cover.Id).jpg, @(AssetUrls.BaseUrl)/assets/photos/software-covers/thumbs/jpeg/1440p/@(cover.Id).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/thumbs/jpeg/4k/@(cover.Id).jpg 3x"
+                                     style="max-height: 256px; max-width: 100%; border-radius: 8px;" width="auto" height="auto"/>
+                            </picture>
+                        </MudCardContent>
+                        <MudCardContent Class="pa-2">
+                            @if(!string.IsNullOrWhiteSpace(cover.PlatformName))
+                            {
+                                <MudText Typo="Typo.body2" Class="text-truncate">
+                                    <MudIcon Icon="@Icons.Material.Filled.Devices" Size="Size.Small" Class="mr-1"/>
+                                    @cover.PlatformName
+                                </MudText>
+                            }
+                            @if(!string.IsNullOrWhiteSpace(cover.RegionNames))
+                            {
+                                <MudText Typo="Typo.caption" Color="Color.Secondary">@cover.RegionNames</MudText>
+                            }
+                            @if(!string.IsNullOrWhiteSpace(cover.ReleaseTitle))
+                            {
+                                <MudText Typo="Typo.caption">@cover.ReleaseTitle</MudText>
+                            }
+
+                            <MudSelect T="SoftwareReleaseDto"
+                                       Value="@(_releases?.FirstOrDefault(r => r.Id == cover.SoftwareReleaseId))"
+                                       ValueChanged="@(r => OnCoverReleaseChanged(cover, r))"
+                                       Label="@L["Release"]" Variant="Variant.Outlined" Dense="true"
+                                       ToStringFunc="@(r => r is not null ? $"{r.Title} ({r.Platform})" : string.Empty)"
+                                       Class="mt-2">
+                                @if(_releases is not null)
+                                {
+                                    @foreach(SoftwareReleaseDto release in _releases)
+                                    {
+                                        <MudSelectItem T="SoftwareReleaseDto" Value="release">@release.Title (@release.Platform)</MudSelectItem>
+                                    }
+                                }
+                            </MudSelect>
+
+                            <MudSelect T="int?"
+                                       Value="@(cover.Type)"
+                                       ValueChanged="@(t => OnCoverTypeChanged(cover, t))"
+                                       Label="@L["Cover Type"]" Variant="Variant.Outlined" Dense="true"
+                                       Class="mt-2">
+                                <MudSelectItem T="int?" Value="0">@L["Front Cover"]</MudSelectItem>
+                                <MudSelectItem T="int?" Value="1">@L["Back Cover"]</MudSelectItem>
+                                <MudSelectItem T="int?" Value="2">@L["Inside Cover (Front)"]</MudSelectItem>
+                                <MudSelectItem T="int?" Value="3">@L["Inside Cover (Back)"]</MudSelectItem>
+                                <MudSelectItem T="int?" Value="4">@L["Media"]</MudSelectItem>
+                                <MudSelectItem T="int?" Value="5">@L["Spine"]</MudSelectItem>
+                                <MudSelectItem T="int?" Value="6">@L["Manual"]</MudSelectItem>
+                                <MudSelectItem T="int?" Value="7">@L["Other"]</MudSelectItem>
+                            </MudSelect>
+
+                            <MudTextField T="string"
+                                          Value="@cover.Caption"
+                                          ValueChanged="@(c => OnCaptionChanged(cover, c))"
+                                          Label="@L["Caption"]" Variant="Variant.Outlined"
+                                          DebounceInterval="500"
+                                          Class="mt-2"/>
+                        </MudCardContent>
+                        <MudCardActions>
+                            <MudButton Variant="Variant.Text" Color="Color.Error" Size="Size.Small"
+                                       StartIcon="@Icons.Material.Filled.Delete"
+                                       OnClick="() => ConfirmDeleteCover(cover)">@L["Delete"]</MudButton>
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
+            }
+        </MudGrid>
+    }
+</MudPaper>
