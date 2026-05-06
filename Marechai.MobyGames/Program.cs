@@ -351,6 +351,69 @@ class Program
                 break;
             }
 
+            case "scrape-media-pages":
+            {
+                int mediaBatchSize = config.GetValue("Import:BatchSize", 500);
+                int delayMs        = 2000;
+                bool dryRun        = false;
+
+                for(int i = 0; i < args.Length - 1; i++)
+                {
+                    if(args[i] == "--batch-size" && int.TryParse(args[i + 1], out int bs))
+                        mediaBatchSize = bs;
+
+                    if(args[i] == "--delay-ms" && int.TryParse(args[i + 1], out int d))
+                        delayMs = d;
+                }
+
+                if(args.Contains("--dry-run")) dryRun = true;
+
+                var mediaHttpClient = new MobyGamesHttpClient(delayMs);
+                var mediaScraper    = new MediaScraper(factory, sourceDb, mediaHttpClient);
+
+                try
+                {
+                    await mediaScraper.RunAsync(mediaBatchSize, dryRun);
+                }
+                finally
+                {
+                    mediaHttpClient.Dispose();
+                }
+
+                break;
+            }
+
+            case "import-videos":
+            {
+                int videoBatchSize = config.GetValue("Import:BatchSize", 500);
+                bool dryRun        = false;
+
+                for(int i = 0; i < args.Length - 1; i++)
+                {
+                    if(args[i] == "--batch-size" && int.TryParse(args[i + 1], out int bs))
+                        videoBatchSize = bs;
+                }
+
+                if(args.Contains("--dry-run")) dryRun = true;
+
+                var videoStateService = new VideoStateService(factory);
+
+                var videoImportService = new VideoImportService(
+                    factory, sourceDb, videoStateService);
+
+                await videoImportService.RunAsync(videoBatchSize, dryRun);
+
+                break;
+            }
+
+            case "video-status":
+            {
+                var videoStateService2 = new VideoStateService(factory);
+                await videoStateService2.PrintVideoStatusAsync();
+
+                break;
+            }
+
             case "status":
                 await stateService.PrintStatusAsync();
 
@@ -392,6 +455,11 @@ class Program
                 Console.WriteLine("    download-screenshots [--batch-size N] [--delay-ms N] [--dry-run]");
                 Console.WriteLine("                                                  Download screenshots for scraped games");
                 Console.WriteLine("    screenshot-status                             Show screenshot download status counts");
+                Console.WriteLine("    scrape-media-pages [--batch-size N] [--delay-ms N] [--dry-run]");
+                Console.WriteLine("                                                  Scrape media (video) pages from new MobyGames");
+                Console.WriteLine("    import-videos [--batch-size N] [--dry-run]");
+                Console.WriteLine("                                                  Import video links from scraped media pages");
+                Console.WriteLine("    video-status                                  Show video import status counts");
                 Console.WriteLine("    reset --game <id>                             Reset a game to unprocessed");
 
                 break;

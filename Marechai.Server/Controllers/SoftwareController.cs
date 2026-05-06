@@ -489,6 +489,21 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
         // Count promo art
         int promoArtCount = await context.SoftwarePromoArt.CountAsync(p => p.SoftwareId == sourceId);
 
+        // Count videos and duplicates
+        var sourceVideos = await context.SoftwareVideos
+                                        .Where(v => v.SoftwareId == sourceId)
+                                        .Select(v => new { v.Provider, v.VideoId })
+                                        .ToListAsync();
+
+        HashSet<(string, string)> targetVideoKeys = (await context.SoftwareVideos
+                                                                   .Where(v => v.SoftwareId == targetId)
+                                                                   .Select(v => new { v.Provider, v.VideoId })
+                                                                   .ToListAsync())
+           .Select(v => (v.Provider, v.VideoId))
+           .ToHashSet();
+
+        int videosDuplicates = sourceVideos.Count(v => targetVideoKeys.Contains((v.Provider, v.VideoId)));
+
         return new SoftwareMergePreviewDto
         {
             TargetId                       = targetId,
@@ -510,7 +525,9 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
             CreditsDuplicates              = creditsDuplicates,
             CompilationReferencesTotal     = sourceCompilationReleaseIds.Count,
             CompilationReferencesDuplicates = compilationDuplicates,
-            PromoArtCount                  = promoArtCount
+            PromoArtCount                  = promoArtCount,
+            VideosTotal                    = sourceVideos.Count,
+            VideosDuplicates               = videosDuplicates
         };
     }
 
@@ -600,6 +617,28 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
 
             foreach(SoftwarePromoArt promo in sourcePromoArt)
                 promo.SoftwareId = targetId;
+
+            // 4c. Merge SoftwareVideos (unique on SoftwareId+Provider+VideoId)
+            List<SoftwareVideo> sourceVideos =
+                await context.SoftwareVideos.Where(v => v.SoftwareId == sourceId).ToListAsync();
+
+            HashSet<(string, string)> targetVideoKeys = (await context.SoftwareVideos
+                                                                       .Where(v => v.SoftwareId == targetId)
+                                                                       .Select(v => new { v.Provider, v.VideoId })
+                                                                       .ToListAsync())
+               .Select(v => (v.Provider, v.VideoId))
+               .ToHashSet();
+
+            foreach(SoftwareVideo video in sourceVideos)
+            {
+                if(targetVideoKeys.Contains((video.Provider, video.VideoId)))
+                    context.SoftwareVideos.Remove(video);
+                else
+                {
+                    video.SoftwareId = targetId;
+                    targetVideoKeys.Add((video.Provider, video.VideoId));
+                }
+            }
 
             // 5. Merge SoftwareDescriptions (unique on SoftwareId+LanguageCode)
             List<SoftwareDescription> sourceDescriptions =
@@ -712,6 +751,12 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
                 await context.MobyGamesPromoArtDownloadStates.Where(s => s.SoftwareId == sourceId).ToListAsync();
 
             foreach(MobyGamesPromoArtDownloadState state in promoArtStates)
+                state.SoftwareId = targetId;
+
+            List<MobyGamesVideoImportState> videoImportStates =
+                await context.MobyGamesVideoImportStates.Where(s => s.SoftwareId == sourceId).ToListAsync();
+
+            foreach(MobyGamesVideoImportState state in videoImportStates)
                 state.SoftwareId = targetId;
 
             // 9b. Transfer predecessor: if target has no predecessor but source does, adopt it

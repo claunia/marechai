@@ -34,7 +34,7 @@ else
                     @if(n.IsRead != true)
                     {
                         <MudIconButton Icon="@Icons.Material.Filled.MarkEmailRead" Size="Size.Small"
-                                       OnClick="() => MarkReadAsync(n)" Title="@L["Mark as read"]"/>
+                                       OnClick="() => MarkReadAsync(n)" title="@L["Mark as read"]"/>
                     }
                     <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
                                    OnClick="() => DeleteAsync(n)"/>

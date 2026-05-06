@@ -537,20 +537,20 @@
                                    Color="@(userReview.CurrentUserVote == true ? Color.Success : Color.Default)"
                                    Disabled="@(!_isAuthenticated || userReview.UserId == _currentUserId)"
                                    OnClick="() => VoteAsync(userReview, true)"
-                                   Title="@L["Helpful"]"/>
+                                   title="@L["Helpful"]"/>
                     <MudText Typo="Typo.caption">@userReview.ThumbsUp</MudText>
 
                     <MudIconButton Icon="@Icons.Material.Filled.ThumbDown" Size="Size.Small"
                                    Color="@(userReview.CurrentUserVote == false ? Color.Error : Color.Default)"
                                    Disabled="@(!_isAuthenticated || userReview.UserId == _currentUserId)"
                                    OnClick="() => VoteAsync(userReview, false)"
-                                   Title="@L["Not helpful"]"/>
+                                   title="@L["Not helpful"]"/>
                     <MudText Typo="Typo.caption">@userReview.ThumbsDown</MudText>
 
                     @if(_isAuthenticated && userReview.UserId != _currentUserId)
                     {
                         <MudIconButton Icon="@Icons.Material.Filled.Flag" Size="Size.Small" Color="Color.Default"
-                                       OnClick="() => OpenReportDialog(userReview)" Title="@L["Report"]"/>
+                                       OnClick="() => OpenReportDialog(userReview)" title="@L["Report"]"/>
                     }
                 </MudStack>
             </MudPaper>
@@ -906,6 +906,51 @@
             }
         </div>
     </MudOverlay>
+}
+
+@* ── Videos Card ── *@
+@if(_videos.Count > 0)
+{
+    <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+        <MudExpansionPanel>
+            <TitleContent>
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIcon Icon="@Icons.Material.Filled.VideoLibrary" Color="Color.Primary"/>
+                    <MudText Typo="Typo.h6">@L["Videos"]</MudText>
+                    <MudChip T="string" Size="Size.Small" Color="Color.Success">@_videos.Count</MudChip>
+                </MudStack>
+            </TitleContent>
+            <ChildContent>
+                <MudGrid Spacing="3">
+                    @foreach(var video in _videos)
+                    {
+                        <MudItem xs="12" sm="6">
+                            <MudCard Elevation="1">
+                                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                                    @if(video.Provider == "YouTube")
+                                    {
+                                        <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"
+                                                src="https://www.youtube-nocookie.com/embed/@(video.VideoId)"
+                                                title="@(video.Title ?? "Video")"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowfullscreen
+                                                loading="lazy">
+                                        </iframe>
+                                    }
+                                </div>
+                                @if(!string.IsNullOrWhiteSpace(video.Title))
+                                {
+                                    <MudCardContent>
+                                        <MudText Typo="Typo.body2">@video.Title</MudText>
+                                    </MudCardContent>
+                                }
+                            </MudCard>
+                        </MudItem>
+                    }
+                </MudGrid>
+            </ChildContent>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
 }
 
 @* ── Screenshots Card ── *@

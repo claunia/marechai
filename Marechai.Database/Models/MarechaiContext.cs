@@ -177,6 +177,8 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<MobyGamesCoverDownloadState>        MobyGamesCoverDownloadStates        { get; set; }
     public virtual DbSet<MobyGamesPromoArtDownloadState>    MobyGamesPromoArtDownloadStates     { get; set; }
     public virtual DbSet<MobyGamesScreenshotDownloadState>  MobyGamesScreenshotDownloadStates   { get; set; }
+    public virtual DbSet<MobyGamesVideoImportState>          MobyGamesVideoImportStates          { get; set; }
+    public virtual DbSet<SoftwareVideo>                      SoftwareVideos                      { get; set; }
     public virtual DbSet<SoftwareCriticReview>               SoftwareCriticReviews               { get; set; }
     public virtual DbSet<MobyGamesReviewImportState>         MobyGamesReviewImportStates         { get; set; }
     public virtual DbSet<SoftwareUserRating>                  SoftwareUserRatings                 { get; set; }
@@ -2859,6 +2861,25 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
             entity.HasIndex(e => e.ScreenshotPageUrl).IsUnique();
             entity.HasIndex(e => e.Status);
             entity.HasIndex(e => e.MobyGameId);
+        });
+
+        modelBuilder.Entity<SoftwareVideo>(entity =>
+        {
+            entity.HasIndex(e => e.SoftwareId);
+            entity.HasIndex(e => new { e.SoftwareId, e.Provider, e.VideoId }).IsUnique();
+
+            entity.HasOne(e => e.Software)
+                  .WithMany(p => p.Videos)
+                  .HasForeignKey(e => e.SoftwareId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<MobyGamesVideoImportState>(entity =>
+        {
+            entity.HasIndex(e => e.VideoUrl);
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => e.MobyGameId);
+            entity.HasIndex(e => e.SoftwareId);
         });
 
         modelBuilder.Entity<MobyGamesRejection>(entity =>

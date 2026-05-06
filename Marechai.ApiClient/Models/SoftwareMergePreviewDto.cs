@@ -72,6 +72,10 @@ namespace Marechai.ApiClient.Models
 #endif
         /// <summary>The versions_count property</summary>
         public int? VersionsCount { get; set; }
+        /// <summary>The videos_duplicates property</summary>
+        public int? VideosDuplicates { get; set; }
+        /// <summary>The videos_total property</summary>
+        public int? VideosTotal { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.ApiClient.Models.SoftwareMergePreviewDto"/> and sets the default values.
         /// </summary>
@@ -117,6 +121,8 @@ namespace Marechai.ApiClient.Models
                 { "target_id", n => { TargetId = n.GetIntValue(); } },
                 { "target_name", n => { TargetName = n.GetStringValue(); } },
                 { "versions_count", n => { VersionsCount = n.GetIntValue(); } },
+                { "videos_duplicates", n => { VideosDuplicates = n.GetIntValue(); } },
+                { "videos_total", n => { VideosTotal = n.GetIntValue(); } },
             };
         }
         /// <summary>
@@ -146,6 +152,8 @@ namespace Marechai.ApiClient.Models
             writer.WriteIntValue("target_id", TargetId);
             writer.WriteStringValue("target_name", TargetName);
             writer.WriteIntValue("versions_count", VersionsCount);
+            writer.WriteIntValue("videos_duplicates", VideosDuplicates);
+            writer.WriteIntValue("videos_total", VideosTotal);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

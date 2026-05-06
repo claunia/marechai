@@ -69,4 +69,8 @@ public class SoftwareMergePreviewDto
     public int CompilationReferencesDuplicates { get; set; }
     [JsonPropertyName("promo_art_count")]
     public int PromoArtCount { get; set; }
+    [JsonPropertyName("videos_total")]
+    public int VideosTotal { get; set; }
+    [JsonPropertyName("videos_duplicates")]
+    public int VideosDuplicates { get; set; }
 }

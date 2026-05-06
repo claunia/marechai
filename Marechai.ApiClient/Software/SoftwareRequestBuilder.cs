@@ -26,6 +26,7 @@ using Marechai.ApiClient.Software.Roles;
 using Marechai.ApiClient.Software.Screenshots;
 using Marechai.ApiClient.Software.Specifications;
 using Marechai.ApiClient.Software.Versions;
+using Marechai.ApiClient.Software.Videos;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
 using Microsoft.Kiota.Abstractions;
@@ -161,6 +162,11 @@ namespace Marechai.ApiClient.Software
         public global::Marechai.ApiClient.Software.Versions.VersionsRequestBuilder Versions
         {
             get => new global::Marechai.ApiClient.Software.Versions.VersionsRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The videos property</summary>
+        public global::Marechai.ApiClient.Software.Videos.VideosRequestBuilder Videos
+        {
+            get => new global::Marechai.ApiClient.Software.Videos.VideosRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>Gets an item from the Marechai.ApiClient.software.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>

@@ -1388,4 +1388,20 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
             return [];
         }
     }
+
+    // ── Videos ──
+
+    public async Task<List<SoftwareVideoDto>> GetVideosBySoftwareAsync(int softwareId)
+    {
+        try
+        {
+            var result = await client.Software[softwareId].Videos.GetAsync();
+
+            return result ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
 }

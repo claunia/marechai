@@ -64,6 +64,7 @@ public partial class View
     List<SoftwarePromoArtDto>                   _promoArt = [];
     Dictionary<string, List<SoftwarePromoArtDto>> _promoArtByGroup = new();
     SoftwarePromoArtDto                         _fullscreenPromo;
+    List<SoftwareVideoDto>                      _videos = [];
     SoftwareDto                                 _software;
     List<SoftwareVersionDto>                    _versions = [];
     List<SoftwareCriticReviewDto>               _criticReviews = [];
@@ -187,6 +188,9 @@ public partial class View
                           .GroupBy(p => p.GroupName ?? "Other")
                           .OrderBy(g => g.Key)
                           .ToDictionary(g => g.Key, g => g.ToList());
+
+        // Load videos
+        _videos = await Service.GetVideosBySoftwareAsync(Id);
 
         // Load compilations that include this software
         _compilations = await Service.GetCompilationsForSoftwareAsync(Id);

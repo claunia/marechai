@@ -21,6 +21,7 @@ using Marechai.ApiClient.Software.Item.Screenshots;
 using Marechai.ApiClient.Software.Item.UserRatings;
 using Marechai.ApiClient.Software.Item.UserReviews;
 using Marechai.ApiClient.Software.Item.Versions;
+using Marechai.ApiClient.Software.Item.Videos;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
 using Microsoft.Kiota.Abstractions;
@@ -136,6 +137,11 @@ namespace Marechai.ApiClient.Software.Item
         public global::Marechai.ApiClient.Software.Item.Versions.VersionsRequestBuilder Versions
         {
             get => new global::Marechai.ApiClient.Software.Item.Versions.VersionsRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The videos property</summary>
+        public global::Marechai.ApiClient.Software.Item.Videos.VideosRequestBuilder Videos
+        {
+            get => new global::Marechai.ApiClient.Software.Item.Videos.VideosRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.ApiClient.Software.Item.ItemRequestBuilder"/> and sets the default values.
