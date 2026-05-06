@@ -109,6 +109,18 @@ public enum MachineType
     Smartphone = 3
 }
 
+public enum SoftwareKind
+{
+    /// <summary>Generic software</summary>
+    Software = 0,
+    /// <summary>Operating system</summary>
+    OperatingSystem = 1,
+    /// <summary>Videogame</summary>
+    Game = 2,
+    /// <summary>DLC / Addon</summary>
+    Dlc = 3
+}
+
 public enum MemoryType
 {
     /// <summary>Unknown memory type</summary>
