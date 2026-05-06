@@ -39,19 +39,19 @@
         <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadScreensAsync"/>
     </MudToolBar>
 
-    <MudDataGrid Items="_screens" Dense="true" Hover="true" Striped="true" Filterable="true" QuickFilter="QuickFilter">
+    <MudDataGrid Items="_screens" Dense="true" Hover="true" Striped="true" Filterable="true">
         <Columns>
             <PropertyColumn Property="x => x.Diagonal" Title="@L["Diagonal"]"/>
             <PropertyColumn Property="x => x.Width" Title="@L["Width"]"/>
             <PropertyColumn Property="x => x.Height" Title="@L["Height"]"/>
             <PropertyColumn Property="x => x.EffectiveColors" Title="@L["Effective colors"]"/>
             <PropertyColumn Property="x => x.Type" Title="@L["Screen type"]"/>
-            <TemplateColumn Title="@L["Native resolution"]" Sortable="false">
+            <TemplateColumn Title="@L["Native resolution"]" Sortable="false" Filterable="false">
                 <CellTemplate>
                     @FormatNativeResolution(context.Item)
                 </CellTemplate>
             </TemplateColumn>
-            <TemplateColumn Title="@L["Actions"]" Sortable="false">
+            <TemplateColumn Title="@L["Actions"]" Sortable="false" Filterable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
                         <MudTooltip Text="@L["Edit Screen"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditScreenDialog(context.Item)"/></MudTooltip>

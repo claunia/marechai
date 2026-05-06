@@ -47,8 +47,6 @@ public partial class InstructionSets
         _isLoading = false;
     }
 
-    Func<InstructionSetDto, bool> QuickFilter => _ => true;
-
     async Task OpenAddDialog()
     {
         DialogParameters<InstructionSetDialog> parameters = new()

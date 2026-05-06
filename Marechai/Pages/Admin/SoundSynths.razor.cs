@@ -22,8 +22,6 @@ public partial class SoundSynths
         _isLoading   = false;
     }
 
-    Func<SoundSynthDto, bool> QuickFilter => _ => true;
-
     static string FormatDate(DateTimeOffset? date, int? precision = 0)
     {
         if(date is null) return "";

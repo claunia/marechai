@@ -22,11 +22,6 @@ public partial class Documents
         _isLoading = false;
     }
 
-    Func<DocumentDto, bool> QuickFilter => document =>
-    {
-        return true;
-    };
-
     static string FormatDate(DateTimeOffset? date, int? precision = 0)
     {
         if(date is null) return "";

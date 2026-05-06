@@ -42,7 +42,7 @@
     <MudDataGrid Items="_platforms" Dense="true" Hover="true" Striped="true" Filterable="true">
         <Columns>
             <PropertyColumn Property="x => x.Name" Title="@L["Name"]"/>
-            <TemplateColumn Title="@L["Actions"]" Sortable="false">
+            <TemplateColumn Title="@L["Actions"]" Sortable="false" Filterable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
                         <MudTooltip Text="@L["Edit"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditDialog(context.Item)"/></MudTooltip>

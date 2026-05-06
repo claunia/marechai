@@ -64,7 +64,9 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<SoftwareReleaseDto>> GetAsync([FromQuery] int? skip   = null, [FromQuery] int? take = null,
-                                                   [FromQuery] string search = null)
+                                                   [FromQuery] string search = null,
+                                                   [FromQuery] string sortBy = null,
+                                                   [FromQuery] bool sortDescending = false)
     {
         IQueryable<SoftwareRelease> query = context.SoftwareReleases;
 
@@ -74,8 +76,16 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
                                      (r.Platform != null && r.Platform.Name.Contains(search)) ||
                                      (r.Publisher != null && r.Publisher.Name.Contains(search)));
 
-        query = query.OrderBy(r => r.Software != null ? r.Software.Name : r.Title)
-                     .ThenBy(r => r.SoftwareVersion != null ? r.SoftwareVersion.VersionString : null);
+        query = sortBy switch
+        {
+            "Title"       => sortDescending ? query.OrderByDescending(r => MarechaiContext.NaturalSortKey(r.Title))          : query.OrderBy(r => MarechaiContext.NaturalSortKey(r.Title)),
+            "Software"    => sortDescending ? query.OrderByDescending(r => MarechaiContext.NaturalSortKey(r.Software.Name))  : query.OrderBy(r => MarechaiContext.NaturalSortKey(r.Software.Name)),
+            "Platform"    => sortDescending ? query.OrderByDescending(r => MarechaiContext.NaturalSortKey(r.Platform.Name))  : query.OrderBy(r => MarechaiContext.NaturalSortKey(r.Platform.Name)),
+            "Publisher"   => sortDescending ? query.OrderByDescending(r => MarechaiContext.NaturalSortKey(r.Publisher.Name)) : query.OrderBy(r => MarechaiContext.NaturalSortKey(r.Publisher.Name)),
+            "ReleaseDate" => sortDescending ? query.OrderByDescending(r => r.ReleaseDate) : query.OrderBy(r => r.ReleaseDate),
+            _ => query.OrderBy(r => r.Software != null ? r.Software.Name : r.Title)
+                      .ThenBy(r => r.SoftwareVersion != null ? r.SoftwareVersion.VersionString : null)
+        };
 
         if(skip.HasValue) query = query.Skip(skip.Value);
         if(take.HasValue) query = query.Take(take.Value);

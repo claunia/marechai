@@ -67,10 +67,10 @@
         <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadItemsAsync"/>
     </MudToolBar>
 
-    <MudDataGrid Items="_items" Dense="true" Hover="true" Striped="true" Filterable="true" QuickFilter="QuickFilter">
+    <MudDataGrid Items="_items" Dense="true" Hover="true" Striped="true" Filterable="true">
         <Columns>
             <PropertyColumn Property="x => x.Extension" Title="@L["Extension"]"/>
-            <TemplateColumn Title="@L["Actions"]" Sortable="false">
+            <TemplateColumn Title="@L["Actions"]" Sortable="false" Filterable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
                         <MudTooltip Text="@L["Edit Extension"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditDialog(context.Item)"/></MudTooltip>

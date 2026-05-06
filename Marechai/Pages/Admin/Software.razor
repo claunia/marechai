@@ -35,21 +35,21 @@
         <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="async () => await _dataGrid.ReloadServerData()"/>
     </MudToolBar>
 
-    <MudDataGrid @ref="_dataGrid" T="SoftwareDto" ServerData="ServerReload" Dense="true" Hover="true" Striped="true" RowsPerPage="25">
+    <MudDataGrid @ref="_dataGrid" T="SoftwareDto" ServerData="ServerReload" Dense="true" Hover="true" Striped="true" Filterable="true" RowsPerPage="25">
         <Columns>
             <PropertyColumn Property="x => x.Name" Title="@L["Name"]"/>
             <PropertyColumn Property="x => x.Family" Title="@L["Family"]"/>
-            <TemplateColumn Title="@L["OS"]" Sortable="true">
+            <PropertyColumn Property="x => x.IsOperatingSystem" Title="@L["OS"]">
                 <CellTemplate>
                     @(context.Item.IsOperatingSystem == true ? "✓" : "✗")
                 </CellTemplate>
-            </TemplateColumn>
-            <TemplateColumn Title="@L["Game"]" Sortable="true">
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.IsGame" Title="@L["Game"]">
                 <CellTemplate>
                     @(context.Item.IsGame == true ? "✓" : "✗")
                 </CellTemplate>
-            </TemplateColumn>
-            <TemplateColumn Title="@L["Actions"]" Sortable="false">
+            </PropertyColumn>
+            <TemplateColumn Title="@L["Actions"]" Sortable="false" Filterable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
                         <MudTooltip Text="@L["Edit"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditDialog(context.Item)"/></MudTooltip>

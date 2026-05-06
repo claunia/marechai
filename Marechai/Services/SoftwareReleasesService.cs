@@ -631,15 +631,18 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
 
     // ── Paged / count methods ──
 
-    public async Task<List<SoftwareReleaseDto>> GetPagedAsync(int skip, int take, string search = null)
+    public async Task<List<SoftwareReleaseDto>> GetPagedAsync(int skip, int take, string search = null,
+                                                               string sortBy = null, bool sortDescending = false)
     {
         try
         {
             List<SoftwareReleaseDto> releases = await client.Software.Releases.GetAsync(config =>
             {
-                config.QueryParameters.Skip   = skip;
-                config.QueryParameters.Take   = take;
-                config.QueryParameters.Search = search;
+                config.QueryParameters.Skip           = skip;
+                config.QueryParameters.Take           = take;
+                config.QueryParameters.Search         = search;
+                config.QueryParameters.SortBy         = sortBy;
+                config.QueryParameters.SortDescending = sortDescending;
             });
 
             return releases ?? [];

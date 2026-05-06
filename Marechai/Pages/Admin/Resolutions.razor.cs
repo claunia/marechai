@@ -47,8 +47,6 @@ public partial class Resolutions
         _isLoading = false;
     }
 
-    Func<ResolutionDto, bool> QuickFilter => _ => true;
-
     async Task OpenAddDialog()
     {
         DialogParameters<ResolutionDialog> parameters = new()

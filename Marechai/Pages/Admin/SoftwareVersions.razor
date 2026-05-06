@@ -49,7 +49,7 @@
             <PropertyColumn Property="x => x.PublicVersion" Title="@L["Public version"]"/>
             <PropertyColumn Property="x => x.Codename" Title="@L["Codename"]"/>
             <PropertyColumn Property="x => x.License" Title="@L["License"]"/>
-            <TemplateColumn Title="@L["Actions"]" Sortable="false">
+            <TemplateColumn Title="@L["Actions"]" Sortable="false" Filterable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
                         <MudTooltip Text="@L["Edit"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditDialog(context.Item)"/></MudTooltip>

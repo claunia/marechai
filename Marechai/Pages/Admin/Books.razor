@@ -40,19 +40,19 @@
         <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadBooksAsync"/>
     </MudToolBar>
 
-    <MudDataGrid Items="_books" Dense="true" Hover="true" Striped="true" Filterable="true" QuickFilter="QuickFilter">
+    <MudDataGrid Items="_books" Dense="true" Hover="true" Striped="true" Filterable="true">
         <Columns>
             <PropertyColumn Property="x => x.Title" Title="@L["Title"]"/>
             <PropertyColumn Property="x => x.Isbn" Title="@L["ISBN"]"/>
             <PropertyColumn Property="x => x.Edition" Title="@L["Edition"]"/>
             <PropertyColumn Property="x => x.Pages" Title="@L["Pages"]"/>
-            <TemplateColumn Title="@L["Published"]" Sortable="true">
+            <PropertyColumn Property="x => x.Published" Title="@L["Published"]">
                 <CellTemplate>
                     @FormatDate(context.Item.Published)
                 </CellTemplate>
-            </TemplateColumn>
+            </PropertyColumn>
             <PropertyColumn Property="x => x.Country" Title="@L["Country"]"/>
-            <TemplateColumn Title="@L["Actions"]" Sortable="false">
+            <TemplateColumn Title="@L["Actions"]" Sortable="false" Filterable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
                         <MudTooltip Text="@L["Edit Book"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditBookDialog(context.Item)"/></MudTooltip>

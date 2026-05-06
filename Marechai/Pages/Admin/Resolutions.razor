@@ -67,23 +67,23 @@
         <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadItemsAsync"/>
     </MudToolBar>
 
-    <MudDataGrid Items="_items" Dense="true" Hover="true" Striped="true" Filterable="true" QuickFilter="QuickFilter">
+    <MudDataGrid Items="_items" Dense="true" Hover="true" Striped="true" Filterable="true">
         <Columns>
             <PropertyColumn Property="x => x.Width" Title="@L["Width"]"/>
             <PropertyColumn Property="x => x.Height" Title="@L["Height"]"/>
             <PropertyColumn Property="x => x.Colors" Title="@L["Colors"]"/>
             <PropertyColumn Property="x => x.Palette" Title="@L["Palette"]"/>
-            <TemplateColumn Title="@L["Character mode"]" Sortable="false">
+            <PropertyColumn Property="x => x.Chars" Title="@L["Character mode"]">
                 <CellTemplate>
                     @(context.Item.Chars == true ? "✓" : "✗")
                 </CellTemplate>
-            </TemplateColumn>
-            <TemplateColumn Title="@L["Grayscale"]" Sortable="false">
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.Grayscale" Title="@L["Grayscale"]">
                 <CellTemplate>
                     @(context.Item.Grayscale == true ? "✓" : "✗")
                 </CellTemplate>
-            </TemplateColumn>
-            <TemplateColumn Title="@L["Actions"]" Sortable="false">
+            </PropertyColumn>
+            <TemplateColumn Title="@L["Actions"]" Sortable="false" Filterable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
                         <MudTooltip Text="@L["Edit Resolution"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditDialog(context.Item)"/></MudTooltip>

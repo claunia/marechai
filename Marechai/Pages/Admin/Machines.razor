@@ -40,31 +40,31 @@
         <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadMachinesAsync"/>
     </MudToolBar>
 
-    <MudDataGrid Items="_machines" Dense="true" Hover="true" Striped="true" Filterable="true" QuickFilter="QuickFilter">
+    <MudDataGrid Items="_machines" Dense="true" Hover="true" Striped="true" Filterable="true">
         <Columns>
             <PropertyColumn Property="x => x.Name" Title="@L["Name"]"/>
             <PropertyColumn Property="x => x.Company" Title="@L["Company"]"/>
             <PropertyColumn Property="x => x.Model" Title="@L["Model"]"/>
-            <TemplateColumn Title="@L["Type"]" Sortable="true">
+            <PropertyColumn Property="x => x.Type" Title="@L["Type"]">
                 <CellTemplate>
                     @FormatType(context.Item.Type)
                 </CellTemplate>
-            </TemplateColumn>
-            <TemplateColumn Title="@L["Prototype"]" Sortable="true">
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.Prototype" Title="@L["Prototype"]">
                 <CellTemplate>
                     @if(context.Item.Prototype == true)
                     {
                         <MudIcon Icon="@Icons.Material.Filled.Science" Color="Color.Warning" Size="Size.Small"/>
                     }
                 </CellTemplate>
-            </TemplateColumn>
-            <TemplateColumn Title="@L["Introduction date"]" Sortable="true">
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.Introduced" Title="@L["Introduction date"]">
                 <CellTemplate>
                     @FormatDate(context.Item.Introduced)
                 </CellTemplate>
-            </TemplateColumn>
+            </PropertyColumn>
             <PropertyColumn Property="x => x.Family" Title="@L["Family"]"/>
-            <TemplateColumn Title="@L["Actions"]" Sortable="false">
+            <TemplateColumn Title="@L["Actions"]" Sortable="false" Filterable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
                         <MudTooltip Text="@L["Photos"]"><MudIconButton Icon="@Icons.Material.Filled.PhotoLibrary" Size="Size.Small" Color="Color.Info" Href="@($"/admin/machines/{context.Item.Id}/photos")"/></MudTooltip>

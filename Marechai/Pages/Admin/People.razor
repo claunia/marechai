@@ -40,22 +40,22 @@
         <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadPeopleAsync"/>
     </MudToolBar>
 
-    <MudDataGrid Items="_people" Dense="true" Hover="true" Striped="true" Filterable="true" QuickFilter="QuickFilter">
+    <MudDataGrid Items="_people" Dense="true" Hover="true" Striped="true" Filterable="true">
         <Columns>
             <PropertyColumn Property="x => x.Name" Title="@L["Name"]"/>
             <PropertyColumn Property="x => x.Surname" Title="@L["Surname"]"/>
             <PropertyColumn Property="x => x.Country" Title="@L["Country of birth"]"/>
-            <TemplateColumn Title="@L["Birth date"]" Sortable="true">
+            <PropertyColumn Property="x => x.Birthdate" Title="@L["Birth date"]">
                 <CellTemplate>
                     @FormatDate(context.Item.Birthdate)
                 </CellTemplate>
-            </TemplateColumn>
-            <TemplateColumn Title="@L["Death date"]" Sortable="true">
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.DeathDate" Title="@L["Death date"]">
                 <CellTemplate>
                     @FormatDate(context.Item.DeathDate)
                 </CellTemplate>
-            </TemplateColumn>
-            <TemplateColumn Title="@L["Actions"]" Sortable="false">
+            </PropertyColumn>
+            <TemplateColumn Title="@L["Actions"]" Sortable="false" Filterable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
                         <MudTooltip Text="@L["Edit Person"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditPersonDialog(context.Item)"/></MudTooltip>

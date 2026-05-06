@@ -62,22 +62,22 @@
         <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="async () => await _dataGrid.ReloadServerData()"/>
     </MudToolBar>
 
-    <MudDataGrid @ref="_dataGrid" T="CompanyDto" ServerData="ServerReload" Dense="true" Hover="true" Striped="true" RowsPerPage="25">
+    <MudDataGrid @ref="_dataGrid" T="CompanyDto" ServerData="ServerReload" Dense="true" Hover="true" Striped="true" Filterable="true" RowsPerPage="25">
         <Columns>
             <PropertyColumn Property="x => x.Name" Title="@L["Name"]"/>
             <PropertyColumn Property="x => x.LegalName" Title="@L["Legal name"]"/>
             <PropertyColumn Property="x => x.Country" Title="@L["Country"]"/>
-            <TemplateColumn Title="@L["Status"]" Sortable="false">
+            <PropertyColumn Property="x => x.Status" Title="@L["Status"]">
                 <CellTemplate>
                     <MudChip T="string" Size="Size.Small" Color="@GetStatusColor(context.Item.Status)" Variant="Variant.Outlined">@GetStatusText(context.Item.Status)</MudChip>
                 </CellTemplate>
-            </TemplateColumn>
-            <TemplateColumn Title="@L["Founded"]" Sortable="false">
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.Founded" Title="@L["Founded"]">
                 <CellTemplate>
                     @FormatDate(context.Item.Founded, context.Item.FoundedPrecision)
                 </CellTemplate>
-            </TemplateColumn>
-            <TemplateColumn Title="@L["Actions"]" Sortable="false">
+            </PropertyColumn>
+            <TemplateColumn Title="@L["Actions"]" Sortable="false" Filterable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
                         <MudTooltip Text="@L["Edit"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditCompanyDialog(context.Item)"/></MudTooltip>

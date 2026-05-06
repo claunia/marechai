@@ -47,8 +47,6 @@ public partial class Screens
         _isLoading = false;
     }
 
-    Func<ScreenDto, bool> QuickFilter => _ => true;
-
     string FormatNativeResolution(ScreenDto screen)
     {
         ResolutionDto r = screen.NativeResolution?.ResolutionDto;

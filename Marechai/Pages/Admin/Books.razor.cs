@@ -22,11 +22,6 @@ public partial class Books
         _isLoading = false;
     }
 
-    Func<BookDto, bool> QuickFilter => book =>
-    {
-        return true;
-    };
-
     static string FormatDate(DateTimeOffset? date, int? precision = 0)
     {
         if(date is null) return "";

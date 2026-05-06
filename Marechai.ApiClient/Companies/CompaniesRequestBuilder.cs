@@ -182,6 +182,17 @@ namespace Marechai.ApiClient.Companies
 #endif
             [QueryParameter("skip")]
             public int? Skip { get; set; }
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("sortBy")]
+            public string? SortBy { get; set; }
+#nullable restore
+#else
+            [QueryParameter("sortBy")]
+            public string SortBy { get; set; }
+#endif
+            [QueryParameter("sortDescending")]
+            public bool? SortDescending { get; set; }
             [QueryParameter("take")]
             public int? Take { get; set; }
         }

@@ -74,13 +74,13 @@
         <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadUsersAsync"/>
     </MudToolBar>
 
-    <MudDataGrid Items="_users" Dense="true" Hover="true" Striped="true" MultiSelection="true" @bind-SelectedItems="_selectedUsers">
+    <MudDataGrid Items="_users" Dense="true" Hover="true" Striped="true" Filterable="true" MultiSelection="true" @bind-SelectedItems="_selectedUsers">
         <Columns>
             <SelectColumn T="UserDto"/>
             <PropertyColumn Property="x => x.Email" Title="@L["Email"]"/>
             <PropertyColumn Property="x => x.UserName" Title="@L["Username"]"/>
             <PropertyColumn Property="x => x.PhoneNumber" Title="@L["Phone"]"/>
-            <TemplateColumn Title="@L["Roles"]">
+            <TemplateColumn Title="@L["Roles"]" Filterable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
                         @if(context.Item.Roles is { Count: > 0 })
@@ -93,7 +93,7 @@
                     </MudStack>
                 </CellTemplate>
             </TemplateColumn>
-            <TemplateColumn Title="@L["Actions"]" Sortable="false">
+            <TemplateColumn Title="@L["Actions"]" Sortable="false" Filterable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
                         <MudTooltip Text="@L["Edit"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditUserDialog(context.Item)"/></MudTooltip>

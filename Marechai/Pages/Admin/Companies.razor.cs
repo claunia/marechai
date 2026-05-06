@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
@@ -44,8 +45,19 @@ public partial class Companies
         int skip = state.Page * state.PageSize;
         int take = state.PageSize;
 
+        string sortBy         = null;
+        bool   sortDescending = false;
+
+        SortDefinition<CompanyDto> sort = state.SortDefinitions.FirstOrDefault();
+
+        if(sort is not null)
+        {
+            sortBy         = sort.SortBy;
+            sortDescending = sort.Descending;
+        }
+
         Task<int>              countTask = CompaniesService.GetCountAsync(_searchText);
-        Task<List<CompanyDto>> dataTask  = CompaniesService.GetPagedAsync(skip, take, _searchText);
+        Task<List<CompanyDto>> dataTask  = CompaniesService.GetPagedAsync(skip, take, _searchText, sortBy, sortDescending);
 
         await Task.WhenAll(countTask, dataTask);
 

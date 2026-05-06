@@ -22,8 +22,6 @@ public partial class SoftwareFamilies
         _isLoading = false;
     }
 
-    Func<SoftwareFamilyDto, bool> QuickFilter => _ => true;
-
     static string FormatDate(DateTimeOffset? date, int? precision = 0)
     {
         if(date is null) return "";

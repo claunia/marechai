@@ -68,17 +68,17 @@
         <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadGpusAsync"/>
     </MudToolBar>
 
-    <MudDataGrid Items="_gpus" Dense="true" Hover="true" Striped="true" Filterable="true" QuickFilter="QuickFilter">
+    <MudDataGrid Items="_gpus" Dense="true" Hover="true" Striped="true" Filterable="true">
         <Columns>
             <PropertyColumn Property="x => x.Name" Title="@L["Name"]"/>
             <PropertyColumn Property="x => x.Company" Title="@L["Company"]"/>
             <PropertyColumn Property="x => x.ModelCode" Title="@L["Model code"]"/>
-            <TemplateColumn Title="@L["Introduced"]" Sortable="true">
+            <PropertyColumn Property="x => x.Introduced" Title="@L["Introduced"]">
                 <CellTemplate>
                     @FormatDate(context.Item.Introduced)
                 </CellTemplate>
-            </TemplateColumn>
-            <TemplateColumn Title="@L["Actions"]" Sortable="false">
+            </PropertyColumn>
+            <TemplateColumn Title="@L["Actions"]" Sortable="false" Filterable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
                         <MudTooltip Text="@L["Edit GPU"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditGpuDialog(context.Item)"/></MudTooltip>

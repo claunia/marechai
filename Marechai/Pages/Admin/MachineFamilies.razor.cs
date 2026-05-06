@@ -22,8 +22,6 @@ public partial class MachineFamilies
         _isLoading = false;
     }
 
-    Func<MachineFamilyDto, bool> QuickFilter => _ => true;
-
     async Task OpenAddDialog()
     {
         DialogParameters<MachineFamilyDialog> parameters = new()

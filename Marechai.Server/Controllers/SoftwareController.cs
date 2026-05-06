@@ -212,14 +212,23 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<SoftwareDto>> GetAsync([FromQuery] int? skip   = null, [FromQuery] int? take = null,
-                                            [FromQuery] string search = null)
+                                            [FromQuery] string search = null,
+                                            [FromQuery] string sortBy = null,
+                                            [FromQuery] bool sortDescending = false)
     {
         IQueryable<Database.Models.Software> query = context.Softwares;
 
         if(!string.IsNullOrWhiteSpace(search))
             query = query.Where(s => s.Name.Contains(search));
 
-        query = query.OrderBy(s => MarechaiContext.NaturalSortKey(s.Name));
+        query = sortBy switch
+        {
+            "Name"              => sortDescending ? query.OrderByDescending(s => MarechaiContext.NaturalSortKey(s.Name))        : query.OrderBy(s => MarechaiContext.NaturalSortKey(s.Name)),
+            "Family"            => sortDescending ? query.OrderByDescending(s => MarechaiContext.NaturalSortKey(s.Family.Name)) : query.OrderBy(s => MarechaiContext.NaturalSortKey(s.Family.Name)),
+            "IsOperatingSystem" => sortDescending ? query.OrderByDescending(s => s.IsOperatingSystem) : query.OrderBy(s => s.IsOperatingSystem),
+            "IsGame"            => sortDescending ? query.OrderByDescending(s => s.IsGame)            : query.OrderBy(s => s.IsGame),
+            _                   => query.OrderBy(s => MarechaiContext.NaturalSortKey(s.Name))
+        };
 
         if(skip.HasValue) query = query.Skip(skip.Value);
 

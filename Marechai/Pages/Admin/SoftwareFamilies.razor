@@ -39,16 +39,16 @@
         <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadDataAsync"/>
     </MudToolBar>
 
-    <MudDataGrid Items="_families" Dense="true" Hover="true" Striped="true" Filterable="true" QuickFilter="QuickFilter">
+    <MudDataGrid Items="_families" Dense="true" Hover="true" Striped="true" Filterable="true">
         <Columns>
             <PropertyColumn Property="x => x.Name" Title="@L["Name"]"/>
             <PropertyColumn Property="x => x.Parent" Title="@L["Parent"]"/>
-            <TemplateColumn Title="@L["Introduced"]" Sortable="true">
+            <PropertyColumn Property="x => x.Introduced" Title="@L["Introduced"]">
                 <CellTemplate>
                     @FormatDate(context.Item.Introduced)
                 </CellTemplate>
-            </TemplateColumn>
-            <TemplateColumn Title="@L["Actions"]" Sortable="false">
+            </PropertyColumn>
+            <TemplateColumn Title="@L["Actions"]" Sortable="false" Filterable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
                         <MudTooltip Text="@L["Edit"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditDialog(context.Item)"/></MudTooltip>

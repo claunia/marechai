@@ -41,22 +41,22 @@
         <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadProcessorsAsync"/>
     </MudToolBar>
 
-    <MudDataGrid Items="_processors" Dense="true" Hover="true" Striped="true" Filterable="true" QuickFilter="QuickFilter">
+    <MudDataGrid Items="_processors" Dense="true" Hover="true" Striped="true" Filterable="true">
         <Columns>
             <PropertyColumn Property="x => x.Name" Title="@L["Name"]"/>
             <PropertyColumn Property="x => x.Company" Title="@L["Company"]"/>
             <PropertyColumn Property="x => x.ModelCode" Title="@L["Model code"]"/>
-            <TemplateColumn Title="@L["Introduced"]" Sortable="true">
+            <PropertyColumn Property="x => x.Introduced" Title="@L["Introduced"]">
                 <CellTemplate>
                     @FormatDate(context.Item.Introduced)
                 </CellTemplate>
-            </TemplateColumn>
-            <TemplateColumn Title="@L["Nominal speed"]" Sortable="true">
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.Speed" Title="@L["Nominal speed"]">
                 <CellTemplate>
                     @FormatSpeed(context.Item.Speed)
                 </CellTemplate>
-            </TemplateColumn>
-            <TemplateColumn Title="@L["Actions"]" Sortable="false">
+            </PropertyColumn>
+            <TemplateColumn Title="@L["Actions"]" Sortable="false" Filterable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
                         <MudTooltip Text="@L["Edit Processor"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditProcessorDialog(context.Item)"/></MudTooltip>

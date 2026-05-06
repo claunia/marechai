@@ -40,17 +40,17 @@
         <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadSoundSynthsAsync"/>
     </MudToolBar>
 
-    <MudDataGrid Items="_soundSynths" Dense="true" Hover="true" Striped="true" Filterable="true" QuickFilter="QuickFilter">
+    <MudDataGrid Items="_soundSynths" Dense="true" Hover="true" Striped="true" Filterable="true">
         <Columns>
             <PropertyColumn Property="x => x.Name" Title="@L["Name"]"/>
             <PropertyColumn Property="x => x.Company" Title="@L["Company"]"/>
             <PropertyColumn Property="x => x.ModelCode" Title="@L["Model code"]"/>
-            <TemplateColumn Title="@L["Introduction date"]" Sortable="true">
+            <PropertyColumn Property="x => x.Introduced" Title="@L["Introduction date"]">
                 <CellTemplate>
                     @FormatDate(context.Item.Introduced)
                 </CellTemplate>
-            </TemplateColumn>
-            <TemplateColumn Title="@L["Actions"]" Sortable="false">
+            </PropertyColumn>
+            <TemplateColumn Title="@L["Actions"]" Sortable="false" Filterable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
                         <MudTooltip Text="@L["Edit Sound Synth"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditSoundSynthDialog(context.Item)"/></MudTooltip>

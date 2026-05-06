@@ -41,7 +41,7 @@
         <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="async () => await _dataGrid.ReloadServerData()"/>
     </MudToolBar>
 
-    <MudDataGrid @ref="_dataGrid" T="SoftwareReleaseDto" ServerData="ServerReload" Dense="true" Hover="true" Striped="true" RowsPerPage="25">
+    <MudDataGrid @ref="_dataGrid" T="SoftwareReleaseDto" ServerData="ServerReload" Dense="true" Hover="true" Striped="true" Filterable="true" RowsPerPage="25">
         <Columns>
             <PropertyColumn Property="x => x.Title" Title="@L["Title"]"/>
             @if(!_isVersionContext && !_isSoftwareContext)
@@ -49,7 +49,7 @@
                 <PropertyColumn Property="x => x.Software" Title="@L["Software"]"/>
             }
             <PropertyColumn Property="x => x.Platform" Title="@L["Platform"]"/>
-            <TemplateColumn Title="@L["Regions"]">
+            <TemplateColumn Title="@L["Regions"]" Filterable="false">
                 <CellTemplate>
                     @if(context.Item.Regions is not null)
                     {
@@ -57,7 +57,7 @@
                     }
                 </CellTemplate>
             </TemplateColumn>
-            <TemplateColumn Title="@L["Languages"]">
+            <TemplateColumn Title="@L["Languages"]" Filterable="false">
                 <CellTemplate>
                     @if(context.Item.Languages is not null)
                     {
@@ -66,12 +66,12 @@
                 </CellTemplate>
             </TemplateColumn>
             <PropertyColumn Property="x => x.Publisher" Title="@L["Publisher"]"/>
-            <TemplateColumn Title="@L["Release date"]" Sortable="true">
+            <PropertyColumn Property="x => x.ReleaseDate" Title="@L["Release date"]">
                 <CellTemplate>
                     @FormatDate(context.Item.ReleaseDate)
                 </CellTemplate>
-            </TemplateColumn>
-            <TemplateColumn Title="@L["Actions"]" Sortable="false">
+            </PropertyColumn>
+            <TemplateColumn Title="@L["Actions"]" Sortable="false" Filterable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
                         <MudTooltip Text="@L["Edit"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditDialog(context.Item)"/></MudTooltip>

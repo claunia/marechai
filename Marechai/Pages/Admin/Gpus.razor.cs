@@ -47,8 +47,6 @@ public partial class Gpus
         _isLoading = false;
     }
 
-    Func<GpuDto, bool> QuickFilter => _ => true;
-
     static string FormatDate(DateTimeOffset? date, int? precision = 0)
     {
         if(date is null) return "";

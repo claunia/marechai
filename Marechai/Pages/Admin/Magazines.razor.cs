@@ -22,11 +22,6 @@ public partial class Magazines
         _isLoading = false;
     }
 
-    Func<MagazineDto, bool> QuickFilter => magazine =>
-    {
-        return true;
-    };
-
     static string FormatDate(DateTimeOffset? date, int? precision = 0)
     {
         if(date is null) return "";

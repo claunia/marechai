@@ -47,8 +47,6 @@ public partial class InstructionSetExtensions
         _isLoading = false;
     }
 
-    Func<InstructionSetExtensionDto, bool> QuickFilter => _ => true;
-
     async Task OpenAddDialog()
     {
         DialogParameters<InstructionSetExtensionDialog> parameters = new()

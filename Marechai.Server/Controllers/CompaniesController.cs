@@ -46,14 +46,24 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<CompanyDto>> GetAsync([FromQuery] int? skip   = null, [FromQuery] int? take = null,
-                                           [FromQuery] string search = null)
+                                           [FromQuery] string search = null,
+                                           [FromQuery] string sortBy = null,
+                                           [FromQuery] bool sortDescending = false)
     {
         IQueryable<Company> query = context.Companies.Include(c => c.Logos);
 
         if(!string.IsNullOrWhiteSpace(search))
             query = query.Where(c => c.Name.Contains(search) || (c.LegalName != null && c.LegalName.Contains(search)));
 
-        query = query.OrderBy(c => MarechaiContext.NaturalSortKey(c.Name));
+        query = sortBy switch
+        {
+            "Name"      => sortDescending ? query.OrderByDescending(c => MarechaiContext.NaturalSortKey(c.Name))      : query.OrderBy(c => MarechaiContext.NaturalSortKey(c.Name)),
+            "LegalName" => sortDescending ? query.OrderByDescending(c => MarechaiContext.NaturalSortKey(c.LegalName)) : query.OrderBy(c => MarechaiContext.NaturalSortKey(c.LegalName)),
+            "Country"   => sortDescending ? query.OrderByDescending(c => MarechaiContext.NaturalSortKey(c.Country.Name)) : query.OrderBy(c => MarechaiContext.NaturalSortKey(c.Country.Name)),
+            "Status"    => sortDescending ? query.OrderByDescending(c => c.Status)  : query.OrderBy(c => c.Status),
+            "Founded"   => sortDescending ? query.OrderByDescending(c => c.Founded) : query.OrderBy(c => c.Founded),
+            _           => query.OrderBy(c => MarechaiContext.NaturalSortKey(c.Name))
+        };
 
         if(skip.HasValue) query = query.Skip(skip.Value);
 

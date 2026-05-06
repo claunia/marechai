@@ -22,8 +22,6 @@ public partial class Machines
         _isLoading = false;
     }
 
-    Func<MachineDto, bool> QuickFilter => _ => true;
-
     string FormatType(int? type) => type switch
     {
         1 => L["Computer"],

@@ -40,22 +40,22 @@
         <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadMagazinesAsync"/>
     </MudToolBar>
 
-    <MudDataGrid Items="_magazines" Dense="true" Hover="true" Striped="true" Filterable="true" QuickFilter="QuickFilter">
+    <MudDataGrid Items="_magazines" Dense="true" Hover="true" Striped="true" Filterable="true">
         <Columns>
             <PropertyColumn Property="x => x.Title" Title="@L["Title"]"/>
             <PropertyColumn Property="x => x.Issn" Title="@L["ISSN"]"/>
-            <TemplateColumn Title="@L["First publication"]" Sortable="true">
+            <PropertyColumn Property="x => x.FirstPublication" Title="@L["First publication"]">
                 <CellTemplate>
                     @FormatDate(context.Item.FirstPublication)
                 </CellTemplate>
-            </TemplateColumn>
-            <TemplateColumn Title="@L["Published"]" Sortable="true">
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.Published" Title="@L["Published"]">
                 <CellTemplate>
                     @FormatDate(context.Item.Published)
                 </CellTemplate>
-            </TemplateColumn>
+            </PropertyColumn>
             <PropertyColumn Property="x => x.Country" Title="@L["Country"]"/>
-            <TemplateColumn Title="@L["Actions"]" Sortable="false">
+            <TemplateColumn Title="@L["Actions"]" Sortable="false" Filterable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
                         <MudTooltip Text="@L["Edit Magazine"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditMagazineDialog(context.Item)"/></MudTooltip>

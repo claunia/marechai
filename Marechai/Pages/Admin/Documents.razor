@@ -40,16 +40,16 @@
         <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadDocumentsAsync"/>
     </MudToolBar>
 
-    <MudDataGrid Items="_documents" Dense="true" Hover="true" Striped="true" Filterable="true" QuickFilter="QuickFilter">
+    <MudDataGrid Items="_documents" Dense="true" Hover="true" Striped="true" Filterable="true">
         <Columns>
             <PropertyColumn Property="x => x.Title" Title="@L["Title"]"/>
-            <TemplateColumn Title="@L["Published"]" Sortable="true">
+            <PropertyColumn Property="x => x.Published" Title="@L["Published"]">
                 <CellTemplate>
                     @FormatDate(context.Item.Published)
                 </CellTemplate>
-            </TemplateColumn>
+            </PropertyColumn>
             <PropertyColumn Property="x => x.Country" Title="@L["Country"]"/>
-            <TemplateColumn Title="@L["Actions"]" Sortable="false">
+            <TemplateColumn Title="@L["Actions"]" Sortable="false" Filterable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
                         <MudTooltip Text="@L["Edit Document"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditDocumentDialog(context.Item)"/></MudTooltip>
