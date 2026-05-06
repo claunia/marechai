@@ -1133,4 +1133,32 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
             return (false, ex.Message);
         }
     }
+
+    // ── Critic Reviews ──
+
+    public async Task<List<SoftwareCriticReviewDto>> GetCriticReviewsAsync(int softwareId)
+    {
+        try
+        {
+            List<SoftwareCriticReviewDto> reviews = await client.Software[softwareId].CriticReviews.GetAsync();
+
+            return reviews ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<CriticReviewSummaryDto> GetCriticReviewSummaryAsync(int softwareId)
+    {
+        try
+        {
+            return await client.Software[softwareId].CriticReviews.Summary.GetAsync();
+        }
+        catch
+        {
+            return null;
+        }
+    }
 }

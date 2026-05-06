@@ -934,3 +934,12 @@ public enum MobyGamesCoverDownloadStatus : byte
     Skipped    = 3,
     NoRelease  = 4
 }
+
+public enum MobyGamesReviewImportStatus : byte
+{
+    Pending   = 0,
+    Imported  = 1,
+    Failed    = 2,
+    Skipped   = 3,
+    NoReviews = 4
+}

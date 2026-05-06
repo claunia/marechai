@@ -1023,4 +1023,70 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
                       .ToListAsync()).OrderBy(p => p.Role)
            .ThenBy(p => p.FullName)
            .ToList();
+
+    [HttpGet("{id:ulong}/critic-reviews")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<List<SoftwareCriticReviewDto>> GetCriticReviewsAsync(ulong id) =>
+        await context.SoftwareCriticReviews
+                     .Where(r => r.SoftwareId == id)
+                     .OrderByDescending(r => r.NormalizedScore)
+                     .Select(r => new SoftwareCriticReviewDto
+                      {
+                          Id                   = r.Id,
+                          SoftwareId           = r.SoftwareId,
+                          MagazineId           = r.MagazineId,
+                          MagazineTitle        = r.Magazine.Title,
+                          PlatformId           = r.PlatformId,
+                          PlatformName         = r.Platform != null ? r.Platform.Name : null,
+                          NormalizedScore      = r.NormalizedScore,
+                          OriginalScore        = r.OriginalScore,
+                          OriginalScoreMaximum = r.OriginalScoreMaximum,
+                          ReviewText           = r.ReviewText,
+                          ReviewDate           = r.ReviewDate,
+                          ReviewDatePrecision  = r.ReviewDatePrecision,
+                          ReviewUrl            = r.ReviewUrl
+                      })
+                     .ToListAsync();
+
+    [HttpGet("{id:ulong}/critic-reviews/summary")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<CriticReviewSummaryDto> GetCriticReviewSummaryAsync(ulong id)
+    {
+        var reviews = await context.SoftwareCriticReviews
+                                   .Where(r => r.SoftwareId == id)
+                                   .Select(r => new
+                                    {
+                                        r.NormalizedScore,
+                                        r.PlatformId,
+                                        PlatformName = r.Platform != null ? r.Platform.Name : null
+                                    })
+                                   .ToListAsync();
+
+        var scored = reviews.Where(r => r.NormalizedScore.HasValue).ToList();
+
+        return new CriticReviewSummaryDto
+        {
+            AverageScore = scored.Count > 0 ? scored.Average(r => r.NormalizedScore.Value) : null,
+            TotalReviews = reviews.Count,
+            ByPlatform = reviews.GroupBy(r => new { r.PlatformId, r.PlatformName })
+                                .Select(g =>
+                                 {
+                                     var platformScored = g.Where(r => r.NormalizedScore.HasValue).ToList();
+
+                                     return new PlatformReviewSummaryDto
+                                     {
+                                         PlatformId   = g.Key.PlatformId,
+                                         PlatformName = g.Key.PlatformName,
+                                         AverageScore = platformScored.Count > 0
+                                                            ? platformScored.Average(r => r.NormalizedScore.Value)
+                                                            : null,
+                                         ReviewCount = g.Count()
+                                     };
+                                 })
+                                .OrderByDescending(p => p.AverageScore)
+                                .ToList()
+        };
+    }
 }

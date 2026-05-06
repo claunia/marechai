@@ -59,6 +59,8 @@ public partial class View
     SoftwareCoverDto                            _heroCover;
     SoftwareDto                                 _software;
     List<SoftwareVersionDto>                    _versions = [];
+    List<SoftwareCriticReviewDto>               _criticReviews = [];
+    CriticReviewSummaryDto                      _reviewSummary;
 
     [Parameter]
     public int Id { get; set; }
@@ -164,6 +166,10 @@ public partial class View
         // Load compilations that include this software
         _compilations = await Service.GetCompilationsForSoftwareAsync(Id);
 
+        // Load critic reviews
+        _criticReviews = await Service.GetCriticReviewsAsync(Id);
+        _reviewSummary = await Service.GetCriticReviewSummaryAsync(Id);
+
         // Load screenshots
         List<Guid?> screenshotIds = await Service.GetScreenshotIdsAsync(Id);
 
@@ -192,5 +198,18 @@ public partial class View
         {
             // Component was disposed during async loading — ignore
         }
+    }
+
+    static string FormatReviewDate(SoftwareCriticReviewDto review)
+    {
+        if(!review.ReviewDate.HasValue) return "";
+
+        return review.ReviewDatePrecision switch
+        {
+            (int)DatePrecision.Full      => review.ReviewDate.Value.ToString("yyyy-MM-dd"),
+            (int)DatePrecision.MonthYear => review.ReviewDate.Value.ToString("yyyy-MM"),
+            (int)DatePrecision.YearOnly  => review.ReviewDate.Value.ToString("yyyy"),
+            _                            => review.ReviewDate.Value.ToString("yyyy-MM-dd")
+        };
     }
 }

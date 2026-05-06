@@ -173,6 +173,8 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<MobyGamesImportState>               MobyGamesImportStates               { get; set; }
     public virtual DbSet<MobyGamesRejection>                 MobyGamesRejections                 { get; set; }
     public virtual DbSet<MobyGamesCoverDownloadState>        MobyGamesCoverDownloadStates        { get; set; }
+    public virtual DbSet<SoftwareCriticReview>               SoftwareCriticReviews               { get; set; }
+    public virtual DbSet<MobyGamesReviewImportState>         MobyGamesReviewImportStates         { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -2819,6 +2821,35 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
         {
             entity.HasIndex(e => e.MobyGameId);
             entity.HasIndex(e => e.ReviewAction);
+        });
+
+        modelBuilder.Entity<SoftwareCriticReview>(entity =>
+        {
+            entity.HasIndex(e => new { e.SoftwareId, e.MagazineId, e.PlatformId }).IsUnique();
+            entity.HasIndex(e => e.SoftwareId);
+            entity.HasIndex(e => e.MagazineId);
+            entity.HasIndex(e => e.PlatformId);
+
+            entity.HasOne(e => e.Software)
+                  .WithMany(s => s.CriticReviews)
+                  .HasForeignKey(e => e.SoftwareId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Magazine)
+                  .WithMany()
+                  .HasForeignKey(e => e.MagazineId)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.Platform)
+                  .WithMany()
+                  .HasForeignKey(e => e.PlatformId)
+                  .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<MobyGamesReviewImportState>(entity =>
+        {
+            entity.HasIndex(e => e.MobyGameId).IsUnique();
+            entity.HasIndex(e => e.Status);
         });
     }
 }

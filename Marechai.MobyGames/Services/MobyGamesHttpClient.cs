@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 namespace Marechai.MobyGames.Services;
 
 /// <summary>
-///     HTTP client for downloading cover images from MobyGames.
+///     HTTP client for downloading cover images and fetching pages from MobyGames.
 ///     No login required — old /images/covers/l/ URLs redirect to CDN which is publicly accessible.
 /// </summary>
 public sealed class MobyGamesHttpClient : IDisposable
 {
     const    string     BaseUrl   = "https://www.mobygames.com";
-    const    string     UserAgent = "Marechai MobyGames Cover Downloader/1.0";
+    const    string     UserAgent = "Mozilla/5.0 (X11; Linux x86_64; rv:138.0) Gecko/20100101 Firefox/138.0";
     readonly HttpClient _client;
     readonly int        _delayMs;
 
@@ -33,6 +33,41 @@ public sealed class MobyGamesHttpClient : IDisposable
         };
 
         _client.DefaultRequestHeaders.Add("User-Agent", UserAgent);
+        _client.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        _client.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.5");
+    }
+
+    /// <summary>
+    ///     Fetch an HTML page from MobyGames with rate limiting.
+    ///     Returns the HTML string or null on failure.
+    /// </summary>
+    public async Task<string> FetchPageAsync(string url)
+    {
+        if(_delayMs > 0)
+            await Task.Delay(_delayMs);
+
+        if(!url.StartsWith("http"))
+            url = BaseUrl + url;
+
+        try
+        {
+            using var response = await _client.GetAsync(url);
+
+            if(!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"\e[33m  Warning: HTTP {(int)response.StatusCode} fetching {url}\e[0m");
+
+                return null;
+            }
+
+            return await response.Content.ReadAsStringAsync();
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"\e[33m  Warning: Error fetching {url}: {ex.Message}\e[0m");
+
+            return null;
+        }
     }
 
     /// <summary>

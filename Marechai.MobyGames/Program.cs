@@ -138,6 +138,36 @@ class Program
                 break;
             }
 
+            case "import-reviews":
+            {
+                int reviewBatchSize = config.GetValue("Import:BatchSize", 500);
+
+                for(int i = 0; i < args.Length; i++)
+                {
+                    if(args[i] == "--batch-size" && i + 1 < args.Length && int.TryParse(args[i + 1], out int rbs))
+                        reviewBatchSize = rbs;
+                }
+
+                var magazineMatcher    = new MagazineMatcher(factory);
+                var reviewStateService = new ReviewStateService(factory);
+
+                var reviewImportService = new ReviewImportService(
+                    factory, sourceDb, platformMatcher, magazineMatcher,
+                    reviewStateService);
+
+                await reviewImportService.RunAsync(reviewBatchSize);
+
+                break;
+            }
+
+            case "review-status":
+            {
+                var reviewStateService2 = new ReviewStateService(factory);
+                await reviewStateService2.PrintStatusAsync();
+
+                break;
+            }
+
             case "status":
                 await stateService.PrintStatusAsync();
 
@@ -164,8 +194,11 @@ class Program
                 Console.WriteLine("    import [--batch-size N]                       Import next batch of games");
                 Console.WriteLine("    download-covers [--batch-size N] [--delay-ms N] [--dry-run]");
                 Console.WriteLine("                                                  Download covers for imported games");
+                Console.WriteLine("    import-reviews [--batch-size N]");
+                Console.WriteLine("                                                  Import critic reviews for imported games");
                 Console.WriteLine("    status                                        Show import status counts");
                 Console.WriteLine("    cover-status                                  Show cover download status counts");
+                Console.WriteLine("    review-status                                 Show review import status counts");
                 Console.WriteLine("    reset --game <id>                             Reset a game to unprocessed");
 
                 break;

@@ -21,4 +21,6 @@ public class MobyGamesImportState : BaseModel<long>
     public int BatchNumber { get; set; }
 
     public ulong? SoftwareId { get; set; }
+
+    public int? MobyNumericId { get; set; }
 }

@@ -7,6 +7,7 @@ using Marechai.ApiClient.Software.Item.CompanyRoles;
 using Marechai.ApiClient.Software.Item.Compilations;
 using Marechai.ApiClient.Software.Item.Covers;
 using Marechai.ApiClient.Software.Item.Credits;
+using Marechai.ApiClient.Software.Item.CriticReviews;
 using Marechai.ApiClient.Software.Item.Description;
 using Marechai.ApiClient.Software.Item.Descriptions;
 using Marechai.ApiClient.Software.Item.Genres;
@@ -61,6 +62,11 @@ namespace Marechai.ApiClient.Software.Item
         public global::Marechai.ApiClient.Software.Item.Credits.CreditsRequestBuilder Credits
         {
             get => new global::Marechai.ApiClient.Software.Item.Credits.CreditsRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The criticReviews property</summary>
+        public global::Marechai.ApiClient.Software.Item.CriticReviews.CriticReviewsRequestBuilder CriticReviews
+        {
+            get => new global::Marechai.ApiClient.Software.Item.CriticReviews.CriticReviewsRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The description property</summary>
         public global::Marechai.ApiClient.Software.Item.Description.DescriptionRequestBuilder Description
