@@ -176,6 +176,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<MobyGamesRejection>                 MobyGamesRejections                 { get; set; }
     public virtual DbSet<MobyGamesCoverDownloadState>        MobyGamesCoverDownloadStates        { get; set; }
     public virtual DbSet<MobyGamesPromoArtDownloadState>    MobyGamesPromoArtDownloadStates     { get; set; }
+    public virtual DbSet<MobyGamesScreenshotDownloadState>  MobyGamesScreenshotDownloadStates   { get; set; }
     public virtual DbSet<SoftwareCriticReview>               SoftwareCriticReviews               { get; set; }
     public virtual DbSet<MobyGamesReviewImportState>         MobyGamesReviewImportStates         { get; set; }
     public virtual DbSet<SoftwareUserRating>                  SoftwareUserRatings                 { get; set; }
@@ -2849,6 +2850,13 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
         modelBuilder.Entity<MobyGamesPromoArtDownloadState>(entity =>
         {
             entity.HasIndex(e => e.PromoPageUrl).IsUnique();
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => e.MobyGameId);
+        });
+
+        modelBuilder.Entity<MobyGamesScreenshotDownloadState>(entity =>
+        {
+            entity.HasIndex(e => e.ScreenshotPageUrl).IsUnique();
             entity.HasIndex(e => e.Status);
             entity.HasIndex(e => e.MobyGameId);
         });

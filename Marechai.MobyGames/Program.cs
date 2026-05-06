@@ -259,6 +259,98 @@ class Program
                 break;
             }
 
+            case "scrape-screenshot-pages":
+            {
+                int screenshotBatchSize = config.GetValue("Import:BatchSize", 500);
+                int delayMs             = config.GetValue("MobyGames:DelayMs", 2000);
+                bool dryRun             = false;
+
+                for(int i = 0; i < args.Length; i++)
+                {
+                    if(args[i] == "--batch-size" && i + 1 < args.Length && int.TryParse(args[i + 1], out int sbs))
+                        screenshotBatchSize = sbs;
+                    if(args[i] == "--delay-ms" && i + 1 < args.Length && int.TryParse(args[i + 1], out int dms))
+                        delayMs = dms;
+                    if(args[i] == "--dry-run")
+                        dryRun = true;
+                }
+
+                MobyGamesHttpClient screenshotHttpClient = null;
+
+                if(!dryRun)
+                    screenshotHttpClient = new MobyGamesHttpClient(delayMs);
+
+                var screenshotScraper = new ScreenshotScraper(factory, sourceDb, screenshotHttpClient);
+
+                try
+                {
+                    await screenshotScraper.RunAsync(screenshotBatchSize, dryRun);
+                }
+                finally
+                {
+                    screenshotHttpClient?.Dispose();
+                }
+
+                break;
+            }
+
+            case "download-screenshots":
+            {
+                int screenshotBatchSize = config.GetValue("Import:BatchSize", 500);
+                int delayMs             = config.GetValue("MobyGames:DelayMs", 2000);
+                string assetRoot        = config.GetValue<string>("MobyGames:AssetRootPath");
+                bool dryRun             = false;
+
+                for(int i = 0; i < args.Length; i++)
+                {
+                    if(args[i] == "--batch-size" && i + 1 < args.Length && int.TryParse(args[i + 1], out int sbs))
+                        screenshotBatchSize = sbs;
+                    if(args[i] == "--delay-ms" && i + 1 < args.Length && int.TryParse(args[i + 1], out int dms))
+                        delayMs = dms;
+                    if(args[i] == "--dry-run")
+                        dryRun = true;
+                }
+
+                if(!dryRun && string.IsNullOrEmpty(assetRoot))
+                {
+                    Console.WriteLine("\e[31;1mMissing MobyGames:AssetRootPath in appsettings.json\e[0m");
+                    return 1;
+                }
+
+                MobyGamesHttpClient screenshotHttpClient2 = null;
+
+                if(!dryRun)
+                {
+                    screenshotHttpClient2 = new MobyGamesHttpClient(delayMs);
+                    ImageConverter.EnsureDirectoriesCreated(assetRoot, "software-screenshots");
+                }
+
+                var screenshotStateService = new ScreenshotStateService(factory);
+
+                var screenshotDownloadService = new ScreenshotDownloadService(
+                    factory, sourceDb, screenshotStateService, platformMatcher,
+                    screenshotHttpClient2, assetRoot ?? "");
+
+                try
+                {
+                    await screenshotDownloadService.RunAsync(screenshotBatchSize, dryRun);
+                }
+                finally
+                {
+                    screenshotHttpClient2?.Dispose();
+                }
+
+                break;
+            }
+
+            case "screenshot-status":
+            {
+                var screenshotStateService2 = new ScreenshotStateService(factory);
+                await screenshotStateService2.PrintScreenshotStatusAsync();
+
+                break;
+            }
+
             case "status":
                 await stateService.PrintStatusAsync();
 
@@ -295,6 +387,11 @@ class Program
                 Console.WriteLine("    download-promo-art [--batch-size N] [--delay-ms N] [--dry-run]");
                 Console.WriteLine("                                                  Download promo art images for scraped games");
                 Console.WriteLine("    promo-art-status                              Show promo art download status counts");
+                Console.WriteLine("    scrape-screenshot-pages [--batch-size N] [--delay-ms N] [--dry-run]");
+                Console.WriteLine("                                                  Scrape screenshot pages from new MobyGames");
+                Console.WriteLine("    download-screenshots [--batch-size N] [--delay-ms N] [--dry-run]");
+                Console.WriteLine("                                                  Download screenshots for scraped games");
+                Console.WriteLine("    screenshot-status                             Show screenshot download status counts");
                 Console.WriteLine("    reset --game <id>                             Reset a game to unprocessed");
 
                 break;

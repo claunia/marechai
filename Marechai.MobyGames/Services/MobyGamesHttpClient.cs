@@ -10,7 +10,7 @@ namespace Marechai.MobyGames.Services;
 ///     HTTP client for downloading cover images and fetching pages from MobyGames.
 ///     No login required — old /images/covers/l/ URLs redirect to CDN which is publicly accessible.
 /// </summary>
-public sealed class MobyGamesHttpClient : IDisposable
+public sealed partial class MobyGamesHttpClient : IDisposable
 {
     const    string     BaseUrl   = "https://www.mobygames.com";
     const    string     UserAgent = "Mozilla/5.0 (X11; Linux x86_64; rv:138.0) Gecko/20100101 Firefox/138.0";
@@ -161,10 +161,152 @@ public sealed class MobyGamesHttpClient : IDisposable
     }
 
     /// <summary>
+    ///     Extract the full-size screenshot URL from a MobyGames screenshot detail page HTML.
+    ///     The new MobyGames site uses CDN hash URLs that differ between thumbnail and full-size,
+    ///     so we must parse the detail page to find the actual image URL.
+    /// </summary>
+    public static string ExtractFullSizeScreenshotUrl(string detailPageHtml)
+    {
+        if(string.IsNullOrWhiteSpace(detailPageHtml)) return null;
+
+        var doc = new HtmlAgilityPack.HtmlDocument();
+        doc.LoadHtml(detailPageHtml);
+
+        // Primary: look for the full-size <img> inside #gallery-image
+        var galleryImg = doc.DocumentNode.SelectSingleNode("//div[@id='gallery-image']//img[contains(@class, 'img-fluid')]");
+
+        if(galleryImg is not null)
+        {
+            string src = galleryImg.GetAttributeValue("src", null);
+
+            if(!string.IsNullOrWhiteSpace(src))
+                return src;
+        }
+
+        // Fallback 1: any <img> inside #gallery-image figure
+        galleryImg = doc.DocumentNode.SelectSingleNode("//div[@id='gallery-image']//figure//img[@src]");
+
+        if(galleryImg is not null)
+        {
+            string src = galleryImg.GetAttributeValue("src", null);
+
+            if(!string.IsNullOrWhiteSpace(src) && src.Contains("cdn.mobygames.com"))
+                return src;
+        }
+
+        // Fallback 2: og:image meta tag (always present in <head>, unaffected by mature content gates)
+        var ogImage = doc.DocumentNode.SelectSingleNode("//meta[@property='og:image']");
+
+        if(ogImage is not null)
+        {
+            string content = ogImage.GetAttributeValue("content", null);
+
+            if(!string.IsNullOrWhiteSpace(content) && content.Contains("cdn.mobygames.com"))
+                return content;
+        }
+
+        // Fallback 3: MobyPlus original download link
+        var downloadLink = doc.DocumentNode.SelectSingleNode("//a[@download and contains(@href, 'cdn.mobygames.com')]");
+
+        if(downloadLink is not null)
+        {
+            string href = downloadLink.GetAttributeValue("href", null);
+
+            if(!string.IsNullOrWhiteSpace(href))
+                return href;
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    ///     Extract the MobyGames numeric game ID from raw HTML already stored in the source database.
+    ///     Tries multiple extraction points in order of reliability, supporting both
+    ///     the old (pre-2024) and new MobyGames site HTML formats.
+    /// </summary>
+    public static int? ExtractNumericGameIdFromHtml(string html)
+    {
+        if(string.IsNullOrWhiteSpace(html)) return null;
+
+        // 1. New site: gtag content_id: "1068"
+        var contentIdMatch = ContentIdRegex().Match(html);
+
+        if(contentIdMatch.Success && int.TryParse(contentIdMatch.Groups[1].Value, out int id1))
+            return id1;
+
+        // 2. New site: :game-id="1068" (Vue component attribute)
+        var gameIdAttrMatch = GameIdAttrRegex().Match(html);
+
+        if(gameIdAttrMatch.Success && int.TryParse(gameIdAttrMatch.Groups[1].Value, out int id2))
+            return id2;
+
+        // 3. Both sites: /contribute/game/1068/ or /contribute/game-shots/1068/
+        var contributeMatch = ContributeGameIdRegex().Match(html);
+
+        if(contributeMatch.Success && int.TryParse(contributeMatch.Groups[1].Value, out int id3))
+            return id3;
+
+        // 4. Old site: /game/user-rating/post/1068/ or similar action URLs with numeric IDs
+        var ratingActionMatch = RatingActionRegex().Match(html);
+
+        if(ratingActionMatch.Success && int.TryParse(ratingActionMatch.Groups[1].Value, out int id4))
+            return id4;
+
+        // 5. Both sites: "Moby ID: 1068" or "Moby ID 1068" (with or without colon)
+        var mobyIdMatch = MobyIdTextRegex().Match(html);
+
+        if(mobyIdMatch.Success && int.TryParse(mobyIdMatch.Groups[1].Value, out int id5))
+            return id5;
+
+        // 6. Old site: game_id or gameId in embedded JavaScript — e.g. game_id: 1068, "game_id": "1068"
+        var jsGameIdMatch = JsGameIdRegex().Match(html);
+
+        if(jsGameIdMatch.Success && int.TryParse(jsGameIdMatch.Groups[1].Value, out int id6))
+            return id6;
+
+        return null;
+    }
+
+    [System.Text.RegularExpressions.GeneratedRegex(@"content_id:\s*""(\d+)""", System.Text.RegularExpressions.RegexOptions.Compiled)]
+    private static partial System.Text.RegularExpressions.Regex ContentIdRegex();
+
+    [System.Text.RegularExpressions.GeneratedRegex(@":game-id=""(\d+)""", System.Text.RegularExpressions.RegexOptions.Compiled)]
+    private static partial System.Text.RegularExpressions.Regex GameIdAttrRegex();
+
+    [System.Text.RegularExpressions.GeneratedRegex(@"/contribute/game[^""']*/(\d+)/", System.Text.RegularExpressions.RegexOptions.Compiled)]
+    private static partial System.Text.RegularExpressions.Regex ContributeGameIdRegex();
+
+    [System.Text.RegularExpressions.GeneratedRegex(@"/game/(?:user-rating/post|rate)/(\d+)", System.Text.RegularExpressions.RegexOptions.Compiled)]
+    private static partial System.Text.RegularExpressions.Regex RatingActionRegex();
+
+    [System.Text.RegularExpressions.GeneratedRegex(@"Moby\s+ID[:\s]+(\d+)", System.Text.RegularExpressions.RegexOptions.Compiled)]
+    private static partial System.Text.RegularExpressions.Regex MobyIdTextRegex();
+
+    [System.Text.RegularExpressions.GeneratedRegex(@"[""']?game_?[Ii]d[""']?\s*[:=]\s*[""']?(\d+)", System.Text.RegularExpressions.RegexOptions.Compiled)]
+    private static partial System.Text.RegularExpressions.Regex JsGameIdRegex();
+
+    /// <summary>
     ///     Resolve a MobyGames game slug to numeric ID by following the redirect.
     ///     Returns null if the slug cannot be resolved.
     /// </summary>
     public async Task<int?> ResolveNumericGameIdAsync(string slug)
+    {
+        // Try original slug first
+        int? result = await TryResolveSlugAsync(slug);
+
+        // If it failed and slug has a leading '-', retry without it
+        if(result is null && slug.StartsWith('-'))
+        {
+            string trimmed = slug.TrimStart('-');
+
+            if(!string.IsNullOrEmpty(trimmed))
+                result = await TryResolveSlugAsync(trimmed);
+        }
+
+        return result;
+    }
+
+    async Task<int?> TryResolveSlugAsync(string slug)
     {
         if(_delayMs > 0)
             await Task.Delay(_delayMs);
