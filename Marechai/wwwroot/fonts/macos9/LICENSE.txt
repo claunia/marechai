@@ -1,0 +1,21 @@
+Mac OS 9 theme — bundled font
+==============================
+
+File: chikarego.woff2 (converted from ChiKareGo.ttf via woff2_compress)
+Source font: "ChiKareGo" by Joachim Müller (Tepid Monkey Fonts).
+
+Licence
+-------
+
+ChiKareGo is distributed as freeware by the author. The original
+release ships without an explicit licence file but has historically
+been made freely available for personal and commercial use through
+DaFont and similar repositories.
+
+If you redistribute this font as part of a fork of Marechai, please
+keep this attribution file alongside the .woff2 asset.
+
+Upstream
+--------
+  https://www.dafont.com/chikarego.font  (mirror; verify upstream)
+  Author: Joachim Müller / Tepid Monkey Fonts

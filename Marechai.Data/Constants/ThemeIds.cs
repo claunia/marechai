@@ -48,7 +48,10 @@ public static class ThemeIds
     /// <summary>Borland-era DOS text-mode UI (blue desktop / gray windows / cyan accents) with the IBM VGA 9x16 font.</summary>
     public const string Dos = "dos";
 
+    /// <summary>Mac OS 9 Platinum theme (lavender desktop / pinstriped windows / royal-blue accents) with the Virtue Charcoal-style display font.</summary>
+    public const string MacOs9 = "macos9";
+
     /// <summary>All recognised theme slugs. Used by the controller to validate incoming theme ids.</summary>
     public static readonly IReadOnlySet<string> All =
-        new HashSet<string>(StringComparer.OrdinalIgnoreCase) { DefaultDark, DefaultLight, AmigaOs, Dos };
+        new HashSet<string>(StringComparer.OrdinalIgnoreCase) { DefaultDark, DefaultLight, AmigaOs, Dos, MacOs9 };
 }

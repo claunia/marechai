@@ -1,0 +1,14 @@
+/* Mac OS 9 (Platinum) theme web font.
+ *
+ * ChiKareGo — Charcoal-style bitmap font recreation by Joachim Müller (Tepid Monkey Fonts).
+ * Distributed as freeware. Converted from ChiKareGo.ttf to WOFF2 via woff2_compress.
+ * See /fonts/macos9/LICENSE.txt for attribution.
+ */
+
+@font-face {
+    font-family: 'ChiKareGo';
+    src: url('/fonts/macos9/chikarego.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}

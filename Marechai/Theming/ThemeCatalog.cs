@@ -51,6 +51,10 @@ public static class ThemeCatalog
 
     static readonly IReadOnlyList<string> _dosFonts = ["/css/themes/dos.css"];
 
+    static readonly string[] _chiKareGoStack = ["ChiKareGo", "Charcoal", "Geneva", "Helvetica Neue", "Arial", "sans-serif"];
+
+    static readonly IReadOnlyList<string> _macOs9Fonts = ["/css/themes/macos9.css"];
+
     /// <summary>The historical Marechai dark purple palette. Used as fallback for anonymous + null-preference users.</summary>
     public static readonly ThemeDefinition DefaultDark = new(ThemeIds.DefaultDark,
                                                              "Default (Dark)",
@@ -416,8 +420,165 @@ public static class ThemeCatalog
                                                      },
                                                      _dosFonts);
 
+    /// <summary>
+    ///     Mac OS 9 — the Platinum theme: lavender purple-gray desktop, white pinstriped window chrome, royal-blue
+    ///     accent for default actions and selection, and the Virtue Charcoal-style display font for headings.
+    ///     Inspired by Mac OS 8.5 — 9.2.2 (1998 — 2001).
+    /// </summary>
+    public static readonly ThemeDefinition MacOs9 = new(ThemeIds.MacOs9,
+                                                        "Mac OS 9 (Platinum)",
+                                                        false,
+                                                        new MudTheme
+                                                        {
+                                                            // Mac OS 9 Platinum / Appearance Manager palette:
+                                                            //   Desktop = #9999BB  (the iconic lavender / cool purple-gray)
+                                                            //   Window  = #DDDDDD  (light gray pinstriped chrome)
+                                                            //   Surface = #FFFFFF  (dialog / sheet body)
+                                                            //   Body    = #000000  (text)
+                                                            //   Accent  = #3366CC  (royal blue — the Apple Highlight Color
+                                                            //                       default; used for default-button glow,
+                                                            //                       selection, focus ring)
+                                                            //   Hilite  = #B5CFEC  (selection background — pale variant
+                                                            //                       of the highlight colour)
+                                                            //
+                                                            // Mapping:
+                                                            //   AppBar     = WHITE  (the menu bar at the top of the screen)
+                                                            //   Drawer     = LAVENDER (the desktop)
+                                                            //   Surface    = WHITE  (cards / dialogs / Paper)
+                                                            //   Background = LAVENDER (page body — desktop showing through)
+                                                            //   Primary    = ROYAL BLUE (default-action / focused-control colour)
+                                                            //   Secondary  = LAVENDER-LIGHT (calmer accent that fits the era)
+                                                            //   Tertiary   = MID-GRAY (3D-bevel button gray for less-emphasised UI)
+                                                            PaletteLight = new PaletteLight
+                                                            {
+                                                                Primary                  = "#3366CC",
+                                                                PrimaryContrastText      = "#FFFFFF",
+                                                                Secondary                = "#9999BB",
+                                                                SecondaryContrastText    = "#FFFFFF",
+                                                                Tertiary                 = "#888888",
+                                                                TertiaryContrastText     = "#FFFFFF",
+                                                                AppbarBackground         = "#FFFFFF",
+                                                                AppbarText               = "#000000",
+                                                                DrawerBackground         = "#9999BB",
+                                                                DrawerText               = "#FFFFFF",
+                                                                DrawerIcon               = "#FFFFFF",
+                                                                Surface                  = "#FFFFFF",
+                                                                Background               = "#9999BB",
+                                                                BackgroundGray           = "#DDDDDD",
+                                                                TextPrimary              = "#000000",
+                                                                TextSecondary            = "#444466",
+                                                                TextDisabled             = "#888899",
+                                                                ActionDefault            = "#000000",
+                                                                ActionDisabled           = "#888899",
+                                                                ActionDisabledBackground = "#CCCCDD",
+                                                                LinesDefault             = "#888899",
+                                                                LinesInputs              = "#666677",
+                                                                TableLines               = "#CCCCDD",
+                                                                TableStriped             = "#EEEEF4",
+                                                                TableHover               = "#B5CFEC",
+                                                                Divider                  = "#888899",
+                                                                DividerLight             = "#CCCCDD",
+                                                                Info                     = "#3366CC",
+                                                                Success                  = "#339966",
+                                                                Warning                  = "#CC9933",
+                                                                Error                    = "#CC3333",
+                                                                Dark                     = "#000000",
+                                                                HoverOpacity             = 0.08
+                                                            },
+                                                            LayoutProperties = new LayoutProperties
+                                                            {
+                                                                DrawerWidthLeft     = "260px",
+                                                                DrawerMiniWidthLeft = "72px"
+                                                            },
+                                                            Typography = new Typography
+                                                            {
+                                                                // Body text uses Geneva/Helvetica fall-throughs since Virtue
+                                                                // is a display face (the Charcoal recreation is best at
+                                                                // larger sizes for headings / buttons / menu chrome).
+                                                                Default = new DefaultTypography
+                                                                {
+                                                                    FontFamily    = ["Geneva", "Helvetica Neue", "Arial", "sans-serif"],
+                                                                    FontSize      = "0.875rem",
+                                                                    FontWeight    = "400",
+                                                                    LineHeight    = "1.45",
+                                                                    LetterSpacing = "0"
+                                                                },
+                                                                H1 = new H1Typography
+                                                                {
+                                                                    FontFamily = _chiKareGoStack,
+                                                                    FontSize   = "2rem",
+                                                                    FontWeight = "400"
+                                                                },
+                                                                H2 = new H2Typography
+                                                                {
+                                                                    FontFamily = _chiKareGoStack,
+                                                                    FontSize   = "1.75rem",
+                                                                    FontWeight = "400"
+                                                                },
+                                                                H3 = new H3Typography
+                                                                {
+                                                                    FontFamily = _chiKareGoStack,
+                                                                    FontSize   = "1.5rem",
+                                                                    FontWeight = "400"
+                                                                },
+                                                                H4 = new H4Typography
+                                                                {
+                                                                    FontFamily = _chiKareGoStack,
+                                                                    FontSize   = "1.25rem",
+                                                                    FontWeight = "400"
+                                                                },
+                                                                H5 = new H5Typography
+                                                                {
+                                                                    FontFamily = _chiKareGoStack,
+                                                                    FontSize   = "1.125rem",
+                                                                    FontWeight = "400"
+                                                                },
+                                                                H6 = new H6Typography
+                                                                {
+                                                                    FontFamily = _chiKareGoStack,
+                                                                    FontSize   = "1rem",
+                                                                    FontWeight = "400"
+                                                                },
+                                                                Subtitle1 = new Subtitle1Typography
+                                                                {
+                                                                    FontFamily = _chiKareGoStack,
+                                                                    FontWeight = "400"
+                                                                },
+                                                                Subtitle2 = new Subtitle2Typography
+                                                                {
+                                                                    FontFamily = _chiKareGoStack,
+                                                                    FontWeight = "400"
+                                                                },
+                                                                Body1 = new Body1Typography
+                                                                {
+                                                                    FontFamily = ["Geneva", "Helvetica Neue", "Arial", "sans-serif"]
+                                                                },
+                                                                Body2 = new Body2Typography
+                                                                {
+                                                                    FontFamily = ["Geneva", "Helvetica Neue", "Arial", "sans-serif"]
+                                                                },
+                                                                Button = new ButtonTypography
+                                                                {
+                                                                    FontFamily    = _chiKareGoStack,
+                                                                    FontWeight    = "400",
+                                                                    TextTransform = "none"
+                                                                },
+                                                                Caption = new CaptionTypography
+                                                                {
+                                                                    FontFamily = ["Geneva", "Helvetica Neue", "Arial", "sans-serif"]
+                                                                },
+                                                                Overline = new OverlineTypography
+                                                                {
+                                                                    FontFamily    = _chiKareGoStack,
+                                                                    FontWeight    = "400",
+                                                                    TextTransform = "uppercase"
+                                                                }
+                                                            }
+                                                        },
+                                                        _macOs9Fonts);
+
     /// <summary>All themes available to users in the Appearance picker. Order matters — it's the display order.</summary>
-    public static readonly IReadOnlyList<ThemeDefinition> All = new[] { DefaultDark, DefaultLight, AmigaOs, Dos };
+    public static readonly IReadOnlyList<ThemeDefinition> All = new[] { DefaultDark, DefaultLight, AmigaOs, Dos, MacOs9 };
 
     /// <summary>The default theme used when the user has no preference set.</summary>
     public static ThemeDefinition Default => DefaultDark;
