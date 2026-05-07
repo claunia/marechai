@@ -47,6 +47,10 @@ public static class ThemeCatalog
 
     static readonly IReadOnlyList<string> _amigaFonts = ["/css/themes/amigaos.css"];
 
+    static readonly string[] _ibmVgaStack = ["IBM VGA", "Courier New", "Consolas", "monospace"];
+
+    static readonly IReadOnlyList<string> _dosFonts = ["/css/themes/dos.css"];
+
     /// <summary>The historical Marechai dark purple palette. Used as fallback for anonymous + null-preference users.</summary>
     public static readonly ThemeDefinition DefaultDark = new(ThemeIds.DefaultDark,
                                                              "Default (Dark)",
@@ -254,8 +258,166 @@ public static class ThemeCatalog
                                                          },
                                                          _amigaFonts);
 
+    /// <summary>
+    ///     DOS — the iconic Borland Turbo Vision text-mode UI: bright CGA blue desktop, light gray pop-up dialogs,
+    ///     signature green action buttons, cyan input fields, red menu hotkeys, and the IBM VGA 9x16 raster font.
+    ///     Inspired by Turbo Pascal 7, Turbo C++ 3, and the original Turbo Vision 2.0 (1994).
+    /// </summary>
+    public static readonly ThemeDefinition Dos = new(ThemeIds.Dos,
+                                                     "DOS (Turbo Vision)",
+                                                     true,
+                                                     new MudTheme
+                                                     {
+                                                         PaletteDark = new PaletteDark
+                                                         {
+                                                             // Standard CGA / VGA text-mode 16-colour palette:
+                                                             //   Blue    = #0000AA  (desktop background)
+                                                             //   Gray    = #AAAAAA  (dialog & menu-bar surface)
+                                                             //   Green   = #00AA00  (Turbo Vision OK / Save buttons only)
+                                                             //   Cyan    = #00AAAA  (selected items, input fields, accents — the dominant accent)
+                                                             //   Red     = #AA0000  (menu hotkeys, errors)
+                                                             //   Yellow  = #AAAA00  (warnings — kept dimmer than CGA bright)
+                                                             //   Black   = #000000  (text on gray)
+                                                             //   White   = #FFFFFF  (text on blue / on cyan)
+                                                             //
+                                                             // Mapping rationale:
+                                                             //   AppBar    = GRAY  (the top menu bar)
+                                                             //   Drawer    = BLUE  (the desktop / nav surface)
+                                                             //   Surface   = GRAY  (pop-up dialogs / cards)
+                                                             //   Background= BLUE  (the desktop body)
+                                                             //   Primary   = CYAN  (input fields, selection, focused state — by far the
+                                                             //                      most-used interactive colour in Turbo Vision; mapping
+                                                             //                      this slot to green made tabs/switches/progress bars
+                                                             //                      look out of place since green was only ever on
+                                                             //                      OK / Cancel buttons in the actual UI)
+                                                             //   Secondary = YELLOW(highlighted menu items / submenu selection)
+                                                             //   Tertiary  = RED   (hotkeys / shortcut letters)
+                                                             //   Success   = GREEN (preserves the iconic "OK button is green" only
+                                                             //                      where explicit Color.Success is requested)
+                                                             Primary                  = "#00AAAA",
+                                                             PrimaryContrastText      = "#000000",
+                                                             Secondary                = "#FFFF55",
+                                                             SecondaryContrastText    = "#000000",
+                                                             Tertiary                 = "#AA0000",
+                                                             TertiaryContrastText     = "#FFFFFF",
+                                                             AppbarBackground         = "#AAAAAA",
+                                                             AppbarText               = "#000000",
+                                                             DrawerBackground         = "#0000AA",
+                                                             DrawerText               = "#FFFFFF",
+                                                             DrawerIcon               = "#FFFFFF",
+                                                             Surface                  = "#AAAAAA",
+                                                             Background               = "#0000AA",
+                                                             BackgroundGray           = "#000088",
+                                                             TextPrimary              = "#000000",
+                                                             TextSecondary            = "#0000AA",
+                                                             TextDisabled             = "#555555",
+                                                             ActionDefault            = "#000000",
+                                                             ActionDisabled           = "#555555",
+                                                             ActionDisabledBackground = "#888888",
+                                                             LinesDefault             = "#000000",
+                                                             LinesInputs              = "#000000",
+                                                             TableLines               = "#555555",
+                                                             TableStriped             = "#888888",
+                                                             TableHover               = "#00AAAA",
+                                                             Divider                  = "#555555",
+                                                             DividerLight             = "#888888",
+                                                             Info                     = "#00AAAA",
+                                                             Success                  = "#00AA00",
+                                                             Warning                  = "#AA5500",
+                                                             Error                    = "#AA0000",
+                                                             Dark                     = "#000000"
+                                                         },
+                                                         LayoutProperties = new LayoutProperties
+                                                         {
+                                                             DrawerWidthLeft     = "260px",
+                                                             DrawerMiniWidthLeft = "72px"
+                                                         },
+                                                         Typography = new Typography
+                                                         {
+                                                             Default = new DefaultTypography
+                                                             {
+                                                                 FontFamily    = _ibmVgaStack,
+                                                                 FontSize      = "0.875rem",
+                                                                 FontWeight    = "400",
+                                                                 LineHeight    = "1.4",
+                                                                 LetterSpacing = "0"
+                                                             },
+                                                             H1 = new H1Typography
+                                                             {
+                                                                 FontFamily = _ibmVgaStack,
+                                                                 FontSize   = "2rem",
+                                                                 FontWeight = "700"
+                                                             },
+                                                             H2 = new H2Typography
+                                                             {
+                                                                 FontFamily = _ibmVgaStack,
+                                                                 FontSize   = "1.75rem",
+                                                                 FontWeight = "700"
+                                                             },
+                                                             H3 = new H3Typography
+                                                             {
+                                                                 FontFamily = _ibmVgaStack,
+                                                                 FontSize   = "1.5rem",
+                                                                 FontWeight = "700"
+                                                             },
+                                                             H4 = new H4Typography
+                                                             {
+                                                                 FontFamily = _ibmVgaStack,
+                                                                 FontSize   = "1.25rem",
+                                                                 FontWeight = "700"
+                                                             },
+                                                             H5 = new H5Typography
+                                                             {
+                                                                 FontFamily = _ibmVgaStack,
+                                                                 FontSize   = "1.125rem",
+                                                                 FontWeight = "700"
+                                                             },
+                                                             H6 = new H6Typography
+                                                             {
+                                                                 FontFamily = _ibmVgaStack,
+                                                                 FontSize   = "1rem",
+                                                                 FontWeight = "700"
+                                                             },
+                                                             Subtitle1 = new Subtitle1Typography
+                                                             {
+                                                                 FontFamily = _ibmVgaStack,
+                                                                 FontWeight = "700"
+                                                             },
+                                                             Subtitle2 = new Subtitle2Typography
+                                                             {
+                                                                 FontFamily = _ibmVgaStack,
+                                                                 FontWeight = "700"
+                                                             },
+                                                             Body1 = new Body1Typography
+                                                             {
+                                                                 FontFamily = _ibmVgaStack
+                                                             },
+                                                             Body2 = new Body2Typography
+                                                             {
+                                                                 FontFamily = _ibmVgaStack
+                                                             },
+                                                             Button = new ButtonTypography
+                                                             {
+                                                                 FontFamily    = _ibmVgaStack,
+                                                                 FontWeight    = "700",
+                                                                 TextTransform = "none"
+                                                             },
+                                                             Caption = new CaptionTypography
+                                                             {
+                                                                 FontFamily = _ibmVgaStack
+                                                             },
+                                                             Overline = new OverlineTypography
+                                                             {
+                                                                 FontFamily    = _ibmVgaStack,
+                                                                 FontWeight    = "700",
+                                                                 TextTransform = "uppercase"
+                                                             }
+                                                         }
+                                                     },
+                                                     _dosFonts);
+
     /// <summary>All themes available to users in the Appearance picker. Order matters — it's the display order.</summary>
-    public static readonly IReadOnlyList<ThemeDefinition> All = new[] { DefaultDark, DefaultLight, AmigaOs };
+    public static readonly IReadOnlyList<ThemeDefinition> All = new[] { DefaultDark, DefaultLight, AmigaOs, Dos };
 
     /// <summary>The default theme used when the user has no preference set.</summary>
     public static ThemeDefinition Default => DefaultDark;
