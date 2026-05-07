@@ -1100,4 +1100,43 @@
     <data name="Media tab" xml:space="preserve">
         <value>Media</value>
     </data>
+    <data name="Promo Art" xml:space="preserve">
+        <value>Promo Art</value>
+    </data>
+    <data name="Promo Art Management" xml:space="preserve">
+        <value>Promo Art Management</value>
+    </data>
+    <data name="Manage software promo art." xml:space="preserve">
+        <value>Manage software promo art.</value>
+    </data>
+    <data name="Upload Promo Art" xml:space="preserve">
+        <value>Upload Promo Art</value>
+    </data>
+    <data name="Group" xml:space="preserve">
+        <value>Group</value>
+    </data>
+    <data name="Group is required." xml:space="preserve">
+        <value>Group is required.</value>
+    </data>
+    <data name="Select an existing group or type a new name." xml:space="preserve">
+        <value>Select an existing group or type a new name.</value>
+    </data>
+    <data name="Promo art uploaded successfully." xml:space="preserve">
+        <value>Promo art uploaded successfully.</value>
+    </data>
+    <data name="Failed to upload promo art." xml:space="preserve">
+        <value>Failed to upload promo art.</value>
+    </data>
+    <data name="No promo art found for this software." xml:space="preserve">
+        <value>No promo art found for this software.</value>
+    </data>
+    <data name="Delete Promo Art" xml:space="preserve">
+        <value>Delete Promo Art</value>
+    </data>
+    <data name="Are you sure you want to delete this promo art? This action cannot be undone." xml:space="preserve">
+        <value>Are you sure you want to delete this promo art? This action cannot be undone.</value>
+    </data>
+    <data name="Promo art deleted successfully." xml:space="preserve">
+        <value>Promo art deleted successfully.</value>
+    </data>
 </root>

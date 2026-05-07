@@ -1193,4 +1193,56 @@
     <data name="Reviews" xml:space="preserve">
         <value>Rezensionen</value>
     </data>
+    <data name="Promo Art" xml:space="preserve">
+        <value>Werbegrafik</value>
+        <comment>Promo Art</comment>
+    </data>
+    <data name="Promo Art Management" xml:space="preserve">
+        <value>Werbegrafik-Verwaltung</value>
+        <comment>Promo Art Management</comment>
+    </data>
+    <data name="Manage software promo art." xml:space="preserve">
+        <value>Software-Werbegrafik verwalten.</value>
+        <comment>Manage software promo art.</comment>
+    </data>
+    <data name="Upload Promo Art" xml:space="preserve">
+        <value>Werbegrafik hochladen</value>
+        <comment>Upload Promo Art</comment>
+    </data>
+    <data name="Group" xml:space="preserve">
+        <value>Gruppe</value>
+        <comment>Group</comment>
+    </data>
+    <data name="Group is required." xml:space="preserve">
+        <value>Gruppe ist erforderlich.</value>
+        <comment>Group is required.</comment>
+    </data>
+    <data name="Select an existing group or type a new name." xml:space="preserve">
+        <value>Wählen Sie eine bestehende Gruppe oder geben Sie einen neuen Namen ein.</value>
+        <comment>Select an existing group or type a new name.</comment>
+    </data>
+    <data name="Promo art uploaded successfully." xml:space="preserve">
+        <value>Werbegrafik erfolgreich hochgeladen.</value>
+        <comment>Promo art uploaded successfully.</comment>
+    </data>
+    <data name="Failed to upload promo art." xml:space="preserve">
+        <value>Hochladen der Werbegrafik fehlgeschlagen.</value>
+        <comment>Failed to upload promo art.</comment>
+    </data>
+    <data name="No promo art found for this software." xml:space="preserve">
+        <value>Keine Werbegrafik für diese Software gefunden.</value>
+        <comment>No promo art found for this software.</comment>
+    </data>
+    <data name="Delete Promo Art" xml:space="preserve">
+        <value>Werbegrafik löschen</value>
+        <comment>Delete Promo Art</comment>
+    </data>
+    <data name="Are you sure you want to delete this promo art? This action cannot be undone." xml:space="preserve">
+        <value>Sind Sie sicher, dass Sie diese Werbegrafik löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.</value>
+        <comment>Are you sure you want to delete this promo art? This action cannot be undone.</comment>
+    </data>
+    <data name="Promo art deleted successfully." xml:space="preserve">
+        <value>Werbegrafik erfolgreich gelöscht.</value>
+        <comment>Promo art deleted successfully.</comment>
+    </data>
 </root>

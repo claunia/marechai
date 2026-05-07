@@ -1,0 +1,190 @@
+@page "/admin/software/{SoftwareId:int}/promo-art"
+@attribute [Authorize(Roles = "Admin, UberAdmin")]
+@using System.Linq
+@using Marechai.ApiClient.Models
+@using Marechai.Services
+@inject SoftwareService SoftwareService
+@inject IStringLocalizer<SoftwareService> L
+@inject IDialogService DialogService
+@inject NavigationManager NavigationManager
+@inject ApiAssetUrlProvider AssetUrls
+
+<MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" OnClick="@(() => NavigationManager.NavigateTo("/admin/software"))" Class="mb-4">@L["Back to Software"]</MudButton>
+
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #6a1b9a 0%, #9c27b0 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Filled.PhotoLibrary" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Style="color: white;">@L["Promo Art Management"]</MudText>
+    </MudStack>
+    <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);" Class="mt-2">@(_softwareName ?? L["Manage software promo art."])</MudText>
+</MudPaper>
+
+@if(!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+}
+
+@if(!string.IsNullOrWhiteSpace(_successMessage))
+{
+    <MudAlert Severity="Severity.Success" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _successMessage = null">@_successMessage</MudAlert>
+}
+
+@if(_isLoading)
+{
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+    </div>
+    return;
+}
+
+@* ── Upload Section ── *@
+<MudPaper Elevation="2" Class="pa-4 mb-6 rounded-lg">
+    <MudText Typo="Typo.h6" Class="mb-3">@L["Upload Promo Art"]</MudText>
+    <MudStack Spacing="3">
+        <MudAutocomplete T="string" @bind-Value="_groupName"
+                         Label="@L["Group"]"
+                         Variant="Variant.Outlined"
+                         SearchFunc="SearchGroups"
+                         CoerceText="true"
+                         CoerceValue="true"
+                         ResetValueOnEmptyText="false"
+                         Required="true"
+                         RequiredError="@L["Group is required."]"
+                         HelperText="@L["Select an existing group or type a new name."]"/>
+
+        <MudTextField @bind-Value="_caption"
+                      Label="@L["Caption"]"
+                      Variant="Variant.Outlined"/>
+
+        <MudFileUpload T="IBrowserFile" Accept=".jpg,.jpeg,.png,.webp,.tiff,.tif,.bmp"
+                       FilesChanged="OnFileSelected" MaximumFileCount="1">
+            <CustomContent>
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.AttachFile"
+                           OnClick="@context.OpenFilePickerAsync">
+                    @if(_selectedFile is not null)
+                    {
+                        @_selectedFile.Name
+                    }
+                    else
+                    {
+                        @L["Select File"]
+                    }
+                </MudButton>
+            </CustomContent>
+        </MudFileUpload>
+
+        <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                   OnClick="UploadPromoArt"
+                   Disabled="_isUploading || _selectedFile is null || string.IsNullOrWhiteSpace(_groupName)">
+            @if(_isUploading)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
+                @L["Uploading..."]
+            }
+            else
+            {
+                @L["Upload"]
+            }
+        </MudButton>
+    </MudStack>
+</MudPaper>
+
+@* ── Promo Art Grid ── *@
+<MudPaper Elevation="2" Class="rounded-lg">
+    <MudToolBar Dense="true">
+        <MudText Typo="Typo.h6">@L["Promo Art"]</MudText>
+        @if(_promoArt is not null)
+        {
+            <MudChip T="string" Size="Size.Small" Color="Color.Secondary" Class="ml-2">@_promoArt.Count</MudChip>
+        }
+        <MudSpacer/>
+        <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadDataAsync"/>
+    </MudToolBar>
+
+    @if(_promoArt is null || _promoArt.Count == 0)
+    {
+        <MudAlert Severity="Severity.Info" Class="ma-4">@L["No promo art found for this software."]</MudAlert>
+    }
+    else
+    {
+        <MudGrid Class="pa-4">
+            @foreach(SoftwarePromoArtDto promo in _promoArt)
+            {
+                <MudItem xs="12" sm="6" md="4" lg="3">
+                    <MudCard Elevation="1" Class="rounded-lg">
+                        <MudCardContent Class="pa-2 d-flex justify-center" Style="cursor: pointer;" @onclick="() => OpenFullscreen(promo)">
+                            <picture>
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/thumbs/jxl/hd/@(promo.Id).jxl, @(AssetUrls.BaseUrl)/assets/photos/software-promo-art/thumbs/jxl/1440p/@(promo.Id).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/software-promo-art/thumbs/jxl/4k/@(promo.Id).jxl 3x" type="image/jxl">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/thumbs/avif/hd/@(promo.Id).avif, @(AssetUrls.BaseUrl)/assets/photos/software-promo-art/thumbs/avif/1440p/@(promo.Id).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/software-promo-art/thumbs/avif/4k/@(promo.Id).avif 3x" type="image/avif">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/thumbs/heif/hd/@(promo.Id).heic, @(AssetUrls.BaseUrl)/assets/photos/software-promo-art/thumbs/heif/1440p/@(promo.Id).heic 2x, @(AssetUrls.BaseUrl)/assets/photos/software-promo-art/thumbs/heif/4k/@(promo.Id).heic 3x" type="image/heic">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/thumbs/webp/hd/@(promo.Id).webp, @(AssetUrls.BaseUrl)/assets/photos/software-promo-art/thumbs/webp/1440p/@(promo.Id).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/software-promo-art/thumbs/webp/4k/@(promo.Id).webp 3x" type="image/webp">
+                                <img alt="@(promo.Caption ?? promo.GroupName)"
+                                     src="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/thumbs/jpeg/hd/@(promo.Id).jpg"
+                                     srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/thumbs/jpeg/hd/@(promo.Id).jpg, @(AssetUrls.BaseUrl)/assets/photos/software-promo-art/thumbs/jpeg/1440p/@(promo.Id).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/software-promo-art/thumbs/jpeg/4k/@(promo.Id).jpg 3x"
+                                     style="max-height: 256px; max-width: 100%; border-radius: 8px;" width="auto" height="auto"/>
+                            </picture>
+                        </MudCardContent>
+                        <MudCardContent Class="pa-2">
+                            @if(!string.IsNullOrWhiteSpace(promo.GroupName))
+                            {
+                                <MudText Typo="Typo.body2" Class="text-truncate">
+                                    <MudIcon Icon="@Icons.Material.Filled.Label" Size="Size.Small" Class="mr-1"/>
+                                    @promo.GroupName
+                                </MudText>
+                            }
+
+                            <MudAutocomplete T="string"
+                                             Value="@promo.GroupName"
+                                             ValueChanged="@(g => OnGroupChanged(promo, g))"
+                                             Label="@L["Group"]" Variant="Variant.Outlined" Dense="true"
+                                             SearchFunc="SearchGroups"
+                                             CoerceText="true"
+                                             CoerceValue="true"
+                                             ResetValueOnEmptyText="false"
+                                             Class="mt-2"/>
+
+                            <MudTextField T="string"
+                                          Value="@promo.Caption"
+                                          ValueChanged="@(c => OnCaptionChanged(promo, c))"
+                                          Label="@L["Caption"]" Variant="Variant.Outlined"
+                                          DebounceInterval="500"
+                                          Class="mt-2"/>
+                        </MudCardContent>
+                        <MudCardActions>
+                            <MudButton Variant="Variant.Text" Color="Color.Error" Size="Size.Small"
+                                       StartIcon="@Icons.Material.Filled.Delete"
+                                       OnClick="() => ConfirmDeletePromoArt(promo)">@L["Delete"]</MudButton>
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
+            }
+        </MudGrid>
+    }
+</MudPaper>
+
+@if(_fullscreenItem is not null)
+{
+    var item = _fullscreenItem;
+    <MudOverlay Visible="true" DarkBackground="true" AutoClose="false" OnClick="() => _fullscreenItem = null" ZIndex="9999">
+        <MudStack AlignItems="AlignItems.Center" Spacing="2" Style="max-width: 95vw; max-height: 95vh;">
+            <picture>
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/jxl/4k/@(item.Id).jxl" type="image/jxl">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/avif/4k/@(item.Id).avif" type="image/avif">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/heif/4k/@(item.Id).heic" type="image/heic">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/webp/4k/@(item.Id).webp" type="image/webp">
+                <img alt="@(item.Caption ?? item.GroupName)"
+                     src="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/jpeg/4k/@(item.Id).jpg"
+                     style="max-width: 95vw; max-height: 80vh; border-radius: 8px;"/>
+            </picture>
+            @if(!string.IsNullOrWhiteSpace(item.GroupName))
+            {
+                <MudText Typo="Typo.h6" Style="color: white;">@item.GroupName</MudText>
+            }
+            @if(!string.IsNullOrWhiteSpace(item.Caption))
+            {
+                <MudText Typo="Typo.body1" Style="color: white;">@item.Caption</MudText>
+            }
+        </MudStack>
+    </MudOverlay>
+}
