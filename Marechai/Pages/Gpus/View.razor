@@ -184,6 +184,47 @@
 
 <PhotoLightbox @ref="_lightbox" BaseUrl="@AssetUrls.BaseUrl" Category="gpus"/>
 
+@* ── Videos Card ── *@
+@if(_videos is { Count: > 0 })
+{
+    <MudCard Elevation="2" Class="mb-4 rounded-lg">
+        <MudCardContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+                <MudIcon Icon="@Icons.Material.Filled.VideoLibrary" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Videos"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="Color.Secondary">@_videos.Count</MudChip>
+            </MudStack>
+            <MudGrid Spacing="3">
+                @foreach(GpuVideoDto video in _videos)
+                {
+                    <MudItem xs="12" sm="6">
+                        <MudCard Elevation="1" Class="rounded-lg">
+                            @if(string.Equals(video.Provider, "YouTube", StringComparison.OrdinalIgnoreCase))
+                            {
+                                <div style="position: relative; width: 100%; padding-bottom: 56.25%; border-radius: 8px 8px 0 0; overflow: hidden;">
+                                    <iframe src="@($"https://www.youtube-nocookie.com/embed/{video.VideoId}")"
+                                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"
+                                            title="@(video.Title ?? "Video")"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowfullscreen
+                                            loading="lazy"
+                                            referrerpolicy="no-referrer-when-downgrade"></iframe>
+                                </div>
+                            }
+                            @if(!string.IsNullOrWhiteSpace(video.Title))
+                            {
+                                <MudCardContent>
+                                    <MudText Typo="Typo.body2">@video.Title</MudText>
+                                </MudCardContent>
+                            }
+                        </MudCard>
+                    </MudItem>
+                }
+            </MudGrid>
+        </MudCardContent>
+    </MudCard>
+}
+
 @* ── Resolutions Card ── *@
 @if(_resolutions.Count > 0)
 {

@@ -47,6 +47,7 @@ public partial class View
     bool                _loaded;
     List<Guid>          _photos      = [];
     List<ResolutionDto> _resolutions = [];
+    List<GpuVideoDto>   _videos      = [];
 
     [Parameter]
     public int Id { get; set; }
@@ -113,6 +114,8 @@ public partial class View
         _description = await Service.GetDescriptionTextAsync(Id);
 
         _photos = await GpuPhotosService.GetGuidsByGpuAsync(Id);
+
+        _videos = await Service.GetVideosByGpuAsync(Id);
 
         _loaded = true;
         StateHasChanged();

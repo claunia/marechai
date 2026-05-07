@@ -41,6 +41,7 @@ public class Gpu : BaseModel<int>
         ResolutionsByGpu               = new HashSet<ResolutionsByGpu>();
         MinimumForSoftwareReleases     = new HashSet<MinimumGpuBySoftwareRelease>();
         RecommendedForSoftwareReleases = new HashSet<RecommendedGpuBySoftwareRelease>();
+        Videos                         = new HashSet<GpuVideo>();
     }
 
     [Required]
@@ -73,4 +74,5 @@ public class Gpu : BaseModel<int>
     public virtual ICollection<ResolutionsByGpu>                ResolutionsByGpu               { get; set; }
     public virtual ICollection<MinimumGpuBySoftwareRelease>     MinimumForSoftwareReleases     { get; set; }
     public virtual ICollection<RecommendedGpuBySoftwareRelease> RecommendedForSoftwareReleases { get; set; }
+    public virtual ICollection<GpuVideo>                        Videos                         { get; set; }
 }

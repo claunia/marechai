@@ -283,4 +283,92 @@ public class GpusService(Marechai.ApiClient.Client client)
             return (false, ex.Message);
         }
     }
+
+    // ── Videos ──
+
+    static string ExtractErrorMessage(ApiException ex)
+    {
+        if(ex is ProblemDetails pd) return pd.Detail ?? pd.Title ?? ex.Message;
+
+        return ex.Message;
+    }
+
+    public async Task<List<GpuVideoDto>> GetVideosByGpuAsync(int gpuId)
+    {
+        try
+        {
+            var result = await client.Gpus[gpuId].Videos.GetAsync();
+
+            return result ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(GpuVideoDto dto, string error)> CreateVideoAsync(int    gpuId, string provider,
+                                                                        string videoId,
+                                                                        string title)
+    {
+        try
+        {
+            var dto = await client.Gpus[gpuId]
+                                  .Videos.PostAsync(new CreateGpuVideoRequest
+                                                    {
+                                                        Provider = provider,
+                                                        VideoId  = videoId,
+                                                        Title    = title
+                                                    });
+
+            return (dto, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string error)> UpdateVideoTitleAsync(long id, string title)
+    {
+        try
+        {
+            await client.Gpus.Videos[id].PutAsync(new UpdateGpuVideoRequest
+                                                  {
+                                                      Title = title
+                                                  });
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string error)> DeleteVideoAsync(long id)
+    {
+        try
+        {
+            await client.Gpus.Videos[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
 }

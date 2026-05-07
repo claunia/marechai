@@ -84,6 +84,7 @@
                         <MudTooltip Text="@L["Edit GPU"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditGpuDialog(context.Item)"/></MudTooltip>
                         <MudTooltip Text="@L["Descriptions"]"><MudIconButton Icon="@Icons.Material.Filled.Description" Size="Size.Small" OnClick="() => OpenDescriptionsDialog(context.Item)"/></MudTooltip>
                         <MudTooltip Text="@L["Photos"]"><MudIconButton Icon="@Icons.Material.Filled.PhotoLibrary" Size="Size.Small" Href="@($"/admin/gpus/{context.Item.Id}/photos")"/></MudTooltip>
+                        <MudTooltip Text="@L["Videos"]"><MudIconButton Icon="@Icons.Material.Filled.VideoLibrary" Size="Size.Small" Href="@($"/admin/gpus/{context.Item.Id}/videos")"/></MudTooltip>
                         <MudTooltip Text="@L["Delete GPU"]"><MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDeleteGpu(context.Item)"/></MudTooltip>
 
                     </MudStack>

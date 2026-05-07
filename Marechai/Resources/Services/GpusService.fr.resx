@@ -422,4 +422,104 @@
         <value>Année uniquement</value>
         <comment>Year only</comment>
     </data>
+    <data name="Video Management" xml:space="preserve">
+        <value>Gestion des vidéos</value>
+        <comment>Video Management</comment>
+    </data>
+    <data name="Manage GPU videos." xml:space="preserve">
+        <value>Gérer les vidéos du GPU.</value>
+        <comment>Manage GPU videos.</comment>
+    </data>
+    <data name="Link Video" xml:space="preserve">
+        <value>Associer une vidéo</value>
+        <comment>Link Video</comment>
+    </data>
+    <data name="YouTube URL or Video ID" xml:space="preserve">
+        <value>URL YouTube ou identifiant de la vidéo</value>
+        <comment>YouTube URL or Video ID</comment>
+    </data>
+    <data name="Detected Video ID" xml:space="preserve">
+        <value>Identifiant de vidéo détecté</value>
+        <comment>Detected Video ID</comment>
+    </data>
+    <data name="Video Title" xml:space="preserve">
+        <value>Titre de la vidéo</value>
+        <comment>Video Title</comment>
+    </data>
+    <data name="Video ID" xml:space="preserve">
+        <value>Identifiant de la vidéo</value>
+        <comment>Video ID</comment>
+    </data>
+    <data name="Videos" xml:space="preserve">
+        <value>Vidéos</value>
+        <comment>Videos</comment>
+    </data>
+    <data name="No videos found for this GPU." xml:space="preserve">
+        <value>Aucune vidéo trouvée pour ce GPU.</value>
+        <comment>No videos found for this GPU.</comment>
+    </data>
+    <data name="Video linked successfully." xml:space="preserve">
+        <value>Vidéo associée avec succès.</value>
+        <comment>Video linked successfully.</comment>
+    </data>
+    <data name="Failed to link video." xml:space="preserve">
+        <value>Échec de l'association de la vidéo.</value>
+        <comment>Failed to link video.</comment>
+    </data>
+    <data name="Video updated successfully." xml:space="preserve">
+        <value>Vidéo mise à jour avec succès.</value>
+        <comment>Video updated successfully.</comment>
+    </data>
+    <data name="Failed to update video." xml:space="preserve">
+        <value>Échec de la mise à jour de la vidéo.</value>
+        <comment>Failed to update video.</comment>
+    </data>
+    <data name="Delete Video" xml:space="preserve">
+        <value>Supprimer la vidéo</value>
+        <comment>Delete Video</comment>
+    </data>
+    <data name="Are you sure you want to delete this video? This action cannot be undone." xml:space="preserve">
+        <value>Êtes-vous sûr de vouloir supprimer cette vidéo ? Cette action ne peut pas être annulée.</value>
+        <comment>Are you sure you want to delete this video? This action cannot be undone.</comment>
+    </data>
+    <data name="Video deleted successfully." xml:space="preserve">
+        <value>Vidéo supprimée avec succès.</value>
+        <comment>Video deleted successfully.</comment>
+    </data>
+    <data name="Failed to delete video." xml:space="preserve">
+        <value>Échec de la suppression de la vidéo.</value>
+        <comment>Failed to delete video.</comment>
+    </data>
+    <data name="Provider name (e.g. YouTube)." xml:space="preserve">
+        <value>Nom du fournisseur (par ex. YouTube).</value>
+        <comment>Provider name (e.g. YouTube).</comment>
+    </data>
+    <data name="Use this when the URL above cannot be parsed (non-YouTube providers)." xml:space="preserve">
+        <value>Utilisez ceci lorsque l'URL ci-dessus ne peut pas être analysée (fournisseurs autres que YouTube).</value>
+        <comment>Use this when the URL above cannot be parsed (non-YouTube providers).</comment>
+    </data>
+    <data name="Provider" xml:space="preserve">
+        <value>Fournisseur</value>
+        <comment>Provider</comment>
+    </data>
+    <data name="Advanced" xml:space="preserve">
+        <value>Avancé</value>
+        <comment>Advanced</comment>
+    </data>
+    <data name="Saving..." xml:space="preserve">
+        <value>Enregistrement…</value>
+        <comment>Saving...</comment>
+    </data>
+    <data name="Title" xml:space="preserve">
+        <value>Titre</value>
+        <comment>Title</comment>
+    </data>
+    <data name="Delete" xml:space="preserve">
+        <value>Supprimer</value>
+        <comment>Delete</comment>
+    </data>
+    <data name="Back to GPUs" xml:space="preserve">
+        <value>Retour aux GPU</value>
+        <comment>Back to GPUs</comment>
+    </data>
 </root>
