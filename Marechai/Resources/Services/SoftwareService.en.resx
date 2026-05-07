@@ -1093,4 +1093,11 @@
     <data name="Yes" xml:space="preserve">
         <value>Yes</value>
     </data>
+    <!-- Software View tabs -->
+    <data name="Overview" xml:space="preserve">
+        <value>Overview</value>
+    </data>
+    <data name="Media tab" xml:space="preserve">
+        <value>Media</value>
+    </data>
 </root>

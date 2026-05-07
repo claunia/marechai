@@ -1095,4 +1095,14 @@
     <data name="Metroidvania" xml:space="preserve">
         <value>Metroidvania</value>
     </data>
+    <!-- Software View tabs -->
+    <data name="Overview" xml:space="preserve">
+        <value>Panoramica</value>
+    </data>
+    <data name="Media tab" xml:space="preserve">
+        <value>Media</value>
+    </data>
+    <data name="Reviews" xml:space="preserve">
+        <value>Recensioni</value>
+    </data>
 </root>

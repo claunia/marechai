@@ -155,6 +155,62 @@
     </MudStack>
 </MudPaper>
 
+@* ── Tabbed content (sticky frosted-glass tab bar; icon+label desktop, icon-only mobile) ── *@
+<style>
+    /* Rounded="true" sets overflow:hidden on .mud-tabs which breaks position:sticky on the tabbar.
+       Force overflow:visible so the tabbar can stick to the page viewport. */
+    .sticky-tabs.mud-tabs,
+    .sticky-tabs .mud-tabs-panels {
+        overflow: visible !important;
+    }
+
+    .sticky-tabs .mud-tabs-tabbar {
+        position: sticky;
+        /* MudAppBar (mt-16 = 64px) is fixed at top:0; offset the tabbar so it docks just below. */
+        top: 64px;
+        z-index: 5;
+        /* Frosted-glass: white tint over a strong backdrop blur. Layered so it reads as
+           "icy translucent" in both light and dark themes. */
+        background-color: color-mix(in srgb, white 35%, var(--mud-palette-surface) 65%) !important;
+        background-image: linear-gradient(rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.06));
+        backdrop-filter: blur(20px) saturate(180%) brightness(110%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%) brightness(110%);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+        /* Visual breathing room between tab bar and content below. */
+        margin-bottom: 20px;
+    }
+
+    /* MudTabPanel renders text directly next to the icon component, with no .mud-typography wrapper.
+       Use font-size:0 to collapse the bare text node on mobile, then null the icon-text margin so
+       the icon stays centered. SVG icons are unaffected by font-size. */
+    @@media (max-width: 599.98px) {
+        .sticky-tabs .mud-tab {
+            font-size: 0 !important;
+            min-width: 56px !important;
+            padding: 6px 10px !important;
+        }
+        .sticky-tabs .mud-tab .mud-tab-icon-text {
+            margin-right: 0 !important;
+            margin-inline-end: 0 !important;
+        }
+    }
+</style>
+
+<MudTabs Rounded="true"
+         ApplyEffectsToContainer="true"
+         KeepPanelsAlive="true"
+         Centered="true"
+         Color="Color.Primary"
+         SliderColor="Color.Primary"
+         Class="sticky-tabs mb-4"
+         ActivePanelIndex="@_activeTabIndex"
+         ActivePanelIndexChanged="OnTabChanged">
+
+@* ── OVERVIEW TAB ── *@
+<MudTabPanel Text="@L["Overview"]" Icon="@Icons.Material.Filled.Info" ToolTip="@L["Overview"]">
+
 @* ── Description Card ── *@
 @if(!string.IsNullOrWhiteSpace(_description))
 {
@@ -357,6 +413,11 @@
 </MudCard>
 }
 
+</MudTabPanel>
+
+@* ── SPECIFICATIONS TAB ── *@
+<MudTabPanel Text="@L["Specifications"]" Icon="@Icons.Material.Filled.Tune" ToolTip="@L["Specifications"]">
+
 @* ── Specifications & Ratings Card ── *@
 @if(_specs.Count > 0 || _ratings.Count > 0)
 {
@@ -400,226 +461,6 @@
                     }
                 </div>
             }
-        }
-    </MudCardContent>
-</MudCard>
-}
-
-@* ── Critic Reviews Section ── *@
-@if(_criticReviews.Count > 0 || _userReviews.Count > 0)
-{
-<MudCard Elevation="2" Class="mb-4 rounded-lg">
-    <MudCardContent>
-        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
-            <MudIcon Icon="@Icons.Material.Filled.RateReview" Color="Color.Primary"/>
-            <MudText Typo="Typo.h6">@L["Reviews"]</MudText>
-        </MudStack>
-
-        @* ── Aggregate scores ── *@
-        @if(_reviewSummary is not null)
-        {
-            <MudStack Row="true" Spacing="3" AlignItems="AlignItems.Center" Class="mb-4" Wrap="Wrap.Wrap">
-                @if(_reviewSummary.AverageScore.HasValue)
-                {
-                    <MudChip T="string" Size="Size.Large" Variant="Variant.Filled" Color="Color.Primary">
-                        @L["Overall:"] @($"{_reviewSummary.AverageScore:F0}%") (@_reviewSummary.TotalReviews @L["reviews"])
-                    </MudChip>
-                }
-                @if(_reviewSummary.ByPlatform is not null)
-                {
-                    @foreach(var plat in _reviewSummary.ByPlatform)
-                    {
-                        @if(plat.AverageScore.HasValue)
-                        {
-                            <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Secondary">
-                                @(plat.PlatformName ?? "Unknown"): @($"{plat.AverageScore:F0}%") (@plat.ReviewCount)
-                            </MudChip>
-                        }
-                    }
-                }
-            </MudStack>
-        }
-
-        @* ── Critic Reviews table ── *@
-        @if(_criticReviews.Count > 0)
-        {
-        <MudText Typo="Typo.subtitle1" Class="mb-2"><strong>@L["Critic Reviews"]</strong></MudText>
-        <MudExpansionPanels MultiExpansion="true" Elevation="0">
-            @foreach(SoftwareCriticReviewDto review in _criticReviews)
-            {
-                <MudExpansionPanel>
-                    <TitleContent>
-                        <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="w-100">
-                            <MudText Typo="Typo.body1"><strong>@review.MagazineTitle</strong></MudText>
-                            <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
-                                @if(!string.IsNullOrWhiteSpace(review.PlatformName))
-                                {
-                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Color="Color.Default">@review.PlatformName</MudChip>
-                                }
-                                @if(review.NormalizedScore.HasValue)
-                                {
-                                    var scoreColor = review.NormalizedScore >= 75 ? Color.Success : review.NormalizedScore >= 50 ? Color.Warning : Color.Error;
-                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Filled" Color="scoreColor">
-                                        @($"{review.NormalizedScore}%")
-                                    </MudChip>
-                                }
-                                else
-                                {
-                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Default">@L["Unscored"]</MudChip>
-                                }
-                            </MudStack>
-                        </MudStack>
-                    </TitleContent>
-                    <ChildContent>
-                        @if(review.ReviewDate.HasValue)
-                        {
-                            <MudText Typo="Typo.caption" Color="Color.Primary" Class="mb-2">
-                                @FormatReviewDate(review)
-                            </MudText>
-                        }
-                        @if(review.OriginalScore.HasValue && review.OriginalScoreMaximum.HasValue)
-                        {
-                            <MudText Typo="Typo.caption" Class="mb-2">
-                                @($"{review.OriginalScore} / {review.OriginalScoreMaximum}")
-                            </MudText>
-                        }
-                        @if(!string.IsNullOrWhiteSpace(review.ReviewText))
-                        {
-                            <MudText Typo="Typo.body2" Class="mt-2" Style="white-space: pre-wrap;">@review.ReviewText</MudText>
-                        }
-                        @if(!string.IsNullOrWhiteSpace(review.ReviewUrl))
-                        {
-                            <MudLink Href="@review.ReviewUrl" Target="_blank" Class="mt-2">@L["Full Review"]</MudLink>
-                        }
-                    </ChildContent>
-                </MudExpansionPanel>
-            }
-        </MudExpansionPanels>
-        }
-
-        @* ── User Reviews ── *@
-        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-2 mt-4">
-            <MudText Typo="Typo.subtitle1"><strong>@L["User Reviews"]</strong></MudText>
-            @if(_isAuthenticated)
-            {
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Edit"
-                           OnClick="OpenReviewDialog" Size="Size.Small">
-                    @(_myReview is not null ? L["Edit Review"] : L["Write Review"])
-                </MudButton>
-            }
-        </MudStack>
-
-        @if(_userReviews.Count == 0)
-        {
-            <MudText Typo="Typo.body2" Color="Color.Primary" Class="mb-2">@L["No reviews yet."]</MudText>
-        }
-
-        @foreach(SoftwareUserReviewDto userReview in _userReviews)
-        {
-            <MudPaper Class="pa-3 mb-3" Elevation="1" Style="border-radius: 8px;">
-                @* ── Review Header ── *@
-                <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-2">
-                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
-                        @if(!userReview.IsAnonymous.GetValueOrDefault() && !string.IsNullOrEmpty(userReview.UserName))
-                        {
-                            @if(!string.IsNullOrEmpty(userReview.AvatarUrl))
-                            {
-                                <MudAvatar Size="Size.Small">
-                                    <MudImage Src="@userReview.AvatarUrl" Alt="@userReview.DisplayName"/>
-                                </MudAvatar>
-                            }
-                            else
-                            {
-                                <MudAvatar Size="Size.Small" Color="Color.Primary">@(userReview.DisplayName?[..1] ?? "?")</MudAvatar>
-                            }
-                            <MudLink Href="@($"/profile/{userReview.UserName}")">@(userReview.DisplayName ?? userReview.UserName)</MudLink>
-                        }
-                        else
-                        {
-                            <MudAvatar Size="Size.Small" Color="Color.Default"><MudIcon Icon="@Icons.Material.Filled.Person"/></MudAvatar>
-                            <MudText Typo="Typo.body2" Color="Color.Secondary">@L["Anonymous"]</MudText>
-                            @if(_isAdmin && userReview.IsAnonymous.GetValueOrDefault())
-                            {
-                                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Warning">@L["Anonymous"]</MudChip>
-                            }
-                        }
-                        @if(userReview.Rating.HasValue)
-                        {
-                            <HalfStarRating ReadOnly="true" Value="@userReview.Rating.Value" Size="Size.Small"/>
-                        }
-                    </MudStack>
-                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
-                        <MudText Typo="Typo.caption" Color="Color.Secondary">@userReview.CreatedOn?.DateTime.ToString("d")</MudText>
-                        @* ── Admin actions ── *@
-                        @if(_isAdmin || userReview.UserId == _currentUserId)
-                        {
-                            <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditReviewDialog(userReview)"/>
-                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => DeleteReviewAsync(userReview)"/>
-                        }
-                        @if(_isAdmin && userReview.ReportCount > 0)
-                        {
-                            <MudBadge Content="@userReview.ReportCount" Color="Color.Error" Overlap="true">
-                                <MudIcon Icon="@Icons.Material.Filled.Flag" Color="Color.Warning" Size="Size.Small"/>
-                            </MudBadge>
-                        }
-                    </MudStack>
-                </MudStack>
-
-                @* ── Review Content (Good/Bad/Ugly) ── *@
-                @if(!string.IsNullOrWhiteSpace(userReview.TheGood))
-                {
-                    <MudStack Row="true" AlignItems="AlignItems.Start" Spacing="1" Class="mb-1">
-                        <MudIcon Icon="@Icons.Material.Filled.ThumbUp" Color="Color.Success" Size="Size.Small"/>
-                        <div>
-                            <MudText Typo="Typo.caption" Color="Color.Success"><strong>@L["The Good"]</strong></MudText>
-                            <MudText Typo="Typo.body2" Style="white-space: pre-wrap;">@userReview.TheGood</MudText>
-                        </div>
-                    </MudStack>
-                }
-                @if(!string.IsNullOrWhiteSpace(userReview.TheBad))
-                {
-                    <MudStack Row="true" AlignItems="AlignItems.Start" Spacing="1" Class="mb-1">
-                        <MudIcon Icon="@Icons.Material.Filled.ThumbDown" Color="Color.Error" Size="Size.Small"/>
-                        <div>
-                            <MudText Typo="Typo.caption" Color="Color.Error"><strong>@L["The Bad"]</strong></MudText>
-                            <MudText Typo="Typo.body2" Style="white-space: pre-wrap;">@userReview.TheBad</MudText>
-                        </div>
-                    </MudStack>
-                }
-                @if(!string.IsNullOrWhiteSpace(userReview.TheUgly))
-                {
-                    <MudStack Row="true" AlignItems="AlignItems.Start" Spacing="1" Class="mb-1">
-                        <MudIcon Icon="@Icons.Material.Filled.Warning" Color="Color.Warning" Size="Size.Small"/>
-                        <div>
-                            <MudText Typo="Typo.caption" Color="Color.Warning"><strong>@L["The Ugly"]</strong></MudText>
-                            <MudText Typo="Typo.body2" Style="white-space: pre-wrap;">@userReview.TheUgly</MudText>
-                        </div>
-                    </MudStack>
-                }
-
-                @* ── Voting + Report ── *@
-                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-2">
-                    <MudIconButton Icon="@Icons.Material.Filled.ThumbUp" Size="Size.Small"
-                                   Color="@(userReview.CurrentUserVote == true ? Color.Success : Color.Default)"
-                                   Disabled="@(!_isAuthenticated || userReview.UserId == _currentUserId)"
-                                   OnClick="() => VoteAsync(userReview, true)"
-                                   title="@L["Helpful"]"/>
-                    <MudText Typo="Typo.caption">@userReview.ThumbsUp</MudText>
-
-                    <MudIconButton Icon="@Icons.Material.Filled.ThumbDown" Size="Size.Small"
-                                   Color="@(userReview.CurrentUserVote == false ? Color.Error : Color.Default)"
-                                   Disabled="@(!_isAuthenticated || userReview.UserId == _currentUserId)"
-                                   OnClick="() => VoteAsync(userReview, false)"
-                                   title="@L["Not helpful"]"/>
-                    <MudText Typo="Typo.caption">@userReview.ThumbsDown</MudText>
-
-                    @if(_isAuthenticated && userReview.UserId != _currentUserId)
-                    {
-                        <MudIconButton Icon="@Icons.Material.Filled.Flag" Size="Size.Small" Color="Color.Default"
-                                       OnClick="() => OpenReportDialog(userReview)" title="@L["Report"]"/>
-                    }
-                </MudStack>
-            </MudPaper>
         }
     </MudCardContent>
 </MudCard>
@@ -684,6 +525,11 @@
     </MudExpansionPanel>
 </MudExpansionPanels>
 }
+
+</MudTabPanel>
+
+@* ── RELEASES TAB ── *@
+<MudTabPanel Text="@L["Releases"]" Icon="@Icons.Material.Filled.LibraryBooks" ToolTip="@L["Releases"]">
 
 @* ── Versions Card ── *@
 @if(_versions.Count > 0)
@@ -837,6 +683,11 @@
     </MudExpansionPanels>
 }
 
+</MudTabPanel>
+
+@* ── MEDIA TAB ── *@
+<MudTabPanel Text="@L["Media tab"]" Icon="@Icons.Material.Filled.PhotoLibrary" ToolTip="@L["Media tab"]">
+
 @* ── Covers Card ── *@
 @if(_covers.Count > 0)
 {
@@ -885,21 +736,89 @@
 
 @if(_fullscreenCover is not null)
 {
+    var cover = _fullscreenCover;
     <MudOverlay Visible="true" DarkBackground="true" ZIndex="9999" OnClick="() => _fullscreenCover = null">
         <div class="d-flex flex-column align-center justify-center" style="width: 100vw; height: 100vh;">
             <picture>
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(_fullscreenCover.Id).jxl" type="image/jxl">
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(_fullscreenCover.Id).avif" type="image/avif">
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/heif/4k/@(_fullscreenCover.Id).heic" type="image/heic">
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(_fullscreenCover.Id).webp" type="image/webp">
-                <img alt="@(_fullscreenCover.TypeName ?? _fullscreenCover.Caption)"
-                     src="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(_fullscreenCover.Id).jpg"
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(cover.Id).jxl" type="image/jxl">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(cover.Id).avif" type="image/avif">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/heif/4k/@(cover.Id).heic" type="image/heic">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(cover.Id).webp" type="image/webp">
+                <img alt="@(cover.TypeName ?? cover.Caption)"
+                     src="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(cover.Id).jpg"
                      style="max-width: 95vw; max-height: 90vh; object-fit: contain;"/>
             </picture>
-            <MudText Typo="Typo.subtitle1" Style="color: white;" Class="mt-2">@_fullscreenCover.TypeName</MudText>
-            @if(!string.IsNullOrEmpty(_fullscreenCover.Caption))
+            <MudText Typo="Typo.subtitle1" Style="color: white;" Class="mt-2">@cover.TypeName</MudText>
+            @if(!string.IsNullOrEmpty(cover.Caption))
             {
-                <MudText Typo="Typo.body2" Style="color: rgba(255,255,255,0.8);" Class="mt-1">@_fullscreenCover.Caption</MudText>
+                <MudText Typo="Typo.body2" Style="color: rgba(255,255,255,0.8);" Class="mt-1">@cover.Caption</MudText>
+            }
+        </div>
+    </MudOverlay>
+}
+
+@* ── Screenshots Card ── *@
+@if(_screenshots.Count > 0)
+{
+    <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+        <MudExpansionPanel>
+            <TitleContent>
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIcon Icon="@Icons.Material.Filled.Image" Color="Color.Primary"/>
+                    <MudText Typo="Typo.h6">@L["Screenshots"]</MudText>
+                    <MudChip T="string" Size="Size.Small" Color="Color.Success">@_screenshots.Count</MudChip>
+                </MudStack>
+            </TitleContent>
+            <ChildContent>
+                @foreach(var group in _screenshotsByPlatform)
+                {
+                    <MudText Typo="Typo.subtitle1" Class="mt-3 mb-2"><strong>@group.Key</strong></MudText>
+                    <div class="d-flex flex-wrap gap-3">
+                        @foreach(SoftwareScreenshotDto screenshot in group.Value)
+                        {
+                            <MudCard Elevation="1" Class="rounded-lg" Style="width: 200px; cursor: pointer;" @onclick="() => _fullscreenScreenshot = screenshot">
+                                <MudCardContent Class="pa-2">
+                                    <picture>
+                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jxl/hd/@(screenshot.Id).jxl, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jxl/1440p/@(screenshot.Id).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jxl/4k/@(screenshot.Id).jxl 3x" type="image/jxl">
+                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/avif/hd/@(screenshot.Id).avif, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/avif/1440p/@(screenshot.Id).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/avif/4k/@(screenshot.Id).avif 3x" type="image/avif">
+                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/heif/hd/@(screenshot.Id).heic, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/heif/1440p/@(screenshot.Id).heic 2x, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/heif/4k/@(screenshot.Id).heic 3x" type="image/heic">
+                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/webp/hd/@(screenshot.Id).webp, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/webp/1440p/@(screenshot.Id).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/webp/4k/@(screenshot.Id).webp 3x" type="image/webp">
+                                        <img alt="@screenshot.Caption"
+                                             src="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/hd/@(screenshot.Id).jpg"
+                                             srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/hd/@(screenshot.Id).jpg, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/1440p/@(screenshot.Id).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/4k/@(screenshot.Id).jpg 3x"
+                                             style="width: 100%; max-height: 150px; object-fit: contain; border-radius: 4px;"/>
+                                    </picture>
+                                    @if(!string.IsNullOrEmpty(screenshot.Caption))
+                                    {
+                                        <MudText Typo="Typo.caption" Align="Align.Center" Class="mt-1">@screenshot.Caption</MudText>
+                                    }
+                                </MudCardContent>
+                            </MudCard>
+                        }
+                    </div>
+                }
+            </ChildContent>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+}
+
+@if(_fullscreenScreenshot is not null)
+{
+    var screenshot = _fullscreenScreenshot;
+    <MudOverlay Visible="true" DarkBackground="true" ZIndex="9999" OnClick="() => _fullscreenScreenshot = null">
+        <div class="d-flex flex-column align-center justify-center" style="width: 100vw; height: 100vh;">
+            <picture>
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jxl/4k/@(screenshot.Id).jxl" type="image/jxl">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/avif/4k/@(screenshot.Id).avif" type="image/avif">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/heif/4k/@(screenshot.Id).heic" type="image/heic">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/webp/4k/@(screenshot.Id).webp" type="image/webp">
+                <img alt="@screenshot.Caption"
+                     src="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/4k/@(screenshot.Id).jpg"
+                     style="max-width: 95vw; max-height: 90vh; object-fit: contain;"/>
+            </picture>
+            @if(!string.IsNullOrEmpty(screenshot.Caption))
+            {
+                <MudText Typo="Typo.subtitle1" Style="color: white;" Class="mt-2">@screenshot.Caption</MudText>
             }
         </div>
     </MudOverlay>
@@ -952,23 +871,24 @@
 
 @if(_fullscreenPromo is not null)
 {
+    var promo = _fullscreenPromo;
     <MudOverlay Visible="true" DarkBackground="true" ZIndex="9999" OnClick="() => _fullscreenPromo = null">
         <div class="d-flex flex-column align-center justify-center" style="width: 100vw; height: 100vh;">
             <picture>
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/jxl/4k/@(_fullscreenPromo.Id).jxl" type="image/jxl">
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/avif/4k/@(_fullscreenPromo.Id).avif" type="image/avif">
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/webp/4k/@(_fullscreenPromo.Id).webp" type="image/webp">
-                <img alt="@(_fullscreenPromo.Caption ?? _fullscreenPromo.GroupName)"
-                     src="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/jpeg/4k/@(_fullscreenPromo.Id).jpg"
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/jxl/4k/@(promo.Id).jxl" type="image/jxl">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/avif/4k/@(promo.Id).avif" type="image/avif">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/webp/4k/@(promo.Id).webp" type="image/webp">
+                <img alt="@(promo.Caption ?? promo.GroupName)"
+                     src="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/jpeg/4k/@(promo.Id).jpg"
                      style="max-width: 95vw; max-height: 90vh; object-fit: contain;"/>
             </picture>
-            @if(!string.IsNullOrEmpty(_fullscreenPromo.GroupName))
+            @if(!string.IsNullOrEmpty(promo.GroupName))
             {
-                <MudText Typo="Typo.subtitle1" Style="color: white;" Class="mt-2">@L[_fullscreenPromo.GroupName]</MudText>
+                <MudText Typo="Typo.subtitle1" Style="color: white;" Class="mt-2">@L[promo.GroupName]</MudText>
             }
-            @if(!string.IsNullOrEmpty(_fullscreenPromo.Caption))
+            @if(!string.IsNullOrEmpty(promo.Caption))
             {
-                <MudText Typo="Typo.body2" Style="color: rgba(255,255,255,0.8);" Class="mt-1">@_fullscreenPromo.Caption</MudText>
+                <MudText Typo="Typo.body2" Style="color: rgba(255,255,255,0.8);" Class="mt-1">@promo.Caption</MudText>
             }
         </div>
     </MudOverlay>
@@ -1019,68 +939,233 @@
     </MudExpansionPanels>
 }
 
-@* ── Screenshots Card ── *@
-@if(_screenshots.Count > 0)
+</MudTabPanel>
+
+@* ── REVIEWS TAB ── *@
+<MudTabPanel Text="@L["Reviews"]" Icon="@Icons.Material.Filled.RateReview" ToolTip="@L["Reviews"]">
+
+@* ── Critic Reviews Card (only when there are critic reviews) ── *@
+@if(_criticReviews.Count > 0)
 {
-    <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-        <MudExpansionPanel>
-            <TitleContent>
-                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
-                    <MudIcon Icon="@Icons.Material.Filled.Image" Color="Color.Primary"/>
-                    <MudText Typo="Typo.h6">@L["Screenshots"]</MudText>
-                    <MudChip T="string" Size="Size.Small" Color="Color.Success">@_screenshots.Count</MudChip>
-                </MudStack>
-            </TitleContent>
-            <ChildContent>
-                @foreach(var group in _screenshotsByPlatform)
+<MudCard Elevation="2" Class="mb-4 rounded-lg">
+    <MudCardContent>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+            <MudIcon Icon="@Icons.Material.Filled.RateReview" Color="Color.Primary"/>
+            <MudText Typo="Typo.h6">@L["Critic Reviews"]</MudText>
+        </MudStack>
+
+        @* ── Aggregate scores ── *@
+        @if(_reviewSummary is not null)
+        {
+            <MudStack Row="true" Spacing="3" AlignItems="AlignItems.Center" Class="mb-4" Wrap="Wrap.Wrap">
+                @if(_reviewSummary.AverageScore.HasValue)
                 {
-                    <MudText Typo="Typo.subtitle1" Class="mt-3 mb-2"><strong>@group.Key</strong></MudText>
-                    <div class="d-flex flex-wrap gap-3">
-                        @foreach(SoftwareScreenshotDto screenshot in group.Value)
-                        {
-                            <MudCard Elevation="1" Class="rounded-lg" Style="width: 200px; cursor: pointer;" @onclick="() => _fullscreenScreenshot = screenshot">
-                                <MudCardContent Class="pa-2">
-                                    <picture>
-                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jxl/hd/@(screenshot.Id).jxl, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jxl/1440p/@(screenshot.Id).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jxl/4k/@(screenshot.Id).jxl 3x" type="image/jxl">
-                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/avif/hd/@(screenshot.Id).avif, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/avif/1440p/@(screenshot.Id).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/avif/4k/@(screenshot.Id).avif 3x" type="image/avif">
-                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/heif/hd/@(screenshot.Id).heic, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/heif/1440p/@(screenshot.Id).heic 2x, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/heif/4k/@(screenshot.Id).heic 3x" type="image/heic">
-                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/webp/hd/@(screenshot.Id).webp, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/webp/1440p/@(screenshot.Id).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/webp/4k/@(screenshot.Id).webp 3x" type="image/webp">
-                                        <img alt="@screenshot.Caption"
-                                             src="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/hd/@(screenshot.Id).jpg"
-                                             srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/hd/@(screenshot.Id).jpg, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/1440p/@(screenshot.Id).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/4k/@(screenshot.Id).jpg 3x"
-                                             style="width: 100%; max-height: 150px; object-fit: contain; border-radius: 4px;"/>
-                                    </picture>
-                                    @if(!string.IsNullOrEmpty(screenshot.Caption))
-                                    {
-                                        <MudText Typo="Typo.caption" Align="Align.Center" Class="mt-1">@screenshot.Caption</MudText>
-                                    }
-                                </MudCardContent>
-                            </MudCard>
-                        }
-                    </div>
+                    <MudChip T="string" Size="Size.Large" Variant="Variant.Filled" Color="Color.Primary">
+                        @L["Overall:"] @($"{_reviewSummary.AverageScore:F0}%") (@_reviewSummary.TotalReviews @L["reviews"])
+                    </MudChip>
                 }
-            </ChildContent>
-        </MudExpansionPanel>
-    </MudExpansionPanels>
+                @if(_reviewSummary.ByPlatform is not null)
+                {
+                    @foreach(var plat in _reviewSummary.ByPlatform)
+                    {
+                        @if(plat.AverageScore.HasValue)
+                        {
+                            <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Secondary">
+                                @(plat.PlatformName ?? "Unknown"): @($"{plat.AverageScore:F0}%") (@plat.ReviewCount)
+                            </MudChip>
+                        }
+                    }
+                }
+            </MudStack>
+        }
+
+        <MudExpansionPanels MultiExpansion="true" Elevation="0">
+            @foreach(SoftwareCriticReviewDto review in _criticReviews)
+            {
+                <MudExpansionPanel>
+                    <TitleContent>
+                        <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="w-100">
+                            <MudText Typo="Typo.body1"><strong>@review.MagazineTitle</strong></MudText>
+                            <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
+                                @if(!string.IsNullOrWhiteSpace(review.PlatformName))
+                                {
+                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Color="Color.Default">@review.PlatformName</MudChip>
+                                }
+                                @if(review.NormalizedScore.HasValue)
+                                {
+                                    var scoreColor = review.NormalizedScore >= 75 ? Color.Success : review.NormalizedScore >= 50 ? Color.Warning : Color.Error;
+                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Filled" Color="scoreColor">
+                                        @($"{review.NormalizedScore}%")
+                                    </MudChip>
+                                }
+                                else
+                                {
+                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Default">@L["Unscored"]</MudChip>
+                                }
+                            </MudStack>
+                        </MudStack>
+                    </TitleContent>
+                    <ChildContent>
+                        @if(review.ReviewDate.HasValue)
+                        {
+                            <MudText Typo="Typo.caption" Color="Color.Primary" Class="mb-2">
+                                @FormatReviewDate(review)
+                            </MudText>
+                        }
+                        @if(review.OriginalScore.HasValue && review.OriginalScoreMaximum.HasValue)
+                        {
+                            <MudText Typo="Typo.caption" Class="mb-2">
+                                @($"{review.OriginalScore} / {review.OriginalScoreMaximum}")
+                            </MudText>
+                        }
+                        @if(!string.IsNullOrWhiteSpace(review.ReviewText))
+                        {
+                            <MudText Typo="Typo.body2" Class="mt-2" Style="white-space: pre-wrap;">@review.ReviewText</MudText>
+                        }
+                        @if(!string.IsNullOrWhiteSpace(review.ReviewUrl))
+                        {
+                            <MudLink Href="@review.ReviewUrl" Target="_blank" Class="mt-2">@L["Full Review"]</MudLink>
+                        }
+                    </ChildContent>
+                </MudExpansionPanel>
+            }
+        </MudExpansionPanels>
+    </MudCardContent>
+</MudCard>
 }
 
-@if(_fullscreenScreenshot is not null)
-{
-    <MudOverlay Visible="true" DarkBackground="true" ZIndex="9999" OnClick="() => _fullscreenScreenshot = null">
-        <div class="d-flex flex-column align-center justify-center" style="width: 100vw; height: 100vh;">
-            <picture>
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jxl/4k/@(_fullscreenScreenshot.Id).jxl" type="image/jxl">
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/avif/4k/@(_fullscreenScreenshot.Id).avif" type="image/avif">
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/heif/4k/@(_fullscreenScreenshot.Id).heic" type="image/heic">
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/webp/4k/@(_fullscreenScreenshot.Id).webp" type="image/webp">
-                <img alt="@_fullscreenScreenshot.Caption"
-                     src="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/4k/@(_fullscreenScreenshot.Id).jpg"
-                     style="max-width: 95vw; max-height: 90vh; object-fit: contain;"/>
-            </picture>
-            @if(!string.IsNullOrEmpty(_fullscreenScreenshot.Caption))
+@* ── User Reviews Card (always shown, with empty-state) ── *@
+<MudCard Elevation="2" Class="mb-4 rounded-lg">
+    <MudCardContent>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-3">
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.People" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["User Reviews"]</MudText>
+            </MudStack>
+            @if(_isAuthenticated)
             {
-                <MudText Typo="Typo.subtitle1" Style="color: white;" Class="mt-2">@_fullscreenScreenshot.Caption</MudText>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Edit"
+                           OnClick="OpenReviewDialog" Size="Size.Small">
+                    @(_myReview is not null ? L["Edit Review"] : L["Write Review"])
+                </MudButton>
             }
-        </div>
-    </MudOverlay>
-}
+        </MudStack>
+
+        @if(_userReviews.Count == 0)
+        {
+            <MudText Typo="Typo.body2" Color="Color.Primary" Class="mb-2">@L["No reviews yet."]</MudText>
+        }
+
+        @foreach(SoftwareUserReviewDto userReview in _userReviews)
+        {
+            <MudPaper Class="pa-3 mb-3" Elevation="1" Style="border-radius: 8px;">
+                @* ── Review Header ── *@
+                <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-2">
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                        @if(!userReview.IsAnonymous.GetValueOrDefault() && !string.IsNullOrEmpty(userReview.UserName))
+                        {
+                            @if(!string.IsNullOrEmpty(userReview.AvatarUrl))
+                            {
+                                <MudAvatar Size="Size.Small">
+                                    <MudImage Src="@userReview.AvatarUrl" Alt="@userReview.DisplayName"/>
+                                </MudAvatar>
+                            }
+                            else
+                            {
+                                <MudAvatar Size="Size.Small" Color="Color.Primary">@(userReview.DisplayName?[..1] ?? "?")</MudAvatar>
+                            }
+                            <MudLink Href="@($"/profile/{userReview.UserName}")">@(userReview.DisplayName ?? userReview.UserName)</MudLink>
+                        }
+                        else
+                        {
+                            <MudAvatar Size="Size.Small" Color="Color.Default"><MudIcon Icon="@Icons.Material.Filled.Person"/></MudAvatar>
+                            <MudText Typo="Typo.body2" Color="Color.Secondary">@L["Anonymous"]</MudText>
+                            @if(_isAdmin && userReview.IsAnonymous.GetValueOrDefault())
+                            {
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Warning">@L["Anonymous"]</MudChip>
+                            }
+                        }
+                        @if(userReview.Rating.HasValue)
+                        {
+                            <HalfStarRating ReadOnly="true" Value="@userReview.Rating.Value" Size="Size.Small"/>
+                        }
+                    </MudStack>
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+                        <MudText Typo="Typo.caption" Color="Color.Secondary">@userReview.CreatedOn?.DateTime.ToString("d")</MudText>
+                        @* ── Admin actions ── *@
+                        @if(_isAdmin || userReview.UserId == _currentUserId)
+                        {
+                            <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditReviewDialog(userReview)"/>
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => DeleteReviewAsync(userReview)"/>
+                        }
+                        @if(_isAdmin && userReview.ReportCount > 0)
+                        {
+                            <MudBadge Content="@userReview.ReportCount" Color="Color.Error" Overlap="true">
+                                <MudIcon Icon="@Icons.Material.Filled.Flag" Color="Color.Warning" Size="Size.Small"/>
+                            </MudBadge>
+                        }
+                    </MudStack>
+                </MudStack>
+
+                @* ── Review Content (Good/Bad/Ugly) ── *@
+                @if(!string.IsNullOrWhiteSpace(userReview.TheGood))
+                {
+                    <MudStack Row="true" AlignItems="AlignItems.Start" Spacing="1" Class="mb-1">
+                        <MudIcon Icon="@Icons.Material.Filled.ThumbUp" Color="Color.Success" Size="Size.Small"/>
+                        <div>
+                            <MudText Typo="Typo.caption" Color="Color.Success"><strong>@L["The Good"]</strong></MudText>
+                            <MudText Typo="Typo.body2" Style="white-space: pre-wrap;">@userReview.TheGood</MudText>
+                        </div>
+                    </MudStack>
+                }
+                @if(!string.IsNullOrWhiteSpace(userReview.TheBad))
+                {
+                    <MudStack Row="true" AlignItems="AlignItems.Start" Spacing="1" Class="mb-1">
+                        <MudIcon Icon="@Icons.Material.Filled.ThumbDown" Color="Color.Error" Size="Size.Small"/>
+                        <div>
+                            <MudText Typo="Typo.caption" Color="Color.Error"><strong>@L["The Bad"]</strong></MudText>
+                            <MudText Typo="Typo.body2" Style="white-space: pre-wrap;">@userReview.TheBad</MudText>
+                        </div>
+                    </MudStack>
+                }
+                @if(!string.IsNullOrWhiteSpace(userReview.TheUgly))
+                {
+                    <MudStack Row="true" AlignItems="AlignItems.Start" Spacing="1" Class="mb-1">
+                        <MudIcon Icon="@Icons.Material.Filled.Warning" Color="Color.Warning" Size="Size.Small"/>
+                        <div>
+                            <MudText Typo="Typo.caption" Color="Color.Warning"><strong>@L["The Ugly"]</strong></MudText>
+                            <MudText Typo="Typo.body2" Style="white-space: pre-wrap;">@userReview.TheUgly</MudText>
+                        </div>
+                    </MudStack>
+                }
+
+                @* ── Voting + Report ── *@
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-2">
+                    <MudIconButton Icon="@Icons.Material.Filled.ThumbUp" Size="Size.Small"
+                                   Color="@(userReview.CurrentUserVote == true ? Color.Success : Color.Default)"
+                                   Disabled="@(!_isAuthenticated || userReview.UserId == _currentUserId)"
+                                   OnClick="() => VoteAsync(userReview, true)"
+                                   title="@L["Helpful"]"/>
+                    <MudText Typo="Typo.caption">@userReview.ThumbsUp</MudText>
+
+                    <MudIconButton Icon="@Icons.Material.Filled.ThumbDown" Size="Size.Small"
+                                   Color="@(userReview.CurrentUserVote == false ? Color.Error : Color.Default)"
+                                   Disabled="@(!_isAuthenticated || userReview.UserId == _currentUserId)"
+                                   OnClick="() => VoteAsync(userReview, false)"
+                                   title="@L["Not helpful"]"/>
+                    <MudText Typo="Typo.caption">@userReview.ThumbsDown</MudText>
+
+                    @if(_isAuthenticated && userReview.UserId != _currentUserId)
+                    {
+                        <MudIconButton Icon="@Icons.Material.Filled.Flag" Size="Size.Small" Color="Color.Default"
+                                       OnClick="() => OpenReportDialog(userReview)" title="@L["Report"]"/>
+                    }
+                </MudStack>
+            </MudPaper>
+        }
+    </MudCardContent>
+</MudCard>
+
+</MudTabPanel>
+
+</MudTabs>

@@ -81,15 +81,46 @@ public partial class View
     bool                                        _isAdmin;
     string                                      _currentUserId;
 
+    // Tab state — backs the responsive sticky MudTabs in View.razor
+    static readonly string[] _tabNames = ["overview", "specifications", "releases", "media", "reviews"];
+
+    string _activeTab = "overview";
+
+    int _activeTabIndex => Math.Max(0, Array.IndexOf(_tabNames, _activeTab));
+
     [Parameter]
     public int Id { get; set; }
 
+    [SupplyParameterFromQuery(Name = "tab")]
+    public string TabParam { get; set; }
+
+    [Inject]
+    NavigationManager NavManager { get; set; }
+
     protected override void OnParametersSet()
     {
+        string tab = (TabParam ?? "overview").ToLowerInvariant();
+        _activeTab = Array.IndexOf(_tabNames, tab) >= 0 ? tab : "overview";
+
         if(Id == _lastId) return;
 
         _lastId = Id;
         _loaded = false;
+    }
+
+    void OnTabChanged(int index)
+    {
+        if(index < 0 || index >= _tabNames.Length) return;
+
+        string newTab = _tabNames[index];
+
+        if(newTab == _activeTab) return;
+
+        _activeTab = newTab;
+
+        // Default tab (overview) drops the query param to keep URLs clean.
+        string newUri = NavManager.GetUriWithQueryParameter("tab", newTab == "overview" ? null : newTab);
+        NavManager.NavigateTo(newUri, false, true);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
