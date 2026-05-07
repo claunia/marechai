@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Marechai.Theming;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Kiota.Abstractions;
@@ -76,6 +77,13 @@ public partial class Profile
     List<CollectedMachineDto>         _myMachines;
     List<CollectedSoftwareReleaseDto> _myReleases;
 
+    // ── Appearance / theme state ──
+    string _savedThemeId;
+    string _pendingThemeId;
+    bool   _isSavingTheme;
+    string _themeSuccessMessage;
+    string _themeErrorMessage;
+
     protected override async Task OnInitializedAsync()
     {
         _profile       = await AuthService.GetProfileAsync();
@@ -83,6 +91,8 @@ public partial class Profile
 
         if(_publicProfile is not null)
             PopulatePublicProfileFields();
+
+        _savedThemeId = _profile?.PreferredThemeId;
 
         _isLoading = false;
 
@@ -336,5 +346,80 @@ public partial class Profile
 
         if(success)
             _myReleases?.RemoveAll(r => r.SoftwareReleaseId == releaseId);
+    }
+
+    // ── Appearance / theme methods ──
+
+    async Task SelectThemeAsync(ThemeDefinition theme)
+    {
+        if(theme is null || _isSavingTheme) return;
+
+        if(string.Equals(theme.Id, ThemeState.CurrentTheme.Id, StringComparison.OrdinalIgnoreCase) &&
+           string.Equals(theme.Id, _savedThemeId,              StringComparison.OrdinalIgnoreCase))
+            return;
+
+        ThemeDefinition previous = ThemeState.CurrentTheme;
+        string          previousSavedId = _savedThemeId;
+
+        _themeErrorMessage   = null;
+        _themeSuccessMessage = null;
+        _pendingThemeId      = theme.Id;
+        _isSavingTheme       = true;
+
+        // Live preview before the server confirms.
+        ThemeState.Set(theme);
+        StateHasChanged();
+
+        (bool ok, string error) = await AuthService.SetThemeAsync(theme.Id);
+
+        _isSavingTheme  = false;
+        _pendingThemeId = null;
+
+        if(ok)
+        {
+            _savedThemeId        = theme.Id;
+            _themeSuccessMessage = $"Theme set to “{theme.DisplayName}”.";
+        }
+        else
+        {
+            // Roll back the live preview if the server refused.
+            ThemeState.Set(previous);
+            _savedThemeId      = previousSavedId;
+            _themeErrorMessage = error ?? "Failed to save theme.";
+        }
+
+        StateHasChanged();
+    }
+
+    async Task ResetThemeAsync()
+    {
+        if(_isSavingTheme) return;
+
+        ThemeDefinition previous        = ThemeState.CurrentTheme;
+        string          previousSavedId = _savedThemeId;
+
+        _themeErrorMessage   = null;
+        _themeSuccessMessage = null;
+        _isSavingTheme       = true;
+        StateHasChanged();
+
+        (bool ok, string error) = await AuthService.SetThemeAsync(null);
+
+        _isSavingTheme = false;
+
+        if(ok)
+        {
+            ThemeState.Set(ThemeCatalog.Default);
+            _savedThemeId        = null;
+            _themeSuccessMessage = "Theme reset to default.";
+        }
+        else
+        {
+            ThemeState.Set(previous);
+            _savedThemeId      = previousSavedId;
+            _themeErrorMessage = error ?? "Failed to reset theme.";
+        }
+
+        StateHasChanged();
     }
 }

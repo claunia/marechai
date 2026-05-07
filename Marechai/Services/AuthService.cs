@@ -155,6 +155,37 @@ public sealed class AuthService(Marechai.ApiClient.Client             client,
         }
     }
 
+    /// <summary>
+    ///     Persist the user's preferred UI theme. Pass <see langword="null" /> to revert to the catalog default.
+    ///     Returns <c>(true, null)</c> on success, or <c>(false, errorMessage)</c> with a user-facing message.
+    /// </summary>
+    public async Task<(bool Succeeded, string ErrorMessage)> SetThemeAsync(string themeId)
+    {
+        try
+        {
+            var request = new UpdateUserThemeRequest
+            {
+                ThemeId = themeId
+            };
+
+            await client.Auth.Me.Theme.PutAsync(request);
+
+            return (true, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            logger.LogWarning(ex, "Theme update failed");
+
+            return (false, ex.Detail ?? ex.Title ?? "Theme update failed.");
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Theme update failed");
+
+            return (false, "An error occurred while saving the theme.");
+        }
+    }
+
     public async Task<PublicProfileDto> GetPublicProfileAsync()
     {
         try

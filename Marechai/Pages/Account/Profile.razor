@@ -27,10 +27,12 @@
 
 @page "/account/profile"
 @using Marechai.ApiClient.Models
+@using Marechai.Theming
 @attribute [Authorize]
 @inject AuthService AuthService
 @inject NavigationManager Navigation
 @inject CollectionService CollectionSvc
+@inject ThemeStateService ThemeState
 
 <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
     <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
@@ -341,6 +343,84 @@
                         }
                     </MudButton>
                 </MudStack>
+            </MudItem>
+        </MudGrid>
+    </MudTabPanel>
+
+    @* ── Appearance Tab ── *@
+    <MudTabPanel Text="Appearance" Icon="@Icons.Material.Filled.Palette">
+        <MudGrid Justify="Justify.Center" Class="pa-4">
+            <MudItem xs="12" sm="10" md="8">
+                <MudText Typo="Typo.body2" Class="mb-4">Pick a theme to personalise the look of Marechai. Changes apply instantly and are saved to your profile.</MudText>
+
+                @if(!string.IsNullOrWhiteSpace(_themeSuccessMessage))
+                {
+                    <MudAlert Severity="Severity.Success" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _themeSuccessMessage = null">@_themeSuccessMessage</MudAlert>
+                }
+
+                @if(!string.IsNullOrWhiteSpace(_themeErrorMessage))
+                {
+                    <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _themeErrorMessage = null">@_themeErrorMessage</MudAlert>
+                }
+
+                <MudGrid>
+                    @foreach(var theme in ThemeCatalog.All)
+                    {
+                        var isSelected = string.Equals(theme.Id, ThemeState.CurrentTheme.Id, StringComparison.OrdinalIgnoreCase);
+                        var palette    = theme.IsDark ? (Palette)theme.MudTheme.PaletteDark : theme.MudTheme.PaletteLight;
+                        var primary    = palette.Primary.Value;
+                        var secondary  = palette.Secondary.Value;
+                        var background = palette.Background.Value;
+                        var surface    = palette.Surface.Value;
+                        var text       = palette.TextPrimary.Value;
+
+                        <MudItem xs="12" sm="6" md="4">
+                            <MudPaper Class="@(isSelected ? "pa-4 mud-elevation-8" : "pa-4 mud-elevation-2")"
+                                      Style="@($"cursor: pointer; border: 2px solid {(isSelected ? primary : "transparent")}; transition: all 0.2s;")"
+                                      @onclick="@(() => SelectThemeAsync(theme))">
+                                <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-3">
+                                    <MudText Typo="Typo.subtitle1"><b>@theme.DisplayName</b></MudText>
+                                    @if(isSelected)
+                                    {
+                                        <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Style="@($"color: {primary};")"/>
+                                    }
+                                </MudStack>
+
+                                @* Mock palette preview: header + body + accent stripe *@
+                                <div style="@($"background: {background}; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05);")">
+                                    <div style="@($"background: {primary}; padding: 8px 12px; color: #fff;")">
+                                        <span style="font-size: 0.75rem; font-weight: 600;">Marechai</span>
+                                    </div>
+                                    <div style="@($"background: {surface}; padding: 12px; color: {text};")">
+                                        <div style="@($"font-size: 0.8rem; margin-bottom: 6px;")">Aa Bb 123</div>
+                                        <div style="@($"display: inline-block; background: {secondary}; color: #fff; font-size: 0.65rem; padding: 2px 8px; border-radius: 4px;")">Accent</div>
+                                    </div>
+                                </div>
+
+                                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-3">
+                                    <MudChip T="string" Size="Size.Small" Color="@(theme.IsDark ? Color.Dark : Color.Default)" Variant="Variant.Filled">
+                                        @(theme.IsDark ? "Dark" : "Light")
+                                    </MudChip>
+                                    <MudSpacer/>
+                                    @if(_isSavingTheme && string.Equals(theme.Id, _pendingThemeId, StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <MudProgressCircular Size="Size.Small" Indeterminate="true"/>
+                                    }
+                                </MudStack>
+                            </MudPaper>
+                        </MudItem>
+                    }
+                </MudGrid>
+
+                @if(!string.IsNullOrWhiteSpace(_savedThemeId))
+                {
+                    <MudStack Row="true" Justify="Justify.FlexEnd" Class="mt-4">
+                        <MudButton Variant="Variant.Text" Color="Color.Default" StartIcon="@Icons.Material.Filled.RestartAlt"
+                                   OnClick="ResetThemeAsync" Disabled="_isSavingTheme">
+                            Reset to default
+                        </MudButton>
+                    </MudStack>
+                }
             </MudItem>
         </MudGrid>
     </MudTabPanel>

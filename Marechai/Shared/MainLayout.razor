@@ -27,9 +27,13 @@
 @inherits LayoutComponentBase
 @implements IDisposable
 @using Marechai.Services
+@using Marechai.Theming
 @inject StringLocalizer<NavMenu> L
+@inject ThemeStateService ThemeState
+@inject ThemeFontLoader ThemeFontLoader
+@inject AuthService AuthService
 
-<MudThemeProvider Theme="_theme" IsDarkMode="true"/>
+<MudThemeProvider Theme="@ThemeState.CurrentTheme.MudTheme" IsDarkMode="@ThemeState.CurrentTheme.IsDark"/>
 <MudPopoverProvider/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
@@ -90,11 +94,23 @@
     private bool _isAdminMode;
     private int  _unreadMessageCount;
     private System.Threading.Timer _messagePollTimer;
+    private bool _themeInitialised;
+    private string _appliedFontKey;
 
     [Inject] MessagingService MessagingService { get; set; }
     [CascadingParameter] private Task<Microsoft.AspNetCore.Components.Authorization.AuthenticationState> AuthState { get; set; }
 
-    protected override void OnAfterRender(bool firstRender)
+    protected override void OnInitialized()
+    {
+        ThemeState.Changed += HandleThemeChanged;
+    }
+
+    private void HandleThemeChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if(firstRender)
         {
@@ -129,40 +145,46 @@
                 }
             }, null, TimeSpan.Zero, TimeSpan.FromSeconds(60));
         }
+
+        // Load the user's saved theme once auth state is available.
+        if(!_themeInitialised && AuthState is not null)
+        {
+            _themeInitialised = true;
+
+            try
+            {
+                var auth = await AuthState;
+
+                if(auth?.User?.Identity?.IsAuthenticated == true)
+                {
+                    var profile = await AuthService.GetProfileAsync();
+
+                    if(profile is not null && !string.IsNullOrWhiteSpace(profile.PreferredThemeId))
+                        await ThemeState.SetByIdAsync(profile.PreferredThemeId);
+                }
+            }
+            catch
+            {
+                // Failure to load profile leaves the default theme — non-fatal.
+            }
+        }
+
+        // Sync the web-font links in <head> with the current theme. Idempotent: cheap when nothing changed.
+        var fonts = ThemeState.CurrentTheme.WebFontUrls;
+        var fontKey = fonts is null || fonts.Count == 0 ? "" : string.Join("\n", fonts);
+
+        if(!string.Equals(fontKey, _appliedFontKey, StringComparison.Ordinal))
+        {
+            _appliedFontKey = fontKey;
+            await ThemeFontLoader.ApplyAsync(fonts);
+        }
     }
 
     public void Dispose()
     {
         _messagePollTimer?.Dispose();
+        ThemeState.Changed -= HandleThemeChanged;
     }
-
-    private readonly MudTheme _theme = new()
-    {
-        PaletteDark = new PaletteDark
-        {
-            Primary = "#7e57c2",
-            Secondary = "#42a5f5",
-            AppbarBackground = "#1a1a2e",
-            DrawerBackground = "#16213e",
-            Surface = "#1e1e2f",
-            Background = "#121212",
-            TextPrimary = "#e0e0e0",
-            TextSecondary = "#a0a0a0",
-            ActionDefault = "#9e9e9e"
-        },
-        LayoutProperties = new LayoutProperties
-        {
-            DrawerWidthLeft = "260px",
-            DrawerMiniWidthLeft = "72px"
-        },
-        Typography = new Typography
-        {
-            Default = new DefaultTypography
-            {
-                FontFamily = ["Roboto", "Helvetica Neue", "Arial", "sans-serif"]
-            }
-        }
-    };
 
     private void ToggleDrawer()
     {

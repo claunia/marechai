@@ -54,6 +54,14 @@ namespace Marechai.ApiClient.Models
 #endif
         /// <summary>The phoneNumberConfirmed property</summary>
         public bool? PhoneNumberConfirmed { get; set; }
+        /// <summary>The preferredThemeId property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? PreferredThemeId { get; set; }
+#nullable restore
+#else
+        public string PreferredThemeId { get; set; }
+#endif
         /// <summary>The roles property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -103,6 +111,7 @@ namespace Marechai.ApiClient.Models
                 { "lockoutEnd", n => { LockoutEnd = n.GetStringValue(); } },
                 { "phoneNumber", n => { PhoneNumber = n.GetStringValue(); } },
                 { "phoneNumberConfirmed", n => { PhoneNumberConfirmed = n.GetBoolValue(); } },
+                { "preferredThemeId", n => { PreferredThemeId = n.GetStringValue(); } },
                 { "roles", n => { Roles = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
                 { "userName", n => { UserName = n.GetStringValue(); } },
             };
@@ -122,6 +131,7 @@ namespace Marechai.ApiClient.Models
             writer.WriteStringValue("lockoutEnd", LockoutEnd);
             writer.WriteStringValue("phoneNumber", PhoneNumber);
             writer.WriteBoolValue("phoneNumberConfirmed", PhoneNumberConfirmed);
+            writer.WriteStringValue("preferredThemeId", PreferredThemeId);
             writer.WriteCollectionOfPrimitiveValues<string>("roles", Roles);
             writer.WriteStringValue("userName", UserName);
             writer.WriteAdditionalData(AdditionalData);

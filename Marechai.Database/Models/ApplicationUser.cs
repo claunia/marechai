@@ -72,6 +72,15 @@ public class ApplicationUser : IdentityUser
     /// </summary>
     public bool IsSystemAccount { get; set; }
 
+    /// <summary>
+    ///     Slug of the user's preferred UI theme (e.g. <c>default-dark</c>, <c>default-light</c>). When
+    ///     <see langword="null" /> the application falls back to the default theme. The set of valid slugs is the
+    ///     intersection of <c>Marechai.Data.Constants.ThemeIds</c> (server allow-list) and the client-side
+    ///     <c>ThemeCatalog</c>.
+    /// </summary>
+    [MaxLength(50)]
+    public string PreferredThemeId { get; set; }
+
     public virtual ICollection<MachinePhoto>              Photos                    { get; set; }
     public virtual ICollection<OwnedMachine>              OwnedMachines             { get; set; }
     public virtual ICollection<CollectedBook>             CollectedBooks            { get; set; }

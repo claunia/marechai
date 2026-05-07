@@ -29,6 +29,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Marechai.Data.Constants;
 using Marechai.Data.Models;
 using Marechai.Database.Models;
 using Marechai.Helpers;
@@ -123,6 +124,7 @@ public class AuthController
             LockoutEnabled       = user.LockoutEnabled,
             LockoutEnd           = user.LockoutEnd?.ToString("O"),
             AccessFailedCount    = user.AccessFailedCount,
+            PreferredThemeId     = user.PreferredThemeId,
             Roles                = roles.ToList()
         });
     }
@@ -168,8 +170,45 @@ public class AuthController
             LockoutEnabled       = user.LockoutEnabled,
             LockoutEnd           = user.LockoutEnd?.ToString("O"),
             AccessFailedCount    = user.AccessFailedCount,
+            PreferredThemeId     = user.PreferredThemeId,
             Roles                = roles.ToList()
         });
+    }
+
+    [HttpPut]
+    [Route("me/theme")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent, Description = "Theme preference saved.")]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status403Forbidden)]
+    [Consumes("application/json")]
+    public async Task<IActionResult> SetMyThemeAsync([FromBody] UpdateUserThemeRequest request)
+    {
+        if(!ModelState.IsValid) return BadRequest(ModelState);
+
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        ApplicationUser user = await userManager.FindByIdAsync(userId);
+
+        if(user is null) return Unauthorized();
+
+        string requested = string.IsNullOrWhiteSpace(request.ThemeId) ? null : request.ThemeId.Trim();
+
+        if(requested is not null && !ThemeIds.All.Contains(requested))
+            return Problem("Unknown theme identifier.",
+                           statusCode: StatusCodes.Status400BadRequest,
+                           title: "UNKNOWN_THEME");
+
+        user.PreferredThemeId = requested;
+
+        IdentityResult result = await userManager.UpdateAsync(user);
+
+        if(!result.Succeeded) return BadRequest(result.Errors);
+
+        return NoContent();
     }
 
     [HttpPost]

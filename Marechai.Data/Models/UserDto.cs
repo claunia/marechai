@@ -32,6 +32,9 @@ public sealed record UserDto
     [JsonPropertyName("accessFailedCount")]
     public int AccessFailedCount { get; set; }
     
+    [JsonPropertyName("preferredThemeId")]
+    public string? PreferredThemeId { get; set; }
+    
     [JsonPropertyName("roles")]
     public List<string> Roles { get; set; } = [];
 }

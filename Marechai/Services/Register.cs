@@ -24,6 +24,7 @@
 *******************************************************************************/
 
 using Marechai.Shared;
+using Marechai.Theming;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 
@@ -70,5 +71,8 @@ public static class Register
         services.AddScoped<TranslationService>();
         services.AddScoped<MessagingService>();
         services.AddScoped<ReviewReportService>();
+
+        services.AddScoped<ThemeStateService>();
+        services.AddScoped<ThemeFontLoader>();
     }
 }
