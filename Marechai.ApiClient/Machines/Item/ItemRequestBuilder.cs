@@ -11,6 +11,7 @@ using Marechai.ApiClient.Machines.Item.Screens;
 using Marechai.ApiClient.Machines.Item.Software;
 using Marechai.ApiClient.Machines.Item.SoundSynths;
 using Marechai.ApiClient.Machines.Item.Storage;
+using Marechai.ApiClient.Machines.Item.Videos;
 using Marechai.ApiClient.Models;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
@@ -82,6 +83,11 @@ namespace Marechai.ApiClient.Machines.Item
         public global::Marechai.ApiClient.Machines.Item.Storage.StorageRequestBuilder Storage
         {
             get => new global::Marechai.ApiClient.Machines.Item.Storage.StorageRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The videos property</summary>
+        public global::Marechai.ApiClient.Machines.Item.Videos.VideosRequestBuilder Videos
+        {
+            get => new global::Marechai.ApiClient.Machines.Item.Videos.VideosRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.ApiClient.Machines.Item.ItemRequestBuilder"/> and sets the default values.

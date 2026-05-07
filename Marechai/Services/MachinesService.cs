@@ -33,6 +33,12 @@ namespace Marechai.Services;
 
 public class MachinesService(Marechai.ApiClient.Client client)
 {
+    static string ExtractErrorMessage(ApiException ex)
+    {
+        if(ex is ProblemDetails pd) return pd.Detail ?? pd.Title ?? ex.Message;
+
+        return ex.Message;
+    }
     public async Task<MachineDto> GetMachine(int id)
     {
         try
@@ -666,6 +672,87 @@ public class MachinesService(Marechai.ApiClient.Client client)
         catch(ApiException ex)
         {
             return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    // ── Videos ──
+
+    public async Task<List<MachineVideoDto>> GetVideosByMachineAsync(int machineId)
+    {
+        try
+        {
+            var result = await client.Machines[machineId].Videos.GetAsync();
+
+            return result ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(MachineVideoDto dto, string error)> CreateVideoAsync(int    machineId, string provider,
+                                                                            string videoId,
+                                                                            string title)
+    {
+        try
+        {
+            var dto = await client.Machines[machineId]
+                                  .Videos.PostAsync(new CreateMachineVideoRequest
+                                                    {
+                                                        Provider = provider,
+                                                        VideoId  = videoId,
+                                                        Title    = title
+                                                    });
+
+            return (dto, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string error)> UpdateVideoTitleAsync(long id, string title)
+    {
+        try
+        {
+            await client.Machines.Videos[id].PutAsync(new UpdateMachineVideoRequest
+                                                      {
+                                                          Title = title
+                                                      });
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string error)> DeleteVideoAsync(long id)
+    {
+        try
+        {
+            await client.Machines.Videos[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ExtractErrorMessage(ex));
         }
         catch(Exception ex)
         {

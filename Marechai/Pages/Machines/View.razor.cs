@@ -43,6 +43,7 @@ public partial class View
     MachineDto _machine;
     List<Guid>       _photos;
     List<SoftwareDto> _software;
+    List<MachineVideoDto> _videos;
     bool             _togglingCollection;
 
     [CascadingParameter]
@@ -70,6 +71,7 @@ public partial class View
         _photos           = await MachinePhotosService.GetGuidsByMachineAsync(Id);
         _software         = await Service.GetSoftwareByMachineAsync(Id);
         _description      = await Service.GetDescriptionTextAsync(Id);
+        _videos           = await Service.GetVideosByMachineAsync(Id);
 
         AuthenticationState authState = await AuthState;
 

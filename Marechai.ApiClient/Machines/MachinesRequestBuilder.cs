@@ -5,6 +5,7 @@ using Marechai.ApiClient.Machines.Documents;
 using Marechai.ApiClient.Machines.Gpus;
 using Marechai.ApiClient.Machines.Item;
 using Marechai.ApiClient.Machines.Photos;
+using Marechai.ApiClient.Machines.Videos;
 using Marechai.ApiClient.Models;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
@@ -41,6 +42,11 @@ namespace Marechai.ApiClient.Machines
         public global::Marechai.ApiClient.Machines.Photos.PhotosRequestBuilder Photos
         {
             get => new global::Marechai.ApiClient.Machines.Photos.PhotosRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The videos property</summary>
+        public global::Marechai.ApiClient.Machines.Videos.VideosRequestBuilder Videos
+        {
+            get => new global::Marechai.ApiClient.Machines.Videos.VideosRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>Gets an item from the Marechai.ApiClient.machines.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
