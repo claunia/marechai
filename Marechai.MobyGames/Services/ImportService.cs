@@ -1029,14 +1029,15 @@ public class ImportService
 
                     switch(productCode.Type)
                     {
-                        case "Sony PN":       issuer = ProductCodeIssuer.Sony;       break;
-                        case "PSN/SEN Code":  issuer = ProductCodeIssuer.PSN;        break;
-                        case "Microsoft PN":  issuer = ProductCodeIssuer.Microsoft;  break;
-                        case "Nintendo PN":   issuer = ProductCodeIssuer.Nintendo;   break;
-                        case "Sega PN":       issuer = ProductCodeIssuer.Sega;       break;
-                        case "Activision PN": issuer = ProductCodeIssuer.Activision; break;
-                        case "Amazon ASIN":   issuer = ProductCodeIssuer.Amazon;     break;
-                        case "eBay Item No.": issuer = ProductCodeIssuer.eBay;       break;
+                        case "Sony PN":         issuer = ProductCodeIssuer.Sony;       break;
+                        case "PSN/SEN Code":    issuer = ProductCodeIssuer.PSN;        break;
+                        case "Microsoft PN":    issuer = ProductCodeIssuer.Microsoft;  break;
+                        case "Nintendo PN":     issuer = ProductCodeIssuer.Nintendo;   break;
+                        case "Nintendo Media PN": issuer = ProductCodeIssuer.Nintendo; break;
+                        case "Sega PN":         issuer = ProductCodeIssuer.Sega;       break;
+                        case "Activision PN":   issuer = ProductCodeIssuer.Activision; break;
+                        case "Amazon ASIN":     issuer = ProductCodeIssuer.Amazon;     break;
+                        case "eBay Item No.":   issuer = ProductCodeIssuer.eBay;       break;
 
                         default:
                             // Unknown Type — ask the user to map it instead of silently
