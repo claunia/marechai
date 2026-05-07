@@ -1,0 +1,18 @@
+/* Phosphor (Green CRT Terminal) theme web font.
+ *
+ * VT323 — recreation of the DEC VT320 character ROM by Peter Hull.
+ * Self-hosted, subset to Latin-1 + punctuation + Euro via pyftsubset.
+ * Captures the look of late-70s / 80s serial terminals (VT100/VT220/VT320,
+ * IBM 3270, the WarGames hacker aesthetic).
+ *
+ * Source: https://fonts.google.com/specimen/VT323
+ * License: SIL OFL 1.1 (see /fonts/phosphor/LICENSE.txt).
+ */
+
+@font-face {
+    font-family: 'VT323';
+    src: url('/fonts/phosphor/vt323.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}

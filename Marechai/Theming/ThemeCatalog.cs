@@ -63,6 +63,10 @@ public static class ThemeCatalog
 
     static readonly IReadOnlyList<string> _cyberpunkFonts = ["/css/themes/cyberpunk.css"];
 
+    static readonly string[] _vt323Stack = ["VT323", "Courier New", "Consolas", "monospace"];
+
+    static readonly IReadOnlyList<string> _phosphorFonts = ["/css/themes/phosphor.css"];
+
     /// <summary>The historical Marechai dark purple palette. Used as fallback for anonymous + null-preference users.</summary>
     public static readonly ThemeDefinition DefaultDark = new(ThemeIds.DefaultDark,
                                                              "Default (Dark)",
@@ -911,8 +915,192 @@ public static class ThemeCatalog
                                                            },
                                                            _cyberpunkFonts);
 
+    /// <summary>
+    ///     Phosphor — the green-on-black CRT terminal aesthetic of late-70s / 80s serial terminals
+    ///     (DEC VT100/VT220/VT320, IBM 3270 in green-screen mode, the iconic "hacking scene" look from
+    ///     WarGames, Alien, and every system-administrator's actual workstation through the 1980s).
+    ///     Pure black background, brilliant P1-phosphor green text, single-weight VT323 monospace
+    ///     reproducing the original DEC character ROM. Hierarchy is conveyed through brightness
+    ///     levels of green rather than hue, matching how monochrome CRTs actually worked.
+    /// </summary>
+    public static readonly ThemeDefinition Phosphor = new(ThemeIds.Phosphor,
+                                                          "Phosphor (Green CRT)",
+                                                          true,
+                                                          new MudTheme
+                                                          {
+                                                              // Monochrome green-phosphor palette — derived from
+                                                              // the P1 phosphor used on DEC VT-series terminals:
+                                                              //   Background = #000000 (CRT off / scanline gaps)
+                                                              //   Bright fg  = #33FF66 (full-intensity phosphor green)
+                                                              //   Mid fg     = #00CC33 (60% intensity — body text)
+                                                              //   Dim fg     = #00802B (35% intensity — secondary text)
+                                                              //   Faint      = #004D1A (15% intensity — disabled / lines)
+                                                              //   Glow tint  = rgba(51,255,102,0.15) (hover / hilight)
+                                                              //
+                                                              // No hue accents — real green-phosphor terminals had
+                                                              // exactly ONE colour. Status colours preserve their
+                                                              // semantic meaning by using DIFFERENT BRIGHTNESS LEVELS
+                                                              // (success = brightest, warning = mid + amber tint to
+                                                              // hint at the optional amber-phosphor terminals, error
+                                                              // = a touch of red because some VT241 colour terminals
+                                                              // *did* have red for alerts).
+                                                              //
+                                                              // Mapping:
+                                                              //   AppBar     = BLACK with bright-green text (status line)
+                                                              //   Drawer     = BLACK with mid-green text (menu list)
+                                                              //   Surface    = BLACK (windows are just framed regions)
+                                                              //   Background = BLACK (the CRT itself)
+                                                              //   Primary    = BRIGHT GREEN (focused/selected — the
+                                                              //                              cursor's home colour)
+                                                              //   Secondary  = MID GREEN (alternate accent)
+                                                              //   Tertiary   = DIM GREEN (least-emphasised)
+                                                              PaletteDark = new PaletteDark
+                                                              {
+                                                                  Primary                  = "#33FF66",
+                                                                  PrimaryContrastText      = "#000000",
+                                                                  Secondary                = "#00CC33",
+                                                                  SecondaryContrastText    = "#000000",
+                                                                  Tertiary                 = "#00802B",
+                                                                  TertiaryContrastText     = "#000000",
+                                                                  AppbarBackground         = "#000000",
+                                                                  AppbarText               = "#33FF66",
+                                                                  DrawerBackground         = "#000000",
+                                                                  DrawerText               = "#00CC33",
+                                                                  DrawerIcon               = "#33FF66",
+                                                                  Surface                  = "#000000",
+                                                                  Background               = "#000000",
+                                                                  BackgroundGray           = "#0A1A0A",
+                                                                  TextPrimary              = "#33FF66",
+                                                                  TextSecondary            = "#00CC33",
+                                                                  TextDisabled             = "#00802B",
+                                                                  ActionDefault            = "#33FF66",
+                                                                  ActionDisabled           = "#00802B",
+                                                                  ActionDisabledBackground = "#0A1A0A",
+                                                                  // Bright green frames everywhere — every "window"
+                                                                  // on a real terminal was drawn with line-drawing
+                                                                  // characters of the same bright phosphor.
+                                                                  LinesDefault             = "#00CC33",
+                                                                  LinesInputs              = "#33FF66",
+                                                                  TableLines               = "#00802B",
+                                                                  TableStriped             = "#0A1A0A",
+                                                                  TableHover               = "#0F2A0F",
+                                                                  Divider                  = "#00CC33",
+                                                                  DividerLight             = "#00802B",
+                                                                  Info                     = "#33FF66",
+                                                                  Success                  = "#00FF66",
+                                                                  // Amber tint nods to the optional amber-phosphor
+                                                                  // terminals (some Wyse/IBM 3151 models shipped
+                                                                  // with amber CRTs instead of green).
+                                                                  Warning                  = "#FFB000",
+                                                                  Error                    = "#FF3333",
+                                                                  Dark                     = "#000000",
+                                                                  HoverOpacity             = 0.18
+                                                              },
+                                                              LayoutProperties = new LayoutProperties
+                                                              {
+                                                                  DrawerWidthLeft     = "260px",
+                                                                  DrawerMiniWidthLeft = "72px"
+                                                              },
+                                                              Typography = new Typography
+                                                              {
+                                                                  // VT323 has only one weight (it's a bitmap-style
+                                                                  // monospace recreation of the VT320 character ROM).
+                                                                  // Use it everywhere; differentiate hierarchy via
+                                                                  // size + brightness, not weight.
+                                                                  // Slight letter-spacing widening on overlines /
+                                                                  // headings for the chunky CRT-readable feel.
+                                                                  Default = new DefaultTypography
+                                                                  {
+                                                                      FontFamily    = _vt323Stack,
+                                                                      FontSize      = "1rem",
+                                                                      FontWeight    = "400",
+                                                                      LineHeight    = "1.4",
+                                                                      LetterSpacing = "0"
+                                                                  },
+                                                                  H1 = new H1Typography
+                                                                  {
+                                                                      FontFamily    = _vt323Stack,
+                                                                      FontSize      = "2.5rem",
+                                                                      FontWeight    = "400",
+                                                                      LetterSpacing = "0.05em"
+                                                                  },
+                                                                  H2 = new H2Typography
+                                                                  {
+                                                                      FontFamily    = _vt323Stack,
+                                                                      FontSize      = "2rem",
+                                                                      FontWeight    = "400",
+                                                                      LetterSpacing = "0.05em"
+                                                                  },
+                                                                  H3 = new H3Typography
+                                                                  {
+                                                                      FontFamily    = _vt323Stack,
+                                                                      FontSize      = "1.6rem",
+                                                                      FontWeight    = "400",
+                                                                      LetterSpacing = "0.04em"
+                                                                  },
+                                                                  H4 = new H4Typography
+                                                                  {
+                                                                      FontFamily    = _vt323Stack,
+                                                                      FontSize      = "1.3rem",
+                                                                      FontWeight    = "400",
+                                                                      LetterSpacing = "0.04em"
+                                                                  },
+                                                                  H5 = new H5Typography
+                                                                  {
+                                                                      FontFamily    = _vt323Stack,
+                                                                      FontSize      = "1.15rem",
+                                                                      FontWeight    = "400",
+                                                                      LetterSpacing = "0.03em"
+                                                                  },
+                                                                  H6 = new H6Typography
+                                                                  {
+                                                                      FontFamily    = _vt323Stack,
+                                                                      FontSize      = "1rem",
+                                                                      FontWeight    = "400",
+                                                                      LetterSpacing = "0.03em"
+                                                                  },
+                                                                  Subtitle1 = new Subtitle1Typography
+                                                                  {
+                                                                      FontFamily = _vt323Stack,
+                                                                      FontWeight = "400"
+                                                                  },
+                                                                  Subtitle2 = new Subtitle2Typography
+                                                                  {
+                                                                      FontFamily = _vt323Stack,
+                                                                      FontWeight = "400"
+                                                                  },
+                                                                  Body1 = new Body1Typography
+                                                                  {
+                                                                      FontFamily = _vt323Stack
+                                                                  },
+                                                                  Body2 = new Body2Typography
+                                                                  {
+                                                                      FontFamily = _vt323Stack
+                                                                  },
+                                                                  Button = new ButtonTypography
+                                                                  {
+                                                                      FontFamily    = _vt323Stack,
+                                                                      FontWeight    = "400",
+                                                                      LetterSpacing = "0.1em",
+                                                                      TextTransform = "uppercase"
+                                                                  },
+                                                                  Caption = new CaptionTypography
+                                                                  {
+                                                                      FontFamily = _vt323Stack
+                                                                  },
+                                                                  Overline = new OverlineTypography
+                                                                  {
+                                                                      FontFamily    = _vt323Stack,
+                                                                      FontWeight    = "400",
+                                                                      LetterSpacing = "0.18em",
+                                                                      TextTransform = "uppercase"
+                                                                  }
+                                                              }
+                                                          },
+                                                          _phosphorFonts);
+
     /// <summary>All themes available to users in the Appearance picker. Order matters — it's the display order.</summary>
-    public static readonly IReadOnlyList<ThemeDefinition> All = new[] { DefaultDark, DefaultLight, AmigaOs, Cde, Cyberpunk, Dos, MacOs9 };
+    public static readonly IReadOnlyList<ThemeDefinition> All = new[] { DefaultDark, DefaultLight, AmigaOs, Cde, Cyberpunk, Dos, MacOs9, Phosphor };
 
     /// <summary>The default theme used when the user has no preference set.</summary>
     public static ThemeDefinition Default => DefaultDark;

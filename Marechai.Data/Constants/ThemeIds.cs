@@ -57,7 +57,10 @@ public static class ThemeIds
     /// <summary>1980s cyberpunk — deep purple-black backgrounds with hot magenta + electric cyan neon accents and the Orbitron geometric font.</summary>
     public const string Cyberpunk = "cyberpunk";
 
+    /// <summary>Green phosphor CRT terminal (VT100/VT220 era) — pure black background, brilliant green text, VT323 monospace.</summary>
+    public const string Phosphor = "phosphor";
+
     /// <summary>All recognised theme slugs. Used by the controller to validate incoming theme ids.</summary>
     public static readonly IReadOnlySet<string> All =
-        new HashSet<string>(StringComparer.OrdinalIgnoreCase) { DefaultDark, DefaultLight, AmigaOs, Dos, MacOs9, Cde, Cyberpunk };
+        new HashSet<string>(StringComparer.OrdinalIgnoreCase) { DefaultDark, DefaultLight, AmigaOs, Dos, MacOs9, Cde, Cyberpunk, Phosphor };
 }
