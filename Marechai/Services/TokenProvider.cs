@@ -23,16 +23,18 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using Microsoft.JSInterop;
 
 namespace Marechai.Services;
 
 public sealed class TokenProvider(ProtectedLocalStorage localStorage)
 {
-    const    string  StorageKey = "auth_token";
+    const  string StorageKey = "auth_token";
     string _cachedToken;
-    bool    _initialized;
+    bool   _initialized;
 
     public async Task<string> GetTokenAsync()
     {
@@ -43,13 +45,18 @@ public sealed class TokenProvider(ProtectedLocalStorage localStorage)
         {
             ProtectedBrowserStorageResult<string> result = await localStorage.GetAsync<string>(StorageKey);
             _cachedToken = result.Success ? result.Value : null;
+            _initialized = true;
         }
-        catch
+        catch(InvalidOperationException)
         {
+            // JS interop not available yet (prerendering). Leave uninitialized so the next call retries.
             _cachedToken = null;
         }
-
-        _initialized = true;
+        catch(JSException)
+        {
+            // Circuit not ready or JS error. Leave uninitialized so the next call retries.
+            _cachedToken = null;
+        }
 
         return _cachedToken;
     }
