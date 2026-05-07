@@ -1,0 +1,25 @@
+/* Cyberpunk theme web font.
+ *
+ * Orbitron — geometric futurist sans-serif by Matt McInerney.
+ * Self-hosted, subset to Latin-1 + punctuation + Euro via pyftsubset.
+ * Captures the 80s cyberpunk / Blade Runner / TRON sci-fi aesthetic.
+ *
+ * Source: https://fonts.google.com/specimen/Orbitron
+ * License: SIL OFL 1.1 (see /fonts/cyberpunk/LICENSE.txt).
+ */
+
+@font-face {
+    font-family: 'Orbitron';
+    src: url('/fonts/cyberpunk/orbitron-regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Orbitron';
+    src: url('/fonts/cyberpunk/orbitron-bold.woff2') format('woff2');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}

@@ -59,6 +59,10 @@ public static class ThemeCatalog
 
     static readonly IReadOnlyList<string> _cdeFonts = ["/css/themes/cde.css"];
 
+    static readonly string[] _orbitronStack = ["Orbitron", "Eurostile", "Helvetica Neue", "Arial", "sans-serif"];
+
+    static readonly IReadOnlyList<string> _cyberpunkFonts = ["/css/themes/cyberpunk.css"];
+
     /// <summary>The historical Marechai dark purple palette. Used as fallback for anonymous + null-preference users.</summary>
     public static readonly ThemeDefinition DefaultDark = new(ThemeIds.DefaultDark,
                                                              "Default (Dark)",
@@ -737,8 +741,178 @@ public static class ThemeCatalog
                                                      },
                                                      _cdeFonts);
 
+    /// <summary>
+    ///     Cyberpunk — the original 1980s vision: deep purple-black backgrounds with hot magenta and electric
+    ///     cyan neon accents, geometric futurist typography. Inspired by Blade Runner (1982), William Gibson's
+    ///     Neuromancer (1984), Akira (1988), and the synthwave / outrun aesthetic that grew out of MTV-era
+    ///     Miami Vice and arcade neon. NOT a reference to any modern video game.
+    /// </summary>
+    public static readonly ThemeDefinition Cyberpunk = new(ThemeIds.Cyberpunk,
+                                                           "Cyberpunk (1980s)",
+                                                           true,
+                                                           new MudTheme
+                                                           {
+                                                               // 1980s cyberpunk neon palette:
+                                                               //   Background = #0A0014 (near-black with deep purple tint —
+                                                               //                         the night-city void)
+                                                               //   Surface    = #15082A (slightly lighter purple-black for cards)
+                                                               //   AppBar     = #1A0033 (deeper plum for the top chrome)
+                                                               //   Drawer     = #100020 (sidebar — between AppBar and Surface)
+                                                               //
+                                                               //   Magenta    = #FF1493 (hot pink — the iconic 80s neon, used
+                                                               //                         everywhere: Miami Vice, Blade Runner
+                                                               //                         signage, vaporwave precursor era)
+                                                               //   Cyan       = #00F0FF (electric cyan — the second half of
+                                                               //                         the iconic 80s magenta+cyan pairing)
+                                                               //   Purple     = #BD00FF (neon violet — used for tertiary
+                                                               //                         accents and selection)
+                                                               //   Green      = #39FF14 (toxic / lime neon — period-correct
+                                                               //                         success colour, evokes CRT phosphor)
+                                                               //   Yellow     = #FFD300 (amber neon — warnings)
+                                                               //   Red        = #FF003C (vivid alert red — errors)
+                                                               //
+                                                               //   Text       = #F0EFFF (off-white with cool purple cast,
+                                                               //                         feels like phosphor glow)
+                                                               //   Muted text = #A09AC9 (lavender-gray)
+                                                               PaletteDark = new PaletteDark
+                                                               {
+                                                                   Primary                  = "#FF1493",
+                                                                   PrimaryContrastText      = "#0A0014",
+                                                                   Secondary                = "#00F0FF",
+                                                                   SecondaryContrastText    = "#0A0014",
+                                                                   Tertiary                 = "#BD00FF",
+                                                                   TertiaryContrastText     = "#FFFFFF",
+                                                                   AppbarBackground         = "#1A0033",
+                                                                   AppbarText               = "#00F0FF",
+                                                                   DrawerBackground         = "#100020",
+                                                                   DrawerText               = "#F0EFFF",
+                                                                   DrawerIcon               = "#FF1493",
+                                                                   Surface                  = "#15082A",
+                                                                   Background               = "#0A0014",
+                                                                   BackgroundGray           = "#1F0F36",
+                                                                   TextPrimary              = "#F0EFFF",
+                                                                   TextSecondary            = "#A09AC9",
+                                                                   TextDisabled             = "#5A4F7C",
+                                                                   ActionDefault            = "#00F0FF",
+                                                                   ActionDisabled           = "#5A4F7C",
+                                                                   ActionDisabledBackground = "#1F0F36",
+                                                                   LinesDefault             = "#3D2A5C",
+                                                                   LinesInputs              = "#FF1493",
+                                                                   TableLines               = "#3D2A5C",
+                                                                   TableStriped             = "#1F0F36",
+                                                                   TableHover               = "#2A1450",
+                                                                   Divider                  = "#3D2A5C",
+                                                                   DividerLight             = "#5A4F7C",
+                                                                   Info                     = "#00F0FF",
+                                                                   Success                  = "#39FF14",
+                                                                   Warning                  = "#FFD300",
+                                                                   Error                    = "#FF003C",
+                                                                   Dark                     = "#0A0014",
+                                                                   HoverOpacity             = 0.15
+                                                               },
+                                                               LayoutProperties = new LayoutProperties
+                                                               {
+                                                                   DrawerWidthLeft     = "260px",
+                                                                   DrawerMiniWidthLeft = "72px"
+                                                               },
+                                                               Typography = new Typography
+                                                               {
+                                                                   // Orbitron's geometric letterforms work well at all
+                                                                   // sizes; use it everywhere for full sci-fi vibe.
+                                                                   Default = new DefaultTypography
+                                                                   {
+                                                                       FontFamily    = _orbitronStack,
+                                                                       FontSize      = "0.875rem",
+                                                                       FontWeight    = "400",
+                                                                       LineHeight    = "1.5",
+                                                                       LetterSpacing = "0.02em"
+                                                                   },
+                                                                   H1 = new H1Typography
+                                                                   {
+                                                                       FontFamily    = _orbitronStack,
+                                                                       FontSize      = "2.25rem",
+                                                                       FontWeight    = "700",
+                                                                       LetterSpacing = "0.05em"
+                                                                   },
+                                                                   H2 = new H2Typography
+                                                                   {
+                                                                       FontFamily    = _orbitronStack,
+                                                                       FontSize      = "1.875rem",
+                                                                       FontWeight    = "700",
+                                                                       LetterSpacing = "0.05em"
+                                                                   },
+                                                                   H3 = new H3Typography
+                                                                   {
+                                                                       FontFamily    = _orbitronStack,
+                                                                       FontSize      = "1.5rem",
+                                                                       FontWeight    = "700",
+                                                                       LetterSpacing = "0.04em"
+                                                                   },
+                                                                   H4 = new H4Typography
+                                                                   {
+                                                                       FontFamily    = _orbitronStack,
+                                                                       FontSize      = "1.25rem",
+                                                                       FontWeight    = "700",
+                                                                       LetterSpacing = "0.03em"
+                                                                   },
+                                                                   H5 = new H5Typography
+                                                                   {
+                                                                       FontFamily    = _orbitronStack,
+                                                                       FontSize      = "1.125rem",
+                                                                       FontWeight    = "700",
+                                                                       LetterSpacing = "0.03em"
+                                                                   },
+                                                                   H6 = new H6Typography
+                                                                   {
+                                                                       FontFamily    = _orbitronStack,
+                                                                       FontSize      = "1rem",
+                                                                       FontWeight    = "700",
+                                                                       LetterSpacing = "0.03em"
+                                                                   },
+                                                                   Subtitle1 = new Subtitle1Typography
+                                                                   {
+                                                                       FontFamily    = _orbitronStack,
+                                                                       FontWeight    = "700",
+                                                                       LetterSpacing = "0.02em"
+                                                                   },
+                                                                   Subtitle2 = new Subtitle2Typography
+                                                                   {
+                                                                       FontFamily    = _orbitronStack,
+                                                                       FontWeight    = "700",
+                                                                       LetterSpacing = "0.02em"
+                                                                   },
+                                                                   Body1 = new Body1Typography
+                                                                   {
+                                                                       FontFamily = _orbitronStack
+                                                                   },
+                                                                   Body2 = new Body2Typography
+                                                                   {
+                                                                       FontFamily = _orbitronStack
+                                                                   },
+                                                                   Button = new ButtonTypography
+                                                                   {
+                                                                       FontFamily    = _orbitronStack,
+                                                                       FontWeight    = "700",
+                                                                       LetterSpacing = "0.08em",
+                                                                       TextTransform = "uppercase"
+                                                                   },
+                                                                   Caption = new CaptionTypography
+                                                                   {
+                                                                       FontFamily = _orbitronStack
+                                                                   },
+                                                                   Overline = new OverlineTypography
+                                                                   {
+                                                                       FontFamily    = _orbitronStack,
+                                                                       FontWeight    = "700",
+                                                                       LetterSpacing = "0.15em",
+                                                                       TextTransform = "uppercase"
+                                                                   }
+                                                               }
+                                                           },
+                                                           _cyberpunkFonts);
+
     /// <summary>All themes available to users in the Appearance picker. Order matters — it's the display order.</summary>
-    public static readonly IReadOnlyList<ThemeDefinition> All = new[] { DefaultDark, DefaultLight, AmigaOs, Cde, Dos, MacOs9 };
+    public static readonly IReadOnlyList<ThemeDefinition> All = new[] { DefaultDark, DefaultLight, AmigaOs, Cde, Cyberpunk, Dos, MacOs9 };
 
     /// <summary>The default theme used when the user has no preference set.</summary>
     public static ThemeDefinition Default => DefaultDark;
