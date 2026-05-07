@@ -283,4 +283,8 @@
     <value>Gestión de lanzamientos de software</value>
         <comment>Software release management admin link</comment>
   </data>
+    <data name="Software Attributes Management" xml:space="preserve">
+    <value>Gestión de atributos de software</value>
+        <comment>Software attributes management admin link</comment>
+  </data>
 </root>

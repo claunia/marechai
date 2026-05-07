@@ -1,0 +1,139 @@
+@page "/admin/software-attributes"
+@attribute [Authorize(Roles = "Admin, UberAdmin")]
+@using Marechai.ApiClient.Models
+@using Marechai.Services
+@inject SoftwareAttributesService SoftwareAttributesService
+@inject SoftwareService SoftwareService
+@inject IStringLocalizer<SoftwareAttributesService> L
+@inject IDialogService DialogService
+
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #5e35b1 0%, #9575cd 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Filled.Tune" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Style="color: white;">@L["Software Attributes Management"]</MudText>
+    </MudStack>
+    <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);" Class="mt-2">@L["Manage software attributes (specifications and ratings)."]</MudText>
+</MudPaper>
+
+@if(!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+}
+
+@if(!string.IsNullOrWhiteSpace(_successMessage))
+{
+    <MudAlert Severity="Severity.Success" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _successMessage = null">@_successMessage</MudAlert>
+}
+
+<MudPaper Elevation="2" Class="rounded-lg pa-4 mb-4">
+    <MudGrid Spacing="2">
+        <MudItem xs="12" md="6" lg="3">
+            <MudAutocomplete T="SoftwareDto"
+                             Value="_filterSoftware"
+                             ValueChanged="OnFilterSoftwareChanged"
+                             Label="@L["Filter by software"]"
+                             Placeholder="@L["Type to search software..."]"
+                             SearchFunc="SearchSoftwareAsync"
+                             ToStringFunc="@(s => s?.Name)"
+                             Variant="Variant.Outlined"
+                             Clearable="true"
+                             Dense="true"
+                             ResetValueOnEmptyText="true"
+                             CoerceText="false"/>
+        </MudItem>
+        <MudItem xs="12" md="6" lg="3">
+            <MudAutocomplete T="SoftwareReleaseLookupDto"
+                             Value="_filterRelease"
+                             ValueChanged="OnFilterReleaseChanged"
+                             Label="@L["Filter by release"]"
+                             Disabled="@(_filterSoftware is null)"
+                             SearchFunc="SearchReleasesAsync"
+                             ToStringFunc="ReleaseToString"
+                             Variant="Variant.Outlined"
+                             Clearable="true"
+                             Dense="true"
+                             ResetValueOnEmptyText="true"
+                             CoerceText="false"
+                             HelperText="@(_filterSoftware is null ? L["Pick a software to enable release filter"] : null)"/>
+        </MudItem>
+        <MudItem xs="12" md="6" lg="3">
+            <MudAutocomplete T="string"
+                             Value="_filterCategory"
+                             ValueChanged="OnFilterCategoryChanged"
+                             Label="@L["Filter by category"]"
+                             SearchFunc="SearchCategoriesAsync"
+                             Variant="Variant.Outlined"
+                             Clearable="true"
+                             Dense="true"
+                             ResetValueOnEmptyText="true"
+                             CoerceText="false"
+                             CoerceValue="true"/>
+        </MudItem>
+        <MudItem xs="12" md="6" lg="3">
+            <MudAutocomplete T="string"
+                             Value="_filterKey"
+                             ValueChanged="OnFilterKeyChanged"
+                             Label="@L["Filter by key"]"
+                             SearchFunc="SearchKeysAsync"
+                             Variant="Variant.Outlined"
+                             Clearable="true"
+                             Dense="true"
+                             ResetValueOnEmptyText="true"
+                             CoerceText="false"
+                             CoerceValue="true"/>
+        </MudItem>
+    </MudGrid>
+    <MudStack Row="true" Class="mt-2">
+        <MudSpacer/>
+        <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.FilterAltOff" OnClick="ClearFilters">@L["Clear filters"]</MudButton>
+    </MudStack>
+</MudPaper>
+
+<MudPaper Elevation="2" Class="rounded-lg">
+    <MudToolBar Dense="true">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="OpenAddDialog">@L["Add Attribute"]</MudButton>
+        <MudSpacer/>
+        <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="async () => await _dataGrid.ReloadServerData()"/>
+    </MudToolBar>
+
+    <MudDataGrid @ref="_dataGrid" T="SoftwareAttributeDto" ServerData="ServerReload" Dense="true" Hover="true" Striped="true" RowsPerPage="25">
+        <NoRecordsContent>
+            <MudText>@L["No attributes found."]</MudText>
+        </NoRecordsContent>
+        <LoadingContent>
+            <MudText>@L["Loading..."]</MudText>
+        </LoadingContent>
+        <Columns>
+            <PropertyColumn Property="x => x.SoftwareName" Title="@L["Software"]" Sortable="false" Filterable="false">
+                <CellTemplate>
+                    @(context.Item.SoftwareName ?? context.Item.SoftwareReleaseTitle ?? "—")
+                </CellTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.SoftwareReleaseTitle" Title="@L["Release"]" Sortable="false" Filterable="false">
+                <CellTemplate>
+                    <MudStack Spacing="0">
+                        <MudText Typo="Typo.body2">@(string.IsNullOrWhiteSpace(context.Item.SoftwareReleaseTitle) ? "—" : context.Item.SoftwareReleaseTitle)</MudText>
+                        @if(!string.IsNullOrWhiteSpace(context.Item.PlatformName))
+                        {
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">@context.Item.PlatformName</MudText>
+                        }
+                    </MudStack>
+                </CellTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.Category" Title="@L["Category"]" Sortable="false" Filterable="false"/>
+            <PropertyColumn Property="x => x.Key" Title="@L["Key"]" Sortable="false" Filterable="false"/>
+            <PropertyColumn Property="x => x.Value" Title="@L["Value"]" Sortable="false" Filterable="false"/>
+            <TemplateColumn Title="@L["Actions"]" Sortable="false" Filterable="false">
+                <CellTemplate>
+                    <MudStack Row="true" Spacing="1">
+                        <MudTooltip Text="@L["Edit"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditDialog(context.Item)"/></MudTooltip>
+                        <MudTooltip Text="@L["Delete"]"><MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDelete(context.Item)"/></MudTooltip>
+                    </MudStack>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="SoftwareAttributeDto" PageSizeOptions="new[] { 10, 25, 50, 100 }"/>
+        </PagerContent>
+    </MudDataGrid>
+</MudPaper>

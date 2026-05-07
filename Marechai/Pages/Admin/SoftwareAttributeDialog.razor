@@ -1,0 +1,268 @@
+@using System
+@using System.Collections.Generic
+@using System.Linq
+@using System.Threading
+@using System.Threading.Tasks
+@using Marechai.ApiClient.Models
+@using Marechai.Services
+
+@inject SoftwareAttributesService SoftwareAttributesService
+@inject IStringLocalizer<SoftwareAttributesService> L
+
+<MudDialog>
+    <DialogContent>
+        <MudStack Spacing="3">
+            <MudPaper Elevation="0" Class="pa-3" Style="background-color: var(--mud-palette-background-grey); border-radius: 8px;">
+                <MudStack Spacing="0">
+                    <MudText Typo="Typo.caption" Color="Color.Secondary">@L["Software"] · @L["Release"]</MudText>
+                    <MudText Typo="Typo.body2">
+                        @(string.IsNullOrWhiteSpace(SoftwareName) ? "—" : SoftwareName)
+                        @if(!string.IsNullOrWhiteSpace(SoftwareReleaseTitle))
+                        {
+                            <text> · </text>@SoftwareReleaseTitle
+                        }
+                        @if(!string.IsNullOrWhiteSpace(PlatformName))
+                        {
+                            <text> · </text>@PlatformName
+                        }
+                    </MudText>
+                </MudStack>
+            </MudPaper>
+
+            <MudAutocomplete T="string"
+                             Value="Category"
+                             ValueChanged="OnCategoryChanged"
+                             Label="@L["Category"]"
+                             SearchFunc="SearchCategoriesAsync"
+                             Variant="Variant.Outlined"
+                             Required="true"
+                             RequiredError="@L["Category is required."]"
+                             CoerceText="false"
+                             CoerceValue="true"/>
+
+            <MudAutocomplete T="string"
+                             Value="Key"
+                             ValueChanged="OnKeyChanged"
+                             Label="@L["Key"]"
+                             SearchFunc="SearchKeysAsync"
+                             Variant="Variant.Outlined"
+                             Required="true"
+                             RequiredError="@L["Key is required."]"
+                             CoerceText="false"
+                             CoerceValue="true"/>
+
+            <MudTextField @bind-Value="Value"
+                          Label="@L["Value"]"
+                          Variant="Variant.Outlined"
+                          Required="true"
+                          RequiredError="@L["Value cannot be empty."]"/>
+
+            @if(!IsNew && !string.IsNullOrEmpty(Value) && Value.Contains(", "))
+            {
+                <MudStack Row="true" Spacing="2">
+                    <MudButton Variant="Variant.Outlined"
+                               Color="Color.Secondary"
+                               StartIcon="@Icons.Material.Filled.CallSplit"
+                               OnClick="PreviewSplit"
+                               Disabled="@_splitInProgress">
+                        @L["Split by \", \""]
+                    </MudButton>
+                    @if(_splitPreview is { Fragments: { Count: > 0 } })
+                    {
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Secondary"
+                                   StartIcon="@Icons.Material.Filled.PlaylistAdd"
+                                   OnClick="ApplySplit"
+                                   Disabled="@(_splitInProgress || _newFragmentCount == 0)">
+                            @L["Apply split"]
+                        </MudButton>
+                    }
+                </MudStack>
+
+                @if(_splitInProgress)
+                {
+                    <MudProgressLinear Indeterminate="true" Color="Color.Secondary"/>
+                }
+
+                @if(_splitPreview is { Fragments: { Count: > 0 } })
+                {
+                    <MudPaper Elevation="0" Class="pa-3" Style="background-color: var(--mud-palette-background-grey); border-radius: 8px;">
+                        <MudText Typo="Typo.subtitle2" Class="mb-2">@L["Split preview"]</MudText>
+                        <MudList T="SplitFragmentResultDto" Dense="true" ReadOnly="true">
+                            @foreach(SplitFragmentResultDto f in _splitPreview.Fragments)
+                            {
+                                <MudListItem T="SplitFragmentResultDto">
+                                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                        <MudChip T="string"
+                                                 Size="Size.Small"
+                                                 Variant="Variant.Filled"
+                                                 Color="@(f.AlreadyExisted == true ? Color.Warning : Color.Success)">
+                                            @(f.AlreadyExisted == true ? L["Already exists, will be skipped"] : L["New"])
+                                        </MudChip>
+                                        <MudText Typo="Typo.body2">@f.Value</MudText>
+                                    </MudStack>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    </MudPaper>
+                }
+            }
+
+            @if(!string.IsNullOrWhiteSpace(_validationError))
+            {
+                <MudAlert Severity="Severity.Error">@_validationError</MudAlert>
+            }
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit" Disabled="@_splitInProgress">@L["Save"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    string                          _validationError;
+    SplitSoftwareAttributeResultDto _splitPreview;
+    int                             _newFragmentCount;
+    bool                            _splitInProgress;
+
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter] public bool   IsNew                { get; set; }
+    [Parameter] public long   AttributeId          { get; set; }
+    [Parameter] public ulong  SoftwareReleaseId    { get; set; }
+    [Parameter] public string SoftwareName         { get; set; } = string.Empty;
+    [Parameter] public string SoftwareReleaseTitle { get; set; } = string.Empty;
+    [Parameter] public string PlatformName         { get; set; } = string.Empty;
+    [Parameter] public string Category             { get; set; } = string.Empty;
+    [Parameter] public string Key                  { get; set; } = string.Empty;
+    [Parameter] public string Value                { get; set; } = string.Empty;
+
+    void Cancel() => MudDialog.Cancel();
+
+    void OnCategoryChanged(string c)
+    {
+        Category      = c ?? string.Empty;
+        _splitPreview = null;
+    }
+
+    void OnKeyChanged(string k)
+    {
+        Key           = k ?? string.Empty;
+        _splitPreview = null;
+    }
+
+    async Task<IEnumerable<string>> SearchCategoriesAsync(string text, CancellationToken cancellationToken)
+    {
+        List<string> all = await SoftwareAttributesService.GetDistinctCategoriesAsync();
+
+        if(string.IsNullOrWhiteSpace(text)) return all;
+
+        return all.Where(c => c.Contains(text, StringComparison.OrdinalIgnoreCase));
+    }
+
+    async Task<IEnumerable<string>> SearchKeysAsync(string text, CancellationToken cancellationToken)
+    {
+        List<string> all = await SoftwareAttributesService.GetDistinctKeysAsync(Category);
+
+        if(string.IsNullOrWhiteSpace(text)) return all;
+
+        return all.Where(k => k.Contains(text, StringComparison.OrdinalIgnoreCase));
+    }
+
+    async Task PreviewSplit()
+    {
+        _validationError = null;
+        _splitInProgress = true;
+        StateHasChanged();
+
+        (SplitSoftwareAttributeResultDto preview, string error) =
+            await SoftwareAttributesService.PreviewSplitAsync(AttributeId, ", ");
+
+        _splitInProgress = false;
+
+        if(error is not null)
+        {
+            _validationError = error;
+            _splitPreview    = null;
+
+            return;
+        }
+
+        _splitPreview     = preview;
+        _newFragmentCount = preview?.Fragments?.Count(f => f.AlreadyExisted != true) ?? 0;
+    }
+
+    async Task ApplySplit()
+    {
+        _validationError = null;
+        _splitInProgress = true;
+        StateHasChanged();
+
+        (SplitSoftwareAttributeResultDto result, string error) =
+            await SoftwareAttributesService.SplitAsync(AttributeId, ", ");
+
+        _splitInProgress = false;
+
+        if(error is not null)
+        {
+            _validationError = error;
+
+            return;
+        }
+
+        int newCount     = result?.Fragments?.Count(f => f.AlreadyExisted != true) ?? 0;
+        int skippedCount = result?.Fragments?.Count(f => f.AlreadyExisted == true) ?? 0;
+        string summary   = string.Format(L["Attribute split into {0} new value(s) ({1} skipped)."], newCount, skippedCount);
+
+        MudDialog.Close(DialogResult.Ok(new SoftwareAttributeDialogResult
+        {
+            SoftwareReleaseId = SoftwareReleaseId,
+            Category          = Category,
+            Key               = Key,
+            Value             = Value,
+            SplitApplied      = true,
+            Summary           = summary
+        }));
+    }
+
+    void Submit()
+    {
+        if(string.IsNullOrWhiteSpace(Category))
+        {
+            _validationError = L["Category is required."];
+
+            return;
+        }
+
+        if(string.IsNullOrWhiteSpace(Key))
+        {
+            _validationError = L["Key is required."];
+
+            return;
+        }
+
+        if(string.IsNullOrWhiteSpace(Value))
+        {
+            _validationError = L["Value cannot be empty."];
+
+            return;
+        }
+
+        if(IsNew && SoftwareReleaseId == 0)
+        {
+            _validationError = L["Release is required."];
+
+            return;
+        }
+
+        MudDialog.Close(DialogResult.Ok(new SoftwareAttributeDialogResult
+        {
+            SoftwareReleaseId = SoftwareReleaseId,
+            Category          = Category.Trim(),
+            Key               = Key.Trim(),
+            Value             = Value.Trim(),
+            SplitApplied      = false
+        }));
+    }
+}

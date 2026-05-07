@@ -58,7 +58,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache) : C
     // values, year range) and barely change between requests, so a short
     // memory cache turns 4 expensive queries into ~0 ms hits.
     const           string   SOFTWARE_GENRES_CACHE_KEY    = "software:genres";
-    const           string   SOFTWARE_SPECS_CACHE_KEY     = "software:specs";
+    internal const  string   SOFTWARE_SPECS_CACHE_KEY     = "software:specs";
     const           string   SOFTWARE_PLATFORMS_CACHE_KEY = "software:platforms";
     const           string   SOFTWARE_YEARS_CACHE_KEY     = "software:years";
     const           string   SOFTWARE_COUNT_CACHE_KEY     = "software:count";

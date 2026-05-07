@@ -222,4 +222,8 @@
         <value>Softwareveröffentlichungsverwaltung</value>
         <comment>Software release management admin link</comment>
     </data>
+    <data name="Software Attributes Management" xml:space="preserve">
+        <value>Verwaltung von Softwareattributen</value>
+        <comment>Software attributes management admin link</comment>
+    </data>
 </root>

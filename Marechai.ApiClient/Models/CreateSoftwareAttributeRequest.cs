@@ -9,7 +9,7 @@ namespace Marechai.ApiClient.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class SoftwareAttributeDto : IAdditionalDataHolder, IParsable
+    public partial class CreateSoftwareAttributeRequest : IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
@@ -22,8 +22,6 @@ namespace Marechai.ApiClient.Models
 #else
         public string Category { get; set; }
 #endif
-        /// <summary>The id property</summary>
-        public long? Id { get; set; }
         /// <summary>The key property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -32,40 +30,8 @@ namespace Marechai.ApiClient.Models
 #else
         public string Key { get; set; }
 #endif
-        /// <summary>The platform_name property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? PlatformName { get; set; }
-#nullable restore
-#else
-        public string PlatformName { get; set; }
-#endif
-        /// <summary>The region_names property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? RegionNames { get; set; }
-#nullable restore
-#else
-        public string RegionNames { get; set; }
-#endif
-        /// <summary>The software_name property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? SoftwareName { get; set; }
-#nullable restore
-#else
-        public string SoftwareName { get; set; }
-#endif
         /// <summary>The software_release_id property</summary>
         public int? SoftwareReleaseId { get; set; }
-        /// <summary>The software_release_title property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? SoftwareReleaseTitle { get; set; }
-#nullable restore
-#else
-        public string SoftwareReleaseTitle { get; set; }
-#endif
         /// <summary>The value property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -75,21 +41,21 @@ namespace Marechai.ApiClient.Models
         public string Value { get; set; }
 #endif
         /// <summary>
-        /// Instantiates a new <see cref="global::Marechai.ApiClient.Models.SoftwareAttributeDto"/> and sets the default values.
+        /// Instantiates a new <see cref="global::Marechai.ApiClient.Models.CreateSoftwareAttributeRequest"/> and sets the default values.
         /// </summary>
-        public SoftwareAttributeDto()
+        public CreateSoftwareAttributeRequest()
         {
             AdditionalData = new Dictionary<string, object>();
         }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
-        /// <returns>A <see cref="global::Marechai.ApiClient.Models.SoftwareAttributeDto"/></returns>
+        /// <returns>A <see cref="global::Marechai.ApiClient.Models.CreateSoftwareAttributeRequest"/></returns>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static global::Marechai.ApiClient.Models.SoftwareAttributeDto CreateFromDiscriminatorValue(IParseNode parseNode)
+        public static global::Marechai.ApiClient.Models.CreateSoftwareAttributeRequest CreateFromDiscriminatorValue(IParseNode parseNode)
         {
             if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
-            return new global::Marechai.ApiClient.Models.SoftwareAttributeDto();
+            return new global::Marechai.ApiClient.Models.CreateSoftwareAttributeRequest();
         }
         /// <summary>
         /// The deserialization information for the current model
@@ -100,13 +66,8 @@ namespace Marechai.ApiClient.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "category", n => { Category = n.GetStringValue(); } },
-                { "id", n => { Id = n.GetLongValue(); } },
                 { "key", n => { Key = n.GetStringValue(); } },
-                { "platform_name", n => { PlatformName = n.GetStringValue(); } },
-                { "region_names", n => { RegionNames = n.GetStringValue(); } },
-                { "software_name", n => { SoftwareName = n.GetStringValue(); } },
                 { "software_release_id", n => { SoftwareReleaseId = n.GetIntValue(); } },
-                { "software_release_title", n => { SoftwareReleaseTitle = n.GetStringValue(); } },
                 { "value", n => { Value = n.GetStringValue(); } },
             };
         }
@@ -118,13 +79,8 @@ namespace Marechai.ApiClient.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("category", Category);
-            writer.WriteLongValue("id", Id);
             writer.WriteStringValue("key", Key);
-            writer.WriteStringValue("platform_name", PlatformName);
-            writer.WriteStringValue("region_names", RegionNames);
-            writer.WriteStringValue("software_name", SoftwareName);
             writer.WriteIntValue("software_release_id", SoftwareReleaseId);
-            writer.WriteStringValue("software_release_title", SoftwareReleaseTitle);
             writer.WriteStringValue("value", Value);
             writer.WriteAdditionalData(AdditionalData);
         }

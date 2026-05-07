@@ -26,4 +26,10 @@ public class SoftwareAttributeDto : BaseDto<long>
 
     [JsonPropertyName("region_names")]
     public string? RegionNames { get; set; }
+
+    [JsonPropertyName("software_name")]
+    public string? SoftwareName { get; set; }
+
+    [JsonPropertyName("software_release_title")]
+    public string? SoftwareReleaseTitle { get; set; }
 }
