@@ -45,6 +45,8 @@ public static class Register
         services.AddScoped<MachineFamiliesService>();
         services.AddScoped<MachinePhotosService>();
         services.AddScoped<GpuPhotosService>();
+        services.AddScoped<SoundSynthPhotosService>();
+        services.AddScoped<ProcessorPhotosService>();
         services.AddScoped<GpusService>();
         services.AddScoped<InstructionSetsService>();
         services.AddScoped<InstructionSetExtensionsService>();
