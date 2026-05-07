@@ -11,6 +11,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.MobyGames.Services;
 
+/// <summary>
+///     Control-flow signal raised when the user picks [Q]uit at an interactive prompt
+///     (e.g. the unknown-product-code-issuer prompt). Callers at CLI entry points should
+///     catch this and exit cleanly without printing a stack trace.
+/// </summary>
+public sealed class UserQuitException : Exception
+{
+    public UserQuitException() : base("User requested to quit") { }
+}
+
 public class ImportService
 {
     readonly IDbContextFactory<MarechaiContext> _contextFactory;
@@ -21,6 +31,12 @@ public class ImportService
     readonly CountryMatcher                    _countryMatcher;
     readonly StateService                      _stateService;
     readonly MobyGamesHttpClient               _mobyHttpClient;
+
+    // Session-only cache of user mapping decisions for product code Type strings that
+    // aren't covered by the hardcoded fast-path switch in ImportReleasesInternalAsync.
+    // Value == null means the user chose [S]kip for that Type.
+    readonly Dictionary<string, ProductCodeIssuer?> _productCodeIssuerCache =
+        new(StringComparer.Ordinal);
 
     public ImportService(
         IDbContextFactory<MarechaiContext> contextFactory,
@@ -164,6 +180,12 @@ public class ImportService
                 await ImportGameAsync(game, batchNumber);
                 imported++;
             }
+            catch(UserQuitException)
+            {
+                Console.WriteLine($"\n  Quitting on user request. {imported} imported, {rejected} rejected, {failed} failed so far.");
+
+                return;
+            }
             catch(Exception ex)
             {
                 Console.WriteLine($"    ERROR: {ex}");
@@ -173,6 +195,72 @@ public class ImportService
         }
 
         Console.WriteLine($"\n  Batch complete: {imported} imported, {rejected} rejected, {failed} failed");
+    }
+
+    /// <summary>
+    ///     Resolves an unknown product code Type string to a <see cref="ProductCodeIssuer" /> by
+    ///     prompting the user. Returns true if the user picked an issuer (assigned to
+    ///     <paramref name="issuer" />), false if the user chose [S]kip. Throws
+    ///     <see cref="UserQuitException" /> if the user chose [Q]uit. Decisions are cached for the
+    ///     remainder of the session so the user is asked at most once per Type per CLI run.
+    /// </summary>
+    bool TryResolveProductCodeIssuer(string type, out ProductCodeIssuer issuer)
+    {
+        if(_productCodeIssuerCache.TryGetValue(type, out var cached))
+        {
+            if(cached.HasValue)
+            {
+                issuer = cached.Value;
+
+                return true;
+            }
+
+            // Cached decision was [S]kip
+            issuer = default;
+
+            return false;
+        }
+
+        var values = (ProductCodeIssuer[])Enum.GetValues(typeof(ProductCodeIssuer));
+
+        while(true)
+        {
+            Console.WriteLine($"\n    Unknown product code issuer \"{type}\"");
+            Console.WriteLine("    Pick the issuer it should map to:");
+
+            for(int i = 0; i < values.Length; i++)
+                Console.WriteLine($"      [{i + 1}] {values[i]}");
+
+            Console.WriteLine("      [S] Skip this code");
+            Console.WriteLine("      [Q] Quit batch (e.g. to add a new issuer enum value in code and re-run)");
+            Console.Write("    Select: ");
+
+            string input = Console.ReadLine()?.Trim();
+
+            if(string.IsNullOrEmpty(input))
+                continue;
+
+            if(string.Equals(input, "Q", StringComparison.OrdinalIgnoreCase))
+                throw new UserQuitException();
+
+            if(string.Equals(input, "S", StringComparison.OrdinalIgnoreCase))
+            {
+                _productCodeIssuerCache[type] = null;
+                issuer                        = default;
+
+                return false;
+            }
+
+            if(int.TryParse(input, out int choice) && choice >= 1 && choice <= values.Length)
+            {
+                issuer                        = values[choice - 1];
+                _productCodeIssuerCache[type] = issuer;
+
+                return true;
+            }
+
+            Console.WriteLine("    Invalid input. Please enter a number, S, or Q.");
+        }
     }
 
     /// <summary>
@@ -882,18 +970,27 @@ public class ImportService
                 // Product codes
                 foreach(var productCode in release.ProductCodes)
                 {
-                    var issuer = productCode.Type switch
+                    ProductCodeIssuer issuer;
+
+                    switch(productCode.Type)
                     {
-                        "Sony PN"        => ProductCodeIssuer.Sony,
-                        "PSN/SEN Code"   => ProductCodeIssuer.PSN,
-                        "Microsoft PN"   => ProductCodeIssuer.Microsoft,
-                        "Nintendo PN"    => ProductCodeIssuer.Nintendo,
-                        "Sega PN"        => ProductCodeIssuer.Sega,
-                        "Activision PN"  => ProductCodeIssuer.Activision,
-                        "Amazon ASIN"    => ProductCodeIssuer.Amazon,
-                        "eBay Item No."  => ProductCodeIssuer.eBay,
-                        _                => ProductCodeIssuer.Other
-                    };
+                        case "Sony PN":       issuer = ProductCodeIssuer.Sony;       break;
+                        case "PSN/SEN Code":  issuer = ProductCodeIssuer.PSN;        break;
+                        case "Microsoft PN":  issuer = ProductCodeIssuer.Microsoft;  break;
+                        case "Nintendo PN":   issuer = ProductCodeIssuer.Nintendo;   break;
+                        case "Sega PN":       issuer = ProductCodeIssuer.Sega;       break;
+                        case "Activision PN": issuer = ProductCodeIssuer.Activision; break;
+                        case "Amazon ASIN":   issuer = ProductCodeIssuer.Amazon;     break;
+                        case "eBay Item No.": issuer = ProductCodeIssuer.eBay;       break;
+
+                        default:
+                            // Unknown Type — ask the user to map it instead of silently
+                            // defaulting to ProductCodeIssuer.Other.
+                            if(!TryResolveProductCodeIssuer(productCode.Type, out issuer))
+                                continue; // user chose [S]kip
+
+                            break;
+                    }
 
                     bool codeExists = await context.SoftwareProductCodes
                                                    .AnyAsync(c => c.Issuer == issuer &&

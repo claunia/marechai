@@ -460,7 +460,15 @@ class Program
                                                          countryMatcher, stateService, dlcHttpClient);
 
                 var dlcService = new DlcRelationService(factory, dlcHttpClient, dlcImportService, sourceDb);
-                await dlcService.RunAsync(dlcBatchSize, dlcDryRun);
+
+                try
+                {
+                    await dlcService.RunAsync(dlcBatchSize, dlcDryRun);
+                }
+                catch(UserQuitException)
+                {
+                    Console.WriteLine("\n  Quitting on user request.");
+                }
 
                 break;
             }
@@ -484,7 +492,15 @@ class Program
                                                           countryMatcher, stateService);
 
                 var compService = new CompilationRelationService(factory, sourceDb, compImportService);
-                await compService.RunAsync(compBatchSize, compDryRun);
+
+                try
+                {
+                    await compService.RunAsync(compBatchSize, compDryRun);
+                }
+                catch(UserQuitException)
+                {
+                    Console.WriteLine("\n  Quitting on user request.");
+                }
 
                 break;
             }
