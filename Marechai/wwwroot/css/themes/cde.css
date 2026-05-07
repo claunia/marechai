@@ -1,0 +1,26 @@
+/* CDE (Common Desktop Environment) theme web font.
+ *
+ * DejaVu Sans — humanist sans-serif derived from Bitstream Vera Sans,
+ * chosen as the closest freely-redistributable substitute for the
+ * Lucida Sans font used by the original Solaris CDE desktop.
+ *
+ * Source: https://dejavu-fonts.github.io/
+ * License: Bitstream Vera + DejaVu public-domain additions (free / permissive).
+ * See /fonts/cde/LICENSE.txt.
+ */
+
+@font-face {
+    font-family: 'DejaVu Sans CDE';
+    src: url('/fonts/cde/dejavu-sans.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'DejaVu Sans CDE';
+    src: url('/fonts/cde/dejavu-sans-bold.woff2') format('woff2');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}

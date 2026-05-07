@@ -51,7 +51,10 @@ public static class ThemeIds
     /// <summary>Mac OS 9 Platinum theme (lavender desktop / pinstriped windows / royal-blue accents) with the Virtue Charcoal-style display font.</summary>
     public const string MacOs9 = "macos9";
 
+    /// <summary>CDE (Common Desktop Environment) — teal/gray Motif-style UI with DejaVu Sans (Lucida Sans substitute).</summary>
+    public const string Cde = "cde";
+
     /// <summary>All recognised theme slugs. Used by the controller to validate incoming theme ids.</summary>
     public static readonly IReadOnlySet<string> All =
-        new HashSet<string>(StringComparer.OrdinalIgnoreCase) { DefaultDark, DefaultLight, AmigaOs, Dos, MacOs9 };
+        new HashSet<string>(StringComparer.OrdinalIgnoreCase) { DefaultDark, DefaultLight, AmigaOs, Dos, MacOs9, Cde };
 }

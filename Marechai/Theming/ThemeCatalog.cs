@@ -55,6 +55,10 @@ public static class ThemeCatalog
 
     static readonly IReadOnlyList<string> _macOs9Fonts = ["/css/themes/macos9.css"];
 
+    static readonly string[] _dejaVuCdeStack = ["DejaVu Sans CDE", "DejaVu Sans", "Lucida Grande", "Lucida Sans", "sans-serif"];
+
+    static readonly IReadOnlyList<string> _cdeFonts = ["/css/themes/cde.css"];
+
     /// <summary>The historical Marechai dark purple palette. Used as fallback for anonymous + null-preference users.</summary>
     public static readonly ThemeDefinition DefaultDark = new(ThemeIds.DefaultDark,
                                                              "Default (Dark)",
@@ -577,8 +581,164 @@ public static class ThemeCatalog
                                                         },
                                                         _macOs9Fonts);
 
+    /// <summary>
+    ///     CDE (Common Desktop Environment) — the classic UNIX workstation desktop from Sun, HP, and IBM.
+    ///     Teal-gray Motif-style 3D bevels, dark teal title bars and panel, warm gray surfaces, and
+    ///     DejaVu Sans as the closest free substitute for the Lucida Sans font used by the original
+    ///     Solaris CDE. Inspired by CDE 1.x on Solaris 2.x (mid-1990s).
+    /// </summary>
+    public static readonly ThemeDefinition Cde = new(ThemeIds.Cde,
+                                                     "CDE (Common Desktop)",
+                                                     false,
+                                                     new MudTheme
+                                                     {
+                                                         // CDE / Motif palette (from the Solaris default colour set):
+                                                         //   Desktop bg    = #7B9494  (blue-gray — the desktop workspace)
+                                                         //   Window chrome = #AEB2B2  (warm medium gray — Motif 3D buttons)
+                                                         //   Title bar     = #D6A564  (warm tan/sandy — active window title,
+                                                         //                             the signature CDE colour)
+                                                         //   Content area  = #D9D9D9  (light gray — pane backgrounds)
+                                                         //   Input field   = #FFFFFF  (white)
+                                                         //   Text          = #000000  (black)
+                                                         //   Selection     = #4D7B8A  (muted teal-blue)
+                                                         //   Inactive      = #5F7070  (darker blue-gray)
+                                                         //
+                                                         // Mapping:
+                                                         //   AppBar     = TAN     (the iconic CDE title-bar colour — most
+                                                         //                         recognisable element, suitable for the top bar)
+                                                         //   Drawer     = BLUE-GRAY (the desktop workspace)
+                                                         //   Surface    = LIGHT GRAY (cards / dialogs)
+                                                         //   Background = BLUE-GRAY (page body = desktop)
+                                                         //   Primary    = MUTED TEAL (selection, focus ring, toggled controls)
+                                                         //   Secondary  = TAN        (secondary accent matching CDE active chrome)
+                                                         //   Tertiary   = WARM GRAY  (Motif 3D button faces)
+                                                         PaletteLight = new PaletteLight
+                                                         {
+                                                             Primary                  = "#4D7B8A",
+                                                             PrimaryContrastText      = "#FFFFFF",
+                                                             Secondary                = "#D6A564",
+                                                             SecondaryContrastText    = "#000000",
+                                                             Tertiary                 = "#AEB2B2",
+                                                             TertiaryContrastText     = "#000000",
+                                                             AppbarBackground         = "#D6A564",
+                                                             AppbarText               = "#000000",
+                                                             DrawerBackground         = "#7B9494",
+                                                             DrawerText               = "#FFFFFF",
+                                                             DrawerIcon               = "#FFFFFF",
+                                                             Surface                  = "#D9D9D9",
+                                                             Background               = "#7B9494",
+                                                             BackgroundGray           = "#AEB2B2",
+                                                             TextPrimary              = "#000000",
+                                                             TextSecondary            = "#333333",
+                                                             TextDisabled             = "#777777",
+                                                             ActionDefault            = "#000000",
+                                                             ActionDisabled           = "#777777",
+                                                             ActionDisabledBackground = "#BFBFBF",
+                                                             LinesDefault             = "#777777",
+                                                             LinesInputs              = "#555555",
+                                                             TableLines               = "#BBBBBB",
+                                                             TableStriped             = "#CCCCCC",
+                                                             TableHover               = "#B8D0D6",
+                                                             Divider                  = "#999999",
+                                                             DividerLight             = "#CCCCCC",
+                                                             Info                     = "#4D7B8A",
+                                                             Success                  = "#5A8A5A",
+                                                             Warning                  = "#D6A564",
+                                                             Error                    = "#AA4444",
+                                                             Dark                     = "#333333",
+                                                             HoverOpacity             = 0.08
+                                                         },
+                                                         LayoutProperties = new LayoutProperties
+                                                         {
+                                                             DrawerWidthLeft     = "260px",
+                                                             DrawerMiniWidthLeft = "72px"
+                                                         },
+                                                         Typography = new Typography
+                                                         {
+                                                             Default = new DefaultTypography
+                                                             {
+                                                                 FontFamily    = _dejaVuCdeStack,
+                                                                 FontSize      = "0.875rem",
+                                                                 FontWeight    = "400",
+                                                                 LineHeight    = "1.45",
+                                                                 LetterSpacing = "0"
+                                                             },
+                                                             H1 = new H1Typography
+                                                             {
+                                                                 FontFamily = _dejaVuCdeStack,
+                                                                 FontSize   = "2rem",
+                                                                 FontWeight = "700"
+                                                             },
+                                                             H2 = new H2Typography
+                                                             {
+                                                                 FontFamily = _dejaVuCdeStack,
+                                                                 FontSize   = "1.75rem",
+                                                                 FontWeight = "700"
+                                                             },
+                                                             H3 = new H3Typography
+                                                             {
+                                                                 FontFamily = _dejaVuCdeStack,
+                                                                 FontSize   = "1.5rem",
+                                                                 FontWeight = "700"
+                                                             },
+                                                             H4 = new H4Typography
+                                                             {
+                                                                 FontFamily = _dejaVuCdeStack,
+                                                                 FontSize   = "1.25rem",
+                                                                 FontWeight = "700"
+                                                             },
+                                                             H5 = new H5Typography
+                                                             {
+                                                                 FontFamily = _dejaVuCdeStack,
+                                                                 FontSize   = "1.125rem",
+                                                                 FontWeight = "700"
+                                                             },
+                                                             H6 = new H6Typography
+                                                             {
+                                                                 FontFamily = _dejaVuCdeStack,
+                                                                 FontSize   = "1rem",
+                                                                 FontWeight = "700"
+                                                             },
+                                                             Subtitle1 = new Subtitle1Typography
+                                                             {
+                                                                 FontFamily = _dejaVuCdeStack,
+                                                                 FontWeight = "700"
+                                                             },
+                                                             Subtitle2 = new Subtitle2Typography
+                                                             {
+                                                                 FontFamily = _dejaVuCdeStack,
+                                                                 FontWeight = "700"
+                                                             },
+                                                             Body1 = new Body1Typography
+                                                             {
+                                                                 FontFamily = _dejaVuCdeStack
+                                                             },
+                                                             Body2 = new Body2Typography
+                                                             {
+                                                                 FontFamily = _dejaVuCdeStack
+                                                             },
+                                                             Button = new ButtonTypography
+                                                             {
+                                                                 FontFamily    = _dejaVuCdeStack,
+                                                                 FontWeight    = "700",
+                                                                 TextTransform = "none"
+                                                             },
+                                                             Caption = new CaptionTypography
+                                                             {
+                                                                 FontFamily = _dejaVuCdeStack
+                                                             },
+                                                             Overline = new OverlineTypography
+                                                             {
+                                                                 FontFamily    = _dejaVuCdeStack,
+                                                                 FontWeight    = "700",
+                                                                 TextTransform = "uppercase"
+                                                             }
+                                                         }
+                                                     },
+                                                     _cdeFonts);
+
     /// <summary>All themes available to users in the Appearance picker. Order matters — it's the display order.</summary>
-    public static readonly IReadOnlyList<ThemeDefinition> All = new[] { DefaultDark, DefaultLight, AmigaOs, Dos, MacOs9 };
+    public static readonly IReadOnlyList<ThemeDefinition> All = new[] { DefaultDark, DefaultLight, AmigaOs, Cde, Dos, MacOs9 };
 
     /// <summary>The default theme used when the user has no preference set.</summary>
     public static ThemeDefinition Default => DefaultDark;

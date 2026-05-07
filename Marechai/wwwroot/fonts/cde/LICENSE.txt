@@ -1,0 +1,13 @@
+CDE theme — bundled font
+=========================
+
+Files: dejavu-sans.woff2, dejavu-sans-bold.woff2
+  (subset + converted from DejaVuSans.ttf / DejaVuSans-Bold.ttf via pyftsubset)
+
+Source font: DejaVu Sans (derived from Bitstream Vera Sans)
+Upstream: https://dejavu-fonts.github.io/
+License: Bitstream Vera Fonts Copyright + DejaVu Fonts License (free / permissive)
+
+Fonts are (c) Bitstream. DejaVu changes are in public domain. Glyphs
+imported from Arev fonts are (c) Tavmjong Bah. See full text at
+https://dejavu-fonts.github.io/License.html
