@@ -42,7 +42,10 @@ public static class ThemeIds
     /// <summary>Stock MudBlazor light palette.</summary>
     public const string DefaultLight = "default-light";
 
+    /// <summary>AmigaOS Workbench 1.x palette (blue / white / black / orange) with the Topaz bitmap font.</summary>
+    public const string AmigaOs = "amigaos";
+
     /// <summary>All recognised theme slugs. Used by the controller to validate incoming theme ids.</summary>
     public static readonly IReadOnlySet<string> All =
-        new HashSet<string>(StringComparer.OrdinalIgnoreCase) { DefaultDark, DefaultLight };
+        new HashSet<string>(StringComparer.OrdinalIgnoreCase) { DefaultDark, DefaultLight, AmigaOs };
 }

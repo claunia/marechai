@@ -1,0 +1,22 @@
+/* AmigaOS theme web fonts.
+ *
+ * Topaz Unicode (Workbench 1.x system font) — bitmap font wrapped as TTF, converted to WOFF2.
+ * Source: https://github.com/Themaister/topaz_unicode (effectively public-domain bitmap font, ISC for accompanying files).
+ * License kept at /fonts/amigaos/LICENSE.txt.
+ */
+
+@font-face {
+    font-family: 'Topaz';
+    src: url('/fonts/amigaos/topaz-regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Topaz';
+    src: url('/fonts/amigaos/topaz-bold.woff2') format('woff2');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
