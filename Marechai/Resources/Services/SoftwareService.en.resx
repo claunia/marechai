@@ -210,6 +210,27 @@
     <data name="Operating System" xml:space="preserve">
         <value>Operating System</value>
     </data>
+    <data name="DLC / Addon" xml:space="preserve">
+        <value>DLC / Addon</value>
+    </data>
+    <data name="System software" xml:space="preserve">
+        <value>System software</value>
+    </data>
+    <data name="Application" xml:space="preserve">
+        <value>Application</value>
+    </data>
+    <data name="Development software" xml:space="preserve">
+        <value>Development software</value>
+    </data>
+    <data name="Server software" xml:space="preserve">
+        <value>Server software</value>
+    </data>
+    <data name="Firmware" xml:space="preserve">
+        <value>Firmware</value>
+    </data>
+    <data name="Embedded software" xml:space="preserve">
+        <value>Embedded software</value>
+    </data>
     <data name="Yes" xml:space="preserve">
         <value>Yes</value>
     </data>

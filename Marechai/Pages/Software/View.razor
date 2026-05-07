@@ -85,6 +85,27 @@
                 case Marechai.Data.SoftwareKind.Dlc:
                     <MudChip T="string" Color="Color.Warning" Variant="Variant.Filled" Size="Size.Small">@L["DLC / Addon"]</MudChip>
                     break;
+                case Marechai.Data.SoftwareKind.SystemSoftware:
+                    <MudChip T="string" Variant="Variant.Filled" Size="Size.Small" Style="background-color: #455A64; color: white;">@L["System software"]</MudChip>
+                    break;
+                case Marechai.Data.SoftwareKind.Application:
+                    <MudChip T="string" Variant="Variant.Filled" Size="Size.Small" Style="background-color: #1976D2; color: white;">@L["Application"]</MudChip>
+                    break;
+                case Marechai.Data.SoftwareKind.DevelopmentSoftware:
+                    <MudChip T="string" Variant="Variant.Filled" Size="Size.Small" Style="background-color: #3F51B5; color: white;">@L["Development software"]</MudChip>
+                    break;
+                case Marechai.Data.SoftwareKind.ServerSoftware:
+                    <MudChip T="string" Variant="Variant.Filled" Size="Size.Small" Style="background-color: #795548; color: white;">@L["Server software"]</MudChip>
+                    break;
+                case Marechai.Data.SoftwareKind.Middleware:
+                    <MudChip T="string" Variant="Variant.Filled" Size="Size.Small" Style="background-color: #00BCD4; color: white;">@L["Middleware"]</MudChip>
+                    break;
+                case Marechai.Data.SoftwareKind.Firmware:
+                    <MudChip T="string" Variant="Variant.Filled" Size="Size.Small" Style="background-color: #CDDC39; color: black;">@L["Firmware"]</MudChip>
+                    break;
+                case Marechai.Data.SoftwareKind.EmbeddedSoftware:
+                    <MudChip T="string" Variant="Variant.Filled" Size="Size.Small" Style="background-color: #009688; color: white;">@L["Embedded software"]</MudChip>
+                    break;
                 default:
                     <MudChip T="string" Color="Color.Default" Variant="Variant.Filled" Size="Size.Small">@L["Software"]</MudChip>
                     break;
@@ -266,10 +287,17 @@
                 <td style="width: 33%; text-align: right;"><strong>@L["Kind"]</strong></td>
                 <td>@(((Marechai.Data.SoftwareKind)(_software.Kind ?? 0)) switch
                     {
-                        Marechai.Data.SoftwareKind.OperatingSystem => L["Operating System"],
-                        Marechai.Data.SoftwareKind.Game            => L["Game"],
-                        Marechai.Data.SoftwareKind.Dlc             => L["DLC / Addon"],
-                        _                                          => L["Software"]
+                        Marechai.Data.SoftwareKind.OperatingSystem     => L["Operating System"],
+                        Marechai.Data.SoftwareKind.Game                => L["Game"],
+                        Marechai.Data.SoftwareKind.Dlc                 => L["DLC / Addon"],
+                        Marechai.Data.SoftwareKind.SystemSoftware      => L["System software"],
+                        Marechai.Data.SoftwareKind.Application         => L["Application"],
+                        Marechai.Data.SoftwareKind.DevelopmentSoftware => L["Development software"],
+                        Marechai.Data.SoftwareKind.ServerSoftware      => L["Server software"],
+                        Marechai.Data.SoftwareKind.Middleware          => L["Middleware"],
+                        Marechai.Data.SoftwareKind.Firmware            => L["Firmware"],
+                        Marechai.Data.SoftwareKind.EmbeddedSoftware    => L["Embedded software"],
+                        _                                              => L["Software"]
                     })
                 </td>
             </tr>

@@ -98,6 +98,27 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     private Visibility _showDlcBadge = Visibility.Collapsed;
 
     [ObservableProperty]
+    private Visibility _showSystemSoftwareBadge = Visibility.Collapsed;
+
+    [ObservableProperty]
+    private Visibility _showApplicationBadge = Visibility.Collapsed;
+
+    [ObservableProperty]
+    private Visibility _showDevelopmentSoftwareBadge = Visibility.Collapsed;
+
+    [ObservableProperty]
+    private Visibility _showServerSoftwareBadge = Visibility.Collapsed;
+
+    [ObservableProperty]
+    private Visibility _showMiddlewareBadge = Visibility.Collapsed;
+
+    [ObservableProperty]
+    private Visibility _showFirmwareBadge = Visibility.Collapsed;
+
+    [ObservableProperty]
+    private Visibility _showEmbeddedSoftwareBadge = Visibility.Collapsed;
+
+    [ObservableProperty]
     private Visibility _showBaseSoftware = Visibility.Collapsed;
 
     [ObservableProperty]
@@ -538,6 +559,13 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
         ShowGameBadge     = Kind == SoftwareKind.Game ? Visibility.Visible : Visibility.Collapsed;
         ShowSoftwareBadge = Kind == SoftwareKind.Software ? Visibility.Visible : Visibility.Collapsed;
         ShowDlcBadge      = Kind == SoftwareKind.Dlc ? Visibility.Visible : Visibility.Collapsed;
+        ShowSystemSoftwareBadge      = Kind == SoftwareKind.SystemSoftware ? Visibility.Visible : Visibility.Collapsed;
+        ShowApplicationBadge         = Kind == SoftwareKind.Application ? Visibility.Visible : Visibility.Collapsed;
+        ShowDevelopmentSoftwareBadge = Kind == SoftwareKind.DevelopmentSoftware ? Visibility.Visible : Visibility.Collapsed;
+        ShowServerSoftwareBadge      = Kind == SoftwareKind.ServerSoftware ? Visibility.Visible : Visibility.Collapsed;
+        ShowMiddlewareBadge          = Kind == SoftwareKind.Middleware ? Visibility.Visible : Visibility.Collapsed;
+        ShowFirmwareBadge            = Kind == SoftwareKind.Firmware ? Visibility.Visible : Visibility.Collapsed;
+        ShowEmbeddedSoftwareBadge    = Kind == SoftwareKind.EmbeddedSoftware ? Visibility.Visible : Visibility.Collapsed;
         ShowBaseSoftware  = BaseSoftwareId is not null && !string.IsNullOrEmpty(BaseSoftware) ? Visibility.Visible : Visibility.Collapsed;
         ShowScreenshots = ScreenshotGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowCredits     = CreditGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;

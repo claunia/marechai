@@ -2293,6 +2293,13 @@
   <data name="SoftwareIsDlcLabel" xml:space="preserve"><value>DLC / Addon</value></data>
   <data name="SoftwareIsSoftwareLabel" xml:space="preserve"><value>Software</value></data>
   <data name="SoftwareIsCompilationLabel" xml:space="preserve"><value>Compilation</value></data>
+  <data name="SoftwareIsSystemSoftwareLabel" xml:space="preserve"><value>System software</value></data>
+  <data name="SoftwareIsApplicationLabel" xml:space="preserve"><value>Application</value></data>
+  <data name="SoftwareIsDevelopmentSoftwareLabel" xml:space="preserve"><value>Development software</value></data>
+  <data name="SoftwareIsServerSoftwareLabel" xml:space="preserve"><value>Server software</value></data>
+  <data name="SoftwareIsMiddlewareLabel" xml:space="preserve"><value>Middleware</value></data>
+  <data name="SoftwareIsFirmwareLabel" xml:space="preserve"><value>Firmware</value></data>
+  <data name="SoftwareIsEmbeddedSoftwareLabel" xml:space="preserve"><value>Embedded software</value></data>
   <data name="SoftwareKindLabel" xml:space="preserve"><value>Kind</value></data>
   <data name="BaseSoftwareLabel" xml:space="preserve"><value>Base Software</value></data>
   <data name="AddonsLabel" xml:space="preserve"><value>Addons</value></data>

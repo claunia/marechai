@@ -2074,6 +2074,13 @@
   <data name="SoftwareIsGameLabel" xml:space="preserve"><value>Juego</value></data>
   <data name="SoftwareIsSoftwareLabel" xml:space="preserve"><value>Software</value></data>
   <data name="SoftwareIsCompilationLabel" xml:space="preserve"><value>Compilación</value></data>
+  <data name="SoftwareIsSystemSoftwareLabel" xml:space="preserve"><value>Software de sistema</value></data>
+  <data name="SoftwareIsApplicationLabel" xml:space="preserve"><value>Aplicación</value></data>
+  <data name="SoftwareIsDevelopmentSoftwareLabel" xml:space="preserve"><value>Software de desarrollo</value></data>
+  <data name="SoftwareIsServerSoftwareLabel" xml:space="preserve"><value>Software de servidor</value></data>
+  <data name="SoftwareIsMiddlewareLabel" xml:space="preserve"><value>Middleware</value></data>
+  <data name="SoftwareIsFirmwareLabel" xml:space="preserve"><value>Firmware</value></data>
+  <data name="SoftwareIsEmbeddedSoftwareLabel" xml:space="preserve"><value>Software embebido</value></data>
   <data name="SoftwareKindLabel" xml:space="preserve"><value>Tipo</value></data>
   <data name="Release not found" xml:space="preserve"><value>Publicación no encontrada</value></data>
   <data name="Software Release" xml:space="preserve"><value>Publicación de software</value></data>

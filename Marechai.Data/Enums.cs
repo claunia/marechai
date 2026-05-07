@@ -118,7 +118,21 @@ public enum SoftwareKind
     /// <summary>Videogame</summary>
     Game = 2,
     /// <summary>DLC / Addon</summary>
-    Dlc = 3
+    Dlc = 3,
+    /// <summary>System software (drivers, system utilities, shells)</summary>
+    SystemSoftware = 4,
+    /// <summary>End-user application (productivity, multimedia, etc.)</summary>
+    Application = 5,
+    /// <summary>Development software (compilers, IDEs, SDKs)</summary>
+    DevelopmentSoftware = 6,
+    /// <summary>Server software (web/database/file/mail servers)</summary>
+    ServerSoftware = 7,
+    /// <summary>Middleware (frameworks, runtimes, integration layers)</summary>
+    Middleware = 8,
+    /// <summary>Firmware (low-level device-resident software)</summary>
+    Firmware = 9,
+    /// <summary>Embedded software (device-specific application software)</summary>
+    EmbeddedSoftware = 10
 }
 
 public enum MemoryType

@@ -785,6 +785,30 @@
                                 case Marechai.Data.SoftwareKind.Game:
                                     <MudChip T="string" Size="Size.Small" Color="Color.Success" Variant="Variant.Outlined">@L["Game"]</MudChip>
                                     break;
+                                case Marechai.Data.SoftwareKind.Dlc:
+                                    <MudChip T="string" Size="Size.Small" Color="Color.Warning" Variant="Variant.Outlined">@L["DLC / Addon"]</MudChip>
+                                    break;
+                                case Marechai.Data.SoftwareKind.SystemSoftware:
+                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="color: #455A64; border-color: #455A64;">@L["System software"]</MudChip>
+                                    break;
+                                case Marechai.Data.SoftwareKind.Application:
+                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="color: #1976D2; border-color: #1976D2;">@L["Application"]</MudChip>
+                                    break;
+                                case Marechai.Data.SoftwareKind.DevelopmentSoftware:
+                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="color: #3F51B5; border-color: #3F51B5;">@L["Development software"]</MudChip>
+                                    break;
+                                case Marechai.Data.SoftwareKind.ServerSoftware:
+                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="color: #795548; border-color: #795548;">@L["Server software"]</MudChip>
+                                    break;
+                                case Marechai.Data.SoftwareKind.Middleware:
+                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="color: #00BCD4; border-color: #00BCD4;">@L["Middleware"]</MudChip>
+                                    break;
+                                case Marechai.Data.SoftwareKind.Firmware:
+                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="color: #827717; border-color: #CDDC39;">@L["Firmware"]</MudChip>
+                                    break;
+                                case Marechai.Data.SoftwareKind.EmbeddedSoftware:
+                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="color: #009688; border-color: #009688;">@L["Embedded software"]</MudChip>
+                                    break;
                                 default:
                                     <MudChip T="string" Size="Size.Small" Color="Color.Default" Variant="Variant.Outlined">@L["Software"]</MudChip>
                                     break;

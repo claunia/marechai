@@ -134,6 +134,13 @@
                                             <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=IsOperatingSystemLabel}" />
                                             <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=IsGameLabel}" />
                                             <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsDlcLabel}" />
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsSystemSoftwareLabel}" />
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsApplicationLabel}" />
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsDevelopmentSoftwareLabel}" />
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsServerSoftwareLabel}" />
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsMiddlewareLabel}" />
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsFirmwareLabel}" />
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsEmbeddedSoftwareLabel}" />
                                         </ComboBox>
 
                                         <!-- Company Roles (edit only) -->

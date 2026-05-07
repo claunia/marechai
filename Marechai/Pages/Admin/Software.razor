@@ -43,9 +43,17 @@
                 <CellTemplate>
                     @(((Marechai.Data.SoftwareKind)(context.Item.Kind ?? 0)) switch
                     {
-                        Marechai.Data.SoftwareKind.OperatingSystem => L["Operating System"],
-                        Marechai.Data.SoftwareKind.Game            => L["Game"],
-                        _                                          => L["Software"]
+                        Marechai.Data.SoftwareKind.OperatingSystem     => L["Operating System"],
+                        Marechai.Data.SoftwareKind.Game                => L["Game"],
+                        Marechai.Data.SoftwareKind.Dlc                 => L["DLC / Addon"],
+                        Marechai.Data.SoftwareKind.SystemSoftware      => L["System software"],
+                        Marechai.Data.SoftwareKind.Application         => L["Application"],
+                        Marechai.Data.SoftwareKind.DevelopmentSoftware => L["Development software"],
+                        Marechai.Data.SoftwareKind.ServerSoftware      => L["Server software"],
+                        Marechai.Data.SoftwareKind.Middleware          => L["Middleware"],
+                        Marechai.Data.SoftwareKind.Firmware            => L["Firmware"],
+                        Marechai.Data.SoftwareKind.EmbeddedSoftware    => L["Embedded software"],
+                        _                                              => L["Software"]
                     })
                 </CellTemplate>
             </PropertyColumn>

@@ -162,6 +162,34 @@
         <value>Système d'exploitation</value>
         <comment>Operating System</comment>
     </data>
+    <data name="DLC / Addon" xml:space="preserve">
+        <value>DLC / Extension</value>
+        <comment>DLC / Addon</comment>
+    </data>
+    <data name="System software" xml:space="preserve">
+        <value>Logiciel système</value>
+        <comment>System software badge</comment>
+    </data>
+    <data name="Application" xml:space="preserve">
+        <value>Application</value>
+        <comment>Application badge</comment>
+    </data>
+    <data name="Development software" xml:space="preserve">
+        <value>Logiciel de développement</value>
+        <comment>Development software badge</comment>
+    </data>
+    <data name="Server software" xml:space="preserve">
+        <value>Logiciel serveur</value>
+        <comment>Server software badge</comment>
+    </data>
+    <data name="Firmware" xml:space="preserve">
+        <value>Micrologiciel</value>
+        <comment>Firmware badge</comment>
+    </data>
+    <data name="Embedded software" xml:space="preserve">
+        <value>Logiciel embarqué</value>
+        <comment>Embedded software badge</comment>
+    </data>
     <data name="Yes" xml:space="preserve">
         <value>Oui</value>
         <comment>Yes</comment>

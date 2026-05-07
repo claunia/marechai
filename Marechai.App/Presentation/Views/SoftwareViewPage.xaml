@@ -133,6 +133,69 @@
                                        FontWeight="SemiBold"
                                        Foreground="White" />
                         </Border>
+                        <Border Visibility="{Binding ShowSystemSoftwareBadge}"
+                                Background="#455A64"
+                                CornerRadius="12"
+                                Padding="12,4">
+                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareIsSystemSoftwareLabel}"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="White" />
+                        </Border>
+                        <Border Visibility="{Binding ShowApplicationBadge}"
+                                Background="#1976D2"
+                                CornerRadius="12"
+                                Padding="12,4">
+                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareIsApplicationLabel}"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="White" />
+                        </Border>
+                        <Border Visibility="{Binding ShowDevelopmentSoftwareBadge}"
+                                Background="#3F51B5"
+                                CornerRadius="12"
+                                Padding="12,4">
+                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareIsDevelopmentSoftwareLabel}"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="White" />
+                        </Border>
+                        <Border Visibility="{Binding ShowServerSoftwareBadge}"
+                                Background="#795548"
+                                CornerRadius="12"
+                                Padding="12,4">
+                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareIsServerSoftwareLabel}"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="White" />
+                        </Border>
+                        <Border Visibility="{Binding ShowMiddlewareBadge}"
+                                Background="#00BCD4"
+                                CornerRadius="12"
+                                Padding="12,4">
+                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareIsMiddlewareLabel}"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="White" />
+                        </Border>
+                        <Border Visibility="{Binding ShowFirmwareBadge}"
+                                Background="#CDDC39"
+                                CornerRadius="12"
+                                Padding="12,4">
+                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareIsFirmwareLabel}"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="Black" />
+                        </Border>
+                        <Border Visibility="{Binding ShowEmbeddedSoftwareBadge}"
+                                Background="#009688"
+                                CornerRadius="12"
+                                Padding="12,4">
+                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareIsEmbeddedSoftwareLabel}"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="White" />
+                        </Border>
                     </StackPanel>
 
                     <!-- Description -->

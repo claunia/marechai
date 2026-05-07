@@ -1934,6 +1934,13 @@
   <data name="SoftwareIsGameLabel" xml:space="preserve"><value>Ludus</value></data>
   <data name="SoftwareIsSoftwareLabel" xml:space="preserve"><value>Programma</value></data>
   <data name="SoftwareIsCompilationLabel" xml:space="preserve"><value>Compilatio</value></data>
+  <data name="SoftwareIsSystemSoftwareLabel" xml:space="preserve"><value>Programma systematis</value></data>
+  <data name="SoftwareIsApplicationLabel" xml:space="preserve"><value>Applicatio</value></data>
+  <data name="SoftwareIsDevelopmentSoftwareLabel" xml:space="preserve"><value>Programma evolutionis</value></data>
+  <data name="SoftwareIsServerSoftwareLabel" xml:space="preserve"><value>Programma servitoris</value></data>
+  <data name="SoftwareIsMiddlewareLabel" xml:space="preserve"><value>Programma medium</value></data>
+  <data name="SoftwareIsFirmwareLabel" xml:space="preserve"><value>Firmamentum</value></data>
+  <data name="SoftwareIsEmbeddedSoftwareLabel" xml:space="preserve"><value>Programma insertum</value></data>
   <data name="SoftwareKindLabel" xml:space="preserve"><value>Genus</value></data>
   <data name="Release not found" xml:space="preserve"><value>Editio non inventa</value></data>
   <data name="Software Release" xml:space="preserve"><value>Editio programmatis</value></data>
