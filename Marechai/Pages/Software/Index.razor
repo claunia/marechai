@@ -27,6 +27,7 @@
 
 @page "/software"
 @using Marechai.ApiClient.Models
+@using Marechai.Data
 @inherits OwningComponentBase<SoftwareService>
 @inject IStringLocalizer<SoftwareService> L
 
@@ -95,7 +96,7 @@
             <MudText Typo="Typo.subtitle1">@L["Search software by platform"]</MudText>
         </MudStack>
         <div class="d-flex flex-wrap gap-1">
-            @foreach(SoftwarePlatformDto platform in _platforms)
+            @foreach(SoftwarePlatformDto platform in _platforms.OrderBy(p => p.Name, NaturalUnitComparer.Instance))
             {
                 <MudChip T="string" Href="@($"/software/platform/{platform.Id}")">@platform.Name</MudChip>
             }
@@ -114,7 +115,7 @@
         {
             <MudText Typo="Typo.subtitle2" Class="mt-2 mb-1"><strong>@L[genreType.Key]</strong></MudText>
             <div class="d-flex flex-wrap gap-1">
-                @foreach(SoftwareGenreDto genre in genreType.Value)
+                @foreach(SoftwareGenreDto genre in genreType.Value.OrderBy(g => (string)L[g.Name], NaturalUnitComparer.Instance))
                 {
                     <MudChip T="string" Href="@($"/software/genre/{genre.Id}")">@L[genre.Name]</MudChip>
                 }
@@ -134,7 +135,7 @@
         {
             <MudText Typo="Typo.subtitle2" Class="mt-2 mb-1"><strong>@L[specKey.Key]</strong></MudText>
             <div class="d-flex flex-wrap gap-1">
-                @foreach(string specValue in specKey.Values)
+                @foreach(string specValue in specKey.Values.OrderBy(v => (string)L[v], NaturalUnitComparer.Instance))
                 {
                     <MudChip T="string" Href="@($"/software/spec?key={Uri.EscapeDataString(specKey.Key)}&value={Uri.EscapeDataString(specValue)}")">@L[specValue]</MudChip>
                 }
