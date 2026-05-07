@@ -62,6 +62,8 @@ public class GpuPhotosController(MarechaiContext context, IConfiguration configu
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<Guid>> GetGuidsByGpuAsync(int gpuId) => context.GpuPhotos
                                                                     .Where(p => p.GpuId == gpuId)
+                                                                    .OrderBy(p => p.CreatedOn)
+                                                                    .ThenBy(p => p.Id)
                                                                     .Select(p => p.Id)
                                                                     .ToListAsync();
 

@@ -62,6 +62,8 @@ public class SoundSynthPhotosController(MarechaiContext context, IConfiguration 
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<Guid>> GetGuidsBySoundSynthAsync(int soundSynthId) => context.SoundSynthPhotos
                                                                     .Where(p => p.SoundSynthId == soundSynthId)
+                                                                    .OrderBy(p => p.CreatedOn)
+                                                                    .ThenBy(p => p.Id)
                                                                     .Select(p => p.Id)
                                                                     .ToListAsync();
 

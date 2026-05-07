@@ -48,6 +48,8 @@ public class SoftwarePromoArtController(MarechaiContext context) : ControllerBas
         context.SoftwarePromoArt
                .Where(p => p.SoftwareId == softwareId)
                .OrderBy(p => p.Group.Name)
+               .ThenBy(p => p.CreatedOn)
+               .ThenBy(p => p.Id)
                .Select(p => new SoftwarePromoArtDto
                 {
                     Id                = p.Id,

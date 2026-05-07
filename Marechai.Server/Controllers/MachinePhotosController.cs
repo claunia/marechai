@@ -62,6 +62,8 @@ public class MachinePhotosController(MarechaiContext context, IConfiguration con
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<Guid>> GetGuidsByMachineAsync(int machineId) => context.MachinePhotos
                                                                             .Where(p => p.MachineId == machineId)
+                                                                            .OrderBy(p => p.CreatedOn)
+                                                                            .ThenBy(p => p.Id)
                                                                             .Select(p => p.Id)
                                                                             .ToListAsync();
 

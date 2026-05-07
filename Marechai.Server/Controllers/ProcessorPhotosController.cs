@@ -62,6 +62,8 @@ public class ProcessorPhotosController(MarechaiContext context, IConfiguration c
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<Guid>> GetGuidsByProcessorAsync(int processorId) => context.ProcessorPhotos
                                                                     .Where(p => p.ProcessorId == processorId)
+                                                                    .OrderBy(p => p.CreatedOn)
+                                                                    .ThenBy(p => p.Id)
                                                                     .Select(p => p.Id)
                                                                     .ToListAsync();
 

@@ -60,6 +60,8 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
     public Task<List<Guid>> GetGuidsByReleaseAsync(ulong releaseId) =>
         context.SoftwareCovers
                .Where(c => c.SoftwareReleaseId == releaseId)
+               .OrderBy(c => c.CreatedOn)
+               .ThenBy(c => c.Id)
                .Select(c => c.Id)
                .ToListAsync();
 

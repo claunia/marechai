@@ -48,6 +48,8 @@ public class MagazineScansController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<Guid>> GetGuidsByMagazineAsync(long magazineId) => context.MagazineScans
        .Where(p => p.MagazineId == magazineId)
+       .OrderBy(p => p.CreatedOn)
+       .ThenBy(p => p.Id)
        .Select(p => p.Id)
        .ToListAsync();
 

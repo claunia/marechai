@@ -48,6 +48,8 @@ public class DocumentScansController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<Guid>> GetGuidsByDocumentAsync(long documentId) => context.DocumentScans
        .Where(p => p.DocumentId == documentId)
+       .OrderBy(p => p.CreatedOn)
+       .ThenBy(p => p.Id)
        .Select(p => p.Id)
        .ToListAsync();
 

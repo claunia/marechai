@@ -59,6 +59,8 @@ public class SoftwareScreenshotsController(MarechaiContext context, IConfigurati
     public Task<List<Guid>> GetGuidsBySoftwareAsync(ulong softwareId) =>
         context.SoftwareScreenshots
                .Where(s => s.SoftwareId == softwareId)
+               .OrderBy(s => s.CreatedOn)
+               .ThenBy(s => s.Id)
                .Select(s => s.Id)
                .ToListAsync();
 
@@ -68,6 +70,8 @@ public class SoftwareScreenshotsController(MarechaiContext context, IConfigurati
     public Task<List<Guid>> GetGuidsByPlatformAsync(ulong softwareId, ulong platformId) =>
         context.SoftwareScreenshots
                .Where(s => s.SoftwareId == softwareId && s.SoftwarePlatformId == platformId)
+               .OrderBy(s => s.CreatedOn)
+               .ThenBy(s => s.Id)
                .Select(s => s.Id)
                .ToListAsync();
 
@@ -77,6 +81,8 @@ public class SoftwareScreenshotsController(MarechaiContext context, IConfigurati
     public Task<List<Guid>> GetGuidsByVersionAsync(ulong softwareId, ulong versionId) =>
         context.SoftwareScreenshots
                .Where(s => s.SoftwareId == softwareId && s.SoftwareVersionId == versionId)
+               .OrderBy(s => s.CreatedOn)
+               .ThenBy(s => s.Id)
                .Select(s => s.Id)
                .ToListAsync();
 
