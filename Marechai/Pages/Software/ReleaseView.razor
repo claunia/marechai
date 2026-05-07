@@ -71,7 +71,7 @@
         @if(_release.IsCompilation == true)
         {
             <MudText Typo="Typo.h4" Align="Align.Center" Style="color: white; font-weight: 700;">@(!string.IsNullOrEmpty(_release.Title) ? _release.Title : L["Compilation"])</MudText>
-            <MudChip T="string" Color="Color.Warning" Variant="Variant.Filled" Size="Size.Small">@L["Compilation"]</MudChip>
+            <MudChip T="string" Variant="Variant.Filled" Size="Size.Small" Style="background-color: #9C27B0; color: white;">@L["Compilation"]</MudChip>
         }
         else
         {

@@ -52,6 +52,8 @@ public class SoftwareDto : BaseDto<ulong>
     public ulong? BaseSoftwareId { get; set; }
     [JsonPropertyName("base_software")]
     public string? BaseSoftware { get; set; }
+    [JsonPropertyName("is_compilation")]
+    public bool IsCompilation { get; set; }
     [JsonPropertyName("front_cover_id")]
     public Guid? FrontCoverId { get; set; }
 }

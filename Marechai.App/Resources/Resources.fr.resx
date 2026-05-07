@@ -2037,6 +2037,7 @@
   <data name="SoftwareIsOSLabel" xml:space="preserve"><value>Système d'exploitation</value></data>
   <data name="SoftwareIsGameLabel" xml:space="preserve"><value>Jeu</value></data>
   <data name="SoftwareIsSoftwareLabel" xml:space="preserve"><value>Logiciel</value></data>
+  <data name="SoftwareIsCompilationLabel" xml:space="preserve"><value>Compilation</value></data>
   <data name="SoftwareKindLabel" xml:space="preserve"><value>Type</value></data>
   <data name="Release not found" xml:space="preserve"><value>Publication non trouvée</value></data>
   <data name="Software Release" xml:space="preserve"><value>Publication logicielle</value></data>

@@ -189,6 +189,16 @@
                                                                            TextTrimming="CharacterEllipsis" />
                                                                 <StackPanel Orientation="Horizontal"
                                                                             Spacing="12">
+                                                                    <Border Background="#9C27B0"
+                                                                            CornerRadius="12"
+                                                                            Padding="10,2"
+                                                                            VerticalAlignment="Center"
+                                                                            Visibility="{Binding IsCompilation, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareIsCompilationLabel}"
+                                                                                   FontSize="11"
+                                                                                   FontWeight="SemiBold"
+                                                                                   Foreground="White" />
+                                                                    </Border>
                                                                     <StackPanel Orientation="Horizontal"
                                                                                 Spacing="6"
                                                                                 Visibility="{Binding Family, Converter={StaticResource NullToVisibilityConverter}}">

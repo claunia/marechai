@@ -2292,6 +2292,7 @@
   <data name="SoftwareIsGameLabel" xml:space="preserve"><value>Game</value></data>
   <data name="SoftwareIsDlcLabel" xml:space="preserve"><value>DLC / Addon</value></data>
   <data name="SoftwareIsSoftwareLabel" xml:space="preserve"><value>Software</value></data>
+  <data name="SoftwareIsCompilationLabel" xml:space="preserve"><value>Compilation</value></data>
   <data name="SoftwareKindLabel" xml:space="preserve"><value>Kind</value></data>
   <data name="BaseSoftwareLabel" xml:space="preserve"><value>Base Software</value></data>
   <data name="AddonsLabel" xml:space="preserve"><value>Addons</value></data>

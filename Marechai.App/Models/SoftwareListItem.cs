@@ -10,6 +10,7 @@ public class SoftwareListItem
     public string       Family        { get; set; }
     public int?         Year          { get; set; }
     public SoftwareKind Kind          { get; set; }
+    public bool         IsCompilation { get; set; }
     public Guid?        FrontCoverId  { get; set; }
     public string       CoverImageUrl { get; set; }
     public bool         HasCover      => FrontCoverId.HasValue;

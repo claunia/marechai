@@ -39,6 +39,7 @@ namespace Marechai.ApiClient.Software.Item.Merge.Item
         /// <exception cref="global::Marechai.ApiClient.Models.ProblemDetails">When receiving a 400 status code</exception>
         /// <exception cref="global::Marechai.ApiClient.Models.ProblemDetails">When receiving a 401 status code</exception>
         /// <exception cref="global::Marechai.ApiClient.Models.ProblemDetails">When receiving a 404 status code</exception>
+        /// <exception cref="global::Marechai.ApiClient.Models.ProblemDetails">When receiving a 409 status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public async Task<Stream?> PostAsync(Action<RequestConfiguration<global::Marechai.ApiClient.Software.Item.Merge.Item.WithSourceItemRequestBuilder.WithSourceItemRequestBuilderPostQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
@@ -54,6 +55,7 @@ namespace Marechai.ApiClient.Software.Item.Merge.Item
                 { "400", global::Marechai.ApiClient.Models.ProblemDetails.CreateFromDiscriminatorValue },
                 { "401", global::Marechai.ApiClient.Models.ProblemDetails.CreateFromDiscriminatorValue },
                 { "404", global::Marechai.ApiClient.Models.ProblemDetails.CreateFromDiscriminatorValue },
+                { "409", global::Marechai.ApiClient.Models.ProblemDetails.CreateFromDiscriminatorValue },
             };
             return await RequestAdapter.SendPrimitiveAsync<Stream>(requestInfo, errorMapping, cancellationToken).ConfigureAwait(false);
         }

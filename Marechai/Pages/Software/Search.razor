@@ -75,7 +75,7 @@
     <MudList T="SoftwareDto" Dense="true">
         @foreach(SoftwareDto sw in _software)
         {
-            <MudListItem T="SoftwareDto" Href="@($"/software/{sw.Id}")" Icon="@(sw.FrontCoverId.HasValue ? null : Icons.Material.Filled.Apps)">
+            <MudListItem T="SoftwareDto" Href="@(sw.IsCompilation == true ? $"/software/release/{sw.Id}" : $"/software/{sw.Id}")" Icon="@(sw.FrontCoverId.HasValue ? null : Icons.Material.Filled.Apps)">
                 <div class="d-flex align-center gap-3">
                     @if(sw.FrontCoverId.HasValue)
                     {
@@ -97,20 +97,27 @@
                             <MudText Typo="Typo.caption" Color="Color.Secondary">@sw.Family</MudText>
                         }
                     </div>
-                    @switch((Marechai.Data.SoftwareKind)(sw.Kind ?? 0))
+                    @if(sw.IsCompilation == true)
                     {
-                        case Marechai.Data.SoftwareKind.OperatingSystem:
-                            <MudChip T="string" Size="Size.Small" Color="Color.Info" Variant="Variant.Outlined">@L["OS"]</MudChip>
-                            break;
-                        case Marechai.Data.SoftwareKind.Game:
-                            <MudChip T="string" Size="Size.Small" Color="Color.Success" Variant="Variant.Outlined">@L["Game"]</MudChip>
-                            break;
-                        case Marechai.Data.SoftwareKind.Dlc:
-                            <MudChip T="string" Size="Size.Small" Color="Color.Warning" Variant="Variant.Outlined">@L["DLC / Addon"]</MudChip>
-                            break;
-                        default:
-                            <MudChip T="string" Size="Size.Small" Color="Color.Default" Variant="Variant.Outlined">@L["Software"]</MudChip>
-                            break;
+                        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="color: #9C27B0; border-color: #9C27B0;">@L["Compilation"]</MudChip>
+                    }
+                    else
+                    {
+                        @switch((Marechai.Data.SoftwareKind)(sw.Kind ?? 0))
+                        {
+                            case Marechai.Data.SoftwareKind.OperatingSystem:
+                                <MudChip T="string" Size="Size.Small" Color="Color.Info" Variant="Variant.Outlined">@L["OS"]</MudChip>
+                                break;
+                            case Marechai.Data.SoftwareKind.Game:
+                                <MudChip T="string" Size="Size.Small" Color="Color.Success" Variant="Variant.Outlined">@L["Game"]</MudChip>
+                                break;
+                            case Marechai.Data.SoftwareKind.Dlc:
+                                <MudChip T="string" Size="Size.Small" Color="Color.Warning" Variant="Variant.Outlined">@L["DLC / Addon"]</MudChip>
+                                break;
+                            default:
+                                <MudChip T="string" Size="Size.Small" Color="Color.Default" Variant="Variant.Outlined">@L["Software"]</MudChip>
+                                break;
+                        }
                     }
                 </div>
             </MudListItem>

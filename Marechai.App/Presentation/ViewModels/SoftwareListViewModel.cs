@@ -209,7 +209,8 @@ public partial class SoftwareListViewModel : ObservableObject, IRegionAware
                     Id                = id,
                     Name              = sw.Name ?? string.Empty,
                     Family            = sw.Family,
-                    Kind              = (SoftwareKind)(sw.Kind ?? 0)
+                    Kind              = (SoftwareKind)(sw.Kind ?? 0),
+                    IsCompilation     = sw.IsCompilation ?? false
                 };
 
                 SoftwareList.Add(item);
@@ -231,6 +232,19 @@ public partial class SoftwareListViewModel : ObservableObject, IRegionAware
     private Task NavigateToSoftwareAsync(SoftwareListItem? sw)
     {
         if(sw is null) return Task.CompletedTask;
+
+        if(sw.IsCompilation)
+        {
+            var releaseParameters = new NavigationParameters
+            {
+                { NavParamKeys.SoftwareReleaseId, sw.Id },
+                { NavParamKeys.NavigationSource, nameof(SoftwareListViewModel) }
+            };
+
+            _regionManager.RequestNavigate(RegionNames.Content, nameof(SoftwareReleaseViewPage), releaseParameters);
+
+            return Task.CompletedTask;
+        }
 
         var parameters = new NavigationParameters
         {

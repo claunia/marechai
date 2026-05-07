@@ -14,6 +14,16 @@ namespace Marechai.ApiClient.Models
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
+        /// <summary>The base_software property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? BaseSoftware { get; set; }
+#nullable restore
+#else
+        public string BaseSoftware { get; set; }
+#endif
+        /// <summary>The base_software_id property</summary>
+        public int? BaseSoftwareId { get; set; }
         /// <summary>The family property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -28,16 +38,8 @@ namespace Marechai.ApiClient.Models
         public Guid? FrontCoverId { get; set; }
         /// <summary>The id property</summary>
         public int? Id { get; set; }
-        /// <summary>The base_software property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? BaseSoftware { get; set; }
-#nullable restore
-#else
-        public string BaseSoftware { get; set; }
-#endif
-        /// <summary>The base_software_id property</summary>
-        public int? BaseSoftwareId { get; set; }
+        /// <summary>The is_compilation property</summary>
+        public bool? IsCompilation { get; set; }
         /// <summary>The kind property</summary>
         public int? Kind { get; set; }
         /// <summary>The name property</summary>
@@ -99,6 +101,7 @@ namespace Marechai.ApiClient.Models
                 { "family_id", n => { FamilyId = n.GetIntValue(); } },
                 { "front_cover_id", n => { FrontCoverId = n.GetGuidValue(); } },
                 { "id", n => { Id = n.GetIntValue(); } },
+                { "is_compilation", n => { IsCompilation = n.GetBoolValue(); } },
                 { "kind", n => { Kind = n.GetIntValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
                 { "predecessor", n => { Predecessor = n.GetStringValue(); } },
@@ -120,6 +123,7 @@ namespace Marechai.ApiClient.Models
             writer.WriteIntValue("family_id", FamilyId);
             writer.WriteGuidValue("front_cover_id", FrontCoverId);
             writer.WriteIntValue("id", Id);
+            writer.WriteBoolValue("is_compilation", IsCompilation);
             writer.WriteIntValue("kind", Kind);
             writer.WriteStringValue("name", Name);
             writer.WriteStringValue("predecessor", Predecessor);
