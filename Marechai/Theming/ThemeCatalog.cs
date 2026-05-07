@@ -1099,8 +1099,186 @@ public static class ThemeCatalog
                                                           },
                                                           _phosphorFonts);
 
+    /// <summary>
+    ///     Phosphor (Amber) — same VT-series CRT terminal aesthetic as <see cref="Phosphor" />, but rendered in
+    ///     warm amber instead of green. Inspired by the IBM 5151 monochrome display (1981, the original IBM PC
+    ///     monitor in its amber variant), the Hercules Graphics Card's amber phosphor mode, the Wyse 50 / 60
+    ///     amber serial terminal, and the Apple Monitor III. Amber phosphor was widely preferred over green for
+    ///     long sessions because the lower colour temperature is gentler on the eyes — it became the "premium"
+    ///     monochrome option on workstations and accounting machines through the mid-1980s.
+    /// </summary>
+    public static readonly ThemeDefinition PhosphorAmber = new(ThemeIds.PhosphorAmber,
+                                                               "Phosphor (Amber CRT)",
+                                                               true,
+                                                               new MudTheme
+                                                               {
+                                                                   // Monochrome amber-phosphor palette — derived
+                                                                   // from the P3 phosphor used on IBM 5151 / Wyse
+                                                                   // / Hercules amber displays:
+                                                                   //   Background = #000000 (CRT off)
+                                                                   //   Bright fg  = #FFB000 (full-intensity amber)
+                                                                   //   Mid fg     = #CC8800 (60% — body text)
+                                                                   //   Dim fg     = #805500 (35% — secondary)
+                                                                   //   Faint      = #4D3300 (15% — disabled / lines)
+                                                                   //
+                                                                   // No hue accents — true amber-phosphor terminals
+                                                                   // had exactly ONE colour. Hierarchy is conveyed
+                                                                   // through brightness levels, just like the green
+                                                                   // variant. Status colours preserve their semantic
+                                                                   // meaning by varying brightness, with two
+                                                                   // exceptions for severity: a slight green tint on
+                                                                   // success (recalls the green-phosphor option) and
+                                                                   // a red tint on errors (some VT241-class colour
+                                                                   // terminals genuinely had red for alerts).
+                                                                   //
+                                                                   // Mapping (mirrors the green variant exactly,
+                                                                   // just shifted to amber):
+                                                                   //   AppBar     = BLACK with bright-amber text
+                                                                   //   Drawer     = BLACK with mid-amber text
+                                                                   //   Surface    = BLACK
+                                                                   //   Background = BLACK
+                                                                   //   Primary    = BRIGHT AMBER (focused/selected)
+                                                                   //   Secondary  = MID AMBER  (alternate accent)
+                                                                   //   Tertiary   = DIM AMBER  (least-emphasised)
+                                                                   PaletteDark = new PaletteDark
+                                                                   {
+                                                                       Primary                  = "#FFB000",
+                                                                       PrimaryContrastText      = "#000000",
+                                                                       Secondary                = "#CC8800",
+                                                                       SecondaryContrastText    = "#000000",
+                                                                       Tertiary                 = "#805500",
+                                                                       TertiaryContrastText     = "#000000",
+                                                                       AppbarBackground         = "#000000",
+                                                                       AppbarText               = "#FFB000",
+                                                                       DrawerBackground         = "#000000",
+                                                                       DrawerText               = "#CC8800",
+                                                                       DrawerIcon               = "#FFB000",
+                                                                       Surface                  = "#000000",
+                                                                       Background               = "#000000",
+                                                                       BackgroundGray           = "#1A1100",
+                                                                       TextPrimary              = "#FFB000",
+                                                                       TextSecondary            = "#CC8800",
+                                                                       TextDisabled             = "#805500",
+                                                                       ActionDefault            = "#FFB000",
+                                                                       ActionDisabled           = "#805500",
+                                                                       ActionDisabledBackground = "#1A1100",
+                                                                       LinesDefault             = "#CC8800",
+                                                                       LinesInputs              = "#FFB000",
+                                                                       TableLines               = "#805500",
+                                                                       TableStriped             = "#1A1100",
+                                                                       TableHover               = "#2A1F00",
+                                                                       Divider                  = "#CC8800",
+                                                                       DividerLight             = "#805500",
+                                                                       Info                     = "#FFB000",
+                                                                       Success                  = "#CCFF66",
+                                                                       Warning                  = "#FFD700",
+                                                                       Error                    = "#FF5544",
+                                                                       Dark                     = "#000000",
+                                                                       HoverOpacity             = 0.18
+                                                                   },
+                                                                   LayoutProperties = new LayoutProperties
+                                                                   {
+                                                                       DrawerWidthLeft     = "260px",
+                                                                       DrawerMiniWidthLeft = "72px"
+                                                                   },
+                                                                   // Identical typography to the green variant —
+                                                                   // both phosphor colours used the same DEC
+                                                                   // VT-series character ROM (only the CRT
+                                                                   // coating differed).
+                                                                   Typography = new Typography
+                                                                   {
+                                                                       Default = new DefaultTypography
+                                                                       {
+                                                                           FontFamily    = _vt323Stack,
+                                                                           FontSize      = "1rem",
+                                                                           FontWeight    = "400",
+                                                                           LineHeight    = "1.4",
+                                                                           LetterSpacing = "0"
+                                                                       },
+                                                                       H1 = new H1Typography
+                                                                       {
+                                                                           FontFamily    = _vt323Stack,
+                                                                           FontSize      = "2.5rem",
+                                                                           FontWeight    = "400",
+                                                                           LetterSpacing = "0.05em"
+                                                                       },
+                                                                       H2 = new H2Typography
+                                                                       {
+                                                                           FontFamily    = _vt323Stack,
+                                                                           FontSize      = "2rem",
+                                                                           FontWeight    = "400",
+                                                                           LetterSpacing = "0.05em"
+                                                                       },
+                                                                       H3 = new H3Typography
+                                                                       {
+                                                                           FontFamily    = _vt323Stack,
+                                                                           FontSize      = "1.6rem",
+                                                                           FontWeight    = "400",
+                                                                           LetterSpacing = "0.04em"
+                                                                       },
+                                                                       H4 = new H4Typography
+                                                                       {
+                                                                           FontFamily    = _vt323Stack,
+                                                                           FontSize      = "1.3rem",
+                                                                           FontWeight    = "400",
+                                                                           LetterSpacing = "0.04em"
+                                                                       },
+                                                                       H5 = new H5Typography
+                                                                       {
+                                                                           FontFamily    = _vt323Stack,
+                                                                           FontSize      = "1.15rem",
+                                                                           FontWeight    = "400",
+                                                                           LetterSpacing = "0.03em"
+                                                                       },
+                                                                       H6 = new H6Typography
+                                                                       {
+                                                                           FontFamily    = _vt323Stack,
+                                                                           FontSize      = "1rem",
+                                                                           FontWeight    = "400",
+                                                                           LetterSpacing = "0.03em"
+                                                                       },
+                                                                       Subtitle1 = new Subtitle1Typography
+                                                                       {
+                                                                           FontFamily = _vt323Stack,
+                                                                           FontWeight = "400"
+                                                                       },
+                                                                       Subtitle2 = new Subtitle2Typography
+                                                                       {
+                                                                           FontFamily = _vt323Stack,
+                                                                           FontWeight = "400"
+                                                                       },
+                                                                       Body1 = new Body1Typography
+                                                                       {
+                                                                           FontFamily = _vt323Stack
+                                                                       },
+                                                                       Body2 = new Body2Typography
+                                                                       {
+                                                                           FontFamily = _vt323Stack
+                                                                       },
+                                                                       Button = new ButtonTypography
+                                                                       {
+                                                                           FontFamily    = _vt323Stack,
+                                                                           FontWeight    = "400",
+                                                                           LetterSpacing = "0.1em",
+                                                                           TextTransform = "uppercase"
+                                                                       },
+                                                                       Caption = new CaptionTypography
+                                                                       {
+                                                                           FontFamily = _vt323Stack
+                                                                       },
+                                                                       Overline = new OverlineTypography
+                                                                       {
+                                                                           FontFamily    = _vt323Stack,
+                                                                           FontWeight    = "400",
+                                                                           LetterSpacing = "0.18em",
+                                                                           TextTransform = "uppercase"
+                                                                       }
+                                                                   }
+                                                               },
+                                                               _phosphorFonts);
+
     /// <summary>All themes available to users in the Appearance picker. Order matters — it's the display order.</summary>
-    public static readonly IReadOnlyList<ThemeDefinition> All = new[] { DefaultDark, DefaultLight, AmigaOs, Cde, Cyberpunk, Dos, MacOs9, Phosphor };
+    public static readonly IReadOnlyList<ThemeDefinition> All = new[] { DefaultDark, DefaultLight, AmigaOs, Cde, Cyberpunk, Dos, MacOs9, Phosphor, PhosphorAmber };
 
     /// <summary>The default theme used when the user has no preference set.</summary>
     public static ThemeDefinition Default => DefaultDark;

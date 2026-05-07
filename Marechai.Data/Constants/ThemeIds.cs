@@ -60,7 +60,10 @@ public static class ThemeIds
     /// <summary>Green phosphor CRT terminal (VT100/VT220 era) — pure black background, brilliant green text, VT323 monospace.</summary>
     public const string Phosphor = "phosphor";
 
+    /// <summary>Amber phosphor CRT terminal (IBM 5151 / Hercules / Wyse 50 era) — pure black background, warm amber text, VT323 monospace.</summary>
+    public const string PhosphorAmber = "phosphor-amber";
+
     /// <summary>All recognised theme slugs. Used by the controller to validate incoming theme ids.</summary>
     public static readonly IReadOnlySet<string> All =
-        new HashSet<string>(StringComparer.OrdinalIgnoreCase) { DefaultDark, DefaultLight, AmigaOs, Dos, MacOs9, Cde, Cyberpunk, Phosphor };
+        new HashSet<string>(StringComparer.OrdinalIgnoreCase) { DefaultDark, DefaultLight, AmigaOs, Dos, MacOs9, Cde, Cyberpunk, Phosphor, PhosphorAmber };
 }
