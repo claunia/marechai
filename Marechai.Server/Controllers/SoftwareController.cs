@@ -1502,8 +1502,8 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     [HttpGet("{id:ulong}/user-ratings/me")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<SoftwareUserRatingDto>> GetMyRatingAsync(ulong id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
@@ -1511,7 +1511,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
         SoftwareUserRating rating =
             await context.SoftwareUserRatings.FirstOrDefaultAsync(r => r.UserId == userId && r.SoftwareId == id);
 
-        if(rating is null) return NotFound();
+        if(rating is null) return NoContent();
 
         return Ok(new SoftwareUserRatingDto
         {
