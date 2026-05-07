@@ -33,9 +33,11 @@ using System.Threading.Tasks;
 using Marechai.Data;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
+using Marechai.Server.Helpers;
 using Markdig;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -44,7 +46,7 @@ namespace Marechai.Server.Controllers;
 
 [Route("/software")]
 [ApiController]
-public class SoftwareController(MarechaiContext context, IMemoryCache cache) : ControllerBase
+public class SoftwareController(MarechaiContext context, IMemoryCache cache, UserManager<ApplicationUser> userManager) : ControllerBase
 {
     // Cache key + duration for the global Marechai score ranking.
     // The full catalog ranking changes only when reviews/ratings are
@@ -1871,17 +1873,27 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache) : C
             Explanation = dto.Explanation
         });
 
-        // Create admin notification
-        context.AdminNotifications.Add(new AdminNotification
-        {
-            Title            = "Review reported",
-            Message          = $"A review on \"{review.Software.Name}\" has been reported as {dto.Reason}.",
-            LinkUrl          = $"/software/{review.SoftwareId}",
-            LinkText         = review.Software.Name,
-            NotificationType = "ReviewReport"
-        });
-
         await context.SaveChangesAsync();
+
+        // Notify all admins/uberadmins via the messaging system. Sent post-save so the report row exists when admins
+        // click through. Failures are non-fatal: the report itself is what matters.
+        try
+        {
+            string explanationBlock = string.IsNullOrWhiteSpace(dto.Explanation)
+                                          ? string.Empty
+                                          : $"\n\n> {dto.Explanation}\n";
+
+            await MessageDispatcher.SendSystemMessageToAdminsAsync(context,
+                userManager,
+                subject: $"Review reported: {review.Software.Name}",
+                body:
+                $"A user review on **{review.Software.Name}** has been reported as **{dto.Reason}**.{explanationBlock}\n\n" +
+                "[Open the Review Reports page](/admin/review-reports)");
+        }
+        catch
+        {
+            // Swallow — report is persisted; admins will still see it on the Review Reports page.
+        }
 
         return Created();
     }

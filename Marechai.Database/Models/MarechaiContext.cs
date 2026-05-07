@@ -185,7 +185,11 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<SoftwareUserReview>                  SoftwareUserReviews                 { get; set; }
     public virtual DbSet<SoftwareUserReviewVote>              SoftwareUserReviewVotes             { get; set; }
     public virtual DbSet<ReviewReport>                        ReviewReports                       { get; set; }
-    public virtual DbSet<AdminNotification>                   AdminNotifications                  { get; set; }
+    public virtual DbSet<Conversation>                        Conversations                       { get; set; }
+    public virtual DbSet<ConversationParticipant>             ConversationParticipants            { get; set; }
+    public virtual DbSet<Message>                             Messages                            { get; set; }
+    public virtual DbSet<MessageState>                        MessageStates                       { get; set; }
+    public virtual DbSet<MessageReport>                       MessageReports                      { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -2997,15 +3001,85 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .OnDelete(DeleteBehavior.SetNull);
         });
 
-        modelBuilder.Entity<AdminNotification>(entity =>
+        modelBuilder.Entity<Conversation>(entity =>
         {
-            entity.HasIndex(e => new { e.IsRead, e.TargetUserId });
-            entity.HasIndex(e => e.TargetUserId);
+            entity.HasIndex(e => e.IsSystemThread);
+        });
 
-            entity.HasOne(e => e.TargetUser)
-                  .WithMany()
-                  .HasForeignKey(e => e.TargetUserId)
+        modelBuilder.Entity<ConversationParticipant>(entity =>
+        {
+            entity.HasKey(e => new { e.ConversationId, e.UserId });
+
+            entity.HasIndex(e => e.UserId);
+
+            entity.HasOne(e => e.Conversation)
+                  .WithMany(p => p.Participants)
+                  .HasForeignKey(e => e.ConversationId)
                   .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.User)
+                  .WithMany()
+                  .HasForeignKey(e => e.UserId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Message>(entity =>
+        {
+            entity.HasIndex(e => new { e.ConversationId, e.CreatedOn });
+            entity.HasIndex(e => e.SenderId);
+
+            entity.HasOne(e => e.Conversation)
+                  .WithMany(p => p.Messages)
+                  .HasForeignKey(e => e.ConversationId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Sender)
+                  .WithMany()
+                  .HasForeignKey(e => e.SenderId)
+                  .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(e => e.ParentMessage)
+                  .WithMany()
+                  .HasForeignKey(e => e.ParentMessageId)
+                  .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<MessageState>(entity =>
+        {
+            entity.HasKey(e => new { e.MessageId, e.UserId });
+
+            entity.HasIndex(e => new { e.UserId, e.IsRead, e.DeletedAt });
+
+            entity.HasOne(e => e.Message)
+                  .WithMany(p => p.States)
+                  .HasForeignKey(e => e.MessageId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.User)
+                  .WithMany()
+                  .HasForeignKey(e => e.UserId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<MessageReport>(entity =>
+        {
+            entity.HasIndex(e => e.MessageId);
+            entity.HasIndex(e => e.IsResolved);
+
+            entity.HasOne(e => e.Reporter)
+                  .WithMany()
+                  .HasForeignKey(e => e.ReporterId)
+                  .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(e => e.Message)
+                  .WithMany()
+                  .HasForeignKey(e => e.MessageId)
+                  .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(e => e.ResolvedBy)
+                  .WithMany()
+                  .HasForeignKey(e => e.ResolvedByUserId)
+                  .OnDelete(DeleteBehavior.SetNull);
         });
     }
 }

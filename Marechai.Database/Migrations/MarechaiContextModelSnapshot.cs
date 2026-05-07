@@ -25,64 +25,6 @@ namespace Marechai.Database.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
-            modelBuilder.Entity("Marechai.Database.Models.AdminNotification", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<DateTime>("CreatedOn"));
-
-                    b.Property<bool>("IsRead")
-                        .HasColumnType("bit(1)");
-
-                    b.Property<string>("LinkText")
-                        .HasMaxLength(128)
-                        .HasColumnType("varchar(128)");
-
-                    b.Property<string>("LinkUrl")
-                        .HasMaxLength(512)
-                        .HasColumnType("varchar(512)");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasMaxLength(1024)
-                        .HasColumnType("varchar(1024)");
-
-                    b.Property<string>("NotificationType")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("varchar(64)");
-
-                    b.Property<string>("TargetUserId")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
-
-                    b.Property<DateTime>("UpdatedOn")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime(6)");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("UpdatedOn"));
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TargetUserId");
-
-                    b.HasIndex("IsRead", "TargetUserId");
-
-                    b.ToTable("AdminNotifications");
-                });
-
             modelBuilder.Entity("Marechai.Database.Models.ApplicationRole", b =>
                 {
                     b.Property<string>("Id")
@@ -152,6 +94,9 @@ namespace Marechai.Database.Migrations
                     b.Property<string>("GitHub")
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
+
+                    b.Property<bool>("IsSystemAccount")
+                        .HasColumnType("bit(1)");
 
                     b.Property<string>("LinkedIn")
                         .HasMaxLength(200)
@@ -1236,6 +1181,61 @@ namespace Marechai.Database.Migrations
                         .HasDatabaseName("idx_id");
 
                     b.ToTable("company_logos", (string)null);
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.Conversation", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<DateTime>("CreatedOn"));
+
+                    b.Property<bool>("IsSystemThread")
+                        .HasColumnType("bit(1)");
+
+                    b.Property<string>("Subject")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("UpdatedOn"));
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsSystemThread");
+
+                    b.ToTable("Conversations");
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.ConversationParticipant", b =>
+                {
+                    b.Property<long>("ConversationId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime>("JoinedOn")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("LeftOn")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("ConversationId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ConversationParticipants");
                 });
 
             modelBuilder.Entity("Marechai.Database.Models.CurrencyInflation", b =>
@@ -4585,6 +4585,133 @@ namespace Marechai.Database.Migrations
                         .HasDatabaseName("idx_memory_by_machine_usage");
 
                     b.ToTable("memory_by_machine", (string)null);
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.Message", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasMaxLength(5000)
+                        .HasColumnType("varchar(5000)");
+
+                    b.Property<long>("ConversationId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<DateTime>("CreatedOn"));
+
+                    b.Property<bool>("IsSystemAuthored")
+                        .HasColumnType("bit(1)");
+
+                    b.Property<long?>("ParentMessageId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("SenderId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("UpdatedOn"));
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentMessageId");
+
+                    b.HasIndex("SenderId");
+
+                    b.HasIndex("ConversationId", "CreatedOn");
+
+                    b.ToTable("Messages");
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.MessageReport", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<DateTime>("CreatedOn"));
+
+                    b.Property<string>("Explanation")
+                        .HasMaxLength(2048)
+                        .HasColumnType("varchar(2048)");
+
+                    b.Property<bool>("IsResolved")
+                        .HasColumnType("bit(1)");
+
+                    b.Property<long?>("MessageId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Reason")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReporterId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ResolvedByUserId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime?>("ResolvedOn")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("UpdatedOn"));
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsResolved");
+
+                    b.HasIndex("MessageId");
+
+                    b.HasIndex("ReporterId");
+
+                    b.HasIndex("ResolvedByUserId");
+
+                    b.ToTable("MessageReports");
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.MessageState", b =>
+                {
+                    b.Property<long>("MessageId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit(1)");
+
+                    b.Property<DateTime?>("ReadAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("MessageId", "UserId");
+
+                    b.HasIndex("UserId", "IsRead", "DeletedAt");
+
+                    b.ToTable("MessageStates");
                 });
 
             modelBuilder.Entity("Marechai.Database.Models.MinimumGpuBySoftwareRelease", b =>
@@ -8098,16 +8225,6 @@ namespace Marechai.Database.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Marechai.Database.Models.AdminNotification", b =>
-                {
-                    b.HasOne("Marechai.Database.Models.ApplicationUser", "TargetUser")
-                        .WithMany()
-                        .HasForeignKey("TargetUserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("TargetUser");
-                });
-
             modelBuilder.Entity("Marechai.Database.Models.Audit", b =>
                 {
                     b.HasOne("Marechai.Database.Models.ApplicationUser", "User")
@@ -8454,6 +8571,25 @@ namespace Marechai.Database.Migrations
                         .HasConstraintName("fk_company_logos_company1");
 
                     b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.ConversationParticipant", b =>
+                {
+                    b.HasOne("Marechai.Database.Models.Conversation", "Conversation")
+                        .WithMany("Participants")
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Marechai.Database.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Conversation");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Marechai.Database.Models.CurrencyInflation", b =>
@@ -9149,6 +9285,74 @@ namespace Marechai.Database.Migrations
                         .HasConstraintName("fk_memory_by_machine_machine");
 
                     b.Navigation("Machine");
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.Message", b =>
+                {
+                    b.HasOne("Marechai.Database.Models.Conversation", "Conversation")
+                        .WithMany("Messages")
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Marechai.Database.Models.Message", "ParentMessage")
+                        .WithMany()
+                        .HasForeignKey("ParentMessageId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Marechai.Database.Models.ApplicationUser", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Conversation");
+
+                    b.Navigation("ParentMessage");
+
+                    b.Navigation("Sender");
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.MessageReport", b =>
+                {
+                    b.HasOne("Marechai.Database.Models.Message", "Message")
+                        .WithMany()
+                        .HasForeignKey("MessageId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Marechai.Database.Models.ApplicationUser", "Reporter")
+                        .WithMany()
+                        .HasForeignKey("ReporterId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Marechai.Database.Models.ApplicationUser", "ResolvedBy")
+                        .WithMany()
+                        .HasForeignKey("ResolvedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Message");
+
+                    b.Navigation("Reporter");
+
+                    b.Navigation("ResolvedBy");
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.MessageState", b =>
+                {
+                    b.HasOne("Marechai.Database.Models.Message", "Message")
+                        .WithMany("States")
+                        .HasForeignKey("MessageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Marechai.Database.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Message");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Marechai.Database.Models.MinimumGpuBySoftwareRelease", b =>
@@ -10218,6 +10422,13 @@ namespace Marechai.Database.Migrations
                     b.Navigation("SoundSynths");
                 });
 
+            modelBuilder.Entity("Marechai.Database.Models.Conversation", b =>
+                {
+                    b.Navigation("Messages");
+
+                    b.Navigation("Participants");
+                });
+
             modelBuilder.Entity("Marechai.Database.Models.Document", b =>
                 {
                     b.Navigation("CollectedBy");
@@ -10398,6 +10609,11 @@ namespace Marechai.Database.Migrations
             modelBuilder.Entity("Marechai.Database.Models.MediaFile", b =>
                 {
                     b.Navigation("DataStreams");
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.Message", b =>
+                {
+                    b.Navigation("States");
                 });
 
             modelBuilder.Entity("Marechai.Database.Models.Person", b =>

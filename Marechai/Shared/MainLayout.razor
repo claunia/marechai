@@ -40,25 +40,23 @@
         <MudIcon Icon="@Icons.Material.Filled.Museum" Class="ml-2"/>
         <MudText Typo="Typo.h6" Class="ml-2">Marechai</MudText>
         <MudSpacer/>
-        <AuthorizeView Roles="Admin, UberAdmin">
+        <AuthorizeView>
             <Authorized>
-                <MudBadge Content="@_unreadNotificationCount" Color="Color.Error" Overlap="true" Visible="@(_unreadNotificationCount > 0)">
-                    <MudIconButton Icon="@Icons.Material.Filled.Notifications" Color="Color.Inherit"
-                                   Href="/admin/notifications" aria-label="Notifications"/>
-                </MudBadge>
+                <MudTooltip Text="@L["Messages"]">
+                    <MudBadge Content="@_unreadMessageCount" Color="Color.Error" Overlap="true" Visible="@(_unreadMessageCount > 0)">
+                        <MudIconButton Icon="@Icons.Material.Filled.Mail" Color="Color.Inherit"
+                                       Href="/messages" aria-label="@L["Messages"]"/>
+                    </MudBadge>
+                </MudTooltip>
             </Authorized>
         </AuthorizeView>
         <LoginDisplay/>
         <MudHidden Breakpoint="Breakpoint.SmAndDown">
             <MudButton Href="/about" Color="Color.Inherit" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Info">@L["About"]</MudButton>
-            <MudButton Href="/contact" Color="Color.Inherit" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Email">@L["Contact"]</MudButton>
         </MudHidden>
         <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
             <MudTooltip Text="@L["About"]">
                 <MudIconButton Href="/about" Color="Color.Inherit" Icon="@Icons.Material.Filled.Info" aria-label="@L["About"]"/>
-            </MudTooltip>
-            <MudTooltip Text="@L["Contact"]">
-                <MudIconButton Href="/contact" Color="Color.Inherit" Icon="@Icons.Material.Filled.Email" aria-label="@L["Contact"]"/>
             </MudTooltip>
         </MudHidden>
     </MudAppBar>
@@ -90,25 +88,44 @@
 @code {
     private bool _drawerOpen = true;
     private bool _isAdminMode;
-    private int  _unreadNotificationCount;
-    private System.Threading.Timer _notificationTimer;
+    private int  _unreadMessageCount;
+    private System.Threading.Timer _messagePollTimer;
 
-    [Inject] NotificationService NotificationService { get; set; }
+    [Inject] MessagingService MessagingService { get; set; }
+    [CascadingParameter] private Task<Microsoft.AspNetCore.Components.Authorization.AuthenticationState> AuthState { get; set; }
 
     protected override void OnAfterRender(bool firstRender)
     {
         if(firstRender)
         {
-            _notificationTimer = new System.Threading.Timer(async _ =>
+            _messagePollTimer = new System.Threading.Timer(async _ =>
             {
                 try
                 {
-                    _unreadNotificationCount = await NotificationService.GetUnreadCountAsync();
-                    await InvokeAsync(StateHasChanged);
+                    if(AuthState is null) return;
+
+                    var auth = await AuthState;
+                    if(auth?.User?.Identity?.IsAuthenticated != true)
+                    {
+                        if(_unreadMessageCount != 0)
+                        {
+                            _unreadMessageCount = 0;
+                            await InvokeAsync(StateHasChanged);
+                        }
+
+                        return;
+                    }
+
+                    int count = await MessagingService.GetUnreadCountAsync();
+                    if(count != _unreadMessageCount)
+                    {
+                        _unreadMessageCount = count;
+                        await InvokeAsync(StateHasChanged);
+                    }
                 }
                 catch
                 {
-                    // ignore
+                    // ignore polling errors
                 }
             }, null, TimeSpan.Zero, TimeSpan.FromSeconds(60));
         }
@@ -116,7 +133,7 @@
 
     public void Dispose()
     {
-        _notificationTimer?.Dispose();
+        _messagePollTimer?.Dispose();
     }
 
     private readonly MudTheme _theme = new()

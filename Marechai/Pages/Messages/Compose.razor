@@ -1,0 +1,199 @@
+@page "/messages/compose"
+@attribute [Authorize]
+@using Marechai.ApiClient.Models
+@using Marechai.Services
+@inject MessagingService MessagingService
+@inject IStringLocalizer<MessagingService> L
+@inject IDialogService DialogService
+@inject NavigationManager NavigationManager
+
+<MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack"
+           OnClick="@(() => NavigationManager.NavigateTo("/messages"))" Class="mb-4">@L["Back to messages"]</MudButton>
+
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #0d47a1 0%, #1976d2 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Filled.Edit" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Style="color: white;">@L["New Message"]</MudText>
+    </MudStack>
+</MudPaper>
+
+@if(!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+}
+
+<MudPaper Elevation="2" Class="pa-4 mb-6 rounded-lg">
+    <MudStack Spacing="3">
+        @if(_recipient is not null)
+        {
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudText Typo="Typo.subtitle2">@L["Recipient"]:</MudText>
+                @if(_recipient.IsAdmin == true)
+                {
+                    <MudChip T="string" Color="Color.Info" Variant="Variant.Filled">@_recipient.DisplayName <small>(@L["Admin"])</small></MudChip>
+                }
+                else
+                {
+                    <MudChip T="string" Variant="Variant.Outlined">@_recipient.DisplayName</MudChip>
+                }
+                <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small" OnClick="ClearRecipient"/>
+            </MudStack>
+        }
+        else
+        {
+            <MudAutocomplete T="UserSummaryDto"
+                             Label="@L["Recipient"]"
+                             Value="_recipient"
+                             ValueChanged="OnRecipientSelected"
+                             SearchFunc="@SearchUsersAsync"
+                             ToStringFunc="@(u => u?.DisplayName ?? string.Empty)"
+                             ResetValueOnEmptyText="false"
+                             CoerceText="false"
+                             CoerceValue="false"
+                             DebounceInterval="300"
+                             MinCharacters="2"
+                             Placeholder="@L["Search users..."]"
+                             Variant="Variant.Outlined">
+                <ItemTemplate Context="user">
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                        @if(!string.IsNullOrEmpty(user.AvatarUrl))
+                        {
+                            <MudAvatar Size="Size.Small" Image="@user.AvatarUrl"/>
+                        }
+                        else
+                        {
+                            <MudAvatar Size="Size.Small" Color="Color.Default">@(user.DisplayName?[..1] ?? "?")</MudAvatar>
+                        }
+                        <MudText>@user.DisplayName</MudText>
+                        <MudText Typo="Typo.caption" Color="Color.Default">@@@user.UserName</MudText>
+                        @if(user.IsAdmin == true)
+                        {
+                            <MudChip T="string" Size="Size.Small" Color="Color.Info">@L["Admin"]</MudChip>
+                        }
+                    </MudStack>
+                </ItemTemplate>
+            </MudAutocomplete>
+        }
+
+        <MudTextField @bind-Value="_subject"
+                      Label="@L["Subject"]"
+                      Variant="Variant.Outlined"
+                      MaxLength="256"/>
+
+        <MarkdownEditor @bind-Value="_body"
+                        @ref="_editor"
+                        SpellChecker="false"
+                        MinHeight="280px"
+                        MaxHeight="500px"
+                        Placeholder="@L["Message body"]"/>
+
+        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+            <MudText Typo="Typo.caption" Color="@(BodyLength > MaxBody ? Color.Error : Color.Default)">
+                @string.Format(L["{0} / 5000 characters"], BodyLength)
+            </MudText>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Material.Filled.Send"
+                       OnClick="SendAsync"
+                       Disabled="@(_isSending || _recipient is null || string.IsNullOrWhiteSpace(_body) || BodyLength > MaxBody)">
+                @if(_isSending)
+                {
+                    <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
+                    @L["Sending..."]
+                }
+                else
+                {
+                    @L["Send"]
+                }
+            </MudButton>
+        </MudStack>
+
+        @if(BodyLength > MaxBody)
+        {
+            <MudAlert Severity="Severity.Warning">@L["Message exceeds 5000 character limit."]</MudAlert>
+        }
+    </MudStack>
+</MudPaper>
+
+@code {
+    const int MaxBody = MessagingService.MaxBodyLength;
+
+    [SupplyParameterFromQuery(Name = "to")]
+    public string ToUserId { get; set; }
+
+    UserSummaryDto _recipient;
+    string         _subject;
+    string         _body;
+    string         _errorMessage;
+    bool           _isSending;
+    MarkdownEditor _editor;
+
+    int BodyLength => _body?.Length ?? 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if(!string.IsNullOrWhiteSpace(ToUserId))
+        {
+            // Look up by id via search using the userid as exact prefix; fall back to nothing if no match.
+            // Since search uses prefix match on UserName/DisplayName, this won't always resolve. The compose page
+            // accepts either an id or a username; for ids, the user can manually pick the recipient via search.
+            // No-op for now; the autocomplete remains shown.
+            await Task.CompletedTask;
+        }
+    }
+
+    async Task<System.Collections.Generic.IEnumerable<UserSummaryDto>> SearchUsersAsync(string value, System.Threading.CancellationToken ct)
+    {
+        var hits = await MessagingService.SearchUsersAsync(value);
+        return hits;
+    }
+
+    void OnRecipientSelected(UserSummaryDto u)
+    {
+        _recipient = u;
+        StateHasChanged();
+    }
+
+    void ClearRecipient()
+    {
+        _recipient = null;
+        StateHasChanged();
+    }
+
+    async Task SendAsync()
+    {
+        if(_recipient is null || string.IsNullOrWhiteSpace(_body) || string.IsNullOrEmpty(_recipient.Id)) return;
+
+        _isSending    = true;
+        _errorMessage = null;
+        StateHasChanged();
+
+        var (result, conversationId, err) = await MessagingService.StartConversationAsync(
+            _recipient.Id, _subject, _body);
+
+        _isSending = false;
+
+        switch(result)
+        {
+            case MessageSendResult.Sent when conversationId.HasValue:
+                NavigationManager.NavigateTo($"/messages/{conversationId.Value}");
+                return;
+            case MessageSendResult.InboxFull:
+                await DialogService.ShowAsync<InboxFullDialog>(
+                    L["Inbox Full"],
+                    new DialogParameters
+                    {
+                        ["Message"] = string.Format(L["Cannot send: {0}'s inbox is full."], _recipient.DisplayName)
+                    });
+                break;
+            case MessageSendResult.RateLimited:
+                _errorMessage = err ?? L["Rate limited"];
+                break;
+            default:
+                _errorMessage = err ?? "Failed to send message.";
+                break;
+        }
+
+        StateHasChanged();
+    }
+}

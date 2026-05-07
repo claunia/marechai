@@ -66,6 +66,12 @@ public class ApplicationUser : IdentityUser
     [MaxLength(200)]
     public string LinkedIn { get; set; }
 
+    /// <summary>
+    ///     True for the seeded built-in `system` account used to author bot messages (e.g. report notifications).
+    ///     System users are never loginable and bypass all messaging quotas / rate limits.
+    /// </summary>
+    public bool IsSystemAccount { get; set; }
+
     public virtual ICollection<MachinePhoto>              Photos                    { get; set; }
     public virtual ICollection<OwnedMachine>              OwnedMachines             { get; set; }
     public virtual ICollection<CollectedBook>             CollectedBooks            { get; set; }

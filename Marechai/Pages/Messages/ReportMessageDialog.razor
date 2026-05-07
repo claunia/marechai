@@ -1,0 +1,72 @@
+@using Marechai.Data
+@using Marechai.Services
+@inject MessagingService MessagingService
+@inject IStringLocalizer<MessagingService> L
+
+<MudDialog>
+    <DialogContent>
+        <MudStack Spacing="3">
+            <MudSelect T="ReviewReportReason" @bind-Value="_reason" Label="@L["Reason"]" Variant="Variant.Outlined">
+                <MudSelectItem Value="ReviewReportReason.Spam">@L["Spam"]</MudSelectItem>
+                <MudSelectItem Value="ReviewReportReason.Offensive">@L["Offensive"]</MudSelectItem>
+                <MudSelectItem Value="ReviewReportReason.Misleading">@L["Misleading"]</MudSelectItem>
+                <MudSelectItem Value="ReviewReportReason.OffTopic">@L["Off-topic"]</MudSelectItem>
+                <MudSelectItem Value="ReviewReportReason.Other">@L["Other"]</MudSelectItem>
+            </MudSelect>
+            <MudTextField @bind-Value="_explanation"
+                          Label="@L["Explanation (optional)"]"
+                          Variant="Variant.Outlined"
+                          Lines="4"
+                          MaxLength="2048"/>
+            @if(!string.IsNullOrEmpty(_error))
+            {
+                <MudAlert Severity="Severity.Error">@_error</MudAlert>
+            }
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="Submit" Disabled="_busy">
+            @if(_busy)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
+            }
+            @L["Submit report"]
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public long MessageId { get; set; }
+
+    ReviewReportReason _reason = ReviewReportReason.Spam;
+    string             _explanation;
+    string             _error;
+    bool               _busy;
+
+    void Cancel() => MudDialog.Cancel();
+
+    async Task Submit()
+    {
+        _busy  = true;
+        _error = null;
+        StateHasChanged();
+
+        var (succeeded, err) = await MessagingService.ReportMessageAsync(MessageId, _reason, _explanation);
+        _busy = false;
+
+        if(succeeded)
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+        else
+        {
+            _error = err;
+            StateHasChanged();
+        }
+    }
+}

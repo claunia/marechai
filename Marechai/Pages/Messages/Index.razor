@@ -1,0 +1,183 @@
+@page "/messages"
+@attribute [Authorize]
+@using Marechai.ApiClient.Models
+@using Marechai.Services
+@inject MessagingService MessagingService
+@inject IStringLocalizer<MessagingService> L
+@inject IDialogService DialogService
+@inject NavigationManager NavigationManager
+
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #0d47a1 0%, #1976d2 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+            <MudIcon Icon="@Icons.Material.Filled.Mail" Size="Size.Large" Style="color: white;"/>
+            <MudText Typo="Typo.h4" Style="color: white;">@L["Messages"]</MudText>
+        </MudStack>
+        <MudButton Color="Color.Primary"
+                   Variant="Variant.Filled"
+                   StartIcon="@Icons.Material.Filled.Edit"
+                   Style="background-color: white; color: #0d47a1;"
+                   OnClick="@(() => NavigationManager.NavigateTo("/messages/compose"))">@L["Compose"]</MudButton>
+    </MudStack>
+</MudPaper>
+
+@if(!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+}
+
+@if(!string.IsNullOrWhiteSpace(_successMessage))
+{
+    <MudAlert Severity="Severity.Success" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _successMessage = null">@_successMessage</MudAlert>
+}
+
+<MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-4" @bind-ActivePanelIndex="_activeTab" @bind-ActivePanelIndex:after="OnTabChanged">
+    <MudTabPanel Text="@L["Inbox"]" Icon="@Icons.Material.Filled.Inbox"/>
+    <MudTabPanel Text="@L["Sent"]" Icon="@Icons.Material.Filled.Send"/>
+    <AuthorizeView Roles="Admin, UberAdmin" Context="adminCtx">
+        <Authorized>
+            <MudTabPanel Text="@L["Reports"]" Icon="@Icons.Material.Filled.Report"/>
+        </Authorized>
+    </AuthorizeView>
+</MudTabs>
+
+@if(_isLoading)
+{
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+    </div>
+}
+else if(_conversations is null || _conversations.Count == 0)
+{
+    <MudPaper Class="pa-8 mt-4 d-flex justify-center" Elevation="0">
+        <MudText Typo="Typo.body1" Color="Color.Default">@L["No messages"]</MudText>
+    </MudPaper>
+}
+else
+{
+    <MudList T="ConversationSummaryDto" Class="mt-4">
+        @foreach(ConversationSummaryDto conv in _conversations)
+        {
+            ConversationSummaryDto c = conv;
+            <MudListItem T="ConversationSummaryDto" OnClick="@(() => OpenConversation(c))">
+                <MudPaper Class="pa-3 mb-2" Elevation="@(c.UnreadCount > 0 ? 2 : 0)" Style="@(c.UnreadCount > 0 ? "border-left: 4px solid #1976d2;" : "")">
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                        <MudStack Spacing="1" Style="flex: 1; min-width: 0;">
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                @foreach(UserSummaryDto p in (c.Participants ?? new()))
+                                {
+                                    if(p.IsSystem == true)
+                                    {
+                                        <MudChip T="string" Size="Size.Small" Color="Color.Error" Variant="Variant.Filled">@L["System"]</MudChip>
+                                    }
+                                    else if(p.IsAdmin == true)
+                                    {
+                                        <MudChip T="string" Size="Size.Small" Color="Color.Info" Variant="Variant.Filled">@p.DisplayName <small>(@L["Admin"])</small></MudChip>
+                                    }
+                                    else
+                                    {
+                                        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined">@p.DisplayName</MudChip>
+                                    }
+                                }
+                                @if(c.UnreadCount > 0)
+                                {
+                                    <MudBadge Content="@c.UnreadCount" Color="Color.Error" Class="ml-2"/>
+                                }
+                            </MudStack>
+                            <MudText Typo="Typo.subtitle2" Style="@(c.UnreadCount > 0 ? "font-weight: 600;" : "")">@(c.Subject ?? L["Conversation"])</MudText>
+                            <MudText Typo="Typo.body2" Style="color: var(--mud-palette-text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                <strong>@(c.LatestMessage?.MessageSummaryDto?.SenderDisplayName):</strong>
+                                @(c.LatestMessage?.MessageSummaryDto?.Snippet)
+                            </MudText>
+                        </MudStack>
+                        <MudStack Spacing="1" AlignItems="AlignItems.End">
+                            <MudText Typo="Typo.caption" Style="color: var(--mud-palette-text-secondary);">@FormatTimestamp(c.LastActivityOn)</MudText>
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="@(e => ConfirmDeleteConversation(e, c))" aria-label="@L["Delete conversation"]"/>
+                        </MudStack>
+                    </MudStack>
+                </MudPaper>
+            </MudListItem>
+        }
+    </MudList>
+}
+
+@code {
+    int                                _activeTab;
+    bool                               _isLoading = true;
+    string                             _errorMessage;
+    string                             _successMessage;
+    System.Collections.Generic.List<ConversationSummaryDto> _conversations;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    string CurrentFolder => _activeTab switch
+    {
+        1 => "sent",
+        2 => "reports",
+        _ => "inbox"
+    };
+
+    async Task OnTabChanged()
+    {
+        await LoadAsync();
+    }
+
+    async Task LoadAsync()
+    {
+        _isLoading = true;
+        _errorMessage = null;
+        StateHasChanged();
+
+        var (list, err) = await MessagingService.GetConversationsAsync(CurrentFolder);
+        if(err is not null) _errorMessage = err;
+        _conversations = list;
+        _isLoading = false;
+        StateHasChanged();
+    }
+
+    void OpenConversation(ConversationSummaryDto c)
+    {
+        if(c?.Id is null) return;
+        NavigationManager.NavigateTo($"/messages/{c.Id}");
+    }
+
+    async Task ConfirmDeleteConversation(MouseEventArgs e, ConversationSummaryDto c)
+    {
+        if(c?.Id is null) return;
+        var parameters = new DialogParameters
+        {
+            ["ContentText"] = L["Are you sure you want to delete this conversation? It will only be removed from your view."].Value
+        };
+        var dialog  = await DialogService.ShowAsync<Marechai.Pages.Admin.DeleteConfirmDialog>(L["Delete conversation"], parameters);
+        var result  = await dialog.Result;
+        if(result.Canceled || result.Data is not bool ok || !ok) return;
+
+        var (succeeded, err) = await MessagingService.DeleteConversationAsync(c.Id.Value);
+        if(succeeded)
+        {
+            _successMessage = L["Conversation deleted"];
+            await LoadAsync();
+        }
+        else
+        {
+            _errorMessage = err;
+        }
+    }
+
+    static string FormatTimestamp(DateTimeOffset? when)
+    {
+        if(!when.HasValue) return "";
+        DateTime ts = when.Value.UtcDateTime;
+        DateTime now = DateTime.UtcNow;
+        TimeSpan diff = now - ts;
+
+        if(diff.TotalMinutes < 1) return "now";
+        if(diff.TotalMinutes < 60) return $"{(int)diff.TotalMinutes}m ago";
+        if(diff.TotalHours < 24)   return $"{(int)diff.TotalHours}h ago";
+        if(diff.TotalDays < 7)     return $"{(int)diff.TotalDays}d ago";
+        return when.Value.LocalDateTime.ToString("yyyy-MM-dd");
+    }
+}

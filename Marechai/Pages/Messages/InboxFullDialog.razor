@@ -1,0 +1,24 @@
+@using Marechai.Services
+@inject IStringLocalizer<MessagingService> L
+
+<MudDialog>
+    <DialogContent>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+            <MudIcon Icon="@Icons.Material.Filled.Inbox" Size="Size.Large" Color="Color.Error"/>
+            <MudText>@Message</MudText>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Close">@L["OK"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public string Message { get; set; } = string.Empty;
+
+    void Close() => MudDialog.Close(DialogResult.Ok(true));
+}

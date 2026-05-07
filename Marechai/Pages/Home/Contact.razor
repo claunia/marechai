@@ -21,18 +21,39 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2003-2026 Natalia Portillo
+// Copyright (c) 2003-2026 Natalia Portillo
 *******************************************************************************/
 }
 
 @page "/contact"
+@* The Contact section was merged into the About page (its standalone Email icon
+   clashed with the Messages envelope icon in the AppBar). This standalone page
+   is preserved as a self-contained mirror so existing /contact bookmarks keep
+   working without triggering a NavigationException during Blazor Server
+   prerender. *@
+@inject IStringLocalizer<About> L
+
 <MudContainer MaxWidth="MaxWidth.Small">
-    <MudText Typo="Typo.h4" Class="mb-4">Contact</MudText>
-    <MudPaper Elevation="1" Class="pa-6">
-        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
-            <MudIcon Icon="@Icons.Material.Filled.Email" Color="Color.Primary"/>
-            <MudText Typo="Typo.body1"><strong>Support:</strong></MudText>
-            <MudLink Href="mailto:museum@claunia.com">museum@claunia.com</MudLink>
+    <MudPaper Class="pa-6 mb-6" Elevation="0"
+              Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+            <MudIcon Icon="@Icons.Material.Filled.AlternateEmail" Size="Size.Large" Style="color: white;"/>
+            <MudText Typo="Typo.h4" Style="color: white;">@L["Contact"]</MudText>
         </MudStack>
     </MudPaper>
+
+    <MudCard Elevation="2" Class="rounded-lg">
+        <MudCardContent>
+            <MudText Typo="Typo.body1">@L["Contact Body"]</MudText>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-3">
+                <MudIcon Icon="@Icons.Material.Filled.Email" Color="Color.Primary"/>
+                <MudText Typo="Typo.body1"><strong>@L["Support"]:</strong></MudText>
+                <MudLink Href="mailto:museum@claunia.com">museum@claunia.com</MudLink>
+            </MudStack>
+            <MudButton Class="mt-4" Variant="Variant.Text" Color="Color.Primary"
+                       StartIcon="@Icons.Material.Filled.Info" Href="/about#contact">
+                @L["About Marechai"]
+            </MudButton>
+        </MudCardContent>
+    </MudCard>
 </MudContainer>

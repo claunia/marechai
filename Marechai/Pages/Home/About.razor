@@ -162,7 +162,7 @@
     </MudCard>
 
     <!-- Dedication -->
-    <MudCard Elevation="2" Class="mb-4 rounded-lg mb-8">
+    <MudCard Elevation="2" Class="mb-4 rounded-lg">
         <MudCardContent>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-2">
                 <MudIcon Icon="@Icons.Material.Filled.Favorite" Color="Color.Primary" />
@@ -175,6 +175,22 @@
                 <MudListItem Text="@L["Dedication Tata"].Value" />
                 <MudListItem Text="@L["Dedication Jhenn"].Value" />
             </MudList>
+        </MudCardContent>
+    </MudCard>
+
+    <!-- Contact -->
+    <MudCard id="contact" Elevation="2" Class="mb-4 rounded-lg mb-8">
+        <MudCardContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-2">
+                <MudIcon Icon="@Icons.Material.Filled.AlternateEmail" Color="Color.Primary" />
+                <MudText Typo="Typo.h6">@L["Contact"]</MudText>
+            </MudStack>
+            <MudText Typo="Typo.body1">@L["Contact Body"]</MudText>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-3">
+                <MudIcon Icon="@Icons.Material.Filled.Email" Color="Color.Primary" />
+                <MudText Typo="Typo.body1"><strong>@L["Support"]:</strong></MudText>
+                <MudLink Href="mailto:museum@claunia.com">museum@claunia.com</MudLink>
+            </MudStack>
         </MudCardContent>
     </MudCard>
 

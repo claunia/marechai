@@ -226,4 +226,8 @@
         <value>Verwaltung von Softwareattributen</value>
         <comment>Software attributes management admin link</comment>
     </data>
+    <data name="Message Reports" xml:space="preserve">
+    <value>Nachrichtenmeldungen</value>
+        <comment>Message reports admin link</comment>
+  </data>
 </root>

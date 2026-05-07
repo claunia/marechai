@@ -26,8 +26,8 @@ using Marechai.ApiClient.MagazinesByMachine;
 using Marechai.ApiClient.MagazinesByMachineFamily;
 using Marechai.ApiClient.Medias;
 using Marechai.ApiClient.MemoriesByMachine;
+using Marechai.ApiClient.Messages;
 using Marechai.ApiClient.News;
-using Marechai.ApiClient.Notifications;
 using Marechai.ApiClient.People;
 using Marechai.ApiClient.PeopleByBook;
 using Marechai.ApiClient.PeopleByCompany;
@@ -198,15 +198,15 @@ namespace Marechai.ApiClient
         {
             get => new global::Marechai.ApiClient.MemoriesByMachine.MemoriesByMachineRequestBuilder(PathParameters, RequestAdapter);
         }
+        /// <summary>The messages property</summary>
+        public global::Marechai.ApiClient.Messages.MessagesRequestBuilder Messages
+        {
+            get => new global::Marechai.ApiClient.Messages.MessagesRequestBuilder(PathParameters, RequestAdapter);
+        }
         /// <summary>The news property</summary>
         public global::Marechai.ApiClient.News.NewsRequestBuilder News
         {
             get => new global::Marechai.ApiClient.News.NewsRequestBuilder(PathParameters, RequestAdapter);
-        }
-        /// <summary>The notifications property</summary>
-        public global::Marechai.ApiClient.Notifications.NotificationsRequestBuilder Notifications
-        {
-            get => new global::Marechai.ApiClient.Notifications.NotificationsRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The people property</summary>
         public global::Marechai.ApiClient.People.PeopleRequestBuilder People

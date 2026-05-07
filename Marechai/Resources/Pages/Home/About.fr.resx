@@ -198,4 +198,13 @@
     <data name="Dedication Jhenn" xml:space="preserve">
         <value>Jhenn García — pour ton amour inconditionnel en tant que sœur.</value>
     </data>
+    <data name="Contact" xml:space="preserve">
+        <value>Contact</value>
+    </data>
+    <data name="Contact Body" xml:space="preserve">
+        <value>Vous avez une question, une correction ou du matériel à apporter ? Nous serions ravis de vous lire.</value>
+    </data>
+    <data name="Support" xml:space="preserve">
+        <value>Support</value>
+    </data>
 </root>

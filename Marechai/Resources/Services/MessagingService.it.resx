@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:schema id="root">
+        <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+        <xs:element name="root" ns1:IsDataSet="true">
+            <xs:complexType>
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element name="metadata">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0" />
+                            </xs:sequence>
+                            <xs:attribute name="name" use="required" type="xsd:string" />
+                            <xs:attribute name="type" type="xsd:string" />
+                            <xs:attribute name="mimetype" type="xsd:string" />
+                            <xs:attribute ref="xml:space" />
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="assembly">
+                        <xs:complexType>
+                            <xs:attribute name="alias" type="xsd:string" />
+                            <xs:attribute name="name" type="xsd:string" />
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="data">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
+                            </xs:sequence>
+                            <xs:attribute name="name" type="xsd:string" use="required" ns1:Ordinal="1" />
+                            <xs:attribute name="type" type="xsd:string" ns1:Ordinal="3" />
+                            <xs:attribute name="mimetype" type="xsd:string" ns1:Ordinal="4" />
+                            <xs:attribute ref="xml:space" />
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="resheader">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                            </xs:sequence>
+                            <xs:attribute name="name" type="xsd:string" use="required" />
+                        </xs:complexType>
+                    </xs:element>
+                </xs:choice>
+            </xs:complexType>
+        </xs:element>
+    </xs:schema>
+    <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+    <resheader name="version"><value>2.0</value></resheader>
+    <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+    <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+    <data name="Messages" xml:space="preserve"><value>Messaggi</value><comment>Messages</comment></data>
+    <data name="Inbox" xml:space="preserve"><value>Posta in arrivo</value><comment>Inbox</comment></data>
+    <data name="Sent" xml:space="preserve"><value>Inviati</value><comment>Sent</comment></data>
+    <data name="Reports" xml:space="preserve"><value>Segnalazioni</value><comment>Reports</comment></data>
+    <data name="Compose" xml:space="preserve"><value>Componi</value><comment>Compose</comment></data>
+    <data name="New Message" xml:space="preserve"><value>Nuovo messaggio</value><comment>New Message</comment></data>
+    <data name="Recipient" xml:space="preserve"><value>Destinatario</value><comment>Recipient</comment></data>
+    <data name="Subject" xml:space="preserve"><value>Oggetto</value><comment>Subject</comment></data>
+    <data name="Message body" xml:space="preserve"><value>Corpo del messaggio</value><comment>Message body</comment></data>
+    <data name="Send" xml:space="preserve"><value>Invia</value><comment>Send</comment></data>
+    <data name="Sending..." xml:space="preserve"><value>Invio in corso…</value><comment>Sending...</comment></data>
+    <data name="Reply" xml:space="preserve"><value>Rispondi</value><comment>Reply</comment></data>
+    <data name="Delete" xml:space="preserve"><value>Elimina</value><comment>Delete</comment></data>
+    <data name="Delete conversation" xml:space="preserve"><value>Elimina conversazione</value><comment>Delete conversation</comment></data>
+    <data name="Delete message" xml:space="preserve"><value>Elimina messaggio</value><comment>Delete message</comment></data>
+    <data name="Report message" xml:space="preserve"><value>Segnala messaggio</value><comment>Report message</comment></data>
+    <data name="Report" xml:space="preserve"><value>Segnala</value><comment>Report</comment></data>
+    <data name="Mark resolved" xml:space="preserve"><value>Segna come risolto</value><comment>Mark resolved</comment></data>
+    <data name="Resolved" xml:space="preserve"><value>Risolto</value><comment>Resolved</comment></data>
+    <data name="Pending" xml:space="preserve"><value>In sospeso</value><comment>Pending</comment></data>
+    <data name="Show resolved" xml:space="preserve"><value>Mostra risolti</value><comment>Show resolved</comment></data>
+    <data name="System" xml:space="preserve"><value>Sistema</value><comment>System</comment></data>
+    <data name="Admin" xml:space="preserve"><value>Amministratore</value><comment>Admin</comment></data>
+    <data name="No messages" xml:space="preserve"><value>Non ci sono messaggi qui.</value><comment>No messages</comment></data>
+    <data name="No reports" xml:space="preserve"><value>Nessuna segnalazione.</value><comment>No reports</comment></data>
+    <data name="Loading..." xml:space="preserve"><value>Caricamento…</value><comment>Loading...</comment></data>
+    <data name="Cancel" xml:space="preserve"><value>Annulla</value><comment>Cancel</comment></data>
+    <data name="Close" xml:space="preserve"><value>Chiudi</value><comment>Close</comment></data>
+    <data name="Back to messages" xml:space="preserve"><value>Torna ai messaggi</value><comment>Back to messages</comment></data>
+    <data name="Conversation" xml:space="preserve"><value>Conversazione</value><comment>Conversation</comment></data>
+    <data name="Search users..." xml:space="preserve"><value>Cerca utenti…</value><comment>Search users...</comment></data>
+    <data name="Type at least 2 characters to search" xml:space="preserve"><value>Digita almeno 2 caratteri per cercare</value><comment>Type at least 2 characters to search</comment></data>
+    <data name="Conversation deleted" xml:space="preserve"><value>Conversazione eliminata.</value><comment>Conversation deleted</comment></data>
+    <data name="Message deleted" xml:space="preserve"><value>Messaggio eliminato.</value><comment>Message deleted</comment></data>
+    <data name="Message reported. An administrator will review it shortly." xml:space="preserve"><value>Messaggio segnalato. Un amministratore lo esaminerà a breve.</value><comment>Message reported. An administrator will review it shortly.</comment></data>
+    <data name="Message sent." xml:space="preserve"><value>Messaggio inviato.</value><comment>Message sent.</comment></data>
+    <data name="Reply sent." xml:space="preserve"><value>Risposta inviata.</value><comment>Reply sent.</comment></data>
+    <data name="Are you sure you want to delete this conversation? It will only be removed from your view." xml:space="preserve"><value>Sei sicuro di voler eliminare questa conversazione? Verrà rimossa solo dalla tua vista.</value><comment>Are you sure you want to delete this conversation? It will only be removed from your view.</comment></data>
+    <data name="Are you sure you want to delete this message? It will only be removed from your view." xml:space="preserve"><value>Sei sicuro di voler eliminare questo messaggio? Verrà rimosso solo dalla tua vista.</value><comment>Are you sure you want to delete this message? It will only be removed from your view.</comment></data>
+    <data name="Inbox Full" xml:space="preserve"><value>Posta piena</value><comment>Inbox Full</comment></data>
+    <data name="Cannot send: {0}&apos;s inbox is full." xml:space="preserve"><value>Impossibile inviare: la posta in arrivo di {0} è piena.</value><comment>Cannot send: {0}&apos;s inbox is full.</comment></data>
+    <data name="Rate limited" xml:space="preserve"><value>Attendi un momento prima di inviare un altro messaggio.</value><comment>Rate limited</comment></data>
+    <data name="OK" xml:space="preserve"><value>OK</value><comment>OK</comment></data>
+    <data name="Reason" xml:space="preserve"><value>Motivo</value><comment>Reason</comment></data>
+    <data name="Explanation (optional)" xml:space="preserve"><value>Spiegazione (facoltativa)</value><comment>Explanation (optional)</comment></data>
+    <data name="Spam" xml:space="preserve"><value>Spam</value><comment>Spam</comment></data>
+    <data name="Offensive" xml:space="preserve"><value>Offensivo</value><comment>Offensive</comment></data>
+    <data name="Misleading" xml:space="preserve"><value>Fuorviante</value><comment>Misleading</comment></data>
+    <data name="Off-topic" xml:space="preserve"><value>Fuori tema</value><comment>Off-topic</comment></data>
+    <data name="Other" xml:space="preserve"><value>Altro</value><comment>Other</comment></data>
+    <data name="{0} / 5000 characters" xml:space="preserve"><value>{0} / 5000 caratteri</value><comment>{0} / 5000 characters</comment></data>
+    <data name="Message exceeds 5000 character limit." xml:space="preserve"><value>Il messaggio supera il limite di 5000 caratteri.</value><comment>Message exceeds 5000 character limit.</comment></data>
+    <data name="Reply to system threads is restricted to administrators." xml:space="preserve"><value>La risposta ai thread di sistema è riservata agli amministratori.</value><comment>Reply to system threads is restricted to administrators.</comment></data>
+    <data name="Reporter" xml:space="preserve"><value>Segnalatore</value><comment>Reporter</comment></data>
+    <data name="Date" xml:space="preserve"><value>Data</value><comment>Date</comment></data>
+    <data name="Status" xml:space="preserve"><value>Stato</value><comment>Status</comment></data>
+    <data name="View thread" xml:space="preserve"><value>Visualizza thread</value><comment>View thread</comment></data>
+    <data name="Resolve" xml:space="preserve"><value>Risolvi</value><comment>Resolve</comment></data>
+    <data name="Message Reports" xml:space="preserve"><value>Segnalazioni messaggi</value><comment>Message Reports</comment></data>
+    <data name="Manage reported messages." xml:space="preserve"><value>Gestisci i messaggi segnalati.</value><comment>Manage reported messages.</comment></data>
+    <data name="Report submitted." xml:space="preserve"><value>Segnalazione inviata.</value><comment>Report submitted.</comment></data>
+    <data name="Submit report" xml:space="preserve"><value>Invia segnalazione</value><comment>Submit report</comment></data>
+    <data name="(deleted)" xml:space="preserve"><value>(eliminato)</value><comment>(deleted)</comment></data>
+</root>

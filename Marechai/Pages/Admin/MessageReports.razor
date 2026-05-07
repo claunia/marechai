@@ -1,0 +1,128 @@
+@page "/admin/messages/reports"
+@attribute [Authorize(Roles = "Admin, UberAdmin")]
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@using Marechai.Services
+@inject MessagingService MessagingService
+@inject IStringLocalizer<MessagingService> L
+@inject NavigationManager NavigationManager
+
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Filled.Report" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Style="color: white;">@L["Message Reports"]</MudText>
+    </MudStack>
+    <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);" Class="mt-2">@L["Manage reported messages."]</MudText>
+</MudPaper>
+
+@if(!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+}
+
+<MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-3">
+    <MudCheckBox T="bool" @bind-Value="_includeResolved" @bind-Value:after="LoadAsync" Label="@L["Show resolved"]"/>
+</MudStack>
+
+@if(_isLoading)
+{
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+    </div>
+}
+else if(_reports is null || _reports.Count == 0)
+{
+    <MudPaper Class="pa-6 d-flex justify-center" Elevation="0">
+        <MudText Typo="Typo.body1">@L["No reports"]</MudText>
+    </MudPaper>
+}
+else
+{
+    <MudTable Items="_reports" Hover="true" Dense="true" Bordered="false" Striped="true">
+        <HeaderContent>
+            <MudTh>@L["Date"]</MudTh>
+            <MudTh>@L["Reporter"]</MudTh>
+            <MudTh>@L["Reason"]</MudTh>
+            <MudTh>@L["Explanation (optional)"]</MudTh>
+            <MudTh>@L["Status"]</MudTh>
+            <MudTh></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>@(context.CreatedOn?.ToLocalTime().ToString("yyyy-MM-dd HH:mm"))</MudTd>
+            <MudTd>@(context.Reporter?.UserSummaryDto?.DisplayName ?? L["(deleted)"])</MudTd>
+            <MudTd>@FormatReason(context.Reason)</MudTd>
+            <MudTd>@(context.Explanation ?? "")</MudTd>
+            <MudTd>
+                @if(context.IsResolved == true)
+                {
+                    <MudChip T="string" Color="Color.Success" Size="Size.Small">@L["Resolved"]</MudChip>
+                }
+                else
+                {
+                    <MudChip T="string" Color="Color.Warning" Size="Size.Small">@L["Pending"]</MudChip>
+                }
+            </MudTd>
+            <MudTd>
+                <MudStack Row="true" Spacing="1">
+                    @if(context.ConversationId.HasValue)
+                    {
+                        <MudTooltip Text="@L["View thread"]">
+                            <MudIconButton Icon="@Icons.Material.Filled.OpenInNew" Size="Size.Small"
+                                           OnClick="@(() => NavigationManager.NavigateTo($"/messages/{context.ConversationId.Value}"))"/>
+                        </MudTooltip>
+                    }
+                    @if(context.IsResolved != true && context.Id.HasValue)
+                    {
+                        long reportId = context.Id.Value;
+                        <MudTooltip Text="@L["Resolve"]">
+                            <MudIconButton Icon="@Icons.Material.Filled.Done" Size="Size.Small" Color="Color.Success"
+                                           OnClick="@(() => ResolveAsync(reportId))"/>
+                        </MudTooltip>
+                    }
+                </MudStack>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+}
+
+@code {
+    bool                                                       _isLoading = true;
+    bool                                                       _includeResolved;
+    string                                                     _errorMessage;
+    System.Collections.Generic.List<MessageReportDto>          _reports;
+
+    protected override async Task OnInitializedAsync() => await LoadAsync();
+
+    async Task LoadAsync()
+    {
+        _isLoading    = true;
+        _errorMessage = null;
+        StateHasChanged();
+
+        var (list, err) = await MessagingService.GetReportsAsync(_includeResolved);
+        _reports        = list;
+        _errorMessage   = err;
+        _isLoading      = false;
+        StateHasChanged();
+    }
+
+    async Task ResolveAsync(long id)
+    {
+        var (succeeded, err) = await MessagingService.ResolveReportAsync(id);
+        if(succeeded) await LoadAsync();
+        else _errorMessage = err;
+    }
+
+    string FormatReason(int? code)
+    {
+        if(!code.HasValue) return "";
+        return ((ReviewReportReason)code.Value) switch
+        {
+            ReviewReportReason.Spam       => L["Spam"].Value,
+            ReviewReportReason.Offensive  => L["Offensive"].Value,
+            ReviewReportReason.Misleading => L["Misleading"].Value,
+            ReviewReportReason.OffTopic   => L["Off-topic"].Value,
+            _                             => L["Other"].Value
+        };
+    }
+}
