@@ -1514,4 +1514,69 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
             return [];
         }
     }
+
+    public async Task<(SoftwareVideoDto dto, string error)> CreateVideoAsync(int    softwareId, string provider,
+                                                                             string videoId,
+                                                                             string title)
+    {
+        try
+        {
+            var dto = await client.Software[softwareId]
+                                  .Videos.PostAsync(new CreateSoftwareVideoRequest
+                                                    {
+                                                        Provider = provider,
+                                                        VideoId  = videoId,
+                                                        Title    = title
+                                                    });
+
+            return (dto, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string error)> UpdateVideoTitleAsync(long id, string title)
+    {
+        try
+        {
+            await client.Software.Videos[id].PutAsync(new UpdateSoftwareVideoRequest
+                                                      {
+                                                          Title = title
+                                                      });
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string error)> DeleteVideoAsync(long id)
+    {
+        try
+        {
+            await client.Software.Videos[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
 }

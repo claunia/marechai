@@ -87,40 +87,90 @@ public class SoftwareVideosController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<SoftwareVideoDto>> CreateAsync(ulong softwareId, [FromBody] SoftwareVideoDto dto)
+    public async Task<ActionResult<SoftwareVideoDto>> CreateAsync(ulong                            softwareId,
+                                                                  [FromBody] CreateSoftwareVideoRequest request)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
         if(userId is null) return Unauthorized();
 
+        if(string.IsNullOrWhiteSpace(request.Provider) || string.IsNullOrWhiteSpace(request.VideoId))
+            return BadRequest("Provider and Video ID are required.");
+
+        string provider = request.Provider.Trim();
+        string videoId  = request.VideoId.Trim();
+        string title    = string.IsNullOrWhiteSpace(request.Title) ? null : request.Title.Trim();
+
+        bool softwareExists = await context.Softwares.AnyAsync(s => s.Id == softwareId);
+
+        if(!softwareExists) return NotFound();
+
         bool exists = await context.SoftwareVideos.AnyAsync(v => v.SoftwareId == softwareId &&
-                                                                  v.Provider   == dto.Provider &&
-                                                                  v.VideoId    == dto.VideoId);
+                                                                  v.Provider   == provider &&
+                                                                  v.VideoId    == videoId);
 
         if(exists) return Conflict("This video is already linked to this software.");
 
         var model = new SoftwareVideo
         {
             SoftwareId = softwareId,
-            Provider   = dto.Provider,
-            VideoId    = dto.VideoId,
-            Title      = dto.Title
+            Provider   = provider,
+            VideoId    = videoId,
+            Title      = title
         };
 
         context.SoftwareVideos.Add(model);
         await context.SaveChangesAsync();
 
-        dto.Id         = model.Id;
-        dto.SoftwareId = softwareId;
+        string softwareName = await context.Softwares.Where(s => s.Id == softwareId)
+                                            .Select(s => s.Name)
+                                            .FirstOrDefaultAsync();
+
+        var dto = new SoftwareVideoDto
+        {
+            Id           = model.Id,
+            SoftwareId   = softwareId,
+            SoftwareName = softwareName,
+            Provider     = provider,
+            VideoId      = videoId,
+            Title        = title
+        };
 
         return CreatedAtAction(nameof(GetAsync), new { id = model.Id }, dto);
+    }
+
+    [HttpPut("{id:long}")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateAsync(long id, [FromBody] UpdateSoftwareVideoRequest request)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        SoftwareVideo video = await context.SoftwareVideos.FindAsync(id);
+
+        if(video is null) return NotFound();
+
+        video.Title = string.IsNullOrWhiteSpace(request.Title) ? null : request.Title.Trim();
+
+        await context.SaveChangesAsync();
+
+        return NoContent();
     }
 
     [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteAsync(long id)
     {

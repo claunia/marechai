@@ -64,6 +64,9 @@ public partial class Software
     void NavigateToPromoArt(SoftwareDto software) =>
         NavigationManager.NavigateTo($"/admin/software/{software.Id}/promo-art");
 
+    void NavigateToVideos(SoftwareDto software) =>
+        NavigationManager.NavigateTo($"/admin/software/{software.Id}/videos");
+
     async Task OpenDescriptionsDialog(SoftwareDto software)
     {
         DialogParameters<SoftwareDescriptionDialog> parameters = new()

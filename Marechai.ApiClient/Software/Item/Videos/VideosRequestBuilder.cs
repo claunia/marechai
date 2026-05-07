@@ -60,14 +60,16 @@ namespace Marechai.ApiClient.Software.Item.Videos
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
         /// <exception cref="global::Marechai.ApiClient.Models.ProblemDetails">When receiving a 400 status code</exception>
         /// <exception cref="global::Marechai.ApiClient.Models.ProblemDetails">When receiving a 401 status code</exception>
+        /// <exception cref="global::Marechai.ApiClient.Models.ProblemDetails">When receiving a 403 status code</exception>
+        /// <exception cref="global::Marechai.ApiClient.Models.ProblemDetails">When receiving a 404 status code</exception>
         /// <exception cref="global::Marechai.ApiClient.Models.ProblemDetails">When receiving a 409 status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<global::Marechai.ApiClient.Models.SoftwareVideoDto?> PostAsync(global::Marechai.ApiClient.Models.SoftwareVideoDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::Marechai.ApiClient.Models.SoftwareVideoDto?> PostAsync(global::Marechai.ApiClient.Models.CreateSoftwareVideoRequest body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<global::Marechai.ApiClient.Models.SoftwareVideoDto> PostAsync(global::Marechai.ApiClient.Models.SoftwareVideoDto body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::Marechai.ApiClient.Models.SoftwareVideoDto> PostAsync(global::Marechai.ApiClient.Models.CreateSoftwareVideoRequest body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             if(ReferenceEquals(body, null)) throw new ArgumentNullException(nameof(body));
@@ -76,6 +78,8 @@ namespace Marechai.ApiClient.Software.Item.Videos
             {
                 { "400", global::Marechai.ApiClient.Models.ProblemDetails.CreateFromDiscriminatorValue },
                 { "401", global::Marechai.ApiClient.Models.ProblemDetails.CreateFromDiscriminatorValue },
+                { "403", global::Marechai.ApiClient.Models.ProblemDetails.CreateFromDiscriminatorValue },
+                { "404", global::Marechai.ApiClient.Models.ProblemDetails.CreateFromDiscriminatorValue },
                 { "409", global::Marechai.ApiClient.Models.ProblemDetails.CreateFromDiscriminatorValue },
             };
             return await RequestAdapter.SendAsync<global::Marechai.ApiClient.Models.SoftwareVideoDto>(requestInfo, global::Marechai.ApiClient.Models.SoftwareVideoDto.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
@@ -101,11 +105,11 @@ namespace Marechai.ApiClient.Software.Item.Videos
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public RequestInformation ToPostRequestInformation(global::Marechai.ApiClient.Models.SoftwareVideoDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default)
+        public RequestInformation ToPostRequestInformation(global::Marechai.ApiClient.Models.CreateSoftwareVideoRequest body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default)
         {
 #nullable restore
 #else
-        public RequestInformation ToPostRequestInformation(global::Marechai.ApiClient.Models.SoftwareVideoDto body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default)
+        public RequestInformation ToPostRequestInformation(global::Marechai.ApiClient.Models.CreateSoftwareVideoRequest body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default)
         {
 #endif
             if(ReferenceEquals(body, null)) throw new ArgumentNullException(nameof(body));
