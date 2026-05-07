@@ -33,17 +33,48 @@ public static class SpecsTabParser
 
                 if(cells is null || cells.Count < 2) continue;
 
-                string key   = WebUtility.HtmlDecode(cells[0].InnerText).Trim();
-                string value = WebUtility.HtmlDecode(cells[1].InnerText).Trim();
+                string key = WebUtility.HtmlDecode(cells[0].InnerText).Trim();
 
-                if(string.IsNullOrWhiteSpace(key) || string.IsNullOrWhiteSpace(value)) continue;
+                if(string.IsNullOrWhiteSpace(key)) continue;
 
-                game.Specs.Add(new ParsedSpec
+                // MobyGames renders multi-value spec cells as a series of <a> links
+                // separated by commas, e.g. CPU = "<a>Intel 386</a>, <a>Intel 486</a>".
+                // Concatenating cells[1].InnerText would bake the commas into the value
+                // and break exact-match search via /software/by-spec. Split on the
+                // anchor element structure (the source of truth — values themselves can
+                // legitimately contain commas, e.g. notes), emitting one ParsedSpec per
+                // anchor.
+                var anchors = cells[1].SelectNodes(".//a");
+
+                if(anchors is { Count: >= 2 })
                 {
-                    Platform = platform,
-                    Key      = key,
-                    Value    = value
-                });
+                    foreach(var a in anchors)
+                    {
+                        string anchorValue = WebUtility.HtmlDecode(a.InnerText).Trim();
+
+                        if(string.IsNullOrWhiteSpace(anchorValue)) continue;
+
+                        game.Specs.Add(new ParsedSpec
+                        {
+                            Platform = platform,
+                            Key      = key,
+                            Value    = anchorValue
+                        });
+                    }
+                }
+                else
+                {
+                    string value = WebUtility.HtmlDecode(cells[1].InnerText).Trim();
+
+                    if(string.IsNullOrWhiteSpace(value)) continue;
+
+                    game.Specs.Add(new ParsedSpec
+                    {
+                        Platform = platform,
+                        Key      = key,
+                        Value    = value
+                    });
+                }
             }
         }
     }

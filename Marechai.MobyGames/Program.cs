@@ -489,6 +489,25 @@ class Program
                 break;
             }
 
+            case "reparse-specs":
+            {
+                int  reparseBatchSize = 50;
+                bool reparseDryRun    = false;
+
+                for(int i = 1; i < args.Length - 1; i++)
+                {
+                    if(args[i] == "--batch-size" && int.TryParse(args[i + 1], out int bs))
+                        reparseBatchSize = bs;
+                }
+
+                if(args.Contains("--dry-run")) reparseDryRun = true;
+
+                var reparseService = new SpecsReparseService(factory, sourceDb);
+                await reparseService.RunAsync(reparseBatchSize, reparseDryRun);
+
+                break;
+            }
+
             default:
                 Console.WriteLine("  Usage:");
                 Console.WriteLine("    import [--batch-size N]                       Import next batch of games");
@@ -518,6 +537,8 @@ class Program
                 Console.WriteLine("                                                  Link DLC entries to their base games via MobyGames");
                 Console.WriteLine("    resolve-compilation-relations [--batch-size N] [--dry-run]");
                 Console.WriteLine("                                                  Convert compilation Software to proper compilation releases");
+                Console.WriteLine("    reparse-specs [--batch-size N] [--dry-run]");
+                Console.WriteLine("                                                  Reparse Specs tab from raw HTML and split multi-anchor values into one row each");
                 Console.WriteLine("    reset --game <id>                             Reset a game to unprocessed");
 
                 break;
