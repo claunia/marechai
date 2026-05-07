@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Marechai.Data;
 using Marechai.Database.Models;
+using Marechai.MobyGames.Models;
 using Marechai.MobyGames.Parsers;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,13 +15,16 @@ public class CompilationRelationService
     readonly IDbContextFactory<MarechaiContext> _contextFactory;
     readonly SourceDatabaseService             _sourceDb;
     readonly ImportService                     _importService;
+    readonly AdminMessageService               _adminMessenger;
 
     public CompilationRelationService(IDbContextFactory<MarechaiContext> contextFactory,
-                                      SourceDatabaseService sourceDb, ImportService importService)
+                                      SourceDatabaseService sourceDb, ImportService importService,
+                                      AdminMessageService adminMessenger = null)
     {
         _contextFactory = contextFactory;
         _sourceDb       = sourceDb;
         _importService  = importService;
+        _adminMessenger = adminMessenger;
     }
 
     public async Task RunAsync(int batchSize, bool dryRun)
@@ -53,7 +57,7 @@ public class CompilationRelationService
         Console.WriteLine($"Found {compilationSoftware.Count} compilation Software entries to convert " +
                           $"(batch={batchSize})");
 
-        int converted = 0, skipped = 0, failed = 0;
+        int converted = 0, partial = 0, skipped = 0, failed = 0;
 
         foreach(Software compilation in compilationSoftware)
         {
@@ -73,7 +77,7 @@ public class CompilationRelationService
 
             try
             {
-                // Get raw HTML from mobygames_raw to extract contained game slugs
+                // Get raw HTML from mobygames_raw to extract contained game slugs and unresolvable anchors.
                 string slug = importState.MobyGameId;
 
                 string[] slugsToTry =
@@ -81,7 +85,8 @@ public class CompilationRelationService
                     slug, $"-{slug}", slug.TrimStart('-'), $"-{slug.TrimStart('-')}"
                 ];
 
-                List<string> gameSlugs = null;
+                List<string>                       gameSlugs    = null;
+                List<UnresolvableCompilationLink>  unresolvable = null;
 
                 foreach(string trySlug in slugsToTry.Distinct())
                 {
@@ -89,23 +94,28 @@ public class CompilationRelationService
 
                     if(rows.Count == 0) continue;
 
-                    // Parse the main tab HTML for game links in description
+                    // Parse the main tab HTML for game links AND unresolvable anchors in the description.
                     foreach(var row in rows)
                     {
-                        var extractedSlugs = MainTabParser.ExtractGameSlugsFromHtml(row.Body, slug);
+                        (List<string> extractedSlugs, List<UnresolvableCompilationLink> extractedUnresolvable) =
+                            MainTabParser.ExtractCompilationContentsFromHtml(row.Body, slug);
 
-                        if(extractedSlugs.Count > 0)
+                        if(extractedSlugs.Count > 0 || extractedUnresolvable.Count > 0)
                         {
-                            gameSlugs = extractedSlugs;
+                            gameSlugs    = extractedSlugs;
+                            unresolvable = extractedUnresolvable;
 
                             break;
                         }
                     }
 
-                    if(gameSlugs is { Count: > 0 }) break;
+                    if((gameSlugs is { Count: > 0 }) || (unresolvable is { Count: > 0 })) break;
                 }
 
-                if(gameSlugs is null or { Count: 0 })
+                gameSlugs    ??= [];
+                unresolvable ??= [];
+
+                if(gameSlugs.Count == 0 && unresolvable.Count == 0)
                 {
                     Console.WriteLine(" No game links found in description HTML.");
                     skipped++;
@@ -113,14 +123,18 @@ public class CompilationRelationService
                     continue;
                 }
 
-                Console.WriteLine($"\n    Found {gameSlugs.Count} contained game slug(s):");
+                Console.WriteLine($"\n    Found {gameSlugs.Count} contained game slug(s) and " +
+                                  $"{unresolvable.Count} unresolvable anchor(s):");
 
                 foreach(string gameSlug in gameSlugs)
                     Console.WriteLine($"      - {gameSlug}");
 
-                // Resolution phase: resolve all slugs to Software IDs (atomic)
+                foreach(UnresolvableCompilationLink link in unresolvable)
+                    Console.WriteLine($"      ? {link.Name}  →  {link.Href}");
+
+                // Resolution phase: resolve every slug we can but DO NOT abort on individual failures.
                 var containedSoftwareIds = new List<ulong>();
-                bool allResolved         = true;
+                var unresolvedSlugs      = new List<string>();
 
                 foreach(string gameSlug in gameSlugs)
                 {
@@ -128,18 +142,32 @@ public class CompilationRelationService
 
                     if(softwareId is null)
                     {
-                        Console.WriteLine($"    Cannot resolve '{gameSlug}'. Skipping entire compilation.");
-                        allResolved = false;
+                        Console.WriteLine($"    WARNING: Cannot resolve '{gameSlug}'.");
+                        unresolvedSlugs.Add(gameSlug);
 
-                        break;
+                        continue;
                     }
 
                     containedSoftwareIds.Add(softwareId.Value);
                     Console.WriteLine($"    Resolved '{gameSlug}' → Software ID: {softwareId}");
                 }
 
-                if(!allResolved)
+                bool hasUnresolved      = unresolvedSlugs.Count > 0 || unresolvable.Count > 0;
+                bool compilationCreated = false;
+
+                if(containedSoftwareIds.Count == 0)
                 {
+                    Console.WriteLine("    FAILED: No contained games could be resolved; compilation not created.");
+
+                    if(hasUnresolved && !dryRun && _adminMessenger is not null)
+                        await _adminMessenger.SendCompilationReportAsync(compilation.Name, importState.MobyGameId,
+                                                                         resolvedSoftwareIds: [],
+                                                                         unresolvedSlugs: unresolvedSlugs,
+                                                                         unresolvableLinks: unresolvable,
+                                                                         compilationCreated: false);
+                    else if(hasUnresolved)
+                        Console.WriteLine("    [dry-run] Would send admin report (compilation not created).");
+
                     skipped++;
 
                     continue;
@@ -148,74 +176,111 @@ public class CompilationRelationService
                 // Conversion phase
                 if(dryRun)
                 {
-                    Console.WriteLine($"    Would convert to compilation with {containedSoftwareIds.Count} game(s)");
-                    converted++;
+                    Console.WriteLine($"    Would convert to compilation with {containedSoftwareIds.Count} game(s)" +
+                                      (hasUnresolved
+                                           ? $" and send admin report ({unresolvedSlugs.Count} unresolved slug(s), " +
+                                             $"{unresolvable.Count} unresolvable anchor(s))"
+                                           : ""));
+
+                    if(hasUnresolved) partial++;
+                    else converted++;
 
                     continue;
                 }
 
-                // Find all SoftwareRelease records pointing to this Software
-                var releases = await context.SoftwareReleases
-                    .Where(r => r.SoftwareId == compilation.Id)
-                    .ToListAsync();
-
-                if(releases.Count == 0)
+                try
                 {
-                    Console.WriteLine("    No releases found for this software, skipping.");
-                    skipped++;
+                    // Find all SoftwareRelease records pointing to this Software
+                    var releases = await context.SoftwareReleases
+                        .Where(r => r.SoftwareId == compilation.Id)
+                        .ToListAsync();
 
-                    continue;
-                }
-
-                // Convert each release to a compilation release
-                foreach(var release in releases)
-                {
-                    release.IsCompilation = true;
-                    release.Title         = compilation.Name;
-                    release.SoftwareId    = null;
-
-                    // Add junction entries for contained games
-                    foreach(ulong containedId in containedSoftwareIds)
+                    if(releases.Count == 0)
                     {
-                        bool junctionExists = await context.SoftwareBySoftwareRelease
-                            .AnyAsync(j => j.ReleaseId == release.Id && j.SoftwareId == containedId);
+                        Console.WriteLine("    No releases found for this software, skipping.");
+                        skipped++;
 
-                        if(!junctionExists)
+                        continue;
+                    }
+
+                    // Convert each release to a compilation release
+                    foreach(var release in releases)
+                    {
+                        release.IsCompilation = true;
+                        release.Title         = compilation.Name;
+                        release.SoftwareId    = null;
+
+                        // Add junction entries for contained games
+                        foreach(ulong containedId in containedSoftwareIds)
                         {
-                            context.SoftwareBySoftwareRelease.Add(new SoftwareBySoftwareRelease
+                            bool junctionExists = await context.SoftwareBySoftwareRelease
+                                .AnyAsync(j => j.ReleaseId == release.Id && j.SoftwareId == containedId);
+
+                            if(!junctionExists)
                             {
-                                ReleaseId  = release.Id,
-                                SoftwareId = containedId
-                            });
+                                context.SoftwareBySoftwareRelease.Add(new SoftwareBySoftwareRelease
+                                {
+                                    ReleaseId  = release.Id,
+                                    SoftwareId = containedId
+                                });
+                            }
                         }
                     }
+
+                    // Update import state: clear SoftwareId (compilation has no Software)
+                    importState.SoftwareId = null;
+
+                    // Save before deleting the Software (SoftwareRelease FK is Restrict, but we already nulled it)
+                    await context.SaveChangesAsync();
+
+                    // Delete the orphaned Software record
+                    // Cascade takes care of: GenreBySoftware, PeopleBySoftware, SoftwareDescription,
+                    // SoftwarePromoArt, SoftwareVideo, SoftwareCriticReview, SoftwareUserRating,
+                    // SoftwareUserReview, SoftwareVersion, SoftwareScreenshot
+                    // SoftwareCompanyRole needs explicit deletion (no explicit cascade config)
+                    var companyRoles = await context.SoftwareCompanyRoles
+                        .Where(r => r.SoftwareId == compilation.Id)
+                        .ToListAsync();
+
+                    context.SoftwareCompanyRoles.RemoveRange(companyRoles);
+
+                    context.Softwares.Remove(compilation);
+                    await context.SaveChangesAsync();
+
+                    compilationCreated = true;
+
+                    if(hasUnresolved)
+                    {
+                        Console.WriteLine($"    Converted {releases.Count} release(s) to PARTIAL compilation, " +
+                                          $"linked {containedSoftwareIds.Count} game(s), " +
+                                          $"{unresolvedSlugs.Count} unresolved slug(s), " +
+                                          $"{unresolvable.Count} unresolvable anchor(s), " +
+                                          $"deleted orphaned Software ID {compilation.Id}");
+
+                        partial++;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"    Converted {releases.Count} release(s) to compilation, " +
+                                          $"linked {containedSoftwareIds.Count} game(s), " +
+                                          $"deleted orphaned Software ID {compilation.Id}");
+
+                        converted++;
+                    }
                 }
-
-                // Update import state: clear SoftwareId (compilation has no Software)
-                importState.SoftwareId = null;
-
-                // Save before deleting the Software (SoftwareRelease FK is Restrict, but we already nulled it)
-                await context.SaveChangesAsync();
-
-                // Delete the orphaned Software record
-                // Cascade takes care of: GenreBySoftware, PeopleBySoftware, SoftwareDescription,
-                // SoftwarePromoArt, SoftwareVideo, SoftwareCriticReview, SoftwareUserRating,
-                // SoftwareUserReview, SoftwareVersion, SoftwareScreenshot
-                // SoftwareCompanyRole needs explicit deletion (no explicit cascade config)
-                var companyRoles = await context.SoftwareCompanyRoles
-                    .Where(r => r.SoftwareId == compilation.Id)
-                    .ToListAsync();
-
-                context.SoftwareCompanyRoles.RemoveRange(companyRoles);
-
-                context.Softwares.Remove(compilation);
-                await context.SaveChangesAsync();
-
-                Console.WriteLine($"    Converted {releases.Count} release(s) to compilation, " +
-                                  $"linked {containedSoftwareIds.Count} game(s), " +
-                                  $"deleted orphaned Software ID {compilation.Id}");
-
-                converted++;
+                finally
+                {
+                    // Always send the partial-compilation report when there were unresolved entries — even if
+                    // a downstream mutation throws (we'll re-raise via the outer catch which logs Failed).
+                    if(hasUnresolved && _adminMessenger is not null)
+                    {
+                        await _adminMessenger.SendCompilationReportAsync(compilation.Name, importState.MobyGameId,
+                                                                         resolvedSoftwareIds: containedSoftwareIds,
+                                                                         unresolvedSlugs: unresolvedSlugs,
+                                                                         unresolvableLinks: unresolvable,
+                                                                         compilationCreated: compilationCreated);
+                    }
+                }
             }
             catch(Exception ex)
             {
@@ -224,7 +289,7 @@ public class CompilationRelationService
             }
         }
 
-        Console.WriteLine($"\nDone: {converted} converted, {skipped} skipped, {failed} failed");
+        Console.WriteLine($"\nDone: {converted} converted, {partial} partial, {skipped} skipped, {failed} failed");
     }
 
     /// <summary>

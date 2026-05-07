@@ -26,11 +26,12 @@ public class ParsedGame
     public List<string>          CompilationGameSlugs { get; set; } = [];
 
     /// <summary>
-    ///     Names of games in this compilation that have no MobyGames entry
-    ///     (linked via /search/quick?game= instead of /game/). These make the
-    ///     compilation unresolvable.
+    ///     Anchors in this compilation's description that do not point to a MobyGames
+    ///     game entry (typically /search/quick?game= placeholders or external links).
+    ///     Captured with the original href so the importer can include them in the
+    ///     admin report when the compilation is imported partially.
     /// </summary>
-    public List<string>          UnresolvableCompilationGames { get; set; } = [];
+    public List<UnresolvableCompilationLink> UnresolvableCompilationGames { get; set; } = [];
 
     // From Credits tab
     public List<ParsedCredit> Credits { get; set; } = [];
@@ -96,6 +97,18 @@ public class ParsedSpec
     public string Platform { get; set; }
     public string Key      { get; set; }
     public string Value    { get; set; }
+}
+
+/// <summary>
+///     A description anchor that the importer could not resolve to a MobyGames
+///     game entry. <see cref="Name" /> is the visible link text and
+///     <see cref="Href" /> is the absolute URL the link pointed at (typically a
+///     <c>/search/quick?game=</c> URL on mobygames.com but may be any non-game href).
+/// </summary>
+public class UnresolvableCompilationLink
+{
+    public string Name { get; set; }
+    public string Href { get; set; }
 }
 
 public class ParsedRating

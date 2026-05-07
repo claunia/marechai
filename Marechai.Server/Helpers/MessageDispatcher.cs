@@ -25,11 +25,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Marechai.Database.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using DatabaseDispatcher = Marechai.Database.Helpers.MessageDispatcher;
 
 namespace Marechai.Server.Helpers;
 
@@ -59,63 +58,7 @@ internal static class MessageDispatcher
         foreach(ApplicationUser u in await userManager.GetUsersInRoleAsync("UberAdmin"))
             adminIds.Add(u.Id);
 
-        if(adminIds.Count == 0) return null;
-
-        DateTime now = DateTime.UtcNow;
-
-        var conversation = new Conversation
-        {
-            Subject        = Truncate(subject, 256),
-            IsSystemThread = true
-        };
-
-        context.Conversations.Add(conversation);
-
-        // Add the system user as a participant too so it appears in the participant list (rendered as "System").
-        // Sender's own state row tracks read/delete uniformly.
-        var participantIds = new HashSet<string>(adminIds, StringComparer.Ordinal) { WellKnownUsers.SystemUserId };
-
-        foreach(string userId in participantIds)
-        {
-            context.ConversationParticipants.Add(new ConversationParticipant
-            {
-                Conversation = conversation,
-                UserId       = userId,
-                JoinedOn     = now
-            });
-        }
-
-        var message = new Message
-        {
-            Conversation     = conversation,
-            SenderId         = WellKnownUsers.SystemUserId,
-            Body             = body ?? string.Empty,
-            IsSystemAuthored = true
-        };
-
-        context.Messages.Add(message);
-
-        // Per-user state rows. Sender (system) row is read; others unread.
-        foreach(string userId in participantIds)
-        {
-            context.MessageStates.Add(new MessageState
-            {
-                Message = message,
-                UserId  = userId,
-                IsRead  = userId == WellKnownUsers.SystemUserId,
-                ReadAt  = userId == WellKnownUsers.SystemUserId ? now : null
-            });
-        }
-
-        await context.SaveChangesAsync();
-
-        return conversation;
-    }
-
-    static string Truncate(string s, int max)
-    {
-        if(string.IsNullOrEmpty(s)) return s;
-
-        return s.Length <= max ? s : s.Substring(0, max);
+        return await DatabaseDispatcher.PostSystemMessageAsync(context, adminIds, subject, body);
     }
 }
+

@@ -46,9 +46,12 @@ class Program
         var platformMatcher = new PlatformMatcher(factory);
         var countryMatcher  = new CountryMatcher(factory);
         var stateService    = new StateService(factory);
+        var adminMessenger  = new AdminMessageService(factory);
         var importService   = new ImportService(factory, sourceDb, companyMatcher,
                                                 personMatcher, platformMatcher,
-                                                countryMatcher, stateService);
+                                                countryMatcher, stateService,
+                                                mobyHttpClient: null,
+                                                adminMessenger: adminMessenger);
 
         string command = args.Length > 0 ? args[0].ToLowerInvariant() : "import";
 
@@ -489,9 +492,12 @@ class Program
                 // Create import service without HTTP client (local only)
                 var compImportService = new ImportService(factory, sourceDb, companyMatcher,
                                                           personMatcher, platformMatcher,
-                                                          countryMatcher, stateService);
+                                                          countryMatcher, stateService,
+                                                          mobyHttpClient: null,
+                                                          adminMessenger: adminMessenger);
 
-                var compService = new CompilationRelationService(factory, sourceDb, compImportService);
+                var compService = new CompilationRelationService(factory, sourceDb, compImportService,
+                                                                 adminMessenger);
 
                 try
                 {

@@ -31,6 +31,7 @@ public class ImportService
     readonly CountryMatcher                    _countryMatcher;
     readonly StateService                      _stateService;
     readonly MobyGamesHttpClient               _mobyHttpClient;
+    readonly AdminMessageService               _adminMessenger;
 
     // Session-only cache of user mapping decisions for product code Type strings that
     // aren't covered by the hardcoded fast-path switch in ImportReleasesInternalAsync.
@@ -46,7 +47,8 @@ public class ImportService
         PlatformMatcher platformMatcher,
         CountryMatcher countryMatcher,
         StateService stateService,
-        MobyGamesHttpClient mobyHttpClient = null)
+        MobyGamesHttpClient mobyHttpClient = null,
+        AdminMessageService adminMessenger = null)
     {
         _contextFactory  = contextFactory;
         _sourceDb        = sourceDb;
@@ -56,6 +58,7 @@ public class ImportService
         _countryMatcher  = countryMatcher;
         _stateService    = stateService;
         _mobyHttpClient  = mobyHttpClient;
+        _adminMessenger  = adminMessenger;
     }
 
     public async Task RunBatchAsync(int batchSize, int batchNumber)
@@ -697,29 +700,25 @@ public class ImportService
 
     async Task ImportCompilationAsync(MarechaiContext context, ParsedGame game, int batchNumber)
     {
-        Console.WriteLine($"    Compilation detected with {game.CompilationGameSlugs.Count} contained game(s):");
+        Console.WriteLine($"    Compilation detected with {game.CompilationGameSlugs.Count} game slug(s) " +
+                          $"and {game.UnresolvableCompilationGames.Count} unresolvable anchor(s):");
 
         foreach(string slug in game.CompilationGameSlugs)
             Console.WriteLine($"      - {slug}");
 
-        // Check for games that have no MobyGames entry (linked via /search/quick?game=)
         if(game.UnresolvableCompilationGames.Count > 0)
         {
-            Console.WriteLine($"    FAILED: {game.UnresolvableCompilationGames.Count} game(s) have no " +
-                              "MobyGames entry (linked via search URL, not /game/ URL):");
+            Console.WriteLine($"    WARNING: {game.UnresolvableCompilationGames.Count} anchor(s) do not point at " +
+                              "a MobyGames game entry (search URL or non-game link):");
 
-            foreach(string name in game.UnresolvableCompilationGames)
-                Console.WriteLine($"      ? {name}");
-
-            await _stateService.MarkFailedAsync(game.MobyGameId,
-                $"Unresolvable games without MobyGames entries: {string.Join(", ", game.UnresolvableCompilationGames)}",
-                batchNumber);
-
-            return;
+            foreach(UnresolvableCompilationLink link in game.UnresolvableCompilationGames)
+                Console.WriteLine($"      ? {link.Name}  →  {link.Href}");
         }
 
-        // Resolution phase: resolve all contained game slugs to Software IDs (atomic — all or nothing)
+        // Resolution phase: try to resolve every contained slug, but DO NOT abort on individual
+        // failures — we want to import a partial compilation and report the rest to admins.
         var containedSoftwareIds = new List<ulong>();
+        var unresolvedSlugs      = new List<string>();
 
         foreach(string slug in game.CompilationGameSlugs)
         {
@@ -727,116 +726,172 @@ public class ImportService
 
             if(softwareId is null)
             {
-                Console.WriteLine($"    FAILED: Cannot resolve contained game '{slug}'. " +
-                                  "Skipping entire compilation.");
+                Console.WriteLine($"      WARNING: Cannot resolve contained game '{slug}'.");
+                unresolvedSlugs.Add(slug);
 
-                await _stateService.MarkFailedAsync(game.MobyGameId,
-                    $"Unresolvable contained game slug: {slug}", batchNumber);
-
-                return;
+                continue;
             }
 
             containedSoftwareIds.Add(softwareId.Value);
             Console.WriteLine($"      Resolved '{slug}' → Software ID: {softwareId}");
         }
 
-        // Creation phase: create compilation releases (no Software record)
-        List<SoftwareRelease> createdReleases;
+        bool hasUnresolved = unresolvedSlugs.Count > 0 || game.UnresolvableCompilationGames.Count > 0;
 
-        if(game.Releases.Count > 0)
-            createdReleases = await ImportCompilationReleasesAsync(context, game, game.Name);
-        else
-            createdReleases = await ImportBasicCompilationReleaseAsync(context, game, game.Name);
-
-        if(createdReleases.Count == 0)
+        // If nothing at all could be linked we cannot create a meaningful compilation; mark Failed
+        // and still report the missing entries to admins so they can act.
+        if(containedSoftwareIds.Count == 0)
         {
-            Console.WriteLine("    WARNING: No releases created for compilation.");
-            await _stateService.MarkFailedAsync(game.MobyGameId, "No releases created", batchNumber);
+            Console.WriteLine("    FAILED: No contained games could be resolved; compilation not created.");
+
+            if(hasUnresolved && _adminMessenger is not null)
+            {
+                await _adminMessenger.SendCompilationReportAsync(game.Name, game.MobyGameId,
+                                                                 resolvedSoftwareIds: [],
+                                                                 unresolvedSlugs: unresolvedSlugs,
+                                                                 unresolvableLinks: game.UnresolvableCompilationGames,
+                                                                 compilationCreated: false);
+            }
+
+            await _stateService.MarkFailedAsync(game.MobyGameId,
+                $"No contained games could be resolved (unresolved slugs: {unresolvedSlugs.Count}, " +
+                $"unresolvable anchors: {game.UnresolvableCompilationGames.Count})", batchNumber);
 
             return;
         }
 
-        // Add SoftwareBySoftwareRelease junction entries
-        foreach(var release in createdReleases)
+        // Heavy-mutation phase. We track success in a flag so the partial-report send (in the
+        // outer finally) can describe accurately whether the compilation actually got created.
+        // The flag also lets us re-raise the original exception without losing the report.
+        bool compilationCreated = false;
+
+        try
         {
-            foreach(ulong containedId in containedSoftwareIds)
+            // Creation phase: create compilation releases (no Software record)
+            List<SoftwareRelease> createdReleases;
+
+            if(game.Releases.Count > 0)
+                createdReleases = await ImportCompilationReleasesAsync(context, game, game.Name);
+            else
+                createdReleases = await ImportBasicCompilationReleaseAsync(context, game, game.Name);
+
+            if(createdReleases.Count == 0)
             {
-                context.SoftwareBySoftwareRelease.Add(new SoftwareBySoftwareRelease
-                {
-                    ReleaseId  = release.Id,
-                    SoftwareId = containedId
-                });
+                Console.WriteLine("    WARNING: No releases created for compilation.");
+                await _stateService.MarkFailedAsync(game.MobyGameId, "No releases created", batchNumber);
+
+                return;
             }
-        }
 
-        await context.SaveChangesAsync();
-
-        // Clean up any orphaned Software record with the same name as this compilation.
-        // This handles the case where a previous import (before compilation detection existed)
-        // created a Software for this compilation, then the game was reset and re-imported.
-        // ResetGameAsync deletes the import state but NOT the Software, so we can't rely
-        // on import state — we search by name instead.
-        var orphanedSoftware = await context.Softwares
-            .Where(s => s.Name == game.Name)
-            .ToListAsync();
-
-        foreach(var orphan in orphanedSoftware)
-        {
-            // Convert any releases on the orphaned Software to compilation releases
-            var existingReleases = await context.SoftwareReleases
-                .Where(r => r.SoftwareId == orphan.Id)
-                .ToListAsync();
-
-            foreach(var release in existingReleases)
+            // Add SoftwareBySoftwareRelease junction entries
+            foreach(var release in createdReleases)
             {
-                release.IsCompilation = true;
-                release.Title         = game.Name;
-                release.SoftwareId    = null;
-
-                // Add junction entries for contained games
                 foreach(ulong containedId in containedSoftwareIds)
                 {
-                    bool junctionExists = await context.SoftwareBySoftwareRelease
-                        .AnyAsync(j => j.ReleaseId == release.Id && j.SoftwareId == containedId);
-
-                    if(!junctionExists)
+                    context.SoftwareBySoftwareRelease.Add(new SoftwareBySoftwareRelease
                     {
-                        context.SoftwareBySoftwareRelease.Add(new SoftwareBySoftwareRelease
-                        {
-                            ReleaseId  = release.Id,
-                            SoftwareId = containedId
-                        });
-                    }
+                        ReleaseId  = release.Id,
+                        SoftwareId = containedId
+                    });
                 }
             }
 
-            // Clear SoftwareId from any import state referencing this orphan
-            var orphanStates = await context.MobyGamesImportStates
-                .Where(s => s.SoftwareId == orphan.Id)
-                .ToListAsync();
-
-            foreach(var state in orphanStates)
-                state.SoftwareId = null;
-
             await context.SaveChangesAsync();
 
-            // Delete orphaned Software (company roles need explicit removal — no cascade configured)
-            var companyRoles = await context.SoftwareCompanyRoles
-                .Where(r => r.SoftwareId == orphan.Id)
+            // Clean up any orphaned Software record with the same name as this compilation.
+            // This handles the case where a previous import (before compilation detection existed)
+            // created a Software for this compilation, then the game was reset and re-imported.
+            // ResetGameAsync deletes the import state but NOT the Software, so we can't rely
+            // on import state — we search by name instead.
+            var orphanedSoftware = await context.Softwares
+                .Where(s => s.Name == game.Name)
                 .ToListAsync();
 
-            context.SoftwareCompanyRoles.RemoveRange(companyRoles);
+            foreach(var orphan in orphanedSoftware)
+            {
+                // Convert any releases on the orphaned Software to compilation releases
+                var existingReleases = await context.SoftwareReleases
+                    .Where(r => r.SoftwareId == orphan.Id)
+                    .ToListAsync();
 
-            context.Softwares.Remove(orphan);
-            await context.SaveChangesAsync();
-            Console.WriteLine($"    Cleaned up orphaned Software ID: {orphan.Id}");
+                foreach(var release in existingReleases)
+                {
+                    release.IsCompilation = true;
+                    release.Title         = game.Name;
+                    release.SoftwareId    = null;
+
+                    // Add junction entries for contained games
+                    foreach(ulong containedId in containedSoftwareIds)
+                    {
+                        bool junctionExists = await context.SoftwareBySoftwareRelease
+                            .AnyAsync(j => j.ReleaseId == release.Id && j.SoftwareId == containedId);
+
+                        if(!junctionExists)
+                        {
+                            context.SoftwareBySoftwareRelease.Add(new SoftwareBySoftwareRelease
+                            {
+                                ReleaseId  = release.Id,
+                                SoftwareId = containedId
+                            });
+                        }
+                    }
+                }
+
+                // Clear SoftwareId from any import state referencing this orphan
+                var orphanStates = await context.MobyGamesImportStates
+                    .Where(s => s.SoftwareId == orphan.Id)
+                    .ToListAsync();
+
+                foreach(var state in orphanStates)
+                    state.SoftwareId = null;
+
+                await context.SaveChangesAsync();
+
+                // Delete orphaned Software (company roles need explicit removal — no cascade configured)
+                var companyRoles = await context.SoftwareCompanyRoles
+                    .Where(r => r.SoftwareId == orphan.Id)
+                    .ToListAsync();
+
+                context.SoftwareCompanyRoles.RemoveRange(companyRoles);
+
+                context.Softwares.Remove(orphan);
+                await context.SaveChangesAsync();
+                Console.WriteLine($"    Cleaned up orphaned Software ID: {orphan.Id}");
+            }
+
+            // Mark as imported with no SoftwareId (compilations don't have a Software record)
+            await _stateService.MarkImportedAsync(game.MobyGameId, batchNumber, null);
+
+            compilationCreated = true;
+
+            if(hasUnresolved)
+            {
+                Console.WriteLine($"    Imported as PARTIAL compilation with {createdReleases.Count} release(s), " +
+                                  $"{containedSoftwareIds.Count} resolved game(s), " +
+                                  $"{unresolvedSlugs.Count} unresolved slug(s), " +
+                                  $"{game.UnresolvableCompilationGames.Count} unresolvable anchor(s)");
+            }
+            else
+            {
+                Console.WriteLine($"    Imported as compilation with {createdReleases.Count} release(s), " +
+                                  $"{containedSoftwareIds.Count} contained game(s)");
+            }
         }
-
-        // Mark as imported with no SoftwareId (compilations don't have a Software record)
-        await _stateService.MarkImportedAsync(game.MobyGameId, batchNumber, null);
-
-        Console.WriteLine($"    Imported as compilation with {createdReleases.Count} release(s), " +
-                          $"{containedSoftwareIds.Count} contained game(s)");
+        finally
+        {
+            // Always send the partial-compilation report when there were unresolved entries — even
+            // if a downstream mutation throws. The outer batch loop catches Exception and marks the
+            // game Failed, but admins still need to see what was missing. Report-send failures are
+            // swallowed inside AdminMessageService so this finally never masks the original exception.
+            if(hasUnresolved && _adminMessenger is not null)
+            {
+                await _adminMessenger.SendCompilationReportAsync(game.Name, game.MobyGameId,
+                                                                 resolvedSoftwareIds: containedSoftwareIds,
+                                                                 unresolvedSlugs: unresolvedSlugs,
+                                                                 unresolvableLinks: game.UnresolvableCompilationGames,
+                                                                 compilationCreated: compilationCreated);
+            }
+        }
     }
 
     /// <summary>

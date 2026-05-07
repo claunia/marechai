@@ -300,6 +300,10 @@ public static partial class MainTabParser
             foreach(var link in links)
             {
                 string href = link.GetAttributeValue("href", "");
+
+                // Tab/anchor-only links (#, #anchor) and javascript: URLs are page navigation, not games.
+                if(IsIgnorableHref(href)) continue;
+
                 string slug = ExtractGameSlugFromHref(href);
 
                 if(slug != null)
@@ -313,12 +317,22 @@ public static partial class MainTabParser
                          !href.Contains("/game/", StringComparison.OrdinalIgnoreCase)))
                 {
                     // Link is NOT a /game/ URL — could be /search/quick?game= or some other non-game link.
-                    // This game has no proper MobyGames entry — mark as unresolvable.
+                    // This game has no proper MobyGames entry — mark as unresolvable but keep the
+                    // href so admins can investigate the original anchor.
                     string gameName = WebUtility.HtmlDecode(link.InnerText).Trim();
+                    string absHref  = MakeAbsoluteMobyGamesUrl(href);
 
                     if(!string.IsNullOrWhiteSpace(gameName) &&
-                       !game.UnresolvableCompilationGames.Contains(gameName))
-                        game.UnresolvableCompilationGames.Add(gameName);
+                       !game.UnresolvableCompilationGames.Any(u =>
+                           string.Equals(u.Name, gameName, StringComparison.OrdinalIgnoreCase) &&
+                           string.Equals(u.Href, absHref, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        game.UnresolvableCompilationGames.Add(new UnresolvableCompilationLink
+                        {
+                            Name = gameName,
+                            Href = absHref
+                        });
+                    }
                 }
             }
         }
@@ -328,25 +342,103 @@ public static partial class MainTabParser
 
         foreach(Match match in searchMatches)
         {
-            string gameName = WebUtility.HtmlDecode(match.Groups[1].Value).Trim();
+            string href     = match.Groups[1].Value;
+            string gameName = WebUtility.HtmlDecode(match.Groups[2].Value).Trim();
+            string absHref  = MakeAbsoluteMobyGamesUrl(href);
 
             if(!string.IsNullOrWhiteSpace(gameName) &&
-               !game.UnresolvableCompilationGames.Contains(gameName))
-                game.UnresolvableCompilationGames.Add(gameName);
+               !game.UnresolvableCompilationGames.Any(u =>
+                   string.Equals(u.Name, gameName, StringComparison.OrdinalIgnoreCase) &&
+                   string.Equals(u.Href, absHref, StringComparison.OrdinalIgnoreCase)))
+            {
+                game.UnresolvableCompilationGames.Add(new UnresolvableCompilationLink
+                {
+                    Name = gameName,
+                    Href = absHref
+                });
+            }
         }
     }
 
     /// <summary>
-    ///     Matches anchor tags with search/quick URLs and captures the link text.
+    ///     MobyGames tab/section slugs that share the <c>/game/...</c> URL prefix but never
+    ///     refer to a contained game. These are filtered out so the importer doesn't try to
+    ///     resolve them and doesn't pester admins about anchors that are simply page navigation.
     /// </summary>
-    [GeneratedRegex(@"<a\s[^>]*href=""[^""]*(?:/search/|search\.php)[^""]*""[^>]*>([^<]+)</a>",
+    static readonly HashSet<string> KnownNonGameSlugs =
+        new(StringComparer.OrdinalIgnoreCase)
+        {
+            "mobyrank",
+            "cover-art",
+            "release-info",
+            "techinfo",
+            "adblurbs",
+            "buy-trade",
+
+            // Other tab subpages we want rejected if they ever appear as 1-segment paths
+            "credits",
+            "screenshots",
+            "promo",
+            "promo-art",
+            "trivia",
+            "hints",
+            "rating-systems",
+            "reviews",
+            "forums"
+        };
+
+    /// <summary>
+    ///     Returns <c>true</c> for hrefs that are obviously not game references and that
+    ///     therefore should be ignored entirely (neither parsed as a slug nor recorded as
+    ///     an unresolvable anchor). Covers tab/anchor-only links (<c>#</c>, <c>#anchor</c>),
+    ///     empty hrefs and <c>javascript:</c> URLs.
+    /// </summary>
+    static bool IsIgnorableHref(string href)
+    {
+        if(string.IsNullOrWhiteSpace(href)) return true;
+
+        string trimmed = href.Trim();
+
+        if(trimmed == "#" || trimmed.StartsWith("#", StringComparison.Ordinal)) return true;
+
+        if(trimmed.StartsWith("javascript:", StringComparison.OrdinalIgnoreCase)) return true;
+
+        return false;
+    }
+
+    /// <summary>
+    ///     Makes a MobyGames URL absolute. Leading-slash hrefs are prefixed with the
+    ///     mobygames.com origin. Hrefs that already include a scheme are returned
+    ///     unchanged. Empty/null input returns null.
+    /// </summary>
+    static string MakeAbsoluteMobyGamesUrl(string href)
+    {
+        if(string.IsNullOrWhiteSpace(href)) return null;
+
+        string trimmed = href.Trim();
+
+        if(trimmed.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+           trimmed.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            return trimmed;
+
+        if(trimmed.StartsWith("/", StringComparison.Ordinal))
+            return "https://www.mobygames.com" + trimmed;
+
+        return trimmed;
+    }
+
+    /// <summary>
+    ///     Matches anchor tags with search/quick URLs and captures the href and link text.
+    /// </summary>
+    [GeneratedRegex(@"<a\s[^>]*href=""([^""]*(?:/search/|search\.php)[^""]*)""[^>]*>([^<]+)</a>",
                     RegexOptions.IgnoreCase)]
     private static partial Regex SearchUrlRegex();
 
     /// <summary>
     ///     Extracts a MobyGames game slug from a single href URL.
     ///     Only matches direct game URLs (1-2 path segments: /game/slug or /game/platform/slug
-    ///     or /game/12345/slug/). Rejects subpage URLs (/game/platform/slug/forums).
+    ///     or /game/12345/slug/). Rejects subpage URLs (/game/platform/slug/forums) and known
+    ///     non-game slugs like /game/mobyrank, /game/cover-art (see <see cref="KnownNonGameSlugs" />).
     ///     Returns null if the href is not a valid game URL.
     /// </summary>
     static string ExtractGameSlugFromHref(string href)
@@ -360,7 +452,7 @@ public static partial class MainTabParser
         string fullPath = match.Groups[1].Value.TrimEnd('/');
         var    segments = fullPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
 
-        return segments.Length switch
+        string slug = segments.Length switch
         {
             // /game/slug — one segment, must not be purely numeric
             1 when !int.TryParse(segments[0], out _) => segments[0],
@@ -372,6 +464,11 @@ public static partial class MainTabParser
             // /game/platform/slug/subpage — too many segments, subpage URL
             _ => null
         };
+
+        // Filter out known non-game slugs (tab subpages that share the /game/ URL space).
+        if(slug != null && KnownNonGameSlugs.Contains(slug)) return null;
+
+        return slug;
     }
 
     /// <summary>
@@ -410,6 +507,95 @@ public static partial class MainTabParser
         }
 
         return slugs;
+    }
+
+    /// <summary>
+    ///     Extracts both the resolved game slugs AND the unresolvable anchors
+    ///     (search URLs / non-game links) from a compilation description HTML chunk.
+    ///     Used by <c>CompilationRelationService</c> for retroactive processing.
+    /// </summary>
+    public static (List<string> slugs, List<UnresolvableCompilationLink> unresolvable)
+        ExtractCompilationContentsFromHtml(string html, string selfSlug = null)
+    {
+        var slugs        = new List<string>();
+        var unresolvable = new List<UnresolvableCompilationLink>();
+
+        if(string.IsNullOrWhiteSpace(html)) return (slugs, unresolvable);
+
+        var htmlDoc = new HtmlDocument();
+        htmlDoc.LoadHtml($"<div>{html}</div>");
+
+        var selfSlugs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        if(!string.IsNullOrWhiteSpace(selfSlug))
+        {
+            selfSlugs.Add(selfSlug);
+            selfSlugs.Add(selfSlug.TrimStart('-'));
+        }
+
+        var links = htmlDoc.DocumentNode.SelectNodes("//li//a[@href]");
+
+        if(links != null)
+        {
+            foreach(var link in links)
+            {
+                string href = link.GetAttributeValue("href", "");
+
+                // Tab/anchor-only links (#, #anchor) and javascript: URLs are page navigation, not games.
+                if(IsIgnorableHref(href)) continue;
+
+                string slug = ExtractGameSlugFromHref(href);
+
+                if(slug != null)
+                {
+                    if(!selfSlugs.Contains(slug) && !slugs.Contains(slug))
+                        slugs.Add(slug);
+                }
+                else if(!string.IsNullOrWhiteSpace(href) &&
+                        (href.Contains("/search/", StringComparison.OrdinalIgnoreCase) ||
+                         !href.Contains("/game/", StringComparison.OrdinalIgnoreCase)))
+                {
+                    string gameName = WebUtility.HtmlDecode(link.InnerText).Trim();
+                    string absHref  = MakeAbsoluteMobyGamesUrl(href);
+
+                    if(!string.IsNullOrWhiteSpace(gameName) &&
+                       !unresolvable.Any(u =>
+                           string.Equals(u.Name, gameName, StringComparison.OrdinalIgnoreCase) &&
+                           string.Equals(u.Href, absHref, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        unresolvable.Add(new UnresolvableCompilationLink
+                        {
+                            Name = gameName,
+                            Href = absHref
+                        });
+                    }
+                }
+            }
+        }
+
+        // Regex fallback for search URLs the DOM walker misses.
+        var searchMatches = SearchUrlRegex().Matches(html);
+
+        foreach(Match match in searchMatches)
+        {
+            string href     = match.Groups[1].Value;
+            string gameName = WebUtility.HtmlDecode(match.Groups[2].Value).Trim();
+            string absHref  = MakeAbsoluteMobyGamesUrl(href);
+
+            if(!string.IsNullOrWhiteSpace(gameName) &&
+               !unresolvable.Any(u =>
+                   string.Equals(u.Name, gameName, StringComparison.OrdinalIgnoreCase) &&
+                   string.Equals(u.Href, absHref, StringComparison.OrdinalIgnoreCase)))
+            {
+                unresolvable.Add(new UnresolvableCompilationLink
+                {
+                    Name = gameName,
+                    Href = absHref
+                });
+            }
+        }
+
+        return (slugs, unresolvable);
     }
 
     /// <summary>
