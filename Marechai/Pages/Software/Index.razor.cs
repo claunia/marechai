@@ -44,17 +44,28 @@ public partial class Index
     {
         if(_loaded) return;
 
-        _count    = await Service.GetSoftwareCountAsync();
-        _minYear  = await Service.GetMinimumYearAsync();
-        _maxYear  = await Service.GetMaximumYearAsync();
-        _platforms = await Service.GetPlatformsAsync();
+        // Fan out: every call is independent, so kick them off in parallel
+        // instead of awaiting each one sequentially. Was 6 round-trips
+        // (~6 × DB RTT) on the same critical path.
+        Task<int>                       countTask     = Service.GetSoftwareCountAsync();
+        Task<int>                       minYearTask   = Service.GetMinimumYearAsync();
+        Task<int>                       maxYearTask   = Service.GetMaximumYearAsync();
+        Task<List<SoftwarePlatformDto>> platformsTask = Service.GetPlatformsAsync();
+        Task<List<SoftwareGenreDto>>    genresTask    = Service.GetAllGenresAsync();
+        Task<List<SoftwareSpecKeyDto>>  specsTask     = Service.GetSpecificationsAsync();
 
-        List<SoftwareGenreDto> genres = await Service.GetAllGenresAsync();
+        await Task.WhenAll(countTask, minYearTask, maxYearTask, platformsTask, genresTask, specsTask);
 
-        _genresByType = genres.GroupBy(g => g.TypeName ?? "Genre")
-                              .ToDictionary(g => g.Key, g => g.ToList());
+        _count     = countTask.Result;
+        _minYear   = minYearTask.Result;
+        _maxYear   = maxYearTask.Result;
+        _platforms = platformsTask.Result;
 
-        _specsByKey = await Service.GetSpecificationsAsync();
+        _genresByType = genresTask.Result
+                                  .GroupBy(g => g.TypeName ?? "Genre")
+                                  .ToDictionary(g => g.Key, g => g.ToList());
+
+        _specsByKey = specsTask.Result;
 
         _loaded = true;
         StateHasChanged();

@@ -38,30 +38,70 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Marechai.Server.Controllers;
 
 [Route("/software")]
 [ApiController]
-public class SoftwareController(MarechaiContext context) : ControllerBase
+public class SoftwareController(MarechaiContext context, IMemoryCache cache) : ControllerBase
 {
+    // Cache key + duration for the global Marechai score ranking.
+    // The full catalog ranking changes only when reviews/ratings are
+    // added; recomputing it on every page load was the dominant cost
+    // of /software/{id}/marechai-score.
+    const           string   MARECHAI_RANKING_CACHE_KEY = "marechai:ranking";
+    static readonly TimeSpan _marechaiRankingTtl        = TimeSpan.FromMinutes(5);
+
+    // Cache keys + TTL for the /software landing-page catalog endpoints.
+    // These query the *whole* catalog (all genres, all platforms, all spec
+    // values, year range) and barely change between requests, so a short
+    // memory cache turns 4 expensive queries into ~0 ms hits.
+    const           string   SOFTWARE_GENRES_CACHE_KEY    = "software:genres";
+    const           string   SOFTWARE_SPECS_CACHE_KEY     = "software:specs";
+    const           string   SOFTWARE_PLATFORMS_CACHE_KEY = "software:platforms";
+    const           string   SOFTWARE_YEARS_CACHE_KEY     = "software:years";
+    const           string   SOFTWARE_COUNT_CACHE_KEY     = "software:count";
+    const           string   SOFTWARE_COMPANIES_CACHE_KEY = "software:companies";
+    static readonly TimeSpan _catalogCacheTtl             = TimeSpan.FromMinutes(5);
+
     [HttpGet("count")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<int> GetSoftwareCountAsync([FromQuery] string search = null)
     {
-        IQueryable<Database.Models.Software> query = context.Softwares;
+        // Fast path: no search filter — use the cached total.
+        if(string.IsNullOrWhiteSpace(search))
+        {
+            if(cache.TryGetValue(SOFTWARE_COUNT_CACHE_KEY, out int cachedCount)) return cachedCount;
 
-        if(!string.IsNullOrWhiteSpace(search))
-            query = query.Where(s => s.Name.Contains(search));
+            // Single round-trip: count software + compilation releases as a
+            // 2-element projection (was two awaited CountAsync calls).
+            var totals = await context.Softwares
+                                      .Select(_ => 1)
+                                      .GroupBy(_ => 1)
+                                      .Select(g => new
+                                       {
+                                           Software = g.Count(),
+                                           Compilations =
+                                               context.SoftwareReleases.Count(r => r.IsCompilation)
+                                       })
+                                      .FirstOrDefaultAsync();
+
+            int total = (totals?.Software ?? 0) + (totals?.Compilations ?? 0);
+            cache.Set(SOFTWARE_COUNT_CACHE_KEY, total, _catalogCacheTtl);
+
+            return total;
+        }
+
+        IQueryable<Database.Models.Software> query = context.Softwares;
+        query = query.Where(s => s.Name.Contains(search));
 
         int softwareCount = await query.CountAsync();
 
-        IQueryable<SoftwareRelease> compQuery = context.SoftwareReleases.Where(r => r.IsCompilation);
-
-        if(!string.IsNullOrWhiteSpace(search))
-            compQuery = compQuery.Where(r => r.Title.Contains(search));
+        IQueryable<SoftwareRelease> compQuery =
+            context.SoftwareReleases.Where(r => r.IsCompilation && r.Title.Contains(search));
 
         int compilationCount = await compQuery.CountAsync();
 
@@ -72,19 +112,48 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<int> GetMinimumYearAsync() => context.SoftwareReleases
-                                                     .Where(r => r.ReleaseDate.HasValue &&
-                                                                 r.ReleaseDate.Value.Year > 1000)
-                                                     .MinAsync(r => r.ReleaseDate.Value.Year);
+    public async Task<int> GetMinimumYearAsync()
+    {
+        (int min, _) = await GetYearRangeAsync();
+
+        return min;
+    }
 
     [HttpGet("maximum-year")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<int> GetMaximumYearAsync() => context.SoftwareReleases
-                                                     .Where(r => r.ReleaseDate.HasValue &&
-                                                                 r.ReleaseDate.Value.Year > 1000)
-                                                     .MaxAsync(r => r.ReleaseDate.Value.Year);
+    public async Task<int> GetMaximumYearAsync()
+    {
+        (_, int max) = await GetYearRangeAsync();
+
+        return max;
+    }
+
+    /// <summary>
+    /// Returns the (min, max) ReleaseDate year across all releases, computed in
+    /// a single round-trip and cached. The Index page asks for both and they
+    /// only change when a release is added/edited, so 5 min caching is safe.
+    /// </summary>
+    async Task<(int Min, int Max)> GetYearRangeAsync()
+    {
+        if(cache.TryGetValue(SOFTWARE_YEARS_CACHE_KEY, out (int Min, int Max) cached)) return cached;
+
+        var range = await context.SoftwareReleases
+                                 .Where(r => r.ReleaseDate.HasValue && r.ReleaseDate.Value.Year > 1000)
+                                 .GroupBy(_ => 1)
+                                 .Select(g => new
+                                  {
+                                      Min = g.Min(r => r.ReleaseDate.Value.Year),
+                                      Max = g.Max(r => r.ReleaseDate.Value.Year)
+                                  })
+                                 .FirstOrDefaultAsync();
+
+        var result = range is null ? (0, 0) : (range.Min, range.Max);
+        cache.Set(SOFTWARE_YEARS_CACHE_KEY, result, _catalogCacheTtl);
+
+        return result;
+    }
 
     [HttpGet("by-letter/{c}")]
     [AllowAnonymous]
@@ -92,7 +161,9 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<List<SoftwareDto>> GetSoftwareByLetterAsync(char c)
     {
-        List<SoftwareDto> software = await context.Softwares
+        // Single SQL round-trip: UNION ALL the software + compilations projection
+        // (was two sequential awaited queries before merging in memory).
+        IQueryable<SoftwareDto> softwareQuery = context.Softwares
            .Where(s => EF.Functions.Like(s.Name, $"{c}%"))
            .Select(s => new SoftwareDto
             {
@@ -101,32 +172,34 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
                 FamilyId     = s.FamilyId,
                 Family       = s.Family.Name,
                 Kind         = s.Kind,
+                IsCompilation = false,
                 FrontCoverId = context.SoftwareCovers
                                       .Where(c2 => (c2.Release.SoftwareId == s.Id ||
                                                      c2.Release.SoftwareVersion.SoftwareId == s.Id) &&
                                                     c2.Type == SoftwareCoverType.Front)
                                       .Select(c2 => (Guid?)c2.Id)
                                       .FirstOrDefault()
-            })
-           .ToListAsync();
+            });
 
-        List<SoftwareDto> compilations = await context.SoftwareReleases
+        IQueryable<SoftwareDto> compilationsQuery = context.SoftwareReleases
            .Where(r => r.IsCompilation && EF.Functions.Like(r.Title, $"{c}%"))
            .Select(r => new SoftwareDto
             {
                 Id            = r.Id,
                 Name          = r.Title,
+                FamilyId      = null,
+                Family        = null,
+                Kind          = default,
                 IsCompilation = true,
                 FrontCoverId  = r.Covers
                                  .Where(cv => cv.Type == SoftwareCoverType.Front)
                                  .Select(cv => (Guid?)cv.Id)
                                  .FirstOrDefault()
-            })
-           .ToListAsync();
+            });
 
-        return software.Concat(compilations)
-                       .OrderBy(s => s.Name, NaturalStringComparer.Instance)
-                       .ToList();
+        List<SoftwareDto> combined = await softwareQuery.Concat(compilationsQuery).ToListAsync();
+
+        return combined.OrderBy(s => s.Name, NaturalStringComparer.Instance).ToList();
     }
 
     [HttpGet("by-year/{year:int}")]
@@ -135,28 +208,29 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<List<SoftwareDto>> GetSoftwareByYearAsync(int year)
     {
-        List<SoftwareDto> software = await context.Softwares
+        // Single SQL round-trip via Concat (UNION ALL).
+        IQueryable<SoftwareDto> softwareQuery = context.Softwares
            .Where(s => s.Versions.Any(v => v.Releases.Any(r => r.ReleaseDate != null &&
                                                                r.ReleaseDate.Value.Year == year))
                     || s.DirectReleases.Any(r => r.ReleaseDate != null &&
                                                  r.ReleaseDate.Value.Year == year))
            .Select(s => new SoftwareDto
             {
-                Id           = s.Id,
-                Name         = s.Name,
-                FamilyId     = s.FamilyId,
-                Family       = s.Family.Name,
-                Kind         = s.Kind,
+                Id            = s.Id,
+                Name          = s.Name,
+                FamilyId      = s.FamilyId,
+                Family        = s.Family.Name,
+                Kind          = s.Kind,
+                IsCompilation = false,
                 FrontCoverId = context.SoftwareCovers
                                       .Where(c => (c.Release.SoftwareId == s.Id ||
                                                     c.Release.SoftwareVersion.SoftwareId == s.Id) &&
                                                    c.Type == SoftwareCoverType.Front)
                                       .Select(c => (Guid?)c.Id)
                                       .FirstOrDefault()
-            })
-           .ToListAsync();
+            });
 
-        List<SoftwareDto> compilations = await context.SoftwareReleases
+        IQueryable<SoftwareDto> compilationsQuery = context.SoftwareReleases
            .Where(r => r.IsCompilation &&
                         r.ReleaseDate != null &&
                         r.ReleaseDate.Value.Year == year)
@@ -164,17 +238,19 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
             {
                 Id            = r.Id,
                 Name          = r.Title,
+                FamilyId      = null,
+                Family        = null,
+                Kind          = default,
                 IsCompilation = true,
                 FrontCoverId  = r.Covers
                                  .Where(cv => cv.Type == SoftwareCoverType.Front)
                                  .Select(cv => (Guid?)cv.Id)
                                  .FirstOrDefault()
-            })
-           .ToListAsync();
+            });
 
-        return software.Concat(compilations)
-                       .OrderBy(s => s.Name, NaturalStringComparer.Instance)
-                       .ToList();
+        List<SoftwareDto> combined = await softwareQuery.Concat(compilationsQuery).ToListAsync();
+
+        return combined.OrderBy(s => s.Name, NaturalStringComparer.Instance).ToList();
     }
 
     [HttpGet("by-platform/{platformId:ulong}")]
@@ -183,82 +259,104 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<List<SoftwareDto>> GetSoftwareByPlatformAsync(ulong platformId)
     {
-        List<SoftwareDto> software = await context.Softwares
+        // Single SQL round-trip via Concat (UNION ALL).
+        IQueryable<SoftwareDto> softwareQuery = context.Softwares
            .Where(s => s.Versions.Any(v => v.Releases.Any(r => r.PlatformId == platformId))
                     || s.DirectReleases.Any(r => r.PlatformId == platformId))
            .Select(s => new SoftwareDto
             {
-                Id           = s.Id,
-                Name         = s.Name,
-                FamilyId     = s.FamilyId,
-                Family       = s.Family.Name,
-                Kind         = s.Kind,
+                Id            = s.Id,
+                Name          = s.Name,
+                FamilyId      = s.FamilyId,
+                Family        = s.Family.Name,
+                Kind          = s.Kind,
+                IsCompilation = false,
                 FrontCoverId = context.SoftwareCovers
                                       .Where(c => (c.Release.SoftwareId == s.Id ||
                                                     c.Release.SoftwareVersion.SoftwareId == s.Id) &&
                                                    c.Type == SoftwareCoverType.Front)
                                       .Select(c => (Guid?)c.Id)
                                       .FirstOrDefault()
-            })
-           .ToListAsync();
+            });
 
-        List<SoftwareDto> compilations = await context.SoftwareReleases
+        IQueryable<SoftwareDto> compilationsQuery = context.SoftwareReleases
            .Where(r => r.IsCompilation && r.PlatformId == platformId)
            .Select(r => new SoftwareDto
             {
                 Id            = r.Id,
                 Name          = r.Title,
+                FamilyId      = null,
+                Family        = null,
+                Kind          = default,
                 IsCompilation = true,
                 FrontCoverId  = r.Covers
                                  .Where(cv => cv.Type == SoftwareCoverType.Front)
                                  .Select(cv => (Guid?)cv.Id)
                                  .FirstOrDefault()
-            })
-           .ToListAsync();
+            });
 
-        return software.Concat(compilations)
-                       .OrderBy(s => s.Name, NaturalStringComparer.Instance)
-                       .ToList();
+        List<SoftwareDto> combined = await softwareQuery.Concat(compilationsQuery).ToListAsync();
+
+        return combined.OrderBy(s => s.Name, NaturalStringComparer.Instance).ToList();
     }
 
     [HttpGet("companies")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<CompanyDto>> GetSoftwareCompaniesAsync() =>
-        context.SoftwareCompanyRoles
-               .Select(cr => cr.Company)
-               .Union(context.SoftwareReleases.Select(sr => sr.Publisher))
-               .Distinct()
-               .Include(c => c.Logos)
-               .OrderBy(c => MarechaiContext.NaturalSortKey(c.Name))
-               .Select(c => new CompanyDto
-                {
-                    Id       = c.Id,
-                    LastLogo = c.Logos.OrderByDescending(l => l.Year).FirstOrDefault().Guid,
-                    Name     = c.Name
-                })
-               .ToListAsync();
+    public async Task<List<CompanyDto>> GetSoftwareCompaniesAsync()
+    {
+        if(cache.TryGetValue(SOFTWARE_COMPANIES_CACHE_KEY, out List<CompanyDto> cached) && cached is not null)
+            return cached;
+
+        List<CompanyDto> companies = await context.SoftwareCompanyRoles
+                                                  .Select(cr => cr.Company)
+                                                  .Union(context.SoftwareReleases.Select(sr => sr.Publisher))
+                                                  .Distinct()
+                                                  .Include(c => c.Logos)
+                                                  .OrderBy(c => MarechaiContext.NaturalSortKey(c.Name))
+                                                  .Select(c => new CompanyDto
+                                                   {
+                                                       Id       = c.Id,
+                                                       LastLogo = c.Logos.OrderByDescending(l => l.Year)
+                                                                         .FirstOrDefault().Guid,
+                                                       Name     = c.Name
+                                                   })
+                                                  .ToListAsync();
+
+        cache.Set(SOFTWARE_COMPANIES_CACHE_KEY, companies, _catalogCacheTtl);
+
+        return companies;
+    }
 
     [HttpGet("companies/letter/{c}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<CompanyDto>> GetSoftwareCompaniesByLetterAsync(char c) =>
-        context.SoftwareCompanyRoles
-               .Select(cr => cr.Company)
-               .Union(context.SoftwareReleases.Select(sr => sr.Publisher))
-               .Distinct()
-               .Include(c => c.Logos)
-               .Where(co => EF.Functions.Like(co.Name, $"{c}%"))
-               .OrderBy(co => MarechaiContext.NaturalSortKey(co.Name))
-               .Select(co => new CompanyDto
-                {
-                    Id       = co.Id,
-                    LastLogo = co.Logos.OrderByDescending(l => l.Year).FirstOrDefault().Guid,
-                    Name     = co.Name
-                })
-               .ToListAsync();
+    public async Task<List<CompanyDto>> GetSoftwareCompaniesByLetterAsync(char c)
+    {
+        // Filter from the cached full list when available — avoids hitting the
+        // DB for the per-letter pages.
+        if(cache.TryGetValue(SOFTWARE_COMPANIES_CACHE_KEY, out List<CompanyDto> cached) && cached is not null)
+            return cached.Where(co => !string.IsNullOrEmpty(co.Name) && char.ToUpperInvariant(co.Name[0]) ==
+                                          char.ToUpperInvariant(c))
+                         .ToList();
+
+        return await context.SoftwareCompanyRoles
+                            .Select(cr => cr.Company)
+                            .Union(context.SoftwareReleases.Select(sr => sr.Publisher))
+                            .Distinct()
+                            .Include(co2 => co2.Logos)
+                            .Where(co => EF.Functions.Like(co.Name, $"{c}%"))
+                            .OrderBy(co => MarechaiContext.NaturalSortKey(co.Name))
+                            .Select(co => new CompanyDto
+                             {
+                                 Id       = co.Id,
+                                 LastLogo = co.Logos.OrderByDescending(l => l.Year).FirstOrDefault().Guid,
+                                 Name     = co.Name
+                             })
+                            .ToListAsync();
+    }
 
     [HttpGet("/software/{softwareId:ulong}/companies")]
     [AllowAnonymous]
@@ -286,45 +384,50 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
                                             [FromQuery] string sortBy = null,
                                             [FromQuery] bool sortDescending = false)
     {
-        IQueryable<Database.Models.Software> query = context.Softwares;
+        IQueryable<Database.Models.Software> baseSoftwareQuery = context.Softwares;
 
         if(!string.IsNullOrWhiteSpace(search))
-            query = query.Where(s => s.Name.Contains(search));
+            baseSoftwareQuery = baseSoftwareQuery.Where(s => s.Name.Contains(search));
 
-        List<SoftwareDto> software = await query.Select(s => new SoftwareDto
-                     {
-                         Id           = s.Id,
-                         Name         = s.Name,
-                         FamilyId     = s.FamilyId,
-                         Family       = s.Family.Name,
-                         Kind         = s.Kind,
-                         FrontCoverId = context.SoftwareCovers
-                                               .Where(c => (c.Release.SoftwareId == s.Id ||
-                                                             c.Release.SoftwareVersion.SoftwareId == s.Id) &&
-                                                            c.Type == SoftwareCoverType.Front)
-                                               .Select(c => (Guid?)c.Id)
-                                               .FirstOrDefault()
-                     })
-                    .ToListAsync();
+        IQueryable<SoftwareDto> softwareQuery = baseSoftwareQuery.Select(s => new SoftwareDto
+        {
+            Id            = s.Id,
+            Name          = s.Name,
+            FamilyId      = s.FamilyId,
+            Family        = s.Family.Name,
+            Kind          = s.Kind,
+            IsCompilation = false,
+            FrontCoverId  = context.SoftwareCovers
+                                   .Where(c => (c.Release.SoftwareId == s.Id ||
+                                                 c.Release.SoftwareVersion.SoftwareId == s.Id) &&
+                                                c.Type == SoftwareCoverType.Front)
+                                   .Select(c => (Guid?)c.Id)
+                                   .FirstOrDefault()
+        });
 
-        IQueryable<SoftwareRelease> compQuery = context.SoftwareReleases.Where(r => r.IsCompilation);
+        IQueryable<SoftwareRelease> baseCompQuery = context.SoftwareReleases.Where(r => r.IsCompilation);
 
         if(!string.IsNullOrWhiteSpace(search))
-            compQuery = compQuery.Where(r => r.Title.Contains(search));
+            baseCompQuery = baseCompQuery.Where(r => r.Title.Contains(search));
 
-        List<SoftwareDto> compilations = await compQuery.Select(r => new SoftwareDto
-            {
-                Id            = r.Id,
-                Name          = r.Title,
-                IsCompilation = true,
-                FrontCoverId  = r.Covers
-                                 .Where(cv => cv.Type == SoftwareCoverType.Front)
-                                 .Select(cv => (Guid?)cv.Id)
-                                 .FirstOrDefault()
-            })
-           .ToListAsync();
+        IQueryable<SoftwareDto> compilationsQuery = baseCompQuery.Select(r => new SoftwareDto
+        {
+            Id            = r.Id,
+            Name          = r.Title,
+            FamilyId      = null,
+            Family        = null,
+            Kind          = default,
+            IsCompilation = true,
+            FrontCoverId  = r.Covers
+                             .Where(cv => cv.Type == SoftwareCoverType.Front)
+                             .Select(cv => (Guid?)cv.Id)
+                             .FirstOrDefault()
+        });
 
-        IEnumerable<SoftwareDto> merged = software.Concat(compilations);
+        // Single SQL round-trip via Concat (UNION ALL).
+        List<SoftwareDto> combined = await softwareQuery.Concat(compilationsQuery).ToListAsync();
+
+        IEnumerable<SoftwareDto> merged = combined;
 
         merged = sortBy switch
         {
@@ -1073,18 +1176,28 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<SoftwareGenreDto>> GetAllGenresAsync() => context.SoftwareGenres
-       .Where(g => g.Softwares.Any())
-       .OrderBy(g => g.Type)
-       .ThenBy(g => g.Name)
-       .Select(g => new SoftwareGenreDto
-        {
-            Id       = g.Id,
-            Name     = g.Name,
-            Type     = (int)g.Type,
-            TypeName = g.Type.ToString()
-        })
-       .ToListAsync();
+    public async Task<List<SoftwareGenreDto>> GetAllGenresAsync()
+    {
+        if(cache.TryGetValue(SOFTWARE_GENRES_CACHE_KEY, out List<SoftwareGenreDto> cached) && cached is not null)
+            return cached;
+
+        List<SoftwareGenreDto> genres = await context.SoftwareGenres
+                                                     .Where(g => g.Softwares.Any())
+                                                     .OrderBy(g => g.Type)
+                                                     .ThenBy(g => g.Name)
+                                                     .Select(g => new SoftwareGenreDto
+                                                      {
+                                                          Id       = g.Id,
+                                                          Name     = g.Name,
+                                                          Type     = (int)g.Type,
+                                                          TypeName = g.Type.ToString()
+                                                      })
+                                                     .ToListAsync();
+
+        cache.Set(SOFTWARE_GENRES_CACHE_KEY, genres, _catalogCacheTtl);
+
+        return genres;
+    }
 
     [HttpGet("by-genre/{genreId:int}")]
     [AllowAnonymous]
@@ -1092,25 +1205,26 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<List<SoftwareDto>> GetSoftwareByGenreAsync(int genreId)
     {
-        List<SoftwareDto> software = await context.Softwares
+        // Single SQL round-trip via Concat (UNION ALL).
+        IQueryable<SoftwareDto> softwareQuery = context.Softwares
            .Where(s => s.Genres.Any(g => g.GenreId == genreId))
            .Select(s => new SoftwareDto
             {
-                Id           = s.Id,
-                Name         = s.Name,
-                FamilyId     = s.FamilyId,
-                Family       = s.Family.Name,
-                Kind         = s.Kind,
+                Id            = s.Id,
+                Name          = s.Name,
+                FamilyId      = s.FamilyId,
+                Family        = s.Family.Name,
+                Kind          = s.Kind,
+                IsCompilation = false,
                 FrontCoverId = context.SoftwareCovers
                                       .Where(c => (c.Release.SoftwareId == s.Id ||
                                                     c.Release.SoftwareVersion.SoftwareId == s.Id) &&
                                                    c.Type == SoftwareCoverType.Front)
                                       .Select(c => (Guid?)c.Id)
                                       .FirstOrDefault()
-            })
-           .ToListAsync();
+            });
 
-        List<SoftwareDto> compilations = await context.SoftwareReleases
+        IQueryable<SoftwareDto> compilationsQuery = context.SoftwareReleases
            .Where(r => r.IsCompilation &&
                        (r.IncludedSoftware.Any(s => s.Software.Genres.Any(g => g.GenreId == genreId)) ||
                         r.IncludedVersions.Any(v => v.SoftwareVersion.Software.Genres.Any(g => g.GenreId == genreId))))
@@ -1118,17 +1232,19 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
             {
                 Id            = r.Id,
                 Name          = r.Title,
+                FamilyId      = null,
+                Family        = null,
+                Kind          = default,
                 IsCompilation = true,
                 FrontCoverId  = r.Covers
                                  .Where(cv => cv.Type == SoftwareCoverType.Front)
                                  .Select(cv => (Guid?)cv.Id)
                                  .FirstOrDefault()
-            })
-           .ToListAsync();
+            });
 
-        return software.Concat(compilations)
-                       .OrderBy(s => s.Name, NaturalStringComparer.Instance)
-                       .ToList();
+        List<SoftwareDto> combined = await softwareQuery.Concat(compilationsQuery).ToListAsync();
+
+        return combined.OrderBy(s => s.Name, NaturalStringComparer.Instance).ToList();
     }
 
     [HttpGet("specifications")]
@@ -1137,20 +1253,27 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<List<SoftwareSpecKeyDto>> GetSpecificationsAsync()
     {
+        if(cache.TryGetValue(SOFTWARE_SPECS_CACHE_KEY, out List<SoftwareSpecKeyDto> cached) && cached is not null)
+            return cached;
+
         var raw = await context.SoftwareAttributes
                                .Where(a => a.Category == "Spec" && a.Key != "Notes")
                                .Select(a => new { a.Key, a.Value })
                                .Distinct()
                                .ToListAsync();
 
-        return raw.GroupBy(a => a.Key)
-                  .OrderBy(g => g.Key)
-                  .Select(g => new SoftwareSpecKeyDto
-                   {
-                       Key    = g.Key,
-                       Values = g.Select(a => a.Value).OrderBy(v => v).ToList()
-                   })
-                  .ToList();
+        List<SoftwareSpecKeyDto> result = raw.GroupBy(a => a.Key)
+                                             .OrderBy(g => g.Key)
+                                             .Select(g => new SoftwareSpecKeyDto
+                                              {
+                                                  Key    = g.Key,
+                                                  Values = g.Select(a => a.Value).OrderBy(v => v).ToList()
+                                              })
+                                             .ToList();
+
+        cache.Set(SOFTWARE_SPECS_CACHE_KEY, result, _catalogCacheTtl);
+
+        return result;
     }
 
     [HttpGet("by-spec")]
@@ -1161,7 +1284,8 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
     {
         if(key == "Notes") return [];
 
-        List<SoftwareDto> software = await context.Softwares
+        // Single SQL round-trip via Concat (UNION ALL).
+        IQueryable<SoftwareDto> softwareQuery = context.Softwares
                .Where(s => s.Versions.Any(v => v.Releases.Any(r => r.Attributes
                                                                      .Any(a => a.Category == "Spec" &&
                                                                               a.Key   == key         &&
@@ -1172,21 +1296,21 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
                                                                   a.Value == value)))
                .Select(s => new SoftwareDto
                 {
-                    Id           = s.Id,
-                    Name         = s.Name,
-                    FamilyId     = s.FamilyId,
-                    Family       = s.Family.Name,
-                    Kind         = s.Kind,
+                    Id            = s.Id,
+                    Name          = s.Name,
+                    FamilyId      = s.FamilyId,
+                    Family        = s.Family.Name,
+                    Kind          = s.Kind,
+                    IsCompilation = false,
                     FrontCoverId = context.SoftwareCovers
                                           .Where(c => (c.Release.SoftwareId == s.Id ||
                                                         c.Release.SoftwareVersion.SoftwareId == s.Id) &&
                                                        c.Type == SoftwareCoverType.Front)
                                           .Select(c => (Guid?)c.Id)
                                           .FirstOrDefault()
-                })
-               .ToListAsync();
+                });
 
-        List<SoftwareDto> compilations = await context.SoftwareReleases
+        IQueryable<SoftwareDto> compilationsQuery = context.SoftwareReleases
            .Where(r => r.IsCompilation &&
                         r.Attributes.Any(a => a.Category == "Spec" &&
                                               a.Key   == key       &&
@@ -1195,17 +1319,19 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
             {
                 Id            = r.Id,
                 Name          = r.Title,
+                FamilyId      = null,
+                Family        = null,
+                Kind          = default,
                 IsCompilation = true,
                 FrontCoverId  = r.Covers
                                  .Where(cv => cv.Type == SoftwareCoverType.Front)
                                  .Select(cv => (Guid?)cv.Id)
                                  .FirstOrDefault()
-            })
-           .ToListAsync();
+            });
 
-        return software.Concat(compilations)
-                       .OrderBy(s => s.Name, NaturalStringComparer.Instance)
-                       .ToList();
+        List<SoftwareDto> combined = await softwareQuery.Concat(compilationsQuery).ToListAsync();
+
+        return combined.OrderBy(s => s.Name, NaturalStringComparer.Instance).ToList();
     }
 
     [HttpGet("/software/{softwareId:ulong}/genres")]
@@ -1342,18 +1468,32 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<UserReviewSummaryDto> GetUserReviewSummaryAsync(ulong id)
     {
-        var ratings = await context.SoftwareUserRatings
-                                   .Where(r => r.SoftwareId == id)
-                                   .Select(r => r.Rating)
-                                   .ToListAsync();
+        // Single round-trip: aggregate ratings + count reviews via grouped subqueries.
+        // Was previously two awaited queries (Select+ToListAsync then CountAsync)
+        // which doubled the latency of this endpoint.
+        var summary = await context.Softwares
+                                   .Where(s => s.Id == id)
+                                   .Select(s => new
+                                    {
+                                        AvgRating    = (double?)s.UserRatings.Average(r => (double?)r.Rating),
+                                        TotalRatings = s.UserRatings.Count(),
+                                        TotalReviews = s.UserReviews.Count()
+                                    })
+                                   .FirstOrDefaultAsync();
 
-        int reviewCount = await context.SoftwareUserReviews.CountAsync(r => r.SoftwareId == id);
+        if(summary is null)
+            return new UserReviewSummaryDto
+            {
+                AverageRating = null,
+                TotalRatings  = 0,
+                TotalReviews  = 0
+            };
 
         return new UserReviewSummaryDto
         {
-            AverageRating = ratings.Count > 0 ? ratings.Average() : null,
-            TotalRatings  = ratings.Count,
-            TotalReviews  = reviewCount
+            AverageRating = summary.AvgRating,
+            TotalRatings  = summary.TotalRatings,
+            TotalReviews  = summary.TotalReviews
         };
     }
 
@@ -1448,6 +1588,8 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
         string callerId = User.FindFirstValue(ClaimTypes.Sid);
         bool   isAdmin  = User.IsInRole("Admin") || User.IsInRole("UberAdmin");
 
+        // Single round-trip: pull each reviewer's rating in the same projection
+        // (was previously two awaited queries: reviews then a batched ratings dict).
         var reviews = await context.SoftwareUserReviews
                                    .Where(r => r.SoftwareId == id)
                                    .OrderByDescending(r => r.CreatedOn)
@@ -1469,20 +1611,21 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
                                         ThumbsUp    = r.Votes.Count(v => v.IsUpvote),
                                         ThumbsDown  = r.Votes.Count(v => !v.IsUpvote),
                                         ReportCount = r.Reports.Count,
-                                        CallerVote  = callerId != null
-                                                          ? r.Votes
-                                                             .Where(v => v.UserId == callerId)
-                                                             .Select(v => (bool?)v.IsUpvote)
-                                                             .FirstOrDefault()
-                                                          : null
+                                        CallerVote = callerId != null
+                                                         ? r.Votes
+                                                            .Where(v => v.UserId == callerId)
+                                                            .Select(v => (bool?)v.IsUpvote)
+                                                            .FirstOrDefault()
+                                                         : null,
+                                        ReviewerRating = r.UserId != null
+                                                             ? context.SoftwareUserRatings
+                                                                      .Where(rt => rt.SoftwareId == id &&
+                                                                                   rt.UserId     == r.UserId)
+                                                                      .Select(rt => (float?)rt.Rating)
+                                                                      .FirstOrDefault()
+                                                             : null
                                     })
                                    .ToListAsync();
-
-        // Also load ratings in batch for these users
-        var userIds    = reviews.Where(r => r.UserId != null).Select(r => r.UserId).Distinct().ToList();
-        var ratingsMap = await context.SoftwareUserRatings
-                                      .Where(r => r.SoftwareId == id && userIds.Contains(r.UserId))
-                                      .ToDictionaryAsync(r => r.UserId, r => r.Rating);
 
         return reviews.Select(r =>
         {
@@ -1501,7 +1644,7 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
                 TheBad          = r.TheBad,
                 TheUgly         = r.TheUgly,
                 IsAnonymous     = r.IsAnonymous,
-                Rating          = r.UserId != null && ratingsMap.TryGetValue(r.UserId, out float rating) ? rating : null,
+                Rating          = r.ReviewerRating,
                 ThumbsUp        = r.ThumbsUp,
                 ThumbsDown      = r.ThumbsDown,
                 CurrentUserVote = r.CallerVote,
@@ -1750,20 +1893,26 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<MarechaiScoreDto> GetMarechaiScoreAsync(ulong id)
     {
-        // Critic score: average of NormalizedScore (0-100), scaled to 0-10
-        double? criticAvg = await context.SoftwareCriticReviews
-                                         .Where(r => r.SoftwareId == id && r.NormalizedScore != null)
-                                         .Select(r => (double?)r.NormalizedScore)
-                                         .AverageAsync();
+        // Single round-trip: pull both critic and user averages in one query
+        // off the Software entity (was two sequential Average() awaits).
+        var avg = await context.Softwares
+                               .Where(s => s.Id == id)
+                               .Select(s => new
+                                {
+                                    CriticAvg = (double?)s.CriticReviews
+                                                          .Where(r => r.NormalizedScore != null)
+                                                          .Average(r => (double?)r.NormalizedScore),
+                                    UserAvg = (double?)s.UserRatings.Average(r => (double?)r.Rating)
+                                })
+                               .FirstOrDefaultAsync();
 
+        double? criticAvg = avg?.CriticAvg;
+        double? userAvg   = avg?.UserAvg;
+
+        // Critic score: average of NormalizedScore (0-100), scaled to 0-10
         double? criticScore = criticAvg.HasValue ? Math.Round(criticAvg.Value / 10.0, 1) : null;
 
         // User score: average of Rating (0-5), scaled to 0-10
-        double? userAvg = await context.SoftwareUserRatings
-                                       .Where(r => r.SoftwareId == id)
-                                       .Select(r => (double?)r.Rating)
-                                       .AverageAsync();
-
         double? userScore = userAvg.HasValue ? Math.Round(userAvg.Value * 2.0, 1) : null;
 
         // Marechai score: average of available components
@@ -1776,49 +1925,18 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
         else if(userScore.HasValue)
             marechaiScore = userScore.Value;
 
-        // Rank
-        int?  rank       = null;
+        // Rank — looked up from a 5-minute cached dictionary so we don't
+        // re-rank the entire catalog on every page load.
+        int?  rank        = null;
         int   totalRanked = 0;
 
         if(marechaiScore.HasValue)
         {
-            // Count all software that have a score
-            var allScores = await context.Softwares
-                                         .Select(s => new
-                                          {
-                                              s.Id,
-                                              CriticAvg = s.CriticReviews
-                                                           .Where(r => r.NormalizedScore != null)
-                                                           .Select(r => (double?)r.NormalizedScore)
-                                                           .Average(),
-                                              UserAvg = s.UserRatings
-                                                         .Select(r => (double?)r.Rating)
-                                                         .Average()
-                                          })
-                                         .Where(s => s.CriticAvg != null || s.UserAvg != null)
-                                         .ToListAsync();
+            Dictionary<ulong, int> ranking = await GetMarechaiRankingAsync();
 
-            var ranked = allScores.Select(s =>
-            {
-                double? c = s.CriticAvg.HasValue ? s.CriticAvg.Value / 10.0 : null;
-                double? u = s.UserAvg.HasValue   ? s.UserAvg.Value * 2.0    : null;
+            totalRanked = ranking.Count;
 
-                double score;
-
-                if(c.HasValue && u.HasValue)
-                    score = (c.Value + u.Value) / 2.0;
-                else if(c.HasValue)
-                    score = c.Value;
-                else
-                    score = u!.Value;
-
-                return new { s.Id, Score = Math.Round(score, 1) };
-            }).OrderByDescending(s => s.Score).ThenBy(s => s.Id).ToList();
-
-            totalRanked = ranked.Count;
-            rank        = ranked.FindIndex(s => s.Id == id) + 1;
-
-            if(rank == 0) rank = null; // not found (shouldn't happen)
+            if(ranking.TryGetValue(id, out int found)) rank = found;
         }
 
         return new MarechaiScoreDto
@@ -1829,6 +1947,57 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
             Rank          = rank,
             TotalRanked   = totalRanked
         };
+    }
+
+    /// <summary>
+    /// Returns a software-id → rank dictionary spanning every software with at least
+    /// one critic review or user rating. Cached for <see cref="_marechaiRankingTtl"/>
+    /// so we don't re-rank the entire catalog on every page load.
+    /// </summary>
+    async Task<Dictionary<ulong, int>> GetMarechaiRankingAsync()
+    {
+        if(cache.TryGetValue(MARECHAI_RANKING_CACHE_KEY, out Dictionary<ulong, int> cached) && cached is not null)
+            return cached;
+
+        var allScores = await context.Softwares
+                                     .Select(s => new
+                                      {
+                                          s.Id,
+                                          CriticAvg = s.CriticReviews
+                                                       .Where(r => r.NormalizedScore != null)
+                                                       .Select(r => (double?)r.NormalizedScore)
+                                                       .Average(),
+                                          UserAvg = s.UserRatings
+                                                     .Select(r => (double?)r.Rating)
+                                                     .Average()
+                                      })
+                                     .Where(s => s.CriticAvg != null || s.UserAvg != null)
+                                     .ToListAsync();
+
+        var ranking = allScores.Select(s =>
+                              {
+                                  double? c = s.CriticAvg.HasValue ? s.CriticAvg.Value / 10.0 : null;
+                                  double? u = s.UserAvg.HasValue ? s.UserAvg.Value * 2.0 : null;
+
+                                  double score;
+
+                                  if(c.HasValue && u.HasValue)
+                                      score = (c.Value + u.Value) / 2.0;
+                                  else if(c.HasValue)
+                                      score = c.Value;
+                                  else
+                                      score = u!.Value;
+
+                                  return new { s.Id, Score = Math.Round(score, 1) };
+                              })
+                              .OrderByDescending(s => s.Score)
+                              .ThenBy(s => s.Id)
+                              .Select((s, i) => new { s.Id, Rank = i + 1 })
+                              .ToDictionary(x => x.Id, x => x.Rank);
+
+        cache.Set(MARECHAI_RANKING_CACHE_KEY, ranking, _marechaiRankingTtl);
+
+        return ranking;
     }
 
     static string GetAvatarUrl(ApplicationUser user)

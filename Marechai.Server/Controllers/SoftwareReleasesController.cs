@@ -560,51 +560,46 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
     [HttpGet("/software/{softwareId:ulong}/compilations")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<List<SoftwareReleaseDto>>> GetCompilationsForSoftwareAsync(ulong softwareId)
-    {
-        // Collect release IDs from both versioned and versionless compilations
-        var versionedIds = context.SoftwareVersionBySoftwareRelease
-                                  .Where(x => x.SoftwareVersion.SoftwareId == softwareId)
-                                  .Select(x => x.ReleaseId);
-
-        var versionlessIds = context.SoftwareBySoftwareRelease
-                                    .Where(x => x.SoftwareId == softwareId)
-                                    .Select(x => x.ReleaseId);
-
-        var releaseIds = await versionedIds.Union(versionlessIds).Distinct().ToListAsync();
-
-        return await context.SoftwareReleases
-                    .Where(r => releaseIds.Contains(r.Id))
-                    .OrderBy(r => r.Title)
-                    .Select(r => new SoftwareReleaseDto
-                     {
-                         Id                = r.Id,
-                         Title             = r.Title,
-                         IsCompilation     = r.IsCompilation,
-                         SoftwareId        = r.SoftwareId,
-                         Software          = r.Software.Name,
-                         SoftwareVersionId = r.SoftwareVersionId,
-                         PlatformId        = r.PlatformId,
-                         Platform          = r.Platform.Name,
-                         Regions           = r.Regions.Select(rg => new UnM49BySoftwareReleaseDto
-                         {
-                             SoftwareReleaseId = rg.SoftwareReleaseId,
-                             UnM49Id           = rg.UnM49Id,
-                             RegionName        = rg.UnM49.Name
-                         }).ToList(),
-                         Languages         = r.Languages.Select(lg => new LanguageBySoftwareReleaseDto
-                         {
-                             SoftwareReleaseId = lg.SoftwareReleaseId,
-                             LanguageCode      = lg.LanguageCode,
-                             Language          = lg.Language.ReferenceName
-                         }).ToList(),
-                         PublisherId       = r.PublisherId,
-                         Publisher         = r.Publisher.Name,
-                         ReleaseDate       = r.ReleaseDate,
-                         ReleaseDatePrecision = r.ReleaseDatePrecision
-                     })
-                    .ToListAsync();
-    }
+    public Task<List<SoftwareReleaseDto>> GetCompilationsForSoftwareAsync(ulong softwareId) =>
+        // Single round-trip: compose the releaseId set as a subquery directly inside
+        // the projection's Where clause instead of materializing IDs first and then
+        // running a separate Contains(...) query.
+        context.SoftwareReleases
+               .Where(r => context.SoftwareVersionBySoftwareRelease
+                                  .Any(x => x.ReleaseId == r.Id && x.SoftwareVersion.SoftwareId == softwareId) ||
+                           context.SoftwareBySoftwareRelease
+                                  .Any(x => x.ReleaseId == r.Id && x.SoftwareId == softwareId))
+               .OrderBy(r => r.Title)
+               .Select(r => new SoftwareReleaseDto
+                {
+                    Id                = r.Id,
+                    Title             = r.Title,
+                    IsCompilation     = r.IsCompilation,
+                    SoftwareId        = r.SoftwareId,
+                    Software          = r.Software.Name,
+                    SoftwareVersionId = r.SoftwareVersionId,
+                    PlatformId        = r.PlatformId,
+                    Platform          = r.Platform.Name,
+                    Regions = r.Regions.Select(rg => new UnM49BySoftwareReleaseDto
+                                        {
+                                            SoftwareReleaseId = rg.SoftwareReleaseId,
+                                            UnM49Id           = rg.UnM49Id,
+                                            RegionName        = rg.UnM49.Name
+                                        })
+                                       .ToList(),
+                    Languages = r.Languages.Select(lg => new LanguageBySoftwareReleaseDto
+                                            {
+                                                SoftwareReleaseId = lg.SoftwareReleaseId,
+                                                LanguageCode      = lg.LanguageCode,
+                                                Language          = lg.Language.ReferenceName
+                                            })
+                                           .ToList(),
+                    PublisherId          = r.PublisherId,
+                    Publisher            = r.Publisher.Name,
+                    ReleaseDate          = r.ReleaseDate,
+                    ReleaseDatePrecision = r.ReleaseDatePrecision
+                })
+               .ToListAsync();
 
     // --- Versionless compilation junction endpoints ---
 

@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -13,6 +14,7 @@ using Markdig;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
@@ -208,6 +210,27 @@ file class Program
                     options.JsonSerializerOptions.NumberHandling       = JsonNumberHandling.Strict;
                 });
 
+        // In-process memory cache used by SoftwareController for the global Marechai
+        // ranking (avoids re-ranking the catalog on every page load).
+        builder.Services.AddMemoryCache();
+
+        // Compress JSON / text responses. Brotli + Gzip only — the application/json
+        // payloads from this API compress to ~10–20% of their original size, which
+        // is significant over real networks (and free on localhost).
+        builder.Services.AddResponseCompression(options =>
+        {
+            options.EnableForHttps = true;
+            options.Providers.Add<BrotliCompressionProvider>();
+            options.Providers.Add<GzipCompressionProvider>();
+            options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[]
+            {
+                "application/json", "application/problem+json", "text/plain"
+            });
+        });
+
+        builder.Services.Configure<BrotliCompressionProviderOptions>(o => o.Level = CompressionLevel.Fastest);
+        builder.Services.Configure<GzipCompressionProviderOptions>(o   => o.Level = CompressionLevel.Fastest);
+
         builder.Services.ConfigureHttpJsonOptions(options =>
         {
             // Tell OpenAPI generator to report number fields as integers/floats only, not strings
@@ -288,9 +311,15 @@ file class Program
                                                                            new
                                                                                MariaDbServerVersion(new System.
                                                                                    Version(12, 0, 2)),
+                                                                           // SingleQuery is the safer default when the DB is on a
+                                                                           // remote host: SplitQuery turns one logical query into N+1
+                                                                           // round-trips (one per collection navigation), each costing
+                                                                           // the DB RTT (~57 ms in this deployment). Endpoints that
+                                                                           // actually benefit from splitting can opt in per-query with
+                                                                           // .AsSplitQuery().
                                                                            b => b.UseMicrosoftJson()
                                                                                     .EnableStringComparisonTranslations()
-                                                                                    .UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
+                                                                                    .UseQuerySplittingBehavior(QuerySplittingBehavior.SingleQuery)));
 
         builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                .AddRoles<ApplicationRole>()
@@ -316,6 +345,9 @@ file class Program
 
         // Only redirect to HTTPS in production
         if(!app.Environment.IsDevelopment()) app.UseHttpsRedirection();
+
+        // Compression must run before CORS / auth so the response body is compressed.
+        app.UseResponseCompression();
 
         // Use CORS before authentication/authorization
         app.UseCors("AllowFrontend");

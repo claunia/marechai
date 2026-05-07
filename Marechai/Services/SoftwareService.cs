@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.Kiota.Abstractions;
@@ -708,18 +709,17 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
 
             if(ids is null or { Count: 0 }) return [];
 
-            var screenshots = new List<SoftwareScreenshotDto>();
+            // Fan out: fetch every screenshot's details in parallel instead of N
+            // sequential round-trips. This turns an O(N) latency wall into O(1)
+            // (capped by the HttpClient connection pool).
+            Task<SoftwareScreenshotDto>[] tasks = ids
+                                                 .Where(id => id.HasValue)
+                                                 .Select(id => GetScreenshotDetailsAsync(id!.Value))
+                                                 .ToArray();
 
-            foreach(Guid? id in ids)
-            {
-                if(!id.HasValue) continue;
+            SoftwareScreenshotDto[] results = await Task.WhenAll(tasks);
 
-                SoftwareScreenshotDto dto = await GetScreenshotDetailsAsync(id.Value);
-
-                if(dto is not null) screenshots.Add(dto);
-            }
-
-            return screenshots;
+            return results.Where(d => d is not null).ToList();
         }
         catch
         {

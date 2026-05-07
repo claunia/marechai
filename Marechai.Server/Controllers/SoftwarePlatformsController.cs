@@ -23,6 +23,7 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -33,24 +34,39 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Marechai.Server.Controllers;
 
 [Route("/software/platforms")]
 [ApiController]
-public class SoftwarePlatformsController(MarechaiContext context) : ControllerBase
+public class SoftwarePlatformsController(MarechaiContext context, IMemoryCache cache) : ControllerBase
 {
+    // Software platforms barely change — cache the full list briefly so the
+    // /software landing page doesn't re-hit the DB on every load.
+    const           string   PLATFORMS_CACHE_KEY = "software:platforms:list";
+    static readonly TimeSpan _platformsCacheTtl  = TimeSpan.FromMinutes(5);
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<SoftwarePlatformDto>> GetAsync() => context.SoftwarePlatforms.OrderBy(p => p.Name)
-                                                                .Select(p => new SoftwarePlatformDto
-                                                                 {
-                                                                     Id   = p.Id,
-                                                                     Name = p.Name
-                                                                 })
-                                                                .ToListAsync();
+    public async Task<List<SoftwarePlatformDto>> GetAsync()
+    {
+        if(cache.TryGetValue(PLATFORMS_CACHE_KEY, out List<SoftwarePlatformDto> cached) && cached is not null)
+            return cached;
+
+        List<SoftwarePlatformDto> platforms = await context.SoftwarePlatforms.OrderBy(p => p.Name)
+                                                           .Select(p => new SoftwarePlatformDto
+                                                            {
+                                                                Id   = p.Id,
+                                                                Name = p.Name
+                                                            })
+                                                           .ToListAsync();
+
+        cache.Set(PLATFORMS_CACHE_KEY, platforms, _platformsCacheTtl);
+
+        return platforms;
+    }
 
     [HttpGet("{id:ulong}")]
     [AllowAnonymous]

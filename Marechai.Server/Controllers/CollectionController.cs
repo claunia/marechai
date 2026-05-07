@@ -55,12 +55,28 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
 
         if(user is null) return NotFound();
 
+        // Single round-trip instead of 4 sequential CountAsync calls. Each Count
+        // becomes a scalar subquery the DB executes in parallel as part of one
+        // composite SELECT.
+        string userId = user.Id;
+
+        var counts = await context.Users
+                                  .Where(u => u.Id == userId)
+                                  .Select(_ => new
+                                   {
+                                       Books    = context.CollectedBooks.Count(c => c.UserId == userId),
+                                       Docs     = context.CollectedDocuments.Count(c => c.UserId == userId),
+                                       Machines = context.OwnedMachines.Count(c => c.UserId == userId),
+                                       Releases = context.CollectedSoftwareReleases.Count(c => c.UserId == userId)
+                                   })
+                                  .FirstOrDefaultAsync();
+
         var summary = new UserCollectionSummaryDto
         {
-            BookCount            = await context.CollectedBooks.CountAsync(c => c.UserId == user.Id),
-            DocumentCount        = await context.CollectedDocuments.CountAsync(c => c.UserId == user.Id),
-            MachineCount         = await context.OwnedMachines.CountAsync(c => c.UserId == user.Id),
-            SoftwareReleaseCount = await context.CollectedSoftwareReleases.CountAsync(c => c.UserId == user.Id)
+            BookCount            = counts?.Books    ?? 0,
+            DocumentCount        = counts?.Docs     ?? 0,
+            MachineCount         = counts?.Machines ?? 0,
+            SoftwareReleaseCount = counts?.Releases ?? 0
         };
 
         return Ok(summary);

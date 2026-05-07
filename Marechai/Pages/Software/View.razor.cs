@@ -136,143 +136,152 @@ public partial class View
 
         try
         {
+            _software = await Service.GetSoftwareByIdAsync(Id);
 
-        _software = await Service.GetSoftwareByIdAsync(Id);
+            if(_software is null)
+            {
+                _loaded = true;
+                StateHasChanged();
 
-        if(_software is null)
-        {
+                return;
+            }
+
+            // ── Two-phase load ──
+            // EVERY task is launched in parallel up front so they all benefit from
+            // the connection pool concurrently. We then await them in two waves:
+            //   Phase 1: data the header + Overview tab consume → unblocks LCP.
+            //   Phase 2: data only the Specifications/Releases/Media/Reviews tabs
+            //            need → re-renders once it arrives but doesn't block first paint.
+
+            // Phase 1 (header + Overview)
+            Task<List<SoftwareGenreDto>>            genresTask        = Service.GetGenresAsync(Id);
+            Task<List<SoftwareDto>>                 addonsTask        = Service.GetAddonsAsync(Id);
+            Task<string>                            descriptionTask   = Service.GetDescriptionTextAsync(Id);
+            Task<List<SoftwareCoverDto>>            coversTask        = Service.GetCoversBySoftwareAsync(Id);
+            Task<MarechaiScoreDto>                  marechaiScoreTask = AuthService.GetMarechaiScoreAsync(Id);
+            Task<UserReviewSummaryDto>              userSummaryTask   = AuthService.GetUserReviewSummaryAsync(Id);
+            Task<AuthenticationState>               authStateTask     = AuthStateProvider.GetAuthenticationStateAsync();
+            Task<SoftwareUserRatingDto>             myRatingTask      = AuthService.GetMyRatingAsync(Id);
+
+            // Phase 2 (deferred tabs) — kicked off NOW so they overlap Phase 1 awaits
+            Task<List<SoftwareCompanyRoleDto>>      companiesTask     = Service.GetCompaniesAsync(Id);
+            Task<List<SoftwareVersionDto>>          versionsTask      = Service.GetVersionsAsync(Id);
+            Task<List<PersonBySoftwareDto>>         creditsTask       = Service.GetCreditsBySoftwareAsync(Id);
+            Task<List<SoftwareAttributeDto>>        attributesTask    = Service.GetAttributesAsync(Id);
+            Task<List<SoftwareReleaseDto>>          releasesTask      = Service.GetReleasesBySoftwareAsync(Id);
+            Task<List<SoftwarePromoArtDto>>         promoArtTask      = Service.GetPromoArtBySoftwareAsync(Id);
+            Task<List<SoftwareVideoDto>>            videosTask        = Service.GetVideosBySoftwareAsync(Id);
+            Task<List<SoftwareReleaseDto>>          compilationsTask  = Service.GetCompilationsForSoftwareAsync(Id);
+            Task<List<SoftwareCriticReviewDto>>     criticReviewsTask = Service.GetCriticReviewsAsync(Id);
+            Task<CriticReviewSummaryDto>            criticSummaryTask = Service.GetCriticReviewSummaryAsync(Id);
+            Task<List<SoftwareScreenshotDto>>       screenshotsTask   = Service.GetScreenshotsBySoftwareAsync(Id);
+            Task<List<SoftwareUserReviewDto>>       userReviewsTask   = AuthService.GetUserReviewsAsync(Id);
+
+            // ── Phase 1 await ──
+            await Task.WhenAll(genresTask, addonsTask, descriptionTask, coversTask,
+                               marechaiScoreTask, userSummaryTask, authStateTask, myRatingTask);
+
+            _genres            = genresTask.Result;
+            _addons            = addonsTask.Result;
+            _description       = descriptionTask.Result;
+            _covers            = coversTask.Result;
+            _marechaiScore     = marechaiScoreTask.Result;
+            _userReviewSummary = userSummaryTask.Result;
+
+            AuthenticationState authState = authStateTask.Result;
+            _isAuthenticated = authState.User.Identity?.IsAuthenticated == true;
+            _currentUserId   = authState.User.FindFirst(ClaimTypes.Sid)?.Value;
+            _isAdmin         = authState.User.IsInRole("Admin") || authState.User.IsInRole("UberAdmin");
+
+            _genresByType = _genres
+                           .GroupBy(g => g.TypeName ?? "Genre")
+                           .OrderBy(g => g.Key)
+                           .ToDictionary(g => g.Key, g => g.OrderBy(x => x.Name).ToList());
+
+            // Pick a random front cover for the hero header (covers list is also reused
+            // by the Media tab below).
+            var frontCovers = _covers.Where(c => c.Type == 0).ToList();
+
+            if(frontCovers.Count > 0)
+                _heroCover = frontCovers[Random.Shared.Next(frontCovers.Count)];
+
+            if(_isAuthenticated)
+            {
+                SoftwareUserRatingDto myRating = myRatingTask.Result;
+                _myRatingFloat = myRating is not null ? myRating.Rating.GetValueOrDefault() : 0;
+            }
+
+            // First render: Overview tab + header are fully populated.
             _loaded = true;
             StateHasChanged();
 
-            return;
-        }
+            // ── Phase 2 await ──
+            await Task.WhenAll(companiesTask, versionsTask, creditsTask, attributesTask, releasesTask,
+                               promoArtTask, videosTask, compilationsTask, criticReviewsTask, criticSummaryTask,
+                               screenshotsTask, userReviewsTask);
 
-        _companies = await Service.GetCompaniesAsync(Id);
-        _versions  = await Service.GetVersionsAsync(Id);
-        _addons    = await Service.GetAddonsAsync(Id);
+            _companies     = companiesTask.Result;
+            _versions      = versionsTask.Result;
+            _credits       = creditsTask.Result;
+            _attributes    = attributesTask.Result;
+            _releases      = releasesTask.Result;
+            _promoArt      = promoArtTask.Result;
+            _videos        = videosTask.Result;
+            _compilations  = compilationsTask.Result;
+            _criticReviews = criticReviewsTask.Result;
+            _reviewSummary = criticSummaryTask.Result;
+            _screenshots   = screenshotsTask.Result;
+            _userReviews   = userReviewsTask.Result;
 
-        // Load credits
-        _credits = await Service.GetCreditsBySoftwareAsync(Id);
-
-        _creditsByRole = _credits
-                        .GroupBy(c => c.Role ?? "Other")
-                        .OrderBy(g => g.Key)
-                        .ToDictionary(g => g.Key, g => g.ToList());
-
-        // Load genres
-        _genres = await Service.GetGenresAsync(Id);
-
-        _genresByType = _genres
-                       .GroupBy(g => g.TypeName ?? "Genre")
-                       .OrderBy(g => g.Key)
-                       .ToDictionary(g => g.Key, g => g.OrderBy(x => x.Name).ToList());
-
-        // Load attributes (specs + ratings)
-        _attributes = await Service.GetAttributesAsync(Id);
-
-        _specs   = _attributes.Where(a => a.Category == "Spec").ToList();
-        _ratings = _attributes.Where(a => a.Category == "Rating").ToList();
-
-        _specsByPlatform = _specs
-                          .GroupBy(s => s.PlatformName ?? "Unknown")
-                          .OrderBy(g => g.Key)
-                          .ToDictionary(g => g.Key,
-                                        g => g.DistinctBy(s => (s.Key, s.Value)).ToList());
-
-        _ratingsByPlatform = _ratings
-                            .GroupBy(r => r.PlatformName ?? "Unknown")
+            _creditsByRole = _credits
+                            .GroupBy(c => c.Role ?? "Other")
                             .OrderBy(g => g.Key)
-                            .ToDictionary(g => g.Key,
-                                          g => g.DistinctBy(r => (r.Key, r.Value)).ToList());
+                            .ToDictionary(g => g.Key, g => g.ToList());
 
-        // Load description with language fallback to English
-        _description = await Service.GetDescriptionTextAsync(Id);
-        _versions.Sort((a, b) => NaturalStringComparer.Instance.Compare(a.VersionString, b.VersionString));
+            _specs   = _attributes.Where(a => a.Category == "Spec").ToList();
+            _ratings = _attributes.Where(a => a.Category == "Rating").ToList();
 
-        // Load all non-compilation releases for this software (flat list)
-        _releases = await Service.GetReleasesBySoftwareAsync(Id);
+            _specsByPlatform = _specs
+                              .GroupBy(s => s.PlatformName ?? "Unknown")
+                              .OrderBy(g => g.Key)
+                              .ToDictionary(g => g.Key,
+                                            g => g.DistinctBy(s => (s.Key, s.Value)).ToList());
 
-        // Load covers from all releases
-        _covers = await Service.GetCoversBySoftwareAsync(Id);
-
-        _coversByRelease = _covers
-                           .GroupBy(c =>
-                            {
-                                string label = c.PlatformName ?? "Unknown";
-
-                                if(!string.IsNullOrEmpty(c.RegionNames))
-                                    label += " — " + c.RegionNames;
-
-                                return label;
-                            })
-                           .OrderBy(g => g.Key)
-                           .ToDictionary(g => g.Key, g => g.OrderBy(c => c.Type).ToList());
-
-        // Pick a random front cover for the hero header
-        var frontCovers = _covers.Where(c => c.Type == 0).ToList();
-
-        if(frontCovers.Count > 0)
-            _heroCover = frontCovers[Random.Shared.Next(frontCovers.Count)];
-
-        // Load promo art
-        _promoArt = await Service.GetPromoArtBySoftwareAsync(Id);
-
-        _promoArtByGroup = _promoArt
-                          .GroupBy(p => p.GroupName ?? "Other")
-                          .OrderBy(g => g.Key)
-                          .ToDictionary(g => g.Key, g => g.ToList());
-
-        // Load videos
-        _videos = await Service.GetVideosBySoftwareAsync(Id);
-
-        // Load compilations that include this software
-        _compilations = await Service.GetCompilationsForSoftwareAsync(Id);
-
-        // Load critic reviews
-        _criticReviews = await Service.GetCriticReviewsAsync(Id);
-        _reviewSummary = await Service.GetCriticReviewSummaryAsync(Id);
-
-        // Load auth state
-        AuthenticationState authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        _isAuthenticated = authState.User.Identity?.IsAuthenticated == true;
-        _currentUserId   = authState.User.FindFirst(ClaimTypes.Sid)?.Value;
-        _isAdmin         = authState.User.IsInRole("Admin") || authState.User.IsInRole("UberAdmin");
-
-        // Load user reviews, ratings, score
-        _userReviews       = await AuthService.GetUserReviewsAsync(Id);
-        _userReviewSummary = await AuthService.GetUserReviewSummaryAsync(Id);
-        _marechaiScore     = await AuthService.GetMarechaiScoreAsync(Id);
-
-        if(_isAuthenticated)
-        {
-            SoftwareUserRatingDto myRating = await AuthService.GetMyRatingAsync(Id);
-            _myRatingFloat = myRating is not null ? myRating.Rating.GetValueOrDefault() : 0;
-            _myReview    = _userReviews.FirstOrDefault(r => r.UserId == _currentUserId);
-        }
-
-        // Load screenshots
-        List<Guid?> screenshotIds = await Service.GetScreenshotIdsAsync(Id);
-
-        _screenshots = [];
-
-        foreach(Guid? id in screenshotIds)
-        {
-            if(id.HasValue && id.Value != Guid.Empty)
-            {
-                SoftwareScreenshotDto detail = await Service.GetScreenshotDetailsAsync(id.Value);
-
-                if(detail != null) _screenshots.Add(detail);
-            }
-        }
-
-        // Group screenshots by platform
-        _screenshotsByPlatform = _screenshots
-                                .GroupBy(s => s.PlatformName ?? "Unknown")
+            _ratingsByPlatform = _ratings
+                                .GroupBy(r => r.PlatformName ?? "Unknown")
                                 .OrderBy(g => g.Key)
-                                .ToDictionary(g => g.Key, g => g.ToList());
+                                .ToDictionary(g => g.Key,
+                                              g => g.DistinctBy(r => (r.Key, r.Value)).ToList());
 
-        _loaded = true;
-        StateHasChanged();
+            _versions.Sort((a, b) => NaturalStringComparer.Instance.Compare(a.VersionString, b.VersionString));
+
+            _coversByRelease = _covers
+                              .GroupBy(c =>
+                               {
+                                   string label = c.PlatformName ?? "Unknown";
+
+                                   if(!string.IsNullOrEmpty(c.RegionNames))
+                                       label += " — " + c.RegionNames;
+
+                                   return label;
+                               })
+                              .OrderBy(g => g.Key)
+                              .ToDictionary(g => g.Key, g => g.OrderBy(c => c.Type).ToList());
+
+            _promoArtByGroup = _promoArt
+                              .GroupBy(p => p.GroupName ?? "Other")
+                              .OrderBy(g => g.Key)
+                              .ToDictionary(g => g.Key, g => g.ToList());
+
+            _screenshotsByPlatform = _screenshots
+                                    .GroupBy(s => s.PlatformName ?? "Unknown")
+                                    .OrderBy(g => g.Key)
+                                    .ToDictionary(g => g.Key, g => g.ToList());
+
+            if(_isAuthenticated)
+                _myReview = _userReviews.FirstOrDefault(r => r.UserId == _currentUserId);
+
+            StateHasChanged();
         }
         catch(ObjectDisposedException)
         {
