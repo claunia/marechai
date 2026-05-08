@@ -505,4 +505,13 @@
     <data name="No machines found." xml:space="preserve">
         <value>No machines found.</value>
     </data>
+    <data name="Specifications" xml:space="preserve">
+        <value>Specifications</value>
+    </data>
+    <data name="Media tab" xml:space="preserve">
+        <value>Media</value>
+    </data>
+    <data name="Software" xml:space="preserve">
+        <value>Software</value>
+    </data>
 </root>

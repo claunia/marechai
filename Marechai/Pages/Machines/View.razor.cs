@@ -46,18 +46,53 @@ public partial class View
     List<MachineVideoDto> _videos;
     bool             _togglingCollection;
 
+    // Tab state — backs the responsive sticky MudTabs in View.razor.
+    // _tabNames is rebuilt after data loads to include "software" only when
+    // the machine actually has software entries (the list can be very long,
+    // so we hide the panel entirely when empty).
+    string[] _tabNames = ["specifications", "media"];
+    string   _activeTab = "specifications";
+
+    int _activeTabIndex => Math.Max(0, Array.IndexOf(_tabNames, _activeTab));
+
     [CascadingParameter]
     Task<AuthenticationState> AuthState { get; set; }
 
     [Parameter]
     public int Id { get; set; }
 
+    [SupplyParameterFromQuery(Name = "tab")]
+    public string TabParam { get; set; }
+
+    [Inject]
+    NavigationManager NavManager { get; set; }
+
     protected override void OnParametersSet()
     {
+        // Validate against the static superset; the index resolver collapses
+        // missing tabs (e.g. "software" on a machine with none) to 0.
+        string tab = (TabParam ?? "specifications").ToLowerInvariant();
+        _activeTab = tab is "specifications" or "software" or "media" ? tab : "specifications";
+
         if(Id == _lastId) return;
 
         _lastId = Id;
         _loaded = false;
+    }
+
+    void OnTabChanged(int index)
+    {
+        if(index < 0 || index >= _tabNames.Length) return;
+
+        string newTab = _tabNames[index];
+
+        if(newTab == _activeTab) return;
+
+        _activeTab = newTab;
+
+        // Default tab (specifications) drops the query param to keep URLs clean.
+        string newUri = NavManager.GetUriWithQueryParameter("tab", newTab == "specifications" ? null : newTab);
+        NavManager.NavigateTo(newUri, false, true);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -77,6 +112,13 @@ public partial class View
 
         if(authState.User.Identity?.IsAuthenticated == true)
             _isCollected = await CollectionSvc.IsMachineCollectedAsync(Id);
+
+        // Insert the Software tab between Specifications and Media when the
+        // machine has any software, so _activeTabIndex resolves "software"
+        // correctly on first paint after a deep link.
+        _tabNames = _software is { Count: > 0 }
+                        ? ["specifications", "software", "media"]
+                        : ["specifications", "media"];
 
         _loaded = true;
         StateHasChanged();

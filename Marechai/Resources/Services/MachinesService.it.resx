@@ -629,4 +629,12 @@
         <value>No machines found.</value>
         <comment>No machines found.</comment>
     </data>
+    <data name="Specifications" xml:space="preserve">
+        <value>Specifications</value>
+        <comment>Specifications</comment>
+    </data>
+    <data name="Media tab" xml:space="preserve">
+        <value>Media</value>
+        <comment>Media tab</comment>
+    </data>
 </root>
