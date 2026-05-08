@@ -482,4 +482,16 @@
         <value>Torna ai sintetizzatori sonori</value>
         <comment>Back to Sound Synths</comment>
     </data>
+    <data name="Specifications" xml:space="preserve">
+        <value>Specifiche</value>
+        <comment>Specifications</comment>
+    </data>
+    <data name="Media tab" xml:space="preserve">
+        <value>Media</value>
+        <comment>Media</comment>
+    </data>
+    <data name="Machines" xml:space="preserve">
+        <value>Macchine</value>
+        <comment>Machines</comment>
+    </data>
 </root>

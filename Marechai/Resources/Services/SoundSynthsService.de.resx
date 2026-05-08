@@ -482,4 +482,16 @@
         <value>Zurück zu Soundsynthesizern</value>
         <comment>Back to Sound Synths</comment>
     </data>
+    <data name="Specifications" xml:space="preserve">
+        <value>Spezifikationen</value>
+        <comment>Specifications</comment>
+    </data>
+    <data name="Media tab" xml:space="preserve">
+        <value>Medien</value>
+        <comment>Media</comment>
+    </data>
+    <data name="Machines" xml:space="preserve">
+        <value>Maschinen</value>
+        <comment>Machines</comment>
+    </data>
 </root>
