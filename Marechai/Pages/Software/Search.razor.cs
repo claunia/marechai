@@ -23,25 +23,34 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using Marechai.ApiClient.Models;
+using Marechai.Data;
 using Microsoft.AspNetCore.Components;
 
 namespace Marechai.Pages.Software;
 
 public partial class Search
 {
-    char?           _character;
-    int?            _lastGenreId;
-    int?            _lastPlatformId;
-    string          _lastStartingCharacter;
-    int?            _lastYear;
-    bool            _loaded;
-    string          _genreName;
-    string          _platformName;
+    char?             _character;
+    int?              _lastGenreId;
+    string            _lastKindString;
+    int?              _lastPlatformId;
+    string            _lastStartingCharacter;
+    int?              _lastYear;
+    bool              _loaded;
+    string            _genreName;
+    SoftwareKind?     _kind;
+    string            _platformName;
     List<SoftwareDto> _software;
+
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
 
     [Parameter]
     public int? Year { get; set; }
@@ -61,15 +70,20 @@ public partial class Search
     [SupplyParameterFromQuery(Name = "value")]
     public string SpecValue { get; set; }
 
+    [SupplyParameterFromQuery(Name = "kind")]
+    public string KindString { get; set; }
+
     protected override void OnParametersSet()
     {
         if(Year == _lastYear && StartingCharacter == _lastStartingCharacter &&
-           PlatformId == _lastPlatformId && GenreId == _lastGenreId) return;
+           PlatformId == _lastPlatformId && GenreId == _lastGenreId &&
+           string.Equals(KindString, _lastKindString, StringComparison.OrdinalIgnoreCase)) return;
 
         _lastYear              = Year;
         _lastStartingCharacter = StartingCharacter;
         _lastPlatformId        = PlatformId;
         _lastGenreId           = GenreId;
+        _lastKindString        = KindString;
         _loaded                = false;
     }
 
@@ -78,6 +92,13 @@ public partial class Search
         if(_loaded) return;
 
         _character = null;
+        _kind      = null;
+        _software  = null;
+
+        if(!string.IsNullOrWhiteSpace(KindString) &&
+           Enum.TryParse<SoftwareKind>(KindString, true, out SoftwareKind parsed) &&
+           Enum.IsDefined(typeof(SoftwareKind), parsed))
+            _kind = parsed;
 
         if(!string.IsNullOrWhiteSpace(StartingCharacter) && StartingCharacter.Length == 1)
         {
@@ -90,13 +111,13 @@ public partial class Search
             if(_character < '0' || _character > '9' && _character < 'A' || _character > 'Z') _character = null;
         }
 
-        if(_character.HasValue) _software = await Service.GetSoftwareByLetterAsync(_character.Value);
+        if(_character.HasValue) _software = await Service.GetSoftwareByLetterAsync(_character.Value, _kind);
 
-        if(Year.HasValue && _software is null) _software = await Service.GetSoftwareByYearAsync(Year.Value);
+        if(Year.HasValue && _software is null) _software = await Service.GetSoftwareByYearAsync(Year.Value, _kind);
 
         if(PlatformId.HasValue && _software is null)
         {
-            _software = await Service.GetSoftwareByPlatformAsync(PlatformId.Value);
+            _software = await Service.GetSoftwareByPlatformAsync(PlatformId.Value, _kind);
 
             // Get platform name from first result or from platforms list
             List<SoftwarePlatformDto> platforms = await Service.GetPlatformsAsync();
@@ -105,7 +126,7 @@ public partial class Search
 
         if(GenreId.HasValue && _software is null)
         {
-            _software = await Service.GetSoftwareByGenreAsync(GenreId.Value);
+            _software = await Service.GetSoftwareByGenreAsync(GenreId.Value, _kind);
 
             // Get genre name from the genres list
             List<SoftwareGenreDto> genres = await Service.GetAllGenresAsync();
@@ -113,10 +134,27 @@ public partial class Search
         }
 
         if(!string.IsNullOrEmpty(SpecKey) && !string.IsNullOrEmpty(SpecValue) && _software is null)
-            _software = await Service.GetSoftwareBySpecAsync(SpecKey, SpecValue);
+            _software = await Service.GetSoftwareBySpecAsync(SpecKey, SpecValue, _kind);
 
-        _software ??= await Service.GetAllSoftwareAsync();
+        _software ??= await Service.GetAllSoftwareAsync(_kind);
         _loaded   =   true;
         StateHasChanged();
+    }
+
+    void OnKindChanged(SoftwareKind? value)
+    {
+        if(value == _kind) return;
+
+        // Rewrite the current URL preserving path + non-kind query params, replacing
+        // (or removing) the kind value, and force-reload via NavigateTo.
+        Uri    uri      = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        NameValueCollection q = HttpUtility.ParseQueryString(uri.Query);
+        q.Remove("kind");
+
+        if(value.HasValue) q["kind"] = value.Value.ToString();
+
+        string query  = q.Count == 0 ? string.Empty : "?" + q;
+        string target = uri.GetLeftPart(UriPartial.Path) + query;
+        NavigationManager.NavigateTo(target);
     }
 }

@@ -676,6 +676,8 @@ public class LocalizedStrings
     public string SoftwareIsEmbeddedSoftwareLabel => _l["SoftwareIsEmbeddedSoftwareLabel"];
     public string SoftwareIsSoftwareLabel => _l["SoftwareIsSoftwareLabel"];
     public string SoftwareIsCompilationLabel => _l["SoftwareIsCompilationLabel"];
+    public string SoftwareFilterByKindLabel => _l["SoftwareFilterByKindLabel"];
+    public string SoftwareAnyKindLabel => _l["SoftwareAnyKindLabel"];
     public string SoftwareKindLabel => _l["SoftwareKindLabel"];
     public string BaseSoftwareLabel => _l["BaseSoftwareLabel"];
     public string AddonsLabel => _l["AddonsLabel"];

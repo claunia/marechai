@@ -67,32 +67,42 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     const           string   SOFTWARE_COMPANIES_CACHE_KEY = "software:companies";
     static readonly TimeSpan _catalogCacheTtl             = TimeSpan.FromMinutes(5);
 
+    // Compilations have no Kind column; we treat them as if they were Game-kind
+    // when filtering, since the overwhelming majority of compilations are game
+    // collections. With no kind filter (or kind=Game) compilations are included;
+    // any other kind excludes them.
+    static bool ShouldIncludeCompilations(SoftwareKind? kind) =>
+        kind is null or SoftwareKind.Game;
+
+    static string CountCacheKey(SoftwareKind? kind) =>
+        kind is null ? SOFTWARE_COUNT_CACHE_KEY : $"{SOFTWARE_COUNT_CACHE_KEY}:{(int)kind.Value}";
+
     [HttpGet("count")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<int> GetSoftwareCountAsync([FromQuery] string search = null)
+    public async Task<int> GetSoftwareCountAsync([FromQuery] string search = null,
+                                                 [FromQuery] SoftwareKind? kind = null)
     {
+        bool   includeCompilations = ShouldIncludeCompilations(kind);
+        string cacheKey            = CountCacheKey(kind);
+
         // Fast path: no search filter — use the cached total.
         if(string.IsNullOrWhiteSpace(search))
         {
-            if(cache.TryGetValue(SOFTWARE_COUNT_CACHE_KEY, out int cachedCount)) return cachedCount;
+            if(cache.TryGetValue(cacheKey, out int cachedCount)) return cachedCount;
 
-            // Single round-trip: count software + compilation releases as a
-            // 2-element projection (was two awaited CountAsync calls).
-            var totals = await context.Softwares
-                                      .Select(_ => 1)
-                                      .GroupBy(_ => 1)
-                                      .Select(g => new
-                                       {
-                                           Software = g.Count(),
-                                           Compilations =
-                                               context.SoftwareReleases.Count(r => r.IsCompilation)
-                                       })
-                                      .FirstOrDefaultAsync();
+            IQueryable<Database.Models.Software> baseQuery = context.Softwares;
 
-            int total = (totals?.Software ?? 0) + (totals?.Compilations ?? 0);
-            cache.Set(SOFTWARE_COUNT_CACHE_KEY, total, _catalogCacheTtl);
+            if(kind.HasValue) baseQuery = baseQuery.Where(s => s.Kind == kind.Value);
+
+            int softwareTotal     = await baseQuery.CountAsync();
+            int compilationsTotal = includeCompilations
+                                        ? await context.SoftwareReleases.CountAsync(r => r.IsCompilation)
+                                        : 0;
+
+            int total = softwareTotal + compilationsTotal;
+            cache.Set(cacheKey, total, _catalogCacheTtl);
 
             return total;
         }
@@ -100,7 +110,11 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
         IQueryable<Database.Models.Software> query = context.Softwares;
         query = query.Where(s => s.Name.Contains(search));
 
+        if(kind.HasValue) query = query.Where(s => s.Kind == kind.Value);
+
         int softwareCount = await query.CountAsync();
+
+        if(!includeCompilations) return softwareCount;
 
         IQueryable<SoftwareRelease> compQuery =
             context.SoftwareReleases.Where(r => r.IsCompilation && r.Title.Contains(search));
@@ -161,12 +175,17 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<SoftwareDto>> GetSoftwareByLetterAsync(char c)
+    public async Task<List<SoftwareDto>> GetSoftwareByLetterAsync(char c,
+                                                                  [FromQuery] SoftwareKind? kind = null)
     {
         // Single SQL round-trip: UNION ALL the software + compilations projection
         // (was two sequential awaited queries before merging in memory).
-        IQueryable<SoftwareDto> softwareQuery = context.Softwares
-           .Where(s => EF.Functions.Like(s.Name, $"{c}%"))
+        IQueryable<Database.Models.Software> baseSoftwareQuery =
+            context.Softwares.Where(s => EF.Functions.Like(s.Name, $"{c}%"));
+
+        if(kind.HasValue) baseSoftwareQuery = baseSoftwareQuery.Where(s => s.Kind == kind.Value);
+
+        IQueryable<SoftwareDto> softwareQuery = baseSoftwareQuery
            .Select(s => new SoftwareDto
             {
                 Id           = s.Id,
@@ -182,6 +201,11 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                                       .Select(c2 => (Guid?)c2.Id)
                                       .FirstOrDefault()
             });
+
+        if(!ShouldIncludeCompilations(kind))
+            return (await softwareQuery.ToListAsync())
+                  .OrderBy(s => s.Name, NaturalStringComparer.Instance)
+                  .ToList();
 
         IQueryable<SoftwareDto> compilationsQuery = context.SoftwareReleases
            .Where(r => r.IsCompilation && EF.Functions.Like(r.Title, $"{c}%"))
@@ -208,14 +232,19 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<SoftwareDto>> GetSoftwareByYearAsync(int year)
+    public async Task<List<SoftwareDto>> GetSoftwareByYearAsync(int year,
+                                                                [FromQuery] SoftwareKind? kind = null)
     {
         // Single SQL round-trip via Concat (UNION ALL).
-        IQueryable<SoftwareDto> softwareQuery = context.Softwares
+        IQueryable<Database.Models.Software> baseSoftwareQuery = context.Softwares
            .Where(s => s.Versions.Any(v => v.Releases.Any(r => r.ReleaseDate != null &&
                                                                r.ReleaseDate.Value.Year == year))
                     || s.DirectReleases.Any(r => r.ReleaseDate != null &&
-                                                 r.ReleaseDate.Value.Year == year))
+                                                 r.ReleaseDate.Value.Year == year));
+
+        if(kind.HasValue) baseSoftwareQuery = baseSoftwareQuery.Where(s => s.Kind == kind.Value);
+
+        IQueryable<SoftwareDto> softwareQuery = baseSoftwareQuery
            .Select(s => new SoftwareDto
             {
                 Id            = s.Id,
@@ -231,6 +260,11 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                                       .Select(c => (Guid?)c.Id)
                                       .FirstOrDefault()
             });
+
+        if(!ShouldIncludeCompilations(kind))
+            return (await softwareQuery.ToListAsync())
+                  .OrderBy(s => s.Name, NaturalStringComparer.Instance)
+                  .ToList();
 
         IQueryable<SoftwareDto> compilationsQuery = context.SoftwareReleases
            .Where(r => r.IsCompilation &&
@@ -259,12 +293,17 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<SoftwareDto>> GetSoftwareByPlatformAsync(ulong platformId)
+    public async Task<List<SoftwareDto>> GetSoftwareByPlatformAsync(ulong platformId,
+                                                                    [FromQuery] SoftwareKind? kind = null)
     {
         // Single SQL round-trip via Concat (UNION ALL).
-        IQueryable<SoftwareDto> softwareQuery = context.Softwares
+        IQueryable<Database.Models.Software> baseSoftwareQuery = context.Softwares
            .Where(s => s.Versions.Any(v => v.Releases.Any(r => r.PlatformId == platformId))
-                    || s.DirectReleases.Any(r => r.PlatformId == platformId))
+                    || s.DirectReleases.Any(r => r.PlatformId == platformId));
+
+        if(kind.HasValue) baseSoftwareQuery = baseSoftwareQuery.Where(s => s.Kind == kind.Value);
+
+        IQueryable<SoftwareDto> softwareQuery = baseSoftwareQuery
            .Select(s => new SoftwareDto
             {
                 Id            = s.Id,
@@ -280,6 +319,11 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                                       .Select(c => (Guid?)c.Id)
                                       .FirstOrDefault()
             });
+
+        if(!ShouldIncludeCompilations(kind))
+            return (await softwareQuery.ToListAsync())
+                  .OrderBy(s => s.Name, NaturalStringComparer.Instance)
+                  .ToList();
 
         IQueryable<SoftwareDto> compilationsQuery = context.SoftwareReleases
            .Where(r => r.IsCompilation && r.PlatformId == platformId)
@@ -384,12 +428,16 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     public async Task<List<SoftwareDto>> GetAsync([FromQuery] int? skip   = null, [FromQuery] int? take = null,
                                             [FromQuery] string search = null,
                                             [FromQuery] string sortBy = null,
-                                            [FromQuery] bool sortDescending = false)
+                                            [FromQuery] bool sortDescending = false,
+                                            [FromQuery] SoftwareKind? kind = null)
     {
         IQueryable<Database.Models.Software> baseSoftwareQuery = context.Softwares;
 
         if(!string.IsNullOrWhiteSpace(search))
             baseSoftwareQuery = baseSoftwareQuery.Where(s => s.Name.Contains(search));
+
+        if(kind.HasValue)
+            baseSoftwareQuery = baseSoftwareQuery.Where(s => s.Kind == kind.Value);
 
         IQueryable<SoftwareDto> softwareQuery = baseSoftwareQuery.Select(s => new SoftwareDto
         {
@@ -407,27 +455,34 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                                    .FirstOrDefault()
         });
 
-        IQueryable<SoftwareRelease> baseCompQuery = context.SoftwareReleases.Where(r => r.IsCompilation);
+        List<SoftwareDto> combined;
 
-        if(!string.IsNullOrWhiteSpace(search))
-            baseCompQuery = baseCompQuery.Where(r => r.Title.Contains(search));
-
-        IQueryable<SoftwareDto> compilationsQuery = baseCompQuery.Select(r => new SoftwareDto
+        if(ShouldIncludeCompilations(kind))
         {
-            Id            = r.Id,
-            Name          = r.Title,
-            FamilyId      = null,
-            Family        = null,
-            Kind          = default,
-            IsCompilation = true,
-            FrontCoverId  = r.Covers
-                             .Where(cv => cv.Type == SoftwareCoverType.Front)
-                             .Select(cv => (Guid?)cv.Id)
-                             .FirstOrDefault()
-        });
+            IQueryable<SoftwareRelease> baseCompQuery = context.SoftwareReleases.Where(r => r.IsCompilation);
 
-        // Single SQL round-trip via Concat (UNION ALL).
-        List<SoftwareDto> combined = await softwareQuery.Concat(compilationsQuery).ToListAsync();
+            if(!string.IsNullOrWhiteSpace(search))
+                baseCompQuery = baseCompQuery.Where(r => r.Title.Contains(search));
+
+            IQueryable<SoftwareDto> compilationsQuery = baseCompQuery.Select(r => new SoftwareDto
+            {
+                Id            = r.Id,
+                Name          = r.Title,
+                FamilyId      = null,
+                Family        = null,
+                Kind          = default,
+                IsCompilation = true,
+                FrontCoverId  = r.Covers
+                                 .Where(cv => cv.Type == SoftwareCoverType.Front)
+                                 .Select(cv => (Guid?)cv.Id)
+                                 .FirstOrDefault()
+            });
+
+            // Single SQL round-trip via Concat (UNION ALL).
+            combined = await softwareQuery.Concat(compilationsQuery).ToListAsync();
+        }
+        else
+            combined = await softwareQuery.ToListAsync();
 
         IEnumerable<SoftwareDto> merged = combined;
 
@@ -1205,11 +1260,16 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<SoftwareDto>> GetSoftwareByGenreAsync(int genreId)
+    public async Task<List<SoftwareDto>> GetSoftwareByGenreAsync(int genreId,
+                                                                 [FromQuery] SoftwareKind? kind = null)
     {
         // Single SQL round-trip via Concat (UNION ALL).
-        IQueryable<SoftwareDto> softwareQuery = context.Softwares
-           .Where(s => s.Genres.Any(g => g.GenreId == genreId))
+        IQueryable<Database.Models.Software> baseSoftwareQuery = context.Softwares
+           .Where(s => s.Genres.Any(g => g.GenreId == genreId));
+
+        if(kind.HasValue) baseSoftwareQuery = baseSoftwareQuery.Where(s => s.Kind == kind.Value);
+
+        IQueryable<SoftwareDto> softwareQuery = baseSoftwareQuery
            .Select(s => new SoftwareDto
             {
                 Id            = s.Id,
@@ -1225,6 +1285,11 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                                       .Select(c => (Guid?)c.Id)
                                       .FirstOrDefault()
             });
+
+        if(!ShouldIncludeCompilations(kind))
+            return (await softwareQuery.ToListAsync())
+                  .OrderBy(s => s.Name, NaturalStringComparer.Instance)
+                  .ToList();
 
         IQueryable<SoftwareDto> compilationsQuery = context.SoftwareReleases
            .Where(r => r.IsCompilation &&
@@ -1282,12 +1347,13 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<SoftwareDto>> GetSoftwareBySpecAsync([FromQuery] string key, [FromQuery] string value)
+    public async Task<List<SoftwareDto>> GetSoftwareBySpecAsync([FromQuery] string key, [FromQuery] string value,
+                                                                [FromQuery] SoftwareKind? kind = null)
     {
         if(key == "Notes") return [];
 
         // Single SQL round-trip via Concat (UNION ALL).
-        IQueryable<SoftwareDto> softwareQuery = context.Softwares
+        IQueryable<Database.Models.Software> baseSoftwareQuery = context.Softwares
                .Where(s => s.Versions.Any(v => v.Releases.Any(r => r.Attributes
                                                                      .Any(a => a.Category == "Spec" &&
                                                                               a.Key   == key         &&
@@ -1295,7 +1361,11 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                          || s.DirectReleases.Any(r => r.Attributes
                                                        .Any(a => a.Category == "Spec" &&
                                                                   a.Key   == key       &&
-                                                                  a.Value == value)))
+                                                                  a.Value == value)));
+
+        if(kind.HasValue) baseSoftwareQuery = baseSoftwareQuery.Where(s => s.Kind == kind.Value);
+
+        IQueryable<SoftwareDto> softwareQuery = baseSoftwareQuery
                .Select(s => new SoftwareDto
                 {
                     Id            = s.Id,
@@ -1311,6 +1381,11 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                                           .Select(c => (Guid?)c.Id)
                                           .FirstOrDefault()
                 });
+
+        if(!ShouldIncludeCompilations(kind))
+            return (await softwareQuery.ToListAsync())
+                  .OrderBy(s => s.Name, NaturalStringComparer.Instance)
+                  .ToList();
 
         IQueryable<SoftwareDto> compilationsQuery = context.SoftwareReleases
            .Where(r => r.IsCompilation &&

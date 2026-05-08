@@ -21,7 +21,7 @@
               BorderThickness="0,0,0,1"
               Padding="16,12,16,12">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" /> <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" /> <ColumnDefinition Width="*" /> <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <Button Grid.Column="0"
@@ -48,6 +48,26 @@
                            Foreground="{ThemeResource SystemBaseMediumColor}"
                            Margin="0,4,0,0" />
             </StackPanel>
+
+            <ComboBox Grid.Column="2"
+                      Header="{Binding Source={StaticResource Strings}, Path=SoftwareFilterByKindLabel}"
+                      SelectedIndex="{Binding SelectedKindIndex, Mode=TwoWay}"
+                      MinWidth="200"
+                      Margin="16,0,0,0"
+                      VerticalAlignment="Center">
+                <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareAnyKindLabel}" />
+                <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsSoftwareLabel}" />
+                <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsOSLabel}" />
+                <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsGameLabel}" />
+                <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsDlcLabel}" />
+                <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsSystemSoftwareLabel}" />
+                <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsApplicationLabel}" />
+                <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsDevelopmentSoftwareLabel}" />
+                <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsServerSoftwareLabel}" />
+                <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsMiddlewareLabel}" />
+                <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsFirmwareLabel}" />
+                <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsEmbeddedSoftwareLabel}" />
+            </ComboBox>
         </Grid>
 
         <!-- Main Content -->

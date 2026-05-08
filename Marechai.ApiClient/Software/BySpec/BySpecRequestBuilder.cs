@@ -22,7 +22,7 @@ namespace Marechai.ApiClient.Software.BySpec
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public BySpecRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/by-spec{?key*,value*}", pathParameters)
+        public BySpecRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/by-spec{?key*,kind*,value*}", pathParameters)
         {
         }
         /// <summary>
@@ -30,7 +30,7 @@ namespace Marechai.ApiClient.Software.BySpec
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public BySpecRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/by-spec{?key*,value*}", rawUrl)
+        public BySpecRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/by-spec{?key*,kind*,value*}", rawUrl)
         {
         }
         /// <returns>A List&lt;global::Marechai.ApiClient.Models.SoftwareDto&gt;</returns>
@@ -93,6 +93,8 @@ namespace Marechai.ApiClient.Software.BySpec
             [QueryParameter("key")]
             public string Key { get; set; }
 #endif
+            [QueryParameter("kind")]
+            public int? Kind { get; set; }
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
             [QueryParameter("value")]

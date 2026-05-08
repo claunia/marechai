@@ -1211,4 +1211,13 @@
     <data name="Back to Software" xml:space="preserve">
         <value>Back to Software</value>
     </data>
+    <data name="Filter by kind" xml:space="preserve">
+        <value>Filter by kind</value>
+    </data>
+    <data name="Any kind" xml:space="preserve">
+        <value>Any kind</value>
+    </data>
+    <data name="Filtered by kind: {0}" xml:space="preserve">
+        <value>Filtered by kind: {0}</value>
+    </data>
 </root>

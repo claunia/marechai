@@ -208,6 +208,7 @@ public partial class SoftwareViewModel : ObservableObject
             _logger.LogInformation("Navigating to software by letter: {Letter}", letter);
             _filterContext.FilterType  = SoftwareListFilterType.Letter;
             _filterContext.FilterValue = letter.ToString();
+            _filterContext.Kind        = null;
             _regionManager.RequestNavigate(RegionNames.Content, nameof(SoftwareListPage));
         }
         catch(Exception ex)
@@ -227,6 +228,7 @@ public partial class SoftwareViewModel : ObservableObject
             _logger.LogInformation("Navigating to software by year: {Year}", year);
             _filterContext.FilterType  = SoftwareListFilterType.Year;
             _filterContext.FilterValue = year.ToString();
+            _filterContext.Kind        = null;
             _regionManager.RequestNavigate(RegionNames.Content, nameof(SoftwareListPage));
         }
         catch(Exception ex)
@@ -248,6 +250,7 @@ public partial class SoftwareViewModel : ObservableObject
             _logger.LogInformation("Navigating to software by platform: {Platform}", platform.Name);
             _filterContext.FilterType  = SoftwareListFilterType.Platform;
             _filterContext.FilterValue = platform.Id?.ToString() ?? string.Empty;
+            _filterContext.Kind        = null;
             _regionManager.RequestNavigate(RegionNames.Content, nameof(SoftwareListPage));
         }
         catch(Exception ex)
@@ -269,6 +272,7 @@ public partial class SoftwareViewModel : ObservableObject
             _logger.LogInformation("Navigating to software by spec: {Key}={Value}", specItem.Key, specItem.Value);
             _filterContext.FilterType  = SoftwareListFilterType.Spec;
             _filterContext.FilterValue = $"{specItem.Key}|{specItem.Value}";
+            _filterContext.Kind        = null;
             _regionManager.RequestNavigate(RegionNames.Content, nameof(SoftwareListPage));
         }
         catch(Exception ex)
@@ -288,6 +292,7 @@ public partial class SoftwareViewModel : ObservableObject
             _logger.LogInformation("Navigating to all software");
             _filterContext.FilterType  = SoftwareListFilterType.All;
             _filterContext.FilterValue = string.Empty;
+            _filterContext.Kind        = null;
             _regionManager.RequestNavigate(RegionNames.Content, nameof(SoftwareListPage));
         }
         catch(Exception ex)

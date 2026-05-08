@@ -2293,6 +2293,9 @@
   <data name="SoftwareIsDlcLabel" xml:space="preserve"><value>DLC / Addon</value></data>
   <data name="SoftwareIsSoftwareLabel" xml:space="preserve"><value>Software</value></data>
   <data name="SoftwareIsCompilationLabel" xml:space="preserve"><value>Compilation</value></data>
+  <data name="SoftwareFilterByKindLabel" xml:space="preserve"><value>Filter by kind</value></data>
+  <data name="SoftwareAnyKindLabel" xml:space="preserve"><value>Any kind</value></data>
+  <data name="SoftwareFilteredByKindFormat" xml:space="preserve"><value>Filtered by kind: {0}</value></data>
   <data name="SoftwareIsSystemSoftwareLabel" xml:space="preserve"><value>System software</value></data>
   <data name="SoftwareIsApplicationLabel" xml:space="preserve"><value>Application</value></data>
   <data name="SoftwareIsDevelopmentSoftwareLabel" xml:space="preserve"><value>Development software</value></data>

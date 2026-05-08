@@ -1337,4 +1337,16 @@
         <value>Échec de la suppression de la vidéo.</value>
         <comment>Failed to delete video.</comment>
     </data>
+    <data name="Filter by kind" xml:space="preserve">
+        <value>Filtrer par type</value>
+        <comment>Filter by kind</comment>
+    </data>
+    <data name="Any kind" xml:space="preserve">
+        <value>Tout type</value>
+        <comment>Any kind</comment>
+    </data>
+    <data name="Filtered by kind: {0}" xml:space="preserve">
+        <value>Filtré par type : {0}</value>
+        <comment>Filtered by kind: {0}</comment>
+    </data>
 </root>

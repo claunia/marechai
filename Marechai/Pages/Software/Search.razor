@@ -32,6 +32,7 @@
 @page "/software/genre/{GenreId:int}"
 @page "/software/spec"
 @using Marechai.ApiClient.Models
+@using Marechai.Data
 @inherits OwningComponentBase<SoftwareService>
 @inject IStringLocalizer<SoftwareService> L
 @inject ApiAssetUrlProvider               AssetUrls
@@ -46,28 +47,72 @@
 }
 
 <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
-    <MudText Typo="Typo.h5" Style="color: white;">@L["Search results:"]</MudText>
-    @if(_character.HasValue)
-    {
-        <MudText Typo="Typo.h6" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Software starting with {0}"], _character)</MudText>
-    }
-    else if(Year.HasValue)
-    {
-        <MudText Typo="Typo.h6" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Software from {0}"], Year)</MudText>
-    }
-    else if(PlatformId.HasValue && !string.IsNullOrEmpty(_platformName))
-    {
-        <MudText Typo="Typo.h6" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Software for {0}"], _platformName)</MudText>
-    }
-    else if(GenreId.HasValue && !string.IsNullOrEmpty(_genreName))
-    {
-        <MudText Typo="Typo.h6" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Software in genre {0}"], L[_genreName])</MudText>
-    }
-    else if(!string.IsNullOrEmpty(SpecKey) && !string.IsNullOrEmpty(SpecValue))
-    {
-        <MudText Typo="Typo.h6" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Software with {0}: {1}"], L[SpecKey], L[SpecValue])</MudText>
-    }
+    <div class="d-flex justify-space-between align-start gap-4 flex-wrap">
+        <div>
+            <MudText Typo="Typo.h5" Style="color: white;">@L["Search results:"]</MudText>
+            @if(_character.HasValue)
+            {
+                <MudText Typo="Typo.h6" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Software starting with {0}"], _character)</MudText>
+            }
+            else if(Year.HasValue)
+            {
+                <MudText Typo="Typo.h6" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Software from {0}"], Year)</MudText>
+            }
+            else if(PlatformId.HasValue && !string.IsNullOrEmpty(_platformName))
+            {
+                <MudText Typo="Typo.h6" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Software for {0}"], _platformName)</MudText>
+            }
+            else if(GenreId.HasValue && !string.IsNullOrEmpty(_genreName))
+            {
+                <MudText Typo="Typo.h6" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Software in genre {0}"], L[_genreName])</MudText>
+            }
+            else if(!string.IsNullOrEmpty(SpecKey) && !string.IsNullOrEmpty(SpecValue))
+            {
+                <MudText Typo="Typo.h6" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Software with {0}: {1}"], L[SpecKey], L[SpecValue])</MudText>
+            }
+            @if(_kind.HasValue)
+            {
+                <MudText Typo="Typo.body2" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Filtered by kind: {0}"], L[KindLabel(_kind.Value)])</MudText>
+            }
+        </div>
+        <MudSelect T="SoftwareKind?" Value="_kind" ValueChanged="OnKindChanged"
+                   Label="@L["Filter by kind"]"
+                   Variant="Variant.Filled"
+                   Margin="Margin.Dense"
+                   Style="background: rgba(255,255,255,0.85); border-radius: 8px; min-width: 220px; max-width: 260px;"
+                   Clearable="true">
+            <MudSelectItem T="SoftwareKind?" Value="@((SoftwareKind?)null)">@L["Any kind"]</MudSelectItem>
+            <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.OperatingSystem">@L["OS"]</MudSelectItem>
+            <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.Game">@L["Game"]</MudSelectItem>
+            <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.Dlc">@L["DLC / Addon"]</MudSelectItem>
+            <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.SystemSoftware">@L["System software"]</MudSelectItem>
+            <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.Application">@L["Application"]</MudSelectItem>
+            <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.DevelopmentSoftware">@L["Development software"]</MudSelectItem>
+            <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.ServerSoftware">@L["Server software"]</MudSelectItem>
+            <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.Middleware">@L["Middleware"]</MudSelectItem>
+            <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.Firmware">@L["Firmware"]</MudSelectItem>
+            <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.EmbeddedSoftware">@L["Embedded software"]</MudSelectItem>
+            <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.Software">@L["Software"]</MudSelectItem>
+        </MudSelect>
+    </div>
 </MudPaper>
+
+@code {
+    static string KindLabel(SoftwareKind kind) => kind switch
+    {
+        SoftwareKind.OperatingSystem     => "OS",
+        SoftwareKind.Game                => "Game",
+        SoftwareKind.Dlc                 => "DLC / Addon",
+        SoftwareKind.SystemSoftware      => "System software",
+        SoftwareKind.Application         => "Application",
+        SoftwareKind.DevelopmentSoftware => "Development software",
+        SoftwareKind.ServerSoftware      => "Server software",
+        SoftwareKind.Middleware          => "Middleware",
+        SoftwareKind.Firmware            => "Firmware",
+        SoftwareKind.EmbeddedSoftware    => "Embedded software",
+        _                                 => "Software"
+    };
+}
 
 @if(_software?.Count > 0)
 {

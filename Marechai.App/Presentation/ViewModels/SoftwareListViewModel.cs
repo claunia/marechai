@@ -74,6 +74,74 @@ public partial class SoftwareListViewModel : ObservableObject, IRegionAware
         set => _filterContext.FilterValue = value;
     }
 
+    public SoftwareKind? Kind
+    {
+        get => _filterContext.Kind;
+        set
+        {
+            if(_filterContext.Kind == value) return;
+
+            _filterContext.Kind = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(KindLabel));
+            OnPropertyChanged(nameof(SelectedKindIndex));
+            _ = LoadDataAsync();
+        }
+    }
+
+    public string KindLabel => Kind switch
+    {
+        SoftwareKind.OperatingSystem     => _localizer["SoftwareIsOSLabel"],
+        SoftwareKind.Game                => _localizer["SoftwareIsGameLabel"],
+        SoftwareKind.Dlc                 => _localizer["SoftwareIsDlcLabel"],
+        SoftwareKind.SystemSoftware      => _localizer["SoftwareIsSystemSoftwareLabel"],
+        SoftwareKind.Application         => _localizer["SoftwareIsApplicationLabel"],
+        SoftwareKind.DevelopmentSoftware => _localizer["SoftwareIsDevelopmentSoftwareLabel"],
+        SoftwareKind.ServerSoftware      => _localizer["SoftwareIsServerSoftwareLabel"],
+        SoftwareKind.Middleware          => _localizer["SoftwareIsMiddlewareLabel"],
+        SoftwareKind.Firmware            => _localizer["SoftwareIsFirmwareLabel"],
+        SoftwareKind.EmbeddedSoftware    => _localizer["SoftwareIsEmbeddedSoftwareLabel"],
+        SoftwareKind.Software            => _localizer["SoftwareIsSoftwareLabel"],
+        _                                 => _localizer["SoftwareAnyKindLabel"]
+    };
+
+    // Index 0 = Any (null). Index 1..11 = SoftwareKind values 0..10 in enum order.
+    // Used to bind ComboBox.SelectedIndex from XAML without a custom converter.
+    public int SelectedKindIndex
+    {
+        get => Kind switch
+        {
+            null                                  => 0,
+            SoftwareKind.Software                 => 1,
+            SoftwareKind.OperatingSystem          => 2,
+            SoftwareKind.Game                     => 3,
+            SoftwareKind.Dlc                      => 4,
+            SoftwareKind.SystemSoftware           => 5,
+            SoftwareKind.Application              => 6,
+            SoftwareKind.DevelopmentSoftware      => 7,
+            SoftwareKind.ServerSoftware           => 8,
+            SoftwareKind.Middleware               => 9,
+            SoftwareKind.Firmware                 => 10,
+            SoftwareKind.EmbeddedSoftware         => 11,
+            _                                      => 0
+        };
+        set => Kind = value switch
+        {
+            1  => SoftwareKind.Software,
+            2  => SoftwareKind.OperatingSystem,
+            3  => SoftwareKind.Game,
+            4  => SoftwareKind.Dlc,
+            5  => SoftwareKind.SystemSoftware,
+            6  => SoftwareKind.Application,
+            7  => SoftwareKind.DevelopmentSoftware,
+            8  => SoftwareKind.ServerSoftware,
+            9  => SoftwareKind.Middleware,
+            10 => SoftwareKind.Firmware,
+            11 => SoftwareKind.EmbeddedSoftware,
+            _  => null
+        };
+    }
+
     public bool IsNavigationTarget(NavigationContext navigationContext) => false;
 
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
@@ -173,31 +241,38 @@ public partial class SoftwareListViewModel : ObservableObject, IRegionAware
 
                 break;
         }
+
+        if(_filterContext.Kind.HasValue)
+            FilterDescription =
+                $"{FilterDescription} \u2014 {string.Format(_localizer["SoftwareFilteredByKindFormat"], KindLabel)}";
     }
 
     private async Task LoadSoftwareFromApiAsync()
     {
         try
         {
+            SoftwareKind? kind = _filterContext.Kind;
+
             List<SoftwareDto> software = FilterType switch
                                          {
                                              SoftwareListFilterType.Letter when FilterValue.Length == 1 =>
-                                                 await _browsingService.GetSoftwareByLetterAsync(FilterValue[0]),
+                                                 await _browsingService.GetSoftwareByLetterAsync(FilterValue[0], kind),
 
                                              SoftwareListFilterType.Year when int.TryParse(FilterValue, out int year) =>
-                                                 await _browsingService.GetSoftwareByYearAsync(year),
+                                                 await _browsingService.GetSoftwareByYearAsync(year, kind),
 
                                              SoftwareListFilterType.Platform
                                                  when int.TryParse(FilterValue, out int platformId) =>
-                                                 await _browsingService.GetSoftwareByPlatformAsync(platformId),
+                                                 await _browsingService.GetSoftwareByPlatformAsync(platformId, kind),
 
                                              SoftwareListFilterType.Spec
                                                  when FilterValue.Contains('|') =>
                                                  await _browsingService.GetSoftwareBySpecAsync(
                                                      FilterValue.Split('|', 2)[0],
-                                                     FilterValue.Split('|', 2)[1]),
+                                                     FilterValue.Split('|', 2)[1],
+                                                     kind),
 
-                                             _ => await _browsingService.GetAllSoftwareAsync()
+                                             _ => await _browsingService.GetAllSoftwareAsync(kind)
                                          };
 
             foreach(SoftwareDto sw in software)

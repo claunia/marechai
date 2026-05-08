@@ -1934,6 +1934,9 @@
   <data name="SoftwareIsGameLabel" xml:space="preserve"><value>Jogo</value></data>
   <data name="SoftwareIsSoftwareLabel" xml:space="preserve"><value>Software</value></data>
   <data name="SoftwareIsCompilationLabel" xml:space="preserve"><value>Coletânea</value></data>
+  <data name="SoftwareFilterByKindLabel" xml:space="preserve"><value>Filtrar por tipo</value></data>
+  <data name="SoftwareAnyKindLabel" xml:space="preserve"><value>Qualquer tipo</value></data>
+  <data name="SoftwareFilteredByKindFormat" xml:space="preserve"><value>Filtrado por tipo: {0}</value></data>
   <data name="SoftwareIsSystemSoftwareLabel" xml:space="preserve"><value>Software de sistema</value></data>
   <data name="SoftwareIsApplicationLabel" xml:space="preserve"><value>Aplicação</value></data>
   <data name="SoftwareIsDevelopmentSoftwareLabel" xml:space="preserve"><value>Software de desenvolvimento</value></data>

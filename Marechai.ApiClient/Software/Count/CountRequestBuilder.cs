@@ -22,7 +22,7 @@ namespace Marechai.ApiClient.Software.Count
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public CountRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/count{?search*}", pathParameters)
+        public CountRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/count{?kind*,search*}", pathParameters)
         {
         }
         /// <summary>
@@ -30,7 +30,7 @@ namespace Marechai.ApiClient.Software.Count
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public CountRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/count{?search*}", rawUrl)
+        public CountRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/count{?kind*,search*}", rawUrl)
         {
         }
         /// <returns>A <see cref="int"/></returns>
@@ -83,6 +83,8 @@ namespace Marechai.ApiClient.Software.Count
         public partial class CountRequestBuilderGetQueryParameters 
         #pragma warning restore CS1591
         {
+            [QueryParameter("kind")]
+            public int? Kind { get; set; }
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
             [QueryParameter("search")]

@@ -204,7 +204,7 @@ namespace Marechai.ApiClient.Software
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public SoftwareRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software{?search*,skip*,sortBy*,sortDescending*,take*}", pathParameters)
+        public SoftwareRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software{?kind*,search*,skip*,sortBy*,sortDescending*,take*}", pathParameters)
         {
         }
         /// <summary>
@@ -212,7 +212,7 @@ namespace Marechai.ApiClient.Software
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public SoftwareRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software{?search*,skip*,sortBy*,sortDescending*,take*}", rawUrl)
+        public SoftwareRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software{?kind*,search*,skip*,sortBy*,sortDescending*,take*}", rawUrl)
         {
         }
         /// <returns>A List&lt;global::Marechai.ApiClient.Models.SoftwareDto&gt;</returns>
@@ -309,6 +309,8 @@ namespace Marechai.ApiClient.Software
         public partial class SoftwareRequestBuilderGetQueryParameters 
         #pragma warning restore CS1591
         {
+            [QueryParameter("kind")]
+            public int? Kind { get; set; }
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
             [QueryParameter("search")]

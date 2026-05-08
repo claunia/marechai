@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Marechai.Data;
 
 namespace Marechai.App.Services;
 
@@ -74,13 +75,16 @@ public class SoftwareBrowsingService
         }
     }
 
-    public async Task<List<SoftwareDto>> GetSoftwareByLetterAsync(char letter)
+    public async Task<List<SoftwareDto>> GetSoftwareByLetterAsync(char letter, SoftwareKind? kind = null)
     {
         try
         {
             _logger.LogInformation("Fetching software starting with '{Letter}' from API", letter);
 
-            List<SoftwareDto> software = await _apiClient.Software.ByLetter[letter.ToString()].GetAsync();
+            List<SoftwareDto> software = await _apiClient.Software.ByLetter[letter.ToString()].GetAsync(config =>
+            {
+                if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
+            });
 
             if(software == null) return [];
 
@@ -98,13 +102,16 @@ public class SoftwareBrowsingService
         }
     }
 
-    public async Task<List<SoftwareDto>> GetSoftwareByYearAsync(int year)
+    public async Task<List<SoftwareDto>> GetSoftwareByYearAsync(int year, SoftwareKind? kind = null)
     {
         try
         {
             _logger.LogInformation("Fetching software from year {Year} from API", year);
 
-            List<SoftwareDto> software = await _apiClient.Software.ByYear[year].GetAsync();
+            List<SoftwareDto> software = await _apiClient.Software.ByYear[year].GetAsync(config =>
+            {
+                if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
+            });
 
             if(software == null) return [];
 
@@ -120,13 +127,16 @@ public class SoftwareBrowsingService
         }
     }
 
-    public async Task<List<SoftwareDto>> GetSoftwareByPlatformAsync(int platformId)
+    public async Task<List<SoftwareDto>> GetSoftwareByPlatformAsync(int platformId, SoftwareKind? kind = null)
     {
         try
         {
             _logger.LogInformation("Fetching software for platform {PlatformId} from API", platformId);
 
-            List<SoftwareDto> software = await _apiClient.Software.ByPlatform[platformId].GetAsync();
+            List<SoftwareDto> software = await _apiClient.Software.ByPlatform[platformId].GetAsync(config =>
+            {
+                if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
+            });
 
             if(software == null) return [];
 
@@ -144,13 +154,16 @@ public class SoftwareBrowsingService
         }
     }
 
-    public async Task<List<SoftwareDto>> GetAllSoftwareAsync()
+    public async Task<List<SoftwareDto>> GetAllSoftwareAsync(SoftwareKind? kind = null)
     {
         try
         {
             _logger.LogInformation("Fetching all software from API");
 
-            List<SoftwareDto> software = await _apiClient.Software.GetAsync();
+            List<SoftwareDto> software = await _apiClient.Software.GetAsync(config =>
+            {
+                if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
+            });
 
             if(software == null) return [];
 
@@ -188,7 +201,7 @@ public class SoftwareBrowsingService
         }
     }
 
-    public async Task<List<SoftwareDto>> GetSoftwareBySpecAsync(string key, string value)
+    public async Task<List<SoftwareDto>> GetSoftwareBySpecAsync(string key, string value, SoftwareKind? kind = null)
     {
         try
         {
@@ -198,6 +211,7 @@ public class SoftwareBrowsingService
             {
                 config.QueryParameters.Key   = key;
                 config.QueryParameters.Value = value;
+                if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
             });
 
             if(software == null) return [];

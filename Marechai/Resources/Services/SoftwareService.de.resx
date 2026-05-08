@@ -1337,4 +1337,16 @@
         <value>Video konnte nicht gelöscht werden.</value>
         <comment>Failed to delete video.</comment>
     </data>
+    <data name="Filter by kind" xml:space="preserve">
+        <value>Nach Art filtern</value>
+        <comment>Filter by kind</comment>
+    </data>
+    <data name="Any kind" xml:space="preserve">
+        <value>Beliebige Art</value>
+        <comment>Any kind</comment>
+    </data>
+    <data name="Filtered by kind: {0}" xml:space="preserve">
+        <value>Gefiltert nach Art: {0}</value>
+        <comment>Filtered by kind: {0}</comment>
+    </data>
 </root>

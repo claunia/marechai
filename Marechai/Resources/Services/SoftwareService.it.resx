@@ -1249,4 +1249,16 @@
         <value>Impossibile eliminare il video.</value>
         <comment>Failed to delete video.</comment>
     </data>
+    <data name="Filter by kind" xml:space="preserve">
+        <value>Filtra per tipo</value>
+        <comment>Filter by kind</comment>
+    </data>
+    <data name="Any kind" xml:space="preserve">
+        <value>Qualsiasi tipo</value>
+        <comment>Any kind</comment>
+    </data>
+    <data name="Filtered by kind: {0}" xml:space="preserve">
+        <value>Filtrato per tipo: {0}</value>
+        <comment>Filtered by kind: {0}</comment>
+    </data>
 </root>

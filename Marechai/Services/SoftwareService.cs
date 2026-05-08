@@ -29,6 +29,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Marechai.Data;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Serialization;
 
@@ -287,11 +288,14 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
 
     // ── Picker methods ──
 
-    public async Task<int> GetSoftwareCountAsync()
+    public async Task<int> GetSoftwareCountAsync(SoftwareKind? kind = null)
     {
         try
         {
-            int? count = await client.Software.Count.GetAsync();
+            int? count = await client.Software.Count.GetAsync(config =>
+            {
+                if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
+            });
 
             return count ?? 0;
         }
@@ -375,11 +379,14 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
 
     // ── Search methods ──
 
-    public async Task<List<SoftwareDto>> GetSoftwareByLetterAsync(char c)
+    public async Task<List<SoftwareDto>> GetSoftwareByLetterAsync(char c, SoftwareKind? kind = null)
     {
         try
         {
-            List<SoftwareDto> software = await client.Software.ByLetter[c.ToString()].GetAsync();
+            List<SoftwareDto> software = await client.Software.ByLetter[c.ToString()].GetAsync(config =>
+            {
+                if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
+            });
 
             return software ?? [];
         }
@@ -389,11 +396,14 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
-    public async Task<List<SoftwareDto>> GetSoftwareByYearAsync(int year)
+    public async Task<List<SoftwareDto>> GetSoftwareByYearAsync(int year, SoftwareKind? kind = null)
     {
         try
         {
-            List<SoftwareDto> software = await client.Software.ByYear[year].GetAsync();
+            List<SoftwareDto> software = await client.Software.ByYear[year].GetAsync(config =>
+            {
+                if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
+            });
 
             return software ?? [];
         }
@@ -403,11 +413,14 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
-    public async Task<List<SoftwareDto>> GetSoftwareByPlatformAsync(int platformId)
+    public async Task<List<SoftwareDto>> GetSoftwareByPlatformAsync(int platformId, SoftwareKind? kind = null)
     {
         try
         {
-            List<SoftwareDto> software = await client.Software.ByPlatform[platformId].GetAsync();
+            List<SoftwareDto> software = await client.Software.ByPlatform[platformId].GetAsync(config =>
+            {
+                if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
+            });
 
             return software ?? [];
         }
@@ -431,11 +444,14 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
-    public async Task<List<SoftwareDto>> GetSoftwareByGenreAsync(int genreId)
+    public async Task<List<SoftwareDto>> GetSoftwareByGenreAsync(int genreId, SoftwareKind? kind = null)
     {
         try
         {
-            List<SoftwareDto> software = await client.Software.ByGenre[genreId].GetAsync();
+            List<SoftwareDto> software = await client.Software.ByGenre[genreId].GetAsync(config =>
+            {
+                if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
+            });
 
             return software ?? [];
         }
@@ -445,11 +461,14 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
-    public async Task<List<SoftwareDto>> GetAllSoftwareAsync()
+    public async Task<List<SoftwareDto>> GetAllSoftwareAsync(SoftwareKind? kind = null)
     {
         try
         {
-            List<SoftwareDto> software = await client.Software.GetAsync();
+            List<SoftwareDto> software = await client.Software.GetAsync(config =>
+            {
+                if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
+            });
 
             return software ?? [];
         }
@@ -460,7 +479,8 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     }
 
     public async Task<List<SoftwareDto>> GetPagedAsync(int skip, int take, string search = null,
-                                                        string sortBy = null, bool sortDescending = false)
+                                                        string sortBy = null, bool sortDescending = false,
+                                                        SoftwareKind? kind = null)
     {
         try
         {
@@ -471,6 +491,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
                 config.QueryParameters.Search         = search;
                 config.QueryParameters.SortBy         = sortBy;
                 config.QueryParameters.SortDescending = sortDescending;
+                if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
             });
 
             return software ?? [];
@@ -481,7 +502,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
-    public async Task<List<SoftwareDto>> SearchSoftwareAsync(string search)
+    public async Task<List<SoftwareDto>> SearchSoftwareAsync(string search, SoftwareKind? kind = null)
     {
         try
         {
@@ -489,6 +510,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
             {
                 config.QueryParameters.Take   = 20;
                 config.QueryParameters.Search = search;
+                if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
             });
 
             return software ?? [];
@@ -499,13 +521,14 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
-    public async Task<int> GetCountAsync(string search = null)
+    public async Task<int> GetCountAsync(string search = null, SoftwareKind? kind = null)
     {
         try
         {
             int? count = await client.Software.Count.GetAsync(config =>
             {
                 config.QueryParameters.Search = search;
+                if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
             });
 
             return count ?? 0;
@@ -530,7 +553,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
-    public async Task<List<SoftwareDto>> GetSoftwareBySpecAsync(string key, string value)
+    public async Task<List<SoftwareDto>> GetSoftwareBySpecAsync(string key, string value, SoftwareKind? kind = null)
     {
         try
         {
@@ -538,6 +561,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
             {
                 config.QueryParameters.Key   = key;
                 config.QueryParameters.Value = value;
+                if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
             });
 
             return software ?? [];

@@ -22,7 +22,7 @@ namespace Marechai.ApiClient.Software.ByPlatform.Item
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public WithPlatformItemRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/by-platform/{platformId}", pathParameters)
+        public WithPlatformItemRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/by-platform/{platformId}{?kind*}", pathParameters)
         {
         }
         /// <summary>
@@ -30,7 +30,7 @@ namespace Marechai.ApiClient.Software.ByPlatform.Item
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public WithPlatformItemRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/by-platform/{platformId}", rawUrl)
+        public WithPlatformItemRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/by-platform/{platformId}{?kind*}", rawUrl)
         {
         }
         /// <returns>A List&lt;global::Marechai.ApiClient.Models.SoftwareDto&gt;</returns>
@@ -39,11 +39,11 @@ namespace Marechai.ApiClient.Software.ByPlatform.Item
         /// <exception cref="global::Marechai.ApiClient.Models.ProblemDetails">When receiving a 400 status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<List<global::Marechai.ApiClient.Models.SoftwareDto>?> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<List<global::Marechai.ApiClient.Models.SoftwareDto>?> GetAsync(Action<RequestConfiguration<global::Marechai.ApiClient.Software.ByPlatform.Item.WithPlatformItemRequestBuilder.WithPlatformItemRequestBuilderGetQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<List<global::Marechai.ApiClient.Models.SoftwareDto>> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<List<global::Marechai.ApiClient.Models.SoftwareDto>> GetAsync(Action<RequestConfiguration<global::Marechai.ApiClient.Software.ByPlatform.Item.WithPlatformItemRequestBuilder.WithPlatformItemRequestBuilderGetQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             var requestInfo = ToGetRequestInformation(requestConfiguration);
@@ -58,11 +58,11 @@ namespace Marechai.ApiClient.Software.ByPlatform.Item
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default)
+        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<global::Marechai.ApiClient.Software.ByPlatform.Item.WithPlatformItemRequestBuilder.WithPlatformItemRequestBuilderGetQueryParameters>>? requestConfiguration = default)
         {
 #nullable restore
 #else
-        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default)
+        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<global::Marechai.ApiClient.Software.ByPlatform.Item.WithPlatformItemRequestBuilder.WithPlatformItemRequestBuilderGetQueryParameters>> requestConfiguration = default)
         {
 #endif
             var requestInfo = new RequestInformation(Method.GET, UrlTemplate, PathParameters);
@@ -79,12 +79,20 @@ namespace Marechai.ApiClient.Software.ByPlatform.Item
         {
             return new global::Marechai.ApiClient.Software.ByPlatform.Item.WithPlatformItemRequestBuilder(rawUrl, RequestAdapter);
         }
+        [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
+        #pragma warning disable CS1591
+        public partial class WithPlatformItemRequestBuilderGetQueryParameters 
+        #pragma warning restore CS1591
+        {
+            [QueryParameter("kind")]
+            public int? Kind { get; set; }
+        }
         /// <summary>
         /// Configuration for the request such as headers, query parameters, and middleware options.
         /// </summary>
         [Obsolete("This class is deprecated. Please use the generic RequestConfiguration class generated by the generator.")]
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class WithPlatformItemRequestBuilderGetRequestConfiguration : RequestConfiguration<DefaultQueryParameters>
+        public partial class WithPlatformItemRequestBuilderGetRequestConfiguration : RequestConfiguration<global::Marechai.ApiClient.Software.ByPlatform.Item.WithPlatformItemRequestBuilder.WithPlatformItemRequestBuilderGetQueryParameters>
         {
         }
     }

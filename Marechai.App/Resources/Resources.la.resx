@@ -1934,6 +1934,9 @@
   <data name="SoftwareIsGameLabel" xml:space="preserve"><value>Ludus</value></data>
   <data name="SoftwareIsSoftwareLabel" xml:space="preserve"><value>Programma</value></data>
   <data name="SoftwareIsCompilationLabel" xml:space="preserve"><value>Compilatio</value></data>
+  <data name="SoftwareFilterByKindLabel" xml:space="preserve"><value>Per genus filtrare</value></data>
+  <data name="SoftwareAnyKindLabel" xml:space="preserve"><value>Quodlibet genus</value></data>
+  <data name="SoftwareFilteredByKindFormat" xml:space="preserve"><value>Per genus filtratum: {0}</value></data>
   <data name="SoftwareIsSystemSoftwareLabel" xml:space="preserve"><value>Programma systematis</value></data>
   <data name="SoftwareIsApplicationLabel" xml:space="preserve"><value>Applicatio</value></data>
   <data name="SoftwareIsDevelopmentSoftwareLabel" xml:space="preserve"><value>Programma evolutionis</value></data>
