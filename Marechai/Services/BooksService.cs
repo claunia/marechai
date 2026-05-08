@@ -225,6 +225,25 @@ public class BooksService(Marechai.ApiClient.Client client)
         }
     }
 
+    /// <summary>
+    /// Consolidated fetch for the public /book/{Id} view page. Calls the new
+    /// /books/{id}/full endpoint which returns the head + previous/source titles,
+    /// the language-aware synopsis (with English fallback collapsed server-side),
+    /// and all four child collections in a single HTTP round-trip. Replaces what
+    /// used to be 6–8 sequential service calls.
+    /// </summary>
+    public async Task<BookFullDto> GetBookFullAsync(long id, string lang = "eng")
+    {
+        try
+        {
+            return await client.Books[id].Full.GetAsync(rc => rc.QueryParameters.Lang = lang);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
     // --- CRUD methods ---
 
     public async Task<(long? id, string error)> CreateAsync(BookDto dto)

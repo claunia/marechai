@@ -43,7 +43,10 @@ namespace Marechai.Server.Controllers;
 
 [Route("/books")]
 [ApiController]
-public class BooksController(MarechaiContext context, IConfiguration configuration) : ControllerBase
+public class BooksController(
+    MarechaiContext                    context,
+    IConfiguration                     configuration,
+    IDbContextFactory<MarechaiContext> dbFactory) : ControllerBase
 {
     static readonly HashSet<string> _allowedExtensions = [".jpg", ".jpeg", ".png", ".webp", ".tiff", ".tif", ".bmp"];
 
@@ -226,6 +229,179 @@ public class BooksController(MarechaiContext context, IConfiguration configurati
                                                           OriginalCoverExtension = b.OriginalCoverExtension
                                                       })
                                                      .FirstOrDefaultAsync();
+
+    /// <summary>
+    /// Consolidated payload for the public /book/{Id} view page. Replaces 6–8 sequential
+    /// HTTP round-trips (head + previous + source + synopsis + people + companies +
+    /// machines + machine-families) with a single response. The head + previous/source
+    /// titles are pulled in one projected query; the synopsis fallback to English is
+    /// collapsed into a single ordered query; the four child collections are fetched in
+    /// parallel using independent DbContext instances from <c>IDbContextFactory</c>
+    /// (DbContext is not thread-safe; sharing the request-scoped context across parallel
+    /// branches throws InvalidOperationException).
+    /// </summary>
+    [HttpGet("{id:long}/full")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<BookFullDto>> GetFullAsync(long id, [FromQuery] string lang = "eng")
+    {
+        // The five child collections plus the synopsis only depend on `id` (from the
+        // URL) and not on any value projected by the head query, so we fire all SIX
+        // queries — head + synopsis + people + companies + machines + machine-families
+        // — in parallel using independent DbContext instances from the factory
+        // (DbContext is not thread-safe). Compared to running head first and then the
+        // children in parallel, this saves one full ~180 ms RTT in the common case.
+        await using var headCtx       = await dbFactory.CreateDbContextAsync();
+        await using var synopsisCtx   = await dbFactory.CreateDbContextAsync();
+        await using var peopleCtx     = await dbFactory.CreateDbContextAsync();
+        await using var companiesCtx  = await dbFactory.CreateDbContextAsync();
+        await using var machinesCtx   = await dbFactory.CreateDbContextAsync();
+        await using var familiesCtx   = await dbFactory.CreateDbContextAsync();
+
+        // Head + previous/source titles in a single projected join. Returns null
+        // when the book does not exist; we surface that as 404 below.
+        var headTask = headCtx.Books.AsNoTracking()
+                              .Where(b => b.Id == id)
+                              .Select(b => new
+                               {
+                                   b.Id,
+                                   b.Title,
+                                   b.NativeTitle,
+                                   b.SortTitle,
+                                   b.Published,
+                                   b.PublishedPrecision,
+                                   b.Isbn,
+                                   b.CountryId,
+                                   b.Pages,
+                                   b.Edition,
+                                   b.PreviousId,
+                                   b.SourceId,
+                                   CountryName            = b.Country.Name,
+                                   b.CoverGuid,
+                                   b.OriginalCoverExtension,
+                                   PreviousTitle = b.PreviousId.HasValue ? b.Previous.Title : null,
+                                   SourceTitle   = b.SourceId.HasValue ? b.Source.Title : null
+                               })
+                              .FirstOrDefaultAsync();
+
+        // Synopsis: collapse the original two-step lookup (try requested lang,
+        // then English fallback) into a single ordered query. Synopses that
+        // match the requested language sort first (key 0); English fallback
+        // is key 1. FirstOrDefaultAsync returns the preferred row.
+        Task<DocumentSynopsisDto> synopsisTask = synopsisCtx.BookSynopses.AsNoTracking()
+            .Where(s => s.BookId == id && (s.LanguageCode == lang || s.LanguageCode == "eng"))
+            .OrderBy(s => s.LanguageCode == lang ? 0 : 1)
+            .Select(s => new DocumentSynopsisDto
+             {
+                 Id           = s.Id,
+                 Text         = s.Text,
+                 LanguageCode = s.LanguageCode,
+                 Language     = s.Language.ReferenceName
+             })
+            .FirstOrDefaultAsync();
+
+        // Mirrors PeopleByBookController.GetByBook — projection identical, sort
+        // happens client-side because PersonByBookDto.FullName is a computed
+        // string property and EF cannot translate it to SQL.
+        Task<List<PersonByBookDto>> peopleTask = peopleCtx.PeopleByBooks.AsNoTracking()
+            .Where(p => p.BookId == id)
+            .Select(p => new PersonByBookDto
+             {
+                 Id          = p.Id,
+                 Name        = p.Person.Name,
+                 Surname     = p.Person.Surname,
+                 Alias       = p.Person.Alias,
+                 DisplayName = p.Person.DisplayName,
+                 PersonId    = p.PersonId,
+                 RoleId      = p.RoleId,
+                 Role        = p.Role.Name,
+                 BookId      = p.BookId
+             })
+            .ToListAsync();
+
+        // Mirrors CompaniesByBookController.GetByBook.
+        Task<List<CompanyByBookDto>> companiesTask = companiesCtx.CompaniesByBooks.AsNoTracking()
+            .Where(p => p.BookId == id)
+            .Select(p => new CompanyByBookDto
+             {
+                 Id        = p.Id,
+                 Company   = p.Company.Name,
+                 CompanyId = p.CompanyId,
+                 RoleId    = p.RoleId,
+                 Role      = p.Role.Name,
+                 BookId    = p.BookId
+             })
+            .OrderBy(p => p.Company)
+            .ThenBy(p => p.Role)
+            .ToListAsync();
+
+        // Mirrors BooksByMachineController.GetByBook.
+        Task<List<BookByMachineDto>> machinesTask = machinesCtx.BooksByMachines.AsNoTracking()
+            .Where(p => p.BookId == id)
+            .Select(p => new BookByMachineDto
+             {
+                 Id        = p.Id,
+                 BookId    = p.BookId,
+                 MachineId = p.MachineId,
+                 Machine   = p.Machine.Name
+             })
+            .OrderBy(p => p.Machine)
+            .ToListAsync();
+
+        // Mirrors BooksByMachineFamilyController.GetByBook.
+        Task<List<BookByMachineFamilyDto>> familiesTask = familiesCtx.BooksByMachineFamilies.AsNoTracking()
+            .Where(p => p.BookId == id)
+            .Select(p => new BookByMachineFamilyDto
+             {
+                 Id              = p.Id,
+                 BookId          = p.BookId,
+                 MachineFamilyId = p.MachineFamilyId,
+                 MachineFamily   = p.MachineFamily.Name
+             })
+            .OrderBy(p => p.MachineFamily)
+            .ToListAsync();
+
+        await Task.WhenAll(headTask, synopsisTask, peopleTask, companiesTask, machinesTask, familiesTask);
+
+        var head = headTask.Result;
+
+        if(head is null) return NotFound();
+
+        var book = new BookDto
+        {
+            Id                     = head.Id,
+            Title                  = head.Title,
+            NativeTitle            = head.NativeTitle,
+            SortTitle              = head.SortTitle,
+            Published              = head.Published,
+            PublishedPrecision     = head.PublishedPrecision,
+            Isbn                   = head.Isbn,
+            CountryId              = head.CountryId,
+            Pages                  = head.Pages,
+            Edition                = head.Edition,
+            PreviousId             = head.PreviousId,
+            SourceId               = head.SourceId,
+            Country                = head.CountryName,
+            CoverGuid              = head.CoverGuid,
+            OriginalCoverExtension = head.OriginalCoverExtension
+        };
+
+        List<PersonByBookDto> people = peopleTask.Result.OrderBy(p => p.FullName).ThenBy(p => p.Role).ToList();
+
+        return new BookFullDto
+        {
+            Book              = book,
+            PreviousBookTitle = head.PreviousTitle,
+            SourceBookTitle   = head.SourceTitle,
+            Synopsis          = synopsisTask.Result,
+            People            = people,
+            Companies         = companiesTask.Result,
+            Machines          = machinesTask.Result,
+            MachineFamilies   = familiesTask.Result
+        };
+    }
 
     [HttpPut("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]

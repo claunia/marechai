@@ -2,6 +2,7 @@
 #pragma warning disable CS0618
 using Marechai.ApiClient.Books.Item.Companies;
 using Marechai.ApiClient.Books.Item.Cover;
+using Marechai.ApiClient.Books.Item.Full;
 using Marechai.ApiClient.Books.Item.MachineFamilies;
 using Marechai.ApiClient.Books.Item.Machines;
 using Marechai.ApiClient.Books.Item.People;
@@ -34,6 +35,11 @@ namespace Marechai.ApiClient.Books.Item
         public global::Marechai.ApiClient.Books.Item.Cover.CoverRequestBuilder Cover
         {
             get => new global::Marechai.ApiClient.Books.Item.Cover.CoverRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The full property</summary>
+        public global::Marechai.ApiClient.Books.Item.Full.FullRequestBuilder Full
+        {
+            get => new global::Marechai.ApiClient.Books.Item.Full.FullRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The machineFamilies property</summary>
         public global::Marechai.ApiClient.Books.Item.MachineFamilies.MachineFamiliesRequestBuilder MachineFamilies

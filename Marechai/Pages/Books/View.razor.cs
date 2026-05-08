@@ -71,9 +71,14 @@ public partial class View
             return;
         }
 
-        _book = await Service.GetBookAsync(Id);
+        // Single consolidated fetch: head + previous/source titles + synopsis +
+        // all four child collections (people, companies, machines, machine
+        // families) in one HTTP round-trip. Replaces 6 sequential service
+        // calls plus the two conditional Previous/Source book fetches that
+        // used to dominate the page-load critical path.
+        BookFullDto full = await Service.GetBookFullAsync(Id);
 
-        if(_book is null)
+        if(full?.Book is null)
         {
             _loaded = true;
             StateHasChanged();
@@ -81,15 +86,21 @@ public partial class View
             return;
         }
 
-        _synopsis        = await Service.GetBookSynopsisAsync(Id);
-        _people          = await Service.GetPeopleByBookAsync(Id);
-        _companies       = await Service.GetCompaniesByBookAsync(Id);
-        _machines        = await Service.GetMachinesByBookAsync(Id);
-        _machineFamilies = await Service.GetMachineFamiliesByBookAsync(Id);
+        _book            = full.Book;
+        _synopsis        = full.Synopsis;
+        _people          = full.People          ?? [];
+        _companies       = full.Companies       ?? [];
+        _machines        = full.Machines        ?? [];
+        _machineFamilies = full.MachineFamilies ?? [];
 
-        if(_book.PreviousId.HasValue) _previousBook = await Service.GetBookAsync(_book.PreviousId.Value);
+        // Materialize lightweight stand-ins for the previous/source book chips.
+        // The markup only renders the link target (Id) and the button label
+        // (Title), so projecting just those two fields server-side is enough.
+        if(_book.PreviousId.HasValue && full.PreviousBookTitle is not null)
+            _previousBook = new BookDto { Id = _book.PreviousId.Value, Title = full.PreviousBookTitle };
 
-        if(_book.SourceId.HasValue) _sourceBook = await Service.GetBookAsync(_book.SourceId.Value);
+        if(_book.SourceId.HasValue && full.SourceBookTitle is not null)
+            _sourceBook = new BookDto { Id = _book.SourceId.Value, Title = full.SourceBookTitle };
 
         AuthenticationState authState = await AuthState;
 
