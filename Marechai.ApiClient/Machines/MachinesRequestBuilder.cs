@@ -4,6 +4,7 @@ using Marechai.ApiClient.Machines.Books;
 using Marechai.ApiClient.Machines.Documents;
 using Marechai.ApiClient.Machines.Gpus;
 using Marechai.ApiClient.Machines.Item;
+using Marechai.ApiClient.Machines.Paged;
 using Marechai.ApiClient.Machines.Photos;
 using Marechai.ApiClient.Machines.Videos;
 using Marechai.ApiClient.Models;
@@ -37,6 +38,11 @@ namespace Marechai.ApiClient.Machines
         public global::Marechai.ApiClient.Machines.Gpus.GpusRequestBuilder Gpus
         {
             get => new global::Marechai.ApiClient.Machines.Gpus.GpusRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The paged property</summary>
+        public global::Marechai.ApiClient.Machines.Paged.PagedRequestBuilder Paged
+        {
+            get => new global::Marechai.ApiClient.Machines.Paged.PagedRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The photos property</summary>
         public global::Marechai.ApiClient.Machines.Photos.PhotosRequestBuilder Photos

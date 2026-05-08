@@ -64,6 +64,48 @@ public class MachinesController(MarechaiContext context) : ControllerBase
                                                         })
                                                        .ToListAsync();
 
+    [HttpGet("paged")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<MachinePageDto>> GetPagedAsync([FromQuery] int page     = 1,
+                                                                  [FromQuery] int pageSize = 25)
+    {
+        if(page     < 1)   page     = 1;
+        if(pageSize < 1)   pageSize = 25;
+        if(pageSize > 200) pageSize = 200;
+
+        IQueryable<Machine> query = context.Machines;
+
+        int totalCount = await query.CountAsync();
+
+        List<MachineDto> items = await query.OrderBy(m => m.Company.Name)
+                                            .ThenBy(m => m.Name)
+                                            .ThenBy(m => m.Family.Name)
+                                            .Skip((page - 1) * pageSize)
+                                            .Take(pageSize)
+                                            .Select(m => new MachineDto
+                                             {
+                                                 Id                  = m.Id,
+                                                 Company             = m.Company.Name,
+                                                 Name                = m.Name,
+                                                 Model               = m.Model,
+                                                 Introduced          = m.Introduced,
+                                                 IntroducedPrecision = m.IntroducedPrecision,
+                                                 Prototype           = m.Prototype,
+                                                 Type                = m.Type,
+                                                 Family              = m.Family.Name
+                                             })
+                                            .ToListAsync();
+
+        return Ok(new MachinePageDto
+        {
+            Items      = items,
+            TotalCount = totalCount
+        });
+    }
+
     [HttpGet("{id:int}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using MudBlazor;
@@ -8,18 +9,22 @@ namespace Marechai.Pages.Admin;
 
 public partial class Machines
 {
-    string            _errorMessage;
-    bool               _isLoading = true;
-    string            _successMessage;
-    List<MachineDto>  _machines;
+    string                  _errorMessage;
+    string                  _successMessage;
+    MudDataGrid<MachineDto> _dataGrid;
 
-    protected override async Task OnInitializedAsync() => await LoadMachinesAsync();
-
-    async Task LoadMachinesAsync()
+    async Task<GridData<MachineDto>> ServerReload(GridState<MachineDto> state, CancellationToken cancellationToken)
     {
-        _isLoading = true;
-        _machines  = await MachinesService.GetAllAsync();
-        _isLoading = false;
+        int page     = state.Page + 1;
+        int pageSize = state.PageSize;
+
+        MachinePageDto result = await MachinesService.GetPagedAsync(page, pageSize);
+
+        return new GridData<MachineDto>
+        {
+            Items      = result?.Items ?? new List<MachineDto>(),
+            TotalItems = result?.TotalCount ?? 0
+        };
     }
 
     string FormatType(int? type) => type switch
@@ -73,7 +78,7 @@ public partial class Machines
             if(id is not null)
             {
                 _successMessage = L["Machine created successfully."];
-                await LoadMachinesAsync();
+                await _dataGrid.ReloadServerData();
             }
             else
             {
@@ -137,7 +142,7 @@ public partial class Machines
             if(succeeded)
             {
                 _successMessage = L["Machine updated successfully."];
-                await LoadMachinesAsync();
+                await _dataGrid.ReloadServerData();
             }
             else
             {
@@ -174,7 +179,7 @@ public partial class Machines
             if(succeeded)
             {
                 _successMessage = L["Machine deleted successfully."];
-                await LoadMachinesAsync();
+                await _dataGrid.ReloadServerData();
             }
             else
             {
@@ -210,6 +215,6 @@ public partial class Machines
         DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
-            await LoadMachinesAsync();
+            await _dataGrid.ReloadServerData();
     }
 }

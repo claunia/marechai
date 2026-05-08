@@ -24,33 +24,31 @@
     <MudAlert Severity="Severity.Success" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _successMessage = null">@_successMessage</MudAlert>
 }
 
-@if(_isLoading)
-{
-    <div class="d-flex justify-center pa-8">
-        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
-    </div>
-    return;
-}
-
 <MudPaper Elevation="2" Class="rounded-lg">
     <MudToolBar Dense="true">
         <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="OpenAddMachineDialog">@L["Add Machine"]</MudButton>
         <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Upload" OnClick="OpenImportDialog" Class="ml-2">@L["Import CSV"]</MudButton>
         <MudSpacer/>
-        <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadMachinesAsync"/>
+        <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="async () => await _dataGrid.ReloadServerData()"/>
     </MudToolBar>
 
-    <MudDataGrid Items="_machines" Dense="true" Hover="true" Striped="true" Filterable="true">
+    <MudDataGrid @ref="_dataGrid" T="MachineDto" ServerData="ServerReload" Dense="true" Hover="true" Striped="true" RowsPerPage="25">
+        <NoRecordsContent>
+            <MudText>@L["No machines found."]</MudText>
+        </NoRecordsContent>
+        <LoadingContent>
+            <MudText>@L["Loading..."]</MudText>
+        </LoadingContent>
         <Columns>
-            <PropertyColumn Property="x => x.Name" Title="@L["Name"]"/>
-            <PropertyColumn Property="x => x.Company" Title="@L["Company"]"/>
-            <PropertyColumn Property="x => x.Model" Title="@L["Model"]"/>
-            <PropertyColumn Property="x => x.Type" Title="@L["Type"]">
+            <PropertyColumn Property="x => x.Name" Title="@L["Name"]" Sortable="false" Filterable="false"/>
+            <PropertyColumn Property="x => x.Company" Title="@L["Company"]" Sortable="false" Filterable="false"/>
+            <PropertyColumn Property="x => x.Model" Title="@L["Model"]" Sortable="false" Filterable="false"/>
+            <PropertyColumn Property="x => x.Type" Title="@L["Type"]" Sortable="false" Filterable="false">
                 <CellTemplate>
                     @FormatType(context.Item.Type)
                 </CellTemplate>
             </PropertyColumn>
-            <PropertyColumn Property="x => x.Prototype" Title="@L["Prototype"]">
+            <PropertyColumn Property="x => x.Prototype" Title="@L["Prototype"]" Sortable="false" Filterable="false">
                 <CellTemplate>
                     @if(context.Item.Prototype == true)
                     {
@@ -58,12 +56,12 @@
                     }
                 </CellTemplate>
             </PropertyColumn>
-            <PropertyColumn Property="x => x.Introduced" Title="@L["Introduction date"]">
+            <PropertyColumn Property="x => x.Introduced" Title="@L["Introduction date"]" Sortable="false" Filterable="false">
                 <CellTemplate>
                     @FormatDate(context.Item.Introduced)
                 </CellTemplate>
             </PropertyColumn>
-            <PropertyColumn Property="x => x.Family" Title="@L["Family"]"/>
+            <PropertyColumn Property="x => x.Family" Title="@L["Family"]" Sortable="false" Filterable="false"/>
             <TemplateColumn Title="@L["Actions"]" Sortable="false" Filterable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
@@ -76,5 +74,8 @@
                 </CellTemplate>
             </TemplateColumn>
         </Columns>
+        <PagerContent>
+            <MudDataGridPager T="MachineDto" PageSizeOptions="new[] { 10, 25, 50, 100 }"/>
+        </PagerContent>
     </MudDataGrid>
 </MudPaper>

@@ -981,4 +981,8 @@
         <value>No se pudo eliminar el vídeo.</value>
         <comment>Failed to delete video.</comment>
     </data>
+    <data name="No machines found." xml:space="preserve">
+        <value>No machines found.</value>
+        <comment>No machines found.</comment>
+    </data>
 </root>

@@ -65,6 +65,26 @@ public class MachinesService(Marechai.ApiClient.Client client)
         }
     }
 
+    public async Task<MachinePageDto> GetPagedAsync(int page, int pageSize)
+    {
+        try
+        {
+            return await client.Machines.Paged.GetAsync(rc =>
+            {
+                rc.QueryParameters.Page     = page;
+                rc.QueryParameters.PageSize = pageSize;
+            });
+        }
+        catch
+        {
+            return new MachinePageDto
+            {
+                Items      = new List<MachineDto>(),
+                TotalCount = 0
+            };
+        }
+    }
+
     public async Task<MachineDto> GetByIdAsync(int id)
     {
         try
