@@ -45,6 +45,7 @@ public partial class View
     PhotoLightbox    _lightbox;
     List<Guid>       _photos = [];
     ProcessorDto     _processor;
+    List<ProcessorVideoDto> _videos = [];
 
     [Parameter]
     public int Id { get; set; }
@@ -86,6 +87,8 @@ public partial class View
         _description = await Service.GetDescriptionTextAsync(Id);
 
         _photos = await ProcessorPhotosService.GetGuidsByProcessorAsync(Id);
+
+        _videos = await Service.GetVideosByProcessorAsync(Id);
 
         _loaded = true;
         StateHasChanged();

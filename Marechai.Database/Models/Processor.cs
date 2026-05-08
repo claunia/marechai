@@ -102,4 +102,5 @@ public class Processor : BaseModel<int>
     public virtual ICollection<ProcessorDescription>               Descriptions             { get; set; }
     public virtual ICollection<ProcessorPhoto>                     Photos                   { get; set; }
     public virtual ICollection<ProcessorsByMachine>                 ProcessorsByMachine      { get; set; }
+    public virtual ICollection<ProcessorVideo>                      Videos                   { get; set; }
 }

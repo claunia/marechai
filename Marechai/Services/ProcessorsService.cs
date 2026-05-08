@@ -258,4 +258,92 @@ public class ProcessorsService(Marechai.ApiClient.Client client)
             return (false, ex.Message);
         }
     }
+
+    // ── Videos ──
+
+    static string ExtractErrorMessage(ApiException ex)
+    {
+        if(ex is ProblemDetails pd) return pd.Detail ?? pd.Title ?? ex.Message;
+
+        return ex.Message;
+    }
+
+    public async Task<List<ProcessorVideoDto>> GetVideosByProcessorAsync(int processorId)
+    {
+        try
+        {
+            var result = await client.Processors[processorId].Videos.GetAsync();
+
+            return result ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(ProcessorVideoDto dto, string error)> CreateVideoAsync(int    processorId, string provider,
+                                                                              string videoId,
+                                                                              string title)
+    {
+        try
+        {
+            var dto = await client.Processors[processorId]
+                                  .Videos.PostAsync(new CreateProcessorVideoRequest
+                                                    {
+                                                        Provider = provider,
+                                                        VideoId  = videoId,
+                                                        Title    = title
+                                                    });
+
+            return (dto, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string error)> UpdateVideoTitleAsync(long id, string title)
+    {
+        try
+        {
+            await client.Processors.Videos[id].PutAsync(new UpdateProcessorVideoRequest
+                                                        {
+                                                            Title = title
+                                                        });
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string error)> DeleteVideoAsync(long id)
+    {
+        try
+        {
+            await client.Processors.Videos[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
 }

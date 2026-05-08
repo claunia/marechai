@@ -181,6 +181,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<SoftwareVideo>                      SoftwareVideos                      { get; set; }
     public virtual DbSet<MachineVideo>                       MachineVideos                       { get; set; }
     public virtual DbSet<GpuVideo>                           GpuVideos                           { get; set; }
+    public virtual DbSet<ProcessorVideo>                     ProcessorVideos                     { get; set; }
     public virtual DbSet<SoftwareCriticReview>               SoftwareCriticReviews               { get; set; }
     public virtual DbSet<MobyGamesReviewImportState>         MobyGamesReviewImportStates         { get; set; }
     public virtual DbSet<SoftwareUserRating>                  SoftwareUserRatings                 { get; set; }
@@ -2906,6 +2907,17 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
             entity.HasOne(e => e.Gpu)
                   .WithMany(p => p.Videos)
                   .HasForeignKey(e => e.GpuId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<ProcessorVideo>(entity =>
+        {
+            entity.HasIndex(e => e.ProcessorId);
+            entity.HasIndex(e => new { e.ProcessorId, e.Provider, e.VideoId }).IsUnique();
+
+            entity.HasOne(e => e.Processor)
+                  .WithMany(p => p.Videos)
+                  .HasForeignKey(e => e.ProcessorId)
                   .OnDelete(DeleteBehavior.Cascade);
         });
 
