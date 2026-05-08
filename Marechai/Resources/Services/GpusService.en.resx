@@ -542,4 +542,13 @@
     <data name="Back to GPUs" xml:space="preserve">
         <value>Back to GPUs</value>
     </data>
+    <data name="Specifications" xml:space="preserve">
+        <value>Specifications</value>
+    </data>
+    <data name="Machines" xml:space="preserve">
+        <value>Machines</value>
+    </data>
+    <data name="Media tab" xml:space="preserve">
+        <value>Media</value>
+    </data>
 </root>

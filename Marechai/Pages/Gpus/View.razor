@@ -61,6 +61,62 @@
     </MudStack>
 </MudPaper>
 
+@* ── Tabbed content (sticky frosted-glass tab bar; icon+label desktop, icon-only mobile) ── *@
+<style>
+    /* Rounded="true" sets overflow:hidden on .mud-tabs which breaks position:sticky on the tabbar.
+       Force overflow:visible so the tabbar can stick to the page viewport. */
+    .sticky-tabs.mud-tabs,
+    .sticky-tabs .mud-tabs-panels {
+        overflow: visible !important;
+    }
+
+    .sticky-tabs .mud-tabs-tabbar {
+        position: sticky;
+        /* MudAppBar (mt-16 = 64px) is fixed at top:0; offset the tabbar so it docks just below. */
+        top: 64px;
+        z-index: 5;
+        /* Frosted-glass: white tint over a strong backdrop blur. Layered so it reads as
+           "icy translucent" in both light and dark themes. */
+        background-color: color-mix(in srgb, white 35%, var(--mud-palette-surface) 65%) !important;
+        background-image: linear-gradient(rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.06));
+        backdrop-filter: blur(20px) saturate(180%) brightness(110%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%) brightness(110%);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+        /* Visual breathing room between tab bar and content below. */
+        margin-bottom: 20px;
+    }
+
+    /* MudTabPanel renders text directly next to the icon component, with no .mud-typography wrapper.
+       Use font-size:0 to collapse the bare text node on mobile, then null the icon-text margin so
+       the icon stays centered. SVG icons are unaffected by font-size. */
+    @@media (max-width: 599.98px) {
+        .sticky-tabs .mud-tab {
+            font-size: 0 !important;
+            min-width: 56px !important;
+            padding: 6px 10px !important;
+        }
+        .sticky-tabs .mud-tab .mud-tab-icon-text {
+            margin-right: 0 !important;
+            margin-inline-end: 0 !important;
+        }
+    }
+</style>
+
+<MudTabs Rounded="true"
+         ApplyEffectsToContainer="true"
+         KeepPanelsAlive="true"
+         Centered="true"
+         Color="Color.Primary"
+         SliderColor="Color.Primary"
+         Class="sticky-tabs mb-4"
+         ActivePanelIndex="@_activeTabIndex"
+         ActivePanelIndexChanged="OnTabChanged">
+
+@* ── SPECIFICATIONS TAB ── *@
+<MudTabPanel Text="@L["Specifications"]" Icon="@Icons.Material.Filled.Tune" ToolTip="@L["Specifications"]">
+
 @* ── General Information Card ── *@
 <MudCard Elevation="2" Class="mb-4 rounded-lg">
     <MudCardContent>
@@ -145,86 +201,6 @@
     </MudCard>
 }
 
-@* ── Photos Card ── *@
-@if(_photos.Count > 0)
-{
-    <MudCard Elevation="2" Class="mb-4 rounded-lg">
-        <MudCardContent>
-            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
-                <MudIcon Icon="@Icons.Material.Filled.PhotoLibrary" Color="Color.Primary"/>
-                <MudText Typo="Typo.h6">@L["Photos"]</MudText>
-                <MudChip T="string" Size="Size.Small" Color="Color.Secondary">@_photos.Count</MudChip>
-            </MudStack>
-            <MudGrid>
-                @foreach(Guid photo in _photos)
-                {
-                    <MudItem xs="6" sm="4" md="3">
-                        <MudCard Elevation="1" Class="rounded-lg">
-                            <MudCardContent Class="pa-2 d-flex justify-center" Style="cursor: pointer;" @onclick="() => _lightbox.Show(_photos, photo)">
-                                <picture>
-                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/jxl/hd/@(photo).jxl, @(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/jxl/1440p/@(photo).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/jxl/4k/@(photo).jxl 3x" type="image/jxl">
-                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/avif/hd/@(photo).avif, @(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/avif/1440p/@(photo).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/avif/4k/@(photo).avif 3x" type="image/avif">
-                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/heif/hd/@(photo).heic, @(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/heif/1440p/@(photo).heic 2x, @(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/heif/4k/@(photo).heic 3x" type="image/heic">
-                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/webp/hd/@(photo).webp, @(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/webp/1440p/@(photo).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/webp/4k/@(photo).webp 3x" type="image/webp">
-                                    <img alt="" height="auto" src="@(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/jpeg/hd/@(photo).jpg"
-                                         srcset="@(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/jpeg/hd/@(photo).jpg, @(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/jpeg/1440p/@(photo).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/jpeg/4k/@(photo).jpg 3x"
-                                         style="max-height: 256px; max-width: 100%; border-radius: 8px;" width="auto"/>
-                                </picture>
-                            </MudCardContent>
-                            <MudCardActions Class="justify-center">
-                                <MudButton Href="@($"/gpus/photo/{photo}")" Target="_blank" Variant="Variant.Text" Color="Color.Primary" Size="Size.Small" StartIcon="@Icons.Material.Filled.ZoomIn">@L["Details"]</MudButton>
-                            </MudCardActions>
-                        </MudCard>
-                    </MudItem>
-                }
-            </MudGrid>
-        </MudCardContent>
-    </MudCard>
-}
-
-<PhotoLightbox @ref="_lightbox" BaseUrl="@AssetUrls.BaseUrl" Category="gpus"/>
-
-@* ── Videos Card ── *@
-@if(_videos is { Count: > 0 })
-{
-    <MudCard Elevation="2" Class="mb-4 rounded-lg">
-        <MudCardContent>
-            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
-                <MudIcon Icon="@Icons.Material.Filled.VideoLibrary" Color="Color.Primary"/>
-                <MudText Typo="Typo.h6">@L["Videos"]</MudText>
-                <MudChip T="string" Size="Size.Small" Color="Color.Secondary">@_videos.Count</MudChip>
-            </MudStack>
-            <MudGrid Spacing="3">
-                @foreach(GpuVideoDto video in _videos)
-                {
-                    <MudItem xs="12" sm="6">
-                        <MudCard Elevation="1" Class="rounded-lg">
-                            @if(string.Equals(video.Provider, "YouTube", StringComparison.OrdinalIgnoreCase))
-                            {
-                                <div style="position: relative; width: 100%; padding-bottom: 56.25%; border-radius: 8px 8px 0 0; overflow: hidden;">
-                                    <iframe src="@($"https://www.youtube-nocookie.com/embed/{video.VideoId}")"
-                                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"
-                                            title="@(video.Title ?? "Video")"
-                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                            allowfullscreen
-                                            loading="lazy"
-                                            referrerpolicy="no-referrer-when-downgrade"></iframe>
-                                </div>
-                            }
-                            @if(!string.IsNullOrWhiteSpace(video.Title))
-                            {
-                                <MudCardContent>
-                                    <MudText Typo="Typo.body2">@video.Title</MudText>
-                                </MudCardContent>
-                            }
-                        </MudCard>
-                    </MudItem>
-                }
-            </MudGrid>
-        </MudCardContent>
-    </MudCard>
-}
-
 @* ── Resolutions Card ── *@
 @if(_resolutions.Count > 0)
 {
@@ -267,6 +243,13 @@
     </MudExpansionPanel>
 </MudExpansionPanels>
 }
+
+</MudTabPanel>
+
+@* ── MACHINES TAB (only when at least one of Computers/Consoles/Smartphones has entries) ── *@
+@if(_computers.Count > 0 || _consoles.Count > 0 || _smartphones.Count > 0)
+{
+<MudTabPanel Text="@L["Machines"]" Icon="@Icons.Material.Filled.Devices" ToolTip="@L["Machines"]">
 
 @* ── Computers Card ── *@
 @if(_computers.Count > 0)
@@ -320,6 +303,7 @@
 </MudExpansionPanels>
 }
 
+@* ── Smartphones Card ── *@
 @if(_smartphones.Count > 0)
 {
 <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
@@ -344,3 +328,93 @@
     </MudExpansionPanel>
 </MudExpansionPanels>
 }
+
+</MudTabPanel>
+}
+
+@* ── MEDIA TAB ── *@
+<MudTabPanel Text="@L["Media tab"]" Icon="@Icons.Material.Filled.PhotoLibrary" ToolTip="@L["Media tab"]">
+
+@* ── Photos Card ── *@
+@if(_photos.Count > 0)
+{
+    <MudCard Elevation="2" Class="mb-4 rounded-lg">
+        <MudCardContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+                <MudIcon Icon="@Icons.Material.Filled.PhotoLibrary" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Photos"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="Color.Secondary">@_photos.Count</MudChip>
+            </MudStack>
+            <MudGrid>
+                @foreach(Guid photo in _photos)
+                {
+                    <MudItem xs="6" sm="4" md="3">
+                        <MudCard Elevation="1" Class="rounded-lg">
+                            <MudCardContent Class="pa-2 d-flex justify-center" Style="cursor: pointer;" @onclick="() => _lightbox.Show(_photos, photo)">
+                                <picture>
+                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/jxl/hd/@(photo).jxl, @(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/jxl/1440p/@(photo).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/jxl/4k/@(photo).jxl 3x" type="image/jxl">
+                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/avif/hd/@(photo).avif, @(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/avif/1440p/@(photo).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/avif/4k/@(photo).avif 3x" type="image/avif">
+                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/heif/hd/@(photo).heic, @(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/heif/1440p/@(photo).heic 2x, @(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/heif/4k/@(photo).heic 3x" type="image/heic">
+                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/webp/hd/@(photo).webp, @(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/webp/1440p/@(photo).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/webp/4k/@(photo).webp 3x" type="image/webp">
+                                    <img alt="" height="auto" src="@(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/jpeg/hd/@(photo).jpg"
+                                         srcset="@(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/jpeg/hd/@(photo).jpg, @(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/jpeg/1440p/@(photo).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/gpus/thumbs/jpeg/4k/@(photo).jpg 3x"
+                                         style="max-height: 256px; max-width: 100%; border-radius: 8px;" width="auto"/>
+                                </picture>
+                            </MudCardContent>
+                            <MudCardActions Class="justify-center">
+                                <MudButton Href="@($"/gpus/photo/{photo}")" Target="_blank" Variant="Variant.Text" Color="Color.Primary" Size="Size.Small" StartIcon="@Icons.Material.Filled.ZoomIn">@L["Details"]</MudButton>
+                            </MudCardActions>
+                        </MudCard>
+                    </MudItem>
+                }
+            </MudGrid>
+        </MudCardContent>
+    </MudCard>
+}
+
+@* ── Videos Card ── *@
+@if(_videos is { Count: > 0 })
+{
+    <MudCard Elevation="2" Class="mb-4 rounded-lg">
+        <MudCardContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+                <MudIcon Icon="@Icons.Material.Filled.VideoLibrary" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Videos"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="Color.Secondary">@_videos.Count</MudChip>
+            </MudStack>
+            <MudGrid Spacing="3">
+                @foreach(GpuVideoDto video in _videos)
+                {
+                    <MudItem xs="12" sm="6">
+                        <MudCard Elevation="1" Class="rounded-lg">
+                            @if(string.Equals(video.Provider, "YouTube", StringComparison.OrdinalIgnoreCase))
+                            {
+                                <div style="position: relative; width: 100%; padding-bottom: 56.25%; border-radius: 8px 8px 0 0; overflow: hidden;">
+                                    <iframe src="@($"https://www.youtube-nocookie.com/embed/{video.VideoId}")"
+                                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"
+                                            title="@(video.Title ?? "Video")"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowfullscreen
+                                            loading="lazy"
+                                            referrerpolicy="no-referrer-when-downgrade"></iframe>
+                                </div>
+                            }
+                            @if(!string.IsNullOrWhiteSpace(video.Title))
+                            {
+                                <MudCardContent>
+                                    <MudText Typo="Typo.body2">@video.Title</MudText>
+                                </MudCardContent>
+                            }
+                        </MudCard>
+                    </MudItem>
+                }
+            </MudGrid>
+        </MudCardContent>
+    </MudCard>
+}
+
+</MudTabPanel>
+
+</MudTabs>
+
+<PhotoLightbox @ref="_lightbox" BaseUrl="@AssetUrls.BaseUrl" Category="gpus"/>

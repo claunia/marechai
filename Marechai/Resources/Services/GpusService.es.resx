@@ -507,4 +507,16 @@
         <value>Volver a GPU</value>
         <comment>Back to GPUs</comment>
     </data>
+    <data name="Specifications" xml:space="preserve">
+        <value>Specifications</value>
+        <comment>Specifications</comment>
+    </data>
+    <data name="Machines" xml:space="preserve">
+        <value>Machines</value>
+        <comment>Machines</comment>
+    </data>
+    <data name="Media tab" xml:space="preserve">
+        <value>Media</value>
+        <comment>Media tab</comment>
+    </data>
 </root>
