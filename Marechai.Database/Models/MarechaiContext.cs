@@ -1096,6 +1096,16 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
 
         modelBuilder.Entity<MachinePhoto>(entity =>
         {
+            // Foreign-key + sort columns used by the per-machine photos endpoint
+            // (`/machines/{id}/photos`). Without these indexes the query degenerates
+            // to a full table scan + filesort over the entire machine_photos table
+            // because the historical EXIF indexes do not cover the (MachineId, sort)
+            // access pattern.
+            entity.HasIndex(e => e.MachineId).HasDatabaseName("idx_machine_photos_machine");
+
+            entity.HasIndex(e => new { e.MachineId, e.CreatedOn, e.Id })
+                  .HasDatabaseName("idx_machine_photos_machine_created");
+
             entity.HasIndex(e => e.Aperture);
 
             entity.HasIndex(e => e.Author);

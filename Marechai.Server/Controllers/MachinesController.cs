@@ -41,7 +41,8 @@ namespace Marechai.Server.Controllers;
 
 [Route("/machines")]
 [ApiController]
-public class MachinesController(MarechaiContext context) : ControllerBase
+public class MachinesController(MarechaiContext context, IDbContextFactory<MarechaiContext> dbFactory)
+    : ControllerBase
 {
     [HttpGet]
     [AllowAnonymous]
@@ -256,141 +257,183 @@ public class MachinesController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<MachineDto> GetMachine(int id)
     {
-        Machine machine = await context.Machines.FindAsync(id);
+        // Fetch the head row + the company name + the family scalar fields in
+        // a single round-trip via a projected join. Replaces three separate
+        // FindAsync() calls (Machines, Companies, MachineFamilies) which on a
+        // remote MariaDB cost one ~57 ms RTT each.
+        var head = await context.Machines.AsNoTracking()
+                                .Where(m => m.Id == id)
+                                .Select(m => new
+                                 {
+                                     m.Introduced,
+                                     m.IntroducedPrecision,
+                                     m.Name,
+                                     m.CompanyId,
+                                     m.Model,
+                                     m.Prototype,
+                                     m.Type,
+                                     CompanyName = m.Company.Name,
+                                     FamilyId    = (int?)m.FamilyId,
+                                     FamilyName  = m.Family.Name
+                                 })
+                                .FirstOrDefaultAsync();
 
-        if(machine is null) return null;
+        if(head is null) return null;
 
         var model = new MachineDto
         {
-            Introduced = machine.Introduced,
-            IntroducedPrecision = machine.IntroducedPrecision,
-            Name       = machine.Name,
-            CompanyId  = machine.CompanyId,
-            Model      = machine.Model,
-            Prototype  = machine.Prototype,
-            Type       = machine.Type
+            Introduced          = head.Introduced,
+            IntroducedPrecision = head.IntroducedPrecision,
+            Name                = head.Name,
+            CompanyId           = head.CompanyId,
+            Company             = head.CompanyName,
+            Model               = head.Model,
+            Prototype           = head.Prototype,
+            Type                = head.Type,
+            FamilyName          = head.FamilyName,
+            FamilyId            = head.FamilyId ?? 0
         };
 
-        Company company = await context.Companies.FindAsync(model.CompanyId);
+        // Run the company-logo lookup and the five child collection queries
+        // in parallel using independent DbContext instances from the factory
+        // (DbContext is not thread-safe; sharing the request-scoped context
+        // would throw InvalidOperationException). On the remote MariaDB this
+        // collapses six sequential ~200 ms round-trips into one parallel batch.
+        int  companyId          = head.CompanyId;
+        int  machineId          = id;
+        int? introducedYear     = head.Introduced?.Year;
 
-        if(company != null)
-        {
-            model.Company = company.Name;
+        await using var logoCtx       = await dbFactory.CreateDbContextAsync();
+        await using var gpusCtx       = await dbFactory.CreateDbContextAsync();
+        await using var memoryCtx     = await dbFactory.CreateDbContextAsync();
+        await using var processorsCtx = await dbFactory.CreateDbContextAsync();
+        await using var soundCtx      = await dbFactory.CreateDbContextAsync();
+        await using var storageCtx    = await dbFactory.CreateDbContextAsync();
 
-            IQueryable<CompanyLogo> logos = context.CompanyLogos.Where(l => l.CompanyId == company.Id);
+        // Company logo: collapse the original two-step lookup
+        // (FirstOrDefaultAsync(year-filter) + Any() + FirstAsync()) into a
+        // single ordered query. Logos that satisfy the year cut-off sort
+        // first (key 0); any other logo falls back as key 1.
+        Task<Guid?> companyLogoTask = logoCtx.CompanyLogos.AsNoTracking()
+                                             .Where(l => l.CompanyId == companyId)
+                                             .OrderBy(l => introducedYear.HasValue && l.Year >= introducedYear.Value
+                                                               ? 0
+                                                               : 1)
+                                             .ThenBy(l => l.Year)
+                                             .Select(l => (Guid?)l.Guid)
+                                             .FirstOrDefaultAsync();
 
-            if(model.Introduced.HasValue)
-                model.CompanyLogo = (await logos.FirstOrDefaultAsync(l => l.Year >= model.Introduced.Value.Year))?.Guid;
+        Task<List<GpuDto>> gpusTask = gpusCtx.GpusByMachine.AsNoTracking()
+                                             .Where(g => g.MachineId == machineId)
+                                             .Select(g => g.Gpu)
+                                             .OrderBy(g => g.Company.Name)
+                                             .ThenBy(g => g.Name)
+                                             .Select(g => new GpuDto
+                                              {
+                                                  Id                  = g.Id,
+                                                  Name                = g.Name,
+                                                  Company             = g.Company.Name,
+                                                  CompanyId           = g.Company.Id,
+                                                  ModelCode           = g.ModelCode,
+                                                  Introduced          = g.Introduced,
+                                                  IntroducedPrecision = g.IntroducedPrecision,
+                                                  Package             = g.Package,
+                                                  Process             = g.Process,
+                                                  ProcessNm           = g.ProcessNm,
+                                                  DieSize             = g.DieSize,
+                                                  Transistors         = g.Transistors
+                                              })
+                                             .ToListAsync();
 
-            if(model.CompanyLogo is null && logos.Any()) model.CompanyLogo = (await logos.FirstAsync())?.Guid;
-        }
+        Task<List<MemoryDto>> memoryTask = memoryCtx.MemoryByMachine.AsNoTracking()
+                                                    .Where(m => m.MachineId == machineId)
+                                                    .Select(m => new MemoryDto
+                                                     {
+                                                         Type  = m.Type,
+                                                         Usage = m.Usage,
+                                                         Size  = m.Size,
+                                                         Speed = m.Speed
+                                                     })
+                                                    .ToListAsync();
 
-        MachineFamily family = await context.MachineFamilies.FindAsync(machine.FamilyId);
+        Task<List<ProcessorDto>> processorsTask = processorsCtx.ProcessorsByMachine.AsNoTracking()
+            .Where(p => p.MachineId == machineId)
+            .Select(p => new ProcessorDto
+             {
+                 Name           = p.Processor.Name,
+                 CompanyName    = p.Processor.Company.Name,
+                 CompanyId      = p.Processor.Company.Id,
+                 ModelCode      = p.Processor.ModelCode,
+                 Introduced     = p.Processor.Introduced,
+                 Speed          = p.Speed,
+                 Package        = p.Processor.Package,
+                 Gprs           = p.Processor.Gprs,
+                 GprSize        = p.Processor.GprSize,
+                 Fprs           = p.Processor.Fprs,
+                 FprSize        = p.Processor.FprSize,
+                 Cores          = p.Processor.Cores,
+                 ThreadsPerCore = p.Processor.ThreadsPerCore,
+                 Process        = p.Processor.Process,
+                 ProcessNm      = p.Processor.ProcessNm,
+                 DieSize        = p.Processor.DieSize,
+                 Transistors    = p.Processor.Transistors,
+                 DataBus        = p.Processor.DataBus,
+                 AddrBus        = p.Processor.AddrBus,
+                 SimdRegisters  = p.Processor.SimdRegisters,
+                 SimdSize       = p.Processor.SimdSize,
+                 L1Instruction  = p.Processor.L1Instruction,
+                 L1Data         = p.Processor.L1Data,
+                 L2             = p.Processor.L2,
+                 L3             = p.Processor.L3,
+                 InstructionSet = p.Processor.InstructionSet.Name,
+                 Id             = p.Processor.Id,
+                 InstructionSetExtensions =
+                     p.Processor.InstructionSetExtensions.Select(e => e.Extension.Extension).ToList()
+             })
+            .ToListAsync();
 
-        if(family != null)
-        {
-            model.FamilyName = family.Name;
-            model.FamilyId   = family.Id;
-        }
+        Task<List<SoundSynthDto>> soundTask = soundCtx.SoundByMachine.AsNoTracking()
+                                                      .Where(s => s.MachineId == machineId)
+                                                      .Select(s => s.SoundSynth)
+                                                      .OrderBy(s => s.Company.Name)
+                                                      .ThenBy(s => s.Name)
+                                                      .ThenBy(s => s.ModelCode)
+                                                      .Select(s => new SoundSynthDto
+                                                       {
+                                                           Id                  = s.Id,
+                                                           Name                = s.Name,
+                                                           CompanyId           = s.Company.Id,
+                                                           CompanyName         = s.Company.Name,
+                                                           ModelCode           = s.ModelCode,
+                                                           Introduced          = s.Introduced,
+                                                           IntroducedPrecision = s.IntroducedPrecision,
+                                                           Voices              = s.Voices,
+                                                           Frequency           = s.Frequency,
+                                                           Depth               = s.Depth,
+                                                           SquareWave          = s.SquareWave,
+                                                           WhiteNoise          = s.WhiteNoise,
+                                                           Type                = s.Type
+                                                       })
+                                                      .ToListAsync();
 
-        model.Gpus = await context.GpusByMachine.Where(g => g.MachineId == machine.Id)
-                                  .Select(g => g.Gpu)
-                                  .OrderBy(g => g.Company.Name)
-                                  .ThenBy(g => g.Name)
-                                  .Select(g => new GpuDto
-                                   {
-                                       Id          = g.Id,
-                                       Name        = g.Name,
-                                       Company     = g.Company.Name,
-                                       CompanyId   = g.Company.Id,
-                                       ModelCode   = g.ModelCode,
-                                       Introduced  = g.Introduced,
-                                       IntroducedPrecision = g.IntroducedPrecision,
-                                       Package     = g.Package,
-                                       Process     = g.Process,
-                                       ProcessNm   = g.ProcessNm,
-                                       DieSize     = g.DieSize,
-                                       Transistors = g.Transistors
-                                   })
-                                  .ToListAsync();
+        Task<List<StorageDto>> storageTask = storageCtx.StorageByMachine.AsNoTracking()
+                                                       .Where(s => s.MachineId == machineId)
+                                                       .Select(s => new StorageDto
+                                                        {
+                                                            Type      = s.Type,
+                                                            Interface = s.Interface,
+                                                            Capacity  = s.Capacity
+                                                        })
+                                                       .ToListAsync();
 
-        model.Memory = await context.MemoryByMachine.Where(m => m.MachineId == machine.Id)
-                                    .Select(m => new MemoryDto
-                                     {
-                                         Type  = m.Type,
-                                         Usage = m.Usage,
-                                         Size  = m.Size,
-                                         Speed = m.Speed
-                                     })
-                                    .ToListAsync();
+        await Task.WhenAll(companyLogoTask, gpusTask, memoryTask, processorsTask, soundTask, storageTask);
 
-        model.Processors = await context.ProcessorsByMachine.Where(p => p.MachineId == machine.Id)
-                                        .Select(p => new ProcessorDto
-                                         {
-                                             Name           = p.Processor.Name,
-                                             CompanyName    = p.Processor.Company.Name,
-                                             CompanyId      = p.Processor.Company.Id,
-                                             ModelCode      = p.Processor.ModelCode,
-                                             Introduced     = p.Processor.Introduced,
-                                             Speed          = p.Speed,
-                                             Package        = p.Processor.Package,
-                                             Gprs           = p.Processor.Gprs,
-                                             GprSize        = p.Processor.GprSize,
-                                             Fprs           = p.Processor.Fprs,
-                                             FprSize        = p.Processor.FprSize,
-                                             Cores          = p.Processor.Cores,
-                                             ThreadsPerCore = p.Processor.ThreadsPerCore,
-                                             Process        = p.Processor.Process,
-                                             ProcessNm      = p.Processor.ProcessNm,
-                                             DieSize        = p.Processor.DieSize,
-                                             Transistors    = p.Processor.Transistors,
-                                             DataBus        = p.Processor.DataBus,
-                                             AddrBus        = p.Processor.AddrBus,
-                                             SimdRegisters  = p.Processor.SimdRegisters,
-                                             SimdSize       = p.Processor.SimdSize,
-                                             L1Instruction  = p.Processor.L1Instruction,
-                                             L1Data         = p.Processor.L1Data,
-                                             L2             = p.Processor.L2,
-                                             L3             = p.Processor.L3,
-                                             InstructionSet = p.Processor.InstructionSet.Name,
-                                             Id             = p.Processor.Id,
-                                             InstructionSetExtensions = p.Processor.InstructionSetExtensions
-                                                                         .Select(e => e.Extension.Extension)
-                                                                         .ToList()
-                                         })
-                                        .ToListAsync();
-
-        model.SoundSynthesizers = await context.SoundByMachine.Where(s => s.MachineId == machine.Id)
-                                               .Select(s => s.SoundSynth)
-                                               .OrderBy(s => s.Company.Name)
-                                               .ThenBy(s => s.Name)
-                                               .ThenBy(s => s.ModelCode)
-                                               .Select(s => new SoundSynthDto
-                                                {
-                                                    Id          = s.Id,
-                                                    Name        = s.Name,
-                                                    CompanyId   = s.Company.Id,
-                                                    CompanyName = s.Company.Name,
-                                                    ModelCode   = s.ModelCode,
-                                                    Introduced  = s.Introduced,
-                                                    IntroducedPrecision = s.IntroducedPrecision,
-                                                    Voices      = s.Voices,
-                                                    Frequency   = s.Frequency,
-                                                    Depth       = s.Depth,
-                                                    SquareWave  = s.SquareWave,
-                                                    WhiteNoise  = s.WhiteNoise,
-                                                    Type        = s.Type
-                                                })
-                                               .ToListAsync();
-
-        model.Storage = await context.StorageByMachine.Where(s => s.MachineId == machine.Id)
-                                     .Select(s => new StorageDto
-                                      {
-                                          Type      = s.Type,
-                                          Interface = s.Interface,
-                                          Capacity  = s.Capacity
-                                      })
-                                     .ToListAsync();
+        model.CompanyLogo       = companyLogoTask.Result;
+        model.Gpus              = gpusTask.Result;
+        model.Memory            = memoryTask.Result;
+        model.Processors        = processorsTask.Result;
+        model.SoundSynthesizers = soundTask.Result;
+        model.Storage           = storageTask.Result;
 
         return model;
     }
@@ -456,13 +499,16 @@ public class MachinesController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<string> GetDescriptionTextAsync(int id, [FromQuery] string lang = "eng")
     {
-        MachineDescription description =
-            await context.MachineDescriptions.FirstOrDefaultAsync(d => d.MachineId == id && d.LanguageCode == lang);
-
-        // Fallback to English if requested language not found
-        if(description is null && lang != "eng")
-            description = await context.MachineDescriptions.FirstOrDefaultAsync(d => d.MachineId == id &&
-                              d.LanguageCode == "eng");
+        // Collapse the requested-language + English-fallback lookup into a single
+        // ordered query: the requested language sorts first (key 0), English (key
+        // 1) is the fallback, anything else (key 2) is filtered out by Take(1).
+        // Saves one ~57 ms RTT when the requested language has no description.
+        var description = await context.MachineDescriptions.AsNoTracking()
+                                       .Where(d => d.MachineId == id &&
+                                                   (d.LanguageCode == lang || d.LanguageCode == "eng"))
+                                       .OrderBy(d => d.LanguageCode == lang ? 0 : 1)
+                                       .Select(d => new { d.Html, d.Text })
+                                       .FirstOrDefaultAsync();
 
         return description?.Html ?? description?.Text;
     }
@@ -488,37 +534,23 @@ public class MachinesController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<MachineDescriptionDto> GetDescriptionAsync(int id, [FromQuery] string lang = "eng")
+    public Task<MachineDescriptionDto> GetDescriptionAsync(int id, [FromQuery] string lang = "eng")
     {
-        MachineDescriptionDto description = await context.MachineDescriptions
-                                                         .Where(d => d.MachineId == id && d.LanguageCode == lang)
-                                                         .Select(d => new MachineDescriptionDto
-                                                          {
-                                                              Id           = d.Id,
-                                                              MachineId    = d.MachineId,
-                                                              Html         = d.Html,
-                                                              Markdown     = d.Text,
-                                                              LanguageCode = d.LanguageCode,
-                                                              Language     = d.Language.ReferenceName
-                                                          })
-                                                         .FirstOrDefaultAsync();
-
-        // Fallback to English if requested language not found
-        if(description is null && lang != "eng")
-            description = await context.MachineDescriptions
-                                       .Where(d => d.MachineId == id && d.LanguageCode == "eng")
-                                       .Select(d => new MachineDescriptionDto
-                                        {
-                                            Id           = d.Id,
-                                            MachineId    = d.MachineId,
-                                            Html         = d.Html,
-                                            Markdown     = d.Text,
-                                            LanguageCode = d.LanguageCode,
-                                            Language     = d.Language.ReferenceName
-                                        })
-                                       .FirstOrDefaultAsync();
-
-        return description;
+        // Collapse the requested-language + English-fallback lookup into a single
+        // ordered query (see GetDescriptionTextAsync for rationale).
+        return context.MachineDescriptions.AsNoTracking()
+                      .Where(d => d.MachineId == id && (d.LanguageCode == lang || d.LanguageCode == "eng"))
+                      .OrderBy(d => d.LanguageCode == lang ? 0 : 1)
+                      .Select(d => new MachineDescriptionDto
+                       {
+                           Id           = d.Id,
+                           MachineId    = d.MachineId,
+                           Html         = d.Html,
+                           Markdown     = d.Text,
+                           LanguageCode = d.LanguageCode,
+                           Language     = d.Language.ReferenceName
+                       })
+                      .FirstOrDefaultAsync();
     }
 
     [HttpPost("{id:int}/description")]
