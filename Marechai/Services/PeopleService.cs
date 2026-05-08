@@ -199,6 +199,24 @@ public class PeopleService(Marechai.ApiClient.Client client)
         }
     }
 
+    /// <summary>
+    /// Wrapper for the consolidated /people/{id}/full endpoint. Returns the
+    /// person head plus all five child collections (companies, books, documents,
+    /// magazines, software credits) in a single HTTP round-trip. Replaces what
+    /// used to be 6 sequential service calls in the public /person/{Id} view.
+    /// </summary>
+    public async Task<PersonFullDto> GetPersonFullAsync(int id)
+    {
+        try
+        {
+            return await client.People[id].Full.GetAsync();
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
     public async Task<(long? id, string error)> CreateAsync(PersonDto dto)
     {
         try

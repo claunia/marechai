@@ -40,7 +40,9 @@ namespace Marechai.Server.Controllers;
 
 [Route("/people")]
 [ApiController]
-public class PeopleController(MarechaiContext context) : ControllerBase
+public class PeopleController(
+    MarechaiContext                    context,
+    IDbContextFactory<MarechaiContext> dbFactory) : ControllerBase
 {
     [HttpGet("count")]
     [AllowAnonymous]
@@ -295,6 +297,182 @@ public class PeopleController(MarechaiContext context) : ControllerBase
                                                            DisplayName      = p.DisplayName
                                                        })
                                                       .FirstOrDefaultAsync();
+
+    /// <summary>
+    /// Consolidated /people/{id}/full endpoint for the public view page. Returns
+    /// the person head plus all five child collections in one HTTP response,
+    /// replacing the 6 sequential round-trips the page used to make.
+    ///
+    /// Each query runs on its own DbContext from the factory so they can fan out
+    /// in parallel via Task.WhenAll. None of the children depend on values
+    /// projected by the head, so we use the /book head-with-children pattern
+    /// (all 6 queries fire in parallel) rather than head-first-then-children;
+    /// this saves one full ~180 ms RTT in the common case.
+    /// </summary>
+    [HttpGet("{id:int}/full")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<PersonFullDto>> GetFullAsync(int id)
+    {
+        await using var headCtx       = await dbFactory.CreateDbContextAsync();
+        await using var companiesCtx  = await dbFactory.CreateDbContextAsync();
+        await using var booksCtx      = await dbFactory.CreateDbContextAsync();
+        await using var documentsCtx  = await dbFactory.CreateDbContextAsync();
+        await using var magazinesCtx  = await dbFactory.CreateDbContextAsync();
+        await using var softwareCtx   = await dbFactory.CreateDbContextAsync();
+
+        // Head — same projection as GetAsync(int id) above. AsNoTracking because
+        // this is read-only.
+        Task<PersonDto> headTask = headCtx.People.AsNoTracking()
+            .Where(p => p.Id == id)
+            .Select(p => new PersonDto
+             {
+                 Id                 = p.Id,
+                 Name               = p.Name,
+                 Surname            = p.Surname,
+                 CountryOfBirthId   = p.CountryOfBirthId,
+                 BirthDate          = p.BirthDate,
+                 BirthDatePrecision = p.BirthDatePrecision,
+                 DeathDate          = p.DeathDate,
+                 DeathDatePrecision = p.DeathDatePrecision,
+                 Webpage            = p.Webpage,
+                 Twitter            = p.Twitter,
+                 Facebook           = p.Facebook,
+                 Photo              = p.Photo,
+                 Alias              = p.Alias,
+                 DisplayName        = p.DisplayName
+             })
+            .FirstOrDefaultAsync();
+
+        // Mirrors GetCompaniesByPersonAsync. The original sorts in memory because
+        // PersonByCompanyDto.FullName etc. are computed properties; we keep the
+        // same in-memory sort after Task.WhenAll completes.
+        Task<List<PersonByCompanyDto>> companiesTask = companiesCtx.PeopleByCompanies.AsNoTracking()
+            .Where(p => p.PersonId == id)
+            .Select(p => new PersonByCompanyDto
+             {
+                 Id          = p.Id,
+                 PersonId    = p.PersonId,
+                 CompanyId   = p.CompanyId,
+                 CompanyName = p.Company.Name,
+                 Position    = p.Position,
+                 Start       = p.Start,
+                 End         = p.End,
+                 Ongoing     = p.Ongoing,
+                 Name        = p.Person.Name,
+                 Surname     = p.Person.Surname,
+                 Alias       = p.Person.Alias,
+                 DisplayName = p.Person.DisplayName
+             })
+            .ToListAsync();
+
+        // Mirrors GetBooksByPersonAsync.
+        Task<List<PersonByBookDto>> booksTask = booksCtx.PeopleByBooks.AsNoTracking()
+            .Where(p => p.PersonId == id)
+            .Select(p => new PersonByBookDto
+             {
+                 Id          = p.Id,
+                 PersonId    = p.PersonId,
+                 BookId      = p.BookId,
+                 RoleId      = p.RoleId,
+                 Role        = p.Role.Name,
+                 BookTitle   = p.Book.Title,
+                 Name        = p.Person.Name,
+                 Surname     = p.Person.Surname,
+                 Alias       = p.Person.Alias,
+                 DisplayName = p.Person.DisplayName
+             })
+            .ToListAsync();
+
+        // Mirrors GetDocumentsByPersonAsync.
+        Task<List<PersonByDocumentDto>> documentsTask = documentsCtx.PeopleByDocuments.AsNoTracking()
+            .Where(p => p.PersonId == id)
+            .Select(p => new PersonByDocumentDto
+             {
+                 Id            = p.Id,
+                 PersonId      = p.PersonId,
+                 DocumentId    = p.DocumentId,
+                 RoleId        = p.RoleId,
+                 Role          = p.Role.Name,
+                 DocumentTitle = p.Document.Title,
+                 Name          = p.Person.Name,
+                 Surname       = p.Person.Surname,
+                 Alias         = p.Person.Alias,
+                 DisplayName   = p.Person.DisplayName
+             })
+            .ToListAsync();
+
+        // Mirrors GetMagazinesByPersonAsync.
+        Task<List<PersonByMagazineDto>> magazinesTask = magazinesCtx.PeopleByMagazines.AsNoTracking()
+            .Where(p => p.PersonId == id)
+            .Select(p => new PersonByMagazineDto
+             {
+                 Id            = p.Id,
+                 PersonId      = p.PersonId,
+                 MagazineId    = p.MagazineId,
+                 RoleId        = p.RoleId,
+                 Role          = p.Role.Name,
+                 MagazineTitle = p.Magazine.Magazine.Title,
+                 Name          = p.Person.Name,
+                 Surname       = p.Person.Surname,
+                 Alias         = p.Person.Alias,
+                 DisplayName   = p.Person.DisplayName
+             })
+            .ToListAsync();
+
+        // Mirrors GetSoftwareByPersonAsync.
+        Task<List<PersonBySoftwareDto>> softwareTask = softwareCtx.PeopleBySoftware.AsNoTracking()
+            .Where(p => p.PersonId == id)
+            .Select(p => new PersonBySoftwareDto
+             {
+                 Id           = p.Id,
+                 PersonId     = p.PersonId,
+                 SoftwareId   = p.SoftwareId,
+                 Role         = p.DocumentRole != null ? p.DocumentRole.Name : p.Role,
+                 SoftwareName = p.Software.Name,
+                 Name         = p.Person.Name,
+                 Surname      = p.Person.Surname,
+                 Alias        = p.Person.Alias,
+                 DisplayName  = p.Person.DisplayName
+             })
+            .ToListAsync();
+
+        await Task.WhenAll(headTask,
+                           companiesTask,
+                           booksTask,
+                           documentsTask,
+                           magazinesTask,
+                           softwareTask);
+
+        PersonDto person = headTask.Result;
+
+        if(person is null) return NotFound();
+
+        // Same in-memory sort orders as the legacy individual endpoints, so the
+        // page renders rows in the same sequence as before.
+        List<PersonByCompanyDto> companies = companiesTask.Result.OrderBy(p => p.CompanyName)
+                                                          .ThenBy(p => p.Position)
+                                                          .ThenBy(p => p.Start)
+                                                          .ToList();
+        List<PersonByBookDto>      books      = booksTask.Result.OrderBy(p => p.Role).ToList();
+        List<PersonByDocumentDto>  documents  = documentsTask.Result.OrderBy(p => p.Role).ToList();
+        List<PersonByMagazineDto>  magazines  = magazinesTask.Result.OrderBy(p => p.Role).ToList();
+        List<PersonBySoftwareDto>  software   = softwareTask.Result.OrderBy(p => p.SoftwareName)
+                                                            .ThenBy(p => p.Role)
+                                                            .ToList();
+
+        return new PersonFullDto
+        {
+            Person          = person,
+            Companies       = companies,
+            Books           = books,
+            Documents       = documents,
+            Magazines       = magazines,
+            SoftwareCredits = software
+        };
+    }
 
     [HttpPut("{id:int}")]
     [Authorize(Roles = "Admin,UberAdmin")]

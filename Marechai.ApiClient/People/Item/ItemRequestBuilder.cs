@@ -4,6 +4,7 @@ using Marechai.ApiClient.Models;
 using Marechai.ApiClient.People.Item.Books;
 using Marechai.ApiClient.People.Item.Companies;
 using Marechai.ApiClient.People.Item.Documents;
+using Marechai.ApiClient.People.Item.Full;
 using Marechai.ApiClient.People.Item.Magazines;
 using Marechai.ApiClient.People.Item.Software;
 using Microsoft.Kiota.Abstractions.Extensions;
@@ -36,6 +37,11 @@ namespace Marechai.ApiClient.People.Item
         public global::Marechai.ApiClient.People.Item.Documents.DocumentsRequestBuilder Documents
         {
             get => new global::Marechai.ApiClient.People.Item.Documents.DocumentsRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The full property</summary>
+        public global::Marechai.ApiClient.People.Item.Full.FullRequestBuilder Full
+        {
+            get => new global::Marechai.ApiClient.People.Item.Full.FullRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The magazines property</summary>
         public global::Marechai.ApiClient.People.Item.Magazines.MagazinesRequestBuilder Magazines

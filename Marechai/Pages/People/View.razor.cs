@@ -23,6 +23,7 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
@@ -63,21 +64,33 @@ public partial class View
             return;
         }
 
-        _person = await Service.GetPersonAsync(Id);
-
-        if(_person is null)
+        // Single consolidated /people/{id}/full call replaces six sequential
+        // round-trips. The legacy individual endpoints are still available for
+        // admin / internal callers; this page is the only consumer of /full.
+        try
         {
-            _loaded = true;
-            StateHasChanged();
+            PersonFullDto full = await Service.GetPersonFullAsync(Id);
 
+            if(full?.Person is null)
+            {
+                _loaded = true;
+                StateHasChanged();
+
+                return;
+            }
+
+            _person          = full.Person;
+            _companies       = full.Companies       ?? [];
+            _books           = full.Books           ?? [];
+            _documents       = full.Documents       ?? [];
+            _magazines       = full.Magazines       ?? [];
+            _softwareCredits = full.SoftwareCredits ?? [];
+        }
+        catch(ObjectDisposedException)
+        {
+            // Component was disposed mid-load (navigation away). Nothing to do.
             return;
         }
-
-        _companies = await Service.GetCompaniesByPersonAsync(Id);
-        _books     = await Service.GetBooksByPersonAsync(Id);
-        _documents = await Service.GetDocumentsByPersonAsync(Id);
-        _magazines = await Service.GetMagazinesByPersonAsync(Id);
-        _softwareCredits = await Service.GetSoftwareByPersonAsync(Id);
 
         _loaded = true;
         StateHasChanged();
