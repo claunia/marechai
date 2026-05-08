@@ -16,18 +16,21 @@ public class ReviewImportService
     readonly SourceDatabaseService             _sourceDb;
     readonly PlatformMatcher                   _platformMatcher;
     readonly MagazineMatcher                   _magazineMatcher;
+    readonly CountryMatcher                    _countryMatcher;
     readonly ReviewStateService                _reviewStateService;
 
     public ReviewImportService(IDbContextFactory<MarechaiContext> contextFactory,
                                SourceDatabaseService sourceDb,
                                PlatformMatcher platformMatcher,
                                MagazineMatcher magazineMatcher,
-                               ReviewStateService reviewStateService)
+                               ReviewStateService reviewStateService,
+                               CountryMatcher countryMatcher = null)
     {
         _contextFactory     = contextFactory;
         _sourceDb           = sourceDb;
         _platformMatcher    = platformMatcher;
         _magazineMatcher    = magazineMatcher;
+        _countryMatcher     = countryMatcher;
         _reviewStateService = reviewStateService;
     }
 
@@ -36,6 +39,9 @@ public class ReviewImportService
         Console.WriteLine("  Loading reference data...");
         await _platformMatcher.LoadAsync();
         await _magazineMatcher.LoadAsync();
+
+        if(_countryMatcher != null)
+            await _countryMatcher.LoadAsync();
 
         // Get all imported games with SoftwareId
         await using var context = await _contextFactory.CreateDbContextAsync();
@@ -169,7 +175,7 @@ public class ReviewImportService
         foreach(var review in reviews)
         {
             // Match magazine
-            var (magazineId, matchType) = await _magazineMatcher.MatchOrCreateAsync(review.PublicationName);
+            var (magazineId, matchType) = await _magazineMatcher.MatchOrCreateAsync(review.PublicationName, review.PublicationSourceId);
 
             if(magazineId == 0)
             {

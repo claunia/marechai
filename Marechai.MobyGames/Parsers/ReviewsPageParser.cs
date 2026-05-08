@@ -59,7 +59,20 @@ public static partial class ReviewsPageParser
                 var publicationLink = sourceDiv.SelectSingleNode(".//a[contains(@href,'mobyrank/source') or contains(@href,'sourceId')]");
 
                 if(publicationLink != null)
+                {
                     review.PublicationName = WebUtility.HtmlDecode(publicationLink.InnerText).Trim();
+
+                    // Extract sourceId from href (e.g. ".../mobyrank/source/sourceId,395/")
+                    string href = publicationLink.GetAttributeValue("href", null);
+
+                    if(!string.IsNullOrWhiteSpace(href))
+                    {
+                        var sourceIdMatch = SourceIdRegex().Match(href);
+
+                        if(sourceIdMatch.Success && int.TryParse(sourceIdMatch.Groups[1].Value, out int sid))
+                            review.PublicationSourceId = sid;
+                    }
+                }
 
                 // Date: text after the </a> in parentheses, e.g. " (Jan, 1990)" or " (1990)"
                 string sourceText = WebUtility.HtmlDecode(sourceDiv.InnerText).Trim();
@@ -108,4 +121,8 @@ public static partial class ReviewsPageParser
     /// <summary>Matches date in parentheses: (Jan, 1990) or (1990) or (Apr, 1994)</summary>
     [GeneratedRegex(@"\(([^)]+)\)\s*$", RegexOptions.Compiled)]
     private static partial Regex DateRegex();
+
+    /// <summary>Matches MobyGames source/critic id, e.g. "sourceId,395" or "/critic/395/".</summary>
+    [GeneratedRegex(@"(?:sourceId,|/critic/)(\d+)", RegexOptions.Compiled)]
+    private static partial Regex SourceIdRegex();
 }

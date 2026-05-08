@@ -5,6 +5,7 @@ namespace Marechai.MobyGames.Models;
 public class ParsedCriticReview
 {
     public string PublicationName { get; set; }
+    public int?   PublicationSourceId { get; set; }
     public string PlatformName   { get; set; }
     public int?   NormalizedScore { get; set; }
     public float? OriginalScore   { get; set; }

@@ -144,19 +144,25 @@ class Program
             case "import-reviews":
             {
                 int reviewBatchSize = config.GetValue("Import:BatchSize", 500);
+                int reviewDelayMs   = config.GetValue("MobyGames:DelayMs", 2000);
 
                 for(int i = 0; i < args.Length; i++)
                 {
                     if(args[i] == "--batch-size" && i + 1 < args.Length && int.TryParse(args[i + 1], out int rbs))
                         reviewBatchSize = rbs;
+
+                    if(args[i] == "--delay-ms" && i + 1 < args.Length && int.TryParse(args[i + 1], out int rdm))
+                        reviewDelayMs = rdm;
                 }
 
-                var magazineMatcher    = new MagazineMatcher(factory);
+                using var reviewHttpClient = new MobyGamesHttpClient(reviewDelayMs);
+
+                var magazineMatcher    = new MagazineMatcher(factory, countryMatcher, reviewHttpClient);
                 var reviewStateService = new ReviewStateService(factory);
 
                 var reviewImportService = new ReviewImportService(
                     factory, sourceDb, platformMatcher, magazineMatcher,
-                    reviewStateService);
+                    reviewStateService, countryMatcher);
 
                 await reviewImportService.RunAsync(reviewBatchSize);
 
