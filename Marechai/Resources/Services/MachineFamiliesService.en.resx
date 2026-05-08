@@ -128,4 +128,16 @@
         <value>Actions</value>
         <comment>Actions column header</comment>
     </data>
+    <data name="Machine family not found in database" xml:space="preserve">
+        <value>Machine family not found in database</value>
+        <comment>Shown when the requested machine family does not exist</comment>
+    </data>
+    <data name="{0} machines found in this family." xml:space="preserve">
+        <value>{0} machines found in this family.</value>
+        <comment>Count line above the machine list on the family page</comment>
+    </data>
+    <data name="There are no machines in this family." xml:space="preserve">
+        <value>There are no machines in this family.</value>
+        <comment>Empty-state alert on the family page</comment>
+    </data>
 </root>

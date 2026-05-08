@@ -126,4 +126,16 @@
         <value>Acciones</value>
         <comment>Actions column header</comment>
     </data>
+    <data name="Machine family not found in database" xml:space="preserve">
+        <value>Familia de máquinas no encontrada en la base de datos</value>
+        <comment>Shown when the requested machine family does not exist</comment>
+    </data>
+    <data name="{0} machines found in this family." xml:space="preserve">
+        <value>Se han encontrado {0} máquinas en esta familia.</value>
+        <comment>Count line above the machine list on the family page</comment>
+    </data>
+    <data name="There are no machines in this family." xml:space="preserve">
+        <value>No hay máquinas en esta familia.</value>
+        <comment>Empty-state alert on the family page</comment>
+    </data>
 <data name="Date precision" xml:space="preserve"><value>Precisión de fecha</value></data><data name="Full date" xml:space="preserve"><value>Fecha completa</value></data><data name="Month and year only" xml:space="preserve"><value>Solo mes y año</value></data><data name="Year only" xml:space="preserve"><value>Solo año</value></data></root>

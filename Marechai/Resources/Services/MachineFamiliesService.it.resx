@@ -142,4 +142,16 @@
         <value>Solo anno</value>
         <comment>Year only</comment>
     </data>
+    <data name="Machine family not found in database" xml:space="preserve">
+        <value>Famiglia di macchine non trovata nel database</value>
+        <comment>Shown when the requested machine family does not exist</comment>
+    </data>
+    <data name="{0} machines found in this family." xml:space="preserve">
+        <value>{0} macchine trovate in questa famiglia.</value>
+        <comment>Count line above the machine list on the family page</comment>
+    </data>
+    <data name="There are no machines in this family." xml:space="preserve">
+        <value>Non ci sono macchine in questa famiglia.</value>
+        <comment>Empty-state alert on the family page</comment>
+    </data>
 </root>
