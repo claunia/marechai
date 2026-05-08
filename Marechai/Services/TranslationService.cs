@@ -69,41 +69,40 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
         {
             HttpClient client = httpClientFactory.CreateClient("NllbServe");
 
-            // Split by paragraphs to stay under the model's 1024 token limit
-            string[] paragraphs = text.Split(["\r\n\r\n", "\n\n"], StringSplitOptions.None);
+            // Tokenize the text into alternating (line, separator) pairs so we can translate each
+            // line independently and re-assemble the text with the exact original separators.
+            // Recognised line separators (in priority order):
+            //   CRLF (\r\n), LF (\n), CR (\r), NEL (U+0085), LS (U+2028), PS (U+2029),
+            //   VT (U+000B), FF (U+000C).
+            // This handles Unix, Windows, classic Mac, and Unicode-rich text equally well.
+            List<(string line, string separator)> tokens = TokenizeLines(text);
 
-            // Count non-empty paragraphs for progress
-            int totalChunks     = paragraphs.Count(p => !string.IsNullOrWhiteSpace(p));
+            // Count non-empty lines for progress
+            int totalChunks     = tokens.Count(t => !string.IsNullOrWhiteSpace(t.line));
             int completedChunks = 0;
 
             progress?.Report((0, totalChunks));
 
             var translatedParts = new StringBuilder();
 
-            for(int i = 0; i < paragraphs.Length; i++)
+            foreach((string line, string separator) in tokens)
             {
-                if(i > 0)
-                    translatedParts.Append("\n\n");
-
-                string paragraph = paragraphs[i];
-
-                // Preserve empty paragraphs (consecutive blank lines)
-                if(string.IsNullOrWhiteSpace(paragraph))
+                if(string.IsNullOrWhiteSpace(line))
+                    translatedParts.Append(line);
+                else
                 {
-                    translatedParts.Append(paragraph);
+                    (string translated, string error) = await TranslateChunkAsync(client, line, targetCode);
 
-                    continue;
+                    if(error is not null)
+                        return (null, error);
+
+                    translatedParts.Append(translated);
+
+                    completedChunks++;
+                    progress?.Report((completedChunks, totalChunks));
                 }
 
-                (string translated, string error) = await TranslateChunkAsync(client, paragraph, targetCode);
-
-                if(error is not null)
-                    return (null, error);
-
-                translatedParts.Append(translated);
-
-                completedChunks++;
-                progress?.Report((completedChunks, totalChunks));
+                translatedParts.Append(separator);
             }
 
             return (translatedParts.ToString(), null);
@@ -126,10 +125,53 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
         }
     }
 
+    static List<(string line, string separator)> TokenizeLines(string text)
+    {
+        var tokens = new List<(string line, string separator)>();
+
+        if(string.IsNullOrEmpty(text))
+        {
+            tokens.Add((text ?? string.Empty, string.Empty));
+
+            return tokens;
+        }
+
+        int start = 0;
+
+        for(int i = 0; i < text.Length; i++)
+        {
+            char c = text[i];
+
+            // Recognised line separators (priority order matters for CRLF)
+            if(c is not ('\r' or '\n' or '\u0085' or '\u2028' or '\u2029' or '\u000B' or '\u000C'))
+                continue;
+
+            string separator;
+
+            // CRLF must be treated as a single separator
+            if(c == '\r' && i + 1 < text.Length && text[i + 1] == '\n')
+            {
+                separator = "\r\n";
+                i++;
+            }
+            else
+                separator = c.ToString();
+
+            string line = text.Substring(start, i - separator.Length + 1 - start);
+            tokens.Add((line, separator));
+            start = i + 1;
+        }
+
+        // Trailing line without a final separator
+        if(start <= text.Length)
+            tokens.Add((text[start..], string.Empty));
+
+        return tokens;
+    }
+
     async Task<(string translated, string error)> TranslateChunkAsync(HttpClient client, string chunk,
                                                                         string targetCode)
-    {
-        var formData = new FormUrlEncodedContent(
+    {        var formData = new FormUrlEncodedContent(
         [
             new KeyValuePair<string, string>("source",   chunk),
             new KeyValuePair<string, string>("src_lang", "eng_Latn"),
