@@ -47,15 +47,49 @@ public partial class View
     ProcessorDto     _processor;
     List<ProcessorVideoDto> _videos = [];
 
+    // Tab state — backs the responsive sticky MudTabs in View.razor.
+    // _tabNames is rebuilt after data loads to include "machines" only when
+    // at least one of the per-machine-type lists is non-empty.
+    string[] _tabNames  = ["specifications", "media"];
+    string   _activeTab = "specifications";
+
+    int _activeTabIndex => Math.Max(0, Array.IndexOf(_tabNames, _activeTab));
+
     [Parameter]
     public int Id { get; set; }
 
+    [SupplyParameterFromQuery(Name = "tab")]
+    public string TabParam { get; set; }
+
+    [Inject]
+    NavigationManager NavManager { get; set; }
+
     protected override void OnParametersSet()
     {
+        // Validate against the static superset; the index resolver collapses
+        // missing tabs (e.g. "machines" on a processor with none) to 0.
+        string tab = (TabParam ?? "specifications").ToLowerInvariant();
+        _activeTab = tab is "specifications" or "machines" or "media" ? tab : "specifications";
+
         if(Id == _lastId) return;
 
         _lastId = Id;
         _loaded = false;
+    }
+
+    void OnTabChanged(int index)
+    {
+        if(index < 0 || index >= _tabNames.Length) return;
+
+        string newTab = _tabNames[index];
+
+        if(newTab == _activeTab) return;
+
+        _activeTab = newTab;
+
+        // Default tab (specifications) drops the query param to keep URLs clean.
+        string newUri = NavManager.GetUriWithQueryParameter("tab", newTab == "specifications" ? null : newTab);
+        NavManager.NavigateTo(newUri, false, true);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -89,6 +123,15 @@ public partial class View
         _photos = await ProcessorPhotosService.GetGuidsByProcessorAsync(Id);
 
         _videos = await Service.GetVideosByProcessorAsync(Id);
+
+        // Insert the Machines tab between Specifications and Media when the
+        // processor has any attached computers/consoles/smartphones, so
+        // _activeTabIndex resolves "machines" correctly on first paint after a
+        // deep link.
+        bool hasMachines = _computers.Count > 0 || _consoles.Count > 0 || _smartphones.Count > 0;
+        _tabNames = hasMachines
+                        ? ["specifications", "machines", "media"]
+                        : ["specifications", "media"];
 
         _loaded = true;
         StateHasChanged();

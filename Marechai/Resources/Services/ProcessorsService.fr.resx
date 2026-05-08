@@ -626,4 +626,16 @@
         <value>Échec de la suppression de la vidéo.</value>
         <comment>Failed to delete video.</comment>
     </data>
+    <data name="Specifications" xml:space="preserve">
+        <value>Spécifications</value>
+        <comment>Specifications</comment>
+    </data>
+    <data name="Media tab" xml:space="preserve">
+        <value>Médias</value>
+        <comment>Media</comment>
+    </data>
+    <data name="Machines" xml:space="preserve">
+        <value>Machines</value>
+        <comment>Machines</comment>
+    </data>
 </root>
