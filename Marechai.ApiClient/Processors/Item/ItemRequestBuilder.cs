@@ -3,6 +3,7 @@
 using Marechai.ApiClient.Models;
 using Marechai.ApiClient.Processors.Item.Description;
 using Marechai.ApiClient.Processors.Item.Descriptions;
+using Marechai.ApiClient.Processors.Item.Full;
 using Marechai.ApiClient.Processors.Item.Machines;
 using Marechai.ApiClient.Processors.Item.Photos;
 using Marechai.ApiClient.Processors.Item.Videos;
@@ -31,6 +32,11 @@ namespace Marechai.ApiClient.Processors.Item
         public global::Marechai.ApiClient.Processors.Item.Descriptions.DescriptionsRequestBuilder Descriptions
         {
             get => new global::Marechai.ApiClient.Processors.Item.Descriptions.DescriptionsRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The full property</summary>
+        public global::Marechai.ApiClient.Processors.Item.Full.FullRequestBuilder Full
+        {
+            get => new global::Marechai.ApiClient.Processors.Item.Full.FullRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The machines property</summary>
         public global::Marechai.ApiClient.Processors.Item.Machines.MachinesRequestBuilder Machines

@@ -41,13 +41,14 @@ namespace Marechai.Server.Controllers;
 
 [Route("/processors")]
 [ApiController]
-public class ProcessorsController(MarechaiContext context) : ControllerBase
+public class ProcessorsController(MarechaiContext context, IDbContextFactory<MarechaiContext> dbFactory)
+    : ControllerBase
 {
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<ProcessorDto>> GetAsync() => context.Processors.Select(p => new ProcessorDto
+    public Task<List<ProcessorDto>> GetAsync() => context.Processors.AsNoTracking().Select(p => new ProcessorDto
                                                           {
                                                               Name           = p.Name,
                                                               CompanyName    = p.Company.Name,
@@ -90,7 +91,8 @@ public class ProcessorsController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<MachineDto>> GetMachinesByProcessorAsync(int processorId) =>
-        context.ProcessorsByMachine.Where(p => p.ProcessorId == processorId)
+        context.ProcessorsByMachine.AsNoTracking()
+               .Where(p => p.ProcessorId == processorId)
                .Select(p => p.Machine)
                .OrderBy(m => m.Company.Name)
                .ThenBy(m => m.Name)
@@ -112,7 +114,7 @@ public class ProcessorsController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<ProcessorDto>> GetByMachineAsync(int machineId) => context.ProcessorsByMachine
+    public Task<List<ProcessorDto>> GetByMachineAsync(int machineId) => context.ProcessorsByMachine.AsNoTracking()
        .Where(p => p.MachineId == machineId)
        .Select(p => new ProcessorDto
         {
@@ -153,7 +155,8 @@ public class ProcessorsController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<ProcessorDto> GetAsync(int id) => context.Processors.Where(p => p.Id == id)
+    public Task<ProcessorDto> GetAsync(int id) => context.Processors.AsNoTracking()
+                                                         .Where(p => p.Id == id)
                                                          .Select(p => new ProcessorDto
                                                           {
                                                               Id               = p.Id,
@@ -187,6 +190,197 @@ public class ProcessorsController(MarechaiContext context) : ControllerBase
                                                               InstructionSetId = p.InstructionSetId
                                                           })
                                                          .FirstOrDefaultAsync();
+
+    /// <summary>
+    /// Consolidated payload for the public /processor/{Id} view page. Replaces five
+    /// sequential HTTP round-trips (head + machines + description + photos + videos)
+    /// with a single response. The head + company name + company logo + instruction-set
+    /// extensions are projected in one query (logo is an inline correlated subquery so
+    /// it costs zero extra DB round-trips); the description language fallback is
+    /// collapsed into a single ordered query; the four child collections are fetched in
+    /// parallel using independent <see cref="MarechaiContext"/> instances from
+    /// <c>IDbContextFactory</c> (DbContext is not thread-safe; sharing the request-scoped
+    /// context across parallel branches throws <c>InvalidOperationException</c>).
+    /// </summary>
+    [HttpGet("{id:int}/full")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<ProcessorFullDto>> GetFullAsync(int id, [FromQuery] string lang = "eng")
+    {
+        // The four child collections plus the description only depend on `id` (from
+        // the URL), and not on any value projected by the head query, so we fire all
+        // FIVE queries — head + description + machines + photos + videos — in parallel
+        // using independent DbContext instances from the factory (DbContext is not
+        // thread-safe). The company-logo lookup is folded into the head query as an
+        // inline correlated subquery so it adds zero extra DB round-trips.
+        await using var headCtx        = await dbFactory.CreateDbContextAsync();
+        await using var descriptionCtx = await dbFactory.CreateDbContextAsync();
+        await using var machinesCtx    = await dbFactory.CreateDbContextAsync();
+        await using var photosCtx      = await dbFactory.CreateDbContextAsync();
+        await using var videosCtx      = await dbFactory.CreateDbContextAsync();
+
+        // Head + company name + instruction set + instruction-set extensions + company
+        // logo in a single projected join. The CompanyLogo lookup uses an inline
+        // correlated subquery ordered such that logos issued on or after the
+        // processor's introduction year sort first (key 0), then any other logo by
+        // ascending year. Returns null when the processor does not exist; surfaced as
+        // 404 below.
+        var headTask = headCtx.Processors.AsNoTracking()
+                              .Where(p => p.Id == id)
+                              .Select(p => new
+                               {
+                                   p.Id,
+                                   p.Name,
+                                   p.CompanyId,
+                                   CompanyName         = p.Company.Name,
+                                   p.ModelCode,
+                                   p.Introduced,
+                                   p.IntroducedPrecision,
+                                   p.Speed,
+                                   p.Package,
+                                   p.Gprs,
+                                   p.GprSize,
+                                   p.Fprs,
+                                   p.FprSize,
+                                   p.Cores,
+                                   p.ThreadsPerCore,
+                                   p.Process,
+                                   p.ProcessNm,
+                                   p.DieSize,
+                                   p.Transistors,
+                                   p.DataBus,
+                                   p.AddrBus,
+                                   p.SimdRegisters,
+                                   p.SimdSize,
+                                   p.L1Instruction,
+                                   p.L1Data,
+                                   p.L2,
+                                   p.L3,
+                                   InstructionSetName       = p.InstructionSet.Name,
+                                   p.InstructionSetId,
+                                   InstructionSetExtensions = p.InstructionSetExtensions
+                                                               .Select(e => e.Extension.Extension)
+                                                               .ToList(),
+                                   CompanyLogo = p.Company.Logos
+                                                  .OrderBy(l => p.Introduced.HasValue && l.Year >= p.Introduced.Value.Year
+                                                                    ? 0
+                                                                    : 1)
+                                                  .ThenBy(l => l.Year)
+                                                  .Select(l => (Guid?)l.Guid)
+                                                  .FirstOrDefault()
+                               })
+                              .FirstOrDefaultAsync();
+
+        // Description: collapse the original two-step lookup (try requested lang, then
+        // English fallback) into a single ordered query. Matches for the requested
+        // language sort first (key 0); English fallback is key 1; FirstOrDefaultAsync
+        // returns the preferred row.
+        var descriptionTask = descriptionCtx.ProcessorDescriptions.AsNoTracking()
+            .Where(d => d.ProcessorId == id && (d.LanguageCode == lang || d.LanguageCode == "eng"))
+            .OrderBy(d => d.LanguageCode == lang ? 0 : 1)
+            .Select(d => new { d.Html, d.Text, d.LanguageCode })
+            .FirstOrDefaultAsync();
+
+        // Mirrors GetMachinesByProcessorAsync above.
+        Task<List<MachineDto>> machinesTask = machinesCtx.ProcessorsByMachine.AsNoTracking()
+            .Where(p => p.ProcessorId == id)
+            .Select(p => p.Machine)
+            .OrderBy(m => m.Company.Name)
+            .ThenBy(m => m.Name)
+            .Select(m => new MachineDto
+             {
+                 Id                  = m.Id,
+                 Company             = m.Company.Name,
+                 CompanyId           = m.Company.Id,
+                 Name                = m.Name,
+                 Model               = m.Model,
+                 Introduced          = m.Introduced,
+                 IntroducedPrecision = m.IntroducedPrecision,
+                 Type                = m.Type,
+                 FamilyId            = m.FamilyId
+             })
+            .ToListAsync();
+
+        // Mirrors ProcessorPhotosController.GetGuidsByProcessorAsync. Will benefit
+        // from the (ProcessorId, CreatedOn, Id) index added in MarechaiContext.
+        Task<List<Guid>> photosTask = photosCtx.ProcessorPhotos.AsNoTracking()
+                                               .Where(p => p.ProcessorId == id)
+                                               .OrderBy(p => p.CreatedOn)
+                                               .ThenBy(p => p.Id)
+                                               .Select(p => p.Id)
+                                               .ToListAsync();
+
+        // Mirrors ProcessorVideosController.GetVideosByProcessorAsync.
+        Task<List<ProcessorVideoDto>> videosTask = videosCtx.ProcessorVideos.AsNoTracking()
+            .Where(v => v.ProcessorId == id)
+            .OrderBy(v => v.Title)
+            .Select(v => new ProcessorVideoDto
+             {
+                 Id            = v.Id,
+                 ProcessorId   = v.ProcessorId,
+                 ProcessorName = v.Processor.Name,
+                 Provider      = v.Provider,
+                 VideoId       = v.VideoId,
+                 Title         = v.Title
+             })
+            .ToListAsync();
+
+        await Task.WhenAll(headTask, descriptionTask, machinesTask, photosTask, videosTask);
+
+        var head = headTask.Result;
+
+        if(head is null) return NotFound();
+
+        var processor = new ProcessorDto
+        {
+            Id                       = head.Id,
+            Name                     = head.Name,
+            CompanyId                = head.CompanyId,
+            CompanyName              = head.CompanyName,
+            ModelCode                = head.ModelCode,
+            Introduced               = head.Introduced,
+            IntroducedPrecision      = head.IntroducedPrecision,
+            Speed                    = head.Speed,
+            Package                  = head.Package,
+            Gprs                     = head.Gprs,
+            GprSize                  = head.GprSize,
+            Fprs                     = head.Fprs,
+            FprSize                  = head.FprSize,
+            Cores                    = head.Cores,
+            ThreadsPerCore           = head.ThreadsPerCore,
+            Process                  = head.Process,
+            ProcessNm                = head.ProcessNm,
+            DieSize                  = head.DieSize,
+            Transistors              = head.Transistors,
+            DataBus                  = head.DataBus,
+            AddrBus                  = head.AddrBus,
+            SimdRegisters            = head.SimdRegisters,
+            SimdSize                 = head.SimdSize,
+            L1Instruction            = head.L1Instruction,
+            L1Data                   = head.L1Data,
+            L2                       = head.L2,
+            L3                       = head.L3,
+            InstructionSet           = head.InstructionSetName,
+            InstructionSetId         = head.InstructionSetId,
+            InstructionSetExtensions = head.InstructionSetExtensions
+        };
+
+        var description = descriptionTask.Result;
+
+        return new ProcessorFullDto
+        {
+            Processor               = processor,
+            CompanyLogo             = head.CompanyLogo,
+            DescriptionHtml         = description?.Html,
+            DescriptionText         = description?.Text,
+            DescriptionLanguageCode = description?.LanguageCode,
+            Machines                = machinesTask.Result,
+            Photos                  = photosTask.Result,
+            Videos                  = videosTask.Result
+        };
+    }
 
     [HttpPut("{id:int}")]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -334,13 +528,14 @@ public class ProcessorsController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<string> GetDescriptionTextAsync(int id, [FromQuery] string lang = "eng")
     {
-        ProcessorDescription description =
-            await context.ProcessorDescriptions.FirstOrDefaultAsync(d => d.ProcessorId == id && d.LanguageCode == lang);
-
-        // Fallback to English if requested language not found
-        if(description is null && lang != "eng")
-            description = await context.ProcessorDescriptions.FirstOrDefaultAsync(d => d.ProcessorId == id &&
-                              d.LanguageCode == "eng");
+        // Single ordered query collapses the original two-step pattern (try requested
+        // language, then English fallback) into one round-trip. Matches for the
+        // requested language sort first (key 0); English fallback is key 1.
+        var description = await context.ProcessorDescriptions.AsNoTracking()
+            .Where(d => d.ProcessorId == id && (d.LanguageCode == lang || d.LanguageCode == "eng"))
+            .OrderBy(d => d.LanguageCode == lang ? 0 : 1)
+            .Select(d => new { d.Html, d.Text })
+            .FirstOrDefaultAsync();
 
         return description?.Html ?? description?.Text;
     }

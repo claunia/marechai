@@ -59,6 +59,27 @@ public class ProcessorsService(Marechai.ApiClient.Client client)
         }
     }
 
+    /// <summary>
+    /// Consolidated fetch for the public /processor/{Id} view page. Replaces five
+    /// sequential HTTP round-trips (head + machines + description + photos + videos)
+    /// with a single backend call. Returns null on transport failure or a 404 from
+    /// the server (the page treats null as "processor not found").
+    /// </summary>
+    public async Task<ProcessorFullDto> GetProcessorFullAsync(int id, string lang = "eng")
+    {
+        try
+        {
+            return await client.Processors[id].Full.GetAsync(rc =>
+            {
+                if(!string.IsNullOrWhiteSpace(lang)) rc.QueryParameters.Lang = lang;
+            });
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
     public async Task<(long? id, string error)> CreateAsync(ProcessorDto dto)
     {
         try

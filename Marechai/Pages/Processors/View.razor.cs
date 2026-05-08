@@ -103,9 +103,12 @@ public partial class View
             return;
         }
 
-        _processor = await Service.GetByIdAsync(Id);
+        // Single backend round-trip: the consolidated /processors/{id}/full
+        // endpoint returns head + company logo + description + machines + photos
+        // + videos in one response. Replaces five sequential REST calls.
+        ProcessorFullDto full = await Service.GetProcessorFullAsync(Id);
 
-        if(_processor is null)
+        if(full?.Processor is null)
         {
             _loaded = true;
             StateHasChanged();
@@ -113,16 +116,20 @@ public partial class View
             return;
         }
 
-        List<MachineDto> machines = await Service.GetMachinesByProcessorAsync(Id);
-        _computers = machines.Where(m => m.Type == (int)MachineType.Computer).ToList();
-        _consoles  = machines.Where(m => m.Type == (int)MachineType.Console).ToList();
+        _processor = full.Processor;
+
+        List<MachineDto> machines = full.Machines ?? [];
+        _computers   = machines.Where(m => m.Type == (int)MachineType.Computer).ToList();
+        _consoles    = machines.Where(m => m.Type == (int)MachineType.Console).ToList();
         _smartphones = machines.Where(m => m.Type == (int)MachineType.Smartphone).ToList();
 
-        _description = await Service.GetDescriptionTextAsync(Id);
+        _description = full.DescriptionHtml ?? full.DescriptionText;
 
-        _photos = await ProcessorPhotosService.GetGuidsByProcessorAsync(Id);
-
-        _videos = await Service.GetVideosByProcessorAsync(Id);
+        // Kiota emits photos as List<Guid?>? from the OpenAPI primitive collection.
+        // Materialize to List<Guid> by dropping the nullability (server projects
+        // ProcessorPhoto.Id which is non-nullable on disk).
+        _photos = full.Photos?.Where(g => g.HasValue).Select(g => g!.Value).ToList() ?? [];
+        _videos = full.Videos ?? [];
 
         // Insert the Machines tab between Specifications and Media when the
         // processor has any attached computers/consoles/smartphones, so

@@ -1192,6 +1192,17 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
 
         modelBuilder.Entity<ProcessorPhoto>(entity =>
         {
+            // Foreign-key + sort indexes for the per-processor photo lookup hit by the
+            // public processor view (`/processors/{id}/photos`) and by the consolidated
+            // /processors/{id}/full endpoint. Without these the query degenerates to a
+            // full table scan + filesort because the historical EXIF indexes do not
+            // cover the (ProcessorId, sort) access pattern. Mirrors the GpuPhoto and
+            // MachinePhoto retrofits.
+            entity.HasIndex(e => e.ProcessorId).HasDatabaseName("idx_processor_photos_processor");
+
+            entity.HasIndex(e => new { e.ProcessorId, e.CreatedOn, e.Id })
+                  .HasDatabaseName("idx_processor_photos_processor_created");
+
             entity.HasIndex(e => e.Aperture);
 
             entity.HasIndex(e => e.Author);
