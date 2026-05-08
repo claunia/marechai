@@ -104,28 +104,41 @@ public partial class View
             return;
         }
 
-        _synth = await Service.GetByIdAsync(Id);
+        // ── Phase 1+3 retrofit ────────────────────────────────────────────────
+        // One consolidated HTTP round-trip via /sound-synths/{Id}/full (head
+        // projection + company logo via inline subquery + description with
+        // single-query language fallback + machines + photos + videos), all
+        // executed in parallel server-side on independent DbContext instances.
+        // Replaces the original 5 sequential GetByIdAsync /
+        // GetMachinesBySoundSynthAsync / GetDescriptionTextAsync /
+        // GetGuidsBySoundSynthAsync / GetVideosBySoundSynthAsync calls.
+        SoundSynthFullDto full = await Service.GetFullAsync(Id);
 
-        if(_synth is null)
+        if(full?.SoundSynth is null)
         {
+            _synth  = null;
             _loaded = true;
             StateHasChanged();
 
             return;
         }
 
+        _synth       = full.SoundSynth;
         _displayName = _synth.Name == "DB_SOFTWARE" ? L["Software"] : _synth.Name;
 
-        List<MachineDto> machines = await Service.GetMachinesBySoundSynthAsync(Id);
-        _computers = machines.Where(m => m.Type == (int)MachineType.Computer).ToList();
-        _consoles  = machines.Where(m => m.Type == (int)MachineType.Console).ToList();
+        // Photos arrive as List<Guid?>? (Kiota emits nullable element type even
+        // for non-nullable server collections). Materialise into the existing
+        // List<Guid> field shape that the .razor view expects.
+        _photos = full.Photos?.Where(g => g.HasValue).Select(g => g!.Value).ToList() ?? [];
+
+        _videos = full.Videos ?? [];
+
+        _description = full.DescriptionHtml ?? full.DescriptionText;
+
+        List<MachineDto> machines = full.Machines ?? [];
+        _computers   = machines.Where(m => m.Type == (int)MachineType.Computer).ToList();
+        _consoles    = machines.Where(m => m.Type == (int)MachineType.Console).ToList();
         _smartphones = machines.Where(m => m.Type == (int)MachineType.Smartphone).ToList();
-
-        _description = await Service.GetDescriptionTextAsync(Id);
-
-        _photos = await SoundSynthPhotosService.GetGuidsBySoundSynthAsync(Id);
-
-        _videos = await Service.GetVideosBySoundSynthAsync(Id);
 
         // Insert the Machines tab between Specifications and Media when the
         // synth has any attached computers/consoles/smartphones, so

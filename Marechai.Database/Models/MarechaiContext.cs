@@ -1344,6 +1344,15 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
 
             entity.HasIndex(e => e.WhiteBalance);
 
+            // FK index for /sound-synths/{id}/photos lookups (matches the
+            // MachinePhoto/GpuPhoto/ProcessorPhoto pattern: this FK was missing
+            // among the 30+ EXIF indexes). Composite (SoundSynthId, CreatedOn,
+            // Id) backs the OrderBy(CreatedOn).ThenBy(Id) sort.
+            entity.HasIndex(e => e.SoundSynthId).HasDatabaseName("idx_sound_synth_photos_sound_synth");
+
+            entity.HasIndex(e => new { e.SoundSynthId, e.CreatedOn, e.Id })
+                  .HasDatabaseName("idx_sound_synth_photos_sound_synth_created");
+
             entity.HasOne(d => d.SoundSynth).WithMany(p => p.Photos).OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(d => d.User).WithMany().OnDelete(DeleteBehavior.SetNull);

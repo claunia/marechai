@@ -3,6 +3,7 @@
 using Marechai.ApiClient.Models;
 using Marechai.ApiClient.SoundSynths.Item.Description;
 using Marechai.ApiClient.SoundSynths.Item.Descriptions;
+using Marechai.ApiClient.SoundSynths.Item.Full;
 using Marechai.ApiClient.SoundSynths.Item.Machines;
 using Marechai.ApiClient.SoundSynths.Item.Photos;
 using Marechai.ApiClient.SoundSynths.Item.Videos;
@@ -31,6 +32,11 @@ namespace Marechai.ApiClient.SoundSynths.Item
         public global::Marechai.ApiClient.SoundSynths.Item.Descriptions.DescriptionsRequestBuilder Descriptions
         {
             get => new global::Marechai.ApiClient.SoundSynths.Item.Descriptions.DescriptionsRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The full property</summary>
+        public global::Marechai.ApiClient.SoundSynths.Item.Full.FullRequestBuilder Full
+        {
+            get => new global::Marechai.ApiClient.SoundSynths.Item.Full.FullRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The machines property</summary>
         public global::Marechai.ApiClient.SoundSynths.Item.Machines.MachinesRequestBuilder Machines

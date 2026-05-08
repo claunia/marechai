@@ -66,6 +66,29 @@ public class SoundSynthsService(Marechai.ApiClient.Client client)
         }
     }
 
+    /// <summary>
+    /// Fetches the consolidated /soundsynth/{Id} payload (head + company logo + description
+    /// + machines + photos + videos) in a single HTTP round-trip. Replaces the original
+    /// 5-call sequence (GetByIdAsync + GetMachinesBySoundSynthAsync + GetDescriptionTextAsync
+    /// + SoundSynthPhotosService.GetGuidsBySoundSynthAsync + GetVideosBySoundSynthAsync).
+    /// Returns <c>null</c> on any transport-level failure or 404; the caller should treat
+    /// null the same way it treated <c>GetByIdAsync</c> returning null.
+    /// </summary>
+    public async Task<SoundSynthFullDto> GetFullAsync(int id, string lang = "eng")
+    {
+        try
+        {
+            return await client.SoundSynths[id].Full.GetAsync(rc =>
+            {
+                if(!string.IsNullOrEmpty(lang)) rc.QueryParameters.Lang = lang;
+            });
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
     public async Task<(long? id, string error)> CreateAsync(SoundSynthDto dto)
     {
         try

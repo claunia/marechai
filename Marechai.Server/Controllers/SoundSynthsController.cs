@@ -41,7 +41,9 @@ namespace Marechai.Server.Controllers;
 
 [Route("/sound-synths")]
 [ApiController]
-public class SoundSynthsController(MarechaiContext context) : ControllerBase
+public class SoundSynthsController(
+    MarechaiContext                  context,
+    IDbContextFactory<MarechaiContext> dbFactory) : ControllerBase
 {
     [HttpGet]
     [AllowAnonymous]
@@ -122,7 +124,8 @@ public class SoundSynthsController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<SoundSynthDto> GetAsync(int id) => context.SoundSynths.Where(s => s.Id == id)
+    public Task<SoundSynthDto> GetAsync(int id) => context.SoundSynths.AsNoTracking()
+                                                          .Where(s => s.Id == id)
                                                           .Select(s => new SoundSynthDto
                                                            {
                                                                Id          = s.Id,
@@ -140,6 +143,160 @@ public class SoundSynthsController(MarechaiContext context) : ControllerBase
                                                                Type        = s.Type
                                                            })
                                                           .FirstOrDefaultAsync();
+
+    /// <summary>
+    /// Consolidated payload for the public /soundsynth/{Id} view page. Replaces five
+    /// sequential HTTP round-trips (head + machines + description + photos + videos)
+    /// with a single response. The head + company name + company logo are projected in
+    /// one query (logo is an inline correlated subquery so it costs zero extra DB
+    /// round-trips); the description language fallback is collapsed into a single
+    /// ordered query; the three child collections are fetched in parallel using
+    /// independent <see cref="MarechaiContext"/> instances from <c>IDbContextFactory</c>
+    /// (DbContext is not thread-safe; sharing the request-scoped context across parallel
+    /// branches throws <c>InvalidOperationException</c>).
+    /// </summary>
+    [HttpGet("{id:int}/full")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<SoundSynthFullDto>> GetFullAsync(int id, [FromQuery] string lang = "eng")
+    {
+        // Head + description + the three child collections only depend on `id`
+        // (from the URL) and not on any value projected by the head query, so we
+        // fire all FIVE queries in parallel using independent DbContext instances
+        // from the factory. Compared to running head first and then the children
+        // in parallel, this saves one full ~180 ms RTT in the common case. The
+        // company-logo lookup is folded into the head query as an inline
+        // correlated subquery so it adds zero extra DB round-trips.
+        await using var headCtx        = await dbFactory.CreateDbContextAsync();
+        await using var descriptionCtx = await dbFactory.CreateDbContextAsync();
+        await using var machinesCtx    = await dbFactory.CreateDbContextAsync();
+        await using var photosCtx      = await dbFactory.CreateDbContextAsync();
+        await using var videosCtx      = await dbFactory.CreateDbContextAsync();
+
+        // Head + company name + company logo in a single projected join.
+        // The CompanyLogo lookup uses an inline correlated subquery ordered
+        // such that logos issued on or after the synth's introduction year sort
+        // first (key 0), then any other logo by ascending year. Returns null
+        // when the synth does not exist; we surface that as 404 below.
+        var headTask = headCtx.SoundSynths.AsNoTracking()
+                              .Where(s => s.Id == id)
+                              .Select(s => new
+                               {
+                                   s.Id,
+                                   s.Name,
+                                   s.CompanyId,
+                                   CompanyName         = s.Company.Name,
+                                   s.ModelCode,
+                                   s.Introduced,
+                                   s.IntroducedPrecision,
+                                   s.Voices,
+                                   s.Frequency,
+                                   s.Depth,
+                                   s.SquareWave,
+                                   s.WhiteNoise,
+                                   s.Type,
+                                   CompanyLogo         = s.Company.Logos
+                                                          .OrderBy(l => s.Introduced.HasValue && l.Year >= s.Introduced.Value.Year
+                                                                            ? 0
+                                                                            : 1)
+                                                          .ThenBy(l => l.Year)
+                                                          .Select(l => (Guid?)l.Guid)
+                                                          .FirstOrDefault()
+                               })
+                              .FirstOrDefaultAsync();
+
+        // Description: collapse the original two-step lookup (try requested
+        // lang, then English fallback) into a single ordered query. Matches
+        // for the requested language sort first (key 0); English fallback is
+        // key 1; FirstOrDefaultAsync returns the preferred row.
+        var descriptionTask = descriptionCtx.SoundSynthDescriptions.AsNoTracking()
+            .Where(d => d.SoundSynthId == id && (d.LanguageCode == lang || d.LanguageCode == "eng"))
+            .OrderBy(d => d.LanguageCode == lang ? 0 : 1)
+            .Select(d => new { d.Html, d.Text, d.LanguageCode })
+            .FirstOrDefaultAsync();
+
+        // Mirrors GetMachinesBySoundSynthAsync.
+        Task<List<MachineDto>> machinesTask = machinesCtx.SoundByMachine.AsNoTracking()
+            .Where(s => s.SoundSynthId == id)
+            .Select(s => s.Machine)
+            .OrderBy(m => m.Company.Name)
+            .ThenBy(m => m.Name)
+            .Select(m => new MachineDto
+             {
+                 Id                  = m.Id,
+                 Company             = m.Company.Name,
+                 CompanyId           = m.Company.Id,
+                 Name                = m.Name,
+                 Model               = m.Model,
+                 Introduced          = m.Introduced,
+                 IntroducedPrecision = m.IntroducedPrecision,
+                 Type                = m.Type,
+                 FamilyId            = m.FamilyId
+             })
+            .ToListAsync();
+
+        // Mirrors SoundSynthPhotosController.GetGuidsBySoundSynthAsync.
+        Task<List<Guid>> photosTask = photosCtx.SoundSynthPhotos.AsNoTracking()
+                                               .Where(p => p.SoundSynthId == id)
+                                               .OrderBy(p => p.CreatedOn)
+                                               .ThenBy(p => p.Id)
+                                               .Select(p => p.Id)
+                                               .ToListAsync();
+
+        // Mirrors SoundSynthVideosController.GetVideosBySoundSynthAsync.
+        Task<List<SoundSynthVideoDto>> videosTask = videosCtx.SoundSynthVideos.AsNoTracking()
+            .Where(v => v.SoundSynthId == id)
+            .OrderBy(v => v.Title)
+            .Select(v => new SoundSynthVideoDto
+             {
+                 Id             = v.Id,
+                 SoundSynthId   = v.SoundSynthId,
+                 SoundSynthName = v.SoundSynth.Name,
+                 Provider       = v.Provider,
+                 VideoId        = v.VideoId,
+                 Title          = v.Title
+             })
+            .ToListAsync();
+
+        await Task.WhenAll(headTask, descriptionTask, machinesTask, photosTask, videosTask);
+
+        var head = headTask.Result;
+
+        if(head is null) return NotFound();
+
+        var synth = new SoundSynthDto
+        {
+            Id                  = head.Id,
+            Name                = head.Name,
+            CompanyId           = head.CompanyId,
+            CompanyName         = head.CompanyName,
+            ModelCode           = head.ModelCode,
+            Introduced          = head.Introduced,
+            IntroducedPrecision = head.IntroducedPrecision,
+            Voices              = head.Voices,
+            Frequency           = head.Frequency,
+            Depth               = head.Depth,
+            SquareWave          = head.SquareWave,
+            WhiteNoise          = head.WhiteNoise,
+            Type                = head.Type
+        };
+
+        var description = descriptionTask.Result;
+
+        return new SoundSynthFullDto
+        {
+            SoundSynth              = synth,
+            CompanyLogo             = head.CompanyLogo,
+            DescriptionHtml         = description?.Html,
+            DescriptionText         = description?.Text,
+            DescriptionLanguageCode = description?.LanguageCode,
+            Machines                = machinesTask.Result,
+            Photos                  = photosTask.Result,
+            Videos                  = videosTask.Result
+        };
+    }
 
     [HttpPut("{id:int}")]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -257,13 +414,14 @@ public class SoundSynthsController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<string> GetDescriptionTextAsync(int id, [FromQuery] string lang = "eng")
     {
-        SoundSynthDescription description =
-            await context.SoundSynthDescriptions.FirstOrDefaultAsync(d => d.SoundSynthId == id && d.LanguageCode == lang);
-
-        // Fallback to English if requested language not found
-        if(description is null && lang != "eng")
-            description = await context.SoundSynthDescriptions.FirstOrDefaultAsync(d => d.SoundSynthId == id &&
-                              d.LanguageCode == "eng");
+        // Single ordered query: requested-language matches sort first (key 0),
+        // English fallback is key 1. Saves one ~RTT vs the original two-step
+        // lookup when the fallback fires.
+        var description = await context.SoundSynthDescriptions.AsNoTracking()
+            .Where(d => d.SoundSynthId == id && (d.LanguageCode == lang || d.LanguageCode == "eng"))
+            .OrderBy(d => d.LanguageCode == lang ? 0 : 1)
+            .Select(d => new { d.Html, d.Text })
+            .FirstOrDefaultAsync();
 
         return description?.Html ?? description?.Text;
     }
@@ -289,38 +447,23 @@ public class SoundSynthsController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<SoundSynthDescriptionDto> GetDescriptionAsync(int id, [FromQuery] string lang = "eng")
-    {
-        SoundSynthDescriptionDto description = await context.SoundSynthDescriptions
-                                                         .Where(d => d.SoundSynthId == id && d.LanguageCode == lang)
-                                                         .Select(d => new SoundSynthDescriptionDto
-                                                          {
-                                                              Id           = d.Id,
-                                                              SoundSynthId = d.SoundSynthId,
-                                                              Html         = d.Html,
-                                                              Markdown     = d.Text,
-                                                              LanguageCode = d.LanguageCode,
-                                                              Language     = d.Language.ReferenceName
-                                                          })
-                                                         .FirstOrDefaultAsync();
-
-        // Fallback to English if requested language not found
-        if(description is null && lang != "eng")
-            description = await context.SoundSynthDescriptions
-                                       .Where(d => d.SoundSynthId == id && d.LanguageCode == "eng")
-                                       .Select(d => new SoundSynthDescriptionDto
-                                        {
-                                            Id           = d.Id,
-                                            SoundSynthId = d.SoundSynthId,
-                                            Html         = d.Html,
-                                            Markdown     = d.Text,
-                                            LanguageCode = d.LanguageCode,
-                                            Language     = d.Language.ReferenceName
-                                        })
-                                       .FirstOrDefaultAsync();
-
-        return description;
-    }
+    public Task<SoundSynthDescriptionDto> GetDescriptionAsync(int id, [FromQuery] string lang = "eng") =>
+        // Single ordered query: requested-language matches sort first (key 0),
+        // English fallback is key 1. Saves one ~RTT vs the original two-step
+        // lookup when the fallback fires.
+        context.SoundSynthDescriptions.AsNoTracking()
+               .Where(d => d.SoundSynthId == id && (d.LanguageCode == lang || d.LanguageCode == "eng"))
+               .OrderBy(d => d.LanguageCode == lang ? 0 : 1)
+               .Select(d => new SoundSynthDescriptionDto
+                {
+                    Id           = d.Id,
+                    SoundSynthId = d.SoundSynthId,
+                    Html         = d.Html,
+                    Markdown     = d.Text,
+                    LanguageCode = d.LanguageCode,
+                    Language     = d.Language.ReferenceName
+                })
+               .FirstOrDefaultAsync();
 
     [HttpPost("{id:int}/description")]
     [Authorize(Roles = "Admin,UberAdmin")]
