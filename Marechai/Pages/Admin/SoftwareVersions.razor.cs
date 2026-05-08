@@ -135,6 +135,27 @@ public partial class SoftwareVersions
         }
     }
 
+    async Task OpenImportDialog()
+    {
+        DialogParameters<SoftwareVersionImportDialog> parameters = new()
+        {
+            { x => x.SoftwareId, SoftwareId }
+        };
+
+        IDialogReference dialog =
+            await DialogService.ShowAsync<SoftwareVersionImportDialog>(L["Import CSV"], parameters,
+                                                                       new DialogOptions
+                                                                       {
+                                                                           MaxWidth  = MaxWidth.ExtraLarge,
+                                                                           FullWidth = true
+                                                                       });
+
+        DialogResult result = await dialog.Result;
+
+        if(result is { Canceled: false })
+            await LoadDataAsync();
+    }
+
     async Task ConfirmDelete(SoftwareVersionDto version)
     {
         DialogParameters<DeleteConfirmDialog> parameters = new()

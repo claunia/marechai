@@ -1,0 +1,826 @@
+@{
+    /******************************************************************************
+    // MARECHAI: Master repository of computing history artifacts information
+    // ----------------------------------------------------------------------------
+    //
+    // Author(s)      : Natalia Portillo <claunia@claunia.com>
+    //
+    // --[ License ] --------------------------------------------------------------
+    //
+    //     This program is free software: you can redistribute it and/or modify
+    //     it under the terms of the GNU General Public License as
+    //     published by the Free Software Foundation, either version 3 of the
+    //     License, or (at your option) any later version.
+    //
+    //     This program is distributed in the hope that it will be useful,
+    //     but WITHOUT ANY WARRANTY; without even the implied warranty of
+    //     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    //     GNU General Public License for more details.
+    //
+    //     You should have received a copy of the GNU General Public License
+    //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    //
+    // ----------------------------------------------------------------------------
+    // Copyright © 2003-2026 Natalia Portillo
+    *******************************************************************************/
+}
+
+@using Marechai.ApiClient.Models
+@using Marechai.Services
+@using Marechai.Helpers
+@inject SoftwareVersionsService SoftwareVersionsService
+@inject IStringLocalizer<SoftwareVersionsService> L
+@inject IJSRuntime JsRuntime
+
+<MudDialog>
+    <DialogContent>
+        @if(!string.IsNullOrWhiteSpace(_errorMessage))
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+        }
+
+        @switch(_state)
+        {
+            case ImportState.Upload:
+                <MudStack Spacing="4">
+                    <MudText Typo="Typo.body1">@L["Upload a CSV file to import software versions in bulk. Download the template first to see the expected format."]</MudText>
+
+                    <MudStack Row="true" Spacing="2">
+                        <MudButton Variant="Variant.Outlined"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.Download"
+                                   OnClick="DownloadTemplate">
+                            @L["Download Template"]
+                        </MudButton>
+                    </MudStack>
+
+                    <MudFileUpload T="IBrowserFile"
+                                   Accept=".csv"
+                                   FilesChanged="OnCsvFileSelected"
+                                   MaximumFileCount="1">
+                        <CustomContent>
+                            <MudButton Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       StartIcon="@Icons.Material.Filled.Upload"
+                                       Disabled="_isProcessing"
+                                       OnClick="@context.OpenFilePickerAsync">
+                                @(_isProcessing ? L["Processing..."] : L["Upload CSV"])
+                            </MudButton>
+                        </CustomContent>
+                    </MudFileUpload>
+
+                    @if(_isProcessing)
+                    {
+                        <MudProgressLinear Indeterminate="true" Color="Color.Primary"/>
+                    }
+                </MudStack>
+                break;
+
+            case ImportState.Preview:
+                <MudStack Spacing="3">
+                    <MudAlert Severity="Severity.Info" Dense="true">
+                        @string.Format(L["{0} rows parsed. {1} auto-rejected (duplicate, missing version string, unresolved parent or license, or other validation error). Selected rows will be REJECTED — unselected rows will be imported."],
+                            _importRows.Count,
+                            _selectedItems.Count)
+                    </MudAlert>
+
+                    <MudDataGrid T="SoftwareVersionImportRow"
+                                 Items="_importRows"
+                                 MultiSelection="true"
+                                 @bind-SelectedItems="_selectedItems"
+                                 Dense="true"
+                                 Hover="true"
+                                 Striped="true"
+                                 FixedHeader="true"
+                                 Height="400px">
+                        <Columns>
+                            <SelectColumn T="SoftwareVersionImportRow"/>
+                            <TemplateColumn Title="@L["Version string"]">
+                                <CellTemplate>
+                                    <div style="@(context.Item.IsDuplicate ? "background-color: #ffe0b2; padding: 4px 8px; border-radius: 4px;" : "")">
+                                        @if(context.Item.IsDuplicate)
+                                        {
+                                            <MudTooltip Text="@L["Duplicate version"]"><MudIcon Icon="@Icons.Material.Filled.Warning" Size="Size.Small" Color="Color.Warning" Class="mr-1"/></MudTooltip>
+                                        }
+                                        @(context.Item.VersionStringInput ?? "")
+                                        @if(context.Item.ValidationError is not null)
+                                        {
+                                            <MudTooltip Text="@context.Item.ValidationError"><MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Small" Color="Color.Error" Class="ml-1"/></MudTooltip>
+                                        }
+                                    </div>
+                                </CellTemplate>
+                            </TemplateColumn>
+                            <PropertyColumn Property="x => x.PublicVersionInput" Title="@L["Public version"]"/>
+                            <PropertyColumn Property="x => x.CodenameInput" Title="@L["Codename"]"/>
+                            <TemplateColumn Title="@L["Parent version"]">
+                                <CellTemplate>
+                                    @if(string.IsNullOrWhiteSpace(context.Item.ParentVersionInput))
+                                    {
+                                        @:&nbsp;
+                                    }
+                                    else
+                                    {
+                                        string parentBgColor = context.Item.ParentVersionMatch switch
+                                        {
+                                            ParentVersionMatchType.ExistingExact => "#c8e6c9",
+                                            ParentVersionMatchType.SameBatch     => "#bbdefb",
+                                            ParentVersionMatchType.NotFound      => "#ffcdd2",
+                                            _                                    => ""
+                                        };
+
+                                        <div style="@(string.IsNullOrEmpty(parentBgColor) ? "" : $"background-color: {parentBgColor}; color: black; padding: 4px 8px; border-radius: 4px;")">
+                                            @if(context.Item.ParentVersionMatch == ParentVersionMatchType.SameBatch)
+                                            {
+                                                @(context.Item.ParentVersionInput)
+                                                <span>*</span>
+                                            }
+                                            else
+                                            {
+                                                @context.Item.ParentVersionDisplay
+                                            }
+                                        </div>
+                                    }
+                                </CellTemplate>
+                            </TemplateColumn>
+                            <TemplateColumn Title="@L["License"]">
+                                <CellTemplate>
+                                    @if(string.IsNullOrWhiteSpace(context.Item.LicenseInput))
+                                    {
+                                        @:&nbsp;
+                                    }
+                                    else
+                                    {
+                                        string licBgColor = context.Item.LicenseMatch switch
+                                        {
+                                            LicenseMatchType.Exact    => "#c8e6c9",
+                                            LicenseMatchType.Partial  => "#fff9c4",
+                                            LicenseMatchType.NotFound => "#ffcdd2",
+                                            _                         => ""
+                                        };
+
+                                        <div style="@(string.IsNullOrEmpty(licBgColor) ? "" : $"background-color: {licBgColor}; color: black; padding: 4px 8px; border-radius: 4px;")">
+                                            @if(context.Item.LicenseMatch == LicenseMatchType.Partial && context.Item.MatchedLicenses.Count > 1)
+                                            {
+                                                <MudSelect T="LicenseDto"
+                                                           Value="context.Item.SelectedLicense"
+                                                           ValueChanged="(l) => OnLicenseSelected(context.Item, l)"
+                                                           Dense="true"
+                                                           Margin="Margin.Dense"
+                                                           Variant="Variant.Text"
+                                                           ToStringFunc="@(l => l?.Name ?? "")">
+                                                    @foreach(LicenseDto lic in context.Item.MatchedLicenses)
+                                                    {
+                                                        <MudSelectItem T="LicenseDto" Value="lic">@lic.Name</MudSelectItem>
+                                                    }
+                                                </MudSelect>
+                                            }
+                                            else
+                                            {
+                                                @context.Item.LicenseDisplay
+                                            }
+                                        </div>
+                                    }
+                                </CellTemplate>
+                            </TemplateColumn>
+                        </Columns>
+                    </MudDataGrid>
+
+                    @if(_importRows.Any(r => r.ParentVersionMatch == ParentVersionMatchType.SameBatch))
+                    {
+                        <MudText Typo="Typo.caption" Color="Color.Info">
+                            @L["* Parent version refers to another row in this import."]
+                        </MudText>
+                    }
+                </MudStack>
+                break;
+
+            case ImportState.Importing:
+                <MudStack Spacing="3">
+                    <MudText Typo="Typo.body1">@string.Format(L["Importing {0} of {1}..."], _importedCount + _failedCount, _totalToImport)</MudText>
+                    <MudProgressLinear Value="_progressPercent" Color="Color.Primary" Rounded="true" Size="Size.Large">
+                        <ChildContent>
+                            <MudText Typo="Typo.body2" Style="color: white;">
+                                @($"{_progressPercent:F0}%")
+                            </MudText>
+                        </ChildContent>
+                    </MudProgressLinear>
+
+                    @if(_importRows.Count > 0)
+                    {
+                        <MudDataGrid T="SoftwareVersionImportRow"
+                                     Items="_importRows"
+                                     Dense="true"
+                                     Hover="true"
+                                     FixedHeader="true"
+                                     Height="300px">
+                            <Columns>
+                                <TemplateColumn Title="@L["Version string"]">
+                                    <CellTemplate>
+                                        @(context.Item.VersionStringInput ?? "")
+                                        @if(context.Item.ImportError is not null)
+                                        {
+                                            <MudTooltip Text="@context.Item.ImportError"><MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Small" Color="Color.Error" Class="ml-1"/></MudTooltip>
+                                        }
+                                    </CellTemplate>
+                                </TemplateColumn>
+                                <PropertyColumn Property="x => x.PublicVersionInput" Title="@L["Public version"]"/>
+                                <PropertyColumn Property="x => x.LicenseInput" Title="@L["License"]"/>
+                            </Columns>
+                        </MudDataGrid>
+                    }
+                </MudStack>
+                break;
+
+            case ImportState.Complete:
+                <MudStack Spacing="3">
+                    <MudAlert Severity="Severity.Success" Dense="true">
+                        @string.Format(L["Import complete. {0} imported, {1} rejected, {2} failed."], _importedCount, _rejectedCount, _failedCount)
+                    </MudAlert>
+
+                    @if(_importRows.Count > 0)
+                    {
+                        <MudText Typo="Typo.body2">@L["The following items were not imported:"]</MudText>
+
+                        <MudDataGrid T="SoftwareVersionImportRow"
+                                     Items="_importRows"
+                                     Dense="true"
+                                     Hover="true"
+                                     FixedHeader="true"
+                                     Height="300px">
+                            <Columns>
+                                <PropertyColumn Property="x => x.VersionStringInput" Title="@L["Version string"]"/>
+                                <PropertyColumn Property="x => x.PublicVersionInput" Title="@L["Public version"]"/>
+                                <PropertyColumn Property="x => x.LicenseInput" Title="@L["License"]"/>
+                                <TemplateColumn Title="@L["Status"]">
+                                    <CellTemplate>
+                                        @if(context.Item.ImportError is not null)
+                                        {
+                                            <MudChip T="string" Color="Color.Error" Size="Size.Small"
+                                                     Style="white-space: normal; height: auto; overflow: visible; text-overflow: unset; padding: 8px 16px;">
+                                                @context.Item.ImportError
+                                            </MudChip>
+                                        }
+                                        else if(context.Item.ValidationError is not null)
+                                        {
+                                            <MudChip T="string" Color="Color.Warning" Size="Size.Small"
+                                                     Style="white-space: normal; height: auto; overflow: visible; text-overflow: unset; padding: 8px 16px;">
+                                                @context.Item.ValidationError
+                                            </MudChip>
+                                        }
+                                        else
+                                        {
+                                            <MudChip T="string" Color="Color.Default" Size="Size.Small">@L["Rejected"]</MudChip>
+                                        }
+                                    </CellTemplate>
+                                </TemplateColumn>
+                            </Columns>
+                        </MudDataGrid>
+
+                        <MudButton Variant="Variant.Outlined"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.Download"
+                                   OnClick="DownloadRejected">
+                            @L["Download Rejected"]
+                        </MudButton>
+                    }
+                </MudStack>
+                break;
+        }
+    </DialogContent>
+    <DialogActions>
+        @switch(_state)
+        {
+            case ImportState.Upload:
+                <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+                break;
+            case ImportState.Preview:
+                <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="StartImport"
+                           Disabled="_importRows.All(r => _selectedItems.Contains(r))">
+                    @L["Import"]
+                </MudButton>
+                break;
+            case ImportState.Importing:
+                break;
+            case ImportState.Complete:
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Close">@L["Close"]</MudButton>
+                break;
+        }
+    </DialogActions>
+</MudDialog>
+
+@code {
+    static readonly string[] CsvHeaders =
+    [
+        "VersionString", "PublicVersion", "Codename", "ParentVersion", "License"
+    ];
+
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter] public int SoftwareId { get; set; }
+
+    string                                          _errorMessage;
+    bool                                            _isProcessing;
+    ImportState                                     _state         = ImportState.Upload;
+    List<SoftwareVersionImportRow>                  _importRows    = [];
+    HashSet<SoftwareVersionImportRow>               _selectedItems = [];
+    List<SoftwareVersionDto>                        _existingVersions;
+    List<LicenseDto>                                _allLicenses;
+    Dictionary<string, List<LicenseDto>>            _licenseSoundexMap;
+    int                                             _importedCount;
+    int                                             _rejectedCount;
+    int                                             _failedCount;
+    int                                             _totalToImport;
+    double                                          _progressPercent;
+
+    void Cancel() => MudDialog.Cancel();
+    void Close()  => MudDialog.Close(DialogResult.Ok(true));
+
+    async Task DownloadTemplate()
+    {
+        string csv    = CsvParser.GenerateTemplate(CsvHeaders);
+        byte[] bytes  = System.Text.Encoding.UTF8.GetBytes(csv);
+        string base64 = Convert.ToBase64String(bytes);
+
+        await JsRuntime.InvokeVoidAsync("downloadFileFromBytes", "software_version_import_template.csv", "text/csv", base64);
+    }
+
+    async Task OnCsvFileSelected(IBrowserFile file)
+    {
+        if(file is null) return;
+
+        _isProcessing = true;
+        _errorMessage = null;
+        StateHasChanged();
+
+        try
+        {
+            using var stream = file.OpenReadStream(10 * 1024 * 1024);
+            using var reader = new System.IO.StreamReader(stream);
+            string csvContent = await reader.ReadToEndAsync();
+
+            List<Dictionary<string, string>> rows = CsvParser.Parse(csvContent);
+
+            if(rows.Count == 0)
+            {
+                _errorMessage = L["The CSV file is empty or has no data rows."];
+                _isProcessing = false;
+                StateHasChanged();
+
+                return;
+            }
+
+            _existingVersions = await SoftwareVersionsService.GetBySoftwareAsync(SoftwareId);
+            _allLicenses      = await SoftwareVersionsService.GetAllLicensesAsync();
+
+            BuildLicenseSoundexMap();
+            _importRows = ParseRows(rows);
+            ResolveBatchParents();
+            DetectCycles();
+            DetectDuplicates();
+            PreSelectRejections();
+
+            _state = ImportState.Preview;
+        }
+        catch(Exception ex)
+        {
+            _errorMessage = string.Format(L["Error reading CSV: {0}"], ex.Message);
+        }
+        finally
+        {
+            _isProcessing = false;
+            StateHasChanged();
+        }
+    }
+
+    void BuildLicenseSoundexMap()
+    {
+        _licenseSoundexMap = new Dictionary<string, List<LicenseDto>>(StringComparer.OrdinalIgnoreCase);
+
+        if(_allLicenses is null)
+            return;
+
+        foreach(LicenseDto lic in _allLicenses)
+        {
+            if(string.IsNullOrWhiteSpace(lic.Name))
+                continue;
+
+            string code = Soundex.Generate(lic.Name);
+
+            if(!_licenseSoundexMap.TryGetValue(code, out List<LicenseDto> list))
+            {
+                list                     = [];
+                _licenseSoundexMap[code] = list;
+            }
+
+            list.Add(lic);
+        }
+    }
+
+    List<SoftwareVersionImportRow> ParseRows(List<Dictionary<string, string>> rows)
+    {
+        var result = new List<SoftwareVersionImportRow>();
+
+        foreach(Dictionary<string, string> row in rows)
+        {
+            var importRow = new SoftwareVersionImportRow
+            {
+                VersionStringInput = GetValueOrNull(row, "VersionString"),
+                PublicVersionInput = GetValueOrNull(row, "PublicVersion"),
+                CodenameInput      = GetValueOrNull(row, "Codename"),
+                ParentVersionInput = GetValueOrNull(row, "ParentVersion"),
+                LicenseInput       = GetValueOrNull(row, "License")
+            };
+
+            // Validate: VersionString is required
+            if(string.IsNullOrWhiteSpace(importRow.VersionStringInput))
+                importRow.ValidationError = L["Version string is required."];
+
+            MatchExistingParent(importRow);
+            MatchLicense(importRow);
+
+            result.Add(importRow);
+        }
+
+        return result;
+    }
+
+    void MatchExistingParent(SoftwareVersionImportRow row)
+    {
+        if(string.IsNullOrWhiteSpace(row.ParentVersionInput))
+        {
+            row.ParentVersionMatch = ParentVersionMatchType.None;
+
+            return;
+        }
+
+        if(_existingVersions is null || _existingVersions.Count == 0)
+        {
+            row.ParentVersionMatch = ParentVersionMatchType.NotFound;
+
+            return;
+        }
+
+        string input = row.ParentVersionInput.Trim();
+
+        // Exact VersionString → PublicVersion → Codename
+        SoftwareVersionDto match = _existingVersions
+                                  .Find(v => string.Equals(v.VersionString, input, StringComparison.OrdinalIgnoreCase));
+
+        match ??= _existingVersions
+                 .Find(v => !string.IsNullOrWhiteSpace(v.PublicVersion) &&
+                            string.Equals(v.PublicVersion, input, StringComparison.OrdinalIgnoreCase));
+
+        match ??= _existingVersions
+                 .Find(v => !string.IsNullOrWhiteSpace(v.Codename) &&
+                            string.Equals(v.Codename, input, StringComparison.OrdinalIgnoreCase));
+
+        if(match is not null)
+        {
+            row.ParentVersionMatch     = ParentVersionMatchType.ExistingExact;
+            row.MatchedExistingParents = [match];
+            row.SelectedExistingParent = match;
+        }
+        else
+        {
+            row.ParentVersionMatch = ParentVersionMatchType.NotFound;
+        }
+    }
+
+    void MatchLicense(SoftwareVersionImportRow row)
+    {
+        if(string.IsNullOrWhiteSpace(row.LicenseInput))
+        {
+            row.LicenseMatch = LicenseMatchType.None;
+
+            return;
+        }
+
+        if(_allLicenses is null)
+        {
+            row.LicenseMatch = LicenseMatchType.NotFound;
+
+            return;
+        }
+
+        string input = row.LicenseInput.Trim();
+
+        LicenseDto exact = _allLicenses.Find(l =>
+            string.Equals(l.Name, input, StringComparison.OrdinalIgnoreCase));
+
+        if(exact is not null)
+        {
+            row.LicenseMatch     = LicenseMatchType.Exact;
+            row.MatchedLicenses  = [exact];
+            row.SelectedLicense  = exact;
+
+            return;
+        }
+
+        string inputSoundex = Soundex.Generate(input);
+
+        if(_licenseSoundexMap is not null &&
+           _licenseSoundexMap.TryGetValue(inputSoundex, out List<LicenseDto> matches) &&
+           matches.Count > 0)
+        {
+            row.LicenseMatch    = LicenseMatchType.Partial;
+            row.MatchedLicenses = [..matches.OrderBy(l => l.Name)];
+            row.SelectedLicense = row.MatchedLicenses[0];
+
+            return;
+        }
+
+        row.LicenseMatch = LicenseMatchType.NotFound;
+    }
+
+    /// <summary>
+    /// Resolves rows whose ParentVersion didn't match an existing version against earlier batch rows
+    /// by VersionStringInput (case-insensitive). Marks them <see cref="ParentVersionMatchType.SameBatch"/>.
+    /// </summary>
+    void ResolveBatchParents()
+    {
+        foreach(SoftwareVersionImportRow row in _importRows)
+        {
+            if(row.ParentVersionMatch != ParentVersionMatchType.NotFound)
+                continue;
+
+            if(string.IsNullOrWhiteSpace(row.ParentVersionInput))
+                continue;
+
+            string input = row.ParentVersionInput.Trim();
+
+            SoftwareVersionImportRow batchMatch = _importRows.Find(r =>
+                r != row &&
+                !string.IsNullOrWhiteSpace(r.VersionStringInput) &&
+                string.Equals(r.VersionStringInput.Trim(), input, StringComparison.OrdinalIgnoreCase));
+
+            if(batchMatch is null)
+                continue;
+
+            row.BatchParentRow     = batchMatch;
+            row.ParentVersionMatch = ParentVersionMatchType.SameBatch;
+        }
+    }
+
+    /// <summary>Detects cycles in the BatchParentRow chains and flags every member of a cycle.</summary>
+    void DetectCycles()
+    {
+        foreach(SoftwareVersionImportRow row in _importRows)
+        {
+            if(row.BatchParentRow is null)
+                continue;
+
+            var seen = new HashSet<SoftwareVersionImportRow> { row };
+            SoftwareVersionImportRow current = row.BatchParentRow;
+
+            while(current is not null)
+            {
+                if(!seen.Add(current))
+                {
+                    // Cycle: flag every row in the seen set
+                    foreach(SoftwareVersionImportRow member in seen)
+                    {
+                        member.ValidationError ??= L["Circular parent version reference."];
+                    }
+
+                    break;
+                }
+
+                current = current.BatchParentRow;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Auto-rejects duplicates by composite (VersionString, PublicVersion) — case-insensitive.
+    /// Blank/null PublicVersion is a wildcard that collides with any other PublicVersion sharing the same VersionString.
+    /// Checked against existing DB versions for this software AND against earlier batch rows.
+    /// </summary>
+    void DetectDuplicates()
+    {
+        for(int i = 0; i < _importRows.Count; i++)
+        {
+            SoftwareVersionImportRow row = _importRows[i];
+
+            if(string.IsNullOrWhiteSpace(row.VersionStringInput))
+                continue;
+
+            string vs = row.VersionStringInput.Trim();
+            string pv = string.IsNullOrWhiteSpace(row.PublicVersionInput) ? null : row.PublicVersionInput.Trim();
+
+            // Existing DB versions
+            bool dbCollision = _existingVersions is not null &&
+                _existingVersions.Any(v =>
+                    !string.IsNullOrWhiteSpace(v.VersionString) &&
+                    string.Equals(v.VersionString, vs, StringComparison.OrdinalIgnoreCase) &&
+                    PublicVersionsCollide(pv, string.IsNullOrWhiteSpace(v.PublicVersion) ? null : v.PublicVersion));
+
+            // Earlier batch rows
+            bool batchCollision = false;
+
+            for(int j = 0; j < i && !batchCollision; j++)
+            {
+                SoftwareVersionImportRow other = _importRows[j];
+
+                if(string.IsNullOrWhiteSpace(other.VersionStringInput))
+                    continue;
+
+                string otherVs = other.VersionStringInput.Trim();
+
+                if(!string.Equals(otherVs, vs, StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                string otherPv = string.IsNullOrWhiteSpace(other.PublicVersionInput) ? null : other.PublicVersionInput.Trim();
+
+                if(PublicVersionsCollide(pv, otherPv))
+                {
+                    batchCollision = true;
+                    other.IsDuplicate = true;
+                    other.ValidationError ??= L["A version with this version string and public version already exists."];
+                }
+            }
+
+            if(dbCollision || batchCollision)
+            {
+                row.IsDuplicate = true;
+                row.ValidationError ??= L["A version with this version string and public version already exists."];
+            }
+        }
+    }
+
+    static bool PublicVersionsCollide(string a, string b)
+    {
+        // Blank/null acts as wildcard: collides with anything sharing the same VersionString.
+        if(a is null || b is null)
+            return true;
+
+        return string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
+    }
+
+    void PreSelectRejections()
+    {
+        _selectedItems = [];
+
+        foreach(SoftwareVersionImportRow row in _importRows)
+        {
+            if(row.ValidationError is not null)
+            {
+                _selectedItems.Add(row);
+
+                continue;
+            }
+
+            // Auto-reject if parent input was provided but no match
+            if(row.ParentVersionMatch == ParentVersionMatchType.NotFound)
+            {
+                _selectedItems.Add(row);
+
+                continue;
+            }
+
+            // Auto-reject if license input was provided but no match (no exact and no soundex partial)
+            if(row.LicenseMatch == LicenseMatchType.NotFound)
+                _selectedItems.Add(row);
+        }
+    }
+
+    void OnLicenseSelected(SoftwareVersionImportRow row, LicenseDto license) => row.SelectedLicense = license;
+
+    async Task StartImport()
+    {
+        var toImport = _importRows.Where(r => !_selectedItems.Contains(r)).ToList();
+        var rejected = _importRows.Where(r => _selectedItems.Contains(r)).ToList();
+
+        _rejectedCount   = rejected.Count;
+        _importedCount   = 0;
+        _failedCount     = 0;
+        _totalToImport   = toImport.Count;
+        _progressPercent = 0;
+        _state           = ImportState.Importing;
+
+        // Display only rejected/failed during import
+        _importRows = [..rejected];
+        StateHasChanged();
+
+        // Topological order: process rows whose parent is already resolvable first.
+        var pending = new List<SoftwareVersionImportRow>(toImport);
+
+        while(pending.Count > 0)
+        {
+            var processedThisPass = new List<SoftwareVersionImportRow>();
+
+            foreach(SoftwareVersionImportRow row in pending)
+            {
+                if(row.BatchParentRow is not null && row.BatchParentRow.CreatedId is null)
+                    continue; // Wait for parent to be created
+
+                processedThisPass.Add(row);
+            }
+
+            if(processedThisPass.Count == 0)
+            {
+                // Stuck: every remaining row is waiting on an unresolved batch parent.
+                // Mark them as failed and bail.
+                foreach(SoftwareVersionImportRow row in pending)
+                {
+                    _failedCount++;
+                    row.ImportError = L["Parent version was not imported."];
+                    _importRows.Add(row);
+                }
+
+                pending.Clear();
+
+                break;
+            }
+
+            foreach(SoftwareVersionImportRow row in processedThisPass)
+            {
+                int? parentId = row.BatchParentRow?.CreatedId
+                                ?? row.SelectedExistingParent?.Id;
+
+                var dto = new SoftwareVersionDto
+                {
+                    SoftwareId      = SoftwareId,
+                    VersionString   = row.VersionStringInput,
+                    PublicVersion   = row.PublicVersionInput,
+                    Codename        = row.CodenameInput,
+                    ParentVersionId = parentId,
+                    LicenseId       = row.SelectedLicense?.Id
+                };
+
+                (int? id, string error) = await SoftwareVersionsService.CreateAsync(dto);
+
+                if(id is not null)
+                {
+                    row.CreatedId = id;
+                    _importedCount++;
+                }
+                else
+                {
+                    _failedCount++;
+                    row.ImportError = string.Format(L["Failed to create version: {0}"], error ?? L["Unknown error"]);
+                    _importRows.Add(row);
+                }
+
+                pending.Remove(row);
+                await UpdateProgress();
+            }
+        }
+
+        _state = ImportState.Complete;
+        StateHasChanged();
+    }
+
+    async Task UpdateProgress()
+    {
+        _progressPercent = _totalToImport > 0
+            ? (double)(_importedCount + _failedCount) / _totalToImport * 100
+            : 100;
+
+        StateHasChanged();
+        await Task.Delay(1);
+    }
+
+    async Task DownloadRejected()
+    {
+        var rows = new List<Dictionary<string, string>>();
+
+        foreach(SoftwareVersionImportRow row in _importRows)
+        {
+            var dict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["VersionString"] = row.VersionStringInput ?? "",
+                ["PublicVersion"] = row.PublicVersionInput ?? "",
+                ["Codename"]      = row.CodenameInput ?? "",
+                ["ParentVersion"] = row.ParentVersionInput ?? "",
+                ["License"]       = row.LicenseInput ?? ""
+            };
+
+            rows.Add(dict);
+        }
+
+        string csv    = CsvParser.Generate(CsvHeaders, rows);
+        byte[] bytes  = System.Text.Encoding.UTF8.GetBytes(csv);
+        string base64 = Convert.ToBase64String(bytes);
+
+        await JsRuntime.InvokeVoidAsync("downloadFileFromBytes", "software_version_import_rejected.csv", "text/csv", base64);
+    }
+
+    static string GetValueOrNull(Dictionary<string, string> row, string key)
+    {
+        if(!row.TryGetValue(key, out string val))
+            return null;
+
+        string trimmed = val?.Trim() ?? "";
+
+        return string.IsNullOrEmpty(trimmed) ? null : trimmed;
+    }
+
+    enum ImportState
+    {
+        Upload,
+        Preview,
+        Importing,
+        Complete
+    }
+}
