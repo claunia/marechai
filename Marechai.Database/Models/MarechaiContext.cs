@@ -1021,6 +1021,17 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
 
         modelBuilder.Entity<GpuPhoto>(entity =>
         {
+            // Foreign-key + sort columns used by the per-GPU photos endpoint
+            // (`/gpus/{id}/photos`) and by the consolidated /gpus/{id}/full
+            // endpoint. Without these indexes the query degenerates to a full
+            // table scan + filesort over the entire gpu_photos table because
+            // the historical EXIF indexes do not cover the (GpuId, sort)
+            // access pattern. Mirrors the MachinePhoto retrofit (see below).
+            entity.HasIndex(e => e.GpuId).HasDatabaseName("idx_gpu_photos_gpu");
+
+            entity.HasIndex(e => new { e.GpuId, e.CreatedOn, e.Id })
+                  .HasDatabaseName("idx_gpu_photos_gpu_created");
+
             entity.HasIndex(e => e.Aperture);
 
             entity.HasIndex(e => e.Author);

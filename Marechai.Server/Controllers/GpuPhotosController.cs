@@ -60,7 +60,7 @@ public class GpuPhotosController(MarechaiContext context, IConfiguration configu
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<Guid>> GetGuidsByGpuAsync(int gpuId) => context.GpuPhotos
+    public Task<List<Guid>> GetGuidsByGpuAsync(int gpuId) => context.GpuPhotos.AsNoTracking()
                                                                     .Where(p => p.GpuId == gpuId)
                                                                     .OrderBy(p => p.CreatedOn)
                                                                     .ThenBy(p => p.Id)

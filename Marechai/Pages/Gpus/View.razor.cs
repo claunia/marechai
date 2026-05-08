@@ -105,15 +105,23 @@ public partial class View
             return;
         }
 
-        _gpu = await Service.GetByIdAsync(Id);
+        // Single backend round-trip: the consolidated /gpus/{id}/full endpoint
+        // returns head + company logo + description + resolutions + machines +
+        // photos + videos in one response. Replaces six sequential REST calls
+        // (and a per-resolution N+1 fallback that was caused by the Kiota
+        // composed-type-wrapper trap on ResolutionByGpuDto.Resolution before
+        // the [Required] fix in Marechai.Data/Dtos/ResolutionByGpuDto.cs).
+        GpuFullDto full = await Service.GetGpuFullAsync(Id);
 
-        if(_gpu is null)
+        if(full?.Gpu is null)
         {
             _loaded = true;
             StateHasChanged();
 
             return;
         }
+
+        _gpu = full.Gpu;
 
         _displayName = _gpu.Name switch
         {
@@ -123,33 +131,20 @@ public partial class View
             _                => _gpu.Name
         };
 
-        // Load resolutions
-        List<ResolutionByGpuDto> resByGpu = await Service.GetResolutionsByGpuAsync(Id);
+        _resolutions = full.Resolutions ?? [];
 
-        _resolutions = [];
-
-        foreach(ResolutionByGpuDto rbg in resByGpu)
-        {
-            // Try to get the nested ResolutionDto from the composed type
-            ResolutionDto res = rbg.Resolution?.ResolutionDto;
-
-            if(res is null && rbg.ResolutionId.HasValue)
-                res = await Service.GetResolutionByIdAsync(rbg.ResolutionId.Value);
-
-            if(res != null)
-                _resolutions.Add(res);
-        }
-
-        List<MachineDto> machines = await Service.GetMachinesByGpuAsync(Id);
-        _computers = machines.Where(m => m.Type == (int)MachineType.Computer).ToList();
-        _consoles  = machines.Where(m => m.Type == (int)MachineType.Console).ToList();
+        List<MachineDto> machines = full.Machines ?? [];
+        _computers   = machines.Where(m => m.Type == (int)MachineType.Computer).ToList();
+        _consoles    = machines.Where(m => m.Type == (int)MachineType.Console).ToList();
         _smartphones = machines.Where(m => m.Type == (int)MachineType.Smartphone).ToList();
 
-        _description = await Service.GetDescriptionTextAsync(Id);
+        _description = full.DescriptionHtml ?? full.DescriptionText;
 
-        _photos = await GpuPhotosService.GetGuidsByGpuAsync(Id);
-
-        _videos = await Service.GetVideosByGpuAsync(Id);
+        // Kiota emits photos as List<Guid?>? from the OpenAPI primitive collection.
+        // Materialize to List<Guid> by dropping the nullability (server projects
+        // GpuPhoto.Id which is non-nullable on disk).
+        _photos = full.Photos?.Where(g => g.HasValue).Select(g => g!.Value).ToList() ?? [];
+        _videos = full.Videos ?? [];
 
         // Insert the Machines tab between Specifications and Media when the
         // GPU has any attached computers/consoles/smartphones, so

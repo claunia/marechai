@@ -2,6 +2,7 @@
 #pragma warning disable CS0618
 using Marechai.ApiClient.Gpus.Item.Description;
 using Marechai.ApiClient.Gpus.Item.Descriptions;
+using Marechai.ApiClient.Gpus.Item.Full;
 using Marechai.ApiClient.Gpus.Item.Machines;
 using Marechai.ApiClient.Gpus.Item.Photos;
 using Marechai.ApiClient.Gpus.Item.Videos;
@@ -31,6 +32,11 @@ namespace Marechai.ApiClient.Gpus.Item
         public global::Marechai.ApiClient.Gpus.Item.Descriptions.DescriptionsRequestBuilder Descriptions
         {
             get => new global::Marechai.ApiClient.Gpus.Item.Descriptions.DescriptionsRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The full property</summary>
+        public global::Marechai.ApiClient.Gpus.Item.Full.FullRequestBuilder Full
+        {
+            get => new global::Marechai.ApiClient.Gpus.Item.Full.FullRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The machines property</summary>
         public global::Marechai.ApiClient.Gpus.Item.Machines.MachinesRequestBuilder Machines

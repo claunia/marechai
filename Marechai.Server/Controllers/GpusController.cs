@@ -41,13 +41,14 @@ namespace Marechai.Server.Controllers;
 
 [Route("/gpus")]
 [ApiController]
-public class GpusController(MarechaiContext context) : ControllerBase
+public class GpusController(MarechaiContext context, IDbContextFactory<MarechaiContext> dbFactory) : ControllerBase
 {
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<GpuDto>> GetAsync() => context.Gpus.OrderBy(g => g.Company.Name)
+    public Task<List<GpuDto>> GetAsync() => context.Gpus.AsNoTracking()
+                                                   .OrderBy(g => g.Company.Name)
                                                    .ThenBy(g => g.Name)
                                                    .ThenBy(g => g.Introduced)
                                                    .Select(g => new GpuDto
@@ -66,7 +67,7 @@ public class GpusController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<GpuDto>> GetByMachineAsync(int machineId) => context.GpusByMachine
+    public Task<List<GpuDto>> GetByMachineAsync(int machineId) => context.GpusByMachine.AsNoTracking()
                                                                          .Where(g => g.MachineId == machineId)
                                                                          .Select(g => g.Gpu)
                                                                          .OrderBy(g => g.Company.Name)
@@ -92,7 +93,8 @@ public class GpusController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<MachineDto>> GetMachinesByGpuAsync(int gpuId) => context.GpusByMachine.Where(g => g.GpuId == gpuId)
+    public Task<List<MachineDto>> GetMachinesByGpuAsync(int gpuId) => context.GpusByMachine.AsNoTracking()
+                                                                             .Where(g => g.GpuId == gpuId)
                                                                              .Select(g => g.Machine)
                                                                              .OrderBy(m => m.Company.Name)
                                                                              .ThenBy(m => m.Name)
@@ -114,7 +116,8 @@ public class GpusController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<GpuDto> GetAsync(int id) => context.Gpus.Where(g => g.Id == id)
+    public Task<GpuDto> GetAsync(int id) => context.Gpus.AsNoTracking()
+                                                   .Where(g => g.Id == id)
                                                    .Select(g => new GpuDto
                                                     {
                                                         Id          = g.Id,
@@ -131,6 +134,199 @@ public class GpusController(MarechaiContext context) : ControllerBase
                                                         Transistors = g.Transistors
                                                     })
                                                    .FirstOrDefaultAsync();
+
+    /// <summary>
+    /// Consolidated payload for the public /gpu/{Id} view page. Replaces six
+    /// sequential HTTP round-trips (head + resolutions + machines + description +
+    /// photos + videos) with a single response. The head + company name + company
+    /// logo are projected in one query (logo is an inline correlated subquery so
+    /// it costs zero extra DB round-trips); the description language fallback is
+    /// collapsed into a single ordered query; the four child collections are
+    /// fetched in parallel using independent <see cref="MarechaiContext"/>
+    /// instances from <c>IDbContextFactory</c> (DbContext is not thread-safe;
+    /// sharing the request-scoped context across parallel branches throws
+    /// <c>InvalidOperationException</c>).
+    /// </summary>
+    [HttpGet("{id:int}/full")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<GpuFullDto>> GetFullAsync(int id, [FromQuery] string lang = "eng")
+    {
+        // The four child collections plus the description only depend on `id`
+        // (from the URL), and not on any value projected by the head query, so
+        // we fire all SIX queries — head + description + resolutions + machines
+        // + photos + videos — in parallel using independent DbContext instances
+        // from the factory (DbContext is not thread-safe). Compared to running
+        // head first and then the children in parallel, this saves one full
+        // ~180 ms RTT in the common case. The company-logo lookup is folded
+        // into the head query as an inline correlated subquery so it adds zero
+        // extra DB round-trips.
+        await using var headCtx        = await dbFactory.CreateDbContextAsync();
+        await using var descriptionCtx = await dbFactory.CreateDbContextAsync();
+        await using var resolutionsCtx = await dbFactory.CreateDbContextAsync();
+        await using var machinesCtx    = await dbFactory.CreateDbContextAsync();
+        await using var photosCtx      = await dbFactory.CreateDbContextAsync();
+        await using var videosCtx      = await dbFactory.CreateDbContextAsync();
+
+        // Head + company name + company logo in a single projected join.
+        // The CompanyLogo lookup uses an inline correlated subquery ordered
+        // such that logos issued on or after the GPU's introduction year sort
+        // first (key 0), then any other logo by ascending year. Returns null
+        // when the GPU does not exist; we surface that as 404 below.
+        var headTask = headCtx.Gpus.AsNoTracking()
+                              .Where(g => g.Id == id)
+                              .Select(g => new
+                               {
+                                   g.Id,
+                                   g.Name,
+                                   g.CompanyId,
+                                   CompanyName         = g.Company.Name,
+                                   g.ModelCode,
+                                   g.Introduced,
+                                   g.IntroducedPrecision,
+                                   g.Package,
+                                   g.Process,
+                                   g.ProcessNm,
+                                   g.DieSize,
+                                   g.Transistors,
+                                   IntroducedYear      = (int?)(g.Introduced.HasValue ? g.Introduced.Value.Year : (int?)null),
+                                   CompanyLogo         = g.Company.Logos
+                                                          .OrderBy(l => g.Introduced.HasValue && l.Year >= g.Introduced.Value.Year
+                                                                            ? 0
+                                                                            : 1)
+                                                          .ThenBy(l => l.Year)
+                                                          .Select(l => (Guid?)l.Guid)
+                                                          .FirstOrDefault()
+                               })
+                              .FirstOrDefaultAsync();
+
+        // Description: collapse the original two-step lookup (try requested
+        // lang, then English fallback) into a single ordered query. Matches
+        // for the requested language sort first (key 0); English fallback is
+        // key 1; FirstOrDefaultAsync returns the preferred row.
+        var descriptionTask = descriptionCtx.GpuDescriptions.AsNoTracking()
+            .Where(d => d.GpuId == id && (d.LanguageCode == lang || d.LanguageCode == "eng"))
+            .OrderBy(d => d.LanguageCode == lang ? 0 : 1)
+            .Select(d => new { d.Html, d.Text, d.LanguageCode })
+            .FirstOrDefaultAsync();
+
+        // Mirrors ResolutionsByGpuController.GetByGpu — projection identical;
+        // ordering happens client-side after materialization to mirror existing
+        // contract (multi-key sort across nested fields is awkward in SQL).
+        Task<List<ResolutionByGpuDto>> resolutionsTask = resolutionsCtx.ResolutionsByGpu.AsNoTracking()
+            .Where(r => r.GpuId == id)
+            .Select(r => new ResolutionByGpuDto
+             {
+                 Id    = r.Id,
+                 GpuId = r.GpuId,
+                 Resolution = new ResolutionDto
+                 {
+                     Id        = r.Resolution.Id,
+                     Width     = r.Resolution.Width,
+                     Height    = r.Resolution.Height,
+                     Colors    = r.Resolution.Colors,
+                     Palette   = r.Resolution.Palette,
+                     Chars     = r.Resolution.Chars,
+                     Grayscale = r.Resolution.Grayscale
+                 },
+                 ResolutionId = r.ResolutionId
+             })
+            .ToListAsync();
+
+        // Mirrors GpusController.GetMachinesByGpuAsync.
+        Task<List<MachineDto>> machinesTask = machinesCtx.GpusByMachine.AsNoTracking()
+            .Where(g => g.GpuId == id)
+            .Select(g => g.Machine)
+            .OrderBy(m => m.Company.Name)
+            .ThenBy(m => m.Name)
+            .Select(m => new MachineDto
+             {
+                 Id                  = m.Id,
+                 Company             = m.Company.Name,
+                 CompanyId           = m.Company.Id,
+                 Name                = m.Name,
+                 Model               = m.Model,
+                 Introduced          = m.Introduced,
+                 IntroducedPrecision = m.IntroducedPrecision,
+                 Type                = m.Type,
+                 FamilyId            = m.FamilyId
+             })
+            .ToListAsync();
+
+        // Mirrors GpuPhotosController.GetGuidsByGpuAsync.
+        Task<List<Guid>> photosTask = photosCtx.GpuPhotos.AsNoTracking()
+                                               .Where(p => p.GpuId == id)
+                                               .OrderBy(p => p.CreatedOn)
+                                               .ThenBy(p => p.Id)
+                                               .Select(p => p.Id)
+                                               .ToListAsync();
+
+        // Mirrors GpuVideosController.GetVideosByGpuAsync.
+        Task<List<GpuVideoDto>> videosTask = videosCtx.GpuVideos.AsNoTracking()
+            .Where(v => v.GpuId == id)
+            .OrderBy(v => v.Title)
+            .Select(v => new GpuVideoDto
+             {
+                 Id       = v.Id,
+                 GpuId    = v.GpuId,
+                 GpuName  = v.Gpu.Name,
+                 Provider = v.Provider,
+                 VideoId  = v.VideoId,
+                 Title    = v.Title
+             })
+            .ToListAsync();
+
+        await Task.WhenAll(headTask, descriptionTask, resolutionsTask, machinesTask, photosTask, videosTask);
+
+        var head = headTask.Result;
+
+        if(head is null) return NotFound();
+
+        var gpu = new GpuDto
+        {
+            Id                  = head.Id,
+            Name                = head.Name,
+            CompanyId           = head.CompanyId,
+            Company             = head.CompanyName,
+            ModelCode           = head.ModelCode,
+            Introduced          = head.Introduced,
+            IntroducedPrecision = head.IntroducedPrecision,
+            Package             = head.Package,
+            Process             = head.Process,
+            ProcessNm           = head.ProcessNm,
+            DieSize             = head.DieSize,
+            Transistors         = head.Transistors
+        };
+
+        // Multi-key ordering applied client-side, mirroring
+        // ResolutionsByGpuController.GetByGpu.
+        List<ResolutionDto> orderedResolutions = resolutionsTask.Result
+            .OrderBy(r => r.Resolution.Width)
+            .ThenBy(r => r.Resolution.Height)
+            .ThenBy(r => r.Resolution.Chars)
+            .ThenBy(r => r.Resolution.Grayscale)
+            .ThenBy(r => r.Resolution.Colors)
+            .ThenBy(r => r.Resolution.Palette)
+            .Select(r => r.Resolution)
+            .ToList();
+
+        var description = descriptionTask.Result;
+
+        return new GpuFullDto
+        {
+            Gpu                     = gpu,
+            CompanyLogo             = head.CompanyLogo,
+            DescriptionHtml         = description?.Html,
+            DescriptionText         = description?.Text,
+            DescriptionLanguageCode = description?.LanguageCode,
+            Resolutions             = orderedResolutions,
+            Machines                = machinesTask.Result,
+            Photos                  = photosTask.Result,
+            Videos                  = videosTask.Result
+        };
+    }
 
     [HttpPut("{id:int}")]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -246,13 +442,16 @@ public class GpusController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<string> GetDescriptionTextAsync(int id, [FromQuery] string lang = "eng")
     {
-        GpuDescription description =
-            await context.GpuDescriptions.FirstOrDefaultAsync(d => d.GpuId == id && d.LanguageCode == lang);
-
-        // Fallback to English if requested language not found
-        if(description is null && lang != "eng")
-            description = await context.GpuDescriptions.FirstOrDefaultAsync(d => d.GpuId == id &&
-                              d.LanguageCode == "eng");
+        // Collapse the original two-step lookup (try requested lang, then English
+        // fallback) into a single ordered query. Descriptions matching the requested
+        // language sort first (key 0); English fallback is key 1; FirstOrDefaultAsync
+        // returns the preferred row in one round-trip.
+        var description = await context.GpuDescriptions.AsNoTracking()
+                                       .Where(d => d.GpuId == id &&
+                                                   (d.LanguageCode == lang || d.LanguageCode == "eng"))
+                                       .OrderBy(d => d.LanguageCode == lang ? 0 : 1)
+                                       .Select(d => new { d.Html, d.Text })
+                                       .FirstOrDefaultAsync();
 
         return description?.Html ?? description?.Text;
     }
@@ -261,7 +460,7 @@ public class GpusController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<GpuDescriptionDto>> GetDescriptionsAsync(int id) => context.GpuDescriptions
+    public Task<List<GpuDescriptionDto>> GetDescriptionsAsync(int id) => context.GpuDescriptions.AsNoTracking()
        .Where(d => d.GpuId == id)
        .Select(d => new GpuDescriptionDto
         {
@@ -280,33 +479,25 @@ public class GpusController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<GpuDescriptionDto> GetDescriptionAsync(int id, [FromQuery] string lang = "eng")
     {
-        GpuDescriptionDto description = await context.GpuDescriptions
-                                                         .Where(d => d.GpuId == id && d.LanguageCode == lang)
-                                                         .Select(d => new GpuDescriptionDto
-                                                          {
-                                                              Id           = d.Id,
-                                                              GpuId        = d.GpuId,
-                                                              Html         = d.Html,
-                                                              Markdown     = d.Text,
-                                                              LanguageCode = d.LanguageCode,
-                                                              Language     = d.Language.ReferenceName
-                                                          })
-                                                         .FirstOrDefaultAsync();
-
-        // Fallback to English if requested language not found
-        if(description is null && lang != "eng")
-            description = await context.GpuDescriptions
-                                       .Where(d => d.GpuId == id && d.LanguageCode == "eng")
-                                       .Select(d => new GpuDescriptionDto
-                                        {
-                                            Id           = d.Id,
-                                            GpuId        = d.GpuId,
-                                            Html         = d.Html,
-                                            Markdown     = d.Text,
-                                            LanguageCode = d.LanguageCode,
-                                            Language     = d.Language.ReferenceName
-                                        })
-                                       .FirstOrDefaultAsync();
+        // Collapse the original two-step lookup (try requested lang, then English
+        // fallback) into a single ordered query. Descriptions matching the requested
+        // language sort first (key 0); English fallback is key 1; FirstOrDefaultAsync
+        // returns the preferred row in one round-trip.
+        GpuDescriptionDto description = await context.GpuDescriptions.AsNoTracking()
+                                                     .Where(d => d.GpuId == id &&
+                                                                 (d.LanguageCode == lang ||
+                                                                  d.LanguageCode == "eng"))
+                                                     .OrderBy(d => d.LanguageCode == lang ? 0 : 1)
+                                                     .Select(d => new GpuDescriptionDto
+                                                      {
+                                                          Id           = d.Id,
+                                                          GpuId        = d.GpuId,
+                                                          Html         = d.Html,
+                                                          Markdown     = d.Text,
+                                                          LanguageCode = d.LanguageCode,
+                                                          Language     = d.Language.ReferenceName
+                                                      })
+                                                     .FirstOrDefaultAsync();
 
         return description;
     }

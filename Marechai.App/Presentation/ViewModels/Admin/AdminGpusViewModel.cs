@@ -419,8 +419,10 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
 
     private string FormatResolutionDisplay(ResolutionByGpuDto rel)
     {
-        // Try to get resolution details from the nested object
-        var res = rel.Resolution?.ResolutionDto;
+        // The server now returns ResolutionDto directly (no Kiota composed-type
+        // wrapper) thanks to [Required] on ResolutionByGpuDto.Resolution. The
+        // wire value is still nullable when the join is missing, so guard.
+        var res = rel.Resolution;
 
         if(res != null)
             return $"{res.Width}x{res.Height}" +

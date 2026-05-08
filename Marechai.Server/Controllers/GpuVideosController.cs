@@ -44,7 +44,7 @@ public class GpuVideosController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<GpuVideoDto>> GetVideosByGpuAsync(int gpuId) => context.GpuVideos
+    public Task<List<GpuVideoDto>> GetVideosByGpuAsync(int gpuId) => context.GpuVideos.AsNoTracking()
        .Where(v => v.GpuId == gpuId)
        .OrderBy(v => v.Title)
        .Select(v => new GpuVideoDto

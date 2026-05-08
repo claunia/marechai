@@ -59,6 +59,27 @@ public class GpusService(Marechai.ApiClient.Client client)
         }
     }
 
+    /// <summary>
+    /// Consolidated fetch for the public /gpu/{Id} view page. Replaces six
+    /// sequential HTTP round-trips (head + resolutions + machines + description +
+    /// photos + videos) with a single backend call. Returns null on transport
+    /// failure or a 404 from the server (the page treats null as "GPU not found").
+    /// </summary>
+    public async Task<GpuFullDto> GetGpuFullAsync(int id, string lang = "eng")
+    {
+        try
+        {
+            return await client.Gpus[id].Full.GetAsync(rc =>
+            {
+                if(!string.IsNullOrWhiteSpace(lang)) rc.QueryParameters.Lang = lang;
+            });
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
     public async Task<(long? id, string error)> CreateAsync(GpuDto dto)
     {
         try

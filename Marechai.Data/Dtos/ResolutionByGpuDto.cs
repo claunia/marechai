@@ -36,6 +36,19 @@ public class ResolutionByGpuDto : BaseDto<long>
     [JsonPropertyName("gpu_id")]
     [Required]
     public int GpuId { get; set; }
+
+    /// <summary>
+    /// The nested resolution payload. Marked <c>[Required]</c> on a non-nullable
+    /// reference type so the OpenAPI schema emits a direct <c>$ref</c> to
+    /// <c>ResolutionDto</c>. Without <c>[Required]</c> ASP.NET emits
+    /// <c>oneOf:[{type:null},{$ref:...}]</c>, which makes Kiota generate a
+    /// composed-type wrapper class whose discriminator-based factory cannot
+    /// populate the inner DTO from our plain JSON, silently leaving it null on
+    /// the client and forcing per-resolution N+1 fallback fetches in the page.
+    /// See pattern in <see cref="BookFullDto.Book"/>. The wire value can still
+    /// legitimately be JSON null at runtime when the join is missing.
+    /// </summary>
     [JsonPropertyName("resolution")]
-    public ResolutionDto? Resolution { get; set; }
+    [Required]
+    public ResolutionDto Resolution { get; set; } = null!;
 }

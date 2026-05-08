@@ -44,7 +44,7 @@ public class ResolutionsByGpuController(MarechaiContext context) : ControllerBas
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<ResolutionByGpuDto>> GetByGpu(int gpuId) => (await context.ResolutionsByGpu
+    public async Task<List<ResolutionByGpuDto>> GetByGpu(int gpuId) => (await context.ResolutionsByGpu.AsNoTracking()
                                                                            .Where(r => r.GpuId == gpuId)
                                                                            .Select(r => new ResolutionByGpuDto
                                                                             {
