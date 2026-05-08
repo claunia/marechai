@@ -67,13 +67,36 @@
                         <MudSelectItem T="string" Value="@("lat")">Latin</MudSelectItem>
                     </MudSelect>
 
-                    <MudTextField @bind-Value="_synopsisText"
-                                  Label="@L["Synopsis text"]"
-                                  Variant="Variant.Outlined"
-                                  Lines="6"
-                                  Class="mb-4"/>
+                    @if(TranslationService.IsAvailable)
+                    {
+                        <MudButton StartIcon="@Icons.Material.Filled.Translate"
+                                   Variant="Variant.Outlined"
+                                   Color="Color.Secondary"
+                                   Class="mb-4"
+                                   OnClick="TranslateSynopsisFromEnglish"
+                                   Disabled="@(_isTranslatingSynopsis || string.IsNullOrWhiteSpace(_selectedLanguage) || _selectedLanguage == "eng" || !TranslationService.IsLanguageSupported(_selectedLanguage) || _existingSynopses?.Exists(s => s.LanguageCode == "eng") != true)">
+                            @if(_isTranslatingSynopsis)
+                            {
+                                <MudProgressLinear Color="Color.Secondary" Value="@(_translationTotal > 0 ? _translationCurrent * 100.0 / _translationTotal : 0)" Class="mr-2" Style="width: 100px; align-self: center;"/>
+                                <text>Translating @_translationCurrent / @_translationTotal...</text>
+                            }
+                            else
+                            {
+                                <text>Translate from English</text>
+                            }
+                        </MudButton>
+                    }
 
-                    <MudStack Row="true" Spacing="2" Class="mb-4">
+                    <MudText Typo="Typo.subtitle2" Class="mb-2">@L["Synopsis text (Markdown)"]</MudText>
+                    <MarkdownEditor @bind-Value="_synopsisText"
+                                    @ref="_synopsisEditor"
+                                    @key="_synopsisEditorKey"
+                                    SpellChecker="false"
+                                    MinHeight="200px"
+                                    MaxHeight="400px"
+                                    Placeholder="Enter synopsis in Markdown..."/>
+
+                    <MudStack Row="true" Spacing="2" Class="mb-4 mt-4">
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
                                    OnClick="SaveSynopsis"
                                    Disabled="@(string.IsNullOrWhiteSpace(_selectedLanguage) || string.IsNullOrWhiteSpace(_synopsisText))">
@@ -312,6 +335,11 @@
     List<DocumentSynopsisDto>  _existingSynopses = [];
     string                    _synopsisMessage;
     Severity                   _synopsisMessageSeverity = Severity.Info;
+    MarkdownEditor             _synopsisEditor;
+    int                        _synopsisEditorKey;
+    bool                       _isTranslatingSynopsis;
+    int                        _translationCurrent;
+    int                        _translationTotal;
 
     // People junction
     List<PersonByDocumentDto> _documentPeople;
@@ -351,6 +379,7 @@
     [Parameter] public int       PublishedPrecision { get; set; }
 
     [Inject] DocumentsService DocumentsService { get; set; } = null!;
+    [Inject] TranslationService TranslationService { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -478,6 +507,7 @@
     {
         _selectedLanguage = synopsis.LanguageCode;
         _synopsisText     = synopsis.Text ?? string.Empty;
+        _synopsisEditorKey++;
     }
 
     async Task SaveSynopsis()
@@ -519,6 +549,7 @@
             _synopsisMessage         = L["Synopsis deleted."];
             _synopsisMessageSeverity = Severity.Success;
             _synopsisText            = string.Empty;
+            _synopsisEditorKey++;
             _existingSynopses        = await DocumentsService.GetSynopsesAsync(DocumentId);
             StateHasChanged();
         }
@@ -526,6 +557,51 @@
         {
             _synopsisMessage         = error;
             _synopsisMessageSeverity = Severity.Error;
+        }
+    }
+
+    async Task TranslateSynopsisFromEnglish()
+    {
+        _isTranslatingSynopsis = true;
+        await InvokeAsync(StateHasChanged);
+
+        try
+        {
+            string englishMarkdown = _existingSynopses?.Find(s => s.LanguageCode == "eng")?.Text;
+
+            if(string.IsNullOrWhiteSpace(englishMarkdown))
+            {
+                _synopsisMessage         = "No English synopsis found to translate from.";
+                _synopsisMessageSeverity = Severity.Error;
+
+                return;
+            }
+
+            (string translatedText, string error) = await TranslationService.TranslateAsync(englishMarkdown, _selectedLanguage!,
+                new Progress<(int current, int total)>(p =>
+                {
+                    _translationCurrent = p.current;
+                    _translationTotal   = p.total;
+                    InvokeAsync(StateHasChanged);
+                }));
+
+            if(translatedText is not null)
+            {
+                _synopsisText            = translatedText;
+                _synopsisEditorKey++;
+                _synopsisMessage         = "Translation completed. Please review before saving.";
+                _synopsisMessageSeverity = Severity.Success;
+            }
+            else
+            {
+                _synopsisMessage         = error ?? "Translation failed.";
+                _synopsisMessageSeverity = Severity.Error;
+            }
+        }
+        finally
+        {
+            _isTranslatingSynopsis = false;
+            await InvokeAsync(StateHasChanged);
         }
     }
 

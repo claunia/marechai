@@ -258,6 +258,10 @@
         <value>Zusammenfassungstext</value>
         <comment>Synopsis text</comment>
     </data>
+    <data name="Synopsis text (Markdown)" xml:space="preserve">
+        <value>Zusammenfassungstext (Markdown)</value>
+        <comment>Synopsis text (Markdown)</comment>
+    </data>
     <data name="Save Synopsis" xml:space="preserve">
         <value>Zusammenfassung speichern</value>
         <comment>Save Synopsis</comment>

@@ -258,6 +258,9 @@
     <data name="Synopsis text" xml:space="preserve">
         <value>Synopsis text</value>
     </data>
+    <data name="Synopsis text (Markdown)" xml:space="preserve">
+        <value>Synopsis text (Markdown)</value>
+    </data>
     <data name="Save Synopsis" xml:space="preserve">
         <value>Save Synopsis</value>
     </data>

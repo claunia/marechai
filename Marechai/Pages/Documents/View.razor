@@ -27,6 +27,7 @@
 
 @page "/document/{Id:long}"
 @using Marechai.ApiClient.Models
+@using Marechai.Helpers
 @inherits OwningComponentBase<DocumentsService>
 @inject IStringLocalizer<DocumentsService> L
 @inject ApiAssetUrlProvider                AssetUrls
@@ -126,7 +127,7 @@
                 <MudIcon Icon="@Icons.Material.Filled.Description" Color="Color.Primary"/>
                 <MudText Typo="Typo.h6">@L["Synopsis"]</MudText>
             </MudStack>
-            <MudText Typo="Typo.body1" Style="white-space: pre-wrap;">@_synopsis.Text</MudText>
+            <div class="markdown-body">@SafeMarkdownRenderer.Render(_synopsis.Text)</div>
         </MudCardContent>
     </MudCard>
 }
