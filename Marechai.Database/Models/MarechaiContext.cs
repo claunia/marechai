@@ -182,6 +182,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<MachineVideo>                       MachineVideos                       { get; set; }
     public virtual DbSet<GpuVideo>                           GpuVideos                           { get; set; }
     public virtual DbSet<ProcessorVideo>                     ProcessorVideos                     { get; set; }
+    public virtual DbSet<SoundSynthVideo>                    SoundSynthVideos                    { get; set; }
     public virtual DbSet<SoftwareCriticReview>               SoftwareCriticReviews               { get; set; }
     public virtual DbSet<MobyGamesReviewImportState>         MobyGamesReviewImportStates         { get; set; }
     public virtual DbSet<SoftwareUserRating>                  SoftwareUserRatings                 { get; set; }
@@ -2918,6 +2919,17 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
             entity.HasOne(e => e.Processor)
                   .WithMany(p => p.Videos)
                   .HasForeignKey(e => e.ProcessorId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<SoundSynthVideo>(entity =>
+        {
+            entity.HasIndex(e => e.SoundSynthId);
+            entity.HasIndex(e => new { e.SoundSynthId, e.Provider, e.VideoId }).IsUnique();
+
+            entity.HasOne(e => e.SoundSynth)
+                  .WithMany(p => p.Videos)
+                  .HasForeignKey(e => e.SoundSynthId)
                   .OnDelete(DeleteBehavior.Cascade);
         });
 

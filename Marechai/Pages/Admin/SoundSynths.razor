@@ -59,6 +59,8 @@
 
                         <MudTooltip Text="@L["Photos"]"><MudIconButton Icon="@Icons.Material.Filled.PhotoLibrary" Size="Size.Small" Href="@($"/admin/sound-synths/{context.Item.Id}/photos")"/></MudTooltip>
 
+                        <MudTooltip Text="@L["Videos"]"><MudIconButton Icon="@Icons.Material.Filled.VideoLibrary" Size="Size.Small" Href="@($"/admin/sound-synths/{context.Item.Id}/videos")"/></MudTooltip>
+
                         <MudTooltip Text="@L["Delete Sound Synth"]"><MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDeleteSoundSynth(context.Item)"/></MudTooltip>
 
                     </MudStack>

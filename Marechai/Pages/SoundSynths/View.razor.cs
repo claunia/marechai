@@ -46,6 +46,7 @@ public partial class View
     List<Guid>       _photos = [];
     PhotoLightbox    _lightbox;
     SoundSynthDto    _synth;
+    List<SoundSynthVideoDto> _videos = [];
 
     [Parameter]
     public int Id { get; set; }
@@ -89,6 +90,8 @@ public partial class View
         _description = await Service.GetDescriptionTextAsync(Id);
 
         _photos = await SoundSynthPhotosService.GetGuidsBySoundSynthAsync(Id);
+
+        _videos = await Service.GetVideosBySoundSynthAsync(Id);
 
         _loaded = true;
         StateHasChanged();

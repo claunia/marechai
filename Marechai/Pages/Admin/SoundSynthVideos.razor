@@ -1,0 +1,164 @@
+@page "/admin/sound-synths/{Id:int}/videos"
+@attribute [Authorize(Roles = "Admin, UberAdmin")]
+@using Marechai.ApiClient.Models
+@using Marechai.Services
+@inject SoundSynthsService SoundSynthsService
+@inject IStringLocalizer<SoundSynthsService> L
+@inject IDialogService DialogService
+@inject NavigationManager NavigationManager
+
+<MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" OnClick="@(() => NavigationManager.NavigateTo("/admin/sound-synths"))" Class="mb-4">@L["Back to Sound Synths"]</MudButton>
+
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Filled.VideoLibrary" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Style="color: white;">@L["Video Management"]</MudText>
+    </MudStack>
+    <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);" Class="mt-2">@(_soundSynthName ?? L["Manage sound synth videos."])</MudText>
+</MudPaper>
+
+@if(!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+}
+
+@if(!string.IsNullOrWhiteSpace(_successMessage))
+{
+    <MudAlert Severity="Severity.Success" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _successMessage = null">@_successMessage</MudAlert>
+}
+
+@if(_isLoading)
+{
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+    </div>
+    return;
+}
+
+@* ── Add Video Section ── *@
+<MudPaper Elevation="2" Class="pa-4 mb-6 rounded-lg">
+    <MudText Typo="Typo.h6" Class="mb-3">@L["Link Video"]</MudText>
+    <MudStack Spacing="3">
+        <MudTextField @bind-Value="_urlInput"
+                      @bind-Value:after="OnUrlInputChanged"
+                      Label="@L["YouTube URL or Video ID"]"
+                      Variant="Variant.Outlined"
+                      Placeholder="https://www.youtube.com/watch?v=..."
+                      Immediate="true"
+                      DebounceInterval="200"/>
+
+        @if(!string.IsNullOrWhiteSpace(_detectedVideoId))
+        {
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success"/>
+                <MudText Typo="Typo.body2">@L["Detected Video ID"]:</MudText>
+                <MudChip T="string" Size="Size.Small" Color="Color.Success">@_detectedVideoId</MudChip>
+            </MudStack>
+        }
+
+        <MudTextField @bind-Value="_title"
+                      Label="@L["Video Title"]"
+                      Variant="Variant.Outlined"
+                      MaxLength="512"/>
+
+        <MudExpansionPanels Elevation="0">
+            <MudExpansionPanel Text="@L["Advanced"]">
+                <MudStack Spacing="3">
+                    <MudTextField @bind-Value="_provider"
+                                  Label="@L["Provider"]"
+                                  Variant="Variant.Outlined"
+                                  HelperText="@L["Provider name (e.g. YouTube)."]"
+                                  MaxLength="32"/>
+                    <MudTextField @bind-Value="_manualVideoId"
+                                  Label="@L["Video ID"]"
+                                  Variant="Variant.Outlined"
+                                  HelperText="@L["Use this when the URL above cannot be parsed (non-YouTube providers)."]"
+                                  MaxLength="64"/>
+                </MudStack>
+            </MudExpansionPanel>
+        </MudExpansionPanels>
+
+        <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.Link"
+                   OnClick="LinkVideoAsync"
+                   Disabled="_isSaving || !CanLink">
+            @if(_isSaving)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
+                @L["Saving..."]
+            }
+            else
+            {
+                @L["Link Video"]
+            }
+        </MudButton>
+    </MudStack>
+</MudPaper>
+
+@* ── Videos Grid ── *@
+<MudPaper Elevation="2" Class="rounded-lg">
+    <MudToolBar Dense="true">
+        <MudText Typo="Typo.h6">@L["Videos"]</MudText>
+        @if(_videos is not null)
+        {
+            <MudChip T="string" Size="Size.Small" Color="Color.Secondary" Class="ml-2">@_videos.Count</MudChip>
+        }
+        <MudSpacer/>
+        <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadDataAsync"/>
+    </MudToolBar>
+
+    @if(_videos is null || _videos.Count == 0)
+    {
+        <MudAlert Severity="Severity.Info" Class="ma-4">@L["No videos found for this sound synth."]</MudAlert>
+    }
+    else
+    {
+        <MudGrid Class="pa-4">
+            @foreach(SoundSynthVideoDto video in _videos)
+            {
+                <MudItem xs="12" sm="6" md="4">
+                    <MudCard Elevation="1" Class="rounded-lg">
+                        <MudCardContent Class="pa-2">
+                            @if(string.Equals(video.Provider, "YouTube", StringComparison.OrdinalIgnoreCase))
+                            {
+                                <div style="position: relative; width: 100%; padding-bottom: 56.25%; border-radius: 8px; overflow: hidden;">
+                                    <iframe src="@($"https://www.youtube-nocookie.com/embed/{video.VideoId}")"
+                                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowfullscreen
+                                            loading="lazy"
+                                            referrerpolicy="no-referrer-when-downgrade"></iframe>
+                                </div>
+                            }
+                            else
+                            {
+                                <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Dense="true">
+                                    @video.Provider: @video.VideoId
+                                </MudAlert>
+                            }
+                        </MudCardContent>
+                        <MudCardContent Class="pa-2">
+                            <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
+                                <MudChip T="string" Size="Size.Small" Color="Color.Primary">@video.Provider</MudChip>
+                                <MudText Typo="Typo.caption" Class="text-truncate" Style="font-family: monospace;">@video.VideoId</MudText>
+                            </MudStack>
+                            <MudTextField T="string"
+                                          Value="@video.Title"
+                                          ValueChanged="@(t => OnTitleChangedAsync(video, t))"
+                                          Label="@L["Title"]"
+                                          Variant="Variant.Outlined"
+                                          DebounceInterval="500"
+                                          MaxLength="512"
+                                          Class="mt-2"/>
+                        </MudCardContent>
+                        <MudCardActions>
+                            <MudButton Variant="Variant.Text" Color="Color.Error" Size="Size.Small"
+                                       StartIcon="@Icons.Material.Filled.Delete"
+                                       OnClick="() => ConfirmDeleteAsync(video)">@L["Delete"]</MudButton>
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
+            }
+        </MudGrid>
+    }
+</MudPaper>

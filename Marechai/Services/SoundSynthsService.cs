@@ -33,6 +33,13 @@ namespace Marechai.Services;
 
 public class SoundSynthsService(Marechai.ApiClient.Client client)
 {
+    static string ExtractErrorMessage(ApiException ex)
+    {
+        if(ex is ProblemDetails pd) return pd.Detail ?? pd.Title ?? ex.Message;
+
+        return ex.Message;
+    }
+
     public async Task<List<SoundSynthDto>> GetAllAsync()
     {
         try
@@ -200,6 +207,87 @@ public class SoundSynthsService(Marechai.ApiClient.Client client)
         catch(ApiException ex)
         {
             return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    // ── Videos ──
+
+    public async Task<List<SoundSynthVideoDto>> GetVideosBySoundSynthAsync(int soundSynthId)
+    {
+        try
+        {
+            var result = await client.SoundSynths[soundSynthId].Videos.GetAsync();
+
+            return result ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(SoundSynthVideoDto dto, string error)> CreateVideoAsync(int    soundSynthId, string provider,
+                                                                               string videoId,
+                                                                               string title)
+    {
+        try
+        {
+            var dto = await client.SoundSynths[soundSynthId]
+                                  .Videos.PostAsync(new CreateSoundSynthVideoRequest
+                                                    {
+                                                        Provider = provider,
+                                                        VideoId  = videoId,
+                                                        Title    = title
+                                                    });
+
+            return (dto, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string error)> UpdateVideoTitleAsync(long id, string title)
+    {
+        try
+        {
+            await client.SoundSynths.Videos[id].PutAsync(new UpdateSoundSynthVideoRequest
+                                                         {
+                                                             Title = title
+                                                         });
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string error)> DeleteVideoAsync(long id)
+    {
+        try
+        {
+            await client.SoundSynths.Videos[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ExtractErrorMessage(ex));
         }
         catch(Exception ex)
         {
