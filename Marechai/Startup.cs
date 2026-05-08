@@ -122,6 +122,22 @@ public class Startup(IConfiguration configuration)
             });
         }
 
+        string openAiUrl = Configuration["OpenAI:Url"];
+
+        if(!string.IsNullOrWhiteSpace(openAiUrl))
+        {
+            int openAiTimeoutSeconds = 600;
+
+            if(int.TryParse(Configuration["OpenAI:TimeoutSeconds"], out int parsedTimeout) && parsedTimeout > 0)
+                openAiTimeoutSeconds = parsedTimeout;
+
+            services.AddHttpClient("OpenAI", client =>
+            {
+                client.BaseAddress = new Uri(openAiUrl);
+                client.Timeout     = TimeSpan.FromSeconds(openAiTimeoutSeconds);
+            });
+        }
+
         services.AddAuthorizationCore();
         services.AddRazorPages();
         services.AddServerSideBlazor();
