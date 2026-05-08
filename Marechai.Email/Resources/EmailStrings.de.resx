@@ -48,4 +48,25 @@
   <data name="TwoFactor_Footer" xml:space="preserve">
     <value>Wenn Sie nicht versucht haben, sich anzumelden, können Sie diese E-Mail ignorieren.</value>
   </data>
+  <data name="PasswordReset_Subject" xml:space="preserve">
+    <value>Setzen Sie Ihr Marechai-Passwort zurück</value>
+  </data>
+  <data name="PasswordReset_Title" xml:space="preserve">
+    <value>Marechai-Passwort zurücksetzen</value>
+  </data>
+  <data name="PasswordReset_Intro" xml:space="preserve">
+    <value>Wir haben eine Anfrage zum Zurücksetzen des Passworts für Ihr Marechai-Konto erhalten. Klicken Sie auf die Schaltfläche unten, um ein neues Passwort festzulegen.</value>
+  </data>
+  <data name="PasswordReset_ButtonText" xml:space="preserve">
+    <value>Passwort zurücksetzen</value>
+  </data>
+  <data name="PasswordReset_LinkFallback" xml:space="preserve">
+    <value>Falls die Schaltfläche nicht funktioniert, kopieren Sie diesen Link und fügen Sie ihn in Ihren Browser ein:</value>
+  </data>
+  <data name="PasswordReset_Expiry" xml:space="preserve">
+    <value>Dieser Link läuft in {0} Minuten ab.</value>
+  </data>
+  <data name="PasswordReset_Footer" xml:space="preserve">
+    <value>Falls Sie kein Zurücksetzen des Passworts angefordert haben, können Sie diese E-Mail ignorieren.</value>
+  </data>
 </root>

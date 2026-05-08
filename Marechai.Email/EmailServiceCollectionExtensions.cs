@@ -27,6 +27,7 @@ public static class EmailServiceCollectionExtensions
         services.AddSingleton<IEmailTemplateRenderer, RazorLightEmailTemplateRenderer>();
         services.AddSingleton<IEmailSender, SmtpEmailSender>();
         services.AddSingleton<TwoFactorEmailComposer>();
+        services.AddSingleton<PasswordResetEmailComposer>();
 
         return services;
     }

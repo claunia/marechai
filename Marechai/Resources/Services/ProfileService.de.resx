@@ -98,4 +98,88 @@
         <value>Software</value>
         <comment>Software</comment>
     </data>
+    <data name="Forgot your password?" xml:space="preserve">
+        <value>Passwort vergessen?</value>
+        <comment>Forgot your password?</comment>
+    </data>
+    <data name="Forgot Password" xml:space="preserve">
+        <value>Passwort vergessen</value>
+        <comment>Forgot Password</comment>
+    </data>
+    <data name="Enter the email address for your account and we will send you a link to reset your password." xml:space="preserve">
+        <value>Geben Sie die E-Mail-Adresse Ihres Kontos ein, dann senden wir Ihnen einen Link zum Zurücksetzen Ihres Passworts.</value>
+        <comment>Enter the email address for your account and we will send you a link to reset your password.</comment>
+    </data>
+    <data name="Email" xml:space="preserve">
+        <value>E-Mail</value>
+        <comment>Email</comment>
+    </data>
+    <data name="Send reset link" xml:space="preserve">
+        <value>Link senden</value>
+        <comment>Send reset link</comment>
+    </data>
+    <data name="Sending..." xml:space="preserve">
+        <value>Wird gesendet...</value>
+        <comment>Sending...</comment>
+    </data>
+    <data name="If an account with that email exists, we have sent a password reset link to it. Please check your inbox (and spam folder) and follow the link to choose a new password." xml:space="preserve">
+        <value>Falls ein Konto mit dieser E-Mail-Adresse existiert, haben wir einen Link zum Zurücksetzen des Passworts an diese Adresse gesendet. Bitte prüfen Sie Ihren Posteingang (und den Spam-Ordner) und folgen Sie dem Link, um ein neues Passwort festzulegen.</value>
+        <comment>If an account with that email exists, we have sent a password reset link to it. Please check your inbox (and spam folder) and follow the link to choose a new password.</comment>
+    </data>
+    <data name="Back to sign in" xml:space="preserve">
+        <value>Zurück zur Anmeldung</value>
+        <comment>Back to sign in</comment>
+    </data>
+    <data name="Email is required." xml:space="preserve">
+        <value>E-Mail-Adresse ist erforderlich.</value>
+        <comment>Email is required.</comment>
+    </data>
+    <data name="Reset Password" xml:space="preserve">
+        <value>Passwort zurücksetzen</value>
+        <comment>Reset Password</comment>
+    </data>
+    <data name="The reset link is invalid or incomplete. Please request a new one." xml:space="preserve">
+        <value>Der Reset-Link ist ungültig oder unvollständig. Bitte fordern Sie einen neuen an.</value>
+        <comment>The reset link is invalid or incomplete. Please request a new one.</comment>
+    </data>
+    <data name="Request a new link" xml:space="preserve">
+        <value>Neuen Link anfordern</value>
+        <comment>Request a new link</comment>
+    </data>
+    <data name="Your password has been reset. You can now sign in with your new password." xml:space="preserve">
+        <value>Ihr Passwort wurde zurückgesetzt. Sie können sich jetzt mit Ihrem neuen Passwort anmelden.</value>
+        <comment>Your password has been reset. You can now sign in with your new password.</comment>
+    </data>
+    <data name="Go to sign in" xml:space="preserve">
+        <value>Zur Anmeldung</value>
+        <comment>Go to sign in</comment>
+    </data>
+    <data name="Choose a new password for {0}." xml:space="preserve">
+        <value>Wählen Sie ein neues Passwort für {0}.</value>
+        <comment>Choose a new password for {0}.</comment>
+    </data>
+    <data name="New password" xml:space="preserve">
+        <value>Neues Passwort</value>
+        <comment>New password</comment>
+    </data>
+    <data name="Confirm new password" xml:space="preserve">
+        <value>Neues Passwort bestätigen</value>
+        <comment>Confirm new password</comment>
+    </data>
+    <data name="Resetting..." xml:space="preserve">
+        <value>Zurücksetzen...</value>
+        <comment>Resetting...</comment>
+    </data>
+    <data name="New password is required." xml:space="preserve">
+        <value>Neues Passwort ist erforderlich.</value>
+        <comment>New password is required.</comment>
+    </data>
+    <data name="Passwords do not match." xml:space="preserve">
+        <value>Passwörter stimmen nicht überein.</value>
+        <comment>Passwords do not match.</comment>
+    </data>
+    <data name="Could not reset password." xml:space="preserve">
+        <value>Passwort konnte nicht zurückgesetzt werden.</value>
+        <comment>Could not reset password.</comment>
+    </data>
 </root>

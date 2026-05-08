@@ -3,6 +3,7 @@
 using Marechai.ApiClient.Auth.ChangePassword;
 using Marechai.ApiClient.Auth.Login;
 using Marechai.ApiClient.Auth.Me;
+using Marechai.ApiClient.Auth.Password;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions;
 using System.Collections.Generic;
@@ -31,6 +32,11 @@ namespace Marechai.ApiClient.Auth
         public global::Marechai.ApiClient.Auth.Me.MeRequestBuilder Me
         {
             get => new global::Marechai.ApiClient.Auth.Me.MeRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The password property</summary>
+        public global::Marechai.ApiClient.Auth.Password.PasswordRequestBuilder Password
+        {
+            get => new global::Marechai.ApiClient.Auth.Password.PasswordRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.ApiClient.Auth.AuthRequestBuilder"/> and sets the default values.

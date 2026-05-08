@@ -263,6 +263,30 @@
   <data name="LoginPage_SignUpLink" xml:space="preserve">
     <value>Cadastre-se</value>
   </data>
+  <data name="ForgotPasswordPage_Title" xml:space="preserve">
+    <value>Esqueci a senha</value>
+  </data>
+  <data name="ForgotPasswordPage_Intro" xml:space="preserve">
+    <value>Digite o endereço de e-mail da sua conta e enviaremos um link para redefinir sua senha. Abra o link em um navegador web para escolher uma nova senha.</value>
+  </data>
+  <data name="ForgotPasswordPage_EmailLabel" xml:space="preserve">
+    <value>E-mail</value>
+  </data>
+  <data name="ForgotPasswordPage_SubmitButton" xml:space="preserve">
+    <value>Enviar link</value>
+  </data>
+  <data name="ForgotPasswordPage_BackToLogin" xml:space="preserve">
+    <value>Voltar para entrar</value>
+  </data>
+  <data name="ForgotPasswordPage_ConfirmationTitle" xml:space="preserve">
+    <value>Verifique sua caixa de entrada</value>
+  </data>
+  <data name="ForgotPasswordPage_ConfirmationMessage" xml:space="preserve">
+    <value>Se houver uma conta com esse endereço de e-mail, enviamos um link para redefinir a senha. Abra o link em um navegador web para escolher uma nova senha.</value>
+  </data>
+  <data name="ForgotPasswordPage_EmailRequired" xml:space="preserve">
+    <value>O endereço de e-mail é obrigatório.</value>
+  </data>
   <data name="LoginPage.Error.EmailRequired" xml:space="preserve">
     <value>O endereço de e-mail é obrigatório.</value>
   </data>

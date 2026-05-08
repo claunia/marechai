@@ -335,6 +335,30 @@
   <data name="LoginPage_SignUpLink" xml:space="preserve">
     <value>Sign up</value>
   </data>
+  <data name="ForgotPasswordPage_Title" xml:space="preserve">
+    <value>Forgot Password</value>
+  </data>
+  <data name="ForgotPasswordPage_Intro" xml:space="preserve">
+    <value>Enter the email address for your account and we will send you a link to reset your password. Open the link in a web browser to choose a new password.</value>
+  </data>
+  <data name="ForgotPasswordPage_EmailLabel" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="ForgotPasswordPage_SubmitButton" xml:space="preserve">
+    <value>Send reset link</value>
+  </data>
+  <data name="ForgotPasswordPage_BackToLogin" xml:space="preserve">
+    <value>Back to sign in</value>
+  </data>
+  <data name="ForgotPasswordPage_ConfirmationTitle" xml:space="preserve">
+    <value>Check your inbox</value>
+  </data>
+  <data name="ForgotPasswordPage_ConfirmationMessage" xml:space="preserve">
+    <value>If an account with that email exists, we have sent a password reset link to it. Open the link in a web browser to choose a new password.</value>
+  </data>
+  <data name="ForgotPasswordPage_EmailRequired" xml:space="preserve">
+    <value>Email address is required.</value>
+  </data>
   <data name="LoginPage.Error.EmailRequired" xml:space="preserve">
     <value>Email address is required.</value>
   </data>

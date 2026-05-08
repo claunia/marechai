@@ -222,5 +222,9 @@ public partial class LoginViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private void ForgotPassword() =>
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(ForgotPasswordPage));
+
+    [RelayCommand]
     private void ClearError() => ErrorMessage = null;
 }

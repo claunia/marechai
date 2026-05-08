@@ -263,6 +263,30 @@
   <data name="LoginPage_SignUpLink" xml:space="preserve">
     <value>Registrarse</value>
   </data>
+  <data name="ForgotPasswordPage_Title" xml:space="preserve">
+    <value>Olvidé mi contraseña</value>
+  </data>
+  <data name="ForgotPasswordPage_Intro" xml:space="preserve">
+    <value>Introduzca la dirección de correo electrónico de su cuenta y le enviaremos un enlace para restablecer la contraseña. Abra el enlace en un navegador web para elegir una nueva contraseña.</value>
+  </data>
+  <data name="ForgotPasswordPage_EmailLabel" xml:space="preserve">
+    <value>Correo electrónico</value>
+  </data>
+  <data name="ForgotPasswordPage_SubmitButton" xml:space="preserve">
+    <value>Enviar enlace</value>
+  </data>
+  <data name="ForgotPasswordPage_BackToLogin" xml:space="preserve">
+    <value>Volver a iniciar sesión</value>
+  </data>
+  <data name="ForgotPasswordPage_ConfirmationTitle" xml:space="preserve">
+    <value>Revise su bandeja de entrada</value>
+  </data>
+  <data name="ForgotPasswordPage_ConfirmationMessage" xml:space="preserve">
+    <value>Si existe una cuenta con esa dirección de correo, le hemos enviado un enlace para restablecer la contraseña. Abra el enlace en un navegador web para elegir una nueva contraseña.</value>
+  </data>
+  <data name="ForgotPasswordPage_EmailRequired" xml:space="preserve">
+    <value>La dirección de correo electrónico es obligatoria.</value>
+  </data>
   <data name="LoginPage.Error.EmailRequired" xml:space="preserve">
     <value>La dirección de correo electrónico es obligatoria.</value>
   </data>

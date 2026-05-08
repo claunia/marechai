@@ -206,6 +206,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<NewsViewModel>();
         containerRegistry.Register<MainViewModel>();
         containerRegistry.Register<LoginViewModel>();
+        containerRegistry.Register<ForgotPasswordViewModel>();
         containerRegistry.Register<ComputersViewModel>();
         containerRegistry.Register<ComputersListViewModel>();
         containerRegistry.Register<ConsolesViewModel>();
@@ -267,6 +268,7 @@ public partial class App : PrismApplication
         // Register views for navigation
         containerRegistry.RegisterForNavigation<MainPage, MainViewModel>();
         containerRegistry.RegisterForNavigation<LoginPage, LoginViewModel>();
+        containerRegistry.RegisterForNavigation<ForgotPasswordPage, ForgotPasswordViewModel>();
         containerRegistry.RegisterForNavigation<NewsPage, NewsViewModel>();
         containerRegistry.RegisterForNavigation<ComputersPage, ComputersViewModel>();
         containerRegistry.RegisterForNavigation<ComputersListPage, ComputersListViewModel>();

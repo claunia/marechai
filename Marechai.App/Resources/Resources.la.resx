@@ -263,6 +263,30 @@
   <data name="LoginPage_SignUpLink" xml:space="preserve">
     <value>Inscribere</value>
   </data>
+  <data name="ForgotPasswordPage_Title" xml:space="preserve">
+    <value>Tessera oblita</value>
+  </data>
+  <data name="ForgotPasswordPage_Intro" xml:space="preserve">
+    <value>Inscriptionem electronicam rationis tuae insere et nexum tibi mittemus ad tesseram restituendam. Aperi nexum in navigatro telae ut tesseram novam eligas.</value>
+  </data>
+  <data name="ForgotPasswordPage_EmailLabel" xml:space="preserve">
+    <value>Inscriptio electronica</value>
+  </data>
+  <data name="ForgotPasswordPage_SubmitButton" xml:space="preserve">
+    <value>Mitte nexum</value>
+  </data>
+  <data name="ForgotPasswordPage_BackToLogin" xml:space="preserve">
+    <value>Reverti ad inscriptionem</value>
+  </data>
+  <data name="ForgotPasswordPage_ConfirmationTitle" xml:space="preserve">
+    <value>Inspice cistam tuam intrantem</value>
+  </data>
+  <data name="ForgotPasswordPage_ConfirmationMessage" xml:space="preserve">
+    <value>Si ratio cum ea inscriptione electronica exstat, nexum tesserae restituendae ei misimus. Aperi nexum in navigatro telae ut tesseram novam eligas.</value>
+  </data>
+  <data name="ForgotPasswordPage_EmailRequired" xml:space="preserve">
+    <value>Inscriptio electronica necessaria est.</value>
+  </data>
   <data name="LoginPage.Error.EmailRequired" xml:space="preserve">
     <value>Inscriptio electronica necessaria est.</value>
   </data>

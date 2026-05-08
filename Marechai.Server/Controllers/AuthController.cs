@@ -49,9 +49,10 @@ namespace Marechai.Server.Controllers;
 [ApiController]
 [Route("auth")]
 public class AuthController
-    (UserManager<ApplicationUser> userManager,         MarechaiContext          context,
-     TokenService                 tokenService,        IConfiguration           configuration,
-     TwoFactorEmailComposer       twoFactorEmailComposer) : ControllerBase
+    (UserManager<ApplicationUser> userManager,         MarechaiContext              context,
+     TokenService                 tokenService,        IConfiguration               configuration,
+     TwoFactorEmailComposer       twoFactorEmailComposer,
+     PasswordResetEmailComposer   passwordResetEmailComposer) : ControllerBase
 {
     static readonly HashSet<string> _allowedExtensions = [".jpg", ".jpeg", ".png", ".webp", ".tiff", ".tif", ".bmp"];
 
@@ -276,6 +277,69 @@ public class AuthController
         return NoContent();
     }
 
+    [HttpPost]
+    [Route("password/forgot")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status204NoContent,
+                          Description =
+                              "Always returned regardless of whether the email matches a registered account, to prevent enumeration. If the address belongs to a confirmed account a reset link is dispatched.")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [Consumes("application/json")]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
+    {
+        if(!ModelState.IsValid) return BadRequest(ModelState);
+
+        ApplicationUser user = await userManager.FindByEmailAsync(request.Email);
+
+        // Anti-enumeration: silently succeed for unknown or unconfirmed accounts. Lockout-on-success
+        // (below) still means an attacker probing valid addresses pays a real cost.
+        if(user is null || !user.EmailConfirmed) return NoContent();
+
+        string token = await userManager.GeneratePasswordResetTokenAsync(user);
+
+        string baseUrl = (configuration["Frontend:BaseUrl"] ?? string.Empty).TrimEnd('/');
+
+        string resetUrl =
+            $"{baseUrl}/reset-password?email={Uri.EscapeDataString(user.Email!)}&token={Uri.EscapeDataString(token)}";
+
+        await SendLocalizedPasswordResetAsync(user.Email!, resetUrl);
+
+        // Reuse Identity's lockout machinery (same approach as the failed-2FA paths) so an attacker that
+        // guesses a valid address can't grind the endpoint indefinitely.
+        await userManager.AccessFailedAsync(user);
+
+        return NoContent();
+    }
+
+    [HttpPost]
+    [Route("password/reset")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status204NoContent, Description = "Password successfully reset.")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [Consumes("application/json")]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+    {
+        if(!ModelState.IsValid) return BadRequest(ModelState);
+
+        ApplicationUser user = await userManager.FindByEmailAsync(request.Email);
+
+        // Generic message: do NOT differentiate between unknown user and bad/expired token.
+        if(user is null) return BadRequest("Invalid token or email.");
+
+        IdentityResult result = await userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
+
+        if(!result.Succeeded)
+        {
+            await userManager.AccessFailedAsync(user);
+
+            return BadRequest(result.Errors);
+        }
+
+        await userManager.ResetAccessFailedCountAsync(user);
+
+        return NoContent();
+    }
+
     [HttpGet]
     [Route("me/public-profile")]
     [Authorize]
@@ -484,6 +548,27 @@ public class AuthController
         {
             System.Globalization.CultureInfo.CurrentUICulture = EmailCulture.PickFromRequest(Request);
             await twoFactorEmailComposer.SendLoginCodeAsync(toEmail, code);
+        }
+        finally
+        {
+            System.Globalization.CultureInfo.CurrentUICulture = previous;
+        }
+    }
+
+    /// <summary>
+    ///     Sends the password-reset link in the language picked from the request's <c>Accept-Language</c> header
+    ///     (restricted to <see cref="EmailCulture.Supported" />, fallback English). Wraps the composer call in a
+    ///     <c>CultureInfo.CurrentUICulture</c> swap so <c>IStringLocalizer&lt;EmailStrings&gt;</c> picks up the
+    ///     right resource and restores the previous culture afterwards.
+    /// </summary>
+    async Task SendLocalizedPasswordResetAsync(string toEmail, string resetUrl)
+    {
+        System.Globalization.CultureInfo previous = System.Globalization.CultureInfo.CurrentUICulture;
+
+        try
+        {
+            System.Globalization.CultureInfo.CurrentUICulture = EmailCulture.PickFromRequest(Request);
+            await passwordResetEmailComposer.SendResetLinkAsync(toEmail, resetUrl);
         }
         finally
         {

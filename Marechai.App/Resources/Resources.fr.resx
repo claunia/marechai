@@ -263,6 +263,30 @@
   <data name="LoginPage_SignUpLink" xml:space="preserve">
     <value>S'inscrire</value>
   </data>
+  <data name="ForgotPasswordPage_Title" xml:space="preserve">
+    <value>Mot de passe oublié</value>
+  </data>
+  <data name="ForgotPasswordPage_Intro" xml:space="preserve">
+    <value>Entrez l'adresse e-mail de votre compte et nous vous enverrons un lien pour réinitialiser votre mot de passe. Ouvrez le lien dans un navigateur web pour choisir un nouveau mot de passe.</value>
+  </data>
+  <data name="ForgotPasswordPage_EmailLabel" xml:space="preserve">
+    <value>E-mail</value>
+  </data>
+  <data name="ForgotPasswordPage_SubmitButton" xml:space="preserve">
+    <value>Envoyer le lien</value>
+  </data>
+  <data name="ForgotPasswordPage_BackToLogin" xml:space="preserve">
+    <value>Retour à la connexion</value>
+  </data>
+  <data name="ForgotPasswordPage_ConfirmationTitle" xml:space="preserve">
+    <value>Vérifiez votre boîte de réception</value>
+  </data>
+  <data name="ForgotPasswordPage_ConfirmationMessage" xml:space="preserve">
+    <value>Si un compte existe avec cette adresse e-mail, nous lui avons envoyé un lien de réinitialisation du mot de passe. Ouvrez le lien dans un navigateur web pour choisir un nouveau mot de passe.</value>
+  </data>
+  <data name="ForgotPasswordPage_EmailRequired" xml:space="preserve">
+    <value>L'adresse e-mail est requise.</value>
+  </data>
   <data name="LoginPage.Error.EmailRequired" xml:space="preserve">
     <value>L'adresse e-mail est requise.</value>
   </data>

@@ -48,4 +48,25 @@
   <data name="TwoFactor_Footer" xml:space="preserve">
     <value>Si vous n'avez pas essayé de vous connecter, vous pouvez ignorer cet e-mail.</value>
   </data>
+  <data name="PasswordReset_Subject" xml:space="preserve">
+    <value>Réinitialisez votre mot de passe Marechai</value>
+  </data>
+  <data name="PasswordReset_Title" xml:space="preserve">
+    <value>Réinitialisation du mot de passe Marechai</value>
+  </data>
+  <data name="PasswordReset_Intro" xml:space="preserve">
+    <value>Nous avons reçu une demande de réinitialisation du mot de passe de votre compte Marechai. Cliquez sur le bouton ci-dessous pour choisir un nouveau mot de passe.</value>
+  </data>
+  <data name="PasswordReset_ButtonText" xml:space="preserve">
+    <value>Réinitialiser le mot de passe</value>
+  </data>
+  <data name="PasswordReset_LinkFallback" xml:space="preserve">
+    <value>Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :</value>
+  </data>
+  <data name="PasswordReset_Expiry" xml:space="preserve">
+    <value>Ce lien expire dans {0} minutes.</value>
+  </data>
+  <data name="PasswordReset_Footer" xml:space="preserve">
+    <value>Si vous n'avez pas demandé de réinitialisation de mot de passe, vous pouvez ignorer cet e-mail.</value>
+  </data>
 </root>

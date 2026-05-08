@@ -89,4 +89,67 @@
     <data name="Anonymous" xml:space="preserve">
         <value>Anonymous</value>
     </data>
+    <data name="Forgot your password?" xml:space="preserve">
+        <value>Forgot your password?</value>
+    </data>
+    <data name="Forgot Password" xml:space="preserve">
+        <value>Forgot Password</value>
+    </data>
+    <data name="Enter the email address for your account and we will send you a link to reset your password." xml:space="preserve">
+        <value>Enter the email address for your account and we will send you a link to reset your password.</value>
+    </data>
+    <data name="Email" xml:space="preserve">
+        <value>Email</value>
+    </data>
+    <data name="Send reset link" xml:space="preserve">
+        <value>Send reset link</value>
+    </data>
+    <data name="Sending..." xml:space="preserve">
+        <value>Sending...</value>
+    </data>
+    <data name="If an account with that email exists, we have sent a password reset link to it. Please check your inbox (and spam folder) and follow the link to choose a new password." xml:space="preserve">
+        <value>If an account with that email exists, we have sent a password reset link to it. Please check your inbox (and spam folder) and follow the link to choose a new password.</value>
+    </data>
+    <data name="Back to sign in" xml:space="preserve">
+        <value>Back to sign in</value>
+    </data>
+    <data name="Email is required." xml:space="preserve">
+        <value>Email is required.</value>
+    </data>
+    <data name="Reset Password" xml:space="preserve">
+        <value>Reset Password</value>
+    </data>
+    <data name="The reset link is invalid or incomplete. Please request a new one." xml:space="preserve">
+        <value>The reset link is invalid or incomplete. Please request a new one.</value>
+    </data>
+    <data name="Request a new link" xml:space="preserve">
+        <value>Request a new link</value>
+    </data>
+    <data name="Your password has been reset. You can now sign in with your new password." xml:space="preserve">
+        <value>Your password has been reset. You can now sign in with your new password.</value>
+    </data>
+    <data name="Go to sign in" xml:space="preserve">
+        <value>Go to sign in</value>
+    </data>
+    <data name="Choose a new password for {0}." xml:space="preserve">
+        <value>Choose a new password for {0}.</value>
+    </data>
+    <data name="New password" xml:space="preserve">
+        <value>New password</value>
+    </data>
+    <data name="Confirm new password" xml:space="preserve">
+        <value>Confirm new password</value>
+    </data>
+    <data name="Resetting..." xml:space="preserve">
+        <value>Resetting...</value>
+    </data>
+    <data name="New password is required." xml:space="preserve">
+        <value>New password is required.</value>
+    </data>
+    <data name="Passwords do not match." xml:space="preserve">
+        <value>Passwords do not match.</value>
+    </data>
+    <data name="Could not reset password." xml:space="preserve">
+        <value>Could not reset password.</value>
+    </data>
 </root>

@@ -206,6 +206,34 @@ public sealed class AuthService
         }
     }
 
+    /// <summary>
+    ///     Asks the server to send a password-reset email. Always returns success: the server already
+    ///     responds 204 regardless of whether the address matches a real account (anti-enumeration), and we
+    ///     mirror that on the client so the UI can show a single generic confirmation message.
+    /// </summary>
+    public async Task<(bool Succeeded, string ErrorMessage)> ForgotPasswordAsync(string email)
+    {
+        try
+        {
+            await client.Auth.Password.Forgot.PostAsync(new ForgotPasswordRequest
+            {
+                Email = email
+            });
+
+            return (true, null);
+        }
+        catch(ProblemDetails)
+        {
+            // Surface generic confirmation; do not leak server-side distinction between unknown and
+            // known emails.
+            return (true, null);
+        }
+        catch(Exception)
+        {
+            return (true, null);
+        }
+    }
+
     /// <inheritdoc />
     public ValueTask<bool> RefreshAsync(CancellationToken? cancellationToken = null) =>
         IsAuthenticated(cancellationToken);

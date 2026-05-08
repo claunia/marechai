@@ -263,6 +263,30 @@
   <data name="LoginPage_SignUpLink" xml:space="preserve">
     <value>Registrieren</value>
   </data>
+  <data name="ForgotPasswordPage_Title" xml:space="preserve">
+    <value>Passwort vergessen</value>
+  </data>
+  <data name="ForgotPasswordPage_Intro" xml:space="preserve">
+    <value>Geben Sie die E-Mail-Adresse Ihres Kontos ein, dann senden wir Ihnen einen Link zum Zurücksetzen Ihres Passworts. Öffnen Sie den Link in einem Webbrowser, um ein neues Passwort festzulegen.</value>
+  </data>
+  <data name="ForgotPasswordPage_EmailLabel" xml:space="preserve">
+    <value>E-Mail</value>
+  </data>
+  <data name="ForgotPasswordPage_SubmitButton" xml:space="preserve">
+    <value>Link senden</value>
+  </data>
+  <data name="ForgotPasswordPage_BackToLogin" xml:space="preserve">
+    <value>Zurück zur Anmeldung</value>
+  </data>
+  <data name="ForgotPasswordPage_ConfirmationTitle" xml:space="preserve">
+    <value>Prüfen Sie Ihren Posteingang</value>
+  </data>
+  <data name="ForgotPasswordPage_ConfirmationMessage" xml:space="preserve">
+    <value>Falls ein Konto mit dieser E-Mail-Adresse existiert, haben wir einen Link zum Zurücksetzen des Passworts an diese Adresse gesendet. Öffnen Sie den Link in einem Webbrowser, um ein neues Passwort festzulegen.</value>
+  </data>
+  <data name="ForgotPasswordPage_EmailRequired" xml:space="preserve">
+    <value>E-Mail-Adresse ist erforderlich.</value>
+  </data>
   <data name="LoginPage.Error.EmailRequired" xml:space="preserve">
     <value>E-Mail-Adresse ist erforderlich.</value>
   </data>

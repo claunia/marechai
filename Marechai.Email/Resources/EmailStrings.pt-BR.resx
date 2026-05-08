@@ -48,4 +48,25 @@
   <data name="TwoFactor_Footer" xml:space="preserve">
     <value>Se você não tentou acessar, pode ignorar este e-mail com segurança.</value>
   </data>
+  <data name="PasswordReset_Subject" xml:space="preserve">
+    <value>Redefina sua senha do Marechai</value>
+  </data>
+  <data name="PasswordReset_Title" xml:space="preserve">
+    <value>Redefinição de senha do Marechai</value>
+  </data>
+  <data name="PasswordReset_Intro" xml:space="preserve">
+    <value>Recebemos uma solicitação para redefinir a senha da sua conta Marechai. Clique no botão abaixo para escolher uma nova senha.</value>
+  </data>
+  <data name="PasswordReset_ButtonText" xml:space="preserve">
+    <value>Redefinir senha</value>
+  </data>
+  <data name="PasswordReset_LinkFallback" xml:space="preserve">
+    <value>Se o botão não funcionar, copie e cole este link no seu navegador:</value>
+  </data>
+  <data name="PasswordReset_Expiry" xml:space="preserve">
+    <value>Este link expira em {0} minutos.</value>
+  </data>
+  <data name="PasswordReset_Footer" xml:space="preserve">
+    <value>Se você não solicitou uma redefinição de senha, pode ignorar este e-mail com segurança.</value>
+  </data>
 </root>

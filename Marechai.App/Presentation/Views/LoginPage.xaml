@@ -238,8 +238,8 @@
                                         HorizontalAlignment="Center">
                                 <HyperlinkButton
                                                  Content="{Binding Source={StaticResource Strings}, Path=LoginPage_ForgotPasswordLink}"
-                                                 HorizontalAlignment="Center"
-                                                 Visibility="Collapsed" />
+                                                 Command="{Binding ForgotPasswordCommand}"
+                                                 HorizontalAlignment="Center" />
 
                                 <StackPanel Orientation="Horizontal"
                                             HorizontalAlignment="Center"

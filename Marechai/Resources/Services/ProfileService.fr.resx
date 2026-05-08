@@ -98,4 +98,88 @@
         <value>Logiciels</value>
         <comment>Software</comment>
     </data>
+    <data name="Forgot your password?" xml:space="preserve">
+        <value>Mot de passe oublié ?</value>
+        <comment>Forgot your password?</comment>
+    </data>
+    <data name="Forgot Password" xml:space="preserve">
+        <value>Mot de passe oublié</value>
+        <comment>Forgot Password</comment>
+    </data>
+    <data name="Enter the email address for your account and we will send you a link to reset your password." xml:space="preserve">
+        <value>Entrez l'adresse e-mail de votre compte et nous vous enverrons un lien pour réinitialiser votre mot de passe.</value>
+        <comment>Enter the email address for your account and we will send you a link to reset your password.</comment>
+    </data>
+    <data name="Email" xml:space="preserve">
+        <value>E-mail</value>
+        <comment>Email</comment>
+    </data>
+    <data name="Send reset link" xml:space="preserve">
+        <value>Envoyer le lien</value>
+        <comment>Send reset link</comment>
+    </data>
+    <data name="Sending..." xml:space="preserve">
+        <value>Envoi en cours...</value>
+        <comment>Sending...</comment>
+    </data>
+    <data name="If an account with that email exists, we have sent a password reset link to it. Please check your inbox (and spam folder) and follow the link to choose a new password." xml:space="preserve">
+        <value>Si un compte existe avec cette adresse e-mail, nous lui avons envoyé un lien de réinitialisation du mot de passe. Veuillez consulter votre boîte de réception (et le dossier spam) et suivre le lien pour choisir un nouveau mot de passe.</value>
+        <comment>If an account with that email exists, we have sent a password reset link to it. Please check your inbox (and spam folder) and follow the link to choose a new password.</comment>
+    </data>
+    <data name="Back to sign in" xml:space="preserve">
+        <value>Retour à la connexion</value>
+        <comment>Back to sign in</comment>
+    </data>
+    <data name="Email is required." xml:space="preserve">
+        <value>L'adresse e-mail est requise.</value>
+        <comment>Email is required.</comment>
+    </data>
+    <data name="Reset Password" xml:space="preserve">
+        <value>Réinitialiser le mot de passe</value>
+        <comment>Reset Password</comment>
+    </data>
+    <data name="The reset link is invalid or incomplete. Please request a new one." xml:space="preserve">
+        <value>Le lien de réinitialisation est invalide ou incomplet. Veuillez en demander un nouveau.</value>
+        <comment>The reset link is invalid or incomplete. Please request a new one.</comment>
+    </data>
+    <data name="Request a new link" xml:space="preserve">
+        <value>Demander un nouveau lien</value>
+        <comment>Request a new link</comment>
+    </data>
+    <data name="Your password has been reset. You can now sign in with your new password." xml:space="preserve">
+        <value>Votre mot de passe a été réinitialisé. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.</value>
+        <comment>Your password has been reset. You can now sign in with your new password.</comment>
+    </data>
+    <data name="Go to sign in" xml:space="preserve">
+        <value>Aller à la connexion</value>
+        <comment>Go to sign in</comment>
+    </data>
+    <data name="Choose a new password for {0}." xml:space="preserve">
+        <value>Choisissez un nouveau mot de passe pour {0}.</value>
+        <comment>Choose a new password for {0}.</comment>
+    </data>
+    <data name="New password" xml:space="preserve">
+        <value>Nouveau mot de passe</value>
+        <comment>New password</comment>
+    </data>
+    <data name="Confirm new password" xml:space="preserve">
+        <value>Confirmer le nouveau mot de passe</value>
+        <comment>Confirm new password</comment>
+    </data>
+    <data name="Resetting..." xml:space="preserve">
+        <value>Réinitialisation...</value>
+        <comment>Resetting...</comment>
+    </data>
+    <data name="New password is required." xml:space="preserve">
+        <value>Le nouveau mot de passe est requis.</value>
+        <comment>New password is required.</comment>
+    </data>
+    <data name="Passwords do not match." xml:space="preserve">
+        <value>Les mots de passe ne correspondent pas.</value>
+        <comment>Passwords do not match.</comment>
+    </data>
+    <data name="Could not reset password." xml:space="preserve">
+        <value>Impossible de réinitialiser le mot de passe.</value>
+        <comment>Could not reset password.</comment>
+    </data>
 </root>

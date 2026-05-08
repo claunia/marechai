@@ -48,4 +48,25 @@
   <data name="TwoFactor_Footer" xml:space="preserve">
     <value>If you didn't try to sign in, you can safely ignore this email.</value>
   </data>
+  <data name="PasswordReset_Subject" xml:space="preserve">
+    <value>Reset your Marechai password</value>
+  </data>
+  <data name="PasswordReset_Title" xml:space="preserve">
+    <value>Marechai password reset</value>
+  </data>
+  <data name="PasswordReset_Intro" xml:space="preserve">
+    <value>We received a request to reset the password for your Marechai account. Click the button below to choose a new password.</value>
+  </data>
+  <data name="PasswordReset_ButtonText" xml:space="preserve">
+    <value>Reset password</value>
+  </data>
+  <data name="PasswordReset_LinkFallback" xml:space="preserve">
+    <value>If the button does not work, copy and paste this link into your browser:</value>
+  </data>
+  <data name="PasswordReset_Expiry" xml:space="preserve">
+    <value>This link expires in {0} minutes.</value>
+  </data>
+  <data name="PasswordReset_Footer" xml:space="preserve">
+    <value>If you didn't request a password reset, you can safely ignore this email.</value>
+  </data>
 </root>

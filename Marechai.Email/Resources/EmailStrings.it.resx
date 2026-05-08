@@ -48,4 +48,25 @@
   <data name="TwoFactor_Footer" xml:space="preserve">
     <value>Se non hai provato ad accedere, puoi ignorare questa e-mail in tutta sicurezza.</value>
   </data>
+  <data name="PasswordReset_Subject" xml:space="preserve">
+    <value>Reimposta la tua password Marechai</value>
+  </data>
+  <data name="PasswordReset_Title" xml:space="preserve">
+    <value>Reimpostazione della password di Marechai</value>
+  </data>
+  <data name="PasswordReset_Intro" xml:space="preserve">
+    <value>Abbiamo ricevuto una richiesta di reimpostazione della password del tuo account Marechai. Fai clic sul pulsante qui sotto per scegliere una nuova password.</value>
+  </data>
+  <data name="PasswordReset_ButtonText" xml:space="preserve">
+    <value>Reimposta la password</value>
+  </data>
+  <data name="PasswordReset_LinkFallback" xml:space="preserve">
+    <value>Se il pulsante non funziona, copia e incolla questo link nel tuo browser:</value>
+  </data>
+  <data name="PasswordReset_Expiry" xml:space="preserve">
+    <value>Questo link scade tra {0} minuti.</value>
+  </data>
+  <data name="PasswordReset_Footer" xml:space="preserve">
+    <value>Se non hai richiesto la reimpostazione della password, puoi ignorare questa e-mail in tutta sicurezza.</value>
+  </data>
 </root>
