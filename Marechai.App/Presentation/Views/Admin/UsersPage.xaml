@@ -173,6 +173,13 @@
                                                     CommandParameter="{Binding}"
                                                     Style="{ThemeResource TextBlockButtonStyle}"
                                                     Padding="8,4" />
+                                            <Button Content="{Binding Source={StaticResource Strings}, Path=DisableTwoFactorButton}"
+                                                    Command="{Binding DataContext.DisableUserTwoFactorCommand, ElementName=PageRoot}"
+                                                    CommandParameter="{Binding}"
+                                                    Visibility="{Binding TwoFactorEnabled, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                    Foreground="{ThemeResource SystemErrorTextColor}"
+                                                    Style="{ThemeResource TextBlockButtonStyle}"
+                                                    Padding="8,4" />
                                             <Button Content="{Binding Source={StaticResource Strings}, Path=DeleteUserButton}"
                                                     Command="{Binding DataContext.DeleteUserCommand, ElementName=PageRoot}"
                                                     CommandParameter="{Binding}"

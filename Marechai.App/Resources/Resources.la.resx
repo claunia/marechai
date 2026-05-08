@@ -1999,4 +1999,40 @@
   <data name="SoftwareCreditsLabel" xml:space="preserve"><value>Credita</value></data>
   <data name="PersonSoftwareLabel" xml:space="preserve"><value>Software</value></data>
   <data name="SoftwareCreditsLabel" xml:space="preserve"><value>Credita</value></data>
+
+  <data name="LoginPage.Error.CodeRequired" xml:space="preserve"><value>Codex verificationis requiritur.</value></data>
+  <data name="LoginPage_TwoFactorTitle" xml:space="preserve"><value>Authenticatio duplicis factoris</value></data>
+  <data name="LoginPage_VerificationCodeLabel" xml:space="preserve"><value>Codex verificationis</value></data>
+  <data name="LoginPage_RecoveryCodeLabel" xml:space="preserve"><value>Codex recuperationis</value></data>
+  <data name="LoginPage_VerifyButton" xml:space="preserve"><value>Verificare</value></data>
+  <data name="LoginPage_VerifyRecoveryButton" xml:space="preserve"><value>Codicem recuperationis verificare</value></data>
+  <data name="LoginPage_SendEmailCodeButton" xml:space="preserve"><value>Mittere codicem ad epistulam meam</value></data>
+  <data name="LoginPage_UseRecoveryCodeLink" xml:space="preserve"><value>Uti codice recuperationis</value></data>
+  <data name="LoginPage_BackToCodeLink" xml:space="preserve"><value>Redire ad authenticatorem</value></data>
+  <data name="DisableTwoFactorButton" xml:space="preserve"><value>Inactivare 2FA</value></data>
+  <data name="Failed to disable 2FA for user." xml:space="preserve"><value>Inactivare 2FA pro usuario defecit.</value></data>
+  <data name="SettingsPage_Security_Header" xml:space="preserve"><value>Securitas</value></data>
+  <data name="SettingsPage_TwoFactorEnabledLabel" xml:space="preserve"><value>Authenticatio duplicis factoris activa:</value></data>
+  <data name="SettingsPage_AuthenticatorEnabledLabel" xml:space="preserve"><value>Applicatio authenticatoris activa:</value></data>
+  <data name="SettingsPage_EmailEnabledLabel" xml:space="preserve"><value>Duplex factor per epistulam activus:</value></data>
+  <data name="SettingsPage_RecoveryCodesRemainingLabel" xml:space="preserve"><value>Codices recuperationis reliqui:</value></data>
+  <data name="SettingsPage_AuthenticatorTitle" xml:space="preserve"><value>Applicatio authenticatoris</value></data>
+  <data name="SettingsPage_SetupAuthenticatorButton" xml:space="preserve"><value>Authenticatorem instituere</value></data>
+  <data name="SettingsPage_ManualEntryKeyLabel" xml:space="preserve"><value>Clavis manualis:</value></data>
+  <data name="SettingsPage_VerificationCodeLabel" xml:space="preserve"><value>Codex verificationis</value></data>
+  <data name="SettingsPage_EnableButton" xml:space="preserve"><value>Activare</value></data>
+  <data name="SettingsPage_CancelButton" xml:space="preserve"><value>Renuntiare</value></data>
+  <data name="SettingsPage_EmailTwoFactorTitle" xml:space="preserve"><value>Duplex factor per epistulam</value></data>
+  <data name="SettingsPage_SendEmailCodeButton" xml:space="preserve"><value>Mittere codicem ad epistulam meam</value></data>
+  <data name="SettingsPage_CurrentPasswordLabel" xml:space="preserve"><value>Tessera hodierna</value></data>
+  <data name="SettingsPage_RecoveryCodesNotice" xml:space="preserve"><value>Codices recuperationis loco tuto serva. Iterum non monstrabuntur.</value></data>
+  <data name="SettingsPage_DismissRecoveryCodesButton" xml:space="preserve"><value>Servavi eos</value></data>
+  <data name="Failed to generate authenticator setup." xml:space="preserve"><value>Configuratio authenticatoris generari non potuit.</value></data>
+  <data name="Verification code is required." xml:space="preserve"><value>Codex verificationis requiritur.</value></data>
+  <data name="Invalid verification code." xml:space="preserve"><value>Codex verificationis invalidus.</value></data>
+  <data name="Authenticator enabled." xml:space="preserve"><value>Authenticator activatus.</value></data>
+  <data name="Code sent to your email." xml:space="preserve"><value>Codex ad epistulam tuam missus.</value></data>
+  <data name="Could not send code." xml:space="preserve"><value>Codex mitti non potuit.</value></data>
+  <data name="Password and code are required." xml:space="preserve"><value>Tessera et codex requiruntur.</value></data>
+  <data name="Email two-factor enabled." xml:space="preserve"><value>Duplex factor per epistulam activatus.</value></data>
 </root>

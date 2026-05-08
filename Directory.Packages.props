@@ -38,6 +38,11 @@
     <PackageVersion Include="Prism.DryIoc.Uno.WinUI" Version="9.0.537"/>
     <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.17.0"/>
     <PackageVersion Include="Svg.Skia" Version="3.7.0"/>
+    <!-- Email (Marechai.Email) -->
+    <PackageVersion Include="MailKit" Version="4.14.0"/>
+    <PackageVersion Include="RazorLight" Version="2.3.1"/>
+    <!-- QR codes (2FA setup) -->
+    <PackageVersion Include="QRCoder" Version="1.6.0"/>
     <!-- Kiota (shared API client) -->
     <PackageVersion Include="Microsoft.Kiota.Abstractions" Version="1.22.1"/>
     <PackageVersion Include="Microsoft.Kiota.Http.HttpClientLibrary" Version="1.22.1"/>

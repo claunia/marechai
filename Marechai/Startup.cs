@@ -28,6 +28,7 @@ using System.Globalization;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using MudBlazor.Services;
+using Marechai.Email;
 using Marechai.Services;
 using Marechai.Shared;
 using Microsoft.AspNetCore.Builder;
@@ -62,6 +63,8 @@ public class Startup(IConfiguration configuration)
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddMudServices();
+
+        services.AddMarechaiEmail(Configuration);
 
         string apiUrl = Configuration.GetSection("ApiClient:Url").Value ?? "http://localhost:5023";
 

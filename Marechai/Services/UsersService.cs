@@ -337,4 +337,31 @@ public sealed class UsersService(Marechai.ApiClient.Client client, ILogger<Users
             return (null, "An error occurred while bulk updating lockout.");
         }
     }
+
+    /// <summary>
+    ///     Admin/UberAdmin action: forcibly disables ALL two-factor methods on the target account (clears the
+    ///     authenticator key, recovery codes, and per-method flags). Used as a last-resort recovery path when a
+    ///     user has lost access to their second factor.
+    /// </summary>
+    public async Task<(bool Succeeded, string ErrorMessage)> DisableTwoFactorAsync(string userId)
+    {
+        try
+        {
+            await client.Users[userId].TwoFactor.Disable.PostAsync();
+
+            return (true, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            logger.LogWarning(ex, "Admin disable 2FA failed");
+
+            return (false, ex.Detail ?? ex.Title ?? "Failed to disable 2FA.");
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Admin disable 2FA failed");
+
+            return (false, "An error occurred while disabling 2FA.");
+        }
+    }
 }

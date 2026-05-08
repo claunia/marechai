@@ -322,4 +322,16 @@
         <value>Solo anno</value>
         <comment>Year only</comment>
     </data>
+    <data name="Disable 2FA" xml:space="preserve">
+        <value>Disable 2FA</value>
+        <comment>Disable 2FA</comment>
+    </data>
+    <data name="Are you sure you want to disable two-factor authentication for user '{0}'? Their authenticator key and recovery codes will be cleared." xml:space="preserve">
+        <value>Are you sure you want to disable two-factor authentication for user '{0}'? Their authenticator key and recovery codes will be cleared.</value>
+        <comment>Disable 2FA confirm prompt</comment>
+    </data>
+    <data name="2FA disabled for user." xml:space="preserve">
+        <value>2FA disabled for user.</value>
+        <comment>2FA disabled for user.</comment>
+    </data>
 </root>

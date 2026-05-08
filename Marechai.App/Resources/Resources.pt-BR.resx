@@ -1999,4 +1999,40 @@
   <data name="SoftwareCreditsLabel" xml:space="preserve"><value>Créditos</value></data>
   <data name="PersonSoftwareLabel" xml:space="preserve"><value>Software</value></data>
   <data name="SoftwareCreditsLabel" xml:space="preserve"><value>Créditos</value></data>
+
+  <data name="LoginPage.Error.CodeRequired" xml:space="preserve"><value>O código de verificação é obrigatório.</value></data>
+  <data name="LoginPage_TwoFactorTitle" xml:space="preserve"><value>Autenticação de dois fatores</value></data>
+  <data name="LoginPage_VerificationCodeLabel" xml:space="preserve"><value>Código de verificação</value></data>
+  <data name="LoginPage_RecoveryCodeLabel" xml:space="preserve"><value>Código de recuperação</value></data>
+  <data name="LoginPage_VerifyButton" xml:space="preserve"><value>Verificar</value></data>
+  <data name="LoginPage_VerifyRecoveryButton" xml:space="preserve"><value>Verificar código de recuperação</value></data>
+  <data name="LoginPage_SendEmailCodeButton" xml:space="preserve"><value>Enviar código para meu e-mail</value></data>
+  <data name="LoginPage_UseRecoveryCodeLink" xml:space="preserve"><value>Usar um código de recuperação</value></data>
+  <data name="LoginPage_BackToCodeLink" xml:space="preserve"><value>Voltar para o autenticador</value></data>
+  <data name="DisableTwoFactorButton" xml:space="preserve"><value>Desativar 2FA</value></data>
+  <data name="Failed to disable 2FA for user." xml:space="preserve"><value>Falha ao desativar 2FA para o usuário.</value></data>
+  <data name="SettingsPage_Security_Header" xml:space="preserve"><value>Segurança</value></data>
+  <data name="SettingsPage_TwoFactorEnabledLabel" xml:space="preserve"><value>Autenticação de dois fatores ativa:</value></data>
+  <data name="SettingsPage_AuthenticatorEnabledLabel" xml:space="preserve"><value>Aplicativo autenticador ativo:</value></data>
+  <data name="SettingsPage_EmailEnabledLabel" xml:space="preserve"><value>Dois fatores por e-mail ativo:</value></data>
+  <data name="SettingsPage_RecoveryCodesRemainingLabel" xml:space="preserve"><value>Códigos de recuperação restantes:</value></data>
+  <data name="SettingsPage_AuthenticatorTitle" xml:space="preserve"><value>Aplicativo autenticador</value></data>
+  <data name="SettingsPage_SetupAuthenticatorButton" xml:space="preserve"><value>Configurar autenticador</value></data>
+  <data name="SettingsPage_ManualEntryKeyLabel" xml:space="preserve"><value>Chave de entrada manual:</value></data>
+  <data name="SettingsPage_VerificationCodeLabel" xml:space="preserve"><value>Código de verificação</value></data>
+  <data name="SettingsPage_EnableButton" xml:space="preserve"><value>Ativar</value></data>
+  <data name="SettingsPage_CancelButton" xml:space="preserve"><value>Cancelar</value></data>
+  <data name="SettingsPage_EmailTwoFactorTitle" xml:space="preserve"><value>Dois fatores por e-mail</value></data>
+  <data name="SettingsPage_SendEmailCodeButton" xml:space="preserve"><value>Enviar código para meu e-mail</value></data>
+  <data name="SettingsPage_CurrentPasswordLabel" xml:space="preserve"><value>Senha atual</value></data>
+  <data name="SettingsPage_RecoveryCodesNotice" xml:space="preserve"><value>Guarde estes códigos de recuperação em local seguro. Eles não serão exibidos novamente.</value></data>
+  <data name="SettingsPage_DismissRecoveryCodesButton" xml:space="preserve"><value>Eu os salvei</value></data>
+  <data name="Failed to generate authenticator setup." xml:space="preserve"><value>Falha ao gerar a configuração do autenticador.</value></data>
+  <data name="Verification code is required." xml:space="preserve"><value>O código de verificação é obrigatório.</value></data>
+  <data name="Invalid verification code." xml:space="preserve"><value>Código de verificação inválido.</value></data>
+  <data name="Authenticator enabled." xml:space="preserve"><value>Autenticador ativado.</value></data>
+  <data name="Code sent to your email." xml:space="preserve"><value>Código enviado para o seu e-mail.</value></data>
+  <data name="Could not send code." xml:space="preserve"><value>Não foi possível enviar o código.</value></data>
+  <data name="Password and code are required." xml:space="preserve"><value>Senha e código são obrigatórios.</value></data>
+  <data name="Email two-factor enabled." xml:space="preserve"><value>Dois fatores por e-mail ativado.</value></data>
 </root>

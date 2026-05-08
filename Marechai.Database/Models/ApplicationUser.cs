@@ -81,6 +81,20 @@ public class ApplicationUser : IdentityUser
     [MaxLength(50)]
     public string PreferredThemeId { get; set; }
 
+    /// <summary>
+    ///     True when the user has enabled TOTP authenticator-app two-factor authentication. Independent of
+    ///     <see cref="IdentityUser.TwoFactorEnabled" />, which is the global flag set when at least one 2FA method
+    ///     is active.
+    /// </summary>
+    public bool TwoFactorViaAuthenticator { get; set; }
+
+    /// <summary>
+    ///     True when the user has enabled email-code two-factor authentication. Independent of
+    ///     <see cref="IdentityUser.TwoFactorEnabled" />, which is the global flag set when at least one 2FA method
+    ///     is active. Requires a confirmed email.
+    /// </summary>
+    public bool TwoFactorViaEmail { get; set; }
+
     public virtual ICollection<MachinePhoto>              Photos                    { get; set; }
     public virtual ICollection<OwnedMachine>              OwnedMachines             { get; set; }
     public virtual ICollection<CollectedBook>             CollectedBooks            { get; set; }

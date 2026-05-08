@@ -1,9 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Marechai.App.Presentation.Models;
 using Marechai.App.Services;
+using Marechai.App.Services.Authentication;
+using Microsoft.UI.Xaml.Media.Imaging;
+using QRCoder;
 using Uno.Extensions.Toolkit;
 
 namespace Marechai.App.Presentation.ViewModels;
@@ -12,6 +16,8 @@ public partial class SettingsViewModel : ObservableObject
 {
     private readonly IColorThemeService _colorThemeService;
     private readonly IStringLocalizer   _localizer;
+    private readonly TwoFactorService?  _twoFactorService;
+    private readonly ITokenService?     _tokenService;
     private          IThemeService     _themeService;
 
     [ObservableProperty]
@@ -26,18 +32,51 @@ public partial class SettingsViewModel : ObservableObject
     [ObservableProperty]
     private ThemeOption _selectedTheme;
 
+    // ── Security / 2FA state ──
+    [ObservableProperty] private bool   _isAuthenticated;
+    [ObservableProperty] private bool   _twoFactorEnabled;
+    [ObservableProperty] private bool   _authenticatorEnabled;
+    [ObservableProperty] private bool   _emailTwoFactorEnabled;
+    [ObservableProperty] private int    _recoveryCodesRemaining;
+    [ObservableProperty] private string _securityMessage = string.Empty;
+    [ObservableProperty] private bool   _isSecurityBusy;
+
+    // Authenticator setup
+    [ObservableProperty] private bool         _authSetupVisible;
+    [ObservableProperty] private string       _authSharedKey = string.Empty;
+    [ObservableProperty] private string       _authUri       = string.Empty;
+    [ObservableProperty] private BitmapImage? _authQrImage;
+    [ObservableProperty] private string       _authVerifyCode = string.Empty;
+
+    // Email enable flow
+    [ObservableProperty] private bool   _emailEnableVisible;
+    [ObservableProperty] private string _emailEnablePassword = string.Empty;
+    [ObservableProperty] private string _emailEnableCode     = string.Empty;
+
+    // Recovery codes display (one-shot)
+    [ObservableProperty] private List<string> _displayedRecoveryCodes = new();
+    public bool ShowRecoveryCodes => DisplayedRecoveryCodes.Count > 0;
+
     public SettingsViewModel(IStringLocalizer   localizer,
-                             IColorThemeService colorThemeService)
+                             IColorThemeService colorThemeService,
+                             TwoFactorService?  twoFactorService = null,
+                             ITokenService?     tokenService     = null)
     {
         _localizer         = localizer;
         _colorThemeService = colorThemeService;
+        _twoFactorService  = twoFactorService;
+        _tokenService      = tokenService;
         Title              = _localizer["Settings"];
+
+        IsAuthenticated = !string.IsNullOrWhiteSpace(_tokenService?.GetToken());
 
         // Initialize immediately to ensure UI is populated
         InitializeOptions();
 
         // Wait for theme service to initialize
         _ = InitializeThemeServiceAsync();
+
+        if(IsAuthenticated) _ = RefreshTwoFactorStatusAsync();
     }
 
     public string Title { get; }
@@ -177,4 +216,174 @@ public partial class SettingsViewModel : ObservableObject
             // Silently fail
         }
     }
+
+    // ──────────────────────────────────────────────────────────────────
+    //  2FA / Security methods
+    // ──────────────────────────────────────────────────────────────────
+
+    partial void OnDisplayedRecoveryCodesChanged(List<string> value) => OnPropertyChanged(nameof(ShowRecoveryCodes));
+
+    public async Task RefreshTwoFactorStatusAsync()
+    {
+        if(_twoFactorService is null) return;
+
+        var status = await _twoFactorService.GetStatusAsync();
+        if(status is null) return;
+
+        TwoFactorEnabled       = status.Enabled       ?? false;
+        AuthenticatorEnabled   = status.AuthenticatorEnabled   ?? false;
+        EmailTwoFactorEnabled  = status.EmailEnabled           ?? false;
+        RecoveryCodesRemaining = status.RecoveryCodesRemaining ?? 0;
+    }
+
+    [RelayCommand]
+    private async Task StartAuthenticatorSetupAsync()
+    {
+        if(_twoFactorService is null) return;
+
+        IsSecurityBusy = true;
+        SecurityMessage = string.Empty;
+
+        var setup = await _twoFactorService.SetupAuthenticatorAsync();
+
+        IsSecurityBusy = false;
+
+        if(setup is null)
+        {
+            SecurityMessage = _localizer["Failed to generate authenticator setup."];
+
+            return;
+        }
+
+        AuthSharedKey     = setup.SharedKey ?? string.Empty;
+        AuthUri           = setup.AuthenticatorUri ?? string.Empty;
+        AuthQrImage       = await BuildQrImageAsync(AuthUri);
+        AuthVerifyCode    = string.Empty;
+        AuthSetupVisible  = true;
+    }
+
+    static async Task<BitmapImage?> BuildQrImageAsync(string uri)
+    {
+        try
+        {
+            using var generator = new QRCodeGenerator();
+            QRCodeData data = generator.CreateQrCode(uri, QRCodeGenerator.ECCLevel.Q);
+            var       png  = new PngByteQRCode(data);
+            byte[]    bytes = png.GetGraphic(8);
+
+            var bitmap = new BitmapImage();
+            using var ms = new MemoryStream(bytes);
+            using var ras = ms.AsRandomAccessStream();
+            await bitmap.SetSourceAsync(ras);
+
+            return bitmap;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    [RelayCommand]
+    private async Task EnableAuthenticatorAsync()
+    {
+        if(_twoFactorService is null) return;
+        if(string.IsNullOrWhiteSpace(AuthVerifyCode))
+        {
+            SecurityMessage = _localizer["Verification code is required."];
+
+            return;
+        }
+
+        IsSecurityBusy = true;
+
+        var (ok, codes, err) = await _twoFactorService.EnableAuthenticatorAsync(AuthVerifyCode.Trim());
+
+        IsSecurityBusy = false;
+
+        if(!ok)
+        {
+            SecurityMessage = err ?? _localizer["Invalid verification code."];
+
+            return;
+        }
+
+        AuthSetupVisible = false;
+        SecurityMessage  = _localizer["Authenticator enabled."];
+
+        if(codes is { Count: > 0 }) DisplayedRecoveryCodes = codes.ToList();
+
+        await RefreshTwoFactorStatusAsync();
+    }
+
+    [RelayCommand]
+    private void CancelAuthenticatorSetup()
+    {
+        AuthSetupVisible = false;
+        AuthSharedKey    = string.Empty;
+        AuthUri          = string.Empty;
+        AuthQrImage      = null;
+        AuthVerifyCode   = string.Empty;
+    }
+
+    [RelayCommand]
+    private async Task StartEmailEnableAsync()
+    {
+        if(_twoFactorService is null) return;
+
+        IsSecurityBusy = true;
+
+        var (ok, err) = await _twoFactorService.StartEmailEnableAsync();
+
+        IsSecurityBusy = false;
+
+        if(ok)
+        {
+            EmailEnableVisible = true;
+            SecurityMessage    = _localizer["Code sent to your email."];
+        }
+        else
+        {
+            SecurityMessage = err ?? _localizer["Could not send code."];
+        }
+    }
+
+    [RelayCommand]
+    private async Task EnableEmailAsync()
+    {
+        if(_twoFactorService is null) return;
+
+        if(string.IsNullOrWhiteSpace(EmailEnablePassword) || string.IsNullOrWhiteSpace(EmailEnableCode))
+        {
+            SecurityMessage = _localizer["Password and code are required."];
+
+            return;
+        }
+
+        IsSecurityBusy = true;
+
+        var (ok, codes, err) = await _twoFactorService.EnableEmailAsync(EmailEnablePassword,
+                                                                         EmailEnableCode.Trim());
+
+        IsSecurityBusy = false;
+
+        if(!ok)
+        {
+            SecurityMessage = err ?? _localizer["Invalid verification code."];
+
+            return;
+        }
+
+        EmailEnableVisible   = false;
+        EmailEnablePassword  = string.Empty;
+        EmailEnableCode      = string.Empty;
+        SecurityMessage      = _localizer["Email two-factor enabled."];
+
+        if(codes is { Count: > 0 }) DisplayedRecoveryCodes = codes.ToList();
+
+        await RefreshTwoFactorStatusAsync();
+    }
+
+    [RelayCommand]
+    private void DismissRecoveryCodes() => DisplayedRecoveryCodes = new List<string>();
 }

@@ -7,6 +7,7 @@ using System.Text.Json.Serialization;
 using Aaru.CommonTypes.Interop;
 using Marechai.Database;
 using Marechai.Database.Models;
+using Marechai.Email;
 using Marechai.Helpers;
 using Marechai.Server.Helpers;
 using Marechai.Server.Services;
@@ -324,6 +325,8 @@ file class Program
         builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                .AddRoles<ApplicationRole>()
                .AddEntityFrameworkStores<MarechaiContext>();
+
+        builder.Services.AddMarechaiEmail(builder.Configuration);
 
         builder.Services.AddScoped<TokenService, TokenService>();
 

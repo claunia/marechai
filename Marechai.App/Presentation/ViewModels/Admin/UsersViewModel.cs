@@ -84,6 +84,7 @@ public partial class UsersViewModel : ObservableObject, IRegionAware
 
         LoadUsersCommand                = new AsyncRelayCommand(LoadUsersAsync);
         DeleteUserCommand               = new AsyncRelayCommand<UserDto>(DeleteUserAsync);
+        DisableUserTwoFactorCommand     = new AsyncRelayCommand<UserDto>(DisableUserTwoFactorAsync);
         OpenAddUserDialogCommand        = new AsyncRelayCommand(OpenAddUserDialogAsync);
         OpenEditUserDialogCommand       = new AsyncRelayCommand<UserDto>(OpenEditUserDialogAsync);
         OpenChangePasswordDialogCommand = new AsyncRelayCommand<UserDto>(OpenChangePasswordDialogAsync);
@@ -122,6 +123,7 @@ public partial class UsersViewModel : ObservableObject, IRegionAware
 
     public IAsyncRelayCommand          LoadUsersCommand                { get; }
     public IAsyncRelayCommand<UserDto> DeleteUserCommand               { get; }
+    public IAsyncRelayCommand<UserDto> DisableUserTwoFactorCommand     { get; }
     public IAsyncRelayCommand          OpenAddUserDialogCommand        { get; }
     public IAsyncRelayCommand<UserDto> OpenEditUserDialogCommand       { get; }
     public IAsyncRelayCommand<UserDto> OpenChangePasswordDialogCommand { get; }
@@ -190,6 +192,23 @@ public partial class UsersViewModel : ObservableObject, IRegionAware
         {
             _logger.LogError(ex, "Error deleting user");
             ErrorMessage = _localizer["Failed to delete user."];
+            HasError     = true;
+        }
+    }
+
+    private async Task DisableUserTwoFactorAsync(UserDto? user)
+    {
+        if(user?.Id == null) return;
+
+        try
+        {
+            await _apiClient.Users[user.Id].TwoFactor.Disable.PostAsync();
+            await LoadUsersAsync();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error disabling 2FA for user");
+            ErrorMessage = _localizer["Failed to disable 2FA for user."];
             HasError     = true;
         }
     }

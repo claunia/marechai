@@ -24,6 +24,8 @@
 *******************************************************************************/
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.Extensions.Logging;
@@ -31,12 +33,21 @@ using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.Services;
 
+/// <summary>
+///     Outcome of <see cref="AuthService.LoginAsync" />. Either the JWT was issued and the user is fully signed
+///     in (<see cref="Succeeded" /> + JWT applied), or the server requires a second factor and the caller must
+///     prompt for a code using <see cref="TwoFactorToken" /> + <see cref="AvailableMethods" />.
+/// </summary>
+public sealed record LoginResult(bool          Succeeded,         string       ErrorMessage,
+                                 bool          RequiresTwoFactor, string       TwoFactorToken,
+                                 IList<string> AvailableMethods);
+
 public sealed class AuthService(Marechai.ApiClient.Client             client,
                                 TokenProvider                          tokenProvider,
                                 JwtAuthenticationStateProvider         authStateProvider,
                                 ILogger<AuthService>                   logger)
 {
-    public async Task<(bool Succeeded, string ErrorMessage)> LoginAsync(string email, string password)
+    public async Task<LoginResult> LoginAsync(string email, string password)
     {
         try
         {
@@ -49,13 +60,57 @@ public sealed class AuthService(Marechai.ApiClient.Client             client,
             AuthResponse response = await client.Auth.Login.PostAsync(request);
 
             if(response is null)
-                return (false, "No response from server.");
+                return new LoginResult(false, "No response from server.", false, null, []);
 
             if(response.Succeeded != true)
-                return (false, response.Message ?? "Login failed.");
+                return new LoginResult(false, response.Message ?? "Login failed.", false, null, []);
+
+            if(response.RequiresTwoFactor == true)
+            {
+                List<string> methods = response.AvailableMethods?.ToList() ?? [];
+
+                return new LoginResult(false, null, true, response.TwoFactorToken, methods);
+            }
 
             if(string.IsNullOrWhiteSpace(response.Token))
-                return (false, "No token received.");
+                return new LoginResult(false, "No token received.", false, null, []);
+
+            await tokenProvider.SetTokenAsync(response.Token);
+            authStateProvider.NotifyUserAuthentication();
+
+            return new LoginResult(true, null, false, null, []);
+        }
+        catch(ProblemDetails ex)
+        {
+            logger.LogWarning(ex, "Login failed with ProblemDetails");
+
+            return new LoginResult(false, ex.Detail ?? ex.Title ?? "Login failed.", false, null, []);
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Login failed");
+
+            return new LoginResult(false, "An error occurred during login.", false, null, []);
+        }
+    }
+
+    /// <summary>
+    ///     Posts the second-factor code captured from the login UI and, on success, applies the issued JWT.
+    /// </summary>
+    public async Task<(bool Succeeded, string ErrorMessage)> VerifyTwoFactorAsync(string twoFactorToken,
+                                                                                   string provider, string code)
+    {
+        try
+        {
+            AuthResponse response = await client.Auth.Login.TwoFactor.PostAsync(new TwoFactorVerifyRequest
+            {
+                TwoFactorToken = twoFactorToken,
+                Provider       = provider,
+                Code           = code
+            });
+
+            if(response is null || response.Succeeded != true || string.IsNullOrWhiteSpace(response.Token))
+                return (false, response?.Message ?? "Invalid verification code.");
 
             await tokenProvider.SetTokenAsync(response.Token);
             authStateProvider.NotifyUserAuthentication();
@@ -64,15 +119,265 @@ public sealed class AuthService(Marechai.ApiClient.Client             client,
         }
         catch(ProblemDetails ex)
         {
-            logger.LogWarning(ex, "Login failed with ProblemDetails");
+            logger.LogWarning(ex, "Two-factor verify failed with ProblemDetails");
 
-            return (false, ex.Detail ?? ex.Title ?? "Login failed.");
+            return (false, ex.Detail ?? ex.Title ?? "Invalid verification code.");
         }
         catch(Exception ex)
         {
-            logger.LogError(ex, "Login failed");
+            logger.LogError(ex, "Two-factor verify failed");
 
-            return (false, "An error occurred during login.");
+            return (false, "Invalid verification code.");
+        }
+    }
+
+    public async Task<(bool Succeeded, string ErrorMessage)> VerifyRecoveryAsync(string twoFactorToken,
+                                                                                  string recoveryCode)
+    {
+        try
+        {
+            AuthResponse response = await client.Auth.Login.Recovery.PostAsync(new TwoFactorRecoveryRequest
+            {
+                TwoFactorToken = twoFactorToken,
+                RecoveryCode   = recoveryCode
+            });
+
+            if(response is null || response.Succeeded != true || string.IsNullOrWhiteSpace(response.Token))
+                return (false, response?.Message ?? "Invalid recovery code.");
+
+            await tokenProvider.SetTokenAsync(response.Token);
+            authStateProvider.NotifyUserAuthentication();
+
+            return (true, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            logger.LogWarning(ex, "Recovery code verify failed with ProblemDetails");
+
+            return (false, ex.Detail ?? ex.Title ?? "Invalid recovery code.");
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Recovery code verify failed");
+
+            return (false, "Invalid recovery code.");
+        }
+    }
+
+    public async Task<(bool Succeeded, string EmailMasked, string ErrorMessage)> SendLoginEmailCodeAsync(
+        string twoFactorToken)
+    {
+        try
+        {
+            TwoFactorEmailSendResponse response = await client.Auth.Login.TwoFactor.Email.Send.PostAsync(
+                                                          new TwoFactorEmailSendRequest
+                                                          {
+                                                              TwoFactorToken = twoFactorToken
+                                                          });
+
+            return (true, response?.EmailMasked, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            logger.LogWarning(ex, "Send login email code failed with ProblemDetails");
+
+            return (false, null, ex.Detail ?? ex.Title ?? "Could not send code.");
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Send login email code failed");
+
+            return (false, null, "Could not send code.");
+        }
+    }
+
+    public async Task<TwoFactorStatusDto> GetTwoFactorStatusAsync()
+    {
+        try
+        {
+            return await client.Auth.Me.TwoFactor.Status.GetAsync();
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Error loading two-factor status");
+
+            return null;
+        }
+    }
+
+    public async Task<AuthenticatorSetupResponse> SetupAuthenticatorAsync()
+    {
+        try
+        {
+            return await client.Auth.Me.TwoFactor.Authenticator.Setup.PostAsync();
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Authenticator setup failed");
+
+            return null;
+        }
+    }
+
+    public async Task<(bool Succeeded, IList<string> RecoveryCodes, string ErrorMessage)> EnableAuthenticatorAsync(
+        string code)
+    {
+        try
+        {
+            RecoveryCodesResponse response = await client.Auth.Me.TwoFactor.Authenticator.Enable.PostAsync(
+                                                     new AuthenticatorEnableRequest
+                                                     {
+                                                         Code = code
+                                                     });
+
+            return (true, response?.RecoveryCodes ?? [], null);
+        }
+        catch(ProblemDetails ex)
+        {
+            logger.LogWarning(ex, "Enable authenticator failed");
+
+            return (false, [], ex.Detail ?? ex.Title ?? "Invalid verification code.");
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Enable authenticator failed");
+
+            return (false, [], "Invalid verification code.");
+        }
+    }
+
+    public async Task<(bool Succeeded, string ErrorMessage)> StartEmailEnableAsync()
+    {
+        try
+        {
+            await client.Auth.Me.TwoFactor.Email.Start.PostAsync();
+
+            return (true, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            logger.LogWarning(ex, "Email start failed");
+
+            return (false, ex.Detail ?? ex.Title ?? "Could not send code.");
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Email start failed");
+
+            return (false, "Could not send code.");
+        }
+    }
+
+    public async Task<(bool Succeeded, IList<string> RecoveryCodes, string ErrorMessage)> EnableEmailAsync(
+        string password, string code)
+    {
+        try
+        {
+            RecoveryCodesResponse response = await client.Auth.Me.TwoFactor.Email.Enable.PostAsync(
+                                                     new EmailTwoFactorEnableRequest
+                                                     {
+                                                         Password = password,
+                                                         Code     = code
+                                                     });
+
+            return (true, response?.RecoveryCodes ?? [], null);
+        }
+        catch(ProblemDetails ex)
+        {
+            logger.LogWarning(ex, "Enable email failed");
+
+            return (false, [], ex.Detail ?? ex.Title ?? "Invalid verification code.");
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Enable email failed");
+
+            return (false, [], "Invalid verification code.");
+        }
+    }
+
+    public async Task<(bool Succeeded, string ErrorMessage)> DisableAuthenticatorAsync(
+        string password, string code, string provider)
+    {
+        try
+        {
+            await client.Auth.Me.TwoFactor.Authenticator.Disable.PostAsync(new DisableTwoFactorRequest
+            {
+                Password = password,
+                Code     = code,
+                Provider = provider
+            });
+
+            return (true, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            logger.LogWarning(ex, "Disable authenticator failed");
+
+            return (false, ex.Detail ?? ex.Title ?? "Invalid verification code.");
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Disable authenticator failed");
+
+            return (false, "Invalid verification code.");
+        }
+    }
+
+    public async Task<(bool Succeeded, string ErrorMessage)> DisableEmailAsync(string password, string code,
+                                                                                string provider)
+    {
+        try
+        {
+            await client.Auth.Me.TwoFactor.Email.Disable.PostAsync(new DisableTwoFactorRequest
+            {
+                Password = password,
+                Code     = code,
+                Provider = provider
+            });
+
+            return (true, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            logger.LogWarning(ex, "Disable email failed");
+
+            return (false, ex.Detail ?? ex.Title ?? "Invalid verification code.");
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Disable email failed");
+
+            return (false, "Invalid verification code.");
+        }
+    }
+
+    public async Task<(bool Succeeded, IList<string> RecoveryCodes, string ErrorMessage)>
+        RegenerateRecoveryCodesAsync(string password, string code, string provider)
+    {
+        try
+        {
+            RecoveryCodesResponse response = await client.Auth.Me.TwoFactor.RecoveryCodes.Regenerate.PostAsync(
+                                                     new DisableTwoFactorRequest
+                                                     {
+                                                         Password = password,
+                                                         Code     = code,
+                                                         Provider = provider
+                                                     });
+
+            return (true, response?.RecoveryCodes ?? [], null);
+        }
+        catch(ProblemDetails ex)
+        {
+            logger.LogWarning(ex, "Regenerate recovery codes failed");
+
+            return (false, [], ex.Detail ?? ex.Title ?? "Invalid verification code.");
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Regenerate recovery codes failed");
+
+            return (false, [], "Invalid verification code.");
         }
     }
 

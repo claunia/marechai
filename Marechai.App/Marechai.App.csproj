@@ -60,6 +60,7 @@
     <PackageReference Include="Prism.DryIoc.Uno.WinUI"/>
     <PackageReference Include="Svg.Skia"/>
     <PackageReference Include="System.IdentityModel.Tokens.Jwt"/>
+    <PackageReference Include="QRCoder"/>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Presentation\Views\Shell.xaml.cs">

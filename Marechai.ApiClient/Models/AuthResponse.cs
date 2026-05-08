@@ -14,6 +14,14 @@ namespace Marechai.ApiClient.Models
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
+        /// <summary>The availableMethods property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public List<string>? AvailableMethods { get; set; }
+#nullable restore
+#else
+        public List<string> AvailableMethods { get; set; }
+#endif
         /// <summary>The message property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -22,6 +30,8 @@ namespace Marechai.ApiClient.Models
 #else
         public string Message { get; set; }
 #endif
+        /// <summary>The requiresTwoFactor property</summary>
+        public bool? RequiresTwoFactor { get; set; }
         /// <summary>The succeeded property</summary>
         public bool? Succeeded { get; set; }
         /// <summary>The token property</summary>
@@ -31,6 +41,14 @@ namespace Marechai.ApiClient.Models
 #nullable restore
 #else
         public string Token { get; set; }
+#endif
+        /// <summary>The twoFactorToken property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? TwoFactorToken { get; set; }
+#nullable restore
+#else
+        public string TwoFactorToken { get; set; }
 #endif
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.ApiClient.Models.AuthResponse"/> and sets the default values.
@@ -57,9 +75,12 @@ namespace Marechai.ApiClient.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
+                { "availableMethods", n => { AvailableMethods = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
                 { "message", n => { Message = n.GetStringValue(); } },
+                { "requiresTwoFactor", n => { RequiresTwoFactor = n.GetBoolValue(); } },
                 { "succeeded", n => { Succeeded = n.GetBoolValue(); } },
                 { "token", n => { Token = n.GetStringValue(); } },
+                { "twoFactorToken", n => { TwoFactorToken = n.GetStringValue(); } },
             };
         }
         /// <summary>
@@ -69,9 +90,12 @@ namespace Marechai.ApiClient.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
+            writer.WriteCollectionOfPrimitiveValues<string>("availableMethods", AvailableMethods);
             writer.WriteStringValue("message", Message);
+            writer.WriteBoolValue("requiresTwoFactor", RequiresTwoFactor);
             writer.WriteBoolValue("succeeded", Succeeded);
             writer.WriteStringValue("token", Token);
+            writer.WriteStringValue("twoFactorToken", TwoFactorToken);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

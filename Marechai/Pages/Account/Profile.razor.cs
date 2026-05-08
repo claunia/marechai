@@ -84,10 +84,24 @@ public partial class Profile
     string _themeSuccessMessage;
     string _themeErrorMessage;
 
+    // ── Security / 2FA state ──
+    TwoFactorStatusDto         _twoFactorStatus;
+    AuthenticatorSetupResponse _authSetup;
+    string                     _authQrSvg = string.Empty;
+    string                     _authVerifyCode;
+    bool                       _emailEnableMode;
+    string                     _emailEnablePassword;
+    string                     _emailEnableCode;
+    IList<string>              _displayedRecoveryCodes;
+    string                     _securityMessage;
+    Severity                   _securitySeverity = Severity.Info;
+    bool                       _isSecurityBusy;
+
     protected override async Task OnInitializedAsync()
     {
-        _profile       = await AuthService.GetProfileAsync();
-        _publicProfile = await AuthService.GetPublicProfileAsync();
+        _profile         = await AuthService.GetProfileAsync();
+        _publicProfile   = await AuthService.GetPublicProfileAsync();
+        _twoFactorStatus = await AuthService.GetTwoFactorStatusAsync();
 
         if(_publicProfile is not null)
             PopulatePublicProfileFields();
@@ -422,4 +436,220 @@ public partial class Profile
 
         StateHasChanged();
     }
+
+    // ── Security / 2FA methods ──
+
+    async Task RefreshTwoFactorStatusAsync()
+    {
+        _twoFactorStatus = await AuthService.GetTwoFactorStatusAsync();
+        StateHasChanged();
+    }
+
+    async Task StartAuthenticatorSetupAsync()
+    {
+        _isSecurityBusy  = true;
+        _securityMessage = null;
+
+        AuthenticatorSetupResponse setup = await AuthService.SetupAuthenticatorAsync();
+
+        _isSecurityBusy = false;
+
+        if(setup is null || string.IsNullOrEmpty(setup.AuthenticatorUri))
+        {
+            _securityMessage  = "Failed to generate authenticator setup.";
+            _securitySeverity = Severity.Error;
+
+            return;
+        }
+
+        _authSetup = setup;
+        _authQrSvg = BuildQrSvg(setup.AuthenticatorUri);
+    }
+
+    static string BuildQrSvg(string text)
+    {
+        using var generator = new QRCoder.QRCodeGenerator();
+        QRCoder.QRCodeData data = generator.CreateQrCode(text, QRCoder.QRCodeGenerator.ECCLevel.Q);
+        var               svg  = new QRCoder.SvgQRCode(data);
+
+        // 4 px per module gives ~120-160 px QR codes which fit nicely in the profile card.
+        return svg.GetGraphic(4);
+    }
+
+    async Task EnableAuthenticatorAsync()
+    {
+        if(string.IsNullOrWhiteSpace(_authVerifyCode))
+        {
+            _securityMessage  = "Verification code is required.";
+            _securitySeverity = Severity.Error;
+
+            return;
+        }
+
+        _isSecurityBusy = true;
+
+        (bool ok, IList<string> codes, string err) = await AuthService.EnableAuthenticatorAsync(_authVerifyCode.Trim());
+
+        _isSecurityBusy = false;
+
+        if(!ok)
+        {
+            _securityMessage  = err ?? "Invalid verification code.";
+            _securitySeverity = Severity.Error;
+
+            return;
+        }
+
+        _authSetup       = null;
+        _authQrSvg       = string.Empty;
+        _authVerifyCode  = null;
+        _securityMessage = "Authenticator enabled.";
+        _securitySeverity = Severity.Success;
+
+        if(codes is { Count: > 0 }) _displayedRecoveryCodes = codes;
+
+        await RefreshTwoFactorStatusAsync();
+    }
+
+    async Task StartEmailEnableAsync()
+    {
+        _isSecurityBusy = true;
+        (bool ok, string err) = await AuthService.StartEmailEnableAsync();
+        _isSecurityBusy = false;
+
+        if(ok)
+        {
+            _emailEnableMode  = true;
+            _securityMessage  = "Code sent to your email.";
+            _securitySeverity = Severity.Info;
+        }
+        else
+        {
+            _securityMessage  = err ?? "Could not send code.";
+            _securitySeverity = Severity.Error;
+        }
+    }
+
+    async Task EnableEmailAsync()
+    {
+        if(string.IsNullOrWhiteSpace(_emailEnablePassword) || string.IsNullOrWhiteSpace(_emailEnableCode))
+        {
+            _securityMessage  = "Password and code are required.";
+            _securitySeverity = Severity.Error;
+
+            return;
+        }
+
+        _isSecurityBusy = true;
+
+        (bool ok, IList<string> codes, string err) = await AuthService.EnableEmailAsync(_emailEnablePassword,
+                                                                                          _emailEnableCode.Trim());
+
+        _isSecurityBusy = false;
+
+        if(!ok)
+        {
+            _securityMessage  = err ?? "Invalid verification code.";
+            _securitySeverity = Severity.Error;
+
+            return;
+        }
+
+        _emailEnableMode     = false;
+        _emailEnablePassword = null;
+        _emailEnableCode     = null;
+        _securityMessage     = "Email two-factor enabled.";
+        _securitySeverity    = Severity.Success;
+
+        if(codes is { Count: > 0 }) _displayedRecoveryCodes = codes;
+
+        await RefreshTwoFactorStatusAsync();
+    }
+
+    async Task OpenDisableAuthenticatorDialog()
+    {
+        var result = await ShowDisableDialog("Disable authenticator app");
+
+        if(result is null) return;
+
+        _isSecurityBusy = true;
+        (bool ok, string err) = await AuthService.DisableAuthenticatorAsync(result.Password, result.Code,
+                                                                            result.Provider);
+        _isSecurityBusy = false;
+
+        _securityMessage  = ok ? "Authenticator disabled." : err ?? "Failed to disable authenticator.";
+        _securitySeverity = ok ? Severity.Success : Severity.Error;
+
+        if(ok) await RefreshTwoFactorStatusAsync();
+    }
+
+    async Task OpenDisableEmailDialog()
+    {
+        var result = await ShowDisableDialog("Disable email two-factor");
+
+        if(result is null) return;
+
+        _isSecurityBusy = true;
+        (bool ok, string err) = await AuthService.DisableEmailAsync(result.Password, result.Code, result.Provider);
+        _isSecurityBusy = false;
+
+        _securityMessage  = ok ? "Email two-factor disabled." : err ?? "Failed to disable email two-factor.";
+        _securitySeverity = ok ? Severity.Success : Severity.Error;
+
+        if(ok) await RefreshTwoFactorStatusAsync();
+    }
+
+    async Task OpenRegenerateRecoveryDialog()
+    {
+        var result = await ShowDisableDialog("Regenerate recovery codes");
+
+        if(result is null) return;
+
+        _isSecurityBusy = true;
+
+        (bool ok, IList<string> codes, string err) =
+            await AuthService.RegenerateRecoveryCodesAsync(result.Password, result.Code, result.Provider);
+
+        _isSecurityBusy = false;
+
+        if(ok)
+        {
+            _displayedRecoveryCodes = codes;
+            _securityMessage        = "Recovery codes regenerated.";
+            _securitySeverity       = Severity.Success;
+            await RefreshTwoFactorStatusAsync();
+        }
+        else
+        {
+            _securityMessage  = err ?? "Failed to regenerate recovery codes.";
+            _securitySeverity = Severity.Error;
+        }
+    }
+
+    async Task<DisableTwoFactorPrompt> ShowDisableDialog(string title)
+    {
+        var defaultProvider = _twoFactorStatus?.AuthenticatorEnabled == true ? "authenticator" : "email";
+
+        var parameters = new DialogParameters<DisableTwoFactorDialog>
+        {
+            { x => x.Title,                  title },
+            { x => x.AuthenticatorAvailable, _twoFactorStatus?.AuthenticatorEnabled == true },
+            { x => x.EmailAvailable,         _twoFactorStatus?.EmailEnabled         == true },
+            { x => x.DefaultProvider,        defaultProvider }
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<DisableTwoFactorDialog>(title, parameters);
+        DialogResult     dr     = await dialog.Result;
+
+        if(dr is { Canceled: false, Data: DisableTwoFactorPrompt data }) return data;
+
+        return null;
+    }
+}
+
+public sealed class DisableTwoFactorPrompt
+{
+    public string Password { get; set; }
+    public string Code     { get; set; }
+    public string Provider { get; set; }
 }

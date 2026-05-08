@@ -159,6 +159,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<IAuthenticationService, AuthService>();
         containerRegistry.RegisterSingleton<ITokenService, TokenService>();
         containerRegistry.RegisterSingleton<IJwtService, JwtService>();
+        containerRegistry.RegisterSingleton<TwoFactorService>();
         containerRegistry.RegisterSingleton<FlagCache>();
         containerRegistry.RegisterSingleton<CompanyLogoCache>();
         containerRegistry.RegisterSingleton<MachinePhotoCache>();

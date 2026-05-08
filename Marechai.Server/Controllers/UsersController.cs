@@ -56,16 +56,19 @@ public class UsersController(UserManager<ApplicationUser> userManager) : Control
 
             userDtos.Add(new UserDto
             {
-                Id                   = user.Id,
-                UserName             = user.UserName!,
-                Email                = user.Email!,
-                EmailConfirmed       = user.EmailConfirmed,
-                PhoneNumber          = user.PhoneNumber,
-                PhoneNumberConfirmed = user.PhoneNumberConfirmed,
-                LockoutEnabled       = user.LockoutEnabled,
-                LockoutEnd           = user.LockoutEnd?.ToString("O"),
-                AccessFailedCount    = user.AccessFailedCount,
-                Roles                = roles.ToList()
+                Id                    = user.Id,
+                UserName              = user.UserName!,
+                Email                 = user.Email!,
+                EmailConfirmed        = user.EmailConfirmed,
+                PhoneNumber           = user.PhoneNumber,
+                PhoneNumberConfirmed  = user.PhoneNumberConfirmed,
+                LockoutEnabled        = user.LockoutEnabled,
+                LockoutEnd            = user.LockoutEnd?.ToString("O"),
+                AccessFailedCount     = user.AccessFailedCount,
+                TwoFactorEnabled      = user.TwoFactorEnabled,
+                AuthenticatorEnabled  = user.TwoFactorViaAuthenticator,
+                EmailTwoFactorEnabled = user.TwoFactorViaEmail,
+                Roles                 = roles.ToList()
             });
         }
 
@@ -88,16 +91,19 @@ public class UsersController(UserManager<ApplicationUser> userManager) : Control
 
         return Ok(new UserDto
         {
-            Id                   = user.Id,
-            UserName             = user.UserName!,
-            Email                = user.Email!,
-            EmailConfirmed       = user.EmailConfirmed,
-            PhoneNumber          = user.PhoneNumber,
-            PhoneNumberConfirmed = user.PhoneNumberConfirmed,
-            LockoutEnabled       = user.LockoutEnabled,
-            LockoutEnd           = user.LockoutEnd?.ToString("O"),
-            AccessFailedCount    = user.AccessFailedCount,
-            Roles                = roles.ToList()
+            Id                    = user.Id,
+            UserName              = user.UserName!,
+            Email                 = user.Email!,
+            EmailConfirmed        = user.EmailConfirmed,
+            PhoneNumber           = user.PhoneNumber,
+            PhoneNumberConfirmed  = user.PhoneNumberConfirmed,
+            LockoutEnabled        = user.LockoutEnabled,
+            LockoutEnd            = user.LockoutEnd?.ToString("O"),
+            AccessFailedCount     = user.AccessFailedCount,
+            TwoFactorEnabled      = user.TwoFactorEnabled,
+            AuthenticatorEnabled  = user.TwoFactorViaAuthenticator,
+            EmailTwoFactorEnabled = user.TwoFactorViaEmail,
+            Roles                 = roles.ToList()
         });
     }
 
@@ -132,16 +138,19 @@ public class UsersController(UserManager<ApplicationUser> userManager) : Control
                                },
                                new UserDto
                                {
-                                   Id                   = user.Id,
-                                   UserName             = user.UserName,
-                                   Email                = user.Email,
-                                   EmailConfirmed       = user.EmailConfirmed,
-                                   PhoneNumber          = user.PhoneNumber,
-                                   PhoneNumberConfirmed = user.PhoneNumberConfirmed,
-                                   LockoutEnabled       = user.LockoutEnabled,
-                                   LockoutEnd           = user.LockoutEnd?.ToString("O"),
-                                   AccessFailedCount    = user.AccessFailedCount,
-                                   Roles                = roles.ToList()
+                                   Id                    = user.Id,
+                                   UserName              = user.UserName,
+                                   Email                 = user.Email,
+                                   EmailConfirmed        = user.EmailConfirmed,
+                                   PhoneNumber           = user.PhoneNumber,
+                                   PhoneNumberConfirmed  = user.PhoneNumberConfirmed,
+                                   LockoutEnabled        = user.LockoutEnabled,
+                                   LockoutEnd            = user.LockoutEnd?.ToString("O"),
+                                   AccessFailedCount     = user.AccessFailedCount,
+                                   TwoFactorEnabled      = user.TwoFactorEnabled,
+                                   AuthenticatorEnabled  = user.TwoFactorViaAuthenticator,
+                                   EmailTwoFactorEnabled = user.TwoFactorViaEmail,
+                                   Roles                 = roles.ToList()
                                });
     }
 
@@ -177,16 +186,19 @@ public class UsersController(UserManager<ApplicationUser> userManager) : Control
 
         return Ok(new UserDto
         {
-            Id                   = user.Id,
-            UserName             = user.UserName,
-            Email                = user.Email,
-            EmailConfirmed       = user.EmailConfirmed,
-            PhoneNumber          = user.PhoneNumber,
-            PhoneNumberConfirmed = user.PhoneNumberConfirmed,
-            LockoutEnabled       = user.LockoutEnabled,
-            LockoutEnd           = user.LockoutEnd?.ToString("O"),
-            AccessFailedCount    = user.AccessFailedCount,
-            Roles                = roles.ToList()
+            Id                    = user.Id,
+            UserName              = user.UserName,
+            Email                 = user.Email,
+            EmailConfirmed        = user.EmailConfirmed,
+            PhoneNumber           = user.PhoneNumber,
+            PhoneNumberConfirmed  = user.PhoneNumberConfirmed,
+            LockoutEnabled        = user.LockoutEnabled,
+            LockoutEnd            = user.LockoutEnd?.ToString("O"),
+            AccessFailedCount     = user.AccessFailedCount,
+            TwoFactorEnabled      = user.TwoFactorEnabled,
+            AuthenticatorEnabled  = user.TwoFactorViaAuthenticator,
+            EmailTwoFactorEnabled = user.TwoFactorViaEmail,
+            Roles                 = roles.ToList()
         });
     }
 
@@ -473,5 +485,35 @@ public class UsersController(UserManager<ApplicationUser> userManager) : Control
         }
 
         return Ok(result);
+    }
+
+    /// <summary>
+    ///     Disables ALL two-factor methods for the target user. Available to <c>Admin</c> and <c>UberAdmin</c>
+    ///     (overrides the class-level <c>UberAdmin</c>-only restriction). Clears the global flag, the per-method
+    ///     flags, the authenticator key and any outstanding recovery codes, and resets the access-failed counter.
+    /// </summary>
+    [HttpPost("{id}/two-factor/disable")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DisableTwoFactor(string id)
+    {
+        ApplicationUser user = await userManager.FindByIdAsync(id);
+
+        if(user == null) return NotFound("User not found");
+
+        await userManager.SetTwoFactorEnabledAsync(user, false);
+        await userManager.ResetAuthenticatorKeyAsync(user);
+        await userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 0);
+
+        user.TwoFactorViaAuthenticator = false;
+        user.TwoFactorViaEmail         = false;
+
+        await userManager.UpdateAsync(user);
+        await userManager.ResetAccessFailedCountAsync(user);
+
+        return NoContent();
     }
 }

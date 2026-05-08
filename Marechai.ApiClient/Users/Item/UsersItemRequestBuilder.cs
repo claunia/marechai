@@ -3,6 +3,7 @@
 using Marechai.ApiClient.Models;
 using Marechai.ApiClient.Users.Item.Password;
 using Marechai.ApiClient.Users.Item.Roles;
+using Marechai.ApiClient.Users.Item.TwoFactor;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
 using Microsoft.Kiota.Abstractions;
@@ -28,6 +29,11 @@ namespace Marechai.ApiClient.Users.Item
         public global::Marechai.ApiClient.Users.Item.Roles.RolesRequestBuilder Roles
         {
             get => new global::Marechai.ApiClient.Users.Item.Roles.RolesRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The twoFactor property</summary>
+        public global::Marechai.ApiClient.Users.Item.TwoFactor.TwoFactorRequestBuilder TwoFactor
+        {
+            get => new global::Marechai.ApiClient.Users.Item.TwoFactor.TwoFactorRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.ApiClient.Users.Item.UsersItemRequestBuilder"/> and sets the default values.

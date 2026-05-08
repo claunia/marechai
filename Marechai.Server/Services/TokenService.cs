@@ -30,6 +30,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using Marechai.Server.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -38,6 +39,12 @@ namespace Marechai.Server.Services;
 
 public sealed class TokenService(IConfiguration configuration)
 {
+    /// <summary>
+    ///     Lifetime of short-lived "two-factor pending" tokens. The user has this long after submitting their
+    ///     password to deliver a valid second-factor code.
+    /// </summary>
+    public static readonly TimeSpan Pending2FaLifetime = TimeSpan.FromMinutes(5);
+
     public string CreateToken(IdentityUser user, IList<string> roles)
     {
         JwtSecurityToken token        = CreateJwtToken(CreateClaims(user, roles), CreateSigningCredentials());
@@ -79,4 +86,70 @@ public sealed class TokenService(IConfiguration configuration)
     SigningCredentials CreateSigningCredentials() =>
         new(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!)),
             SecurityAlgorithms.HmacSha256);
+
+    /// <summary>
+    ///     Issues a short-lived JWT scoped to the "two-factor pending" audience. The token carries only the user id
+    ///     and a <c>purpose=2fa-pending</c> claim, has no role claims, and expires after
+    ///     <see cref="Pending2FaLifetime" />. The global JwtBearer middleware rejects this audience, so the token
+    ///     cannot be used against any normal API endpoint &mdash; it is consumed only by the explicit
+    ///     <c>POST /auth/login/two-factor</c> family of endpoints, which call
+    ///     <see cref="ValidatePending2FaToken" />.
+    /// </summary>
+    public string CreatePending2FaToken(string userId)
+    {
+        var claims = new List<Claim>
+        {
+            new(JwtRegisteredClaimNames.Sub,  userId),
+            new(JwtRegisteredClaimNames.Jti,  Guid.NewGuid().ToString()),
+            new(JwtRegisteredClaimNames.Iat,
+                EpochTime.GetIntDate(DateTime.UtcNow).ToString(CultureInfo.InvariantCulture)),
+            new("purpose", "2fa-pending")
+        };
+
+        var token = new JwtSecurityToken(configuration["Jwt:Issuer"],
+                                         Audiences.Pending2Fa(configuration["Jwt:Audience"]!), claims,
+                                         expires: DateTime.UtcNow.Add(Pending2FaLifetime),
+                                         signingCredentials: CreateSigningCredentials());
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    /// <summary>
+    ///     Validates a token previously issued by <see cref="CreatePending2FaToken" />. Returns the user id on
+    ///     success, or <see langword="null" /> if the token is malformed, expired, signed with the wrong key, or
+    ///     missing the expected audience / purpose claim.
+    /// </summary>
+    public string ValidatePending2FaToken(string token)
+    {
+        if(string.IsNullOrWhiteSpace(token)) return null;
+
+        try
+        {
+            var handler = new JwtSecurityTokenHandler();
+
+            var parameters = new TokenValidationParameters
+            {
+                ClockSkew                = TimeSpan.Zero,
+                ValidateIssuer           = true,
+                ValidateAudience         = true,
+                ValidateLifetime         = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer              = configuration["Jwt:Issuer"],
+                ValidAudience            = Audiences.Pending2Fa(configuration["Jwt:Audience"]!),
+                IssuerSigningKey =
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!))
+            };
+
+            ClaimsPrincipal principal = handler.ValidateToken(token, parameters, out _);
+
+            string purpose = principal.FindFirstValue("purpose");
+            if(purpose != "2fa-pending") return null;
+
+            return principal.FindFirstValue(JwtRegisteredClaimNames.Sub);
+        }
+        catch(Exception)
+        {
+            return null;
+        }
+    }
 }

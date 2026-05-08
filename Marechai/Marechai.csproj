@@ -27,10 +27,12 @@
     <PackageReference Include="Microsoft.Kiota.Serialization.Multipart"/>
     <PackageReference Include="System.IdentityModel.Tokens.Jwt"/>
     <PackageReference Include="Unclassified.NetRevisionTask"/>
+    <PackageReference Include="QRCoder"/>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Marechai.ApiClient\Marechai.ApiClient.csproj"/>
     <ProjectReference Include="..\Marechai.Data\Marechai.Data.csproj"/>
+    <ProjectReference Include="..\Marechai.Email\Marechai.Email.csproj"/>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Resources\**\*.es.resx"/>

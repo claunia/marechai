@@ -102,6 +102,11 @@
 
                         <MudTooltip Text="@L["Manage Roles"]"><MudIconButton Icon="@Icons.Material.Filled.Security" Size="Size.Small" OnClick="() => OpenManageRolesDialog(context.Item)"/></MudTooltip>
 
+                        @if(context.Item.TwoFactorEnabled == true)
+                        {
+                            <MudTooltip Text="@L["Disable 2FA"]"><MudIconButton Icon="@Icons.Material.Filled.LockOpen" Size="Size.Small" Color="Color.Warning" OnClick="() => ConfirmDisableTwoFactor(context.Item)"/></MudTooltip>
+                        }
+
                         <MudTooltip Text="@L["Delete"]"><MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDeleteUser(context.Item)"/></MudTooltip>
 
                     </MudStack>

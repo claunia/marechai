@@ -34,7 +34,26 @@ public sealed record UserDto
     
     [JsonPropertyName("preferredThemeId")]
     public string? PreferredThemeId { get; set; }
-    
+
+    /// <summary>
+    ///     <see langword="true" /> when the user has at least one 2FA method enabled. Mirrors
+    ///     <c>IdentityUser.TwoFactorEnabled</c>.
+    /// </summary>
+    [JsonPropertyName("twoFactorEnabled")]
+    public bool TwoFactorEnabled { get; set; }
+
+    /// <summary>
+    ///     <see langword="true" /> when the user has set up an authenticator app (TOTP) as a 2FA method.
+    /// </summary>
+    [JsonPropertyName("authenticatorEnabled")]
+    public bool AuthenticatorEnabled { get; set; }
+
+    /// <summary>
+    ///     <see langword="true" /> when the user has enabled email-code 2FA.
+    /// </summary>
+    [JsonPropertyName("emailTwoFactorEnabled")]
+    public bool EmailTwoFactorEnabled { get; set; }
+
     [JsonPropertyName("roles")]
     public List<string> Roles { get; set; } = [];
 }

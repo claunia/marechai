@@ -30,4 +30,26 @@ public sealed partial class LoginPage : Page
             e.Handled = true;
         }
     }
+
+    private void OnCodeKeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        if(e.Key == VirtualKey.Enter)
+        {
+            if(DataContext is LoginViewModel viewModel && !viewModel.IsLoggingIn)
+                viewModel.VerifyCodeCommand.Execute(null);
+
+            e.Handled = true;
+        }
+    }
+
+    private void OnRecoveryKeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        if(e.Key == VirtualKey.Enter)
+        {
+            if(DataContext is LoginViewModel viewModel && !viewModel.IsLoggingIn)
+                viewModel.VerifyRecoveryCommand.Execute(null);
+
+            e.Handled = true;
+        }
+    }
 }

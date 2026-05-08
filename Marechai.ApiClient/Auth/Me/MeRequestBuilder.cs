@@ -4,6 +4,7 @@ using Marechai.ApiClient.Auth.Me.Avatar;
 using Marechai.ApiClient.Auth.Me.Collection;
 using Marechai.ApiClient.Auth.Me.PublicProfile;
 using Marechai.ApiClient.Auth.Me.Theme;
+using Marechai.ApiClient.Auth.Me.TwoFactor;
 using Marechai.ApiClient.Models;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
@@ -40,6 +41,11 @@ namespace Marechai.ApiClient.Auth.Me
         public global::Marechai.ApiClient.Auth.Me.Theme.ThemeRequestBuilder Theme
         {
             get => new global::Marechai.ApiClient.Auth.Me.Theme.ThemeRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The twoFactor property</summary>
+        public global::Marechai.ApiClient.Auth.Me.TwoFactor.TwoFactorRequestBuilder TwoFactor
+        {
+            get => new global::Marechai.ApiClient.Auth.Me.TwoFactor.TwoFactorRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.ApiClient.Auth.Me.MeRequestBuilder"/> and sets the default values.

@@ -381,4 +381,14 @@
         <value>Delete</value>
         <comment>Delete confirmation button</comment>
     </data>
+    <!-- Two-factor authentication admin actions -->
+    <data name="Disable 2FA" xml:space="preserve">
+        <value>Disable 2FA</value>
+    </data>
+    <data name="Are you sure you want to disable two-factor authentication for user '{0}'? Their authenticator key and recovery codes will be cleared." xml:space="preserve">
+        <value>Are you sure you want to disable two-factor authentication for user '{0}'? Their authenticator key and recovery codes will be cleared.</value>
+    </data>
+    <data name="2FA disabled for user." xml:space="preserve">
+        <value>2FA disabled for user.</value>
+    </data>
 </root>

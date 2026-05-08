@@ -1,0 +1,22 @@
+@using Marechai.Email.Templates
+@model TwoFactorCodeEmailModel
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@Model.Title</title>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background:#f4f4f6; margin:0; padding:24px;">
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="max-width:520px; margin:0 auto; background:#ffffff; border-radius:8px; padding:32px;">
+        <tr>
+            <td style="text-align:center;">
+                <h1 style="margin:0 0 16px; font-size:20px; color:#222;">@Model.Title</h1>
+                <p style="margin:0 0 24px; color:#555; font-size:14px;">@Model.Intro</p>
+                <p style="margin:0 0 24px; font-family: 'SFMono-Regular', Menlo, Consolas, monospace; font-size:32px; letter-spacing:8px; color:#111; background:#f0f0f3; padding:16px; border-radius:6px;">@Model.Code</p>
+                <p style="margin:0 0 8px; color:#777; font-size:13px;">@Model.Expiry</p>
+                <p style="margin:0; color:#aaa; font-size:12px;">@Model.Footer</p>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

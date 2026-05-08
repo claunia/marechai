@@ -82,6 +82,133 @@
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                 </StackPanel>
 
+                <!-- Security / Two-Factor Authentication (only when authenticated) -->
+                <StackPanel Spacing="12"
+                            Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SettingsPage_Security_Header}"
+                               Style="{ThemeResource SubtitleTextBlockStyle}"/>
+
+                    <!-- Status -->
+                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="6"
+                            Padding="12">
+                        <StackPanel Spacing="4">
+                            <TextBlock>
+                                <Run Text="{Binding Source={StaticResource Strings}, Path=SettingsPage_TwoFactorEnabledLabel}"/>
+                                <Run Text=" "/>
+                                <Run Text="{Binding TwoFactorEnabled}"/>
+                            </TextBlock>
+                            <TextBlock>
+                                <Run Text="{Binding Source={StaticResource Strings}, Path=SettingsPage_AuthenticatorEnabledLabel}"/>
+                                <Run Text=" "/>
+                                <Run Text="{Binding AuthenticatorEnabled}"/>
+                            </TextBlock>
+                            <TextBlock>
+                                <Run Text="{Binding Source={StaticResource Strings}, Path=SettingsPage_EmailEnabledLabel}"/>
+                                <Run Text=" "/>
+                                <Run Text="{Binding EmailTwoFactorEnabled}"/>
+                            </TextBlock>
+                            <TextBlock>
+                                <Run Text="{Binding Source={StaticResource Strings}, Path=SettingsPage_RecoveryCodesRemainingLabel}"/>
+                                <Run Text=" "/>
+                                <Run Text="{Binding RecoveryCodesRemaining}"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Status / error message -->
+                    <Border Background="#FFF4E6"
+                            BorderBrush="#FFB84D"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            Padding="8"
+                            Visibility="{Binding SecurityMessage, Converter={StaticResource NullToVisibilityConverter}}">
+                        <TextBlock Text="{Binding SecurityMessage}" Foreground="#92400E" TextWrapping="Wrap"/>
+                    </Border>
+
+                    <!-- Authenticator section -->
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SettingsPage_AuthenticatorTitle}"
+                                   Style="{ThemeResource BodyStrongTextBlockStyle}"/>
+
+                        <Button Content="{Binding Source={StaticResource Strings}, Path=SettingsPage_SetupAuthenticatorButton}"
+                                Command="{Binding StartAuthenticatorSetupCommand}"
+                                IsEnabled="{Binding IsSecurityBusy, Converter={StaticResource InvertBoolConverter}}">
+                            <Button.Visibility>
+                                <Binding Path="AuthenticatorEnabled" Converter="{StaticResource InvertBoolToVisibilityConverter}"/>
+                            </Button.Visibility>
+                        </Button>
+
+                        <StackPanel Spacing="8"
+                                    Visibility="{Binding AuthSetupVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <Image Source="{Binding AuthQrImage}" Width="200" Height="200" HorizontalAlignment="Left"/>
+                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SettingsPage_ManualEntryKeyLabel}"
+                                       Style="{ThemeResource BodyTextBlockStyle}"/>
+                            <TextBox Text="{Binding AuthSharedKey, Mode=OneWay}" IsReadOnly="True" FontFamily="Consolas"/>
+                            <TextBox Header="{Binding Source={StaticResource Strings}, Path=SettingsPage_VerificationCodeLabel}"
+                                     Text="{Binding AuthVerifyCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Button Content="{Binding Source={StaticResource Strings}, Path=SettingsPage_EnableButton}"
+                                        Command="{Binding EnableAuthenticatorCommand}"
+                                        Style="{ThemeResource AccentButtonStyle}"/>
+                                <Button Content="{Binding Source={StaticResource Strings}, Path=SettingsPage_CancelButton}"
+                                        Command="{Binding CancelAuthenticatorSetupCommand}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Email section -->
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SettingsPage_EmailTwoFactorTitle}"
+                                   Style="{ThemeResource BodyStrongTextBlockStyle}"/>
+
+                        <Button Content="{Binding Source={StaticResource Strings}, Path=SettingsPage_SendEmailCodeButton}"
+                                Command="{Binding StartEmailEnableCommand}"
+                                IsEnabled="{Binding IsSecurityBusy, Converter={StaticResource InvertBoolConverter}}">
+                            <Button.Visibility>
+                                <Binding Path="EmailTwoFactorEnabled" Converter="{StaticResource InvertBoolToVisibilityConverter}"/>
+                            </Button.Visibility>
+                        </Button>
+
+                        <StackPanel Spacing="8"
+                                    Visibility="{Binding EmailEnableVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <PasswordBox Header="{Binding Source={StaticResource Strings}, Path=SettingsPage_CurrentPasswordLabel}"
+                                         Password="{Binding EmailEnablePassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBox Header="{Binding Source={StaticResource Strings}, Path=SettingsPage_VerificationCodeLabel}"
+                                     Text="{Binding EmailEnableCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            <Button Content="{Binding Source={StaticResource Strings}, Path=SettingsPage_EnableButton}"
+                                    Command="{Binding EnableEmailCommand}"
+                                    Style="{ThemeResource AccentButtonStyle}"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Recovery codes one-shot display -->
+                    <Border Background="#FFF4E6"
+                            BorderBrush="#FFB84D"
+                            BorderThickness="2"
+                            CornerRadius="4"
+                            Padding="12"
+                            Visibility="{Binding ShowRecoveryCodes, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SettingsPage_RecoveryCodesNotice}"
+                                       FontWeight="SemiBold"
+                                       Foreground="#92400E"
+                                       TextWrapping="Wrap"/>
+                            <ItemsControl ItemsSource="{Binding DisplayedRecoveryCodes}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" FontFamily="Consolas" Foreground="#92400E"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <Button Content="{Binding Source={StaticResource Strings}, Path=SettingsPage_DismissRecoveryCodesButton}"
+                                    Command="{Binding DismissRecoveryCodesCommand}"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
             </StackPanel>
         </ScrollViewer>
     </Grid>

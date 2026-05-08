@@ -227,6 +227,42 @@ public partial class Users
         }
     }
 
+    async Task ConfirmDisableTwoFactor(UserDto user)
+    {
+        DialogParameters<DeleteConfirmDialog> parameters = new()
+        {
+            {
+                x => x.ContentText,
+                string.Format(L["Are you sure you want to disable two-factor authentication for user '{0}'? Their authenticator key and recovery codes will be cleared."],
+                              user.Email)
+            }
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<DeleteConfirmDialog>(L["Disable 2FA"], parameters,
+                                                                                     new DialogOptions
+                                                                                     {
+                                                                                         MaxWidth  = MaxWidth.ExtraSmall,
+                                                                                         FullWidth = true
+                                                                                     });
+
+        DialogResult result = await dialog.Result;
+
+        if(result is { Canceled: false })
+        {
+            (bool ok, string err) = await UsersService.DisableTwoFactorAsync(user.Id);
+
+            if(ok)
+            {
+                _successMessage = L["2FA disabled for user."];
+                await LoadUsersAsync();
+            }
+            else
+            {
+                _errorMessage = err;
+            }
+        }
+    }
+
     async Task ConfirmBulkDeleteUsers()
     {
         DialogParameters<DeleteConfirmDialog> parameters = new()

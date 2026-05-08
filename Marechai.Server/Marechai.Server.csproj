@@ -21,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Marechai.Database\Marechai.Database.csproj" />
     <ProjectReference Include="..\Marechai.Data\Marechai.Data.csproj" />
+    <ProjectReference Include="..\Marechai.Email\Marechai.Email.csproj" />
   </ItemGroup>
 
 </Project>

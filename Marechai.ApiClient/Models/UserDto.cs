@@ -16,6 +16,8 @@ namespace Marechai.ApiClient.Models
         public int? AccessFailedCount { get; set; }
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
+        /// <summary>The authenticatorEnabled property</summary>
+        public bool? AuthenticatorEnabled { get; set; }
         /// <summary>The email property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -26,6 +28,8 @@ namespace Marechai.ApiClient.Models
 #endif
         /// <summary>The emailConfirmed property</summary>
         public bool? EmailConfirmed { get; set; }
+        /// <summary>The emailTwoFactorEnabled property</summary>
+        public bool? EmailTwoFactorEnabled { get; set; }
         /// <summary>The id property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -70,6 +74,8 @@ namespace Marechai.ApiClient.Models
 #else
         public List<string> Roles { get; set; }
 #endif
+        /// <summary>The twoFactorEnabled property</summary>
+        public bool? TwoFactorEnabled { get; set; }
         /// <summary>The userName property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -104,8 +110,10 @@ namespace Marechai.ApiClient.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "accessFailedCount", n => { AccessFailedCount = n.GetIntValue(); } },
+                { "authenticatorEnabled", n => { AuthenticatorEnabled = n.GetBoolValue(); } },
                 { "email", n => { Email = n.GetStringValue(); } },
                 { "emailConfirmed", n => { EmailConfirmed = n.GetBoolValue(); } },
+                { "emailTwoFactorEnabled", n => { EmailTwoFactorEnabled = n.GetBoolValue(); } },
                 { "id", n => { Id = n.GetStringValue(); } },
                 { "lockoutEnabled", n => { LockoutEnabled = n.GetBoolValue(); } },
                 { "lockoutEnd", n => { LockoutEnd = n.GetStringValue(); } },
@@ -113,6 +121,7 @@ namespace Marechai.ApiClient.Models
                 { "phoneNumberConfirmed", n => { PhoneNumberConfirmed = n.GetBoolValue(); } },
                 { "preferredThemeId", n => { PreferredThemeId = n.GetStringValue(); } },
                 { "roles", n => { Roles = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
+                { "twoFactorEnabled", n => { TwoFactorEnabled = n.GetBoolValue(); } },
                 { "userName", n => { UserName = n.GetStringValue(); } },
             };
         }
@@ -124,8 +133,10 @@ namespace Marechai.ApiClient.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteIntValue("accessFailedCount", AccessFailedCount);
+            writer.WriteBoolValue("authenticatorEnabled", AuthenticatorEnabled);
             writer.WriteStringValue("email", Email);
             writer.WriteBoolValue("emailConfirmed", EmailConfirmed);
+            writer.WriteBoolValue("emailTwoFactorEnabled", EmailTwoFactorEnabled);
             writer.WriteStringValue("id", Id);
             writer.WriteBoolValue("lockoutEnabled", LockoutEnabled);
             writer.WriteStringValue("lockoutEnd", LockoutEnd);
@@ -133,6 +144,7 @@ namespace Marechai.ApiClient.Models
             writer.WriteBoolValue("phoneNumberConfirmed", PhoneNumberConfirmed);
             writer.WriteStringValue("preferredThemeId", PreferredThemeId);
             writer.WriteCollectionOfPrimitiveValues<string>("roles", Roles);
+            writer.WriteBoolValue("twoFactorEnabled", TwoFactorEnabled);
             writer.WriteStringValue("userName", UserName);
             writer.WriteAdditionalData(AdditionalData);
         }

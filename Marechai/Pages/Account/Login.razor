@@ -43,44 +43,139 @@
             {
                 <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
             }
+            @if(!string.IsNullOrWhiteSpace(_infoMessage))
+            {
+                <MudAlert Severity="Severity.Info" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _infoMessage = null">@_infoMessage</MudAlert>
+            }
 
-            <MudTextField @bind-Value="_email"
-                          Label="Email"
-                          Variant="Variant.Outlined"
-                          InputType="InputType.Email"
-                          Adornment="Adornment.Start"
-                          AdornmentIcon="@Icons.Material.Filled.Email"
-                          Class="mb-4"
-                          Disabled="_isLoading"
-                          OnKeyDown="OnEmailKeyDown"/>
+            @if(!_requiresTwoFactor)
+            {
+                <MudTextField @bind-Value="_email"
+                              Label="Email"
+                              Variant="Variant.Outlined"
+                              InputType="InputType.Email"
+                              Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.Email"
+                              Class="mb-4"
+                              Disabled="_isLoading"
+                              OnKeyDown="OnEmailKeyDown"/>
 
-            <MudTextField @bind-Value="_password"
-                          Label="Password"
-                          Variant="Variant.Outlined"
-                          InputType="InputType.Password"
-                          Adornment="Adornment.Start"
-                          AdornmentIcon="@Icons.Material.Filled.Lock"
-                          Class="mb-4"
-                          Disabled="_isLoading"
-                          OnKeyDown="OnPasswordKeyDown"/>
+                <MudTextField @bind-Value="_password"
+                              Label="Password"
+                              Variant="Variant.Outlined"
+                              InputType="InputType.Password"
+                              Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.Lock"
+                              Class="mb-4"
+                              Disabled="_isLoading"
+                              OnKeyDown="OnPasswordKeyDown"/>
 
-            <MudButton Variant="Variant.Filled"
-                       Color="Color.Primary"
-                       FullWidth="true"
-                       Size="Size.Large"
-                       OnClick="LoginAsync"
-                       Disabled="_isLoading"
-                       StartIcon="@(_isLoading ? null : Icons.Material.Filled.Login)">
-                @if(_isLoading)
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           FullWidth="true"
+                           Size="Size.Large"
+                           OnClick="LoginAsync"
+                           Disabled="_isLoading"
+                           StartIcon="@(_isLoading ? null : Icons.Material.Filled.Login)">
+                    @if(_isLoading)
+                    {
+                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
+                        <span>Signing in...</span>
+                    }
+                    else
+                    {
+                        <span>Sign In</span>
+                    }
+                </MudButton>
+            }
+            else
+            {
+                <MudText Typo="Typo.h6" Class="mb-4">Two-factor authentication</MudText>
+
+                @if(!_recoveryMode)
                 {
-                    <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
-                    <span>Signing in...</span>
+                    @if(_availableMethods.Count > 1)
+                    {
+                        <MudSelect T="string" @bind-Value="_selectedProvider" Label="Method" Variant="Variant.Outlined" Class="mb-4" Disabled="_isLoading">
+                            @foreach(string m in _availableMethods)
+                            {
+                                <MudSelectItem Value="@m">@(m == "authenticator" ? "Authenticator app" : "Email code")</MudSelectItem>
+                            }
+                        </MudSelect>
+                    }
+
+                    @if(_selectedProvider == "email")
+                    {
+                        <MudButton Variant="Variant.Outlined" Color="Color.Secondary" FullWidth="true" Class="mb-4" OnClick="SendEmailCodeAsync" Disabled="_isLoading">
+                            Send code to my email
+                        </MudButton>
+                    }
+
+                    <MudTextField @bind-Value="_code"
+                                  Label="@(_selectedProvider == "email" ? "Email code" : "Authenticator code")"
+                                  Variant="Variant.Outlined"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.Pin"
+                                  Class="mb-4"
+                                  Disabled="_isLoading"
+                                  OnKeyDown="OnCodeKeyDown"/>
+
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               FullWidth="true"
+                               Size="Size.Large"
+                               OnClick="VerifyCodeAsync"
+                               Disabled="_isLoading"
+                               Class="mb-2">
+                        @if(_isLoading)
+                        {
+                            <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
+                            <span>Verifying...</span>
+                        }
+                        else
+                        {
+                            <span>Verify</span>
+                        }
+                    </MudButton>
+
+                    <MudButton Variant="Variant.Text" Color="Color.Default" FullWidth="true" OnClick="@(() => { _recoveryMode = true; _errorMessage = null; })" Disabled="_isLoading">
+                        Use a recovery code
+                    </MudButton>
                 }
                 else
                 {
-                    <span>Sign In</span>
+                    <MudTextField @bind-Value="_recoveryCode"
+                                  Label="Recovery code"
+                                  Variant="Variant.Outlined"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.Key"
+                                  Class="mb-4"
+                                  Disabled="_isLoading"
+                                  OnKeyDown="OnRecoveryKeyDown"/>
+
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               FullWidth="true"
+                               Size="Size.Large"
+                               OnClick="VerifyRecoveryAsync"
+                               Disabled="_isLoading"
+                               Class="mb-2">
+                        @if(_isLoading)
+                        {
+                            <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
+                            <span>Verifying...</span>
+                        }
+                        else
+                        {
+                            <span>Verify recovery code</span>
+                        }
+                    </MudButton>
+
+                    <MudButton Variant="Variant.Text" Color="Color.Default" FullWidth="true" OnClick="@(() => { _recoveryMode = false; _errorMessage = null; })" Disabled="_isLoading">
+                        Back to authenticator
+                    </MudButton>
                 }
-            </MudButton>
+            }
         </MudPaper>
     </MudItem>
 </MudGrid>

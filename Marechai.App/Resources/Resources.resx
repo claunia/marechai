@@ -188,6 +188,78 @@
   <data name="SettingsPage_Version" xml:space="preserve">
     <value>Version 1.0</value>
   </data>
+  <data name="SettingsPage_Security_Header" xml:space="preserve">
+    <value>Security</value>
+  </data>
+  <data name="SettingsPage_TwoFactorEnabledLabel" xml:space="preserve">
+    <value>Two-factor authentication enabled:</value>
+  </data>
+  <data name="SettingsPage_AuthenticatorEnabledLabel" xml:space="preserve">
+    <value>Authenticator app enabled:</value>
+  </data>
+  <data name="SettingsPage_EmailEnabledLabel" xml:space="preserve">
+    <value>Email two-factor enabled:</value>
+  </data>
+  <data name="SettingsPage_RecoveryCodesRemainingLabel" xml:space="preserve">
+    <value>Recovery codes remaining:</value>
+  </data>
+  <data name="SettingsPage_AuthenticatorTitle" xml:space="preserve">
+    <value>Authenticator app</value>
+  </data>
+  <data name="SettingsPage_SetupAuthenticatorButton" xml:space="preserve">
+    <value>Setup authenticator</value>
+  </data>
+  <data name="SettingsPage_ManualEntryKeyLabel" xml:space="preserve">
+    <value>Manual entry key:</value>
+  </data>
+  <data name="SettingsPage_VerificationCodeLabel" xml:space="preserve">
+    <value>Verification code</value>
+  </data>
+  <data name="SettingsPage_EnableButton" xml:space="preserve">
+    <value>Enable</value>
+  </data>
+  <data name="SettingsPage_CancelButton" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="SettingsPage_EmailTwoFactorTitle" xml:space="preserve">
+    <value>Email two-factor</value>
+  </data>
+  <data name="SettingsPage_SendEmailCodeButton" xml:space="preserve">
+    <value>Send code to my email</value>
+  </data>
+  <data name="SettingsPage_CurrentPasswordLabel" xml:space="preserve">
+    <value>Current password</value>
+  </data>
+  <data name="SettingsPage_RecoveryCodesNotice" xml:space="preserve">
+    <value>Save these recovery codes in a safe place. They will not be shown again.</value>
+  </data>
+  <data name="SettingsPage_DismissRecoveryCodesButton" xml:space="preserve">
+    <value>I have saved them</value>
+  </data>
+  <data name="Failed to generate authenticator setup." xml:space="preserve">
+    <value>Failed to generate authenticator setup.</value>
+  </data>
+  <data name="Verification code is required." xml:space="preserve">
+    <value>Verification code is required.</value>
+  </data>
+  <data name="Invalid verification code." xml:space="preserve">
+    <value>Invalid verification code.</value>
+  </data>
+  <data name="Authenticator enabled." xml:space="preserve">
+    <value>Authenticator enabled.</value>
+  </data>
+  <data name="Code sent to your email." xml:space="preserve">
+    <value>Code sent to your email.</value>
+  </data>
+  <data name="Could not send code." xml:space="preserve">
+    <value>Could not send code.</value>
+  </data>
+  <data name="Password and code are required." xml:space="preserve">
+    <value>Password and code are required.</value>
+  </data>
+  <data name="Email two-factor enabled." xml:space="preserve">
+    <value>Email two-factor enabled.</value>
+  </data>
   <data name="LightTheme" xml:space="preserve">
     <value>Light</value>
   </data>
@@ -271,6 +343,33 @@
   </data>
   <data name="LoginPage.Error.LoginFailed" xml:space="preserve">
     <value>Login failed. Please check your credentials and try again.</value>
+  </data>
+  <data name="LoginPage.Error.CodeRequired" xml:space="preserve">
+    <value>Verification code is required.</value>
+  </data>
+  <data name="LoginPage_TwoFactorTitle" xml:space="preserve">
+    <value>Two-factor authentication</value>
+  </data>
+  <data name="LoginPage_VerificationCodeLabel" xml:space="preserve">
+    <value>Verification code</value>
+  </data>
+  <data name="LoginPage_RecoveryCodeLabel" xml:space="preserve">
+    <value>Recovery code</value>
+  </data>
+  <data name="LoginPage_VerifyButton" xml:space="preserve">
+    <value>Verify</value>
+  </data>
+  <data name="LoginPage_VerifyRecoveryButton" xml:space="preserve">
+    <value>Verify recovery code</value>
+  </data>
+  <data name="LoginPage_SendEmailCodeButton" xml:space="preserve">
+    <value>Send code to my email</value>
+  </data>
+  <data name="LoginPage_UseRecoveryCodeLink" xml:space="preserve">
+    <value>Use a recovery code</value>
+  </data>
+  <data name="LoginPage_BackToCodeLink" xml:space="preserve">
+    <value>Back to authenticator</value>
   </data>
   <data name="UserManagementButton" xml:space="preserve">
     <value>User Management</value>
@@ -1087,6 +1186,12 @@
   </data>
   <data name="DeleteUserButton" xml:space="preserve">
     <value>Delete</value>
+  </data>
+  <data name="DisableTwoFactorButton" xml:space="preserve">
+    <value>Disable 2FA</value>
+  </data>
+  <data name="Failed to disable 2FA for user." xml:space="preserve">
+    <value>Failed to disable 2FA for user.</value>
   </data>
   <data name="Auth.EmailIsRequired" xml:space="preserve">
     <value>Email is required</value>

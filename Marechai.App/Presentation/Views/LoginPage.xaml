@@ -78,7 +78,7 @@
                                        TextAlignment="Center" />
 
                             <!-- Email Input -->
-                            <StackPanel Spacing="8">
+                            <StackPanel Spacing="8" Visibility="{Binding RequiresTwoFactor, Converter={StaticResource InvertBoolToVisibilityConverter}}">
                                 <TextBlock
                                            Text="{Binding Source={StaticResource Strings}, Path=LoginPage_EmailLabel}"
                                            Style="{StaticResource BodyStrongTextBlockStyle}" />
@@ -92,7 +92,7 @@
                             </StackPanel>
 
                             <!-- Password Input -->
-                            <StackPanel Spacing="8">
+                            <StackPanel Spacing="8" Visibility="{Binding RequiresTwoFactor, Converter={StaticResource InvertBoolToVisibilityConverter}}">
                                 <TextBlock
                                            Text="{Binding Source={StaticResource Strings}, Path=LoginPage_PasswordLabel}"
                                            Style="{StaticResource BodyStrongTextBlockStyle}" />
@@ -155,7 +155,8 @@
                                     HorizontalAlignment="Stretch"
                                     Padding="16,12"
                                     Style="{StaticResource AccentButtonStyle}"
-                                    AutomationProperties.Name="Sign in button">
+                                    AutomationProperties.Name="Sign in button"
+                                    Visibility="{Binding RequiresTwoFactor, Converter={StaticResource InvertBoolToVisibilityConverter}}">
                                 <Button.Content>
                                     <Grid>
                                         <TextBlock
@@ -176,6 +177,61 @@
                                     </Grid>
                                 </Button.Content>
                             </Button>
+
+                            <!-- Two-factor Prompt -->
+                            <StackPanel Spacing="12"
+                                        Visibility="{Binding RequiresTwoFactor, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=LoginPage_TwoFactorTitle}"
+                                           Style="{StaticResource BodyStrongTextBlockStyle}" />
+
+                                <!-- Method picker (only when more than one is available) -->
+                                <ComboBox ItemsSource="{Binding AvailableMethods}"
+                                          SelectedItem="{Binding SelectedProvider, Mode=TwoWay}"
+                                          HorizontalAlignment="Stretch"
+                                          Visibility="{Binding HasMultipleMethods, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                                <!-- Send email code -->
+                                <Button Content="{Binding Source={StaticResource Strings}, Path=LoginPage_SendEmailCodeButton}"
+                                        Command="{Binding SendEmailCodeCommand}"
+                                        IsEnabled="{Binding IsLoggingIn, Converter={StaticResource InvertBoolConverter}}"
+                                        HorizontalAlignment="Stretch"
+                                        Visibility="{Binding ShowSendEmailButton, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                                <!-- Code input + verify (authenticator/email) -->
+                                <StackPanel Spacing="8"
+                                            Visibility="{Binding RecoveryMode, Converter={StaticResource InvertBoolToVisibilityConverter}}">
+                                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=LoginPage_VerificationCodeLabel}"
+                                               Style="{StaticResource BodyStrongTextBlockStyle}" />
+                                    <TextBox Text="{Binding Code, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             PlaceholderText="••••••"
+                                             KeyDown="OnCodeKeyDown" />
+                                    <Button Content="{Binding Source={StaticResource Strings}, Path=LoginPage_VerifyButton}"
+                                            Command="{Binding VerifyCodeCommand}"
+                                            IsEnabled="{Binding IsLoggingIn, Converter={StaticResource InvertBoolConverter}}"
+                                            HorizontalAlignment="Stretch"
+                                            Style="{StaticResource AccentButtonStyle}" />
+                                    <HyperlinkButton Content="{Binding Source={StaticResource Strings}, Path=LoginPage_UseRecoveryCodeLink}"
+                                                     Command="{Binding ToggleRecoveryModeCommand}"
+                                                     HorizontalAlignment="Center" />
+                                </StackPanel>
+
+                                <!-- Recovery code input -->
+                                <StackPanel Spacing="8"
+                                            Visibility="{Binding RecoveryMode, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=LoginPage_RecoveryCodeLabel}"
+                                               Style="{StaticResource BodyStrongTextBlockStyle}" />
+                                    <TextBox Text="{Binding RecoveryCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             KeyDown="OnRecoveryKeyDown" />
+                                    <Button Content="{Binding Source={StaticResource Strings}, Path=LoginPage_VerifyRecoveryButton}"
+                                            Command="{Binding VerifyRecoveryCommand}"
+                                            IsEnabled="{Binding IsLoggingIn, Converter={StaticResource InvertBoolConverter}}"
+                                            HorizontalAlignment="Stretch"
+                                            Style="{StaticResource AccentButtonStyle}" />
+                                    <HyperlinkButton Content="{Binding Source={StaticResource Strings}, Path=LoginPage_BackToCodeLink}"
+                                                     Command="{Binding ToggleRecoveryModeCommand}"
+                                                     HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </StackPanel>
 
                             <!-- Additional Options -->
                             <StackPanel Spacing="8"

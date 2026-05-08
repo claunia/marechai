@@ -33,6 +33,7 @@
 @inject NavigationManager Navigation
 @inject CollectionService CollectionSvc
 @inject ThemeStateService ThemeState
+@inject IDialogService DialogService
 
 <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
     <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
@@ -420,6 +421,137 @@
                             Reset to default
                         </MudButton>
                     </MudStack>
+                }
+            </MudItem>
+        </MudGrid>
+    </MudTabPanel>
+
+    @* ── Security Tab (Two-Factor Authentication) ── *@
+    <MudTabPanel Text="Security" Icon="@Icons.Material.Filled.Security">
+        <MudGrid Justify="Justify.Center" Class="pa-4">
+            <MudItem xs="12" sm="10" md="8">
+                @if(_securityMessage is not null)
+                {
+                    <MudAlert Severity="@_securitySeverity" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _securityMessage = null">@_securityMessage</MudAlert>
+                }
+
+                <MudCard Elevation="2" Class="mb-4">
+                    <MudCardContent>
+                        <MudText Typo="Typo.h6" Class="mb-2">Two-factor authentication</MudText>
+                        @if(_twoFactorStatus is null)
+                        {
+                            <MudProgressCircular Size="Size.Small" Indeterminate="true"/>
+                        }
+                        else
+                        {
+                            <MudText Typo="Typo.body2" Class="mb-2">
+                                @if(_twoFactorStatus.Enabled == true)
+                                {
+                                    <span>Two-factor authentication is <strong>enabled</strong>.</span>
+                                }
+                                else
+                                {
+                                    <span>Two-factor authentication is <strong>disabled</strong>.</span>
+                                }
+                            </MudText>
+
+                            <MudText Typo="Typo.body2">
+                                Authenticator app: @(_twoFactorStatus.AuthenticatorEnabled == true ? "enabled" : "disabled")
+                            </MudText>
+                            <MudText Typo="Typo.body2">
+                                Email: @(_twoFactorStatus.EmailEnabled == true ? "enabled" : "disabled")
+                            </MudText>
+                            <MudText Typo="Typo.body2">
+                                Recovery codes remaining: @_twoFactorStatus.RecoveryCodesRemaining
+                            </MudText>
+                        }
+                    </MudCardContent>
+                </MudCard>
+
+                @* Authenticator app section *@
+                <MudCard Elevation="2" Class="mb-4">
+                    <MudCardContent>
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                            <MudText Typo="Typo.h6">Authenticator app</MudText>
+                            @if(_twoFactorStatus?.AuthenticatorEnabled == true)
+                            {
+                                <MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Filled.LockOpen" OnClick="OpenDisableAuthenticatorDialog">Disable</MudButton>
+                            }
+                            else if(_authSetup is null)
+                            {
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.PhoneAndroid" OnClick="StartAuthenticatorSetupAsync">Setup authenticator</MudButton>
+                            }
+                        </MudStack>
+
+                        @if(_authSetup is not null && _twoFactorStatus?.AuthenticatorEnabled != true)
+                        {
+                            <MudDivider Class="my-3"/>
+                            <MudText Typo="Typo.body2" Class="mb-2">Scan this QR code with your authenticator app, or enter the key manually:</MudText>
+                            <div class="my-2">@((MarkupString)_authQrSvg)</div>
+                            <MudText Typo="Typo.body2" Class="mb-2"><strong>Manual entry key:</strong> <code>@_authSetup.SharedKey</code></MudText>
+                            <MudTextField @bind-Value="_authVerifyCode" Label="Verification code" Variant="Variant.Outlined" Class="mt-2" Disabled="_isSecurityBusy"/>
+                            <MudStack Row="true" Class="mt-2">
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="EnableAuthenticatorAsync" Disabled="_isSecurityBusy">Enable</MudButton>
+                                <MudButton Variant="Variant.Text" OnClick="@(() => { _authSetup = null; _authQrSvg = string.Empty; _authVerifyCode = null; })" Disabled="_isSecurityBusy">Cancel</MudButton>
+                            </MudStack>
+                        }
+                    </MudCardContent>
+                </MudCard>
+
+                @* Email section *@
+                <MudCard Elevation="2" Class="mb-4">
+                    <MudCardContent>
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                            <MudText Typo="Typo.h6">Email two-factor</MudText>
+                            @if(_twoFactorStatus?.EmailEnabled == true)
+                            {
+                                <MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Filled.LockOpen" OnClick="OpenDisableEmailDialog">Disable</MudButton>
+                            }
+                            else if(!_emailEnableMode)
+                            {
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Email" OnClick="StartEmailEnableAsync" Disabled="_isSecurityBusy">Send code to my email</MudButton>
+                            }
+                        </MudStack>
+
+                        @if(_emailEnableMode && _twoFactorStatus?.EmailEnabled != true)
+                        {
+                            <MudDivider Class="my-3"/>
+                            <MudTextField @bind-Value="_emailEnablePassword" Label="Current password" InputType="InputType.Password" Variant="Variant.Outlined" Class="mb-2" Disabled="_isSecurityBusy"/>
+                            <MudTextField @bind-Value="_emailEnableCode" Label="Email code" Variant="Variant.Outlined" Class="mb-2" Disabled="_isSecurityBusy"/>
+                            <MudStack Row="true">
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="EnableEmailAsync" Disabled="_isSecurityBusy">Enable</MudButton>
+                                <MudButton Variant="Variant.Text" OnClick="@(() => { _emailEnableMode = false; _emailEnablePassword = null; _emailEnableCode = null; })" Disabled="_isSecurityBusy">Cancel</MudButton>
+                            </MudStack>
+                        }
+                    </MudCardContent>
+                </MudCard>
+
+                @* Recovery codes section *@
+                @if(_twoFactorStatus?.Enabled == true)
+                {
+                    <MudCard Elevation="2" Class="mb-4">
+                        <MudCardContent>
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                <MudText Typo="Typo.h6">Recovery codes</MudText>
+                                <MudButton Variant="Variant.Outlined" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Refresh" OnClick="OpenRegenerateRecoveryDialog">Regenerate</MudButton>
+                            </MudStack>
+                        </MudCardContent>
+                    </MudCard>
+                }
+
+                @* New recovery codes display (one-shot after enable / regenerate) *@
+                @if(_displayedRecoveryCodes is { Count: > 0 })
+                {
+                    <MudAlert Severity="Severity.Warning" Class="mb-4">
+                        <MudText Typo="Typo.body2" Class="mb-2"><strong>Save these recovery codes in a safe place. They will not be shown again.</strong></MudText>
+                        <MudGrid Spacing="2">
+                            @foreach(string rc in _displayedRecoveryCodes)
+                            {
+                                <MudItem xs="6"><code>@rc</code></MudItem>
+                            }
+                        </MudGrid>
+                        <MudButton Variant="Variant.Text" Class="mt-2" OnClick="@(() => _displayedRecoveryCodes = null)">I have saved them</MudButton>
+                    </MudAlert>
                 }
             </MudItem>
         </MudGrid>

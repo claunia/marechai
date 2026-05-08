@@ -87,13 +87,123 @@ public sealed class AuthService
             return false;
         }
 
-        if(string.IsNullOrWhiteSpace(authResponse?.Token)) return false;
+        if(string.IsNullOrWhiteSpace(authResponse?.Token))
+        {
+            // Two-factor required: bubble up the pending token + available methods so the LoginViewModel can
+            // swap to the 2FA prompt. We deliberately return false (the ITokenService still has no usable token)
+            // and use sentinel keys in the credentials dictionary as the only available transport.
+            if(authResponse?.RequiresTwoFactor == true && !string.IsNullOrWhiteSpace(authResponse.TwoFactorToken))
+            {
+                credentials["requiresTwoFactor"] = "true";
+                credentials["twoFactorToken"]    = authResponse.TwoFactorToken;
+                credentials["availableMethods"]  = string.Join(",", authResponse.AvailableMethods ?? new List<string>());
+
+                return false;
+            }
+
+            return false;
+        }
 
         tokenService.SetToken(authResponse.Token);
 
         LoggedIn?.Invoke(this, EventArgs.Empty);
 
         return true;
+    }
+
+    /// <summary>
+    ///     Completes a two-factor login by submitting an authenticator-app or email code together with the pending
+    ///     token returned from <see cref="LoginAsync" />. On success the JWT is applied via <c>tokenService</c> and
+    ///     the <see cref="LoggedIn" /> event fires.
+    /// </summary>
+    public async Task<(bool Succeeded, string ErrorMessage)> VerifyTwoFactorAsync(string twoFactorToken,
+                                                                                   string provider, string code)
+    {
+        try
+        {
+            tokenService.RemoveToken();
+
+            AuthResponse response = await client.Auth.Login.TwoFactor.PostAsync(new TwoFactorVerifyRequest
+            {
+                TwoFactorToken = twoFactorToken,
+                Provider       = provider,
+                Code           = code
+            });
+
+            if(response is null || response.Succeeded != true || string.IsNullOrWhiteSpace(response.Token))
+                return (false, response?.Message ?? stringLocalizer["Auth.InvalidCredentials"]);
+
+            tokenService.SetToken(response.Token);
+            LoggedIn?.Invoke(this, EventArgs.Empty);
+
+            return (true, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            return (false, ex.Detail ?? ex.Title ?? stringLocalizer["Auth.InvalidCredentials"]);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message ?? stringLocalizer["Auth.InvalidCredentials"]);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool Succeeded, string ErrorMessage)> VerifyRecoveryAsync(string twoFactorToken,
+                                                                                  string recoveryCode)
+    {
+        try
+        {
+            tokenService.RemoveToken();
+
+            AuthResponse response = await client.Auth.Login.Recovery.PostAsync(new TwoFactorRecoveryRequest
+            {
+                TwoFactorToken = twoFactorToken,
+                RecoveryCode   = recoveryCode
+            });
+
+            if(response is null || response.Succeeded != true || string.IsNullOrWhiteSpace(response.Token))
+                return (false, response?.Message ?? stringLocalizer["Auth.InvalidCredentials"]);
+
+            tokenService.SetToken(response.Token);
+            LoggedIn?.Invoke(this, EventArgs.Empty);
+
+            return (true, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            return (false, ex.Detail ?? ex.Title ?? stringLocalizer["Auth.InvalidCredentials"]);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool Succeeded, string EmailMasked, string ErrorMessage)> SendLoginEmailCodeAsync(
+        string twoFactorToken)
+    {
+        try
+        {
+            TwoFactorEmailSendResponse response = await client.Auth.Login.TwoFactor.Email.Send.PostAsync(
+                                                          new TwoFactorEmailSendRequest
+                                                          {
+                                                              TwoFactorToken = twoFactorToken
+                                                          });
+
+            return (true, response?.EmailMasked, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            return (false, null, ex.Detail ?? ex.Title);
+        }
+        catch(Exception ex)
+        {
+            return (false, null, ex.Message);
+        }
     }
 
     /// <inheritdoc />

@@ -151,6 +151,12 @@ namespace Marechai.Database.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit(1)");
 
+                    b.Property<bool>("TwoFactorViaAuthenticator")
+                        .HasColumnType("bit(1)");
+
+                    b.Property<bool>("TwoFactorViaEmail")
+                        .HasColumnType("bit(1)");
+
                     b.Property<bool>("UseGravatar")
                         .HasColumnType("bit(1)");
 
