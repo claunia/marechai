@@ -1,0 +1,112 @@
+<?xml version="1.0"
+      encoding="utf-8"?>
+
+<Page x:Class="Marechai.App.Presentation.Views.ResendConfirmationPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:vm="using:Marechai.App.Presentation.ViewModels"
+      xmlns:utu="using:Uno.Toolkit.UI"
+      mc:Ignorable="d"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+      d:DataContext="{d:DesignInstance vm:ResendConfirmationViewModel}">
+
+    <Grid utu:SafeArea.Insets="VisibleBounds">
+        <Grid HorizontalAlignment="Center"
+              VerticalAlignment="Center"
+              MaxWidth="480"
+              Padding="32">
+
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="2"
+                    CornerRadius="8"
+                    Padding="0"
+                    Translation="0,0,16">
+                <Border.Shadow>
+                    <ThemeShadow />
+                </Border.Shadow>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0"
+                            Background="{ThemeResource AccentFillColorDefaultBrush}"
+                            Padding="16,12"
+                            CornerRadius="6,6,0,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <FontIcon Grid.Column="0"
+                                      Glyph="&#xE724;"
+                                      FontSize="20"
+                                      Foreground="White"
+                                      VerticalAlignment="Center"
+                                      Margin="0,0,12,0" />
+
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding Source={StaticResource Strings}, Path=ResendConfirmationPage_Title}"
+                                       Foreground="White"
+                                       FontWeight="SemiBold"
+                                       FontSize="18"
+                                       VerticalAlignment="Center" />
+                        </Grid>
+                    </Border>
+
+                    <ScrollViewer Grid.Row="1"
+                                  VerticalScrollBarVisibility="Auto"
+                                  Padding="24">
+                        <StackPanel Spacing="16">
+
+                            <StackPanel Spacing="16"
+                                        Visibility="{Binding Submitted, Converter={StaticResource InvertBoolToVisibilityConverter}}">
+                                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ResendConfirmationPage_Intro}"
+                                           TextWrapping="Wrap"
+                                           Style="{StaticResource BodyTextBlockStyle}" />
+
+                                <InfoBar IsOpen="{Binding HasError, Mode=OneWay}"
+                                         Severity="Error"
+                                         Message="{Binding ErrorMessage}"
+                                         IsClosable="False" />
+
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ResendConfirmationPage_EmailLabel}"
+                                               Style="{StaticResource BodyStrongTextBlockStyle}" />
+                                    <TextBox Text="{Binding Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             KeyDown="OnEmailKeyDown"
+                                             InputScope="EmailNameOrAddress" />
+                                </StackPanel>
+
+                                <Button Content="{Binding Source={StaticResource Strings}, Path=ResendConfirmationPage_SubmitButton}"
+                                        Command="{Binding SubmitCommand}"
+                                        IsEnabled="{Binding IsSubmitting, Converter={StaticResource InvertBoolConverter}}"
+                                        HorizontalAlignment="Stretch"
+                                        Style="{StaticResource AccentButtonStyle}" />
+                            </StackPanel>
+
+                            <StackPanel Spacing="16"
+                                        Visibility="{Binding Submitted, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <InfoBar IsOpen="True"
+                                         Severity="Informational"
+                                         Title="{Binding Source={StaticResource Strings}, Path=ResendConfirmationPage_ConfirmationTitle}"
+                                         Message="{Binding Source={StaticResource Strings}, Path=ResendConfirmationPage_ConfirmationMessage}"
+                                         IsClosable="False" />
+                            </StackPanel>
+
+                            <HyperlinkButton Content="{Binding Source={StaticResource Strings}, Path=ResendConfirmationPage_BackToLogin}"
+                                             Command="{Binding BackToLoginCommand}"
+                                             HorizontalAlignment="Center" />
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Page>

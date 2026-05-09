@@ -22,6 +22,8 @@ namespace Marechai.ApiClient.Models
 #else
         public List<string> AvailableMethods { get; set; }
 #endif
+        /// <summary>The emailNotConfirmed property</summary>
+        public bool? EmailNotConfirmed { get; set; }
         /// <summary>The message property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -76,6 +78,7 @@ namespace Marechai.ApiClient.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "availableMethods", n => { AvailableMethods = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
+                { "emailNotConfirmed", n => { EmailNotConfirmed = n.GetBoolValue(); } },
                 { "message", n => { Message = n.GetStringValue(); } },
                 { "requiresTwoFactor", n => { RequiresTwoFactor = n.GetBoolValue(); } },
                 { "succeeded", n => { Succeeded = n.GetBoolValue(); } },
@@ -91,6 +94,7 @@ namespace Marechai.ApiClient.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteCollectionOfPrimitiveValues<string>("availableMethods", AvailableMethods);
+            writer.WriteBoolValue("emailNotConfirmed", EmailNotConfirmed);
             writer.WriteStringValue("message", Message);
             writer.WriteBoolValue("requiresTwoFactor", RequiresTwoFactor);
             writer.WriteBoolValue("succeeded", Succeeded);

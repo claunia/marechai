@@ -1,0 +1,133 @@
+@{
+    /******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2026 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/admin/invitation-codes"
+@attribute [Authorize(Roles = "Admin, UberAdmin")]
+@using Marechai.ApiClient.Models
+@using Marechai.Services
+@inject InvitationCodesService Service
+@inject IDialogService DialogService
+@inject IJSRuntime Js
+
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Filled.CardGiftcard" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Style="color: white;">Invitation Codes</MudText>
+    </MudStack>
+    <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);" Class="mt-2">Generate single-use invitation codes for new accounts. Share each code privately with the person you intend to invite — codes are consumed the first time they are used.</MudText>
+</MudPaper>
+
+@if(!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+}
+
+@if(!string.IsNullOrWhiteSpace(_lastGeneratedCode))
+{
+    <MudAlert Severity="Severity.Success" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _lastGeneratedCode = null">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+            <span>New invitation code generated and copied to your clipboard:</span>
+            <MudText Typo="Typo.h6" Style="font-family: monospace;">@_lastGeneratedCode</MudText>
+        </MudStack>
+    </MudAlert>
+}
+
+<MudPaper Elevation="2" Class="rounded-lg">
+    <MudToolBar Dense="true">
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.Add"
+                   OnClick="GenerateCodeAsync"
+                   Disabled="_isGenerating">
+            @if(_isGenerating)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
+                <span>Generating...</span>
+            }
+            else
+            {
+                <span>Generate code</span>
+            }
+        </MudButton>
+        <MudSpacer/>
+        <MudSwitch T="bool" @bind-Value="_unusedOnly" Color="Color.Primary" Label="Unused only" Class="mr-3" Change="OnFilterChanged"/>
+        <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadAsync"/>
+    </MudToolBar>
+
+    @if(_isLoading)
+    {
+        <div class="d-flex justify-center pa-8">
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+        </div>
+    }
+    else
+    {
+        <MudDataGrid Items="_codes" Dense="true" Hover="true" Striped="true">
+            <Columns>
+                <TemplateColumn Title="Code" Sortable="false">
+                    <CellTemplate>
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+                            <MudText Typo="Typo.body2" Style="font-family: monospace;">@context.Item.Code</MudText>
+                            <MudTooltip Text="Copy to clipboard">
+                                <MudIconButton Icon="@Icons.Material.Filled.ContentCopy"
+                                               Size="Size.Small"
+                                               OnClick="() => CopyToClipboardAsync(context.Item.Code)"/>
+                            </MudTooltip>
+                        </MudStack>
+                    </CellTemplate>
+                </TemplateColumn>
+                <PropertyColumn Property="x => x.CreatedByUserName" Title="Created by"/>
+                <PropertyColumn Property="x => x.CreatedOn" Title="Created on" Format="yyyy-MM-dd HH:mm"/>
+                <TemplateColumn Title="Status" Sortable="false">
+                    <CellTemplate>
+                        @if(context.Item.IsUsed == true)
+                        {
+                            <MudChip T="string" Size="Size.Small" Color="Color.Default" Variant="Variant.Filled">Used</MudChip>
+                        }
+                        else
+                        {
+                            <MudChip T="string" Size="Size.Small" Color="Color.Success" Variant="Variant.Filled">Unused</MudChip>
+                        }
+                    </CellTemplate>
+                </TemplateColumn>
+                <PropertyColumn Property="x => x.UsedByUserName" Title="Used by"/>
+                <PropertyColumn Property="x => x.UsedOn" Title="Used on" Format="yyyy-MM-dd HH:mm"/>
+                <TemplateColumn Title="Actions" Sortable="false">
+                    <CellTemplate>
+                        <MudTooltip Text="@(context.Item.IsUsed == true ? "Cannot revoke used codes" : "Revoke")">
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                           Size="Size.Small"
+                                           Color="Color.Error"
+                                           Disabled="@(context.Item.IsUsed == true)"
+                                           OnClick="() => ConfirmRevokeAsync(context.Item)"/>
+                        </MudTooltip>
+                    </CellTemplate>
+                </TemplateColumn>
+            </Columns>
+        </MudDataGrid>
+    }
+</MudPaper>

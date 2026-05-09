@@ -1,0 +1,86 @@
+@{
+    /******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2026 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/account/deletion-pending"
+@attribute [Authorize]
+@inject AuthService AuthService
+@inject NavigationManager Navigation
+@inject IStringLocalizer<ProfileService> L
+
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #c62828 0%, #ef5350 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Filled.HourglassBottom" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Style="color: white;">@L["Account scheduled for deletion"]</MudText>
+    </MudStack>
+</MudPaper>
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="12" sm="8" md="6" lg="5">
+        <MudPaper Elevation="2" Class="pa-6 rounded-lg">
+            @if(_status is null)
+            {
+                <div class="d-flex justify-center"><MudProgressCircular Indeterminate="true"/></div>
+            }
+            else if(_status.IsPending == true)
+            {
+                <MudAlert Severity="Severity.Warning" Class="mb-4">
+                    @L["Your account is scheduled for permanent deletion. Until then, most of the site is unavailable to you."]
+                </MudAlert>
+                @if(_status.DeletionScheduledFor.HasValue)
+                {
+                    <MudText Typo="Typo.body1" Class="mb-3">
+                        <strong>@L["Scheduled for"]:</strong>
+                        @_status.DeletionScheduledFor.Value.ToLocalTime().ToString("D")
+                    </MudText>
+                }
+                @if(!string.IsNullOrWhiteSpace(_message))
+                {
+                    <MudAlert Severity="Severity.Info" Class="mb-3" ShowCloseIcon="true" CloseIconClicked="() => _message = null">@_message</MudAlert>
+                }
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Class="mb-2" Disabled="_isCancelling" OnClick="CancelAsync" StartIcon="@Icons.Material.Filled.Undo">
+                    @if(_isCancelling)
+                    {
+                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
+                        <span>@L["Cancelling..."]</span>
+                    }
+                    else
+                    {
+                        <span>@L["Cancel deletion"]</span>
+                    }
+                </MudButton>
+                <MudButton Variant="Variant.Outlined" Color="Color.Default" FullWidth="true" Class="mb-2" OnClick="DownloadDataAsync" StartIcon="@Icons.Material.Filled.Download">
+                    @L["Download my data"]
+                </MudButton>
+            }
+            else
+            {
+                <MudAlert Severity="Severity.Success" Class="mb-3">@L["No deletion request is pending on your account."]</MudAlert>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Href="/profile">@L["Back to profile"]</MudButton>
+            }
+        </MudPaper>
+    </MudItem>
+</MudGrid>

@@ -76,6 +76,9 @@ namespace Marechai.Database.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("longtext");
 
+                    b.Property<DateTime?>("DeletionRequestedAt")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("DisplayName")
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
@@ -2820,6 +2823,40 @@ namespace Marechai.Database.Migrations
                         .HasDatabaseName("idx_setextension_processor");
 
                     b.ToTable("instruction_set_extensions_by_processor", (string)null);
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.InvitationCode", b =>
+                {
+                    b.Property<string>("Code")
+                        .HasMaxLength(9)
+                        .HasColumnType("varchar(9)");
+
+                    b.Property<string>("CreatedById")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid>("RowVersion")
+                        .IsConcurrencyToken()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("UsedById")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime?>("UsedOn")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Code");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedOn");
+
+                    b.HasIndex("UsedById");
+
+                    b.ToTable("InvitationCodes");
                 });
 
             modelBuilder.Entity("Marechai.Database.Models.Iso31661Numeric", b =>
@@ -9240,6 +9277,24 @@ namespace Marechai.Database.Migrations
                     b.Navigation("Extension");
 
                     b.Navigation("Processor");
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.InvitationCode", b =>
+                {
+                    b.HasOne("Marechai.Database.Models.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Marechai.Database.Models.ApplicationUser", "UsedBy")
+                        .WithMany()
+                        .HasForeignKey("UsedById")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("UsedBy");
                 });
 
             modelBuilder.Entity("Marechai.Database.Models.LanguageBySoftwareRelease", b =>

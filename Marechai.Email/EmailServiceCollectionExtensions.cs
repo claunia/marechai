@@ -28,6 +28,9 @@ public static class EmailServiceCollectionExtensions
         services.AddSingleton<IEmailSender, SmtpEmailSender>();
         services.AddSingleton<TwoFactorEmailComposer>();
         services.AddSingleton<PasswordResetEmailComposer>();
+        services.AddSingleton<EmailConfirmationEmailComposer>();
+        services.AddSingleton<WelcomeEmailComposer>();
+        services.AddSingleton<AccountDeletionConfirmationEmailComposer>();
 
         return services;
     }

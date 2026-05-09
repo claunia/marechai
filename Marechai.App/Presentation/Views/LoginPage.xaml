@@ -243,15 +243,21 @@
 
                                 <StackPanel Orientation="Horizontal"
                                             HorizontalAlignment="Center"
-                                            Spacing="4"
-                                            Visibility="Collapsed">
+                                            Spacing="4">
                                     <TextBlock
                                                Text="{Binding Source={StaticResource Strings}, Path=LoginPage_NoAccountText}"
                                                VerticalAlignment="Center" />
                                     <HyperlinkButton
                                                      Content="{Binding Source={StaticResource Strings}, Path=LoginPage_SignUpLink}"
+                                                     Command="{Binding SignUpCommand}"
                                                      Padding="4,0" />
                                 </StackPanel>
+
+                                <HyperlinkButton
+                                                 Content="{Binding Source={StaticResource Strings}, Path=LoginPage_ResendConfirmationLink}"
+                                                 Command="{Binding ResendConfirmationCommand}"
+                                                 HorizontalAlignment="Center"
+                                                 Visibility="{Binding EmailNotConfirmed, Converter={StaticResource BoolToVisibilityConverter}}" />
                             </StackPanel>
                         </StackPanel>
                     </ScrollViewer>

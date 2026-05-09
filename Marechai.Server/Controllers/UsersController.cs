@@ -25,9 +25,11 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Marechai.Data.Models;
 using Marechai.Database.Models;
+using Marechai.Server.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -38,7 +40,8 @@ namespace Marechai.Server.Controllers;
 [ApiController]
 [Route("users")]
 [Authorize(Roles = ApplicationRole.RoleUberAdmin)]
-public class UsersController(UserManager<ApplicationUser> userManager) : ControllerBase
+public class UsersController(UserManager<ApplicationUser> userManager,
+                             UserAccountDeletionService    userAccountDeletionService) : ControllerBase
 {
     [HttpGet]
     [ProducesResponseType(typeof(List<UserDto>), StatusCodes.Status200OK, Description = "Returns a list of all users.")]
@@ -213,9 +216,14 @@ public class UsersController(UserManager<ApplicationUser> userManager) : Control
 
         if(user == null) return NotFound("User not found");
 
-        IdentityResult result = await userManager.DeleteAsync(user);
+        // Delegate to the shared deletion service so the admin path applies the same anonymise-content +
+        // hard-delete-state + avatar-file-cleanup as the GDPR self-service path. The admin path is
+        // immediate (no grace window).
+        string actorId = User.FindFirstValue(System.Security.Claims.ClaimTypes.Sid);
 
-        if(!result.Succeeded) return BadRequest(result.Errors);
+        bool ok = await userAccountDeletionService.PurgeAsync(id, actorUserIdForLog: actorId ?? "admin");
+
+        if(!ok) return BadRequest("Failed to purge user account.");
 
         return NoContent();
     }

@@ -207,6 +207,10 @@ public partial class App : PrismApplication
         containerRegistry.Register<MainViewModel>();
         containerRegistry.Register<LoginViewModel>();
         containerRegistry.Register<ForgotPasswordViewModel>();
+        containerRegistry.Register<RegisterViewModel>();
+        containerRegistry.Register<ResendConfirmationViewModel>();
+        containerRegistry.Register<DeleteAccountViewModel>();
+        containerRegistry.Register<DeletionPendingViewModel>();
         containerRegistry.Register<ComputersViewModel>();
         containerRegistry.Register<ComputersListViewModel>();
         containerRegistry.Register<ConsolesViewModel>();
@@ -269,6 +273,10 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<MainPage, MainViewModel>();
         containerRegistry.RegisterForNavigation<LoginPage, LoginViewModel>();
         containerRegistry.RegisterForNavigation<ForgotPasswordPage, ForgotPasswordViewModel>();
+        containerRegistry.RegisterForNavigation<RegisterPage, RegisterViewModel>();
+        containerRegistry.RegisterForNavigation<ResendConfirmationPage, ResendConfirmationViewModel>();
+        containerRegistry.RegisterForNavigation<DeleteAccountPage, DeleteAccountViewModel>();
+        containerRegistry.RegisterForNavigation<DeletionPendingPage, DeletionPendingViewModel>();
         containerRegistry.RegisterForNavigation<NewsPage, NewsViewModel>();
         containerRegistry.RegisterForNavigation<ComputersPage, ComputersViewModel>();
         containerRegistry.RegisterForNavigation<ComputersListPage, ComputersListViewModel>();

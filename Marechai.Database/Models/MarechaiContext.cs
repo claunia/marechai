@@ -86,6 +86,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<InstructionSet>                      InstructionSets                     { get; set; }
     public virtual DbSet<InstructionSetExtension>             InstructionSetExtensions            { get; set; }
     public virtual DbSet<InstructionSetExtensionsByProcessor> InstructionSetExtensionsByProcessor { get; set; }
+    public virtual DbSet<InvitationCode>                      InvitationCodes                     { get; set; }
     public virtual DbSet<Iso31661Numeric>                     Iso31661Numeric                     { get; set; }
     public virtual DbSet<Iso4217>                             Iso4217                             { get; set; }
     public virtual DbSet<Iso639>                              Iso639                              { get; set; }
@@ -3190,6 +3191,30 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
             entity.HasOne(e => e.ResolvedBy)
                   .WithMany()
                   .HasForeignKey(e => e.ResolvedByUserId)
+                  .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<InvitationCode>(entity =>
+        {
+            entity.HasKey(e => e.Code);
+
+            entity.Property(e => e.Code)
+                  .HasMaxLength(9)
+                  .IsRequired();
+
+            entity.Property(e => e.RowVersion).IsConcurrencyToken();
+
+            entity.HasIndex(e => e.UsedById);
+            entity.HasIndex(e => e.CreatedOn);
+
+            entity.HasOne(e => e.CreatedBy)
+                  .WithMany()
+                  .HasForeignKey(e => e.CreatedById)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.UsedBy)
+                  .WithMany()
+                  .HasForeignKey(e => e.UsedById)
                   .OnDelete(DeleteBehavior.SetNull);
         });
     }

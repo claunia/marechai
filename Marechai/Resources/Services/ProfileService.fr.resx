@@ -182,4 +182,260 @@
         <value>Impossible de réinitialiser le mot de passe.</value>
         <comment>Could not reset password.</comment>
     </data>
+    <data name="Password" xml:space="preserve">
+        <value>Mot de passe</value>
+        <comment>Password</comment>
+    </data>
+    <data name="Sign in" xml:space="preserve">
+        <value>Se connecter</value>
+        <comment>Sign in</comment>
+    </data>
+    <data name="Create an account" xml:space="preserve">
+        <value>Créer un compte</value>
+        <comment>Create an account</comment>
+    </data>
+    <data name="Marechai is an invitation-only community. Paste the code an admin shared with you, fill in the fields below, and we will email you a link to confirm your account." xml:space="preserve">
+        <value>Marechai est une communauté sur invitation uniquement. Collez le code qu'un administrateur vous a transmis, remplissez les champs ci-dessous, et nous vous enverrons par e-mail un lien pour confirmer votre compte.</value>
+        <comment>Marechai is an invitation-only community. Paste the code an admin shared with you, fill in the fields below, and we will email you a link to confirm your account.</comment>
+    </data>
+    <data name="Invitation code" xml:space="preserve">
+        <value>Code d'invitation</value>
+        <comment>Invitation code</comment>
+    </data>
+    <data name="Format: XXXX-YYYY" xml:space="preserve">
+        <value>Format : XXXX-YYYY</value>
+        <comment>Format: XXXX-YYYY</comment>
+    </data>
+    <data name="Username" xml:space="preserve">
+        <value>Nom d'utilisateur</value>
+        <comment>Username</comment>
+    </data>
+    <data name="Display name" xml:space="preserve">
+        <value>Nom affiché</value>
+        <comment>Display name</comment>
+    </data>
+    <data name="Shown publicly on your profile and contributions." xml:space="preserve">
+        <value>Affiché publiquement sur votre profil et vos contributions.</value>
+        <comment>Shown publicly on your profile and contributions.</comment>
+    </data>
+    <data name="Confirm password" xml:space="preserve">
+        <value>Confirmez le mot de passe</value>
+        <comment>Confirm password</comment>
+    </data>
+    <data name="Creating account..." xml:space="preserve">
+        <value>Création du compte...</value>
+        <comment>Creating account...</comment>
+    </data>
+    <data name="Create account" xml:space="preserve">
+        <value>Créer le compte</value>
+        <comment>Create account</comment>
+    </data>
+    <data name="Account created. We have sent you a confirmation email — click the link inside to activate your account, then come back here to sign in." xml:space="preserve">
+        <value>Compte créé. Nous vous avons envoyé un e-mail de confirmation — cliquez sur le lien qu'il contient pour activer votre compte, puis revenez ici pour vous connecter.</value>
+        <comment>Account created. We have sent you a confirmation email — click the link inside to activate your account, then come back here to sign in.</comment>
+    </data>
+    <data name="Didn't get the email?" xml:space="preserve">
+        <value>Vous n'avez pas reçu l'e-mail ?</value>
+        <comment>Didn't get the email?</comment>
+    </data>
+    <data name="Already have an account? Sign in" xml:space="preserve">
+        <value>Déjà un compte ? Connectez-vous</value>
+        <comment>Already have an account? Sign in</comment>
+    </data>
+    <data name="Don't have an account?" xml:space="preserve">
+        <value>Pas encore de compte ?</value>
+        <comment>Don't have an account?</comment>
+    </data>
+    <data name="Sign up" xml:space="preserve">
+        <value>Inscrivez-vous</value>
+        <comment>Sign up</comment>
+    </data>
+    <data name="Resend confirmation email" xml:space="preserve">
+        <value>Renvoyer l'e-mail de confirmation</value>
+        <comment>Resend confirmation email</comment>
+    </data>
+    <data name="Invitation code is required." xml:space="preserve">
+        <value>Le code d'invitation est obligatoire.</value>
+        <comment>Invitation code is required.</comment>
+    </data>
+    <data name="Username is required." xml:space="preserve">
+        <value>Le nom d'utilisateur est obligatoire.</value>
+        <comment>Username is required.</comment>
+    </data>
+    <data name="Display name is required." xml:space="preserve">
+        <value>Le nom affiché est obligatoire.</value>
+        <comment>Display name is required.</comment>
+    </data>
+    <data name="Password is required." xml:space="preserve">
+        <value>Le mot de passe est obligatoire.</value>
+        <comment>Password is required.</comment>
+    </data>
+    <data name="Registration failed." xml:space="preserve">
+        <value>L'inscription a échoué.</value>
+        <comment>Registration failed.</comment>
+    </data>
+    <data name="Confirm your email" xml:space="preserve">
+        <value>Confirmez votre e-mail</value>
+        <comment>Confirm your email</comment>
+    </data>
+    <data name="Confirming your email..." xml:space="preserve">
+        <value>Confirmation de votre e-mail...</value>
+        <comment>Confirming your email...</comment>
+    </data>
+    <data name="Your email is confirmed. You can now sign in to Marechai." xml:space="preserve">
+        <value>Votre e-mail est confirmé. Vous pouvez maintenant vous connecter à Marechai.</value>
+        <comment>Your email is confirmed. You can now sign in to Marechai.</comment>
+    </data>
+    <data name="Invalid or expired confirmation link." xml:space="preserve">
+        <value>Lien de confirmation invalide ou expiré.</value>
+        <comment>Invalid or expired confirmation link.</comment>
+    </data>
+    <data name="Send a new confirmation email" xml:space="preserve">
+        <value>Envoyer un nouvel e-mail de confirmation</value>
+        <comment>Send a new confirmation email</comment>
+    </data>
+    <data name="The confirmation link is missing required fields." xml:space="preserve">
+        <value>Le lien de confirmation manque de champs obligatoires.</value>
+        <comment>The confirmation link is missing required fields.</comment>
+    </data>
+    <data name="Enter the email address you registered with and we will send you a fresh confirmation link." xml:space="preserve">
+        <value>Saisissez l'adresse e-mail que vous avez utilisée à l'inscription et nous vous enverrons un nouveau lien de confirmation.</value>
+        <comment>Enter the email address you registered with and we will send you a fresh confirmation link.</comment>
+    </data>
+    <data name="Send confirmation email" xml:space="preserve">
+        <value>Envoyer l'e-mail de confirmation</value>
+        <comment>Send confirmation email</comment>
+    </data>
+    <data name="If an account with that email exists and hasn't been confirmed yet, we have sent a fresh confirmation link to it. Please check your inbox (and spam folder)." xml:space="preserve">
+        <value>Si un compte avec cette adresse existe et n'a pas encore été confirmé, nous lui avons envoyé un nouveau lien de confirmation. Vérifiez votre boîte de réception (et le dossier spam).</value>
+        <comment>If an account with that email exists and hasn't been confirmed yet, we have sent a fresh confirmation link to it. Please check your inbox (and spam folder).</comment>
+    </data>
+    <data name="Delete my account" xml:space="preserve">
+        <value>Supprimer mon compte</value>
+        <comment>Delete my account</comment>
+    </data>
+    <data name="This will permanently remove your account and personal data. Your public contributions (photos, scans, reviews, messages) will be retained but anonymised. After confirming, you have 30 days to change your mind by signing in and choosing 'Cancel deletion'." xml:space="preserve">
+        <value>Cela supprimera définitivement votre compte et vos données personnelles. Vos contributions publiques (photos, scans, avis, messages) seront conservées mais anonymisées. Après confirmation, vous avez 30 jours pour changer d'avis en vous connectant et en choisissant « Annuler la suppression ».</value>
+        <comment>This will permanently remove your account and personal data. Your public contributions (photos, scans, reviews, messages) will be retained but anonymised. After confirming, you have 30 days to change your mind by signing in and choosing 'Cancel deletion'.</comment>
+    </data>
+    <data name="Current password" xml:space="preserve">
+        <value>Mot de passe actuel</value>
+        <comment>Current password</comment>
+    </data>
+    <data name="I have two-factor authentication enabled" xml:space="preserve">
+        <value>J'ai activé l'authentification à deux facteurs</value>
+        <comment>I have two-factor authentication enabled</comment>
+    </data>
+    <data name="Two-factor method" xml:space="preserve">
+        <value>Méthode à deux facteurs</value>
+        <comment>Two-factor method</comment>
+    </data>
+    <data name="Authenticator app" xml:space="preserve">
+        <value>Application d'authentification</value>
+        <comment>Authenticator app</comment>
+    </data>
+    <data name="Email code" xml:space="preserve">
+        <value>Code par e-mail</value>
+        <comment>Email code</comment>
+    </data>
+    <data name="Recovery code" xml:space="preserve">
+        <value>Code de récupération</value>
+        <comment>Recovery code</comment>
+    </data>
+    <data name="Two-factor code" xml:space="preserve">
+        <value>Code à deux facteurs</value>
+        <comment>Two-factor code</comment>
+    </data>
+    <data name="We sent you an email with a confirmation link. Click it to start the 30-day deletion grace window. Until then your account is unchanged." xml:space="preserve">
+        <value>Nous vous avons envoyé un e-mail avec un lien de confirmation. Cliquez dessus pour démarrer la période de grâce de 30 jours. Jusque-là, votre compte reste inchangé.</value>
+        <comment>We sent you an email with a confirmation link. Click it to start the 30-day deletion grace window. Until then your account is unchanged.</comment>
+    </data>
+    <data name="Back to profile" xml:space="preserve">
+        <value>Retour au profil</value>
+        <comment>Back to profile</comment>
+    </data>
+    <data name="Current password is required." xml:space="preserve">
+        <value>Le mot de passe actuel est obligatoire.</value>
+        <comment>Current password is required.</comment>
+    </data>
+    <data name="Two-factor code is required." xml:space="preserve">
+        <value>Le code à deux facteurs est obligatoire.</value>
+        <comment>Two-factor code is required.</comment>
+    </data>
+    <data name="Could not start account deletion." xml:space="preserve">
+        <value>Impossible de démarrer la suppression du compte.</value>
+        <comment>Could not start account deletion.</comment>
+    </data>
+    <data name="Confirm account deletion" xml:space="preserve">
+        <value>Confirmez la suppression du compte</value>
+        <comment>Confirm account deletion</comment>
+    </data>
+    <data name="Your account is now scheduled for deletion. We will permanently remove it after the 30-day grace window. To cancel, sign in any time before then and choose 'Cancel deletion'." xml:space="preserve">
+        <value>Votre compte est maintenant planifié pour suppression. Nous le supprimerons définitivement après la période de grâce de 30 jours. Pour annuler, connectez-vous avant cette date et choisissez « Annuler la suppression ».</value>
+        <comment>Your account is now scheduled for deletion. We will permanently remove it after the 30-day grace window. To cancel, sign in any time before then and choose 'Cancel deletion'.</comment>
+    </data>
+    <data name="View deletion status" xml:space="preserve">
+        <value>Voir l'état de la suppression</value>
+        <comment>View deletion status</comment>
+    </data>
+    <data name="Restart deletion request" xml:space="preserve">
+        <value>Recommencer la demande de suppression</value>
+        <comment>Restart deletion request</comment>
+    </data>
+    <data name="Account scheduled for deletion" xml:space="preserve">
+        <value>Compte planifié pour suppression</value>
+        <comment>Account scheduled for deletion</comment>
+    </data>
+    <data name="Your account is scheduled for permanent deletion. Until then, most of the site is unavailable to you." xml:space="preserve">
+        <value>Votre compte est planifié pour suppression définitive. Jusque-là, la majeure partie du site vous est inaccessible.</value>
+        <comment>Your account is scheduled for permanent deletion. Until then, most of the site is unavailable to you.</comment>
+    </data>
+    <data name="Scheduled for" xml:space="preserve">
+        <value>Prévu pour</value>
+        <comment>Scheduled for</comment>
+    </data>
+    <data name="Cancel deletion" xml:space="preserve">
+        <value>Annuler la suppression</value>
+        <comment>Cancel deletion</comment>
+    </data>
+    <data name="Cancelling..." xml:space="preserve">
+        <value>Annulation...</value>
+        <comment>Cancelling...</comment>
+    </data>
+    <data name="Download my data" xml:space="preserve">
+        <value>Télécharger mes données</value>
+        <comment>Download my data</comment>
+    </data>
+    <data name="No deletion request is pending on your account." xml:space="preserve">
+        <value>Aucune demande de suppression n'est en attente sur votre compte.</value>
+        <comment>No deletion request is pending on your account.</comment>
+    </data>
+    <data name="Deletion cancelled. You can continue using your account normally." xml:space="preserve">
+        <value>Suppression annulée. Vous pouvez continuer à utiliser votre compte normalement.</value>
+        <comment>Deletion cancelled. You can continue using your account normally.</comment>
+    </data>
+    <data name="Could not cancel the deletion. Please try again or contact support." xml:space="preserve">
+        <value>Impossible d'annuler la suppression. Veuillez réessayer ou contacter le support.</value>
+        <comment>Could not cancel the deletion. Please try again or contact support.</comment>
+    </data>
+    <data name="Could not generate your data export." xml:space="preserve">
+        <value>Impossible de générer l'export de vos données.</value>
+        <comment>Could not generate your data export.</comment>
+    </data>
+    <data name="Could not start the download. Please try a different browser." xml:space="preserve">
+        <value>Impossible de démarrer le téléchargement. Essayez un autre navigateur.</value>
+        <comment>Could not start the download. Please try a different browser.</comment>
+    </data>
+    <data name="The deletion link is missing required fields." xml:space="preserve">
+        <value>Le lien de suppression manque de champs obligatoires.</value>
+        <comment>The deletion link is missing required fields.</comment>
+    </data>
+    <data name="Danger zone" xml:space="preserve">
+        <value>Zone de danger</value>
+        <comment>Danger zone</comment>
+    </data>
+    <data name="Download a copy of your data, or permanently delete your Marechai account." xml:space="preserve">
+        <value>Téléchargez une copie de vos données ou supprimez définitivement votre compte Marechai.</value>
+        <comment>Download a copy of your data, or permanently delete your Marechai account.</comment>
+    </data>
 </root>

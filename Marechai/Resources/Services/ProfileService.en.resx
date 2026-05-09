@@ -152,4 +152,196 @@
     <data name="Could not reset password." xml:space="preserve">
         <value>Could not reset password.</value>
     </data>
+    <data name="Password" xml:space="preserve">
+        <value>Password</value>
+    </data>
+    <data name="Sign in" xml:space="preserve">
+        <value>Sign in</value>
+    </data>
+    <data name="Create an account" xml:space="preserve">
+        <value>Create an account</value>
+    </data>
+    <data name="Marechai is an invitation-only community. Paste the code an admin shared with you, fill in the fields below, and we will email you a link to confirm your account." xml:space="preserve">
+        <value>Marechai is an invitation-only community. Paste the code an admin shared with you, fill in the fields below, and we will email you a link to confirm your account.</value>
+    </data>
+    <data name="Invitation code" xml:space="preserve">
+        <value>Invitation code</value>
+    </data>
+    <data name="Format: XXXX-YYYY" xml:space="preserve">
+        <value>Format: XXXX-YYYY</value>
+    </data>
+    <data name="Username" xml:space="preserve">
+        <value>Username</value>
+    </data>
+    <data name="Display name" xml:space="preserve">
+        <value>Display name</value>
+    </data>
+    <data name="Shown publicly on your profile and contributions." xml:space="preserve">
+        <value>Shown publicly on your profile and contributions.</value>
+    </data>
+    <data name="Confirm password" xml:space="preserve">
+        <value>Confirm password</value>
+    </data>
+    <data name="Creating account..." xml:space="preserve">
+        <value>Creating account...</value>
+    </data>
+    <data name="Create account" xml:space="preserve">
+        <value>Create account</value>
+    </data>
+    <data name="Account created. We have sent you a confirmation email — click the link inside to activate your account, then come back here to sign in." xml:space="preserve">
+        <value>Account created. We have sent you a confirmation email — click the link inside to activate your account, then come back here to sign in.</value>
+    </data>
+    <data name="Didn't get the email?" xml:space="preserve">
+        <value>Didn't get the email?</value>
+    </data>
+    <data name="Already have an account? Sign in" xml:space="preserve">
+        <value>Already have an account? Sign in</value>
+    </data>
+    <data name="Don't have an account?" xml:space="preserve">
+        <value>Don't have an account?</value>
+    </data>
+    <data name="Sign up" xml:space="preserve">
+        <value>Sign up</value>
+    </data>
+    <data name="Resend confirmation email" xml:space="preserve">
+        <value>Resend confirmation email</value>
+    </data>
+    <data name="Invitation code is required." xml:space="preserve">
+        <value>Invitation code is required.</value>
+    </data>
+    <data name="Username is required." xml:space="preserve">
+        <value>Username is required.</value>
+    </data>
+    <data name="Display name is required." xml:space="preserve">
+        <value>Display name is required.</value>
+    </data>
+    <data name="Password is required." xml:space="preserve">
+        <value>Password is required.</value>
+    </data>
+    <data name="Registration failed." xml:space="preserve">
+        <value>Registration failed.</value>
+    </data>
+    <data name="Confirm your email" xml:space="preserve">
+        <value>Confirm your email</value>
+    </data>
+    <data name="Confirming your email..." xml:space="preserve">
+        <value>Confirming your email...</value>
+    </data>
+    <data name="Your email is confirmed. You can now sign in to Marechai." xml:space="preserve">
+        <value>Your email is confirmed. You can now sign in to Marechai.</value>
+    </data>
+    <data name="Invalid or expired confirmation link." xml:space="preserve">
+        <value>Invalid or expired confirmation link.</value>
+    </data>
+    <data name="Send a new confirmation email" xml:space="preserve">
+        <value>Send a new confirmation email</value>
+    </data>
+    <data name="The confirmation link is missing required fields." xml:space="preserve">
+        <value>The confirmation link is missing required fields.</value>
+    </data>
+    <data name="Enter the email address you registered with and we will send you a fresh confirmation link." xml:space="preserve">
+        <value>Enter the email address you registered with and we will send you a fresh confirmation link.</value>
+    </data>
+    <data name="Send confirmation email" xml:space="preserve">
+        <value>Send confirmation email</value>
+    </data>
+    <data name="If an account with that email exists and hasn't been confirmed yet, we have sent a fresh confirmation link to it. Please check your inbox (and spam folder)." xml:space="preserve">
+        <value>If an account with that email exists and hasn't been confirmed yet, we have sent a fresh confirmation link to it. Please check your inbox (and spam folder).</value>
+    </data>
+    <data name="Delete my account" xml:space="preserve">
+        <value>Delete my account</value>
+    </data>
+    <data name="This will permanently remove your account and personal data. Your public contributions (photos, scans, reviews, messages) will be retained but anonymised. After confirming, you have 30 days to change your mind by signing in and choosing 'Cancel deletion'." xml:space="preserve">
+        <value>This will permanently remove your account and personal data. Your public contributions (photos, scans, reviews, messages) will be retained but anonymised. After confirming, you have 30 days to change your mind by signing in and choosing 'Cancel deletion'.</value>
+    </data>
+    <data name="Current password" xml:space="preserve">
+        <value>Current password</value>
+    </data>
+    <data name="I have two-factor authentication enabled" xml:space="preserve">
+        <value>I have two-factor authentication enabled</value>
+    </data>
+    <data name="Two-factor method" xml:space="preserve">
+        <value>Two-factor method</value>
+    </data>
+    <data name="Authenticator app" xml:space="preserve">
+        <value>Authenticator app</value>
+    </data>
+    <data name="Email code" xml:space="preserve">
+        <value>Email code</value>
+    </data>
+    <data name="Recovery code" xml:space="preserve">
+        <value>Recovery code</value>
+    </data>
+    <data name="Two-factor code" xml:space="preserve">
+        <value>Two-factor code</value>
+    </data>
+    <data name="We sent you an email with a confirmation link. Click it to start the 30-day deletion grace window. Until then your account is unchanged." xml:space="preserve">
+        <value>We sent you an email with a confirmation link. Click it to start the 30-day deletion grace window. Until then your account is unchanged.</value>
+    </data>
+    <data name="Back to profile" xml:space="preserve">
+        <value>Back to profile</value>
+    </data>
+    <data name="Current password is required." xml:space="preserve">
+        <value>Current password is required.</value>
+    </data>
+    <data name="Two-factor code is required." xml:space="preserve">
+        <value>Two-factor code is required.</value>
+    </data>
+    <data name="Could not start account deletion." xml:space="preserve">
+        <value>Could not start account deletion.</value>
+    </data>
+    <data name="Confirm account deletion" xml:space="preserve">
+        <value>Confirm account deletion</value>
+    </data>
+    <data name="Your account is now scheduled for deletion. We will permanently remove it after the 30-day grace window. To cancel, sign in any time before then and choose 'Cancel deletion'." xml:space="preserve">
+        <value>Your account is now scheduled for deletion. We will permanently remove it after the 30-day grace window. To cancel, sign in any time before then and choose 'Cancel deletion'.</value>
+    </data>
+    <data name="View deletion status" xml:space="preserve">
+        <value>View deletion status</value>
+    </data>
+    <data name="Restart deletion request" xml:space="preserve">
+        <value>Restart deletion request</value>
+    </data>
+    <data name="Account scheduled for deletion" xml:space="preserve">
+        <value>Account scheduled for deletion</value>
+    </data>
+    <data name="Your account is scheduled for permanent deletion. Until then, most of the site is unavailable to you." xml:space="preserve">
+        <value>Your account is scheduled for permanent deletion. Until then, most of the site is unavailable to you.</value>
+    </data>
+    <data name="Scheduled for" xml:space="preserve">
+        <value>Scheduled for</value>
+    </data>
+    <data name="Cancel deletion" xml:space="preserve">
+        <value>Cancel deletion</value>
+    </data>
+    <data name="Cancelling..." xml:space="preserve">
+        <value>Cancelling...</value>
+    </data>
+    <data name="Download my data" xml:space="preserve">
+        <value>Download my data</value>
+    </data>
+    <data name="No deletion request is pending on your account." xml:space="preserve">
+        <value>No deletion request is pending on your account.</value>
+    </data>
+    <data name="Deletion cancelled. You can continue using your account normally." xml:space="preserve">
+        <value>Deletion cancelled. You can continue using your account normally.</value>
+    </data>
+    <data name="Could not cancel the deletion. Please try again or contact support." xml:space="preserve">
+        <value>Could not cancel the deletion. Please try again or contact support.</value>
+    </data>
+    <data name="Could not generate your data export." xml:space="preserve">
+        <value>Could not generate your data export.</value>
+    </data>
+    <data name="Could not start the download. Please try a different browser." xml:space="preserve">
+        <value>Could not start the download. Please try a different browser.</value>
+    </data>
+    <data name="The deletion link is missing required fields." xml:space="preserve">
+        <value>The deletion link is missing required fields.</value>
+    </data>
+    <data name="Danger zone" xml:space="preserve">
+        <value>Danger zone</value>
+    </data>
+    <data name="Download a copy of your data, or permanently delete your Marechai account." xml:space="preserve">
+        <value>Download a copy of your data, or permanently delete your Marechai account.</value>
+    </data>
 </root>

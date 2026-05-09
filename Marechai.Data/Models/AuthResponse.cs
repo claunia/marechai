@@ -42,4 +42,11 @@ public sealed record AuthResponse
     /// </summary>
     [JsonPropertyName("availableMethods")]
     public List<string> AvailableMethods { get; set; } = [];
+
+    /// <summary>
+    ///     <see langword="true" /> when the password step succeeded but login is blocked because the user has not
+    ///     yet confirmed their email address. The client should surface a "Resend confirmation email" affordance.
+    /// </summary>
+    [JsonPropertyName("emailNotConfirmed")]
+    public bool EmailNotConfirmed { get; set; }
 }

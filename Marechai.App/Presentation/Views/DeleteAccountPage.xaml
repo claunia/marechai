@@ -1,0 +1,86 @@
+<?xml version="1.0"
+      encoding="utf-8"?>
+
+<Page x:Class="Marechai.App.Presentation.Views.DeleteAccountPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:vm="using:Marechai.App.Presentation.ViewModels"
+      xmlns:utu="using:Uno.Toolkit.UI"
+      mc:Ignorable="d"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+      d:DataContext="{d:DesignInstance vm:DeleteAccountViewModel}">
+
+    <Grid utu:SafeArea.Insets="VisibleBounds">
+        <Grid HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="520" Padding="32">
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="#c62828" BorderThickness="2" CornerRadius="8" Padding="0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0" Background="#c62828" Padding="16,12" CornerRadius="6,6,0,0">
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <FontIcon Glyph="&#xE7BA;" FontSize="20" Foreground="White" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=DeleteAccountPage_Title}"
+                                       Foreground="White" FontWeight="SemiBold" FontSize="18" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Border>
+
+                    <ScrollViewer Grid.Row="1" Padding="24" VerticalScrollBarVisibility="Auto">
+                        <StackPanel Spacing="16">
+                            <StackPanel Spacing="14"
+                                        Visibility="{Binding Submitted, Converter={StaticResource InvertBoolToVisibilityConverter}}">
+                                <InfoBar IsOpen="True" Severity="Warning" IsClosable="False"
+                                         Message="{Binding Source={StaticResource Strings}, Path=DeleteAccountPage_Warning}" />
+
+                                <InfoBar IsOpen="{Binding HasError, Mode=OneWay}" Severity="Error"
+                                         Message="{Binding ErrorMessage}" IsClosable="False" />
+
+                                <StackPanel Spacing="6">
+                                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=DeleteAccountPage_PasswordLabel}"
+                                               Style="{StaticResource BodyStrongTextBlockStyle}" />
+                                    <PasswordBox Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
+
+                                <CheckBox IsChecked="{Binding Has2fa, Mode=TwoWay}"
+                                          Content="{Binding Source={StaticResource Strings}, Path=DeleteAccountPage_Has2faLabel}" />
+
+                                <StackPanel Spacing="6"
+                                            Visibility="{Binding Has2fa, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=DeleteAccountPage_TwoFactorMethodLabel}"
+                                               Style="{StaticResource BodyStrongTextBlockStyle}" />
+                                    <ComboBox SelectedValue="{Binding Provider, Mode=TwoWay}"
+                                              SelectedValuePath="Tag"
+                                              HorizontalAlignment="Stretch">
+                                        <ComboBoxItem Tag="authenticator" Content="Authenticator" />
+                                        <ComboBoxItem Tag="email"         Content="Email" />
+                                        <ComboBoxItem Tag="recovery"      Content="Recovery code" />
+                                    </ComboBox>
+                                    <TextBox Text="{Binding Code, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             PlaceholderText="123 456" />
+                                </StackPanel>
+
+                                <Button Content="{Binding Source={StaticResource Strings}, Path=DeleteAccountPage_SubmitButton}"
+                                        Command="{Binding SubmitCommand}"
+                                        IsEnabled="{Binding IsSubmitting, Converter={StaticResource InvertBoolConverter}}"
+                                        HorizontalAlignment="Stretch"
+                                        Background="#c62828" Foreground="White" />
+                            </StackPanel>
+
+                            <InfoBar IsOpen="{Binding Submitted, Mode=OneWay}" Severity="Informational" IsClosable="False"
+                                     Message="{Binding Source={StaticResource Strings}, Path=DeleteAccountPage_SubmittedMessage}" />
+
+                            <HyperlinkButton Content="{Binding Source={StaticResource Strings}, Path=DeleteAccountPage_BackLink}"
+                                             Command="{Binding BackToSettingsCommand}"
+                                             HorizontalAlignment="Center" />
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Page>

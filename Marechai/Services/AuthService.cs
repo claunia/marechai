@@ -36,11 +36,13 @@ namespace Marechai.Services;
 /// <summary>
 ///     Outcome of <see cref="AuthService.LoginAsync" />. Either the JWT was issued and the user is fully signed
 ///     in (<see cref="Succeeded" /> + JWT applied), or the server requires a second factor and the caller must
-///     prompt for a code using <see cref="TwoFactorToken" /> + <see cref="AvailableMethods" />.
+///     prompt for a code using <see cref="TwoFactorToken" /> + <see cref="AvailableMethods" />, or the email
+///     hasn't been confirmed yet (<see cref="EmailNotConfirmed" />) and the UI should offer a "resend" link.
 /// </summary>
 public sealed record LoginResult(bool          Succeeded,         string       ErrorMessage,
                                  bool          RequiresTwoFactor, string       TwoFactorToken,
-                                 IList<string> AvailableMethods);
+                                 IList<string> AvailableMethods,
+                                 bool          EmailNotConfirmed = false);
 
 public sealed class AuthService(Marechai.ApiClient.Client             client,
                                 TokenProvider                          tokenProvider,
@@ -61,6 +63,14 @@ public sealed class AuthService(Marechai.ApiClient.Client             client,
 
             if(response is null)
                 return new LoginResult(false, "No response from server.", false, null, []);
+
+            if(response.EmailNotConfirmed == true)
+                return new LoginResult(false,
+                                       "Please confirm your email address before signing in.",
+                                       false,
+                                       null,
+                                       [],
+                                       EmailNotConfirmed: true);
 
             if(response.Succeeded != true)
                 return new LoginResult(false, response.Message ?? "Login failed.", false, null, []);
@@ -248,6 +258,218 @@ public sealed class AuthService(Marechai.ApiClient.Client             client,
             logger.LogError(ex, "Reset password call failed");
 
             return (false, "An error occurred while resetting your password.");
+        }
+    }
+
+    /// <summary>
+    ///     Submits a public registration request. The user is created in an unconfirmed state and a
+    ///     confirmation email is dispatched on success. On any failure the server returns a
+    ///     <see cref="ProblemDetails" /> we surface to the caller.
+    /// </summary>
+    public async Task<(bool Succeeded, string ErrorMessage)> RegisterAsync(string email,        string userName,
+                                                                            string password,    string displayName,
+                                                                            string invitationCode)
+    {
+        try
+        {
+            await client.Auth.Register.PostAsync(new RegisterRequest
+            {
+                Email          = email,
+                UserName       = userName,
+                Password       = password,
+                DisplayName    = displayName,
+                InvitationCode = invitationCode
+            });
+
+            return (true, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            logger.LogWarning(ex, "Register call returned a ProblemDetails");
+
+            return (false, ex.Detail ?? ex.Title ?? "Registration failed.");
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Register call failed");
+
+            return (false, "An error occurred during registration.");
+        }
+    }
+
+    /// <summary>
+    ///     Submits the email-confirmation token captured from the link in the confirmation email. Any error
+    ///     (unknown user, already confirmed, bad/expired token) is surfaced as a single generic message to
+    ///     defeat probing.
+    /// </summary>
+    public async Task<(bool Succeeded, string ErrorMessage)> ConfirmEmailAsync(string email, string token)
+    {
+        try
+        {
+            await client.Auth.Email.Confirm.PostAsync(new ConfirmEmailRequest
+            {
+                Email = email,
+                Token = token
+            });
+
+            return (true, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            logger.LogWarning(ex, "Confirm email call returned a ProblemDetails");
+
+            return (false, ex.Detail ?? ex.Title ?? "Invalid or expired confirmation link.");
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Confirm email call failed");
+
+            return (false, "An error occurred while confirming your email.");
+        }
+    }
+
+    /// <summary>
+    ///     Asks the server to resend the email-confirmation message. Always returns success: the server already
+    ///     responds 204 regardless of whether the address matches a real (or already-confirmed) account, and we
+    ///     mirror that on the client so the UI can show a single generic confirmation message.
+    /// </summary>
+    public async Task<(bool Succeeded, string ErrorMessage)> ResendConfirmationAsync(string email)
+    {
+        try
+        {
+            await client.Auth.Email.ResendConfirmation.PostAsync(new ResendConfirmationRequest
+            {
+                Email = email
+            });
+
+            return (true, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            logger.LogWarning(ex, "Resend confirmation call returned a ProblemDetails");
+
+            return (true, null);
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Resend confirmation call failed");
+
+            return (true, null);
+        }
+    }
+
+    /// <summary>
+    ///     Asks the server to start the GDPR self-service deletion flow. Re-verifies the user's password
+    ///     (and 2FA if enabled) server-side and dispatches a confirmation email; returns success once the
+    ///     email has been queued. The actual move into the 30-day grace window happens when the user
+    ///     clicks the link in that email and the client calls <see cref="ConfirmAccountDeletionAsync" />.
+    /// </summary>
+    public async Task<(bool Succeeded, string ErrorMessage)> RequestAccountDeletionAsync(
+        string currentPassword, string twoFactorProvider, string twoFactorCode)
+    {
+        try
+        {
+            await client.Auth.Me.DeletePath.Request.PostAsync(new RequestAccountDeletionRequest
+            {
+                CurrentPassword   = currentPassword,
+                TwoFactorProvider = twoFactorProvider,
+                TwoFactorCode     = twoFactorCode
+            });
+
+            return (true, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            logger.LogWarning(ex, "Account-deletion request returned a ProblemDetails");
+
+            return (false, ex.Detail ?? ex.Title ?? "Could not start account deletion.");
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Account-deletion request failed");
+
+            return (false, "An error occurred while requesting account deletion.");
+        }
+    }
+
+    public async Task<(bool Succeeded, string ErrorMessage)> ConfirmAccountDeletionAsync(string token)
+    {
+        try
+        {
+            await client.Auth.Me.DeletePath.Confirm.PostAsync(new ConfirmAccountDeletionRequest
+            {
+                Token = token
+            });
+
+            return (true, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            logger.LogWarning(ex, "Account-deletion confirm returned a ProblemDetails");
+
+            return (false, ex.Detail ?? ex.Title ?? "Invalid or expired deletion link.");
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Account-deletion confirm failed");
+
+            return (false, "An error occurred while confirming the deletion link.");
+        }
+    }
+
+    public async Task<bool> CancelAccountDeletionAsync()
+    {
+        try
+        {
+            await client.Auth.Me.DeletePath.Cancel.PostAsync();
+
+            return true;
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Account-deletion cancel failed");
+
+            return false;
+        }
+    }
+
+    public async Task<AccountDeletionStatusDto> GetAccountDeletionStatusAsync()
+    {
+        try
+        {
+            return await client.Auth.Me.DeletePath.Status.GetAsync();
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Account-deletion status query failed");
+
+            return null;
+        }
+    }
+
+    /// <summary>
+    ///     Downloads the GDPR data-portability JSON dump for the current user. Returns the raw bytes
+    ///     so the caller can hand them to the browser via JS interop (<c>download-blob.js</c>) for a
+    ///     "Save as..." prompt.
+    /// </summary>
+    public async Task<byte[]> ExportDataAsync()
+    {
+        try
+        {
+            using System.IO.Stream s = await client.Auth.Me.Export.GetAsync();
+
+            if(s is null) return null;
+
+            using var ms = new System.IO.MemoryStream();
+            await s.CopyToAsync(ms);
+
+            return ms.ToArray();
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Data export download failed");
+
+            return null;
         }
     }
 

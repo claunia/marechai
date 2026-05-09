@@ -1,0 +1,112 @@
+@{
+    /******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2026 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/account/delete"
+@attribute [Authorize]
+@inject AuthService AuthService
+@inject NavigationManager Navigation
+@inject IStringLocalizer<ProfileService> L
+
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #c62828 0%, #ef5350 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Filled.Warning" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Style="color: white;">@L["Delete my account"]</MudText>
+    </MudStack>
+</MudPaper>
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="12" sm="10" md="8" lg="6">
+        <MudPaper Elevation="2" Class="pa-6 rounded-lg">
+            @if(!_submitted)
+            {
+                <MudAlert Severity="Severity.Warning" Class="mb-4">
+                    @L["This will permanently remove your account and personal data. Your public contributions (photos, scans, reviews, messages) will be retained but anonymised. After confirming, you have 30 days to change your mind by signing in and choosing 'Cancel deletion'."]
+                </MudAlert>
+
+                @if(!string.IsNullOrWhiteSpace(_errorMessage))
+                {
+                    <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+                }
+
+                <MudTextField @bind-Value="_password"
+                              Label="@L["Current password"]"
+                              Variant="Variant.Outlined"
+                              InputType="InputType.Password"
+                              Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.Lock"
+                              Class="mb-4"
+                              Disabled="_isLoading"/>
+
+                <MudCheckBox T="bool" @bind-Value="_has2fa" Color="Color.Primary" Label="@L["I have two-factor authentication enabled"]" Class="mb-3"/>
+
+                @if(_has2fa)
+                {
+                    <MudSelect T="string" @bind-Value="_provider" Label="@L["Two-factor method"]" Variant="Variant.Outlined" Class="mb-3" Disabled="_isLoading">
+                        <MudSelectItem Value="@("authenticator")">@L["Authenticator app"]</MudSelectItem>
+                        <MudSelectItem Value="@("email")">@L["Email code"]</MudSelectItem>
+                        <MudSelectItem Value="@("recovery")">@L["Recovery code"]</MudSelectItem>
+                    </MudSelect>
+                    <MudTextField @bind-Value="_code"
+                                  Label="@L["Two-factor code"]"
+                                  Variant="Variant.Outlined"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.Pin"
+                                  Class="mb-4"
+                                  Disabled="_isLoading"/>
+                }
+
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Error"
+                           FullWidth="true"
+                           Size="Size.Large"
+                           OnClick="SubmitAsync"
+                           Disabled="_isLoading"
+                           StartIcon="@(_isLoading ? null : Icons.Material.Filled.DeleteForever)">
+                    @if(_isLoading)
+                    {
+                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
+                        <span>@L["Sending..."]</span>
+                    }
+                    else
+                    {
+                        <span>@L["Send confirmation email"]</span>
+                    }
+                </MudButton>
+            }
+            else
+            {
+                <MudAlert Severity="Severity.Info" Class="mb-4">
+                    @L["We sent you an email with a confirmation link. Click it to start the 30-day deletion grace window. Until then your account is unchanged."]
+                </MudAlert>
+            }
+
+            <div class="d-flex justify-center mt-3">
+                <MudLink Href="/profile" Underline="Underline.Hover">@L["Back to profile"]</MudLink>
+            </div>
+        </MudPaper>
+    </MudItem>
+</MudGrid>

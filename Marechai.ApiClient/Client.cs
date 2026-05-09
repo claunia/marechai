@@ -15,6 +15,7 @@ using Marechai.ApiClient.Gpus;
 using Marechai.ApiClient.InstructionSetExtensions;
 using Marechai.ApiClient.InstructionSetExtensionsByProcessor;
 using Marechai.ApiClient.InstructionSets;
+using Marechai.ApiClient.InvitationCodes;
 using Marechai.ApiClient.Iso31661Numeric;
 using Marechai.ApiClient.Iso4217;
 using Marechai.ApiClient.Languages;
@@ -142,6 +143,11 @@ namespace Marechai.ApiClient
         public global::Marechai.ApiClient.InstructionSets.InstructionSetsRequestBuilder InstructionSets
         {
             get => new global::Marechai.ApiClient.InstructionSets.InstructionSetsRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The invitationCodes property</summary>
+        public global::Marechai.ApiClient.InvitationCodes.InvitationCodesRequestBuilder InvitationCodes
+        {
+            get => new global::Marechai.ApiClient.InvitationCodes.InvitationCodesRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The iso31661Numeric property</summary>
         public global::Marechai.ApiClient.Iso31661Numeric.Iso31661NumericRequestBuilder Iso31661Numeric

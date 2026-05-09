@@ -2059,4 +2059,56 @@
   <data name="Could not send code." xml:space="preserve"><value>Codex mitti non potuit.</value></data>
   <data name="Password and code are required." xml:space="preserve"><value>Tessera et codex requiruntur.</value></data>
   <data name="Email two-factor enabled." xml:space="preserve"><value>Duplex factor per epistulam activatus.</value></data>
+  <data name="LoginPage_ResendConfirmationLink" xml:space="preserve"><value>Iterum mitte epistulam confirmationis</value></data>
+  <data name="LoginPage.Error.EmailNotConfirmed" xml:space="preserve"><value>Quaeso, electronicam tuam confirma antequam intres.</value></data>
+  <data name="RegisterPage_Title" xml:space="preserve"><value>Crea rationem</value></data>
+  <data name="RegisterPage_Intro" xml:space="preserve"><value>Marechai communitas est solis invitatis. Insere codicem ab administro tibi datum, comple campos infra, et tibi mittemus per electronicam vinculum ad rationem confirmandam.</value></data>
+  <data name="RegisterPage_InvitationCodeLabel" xml:space="preserve"><value>Codex invitationis</value></data>
+  <data name="RegisterPage_EmailLabel" xml:space="preserve"><value>Electronica</value></data>
+  <data name="RegisterPage_UserNameLabel" xml:space="preserve"><value>Nomen utentis</value></data>
+  <data name="RegisterPage_DisplayNameLabel" xml:space="preserve"><value>Nomen ostentatum</value></data>
+  <data name="RegisterPage_DisplayNameHelp" xml:space="preserve"><value>Publice in profilo tuo et contributionibus monstratur.</value></data>
+  <data name="RegisterPage_PasswordLabel" xml:space="preserve"><value>Tessera</value></data>
+  <data name="RegisterPage_ConfirmPasswordLabel" xml:space="preserve"><value>Confirma tesseram</value></data>
+  <data name="RegisterPage_SubmitButton" xml:space="preserve"><value>Creare rationem</value></data>
+  <data name="RegisterPage_BackToLogin" xml:space="preserve"><value>Iam rationem habes? Intra</value></data>
+  <data name="RegisterPage_ConfirmationTitle" xml:space="preserve"><value>Inspice tabellarium tuum</value></data>
+  <data name="RegisterPage_ConfirmationMessage" xml:space="preserve"><value>Ratio creata. Misimus tibi epistulam confirmationis — preme vinculum intus (in navigatro tuo aperietur) ad rationem activandam, deinde huc reverte ad intrandum.</value></data>
+  <data name="RegisterPage_ResendLink" xml:space="preserve"><value>Epistulam non accepisti? Iterum mitte</value></data>
+  <data name="RegisterPage.Error.InvitationCodeRequired" xml:space="preserve"><value>Codex invitationis requiritur.</value></data>
+  <data name="RegisterPage.Error.EmailRequired" xml:space="preserve"><value>Electronica requiritur.</value></data>
+  <data name="RegisterPage.Error.UserNameRequired" xml:space="preserve"><value>Nomen utentis requiritur.</value></data>
+  <data name="RegisterPage.Error.DisplayNameRequired" xml:space="preserve"><value>Nomen ostentatum requiritur.</value></data>
+  <data name="RegisterPage.Error.PasswordRequired" xml:space="preserve"><value>Tessera requiritur.</value></data>
+  <data name="RegisterPage.Error.PasswordMismatch" xml:space="preserve"><value>Tesserae non congruunt.</value></data>
+  <data name="RegisterPage.Error.Generic" xml:space="preserve"><value>Inscriptio defecit.</value></data>
+  <data name="ResendConfirmationPage_Title" xml:space="preserve"><value>Iterum mitte epistulam confirmationis</value></data>
+  <data name="ResendConfirmationPage_Intro" xml:space="preserve"><value>Insere electronicam qua inscripta es et tibi mittemus novum vinculum confirmationis.</value></data>
+  <data name="ResendConfirmationPage_EmailLabel" xml:space="preserve"><value>Electronica</value></data>
+  <data name="ResendConfirmationPage_SubmitButton" xml:space="preserve"><value>Mittere epistulam confirmationis</value></data>
+  <data name="ResendConfirmationPage_BackToLogin" xml:space="preserve"><value>Reverte ad introitum</value></data>
+  <data name="ResendConfirmationPage_ConfirmationTitle" xml:space="preserve"><value>Inspice tabellarium tuum</value></data>
+  <data name="ResendConfirmationPage_ConfirmationMessage" xml:space="preserve"><value>Si ratio cum hac electronica exstat et nondum confirmata est, novum vinculum confirmationis ad eam misimus. Aperi illud in navigatro ad activationem perficiendam.</value></data>
+  <data name="ResendConfirmationPage.Error.EmailRequired" xml:space="preserve"><value>Electronica requiritur.</value></data>
+  <data name="DeleteAccountPage_Title" xml:space="preserve"><value>Dele rationem meam</value></data>
+  <data name="DeleteAccountPage_Warning" xml:space="preserve"><value>Hoc rationem tuam ac data personalia perpetuo aufert. Contributiones publicae remanebunt sed anonymizatae. Post confirmationem, 30 dies habes ut sententiam mutes intrando et «Cancellare deletionem» eligendo.</value></data>
+  <data name="DeleteAccountPage_PasswordLabel" xml:space="preserve"><value>Tessera currens</value></data>
+  <data name="DeleteAccountPage_Has2faLabel" xml:space="preserve"><value>Duplex factor authenticationis activatus est</value></data>
+  <data name="DeleteAccountPage_TwoFactorMethodLabel" xml:space="preserve"><value>Methodus duplicis factoris</value></data>
+  <data name="DeleteAccountPage_SubmitButton" xml:space="preserve"><value>Mittere epistulam confirmationis</value></data>
+  <data name="DeleteAccountPage_SubmittedMessage" xml:space="preserve"><value>Misimus tibi epistulam cum vinculo confirmationis. Preme illud (in navigatro tuo aperietur) ad incipiendum periodum gratiae 30 dierum.</value></data>
+  <data name="DeleteAccountPage_BackLink" xml:space="preserve"><value>Reverte ad ordinationes</value></data>
+  <data name="DeleteAccountPage.Error.PasswordRequired" xml:space="preserve"><value>Tessera currens requiritur.</value></data>
+  <data name="DeleteAccountPage.Error.CodeRequired" xml:space="preserve"><value>Codex duplicis factoris requiritur.</value></data>
+  <data name="DeleteAccountPage.Error.Generic" xml:space="preserve"><value>Deletio rationis incipi non potuit.</value></data>
+  <data name="DeletionPendingPage_Title" xml:space="preserve"><value>Ratio ad deletionem destinata</value></data>
+  <data name="DeletionPendingPage_Warning" xml:space="preserve"><value>Ratio tua ad perpetuam deletionem destinata est. Interea, maior pars sitis tibi non patet.</value></data>
+  <data name="DeletionPendingPage_CancelButton" xml:space="preserve"><value>Cancellare deletionem</value></data>
+  <data name="DeletionPendingPage_DownloadButton" xml:space="preserve"><value>Demitte data mea</value></data>
+  <data name="DeletionPendingPage_NoPendingMessage" xml:space="preserve"><value>Nulla petitio deletionis in ratione tua pendens est.</value></data>
+  <data name="DeletionPendingPage_BackLink" xml:space="preserve"><value>Reverte ad ordinationes</value></data>
+  <data name="DeletionPendingPage.CancelSuccess" xml:space="preserve"><value>Deletio cancellata. Pergere potes uti ratione tua normaliter.</value></data>
+  <data name="DeletionPendingPage.CancelFailed" xml:space="preserve"><value>Deletio cancellari non potuit. Quaeso, iterum proba.</value></data>
+  <data name="DeletionPendingPage.DownloadFailed" xml:space="preserve"><value>Exportatio datorum tuorum generari non potuit.</value></data>
+  <data name="DeletionPendingPage.DownloadSaved" xml:space="preserve"><value>Exportatio datorum servata.</value></data>
 </root>

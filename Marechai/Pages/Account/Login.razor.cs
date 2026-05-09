@@ -37,6 +37,7 @@ public partial class Login
     string       _infoMessage;
     bool         _isLoading;
     string       _password;
+    bool         _emailNotConfirmed;
 
     // Two-factor state
     bool         _requiresTwoFactor;
@@ -66,6 +67,7 @@ public partial class Login
         _isLoading    = true;
         _errorMessage = null;
         _infoMessage  = null;
+        _emailNotConfirmed = false;
 
         LoginResult result = await AuthService.LoginAsync(_email, _password);
 
@@ -84,6 +86,14 @@ public partial class Login
             _twoFactorToken    = result.TwoFactorToken;
             _availableMethods  = result.AvailableMethods is { Count: > 0 } ? new List<string>(result.AvailableMethods) : ["authenticator"];
             _selectedProvider  = _availableMethods[0];
+
+            return;
+        }
+
+        if(result.EmailNotConfirmed)
+        {
+            _emailNotConfirmed = true;
+            _errorMessage      = result.ErrorMessage ?? "Please confirm your email address before signing in.";
 
             return;
         }

@@ -2059,4 +2059,56 @@
   <data name="Could not send code." xml:space="preserve"><value>Não foi possível enviar o código.</value></data>
   <data name="Password and code are required." xml:space="preserve"><value>Senha e código são obrigatórios.</value></data>
   <data name="Email two-factor enabled." xml:space="preserve"><value>Dois fatores por e-mail ativado.</value></data>
+  <data name="LoginPage_ResendConfirmationLink" xml:space="preserve"><value>Reenviar e-mail de confirmação</value></data>
+  <data name="LoginPage.Error.EmailNotConfirmed" xml:space="preserve"><value>Por favor confirme o seu endereço de e-mail antes de entrar.</value></data>
+  <data name="RegisterPage_Title" xml:space="preserve"><value>Criar uma conta</value></data>
+  <data name="RegisterPage_Intro" xml:space="preserve"><value>O Marechai é uma comunidade somente por convite. Cole o código que um administrador compartilhou com você, preencha os campos abaixo, e enviaremos um link por e-mail para confirmar a sua conta.</value></data>
+  <data name="RegisterPage_InvitationCodeLabel" xml:space="preserve"><value>Código de convite</value></data>
+  <data name="RegisterPage_EmailLabel" xml:space="preserve"><value>E-mail</value></data>
+  <data name="RegisterPage_UserNameLabel" xml:space="preserve"><value>Nome de usuário</value></data>
+  <data name="RegisterPage_DisplayNameLabel" xml:space="preserve"><value>Nome de exibição</value></data>
+  <data name="RegisterPage_DisplayNameHelp" xml:space="preserve"><value>Mostrado publicamente no seu perfil e nas suas contribuições.</value></data>
+  <data name="RegisterPage_PasswordLabel" xml:space="preserve"><value>Senha</value></data>
+  <data name="RegisterPage_ConfirmPasswordLabel" xml:space="preserve"><value>Confirmar a senha</value></data>
+  <data name="RegisterPage_SubmitButton" xml:space="preserve"><value>Criar conta</value></data>
+  <data name="RegisterPage_BackToLogin" xml:space="preserve"><value>Já tem uma conta? Entrar</value></data>
+  <data name="RegisterPage_ConfirmationTitle" xml:space="preserve"><value>Verifique a sua caixa de entrada</value></data>
+  <data name="RegisterPage_ConfirmationMessage" xml:space="preserve"><value>Conta criada. Enviamos a você um e-mail de confirmação — clique no link interno (ele abrirá no seu navegador) para ativar a sua conta, e então volte aqui para entrar.</value></data>
+  <data name="RegisterPage_ResendLink" xml:space="preserve"><value>Não recebeu o e-mail? Enviar novamente</value></data>
+  <data name="RegisterPage.Error.InvitationCodeRequired" xml:space="preserve"><value>O código de convite é obrigatório.</value></data>
+  <data name="RegisterPage.Error.EmailRequired" xml:space="preserve"><value>O e-mail é obrigatório.</value></data>
+  <data name="RegisterPage.Error.UserNameRequired" xml:space="preserve"><value>O nome de usuário é obrigatório.</value></data>
+  <data name="RegisterPage.Error.DisplayNameRequired" xml:space="preserve"><value>O nome de exibição é obrigatório.</value></data>
+  <data name="RegisterPage.Error.PasswordRequired" xml:space="preserve"><value>A senha é obrigatória.</value></data>
+  <data name="RegisterPage.Error.PasswordMismatch" xml:space="preserve"><value>As senhas não coincidem.</value></data>
+  <data name="RegisterPage.Error.Generic" xml:space="preserve"><value>Falha no registro.</value></data>
+  <data name="ResendConfirmationPage_Title" xml:space="preserve"><value>Reenviar e-mail de confirmação</value></data>
+  <data name="ResendConfirmationPage_Intro" xml:space="preserve"><value>Informe o e-mail com o qual você se registrou e enviaremos um novo link de confirmação.</value></data>
+  <data name="ResendConfirmationPage_EmailLabel" xml:space="preserve"><value>E-mail</value></data>
+  <data name="ResendConfirmationPage_SubmitButton" xml:space="preserve"><value>Enviar e-mail de confirmação</value></data>
+  <data name="ResendConfirmationPage_BackToLogin" xml:space="preserve"><value>Voltar à entrada</value></data>
+  <data name="ResendConfirmationPage_ConfirmationTitle" xml:space="preserve"><value>Verifique a sua caixa de entrada</value></data>
+  <data name="ResendConfirmationPage_ConfirmationMessage" xml:space="preserve"><value>Se uma conta com esse e-mail existir e ainda não tiver sido confirmada, enviamos a ela um novo link de confirmação. Abra-o em um navegador para concluir a ativação.</value></data>
+  <data name="ResendConfirmationPage.Error.EmailRequired" xml:space="preserve"><value>O e-mail é obrigatório.</value></data>
+  <data name="DeleteAccountPage_Title" xml:space="preserve"><value>Excluir minha conta</value></data>
+  <data name="DeleteAccountPage_Warning" xml:space="preserve"><value>Isto removerá permanentemente a sua conta e os dados pessoais. As suas contribuições públicas serão mantidas, porém anonimizadas. Após confirmar, você tem 30 dias para mudar de ideia entrando e escolhendo "Cancelar exclusão".</value></data>
+  <data name="DeleteAccountPage_PasswordLabel" xml:space="preserve"><value>Senha atual</value></data>
+  <data name="DeleteAccountPage_Has2faLabel" xml:space="preserve"><value>Tenho a autenticação em duas etapas ativada</value></data>
+  <data name="DeleteAccountPage_TwoFactorMethodLabel" xml:space="preserve"><value>Método de dois fatores</value></data>
+  <data name="DeleteAccountPage_SubmitButton" xml:space="preserve"><value>Enviar e-mail de confirmação</value></data>
+  <data name="DeleteAccountPage_SubmittedMessage" xml:space="preserve"><value>Enviamos a você um e-mail com um link de confirmação. Clique nele (ele abrirá no seu navegador) para iniciar o período de graça de 30 dias.</value></data>
+  <data name="DeleteAccountPage_BackLink" xml:space="preserve"><value>Voltar para configurações</value></data>
+  <data name="DeleteAccountPage.Error.PasswordRequired" xml:space="preserve"><value>A senha atual é obrigatória.</value></data>
+  <data name="DeleteAccountPage.Error.CodeRequired" xml:space="preserve"><value>O código de dois fatores é obrigatório.</value></data>
+  <data name="DeleteAccountPage.Error.Generic" xml:space="preserve"><value>Não foi possível iniciar a exclusão da conta.</value></data>
+  <data name="DeletionPendingPage_Title" xml:space="preserve"><value>Conta programada para exclusão</value></data>
+  <data name="DeletionPendingPage_Warning" xml:space="preserve"><value>A sua conta está programada para exclusão permanente. Até lá, a maior parte do site está indisponível para você.</value></data>
+  <data name="DeletionPendingPage_CancelButton" xml:space="preserve"><value>Cancelar exclusão</value></data>
+  <data name="DeletionPendingPage_DownloadButton" xml:space="preserve"><value>Baixar meus dados</value></data>
+  <data name="DeletionPendingPage_NoPendingMessage" xml:space="preserve"><value>Não há nenhum pedido de exclusão pendente na sua conta.</value></data>
+  <data name="DeletionPendingPage_BackLink" xml:space="preserve"><value>Voltar para configurações</value></data>
+  <data name="DeletionPendingPage.CancelSuccess" xml:space="preserve"><value>Exclusão cancelada. Você pode continuar usando a sua conta normalmente.</value></data>
+  <data name="DeletionPendingPage.CancelFailed" xml:space="preserve"><value>Não foi possível cancelar a exclusão. Tente novamente.</value></data>
+  <data name="DeletionPendingPage.DownloadFailed" xml:space="preserve"><value>Não foi possível gerar a exportação dos seus dados.</value></data>
+  <data name="DeletionPendingPage.DownloadSaved" xml:space="preserve"><value>Exportação de dados salva.</value></data>
 </root>

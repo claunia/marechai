@@ -69,4 +69,73 @@
   <data name="PasswordReset_Footer" xml:space="preserve">
     <value>Si no has solicitado un restablecimiento de contraseña, puedes ignorar este correo de forma segura.</value>
   </data>
+  <data name="EmailConfirmation_Subject" xml:space="preserve">
+    <value>Confirma tu dirección de correo en Marechai</value>
+  </data>
+  <data name="EmailConfirmation_Title" xml:space="preserve">
+    <value>Confirma tu dirección de correo</value>
+  </data>
+  <data name="EmailConfirmation_Intro" xml:space="preserve">
+    <value>¡Bienvenido a Marechai! Confirma esta dirección de correo para activar tu cuenta.</value>
+  </data>
+  <data name="EmailConfirmation_ButtonText" xml:space="preserve">
+    <value>Confirmar correo</value>
+  </data>
+  <data name="EmailConfirmation_LinkFallback" xml:space="preserve">
+    <value>Si el botón no funciona, copia y pega este enlace en tu navegador:</value>
+  </data>
+  <data name="EmailConfirmation_Footer" xml:space="preserve">
+    <value>Si no has creado una cuenta en Marechai, puedes ignorar este correo de forma segura.</value>
+  </data>
+  <data name="Welcome_Subject" xml:space="preserve">
+    <value>Bienvenida a Marechai — tu sitio en la mesa de la historia de la informática</value>
+  </data>
+  <data name="Welcome_Title" xml:space="preserve">
+    <value>¡Bienvenida a Marechai!</value>
+  </data>
+  <data name="Welcome_Lead" xml:space="preserve">
+    <value>Nos hace mucha ilusión tenerte con nosotros, {0}.</value>
+  </data>
+  <data name="Welcome_Intro" xml:space="preserve">
+    <value>Marechai es un archivo curado por la comunidad de las máquinas, el software, los libros y las revistas que moldearon la informática que conocemos — y ahora formas parte del equipo que mantiene viva esa memoria.</value>
+  </data>
+  <data name="Welcome_ProfileBullet" xml:space="preserve">
+    <value>Haz tuyo este sitio. Ve a tu perfil, añade una biografía, elige un avatar — deja que el resto de coleccionistas e historiadores te conozca.</value>
+  </data>
+  <data name="Welcome_CollectionBullet" xml:space="preserve">
+    <value>Construye tu colección. Explora los ordenadores, las consolas y los smartphones que has tenido (o que sigues guardando como un tesoro) y añádelos a tu estantería para que todo el mundo los vea.</value>
+  </data>
+  <data name="Welcome_SoftwareBullet" xml:space="preserve">
+    <value>Reencuentra viejos amigos. Nuestro catálogo de software reúne miles de títulos — es muy probable que los juegos, las aplicaciones y los sistemas operativos que recuerdas estén esperándote allí.</value>
+  </data>
+  <data name="Welcome_BooksBullet" xml:space="preserve">
+    <value>No te olvides del papel. Los libros y las revistas que enseñaron a programar a toda una generación también están aquí. Busca los que leíste; si faltan, puedes ayudarnos a añadirlos.</value>
+  </data>
+  <data name="Welcome_Closing" xml:space="preserve">
+    <value>Marechai es un trabajo hecho con cariño por gente como tú. Sea lo que sea lo que te ha traído — la nostalgia, la investigación, la preservación — nos alegra que estés aquí, y esperamos que te sientas como en casa.</value>
+  </data>
+  <data name="Welcome_Signoff" xml:space="preserve">
+    <value>Bienvenida a bordo,</value>
+  </data>
+  <data name="Welcome_Footer" xml:space="preserve">
+    <value>— El equipo de Marechai</value>
+  </data>
+  <data name="AccountDeletion_Subject" xml:space="preserve">
+    <value>Confirma la eliminación de tu cuenta de Marechai</value>
+  </data>
+  <data name="AccountDeletion_Title" xml:space="preserve">
+    <value>Confirma la eliminación de la cuenta</value>
+  </data>
+  <data name="AccountDeletion_Intro" xml:space="preserve">
+    <value>Hemos recibido una solicitud para eliminar tu cuenta de Marechai. Si has sido tú, pulsa el botón para confirmarlo. Tu cuenta entrará entonces en un periodo de gracia de 30 días en el que aún podrás cancelarla iniciando sesión y eligiendo «Cancelar eliminación». Pasados los 30 días la cuenta se eliminará de forma permanente.</value>
+  </data>
+  <data name="AccountDeletion_ButtonText" xml:space="preserve">
+    <value>Confirmar eliminación</value>
+  </data>
+  <data name="AccountDeletion_LinkFallback" xml:space="preserve">
+    <value>Si el botón no funciona, copia y pega este enlace en tu navegador:</value>
+  </data>
+  <data name="AccountDeletion_Footer" xml:space="preserve">
+    <value>Si no has solicitado eliminar tu cuenta, puedes ignorar este correo de forma segura — no se hará nada.</value>
+  </data>
 </root>

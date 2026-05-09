@@ -69,4 +69,73 @@
   <data name="PasswordReset_Footer" xml:space="preserve">
     <value>Si vous n'avez pas demandé de réinitialisation de mot de passe, vous pouvez ignorer cet e-mail.</value>
   </data>
+  <data name="EmailConfirmation_Subject" xml:space="preserve">
+    <value>Confirmez votre adresse e-mail Marechai</value>
+  </data>
+  <data name="EmailConfirmation_Title" xml:space="preserve">
+    <value>Confirmez votre adresse e-mail</value>
+  </data>
+  <data name="EmailConfirmation_Intro" xml:space="preserve">
+    <value>Bienvenue sur Marechai ! Confirmez cette adresse e-mail pour activer votre compte.</value>
+  </data>
+  <data name="EmailConfirmation_ButtonText" xml:space="preserve">
+    <value>Confirmer l'e-mail</value>
+  </data>
+  <data name="EmailConfirmation_LinkFallback" xml:space="preserve">
+    <value>Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :</value>
+  </data>
+  <data name="EmailConfirmation_Footer" xml:space="preserve">
+    <value>Si vous n'avez pas créé de compte Marechai, vous pouvez ignorer cet e-mail.</value>
+  </data>
+  <data name="Welcome_Subject" xml:space="preserve">
+    <value>Bienvenue sur Marechai — votre place à la table de l'histoire de l'informatique</value>
+  </data>
+  <data name="Welcome_Title" xml:space="preserve">
+    <value>Bienvenue sur Marechai !</value>
+  </data>
+  <data name="Welcome_Lead" xml:space="preserve">
+    <value>Nous sommes ravis que vous nous ayez rejoints, {0}.</value>
+  </data>
+  <data name="Welcome_Intro" xml:space="preserve">
+    <value>Marechai est une archive entretenue par la communauté des machines, logiciels, livres et magazines qui ont façonné l'informatique d'aujourd'hui — et vous faites désormais partie de l'équipe qui maintient cette mémoire vivante.</value>
+  </data>
+  <data name="Welcome_ProfileBullet" xml:space="preserve">
+    <value>Faites-vous ici chez vous. Allez sur votre profil, ajoutez une bio, choisissez un avatar — faites savoir aux autres collectionneurs et historiens qui vous êtes.</value>
+  </data>
+  <data name="Welcome_CollectionBullet" xml:space="preserve">
+    <value>Construisez votre collection. Parcourez les ordinateurs, consoles et smartphones que vous avez possédés (ou que vous chérissez encore) et ajoutez-les à votre étagère pour que tous puissent les voir.</value>
+  </data>
+  <data name="Welcome_SoftwareBullet" xml:space="preserve">
+    <value>Retrouvez de vieux amis. Notre catalogue de logiciels rassemble des milliers de titres — il y a de fortes chances que les jeux, applications et systèmes d'exploitation dont vous vous souvenez vous y attendent.</value>
+  </data>
+  <data name="Welcome_BooksBullet" xml:space="preserve">
+    <value>N'oubliez pas le papier. Les livres et magazines qui ont appris à programmer à toute une génération sont également ici. Cherchez ceux que vous avez lus ; s'il en manque, vous pouvez nous aider à les ajouter.</value>
+  </data>
+  <data name="Welcome_Closing" xml:space="preserve">
+    <value>Marechai est un travail d'amour bâti par des gens comme vous. Quoi que ce soit qui vous a amené ici — la nostalgie, la recherche, la préservation — nous sommes contents de votre venue, et nous espérons que vous vous sentirez chez vous.</value>
+  </data>
+  <data name="Welcome_Signoff" xml:space="preserve">
+    <value>Bienvenue à bord,</value>
+  </data>
+  <data name="Welcome_Footer" xml:space="preserve">
+    <value>— L'équipe Marechai</value>
+  </data>
+  <data name="AccountDeletion_Subject" xml:space="preserve">
+    <value>Confirmez la suppression de votre compte Marechai</value>
+  </data>
+  <data name="AccountDeletion_Title" xml:space="preserve">
+    <value>Confirmez la suppression du compte</value>
+  </data>
+  <data name="AccountDeletion_Intro" xml:space="preserve">
+    <value>Nous avons reçu une demande de suppression de votre compte Marechai. Si c'était vous, cliquez sur le bouton pour confirmer. Votre compte entrera ensuite dans une période de grâce de 30 jours pendant laquelle vous pouvez encore annuler en vous connectant et en choisissant « Annuler la suppression ». Après 30 jours, le compte sera définitivement supprimé.</value>
+  </data>
+  <data name="AccountDeletion_ButtonText" xml:space="preserve">
+    <value>Confirmer la suppression</value>
+  </data>
+  <data name="AccountDeletion_LinkFallback" xml:space="preserve">
+    <value>Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :</value>
+  </data>
+  <data name="AccountDeletion_Footer" xml:space="preserve">
+    <value>Si vous n'avez pas demandé la suppression de votre compte, vous pouvez ignorer cet e-mail — il ne se passera rien.</value>
+  </data>
 </root>

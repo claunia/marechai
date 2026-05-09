@@ -2490,4 +2490,56 @@
   <data name="SoftwareCreditsLabel" xml:space="preserve"><value>Credits</value></data>
   <data name="PersonSoftwareLabel" xml:space="preserve"><value>Software</value></data>
   <data name="SoftwareCreditsLabel" xml:space="preserve"><value>Credits</value></data>
+  <data name="LoginPage_ResendConfirmationLink" xml:space="preserve"><value>Resend confirmation email</value></data>
+  <data name="LoginPage.Error.EmailNotConfirmed" xml:space="preserve"><value>Please confirm your email address before signing in.</value></data>
+  <data name="RegisterPage_Title" xml:space="preserve"><value>Create an account</value></data>
+  <data name="RegisterPage_Intro" xml:space="preserve"><value>Marechai is an invitation-only community. Paste the code an admin shared with you, fill in the fields below, and we will email you a link to confirm your account.</value></data>
+  <data name="RegisterPage_InvitationCodeLabel" xml:space="preserve"><value>Invitation code</value></data>
+  <data name="RegisterPage_EmailLabel" xml:space="preserve"><value>Email</value></data>
+  <data name="RegisterPage_UserNameLabel" xml:space="preserve"><value>Username</value></data>
+  <data name="RegisterPage_DisplayNameLabel" xml:space="preserve"><value>Display name</value></data>
+  <data name="RegisterPage_DisplayNameHelp" xml:space="preserve"><value>Shown publicly on your profile and contributions.</value></data>
+  <data name="RegisterPage_PasswordLabel" xml:space="preserve"><value>Password</value></data>
+  <data name="RegisterPage_ConfirmPasswordLabel" xml:space="preserve"><value>Confirm password</value></data>
+  <data name="RegisterPage_SubmitButton" xml:space="preserve"><value>Create account</value></data>
+  <data name="RegisterPage_BackToLogin" xml:space="preserve"><value>Already have an account? Sign in</value></data>
+  <data name="RegisterPage_ConfirmationTitle" xml:space="preserve"><value>Check your inbox</value></data>
+  <data name="RegisterPage_ConfirmationMessage" xml:space="preserve"><value>Account created. We have sent you a confirmation email — click the link inside (it opens in your web browser) to activate your account, then come back here to sign in.</value></data>
+  <data name="RegisterPage_ResendLink" xml:space="preserve"><value>Didn't get the email? Send it again</value></data>
+  <data name="RegisterPage.Error.InvitationCodeRequired" xml:space="preserve"><value>Invitation code is required.</value></data>
+  <data name="RegisterPage.Error.EmailRequired" xml:space="preserve"><value>Email address is required.</value></data>
+  <data name="RegisterPage.Error.UserNameRequired" xml:space="preserve"><value>Username is required.</value></data>
+  <data name="RegisterPage.Error.DisplayNameRequired" xml:space="preserve"><value>Display name is required.</value></data>
+  <data name="RegisterPage.Error.PasswordRequired" xml:space="preserve"><value>Password is required.</value></data>
+  <data name="RegisterPage.Error.PasswordMismatch" xml:space="preserve"><value>Passwords do not match.</value></data>
+  <data name="RegisterPage.Error.Generic" xml:space="preserve"><value>Registration failed.</value></data>
+  <data name="ResendConfirmationPage_Title" xml:space="preserve"><value>Resend confirmation email</value></data>
+  <data name="ResendConfirmationPage_Intro" xml:space="preserve"><value>Enter the email address you registered with and we will send you a fresh confirmation link.</value></data>
+  <data name="ResendConfirmationPage_EmailLabel" xml:space="preserve"><value>Email</value></data>
+  <data name="ResendConfirmationPage_SubmitButton" xml:space="preserve"><value>Send confirmation email</value></data>
+  <data name="ResendConfirmationPage_BackToLogin" xml:space="preserve"><value>Back to sign in</value></data>
+  <data name="ResendConfirmationPage_ConfirmationTitle" xml:space="preserve"><value>Check your inbox</value></data>
+  <data name="ResendConfirmationPage_ConfirmationMessage" xml:space="preserve"><value>If an account with that email exists and hasn't been confirmed yet, we have sent a fresh confirmation link to it. Open it from a web browser to finish activating your account.</value></data>
+  <data name="ResendConfirmationPage.Error.EmailRequired" xml:space="preserve"><value>Email address is required.</value></data>
+  <data name="DeleteAccountPage_Title" xml:space="preserve"><value>Delete my account</value></data>
+  <data name="DeleteAccountPage_Warning" xml:space="preserve"><value>This will permanently remove your account and personal data. Your public contributions will be retained but anonymised. After confirming, you have 30 days to change your mind by signing in and choosing 'Cancel deletion'.</value></data>
+  <data name="DeleteAccountPage_PasswordLabel" xml:space="preserve"><value>Current password</value></data>
+  <data name="DeleteAccountPage_Has2faLabel" xml:space="preserve"><value>I have two-factor authentication enabled</value></data>
+  <data name="DeleteAccountPage_TwoFactorMethodLabel" xml:space="preserve"><value>Two-factor method</value></data>
+  <data name="DeleteAccountPage_SubmitButton" xml:space="preserve"><value>Send confirmation email</value></data>
+  <data name="DeleteAccountPage_SubmittedMessage" xml:space="preserve"><value>We sent you an email with a confirmation link. Click it (it opens in your browser) to start the 30-day deletion grace window.</value></data>
+  <data name="DeleteAccountPage_BackLink" xml:space="preserve"><value>Back to settings</value></data>
+  <data name="DeleteAccountPage.Error.PasswordRequired" xml:space="preserve"><value>Current password is required.</value></data>
+  <data name="DeleteAccountPage.Error.CodeRequired" xml:space="preserve"><value>Two-factor code is required.</value></data>
+  <data name="DeleteAccountPage.Error.Generic" xml:space="preserve"><value>Could not start account deletion.</value></data>
+  <data name="DeletionPendingPage_Title" xml:space="preserve"><value>Account scheduled for deletion</value></data>
+  <data name="DeletionPendingPage_Warning" xml:space="preserve"><value>Your account is scheduled for permanent deletion. Until then, most of the site is unavailable to you.</value></data>
+  <data name="DeletionPendingPage_CancelButton" xml:space="preserve"><value>Cancel deletion</value></data>
+  <data name="DeletionPendingPage_DownloadButton" xml:space="preserve"><value>Download my data</value></data>
+  <data name="DeletionPendingPage_NoPendingMessage" xml:space="preserve"><value>No deletion request is pending on your account.</value></data>
+  <data name="DeletionPendingPage_BackLink" xml:space="preserve"><value>Back to settings</value></data>
+  <data name="DeletionPendingPage.CancelSuccess" xml:space="preserve"><value>Deletion cancelled. You can continue using your account normally.</value></data>
+  <data name="DeletionPendingPage.CancelFailed" xml:space="preserve"><value>Could not cancel the deletion. Please try again.</value></data>
+  <data name="DeletionPendingPage.DownloadFailed" xml:space="preserve"><value>Could not generate your data export.</value></data>
+  <data name="DeletionPendingPage.DownloadSaved" xml:space="preserve"><value>Data export saved.</value></data>
 </root>

@@ -1,0 +1,78 @@
+@{
+    /******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2026 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/confirm-email"
+@inject AuthService AuthService
+@inject NavigationManager Navigation
+@inject IStringLocalizer<ProfileService> L
+
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Filled.MarkEmailRead" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Style="color: white;">@L["Confirm your email"]</MudText>
+    </MudStack>
+</MudPaper>
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="12" sm="8" md="6" lg="4">
+        <MudPaper Elevation="2" Class="pa-6 rounded-lg">
+            @if(_isLoading)
+            {
+                <div class="d-flex justify-center">
+                    <MudProgressCircular Indeterminate="true"/>
+                </div>
+                <MudText Typo="Typo.body2" Class="mt-3 text-center">@L["Confirming your email..."]</MudText>
+            }
+            else if(_succeeded)
+            {
+                <MudAlert Severity="Severity.Success" Class="mb-4">
+                    @L["Your email is confirmed. You can now sign in to Marechai."]
+                </MudAlert>
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           FullWidth="true"
+                           Href="/login"
+                           StartIcon="@Icons.Material.Filled.Login">
+                    @L["Sign in"]
+                </MudButton>
+            }
+            else
+            {
+                <MudAlert Severity="Severity.Error" Class="mb-4">
+                    @(_errorMessage ?? L["Invalid or expired confirmation link."])
+                </MudAlert>
+                <MudButton Variant="Variant.Outlined"
+                           Color="Color.Primary"
+                           FullWidth="true"
+                           Href="/resend-confirmation"
+                           StartIcon="@Icons.Material.Filled.Send">
+                    @L["Send a new confirmation email"]
+                </MudButton>
+            }
+        </MudPaper>
+    </MudItem>
+</MudGrid>

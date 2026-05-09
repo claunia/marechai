@@ -69,4 +69,73 @@
   <data name="PasswordReset_Footer" xml:space="preserve">
     <value>Falls Sie kein Zurücksetzen des Passworts angefordert haben, können Sie diese E-Mail ignorieren.</value>
   </data>
+  <data name="EmailConfirmation_Subject" xml:space="preserve">
+    <value>Bestätigen Sie Ihre Marechai-E-Mail-Adresse</value>
+  </data>
+  <data name="EmailConfirmation_Title" xml:space="preserve">
+    <value>E-Mail-Adresse bestätigen</value>
+  </data>
+  <data name="EmailConfirmation_Intro" xml:space="preserve">
+    <value>Willkommen bei Marechai! Bitte bestätigen Sie diese E-Mail-Adresse, um Ihr Konto zu aktivieren.</value>
+  </data>
+  <data name="EmailConfirmation_ButtonText" xml:space="preserve">
+    <value>E-Mail bestätigen</value>
+  </data>
+  <data name="EmailConfirmation_LinkFallback" xml:space="preserve">
+    <value>Falls die Schaltfläche nicht funktioniert, kopieren Sie diesen Link und fügen Sie ihn in Ihren Browser ein:</value>
+  </data>
+  <data name="EmailConfirmation_Footer" xml:space="preserve">
+    <value>Falls Sie kein Marechai-Konto erstellt haben, können Sie diese E-Mail ignorieren.</value>
+  </data>
+  <data name="Welcome_Subject" xml:space="preserve">
+    <value>Willkommen bei Marechai — Ihr Platz an der Tafel der Computergeschichte</value>
+  </data>
+  <data name="Welcome_Title" xml:space="preserve">
+    <value>Willkommen bei Marechai!</value>
+  </data>
+  <data name="Welcome_Lead" xml:space="preserve">
+    <value>Wir freuen uns sehr, dass Sie zu uns gestoßen sind, {0}.</value>
+  </data>
+  <data name="Welcome_Intro" xml:space="preserve">
+    <value>Marechai ist ein von der Community gepflegtes Archiv der Maschinen, Software, Bücher und Zeitschriften, die geprägt haben, wie wir heute mit Computern umgehen — und Sie sind nun Teil des Teams, das diese Erinnerung lebendig hält.</value>
+  </data>
+  <data name="Welcome_ProfileBullet" xml:space="preserve">
+    <value>Machen Sie es sich zu eigen. Gehen Sie zu Ihrem Profil, fügen Sie eine Biografie hinzu, wählen Sie ein Avatar — lassen Sie andere Sammler und Historiker wissen, wer Sie sind.</value>
+  </data>
+  <data name="Welcome_CollectionBullet" xml:space="preserve">
+    <value>Bauen Sie Ihre Sammlung auf. Stöbern Sie durch Computer, Konsolen und Smartphones, die Sie besessen haben (oder noch hüten), und fügen Sie sie Ihrem Regal hinzu, damit alle sie sehen können.</value>
+  </data>
+  <data name="Welcome_SoftwareBullet" xml:space="preserve">
+    <value>Entdecken Sie alte Bekannte wieder. Unser Software-Katalog umfasst Tausende von Titeln — gut möglich, dass die Spiele, Anwendungen und Betriebssysteme, an die Sie sich erinnern, dort schon auf Sie warten.</value>
+  </data>
+  <data name="Welcome_BooksBullet" xml:space="preserve">
+    <value>Vergessen Sie das Papier nicht. Bücher und Zeitschriften, die einer ganzen Generation das Programmieren beibrachten, finden Sie hier ebenfalls. Suchen Sie nach denen, die Sie gelesen haben; falls welche fehlen, können Sie uns helfen, sie hinzuzufügen.</value>
+  </data>
+  <data name="Welcome_Closing" xml:space="preserve">
+    <value>Marechai ist ein Herzensprojekt, das von Menschen wie Ihnen gebaut wird. Was auch immer Sie hierher geführt hat — Nostalgie, Forschung, Bewahrung — wir freuen uns, dass Sie da sind, und hoffen, dass Sie sich wie zu Hause fühlen.</value>
+  </data>
+  <data name="Welcome_Signoff" xml:space="preserve">
+    <value>Willkommen an Bord,</value>
+  </data>
+  <data name="Welcome_Footer" xml:space="preserve">
+    <value>— Das Marechai-Team</value>
+  </data>
+  <data name="AccountDeletion_Subject" xml:space="preserve">
+    <value>Bestätigen Sie die Löschung Ihres Marechai-Kontos</value>
+  </data>
+  <data name="AccountDeletion_Title" xml:space="preserve">
+    <value>Konto-Löschung bestätigen</value>
+  </data>
+  <data name="AccountDeletion_Intro" xml:space="preserve">
+    <value>Wir haben eine Anfrage erhalten, Ihr Marechai-Konto zu löschen. Falls Sie das waren, klicken Sie auf die Schaltfläche, um zu bestätigen. Ihr Konto tritt dann in eine 30-tägige Karenzfrist ein, während der Sie die Löschung noch durch Anmeldung und Auswahl von „Löschung abbrechen“ rückgängig machen können. Nach 30 Tagen wird das Konto endgültig entfernt.</value>
+  </data>
+  <data name="AccountDeletion_ButtonText" xml:space="preserve">
+    <value>Löschung bestätigen</value>
+  </data>
+  <data name="AccountDeletion_LinkFallback" xml:space="preserve">
+    <value>Falls die Schaltfläche nicht funktioniert, kopieren Sie diesen Link und fügen Sie ihn in Ihren Browser ein:</value>
+  </data>
+  <data name="AccountDeletion_Footer" xml:space="preserve">
+    <value>Falls Sie keine Konto-Löschung angefordert haben, können Sie diese E-Mail ignorieren — es wird nichts passieren.</value>
+  </data>
 </root>

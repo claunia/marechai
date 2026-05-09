@@ -1,0 +1,75 @@
+<?xml version="1.0"
+      encoding="utf-8"?>
+
+<Page x:Class="Marechai.App.Presentation.Views.DeletionPendingPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:vm="using:Marechai.App.Presentation.ViewModels"
+      xmlns:utu="using:Uno.Toolkit.UI"
+      mc:Ignorable="d"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+      d:DataContext="{d:DesignInstance vm:DeletionPendingViewModel}">
+
+    <Grid utu:SafeArea.Insets="VisibleBounds">
+        <Grid HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="520" Padding="32">
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="#c62828" BorderThickness="2" CornerRadius="8" Padding="0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0" Background="#c62828" Padding="16,12" CornerRadius="6,6,0,0">
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <FontIcon Glyph="&#xE823;" FontSize="20" Foreground="White" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=DeletionPendingPage_Title}"
+                                       Foreground="White" FontWeight="SemiBold" FontSize="18" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Border>
+
+                    <ScrollViewer Grid.Row="1" Padding="24" VerticalScrollBarVisibility="Auto">
+                        <StackPanel Spacing="16">
+                            <ProgressRing IsActive="{Binding IsLoading}" HorizontalAlignment="Center"
+                                          Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                            <StackPanel Spacing="14"
+                                        Visibility="{Binding Status.IsPending, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <InfoBar IsOpen="True" Severity="Warning" IsClosable="False"
+                                         Message="{Binding Source={StaticResource Strings}, Path=DeletionPendingPage_Warning}" />
+                                <TextBlock Text="{Binding Status.DeletionScheduledFor}"
+                                           Style="{StaticResource BodyTextBlockStyle}" />
+
+                                <InfoBar IsOpen="{Binding HasMessage, Mode=OneWay}" Severity="Informational"
+                                         Message="{Binding Message}" IsClosable="False" />
+
+                                <Button Content="{Binding Source={StaticResource Strings}, Path=DeletionPendingPage_CancelButton}"
+                                        Command="{Binding CancelCommand}"
+                                        IsEnabled="{Binding IsCancelling, Converter={StaticResource InvertBoolConverter}}"
+                                        HorizontalAlignment="Stretch"
+                                        Style="{StaticResource AccentButtonStyle}" />
+
+                                <Button Content="{Binding Source={StaticResource Strings}, Path=DeletionPendingPage_DownloadButton}"
+                                        Command="{Binding DownloadCommand}"
+                                        IsEnabled="{Binding IsDownloading, Converter={StaticResource InvertBoolConverter}}"
+                                        HorizontalAlignment="Stretch" />
+                            </StackPanel>
+
+                            <StackPanel Spacing="14"
+                                        Visibility="{Binding Status.IsPending, Converter={StaticResource InvertBoolToVisibilityConverter}}">
+                                <InfoBar IsOpen="True" Severity="Success" IsClosable="False"
+                                         Message="{Binding Source={StaticResource Strings}, Path=DeletionPendingPage_NoPendingMessage}" />
+                            </StackPanel>
+
+                            <HyperlinkButton Content="{Binding Source={StaticResource Strings}, Path=DeletionPendingPage_BackLink}"
+                                             Command="{Binding BackToSettingsCommand}"
+                                             HorizontalAlignment="Center" />
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Page>

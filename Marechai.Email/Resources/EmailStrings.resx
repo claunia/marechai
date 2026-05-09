@@ -69,4 +69,73 @@
   <data name="PasswordReset_Footer" xml:space="preserve">
     <value>If you didn't request a password reset, you can safely ignore this email.</value>
   </data>
+  <data name="EmailConfirmation_Subject" xml:space="preserve">
+    <value>Confirm your Marechai email address</value>
+  </data>
+  <data name="EmailConfirmation_Title" xml:space="preserve">
+    <value>Confirm your email address</value>
+  </data>
+  <data name="EmailConfirmation_Intro" xml:space="preserve">
+    <value>Welcome to Marechai! Please confirm this email address to activate your account.</value>
+  </data>
+  <data name="EmailConfirmation_ButtonText" xml:space="preserve">
+    <value>Confirm email</value>
+  </data>
+  <data name="EmailConfirmation_LinkFallback" xml:space="preserve">
+    <value>If the button does not work, copy and paste this link into your browser:</value>
+  </data>
+  <data name="EmailConfirmation_Footer" xml:space="preserve">
+    <value>If you didn't create a Marechai account, you can safely ignore this email.</value>
+  </data>
+  <data name="Welcome_Subject" xml:space="preserve">
+    <value>Welcome to Marechai — your seat at the table of computing history</value>
+  </data>
+  <data name="Welcome_Title" xml:space="preserve">
+    <value>Welcome to Marechai!</value>
+  </data>
+  <data name="Welcome_Lead" xml:space="preserve">
+    <value>We're thrilled you've joined us, {0}.</value>
+  </data>
+  <data name="Welcome_Intro" xml:space="preserve">
+    <value>Marechai is a community-curated archive of the machines, software, books and magazines that shaped how we compute today — and you're now part of the team keeping that memory alive.</value>
+  </data>
+  <data name="Welcome_ProfileBullet" xml:space="preserve">
+    <value>Make the place yours. Head to your profile, add a bio, pick an avatar — let other collectors and historians know who you are.</value>
+  </data>
+  <data name="Welcome_CollectionBullet" xml:space="preserve">
+    <value>Build your collection. Browse the computers, consoles and smartphones you've owned (or still treasure) and add them to your shelf for everyone to see.</value>
+  </data>
+  <data name="Welcome_SoftwareBullet" xml:space="preserve">
+    <value>Rediscover old friends. Our software catalogue holds thousands of titles — there's a good chance the games, applications and operating systems you remember are waiting there.</value>
+  </data>
+  <data name="Welcome_BooksBullet" xml:space="preserve">
+    <value>Don't forget the paper. Books and magazines that taught a generation to code are in here too. Search for the ones you read; if they're missing, you can help us add them.</value>
+  </data>
+  <data name="Welcome_Closing" xml:space="preserve">
+    <value>Marechai is a labour of love built by people like you. Whatever drew you here — nostalgia, research, preservation — we're glad you came, and we hope you'll feel at home.</value>
+  </data>
+  <data name="Welcome_Signoff" xml:space="preserve">
+    <value>Welcome aboard,</value>
+  </data>
+  <data name="Welcome_Footer" xml:space="preserve">
+    <value>— The Marechai team</value>
+  </data>
+  <data name="AccountDeletion_Subject" xml:space="preserve">
+    <value>Confirm your Marechai account deletion</value>
+  </data>
+  <data name="AccountDeletion_Title" xml:space="preserve">
+    <value>Confirm account deletion</value>
+  </data>
+  <data name="AccountDeletion_Intro" xml:space="preserve">
+    <value>We received a request to delete your Marechai account. If this was you, click the button below to confirm. Your account will then enter a 30-day grace window during which you can still cancel by signing in and choosing 'Cancel deletion'. After 30 days the account is permanently removed.</value>
+  </data>
+  <data name="AccountDeletion_ButtonText" xml:space="preserve">
+    <value>Confirm deletion</value>
+  </data>
+  <data name="AccountDeletion_LinkFallback" xml:space="preserve">
+    <value>If the button does not work, copy and paste this link into your browser:</value>
+  </data>
+  <data name="AccountDeletion_Footer" xml:space="preserve">
+    <value>If you didn't request to delete your account, you can safely ignore this email — nothing will happen.</value>
+  </data>
 </root>

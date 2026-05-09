@@ -36,13 +36,17 @@ using Marechai.Data.Models;
 using Marechai.Database.Models;
 using Marechai.Email.Composers;
 using Marechai.Helpers;
+using Marechai.Server.Filters;
 using Marechai.Server.Localization;
 using Marechai.Server.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace Marechai.Server.Controllers;
 
@@ -52,7 +56,13 @@ public class AuthController
     (UserManager<ApplicationUser> userManager,         MarechaiContext              context,
      TokenService                 tokenService,        IConfiguration               configuration,
      TwoFactorEmailComposer       twoFactorEmailComposer,
-     PasswordResetEmailComposer   passwordResetEmailComposer) : ControllerBase
+     PasswordResetEmailComposer   passwordResetEmailComposer,
+     EmailConfirmationEmailComposer emailConfirmationEmailComposer,
+     WelcomeEmailComposer           welcomeEmailComposer,
+     AccountDeletionConfirmationEmailComposer accountDeletionConfirmationEmailComposer,
+     UserAccountDeletionService     userAccountDeletionService,
+     AvatarFileCleaner              avatarFileCleaner,
+     ILogger<AuthController>        logger) : ControllerBase
 {
     static readonly HashSet<string> _allowedExtensions = [".jpg", ".jpeg", ".png", ".webp", ".tiff", ".tif", ".bmp"];
 
@@ -89,6 +99,21 @@ public class AuthController
         ApplicationUser userInDb = context.Users.FirstOrDefault(u => u.Email == request.Email);
 
         if(userInDb is null) return Unauthorized();
+
+        // Identity is configured with RequireConfirmedAccount=true. Surface the unconfirmed-email state as an
+        // explicit flag in the response so the client can offer a "Resend confirmation email" affordance
+        // instead of a generic "bad credentials" message (which would be confusing since the password was
+        // accepted just above).
+        if(!userInDb.EmailConfirmed)
+        {
+            return Ok(new AuthResponse
+            {
+                Message           = "Email not confirmed",
+                Succeeded         = false,
+                Token             = "",
+                EmailNotConfirmed = true
+            });
+        }
 
         // Two-factor required: short-circuit and return a pending token. The client must collect a code via one of
         // the /auth/login/two-factor* endpoints to complete the login.
@@ -340,6 +365,441 @@ public class AuthController
         return NoContent();
     }
 
+    // ----------------------------------------------------------------------------------------------------------
+    //  Public registration & email confirmation
+    // ----------------------------------------------------------------------------------------------------------
+
+    [HttpPost]
+    [Route("register")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status204NoContent,
+                          Description =
+                              "Account created. The user must click the link in the confirmation email before they can log in.")]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    [Consumes("application/json")]
+    public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequest request)
+    {
+        if(!ModelState.IsValid) return BadRequest(ModelState);
+
+        await using IDbContextTransaction tx = await context.Database.BeginTransactionAsync();
+
+        // Generic error for missing-or-already-used codes &mdash; never disclose which is the case so an
+        // attacker cannot enumerate valid codes by probing.
+        const string GENERIC_INVITE_ERROR = "Invalid or already-used invitation code.";
+
+        InvitationCode invite = await context.InvitationCodes
+                                             .FirstOrDefaultAsync(c => c.Code == request.InvitationCode &&
+                                                                       c.UsedById == null);
+
+        if(invite is null)
+            return Problem(GENERIC_INVITE_ERROR,
+                           statusCode: StatusCodes.Status400BadRequest,
+                           title: "INVALID_INVITATION_CODE");
+
+        // Anti-enumeration: a single generic message regardless of which side collided. Distinguishing email
+        // vs username would let an attacker iterate through emails to confirm registrations.
+        ApplicationUser existingByEmail = await userManager.FindByEmailAsync(request.Email);
+        ApplicationUser existingByName  = await userManager.FindByNameAsync(request.UserName);
+
+        if(existingByEmail is not null || existingByName is not null)
+            return Problem("An account with that email or username already exists.",
+                           statusCode: StatusCodes.Status400BadRequest,
+                           title: "ACCOUNT_ALREADY_EXISTS");
+
+        var user = new ApplicationUser
+        {
+            UserName       = request.UserName,
+            Email          = request.Email,
+            DisplayName    = request.DisplayName,
+            EmailConfirmed = false
+        };
+
+        IdentityResult create = await userManager.CreateAsync(user, request.Password);
+
+        if(!create.Succeeded)
+        {
+            await tx.RollbackAsync();
+
+            return Problem(string.Join("; ", create.Errors.Select(e => e.Description)),
+                           statusCode: StatusCodes.Status400BadRequest,
+                           title: "REGISTRATION_FAILED");
+        }
+
+        IdentityResult role = await userManager.AddToRoleAsync(user, "NormalUser");
+
+        if(!role.Succeeded)
+        {
+            // Best-effort cleanup: drop the partially-created user and roll back the invite consume so the
+            // user can retry without burning the code.
+            await userManager.DeleteAsync(user);
+            await tx.RollbackAsync();
+
+            return Problem(string.Join("; ", role.Errors.Select(e => e.Description)),
+                           statusCode: StatusCodes.Status400BadRequest,
+                           title: "ROLE_ASSIGNMENT_FAILED");
+        }
+
+        invite.UsedById   = user.Id;
+        invite.UsedOn     = DateTime.UtcNow;
+        invite.RowVersion = Guid.NewGuid();
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch(DbUpdateConcurrencyException)
+        {
+            // Another concurrent registration won the race for this code &mdash; undo the user we created and
+            // surface the same generic error so the loser cannot tell whether the code was used by them or
+            // by someone else.
+            await userManager.DeleteAsync(user);
+            await tx.RollbackAsync();
+
+            return Problem(GENERIC_INVITE_ERROR,
+                           statusCode: StatusCodes.Status400BadRequest,
+                           title: "INVALID_INVITATION_CODE");
+        }
+
+        await tx.CommitAsync();
+
+        // Send the confirmation email AFTER the transaction commits so a transient SMTP failure cannot leave
+        // a half-committed account behind. SMTP errors past this point only mean the user needs to call
+        // /auth/email/resend-confirmation; the account itself is durable.
+        try
+        {
+            string token = await userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            string baseUrl = (configuration["Frontend:BaseUrl"] ?? string.Empty).TrimEnd('/');
+
+            string confirmUrl =
+                $"{baseUrl}/confirm-email?email={Uri.EscapeDataString(user.Email!)}&token={Uri.EscapeDataString(token)}";
+
+            await SendLocalizedConfirmationAsync(user.Email!, confirmUrl);
+        }
+        catch(Exception ex)
+        {
+            logger.LogWarning(ex,
+                              "Confirmation email send failed for {Email} \u2014 registration succeeded; user can retry via /auth/email/resend-confirmation",
+                              user.Email);
+        }
+
+        return NoContent();
+    }
+
+    [HttpPost]
+    [Route("email/confirm")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status204NoContent, Description = "Email confirmed.")]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    [Consumes("application/json")]
+    public async Task<IActionResult> ConfirmEmailAsync([FromBody] ConfirmEmailRequest request)
+    {
+        if(!ModelState.IsValid) return BadRequest(ModelState);
+
+        const string GENERIC_ERROR = "Invalid or expired confirmation link.";
+
+        ApplicationUser user = await userManager.FindByEmailAsync(request.Email);
+
+        // Generic message: NEVER differentiate between unknown user, already-confirmed, and bad/expired token.
+        if(user is null || user.EmailConfirmed)
+            return Problem(GENERIC_ERROR,
+                           statusCode: StatusCodes.Status400BadRequest,
+                           title: "INVALID_CONFIRMATION");
+
+        IdentityResult result = await userManager.ConfirmEmailAsync(user, request.Token);
+
+        if(!result.Succeeded)
+            return Problem(GENERIC_ERROR,
+                           statusCode: StatusCodes.Status400BadRequest,
+                           title: "INVALID_CONFIRMATION");
+
+        // Welcome email: dispatched once on first successful confirmation. A failure here MUST NOT fail the
+        // confirmation itself &mdash; the user is already legitimately confirmed and can log in.
+        try
+        {
+            await SendLocalizedWelcomeAsync(user.Email!,
+                                            string.IsNullOrWhiteSpace(user.DisplayName) ? user.UserName! : user.DisplayName);
+        }
+        catch(Exception ex)
+        {
+            logger.LogWarning(ex,
+                              "Welcome email send failed for {Email} \u2014 confirmation succeeded anyway",
+                              user.Email);
+        }
+
+        return NoContent();
+    }
+
+    [HttpPost]
+    [Route("email/resend-confirmation")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status204NoContent,
+                          Description =
+                              "Always returned regardless of whether the email matches a registered account, to prevent enumeration. If the address belongs to an unconfirmed account a fresh confirmation link is dispatched.")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [Consumes("application/json")]
+    public async Task<IActionResult> ResendConfirmationAsync([FromBody] ResendConfirmationRequest request)
+    {
+        if(!ModelState.IsValid) return BadRequest(ModelState);
+
+        ApplicationUser user = await userManager.FindByEmailAsync(request.Email);
+
+        // Anti-enumeration: silently succeed for unknown / already-confirmed accounts. Lockout-on-success
+        // (below) still means an attacker probing valid addresses pays a real cost.
+        if(user is null || user.EmailConfirmed) return NoContent();
+
+        try
+        {
+            string token = await userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            string baseUrl = (configuration["Frontend:BaseUrl"] ?? string.Empty).TrimEnd('/');
+
+            string confirmUrl =
+                $"{baseUrl}/confirm-email?email={Uri.EscapeDataString(user.Email!)}&token={Uri.EscapeDataString(token)}";
+
+            await SendLocalizedConfirmationAsync(user.Email!, confirmUrl);
+        }
+        catch(Exception ex)
+        {
+            logger.LogWarning(ex, "Resend confirmation email send failed for {Email}", user.Email);
+        }
+
+        // Reuse Identity's lockout machinery (same approach as the failed-2FA paths) so an attacker that
+        // guesses a valid address can't grind the endpoint indefinitely.
+        await userManager.AccessFailedAsync(user);
+
+        return NoContent();
+    }
+
+    // ----------------------------------------------------------------------------------------------------------
+    //  GDPR self-service account deletion
+    // ----------------------------------------------------------------------------------------------------------
+
+    [HttpPost]
+    [Route("me/delete/request")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent,
+                          Description =
+                              "A confirmation email has been sent. The user must click the link in that email within the token's lifetime to actually move the account into the 30-day deletion grace window.")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [Consumes("application/json")]
+    public async Task<IActionResult> RequestAccountDeletionAsync([FromBody] RequestAccountDeletionRequest request)
+    {
+        if(!ModelState.IsValid) return BadRequest(ModelState);
+
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        ApplicationUser user = await userManager.FindByIdAsync(userId);
+
+        if(user is null) return Unauthorized();
+
+        // Step 1: re-verify the password to gate against session hijacking. CheckPasswordAsync increments
+        // AccessFailedCount on failure when the user is lockout-enabled.
+        if(!await userManager.CheckPasswordAsync(user, request.CurrentPassword))
+        {
+            await userManager.AccessFailedAsync(user);
+
+            return Unauthorized("Bad credentials.");
+        }
+
+        // Step 2: if 2FA is enabled, also require a fresh second-factor code.
+        if(user.TwoFactorEnabled)
+        {
+            if(string.IsNullOrWhiteSpace(request.TwoFactorProvider) ||
+               string.IsNullOrWhiteSpace(request.TwoFactorCode))
+                return Unauthorized("Two-factor verification is required for account deletion.");
+
+            if(!await VerifyOwnTwoFactorCodeAsync(user, request.TwoFactorProvider, request.TwoFactorCode))
+                return Unauthorized("Invalid two-factor code.");
+        }
+
+        // Step 3: generate a single-use deletion token and email a confirmation link. The token's
+        // lifetime is bounded by Identity's DataProtectorTokenProvider settings (24h default).
+        string token = await userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultProvider, "DeleteAccount");
+
+        string baseUrl = (configuration["Frontend:BaseUrl"] ?? string.Empty).TrimEnd('/');
+
+        string confirmUrl =
+            $"{baseUrl}/account/delete-confirm?email={Uri.EscapeDataString(user.Email!)}&token={Uri.EscapeDataString(token)}";
+
+        try
+        {
+            await SendLocalizedDeletionConfirmationAsync(user.Email!, confirmUrl);
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex,
+                            "Account-deletion confirmation email failed to send for {UserId} \u2014 user must retry the request",
+                            user.Id);
+
+            return Problem("Could not send the deletion confirmation email. Please try again in a few minutes.",
+                           statusCode: StatusCodes.Status500InternalServerError,
+                           title: "EMAIL_DISPATCH_FAILED");
+        }
+
+        return NoContent();
+    }
+
+    [HttpPost]
+    [Route("me/delete/confirm")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent,
+                          Description =
+                              "Deletion confirmed. The account is now in the 30-day grace window; a background job will hard-delete it after that.")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [Consumes("application/json")]
+    public async Task<IActionResult> ConfirmAccountDeletionAsync([FromBody] ConfirmAccountDeletionRequest request)
+    {
+        if(!ModelState.IsValid) return BadRequest(ModelState);
+
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        ApplicationUser user = await userManager.FindByIdAsync(userId);
+
+        if(user is null) return Unauthorized();
+
+        bool ok = await userManager.VerifyUserTokenAsync(user, TokenOptions.DefaultProvider, "DeleteAccount",
+                                                         request.Token);
+
+        if(!ok)
+            return Problem("Invalid or expired deletion confirmation link.",
+                           statusCode: StatusCodes.Status400BadRequest,
+                           title: "INVALID_DELETION_TOKEN");
+
+        user.DeletionRequestedAt = DateTime.UtcNow;
+        IdentityResult result    = await userManager.UpdateAsync(user);
+
+        if(!result.Succeeded) return BadRequest(result.Errors);
+
+        logger.LogInformation("User {UserId} confirmed self-service deletion; grace window starts now", user.Id);
+
+        return NoContent();
+    }
+
+    [HttpPost]
+    [Route("me/delete/cancel")]
+    [Authorize]
+    [AllowDeletionPending]
+    [ProducesResponseType(StatusCodes.Status204NoContent,
+                          Description =
+                              "Deletion cancelled (idempotent: returns 204 even if no deletion was pending).")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> CancelAccountDeletionAsync()
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        ApplicationUser user = await userManager.FindByIdAsync(userId);
+
+        if(user is null) return Unauthorized();
+
+        if(user.DeletionRequestedAt is null) return NoContent();
+
+        user.DeletionRequestedAt = null;
+        IdentityResult result    = await userManager.UpdateAsync(user);
+
+        if(!result.Succeeded) return BadRequest(result.Errors);
+
+        logger.LogInformation("User {UserId} cancelled their self-service deletion request", user.Id);
+
+        return NoContent();
+    }
+
+    [HttpGet]
+    [Route("me/delete/status")]
+    [Authorize]
+    [AllowDeletionPending]
+    [ProducesResponseType(typeof(AccountDeletionStatusDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [Produces("application/json")]
+    public async Task<ActionResult<AccountDeletionStatusDto>> GetAccountDeletionStatusAsync()
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        DateTime? requestedAt = await context.Users
+                                             .Where(u => u.Id == userId)
+                                             .Select(u => u.DeletionRequestedAt)
+                                             .FirstOrDefaultAsync();
+
+        return Ok(new AccountDeletionStatusDto
+        {
+            IsPending            = requestedAt.HasValue,
+            DeletionRequestedAt  = requestedAt,
+            DeletionScheduledFor = requestedAt?.AddDays(30)
+        });
+    }
+
+    [HttpGet]
+    [Route("me/export")]
+    [Authorize]
+    [AllowDeletionPending]
+    [ProducesResponseType(StatusCodes.Status200OK,
+                          Description =
+                              "GDPR Article 15 right-to-data-portability dump. Returns a single JSON file containing the user's profile, roles, collections, contributions and conversations.")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> ExportAsync()
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        ApplicationUser user = await userManager.FindByIdAsync(userId);
+
+        if(user is null) return Unauthorized();
+
+        IList<string> roles = await userManager.GetRolesAsync(user);
+
+        // Build a flat anonymous-object payload with every per-user table the user has rights to. Kept
+        // as an inline shape (no DTO) because Kiota doesn't need to model the response &mdash; clients
+        // download it as a binary blob and present it as "Save as..." JSON.
+        var payload = new
+        {
+            exportedAt = DateTime.UtcNow,
+            profile = new
+            {
+                user.Id, user.UserName, user.Email, user.EmailConfirmed, user.PhoneNumber,
+                user.PhoneNumberConfirmed, user.LockoutEnabled, user.LockoutEnd, user.AccessFailedCount,
+                user.PreferredThemeId, user.TwoFactorEnabled, user.TwoFactorViaAuthenticator, user.TwoFactorViaEmail
+            },
+            publicProfile = new
+            {
+                user.DisplayName, user.Bio, user.Website, user.Location, user.UseGravatar,
+                user.AvatarGuid, user.OriginalAvatarExtension, user.Twitter, user.GitHub,
+                user.Mastodon, user.Facebook, user.LinkedIn
+            },
+            roles                 = roles,
+            ownedMachines         = await context.OwnedMachines.AsNoTracking().Where(o => o.UserId == userId).ToListAsync(),
+            collectedBooks        = await context.CollectedBooks.AsNoTracking().Where(c => c.UserId == userId).Select(c => new { c.BookId }).ToListAsync(),
+            collectedDocuments    = await context.CollectedDocuments.AsNoTracking().Where(c => c.UserId == userId).Select(c => new { c.DocumentId }).ToListAsync(),
+            collectedSoftwareReleases = await context.CollectedSoftwareReleases.AsNoTracking().Where(c => c.UserId == userId).Select(c => new { c.SoftwareReleaseId }).ToListAsync(),
+            uploadedPhotos        = await context.MachinePhotos.AsNoTracking().Where(p => p.UserId == userId).Select(p => new { p.Id, p.MachineId, p.Author, p.CreatedOn, p.Comments }).ToListAsync(),
+            submittedDumps        = await context.Dumps.AsNoTracking().Where(d => d.UserId == userId).Select(d => new { d.Id, d.UserId }).ToListAsync(),
+            softwareRatings       = await context.SoftwareUserRatings.AsNoTracking().Where(r => r.UserId == userId).Select(r => new { r.SoftwareId, r.Rating }).ToListAsync(),
+            sentMessages          = await context.Messages.AsNoTracking().Where(m => m.SenderId == userId).Select(m => new { m.Id, m.ConversationId, m.Body, m.CreatedOn }).ToListAsync(),
+            conversations         = await context.ConversationParticipants.AsNoTracking().Where(p => p.UserId == userId).Select(p => new { p.ConversationId, p.JoinedOn, p.LeftOn }).ToListAsync()
+        };
+
+        string json = System.Text.Json.JsonSerializer.Serialize(payload, new System.Text.Json.JsonSerializerOptions
+        {
+            WriteIndented = true,
+            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.Never
+        });
+
+        byte[] bytes = System.Text.Encoding.UTF8.GetBytes(json);
+
+        return File(bytes,
+                    "application/json",
+                    $"marechai-user-data-{user.Id}-{DateTime.UtcNow:yyyyMMdd}.json");
+    }
+
     [HttpGet]
     [Route("me/public-profile")]
     [Authorize]
@@ -569,6 +1029,68 @@ public class AuthController
         {
             System.Globalization.CultureInfo.CurrentUICulture = EmailCulture.PickFromRequest(Request);
             await passwordResetEmailComposer.SendResetLinkAsync(toEmail, resetUrl);
+        }
+        finally
+        {
+            System.Globalization.CultureInfo.CurrentUICulture = previous;
+        }
+    }
+
+    /// <summary>
+    ///     Sends the email-confirmation link in the language picked from the request's <c>Accept-Language</c>
+    ///     header (restricted to <see cref="EmailCulture.Supported" />, fallback English). Wraps the composer
+    ///     call in a <c>CultureInfo.CurrentUICulture</c> swap so <c>IStringLocalizer&lt;EmailStrings&gt;</c>
+    ///     picks up the right resource and restores the previous culture afterwards.
+    /// </summary>
+    async Task SendLocalizedConfirmationAsync(string toEmail, string confirmUrl)
+    {
+        System.Globalization.CultureInfo previous = System.Globalization.CultureInfo.CurrentUICulture;
+
+        try
+        {
+            System.Globalization.CultureInfo.CurrentUICulture = EmailCulture.PickFromRequest(Request);
+            await emailConfirmationEmailComposer.SendConfirmLinkAsync(toEmail, confirmUrl);
+        }
+        finally
+        {
+            System.Globalization.CultureInfo.CurrentUICulture = previous;
+        }
+    }
+
+    /// <summary>
+    ///     Sends the welcome email in the language picked from the request's <c>Accept-Language</c> header
+    ///     (restricted to <see cref="EmailCulture.Supported" />, fallback English). Wraps the composer call in
+    ///     a <c>CultureInfo.CurrentUICulture</c> swap so <c>IStringLocalizer&lt;EmailStrings&gt;</c> picks up
+    ///     the right resource and restores the previous culture afterwards.
+    /// </summary>
+    async Task SendLocalizedWelcomeAsync(string toEmail, string displayName)
+    {
+        System.Globalization.CultureInfo previous = System.Globalization.CultureInfo.CurrentUICulture;
+
+        try
+        {
+            System.Globalization.CultureInfo.CurrentUICulture = EmailCulture.PickFromRequest(Request);
+            await welcomeEmailComposer.SendAsync(toEmail, displayName);
+        }
+        finally
+        {
+            System.Globalization.CultureInfo.CurrentUICulture = previous;
+        }
+    }
+
+    /// <summary>
+    ///     Sends the GDPR account-deletion confirmation link in the language picked from the request's
+    ///     <c>Accept-Language</c> header (restricted to <see cref="EmailCulture.Supported" />, fallback
+    ///     English).
+    /// </summary>
+    async Task SendLocalizedDeletionConfirmationAsync(string toEmail, string confirmUrl)
+    {
+        System.Globalization.CultureInfo previous = System.Globalization.CultureInfo.CurrentUICulture;
+
+        try
+        {
+            System.Globalization.CultureInfo.CurrentUICulture = EmailCulture.PickFromRequest(Request);
+            await accountDeletionConfirmationEmailComposer.SendConfirmLinkAsync(toEmail, confirmUrl);
         }
         finally
         {

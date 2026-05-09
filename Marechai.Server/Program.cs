@@ -11,6 +11,7 @@ using Marechai.Email;
 using Marechai.Helpers;
 using Marechai.Server.Helpers;
 using Marechai.Server.Services;
+using Marechai.Server.Filters;
 using Markdig;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -201,7 +202,14 @@ file class Program
         Console.WriteLine("\e[31;1mTook \e[32;1m{0} seconds\e[31;1m...\e[0m", (end - start).TotalSeconds);
 
         // Add services to the container.
-        builder.Services.AddControllers()
+        builder.Services.AddControllers(options =>
+                {
+                    // Globally block authenticated requests from users in the GDPR deletion grace
+                    // window, except where the action carries [AllowDeletionPending]. The filter is
+                    // scoped (depends on MarechaiContext) so we register the type and let DI resolve
+                    // it per-request.
+                    options.Filters.Add<DeletionPendingFilter>();
+                })
                .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.Converters.Add(new IsoDateTimeConverter());
@@ -333,6 +341,11 @@ file class Program
         builder.Services.AddMarechaiEmail(builder.Configuration);
 
         builder.Services.AddScoped<TokenService, TokenService>();
+        builder.Services.AddSingleton<InvitationCodeGenerator>();
+        builder.Services.AddSingleton<AvatarFileCleaner>();
+        builder.Services.AddScoped<UserAccountDeletionService>();
+        builder.Services.AddScoped<DeletionPendingFilter>();
+        builder.Services.AddHostedService<AccountDeletionPurgeService>();
 
         builder.Services.AddCors(options =>
         {

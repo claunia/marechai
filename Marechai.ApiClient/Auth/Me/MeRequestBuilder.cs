@@ -2,6 +2,8 @@
 #pragma warning disable CS0618
 using Marechai.ApiClient.Auth.Me.Avatar;
 using Marechai.ApiClient.Auth.Me.Collection;
+using Marechai.ApiClient.Auth.Me.Delete;
+using Marechai.ApiClient.Auth.Me.Export;
 using Marechai.ApiClient.Auth.Me.PublicProfile;
 using Marechai.ApiClient.Auth.Me.Theme;
 using Marechai.ApiClient.Auth.Me.TwoFactor;
@@ -31,6 +33,16 @@ namespace Marechai.ApiClient.Auth.Me
         public global::Marechai.ApiClient.Auth.Me.Collection.CollectionRequestBuilder Collection
         {
             get => new global::Marechai.ApiClient.Auth.Me.Collection.CollectionRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The deletePath property</summary>
+        public global::Marechai.ApiClient.Auth.Me.Delete.DeleteRequestBuilder DeletePath
+        {
+            get => new global::Marechai.ApiClient.Auth.Me.Delete.DeleteRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The export property</summary>
+        public global::Marechai.ApiClient.Auth.Me.Export.ExportRequestBuilder Export
+        {
+            get => new global::Marechai.ApiClient.Auth.Me.Export.ExportRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The publicProfile property</summary>
         public global::Marechai.ApiClient.Auth.Me.PublicProfile.PublicProfileRequestBuilder PublicProfile

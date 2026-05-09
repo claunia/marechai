@@ -89,6 +89,16 @@ public sealed class AuthService
 
         if(string.IsNullOrWhiteSpace(authResponse?.Token))
         {
+            // Email not yet confirmed: bubble up so the LoginViewModel can show a "resend confirmation"
+            // affordance. Same sentinel-key transport convention as the two-factor signal below.
+            if(authResponse?.EmailNotConfirmed == true)
+            {
+                credentials["emailNotConfirmed"] = "true";
+                credentials["error"]             = stringLocalizer["LoginPage.Error.EmailNotConfirmed"];
+
+                return false;
+            }
+
             // Two-factor required: bubble up the pending token + available methods so the LoginViewModel can
             // swap to the 2FA prompt. We deliberately return false (the ITokenService still has no usable token)
             // and use sentinel keys in the credentials dictionary as the only available transport.
@@ -231,6 +241,189 @@ public sealed class AuthService
         catch(Exception)
         {
             return (true, null);
+        }
+    }
+
+    /// <summary>
+    ///     Submits a public registration request. The user is created in an unconfirmed state and a
+    ///     confirmation email is dispatched on success. On any failure the server returns a
+    ///     <see cref="ProblemDetails" /> we surface to the caller.
+    /// </summary>
+    public async Task<(bool Succeeded, string ErrorMessage)> RegisterAsync(string email,        string userName,
+                                                                            string password,    string displayName,
+                                                                            string invitationCode)
+    {
+        try
+        {
+            await client.Auth.Register.PostAsync(new RegisterRequest
+            {
+                Email          = email,
+                UserName       = userName,
+                Password       = password,
+                DisplayName    = displayName,
+                InvitationCode = invitationCode
+            });
+
+            return (true, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            return (false, ex.Detail ?? ex.Title ?? "Registration failed.");
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    /// <summary>
+    ///     Submits the email-confirmation token captured from the link in the confirmation email. Any error
+    ///     (unknown user, already confirmed, bad/expired token) is surfaced as a single generic message to
+    ///     defeat probing.
+    /// </summary>
+    public async Task<(bool Succeeded, string ErrorMessage)> ConfirmEmailAsync(string email, string token)
+    {
+        try
+        {
+            await client.Auth.Email.Confirm.PostAsync(new ConfirmEmailRequest
+            {
+                Email = email,
+                Token = token
+            });
+
+            return (true, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            return (false, ex.Detail ?? ex.Title ?? "Invalid or expired confirmation link.");
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    /// <summary>
+    ///     Asks the server to resend the email-confirmation message. Always returns success: the server already
+    ///     responds 204 regardless of whether the address matches a real (or already-confirmed) account, and we
+    ///     mirror that on the client so the UI can show a single generic confirmation message.
+    /// </summary>
+    public async Task<(bool Succeeded, string ErrorMessage)> ResendConfirmationAsync(string email)
+    {
+        try
+        {
+            await client.Auth.Email.ResendConfirmation.PostAsync(new ResendConfirmationRequest
+            {
+                Email = email
+            });
+
+            return (true, null);
+        }
+        catch(ProblemDetails)
+        {
+            return (true, null);
+        }
+        catch(Exception)
+        {
+            return (true, null);
+        }
+    }
+
+    /// <summary>
+    ///     Asks the server to start the GDPR self-service deletion flow. Re-verifies the user's password
+    ///     and 2FA server-side and dispatches a confirmation email.
+    /// </summary>
+    public async Task<(bool Succeeded, string ErrorMessage)> RequestAccountDeletionAsync(
+        string currentPassword, string twoFactorProvider, string twoFactorCode)
+    {
+        try
+        {
+            await client.Auth.Me.DeletePath.Request.PostAsync(new RequestAccountDeletionRequest
+            {
+                CurrentPassword   = currentPassword,
+                TwoFactorProvider = twoFactorProvider,
+                TwoFactorCode     = twoFactorCode
+            });
+
+            return (true, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            return (false, ex.Detail ?? ex.Title ?? "Could not start account deletion.");
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool Succeeded, string ErrorMessage)> ConfirmAccountDeletionAsync(string token)
+    {
+        try
+        {
+            await client.Auth.Me.DeletePath.Confirm.PostAsync(new ConfirmAccountDeletionRequest
+            {
+                Token = token
+            });
+
+            return (true, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            return (false, ex.Detail ?? ex.Title ?? "Invalid or expired deletion link.");
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<bool> CancelAccountDeletionAsync()
+    {
+        try
+        {
+            await client.Auth.Me.DeletePath.Cancel.PostAsync();
+
+            return true;
+        }
+        catch(Exception)
+        {
+            return false;
+        }
+    }
+
+    public async Task<AccountDeletionStatusDto> GetAccountDeletionStatusAsync()
+    {
+        try
+        {
+            return await client.Auth.Me.DeletePath.Status.GetAsync();
+        }
+        catch(Exception)
+        {
+            return null;
+        }
+    }
+
+    /// <summary>
+    ///     Downloads the GDPR data-portability JSON dump for the current user. Returns the raw bytes;
+    ///     the caller hands them to a <c>FileSavePicker</c> to write to disk.
+    /// </summary>
+    public async Task<byte[]> ExportDataAsync()
+    {
+        try
+        {
+            using System.IO.Stream s = await client.Auth.Me.Export.GetAsync();
+
+            if(s is null) return null;
+
+            using var ms = new System.IO.MemoryStream();
+            await s.CopyToAsync(ms);
+
+            return ms.ToArray();
+        }
+        catch(Exception)
+        {
+            return null;
         }
     }
 

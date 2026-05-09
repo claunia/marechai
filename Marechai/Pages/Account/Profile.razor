@@ -34,6 +34,7 @@
 @inject CollectionService CollectionSvc
 @inject ThemeStateService ThemeState
 @inject IDialogService DialogService
+@inject IStringLocalizer<ProfileService> L
 
 <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
     <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
@@ -737,3 +738,15 @@
         </MudGrid>
     </MudTabPanel>
 </MudTabs>
+
+<MudPaper Elevation="0" Class="pa-4 mt-6 rounded-lg" Style="border: 2px solid #e57373; background: rgba(229, 115, 115, 0.05);">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+        <MudIcon Icon="@Icons.Material.Filled.Warning" Color="Color.Error"/>
+        <MudText Typo="Typo.h6" Color="Color.Error">@L["Danger zone"]</MudText>
+    </MudStack>
+    <MudText Typo="Typo.body2" Class="mb-3">@L["Download a copy of your data, or permanently delete your Marechai account."]</MudText>
+    <MudStack Row="true" Spacing="2">
+        <MudButton Variant="Variant.Outlined" Color="Color.Default" Href="/account/deletion-pending" StartIcon="@Icons.Material.Filled.Download">@L["Download my data"]</MudButton>
+        <MudButton Variant="Variant.Outlined" Color="Color.Error" Href="/account/delete" StartIcon="@Icons.Material.Filled.DeleteForever">@L["Delete my account"]</MudButton>
+    </MudStack>
+</MudPaper>

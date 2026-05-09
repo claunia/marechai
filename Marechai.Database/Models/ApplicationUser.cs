@@ -95,6 +95,15 @@ public class ApplicationUser : IdentityUser
     /// </summary>
     public bool TwoFactorViaEmail { get; set; }
 
+    /// <summary>
+    ///     UTC timestamp at which the user's self-service GDPR deletion request was confirmed (via the
+    ///     emailed link). Null while the account is active. The background
+    ///     <c>AccountDeletionPurgeService</c> hard-deletes accounts whose value is older than 30 days; the
+    ///     user can cancel by calling <c>POST /auth/me/delete/cancel</c> at any point during the grace
+    ///     window.
+    /// </summary>
+    public DateTime? DeletionRequestedAt { get; set; }
+
     public virtual ICollection<MachinePhoto>              Photos                    { get; set; }
     public virtual ICollection<OwnedMachine>              OwnedMachines             { get; set; }
     public virtual ICollection<CollectedBook>             CollectedBooks            { get; set; }

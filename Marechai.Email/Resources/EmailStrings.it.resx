@@ -69,4 +69,73 @@
   <data name="PasswordReset_Footer" xml:space="preserve">
     <value>Se non hai richiesto la reimpostazione della password, puoi ignorare questa e-mail in tutta sicurezza.</value>
   </data>
+  <data name="EmailConfirmation_Subject" xml:space="preserve">
+    <value>Conferma il tuo indirizzo e-mail su Marechai</value>
+  </data>
+  <data name="EmailConfirmation_Title" xml:space="preserve">
+    <value>Conferma il tuo indirizzo e-mail</value>
+  </data>
+  <data name="EmailConfirmation_Intro" xml:space="preserve">
+    <value>Benvenuta su Marechai! Conferma questo indirizzo e-mail per attivare il tuo account.</value>
+  </data>
+  <data name="EmailConfirmation_ButtonText" xml:space="preserve">
+    <value>Conferma e-mail</value>
+  </data>
+  <data name="EmailConfirmation_LinkFallback" xml:space="preserve">
+    <value>Se il pulsante non funziona, copia e incolla questo link nel tuo browser:</value>
+  </data>
+  <data name="EmailConfirmation_Footer" xml:space="preserve">
+    <value>Se non hai creato un account su Marechai, puoi ignorare questa e-mail in tutta sicurezza.</value>
+  </data>
+  <data name="Welcome_Subject" xml:space="preserve">
+    <value>Benvenuta su Marechai — il tuo posto al tavolo della storia dell'informatica</value>
+  </data>
+  <data name="Welcome_Title" xml:space="preserve">
+    <value>Benvenuta su Marechai!</value>
+  </data>
+  <data name="Welcome_Lead" xml:space="preserve">
+    <value>Siamo felicissimi che tu ti sia unita a noi, {0}.</value>
+  </data>
+  <data name="Welcome_Intro" xml:space="preserve">
+    <value>Marechai è un archivio curato dalla comunità delle macchine, dei software, dei libri e delle riviste che hanno plasmato il modo in cui usiamo i computer oggi — e ora fai parte della squadra che mantiene viva quella memoria.</value>
+  </data>
+  <data name="Welcome_ProfileBullet" xml:space="preserve">
+    <value>Rendi questo posto tuo. Vai sul tuo profilo, aggiungi una bio, scegli un avatar — fai sapere agli altri collezionisti e storici chi sei.</value>
+  </data>
+  <data name="Welcome_CollectionBullet" xml:space="preserve">
+    <value>Costruisci la tua collezione. Sfoglia i computer, le console e gli smartphone che hai posseduto (o che ancora custodisci) e aggiungili al tuo scaffale perché tutti li vedano.</value>
+  </data>
+  <data name="Welcome_SoftwareBullet" xml:space="preserve">
+    <value>Riscopri vecchi amici. Il nostro catalogo software raccoglie migliaia di titoli — è molto probabile che i giochi, le applicazioni e i sistemi operativi che ricordi siano già lì ad aspettarti.</value>
+  </data>
+  <data name="Welcome_BooksBullet" xml:space="preserve">
+    <value>Non dimenticare la carta. Anche i libri e le riviste che hanno insegnato a programmare a un'intera generazione sono qui. Cerca quelli che hai letto; se ne mancano alcuni, puoi aiutarci ad aggiungerli.</value>
+  </data>
+  <data name="Welcome_Closing" xml:space="preserve">
+    <value>Marechai è un lavoro d'amore costruito da persone come te. Qualunque cosa ti abbia portato qui — nostalgia, ricerca, conservazione — siamo felici che tu sia arrivata, e speriamo che ti sentirai a casa.</value>
+  </data>
+  <data name="Welcome_Signoff" xml:space="preserve">
+    <value>Benvenuta a bordo,</value>
+  </data>
+  <data name="Welcome_Footer" xml:space="preserve">
+    <value>— Il team di Marechai</value>
+  </data>
+  <data name="AccountDeletion_Subject" xml:space="preserve">
+    <value>Conferma l'eliminazione del tuo account Marechai</value>
+  </data>
+  <data name="AccountDeletion_Title" xml:space="preserve">
+    <value>Conferma l'eliminazione dell'account</value>
+  </data>
+  <data name="AccountDeletion_Intro" xml:space="preserve">
+    <value>Abbiamo ricevuto una richiesta di eliminare il tuo account Marechai. Se sei stata tu, clicca sul pulsante per confermare. Il tuo account entrerà quindi in un periodo di grazia di 30 giorni durante il quale puoi ancora annullare effettuando l'accesso e scegliendo «Annulla eliminazione». Dopo 30 giorni l'account sarà rimosso definitivamente.</value>
+  </data>
+  <data name="AccountDeletion_ButtonText" xml:space="preserve">
+    <value>Conferma eliminazione</value>
+  </data>
+  <data name="AccountDeletion_LinkFallback" xml:space="preserve">
+    <value>Se il pulsante non funziona, copia e incolla questo link nel tuo browser:</value>
+  </data>
+  <data name="AccountDeletion_Footer" xml:space="preserve">
+    <value>Se non hai richiesto l'eliminazione del tuo account, puoi ignorare questa e-mail in tutta sicurezza — non accadrà nulla.</value>
+  </data>
 </root>

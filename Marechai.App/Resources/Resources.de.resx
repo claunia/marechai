@@ -2059,4 +2059,56 @@
   <data name="Could not send code." xml:space="preserve"><value>Code konnte nicht gesendet werden.</value></data>
   <data name="Password and code are required." xml:space="preserve"><value>Passwort und Code sind erforderlich.</value></data>
   <data name="Email two-factor enabled." xml:space="preserve"><value>E-Mail-Zwei-Faktor aktiviert.</value></data>
+  <data name="LoginPage_ResendConfirmationLink" xml:space="preserve"><value>Bestätigungs-E-Mail erneut senden</value></data>
+  <data name="LoginPage.Error.EmailNotConfirmed" xml:space="preserve"><value>Bitte bestätigen Sie Ihre E-Mail-Adresse, bevor Sie sich anmelden.</value></data>
+  <data name="RegisterPage_Title" xml:space="preserve"><value>Konto erstellen</value></data>
+  <data name="RegisterPage_Intro" xml:space="preserve"><value>Marechai ist eine geschlossene Community. Fügen Sie den Code ein, den ein Administrator Ihnen mitgeteilt hat, füllen Sie die Felder unten aus, und wir senden Ihnen einen Bestätigungslink per E-Mail.</value></data>
+  <data name="RegisterPage_InvitationCodeLabel" xml:space="preserve"><value>Einladungscode</value></data>
+  <data name="RegisterPage_EmailLabel" xml:space="preserve"><value>E-Mail</value></data>
+  <data name="RegisterPage_UserNameLabel" xml:space="preserve"><value>Benutzername</value></data>
+  <data name="RegisterPage_DisplayNameLabel" xml:space="preserve"><value>Anzeigename</value></data>
+  <data name="RegisterPage_DisplayNameHelp" xml:space="preserve"><value>Wird öffentlich in Ihrem Profil und bei Ihren Beiträgen angezeigt.</value></data>
+  <data name="RegisterPage_PasswordLabel" xml:space="preserve"><value>Passwort</value></data>
+  <data name="RegisterPage_ConfirmPasswordLabel" xml:space="preserve"><value>Passwort bestätigen</value></data>
+  <data name="RegisterPage_SubmitButton" xml:space="preserve"><value>Konto erstellen</value></data>
+  <data name="RegisterPage_BackToLogin" xml:space="preserve"><value>Schon ein Konto? Anmelden</value></data>
+  <data name="RegisterPage_ConfirmationTitle" xml:space="preserve"><value>Sehen Sie in Ihrem Posteingang nach</value></data>
+  <data name="RegisterPage_ConfirmationMessage" xml:space="preserve"><value>Konto erstellt. Wir haben Ihnen eine Bestätigungs-E-Mail gesendet — klicken Sie auf den darin enthaltenen Link (er öffnet sich in Ihrem Webbrowser), um Ihr Konto zu aktivieren, und kehren Sie dann hierher zurück, um sich anzumelden.</value></data>
+  <data name="RegisterPage_ResendLink" xml:space="preserve"><value>Keine E-Mail erhalten? Erneut senden</value></data>
+  <data name="RegisterPage.Error.InvitationCodeRequired" xml:space="preserve"><value>Der Einladungscode ist erforderlich.</value></data>
+  <data name="RegisterPage.Error.EmailRequired" xml:space="preserve"><value>Die E-Mail-Adresse ist erforderlich.</value></data>
+  <data name="RegisterPage.Error.UserNameRequired" xml:space="preserve"><value>Der Benutzername ist erforderlich.</value></data>
+  <data name="RegisterPage.Error.DisplayNameRequired" xml:space="preserve"><value>Der Anzeigename ist erforderlich.</value></data>
+  <data name="RegisterPage.Error.PasswordRequired" xml:space="preserve"><value>Das Passwort ist erforderlich.</value></data>
+  <data name="RegisterPage.Error.PasswordMismatch" xml:space="preserve"><value>Die Passwörter stimmen nicht überein.</value></data>
+  <data name="RegisterPage.Error.Generic" xml:space="preserve"><value>Die Registrierung ist fehlgeschlagen.</value></data>
+  <data name="ResendConfirmationPage_Title" xml:space="preserve"><value>Bestätigungs-E-Mail erneut senden</value></data>
+  <data name="ResendConfirmationPage_Intro" xml:space="preserve"><value>Geben Sie die E-Mail-Adresse ein, mit der Sie sich registriert haben, und wir senden Ihnen einen neuen Bestätigungslink.</value></data>
+  <data name="ResendConfirmationPage_EmailLabel" xml:space="preserve"><value>E-Mail</value></data>
+  <data name="ResendConfirmationPage_SubmitButton" xml:space="preserve"><value>Bestätigungs-E-Mail senden</value></data>
+  <data name="ResendConfirmationPage_BackToLogin" xml:space="preserve"><value>Zurück zur Anmeldung</value></data>
+  <data name="ResendConfirmationPage_ConfirmationTitle" xml:space="preserve"><value>Sehen Sie in Ihrem Posteingang nach</value></data>
+  <data name="ResendConfirmationPage_ConfirmationMessage" xml:space="preserve"><value>Falls ein Konto mit dieser E-Mail existiert und noch nicht bestätigt wurde, haben wir einen neuen Bestätigungslink an diese Adresse gesendet. Öffnen Sie ihn in einem Webbrowser, um die Aktivierung abzuschließen.</value></data>
+  <data name="ResendConfirmationPage.Error.EmailRequired" xml:space="preserve"><value>Die E-Mail-Adresse ist erforderlich.</value></data>
+  <data name="DeleteAccountPage_Title" xml:space="preserve"><value>Mein Konto löschen</value></data>
+  <data name="DeleteAccountPage_Warning" xml:space="preserve"><value>Dadurch werden Ihr Konto und Ihre persönlichen Daten dauerhaft entfernt. Ihre öffentlichen Beiträge bleiben erhalten, werden aber anonymisiert. Nach der Bestätigung haben Sie 30 Tage Zeit, es sich anders zu überlegen, indem Sie sich anmelden und „Löschung abbrechen“ wählen.</value></data>
+  <data name="DeleteAccountPage_PasswordLabel" xml:space="preserve"><value>Aktuelles Passwort</value></data>
+  <data name="DeleteAccountPage_Has2faLabel" xml:space="preserve"><value>Ich habe die Zwei-Faktor-Authentifizierung aktiviert</value></data>
+  <data name="DeleteAccountPage_TwoFactorMethodLabel" xml:space="preserve"><value>Zwei-Faktor-Methode</value></data>
+  <data name="DeleteAccountPage_SubmitButton" xml:space="preserve"><value>Bestätigungs-E-Mail senden</value></data>
+  <data name="DeleteAccountPage_SubmittedMessage" xml:space="preserve"><value>Wir haben Ihnen eine E-Mail mit einem Bestätigungslink gesendet. Klicken Sie darauf (sie öffnet sich in Ihrem Browser), um die 30-tägige Karenzfrist zu starten.</value></data>
+  <data name="DeleteAccountPage_BackLink" xml:space="preserve"><value>Zurück zu den Einstellungen</value></data>
+  <data name="DeleteAccountPage.Error.PasswordRequired" xml:space="preserve"><value>Das aktuelle Passwort ist erforderlich.</value></data>
+  <data name="DeleteAccountPage.Error.CodeRequired" xml:space="preserve"><value>Der Zwei-Faktor-Code ist erforderlich.</value></data>
+  <data name="DeleteAccountPage.Error.Generic" xml:space="preserve"><value>Konto-Löschung konnte nicht gestartet werden.</value></data>
+  <data name="DeletionPendingPage_Title" xml:space="preserve"><value>Konto zur Löschung vorgemerkt</value></data>
+  <data name="DeletionPendingPage_Warning" xml:space="preserve"><value>Ihr Konto ist zur endgültigen Löschung vorgemerkt. Bis dahin ist Ihnen der größte Teil der Seite nicht zugänglich.</value></data>
+  <data name="DeletionPendingPage_CancelButton" xml:space="preserve"><value>Löschung abbrechen</value></data>
+  <data name="DeletionPendingPage_DownloadButton" xml:space="preserve"><value>Meine Daten herunterladen</value></data>
+  <data name="DeletionPendingPage_NoPendingMessage" xml:space="preserve"><value>Für Ihr Konto liegt keine Löschanfrage vor.</value></data>
+  <data name="DeletionPendingPage_BackLink" xml:space="preserve"><value>Zurück zu den Einstellungen</value></data>
+  <data name="DeletionPendingPage.CancelSuccess" xml:space="preserve"><value>Löschung abgebrochen. Sie können Ihr Konto normal weiterverwenden.</value></data>
+  <data name="DeletionPendingPage.CancelFailed" xml:space="preserve"><value>Die Löschung konnte nicht abgebrochen werden. Bitte erneut versuchen.</value></data>
+  <data name="DeletionPendingPage.DownloadFailed" xml:space="preserve"><value>Ihr Daten-Export konnte nicht erstellt werden.</value></data>
+  <data name="DeletionPendingPage.DownloadSaved" xml:space="preserve"><value>Daten-Export gespeichert.</value></data>
 </root>

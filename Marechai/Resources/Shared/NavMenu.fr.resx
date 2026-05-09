@@ -154,6 +154,10 @@
         <value>Gestion des utilisateurs</value>
         <comment>User management admin link</comment>
     </data>
+    <data name="Invitation Codes" xml:space="preserve">
+        <value>Codes d'invitation</value>
+        <comment>Invitation codes admin link</comment>
+    </data>
     <data name="GPU Management" xml:space="preserve">
         <value>Gestion des GPUs</value>
         <comment>GPU management admin link</comment>

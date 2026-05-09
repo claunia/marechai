@@ -45,6 +45,14 @@ public partial class LoginViewModel : ObservableObject
     [ObservableProperty]
     private string _recoveryCode = string.Empty;
 
+    /// <summary>
+    ///     <see langword="true" /> when the last login attempt's password was correct but the account's
+    ///     email address has not yet been confirmed. Surfaces the "Resend confirmation email" link in the
+    ///     UI.
+    /// </summary>
+    [ObservableProperty]
+    private bool _emailNotConfirmed;
+
     public bool HasMultipleMethods   => AvailableMethods.Count > 1;
     public bool ShowSendEmailButton => !RecoveryMode && SelectedProvider == "email";
 
@@ -81,6 +89,8 @@ public partial class LoginViewModel : ObservableObject
 
         try
         {
+            EmailNotConfirmed = false;
+
             var credentials = new Dictionary<string, string>
             {
                 ["Email"]    = Email,
@@ -93,6 +103,19 @@ public partial class LoginViewModel : ObservableObject
             {
                 // Navigate back to news page and refresh auth state
                 _regionManager.RequestNavigate(RegionNames.Content, nameof(NewsPage));
+
+                return;
+            }
+
+            // Did the server signal that email confirmation is required?
+            if(credentials.TryGetValue("emailNotConfirmed", out string? notConfirmed) && notConfirmed == "true")
+            {
+                EmailNotConfirmed = true;
+
+                if(credentials.TryGetValue("error", out string? unconfirmedError))
+                    ErrorMessage = unconfirmedError;
+                else
+                    ErrorMessage = _stringLocalizer["LoginPage.Error.EmailNotConfirmed"];
 
                 return;
             }
@@ -224,6 +247,14 @@ public partial class LoginViewModel : ObservableObject
     [RelayCommand]
     private void ForgotPassword() =>
         _regionManager.RequestNavigate(RegionNames.Content, nameof(ForgotPasswordPage));
+
+    [RelayCommand]
+    private void SignUp() =>
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(RegisterPage));
+
+    [RelayCommand]
+    private void ResendConfirmation() =>
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(ResendConfirmationPage));
 
     [RelayCommand]
     private void ClearError() => ErrorMessage = null;

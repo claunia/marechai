@@ -1,0 +1,49 @@
+@using Marechai.Email.Templates
+@model WelcomeEmailModel
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@Model.Title</title>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background:#f4f4f6; margin:0; padding:24px;">
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="max-width:560px; margin:0 auto; background:#ffffff; border-radius:8px; padding:32px;">
+        <tr>
+            <td>
+                <h1 style="margin:0 0 16px; font-size:22px; color:#222; text-align:center;">@Model.Title</h1>
+                <p style="margin:0 0 16px; color:#444; font-size:15px;">@Model.Lead</p>
+                <p style="margin:0 0 20px; color:#555; font-size:14px; line-height:1.5;">@Model.Intro</p>
+                <ul style="margin:0 0 20px 0; padding-left:20px; color:#444; font-size:14px; line-height:1.6;">
+                    <li style="margin-bottom:10px;">
+                        <a href="@Model.ProfileUrl" style="color:#7e57c2; font-weight:600; text-decoration:none;">@Model.ProfileBullet</a>
+                    </li>
+                    <li style="margin-bottom:10px;">
+                        @Model.CollectionBullet
+                        <span style="display:block; margin-top:4px; color:#777; font-size:13px;">
+                            <a href="@Model.ComputersUrl" style="color:#7e57c2; text-decoration:none;">Computers</a>
+                            &middot;
+                            <a href="@Model.ConsolesUrl" style="color:#7e57c2; text-decoration:none;">Consoles</a>
+                            &middot;
+                            <a href="@Model.SmartphonesUrl" style="color:#7e57c2; text-decoration:none;">Smartphones</a>
+                        </span>
+                    </li>
+                    <li style="margin-bottom:10px;">
+                        <a href="@Model.SoftwareUrl" style="color:#7e57c2; font-weight:600; text-decoration:none;">@Model.SoftwareBullet</a>
+                    </li>
+                    <li style="margin-bottom:10px;">
+                        @Model.BooksBullet
+                        <span style="display:block; margin-top:4px; color:#777; font-size:13px;">
+                            <a href="@Model.BooksUrl" style="color:#7e57c2; text-decoration:none;">Books</a>
+                            &middot;
+                            <a href="@Model.MagazinesUrl" style="color:#7e57c2; text-decoration:none;">Magazines</a>
+                        </span>
+                    </li>
+                </ul>
+                <p style="margin:0 0 24px; color:#555; font-size:14px; line-height:1.5;">@Model.Closing</p>
+                <p style="margin:0 0 4px; color:#444; font-size:14px;">@Model.Signoff</p>
+                <p style="margin:0; color:#aaa; font-size:13px;">@Model.Footer</p>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

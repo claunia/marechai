@@ -68,6 +68,7 @@ public static class Register
         services.AddScoped<SmartphonesService>();
         services.AddScoped<AuthService>();
         services.AddScoped<UsersService>();
+        services.AddScoped<InvitationCodesService>();
         services.AddScoped<ProfileService>();
         services.AddScoped<CollectionService>();
         services.AddScoped<TranslationService>();
