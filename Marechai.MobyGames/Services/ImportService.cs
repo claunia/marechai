@@ -1035,6 +1035,7 @@ public class ImportService
                         case "Nintendo PN":     issuer = ProductCodeIssuer.Nintendo;   break;
                         case "Nintendo Media PN": issuer = ProductCodeIssuer.Nintendo; break;
                         case "Sega PN":         issuer = ProductCodeIssuer.Sega;       break;
+                        case "Sega Region Code": issuer = ProductCodeIssuer.Sega;      break;
                         case "Activision PN":   issuer = ProductCodeIssuer.Activision; break;
                         case "Amazon ASIN":     issuer = ProductCodeIssuer.Amazon;     break;
                         case "eBay Item No.":   issuer = ProductCodeIssuer.eBay;       break;

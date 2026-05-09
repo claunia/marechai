@@ -391,7 +391,9 @@ public static partial class MainTabParser
     ///     Returns <c>true</c> for hrefs that are obviously not game references and that
     ///     therefore should be ignored entirely (neither parsed as a slug nor recorded as
     ///     an unresolvable anchor). Covers tab/anchor-only links (<c>#</c>, <c>#anchor</c>),
-    ///     empty hrefs and <c>javascript:</c> URLs.
+    ///     empty hrefs, <c>javascript:</c> URLs, MobyGames game-group URLs
+    ///     (<c>/game-group/...</c>) which are series/franchise pages, and developer
+    ///     profile URLs (<c>/developer/...</c>) which are people pages, not games.
     /// </summary>
     static bool IsIgnorableHref(string href)
     {
@@ -402,6 +404,12 @@ public static partial class MainTabParser
         if(trimmed == "#" || trimmed.StartsWith("#", StringComparison.Ordinal)) return true;
 
         if(trimmed.StartsWith("javascript:", StringComparison.OrdinalIgnoreCase)) return true;
+
+        // /game-group/... links are MobyGames series/franchise pages, not individual games.
+        if(trimmed.Contains("/game-group/", StringComparison.OrdinalIgnoreCase)) return true;
+
+        // /developer/... links are MobyGames people profile pages, not games.
+        if(trimmed.Contains("/developer/", StringComparison.OrdinalIgnoreCase)) return true;
 
         return false;
     }
