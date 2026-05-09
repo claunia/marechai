@@ -297,21 +297,35 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<SoftwareAttributeDto>> GetAttributesAsync(ulong releaseId) => context.SoftwareAttributes
-       .Where(a => a.SoftwareReleaseId == releaseId)
-       .Select(a => new SoftwareAttributeDto
+    public async Task<List<SoftwareAttributeDto>> GetAttributesAsync(ulong releaseId)
+    {
+        List<SoftwareAttributeDto> attributes = await context.SoftwareAttributes
+           .Where(a => a.SoftwareReleaseId == releaseId)
+           .Select(a => new SoftwareAttributeDto
+            {
+                Id                = a.Id,
+                SoftwareReleaseId = a.SoftwareReleaseId,
+                Category          = a.Category,
+                Key               = a.Key,
+                Value             = a.Value,
+                PlatformName      = a.SoftwareRelease.Platform.Name,
+                RegionNames       = string.Join(", ", a.SoftwareRelease.Regions.Select(r => r.UnM49.Name))
+            })
+           .OrderBy(a => a.Category)
+           .ThenBy(a => a.Key)
+           .ToListAsync();
+
+        // Importer stores attribute keys/values with U+00A0 (non-breaking
+        // space); the resx localization keys use a regular ASCII space, so
+        // normalize here before returning so `L[key]` / `L[value]` resolve.
+        foreach(SoftwareAttributeDto a in attributes)
         {
-            Id                = a.Id,
-            SoftwareReleaseId = a.SoftwareReleaseId,
-            Category          = a.Category,
-            Key               = a.Key,
-            Value             = a.Value,
-            PlatformName      = a.SoftwareRelease.Platform.Name,
-            RegionNames       = string.Join(", ", a.SoftwareRelease.Regions.Select(r => r.UnM49.Name))
-        })
-       .OrderBy(a => a.Category)
-       .ThenBy(a => a.Key)
-       .ToListAsync();
+            a.Key   = a.Key?.Replace('\u00A0', ' ');
+            a.Value = a.Value?.Replace('\u00A0', ' ');
+        }
+
+        return attributes;
+    }
 
     [HttpPut("{id:ulong}")]
     [Authorize(Roles = "Admin,UberAdmin")]
