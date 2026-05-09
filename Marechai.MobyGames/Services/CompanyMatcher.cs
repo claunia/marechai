@@ -14,6 +14,8 @@ public partial class CompanyMatcher
     List<Company>                                        _companies;
     Dictionary<string, List<Company>>                    _soundexIndex;
     Dictionary<string, List<Company>>                    _strippedSoundexIndex;
+    Dictionary<string, List<Company>>                    _legalNameSoundexIndex;
+    Dictionary<string, List<Company>>                    _strippedLegalNameSoundexIndex;
     readonly Dictionary<string, Company>                 _cache = new(StringComparer.OrdinalIgnoreCase);
 
     // Common company suffixes to strip for matching
@@ -51,11 +53,13 @@ public partial class CompanyMatcher
         await using var context = await _contextFactory.CreateDbContextAsync();
 
         _companies = await context.Companies
-                                  .Select(c => new Company { Id = c.Id, Name = c.Name })
+                                  .Select(c => new Company { Id = c.Id, Name = c.Name, LegalName = c.LegalName })
                                   .ToListAsync();
 
-        _soundexIndex         = SoundexHelper.BuildSoundexIndex(_companies, c => c.Name);
-        _strippedSoundexIndex = SoundexHelper.BuildSoundexIndex(_companies, c => StripSuffix(c.Name));
+        _soundexIndex                  = SoundexHelper.BuildSoundexIndex(_companies, c => c.Name);
+        _strippedSoundexIndex          = SoundexHelper.BuildSoundexIndex(_companies, c => StripSuffix(c.Name));
+        _legalNameSoundexIndex         = SoundexHelper.BuildSoundexIndex(_companies, c => c.LegalName);
+        _strippedLegalNameSoundexIndex = SoundexHelper.BuildSoundexIndex(_companies, c => StripSuffix(c.LegalName));
     }
 
     public async Task<(Company company, string matchType)> MatchOrCreateAsync(string name)
@@ -80,6 +84,18 @@ public partial class CompanyMatcher
             return (exact, "exact");
         }
 
+        // Exact match against legal name (e.g., MobyGames "Apple" matches Marechai legal name "Apple Computer, Inc.")
+        var legalExact = _companies.FirstOrDefault(c =>
+            !string.IsNullOrWhiteSpace(c.LegalName) &&
+            string.Equals(c.LegalName, normalizedName, StringComparison.OrdinalIgnoreCase));
+
+        if(legalExact != null)
+        {
+            _cache[normalizedName] = legalExact;
+
+            return (legalExact, "exact-legal");
+        }
+
         // Exact match on stripped names (e.g., "Apple Inc." matches "Apple")
         string strippedInput = StripSuffix(normalizedName);
 
@@ -91,6 +107,18 @@ public partial class CompanyMatcher
             _cache[normalizedName] = strippedExact;
 
             return (strippedExact, "exact-stripped");
+        }
+
+        // Exact match on stripped legal names
+        var strippedLegalExact = _companies.FirstOrDefault(c =>
+            !string.IsNullOrWhiteSpace(c.LegalName) &&
+            string.Equals(StripSuffix(c.LegalName), strippedInput, StringComparison.OrdinalIgnoreCase));
+
+        if(strippedLegalExact != null)
+        {
+            _cache[normalizedName] = strippedLegalExact;
+
+            return (strippedLegalExact, "exact-stripped-legal");
         }
 
         // Soundex match on full name
@@ -115,6 +143,26 @@ public partial class CompanyMatcher
             }
         }
 
+        // Soundex match on legal name
+        if(_legalNameSoundexIndex.TryGetValue(soundex, out var legalCandidates) && legalCandidates.Count > 0)
+        {
+            if(legalCandidates.Count == 1)
+            {
+                _cache[normalizedName] = legalCandidates[0];
+
+                return (legalCandidates[0], "soundex-legal");
+            }
+
+            var prompted = PromptMultiple(normalizedName, legalCandidates);
+
+            if(prompted != null)
+            {
+                _cache[normalizedName] = prompted;
+
+                return (prompted, "soundex-legal-selected");
+            }
+        }
+
         // Soundex match on stripped name
         string strippedSoundex = SoundexHelper.Generate(strippedInput);
 
@@ -135,6 +183,27 @@ public partial class CompanyMatcher
                 _cache[normalizedName] = prompted;
 
                 return (prompted, "soundex-stripped-selected");
+            }
+        }
+
+        // Soundex match on stripped legal name
+        if(_strippedLegalNameSoundexIndex.TryGetValue(strippedSoundex, out var strippedLegalCandidates) &&
+           strippedLegalCandidates.Count > 0)
+        {
+            if(strippedLegalCandidates.Count == 1)
+            {
+                _cache[normalizedName] = strippedLegalCandidates[0];
+
+                return (strippedLegalCandidates[0], "soundex-stripped-legal");
+            }
+
+            var prompted = PromptMultiple(normalizedName, strippedLegalCandidates);
+
+            if(prompted != null)
+            {
+                _cache[normalizedName] = prompted;
+
+                return (prompted, "soundex-stripped-legal-selected");
             }
         }
 
