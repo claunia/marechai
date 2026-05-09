@@ -28,7 +28,8 @@
 @page "/software/release/{Id:int}"
 @using Marechai.ApiClient.Models
 @inherits OwningComponentBase<SoftwareService>
-@inject IStringLocalizer<SoftwareService> L
+@inject IStringLocalizer<SoftwareService>  L
+@inject IStringLocalizer<CountriesService> CountryL
 @inject CollectionService                 CollectionSvc
 @inject ApiAssetUrlProvider               AssetUrls
 
@@ -134,7 +135,7 @@
             {
                 <tr>
                     <td style="width: 33%; text-align: right;"><strong>@L["Regions"]</strong></td>
-                    <td>@string.Join(", ", _release.Regions.Select(r => r.RegionName))</td>
+                    <td>@string.Join(", ", _release.Regions.Select(r => (string)CountryL[r.RegionName]))</td>
                 </tr>
             }
             @if(_release.Languages is not null && _release.Languages.Count > 0)

@@ -41,6 +41,7 @@ public static class Register
         services.AddScoped<CompanyLogosService>();
         services.AddScoped<ComputersService>();
         services.AddScoped<ConsolesService>();
+        services.AddScoped<CountriesService>();
         services.AddScoped<MachinesService>();
         services.AddScoped<MachineFamiliesService>();
         services.AddScoped<MachinePhotosService>();

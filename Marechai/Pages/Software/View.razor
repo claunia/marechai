@@ -30,7 +30,8 @@
 @using Marechai.Data
 @inherits OwningComponentBase<SoftwareService>
 @inject SoftwareService                   AuthService
-@inject IStringLocalizer<SoftwareService> L
+@inject IStringLocalizer<SoftwareService>  L
+@inject IStringLocalizer<CountriesService> CountryL
 @inject ApiAssetUrlProvider               AssetUrls
 @inject AuthenticationStateProvider       AuthStateProvider
 @inject IDialogService                    DialogService
@@ -612,7 +613,7 @@
                             {
                                 @foreach(var region in release.Regions)
                                 {
-                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Secondary">@region.RegionName</MudChip>
+                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Secondary">@CountryL[region.RegionName]</MudChip>
                                 }
                             }
                             @if(release.Languages is not null && release.Languages.Count > 0)
@@ -666,7 +667,7 @@
                                 {
                                     @foreach(var region in compilation.Regions)
                                     {
-                                        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Secondary">@region.RegionName</MudChip>
+                                        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Secondary">@CountryL[region.RegionName]</MudChip>
                                     }
                                 }
                                 @if(compilation.Languages is not null && compilation.Languages.Count > 0)

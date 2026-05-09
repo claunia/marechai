@@ -30,7 +30,8 @@
 @page "/companies/{StartingCharacter}"
 @using Marechai.ApiClient.Models
 @inherits OwningComponentBase<CompaniesService>
-@inject IStringLocalizer<CompaniesService> L
+@inject IStringLocalizer<CompaniesService>  L
+@inject IStringLocalizer<CountriesService> CountryL
 @inject ApiAssetUrlProvider                AssetUrls
 
 @if(_companies is null)
@@ -51,7 +52,7 @@
     @if(CountryId.HasValue)
     {
         <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
-            <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Companies founded in {0}."], L[_countryName])</MudText>
+            <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Companies founded in {0}."], CountryL[_countryName])</MudText>
             <picture>
                     <source srcset="@(AssetUrls.BaseUrl)/assets/flags/countries/@($"{CountryId:D3}").svg" type="image/svg+xml">
                     <source srcset="@(AssetUrls.BaseUrl)/assets/flags/countries/webp/1x/@($"{CountryId:D3}").webp,
