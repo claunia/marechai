@@ -40,13 +40,23 @@ public partial class ConfirmEmail
     bool   _succeeded;
     string _errorMessage;
 
-    protected override async Task OnInitializedAsync()
+    // The confirmation POST is dispatched from OnAfterRenderAsync(firstRender) instead of
+    // OnInitializedAsync because Blazor Server runs OnInitializedAsync twice: once during
+    // server-side prerender and again after the SignalR circuit connects. The first call
+    // would consume the token successfully (and send the welcome email), and the second
+    // call would then see EmailConfirmed=true on the server and return the generic
+    // "Invalid or expired confirmation link." error &mdash; which the user would see
+    // even though their account is in fact confirmed.
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if(!firstRender) return;
+
         if(string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Token))
         {
             _isLoading    = false;
             _succeeded    = false;
             _errorMessage = L["The confirmation link is missing required fields."];
+            StateHasChanged();
 
             return;
         }
@@ -56,5 +66,6 @@ public partial class ConfirmEmail
         _isLoading    = false;
         _succeeded    = ok;
         _errorMessage = ok ? null : err;
+        StateHasChanged();
     }
 }
