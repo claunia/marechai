@@ -335,11 +335,7 @@ file class Program
                                                                            // .AsSplitQuery().
                                                                            b => b.UseMicrosoftJson()
                                                                                     .EnableStringComparisonTranslations()
-                                                                                    .UseQuerySplittingBehavior(QuerySplittingBehavior.SingleQuery)
-                                                                                    // Transient resiliency: retry up to 3 times
-                                                                                    // on connection-pool-exhausted / dropped-conn
-                                                                                    // errors instead of failing the request.
-                                                                                    .EnableRetryOnFailure(3)));
+                                                                                    .UseQuerySplittingBehavior(QuerySplittingBehavior.SingleQuery)));
 
         builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                .AddRoles<ApplicationRole>()
