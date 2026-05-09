@@ -5,6 +5,18 @@
     <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)\Generated</CompilerGeneratedFilesOutputPath>
     <UserSecretsId>f752169f-4aaa-411d-a6ba-684cc1ad5349</UserSecretsId>
     <SelfContained>true</SelfContained>
+    <!-- RazorLight (used by Marechai.Email) needs the entry assembly's compilation context
+         at runtime to resolve metadata references when compiling email templates. Without
+         this, every email send fails with "Can't load metadata reference from the entry
+         assembly. Make sure PreserveCompilationContext is set to true in *.csproj file".
+         GenerateRuntimeConfigurationFiles + CopyRefAssembliesToPublishDirectory ensure the
+         ref assemblies actually ship with the published output; PublishTrimmed/PublishSingleFile
+         must stay off because RazorLight reflects over the loaded assemblies at runtime. -->
+    <PreserveCompilationContext>true</PreserveCompilationContext>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <CopyRefAssembliesToPublishDirectory>true</CopyRefAssembliesToPublishDirectory>
+    <PublishTrimmed>false</PublishTrimmed>
+    <PublishSingleFile>false</PublishSingleFile>
   </PropertyGroup>
 
   <ItemGroup>

@@ -6,6 +6,18 @@
     <ApplicationVersion>$(Version)</ApplicationVersion>
     <RootNamespace>Marechai</RootNamespace>
     <SelfContained>true</SelfContained>
+    <!-- RazorLight (used by Marechai.Email) needs the entry assembly's compilation context
+         at runtime to resolve metadata references when compiling email templates. Without
+         this, every email send fails with "Can't load metadata reference from the entry
+         assembly. Make sure PreserveCompilationContext is set to true in *.csproj file".
+         GenerateRuntimeConfigurationFiles + CopyRefAssembliesToPublishDirectory ensure the
+         ref assemblies actually ship with the published output; PublishTrimmed/PublishSingleFile
+         must stay off because RazorLight reflects over the loaded assemblies at runtime. -->
+    <PreserveCompilationContext>true</PreserveCompilationContext>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <CopyRefAssembliesToPublishDirectory>true</CopyRefAssembliesToPublishDirectory>
+    <PublishTrimmed>false</PublishTrimmed>
+    <PublishSingleFile>false</PublishSingleFile>
   </PropertyGroup>
   <PropertyGroup>
     <NrtRevisionFormat>$(Version)-{chash:8} built by {mname} in $(Configuration){!:, modified}</NrtRevisionFormat>
