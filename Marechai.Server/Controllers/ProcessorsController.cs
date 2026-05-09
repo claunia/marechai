@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.Data;
 using Marechai.Data.Dtos;
@@ -48,43 +49,60 @@ public class ProcessorsController(MarechaiContext context, IDbContextFactory<Mar
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<ProcessorDto>> GetAsync() => context.Processors.AsNoTracking().Select(p => new ProcessorDto
-                                                          {
-                                                              Name           = p.Name,
-                                                              CompanyName    = p.Company.Name,
-                                                              CompanyId      = p.Company.Id,
-                                                              ModelCode      = p.ModelCode,
-                                                              Introduced     = p.Introduced,
-                                                              IntroducedPrecision = p.IntroducedPrecision,
-                                                              Speed          = p.Speed,
-                                                              Package        = p.Package,
-                                                              Gprs           = p.Gprs,
-                                                              GprSize        = p.GprSize,
-                                                              Fprs           = p.Fprs,
-                                                              FprSize        = p.FprSize,
-                                                              Cores          = p.Cores,
-                                                              ThreadsPerCore = p.ThreadsPerCore,
-                                                              Process        = p.Process,
-                                                              ProcessNm      = p.ProcessNm,
-                                                              DieSize        = p.DieSize,
-                                                              Transistors    = p.Transistors,
-                                                              DataBus        = p.DataBus,
-                                                              AddrBus        = p.AddrBus,
-                                                              SimdRegisters  = p.SimdRegisters,
-                                                              SimdSize       = p.SimdSize,
-                                                              L1Instruction  = p.L1Instruction,
-                                                              L1Data         = p.L1Data,
-                                                              L2             = p.L2,
-                                                              L3             = p.L3,
-                                                              InstructionSet = p.InstructionSet.Name,
-                                                              Id             = p.Id,
-                                                              InstructionSetExtensions = p.InstructionSetExtensions
-                                                                 .Select(e => e.Extension.Extension)
-                                                                 .ToList()
-                                                          })
-                                                         .OrderBy(p => p.CompanyName)
-                                                         .ThenBy(p => p.Name)
-                                                         .ToListAsync();
+    public Task<List<ProcessorDto>> GetAsync([FromQuery] int? skip = null, [FromQuery] int? take = null,
+                                             CancellationToken cancellationToken = default)
+    {
+        IQueryable<Processor> ordered = context.Processors.AsNoTracking()
+                                               .OrderBy(p => p.Company.Name)
+                                               .ThenBy(p => p.Name)
+                                               .ThenBy(p => p.ModelCode);
+
+        if(skip.HasValue) ordered = ordered.Skip(skip.Value);
+        if(take.HasValue) ordered = ordered.Take(take.Value);
+
+        return ordered.Select(p => new ProcessorDto
+                       {
+                           Name           = p.Name,
+                           CompanyName    = p.Company.Name,
+                           CompanyId      = p.Company.Id,
+                           ModelCode      = p.ModelCode,
+                           Introduced     = p.Introduced,
+                           IntroducedPrecision = p.IntroducedPrecision,
+                           Speed          = p.Speed,
+                           Package        = p.Package,
+                           Gprs           = p.Gprs,
+                           GprSize        = p.GprSize,
+                           Fprs           = p.Fprs,
+                           FprSize        = p.FprSize,
+                           Cores          = p.Cores,
+                           ThreadsPerCore = p.ThreadsPerCore,
+                           Process        = p.Process,
+                           ProcessNm      = p.ProcessNm,
+                           DieSize        = p.DieSize,
+                           Transistors    = p.Transistors,
+                           DataBus        = p.DataBus,
+                           AddrBus        = p.AddrBus,
+                           SimdRegisters  = p.SimdRegisters,
+                           SimdSize       = p.SimdSize,
+                           L1Instruction  = p.L1Instruction,
+                           L1Data         = p.L1Data,
+                           L2             = p.L2,
+                           L3             = p.L3,
+                           InstructionSet = p.InstructionSet.Name,
+                           Id             = p.Id,
+                           InstructionSetExtensions = p.InstructionSetExtensions
+                              .Select(e => e.Extension.Extension)
+                              .ToList()
+                       })
+                      .ToListAsync(cancellationToken);
+    }
+
+    [HttpGet("count")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetCountAsync(CancellationToken cancellationToken = default) =>
+        context.Processors.CountAsync(cancellationToken);
 
     [HttpGet("{processorId:int}/machines")]
     [AllowAnonymous]

@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.Kiota.Abstractions;
@@ -33,17 +34,36 @@ namespace Marechai.Services;
 
 public class ProcessorsService(Marechai.ApiClient.Client client)
 {
-    public async Task<List<ProcessorDto>> GetAllAsync()
+    public async Task<List<ProcessorDto>> GetAllAsync(int? skip = null, int? take = null,
+                                                      CancellationToken cancellationToken = default)
     {
         try
         {
-            List<ProcessorDto> processors = await client.Processors.GetAsync();
+            List<ProcessorDto> processors = await client.Processors.GetAsync(config =>
+            {
+                if(skip.HasValue) config.QueryParameters.Skip = skip.Value;
+                if(take.HasValue) config.QueryParameters.Take = take.Value;
+            }, cancellationToken);
 
             return processors ?? [];
         }
         catch
         {
             return [];
+        }
+    }
+
+    public async Task<int> GetCountAsync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            int? count = await client.Processors.Count.GetAsync(cancellationToken: cancellationToken);
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
         }
     }
 

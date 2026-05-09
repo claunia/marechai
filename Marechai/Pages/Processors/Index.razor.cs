@@ -25,71 +25,123 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace Marechai.Pages.Processors;
 
-public partial class Index
+public partial class Index : IAsyncDisposable
 {
-    List<ProcessorListItem> _filteredProcessors;
-    bool                    _loaded;
-    List<ProcessorListItem> _processors;
-    string                  _searchText;
+    const int                    _pageSize           = 100;
+    readonly string              _sentinelId         = $"processors-sentinel-{Guid.NewGuid():N}";
+    readonly string              _scrollerId         = $"processors-scroll-{Guid.NewGuid():N}";
+    readonly List<ProcessorDto>  _processors         = [];
+    bool                         _initialized;
+    bool                         _loadingMore;
+    bool                         _observerRegistered;
+    int                          _total;
+    DotNetObjectReference<Index> _selfRef;
+
+    [Inject]
+    IJSRuntime JS { get; set; }
+
+    bool HasMore => _processors.Count < _total;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if(_loaded) return;
+        if(!_initialized)
+        {
+            // Stop the previous observer (if any) before swapping in a new
+            // batch — the sentinel/scroller IDs are stable per page instance,
+            // but defensive cleanup keeps callbacks from firing against a
+            // stale state when the component re-initializes.
+            await UnobserveAsync();
 
-        List<ProcessorDto> allProcessors = await Service.GetAllAsync();
+            // Fetch the total count + first page in parallel so the page is
+            // fully painted in one round-trip pair.
+            Task<int>                countTask     = Service.GetCountAsync();
+            Task<List<ProcessorDto>> firstPageTask = Service.GetAllAsync(0, _pageSize);
 
-        _processors = allProcessors
-                     .Select(p =>
-                      {
-                          string displayName = p.Name ?? string.Empty;
+            await Task.WhenAll(countTask, firstPageTask);
 
-                          if(p.Speed > 0)
-                          {
-                              displayName = p.GprSize > 0
-                                                ? string.Format(L["{0} @{1}MHz ({2} bits)"],
-                                                                p.Name,
-                                                                p.Speed,
-                                                                p.GprSize)
-                                                : string.Format(L["{0} @{1}MHz"], p.Name, p.Speed);
-                          }
+            _total = countTask.Result;
+            _processors.AddRange(firstPageTask.Result);
+            _initialized = true;
 
-                          return new ProcessorListItem
-                          {
-                              Id          = p.Id ?? 0,
-                              DisplayName = displayName,
-                              Company     = p.Company ?? string.Empty
-                          };
-                      })
-                     .OrderBy(p => p.DisplayName, StringComparer.OrdinalIgnoreCase)
-                     .ToList();
+            StateHasChanged();
+            return;
+        }
 
-        _filteredProcessors = _processors;
-        _loaded             = true;
+        // Register the IntersectionObserver once the sentinel has been
+        // rendered. The observer keeps the same target reference, so this is
+        // a one-shot until UnobserveAsync clears the flag.
+        if(!_observerRegistered && HasMore)
+        {
+            _selfRef ??= DotNetObjectReference.Create(this);
+
+            try
+            {
+                await JS.InvokeVoidAsync("marechaiInfiniteScroll.observe", _sentinelId, _selfRef, $"#{_scrollerId}",
+                                         "200px");
+                _observerRegistered = true;
+            }
+            catch(JSDisconnectedException)
+            {
+                // Circuit gone — nothing to do.
+            }
+        }
+    }
+
+    /// <summary>
+    /// Invoked by the IntersectionObserver in <c>infinite-scroll.js</c> when the
+    /// sentinel scrolls into view. Loads the next page, appends it to the
+    /// in-memory list, and re-renders.
+    /// </summary>
+    [JSInvokable]
+    public async Task OnSentinelVisibleAsync()
+    {
+        if(_loadingMore || !HasMore) return;
+
+        _loadingMore = true;
         StateHasChanged();
+
+        try
+        {
+            List<ProcessorDto> next = await Service.GetAllAsync(_processors.Count, _pageSize);
+            _processors.AddRange(next);
+
+            // If the very last page just arrived, stop the observer so it
+            // doesn't keep firing as the user scrolls past the new tail.
+            if(!HasMore) await UnobserveAsync();
+        }
+        finally
+        {
+            _loadingMore = false;
+            StateHasChanged();
+        }
     }
 
-    void OnSearchChanged()
+    async Task UnobserveAsync()
     {
-        _filteredProcessors = string.IsNullOrWhiteSpace(_searchText)
-                                  ? _processors
-                                  : _processors
-                                   .Where(p => p.DisplayName.Contains(_searchText,
-                                                                      StringComparison.OrdinalIgnoreCase) ||
-                                               p.Company.Contains(_searchText,
-                                                                   StringComparison.OrdinalIgnoreCase))
-                                   .ToList();
+        if(!_observerRegistered) return;
+
+        try
+        {
+            await JS.InvokeVoidAsync("marechaiInfiniteScroll.unobserve", _sentinelId);
+        }
+        catch(JSDisconnectedException)
+        {
+            // Circuit gone; nothing to do.
+        }
+
+        _observerRegistered = false;
     }
 
-    sealed class ProcessorListItem
+    public async ValueTask DisposeAsync()
     {
-        public int    Id          { get; init; }
-        public string DisplayName { get; init; }
-        public string Company     { get; init; }
+        await UnobserveAsync();
+        _selfRef?.Dispose();
     }
 }
