@@ -1325,4 +1325,457 @@
     <data name="Search software by specifications" xml:space="preserve">
         <value>Search software by specifications</value>
     </data>
+    <data name="Additional Hardware Required" xml:space="preserve">
+        <value>Additional Hardware Required</value>
+    </data>
+    <data name="Additional Hardware Supported" xml:space="preserve">
+        <value>Additional Hardware Supported</value>
+    </data>
+    <data name="Controller Types Supported" xml:space="preserve">
+        <value>Controller Types Supported</value>
+    </data>
+    <data name="Drivers/APIs Supported" xml:space="preserve">
+        <value>Drivers/APIs Supported</value>
+    </data>
+    <data name="Gamepads Supported" xml:space="preserve">
+        <value>Gamepads Supported</value>
+    </data>
+    <data name="Input Device Features Supported" xml:space="preserve">
+        <value>Input Device Features Supported</value>
+    </data>
+    <data name="Input Devices Required" xml:space="preserve">
+        <value>Input Devices Required</value>
+    </data>
+    <data name="Light Guns / Attachments Supported" xml:space="preserve">
+        <value>Light Guns / Attachments Supported</value>
+    </data>
+    <data name="Minimum CD-ROM Drive Speed Required" xml:space="preserve">
+        <value>Minimum CD-ROM Drive Speed Required</value>
+    </data>
+    <data name="Minimum DirectX Version Required" xml:space="preserve">
+        <value>Minimum DirectX Version Required</value>
+    </data>
+    <data name="Minimum DVD-ROM Drive Speed Required" xml:space="preserve">
+        <value>Minimum DVD-ROM Drive Speed Required</value>
+    </data>
+    <data name="Minimum Supported System" xml:space="preserve">
+        <value>Minimum Supported System</value>
+    </data>
+    <data name="Mouses Supported" xml:space="preserve">
+        <value>Mice Supported</value>
+    </data>
+    <data name="Number of Local Players via System Link / LAN Cable" xml:space="preserve">
+        <value>Number of Local Players via System Link / LAN Cable</value>
+    </data>
+    <data name="Number of Local Players via Wi-Fi" xml:space="preserve">
+        <value>Number of Local Players via Wi-Fi</value>
+    </data>
+    <data name="Number of Offline Players via Handheld Mode" xml:space="preserve">
+        <value>Number of Offline Players via Handheld Mode</value>
+    </data>
+    <data name="Number of Offline Players via Multitap" xml:space="preserve">
+        <value>Number of Offline Players via Multitap</value>
+    </data>
+    <data name="Number of Offline Players via Tabletop Mode" xml:space="preserve">
+        <value>Number of Offline Players via Tabletop Mode</value>
+    </data>
+    <data name="Number of Offline Players via TV Mode" xml:space="preserve">
+        <value>Number of Offline Players via TV Mode</value>
+    </data>
+    <data name="Save Game Methods" xml:space="preserve">
+        <value>Save Game Methods</value>
+    </data>
+    <data name="Sound Capabilities" xml:space="preserve">
+        <value>Sound Capabilities</value>
+    </data>
+    <data name="Sound Devices Supported" xml:space="preserve">
+        <value>Sound Devices Supported</value>
+    </data>
+    <data name="Supported Languages and Operating Systems" xml:space="preserve">
+        <value>Supported Languages and Operating Systems</value>
+    </data>
+    <data name="Supported Systems/Models" xml:space="preserve">
+        <value>Supported Systems/Models</value>
+    </data>
+    <data name="Technology" xml:space="preserve">
+        <value>Technology</value>
+    </data>
+    <data name="Text Modes Supported" xml:space="preserve">
+        <value>Text Modes Supported</value>
+    </data>
+    <data name="Video Resolutions Supported" xml:space="preserve">
+        <value>Video Resolutions Supported</value>
+    </data>
+    <data name="VR Helmets/Headsets Supported" xml:space="preserve">
+        <value>VR Helmets/Headsets Supported</value>
+    </data>
+    <data name="VR Play Area" xml:space="preserve">
+        <value>VR Play Area</value>
+    </data>
+    <data name="3D Accelerator" xml:space="preserve">
+        <value>3D Accelerator</value>
+    </data>
+    <data name="1-8 Players" xml:space="preserve">
+        <value>1-8 Players</value>
+    </data>
+    <data name="1-bit (monochrome)" xml:space="preserve">
+        <value>1-bit (monochrome)</value>
+    </data>
+    <data name="16-bit (High Color)" xml:space="preserve">
+        <value>16-bit (High Color)</value>
+    </data>
+    <data name="1 button" xml:space="preserve">
+        <value>1 button</value>
+    </data>
+    <data name="2-12 Players" xml:space="preserve">
+        <value>2-12 Players</value>
+    </data>
+    <data name="2-4 Players" xml:space="preserve">
+        <value>2-4 Players</value>
+    </data>
+    <data name="2-8 Players" xml:space="preserve">
+        <value>2-8 Players</value>
+    </data>
+    <data name="2-bit (4 colors)" xml:space="preserve">
+        <value>2-bit (4 colors)</value>
+    </data>
+    <data name="256 Colors Required" xml:space="preserve">
+        <value>256 Colors Required</value>
+    </data>
+    <data name="2 Players" xml:space="preserve">
+        <value>2 Players</value>
+    </data>
+    <data name="5.25&quot; Floppy Disk" xml:space="preserve">
+        <value>5.25&quot; Floppy Disk</value>
+    </data>
+    <data name="4 Players" xml:space="preserve">
+        <value>4 Players</value>
+    </data>
+    <data name="4-bit (16 greyscales)" xml:space="preserve">
+        <value>4-bit (16 greyscales)</value>
+    </data>
+    <data name="4-bit (16 colors)" xml:space="preserve">
+        <value>4-bit (16 colors)</value>
+    </data>
+    <data name="32 Players" xml:space="preserve">
+        <value>32 Players</value>
+    </data>
+    <data name="3&quot; Floppy Disk" xml:space="preserve">
+        <value>3&quot; Floppy Disk</value>
+    </data>
+    <data name="6 Players" xml:space="preserve">
+        <value>6 Players</value>
+    </data>
+    <data name="8+ Players" xml:space="preserve">
+        <value>8+ Players</value>
+    </data>
+    <data name="8-bit (256 colors)" xml:space="preserve">
+        <value>8-bit (256 colors)</value>
+    </data>
+    <data name="Achievements" xml:space="preserve">
+        <value>Achievements</value>
+    </data>
+    <data name="Add-on Content (DLC)" xml:space="preserve">
+        <value>Add-on Content (DLC)</value>
+    </data>
+    <data name="Ad Hoc" xml:space="preserve">
+        <value>Ad Hoc</value>
+    </data>
+    <data name="Analog Controller" xml:space="preserve">
+        <value>Analog Controller</value>
+    </data>
+    <data name="Avatars" xml:space="preserve">
+        <value>Avatars</value>
+    </data>
+    <data name="BASIC Cartridge" xml:space="preserve">
+        <value>BASIC Cartridge</value>
+    </data>
+    <data name="Built in Rumble Feature" xml:space="preserve">
+        <value>Built in Rumble Feature</value>
+    </data>
+    <data name="Cartridge" xml:space="preserve">
+        <value>Cartridge</value>
+    </data>
+    <data name="Cassette Tape" xml:space="preserve">
+        <value>Cassette Tape</value>
+    </data>
+    <data name="Comlynx Cable" xml:space="preserve">
+        <value>Comlynx Cable</value>
+    </data>
+    <data name="Color Monitor Support" xml:space="preserve">
+        <value>Color Monitor Support</value>
+    </data>
+    <data name="Color Monitor Required" xml:space="preserve">
+        <value>Color Monitor Required</value>
+    </data>
+    <data name="Color" xml:space="preserve">
+        <value>Color</value>
+    </data>
+    <data name="Co-Op" xml:space="preserve">
+        <value>Co-Op</value>
+    </data>
+    <data name="Cloud" xml:space="preserve">
+        <value>Cloud</value>
+    </data>
+    <data name="CGA Composite (16 colors)" xml:space="preserve">
+        <value>CGA Composite (16 colors)</value>
+    </data>
+    <data name="Content Download" xml:space="preserve">
+        <value>Content Download</value>
+    </data>
+    <data name="Cross-Buy" xml:space="preserve">
+        <value>Cross-Buy</value>
+    </data>
+    <data name="Cursor Joystick" xml:space="preserve">
+        <value>Cursor Joystick</value>
+    </data>
+    <data name="Custom Soundtracks" xml:space="preserve">
+        <value>Custom Soundtracks</value>
+    </data>
+    <data name="Definable Keys" xml:space="preserve">
+        <value>Definable Keys</value>
+    </data>
+    <data name="Floppy Disk" xml:space="preserve">
+        <value>Floppy Disk</value>
+    </data>
+    <data name="External Storage" xml:space="preserve">
+        <value>External Storage</value>
+    </data>
+    <data name="Extended Basic Cartridge" xml:space="preserve">
+        <value>Extended Basic Cartridge</value>
+    </data>
+    <data name="Ethernet Compatible" xml:space="preserve">
+        <value>Ethernet Compatible</value>
+    </data>
+    <data name="Ethernet Broadband Required" xml:space="preserve">
+        <value>Ethernet Broadband Required</value>
+    </data>
+    <data name="Double-sided Disk" xml:space="preserve">
+        <value>Double-sided Disk</value>
+    </data>
+    <data name="DOS 4.0 to 6.22" xml:space="preserve">
+        <value>DOS 4.0 to 6.22</value>
+    </data>
+    <data name="DLC available" xml:space="preserve">
+        <value>DLC available</value>
+    </data>
+    <data name="Free-for-all / One-on-one (VS)" xml:space="preserve">
+        <value>Free-for-all / One-on-one (VS)</value>
+    </data>
+    <data name="Friends" xml:space="preserve">
+        <value>Friends</value>
+    </data>
+    <data name="Full screen" xml:space="preserve">
+        <value>Full screen</value>
+    </data>
+    <data name="GameCube Compatible, Multi-Link Cable" xml:space="preserve">
+        <value>GameCube Compatible, Multi-Link Cable</value>
+    </data>
+    <data name="Gamepad" xml:space="preserve">
+        <value>Gamepad</value>
+    </data>
+    <data name="Game Boy Advance Compatible" xml:space="preserve">
+        <value>Game Boy Advance Compatible</value>
+    </data>
+    <data name="Game Card" xml:space="preserve">
+        <value>Game Card</value>
+    </data>
+    <data name="Game Sharing" xml:space="preserve">
+        <value>Game Sharing</value>
+    </data>
+    <data name="Handheld mode compatible" xml:space="preserve">
+        <value>Handheld mode compatible</value>
+    </data>
+    <data name="Hard Drive Installable" xml:space="preserve">
+        <value>Hard Drive Installable</value>
+    </data>
+    <data name="Headset Compatible" xml:space="preserve">
+        <value>Headset Compatible</value>
+    </data>
+    <data name="In-app/game/skill Purchase" xml:space="preserve">
+        <value>In-app/game/skill Purchase</value>
+    </data>
+    <data name="Keyboard" xml:space="preserve">
+        <value>Keyboard</value>
+    </data>
+    <data name="Kempston Mouse" xml:space="preserve">
+        <value>Kempston Mouse</value>
+    </data>
+    <data name="Kempston Joystick" xml:space="preserve">
+        <value>Kempston Joystick</value>
+    </data>
+    <data name="Joystick (Analog)" xml:space="preserve">
+        <value>Joystick (Analog)</value>
+    </data>
+    <data name="Other Input Devices" xml:space="preserve">
+        <value>Other Input Devices</value>
+    </data>
+    <data name="Leaderboards" xml:space="preserve">
+        <value>Leaderboards</value>
+    </data>
+    <data name="Light Gun / Attachment" xml:space="preserve">
+        <value>Light Gun / Attachment</value>
+    </data>
+    <data name="Link Cable" xml:space="preserve">
+        <value>Link Cable</value>
+    </data>
+    <data name="Lobbies/Matchmaking" xml:space="preserve">
+        <value>Lobbies/Matchmaking</value>
+    </data>
+    <data name="Magnetic Card" xml:space="preserve">
+        <value>Magnetic Card</value>
+    </data>
+    <data name="Matchmaking" xml:space="preserve">
+        <value>Matchmaking</value>
+    </data>
+    <data name="MCGA 4-color" xml:space="preserve">
+        <value>MCGA 4-color</value>
+    </data>
+    <data name="Mega Cartridge" xml:space="preserve">
+        <value>Mega Cartridge</value>
+    </data>
+    <data name="Messaging/Friend invite in game" xml:space="preserve">
+        <value>Messaging/Friend invite in game</value>
+    </data>
+    <data name="Mii Support" xml:space="preserve">
+        <value>Mii Support</value>
+    </data>
+    <data name="Modem" xml:space="preserve">
+        <value>Modem</value>
+    </data>
+    <data name="Monochrome Monitor Support" xml:space="preserve">
+        <value>Monochrome Monitor Support</value>
+    </data>
+    <data name="Motion sensor" xml:space="preserve">
+        <value>Motion sensor</value>
+    </data>
+    <data name="Progressive Scan (480p)" xml:space="preserve">
+        <value>Progressive Scan (480p)</value>
+    </data>
+    <data name="Pressure/Touch Sensitive" xml:space="preserve">
+        <value>Pressure/Touch Sensitive</value>
+    </data>
+    <data name="PlayStation Network compatible" xml:space="preserve">
+        <value>PlayStation Network compatible</value>
+    </data>
+    <data name="Pedals" xml:space="preserve">
+        <value>Pedals</value>
+    </data>
+    <data name="PC Speaker (Tweaked)" xml:space="preserve">
+        <value>PC Speaker (Tweaked)</value>
+    </data>
+    <data name="Password" xml:space="preserve">
+        <value>Password</value>
+    </data>
+    <data name="Online Multiplayer" xml:space="preserve">
+        <value>Online Multiplayer</value>
+    </data>
+    <data name="Null-modem cable" xml:space="preserve">
+        <value>Null-modem cable</value>
+    </data>
+    <data name="Network Adaptor" xml:space="preserve">
+        <value>Network Adaptor</value>
+    </data>
+    <data name="Multiple players required" xml:space="preserve">
+        <value>Multiple players required</value>
+    </data>
+    <data name="Multiplayer" xml:space="preserve">
+        <value>Multiplayer</value>
+    </data>
+    <data name="Multi-player" xml:space="preserve">
+        <value>Multi-player</value>
+    </data>
+    <data name="Multi-Link Cable" xml:space="preserve">
+        <value>Multi-Link Cable</value>
+    </data>
+    <data name="Racing/Steering Wheel" xml:space="preserve">
+        <value>Racing/Steering Wheel</value>
+    </data>
+    <data name="Raster" xml:space="preserve">
+        <value>Raster</value>
+    </data>
+    <data name="Remote Play" xml:space="preserve">
+        <value>Remote Play</value>
+    </data>
+    <data name="Room-Scale" xml:space="preserve">
+        <value>Room-Scale</value>
+    </data>
+    <data name="Same/Split-Screen" xml:space="preserve">
+        <value>Same/Split-Screen</value>
+    </data>
+    <data name="Save Data Cloud" xml:space="preserve">
+        <value>Save Data Cloud</value>
+    </data>
+    <data name="Scoreboard/Leaderboard" xml:space="preserve">
+        <value>Scoreboard/Leaderboard</value>
+    </data>
+    <data name="Sinclair Joystick" xml:space="preserve">
+        <value>Sinclair Joystick</value>
+    </data>
+    <data name="Single-player" xml:space="preserve">
+        <value>Single-player</value>
+    </data>
+    <data name="Single-sided Disk" xml:space="preserve">
+        <value>Single-sided Disk</value>
+    </data>
+    <data name="SNES Mouse" xml:space="preserve">
+        <value>SNES Mouse</value>
+    </data>
+    <data name="Standing" xml:space="preserve">
+        <value>Standing</value>
+    </data>
+    <data name="Steam account required" xml:space="preserve">
+        <value>Steam account required</value>
+    </data>
+    <data name="Tabletop mode compatible" xml:space="preserve">
+        <value>Tabletop mode compatible</value>
+    </data>
+    <data name="Team" xml:space="preserve">
+        <value>Team</value>
+    </data>
+    <data name="Teletype/Teleprinter" xml:space="preserve">
+        <value>Teletype/Teleprinter</value>
+    </data>
+    <data name="Tracked motion controllers" xml:space="preserve">
+        <value>Tracked motion controllers</value>
+    </data>
+    <data name="Trading cards" xml:space="preserve">
+        <value>Trading cards</value>
+    </data>
+    <data name="Trophies" xml:space="preserve">
+        <value>Trophies</value>
+    </data>
+    <data name="TV mode compatible" xml:space="preserve">
+        <value>TV mode compatible</value>
+    </data>
+    <data name="Valve Anti-Cheat System (VAC)" xml:space="preserve">
+        <value>Valve Anti-Cheat System (VAC)</value>
+    </data>
+    <data name="VGA (Tweaked)" xml:space="preserve">
+        <value>VGA (Tweaked)</value>
+    </data>
+    <data name="Vibration" xml:space="preserve">
+        <value>Vibration</value>
+    </data>
+    <data name="XNA Indie Games" xml:space="preserve">
+        <value>XNA Indie Games</value>
+    </data>
+    <data name="Xbox 360 Compatible" xml:space="preserve">
+        <value>Xbox 360 Compatible</value>
+    </data>
+    <data name="Window" xml:space="preserve">
+        <value>Window</value>
+    </data>
+    <data name="Widescreen (16 x 9)" xml:space="preserve">
+        <value>Widescreen (16 x 9)</value>
+    </data>
+    <data name="Wi-Fi Connection" xml:space="preserve">
+        <value>Wi-Fi Connection</value>
+    </data>
+    <data name="VR Helmet/Headset" xml:space="preserve">
+        <value>VR Helmet/Headset</value>
+    </data>
+    <data name="Voice Chat" xml:space="preserve">
+        <value>Voice Chat</value>
+    </data>
 </root>
