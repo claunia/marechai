@@ -326,4 +326,16 @@
         <value>Solo anno</value>
         <comment>Year only</comment>
     </data>
+    <data name="Descriptions" xml:space="preserve">
+        <value>Descrizioni</value>
+        <comment>Descriptions</comment>
+    </data>
+    <data name="Person Descriptions" xml:space="preserve">
+        <value>Descrizioni della persona</value>
+        <comment>Person Descriptions</comment>
+    </data>
+    <data name="Biography" xml:space="preserve">
+        <value>Biografia</value>
+        <comment>Biography</comment>
+    </data>
 </root>

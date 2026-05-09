@@ -197,4 +197,25 @@ public partial class People
         if(result is { Canceled: false })
             await LoadPeopleAsync();
     }
+
+    async Task OpenDescriptionsDialog(PersonDto person)
+    {
+        string displayName = person.DisplayName ?? person.Alias ?? $"{person.Name} {person.Surname}".Trim();
+
+        DialogParameters<PersonDescriptionDialog> parameters = new()
+        {
+            { x => x.PersonId, person.Id ?? 0 },
+            { x => x.PersonName, displayName }
+        };
+
+        IDialogReference dialog =
+            await DialogService.ShowAsync<PersonDescriptionDialog>(L["Person Descriptions"], parameters,
+                                                                   new DialogOptions
+                                                                   {
+                                                                       MaxWidth  = MaxWidth.Medium,
+                                                                       FullWidth = true
+                                                                   });
+
+        await dialog.Result;
+    }
 }

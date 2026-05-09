@@ -69,4 +69,5 @@ public class Person : BaseModel<int>
     public virtual ICollection<PeopleByDocument>  Documents        { get; set; }
     public virtual ICollection<PeopleByBook>      Books            { get; set; }
     public virtual ICollection<PeopleByMagazine>  Magazines        { get; set; }
+    public virtual ICollection<PersonDescription> Descriptions     { get; set; }
 }

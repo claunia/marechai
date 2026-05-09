@@ -387,4 +387,13 @@
     <data name="QA" xml:space="preserve">
         <value>QA</value>
     </data>
+    <data name="Descriptions" xml:space="preserve">
+        <value>Descriptions</value>
+    </data>
+    <data name="Person Descriptions" xml:space="preserve">
+        <value>Person Descriptions</value>
+    </data>
+    <data name="Biography" xml:space="preserve">
+        <value>Biography</value>
+    </data>
 </root>

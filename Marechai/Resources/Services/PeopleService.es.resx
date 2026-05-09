@@ -341,4 +341,16 @@
         <value>Control de calidad</value>
         <comment>QA</comment>
     </data>
+    <data name="Descriptions" xml:space="preserve">
+        <value>Descripciones</value>
+        <comment>Descriptions</comment>
+    </data>
+    <data name="Person Descriptions" xml:space="preserve">
+        <value>Descripciones de la persona</value>
+        <comment>Person Descriptions</comment>
+    </data>
+    <data name="Biography" xml:space="preserve">
+        <value>Biografía</value>
+        <comment>Biography</comment>
+    </data>
 </root>

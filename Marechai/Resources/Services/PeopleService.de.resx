@@ -418,4 +418,16 @@
         <value>Qualitätssicherung</value>
         <comment>QA</comment>
     </data>
+    <data name="Descriptions" xml:space="preserve">
+        <value>Beschreibungen</value>
+        <comment>Descriptions</comment>
+    </data>
+    <data name="Person Descriptions" xml:space="preserve">
+        <value>Personenbeschreibungen</value>
+        <comment>Person Descriptions</comment>
+    </data>
+    <data name="Biography" xml:space="preserve">
+        <value>Biografie</value>
+        <comment>Biography</comment>
+    </data>
 </root>

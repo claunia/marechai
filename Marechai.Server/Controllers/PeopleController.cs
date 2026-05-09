@@ -35,6 +35,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Markdig;
 
 namespace Marechai.Server.Controllers;
 
@@ -300,13 +301,15 @@ public class PeopleController(
 
     /// <summary>
     /// Consolidated /people/{id}/full endpoint for the public view page. Returns
-    /// the person head plus all five child collections in one HTTP response,
-    /// replacing the 6 sequential round-trips the page used to make.
+    /// the person head plus the language-aware biography (with English fallback
+    /// collapsed into a single ordered query) plus all five child collections in
+    /// one HTTP response, replacing the 7 sequential round-trips the page used
+    /// to make.
     ///
     /// Each query runs on its own DbContext from the factory so they can fan out
     /// in parallel via Task.WhenAll. None of the children depend on values
     /// projected by the head, so we use the /book head-with-children pattern
-    /// (all 6 queries fire in parallel) rather than head-first-then-children;
+    /// (all 7 queries fire in parallel) rather than head-first-then-children;
     /// this saves one full ~180 ms RTT in the common case.
     /// </summary>
     [HttpGet("{id:int}/full")]
@@ -314,14 +317,15 @@ public class PeopleController(
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<PersonFullDto>> GetFullAsync(int id)
+    public async Task<ActionResult<PersonFullDto>> GetFullAsync(int id, [FromQuery] string lang = "eng")
     {
-        await using var headCtx       = await dbFactory.CreateDbContextAsync();
-        await using var companiesCtx  = await dbFactory.CreateDbContextAsync();
-        await using var booksCtx      = await dbFactory.CreateDbContextAsync();
-        await using var documentsCtx  = await dbFactory.CreateDbContextAsync();
-        await using var magazinesCtx  = await dbFactory.CreateDbContextAsync();
-        await using var softwareCtx   = await dbFactory.CreateDbContextAsync();
+        await using var headCtx        = await dbFactory.CreateDbContextAsync();
+        await using var descriptionCtx = await dbFactory.CreateDbContextAsync();
+        await using var companiesCtx   = await dbFactory.CreateDbContextAsync();
+        await using var booksCtx       = await dbFactory.CreateDbContextAsync();
+        await using var documentsCtx   = await dbFactory.CreateDbContextAsync();
+        await using var magazinesCtx   = await dbFactory.CreateDbContextAsync();
+        await using var softwareCtx    = await dbFactory.CreateDbContextAsync();
 
         // Head — same projection as GetAsync(int id) above. AsNoTracking because
         // this is read-only.
@@ -344,6 +348,16 @@ public class PeopleController(
                  Alias              = p.Alias,
                  DisplayName        = p.DisplayName
              })
+            .FirstOrDefaultAsync();
+
+        // Description: collapse the original two-step lookup (try requested
+        // lang, then English fallback) into a single ordered query. Matches
+        // for the requested language sort first (key 0); English fallback is
+        // key 1; FirstOrDefaultAsync returns the preferred row.
+        var descriptionTask = descriptionCtx.PersonDescriptions.AsNoTracking()
+            .Where(d => d.PersonId == id && (d.LanguageCode == lang || d.LanguageCode == "eng"))
+            .OrderBy(d => d.LanguageCode == lang ? 0 : 1)
+            .Select(d => new { d.Html, d.Text, d.LanguageCode })
             .FirstOrDefaultAsync();
 
         // Mirrors GetCompaniesByPersonAsync. The original sorts in memory because
@@ -440,6 +454,7 @@ public class PeopleController(
             .ToListAsync();
 
         await Task.WhenAll(headTask,
+                           descriptionTask,
                            companiesTask,
                            booksTask,
                            documentsTask,
@@ -465,12 +480,15 @@ public class PeopleController(
 
         return new PersonFullDto
         {
-            Person          = person,
-            Companies       = companies,
-            Books           = books,
-            Documents       = documents,
-            Magazines       = magazines,
-            SoftwareCredits = software
+            Person                  = person,
+            DescriptionHtml         = descriptionTask.Result?.Html,
+            DescriptionText         = descriptionTask.Result?.Text,
+            DescriptionLanguageCode = descriptionTask.Result?.LanguageCode,
+            Companies               = companies,
+            Books                   = books,
+            Documents               = documents,
+            Magazines               = magazines,
+            SoftwareCredits         = software
         };
     }
 
@@ -576,6 +594,139 @@ public class PeopleController(
         if(item is null) return NotFound();
 
         context.People.Remove(item);
+
+        await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
+    }
+
+    [HttpGet("{id:int}/description/text")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<string> GetDescriptionTextAsync(int id, [FromQuery] string lang = "eng")
+    {
+        // Collapse the original two-step lookup (try requested lang, then English
+        // fallback) into a single ordered query. Descriptions matching the requested
+        // language sort first (key 0); English fallback is key 1; FirstOrDefaultAsync
+        // returns the preferred row in one round-trip.
+        var description = await context.PersonDescriptions.AsNoTracking()
+                                       .Where(d => d.PersonId == id &&
+                                                   (d.LanguageCode == lang || d.LanguageCode == "eng"))
+                                       .OrderBy(d => d.LanguageCode == lang ? 0 : 1)
+                                       .Select(d => new { d.Html, d.Text })
+                                       .FirstOrDefaultAsync();
+
+        return description?.Html ?? description?.Text;
+    }
+
+    [HttpGet("{id:int}/descriptions")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<PersonDescriptionDto>> GetDescriptionsAsync(int id) => context.PersonDescriptions.AsNoTracking()
+       .Where(d => d.PersonId == id)
+       .Select(d => new PersonDescriptionDto
+        {
+            Id           = d.Id,
+            PersonId     = d.PersonId,
+            Html         = d.Html,
+            Markdown     = d.Text,
+            LanguageCode = d.LanguageCode,
+            Language     = d.Language.ReferenceName
+        })
+       .ToListAsync();
+
+    [HttpGet("{id:int}/description")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<PersonDescriptionDto> GetDescriptionAsync(int id, [FromQuery] string lang = "eng")
+    {
+        // Collapse the original two-step lookup (try requested lang, then English
+        // fallback) into a single ordered query. Descriptions matching the requested
+        // language sort first (key 0); English fallback is key 1; FirstOrDefaultAsync
+        // returns the preferred row in one round-trip.
+        PersonDescriptionDto description = await context.PersonDescriptions.AsNoTracking()
+                                                        .Where(d => d.PersonId == id &&
+                                                                    (d.LanguageCode == lang ||
+                                                                     d.LanguageCode == "eng"))
+                                                        .OrderBy(d => d.LanguageCode == lang ? 0 : 1)
+                                                        .Select(d => new PersonDescriptionDto
+                                                         {
+                                                             Id           = d.Id,
+                                                             PersonId     = d.PersonId,
+                                                             Html         = d.Html,
+                                                             Markdown     = d.Text,
+                                                             LanguageCode = d.LanguageCode,
+                                                             Language     = d.Language.ReferenceName
+                                                         })
+                                                        .FirstOrDefaultAsync();
+
+        return description;
+    }
+
+    [HttpPost("{id:int}/description")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<int>> CreateOrUpdateDescriptionAsync(
+        int id, [FromBody] PersonDescriptionDto description)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        PersonDescription current = await context.PersonDescriptions
+                                                 .FirstOrDefaultAsync(d => d.PersonId     == id &&
+                                                                           d.LanguageCode == description.LanguageCode);
+
+        MarkdownPipeline pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+        string           html     = Markdown.ToHtml(description.Markdown, pipeline);
+
+        if(current is null)
+        {
+            current = new PersonDescription
+            {
+                PersonId     = id,
+                LanguageCode = description.LanguageCode,
+                Html         = html,
+                Text         = description.Markdown
+            };
+
+            await context.PersonDescriptions.AddAsync(current);
+        }
+        else
+        {
+            current.Html = html;
+            current.Text = description.Markdown;
+        }
+
+        await context.SaveChangesWithUserAsync(userId);
+
+        return current.Id;
+    }
+
+    [HttpDelete("{id:int}/description/{languageCode}")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult> DeleteDescriptionAsync(int id, string languageCode)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        PersonDescription description = await context.PersonDescriptions
+                                                     .FirstOrDefaultAsync(d => d.PersonId     == id &&
+                                                                               d.LanguageCode == languageCode);
+
+        if(description is null) return NotFound();
+
+        context.PersonDescriptions.Remove(description);
 
         await context.SaveChangesWithUserAsync(userId);
 

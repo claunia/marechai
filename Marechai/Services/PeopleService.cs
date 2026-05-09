@@ -284,4 +284,72 @@ public class PeopleService(Marechai.ApiClient.Client client)
             return [];
         }
     }
+
+    public async Task<string> GetDescriptionTextAsync(int id, string lang = "eng")
+    {
+        try
+        {
+            var desc = await client.People[id].Description.GetAsync(rc =>
+            {
+                rc.QueryParameters.Lang = lang;
+            });
+
+            return desc?.Html ?? desc?.Markdown;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public async Task<List<PersonDescriptionDto>> GetDescriptionsAsync(int personId)
+    {
+        try
+        {
+            List<PersonDescriptionDto> descriptions = await client.People[personId].Descriptions.GetAsync();
+
+            return descriptions ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(bool succeeded, string error)> CreateOrUpdateDescriptionAsync(int                  personId,
+                                                                                     PersonDescriptionDto dto)
+    {
+        try
+        {
+            await client.People[personId].Description.PostAsync(dto);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string error)> DeleteDescriptionAsync(int personId, string languageCode)
+    {
+        try
+        {
+            await client.People[personId].Description[languageCode].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
 }

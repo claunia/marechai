@@ -127,6 +127,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<PeopleByDocument>                    PeopleByDocuments                   { get; set; }
     public virtual DbSet<PeopleByMagazine>                    PeopleByMagazines                   { get; set; }
     public virtual DbSet<Person>                              People                              { get; set; }
+    public virtual DbSet<PersonDescription>                   PersonDescriptions                  { get; set; }
     public virtual DbSet<Processor>                           Processors                          { get; set; }
     public virtual DbSet<ProcessorsByMachine>                 ProcessorsByMachine                 { get; set; }
     public virtual DbSet<Resolution>                          Resolutions                         { get; set; }
@@ -1599,6 +1600,27 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
             entity.HasIndex(e => e.DisplayName);
 
             entity.HasOne(d => d.CountryOfBirth).WithMany(p => p.People).HasForeignKey(d => d.CountryOfBirthId);
+        });
+
+        modelBuilder.Entity<PersonDescription>(entity =>
+        {
+            entity.HasIndex(e => e.Text).IsFullText();
+
+            entity.HasIndex(e => new { e.PersonId, e.LanguageCode })
+                  .IsUnique()
+                  .HasDatabaseName("idx_person_descriptions_person_language");
+
+            entity.Property(e => e.LanguageCode).UseCollation("utf8mb4_general_ci");
+
+            entity.HasOne(e => e.Person)
+                  .WithMany(p => p.Descriptions)
+                  .HasForeignKey(e => e.PersonId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Language)
+                  .WithMany()
+                  .HasForeignKey(e => e.LanguageCode)
+                  .HasConstraintName("fk_person_descriptions_language");
         });
 
         modelBuilder.Entity<Processor>(entity =>

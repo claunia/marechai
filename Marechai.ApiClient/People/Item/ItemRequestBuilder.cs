@@ -3,6 +3,8 @@
 using Marechai.ApiClient.Models;
 using Marechai.ApiClient.People.Item.Books;
 using Marechai.ApiClient.People.Item.Companies;
+using Marechai.ApiClient.People.Item.Description;
+using Marechai.ApiClient.People.Item.Descriptions;
 using Marechai.ApiClient.People.Item.Documents;
 using Marechai.ApiClient.People.Item.Full;
 using Marechai.ApiClient.People.Item.Magazines;
@@ -32,6 +34,16 @@ namespace Marechai.ApiClient.People.Item
         public global::Marechai.ApiClient.People.Item.Companies.CompaniesRequestBuilder Companies
         {
             get => new global::Marechai.ApiClient.People.Item.Companies.CompaniesRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The description property</summary>
+        public global::Marechai.ApiClient.People.Item.Description.DescriptionRequestBuilder Description
+        {
+            get => new global::Marechai.ApiClient.People.Item.Description.DescriptionRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The descriptions property</summary>
+        public global::Marechai.ApiClient.People.Item.Descriptions.DescriptionsRequestBuilder Descriptions
+        {
+            get => new global::Marechai.ApiClient.People.Item.Descriptions.DescriptionsRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The documents property</summary>
         public global::Marechai.ApiClient.People.Item.Documents.DocumentsRequestBuilder Documents

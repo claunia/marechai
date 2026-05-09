@@ -35,6 +35,7 @@ public partial class View
 {
     List<PersonByBookDto>     _books;
     List<PersonByCompanyDto>  _companies;
+    string                    _description;
     List<PersonByDocumentDto> _documents;
     int                       _lastId;
     bool                      _loaded;
@@ -67,9 +68,16 @@ public partial class View
         // Single consolidated /people/{id}/full call replaces six sequential
         // round-trips. The legacy individual endpoints are still available for
         // admin / internal callers; this page is the only consumer of /full.
+        // Description is fetched in parallel because /full is intentionally
+        // language-agnostic (cached per id) — same pattern as Machine/GPU views.
         try
         {
-            PersonFullDto full = await Service.GetPersonFullAsync(Id);
+            Task<PersonFullDto> fullTask        = Service.GetPersonFullAsync(Id);
+            Task<string>        descriptionTask = Service.GetDescriptionTextAsync(Id);
+
+            await Task.WhenAll(fullTask, descriptionTask);
+
+            PersonFullDto full = fullTask.Result;
 
             if(full?.Person is null)
             {
@@ -85,6 +93,7 @@ public partial class View
             _documents       = full.Documents       ?? [];
             _magazines       = full.Magazines       ?? [];
             _softwareCredits = full.SoftwareCredits ?? [];
+            _description     = descriptionTask.Result;
         }
         catch(ObjectDisposedException)
         {

@@ -1,0 +1,253 @@
+@using Marechai.ApiClient.Models
+@using Marechai.Services
+
+<MudDialog>
+    <DialogContent>
+        @if(_isLoading)
+        {
+            <div class="d-flex justify-center pa-4">
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true"/>
+            </div>
+        }
+        else
+        {
+            <MudText Typo="Typo.subtitle1" Class="mb-4">Manage descriptions for <strong>@PersonName</strong></MudText>
+
+            @if(_descriptions is { Count: > 0 })
+            {
+                <MudText Typo="Typo.subtitle2" Class="mb-2">Existing Translations</MudText>
+                <MudList T="PersonDescriptionDto" Dense="true" Class="mb-4">
+                    @foreach(PersonDescriptionDto desc in _descriptions)
+                    {
+                        <MudListItem T="PersonDescriptionDto">
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                <MudChip T="string" Size="Size.Small" Color="Color.Primary" Variant="Variant.Outlined">@GetLanguageName(desc.LanguageCode)</MudChip>
+                                <MudStack Row="true" Spacing="1">
+                                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => EditDescription(desc)"/>
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDeleteDescription(desc)"/>
+                                </MudStack>
+                            </MudStack>
+                        </MudListItem>
+                    }
+                </MudList>
+            }
+
+            <MudDivider Class="my-4"/>
+
+            <MudSelect T="string"
+                       @bind-Value="_selectedLanguage"
+                       Label="Language"
+                       Variant="Variant.Outlined"
+                       Class="mb-4">
+                @foreach(var lang in _availableLanguages)
+                {
+                    <MudSelectItem T="string" Value="@lang.Code">@lang.Name</MudSelectItem>
+                }
+            </MudSelect>
+
+            @if(TranslationService.IsAvailable)
+            {
+                <MudButton StartIcon="@Icons.Material.Filled.Translate"
+                           Variant="Variant.Outlined"
+                           Color="Color.Secondary"
+                           Class="mb-4"
+                           OnClick="TranslateFromEnglish"
+                           Disabled="@(_isTranslating || string.IsNullOrWhiteSpace(_selectedLanguage) || _selectedLanguage == "eng" || !TranslationService.IsLanguageSupported(_selectedLanguage) || _descriptions?.Exists(d => d.LanguageCode == "eng") != true)">
+                    @if(_isTranslating)
+                    {
+                        <MudProgressLinear Color="Color.Secondary" Value="@(_translationTotal > 0 ? _translationCurrent * 100.0 / _translationTotal : 0)" Class="mr-2" Style="width: 100px; align-self: center;"/>
+                        <text>Translating @_translationCurrent / @_translationTotal...</text>
+                    }
+                    else
+                    {
+                        <text>Translate from English</text>
+                    }
+                </MudButton>
+            }
+
+            <MarkdownEditor @bind-Value="_markdown"
+                            @ref="_editor"
+                            @key="_editorKey"
+                            SpellChecker="false"
+                            MinHeight="300px"
+                            MaxHeight="500px"
+                            Placeholder="Enter description in Markdown..."/>
+
+            @if(!string.IsNullOrWhiteSpace(_errorMessage))
+            {
+                <MudAlert Severity="Severity.Error" Class="mt-2" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+            }
+
+            @if(!string.IsNullOrWhiteSpace(_successMessage))
+            {
+                <MudAlert Severity="Severity.Success" Class="mt-2" ShowCloseIcon="true" CloseIconClicked="() => _successMessage = null">@_successMessage</MudAlert>
+            }
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Close">Close</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="SaveDescription" Disabled="@(string.IsNullOrWhiteSpace(_selectedLanguage) || string.IsNullOrWhiteSpace(_markdown))">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    bool    _isLoading     = true;
+    bool    _isTranslating  = false;
+    int     _translationCurrent;
+    int     _translationTotal;
+    string _selectedLanguage;
+    string _markdown;
+    string _errorMessage;
+    string _successMessage;
+
+    List<PersonDescriptionDto> _descriptions;
+
+    MarkdownEditor _editor;
+    int             _editorKey;
+
+    static readonly (string Code, string Name)[] _availableLanguages =
+    [
+        ("eng", "English"),
+        ("spa", "Spanish"),
+        ("deu", "German"),
+        ("fra", "French"),
+        ("ita", "Italian"),
+        ("lat", "Latin"),
+        ("por", "Portuguese")
+    ];
+
+    [CascadingParameter]
+    IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter] public int    PersonId   { get; set; }
+    [Parameter] public string PersonName { get; set; } = string.Empty;
+
+    [Inject] PeopleService      PeopleService      { get; set; } = null!;
+    [Inject] IDialogService     DialogService      { get; set; } = null!;
+    [Inject] TranslationService TranslationService { get; set; } = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDescriptions();
+        _isLoading = false;
+    }
+
+    async Task LoadDescriptions()
+    {
+        _descriptions = await PeopleService.GetDescriptionsAsync(PersonId);
+    }
+
+    static string GetLanguageName(string code) =>
+        _availableLanguages.FirstOrDefault(l => l.Code == code).Name ?? code;
+
+    void EditDescription(PersonDescriptionDto desc)
+    {
+        _selectedLanguage = desc.LanguageCode;
+        _markdown         = desc.Markdown;
+        _editorKey++;
+    }
+
+    async Task ConfirmDeleteDescription(PersonDescriptionDto desc)
+    {
+        DialogParameters<DeleteConfirmDialog> parameters = new()
+        {
+            { x => x.ContentText, $"Delete the {GetLanguageName(desc.LanguageCode)} description?" }
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<DeleteConfirmDialog>("Delete Description", parameters,
+                                                                                     new DialogOptions
+                                                                                     {
+                                                                                         MaxWidth = MaxWidth.ExtraSmall,
+                                                                                         FullWidth = true
+                                                                                     });
+
+        DialogResult result = await dialog.Result;
+
+        if(result is { Canceled: false })
+        {
+            (bool succeeded, string error) = await PeopleService.DeleteDescriptionAsync(PersonId, desc.LanguageCode);
+
+            if(succeeded)
+            {
+                _successMessage = "Description deleted.";
+                await LoadDescriptions();
+            }
+            else
+            {
+                _errorMessage = error ?? "Failed to delete description.";
+            }
+        }
+    }
+
+    async Task SaveDescription()
+    {
+        if(string.IsNullOrWhiteSpace(_selectedLanguage) || string.IsNullOrWhiteSpace(_markdown))
+            return;
+
+        var dto = new PersonDescriptionDto
+        {
+            PersonId     = PersonId,
+            LanguageCode = _selectedLanguage,
+            Markdown     = _markdown
+        };
+
+        (bool succeeded, string error) = await PeopleService.CreateOrUpdateDescriptionAsync(PersonId, dto);
+
+        if(succeeded)
+        {
+            _successMessage   = "Description saved.";
+            _markdown         = null;
+            _selectedLanguage = null;
+            await LoadDescriptions();
+        }
+        else
+        {
+            _errorMessage = error ?? "Failed to save description.";
+        }
+    }
+
+    async Task TranslateFromEnglish()
+    {
+        _isTranslating = true;
+        await InvokeAsync(StateHasChanged);
+
+        try
+        {
+            string englishMarkdown = _descriptions?.FirstOrDefault(d => d.LanguageCode == "eng")?.Markdown;
+
+            if(string.IsNullOrWhiteSpace(englishMarkdown))
+            {
+                _errorMessage = "No English description found to translate from.";
+
+                return;
+            }
+
+            (string translatedText, string error) = await TranslationService.TranslateAsync(englishMarkdown, _selectedLanguage!,
+                new Progress<(int current, int total)>(p =>
+                {
+                    _translationCurrent = p.current;
+                    _translationTotal   = p.total;
+                    InvokeAsync(StateHasChanged);
+                }));
+
+            if(translatedText is not null)
+            {
+                _markdown       = translatedText;
+                _isTranslating  = false;
+                _successMessage = "Translation completed. Please review before saving.";
+                _editorKey++;
+            }
+            else
+            {
+                _errorMessage = error ?? "Translation failed.";
+            }
+        }
+        finally
+        {
+            _isTranslating = false;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    void Close() => MudDialog.Cancel();
+}
