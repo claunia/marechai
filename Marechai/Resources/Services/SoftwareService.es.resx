@@ -1291,4 +1291,106 @@
         <value>Filtrado por tipo: {0}</value>
         <comment>Filtered by kind: {0}</comment>
     </data>
+    <data name="Adult" xml:space="preserve">
+        <value>Adulto</value>
+    </data>
+    <data name="Bike / Bicycling" xml:space="preserve">
+        <value>Bicicleta / ciclismo</value>
+    </data>
+    <data name="Cold War" xml:space="preserve">
+        <value>Guerra Fría</value>
+    </data>
+    <data name="Cyberpunk / dark sci-fi" xml:space="preserve">
+        <value>Cyberpunk / ciencia ficción oscura</value>
+    </data>
+    <data name="Egypt (Ancient)" xml:space="preserve">
+        <value>Egipto (antiguo)</value>
+    </data>
+    <data name="Fighting" xml:space="preserve">
+        <value>Lucha</value>
+    </data>
+    <data name="Flight / aviation" xml:space="preserve">
+        <value>Vuelo / aviación</value>
+    </data>
+    <data name="Football (European) / Soccer" xml:space="preserve">
+        <value>Fútbol</value>
+    </data>
+    <data name="Horse / derby" xml:space="preserve">
+        <value>Caballo / hípica</value>
+    </data>
+    <data name="Japanese-style RPG (JRPG)" xml:space="preserve">
+        <value>RPG japonés (JRPG)</value>
+    </data>
+    <data name="Life / social simulation" xml:space="preserve">
+        <value>Simulación social / vida</value>
+    </data>
+    <data name="Martial arts" xml:space="preserve">
+        <value>Artes marciales</value>
+    </data>
+    <data name="Mental training" xml:space="preserve">
+        <value>Entrenamiento mental</value>
+    </data>
+    <data name="Motorcycle" xml:space="preserve">
+        <value>Motocicleta</value>
+    </data>
+    <data name="Multiple units/characters control" xml:space="preserve">
+        <value>Control de varias unidades/personajes</value>
+    </data>
+    <data name="North America" xml:space="preserve">
+        <value>Norteamérica</value>
+    </data>
+    <data name="Off-roading" xml:space="preserve">
+        <value>Todoterreno</value>
+    </data>
+    <data name="Paddle / Pong" xml:space="preserve">
+        <value>Pala / Pong</value>
+    </data>
+    <data name="Pinball" xml:space="preserve">
+        <value>Pinball</value>
+    </data>
+    <data name="Post-apocalyptic" xml:space="preserve">
+        <value>Postapocalíptico</value>
+    </data>
+    <data name="Prehistoric" xml:space="preserve">
+        <value>Prehistórico</value>
+    </data>
+    <data name="Real-time strategy" xml:space="preserve">
+        <value>Estrategia en tiempo real</value>
+    </data>
+    <data name="Roguelike" xml:space="preserve">
+        <value>Roguelike</value>
+    </data>
+    <data name="Sailing / boating" xml:space="preserve">
+        <value>Vela / náutica</value>
+    </data>
+    <data name="Sandbox / open world" xml:space="preserve">
+        <value>Sandbox / mundo abierto</value>
+    </data>
+    <data name="Snowboarding / skiing" xml:space="preserve">
+        <value>Snowboard / esquí</value>
+    </data>
+    <data name="Street racing" xml:space="preserve">
+        <value>Carreras callejeras</value>
+    </data>
+    <data name="Tank" xml:space="preserve">
+        <value>Tanque</value>
+    </data>
+    <data name="Tennis" xml:space="preserve">
+        <value>Tenis</value>
+    </data>
+    <data name="Train" xml:space="preserve">
+        <value>Tren</value>
+    </data>
+    <data name="Tricks / stunts" xml:space="preserve">
+        <value>Trucos / acrobacias</value>
+    </data>
+    <data name="Truck" xml:space="preserve">
+        <value>Camión</value>
+    </data>
+    <data name="Visual novel" xml:space="preserve">
+        <value>Novela visual</value>
+    </data>
+    <data name="Wrestling" xml:space="preserve">
+        <value>Lucha libre</value>
+    </data>
 </root>
