@@ -1322,6 +1322,12 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                                                       })
                                                      .ToListAsync();
 
+        // Importer stores genre names with U+00A0 (non-breaking space); the
+        // resx localization keys use a regular ASCII space, so normalize here
+        // before caching/returning so `L[genre.Name]` resolves correctly.
+        foreach(SoftwareGenreDto g in genres)
+            g.Name = g.Name?.Replace('\u00A0', ' ');
+
         cache.Set(SOFTWARE_GENRES_CACHE_KEY, genres, _catalogCacheTtl);
 
         return genres;
@@ -1429,6 +1435,19 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                                               })
                                              .ToList();
 
+        // Importer stores spec keys/values with U+00A0 (non-breaking space);
+        // the resx localization keys use a regular ASCII space, so normalize
+        // here before caching/returning so `L[key]` / `L[value]` resolve.
+        foreach(SoftwareSpecKeyDto s in result)
+        {
+            s.Key = s.Key?.Replace('\u00A0', ' ');
+
+            if(s.Values is null) continue;
+
+            for(int i = 0; i < s.Values.Count; i++)
+                s.Values[i] = s.Values[i]?.Replace('\u00A0', ' ');
+        }
+
         cache.Set(SOFTWARE_SPECS_CACHE_KEY, result, _catalogCacheTtl);
 
         return result;
@@ -1531,39 +1550,64 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<SoftwareGenreDto>> GetGenresAsync(ulong softwareId) => context.GenresBySoftware
-       .Where(gs => gs.SoftwareId == softwareId)
-       .Select(gs => new SoftwareGenreDto
-        {
-            Id       = gs.Genre.Id,
-            Name     = gs.Genre.Name,
-            Type     = (int)gs.Genre.Type,
-            TypeName = gs.Genre.Type.ToString()
-        })
-       .OrderBy(g => g.Type)
-       .ThenBy(g => g.Name)
-       .ToListAsync();
+    public async Task<List<SoftwareGenreDto>> GetGenresAsync(ulong softwareId)
+    {
+        List<SoftwareGenreDto> genres = await context.GenresBySoftware
+                                                     .Where(gs => gs.SoftwareId == softwareId)
+                                                     .Select(gs => new SoftwareGenreDto
+                                                      {
+                                                          Id       = gs.Genre.Id,
+                                                          Name     = gs.Genre.Name,
+                                                          Type     = (int)gs.Genre.Type,
+                                                          TypeName = gs.Genre.Type.ToString()
+                                                      })
+                                                     .OrderBy(g => g.Type)
+                                                     .ThenBy(g => g.Name)
+                                                     .ToListAsync();
+
+        // Importer stores genre names with U+00A0 (non-breaking space); the
+        // resx localization keys use a regular ASCII space, so normalize here
+        // before returning so `L[genre.Name]` resolves correctly.
+        foreach(SoftwareGenreDto g in genres)
+            g.Name = g.Name?.Replace('\u00A0', ' ');
+
+        return genres;
+    }
 
     [HttpGet("/software/{softwareId:ulong}/attributes")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<SoftwareAttributeDto>> GetAttributesAsync(ulong softwareId) => context.SoftwareAttributes
-       .Where(a => a.SoftwareRelease.SoftwareId == softwareId)
-       .Select(a => new SoftwareAttributeDto
+    public async Task<List<SoftwareAttributeDto>> GetAttributesAsync(ulong softwareId)
+    {
+        List<SoftwareAttributeDto> attributes = await context.SoftwareAttributes
+           .Where(a => a.SoftwareRelease.SoftwareId == softwareId)
+           .Select(a => new SoftwareAttributeDto
+            {
+                Id                = a.Id,
+                SoftwareReleaseId = a.SoftwareReleaseId,
+                Category          = a.Category,
+                Key               = a.Key,
+                Value             = a.Value,
+                PlatformName      = a.SoftwareRelease.Platform.Name,
+                RegionNames       = string.Join(", ", a.SoftwareRelease.Regions.Select(r => r.UnM49.Name))
+            })
+           .OrderBy(a => a.PlatformName)
+           .ThenBy(a => a.Category)
+           .ThenBy(a => a.Key)
+           .ToListAsync();
+
+        // Importer stores attribute keys/values with U+00A0 (non-breaking
+        // space); the resx localization keys use a regular ASCII space, so
+        // normalize here before returning so `L[key]` / `L[value]` resolve.
+        foreach(SoftwareAttributeDto a in attributes)
         {
-            Id                = a.Id,
-            SoftwareReleaseId = a.SoftwareReleaseId,
-            Category          = a.Category,
-            Key               = a.Key,
-            Value             = a.Value,
-            PlatformName      = a.SoftwareRelease.Platform.Name,
-            RegionNames       = string.Join(", ", a.SoftwareRelease.Regions.Select(r => r.UnM49.Name))
-        })
-       .OrderBy(a => a.PlatformName)
-       .ThenBy(a => a.Category)
-       .ThenBy(a => a.Key)
-       .ToListAsync();
+            a.Key   = a.Key?.Replace('\u00A0', ' ');
+            a.Value = a.Value?.Replace('\u00A0', ' ');
+        }
+
+        return attributes;
+    }
 
     [HttpGet("/software/{softwareId:ulong}/credits")]
     [AllowAnonymous]
