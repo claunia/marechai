@@ -287,8 +287,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
 
     [HttpGet("auth/me/collection/documents/{documentId:long}")]
     [Authorize]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<bool>(StatusCodes.Status200OK)]
     public async Task<IActionResult> IsDocumentCollectedAsync(long documentId)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
@@ -297,7 +296,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
         bool exists =
             await context.CollectedDocuments.AnyAsync(c => c.UserId == userId && c.DocumentId == documentId);
 
-        return exists ? Ok() : NotFound();
+        return Ok(exists);
     }
 
     [HttpPost("auth/me/collection/documents/{documentId:long}")]
@@ -349,8 +348,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
 
     [HttpGet("auth/me/collection/machines/{machineId:int}")]
     [Authorize]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<bool>(StatusCodes.Status200OK)]
     public async Task<IActionResult> IsMachineCollectedAsync(int machineId)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
@@ -358,7 +356,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
 
         bool exists = await context.OwnedMachines.AnyAsync(c => c.UserId == userId && c.MachineId == machineId);
 
-        return exists ? Ok() : NotFound();
+        return Ok(exists);
     }
 
     [HttpPost("auth/me/collection/machines/{machineId:int}")]
@@ -417,8 +415,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
 
     [HttpGet("auth/me/collection/software-releases/{releaseId}")]
     [Authorize]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<bool>(StatusCodes.Status200OK)]
     public async Task<IActionResult> IsSoftwareReleaseCollectedAsync(ulong releaseId)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
@@ -428,7 +425,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
             await context.CollectedSoftwareReleases.AnyAsync(c => c.UserId     == userId &&
                                                                    c.SoftwareReleaseId == releaseId);
 
-        return exists ? Ok() : NotFound();
+        return Ok(exists);
     }
 
     [HttpPost("auth/me/collection/software-releases/{releaseId}")]

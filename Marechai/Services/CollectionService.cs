@@ -181,13 +181,7 @@ public sealed class CollectionService(Client client, ILogger<CollectionService> 
     {
         try
         {
-            await client.Auth.Me.Collection.Documents[documentId].GetAsync();
-
-            return true;
-        }
-        catch(ApiException ex) when(ex.ResponseStatusCode == 404)
-        {
-            return false;
+            return await client.Auth.Me.Collection.Documents[documentId].GetAsync() ?? false;
         }
         catch(Exception ex)
         {
@@ -249,13 +243,7 @@ public sealed class CollectionService(Client client, ILogger<CollectionService> 
     {
         try
         {
-            await client.Auth.Me.Collection.Machines[machineId].GetAsync();
-
-            return true;
-        }
-        catch(ApiException ex) when(ex.ResponseStatusCode == 404)
-        {
-            return false;
+            return await client.Auth.Me.Collection.Machines[machineId].GetAsync() ?? false;
         }
         catch(Exception ex)
         {
@@ -317,13 +305,7 @@ public sealed class CollectionService(Client client, ILogger<CollectionService> 
     {
         try
         {
-            await client.Auth.Me.Collection.SoftwareReleases[releaseId].GetAsync();
-
-            return true;
-        }
-        catch(ApiException ex) when(ex.ResponseStatusCode == 404)
-        {
-            return false;
+            return await client.Auth.Me.Collection.SoftwareReleases[releaseId].GetAsync() ?? false;
         }
         catch(Exception ex)
         {
