@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.Data;
 using Marechai.Data.Dtos;
@@ -73,61 +74,103 @@ public class PeopleController(
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<PersonDto>> GetPeopleByLetterAsync(char c) => context.People
-        .Where(p =>
-            (p.DisplayName != null &&
-             EF.Functions.Like(p.DisplayName, $"{c}%")) ||
-            (p.DisplayName == null && p.Alias != null &&
-             EF.Functions.Like(p.Alias, $"{c}%")) ||
-            (p.DisplayName == null && p.Alias == null &&
-             EF.Functions.Like(p.Surname, $"{c}%")))
-        .OrderBy(p => MarechaiContext.NaturalSortKey(p.DisplayName))
-        .ThenBy(p => MarechaiContext.NaturalSortKey(p.Alias))
-        .ThenBy(p => MarechaiContext.NaturalSortKey(p.Name))
-        .ThenBy(p => MarechaiContext.NaturalSortKey(p.Surname))
-        .Select(p => new PersonDto
-        {
-            Id               = p.Id,
-            Name             = p.Name,
-            Surname          = p.Surname,
-            CountryOfBirth   = p.CountryOfBirth.Name,
-            CountryOfBirthId = p.CountryOfBirthId,
-            BirthDate        = p.BirthDate,
-            BirthDatePrecision = p.BirthDatePrecision,
-            DeathDate        = p.DeathDate,
-            DeathDatePrecision = p.DeathDatePrecision,
-            Photo            = p.Photo,
-            Alias            = p.Alias,
-            DisplayName      = p.DisplayName
-        })
-        .ToListAsync();
+    public Task<List<PersonDto>> GetPeopleByLetterAsync(char c, [FromQuery] int? skip = null,
+                                                        [FromQuery] int? take = null,
+                                                        CancellationToken cancellationToken = default)
+    {
+        IQueryable<Person> ordered = context.People
+            .Where(p =>
+                (p.DisplayName != null &&
+                 EF.Functions.Like(p.DisplayName, $"{c}%")) ||
+                (p.DisplayName == null && p.Alias != null &&
+                 EF.Functions.Like(p.Alias, $"{c}%")) ||
+                (p.DisplayName == null && p.Alias == null &&
+                 EF.Functions.Like(p.Surname, $"{c}%")))
+            .OrderBy(p => MarechaiContext.NaturalSortKey(p.DisplayName))
+            .ThenBy(p => MarechaiContext.NaturalSortKey(p.Alias))
+            .ThenBy(p => MarechaiContext.NaturalSortKey(p.Name))
+            .ThenBy(p => MarechaiContext.NaturalSortKey(p.Surname));
+
+        if(skip.HasValue) ordered = ordered.Skip(skip.Value);
+        if(take.HasValue) ordered = ordered.Take(take.Value);
+
+        return ordered.Select(p => new PersonDto
+                       {
+                           Id                 = p.Id,
+                           Name               = p.Name,
+                           Surname            = p.Surname,
+                           CountryOfBirth     = p.CountryOfBirth.Name,
+                           CountryOfBirthId   = p.CountryOfBirthId,
+                           BirthDate          = p.BirthDate,
+                           BirthDatePrecision = p.BirthDatePrecision,
+                           DeathDate          = p.DeathDate,
+                           DeathDatePrecision = p.DeathDatePrecision,
+                           Photo              = p.Photo,
+                           Alias              = p.Alias,
+                           DisplayName        = p.DisplayName
+                       })
+                      .ToListAsync(cancellationToken);
+    }
+
+    [HttpGet("by-letter/{c}/count")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetPeopleByLetterCountAsync(char c, CancellationToken cancellationToken = default) =>
+        context.People
+               .Where(p =>
+                   (p.DisplayName != null &&
+                    EF.Functions.Like(p.DisplayName, $"{c}%")) ||
+                   (p.DisplayName == null && p.Alias != null &&
+                    EF.Functions.Like(p.Alias, $"{c}%")) ||
+                   (p.DisplayName == null && p.Alias == null &&
+                    EF.Functions.Like(p.Surname, $"{c}%")))
+               .CountAsync(cancellationToken);
 
     [HttpGet("by-year/{year:int}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<PersonDto>> GetPeopleByYearAsync(int year) => context.People
-        .Where(p => p.BirthDate > DateTime.MinValue && p.BirthDate.Year == year)
-        .OrderBy(p => MarechaiContext.NaturalSortKey(p.DisplayName))
-        .ThenBy(p => MarechaiContext.NaturalSortKey(p.Alias))
-        .ThenBy(p => MarechaiContext.NaturalSortKey(p.Name))
-        .ThenBy(p => MarechaiContext.NaturalSortKey(p.Surname))
-        .Select(p => new PersonDto
-        {
-            Id               = p.Id,
-            Name             = p.Name,
-            Surname          = p.Surname,
-            CountryOfBirth   = p.CountryOfBirth.Name,
-            CountryOfBirthId = p.CountryOfBirthId,
-            BirthDate        = p.BirthDate,
-            BirthDatePrecision = p.BirthDatePrecision,
-            DeathDate        = p.DeathDate,
-            DeathDatePrecision = p.DeathDatePrecision,
-            Photo            = p.Photo,
-            Alias            = p.Alias,
-            DisplayName      = p.DisplayName
-        })
-        .ToListAsync();
+    public Task<List<PersonDto>> GetPeopleByYearAsync(int year, [FromQuery] int? skip = null,
+                                                      [FromQuery] int? take = null,
+                                                      CancellationToken cancellationToken = default)
+    {
+        IQueryable<Person> ordered = context.People
+            .Where(p => p.BirthDate > DateTime.MinValue && p.BirthDate.Year == year)
+            .OrderBy(p => MarechaiContext.NaturalSortKey(p.DisplayName))
+            .ThenBy(p => MarechaiContext.NaturalSortKey(p.Alias))
+            .ThenBy(p => MarechaiContext.NaturalSortKey(p.Name))
+            .ThenBy(p => MarechaiContext.NaturalSortKey(p.Surname));
+
+        if(skip.HasValue) ordered = ordered.Skip(skip.Value);
+        if(take.HasValue) ordered = ordered.Take(take.Value);
+
+        return ordered.Select(p => new PersonDto
+                       {
+                           Id                 = p.Id,
+                           Name               = p.Name,
+                           Surname            = p.Surname,
+                           CountryOfBirth     = p.CountryOfBirth.Name,
+                           CountryOfBirthId   = p.CountryOfBirthId,
+                           BirthDate          = p.BirthDate,
+                           BirthDatePrecision = p.BirthDatePrecision,
+                           DeathDate          = p.DeathDate,
+                           DeathDatePrecision = p.DeathDatePrecision,
+                           Photo              = p.Photo,
+                           Alias              = p.Alias,
+                           DisplayName        = p.DisplayName
+                       })
+                      .ToListAsync(cancellationToken);
+    }
+
+    [HttpGet("by-year/{year:int}/count")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetPeopleByYearCountAsync(int year, CancellationToken cancellationToken = default) =>
+        context.People
+               .Where(p => p.BirthDate > DateTime.MinValue && p.BirthDate.Year == year)
+               .CountAsync(cancellationToken);
 
     [HttpGet("{personId:int}/books")]
     [AllowAnonymous]
@@ -252,28 +295,37 @@ public class PeopleController(
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<PersonDto>> GetAsync() => context.People.OrderBy(p => MarechaiContext.NaturalSortKey(p.DisplayName))
-                                                      .ThenBy(p => MarechaiContext.NaturalSortKey(p.Alias))
-                                                      .ThenBy(p => MarechaiContext.NaturalSortKey(p.Name))
-                                                      .ThenBy(p => MarechaiContext.NaturalSortKey(p.Surname))
-                                                      .Select(p => new PersonDto
-                                                       {
-                                                           Id             = p.Id,
-                                                           Name           = p.Name,
-                                                           Surname        = p.Surname,
-                                                           CountryOfBirth = p.CountryOfBirth.Name,
-                                                           BirthDate      = p.BirthDate,
-                                                           BirthDatePrecision = p.BirthDatePrecision,
-                                                           DeathDate      = p.DeathDate,
-                                                           DeathDatePrecision = p.DeathDatePrecision,
-                                                           Webpage        = p.Webpage,
-                                                           Twitter        = p.Twitter,
-                                                           Facebook       = p.Facebook,
-                                                           Photo          = p.Photo,
-                                                           Alias          = p.Alias,
-                                                           DisplayName    = p.DisplayName
-                                                       })
-                                                      .ToListAsync();
+    public Task<List<PersonDto>> GetAsync([FromQuery] int? skip = null, [FromQuery] int? take = null,
+                                          CancellationToken cancellationToken = default)
+    {
+        IQueryable<Person> ordered = context.People
+                                            .OrderBy(p => MarechaiContext.NaturalSortKey(p.DisplayName))
+                                            .ThenBy(p => MarechaiContext.NaturalSortKey(p.Alias))
+                                            .ThenBy(p => MarechaiContext.NaturalSortKey(p.Name))
+                                            .ThenBy(p => MarechaiContext.NaturalSortKey(p.Surname));
+
+        if(skip.HasValue) ordered = ordered.Skip(skip.Value);
+        if(take.HasValue) ordered = ordered.Take(take.Value);
+
+        return ordered.Select(p => new PersonDto
+                       {
+                           Id                 = p.Id,
+                           Name               = p.Name,
+                           Surname            = p.Surname,
+                           CountryOfBirth     = p.CountryOfBirth.Name,
+                           BirthDate          = p.BirthDate,
+                           BirthDatePrecision = p.BirthDatePrecision,
+                           DeathDate          = p.DeathDate,
+                           DeathDatePrecision = p.DeathDatePrecision,
+                           Webpage            = p.Webpage,
+                           Twitter            = p.Twitter,
+                           Facebook           = p.Facebook,
+                           Photo              = p.Photo,
+                           Alias              = p.Alias,
+                           DisplayName        = p.DisplayName
+                       })
+                      .ToListAsync(cancellationToken);
+    }
 
     [HttpGet("{id:int}")]
     [AllowAnonymous]

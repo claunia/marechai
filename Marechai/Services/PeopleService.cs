@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.Kiota.Abstractions;
@@ -75,11 +76,16 @@ public class PeopleService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<List<PersonDto>> GetPeopleByLetterAsync(char c)
+    public async Task<List<PersonDto>> GetPeopleByLetterAsync(char c, int? skip = null, int? take = null,
+                                                              CancellationToken cancellationToken = default)
     {
         try
         {
-            List<PersonDto> people = await client.People.ByLetter[c.ToString()].GetAsync();
+            List<PersonDto> people = await client.People.ByLetter[c.ToString()].GetAsync(config =>
+            {
+                if(skip.HasValue) config.QueryParameters.Skip = skip.Value;
+                if(take.HasValue) config.QueryParameters.Take = take.Value;
+            }, cancellationToken);
 
             return people ?? [];
         }
@@ -89,11 +95,30 @@ public class PeopleService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<List<PersonDto>> GetPeopleByYearAsync(int year)
+    public async Task<int> GetPeopleByLetterCountAsync(char c, CancellationToken cancellationToken = default)
     {
         try
         {
-            List<PersonDto> people = await client.People.ByYear[year].GetAsync();
+            int? count = await client.People.ByLetter[c.ToString()].Count.GetAsync(cancellationToken: cancellationToken);
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
+
+    public async Task<List<PersonDto>> GetPeopleByYearAsync(int year, int? skip = null, int? take = null,
+                                                            CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            List<PersonDto> people = await client.People.ByYear[year].GetAsync(config =>
+            {
+                if(skip.HasValue) config.QueryParameters.Skip = skip.Value;
+                if(take.HasValue) config.QueryParameters.Take = take.Value;
+            }, cancellationToken);
 
             return people ?? [];
         }
@@ -103,11 +128,30 @@ public class PeopleService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<List<PersonDto>> GetPeopleAsync()
+    public async Task<int> GetPeopleByYearCountAsync(int year, CancellationToken cancellationToken = default)
     {
         try
         {
-            List<PersonDto> people = await client.People.GetAsync();
+            int? count = await client.People.ByYear[year].Count.GetAsync(cancellationToken: cancellationToken);
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
+
+    public async Task<List<PersonDto>> GetPeopleAsync(int? skip = null, int? take = null,
+                                                      CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            List<PersonDto> people = await client.People.GetAsync(config =>
+            {
+                if(skip.HasValue) config.QueryParameters.Skip = skip.Value;
+                if(take.HasValue) config.QueryParameters.Take = take.Value;
+            }, cancellationToken);
 
             return people ?? [];
         }

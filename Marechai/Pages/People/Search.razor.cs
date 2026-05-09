@@ -23,20 +23,32 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace Marechai.Pages.People;
 
-public partial class Search
+public partial class Search : IAsyncDisposable
 {
-    List<PersonDto> _people;
-    char?           _character;
-    bool            _loaded;
-    string          _lastStartingCharacter;
-    int?            _lastYear;
+    const int                     _pageSize    = 100;
+    readonly string               _sentinelId  = $"people-search-sentinel-{Guid.NewGuid():N}";
+    readonly string               _scrollerId  = $"people-search-scroll-{Guid.NewGuid():N}";
+    readonly List<PersonDto>      _people      = [];
+    char?                         _character;
+    bool                          _initialized;
+    bool                          _loadingMore;
+    bool                          _observerRegistered;
+    string                        _lastStartingCharacter;
+    int?                          _lastYear;
+    int                           _total;
+    DotNetObjectReference<Search> _selfRef;
+
+    [Inject]
+    IJSRuntime JS { get; set; }
 
     [Parameter]
     public int? Year { get; set; }
@@ -44,38 +56,143 @@ public partial class Search
     [Parameter]
     public string StartingCharacter { get; set; }
 
+    bool HasMore => _people.Count < _total;
+
     protected override void OnParametersSet()
     {
         if(Year == _lastYear && StartingCharacter == _lastStartingCharacter) return;
 
         _lastYear              = Year;
         _lastStartingCharacter = StartingCharacter;
-        _loaded                = false;
+        _initialized           = false;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if(_loaded) return;
-
-        _character = null;
-
-        if(!string.IsNullOrWhiteSpace(StartingCharacter) && StartingCharacter.Length == 1)
+        if(!_initialized)
         {
-            _character = StartingCharacter[0];
+            _character = null;
+            _total     = 0;
+            _people.Clear();
 
-            // ToUpper()
-            if(_character >= 'a' && _character <= 'z') _character -= (char)32;
+            if(!string.IsNullOrWhiteSpace(StartingCharacter) && StartingCharacter.Length == 1)
+            {
+                _character = StartingCharacter[0];
 
-            // Check if not letter or number
-            if(_character < '0' || _character > '9' && _character < 'A' || _character > 'Z') _character = null;
+                // ToUpper()
+                if(_character >= 'a' && _character <= 'z') _character -= (char)32;
+
+                // Check if not letter or number
+                if(_character < '0' || _character > '9' && _character < 'A' || _character > 'Z') _character = null;
+            }
+
+            // Stop the previous observer (if any) before swapping in a new
+            // batch — the sentinel/scroller IDs are stable per page instance,
+            // but a route-parameter change forces a fresh data load and the
+            // observer must be re-armed once the new sentinel has rendered.
+            await UnobserveAsync();
+
+            // Fetch the total count + first page in parallel so the page is
+            // fully painted in one round-trip pair.
+            Task<int>             countTask     = GetCurrentCountAsync();
+            Task<List<PersonDto>> firstPageTask = FetchBatchAsync(0, _pageSize);
+
+            await Task.WhenAll(countTask, firstPageTask);
+
+            _total = countTask.Result;
+            _people.AddRange(firstPageTask.Result);
+            _initialized = true;
+
+            StateHasChanged();
+            return;
         }
 
-        if(_character.HasValue) _people = await Service.GetPeopleByLetterAsync(_character.Value);
+        // Register the IntersectionObserver once the sentinel has been
+        // rendered. The observer keeps the same target reference, so this is
+        // a one-shot until UnobserveAsync clears the flag.
+        if(!_observerRegistered && HasMore)
+        {
+            _selfRef ??= DotNetObjectReference.Create(this);
 
-        if(Year.HasValue && _people is null) _people = await Service.GetPeopleByYearAsync(Year.Value);
+            try
+            {
+                await JS.InvokeVoidAsync("marechaiInfiniteScroll.observe", _sentinelId, _selfRef, $"#{_scrollerId}",
+                                         "200px");
+                _observerRegistered = true;
+            }
+            catch(JSDisconnectedException)
+            {
+                // Circuit gone — nothing to do.
+            }
+        }
+    }
 
-        _people ??= await Service.GetPeopleAsync();
-        _loaded =   true;
+    /// <summary>
+    /// Invoked by the IntersectionObserver in <c>infinite-scroll.js</c> when the
+    /// sentinel scrolls into view. Loads the next page, appends it to the
+    /// in-memory list, and re-renders.
+    /// </summary>
+    [JSInvokable]
+    public async Task OnSentinelVisibleAsync()
+    {
+        if(_loadingMore || !HasMore) return;
+
+        _loadingMore = true;
         StateHasChanged();
+
+        try
+        {
+            List<PersonDto> next = await FetchBatchAsync(_people.Count, _pageSize);
+            _people.AddRange(next);
+
+            // If the very last page just arrived, stop the observer so it
+            // doesn't keep firing as the user scrolls past the new tail.
+            if(!HasMore) await UnobserveAsync();
+        }
+        finally
+        {
+            _loadingMore = false;
+            StateHasChanged();
+        }
+    }
+
+    Task<int> GetCurrentCountAsync()
+    {
+        if(_character.HasValue) return Service.GetPeopleByLetterCountAsync(_character.Value);
+
+        if(Year.HasValue) return Service.GetPeopleByYearCountAsync(Year.Value);
+
+        return Service.GetPeopleCountAsync();
+    }
+
+    Task<List<PersonDto>> FetchBatchAsync(int skip, int take)
+    {
+        if(_character.HasValue) return Service.GetPeopleByLetterAsync(_character.Value, skip, take);
+
+        if(Year.HasValue) return Service.GetPeopleByYearAsync(Year.Value, skip, take);
+
+        return Service.GetPeopleAsync(skip, take);
+    }
+
+    async Task UnobserveAsync()
+    {
+        if(!_observerRegistered) return;
+
+        try
+        {
+            await JS.InvokeVoidAsync("marechaiInfiniteScroll.unobserve", _sentinelId);
+        }
+        catch(JSDisconnectedException)
+        {
+            // Circuit gone; nothing to do.
+        }
+
+        _observerRegistered = false;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await UnobserveAsync();
+        _selfRef?.Dispose();
     }
 }
