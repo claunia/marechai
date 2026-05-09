@@ -8,7 +8,6 @@ using Marechai.ApiClient.Magazines.Issues;
 using Marechai.ApiClient.Magazines.Item;
 using Marechai.ApiClient.Magazines.MaximumYear;
 using Marechai.ApiClient.Magazines.MinimumYear;
-using Marechai.ApiClient.Magazines.Scans;
 using Marechai.ApiClient.Magazines.Titles;
 using Marechai.ApiClient.Models;
 using Microsoft.Kiota.Abstractions.Extensions;
@@ -61,11 +60,6 @@ namespace Marechai.ApiClient.Magazines
         public global::Marechai.ApiClient.Magazines.MinimumYear.MinimumYearRequestBuilder MinimumYear
         {
             get => new global::Marechai.ApiClient.Magazines.MinimumYear.MinimumYearRequestBuilder(PathParameters, RequestAdapter);
-        }
-        /// <summary>The scans property</summary>
-        public global::Marechai.ApiClient.Magazines.Scans.ScansRequestBuilder Scans
-        {
-            get => new global::Marechai.ApiClient.Magazines.Scans.ScansRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The titles property</summary>
         public global::Marechai.ApiClient.Magazines.Titles.TitlesRequestBuilder Titles

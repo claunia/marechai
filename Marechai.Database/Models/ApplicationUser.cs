@@ -110,9 +110,6 @@ public class ApplicationUser : IdentityUser
     public virtual ICollection<CollectedDocument>         CollectedDocuments        { get; set; }
     public virtual ICollection<CollectedSoftwareRelease>  CollectedSoftwareReleases { get; set; }
     public virtual ICollection<Dump>                      Dumps                     { get; set; }
-    public virtual ICollection<BookScan>                  BookScans                 { get; set; }
-    public virtual ICollection<DocumentScan>              DocumentScans             { get; set; }
-    public virtual ICollection<MagazineScan>              MagazineScans             { get; set; }
     public virtual ICollection<SoftwareUserRating>        SoftwareRatings           { get; set; }
     public virtual ICollection<SoftwareUserReview>        SoftwareReviews           { get; set; }
     public virtual ICollection<SoftwareUserReviewVote>    ReviewVotes               { get; set; }

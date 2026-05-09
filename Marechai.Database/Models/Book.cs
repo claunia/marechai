@@ -49,7 +49,6 @@ public class Book : DocumentBase
     public virtual ICollection<PeopleByBook>         People          { get; set; }
     public virtual ICollection<BooksByMachine>       Machines        { get; set; }
     public virtual ICollection<BooksByMachineFamily> MachineFamilies { get; set; }
-    public virtual ICollection<BookScan>             Scans           { get; set; }
     public virtual ICollection<BookSynopsis>          Synopses        { get; set; }
     public virtual ICollection<CollectedBook>         CollectedBy     { get; set; }
 }

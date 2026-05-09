@@ -4,7 +4,6 @@ using Marechai.ApiClient.Magazines.Item.Companies;
 using Marechai.ApiClient.Magazines.Item.MachineFamilies;
 using Marechai.ApiClient.Magazines.Item.Machines;
 using Marechai.ApiClient.Magazines.Item.People;
-using Marechai.ApiClient.Magazines.Item.Scans;
 using Marechai.ApiClient.Magazines.Item.Synopses;
 using Marechai.ApiClient.Magazines.Item.Synopsis;
 using Marechai.ApiClient.Models;
@@ -43,11 +42,6 @@ namespace Marechai.ApiClient.Magazines.Item
         public global::Marechai.ApiClient.Magazines.Item.People.PeopleRequestBuilder People
         {
             get => new global::Marechai.ApiClient.Magazines.Item.People.PeopleRequestBuilder(PathParameters, RequestAdapter);
-        }
-        /// <summary>The scans property</summary>
-        public global::Marechai.ApiClient.Magazines.Item.Scans.ScansRequestBuilder Scans
-        {
-            get => new global::Marechai.ApiClient.Magazines.Item.Scans.ScansRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The synopses property</summary>
         public global::Marechai.ApiClient.Magazines.Item.Synopses.SynopsesRequestBuilder Synopses

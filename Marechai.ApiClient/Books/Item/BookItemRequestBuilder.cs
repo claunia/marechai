@@ -6,7 +6,6 @@ using Marechai.ApiClient.Books.Item.Full;
 using Marechai.ApiClient.Books.Item.MachineFamilies;
 using Marechai.ApiClient.Books.Item.Machines;
 using Marechai.ApiClient.Books.Item.People;
-using Marechai.ApiClient.Books.Item.Scans;
 using Marechai.ApiClient.Books.Item.Synopses;
 using Marechai.ApiClient.Books.Item.Synopsis;
 using Marechai.ApiClient.Models;
@@ -55,11 +54,6 @@ namespace Marechai.ApiClient.Books.Item
         public global::Marechai.ApiClient.Books.Item.People.PeopleRequestBuilder People
         {
             get => new global::Marechai.ApiClient.Books.Item.People.PeopleRequestBuilder(PathParameters, RequestAdapter);
-        }
-        /// <summary>The scans property</summary>
-        public global::Marechai.ApiClient.Books.Item.Scans.ScansRequestBuilder Scans
-        {
-            get => new global::Marechai.ApiClient.Books.Item.Scans.ScansRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The synopses property</summary>
         public global::Marechai.ApiClient.Books.Item.Synopses.SynopsesRequestBuilder Synopses

@@ -39,9 +39,9 @@ namespace Marechai.Server.Services;
 ///     strategy:
 ///     <list type="bullet">
 ///         <item>
-///             Content tables (<c>MachinePhoto</c>, <c>Dump</c>, <c>BookScan</c>, <c>DocumentScan</c>,
-///             <c>MagazineScan</c>, <c>SoftwareUserReview</c>, <c>ReviewReport</c>, <c>Message</c>,
-///             <c>OwnedMachine</c>, <c>CollectedBook</c>, <c>CollectedDocument</c>,
+///             Content tables (<c>MachinePhoto</c>, <c>Dump</c>, <c>SoftwareUserReview</c>,
+///             <c>ReviewReport</c>, <c>Message</c>, <c>OwnedMachine</c>, <c>CollectedBook</c>,
+///             <c>CollectedDocument</c>,
 ///             <c>CollectedSoftwareRelease</c>) are reassigned to the seeded <c>system</c> user
 ///             (<c>00000000-0000-0000-0000-00000000sys</c>) so contributions remain attributed but
 ///             anonymized. For composite-keyed reassignment targets where <c>system</c> may already own
@@ -110,18 +110,6 @@ public sealed class UserAccountDeletionService(MarechaiContext              cont
             await context.Dumps
                          .Where(d => d.UserId == userId)
                          .ExecuteUpdateAsync(s => s.SetProperty(d => d.UserId, _ => SystemUserId));
-
-            await context.BookScans
-                         .Where(s => s.UserId == userId)
-                         .ExecuteUpdateAsync(s => s.SetProperty(p => p.UserId, _ => SystemUserId));
-
-            await context.DocumentScans
-                         .Where(s => s.UserId == userId)
-                         .ExecuteUpdateAsync(s => s.SetProperty(p => p.UserId, _ => SystemUserId));
-
-            await context.MagazineScans
-                         .Where(s => s.UserId == userId)
-                         .ExecuteUpdateAsync(s => s.SetProperty(p => p.UserId, _ => SystemUserId));
 
             await context.SoftwareUserReviews
                          .Where(r => r.UserId == userId)

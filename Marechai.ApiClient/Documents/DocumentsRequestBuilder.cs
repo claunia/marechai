@@ -8,7 +8,6 @@ using Marechai.ApiClient.Documents.Item;
 using Marechai.ApiClient.Documents.MaximumYear;
 using Marechai.ApiClient.Documents.MinimumYear;
 using Marechai.ApiClient.Documents.Roles;
-using Marechai.ApiClient.Documents.Scans;
 using Marechai.ApiClient.Models;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
@@ -60,11 +59,6 @@ namespace Marechai.ApiClient.Documents
         public global::Marechai.ApiClient.Documents.Roles.RolesRequestBuilder Roles
         {
             get => new global::Marechai.ApiClient.Documents.Roles.RolesRequestBuilder(PathParameters, RequestAdapter);
-        }
-        /// <summary>The scans property</summary>
-        public global::Marechai.ApiClient.Documents.Scans.ScansRequestBuilder Scans
-        {
-            get => new global::Marechai.ApiClient.Documents.Scans.ScansRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>Gets an item from the Marechai.ApiClient.documents.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>

@@ -57,7 +57,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<Book>                                Books                               { get; set; }
     public virtual DbSet<BooksByMachine>                      BooksByMachines                     { get; set; }
     public virtual DbSet<BooksByMachineFamily>                BooksByMachineFamilies              { get; set; }
-    public virtual DbSet<BookScan>                            BookScans                           { get; set; }
     public virtual DbSet<BookSynopsis>                        BookSynopses                        { get; set; }
     public virtual DbSet<BrowserTest>                         BrowserTests                        { get; set; }
     public virtual DbSet<CompaniesByBook>                     CompaniesByBooks                    { get; set; }
@@ -73,7 +72,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<DocumentRole>                        DocumentRoles                       { get; set; }
     public virtual DbSet<DocumentsByMachine>                  DocumentsByMachines                 { get; set; }
     public virtual DbSet<DocumentsByMachineFamily>            DocumentsByMachineFamilies          { get; set; }
-    public virtual DbSet<DocumentScan>                        DocumentScans                       { get; set; }
     public virtual DbSet<DocumentSynopsis>                    DocumentSynopses                    { get; set; }
     public virtual DbSet<Dump>                                Dumps                               { get; set; }
     public virtual DbSet<DumpHardware>                        DumpHardwares                       { get; set; }
@@ -107,7 +105,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<MagazineIssue>                       MagazineIssues                      { get; set; }
     public virtual DbSet<MagazinesByMachine>                  MagazinesByMachines                 { get; set; }
     public virtual DbSet<MagazinesByMachineFamily>            MagazinesByMachinesFamilies         { get; set; }
-    public virtual DbSet<MagazineScan>                        MagazineScans                       { get; set; }
     public virtual DbSet<MagazineSynopsis>                    MagazineSynopses                    { get; set; }
     public virtual DbSet<MarechaiDb>                          MarechaiDb                          { get; set; }
     public virtual DbSet<MasteringText>                       MasteringTexts                      { get; set; }
@@ -2328,111 +2325,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
             entity.HasIndex(e => e.Type);
 
             entity.HasOne(e => e.MediaDump).WithMany(e => e.Tags).OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<BookScan>(entity =>
-        {
-            entity.HasIndex(e => e.Author);
-
-            entity.HasIndex(e => e.ColorSpace);
-
-            entity.HasIndex(e => e.Comments);
-
-            entity.HasIndex(e => e.CreationDate);
-
-            entity.HasIndex(e => e.ExifVersion);
-
-            entity.HasIndex(e => e.HorizontalResolution);
-
-            entity.HasIndex(e => e.ResolutionUnit);
-
-            entity.HasIndex(e => e.ScannerManufacturer);
-
-            entity.HasIndex(e => e.ScannerModel);
-
-            entity.HasIndex(e => e.SoftwareUsed);
-
-            entity.HasIndex(e => e.UploadDate);
-
-            entity.HasIndex(e => e.VerticalResolution);
-
-            entity.HasIndex(e => e.Type);
-
-            entity.HasIndex(e => e.Page);
-
-            entity.HasOne(d => d.Book).WithMany(p => p.Scans).OnDelete(DeleteBehavior.Cascade);
-
-            entity.HasOne(d => d.User).WithMany(p => p.BookScans).OnDelete(DeleteBehavior.SetNull);
-        });
-
-        modelBuilder.Entity<DocumentScan>(entity =>
-        {
-            entity.HasIndex(e => e.Author);
-
-            entity.HasIndex(e => e.ColorSpace);
-
-            entity.HasIndex(e => e.Comments);
-
-            entity.HasIndex(e => e.CreationDate);
-
-            entity.HasIndex(e => e.ExifVersion);
-
-            entity.HasIndex(e => e.HorizontalResolution);
-
-            entity.HasIndex(e => e.ResolutionUnit);
-
-            entity.HasIndex(e => e.ScannerManufacturer);
-
-            entity.HasIndex(e => e.ScannerModel);
-
-            entity.HasIndex(e => e.SoftwareUsed);
-
-            entity.HasIndex(e => e.UploadDate);
-
-            entity.HasIndex(e => e.VerticalResolution);
-
-            entity.HasIndex(e => e.Type);
-
-            entity.HasIndex(e => e.Page);
-
-            entity.HasOne(d => d.Document).WithMany(p => p.Scans).OnDelete(DeleteBehavior.Cascade);
-
-            entity.HasOne(d => d.User).WithMany(p => p.DocumentScans).OnDelete(DeleteBehavior.SetNull);
-        });
-
-        modelBuilder.Entity<MagazineScan>(entity =>
-        {
-            entity.HasIndex(e => e.Author);
-
-            entity.HasIndex(e => e.ColorSpace);
-
-            entity.HasIndex(e => e.Comments);
-
-            entity.HasIndex(e => e.CreationDate);
-
-            entity.HasIndex(e => e.ExifVersion);
-
-            entity.HasIndex(e => e.HorizontalResolution);
-
-            entity.HasIndex(e => e.ResolutionUnit);
-
-            entity.HasIndex(e => e.ScannerManufacturer);
-
-            entity.HasIndex(e => e.ScannerModel);
-
-            entity.HasIndex(e => e.SoftwareUsed);
-
-            entity.HasIndex(e => e.UploadDate);
-
-            entity.HasIndex(e => e.VerticalResolution);
-
-            entity.HasIndex(e => e.Type);
-
-            entity.HasIndex(e => e.Page);
-
-            entity.HasOne(d => d.Magazine).WithMany(p => p.Scans).OnDelete(DeleteBehavior.Cascade);
-
-            entity.HasOne(d => d.User).WithMany(p => p.MagazineScans).OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<SoftwareFamily>(entity =>

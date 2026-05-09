@@ -800,16 +800,6 @@ public enum MasteringTextType : byte
     Toolstamp     = 6
 }
 
-public enum DocumentScanType : uint
-{
-    Page            = 0,
-    Cover           = 1,
-    BackCover       = 2,
-    TableOfContents = 3,
-    Index           = 4,
-    CopyrightPage   = 5
-}
-
 public enum SoftwareRequirementType : byte
 {
     None        = 0,

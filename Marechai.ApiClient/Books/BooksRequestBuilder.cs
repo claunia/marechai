@@ -7,7 +7,6 @@ using Marechai.ApiClient.Books.Count;
 using Marechai.ApiClient.Books.Item;
 using Marechai.ApiClient.Books.MaximumYear;
 using Marechai.ApiClient.Books.MinimumYear;
-using Marechai.ApiClient.Books.Scans;
 using Marechai.ApiClient.Models;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
@@ -54,11 +53,6 @@ namespace Marechai.ApiClient.Books
         public global::Marechai.ApiClient.Books.MinimumYear.MinimumYearRequestBuilder MinimumYear
         {
             get => new global::Marechai.ApiClient.Books.MinimumYear.MinimumYearRequestBuilder(PathParameters, RequestAdapter);
-        }
-        /// <summary>The scans property</summary>
-        public global::Marechai.ApiClient.Books.Scans.ScansRequestBuilder Scans
-        {
-            get => new global::Marechai.ApiClient.Books.Scans.ScansRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>Gets an item from the Marechai.ApiClient.books.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
