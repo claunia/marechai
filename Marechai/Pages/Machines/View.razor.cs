@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Marechai.Helpers;
 using Marechai.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -109,7 +110,7 @@ public partial class View
             Task<MachineDto>           machineTask     = Service.GetMachine(Id);
             Task<List<Guid>>           photosTask      = MachinePhotosService.GetGuidsByMachineAsync(Id);
             Task<List<SoftwareDto>>    softwareTask    = Service.GetSoftwareByMachineAsync(Id);
-            Task<string>               descriptionTask = Service.GetDescriptionTextAsync(Id);
+            Task<string>               descriptionTask = Service.GetDescriptionTextAsync(Id, UiLanguage.GetIso639_3());
             Task<List<MachineVideoDto>> videosTask     = Service.GetVideosByMachineAsync(Id);
 
             await Task.WhenAll(machineTask, photosTask, softwareTask, descriptionTask, videosTask);

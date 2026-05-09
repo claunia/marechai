@@ -29,6 +29,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Marechai.Data;
+using Marechai.Helpers;
 using Marechai.Shared;
 using Microsoft.AspNetCore.Components;
 
@@ -106,7 +107,7 @@ public partial class View
         // Single backend round-trip: the consolidated /processors/{id}/full
         // endpoint returns head + company logo + description + machines + photos
         // + videos in one response. Replaces five sequential REST calls.
-        ProcessorFullDto full = await Service.GetProcessorFullAsync(Id);
+        ProcessorFullDto full = await Service.GetProcessorFullAsync(Id, UiLanguage.GetIso639_3());
 
         if(full?.Processor is null)
         {

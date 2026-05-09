@@ -205,11 +205,14 @@ public class PeopleService(Marechai.ApiClient.Client client)
     /// magazines, software credits) in a single HTTP round-trip. Replaces what
     /// used to be 6 sequential service calls in the public /person/{Id} view.
     /// </summary>
-    public async Task<PersonFullDto> GetPersonFullAsync(int id)
+    public async Task<PersonFullDto> GetPersonFullAsync(int id, string lang = "eng")
     {
         try
         {
-            return await client.People[id].Full.GetAsync();
+            return await client.People[id].Full.GetAsync(rc =>
+            {
+                if(!string.IsNullOrWhiteSpace(lang)) rc.QueryParameters.Lang = lang;
+            });
         }
         catch
         {

@@ -957,11 +957,14 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
 
     // ── Description methods ──
 
-    public async Task<string> GetDescriptionTextAsync(int id)
+    public async Task<string> GetDescriptionTextAsync(int id, string lang = "eng")
     {
         try
         {
-            var desc = await client.Software[id].Description.GetAsync();
+            var desc = await client.Software[id].Description.GetAsync(rc =>
+            {
+                if(!string.IsNullOrWhiteSpace(lang)) rc.QueryParameters.Lang = lang;
+            });
 
             return desc?.Html ?? desc?.Markdown;
         }

@@ -29,6 +29,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Marechai.Data;
+using Marechai.Helpers;
 using Microsoft.AspNetCore.Components;
 
 namespace Marechai.Pages.Companies;
@@ -96,7 +97,7 @@ public partial class View
         _software        = await Service.GetSoftwareAsync(Id);
         _people          = await Service.GetPeopleAsync(Id);
 
-        _description = await Service.GetDescriptionTextAsync(Id);
+        _description = await Service.GetDescriptionTextAsync(Id, UiLanguage.GetIso639_3());
         _soldTo      = await Service.GetSoldToAsync(_company.SoldToId);
         _logos       = await CompanyLogosService.GetByCompany(Id);
 

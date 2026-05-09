@@ -215,11 +215,14 @@ public class ProcessorsService(Marechai.ApiClient.Client client)
     }
 
     // Description management
-    public async Task<string> GetDescriptionTextAsync(int id)
+    public async Task<string> GetDescriptionTextAsync(int id, string lang = "eng")
     {
         try
         {
-            ProcessorDescriptionDto desc = await client.Processors[id].Description.GetAsync();
+            ProcessorDescriptionDto desc = await client.Processors[id].Description.GetAsync(rc =>
+            {
+                if(!string.IsNullOrWhiteSpace(lang)) rc.QueryParameters.Lang = lang;
+            });
 
             return desc?.Html ?? desc?.Markdown;
         }

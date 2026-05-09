@@ -166,11 +166,14 @@ public class CompaniesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<string> GetDescriptionTextAsync(int id)
+    public async Task<string> GetDescriptionTextAsync(int id, string lang = "eng")
     {
         try
         {
-            var desc = await client.Companies[id].Description.GetAsync();
+            var desc = await client.Companies[id].Description.GetAsync(rc =>
+            {
+                if(!string.IsNullOrWhiteSpace(lang)) rc.QueryParameters.Lang = lang;
+            });
 
             return desc?.Html ?? desc?.Markdown;
         }

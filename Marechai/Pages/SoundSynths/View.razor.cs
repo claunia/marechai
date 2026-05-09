@@ -29,6 +29,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Marechai.Data;
+using Marechai.Helpers;
 using Marechai.Shared;
 using Microsoft.AspNetCore.Components;
 
@@ -112,7 +113,7 @@ public partial class View
         // Replaces the original 5 sequential GetByIdAsync /
         // GetMachinesBySoundSynthAsync / GetDescriptionTextAsync /
         // GetGuidsBySoundSynthAsync / GetVideosBySoundSynthAsync calls.
-        SoundSynthFullDto full = await Service.GetFullAsync(Id);
+        SoundSynthFullDto full = await Service.GetFullAsync(Id, UiLanguage.GetIso639_3());
 
         if(full?.SoundSynth is null)
         {

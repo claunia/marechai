@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Marechai.Helpers;
 using Microsoft.AspNetCore.Components;
 
 namespace Marechai.Pages.People;
@@ -66,18 +67,12 @@ public partial class View
         }
 
         // Single consolidated /people/{id}/full call replaces six sequential
-        // round-trips. The legacy individual endpoints are still available for
-        // admin / internal callers; this page is the only consumer of /full.
-        // Description is fetched in parallel because /full is intentionally
-        // language-agnostic (cached per id) — same pattern as Machine/GPU views.
+        // round-trips. The /full endpoint also resolves the language-aware
+        // biography server-side (with English fallback collapsed into one
+        // ordered query), mirroring the GPU/Processor/SoundSynth pattern.
         try
         {
-            Task<PersonFullDto> fullTask        = Service.GetPersonFullAsync(Id);
-            Task<string>        descriptionTask = Service.GetDescriptionTextAsync(Id);
-
-            await Task.WhenAll(fullTask, descriptionTask);
-
-            PersonFullDto full = fullTask.Result;
+            PersonFullDto full = await Service.GetPersonFullAsync(Id, UiLanguage.GetIso639_3());
 
             if(full?.Person is null)
             {
@@ -93,7 +88,7 @@ public partial class View
             _documents       = full.Documents       ?? [];
             _magazines       = full.Magazines       ?? [];
             _softwareCredits = full.SoftwareCredits ?? [];
-            _description     = descriptionTask.Result;
+            _description     = full.DescriptionHtml ?? full.DescriptionText;
         }
         catch(ObjectDisposedException)
         {

@@ -30,6 +30,30 @@ namespace Marechai.ApiClient.Models
 #else
         public List<global::Marechai.ApiClient.Models.PersonByCompanyDto> Companies { get; set; }
 #endif
+        /// <summary>The description_html property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? DescriptionHtml { get; set; }
+#nullable restore
+#else
+        public string DescriptionHtml { get; set; }
+#endif
+        /// <summary>The description_language_code property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? DescriptionLanguageCode { get; set; }
+#nullable restore
+#else
+        public string DescriptionLanguageCode { get; set; }
+#endif
+        /// <summary>The description_text property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? DescriptionText { get; set; }
+#nullable restore
+#else
+        public string DescriptionText { get; set; }
+#endif
         /// <summary>The documents property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -89,6 +113,9 @@ namespace Marechai.ApiClient.Models
             {
                 { "books", n => { Books = n.GetCollectionOfObjectValues<global::Marechai.ApiClient.Models.PersonByBookDto>(global::Marechai.ApiClient.Models.PersonByBookDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "companies", n => { Companies = n.GetCollectionOfObjectValues<global::Marechai.ApiClient.Models.PersonByCompanyDto>(global::Marechai.ApiClient.Models.PersonByCompanyDto.CreateFromDiscriminatorValue)?.AsList(); } },
+                { "description_html", n => { DescriptionHtml = n.GetStringValue(); } },
+                { "description_language_code", n => { DescriptionLanguageCode = n.GetStringValue(); } },
+                { "description_text", n => { DescriptionText = n.GetStringValue(); } },
                 { "documents", n => { Documents = n.GetCollectionOfObjectValues<global::Marechai.ApiClient.Models.PersonByDocumentDto>(global::Marechai.ApiClient.Models.PersonByDocumentDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "magazines", n => { Magazines = n.GetCollectionOfObjectValues<global::Marechai.ApiClient.Models.PersonByMagazineDto>(global::Marechai.ApiClient.Models.PersonByMagazineDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "person", n => { Person = n.GetObjectValue<global::Marechai.ApiClient.Models.PersonDto>(global::Marechai.ApiClient.Models.PersonDto.CreateFromDiscriminatorValue); } },
@@ -104,6 +131,9 @@ namespace Marechai.ApiClient.Models
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteCollectionOfObjectValues<global::Marechai.ApiClient.Models.PersonByBookDto>("books", Books);
             writer.WriteCollectionOfObjectValues<global::Marechai.ApiClient.Models.PersonByCompanyDto>("companies", Companies);
+            writer.WriteStringValue("description_html", DescriptionHtml);
+            writer.WriteStringValue("description_language_code", DescriptionLanguageCode);
+            writer.WriteStringValue("description_text", DescriptionText);
             writer.WriteCollectionOfObjectValues<global::Marechai.ApiClient.Models.PersonByDocumentDto>("documents", Documents);
             writer.WriteCollectionOfObjectValues<global::Marechai.ApiClient.Models.PersonByMagazineDto>("magazines", Magazines);
             writer.WriteObjectValue<global::Marechai.ApiClient.Models.PersonDto>("person", Person);

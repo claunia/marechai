@@ -30,6 +30,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Marechai.Data;
+using Marechai.Helpers;
 using Marechai.Pages.Admin;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -156,7 +157,7 @@ public partial class View
             // Phase 1 (header + Overview)
             Task<List<SoftwareGenreDto>>            genresTask        = Service.GetGenresAsync(Id);
             Task<List<SoftwareDto>>                 addonsTask        = Service.GetAddonsAsync(Id);
-            Task<string>                            descriptionTask   = Service.GetDescriptionTextAsync(Id);
+            Task<string>                            descriptionTask   = Service.GetDescriptionTextAsync(Id, UiLanguage.GetIso639_3());
             Task<List<SoftwareCoverDto>>            coversTask        = Service.GetCoversBySoftwareAsync(Id);
             Task<MarechaiScoreDto>                  marechaiScoreTask = AuthService.GetMarechaiScoreAsync(Id);
             Task<UserReviewSummaryDto>              userSummaryTask   = AuthService.GetUserReviewSummaryAsync(Id);

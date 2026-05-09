@@ -634,11 +634,14 @@ public class MachinesService(Marechai.ApiClient.Client client)
     }
 
     // Description management
-    public async Task<string> GetDescriptionTextAsync(int id)
+    public async Task<string> GetDescriptionTextAsync(int id, string lang = "eng")
     {
         try
         {
-            MachineDescriptionDto desc = await client.Machines[id].Description.GetAsync();
+            MachineDescriptionDto desc = await client.Machines[id].Description.GetAsync(rc =>
+            {
+                if(!string.IsNullOrWhiteSpace(lang)) rc.QueryParameters.Lang = lang;
+            });
 
             return desc?.Html ?? desc?.Markdown;
         }

@@ -29,6 +29,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Marechai.Data;
+using Marechai.Helpers;
 using Marechai.Shared;
 using Microsoft.AspNetCore.Components;
 
@@ -111,7 +112,7 @@ public partial class View
         // (and a per-resolution N+1 fallback that was caused by the Kiota
         // composed-type-wrapper trap on ResolutionByGpuDto.Resolution before
         // the [Required] fix in Marechai.Data/Dtos/ResolutionByGpuDto.cs).
-        GpuFullDto full = await Service.GetGpuFullAsync(Id);
+        GpuFullDto full = await Service.GetGpuFullAsync(Id, UiLanguage.GetIso639_3());
 
         if(full?.Gpu is null)
         {

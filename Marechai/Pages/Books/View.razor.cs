@@ -26,6 +26,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Marechai.Helpers;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 
@@ -76,7 +77,7 @@ public partial class View
         // families) in one HTTP round-trip. Replaces 6 sequential service
         // calls plus the two conditional Previous/Source book fetches that
         // used to dominate the page-load critical path.
-        BookFullDto full = await Service.GetBookFullAsync(Id);
+        BookFullDto full = await Service.GetBookFullAsync(Id, UiLanguage.GetIso639_3());
 
         if(full?.Book is null)
         {
