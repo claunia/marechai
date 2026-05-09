@@ -25,6 +25,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.Data;
 using Marechai.Data.Dtos;
@@ -70,75 +71,135 @@ public class SmartphonesController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<MachineDto>> GetSmartphonesByLetterAsync(char c) => context.Machines.Include(m => m.Company)
-                                                                                .Where(m =>
-                                                                                     m.Type == MachineType.Smartphone &&
-                                                                                     EF.Functions.Like(m.Name, $"{c}%"))
-                                                                                .OrderBy(m => MarechaiContext.NaturalSortKey(m.Company.Name))
-                                                                                .ThenBy(m => MarechaiContext.NaturalSortKey(m.Name))
-                                                                                .Select(m => new MachineDto
-                                                                                 {
-                                                                                     Id         = m.Id,
-                                                                                     Name       = m.Name,
-                                                                                     Company    = m.Company.Name,
-                                                                                     Introduced = m.Introduced
-                                                                                 })
-                                                                                .ToListAsync();
+    public Task<List<MachineDto>> GetSmartphonesByLetterAsync(char c, [FromQuery] int? skip = null,
+                                                              [FromQuery] int? take = null,
+                                                              CancellationToken cancellationToken = default)
+    {
+        IQueryable<Machine> ordered = context.Machines.Include(m => m.Company)
+                                             .Where(m => m.Type == MachineType.Smartphone &&
+                                                         EF.Functions.Like(m.Name, $"{c}%"))
+                                             .OrderBy(m => MarechaiContext.NaturalSortKey(m.Company.Name))
+                                             .ThenBy(m => MarechaiContext.NaturalSortKey(m.Name));
+
+        if(skip.HasValue) ordered = ordered.Skip(skip.Value);
+        if(take.HasValue) ordered = ordered.Take(take.Value);
+
+        return ordered.Select(m => new MachineDto
+                       {
+                           Id         = m.Id,
+                           Name       = m.Name,
+                           Company    = m.Company.Name,
+                           Introduced = m.Introduced
+                       })
+                      .ToListAsync(cancellationToken);
+    }
+
+    [HttpGet("by-letter/{c}/count")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetSmartphonesByLetterCountAsync(char c, CancellationToken cancellationToken = default) =>
+        context.Machines
+               .Where(m => m.Type == MachineType.Smartphone && EF.Functions.Like(m.Name, $"{c}%"))
+               .CountAsync(cancellationToken);
 
     [HttpGet("by-year/{year:int}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<MachineDto>> GetSmartphonesByYearAsync(int year) => context.Machines.Include(m => m.Company)
-                                                                                .Where(m =>
-                                                                                     m.Type == MachineType.Smartphone &&
-                                                                                     m.Introduced != null &&
-                                                                                     m.Introduced.Value.Year == year)
-                                                                                .OrderBy(m => MarechaiContext.NaturalSortKey(m.Company.Name))
-                                                                                .ThenBy(m => MarechaiContext.NaturalSortKey(m.Name))
-                                                                                .Select(m => new MachineDto
-                                                                                 {
-                                                                                     Id         = m.Id,
-                                                                                     Name       = m.Name,
-                                                                                     Company    = m.Company.Name,
-                                                                                     Introduced = m.Introduced
-                                                                                 })
-                                                                                .ToListAsync();
+    public Task<List<MachineDto>> GetSmartphonesByYearAsync(int year, [FromQuery] int? skip = null,
+                                                            [FromQuery] int? take = null,
+                                                            CancellationToken cancellationToken = default)
+    {
+        IQueryable<Machine> ordered = context.Machines.Include(m => m.Company)
+                                             .Where(m => m.Type == MachineType.Smartphone &&
+                                                         m.Introduced != null &&
+                                                         m.Introduced.Value.Year == year)
+                                             .OrderBy(m => MarechaiContext.NaturalSortKey(m.Company.Name))
+                                             .ThenBy(m => MarechaiContext.NaturalSortKey(m.Name));
+
+        if(skip.HasValue) ordered = ordered.Skip(skip.Value);
+        if(take.HasValue) ordered = ordered.Take(take.Value);
+
+        return ordered.Select(m => new MachineDto
+                       {
+                           Id         = m.Id,
+                           Name       = m.Name,
+                           Company    = m.Company.Name,
+                           Introduced = m.Introduced
+                       })
+                      .ToListAsync(cancellationToken);
+    }
+
+    [HttpGet("by-year/{year:int}/count")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetSmartphonesByYearCountAsync(int year, CancellationToken cancellationToken = default) =>
+        context.Machines
+               .Where(m => m.Type == MachineType.Smartphone &&
+                           m.Introduced != null &&
+                           m.Introduced.Value.Year == year)
+               .CountAsync(cancellationToken);
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<MachineDto>> GetSmartphonesAsync() => context.Machines.Include(m => m.Company)
-                                                                  .Where(m => m.Type == MachineType.Smartphone)
-                                                                  .OrderBy(m => MarechaiContext.NaturalSortKey(m.Company.Name))
-                                                                  .ThenBy(m => MarechaiContext.NaturalSortKey(m.Name))
-                                                                  .Select(m => new MachineDto
-                                                                   {
-                                                                       Id         = m.Id,
-                                                                       Name       = m.Name,
-                                                                       Company    = m.Company.Name,
-                                                                       Introduced = m.Introduced
-                                                                   })
-                                                                  .ToListAsync();
+    public Task<List<MachineDto>> GetSmartphonesAsync([FromQuery] int? skip = null, [FromQuery] int? take = null,
+                                                      CancellationToken cancellationToken = default)
+    {
+        IQueryable<Machine> ordered = context.Machines.Include(m => m.Company)
+                                             .Where(m => m.Type == MachineType.Smartphone)
+                                             .OrderBy(m => MarechaiContext.NaturalSortKey(m.Company.Name))
+                                             .ThenBy(m => MarechaiContext.NaturalSortKey(m.Name));
+
+        if(skip.HasValue) ordered = ordered.Skip(skip.Value);
+        if(take.HasValue) ordered = ordered.Take(take.Value);
+
+        return ordered.Select(m => new MachineDto
+                       {
+                           Id         = m.Id,
+                           Name       = m.Name,
+                           Company    = m.Company.Name,
+                           Introduced = m.Introduced
+                       })
+                      .ToListAsync(cancellationToken);
+    }
 
     [HttpGet("prototypes")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<MachineDto>> GetPrototypesAsync() => context.Machines.Include(m => m.Company)
-                                                                .Where(m => m.Type == MachineType.Smartphone &&
-                                                                            m.Prototype)
-                                                                .OrderBy(m => MarechaiContext.NaturalSortKey(m.Company.Name))
-                                                                .ThenBy(m => MarechaiContext.NaturalSortKey(m.Name))
-                                                                .Select(m => new MachineDto
-                                                                 {
-                                                                     Id        = m.Id,
-                                                                     Name      = m.Name,
-                                                                     Company   = m.Company.Name,
-                                                                     Prototype = m.Prototype
-                                                                 })
-                                                                .ToListAsync();
+    public Task<List<MachineDto>> GetPrototypesAsync([FromQuery] int? skip = null, [FromQuery] int? take = null,
+                                                     CancellationToken cancellationToken = default)
+    {
+        IQueryable<Machine> ordered = context.Machines.Include(m => m.Company)
+                                             .Where(m => m.Type == MachineType.Smartphone && m.Prototype)
+                                             .OrderBy(m => MarechaiContext.NaturalSortKey(m.Company.Name))
+                                             .ThenBy(m => MarechaiContext.NaturalSortKey(m.Name));
+
+        if(skip.HasValue) ordered = ordered.Skip(skip.Value);
+        if(take.HasValue) ordered = ordered.Take(take.Value);
+
+        return ordered.Select(m => new MachineDto
+                       {
+                           Id        = m.Id,
+                           Name      = m.Name,
+                           Company   = m.Company.Name,
+                           Prototype = m.Prototype
+                       })
+                      .ToListAsync(cancellationToken);
+    }
+
+    [HttpGet("prototypes/count")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetPrototypesCountAsync(CancellationToken cancellationToken = default) =>
+        context.Machines
+               .Where(m => m.Type == MachineType.Smartphone && m.Prototype)
+               .CountAsync(cancellationToken);
 
     [HttpGet("companies")]
     [AllowAnonymous]

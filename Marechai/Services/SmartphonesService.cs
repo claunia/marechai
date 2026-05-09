@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 
@@ -74,11 +75,16 @@ public class SmartphonesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<List<MachineDto>> GetSmartphonesByLetterAsync(char c)
+    public async Task<List<MachineDto>> GetSmartphonesByLetterAsync(char c, int? skip = null, int? take = null,
+                                                                    CancellationToken cancellationToken = default)
     {
         try
         {
-            List<MachineDto> machines = await client.Smartphones.ByLetter[c.ToString()].GetAsync();
+            List<MachineDto> machines = await client.Smartphones.ByLetter[c.ToString()].GetAsync(config =>
+            {
+                if(skip.HasValue) config.QueryParameters.Skip = skip.Value;
+                if(take.HasValue) config.QueryParameters.Take = take.Value;
+            }, cancellationToken);
 
             return machines ?? [];
         }
@@ -88,11 +94,31 @@ public class SmartphonesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<List<MachineDto>> GetSmartphonesByYearAsync(int year)
+    public async Task<int> GetSmartphonesByLetterCountAsync(char c, CancellationToken cancellationToken = default)
     {
         try
         {
-            List<MachineDto> machines = await client.Smartphones.ByYear[year].GetAsync();
+            int? count = await client.Smartphones.ByLetter[c.ToString()].Count
+                                     .GetAsync(cancellationToken: cancellationToken);
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
+
+    public async Task<List<MachineDto>> GetSmartphonesByYearAsync(int year, int? skip = null, int? take = null,
+                                                                  CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            List<MachineDto> machines = await client.Smartphones.ByYear[year].GetAsync(config =>
+            {
+                if(skip.HasValue) config.QueryParameters.Skip = skip.Value;
+                if(take.HasValue) config.QueryParameters.Take = take.Value;
+            }, cancellationToken);
 
             return machines ?? [];
         }
@@ -102,11 +128,30 @@ public class SmartphonesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<List<MachineDto>> GetSmartphonesAsync()
+    public async Task<int> GetSmartphonesByYearCountAsync(int year, CancellationToken cancellationToken = default)
     {
         try
         {
-            List<MachineDto> machines = await client.Smartphones.GetAsync();
+            int? count = await client.Smartphones.ByYear[year].Count.GetAsync(cancellationToken: cancellationToken);
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
+
+    public async Task<List<MachineDto>> GetSmartphonesAsync(int? skip = null, int? take = null,
+                                                            CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            List<MachineDto> machines = await client.Smartphones.GetAsync(config =>
+            {
+                if(skip.HasValue) config.QueryParameters.Skip = skip.Value;
+                if(take.HasValue) config.QueryParameters.Take = take.Value;
+            }, cancellationToken);
 
             return machines ?? [];
         }
@@ -116,17 +161,36 @@ public class SmartphonesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<List<MachineDto>> GetPrototypesAsync()
+    public async Task<List<MachineDto>> GetPrototypesAsync(int? skip = null, int? take = null,
+                                                           CancellationToken cancellationToken = default)
     {
         try
         {
-            List<MachineDto> machines = await client.Smartphones.Prototypes.GetAsync();
+            List<MachineDto> machines = await client.Smartphones.Prototypes.GetAsync(config =>
+            {
+                if(skip.HasValue) config.QueryParameters.Skip = skip.Value;
+                if(take.HasValue) config.QueryParameters.Take = take.Value;
+            }, cancellationToken);
 
             return machines ?? [];
         }
         catch
         {
             return [];
+        }
+    }
+
+    public async Task<int> GetPrototypesCountAsync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            int? count = await client.Smartphones.Prototypes.Count.GetAsync(cancellationToken: cancellationToken);
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
         }
     }
 
