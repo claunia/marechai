@@ -1393,4 +1393,7 @@
     <data name="Wrestling" xml:space="preserve">
         <value>Lucha libre</value>
     </data>
+    <data name="Search software by specifications" xml:space="preserve">
+        <value>Buscar software por especificaciones</value>
+    </data>
 </root>

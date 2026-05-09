@@ -1451,4 +1451,7 @@
     <data name="Wrestling" xml:space="preserve">
         <value>Wrestling</value>
     </data>
+    <data name="Search software by specifications" xml:space="preserve">
+        <value>Software nach Spezifikationen suchen</value>
+    </data>
 </root>

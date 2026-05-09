@@ -1322,4 +1322,7 @@
     <data name="Wrestling" xml:space="preserve">
         <value>Wrestling</value>
     </data>
+    <data name="Search software by specifications" xml:space="preserve">
+        <value>Search software by specifications</value>
+    </data>
 </root>
