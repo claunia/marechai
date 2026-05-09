@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.Data;
 using Marechai.Data.Dtos;
@@ -108,67 +109,113 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<DocumentDto>> GetDocumentsByLetterAsync(char c) => context.Documents
-       .Where(d =>
-            (d.SortTitle != null && EF.Functions.Like(d.SortTitle, $"{c}%")) ||
-            (d.SortTitle == null && EF.Functions.Like(d.Title, $"{c}%")))
-       .OrderBy(d => MarechaiContext.NaturalSortKey(d.SortTitle))
-       .ThenBy(d => MarechaiContext.NaturalSortKey(d.Title))
-       .ThenBy(d => d.Published)
-       .Select(d => new DocumentDto
-        {
-            Id          = d.Id,
-            Title       = d.Title,
-            NativeTitle = d.NativeTitle,
-            SortTitle   = d.SortTitle,
-            Published   = d.Published,
-            PublishedPrecision = d.PublishedPrecision,
-            CountryId   = d.CountryId,
-            Country     = d.Country.Name
-        })
-       .ToListAsync();
+    public Task<List<DocumentDto>> GetDocumentsByLetterAsync(char c, [FromQuery] int? skip = null,
+                                                             [FromQuery] int? take = null,
+                                                             CancellationToken cancellationToken = default)
+    {
+        IQueryable<Document> ordered = context.Documents
+                                              .Where(d =>
+                                                  (d.SortTitle != null && EF.Functions.Like(d.SortTitle, $"{c}%")) ||
+                                                  (d.SortTitle == null && EF.Functions.Like(d.Title, $"{c}%")))
+                                              .OrderBy(d => MarechaiContext.NaturalSortKey(d.SortTitle))
+                                              .ThenBy(d => MarechaiContext.NaturalSortKey(d.Title))
+                                              .ThenBy(d => d.Published);
+
+        if(skip.HasValue) ordered = ordered.Skip(skip.Value);
+        if(take.HasValue) ordered = ordered.Take(take.Value);
+
+        return ordered.Select(d => new DocumentDto
+                       {
+                           Id                 = d.Id,
+                           Title              = d.Title,
+                           NativeTitle        = d.NativeTitle,
+                           SortTitle          = d.SortTitle,
+                           Published          = d.Published,
+                           PublishedPrecision = d.PublishedPrecision,
+                           CountryId          = d.CountryId,
+                           Country            = d.Country.Name
+                       })
+                      .ToListAsync(cancellationToken);
+    }
+
+    [HttpGet("by-letter/{c}/count")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetDocumentsByLetterCountAsync(char c, CancellationToken cancellationToken = default) =>
+        context.Documents
+               .Where(d =>
+                   (d.SortTitle != null && EF.Functions.Like(d.SortTitle, $"{c}%")) ||
+                   (d.SortTitle == null && EF.Functions.Like(d.Title, $"{c}%")))
+               .CountAsync(cancellationToken);
 
     [HttpGet("by-year/{year:int}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<DocumentDto>> GetDocumentsByYearAsync(int year) => context.Documents
-       .Where(d => d.Published != null && d.Published.Value.Year == year)
-       .OrderBy(d => MarechaiContext.NaturalSortKey(d.SortTitle))
-       .ThenBy(d => MarechaiContext.NaturalSortKey(d.Title))
-       .ThenBy(d => d.Published)
-       .Select(d => new DocumentDto
-        {
-            Id          = d.Id,
-            Title       = d.Title,
-            NativeTitle = d.NativeTitle,
-            SortTitle   = d.SortTitle,
-            Published   = d.Published,
-            PublishedPrecision = d.PublishedPrecision,
-            CountryId   = d.CountryId,
-            Country     = d.Country.Name
-        })
-       .ToListAsync();
+    public Task<List<DocumentDto>> GetDocumentsByYearAsync(int year, [FromQuery] int? skip = null,
+                                                           [FromQuery] int? take = null,
+                                                           CancellationToken cancellationToken = default)
+    {
+        IQueryable<Document> ordered = context.Documents
+                                              .Where(d => d.Published != null && d.Published.Value.Year == year)
+                                              .OrderBy(d => MarechaiContext.NaturalSortKey(d.SortTitle))
+                                              .ThenBy(d => MarechaiContext.NaturalSortKey(d.Title))
+                                              .ThenBy(d => d.Published);
+
+        if(skip.HasValue) ordered = ordered.Skip(skip.Value);
+        if(take.HasValue) ordered = ordered.Take(take.Value);
+
+        return ordered.Select(d => new DocumentDto
+                       {
+                           Id                 = d.Id,
+                           Title              = d.Title,
+                           NativeTitle        = d.NativeTitle,
+                           SortTitle          = d.SortTitle,
+                           Published          = d.Published,
+                           PublishedPrecision = d.PublishedPrecision,
+                           CountryId          = d.CountryId,
+                           Country            = d.Country.Name
+                       })
+                      .ToListAsync(cancellationToken);
+    }
+
+    [HttpGet("by-year/{year:int}/count")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetDocumentsByYearCountAsync(int year, CancellationToken cancellationToken = default) =>
+        context.Documents.Where(d => d.Published != null && d.Published.Value.Year == year)
+               .CountAsync(cancellationToken);
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<DocumentDto>> GetAsync() => context.Documents.OrderBy(b => MarechaiContext.NaturalSortKey(b.SortTitle))
-                                                        .ThenBy(b => b.Published)
-                                                        .ThenBy(b => MarechaiContext.NaturalSortKey(b.Title))
-                                                        .Select(b => new DocumentDto
-                                                         {
-                                                             Id          = b.Id,
-                                                             Title       = b.Title,
-                                                             NativeTitle = b.NativeTitle,
-                                                             SortTitle   = b.SortTitle,
-                                                             Published   = b.Published,
-                                                             PublishedPrecision = b.PublishedPrecision,
-                                                             CountryId   = b.CountryId,
-                                                             Country     = b.Country.Name
-                                                         })
-                                                        .ToListAsync();
+    public Task<List<DocumentDto>> GetAsync([FromQuery] int? skip = null, [FromQuery] int? take = null,
+                                            CancellationToken cancellationToken = default)
+    {
+        IQueryable<Document> ordered = context.Documents
+                                              .OrderBy(b => MarechaiContext.NaturalSortKey(b.SortTitle))
+                                              .ThenBy(b => b.Published)
+                                              .ThenBy(b => MarechaiContext.NaturalSortKey(b.Title));
+
+        if(skip.HasValue) ordered = ordered.Skip(skip.Value);
+        if(take.HasValue) ordered = ordered.Take(take.Value);
+
+        return ordered.Select(b => new DocumentDto
+                       {
+                           Id                 = b.Id,
+                           Title              = b.Title,
+                           NativeTitle        = b.NativeTitle,
+                           SortTitle          = b.SortTitle,
+                           Published          = b.Published,
+                           PublishedPrecision = b.PublishedPrecision,
+                           CountryId          = b.CountryId,
+                           Country            = b.Country.Name
+                       })
+                      .ToListAsync(cancellationToken);
+    }
 
     [HttpGet("{id:long}")]
     [AllowAnonymous]

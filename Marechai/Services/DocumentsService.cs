@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.Kiota.Abstractions;
@@ -103,11 +104,16 @@ public class DocumentsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<List<DocumentDto>> GetDocumentsByLetterAsync(char c)
+    public async Task<List<DocumentDto>> GetDocumentsByLetterAsync(char c, int? skip = null, int? take = null,
+                                                                    CancellationToken cancellationToken = default)
     {
         try
         {
-            List<DocumentDto> documents = await client.Documents.ByLetter[c.ToString()].GetAsync();
+            List<DocumentDto> documents = await client.Documents.ByLetter[c.ToString()].GetAsync(rc =>
+            {
+                if(skip.HasValue) rc.QueryParameters.Skip = skip.Value;
+                if(take.HasValue) rc.QueryParameters.Take = take.Value;
+            }, cancellationToken);
 
             return documents ?? [];
         }
@@ -117,11 +123,30 @@ public class DocumentsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<List<DocumentDto>> GetDocumentsByYearAsync(int year)
+    public async Task<int> GetDocumentsByLetterCountAsync(char c, CancellationToken cancellationToken = default)
     {
         try
         {
-            List<DocumentDto> documents = await client.Documents.ByYear[year].GetAsync();
+            int? count = await client.Documents.ByLetter[c.ToString()].Count.GetAsync(cancellationToken: cancellationToken);
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
+
+    public async Task<List<DocumentDto>> GetDocumentsByYearAsync(int year, int? skip = null, int? take = null,
+                                                                  CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            List<DocumentDto> documents = await client.Documents.ByYear[year].GetAsync(rc =>
+            {
+                if(skip.HasValue) rc.QueryParameters.Skip = skip.Value;
+                if(take.HasValue) rc.QueryParameters.Take = take.Value;
+            }, cancellationToken);
 
             return documents ?? [];
         }
@@ -131,11 +156,30 @@ public class DocumentsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<List<DocumentDto>> GetDocumentsAsync()
+    public async Task<int> GetDocumentsByYearCountAsync(int year, CancellationToken cancellationToken = default)
     {
         try
         {
-            List<DocumentDto> documents = await client.Documents.GetAsync();
+            int? count = await client.Documents.ByYear[year].Count.GetAsync(cancellationToken: cancellationToken);
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
+
+    public async Task<List<DocumentDto>> GetDocumentsAsync(int? skip = null, int? take = null,
+                                                            CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            List<DocumentDto> documents = await client.Documents.GetAsync(rc =>
+            {
+                if(skip.HasValue) rc.QueryParameters.Skip = skip.Value;
+                if(take.HasValue) rc.QueryParameters.Take = take.Value;
+            }, cancellationToken);
 
             return documents ?? [];
         }
