@@ -57,6 +57,12 @@ public partial class View
 
     int _activeTabIndex => Math.Max(0, Array.IndexOf(_tabNames, _activeTab));
 
+    // Sentinel rows (currently only DB_SOFTWARE, id = -2 per Marechai.Database
+    // Operations.DbSoftware) represent abstract/virtual sound synthesizers and
+    // have no specifications, machines, photos, or videos. Detect by name so
+    // the rename pattern matches the existing _displayName line below.
+    bool _isSentinel => _synth?.Name == "DB_SOFTWARE";
+
     [Parameter]
     public int Id { get; set; }
 
@@ -98,13 +104,6 @@ public partial class View
     {
         if(_loaded) return;
 
-        if(Id <= 0)
-        {
-            _loaded = true;
-
-            return;
-        }
-
         // ── Phase 1+3 retrofit ────────────────────────────────────────────────
         // One consolidated HTTP round-trip via /sound-synths/{Id}/full (head
         // projection + company logo via inline subquery + description with
@@ -144,11 +143,15 @@ public partial class View
         // Insert the Machines tab between Specifications and Media when the
         // synth has any attached computers/consoles/smartphones, so
         // _activeTabIndex resolves "machines" correctly on first paint after a
-        // deep link.
-        bool hasMachines = _computers.Count > 0 || _consoles.Count > 0 || _smartphones.Count > 0;
-        _tabNames = hasMachines
-                        ? ["specifications", "machines", "media"]
-                        : ["specifications", "media"];
+        // deep link. Sentinel rows hide the entire tab block at the markup
+        // level, so leave _tabNames at its default for them.
+        if(!_isSentinel)
+        {
+            bool hasMachines = _computers.Count > 0 || _consoles.Count > 0 || _smartphones.Count > 0;
+            _tabNames = hasMachines
+                            ? ["specifications", "machines", "media"]
+                            : ["specifications", "media"];
+        }
 
         _loaded = true;
         StateHasChanged();
