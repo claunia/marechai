@@ -30,7 +30,7 @@
 @inherits OwningComponentBase<SoundSynthsService>
 @inject IStringLocalizer<SoundSynthsService> L
 
-@if(_synths is null)
+@if(!_initialized)
 {
     <div class="d-flex justify-center pa-8">
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
@@ -45,23 +45,22 @@
         <MudIcon Icon="@Icons.Material.Filled.MusicNote" Size="Size.Large" Style="color: white;"/>
         <MudText Typo="Typo.h4" Style="color: white;">@L["Sound synthesizers"]</MudText>
     </MudStack>
-    <MudChip T="string" Color="Color.Dark" Variant="Variant.Filled" Class="mt-2" Style="color: white; white-space: normal; height: auto; overflow: visible; text-overflow: unset; padding: 8px 16px;">@string.Format(L["{0} sound synthesizers found in the database."], _synths.Count)</MudChip>
+    <MudChip T="string" Color="Color.Dark" Variant="Variant.Filled" Class="mt-2" Style="color: white; white-space: normal; height: auto; overflow: visible; text-overflow: unset; padding: 8px 16px;">@string.Format(L["{0} sound synthesizers found in the database."], _total)</MudChip>
 </MudPaper>
 
-@if(_synths.Any())
+@if(_total > 0)
 {
-    <MudTextField T="string" @bind-Value="_searchText" @bind-Value:after="OnSearchChanged"
-                  Placeholder="@L["Filter sound synthesizers..."]"
-                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
-                  Variant="Variant.Outlined" Class="mb-4" Immediate="true"/>
-
-    <div style="height: 70vh; overflow-y: auto;">
-        <Virtualize Items="_filteredSynths" Context="synth" ItemSize="88">
+    <div id="@_scrollerId" style="height: 70vh; overflow-y: auto;">
+        <Virtualize Items="_synths" Context="synth" ItemSize="88">
+            @{
+                bool   isSpecial   = synth.Name == "DB_SOFTWARE";
+                string displayName = isSpecial ? L["Software"] : synth.Name ?? string.Empty;
+            }
             <a href="/soundsynth/@synth.Id" style="text-decoration: none; color: inherit;">
                 <MudCard Elevation="1" Class="mb-2 rounded-lg" Style="cursor: pointer;">
                     <MudCardContent>
                         <div class="d-flex align-center gap-3">
-                            @if(synth.IsSpecial)
+                            @if(isSpecial)
                             {
                                 <MudIcon Icon="@Icons.Material.Filled.Code" Color="Color.Secondary"/>
                             }
@@ -70,7 +69,7 @@
                                 <MudIcon Icon="@Icons.Material.Filled.Speaker" Color="Color.Primary"/>
                             }
                             <div>
-                                <MudText Typo="Typo.body1" Style="font-weight: 500;">@synth.DisplayName</MudText>
+                                <MudText Typo="Typo.body1" Style="font-weight: 500;">@displayName</MudText>
                                 @if(!string.IsNullOrEmpty(synth.Company))
                                 {
                                     <MudText Typo="Typo.caption" Style="color: var(--mud-palette-text-secondary);">@synth.Company</MudText>
@@ -81,6 +80,13 @@
                 </MudCard>
             </a>
         </Virtualize>
+        <div id="@_sentinelId" style="height: 1px;"></div>
+        @if(_loadingMore)
+        {
+            <div class="d-flex justify-center pa-3">
+                <MudProgressCircular Color="Color.Primary" Size="Size.Small" Indeterminate="true"/>
+            </div>
+        }
     </div>
 }
 else

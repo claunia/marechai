@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.Data;
 using Marechai.Data.Dtos;
@@ -49,25 +50,45 @@ public class SoundSynthsController(
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<SoundSynthDto>> GetAsync() => context.SoundSynths.OrderBy(s => s.Company.Name)
-                                                          .ThenBy(s => s.Name)
-                                                          .ThenBy(s => s.ModelCode)
-                                                          .Select(s => new SoundSynthDto
-                                                           {
-                                                               Id          = s.Id,
-                                                               Name        = s.Name,
-                                                               CompanyId   = s.Company.Id,
-                                                               CompanyName = s.Company.Name,
-                                                               ModelCode   = s.ModelCode,
-                                                               Introduced  = s.Introduced,
-                                                               Voices      = s.Voices,
-                                                               Frequency   = s.Frequency,
-                                                               Depth       = s.Depth,
-                                                               SquareWave  = s.SquareWave,
-                                                               WhiteNoise  = s.WhiteNoise,
-                                                               Type        = s.Type
-                                                           })
-                                                          .ToListAsync();
+    public Task<List<SoundSynthDto>> GetAsync([FromQuery] int? skip = null, [FromQuery] int? take = null,
+                                              CancellationToken cancellationToken = default)
+    {
+        IQueryable<SoundSynth> ordered = context.SoundSynths
+                                                .AsNoTracking()
+                                                // Pin the special "DB_SOFTWARE" row to the top so the public
+                                                // /soundsynths page can display it first across paginated batches.
+                                                .OrderBy(s => s.Name == "DB_SOFTWARE" ? 0 : 1)
+                                                .ThenBy(s => s.Company.Name)
+                                                .ThenBy(s => s.Name)
+                                                .ThenBy(s => s.ModelCode);
+
+        if(skip.HasValue) ordered = ordered.Skip(skip.Value);
+        if(take.HasValue) ordered = ordered.Take(take.Value);
+
+        return ordered.Select(s => new SoundSynthDto
+                       {
+                           Id          = s.Id,
+                           Name        = s.Name,
+                           CompanyId   = s.Company.Id,
+                           CompanyName = s.Company.Name,
+                           ModelCode   = s.ModelCode,
+                           Introduced  = s.Introduced,
+                           Voices      = s.Voices,
+                           Frequency   = s.Frequency,
+                           Depth       = s.Depth,
+                           SquareWave  = s.SquareWave,
+                           WhiteNoise  = s.WhiteNoise,
+                           Type        = s.Type
+                       })
+                      .ToListAsync(cancellationToken);
+    }
+
+    [HttpGet("count")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetCountAsync(CancellationToken cancellationToken = default) =>
+        context.SoundSynths.CountAsync(cancellationToken);
 
     [HttpGet("/machines/{machineId:int}/sound-synths")]
     [AllowAnonymous]

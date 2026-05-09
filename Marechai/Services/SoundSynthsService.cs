@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.Kiota.Abstractions;
@@ -40,17 +41,36 @@ public class SoundSynthsService(Marechai.ApiClient.Client client)
         return ex.Message;
     }
 
-    public async Task<List<SoundSynthDto>> GetAllAsync()
+    public async Task<List<SoundSynthDto>> GetAllAsync(int? skip = null, int? take = null,
+                                                       CancellationToken cancellationToken = default)
     {
         try
         {
-            List<SoundSynthDto> synths = await client.SoundSynths.GetAsync();
+            List<SoundSynthDto> synths = await client.SoundSynths.GetAsync(config =>
+            {
+                if(skip.HasValue) config.QueryParameters.Skip = skip.Value;
+                if(take.HasValue) config.QueryParameters.Take = take.Value;
+            }, cancellationToken);
 
             return synths ?? [];
         }
         catch
         {
             return [];
+        }
+    }
+
+    public async Task<int> GetCountAsync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            int? count = await client.SoundSynths.Count.GetAsync(cancellationToken: cancellationToken);
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
         }
     }
 
