@@ -1819,4 +1819,7 @@
     <data name="Voice Chat" xml:space="preserve">
         <value>Chat vocale</value>
     </data>
+    <data name="Regions" xml:space="preserve">
+        <value>Regioni</value>
+    </data>
 </root>

@@ -1778,4 +1778,7 @@
     <data name="Voice Chat" xml:space="preserve">
         <value>Voice Chat</value>
     </data>
+    <data name="Regions" xml:space="preserve">
+        <value>Regions</value>
+    </data>
 </root>

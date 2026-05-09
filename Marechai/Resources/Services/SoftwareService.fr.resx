@@ -1907,4 +1907,7 @@
     <data name="Voice Chat" xml:space="preserve">
         <value>Chat vocal</value>
     </data>
+    <data name="Regions" xml:space="preserve">
+        <value>Régions</value>
+    </data>
 </root>
