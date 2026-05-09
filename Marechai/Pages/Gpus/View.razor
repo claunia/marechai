@@ -104,6 +104,10 @@
     }
 </style>
 
+@* Sentinel rows (DB_NONE id=-1, DB_FRAMEBUFFER id=-2) have no specs/machines/
+   media, so skip the entire tab block and render the description card alone. *@
+@if(!_isSentinel)
+{
 <MudTabs Rounded="true"
          ApplyEffectsToContainer="true"
          KeepPanelsAlive="true"
@@ -181,12 +185,12 @@
             <div style="color: var(--mud-palette-text-primary); overflow-wrap: break-word;">
                 <style>
                     .gpu-description { line-height: 1.7; color: inherit; }
-                    .gpu-description h1 { font-size: 1.75rem; margin: 1.5rem 0 0.75rem; }
-                    .gpu-description h2 { font-size: 1.5rem; margin: 1.25rem 0 0.5rem; }
-                    .gpu-description h3 { font-size: 1.25rem; margin: 1rem 0 0.5rem; }
-                    .gpu-description p { margin: 0.5rem 0; }
-                    .gpu-description ul, .gpu-description ol { margin: 0.5rem 0; padding-left: 1.5rem; }
-                    .gpu-description li { margin: 0.25rem 0; }
+                    .gpu-description h1 { font-size: 1.75rem; margin: 2rem 0 1rem; line-height: 1.3; }
+                    .gpu-description h2 { font-size: 1.5rem; margin: 2rem 0 1rem; line-height: 1.3; }
+                    .gpu-description h3 { font-size: 1.25rem; margin: 1.5rem 0 0.75rem; line-height: 1.3; }
+                    .gpu-description p { margin: 1rem 0; line-height: 1.8; }
+                    .gpu-description ul, .gpu-description ol { margin: 1rem 0; padding-left: 1.75rem; }
+                    .gpu-description li { margin: 0.6rem 0; line-height: 1.7; }
                     .gpu-description pre { background: var(--mud-palette-surface); padding: 1rem; overflow-x: auto; }
                     .gpu-description code { background: var(--mud-palette-surface); padding: 0.125rem 0.25rem; }
                     .gpu-description blockquote { border-left: 4px solid var(--mud-palette-primary); padding: 0.5rem 1rem; }
@@ -416,5 +420,42 @@
 </MudTabPanel>
 
 </MudTabs>
+}
+else if(!string.IsNullOrWhiteSpace(_description))
+{
+    @* Sentinel branch: render only the description card (markup mirrors the
+       Description Card inside the Specifications tab above). *@
+    <MudCard Elevation="2" Class="mb-4 rounded-lg">
+        <MudCardContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+                <MudIcon Icon="@Icons.Material.Filled.Description" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Description"]</MudText>
+            </MudStack>
+            <div style="color: var(--mud-palette-text-primary); overflow-wrap: break-word; word-break: break-word;">
+                @* Same .gpu-description rules as the Description Card inside the
+                   Specifications tab — duplicated here because the non-sentinel
+                   branch is hidden on /gpu/-1 and /gpu/-2 so its <style> block
+                   never enters the DOM. *@
+                <style>
+                    .gpu-description { line-height: 1.7; color: inherit; }
+                    .gpu-description h1 { font-size: 1.75rem; margin: 2rem 0 1rem; line-height: 1.3; }
+                    .gpu-description h2 { font-size: 1.5rem; margin: 2rem 0 1rem; line-height: 1.3; }
+                    .gpu-description h3 { font-size: 1.25rem; margin: 1.5rem 0 0.75rem; line-height: 1.3; }
+                    .gpu-description p { margin: 1rem 0; line-height: 1.8; }
+                    .gpu-description ul, .gpu-description ol { margin: 1rem 0; padding-left: 1.75rem; }
+                    .gpu-description li { margin: 0.6rem 0; line-height: 1.7; }
+                    .gpu-description pre { background: var(--mud-palette-surface); padding: 1rem; overflow-x: auto; }
+                    .gpu-description code { background: var(--mud-palette-surface); padding: 0.125rem 0.25rem; }
+                    .gpu-description blockquote { border-left: 4px solid var(--mud-palette-primary); padding: 0.5rem 1rem; }
+                    .gpu-description table { border-collapse: collapse; width: 100%; }
+                    .gpu-description th, .gpu-description td { border: 1px solid var(--mud-palette-lines-default); padding: 0.5rem; }
+                </style>
+                <div class="gpu-description" style="padding: 8px;">
+                    @((MarkupString)_description)
+                </div>
+            </div>
+        </MudCardContent>
+    </MudCard>
+}
 
 <PhotoLightbox @ref="_lightbox" BaseUrl="@AssetUrls.BaseUrl" Category="gpus"/>

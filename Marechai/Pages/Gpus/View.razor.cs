@@ -58,6 +58,13 @@ public partial class View
 
     int _activeTabIndex => Math.Max(0, Array.IndexOf(_tabNames, _activeTab));
 
+    // Sentinel rows (DB_NONE id=-1, DB_FRAMEBUFFER id=-2 per Marechai.Database
+    // Operations.DbNone / DbSoftware) represent abstract "no GPU" / "software
+    // framebuffer" placeholders and have no specifications, machines, photos,
+    // resolutions or videos. Detect by name so the rename pattern matches the
+    // existing _displayName switch below.
+    bool _isSentinel => _gpu?.Name is "DB_FRAMEBUFFER" or "DB_SOFTWARE" or "DB_NONE";
+
     [Parameter]
     public int Id { get; set; }
 
@@ -98,13 +105,6 @@ public partial class View
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if(_loaded) return;
-
-        if(Id <= 0)
-        {
-            _loaded = true;
-
-            return;
-        }
 
         // Single backend round-trip: the consolidated /gpus/{id}/full endpoint
         // returns head + company logo + description + resolutions + machines +
@@ -150,11 +150,15 @@ public partial class View
         // Insert the Machines tab between Specifications and Media when the
         // GPU has any attached computers/consoles/smartphones, so
         // _activeTabIndex resolves "machines" correctly on first paint after a
-        // deep link.
-        bool hasMachines = _computers.Count > 0 || _consoles.Count > 0 || _smartphones.Count > 0;
-        _tabNames = hasMachines
-                        ? ["specifications", "machines", "media"]
-                        : ["specifications", "media"];
+        // deep link. Sentinel rows hide the entire tab block at the markup
+        // level, so leave _tabNames at its default for them.
+        if(!_isSentinel)
+        {
+            bool hasMachines = _computers.Count > 0 || _consoles.Count > 0 || _smartphones.Count > 0;
+            _tabNames = hasMachines
+                            ? ["specifications", "machines", "media"]
+                            : ["specifications", "media"];
+        }
 
         _loaded = true;
         StateHasChanged();
