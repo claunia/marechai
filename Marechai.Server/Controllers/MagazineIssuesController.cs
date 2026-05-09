@@ -23,10 +23,12 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Marechai.Data;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -49,15 +51,16 @@ public class MagazineIssuesController(MarechaiContext context) : ControllerBase
                                                              .ThenBy(b => b.Caption)
                                                              .Select(b => new MagazineIssueDto
                                                               {
-                                                                  Id            = b.Id,
-                                                                  MagazineId    = b.MagazineId,
-                                                                  MagazineTitle = b.Magazine.Title,
-                                                                  Caption       = b.Caption,
-                                                                  NativeCaption = b.NativeCaption,
-                                                                  Published     = b.Published,
-                                                                  ProductCode   = b.ProductCode,
-                                                                  Pages         = b.Pages,
-                                                                  IssueNumber   = b.IssueNumber
+                                                                  Id                 = b.Id,
+                                                                  MagazineId         = b.MagazineId,
+                                                                  MagazineTitle      = b.Magazine.Title,
+                                                                  Caption            = b.Caption,
+                                                                  NativeCaption      = b.NativeCaption,
+                                                                  Published          = b.Published,
+                                                                  PublishedPrecision = b.PublishedPrecision,
+                                                                  ProductCode        = b.ProductCode,
+                                                                  Pages              = b.Pages,
+                                                                  IssueNumber        = b.IssueNumber
                                                               })
                                                              .ToListAsync();
 
@@ -68,15 +71,16 @@ public class MagazineIssuesController(MarechaiContext context) : ControllerBase
     public Task<MagazineIssueDto> GetAsync(long id) => context.MagazineIssues.Where(b => b.Id == id)
                                                               .Select(b => new MagazineIssueDto
                                                                {
-                                                                   Id            = b.Id,
-                                                                   MagazineId    = b.MagazineId,
-                                                                   MagazineTitle = b.Magazine.Title,
-                                                                   Caption       = b.Caption,
-                                                                   NativeCaption = b.NativeCaption,
-                                                                   Published     = b.Published,
-                                                                   ProductCode   = b.ProductCode,
-                                                                   Pages         = b.Pages,
-                                                                   IssueNumber   = b.IssueNumber
+                                                                   Id                 = b.Id,
+                                                                   MagazineId         = b.MagazineId,
+                                                                   MagazineTitle      = b.Magazine.Title,
+                                                                   Caption            = b.Caption,
+                                                                   NativeCaption      = b.NativeCaption,
+                                                                   Published          = b.Published,
+                                                                   PublishedPrecision = b.PublishedPrecision,
+                                                                   ProductCode        = b.ProductCode,
+                                                                   Pages              = b.Pages,
+                                                                   IssueNumber        = b.IssueNumber
                                                                })
                                                               .FirstOrDefaultAsync();
 
@@ -95,13 +99,25 @@ public class MagazineIssuesController(MarechaiContext context) : ControllerBase
 
         if(model is null) return NotFound();
 
-        model.MagazineId    = dto.MagazineId;
-        model.Caption       = dto.Caption;
-        model.NativeCaption = dto.NativeCaption;
-        model.Published     = dto.Published;
-        model.ProductCode   = dto.ProductCode;
-        model.Pages         = dto.Pages;
-        model.IssueNumber   = dto.IssueNumber;
+        model.MagazineId         = dto.MagazineId;
+        model.Caption            = dto.Caption;
+        model.NativeCaption      = dto.NativeCaption;
+        model.Published          = dto.Published;
+        model.PublishedPrecision = dto.PublishedPrecision;
+        model.ProductCode        = dto.ProductCode;
+        model.Pages              = dto.Pages;
+        model.IssueNumber        = dto.IssueNumber;
+
+        string newsName = await BuildMagazineIssueNewsNameAsync(model);
+
+        await context.News.AddAsync(new News
+        {
+            AddedId = model.MagazineId,
+            Date    = DateTime.UtcNow,
+            Type    = NewsType.UpdatedMagazineIssueInDb,
+            Name    = newsName
+        });
+
         await context.SaveChangesWithUserAsync(userId);
 
         return Ok();
@@ -120,16 +136,29 @@ public class MagazineIssuesController(MarechaiContext context) : ControllerBase
 
         var model = new MagazineIssue
         {
-            MagazineId    = dto.MagazineId,
-            Caption       = dto.Caption,
-            NativeCaption = dto.NativeCaption,
-            Published     = dto.Published,
-            ProductCode   = dto.ProductCode,
-            Pages         = dto.Pages,
-            IssueNumber   = dto.IssueNumber
+            MagazineId         = dto.MagazineId,
+            Caption            = dto.Caption,
+            NativeCaption      = dto.NativeCaption,
+            Published          = dto.Published,
+            PublishedPrecision = dto.PublishedPrecision,
+            ProductCode        = dto.ProductCode,
+            Pages              = dto.Pages,
+            IssueNumber        = dto.IssueNumber
         };
 
         await context.MagazineIssues.AddAsync(model);
+        await context.SaveChangesWithUserAsync(userId);
+
+        string newsName = await BuildMagazineIssueNewsNameAsync(model);
+
+        await context.News.AddAsync(new News
+        {
+            AddedId = model.MagazineId,
+            Date    = DateTime.UtcNow,
+            Type    = NewsType.NewMagazineIssueInDb,
+            Name    = newsName
+        });
+
         await context.SaveChangesWithUserAsync(userId);
 
         return model.Id;
@@ -155,5 +184,28 @@ public class MagazineIssuesController(MarechaiContext context) : ControllerBase
         await context.SaveChangesWithUserAsync(userId);
 
         return Ok();
+    }
+
+    async Task<string> BuildMagazineIssueNewsNameAsync(MagazineIssue model)
+    {
+        string magazineTitle = await context.Magazines.Where(m => m.Id == model.MagazineId)
+                                            .Select(m => m.Title)
+                                            .FirstOrDefaultAsync() ?? string.Empty;
+
+        if(model.IssueNumber.HasValue) return $"{magazineTitle} #{model.IssueNumber.Value}";
+
+        if(model.Published.HasValue)
+        {
+            string dateStr = model.PublishedPrecision switch
+            {
+                DatePrecision.YearOnly  => model.Published.Value.ToString("yyyy"),
+                DatePrecision.MonthYear => model.Published.Value.ToString("MMMM yyyy"),
+                _                       => model.Published.Value.ToString("d")
+            };
+
+            return $"{magazineTitle} ({dateStr})";
+        }
+
+        return string.IsNullOrWhiteSpace(model.Caption) ? magazineTitle : $"{magazineTitle}: {model.Caption}";
     }
 }

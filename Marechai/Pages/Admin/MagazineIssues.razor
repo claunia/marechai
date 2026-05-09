@@ -1,0 +1,72 @@
+@page "/admin/magazines/{MagazineId:long}/issues"
+@attribute [Authorize(Roles = "Admin, UberAdmin")]
+@using Marechai.ApiClient.Models
+@using Marechai.Services
+@inherits OwningComponentBase<MagazinesService>
+@inject IStringLocalizer<MagazinesService> L
+@inject IDialogService DialogService
+@inject NavigationManager NavigationManager
+
+<MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" OnClick="GoBack" Class="mb-4">@L["Back to Magazines"]</MudButton>
+
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #ff6f00 0%, #ffa000 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Filled.LibraryBooks" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Style="color: white;">@L["Issues"]</MudText>
+    </MudStack>
+    <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);" Class="mt-2">@(_magazineTitle ?? L["Manage magazine issues."])</MudText>
+</MudPaper>
+
+@if(!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+}
+
+@if(!string.IsNullOrWhiteSpace(_successMessage))
+{
+    <MudAlert Severity="Severity.Success" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _successMessage = null">@_successMessage</MudAlert>
+}
+
+@if(!_loaded)
+{
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+    </div>
+    return;
+}
+
+<MudPaper Elevation="2" Class="rounded-lg">
+    <MudToolBar Dense="true">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="OpenAddDialog">@L["Add Issue"]</MudButton>
+        <MudSpacer/>
+        <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="ReloadAsync"/>
+    </MudToolBar>
+
+    <MudDataGrid T="MagazineIssueDto" Items="_issues" Dense="true" Hover="true" Striped="true" Filterable="true">
+        <Columns>
+            <PropertyColumn Property="x => x.IssueNumber" Title="@L["Issue Number"]"/>
+            <PropertyColumn Property="x => x.Caption" Title="@L["Caption"]"/>
+            <PropertyColumn Property="x => x.NativeCaption" Title="@L["Native caption"]"/>
+            <PropertyColumn Property="x => x.Published" Title="@L["Published"]">
+                <CellTemplate>
+                    @FormatDate(context.Item.Published, (int?)context.Item.PublishedPrecision)
+                </CellTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.ProductCode" Title="@L["Product code"]"/>
+            <PropertyColumn Property="x => x.Pages" Title="@L["Pages"]"/>
+            <TemplateColumn Title="@L["Actions"]" Sortable="false" Filterable="false">
+                <CellTemplate>
+                    <MudStack Row="true" Spacing="1">
+                        <MudTooltip Text="@L["Edit Issue"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditDialog(context.Item)"/></MudTooltip>
+                        <MudTooltip Text="@L["Delete Issue"]"><MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDelete(context.Item)"/></MudTooltip>
+                    </MudStack>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+
+    @if(_issues.Count == 0)
+    {
+        <MudAlert Severity="Severity.Info" Class="ma-4">@L["No issues found."]</MudAlert>
+    }
+</MudPaper>

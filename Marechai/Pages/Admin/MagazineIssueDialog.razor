@@ -1,0 +1,92 @@
+@using Marechai.Services
+
+@inject IStringLocalizer<MagazinesService> L
+
+<MudDialog>
+    <DialogContent>
+        <MudTextField @bind-Value="Caption"
+                      Label="@L["Caption"]"
+                      Variant="Variant.Outlined"
+                      Required="true"
+                      RequiredError="@L["Caption is required."]"
+                      Class="mb-4"/>
+
+        <MudTextField @bind-Value="NativeCaption"
+                      Label="@L["Native caption"]"
+                      Variant="Variant.Outlined"
+                      Class="mb-4"/>
+
+        <MudNumericField T="uint?" @bind-Value="IssueNumber"
+                         Label="@L["Issue Number"]"
+                         Variant="Variant.Outlined"
+                         Min="1u"
+                         Clearable="true"
+                         Class="mb-4"/>
+
+        <MudDatePicker @bind-Date="Published"
+                       Label="@L["Published"]"
+                       Variant="Variant.Outlined"
+                       Clearable="true"
+                       Class="mb-4"/>
+
+        <MudSelect T="int" @bind-Value="PublishedPrecision"
+                   Label="@L["Date precision"]"
+                   Variant="Variant.Outlined"
+                   Class="mb-4">
+            <MudSelectItem T="int" Value="0">@L["Full date"]</MudSelectItem>
+            <MudSelectItem T="int" Value="1">@L["Month and year only"]</MudSelectItem>
+            <MudSelectItem T="int" Value="2">@L["Year only"]</MudSelectItem>
+        </MudSelect>
+
+        <MudTextField @bind-Value="ProductCode"
+                      Label="@L["Product code"]"
+                      Variant="Variant.Outlined"
+                      MaxLength="18"
+                      Class="mb-4"/>
+
+        <MudNumericField T="short?" @bind-Value="Pages"
+                         Label="@L["Pages"]"
+                         Variant="Variant.Outlined"
+                         Min="(short)1"
+                         Clearable="true"
+                         Class="mb-4"/>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit">@L["Save"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter] public long      MagazineId         { get; set; }
+    [Parameter] public string    Caption            { get; set; }
+    [Parameter] public string    NativeCaption      { get; set; }
+    [Parameter] public DateTime? Published          { get; set; }
+    [Parameter] public int       PublishedPrecision { get; set; }
+    [Parameter] public string    ProductCode        { get; set; }
+    [Parameter] public short?    Pages              { get; set; }
+    [Parameter] public uint?     IssueNumber        { get; set; }
+
+    void Cancel() => MudDialog.Cancel();
+
+    void Submit()
+    {
+        if(string.IsNullOrWhiteSpace(Caption))
+            return;
+
+        MudDialog.Close(DialogResult.Ok(new MagazineIssueDialogResult
+        {
+            MagazineId         = MagazineId,
+            Caption            = Caption,
+            NativeCaption      = NativeCaption,
+            Published          = Published,
+            PublishedPrecision = PublishedPrecision,
+            ProductCode        = ProductCode,
+            Pages              = Pages,
+            IssueNumber        = IssueNumber
+        }));
+    }
+}

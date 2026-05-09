@@ -237,6 +237,30 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
                                                                })
                                                               .ToListAsync();
 
+    [HttpGet("{magazineId:long}/issues")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<MagazineIssueDto>> GetIssuesByMagazineAsync(long magazineId) =>
+        context.MagazineIssues.Where(i => i.MagazineId == magazineId)
+               .OrderBy(i => i.Published)
+               .ThenBy(i => i.IssueNumber)
+               .ThenBy(i => i.Caption)
+               .Select(i => new MagazineIssueDto
+                {
+                    Id                 = i.Id,
+                    MagazineId         = i.MagazineId,
+                    MagazineTitle      = i.Magazine.Title,
+                    Caption            = i.Caption,
+                    NativeCaption      = i.NativeCaption,
+                    Published          = i.Published,
+                    PublishedPrecision = i.PublishedPrecision,
+                    ProductCode        = i.ProductCode,
+                    Pages              = i.Pages,
+                    IssueNumber        = i.IssueNumber
+                })
+               .ToListAsync();
+
     [HttpGet("{id:long}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]

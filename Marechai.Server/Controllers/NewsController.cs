@@ -140,6 +140,11 @@ public class NewsController(MarechaiContext context) : ControllerBase
 
                     break;
 
+                case NewsType.NewMagazineIssueInDb or NewsType.UpdatedMagazineIssueInDb:
+                    controller = "magazines";
+
+                    break;
+
                 case NewsType.NewPersonInDb or NewsType.UpdatedPersonInDb:
                     controller = "people";
 

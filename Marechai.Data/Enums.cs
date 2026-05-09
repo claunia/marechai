@@ -64,7 +64,9 @@ public enum NewsType
     NewSmartphoneInDb               = 30,
     UpdatedSmartphoneInDb           = 31,
     NewSmartphoneInCollection       = 32,
-    UpdatedSmartphoneInCollection   = 33
+    UpdatedSmartphoneInCollection   = 33,
+    NewMagazineIssueInDb            = 34,
+    UpdatedMagazineIssueInDb        = 35
 }
 
 public enum StatusType

@@ -80,6 +80,8 @@
         NewsType.UpdatedDocumentInDb         => L["Updated document in database"],
         NewsType.NewMagazineInDb             => L["New magazine in database"],
         NewsType.UpdatedMagazineInDb         => L["Updated magazine in database"],
+        NewsType.NewMagazineIssueInDb        => L["New magazine issue in database"],
+        NewsType.UpdatedMagazineIssueInDb    => L["Updated magazine issue in database"],
         NewsType.NewPersonInDb               => L["New person in database"],
         NewsType.UpdatedPersonInDb           => L["Updated person in database"],
         NewsType.NewSoftwareInDb             => L["New software in database"],
@@ -119,6 +121,8 @@
                                                             => $"/document/{news.AffectedId}",
             NewsType.NewMagazineInDb or NewsType.UpdatedMagazineInDb
                                                             => $"/magazine/{news.AffectedId}",
+            NewsType.NewMagazineIssueInDb or NewsType.UpdatedMagazineIssueInDb
+                                                            => $"/magazine/{news.AffectedId}",
             NewsType.NewPersonInDb or NewsType.UpdatedPersonInDb
                                                             => $"/person/{news.AffectedId}",
             NewsType.NewSoftwareInDb or NewsType.UpdatedSoftwareInDb
@@ -145,6 +149,7 @@
             or NewsType.NewPersonInDb or NewsType.NewSoftwareInDb or NewsType.NewSoftwareVersionInDb
             or NewsType.NewSoftwareReleaseInDb or NewsType.NewGpuInDb or NewsType.NewSoundSynthInDb
             or NewsType.NewProcessorInDb
+            or NewsType.NewMagazineIssueInDb
             => Icons.Material.Filled.FiberNew,
         _ => Icons.Material.Filled.Update
     };
@@ -158,6 +163,7 @@
             or NewsType.NewPersonInDb or NewsType.NewSoftwareInDb or NewsType.NewSoftwareVersionInDb
             or NewsType.NewSoftwareReleaseInDb or NewsType.NewGpuInDb or NewsType.NewSoundSynthInDb
             or NewsType.NewProcessorInDb
+            or NewsType.NewMagazineIssueInDb
             => Color.Secondary,
         _ => Color.Info
     };
@@ -175,6 +181,8 @@
         NewsType.NewBookInDb or NewsType.UpdatedBookInDb             => Icons.Material.Filled.MenuBook,
         NewsType.NewDocumentInDb or NewsType.UpdatedDocumentInDb     => Icons.Material.Filled.Article,
         NewsType.NewMagazineInDb or NewsType.UpdatedMagazineInDb     => Icons.Material.Filled.AutoStories,
+        NewsType.NewMagazineIssueInDb or NewsType.UpdatedMagazineIssueInDb
+                                                                     => Icons.Material.Filled.LibraryBooks,
         NewsType.NewPersonInDb or NewsType.UpdatedPersonInDb         => Icons.Material.Filled.Person,
         NewsType.NewSoftwareInDb or NewsType.UpdatedSoftwareInDb
             or NewsType.NewSoftwareVersionInDb or NewsType.UpdatedSoftwareVersionInDb

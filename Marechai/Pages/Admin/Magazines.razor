@@ -60,6 +60,8 @@
                     <MudStack Row="true" Spacing="1">
                         <MudTooltip Text="@L["Edit Magazine"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditMagazineDialog(context.Item)"/></MudTooltip>
 
+                        <MudTooltip Text="@L["Issues"]"><MudIconButton Icon="@Icons.Material.Filled.LibraryBooks" Size="Size.Small" Href="@($"/admin/magazines/{context.Item.Id}/issues")"/></MudTooltip>
+
                         <MudTooltip Text="@L["Delete Magazine"]"><MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDeleteMagazine(context.Item)"/></MudTooltip>
 
                     </MudStack>

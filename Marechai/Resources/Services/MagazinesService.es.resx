@@ -315,4 +315,64 @@
     <data name="There are no companies in the database." xml:space="preserve">
         <value>No hay compañías en la base de datos.</value>
     </data>
+    <data name="Issues" xml:space="preserve">
+        <value>Números</value>
+    </data>
+    <data name="Manage magazine issues." xml:space="preserve">
+        <value>Gestionar los números de la revista.</value>
+    </data>
+    <data name="Add Issue" xml:space="preserve">
+        <value>Añadir número</value>
+    </data>
+    <data name="Edit Issue" xml:space="preserve">
+        <value>Editar número</value>
+    </data>
+    <data name="Delete Issue" xml:space="preserve">
+        <value>Eliminar número</value>
+    </data>
+    <data name="Issue Number" xml:space="preserve">
+        <value>Número</value>
+    </data>
+    <data name="Caption" xml:space="preserve">
+        <value>Título</value>
+    </data>
+    <data name="Caption is required." xml:space="preserve">
+        <value>El título es obligatorio.</value>
+    </data>
+    <data name="Native caption" xml:space="preserve">
+        <value>Título original</value>
+    </data>
+    <data name="Product code" xml:space="preserve">
+        <value>Código de producto</value>
+    </data>
+    <data name="Pages" xml:space="preserve">
+        <value>Páginas</value>
+    </data>
+    <data name="Issue created successfully." xml:space="preserve">
+        <value>Número creado correctamente.</value>
+    </data>
+    <data name="Issue updated successfully." xml:space="preserve">
+        <value>Número actualizado correctamente.</value>
+    </data>
+    <data name="Issue deleted successfully." xml:space="preserve">
+        <value>Número eliminado correctamente.</value>
+    </data>
+    <data name="Are you sure you want to delete the issue {0}?" xml:space="preserve">
+        <value>¿Está seguro de que desea eliminar el número {0}?</value>
+    </data>
+    <data name="Failed to load the issue." xml:space="preserve">
+        <value>Error al cargar el número.</value>
+    </data>
+    <data name="Failed to save the issue." xml:space="preserve">
+        <value>Error al guardar el número.</value>
+    </data>
+    <data name="Failed to delete the issue." xml:space="preserve">
+        <value>Error al eliminar el número.</value>
+    </data>
+    <data name="No issues found." xml:space="preserve">
+        <value>No se encontraron números.</value>
+    </data>
+    <data name="Back to Magazines" xml:space="preserve">
+        <value>Volver a revistas</value>
+    </data>
 </root>

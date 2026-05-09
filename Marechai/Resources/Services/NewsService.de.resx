@@ -222,4 +222,12 @@
         <value>Nur Jahr</value>
         <comment>Year only</comment>
     </data>
+    <data name="New magazine issue in database" xml:space="preserve">
+        <value>Neue Magazinausgabe in der Datenbank</value>
+        <comment>New magazine issue in database</comment>
+    </data>
+    <data name="Updated magazine issue in database" xml:space="preserve">
+        <value>Magazinausgabe in der Datenbank aktualisiert</value>
+        <comment>Updated magazine issue in database</comment>
+    </data>
 </root>

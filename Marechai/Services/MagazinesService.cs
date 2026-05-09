@@ -326,6 +326,88 @@ public class MagazinesService(Marechai.ApiClient.Client client)
         }
     }
 
+    // --- Magazine Issue methods ---
+
+    public async Task<List<MagazineIssueDto>> GetIssuesByMagazineAsync(long magazineId)
+    {
+        try
+        {
+            List<MagazineIssueDto> issues = await client.Magazines[magazineId].Issues.GetAsync();
+
+            return issues ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<MagazineIssueDto> GetIssueByIdAsync(long id)
+    {
+        try
+        {
+            return await client.Magazines.Issues[id].GetAsync();
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public async Task<(long? id, string error)> CreateIssueAsync(MagazineIssueDto dto)
+    {
+        try
+        {
+            long? id = await client.Magazines.Issues.PostAsync(dto);
+
+            return (id, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string error)> UpdateIssueAsync(long id, MagazineIssueDto dto)
+    {
+        try
+        {
+            await client.Magazines.Issues[id].PutAsync(dto);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string error)> DeleteIssueAsync(long id)
+    {
+        try
+        {
+            await client.Magazines.Issues[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
     // --- Synopsis methods ---
 
     public async Task<List<DocumentSynopsisDto>> GetSynopsesAsync(long magazineId)
