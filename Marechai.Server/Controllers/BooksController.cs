@@ -67,19 +67,19 @@ public class BooksController(
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<int> GetMinimumYearAsync() => context.Books
-                                                     .Where(b => b.Published.HasValue &&
-                                                                 b.Published.Value.Year > 1000)
-                                                     .MinAsync(b => b.Published.Value.Year);
+    public async Task<int> GetMinimumYearAsync() => await context.Books
+                                                                 .Where(b => b.Published.HasValue &&
+                                                                             b.Published.Value.Year > 1000)
+                                                                 .MinAsync(b => (int?)b.Published.Value.Year) ?? 0;
 
     [HttpGet("maximum-year")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<int> GetMaximumYearAsync() => context.Books
-                                                     .Where(b => b.Published.HasValue &&
-                                                                 b.Published.Value.Year > 1000)
-                                                     .MaxAsync(b => b.Published.Value.Year);
+    public async Task<int> GetMaximumYearAsync() => await context.Books
+                                                                 .Where(b => b.Published.HasValue &&
+                                                                             b.Published.Value.Year > 1000)
+                                                                 .MaxAsync(b => (int?)b.Published.Value.Year) ?? 0;
 
     [HttpGet("companies")]
     [AllowAnonymous]

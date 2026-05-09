@@ -52,19 +52,21 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<int> GetMinimumYearAsync() => context.Magazines
-                                                     .Where(m => m.FirstPublication.HasValue &&
-                                                                 m.FirstPublication.Value.Year > 1000)
-                                                     .MinAsync(m => m.FirstPublication.Value.Year);
+    public async Task<int> GetMinimumYearAsync() => await context.Magazines
+                                                                 .Where(m => m.FirstPublication.HasValue &&
+                                                                             m.FirstPublication.Value.Year > 1000)
+                                                                 .MinAsync(m => (int?)m.FirstPublication.Value.Year) ??
+                                                    0;
 
     [HttpGet("maximum-year")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<int> GetMaximumYearAsync() => context.Magazines
-                                                     .Where(m => m.FirstPublication.HasValue &&
-                                                                 m.FirstPublication.Value.Year > 1000)
-                                                     .MaxAsync(m => m.FirstPublication.Value.Year);
+    public async Task<int> GetMaximumYearAsync() => await context.Magazines
+                                                                 .Where(m => m.FirstPublication.HasValue &&
+                                                                             m.FirstPublication.Value.Year > 1000)
+                                                                 .MaxAsync(m => (int?)m.FirstPublication.Value.Year) ??
+                                                    0;
 
     [HttpGet("companies")]
     [AllowAnonymous]

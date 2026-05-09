@@ -50,21 +50,21 @@ public class ComputersController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<int> GetMinimumYearAsync() => context.Machines
-                                                     .Where(t => t.Type == MachineType.Computer &&
-                                                                 t.Introduced.HasValue          &&
-                                                                 !t.Prototype)
-                                                     .MinAsync(t => t.Introduced.Value.Year);
+    public async Task<int> GetMinimumYearAsync() => await context.Machines
+                                                                 .Where(t => t.Type == MachineType.Computer &&
+                                                                             t.Introduced.HasValue          &&
+                                                                             !t.Prototype)
+                                                                 .MinAsync(t => (int?)t.Introduced.Value.Year) ?? 0;
 
     [HttpGet("maximum-year")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<int> GetMaximumYearAsync() => context.Machines
-                                                     .Where(t => t.Type == MachineType.Computer &&
-                                                                 t.Introduced.HasValue          &&
-                                                                 !t.Prototype)
-                                                     .MaxAsync(t => t.Introduced.Value.Year);
+    public async Task<int> GetMaximumYearAsync() => await context.Machines
+                                                                 .Where(t => t.Type == MachineType.Computer &&
+                                                                             t.Introduced.HasValue          &&
+                                                                             !t.Prototype)
+                                                                 .MaxAsync(t => (int?)t.Introduced.Value.Year) ?? 0;
 
     [HttpGet("by-letter/{c}")]
     [AllowAnonymous]

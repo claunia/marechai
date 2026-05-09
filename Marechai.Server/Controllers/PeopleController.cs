@@ -55,19 +55,19 @@ public class PeopleController(
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<int> GetMinimumYearAsync() => context.People
-                                                     .Where(p => p.BirthDate > DateTime.MinValue &&
-                                                                 p.BirthDate.Year > 1000)
-                                                     .MinAsync(p => p.BirthDate.Year);
+    public async Task<int> GetMinimumYearAsync() => await context.People
+                                                                 .Where(p => p.BirthDate > DateTime.MinValue &&
+                                                                             p.BirthDate.Year > 1000)
+                                                                 .MinAsync(p => (int?)p.BirthDate.Year) ?? 0;
 
     [HttpGet("maximum-year")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<int> GetMaximumYearAsync() => context.People
-                                                     .Where(p => p.BirthDate > DateTime.MinValue &&
-                                                                 p.BirthDate.Year > 1000)
-                                                     .MaxAsync(p => p.BirthDate.Year);
+    public async Task<int> GetMaximumYearAsync() => await context.People
+                                                                 .Where(p => p.BirthDate > DateTime.MinValue &&
+                                                                             p.BirthDate.Year > 1000)
+                                                                 .MaxAsync(p => (int?)p.BirthDate.Year) ?? 0;
 
     [HttpGet("by-letter/{c}")]
     [AllowAnonymous]

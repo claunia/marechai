@@ -52,19 +52,19 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<int> GetMinimumYearAsync() => context.Documents
-                                                     .Where(d => d.Published.HasValue &&
-                                                                 d.Published.Value.Year > 1000)
-                                                     .MinAsync(d => d.Published.Value.Year);
+    public async Task<int> GetMinimumYearAsync() => await context.Documents
+                                                                 .Where(d => d.Published.HasValue &&
+                                                                             d.Published.Value.Year > 1000)
+                                                                 .MinAsync(d => (int?)d.Published.Value.Year) ?? 0;
 
     [HttpGet("maximum-year")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<int> GetMaximumYearAsync() => context.Documents
-                                                     .Where(d => d.Published.HasValue &&
-                                                                 d.Published.Value.Year > 1000)
-                                                     .MaxAsync(d => d.Published.Value.Year);
+    public async Task<int> GetMaximumYearAsync() => await context.Documents
+                                                                 .Where(d => d.Published.HasValue &&
+                                                                             d.Published.Value.Year > 1000)
+                                                                 .MaxAsync(d => (int?)d.Published.Value.Year) ?? 0;
 
     [HttpGet("companies")]
     [AllowAnonymous]
