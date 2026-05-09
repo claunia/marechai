@@ -209,6 +209,13 @@ file class Program
                     // scoped (depends on MarechaiContext) so we register the type and let DI resolve
                     // it per-request.
                     options.Filters.Add<DeletionPendingFilter>();
+
+                    // Keep the "Async" suffix in registered action names so that
+                    // CreatedAtAction(nameof(GetAllAsync), ...) and similar route lookups match
+                    // the action name as written in the source. Without this the framework
+                    // strips the suffix and nameof(...) returns a string that no route matches,
+                    // throwing "No route matches the supplied values" at response-formatting time.
+                    options.SuppressAsyncSuffixInActionNames = false;
                 })
                .AddJsonOptions(options =>
                 {
