@@ -51,6 +51,13 @@ public sealed class MariaDb12CollationInterceptor : DbConnectionInterceptor
     {
         await using DbCommand cmd = connection.CreateCommand();
         cmd.CommandText = _sql;
-        await cmd.ExecuteNonQueryAsync(cancellationToken);
+
+        // Intentionally NOT passing cancellationToken: this is a single
+        // sub-millisecond SET SESSION executed once per pooled connection.
+        // Cancelling it mid-flight would leave the freshly-opened connection
+        // without its collation override and surface as a noisy first-chance
+        // OperationCanceledException in the debugger every time a client
+        // aborts a request (e.g. MudVirtualize superseding a scroll batch).
+        await cmd.ExecuteNonQueryAsync();
     }
 }

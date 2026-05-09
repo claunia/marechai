@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Marechai.Data;
@@ -379,14 +380,18 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
 
     // ── Search methods ──
 
-    public async Task<List<SoftwareDto>> GetSoftwareByLetterAsync(char c, SoftwareKind? kind = null)
+    public async Task<List<SoftwareDto>> GetSoftwareByLetterAsync(char c, SoftwareKind? kind = null,
+                                                                  int? skip = null, int? take = null,
+                                                                  CancellationToken cancellationToken = default)
     {
         try
         {
             List<SoftwareDto> software = await client.Software.ByLetter[c.ToString()].GetAsync(config =>
             {
                 if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
-            });
+                if(skip.HasValue) config.QueryParameters.Skip = skip.Value;
+                if(take.HasValue) config.QueryParameters.Take = take.Value;
+            }, cancellationToken);
 
             return software ?? [];
         }
@@ -396,14 +401,36 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
-    public async Task<List<SoftwareDto>> GetSoftwareByYearAsync(int year, SoftwareKind? kind = null)
+    public async Task<int> GetSoftwareByLetterCountAsync(char c, SoftwareKind? kind = null,
+                                                          CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            int? count = await client.Software.ByLetter[c.ToString()].Count.GetAsync(config =>
+            {
+                if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
+            }, cancellationToken);
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
+
+    public async Task<List<SoftwareDto>> GetSoftwareByYearAsync(int year, SoftwareKind? kind = null,
+                                                                int? skip = null, int? take = null,
+                                                                CancellationToken cancellationToken = default)
     {
         try
         {
             List<SoftwareDto> software = await client.Software.ByYear[year].GetAsync(config =>
             {
                 if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
-            });
+                if(skip.HasValue) config.QueryParameters.Skip = skip.Value;
+                if(take.HasValue) config.QueryParameters.Take = take.Value;
+            }, cancellationToken);
 
             return software ?? [];
         }
@@ -413,20 +440,60 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
-    public async Task<List<SoftwareDto>> GetSoftwareByPlatformAsync(int platformId, SoftwareKind? kind = null)
+    public async Task<int> GetSoftwareByYearCountAsync(int year, SoftwareKind? kind = null,
+                                                       CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            int? count = await client.Software.ByYear[year].Count.GetAsync(config =>
+            {
+                if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
+            }, cancellationToken);
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
+
+    public async Task<List<SoftwareDto>> GetSoftwareByPlatformAsync(int platformId, SoftwareKind? kind = null,
+                                                                    int? skip = null, int? take = null,
+                                                                    CancellationToken cancellationToken = default)
     {
         try
         {
             List<SoftwareDto> software = await client.Software.ByPlatform[platformId].GetAsync(config =>
             {
                 if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
-            });
+                if(skip.HasValue) config.QueryParameters.Skip = skip.Value;
+                if(take.HasValue) config.QueryParameters.Take = take.Value;
+            }, cancellationToken);
 
             return software ?? [];
         }
         catch
         {
             return [];
+        }
+    }
+
+    public async Task<int> GetSoftwareByPlatformCountAsync(int platformId, SoftwareKind? kind = null,
+                                                           CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            int? count = await client.Software.ByPlatform[platformId].Count.GetAsync(config =>
+            {
+                if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
+            }, cancellationToken);
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
         }
     }
 
@@ -444,14 +511,18 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
-    public async Task<List<SoftwareDto>> GetSoftwareByGenreAsync(int genreId, SoftwareKind? kind = null)
+    public async Task<List<SoftwareDto>> GetSoftwareByGenreAsync(int genreId, SoftwareKind? kind = null,
+                                                                 int? skip = null, int? take = null,
+                                                                 CancellationToken cancellationToken = default)
     {
         try
         {
             List<SoftwareDto> software = await client.Software.ByGenre[genreId].GetAsync(config =>
             {
                 if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
-            });
+                if(skip.HasValue) config.QueryParameters.Skip = skip.Value;
+                if(take.HasValue) config.QueryParameters.Take = take.Value;
+            }, cancellationToken);
 
             return software ?? [];
         }
@@ -461,14 +532,36 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
-    public async Task<List<SoftwareDto>> GetAllSoftwareAsync(SoftwareKind? kind = null)
+    public async Task<int> GetSoftwareByGenreCountAsync(int genreId, SoftwareKind? kind = null,
+                                                        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            int? count = await client.Software.ByGenre[genreId].Count.GetAsync(config =>
+            {
+                if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
+            }, cancellationToken);
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
+
+    public async Task<List<SoftwareDto>> GetAllSoftwareAsync(SoftwareKind? kind = null,
+                                                             int? skip = null, int? take = null,
+                                                             CancellationToken cancellationToken = default)
     {
         try
         {
             List<SoftwareDto> software = await client.Software.GetAsync(config =>
             {
                 if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
-            });
+                if(skip.HasValue) config.QueryParameters.Skip = skip.Value;
+                if(take.HasValue) config.QueryParameters.Take = take.Value;
+            }, cancellationToken);
 
             return software ?? [];
         }
@@ -521,7 +614,8 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
-    public async Task<int> GetCountAsync(string search = null, SoftwareKind? kind = null)
+    public async Task<int> GetCountAsync(string search = null, SoftwareKind? kind = null,
+                                         CancellationToken cancellationToken = default)
     {
         try
         {
@@ -529,7 +623,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
             {
                 config.QueryParameters.Search = search;
                 if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
-            });
+            }, cancellationToken);
 
             return count ?? 0;
         }
@@ -553,7 +647,9 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
-    public async Task<List<SoftwareDto>> GetSoftwareBySpecAsync(string key, string value, SoftwareKind? kind = null)
+    public async Task<List<SoftwareDto>> GetSoftwareBySpecAsync(string key, string value, SoftwareKind? kind = null,
+                                                                int? skip = null, int? take = null,
+                                                                CancellationToken cancellationToken = default)
     {
         try
         {
@@ -562,13 +658,35 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
                 config.QueryParameters.Key   = key;
                 config.QueryParameters.Value = value;
                 if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
-            });
+                if(skip.HasValue) config.QueryParameters.Skip = skip.Value;
+                if(take.HasValue) config.QueryParameters.Take = take.Value;
+            }, cancellationToken);
 
             return software ?? [];
         }
         catch
         {
             return [];
+        }
+    }
+
+    public async Task<int> GetSoftwareBySpecCountAsync(string key, string value, SoftwareKind? kind = null,
+                                                       CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            int? count = await client.Software.BySpec.Count.GetAsync(config =>
+            {
+                config.QueryParameters.Key   = key;
+                config.QueryParameters.Value = value;
+                if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
+            }, cancellationToken);
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
         }
     }
 

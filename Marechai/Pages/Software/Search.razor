@@ -116,10 +116,10 @@
 
 @if(_software?.Count > 0)
 {
-    <MudText Typo="Typo.body2" Class="mb-2">@string.Format(L["{0} software titles found in the database."], _software.Count)</MudText>
-    <MudList T="SoftwareDto" Dense="true">
-        @foreach(SoftwareDto sw in _software)
-        {
+    <MudText Typo="Typo.body2" Class="mb-2">@string.Format(L["{0} software titles found in the database."], _total)</MudText>
+    <div id="@_scrollerId" style="height: 70vh; overflow-y: auto;">
+        <MudList T="SoftwareDto" Dense="true">
+            <Virtualize Items="_software" Context="sw" ItemSize="64">
             <MudListItem T="SoftwareDto" Href="@(sw.IsCompilation == true ? $"/software/release/{sw.Id}" : $"/software/{sw.Id}")" Icon="@(sw.FrontCoverId.HasValue ? null : Icons.Material.Filled.Apps)">
                 <div class="d-flex align-center gap-3">
                     @if(sw.FrontCoverId.HasValue)
@@ -187,8 +187,16 @@
                     }
                 </div>
             </MudListItem>
+        </Virtualize>
+        </MudList>
+        <div id="@_sentinelId" style="height: 1px;"></div>
+        @if(_loadingMore)
+        {
+            <div class="d-flex justify-center pa-3">
+                <MudProgressCircular Color="Color.Primary" Size="Size.Small" Indeterminate="true"/>
+            </div>
         }
-    </MudList>
+    </div>
 }
 else
 {
