@@ -57,7 +57,7 @@
 @if(_total > 0)
 {
     <MudText Typo="Typo.body2" Class="mb-2">@string.Format(L["{0} people found in the database."], _total)</MudText>
-    <div id="@_scrollerId" style="height: 70vh; overflow-y: auto;">
+    <div id="@_scrollerId" style="height: calc(100dvh - 220px); min-height: 360px; overflow-y: auto;">
         <MudList T="PersonDto" Dense="true">
             <Virtualize Items="_people" Context="person" ItemSize="64">
                 <MudListItem T="PersonDto" Href="@($"/person/{person.Id}")" Icon="@Icons.Material.Filled.Person">

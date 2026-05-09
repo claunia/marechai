@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.Kiota.Abstractions;
@@ -103,11 +104,16 @@ public class MagazinesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<List<MagazineDto>> GetMagazinesByLetterAsync(char c)
+    public async Task<List<MagazineDto>> GetMagazinesByLetterAsync(char c, int? skip = null, int? take = null,
+                                                                   CancellationToken cancellationToken = default)
     {
         try
         {
-            List<MagazineDto> magazines = await client.Magazines.ByLetter[c.ToString()].GetAsync();
+            List<MagazineDto> magazines = await client.Magazines.ByLetter[c.ToString()].GetAsync(config =>
+            {
+                if(skip.HasValue) config.QueryParameters.Skip = skip.Value;
+                if(take.HasValue) config.QueryParameters.Take = take.Value;
+            }, cancellationToken);
 
             return magazines ?? [];
         }
@@ -117,11 +123,31 @@ public class MagazinesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<List<MagazineDto>> GetMagazinesByYearAsync(int year)
+    public async Task<int> GetMagazinesByLetterCountAsync(char c, CancellationToken cancellationToken = default)
     {
         try
         {
-            List<MagazineDto> magazines = await client.Magazines.ByYear[year].GetAsync();
+            int? count =
+                await client.Magazines.ByLetter[c.ToString()].Count.GetAsync(cancellationToken: cancellationToken);
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
+
+    public async Task<List<MagazineDto>> GetMagazinesByYearAsync(int year, int? skip = null, int? take = null,
+                                                                 CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            List<MagazineDto> magazines = await client.Magazines.ByYear[year].GetAsync(config =>
+            {
+                if(skip.HasValue) config.QueryParameters.Skip = skip.Value;
+                if(take.HasValue) config.QueryParameters.Take = take.Value;
+            }, cancellationToken);
 
             return magazines ?? [];
         }
@@ -131,11 +157,30 @@ public class MagazinesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<List<MagazineDto>> GetMagazinesAsync()
+    public async Task<int> GetMagazinesByYearCountAsync(int year, CancellationToken cancellationToken = default)
     {
         try
         {
-            List<MagazineDto> magazines = await client.Magazines.GetAsync();
+            int? count = await client.Magazines.ByYear[year].Count.GetAsync(cancellationToken: cancellationToken);
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
+
+    public async Task<List<MagazineDto>> GetMagazinesAsync(int? skip = null, int? take = null,
+                                                           CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            List<MagazineDto> magazines = await client.Magazines.GetAsync(config =>
+            {
+                if(skip.HasValue) config.QueryParameters.Skip = skip.Value;
+                if(take.HasValue) config.QueryParameters.Take = take.Value;
+            }, cancellationToken);
 
             return magazines ?? [];
         }

@@ -32,7 +32,7 @@
 @inherits OwningComponentBase<MagazinesService>
 @inject IStringLocalizer<MagazinesService> L
 
-@if(_magazines is null)
+@if(!_initialized)
 {
     <div class="d-flex justify-center pa-8">
         <MudProgressCircular Color="Color.Primary" Indeterminate="true"/>
@@ -53,23 +53,31 @@
     }
 </MudPaper>
 
-@if(_magazines?.Count > 0)
+@if(_total > 0)
 {
-    <MudText Typo="Typo.body2" Class="mb-2">@string.Format(L["{0} magazines found in the database."], _magazines.Count)</MudText>
-    <MudList T="MagazineDto" Dense="true">
-        @foreach(MagazineDto magazine in _magazines)
+    <MudText Typo="Typo.body2" Class="mb-2">@string.Format(L["{0} magazines found in the database."], _total)</MudText>
+    <div id="@_scrollerId" style="height: calc(100dvh - 220px); min-height: 360px; overflow-y: auto;">
+        <MudList T="MagazineDto" Dense="true">
+            <Virtualize Items="_magazines" Context="magazine" ItemSize="64">
+                <MudListItem T="MagazineDto" Href="@($"/magazine/{magazine.Id}")" Icon="@Icons.Material.Filled.MenuBook">
+                    <div>
+                        <MudText Typo="Typo.body1">@magazine.Title</MudText>
+                        @if(magazine.FirstPublication.HasValue)
+                        {
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">@magazine.FirstPublication.Value.Year</MudText>
+                        }
+                    </div>
+                </MudListItem>
+            </Virtualize>
+        </MudList>
+        <div id="@_sentinelId" style="height: 1px;"></div>
+        @if(_loadingMore)
         {
-            <MudListItem T="MagazineDto" Href="@($"/magazine/{magazine.Id}")" Icon="@Icons.Material.Filled.MenuBook">
-                <div>
-                    <MudText Typo="Typo.body1">@magazine.Title</MudText>
-                    @if(magazine.FirstPublication.HasValue)
-                    {
-                        <MudText Typo="Typo.caption" Color="Color.Secondary">@magazine.FirstPublication.Value.Year</MudText>
-                    }
-                </div>
-            </MudListItem>
+            <div class="d-flex justify-center pa-3">
+                <MudProgressCircular Color="Color.Primary" Size="Size.Small" Indeterminate="true"/>
+            </div>
         }
-    </MudList>
+    </div>
 }
 else
 {

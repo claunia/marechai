@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.Data;
 using Marechai.Data.Dtos;
@@ -110,70 +111,118 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<MagazineDto>> GetMagazinesByLetterAsync(char c) => context.Magazines
-       .Where(m =>
-            (m.SortTitle != null && EF.Functions.Like(m.SortTitle, $"{c}%")) ||
-            (m.SortTitle == null && EF.Functions.Like(m.Title, $"{c}%")))
-       .OrderBy(m => MarechaiContext.NaturalSortKey(m.SortTitle))
-       .ThenBy(m => MarechaiContext.NaturalSortKey(m.Title))
-       .ThenBy(m => m.FirstPublication)
-       .Select(m => new MagazineDto
-        {
-            Id               = m.Id,
-            Title            = m.Title,
-            NativeTitle      = m.NativeTitle,
-            SortTitle        = m.SortTitle,
-            FirstPublication = m.FirstPublication,
-            FirstPublicationPrecision = m.FirstPublicationPrecision,
-            Issn             = m.Issn,
-            CountryId        = m.CountryId,
-            Country          = m.Country.Name
-        })
-       .ToListAsync();
+    public Task<List<MagazineDto>> GetMagazinesByLetterAsync(char c, [FromQuery] int? skip = null,
+                                                             [FromQuery] int? take = null,
+                                                             CancellationToken cancellationToken = default)
+    {
+        IQueryable<Magazine> ordered = context.Magazines
+                                              .Where(m =>
+                                                  (m.SortTitle != null && EF.Functions.Like(m.SortTitle, $"{c}%")) ||
+                                                  (m.SortTitle == null && EF.Functions.Like(m.Title, $"{c}%")))
+                                              .OrderBy(m => MarechaiContext.NaturalSortKey(m.SortTitle))
+                                              .ThenBy(m => MarechaiContext.NaturalSortKey(m.Title))
+                                              .ThenBy(m => m.FirstPublication);
+
+        if(skip.HasValue) ordered = ordered.Skip(skip.Value);
+        if(take.HasValue) ordered = ordered.Take(take.Value);
+
+        return ordered.Select(m => new MagazineDto
+                       {
+                           Id                        = m.Id,
+                           Title                     = m.Title,
+                           NativeTitle               = m.NativeTitle,
+                           SortTitle                 = m.SortTitle,
+                           FirstPublication          = m.FirstPublication,
+                           FirstPublicationPrecision = m.FirstPublicationPrecision,
+                           Issn                      = m.Issn,
+                           CountryId                 = m.CountryId,
+                           Country                   = m.Country.Name
+                       })
+                      .ToListAsync(cancellationToken);
+    }
+
+    [HttpGet("by-letter/{c}/count")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetMagazinesByLetterCountAsync(char c, CancellationToken cancellationToken = default) =>
+        context.Magazines
+               .Where(m =>
+                   (m.SortTitle != null && EF.Functions.Like(m.SortTitle, $"{c}%")) ||
+                   (m.SortTitle == null && EF.Functions.Like(m.Title, $"{c}%")))
+               .CountAsync(cancellationToken);
 
     [HttpGet("by-year/{year:int}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<MagazineDto>> GetMagazinesByYearAsync(int year) => context.Magazines
-       .Where(m => m.FirstPublication != null && m.FirstPublication.Value.Year == year)
-       .OrderBy(m => MarechaiContext.NaturalSortKey(m.SortTitle))
-       .ThenBy(m => MarechaiContext.NaturalSortKey(m.Title))
-       .ThenBy(m => m.FirstPublication)
-       .Select(m => new MagazineDto
-        {
-            Id               = m.Id,
-            Title            = m.Title,
-            NativeTitle      = m.NativeTitle,
-            SortTitle        = m.SortTitle,
-            FirstPublication = m.FirstPublication,
-            FirstPublicationPrecision = m.FirstPublicationPrecision,
-            Issn             = m.Issn,
-            CountryId        = m.CountryId,
-            Country          = m.Country.Name
-        })
-       .ToListAsync();
+    public Task<List<MagazineDto>> GetMagazinesByYearAsync(int year, [FromQuery] int? skip = null,
+                                                           [FromQuery] int? take = null,
+                                                           CancellationToken cancellationToken = default)
+    {
+        IQueryable<Magazine> ordered = context.Magazines
+                                              .Where(m => m.FirstPublication != null &&
+                                                          m.FirstPublication.Value.Year == year)
+                                              .OrderBy(m => MarechaiContext.NaturalSortKey(m.SortTitle))
+                                              .ThenBy(m => MarechaiContext.NaturalSortKey(m.Title))
+                                              .ThenBy(m => m.FirstPublication);
+
+        if(skip.HasValue) ordered = ordered.Skip(skip.Value);
+        if(take.HasValue) ordered = ordered.Take(take.Value);
+
+        return ordered.Select(m => new MagazineDto
+                       {
+                           Id                        = m.Id,
+                           Title                     = m.Title,
+                           NativeTitle               = m.NativeTitle,
+                           SortTitle                 = m.SortTitle,
+                           FirstPublication          = m.FirstPublication,
+                           FirstPublicationPrecision = m.FirstPublicationPrecision,
+                           Issn                      = m.Issn,
+                           CountryId                 = m.CountryId,
+                           Country                   = m.Country.Name
+                       })
+                      .ToListAsync(cancellationToken);
+    }
+
+    [HttpGet("by-year/{year:int}/count")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetMagazinesByYearCountAsync(int year, CancellationToken cancellationToken = default) =>
+        context.Magazines
+               .Where(m => m.FirstPublication != null && m.FirstPublication.Value.Year == year)
+               .CountAsync(cancellationToken);
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<MagazineDto>> GetAsync() => context.Magazines.OrderBy(b => MarechaiContext.NaturalSortKey(b.SortTitle))
-                                                        .ThenBy(b => b.FirstPublication)
-                                                        .ThenBy(b => MarechaiContext.NaturalSortKey(b.Title))
-                                                        .Select(b => new MagazineDto
-                                                         {
-                                                             Id               = b.Id,
-                                                             Title            = b.Title,
-                                                             NativeTitle      = b.NativeTitle,
-                                                             SortTitle        = b.SortTitle,
-                                                             FirstPublication = b.FirstPublication,
-                                                             FirstPublicationPrecision = b.FirstPublicationPrecision,
-                                                             Issn             = b.Issn,
-                                                             CountryId        = b.CountryId,
-                                                             Country          = b.Country.Name
-                                                         })
-                                                        .ToListAsync();
+    public Task<List<MagazineDto>> GetAsync([FromQuery] int? skip = null, [FromQuery] int? take = null,
+                                            CancellationToken cancellationToken = default)
+    {
+        IQueryable<Magazine> ordered = context.Magazines
+                                              .OrderBy(b => MarechaiContext.NaturalSortKey(b.SortTitle))
+                                              .ThenBy(b => b.FirstPublication)
+                                              .ThenBy(b => MarechaiContext.NaturalSortKey(b.Title));
+
+        if(skip.HasValue) ordered = ordered.Skip(skip.Value);
+        if(take.HasValue) ordered = ordered.Take(take.Value);
+
+        return ordered.Select(b => new MagazineDto
+                       {
+                           Id                        = b.Id,
+                           Title                     = b.Title,
+                           NativeTitle               = b.NativeTitle,
+                           SortTitle                 = b.SortTitle,
+                           FirstPublication          = b.FirstPublication,
+                           FirstPublicationPrecision = b.FirstPublicationPrecision,
+                           Issn                      = b.Issn,
+                           CountryId                 = b.CountryId,
+                           Country                   = b.Country.Name
+                       })
+                      .ToListAsync(cancellationToken);
+    }
 
     [HttpGet("titles")]
     [AllowAnonymous]
