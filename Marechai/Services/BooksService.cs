@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.Kiota.Abstractions;
@@ -103,11 +104,16 @@ public class BooksService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<List<BookDto>> GetBooksByLetterAsync(char c)
+    public async Task<List<BookDto>> GetBooksByLetterAsync(char c, int? skip = null, int? take = null,
+                                                           CancellationToken cancellationToken = default)
     {
         try
         {
-            List<BookDto> books = await client.Books.ByLetter[c.ToString()].GetAsync();
+            List<BookDto> books = await client.Books.ByLetter[c.ToString()].GetAsync(config =>
+            {
+                if(skip.HasValue) config.QueryParameters.Skip = skip.Value;
+                if(take.HasValue) config.QueryParameters.Take = take.Value;
+            }, cancellationToken);
 
             return books ?? [];
         }
@@ -117,11 +123,30 @@ public class BooksService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<List<BookDto>> GetBooksByYearAsync(int year)
+    public async Task<int> GetBooksByLetterCountAsync(char c, CancellationToken cancellationToken = default)
     {
         try
         {
-            List<BookDto> books = await client.Books.ByYear[year].GetAsync();
+            int? count = await client.Books.ByLetter[c.ToString()].Count.GetAsync(cancellationToken: cancellationToken);
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
+
+    public async Task<List<BookDto>> GetBooksByYearAsync(int year, int? skip = null, int? take = null,
+                                                         CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            List<BookDto> books = await client.Books.ByYear[year].GetAsync(config =>
+            {
+                if(skip.HasValue) config.QueryParameters.Skip = skip.Value;
+                if(take.HasValue) config.QueryParameters.Take = take.Value;
+            }, cancellationToken);
 
             return books ?? [];
         }
@@ -131,11 +156,30 @@ public class BooksService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<List<BookDto>> GetBooksAsync()
+    public async Task<int> GetBooksByYearCountAsync(int year, CancellationToken cancellationToken = default)
     {
         try
         {
-            List<BookDto> books = await client.Books.GetAsync();
+            int? count = await client.Books.ByYear[year].Count.GetAsync(cancellationToken: cancellationToken);
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
+
+    public async Task<List<BookDto>> GetBooksAsync(int? skip = null, int? take = null,
+                                                   CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            List<BookDto> books = await client.Books.GetAsync(config =>
+            {
+                if(skip.HasValue) config.QueryParameters.Skip = skip.Value;
+                if(take.HasValue) config.QueryParameters.Take = take.Value;
+            }, cancellationToken);
 
             return books ?? [];
         }

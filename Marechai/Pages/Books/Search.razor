@@ -33,7 +33,7 @@
 @inject IStringLocalizer<BooksService> L
 @inject ApiAssetUrlProvider            AssetUrls
 
-@if(_books is null)
+@if(!_initialized)
 {
     <div class="d-flex justify-center pa-8">
         <MudProgressCircular Color="Color.Primary" Indeterminate="true"/>
@@ -54,38 +54,46 @@
     }
 </MudPaper>
 
-@if(_books?.Count > 0)
+@if(_total > 0)
 {
-    <MudText Typo="Typo.body2" Class="mb-2">@string.Format(L["{0} books found in the database."], _books.Count)</MudText>
-    <MudList T="BookDto" Dense="true">
-        @foreach(BookDto book in _books)
-        {
-            <MudListItem T="BookDto" Href="@($"/book/{book.Id}")" Icon="@Icons.Material.Filled.Book">
-                <div class="d-flex align-center gap-3">
-                    @if(book.CoverGuid.HasValue)
-                    {
-                        <picture>
-                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/jxl/hd/@(book.CoverGuid).jxl, @(AssetUrls.BaseUrl)/assets/photos/book-covers/jxl/1440p/@(book.CoverGuid).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/book-covers/jxl/4k/@(book.CoverGuid).jxl 3x" type="image/jxl">
-                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/avif/hd/@(book.CoverGuid).avif, @(AssetUrls.BaseUrl)/assets/photos/book-covers/avif/1440p/@(book.CoverGuid).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/book-covers/avif/4k/@(book.CoverGuid).avif 3x" type="image/avif">
-                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/heif/hd/@(book.CoverGuid).heic, @(AssetUrls.BaseUrl)/assets/photos/book-covers/heif/1440p/@(book.CoverGuid).heic 2x, @(AssetUrls.BaseUrl)/assets/photos/book-covers/heif/4k/@(book.CoverGuid).heic 3x" type="image/heic">
-                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/webp/hd/@(book.CoverGuid).webp, @(AssetUrls.BaseUrl)/assets/photos/book-covers/webp/1440p/@(book.CoverGuid).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/book-covers/webp/4k/@(book.CoverGuid).webp 3x" type="image/webp">
-                            <img alt="@book.Title" height="48"
-                                 src="@(AssetUrls.BaseUrl)/assets/photos/book-covers/jpeg/hd/@(book.CoverGuid).jpg"
-                                 srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/jpeg/hd/@(book.CoverGuid).jpg, @(AssetUrls.BaseUrl)/assets/photos/book-covers/jpeg/1440p/@(book.CoverGuid).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/book-covers/jpeg/4k/@(book.CoverGuid).jpg 3x"
-                                 style="object-fit: contain; border-radius: 4px;"/>
-                        </picture>
-                    }
-                    <div>
-                        <MudText Typo="Typo.body1">@book.Title</MudText>
-                        @if(book.Published.HasValue)
+    <MudText Typo="Typo.body2" Class="mb-2">@string.Format(L["{0} books found in the database."], _total)</MudText>
+    <div id="@_scrollerId" style="height: calc(100dvh - 220px); min-height: 360px; overflow-y: auto;">
+        <MudList T="BookDto" Dense="true">
+            <Virtualize Items="_books" Context="book" ItemSize="64">
+                <MudListItem T="BookDto" Href="@($"/book/{book.Id}")" Icon="@Icons.Material.Filled.Book">
+                    <div class="d-flex align-center gap-3">
+                        @if(book.CoverGuid.HasValue)
                         {
-                            <MudText Typo="Typo.caption" Color="Color.Secondary">@book.Published.Value.Year</MudText>
+                            <picture>
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/jxl/hd/@(book.CoverGuid).jxl, @(AssetUrls.BaseUrl)/assets/photos/book-covers/jxl/1440p/@(book.CoverGuid).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/book-covers/jxl/4k/@(book.CoverGuid).jxl 3x" type="image/jxl">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/avif/hd/@(book.CoverGuid).avif, @(AssetUrls.BaseUrl)/assets/photos/book-covers/avif/1440p/@(book.CoverGuid).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/book-covers/avif/4k/@(book.CoverGuid).avif 3x" type="image/avif">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/heif/hd/@(book.CoverGuid).heic, @(AssetUrls.BaseUrl)/assets/photos/book-covers/heif/1440p/@(book.CoverGuid).heic 2x, @(AssetUrls.BaseUrl)/assets/photos/book-covers/heif/4k/@(book.CoverGuid).heic 3x" type="image/heic">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/webp/hd/@(book.CoverGuid).webp, @(AssetUrls.BaseUrl)/assets/photos/book-covers/webp/1440p/@(book.CoverGuid).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/book-covers/webp/4k/@(book.CoverGuid).webp 3x" type="image/webp">
+                                <img alt="@book.Title" height="48"
+                                     src="@(AssetUrls.BaseUrl)/assets/photos/book-covers/jpeg/hd/@(book.CoverGuid).jpg"
+                                     srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/jpeg/hd/@(book.CoverGuid).jpg, @(AssetUrls.BaseUrl)/assets/photos/book-covers/jpeg/1440p/@(book.CoverGuid).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/book-covers/jpeg/4k/@(book.CoverGuid).jpg 3x"
+                                     style="object-fit: contain; border-radius: 4px;"/>
+                            </picture>
                         }
+                        <div>
+                            <MudText Typo="Typo.body1">@book.Title</MudText>
+                            @if(book.Published.HasValue)
+                            {
+                                <MudText Typo="Typo.caption" Color="Color.Secondary">@book.Published.Value.Year</MudText>
+                            }
+                        </div>
                     </div>
-                </div>
-            </MudListItem>
+                </MudListItem>
+            </Virtualize>
+        </MudList>
+        <div id="@_sentinelId" style="height: 1px;"></div>
+        @if(_loadingMore)
+        {
+            <div class="d-flex justify-center pa-3">
+                <MudProgressCircular Color="Color.Primary" Size="Size.Small" Indeterminate="true"/>
+            </div>
         }
-    </MudList>
+    </div>
 }
 else
 {

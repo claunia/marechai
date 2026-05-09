@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.Data;
 using Marechai.Data.Dtos;
@@ -123,87 +124,131 @@ public class BooksController(
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<BookDto>> GetBooksByLetterAsync(char c) => context.Books
-                                                                       .Where(b =>
-                                                                            (b.SortTitle != null &&
-                                                                             EF.Functions.Like(b.SortTitle, $"{c}%")) ||
-                                                                            (b.SortTitle == null &&
-                                                                             EF.Functions.Like(b.Title, $"{c}%")))
-                                                                       .OrderBy(b => MarechaiContext.NaturalSortKey(b.SortTitle))
-                                                                       .ThenBy(b => MarechaiContext.NaturalSortKey(b.Title))
-                                                                       .ThenBy(b => b.Published)
-                                                                       .Select(b => new BookDto
-                                                                        {
-                                                                            Id        = b.Id,
-                                                                            Title     = b.Title,
-                                                                            NativeTitle = b.NativeTitle,
-                                                                            SortTitle = b.SortTitle,
-                                                                            Published = b.Published,
-                                                                            PublishedPrecision = b.PublishedPrecision,
-                                                                            Isbn      = b.Isbn,
-                                                                            CountryId = b.CountryId,
-                                                                            Pages     = b.Pages,
-                                                                            Country   = b.Country.Name,
-                                                                            CoverGuid = b.CoverGuid,
-                                                                            OriginalCoverExtension =
-                                                                                b.OriginalCoverExtension
-                                                                        })
-                                                                       .ToListAsync();
+    public Task<List<BookDto>> GetBooksByLetterAsync(char c, [FromQuery] int? skip = null,
+                                                     [FromQuery] int? take = null,
+                                                     CancellationToken cancellationToken = default)
+    {
+        IQueryable<Book> ordered = context.Books
+                                          .Where(b =>
+                                              (b.SortTitle != null &&
+                                               EF.Functions.Like(b.SortTitle, $"{c}%")) ||
+                                              (b.SortTitle == null &&
+                                               EF.Functions.Like(b.Title, $"{c}%")))
+                                          .OrderBy(b => MarechaiContext.NaturalSortKey(b.SortTitle))
+                                          .ThenBy(b => MarechaiContext.NaturalSortKey(b.Title))
+                                          .ThenBy(b => b.Published);
+
+        if(skip.HasValue) ordered = ordered.Skip(skip.Value);
+        if(take.HasValue) ordered = ordered.Take(take.Value);
+
+        return ordered.Select(b => new BookDto
+                       {
+                           Id                     = b.Id,
+                           Title                  = b.Title,
+                           NativeTitle            = b.NativeTitle,
+                           SortTitle              = b.SortTitle,
+                           Published              = b.Published,
+                           PublishedPrecision     = b.PublishedPrecision,
+                           Isbn                   = b.Isbn,
+                           CountryId              = b.CountryId,
+                           Pages                  = b.Pages,
+                           Country                = b.Country.Name,
+                           CoverGuid              = b.CoverGuid,
+                           OriginalCoverExtension = b.OriginalCoverExtension
+                       })
+                      .ToListAsync(cancellationToken);
+    }
+
+    [HttpGet("by-letter/{c}/count")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetBooksByLetterCountAsync(char c, CancellationToken cancellationToken = default) =>
+        context.Books
+               .Where(b =>
+                   (b.SortTitle != null && EF.Functions.Like(b.SortTitle, $"{c}%")) ||
+                   (b.SortTitle == null && EF.Functions.Like(b.Title, $"{c}%")))
+               .CountAsync(cancellationToken);
 
     [HttpGet("by-year/{year:int}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<BookDto>> GetBooksByYearAsync(int year) => context.Books
-                                                                       .Where(b => b.Published != null &&
-                                                                                   b.Published.Value.Year == year)
-                                                                       .OrderBy(b => MarechaiContext.NaturalSortKey(b.SortTitle))
-                                                                       .ThenBy(b => MarechaiContext.NaturalSortKey(b.Title))
-                                                                       .ThenBy(b => b.Published)
-                                                                       .Select(b => new BookDto
-                                                                        {
-                                                                            Id        = b.Id,
-                                                                            Title     = b.Title,
-                                                                            NativeTitle = b.NativeTitle,
-                                                                            SortTitle = b.SortTitle,
-                                                                            Published = b.Published,
-                                                                            PublishedPrecision = b.PublishedPrecision,
-                                                                            Isbn      = b.Isbn,
-                                                                            CountryId = b.CountryId,
-                                                                            Pages     = b.Pages,
-                                                                            Country   = b.Country.Name,
-                                                                            CoverGuid = b.CoverGuid,
-                                                                            OriginalCoverExtension =
-                                                                                b.OriginalCoverExtension
-                                                                        })
-                                                                       .ToListAsync();
+    public Task<List<BookDto>> GetBooksByYearAsync(int year, [FromQuery] int? skip = null,
+                                                   [FromQuery] int? take = null,
+                                                   CancellationToken cancellationToken = default)
+    {
+        IQueryable<Book> ordered = context.Books
+                                          .Where(b => b.Published != null && b.Published.Value.Year == year)
+                                          .OrderBy(b => MarechaiContext.NaturalSortKey(b.SortTitle))
+                                          .ThenBy(b => MarechaiContext.NaturalSortKey(b.Title))
+                                          .ThenBy(b => b.Published);
+
+        if(skip.HasValue) ordered = ordered.Skip(skip.Value);
+        if(take.HasValue) ordered = ordered.Take(take.Value);
+
+        return ordered.Select(b => new BookDto
+                       {
+                           Id                     = b.Id,
+                           Title                  = b.Title,
+                           NativeTitle            = b.NativeTitle,
+                           SortTitle              = b.SortTitle,
+                           Published              = b.Published,
+                           PublishedPrecision     = b.PublishedPrecision,
+                           Isbn                   = b.Isbn,
+                           CountryId              = b.CountryId,
+                           Pages                  = b.Pages,
+                           Country                = b.Country.Name,
+                           CoverGuid              = b.CoverGuid,
+                           OriginalCoverExtension = b.OriginalCoverExtension
+                       })
+                      .ToListAsync(cancellationToken);
+    }
+
+    [HttpGet("by-year/{year:int}/count")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetBooksByYearCountAsync(int year, CancellationToken cancellationToken = default) =>
+        context.Books
+               .Where(b => b.Published != null && b.Published.Value.Year == year)
+               .CountAsync(cancellationToken);
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<BookDto>> GetAsync() => context.Books.OrderBy(b => MarechaiContext.NaturalSortKey(b.SortTitle))
-                                                    .ThenBy(b => b.Published)
-                                                    .ThenBy(b => MarechaiContext.NaturalSortKey(b.Title))
-                                                    .Select(b => new BookDto
-                                                     {
-                                                         Id                     = b.Id,
-                                                         Title                  = b.Title,
-                                                         NativeTitle            = b.NativeTitle,
-                                                         SortTitle              = b.SortTitle,
-                                                         Published              = b.Published,
-                                                         PublishedPrecision     = b.PublishedPrecision,
-                                                         Isbn                   = b.Isbn,
-                                                         CountryId              = b.CountryId,
-                                                         Pages                  = b.Pages,
-                                                         Edition                = b.Edition,
-                                                         PreviousId             = b.PreviousId,
-                                                         SourceId               = b.SourceId,
-                                                         Country                = b.Country.Name,
-                                                         CoverGuid              = b.CoverGuid,
-                                                         OriginalCoverExtension = b.OriginalCoverExtension
-                                                     })
-                                                    .ToListAsync();
+    public Task<List<BookDto>> GetAsync([FromQuery] int? skip = null, [FromQuery] int? take = null,
+                                        CancellationToken cancellationToken = default)
+    {
+        IQueryable<Book> ordered = context.Books
+                                          .OrderBy(b => MarechaiContext.NaturalSortKey(b.SortTitle))
+                                          .ThenBy(b => b.Published)
+                                          .ThenBy(b => MarechaiContext.NaturalSortKey(b.Title));
+
+        if(skip.HasValue) ordered = ordered.Skip(skip.Value);
+        if(take.HasValue) ordered = ordered.Take(take.Value);
+
+        return ordered.Select(b => new BookDto
+                       {
+                           Id                     = b.Id,
+                           Title                  = b.Title,
+                           NativeTitle            = b.NativeTitle,
+                           SortTitle              = b.SortTitle,
+                           Published              = b.Published,
+                           PublishedPrecision     = b.PublishedPrecision,
+                           Isbn                   = b.Isbn,
+                           CountryId              = b.CountryId,
+                           Pages                  = b.Pages,
+                           Edition                = b.Edition,
+                           PreviousId             = b.PreviousId,
+                           SourceId               = b.SourceId,
+                           Country                = b.Country.Name,
+                           CoverGuid              = b.CoverGuid,
+                           OriginalCoverExtension = b.OriginalCoverExtension
+                       })
+                      .ToListAsync(cancellationToken);
+    }
 
     [HttpGet("{id:long}")]
     [AllowAnonymous]
