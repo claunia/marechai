@@ -32,7 +32,7 @@
 @inherits OwningComponentBase<ComputersService>
 @inject IStringLocalizer<ComputersService> L
 
-@if(_computers is null)
+@if(!_initialized)
 {
     <div class="d-flex justify-center pa-8">
         <MudProgressCircular Color="Color.Primary" Indeterminate="true"/>
@@ -56,17 +56,25 @@
     }
 </MudPaper>
 
-@if(_computers?.Count > 0)
+@if(_total > 0)
 {
-    <MudText Typo="Typo.body2" Class="mb-2">@string.Format(L["{0} computers found in the database."], _computers.Count)</MudText>
-    <MudList T="MachineDto" Dense="true">
-        @foreach(MachineDto computer in _computers)
+    <MudText Typo="Typo.body2" Class="mb-2">@string.Format(L["{0} computers found in the database."], _total)</MudText>
+    <div id="@_scrollerId" style="height: calc(100dvh - 220px); min-height: 360px; overflow-y: auto;">
+        <MudList T="MachineDto" Dense="true">
+            <Virtualize Items="_computers" Context="computer" ItemSize="64">
+                <MudListItem T="MachineDto" Href="@($"/machine/{computer.Id}")" Icon="@Icons.Material.Filled.Computer">
+                    @computer.Company @computer.Name
+                </MudListItem>
+            </Virtualize>
+        </MudList>
+        <div id="@_sentinelId" style="height: 1px;"></div>
+        @if(_loadingMore)
         {
-            <MudListItem T="MachineDto" Href="@($"/machine/{computer.Id}")" Icon="@Icons.Material.Filled.Computer">
-                @computer.Company @computer.Name
-            </MudListItem>
+            <div class="d-flex justify-center pa-3">
+                <MudProgressCircular Color="Color.Primary" Size="Size.Small" Indeterminate="true"/>
+            </div>
         }
-    </MudList>
+    </div>
 }
 else
 {

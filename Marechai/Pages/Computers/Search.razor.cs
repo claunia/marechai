@@ -23,21 +23,33 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace Marechai.Pages.Computers;
 
-public partial class Search
+public partial class Search : IAsyncDisposable
 {
-    char?            _character;
-    List<MachineDto> _computers;
-    bool             _loaded;
-    bool             _showPrototypes;
-    string           _lastStartingCharacter;
-    int?             _lastYear;
+    const int                     _pageSize    = 100;
+    readonly string               _sentinelId  = $"computers-search-sentinel-{Guid.NewGuid():N}";
+    readonly string               _scrollerId  = $"computers-search-scroll-{Guid.NewGuid():N}";
+    readonly List<MachineDto>     _computers = [];
+    char?                         _character;
+    bool                          _initialized;
+    bool                          _loadingMore;
+    bool                          _observerRegistered;
+    bool                          _showPrototypes;
+    string                        _lastStartingCharacter;
+    int?                          _lastYear;
+    int                           _total;
+    DotNetObjectReference<Search> _selfRef;
+
+    [Inject]
+    IJSRuntime JS { get; set; }
 
     [Parameter]
     public int? Year { get; set; }
@@ -45,30 +57,29 @@ public partial class Search
     [Parameter]
     public string StartingCharacter { get; set; }
 
+    bool HasMore => _computers.Count < _total;
+
     protected override void OnParametersSet()
     {
         if(Year == _lastYear && StartingCharacter == _lastStartingCharacter) return;
 
         _lastYear              = Year;
         _lastStartingCharacter = StartingCharacter;
-        _loaded                = false;
+        _initialized           = false;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if(_loaded) return;
-
-        _character      = null;
-        _showPrototypes = false;
-
-        if(StartingCharacter == "prototypes")
+        if(!_initialized)
         {
-            _showPrototypes = true;
-            _computers      = await Service.GetPrototypesAsync();
-        }
-        else
-        {
-            if(!string.IsNullOrWhiteSpace(StartingCharacter) && StartingCharacter.Length == 1)
+            _character      = null;
+            _showPrototypes = false;
+            _total          = 0;
+            _computers.Clear();
+
+            if(StartingCharacter == "prototypes")
+                _showPrototypes = true;
+            else if(!string.IsNullOrWhiteSpace(StartingCharacter) && StartingCharacter.Length == 1)
             {
                 _character = StartingCharacter[0];
 
@@ -79,14 +90,117 @@ public partial class Search
                 if(_character < '0' || _character > '9' && _character < 'A' || _character > 'Z') _character = null;
             }
 
-            if(_character.HasValue) _computers = await Service.GetComputersByLetterAsync(_character.Value);
+            // Stop the previous observer (if any) before swapping in a new
+            // batch — the sentinel/scroller IDs are stable per page instance,
+            // but a route-parameter change forces a fresh data load and the
+            // observer must be re-armed once the new sentinel has rendered.
+            await UnobserveAsync();
 
-            if(Year.HasValue && _computers is null) _computers = await Service.GetComputersByYearAsync(Year.Value);
+            // Fetch the total count + first page in parallel so the page is
+            // fully painted in one round-trip pair.
+            Task<int>              countTask     = GetCurrentCountAsync();
+            Task<List<MachineDto>> firstPageTask = FetchBatchAsync(0, _pageSize);
 
-            _computers ??= await Service.GetComputersAsync();
+            await Task.WhenAll(countTask, firstPageTask);
+
+            _total = countTask.Result;
+            _computers.AddRange(firstPageTask.Result);
+            _initialized = true;
+
+            StateHasChanged();
+            return;
         }
 
-        _loaded = true;
+        // Register the IntersectionObserver once the sentinel has been
+        // rendered. The observer keeps the same target reference, so this is
+        // a one-shot until UnobserveAsync clears the flag.
+        if(!_observerRegistered && HasMore)
+        {
+            _selfRef ??= DotNetObjectReference.Create(this);
+
+            try
+            {
+                await JS.InvokeVoidAsync("marechaiInfiniteScroll.observe", _sentinelId, _selfRef, $"#{_scrollerId}",
+                                         "200px");
+                _observerRegistered = true;
+            }
+            catch(JSDisconnectedException)
+            {
+                // Circuit gone — nothing to do.
+            }
+        }
+    }
+
+    /// <summary>
+    /// Invoked by the IntersectionObserver in <c>infinite-scroll.js</c> when the
+    /// sentinel scrolls into view. Loads the next page, appends it to the
+    /// in-memory list, and re-renders.
+    /// </summary>
+    [JSInvokable]
+    public async Task OnSentinelVisibleAsync()
+    {
+        if(_loadingMore || !HasMore) return;
+
+        _loadingMore = true;
         StateHasChanged();
+
+        try
+        {
+            List<MachineDto> next = await FetchBatchAsync(_computers.Count, _pageSize);
+            _computers.AddRange(next);
+
+            // If the very last page just arrived, stop the observer so it
+            // doesn't keep firing as the user scrolls past the new tail.
+            if(!HasMore) await UnobserveAsync();
+        }
+        finally
+        {
+            _loadingMore = false;
+            StateHasChanged();
+        }
+    }
+
+    Task<int> GetCurrentCountAsync()
+    {
+        if(_showPrototypes) return Service.GetPrototypesCountAsync();
+
+        if(_character.HasValue) return Service.GetComputersByLetterCountAsync(_character.Value);
+
+        if(Year.HasValue) return Service.GetComputersByYearCountAsync(Year.Value);
+
+        return Service.GetComputersCountAsync();
+    }
+
+    Task<List<MachineDto>> FetchBatchAsync(int skip, int take)
+    {
+        if(_showPrototypes) return Service.GetPrototypesAsync(skip, take);
+
+        if(_character.HasValue) return Service.GetComputersByLetterAsync(_character.Value, skip, take);
+
+        if(Year.HasValue) return Service.GetComputersByYearAsync(Year.Value, skip, take);
+
+        return Service.GetComputersAsync(skip, take);
+    }
+
+    async Task UnobserveAsync()
+    {
+        if(!_observerRegistered) return;
+
+        try
+        {
+            await JS.InvokeVoidAsync("marechaiInfiniteScroll.unobserve", _sentinelId);
+        }
+        catch(JSDisconnectedException)
+        {
+            // Circuit gone; nothing to do.
+        }
+
+        _observerRegistered = false;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await UnobserveAsync();
+        _selfRef?.Dispose();
     }
 }
