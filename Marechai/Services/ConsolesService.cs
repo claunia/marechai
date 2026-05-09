@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 
@@ -74,11 +75,16 @@ public class ConsolesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<List<MachineDto>> GetConsolesByLetterAsync(char c)
+    public async Task<List<MachineDto>> GetConsolesByLetterAsync(char c, int? skip = null, int? take = null,
+                                                                    CancellationToken cancellationToken = default)
     {
         try
         {
-            List<MachineDto> machines = await client.Consoles.ByLetter[c.ToString()].GetAsync();
+            List<MachineDto> machines = await client.Consoles.ByLetter[c.ToString()].GetAsync(config =>
+            {
+                if(skip.HasValue) config.QueryParameters.Skip = skip.Value;
+                if(take.HasValue) config.QueryParameters.Take = take.Value;
+            }, cancellationToken);
 
             return machines ?? [];
         }
@@ -88,11 +94,31 @@ public class ConsolesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<List<MachineDto>> GetConsolesByYearAsync(int year)
+    public async Task<int> GetConsolesByLetterCountAsync(char c, CancellationToken cancellationToken = default)
     {
         try
         {
-            List<MachineDto> machines = await client.Consoles.ByYear[year].GetAsync();
+            int? count = await client.Consoles.ByLetter[c.ToString()].Count
+                                     .GetAsync(cancellationToken: cancellationToken);
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
+
+    public async Task<List<MachineDto>> GetConsolesByYearAsync(int year, int? skip = null, int? take = null,
+                                                                  CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            List<MachineDto> machines = await client.Consoles.ByYear[year].GetAsync(config =>
+            {
+                if(skip.HasValue) config.QueryParameters.Skip = skip.Value;
+                if(take.HasValue) config.QueryParameters.Take = take.Value;
+            }, cancellationToken);
 
             return machines ?? [];
         }
@@ -102,11 +128,30 @@ public class ConsolesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<List<MachineDto>> GetConsolesAsync()
+    public async Task<int> GetConsolesByYearCountAsync(int year, CancellationToken cancellationToken = default)
     {
         try
         {
-            List<MachineDto> machines = await client.Consoles.GetAsync();
+            int? count = await client.Consoles.ByYear[year].Count.GetAsync(cancellationToken: cancellationToken);
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
+
+    public async Task<List<MachineDto>> GetConsolesAsync(int? skip = null, int? take = null,
+                                                            CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            List<MachineDto> machines = await client.Consoles.GetAsync(config =>
+            {
+                if(skip.HasValue) config.QueryParameters.Skip = skip.Value;
+                if(take.HasValue) config.QueryParameters.Take = take.Value;
+            }, cancellationToken);
 
             return machines ?? [];
         }
@@ -116,17 +161,36 @@ public class ConsolesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<List<MachineDto>> GetPrototypesAsync()
+    public async Task<List<MachineDto>> GetPrototypesAsync(int? skip = null, int? take = null,
+                                                           CancellationToken cancellationToken = default)
     {
         try
         {
-            List<MachineDto> machines = await client.Consoles.Prototypes.GetAsync();
+            List<MachineDto> machines = await client.Consoles.Prototypes.GetAsync(config =>
+            {
+                if(skip.HasValue) config.QueryParameters.Skip = skip.Value;
+                if(take.HasValue) config.QueryParameters.Take = take.Value;
+            }, cancellationToken);
 
             return machines ?? [];
         }
         catch
         {
             return [];
+        }
+    }
+
+    public async Task<int> GetPrototypesCountAsync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            int? count = await client.Consoles.Prototypes.Count.GetAsync(cancellationToken: cancellationToken);
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
         }
     }
 

@@ -32,7 +32,7 @@
 @inherits OwningComponentBase<ConsolesService>
 @inject IStringLocalizer<ConsolesService> L
 
-@if(_consoles is null)
+@if(!_initialized)
 {
     <div class="d-flex justify-center pa-8">
         <MudProgressCircular Color="Color.Primary" Indeterminate="true"/>
@@ -56,17 +56,25 @@
     }
 </MudPaper>
 
-@if(_consoles?.Count > 0)
+@if(_total > 0)
 {
-    <MudText Typo="Typo.body2" Class="mb-2">@string.Format(L["{0} videogame consoles found in the database."], _consoles.Count)</MudText>
-    <MudList T="MachineDto" Dense="true">
-        @foreach(MachineDto console in _consoles)
+    <MudText Typo="Typo.body2" Class="mb-2">@string.Format(L["{0} videogame consoles found in the database."], _total)</MudText>
+    <div id="@_scrollerId" style="height: calc(100dvh - 220px); min-height: 360px; overflow-y: auto;">
+        <MudList T="MachineDto" Dense="true">
+            <Virtualize Items="_consoles" Context="console" ItemSize="64">
+                <MudListItem T="MachineDto" Href="@($"/machine/{console.Id}")" Icon="@Icons.Material.Filled.SportsEsports">
+                    @console.Company @console.Name
+                </MudListItem>
+            </Virtualize>
+        </MudList>
+        <div id="@_sentinelId" style="height: 1px;"></div>
+        @if(_loadingMore)
         {
-            <MudListItem T="MachineDto" Href="@($"/machine/{console.Id}")" Icon="@Icons.Material.Filled.SportsEsports">
-                @console.Company @console.Name
-            </MudListItem>
+            <div class="d-flex justify-center pa-3">
+                <MudProgressCircular Color="Color.Primary" Size="Size.Small" Indeterminate="true"/>
+            </div>
         }
-    </MudList>
+    </div>
 }
 else
 {
