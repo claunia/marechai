@@ -16,3 +16,226 @@
   right: 0.75rem;
   top: 0.5rem;
 }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Shared spacing for rendered Markdown bodies.
+
+   `.markdown-body` is used by Books / Documents / Magazines / Messages
+   synopsis cards (rendered via `SafeMarkdownRenderer.Render(...)`).
+   The per-entity description classes (`.gpu-description`,
+   `.sound-synth-description`, `.processor-description`,
+   `.company-description`, `.machine-description`, `.software-description`,
+   `.person-description`) ALSO match these rules so they get the same
+   spacing as `markdown-body` without each page having to redefine the
+   block-level rhythm. The per-page `<style>` blocks still set the
+   per-class colors / line-heights but no longer need to set margins.
+   ───────────────────────────────────────────────────────────────────────── */
+.markdown-body,
+.gpu-description,
+.sound-synth-description,
+.processor-description,
+.company-description,
+.machine-description,
+.software-description,
+.person-description {
+  color: inherit;
+  line-height: 1.7;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.markdown-body h1,
+.gpu-description h1,
+.sound-synth-description h1,
+.processor-description h1,
+.company-description h1,
+.machine-description h1,
+.software-description h1,
+.person-description h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 2rem 0 1rem;
+  line-height: 1.3;
+}
+
+.markdown-body h2,
+.gpu-description h2,
+.sound-synth-description h2,
+.processor-description h2,
+.company-description h2,
+.machine-description h2,
+.software-description h2,
+.person-description h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 2rem 0 1rem;
+  line-height: 1.3;
+}
+
+.markdown-body h3,
+.gpu-description h3,
+.sound-synth-description h3,
+.processor-description h3,
+.company-description h3,
+.machine-description h3,
+.software-description h3,
+.person-description h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.75rem;
+  line-height: 1.3;
+}
+
+.markdown-body h4, .markdown-body h5, .markdown-body h6,
+.gpu-description h4, .gpu-description h5, .gpu-description h6,
+.sound-synth-description h4, .sound-synth-description h5, .sound-synth-description h6,
+.processor-description h4, .processor-description h5, .processor-description h6,
+.company-description h4, .company-description h5, .company-description h6,
+.machine-description h4, .machine-description h5, .machine-description h6,
+.software-description h4, .software-description h5, .software-description h6,
+.person-description h4, .person-description h5, .person-description h6 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 1.25rem 0 0.6rem;
+  line-height: 1.3;
+}
+
+.markdown-body p,
+.gpu-description p,
+.sound-synth-description p,
+.processor-description p,
+.company-description p,
+.machine-description p,
+.software-description p,
+.person-description p {
+  margin: 1rem 0;
+  line-height: 1.8;
+}
+
+.markdown-body ul, .markdown-body ol,
+.gpu-description ul, .gpu-description ol,
+.sound-synth-description ul, .sound-synth-description ol,
+.processor-description ul, .processor-description ol,
+.company-description ul, .company-description ol,
+.machine-description ul, .machine-description ol,
+.software-description ul, .software-description ol,
+.person-description ul, .person-description ol {
+  margin: 1rem 0;
+  padding-left: 1.75rem;
+}
+
+.markdown-body li,
+.gpu-description li,
+.sound-synth-description li,
+.processor-description li,
+.company-description li,
+.machine-description li,
+.software-description li,
+.person-description li {
+  margin: 0.6rem 0;
+  line-height: 1.7;
+}
+
+.markdown-body strong,
+.gpu-description strong,
+.sound-synth-description strong,
+.processor-description strong,
+.company-description strong,
+.machine-description strong,
+.software-description strong,
+.person-description strong {
+  font-weight: 700;
+}
+
+.markdown-body img,
+.gpu-description img,
+.sound-synth-description img,
+.processor-description img,
+.company-description img,
+.machine-description img,
+.software-description img,
+.person-description img {
+  max-width: 100%;
+  height: auto;
+}
+
+.markdown-body pre,
+.gpu-description pre,
+.sound-synth-description pre,
+.processor-description pre,
+.company-description pre,
+.machine-description pre,
+.software-description pre,
+.person-description pre {
+  overflow-x: auto;
+  max-width: 100%;
+  background: var(--mud-palette-surface);
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.markdown-body code,
+.gpu-description code,
+.sound-synth-description code,
+.processor-description code,
+.company-description code,
+.machine-description code,
+.software-description code,
+.person-description code {
+  background: var(--mud-palette-surface);
+  padding: 0.125rem 0.25rem;
+  border-radius: 3px;
+  font-size: 0.875em;
+}
+
+.markdown-body blockquote,
+.gpu-description blockquote,
+.sound-synth-description blockquote,
+.processor-description blockquote,
+.company-description blockquote,
+.machine-description blockquote,
+.software-description blockquote,
+.person-description blockquote {
+  border-left: 4px solid var(--mud-palette-primary);
+  margin: 0.75rem 0;
+  padding: 0.5rem 1rem;
+  opacity: 0.85;
+}
+
+.markdown-body table,
+.gpu-description table,
+.sound-synth-description table,
+.processor-description table,
+.company-description table,
+.machine-description table,
+.software-description table,
+.person-description table {
+  border-collapse: collapse;
+  margin: 0.75rem 0;
+  width: 100%;
+}
+
+.markdown-body th, .markdown-body td,
+.gpu-description th, .gpu-description td,
+.sound-synth-description th, .sound-synth-description td,
+.processor-description th, .processor-description td,
+.company-description th, .company-description td,
+.machine-description th, .machine-description td,
+.software-description th, .software-description td,
+.person-description th, .person-description td {
+  border: 1px solid var(--mud-palette-lines-default);
+  padding: 0.5rem;
+}
+
+.markdown-body hr,
+.gpu-description hr,
+.sound-synth-description hr,
+.processor-description hr,
+.company-description hr,
+.machine-description hr,
+.software-description hr,
+.person-description hr {
+  border: none;
+  border-top: 1px solid var(--mud-palette-lines-default);
+  margin: 1rem 0;
+}
