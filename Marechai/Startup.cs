@@ -25,6 +25,7 @@
 
 using System;
 using System.Globalization;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using MudBlazor.Services;
@@ -33,6 +34,7 @@ using Marechai.Services;
 using Marechai.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
@@ -63,6 +65,21 @@ public class Startup(IConfiguration configuration)
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddMudServices();
+
+        // Persist the ASP.NET Core data protection keys to a stable on-disk directory so the
+        // tokens we encrypt into ProtectedLocalStorage survive process restarts. Without this
+        // every restart generates a fresh ephemeral key, which makes the next request from a
+        // returning user crash with "The key {guid} was not found in the key ring" when the
+        // auth state provider tries to unprotect the cached JWT. SetApplicationName pins the
+        // ring to this app so multiple Marechai-family apps cannot accidentally share keys.
+        string keyRingPath = Configuration["DataProtection:KeyRingPath"]
+                          ?? Path.Combine(AppContext.BaseDirectory, "keys");
+
+        Directory.CreateDirectory(keyRingPath);
+
+        services.AddDataProtection()
+                .PersistKeysToFileSystem(new DirectoryInfo(keyRingPath))
+                .SetApplicationName("Marechai.Blazor");
 
         services.AddMarechaiEmail(Configuration);
 

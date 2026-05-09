@@ -24,6 +24,7 @@
 *******************************************************************************/
 
 using System;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.JSInterop;
@@ -56,6 +57,24 @@ public sealed class TokenProvider(ProtectedLocalStorage localStorage)
         {
             // Circuit not ready or JS error. Leave uninitialized so the next call retries.
             _cachedToken = null;
+        }
+        catch(CryptographicException)
+        {
+            // The data protection key that encrypted the cached token is no longer in the key
+            // ring (e.g. the key directory was wiped or the app's key ring rotated past it).
+            // Treat the stale ciphertext as "no token" and best-effort delete it so the user
+            // simply ends up logged out instead of seeing a server error every render.
+            _cachedToken = null;
+            _initialized = true;
+
+            try
+            {
+                await localStorage.DeleteAsync(StorageKey);
+            }
+            catch
+            {
+                // Best-effort cleanup; ignore JS / prerender failures here.
+            }
         }
 
         return _cachedToken;
