@@ -30,7 +30,7 @@
 @inherits OwningComponentBase<GpusService>
 @inject IStringLocalizer<GpusService> L
 
-@if(_gpus is null)
+@if(!_initialized)
 {
     <div class="d-flex justify-center pa-8">
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
@@ -45,23 +45,28 @@
         <MudIcon Icon="@Icons.Material.Filled.Tv" Size="Size.Large" Style="color: white;"/>
         <MudText Typo="Typo.h4" Style="color: white;">@L["Graphics Processing Units"]</MudText>
     </MudStack>
-    <MudChip T="string" Color="Color.Dark" Variant="Variant.Filled" Class="mt-2" Style="color: white; white-space: normal; height: auto; overflow: visible; text-overflow: unset; padding: 8px 16px;">@string.Format(L["{0} GPUs found in the database."], _gpus.Count)</MudChip>
+    <MudChip T="string" Color="Color.Dark" Variant="Variant.Filled" Class="mt-2" Style="color: white; white-space: normal; height: auto; overflow: visible; text-overflow: unset; padding: 8px 16px;">@string.Format(L["{0} GPUs found in the database."], _total)</MudChip>
 </MudPaper>
 
-@if(_gpus.Any())
+@if(_total > 0)
 {
-    <MudTextField T="string" @bind-Value="_searchText" @bind-Value:after="OnSearchChanged"
-                  Placeholder="@L["Filter GPUs..."]"
-                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
-                  Variant="Variant.Outlined" Class="mb-4" Immediate="true"/>
-
-    <div style="height: 70vh; overflow-y: auto;">
-        <Virtualize Items="_filteredGpus" Context="gpu" ItemSize="88">
+    <div id="@_scrollerId" style="height: 70vh; overflow-y: auto;">
+        <Virtualize Items="_gpus" Context="gpu" ItemSize="88">
+            @{
+                bool isSpecial = gpu.Name is "DB_FRAMEBUFFER" or "DB_SOFTWARE" or "DB_NONE";
+                string displayName = gpu.Name switch
+                {
+                    "DB_FRAMEBUFFER" => L["Framebuffer"],
+                    "DB_SOFTWARE"    => L["Software"],
+                    "DB_NONE"        => L["None"],
+                    _                => gpu.Name ?? string.Empty
+                };
+            }
             <a href="/gpu/@gpu.Id" style="text-decoration: none; color: inherit;">
                 <MudCard Elevation="1" Class="mb-2 rounded-lg" Style="cursor: pointer;">
                     <MudCardContent>
                         <div class="d-flex align-center gap-3">
-                            @if(gpu.IsSpecial)
+                            @if(isSpecial)
                             {
                                 <MudIcon Icon="@Icons.Material.Filled.ScreenshotMonitor" Color="Color.Secondary"/>
                             }
@@ -70,7 +75,7 @@
                                 <MudIcon Icon="@Icons.Material.Filled.DeveloperBoard" Color="Color.Primary"/>
                             }
                             <div>
-                                <MudText Typo="Typo.body1" Style="font-weight: 500;">@gpu.DisplayName</MudText>
+                                <MudText Typo="Typo.body1" Style="font-weight: 500;">@displayName</MudText>
                                 @if(!string.IsNullOrEmpty(gpu.Company))
                                 {
                                     <MudText Typo="Typo.caption" Style="color: var(--mud-palette-text-secondary);">@gpu.Company</MudText>
@@ -81,9 +86,17 @@
                 </MudCard>
             </a>
         </Virtualize>
+        <div id="@_sentinelId" style="height: 1px;"></div>
+        @if(_loadingMore)
+        {
+            <div class="d-flex justify-center pa-3">
+                <MudProgressCircular Color="Color.Primary" Size="Size.Small" Indeterminate="true"/>
+            </div>
+        }
     </div>
 }
 else
 {
     <MudAlert Severity="Severity.Info">@L["No GPUs found"]</MudAlert>
 }
+

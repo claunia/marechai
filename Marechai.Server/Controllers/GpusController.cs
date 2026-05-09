@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.Data;
 using Marechai.Data.Dtos;
@@ -47,21 +48,43 @@ public class GpusController(MarechaiContext context, IDbContextFactory<MarechaiC
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<GpuDto>> GetAsync() => context.Gpus.AsNoTracking()
-                                                   .OrderBy(g => g.Company.Name)
-                                                   .ThenBy(g => g.Name)
-                                                   .ThenBy(g => g.Introduced)
-                                                   .Select(g => new GpuDto
-                                                    {
-                                                        Id         = g.Id,
-                                                        Company    = g.Company.Name,
-                                                        CompanyId  = g.CompanyId,
-                                                        Introduced = g.Introduced,
-                                                        IntroducedPrecision = g.IntroducedPrecision,
-                                                        ModelCode  = g.ModelCode,
-                                                        Name       = g.Name
-                                                    })
-                                                   .ToListAsync();
+    public Task<List<GpuDto>> GetAsync([FromQuery] int? skip = null, [FromQuery] int? take = null,
+                                       CancellationToken cancellationToken = default)
+    {
+        IQueryable<Gpu> ordered = context.Gpus
+                                         .AsNoTracking()
+                                         // Pin the special "DB_FRAMEBUFFER", "DB_SOFTWARE" and "DB_NONE" rows
+                                         // to the top so the public /gpus page can display them first across
+                                         // paginated batches.
+                                         .OrderBy(g => g.Name == "DB_FRAMEBUFFER" ? 0 :
+                                                       g.Name == "DB_SOFTWARE"    ? 1 :
+                                                       g.Name == "DB_NONE"        ? 2 : 3)
+                                         .ThenBy(g => g.Company.Name)
+                                         .ThenBy(g => g.Name)
+                                         .ThenBy(g => g.Introduced);
+
+        if(skip.HasValue) ordered = ordered.Skip(skip.Value);
+        if(take.HasValue) ordered = ordered.Take(take.Value);
+
+        return ordered.Select(g => new GpuDto
+                       {
+                           Id                  = g.Id,
+                           Company             = g.Company.Name,
+                           CompanyId           = g.CompanyId,
+                           Introduced          = g.Introduced,
+                           IntroducedPrecision = g.IntroducedPrecision,
+                           ModelCode           = g.ModelCode,
+                           Name                = g.Name
+                       })
+                      .ToListAsync(cancellationToken);
+    }
+
+    [HttpGet("count")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetCountAsync(CancellationToken cancellationToken = default) =>
+        context.Gpus.CountAsync(cancellationToken);
 
     [HttpGet("/machines/{machineId:int}/gpus")]
     [AllowAnonymous]
