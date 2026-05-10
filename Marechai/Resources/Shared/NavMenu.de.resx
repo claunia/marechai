@@ -234,4 +234,196 @@
     <value>Nachrichtenmeldungen</value>
         <comment>Message reports admin link</comment>
   </data>
+    <data name="Search" xml:space="preserve">
+        <value>Suchen</value>
+    </data>
+    <data name="Search…" xml:space="preserve">
+        <value>Suchen…</value>
+    </data>
+    <data name="Search Results" xml:space="preserve">
+        <value>Suchergebnisse</value>
+    </data>
+    <data name="Advanced Search" xml:space="preserve">
+        <value>Erweiterte Suche</value>
+    </data>
+    <data name="Refine search" xml:space="preserve">
+        <value>Suche verfeinern</value>
+    </data>
+    <data name="No results found." xml:space="preserve">
+        <value>Keine Ergebnisse gefunden.</value>
+    </data>
+    <data name="Type at least 3 characters to search." xml:space="preserve">
+        <value>Geben Sie mindestens 3 Zeichen ein, um zu suchen.</value>
+    </data>
+    <data name="Tip: prefix to filter by category" xml:space="preserve">
+        <value>Tipp: Präfix zum Filtern nach Kategorie</value>
+    </data>
+    <data name="Query" xml:space="preserve">
+        <value>Suchanfrage</value>
+    </data>
+    <data name="Entity types" xml:space="preserve">
+        <value>Entitätstypen</value>
+    </data>
+    <data name="All categories" xml:space="preserve">
+        <value>Alle Kategorien</value>
+    </data>
+    <data name="Year from" xml:space="preserve">
+        <value>Jahr von</value>
+    </data>
+    <data name="Year to" xml:space="preserve">
+        <value>Jahr bis</value>
+    </data>
+    <data name="Country" xml:space="preserve">
+        <value>Land</value>
+    </data>
+    <data name="Contains" xml:space="preserve">
+        <value>Enthält</value>
+    </data>
+    <data name="Does not contain" xml:space="preserve">
+        <value>Enthält nicht</value>
+    </data>
+    <data name="Exact match" xml:space="preserve">
+        <value>Genaue Übereinstimmung</value>
+    </data>
+    <data name="Has image" xml:space="preserve">
+        <value>Hat Bild</value>
+    </data>
+    <data name="Any" xml:space="preserve">
+        <value>Beliebig</value>
+    </data>
+    <data name="Yes" xml:space="preserve">
+        <value>Ja</value>
+    </data>
+    <data name="No" xml:space="preserve">
+        <value>Nein</value>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Abbrechen</value>
+    </data>
+    <data name="Close" xml:space="preserve">
+        <value>Schließen</value>
+    </data>
+    <data name="Company" xml:space="preserve">
+        <value>Unternehmen</value>
+    </data>
+    <data name="Computer" xml:space="preserve">
+        <value>Computer</value>
+    </data>
+    <data name="Console" xml:space="preserve">
+        <value>Konsole</value>
+    </data>
+    <data name="Smartphone" xml:space="preserve">
+        <value>Smartphone</value>
+    </data>
+    <data name="Book" xml:space="preserve">
+        <value>Buch</value>
+    </data>
+    <data name="Document" xml:space="preserve">
+        <value>Dokument</value>
+    </data>
+    <data name="Magazine" xml:space="preserve">
+        <value>Zeitschrift</value>
+    </data>
+    <data name="GPU" xml:space="preserve">
+        <value>GPU</value>
+    </data>
+    <data name="Processor" xml:space="preserve">
+        <value>Prozessor</value>
+    </data>
+    <data name="Sound Synthesizer" xml:space="preserve">
+        <value>Klangsynthesizer</value>
+    </data>
+    <data name="Person" xml:space="preserve">
+        <value>Person</value>
+    </data>
+    <data name="Compilation" xml:space="preserve">
+        <value>Kompilation</value>
+    </data>
+    <data name="Software Compilations" xml:space="preserve">
+        <value>Softwarekompilationen</value>
+    </data>
+    <data name="{0} results across {1} categories." xml:space="preserve">
+        <value>{0} Ergebnisse in {1} Kategorien.</value>
+    </data>
+    <data name="Year known" xml:space="preserve">
+        <value>Jahr bekannt</value>
+    </data>
+    <data name="Country known" xml:space="preserve">
+        <value>Land bekannt</value>
+    </data>
+    <data name="Unknown" xml:space="preserve">
+        <value>Unbekannt</value>
+    </data>
+    <data name="Made by company" xml:space="preserve">
+        <value>Hergestellt von</value>
+    </data>
+    <data name="Starting letter" xml:space="preserve">
+        <value>Anfangsbuchstabe</value>
+    </data>
+    <data name="Software kind" xml:space="preserve">
+        <value>Softwareart</value>
+    </data>
+    <data name="In my collection" xml:space="preserve">
+        <value>In meiner Sammlung</value>
+    </data>
+    <data name="Only mine" xml:space="preserve">
+        <value>Nur meine</value>
+    </data>
+    <data name="Not in mine" xml:space="preserve">
+        <value>Nicht in meiner Sammlung</value>
+    </data>
+    <data name="Sort by" xml:space="preserve">
+        <value>Sortieren nach</value>
+    </data>
+    <data name="Relevance" xml:space="preserve">
+        <value>Relevanz</value>
+    </data>
+    <data name="Name (A→Z)" xml:space="preserve">
+        <value>Name (A→Z)</value>
+    </data>
+    <data name="Name (Z→A)" xml:space="preserve">
+        <value>Name (Z→A)</value>
+    </data>
+    <data name="Year (newest first)" xml:space="preserve">
+        <value>Jahr (neueste zuerst)</value>
+    </data>
+    <data name="Year (oldest first)" xml:space="preserve">
+        <value>Jahr (älteste zuerst)</value>
+    </data>
+    <data name="Compilation includes software" xml:space="preserve">
+        <value>Sammlung enthält Software</value>
+    </data>
+    <data name="Generic software" xml:space="preserve">
+        <value>Allgemeine Software</value>
+    </data>
+    <data name="Operating system" xml:space="preserve">
+        <value>Betriebssystem</value>
+    </data>
+    <data name="Videogame" xml:space="preserve">
+        <value>Videospiel</value>
+    </data>
+    <data name="DLC / Addon" xml:space="preserve">
+        <value>DLC / Erweiterung</value>
+    </data>
+    <data name="System software" xml:space="preserve">
+        <value>Systemsoftware</value>
+    </data>
+    <data name="Application" xml:space="preserve">
+        <value>Anwendung</value>
+    </data>
+    <data name="Development software" xml:space="preserve">
+        <value>Entwicklungssoftware</value>
+    </data>
+    <data name="Server software" xml:space="preserve">
+        <value>Serversoftware</value>
+    </data>
+    <data name="Middleware" xml:space="preserve">
+        <value>Middleware</value>
+    </data>
+    <data name="Firmware" xml:space="preserve">
+        <value>Firmware</value>
+    </data>
+    <data name="Embedded software" xml:space="preserve">
+        <value>Eingebettete Software</value>
+    </data>
 </root>

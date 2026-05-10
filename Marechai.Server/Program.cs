@@ -321,7 +321,7 @@ file class Program
                 });
 
         builder.Services.AddDbContextFactory<MarechaiContext>(options => options.UseLazyLoadingProxies()
-                                                                 .AddInterceptors(new MariaDb12CollationInterceptor())
+                                                                 .AddMarechaiInterceptors()
                                                                  .UseMySql(builder.Configuration
                                                                               .GetConnectionString("DefaultConnection"),
                                                                            new
@@ -346,6 +346,7 @@ file class Program
         builder.Services.AddScoped<TokenService, TokenService>();
         builder.Services.AddSingleton<InvitationCodeGenerator>();
         builder.Services.AddSingleton<AvatarFileCleaner>();
+        builder.Services.AddSingleton<FuzzySearchService>();
         builder.Services.AddScoped<UserAccountDeletionService>();
         builder.Services.AddScoped<DeletionPendingFilter>();
         builder.Services.AddHostedService<AccountDeletionPurgeService>();

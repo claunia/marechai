@@ -44,6 +44,7 @@ using Marechai.ApiClient.ResolutionsByGpu;
 using Marechai.ApiClient.ResolutionsByScreen;
 using Marechai.ApiClient.Screens;
 using Marechai.ApiClient.ScreensByMachine;
+using Marechai.ApiClient.Search;
 using Marechai.ApiClient.Smartphones;
 using Marechai.ApiClient.Software;
 using Marechai.ApiClient.SoftwarePlatformsByMachine;
@@ -289,6 +290,11 @@ namespace Marechai.ApiClient
         public global::Marechai.ApiClient.ScreensByMachine.ScreensByMachineRequestBuilder ScreensByMachine
         {
             get => new global::Marechai.ApiClient.ScreensByMachine.ScreensByMachineRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The search property</summary>
+        public global::Marechai.ApiClient.Search.SearchRequestBuilder Search
+        {
+            get => new global::Marechai.ApiClient.Search.SearchRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The smartphones property</summary>
         public global::Marechai.ApiClient.Smartphones.SmartphonesRequestBuilder Smartphones

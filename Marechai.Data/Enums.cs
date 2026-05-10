@@ -23,6 +23,7 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 // ReSharper disable UnusedMember.Global
@@ -114,26 +115,37 @@ public enum MachineType
 public enum SoftwareKind
 {
     /// <summary>Generic software</summary>
+    [Description("Generic software")]
     Software = 0,
     /// <summary>Operating system</summary>
+    [Description("Operating system")]
     OperatingSystem = 1,
     /// <summary>Videogame</summary>
+    [Description("Videogame")]
     Game = 2,
     /// <summary>DLC / Addon</summary>
+    [Description("DLC / Addon")]
     Dlc = 3,
     /// <summary>System software (drivers, system utilities, shells)</summary>
+    [Description("System software")]
     SystemSoftware = 4,
     /// <summary>End-user application (productivity, multimedia, etc.)</summary>
+    [Description("Application")]
     Application = 5,
     /// <summary>Development software (compilers, IDEs, SDKs)</summary>
+    [Description("Development software")]
     DevelopmentSoftware = 6,
     /// <summary>Server software (web/database/file/mail servers)</summary>
+    [Description("Server software")]
     ServerSoftware = 7,
     /// <summary>Middleware (frameworks, runtimes, integration layers)</summary>
+    [Description("Middleware")]
     Middleware = 8,
     /// <summary>Firmware (low-level device-resident software)</summary>
+    [Description("Firmware")]
     Firmware = 9,
     /// <summary>Embedded software (device-specific application software)</summary>
+    [Description("Embedded software")]
     EmbeddedSoftware = 10
 }
 

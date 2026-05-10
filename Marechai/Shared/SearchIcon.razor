@@ -1,0 +1,25 @@
+@*
+// MARECHAI: Master repository of computing history artifacts information
+// Copyright © 2003-2026 Natalia Portillo
+*@
+@using Marechai.Services
+@inject IDialogService DialogService
+@inject StringLocalizer<NavMenu> L
+
+<MudTooltip Text="@L["Search"]">
+    <MudIconButton Icon="@Icons.Material.Filled.Search" Color="Color.Inherit" OnClick="OpenSearchDialog" aria-label="@L["Search"]"/>
+</MudTooltip>
+
+@code {
+    async Task OpenSearchDialog()
+    {
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Small,
+            Position         = DialogPosition.TopCenter
+        };
+        await DialogService.ShowAsync<SearchDialog>(L["Search"], options);
+    }
+}

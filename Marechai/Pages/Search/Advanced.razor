@@ -1,0 +1,329 @@
+@*
+// MARECHAI: Master repository of computing history artifacts information
+// Copyright © 2003-2026 Natalia Portillo
+*@
+@page "/search/advanced"
+@using System.Collections.Generic
+@using System.Linq
+@using System.Threading.Tasks
+@using Humanizer
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@using Marechai.Helpers
+@using Marechai.Services
+@inject NavigationManager Nav
+@inject CompaniesService CompaniesService
+@inject SearchService SearchService
+@inject StringLocalizer<NavMenu> L
+
+<PageTitle>@L["Advanced Search"] – Marechai</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="pa-4">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-4">
+        <MudIcon Icon="@Icons.Material.Filled.Tune" Size="Size.Large" Color="Color.Primary"/>
+        <MudText Typo="Typo.h4">@L["Advanced Search"]</MudText>
+    </MudStack>
+
+    <MudPaper Class="pa-4" Elevation="2">
+        <MudStack Spacing="3">
+            <MudTextField @bind-Value="_query"
+                          Label="@L["Query"]"
+                          Variant="Variant.Outlined"
+                          Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search"
+                          Immediate="true"
+                          OnKeyDown="@OnQueryKeyDown"/>
+
+            <MudSelect T="int"
+                       MultiSelection="true"
+                       SelectAll="true"
+                       SelectAllText="@L["All categories"]"
+                       Label="@L["Entity types"]"
+                       @bind-SelectedValues="_selectedTypes"
+                       Variant="Variant.Outlined">
+                @foreach(SearchEntityType type in System.Enum.GetValues<SearchEntityType>())
+                {
+                    <MudSelectItem T="int" Value="@((int)type)">
+                        @CategoryLabel(type)
+                    </MudSelectItem>
+                }
+            </MudSelect>
+
+            <MudStack Row="true" Spacing="2">
+                <MudNumericField T="int?" @bind-Value="_yearFrom" Label="@L["Year from"]" Variant="Variant.Outlined" Min="1800" Max="2100"/>
+                <MudNumericField T="int?" @bind-Value="_yearTo"   Label="@L["Year to"]"   Variant="Variant.Outlined" Min="1800" Max="2100"/>
+                <MudSelect T="string" @bind-Value="_yearKnown" Label="@L["Year known"]" Variant="Variant.Outlined" Style="max-width:200px;">
+                    <MudSelectItem Value="@("any")">@L["Any"]</MudSelectItem>
+                    <MudSelectItem Value="@("yes")">@L["Yes"]</MudSelectItem>
+                    <MudSelectItem Value="@("no")">@L["Unknown"]</MudSelectItem>
+                </MudSelect>
+            </MudStack>
+
+            <MudStack Row="true" Spacing="2">
+                <MudAutocomplete T="Iso31661NumericDto"
+                                 Value="_selectedCountry"
+                                 ValueChanged="@(c => _selectedCountry = c)"
+                                 SearchFunc="@SearchCountriesAsync"
+                                 ToStringFunc="@(c => c?.Name ?? string.Empty)"
+                                 Label="@L["Country"]"
+                                 Variant="Variant.Outlined"
+                                 Clearable="true"
+                                 ResetValueOnEmptyText="true"/>
+                <MudSelect T="string" @bind-Value="_countryKnown" Label="@L["Country known"]" Variant="Variant.Outlined" Style="max-width:200px;">
+                    <MudSelectItem Value="@("any")">@L["Any"]</MudSelectItem>
+                    <MudSelectItem Value="@("yes")">@L["Yes"]</MudSelectItem>
+                    <MudSelectItem Value="@("no")">@L["Unknown"]</MudSelectItem>
+                </MudSelect>
+            </MudStack>
+
+            <MudAutocomplete T="SearchResultDto"
+                             Value="_selectedCompany"
+                             ValueChanged="@(c => _selectedCompany = c)"
+                             SearchFunc="@SearchCompaniesAsync"
+                             ToStringFunc="@(c => c?.DisplayName ?? string.Empty)"
+                             Label="@L["Made by company"]"
+                             Variant="Variant.Outlined"
+                             Clearable="true"
+                             ResetValueOnEmptyText="true"
+                             MinCharacters="2"
+                             DebounceInterval="200"/>
+
+            <MudSelect T="string" @bind-Value="_letter" Label="@L["Starting letter"]" Variant="Variant.Outlined">
+                <MudSelectItem Value="@("")">@L["Any"]</MudSelectItem>
+                <MudSelectItem Value="@("#")">#</MudSelectItem>
+                @foreach(char c in "abcdefghijklmnopqrstuvwxyz")
+                {
+                    string s = c.ToString();
+                    <MudSelectItem Value="@s">@s.ToUpperInvariant()</MudSelectItem>
+                }
+            </MudSelect>
+
+            <MudSelect T="string" @bind-Value="_softwareKind" Label="@L["Software kind"]" Variant="Variant.Outlined">
+                <MudSelectItem Value="@("any")">@L["Any"]</MudSelectItem>
+                @foreach(SoftwareKind k in System.Enum.GetValues<SoftwareKind>())
+                {
+                    string v = ((int)k).ToString();
+                    <MudSelectItem Value="@v">@L[k.Humanize()]</MudSelectItem>
+                }
+            </MudSelect>
+
+            <MudAutocomplete T="SearchResultDto"
+                             Value="_selectedIncludesSoftware"
+                             ValueChanged="@(s => _selectedIncludesSoftware = s)"
+                             SearchFunc="@SearchSoftwareAsync"
+                             ToStringFunc="@(s => s?.DisplayName ?? string.Empty)"
+                             Label="@L["Compilation includes software"]"
+                             Variant="Variant.Outlined"
+                             Clearable="true"
+                             ResetValueOnEmptyText="true"
+                             MinCharacters="2"
+                             DebounceInterval="200"/>
+
+            <MudStack Row="true" Spacing="2">
+                <MudTextField @bind-Value="_contains"    Label="@L["Contains"]"         Variant="Variant.Outlined"/>
+                <MudTextField @bind-Value="_notContains" Label="@L["Does not contain"]" Variant="Variant.Outlined"/>
+            </MudStack>
+
+            <MudStack Row="true" Spacing="3" AlignItems="AlignItems.Center">
+                <MudSwitch T="bool" @bind-Value="_exact" Label="@L["Exact match"]" Color="Color.Primary"/>
+                <MudSelect T="string" @bind-Value="_hasImage" Label="@L["Has image"]" Variant="Variant.Outlined" Style="max-width:200px;">
+                    <MudSelectItem Value="@("any")">@L["Any"]</MudSelectItem>
+                    <MudSelectItem Value="@("yes")">@L["Yes"]</MudSelectItem>
+                    <MudSelectItem Value="@("no")">@L["No"]</MudSelectItem>
+                </MudSelect>
+                <AuthorizeView>
+                    <Authorized>
+                        <MudSelect T="string" @bind-Value="_inCollection" Label="@L["In my collection"]" Variant="Variant.Outlined" Style="max-width:200px;">
+                            <MudSelectItem Value="@("any")">@L["Any"]</MudSelectItem>
+                            <MudSelectItem Value="@("yes")">@L["Only mine"]</MudSelectItem>
+                            <MudSelectItem Value="@("no")">@L["Not in mine"]</MudSelectItem>
+                        </MudSelect>
+                    </Authorized>
+                </AuthorizeView>
+            </MudStack>
+
+            <MudSelect T="string" @bind-Value="_sort" Label="@L["Sort by"]" Variant="Variant.Outlined">
+                <MudSelectItem Value="@("relevance")">@L["Relevance"]</MudSelectItem>
+                <MudSelectItem Value="@("name_asc")">@L["Name (A→Z)"]</MudSelectItem>
+                <MudSelectItem Value="@("name_desc")">@L["Name (Z→A)"]</MudSelectItem>
+                <MudSelectItem Value="@("year_desc")">@L["Year (newest first)"]</MudSelectItem>
+                <MudSelectItem Value="@("year_asc")">@L["Year (oldest first)"]</MudSelectItem>
+            </MudSelect>
+
+            <MudStack Row="true" Spacing="2" Class="mt-2">
+                <MudSpacer/>
+                <MudButton Variant="Variant.Outlined" Href="/" Color="Color.Default">@L["Cancel"]</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Search"
+                           OnClick="Submit" Disabled="@(!HasAnyCriteria())">
+                    @L["Search"]
+                </MudButton>
+            </MudStack>
+        </MudStack>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    string _query;
+    IReadOnlyCollection<int> _selectedTypes = new HashSet<int>();
+    int? _yearFrom;
+    int? _yearTo;
+    Iso31661NumericDto _selectedCountry;
+    SearchResultDto _selectedCompany;
+    string _contains;
+    string _notContains;
+    bool _exact;
+    string _hasImage     = "any";
+    string _yearKnown    = "any";
+    string _countryKnown = "any";
+    string _inCollection = "any";
+    string _letter       = "";
+    string _softwareKind = "any";
+    SearchResultDto _selectedIncludesSoftware;
+    string _sort         = "relevance";
+    List<Iso31661NumericDto> _allCountries = new();
+
+    [SupplyParameterFromQuery(Name = "q")]            public string Q { get; set; }
+    [SupplyParameterFromQuery(Name = "types")]        public int[] Types { get; set; }
+    [SupplyParameterFromQuery(Name = "yearFrom")]     public int? YearFrom { get; set; }
+    [SupplyParameterFromQuery(Name = "yearTo")]       public int? YearTo { get; set; }
+    [SupplyParameterFromQuery(Name = "country")]      public int? Country { get; set; }
+    [SupplyParameterFromQuery(Name = "contains")]     public string Contains { get; set; }
+    [SupplyParameterFromQuery(Name = "notContains")]  public string NotContains { get; set; }
+    [SupplyParameterFromQuery(Name = "exact")]        public bool Exact { get; set; }
+    [SupplyParameterFromQuery(Name = "hasImage")]     public bool? HasImage { get; set; }
+    [SupplyParameterFromQuery(Name = "yearKnown")]    public bool? YearKnown { get; set; }
+    [SupplyParameterFromQuery(Name = "countryKnown")] public bool? CountryKnown { get; set; }
+    [SupplyParameterFromQuery(Name = "companyId")]    public int? CompanyId { get; set; }
+    [SupplyParameterFromQuery(Name = "letter")]       public string Letter { get; set; }
+    [SupplyParameterFromQuery(Name = "softwareKind")] public int? SoftwareKind { get; set; }
+    [SupplyParameterFromQuery(Name = "includesSoftwareId")] public long? IncludesSoftwareId { get; set; }
+    [SupplyParameterFromQuery(Name = "inCollection")] public bool? InCollection { get; set; }
+    [SupplyParameterFromQuery(Name = "sort")]         public string Sort { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _allCountries = await CompaniesService.GetCountriesAsync() ?? new();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _query         = Q;
+        _selectedTypes = Types != null ? new HashSet<int>(Types) : new HashSet<int>();
+        _yearFrom      = YearFrom;
+        _yearTo        = YearTo;
+        _contains      = Contains;
+        _notContains   = NotContains;
+        _exact         = Exact;
+        _hasImage      = HasImage switch { true => "yes", false => "no", _ => "any" };
+        _yearKnown     = YearKnown switch { true => "yes", false => "no", _ => "any" };
+        _countryKnown  = CountryKnown switch { true => "yes", false => "no", _ => "any" };
+        _inCollection  = InCollection switch { true => "yes", false => "no", _ => "any" };
+        _letter        = Letter ?? "";
+        _softwareKind  = SoftwareKind?.ToString() ?? "any";
+        _sort          = string.IsNullOrEmpty(Sort) ? "relevance" : Sort;
+
+        if(Country.HasValue && _allCountries.Count > 0)
+            _selectedCountry = _allCountries.FirstOrDefault(c => c.Id == (short)Country.Value);
+
+        if(CompanyId.HasValue && _selectedCompany == null)
+        {
+            // Look up the company's display name via a single autocomplete call.
+            List<SearchResultDto> hits = await SearchService.AutocompleteAsync(string.Empty, (int)SearchEntityType.Company, 50);
+            _selectedCompany = hits.FirstOrDefault(h => h.EntityId == CompanyId.Value);
+        }
+
+        if(IncludesSoftwareId.HasValue && _selectedIncludesSoftware == null)
+        {
+            // Look up by issuing a small autocomplete then matching by id; for unknown query we just pull a few hits.
+            List<SearchResultDto> hits = await SearchService.AutocompleteAsync(string.Empty, (int)SearchEntityType.Software, 50);
+            _selectedIncludesSoftware = hits.FirstOrDefault(h => h.EntityId == IncludesSoftwareId.Value);
+        }
+    }
+
+    async Task<IEnumerable<SearchResultDto>> SearchSoftwareAsync(string value, System.Threading.CancellationToken ct)
+    {
+        if(string.IsNullOrWhiteSpace(value) || value.Length < 2) return Array.Empty<SearchResultDto>();
+        return await SearchService.AutocompleteAsync(value, (int)SearchEntityType.Software, 20);
+    }
+
+    Task<IEnumerable<Iso31661NumericDto>> SearchCountriesAsync(string value, System.Threading.CancellationToken ct)
+    {
+        if(string.IsNullOrWhiteSpace(value)) return Task.FromResult<IEnumerable<Iso31661NumericDto>>(_allCountries.Take(20));
+        return Task.FromResult<IEnumerable<Iso31661NumericDto>>(
+            _allCountries.Where(c => c.Name?.Contains(value, System.StringComparison.OrdinalIgnoreCase) == true).Take(20));
+    }
+
+    async Task<IEnumerable<SearchResultDto>> SearchCompaniesAsync(string value, System.Threading.CancellationToken ct)
+    {
+        if(string.IsNullOrWhiteSpace(value) || value.Length < 2) return Array.Empty<SearchResultDto>();
+        return await SearchService.AutocompleteAsync(value, (int)SearchEntityType.Company, 20);
+    }
+
+    void OnQueryKeyDown(KeyboardEventArgs e) { if(e.Key == "Enter") Submit(); }
+
+    bool HasAnyCriteria() =>
+        !string.IsNullOrWhiteSpace(_query)        ||
+        (_selectedTypes != null && _selectedTypes.Count > 0) ||
+        _yearFrom.HasValue                         ||
+        _yearTo.HasValue                           ||
+        _selectedCountry != null                   ||
+        _selectedCompany != null                   ||
+        !string.IsNullOrWhiteSpace(_contains)      ||
+        !string.IsNullOrWhiteSpace(_notContains)   ||
+        _exact                                     ||
+        _hasImage == "yes" || _hasImage == "no"    ||
+        _yearKnown == "yes" || _yearKnown == "no"  ||
+        _countryKnown == "yes" || _countryKnown == "no" ||
+        _inCollection == "yes" || _inCollection == "no" ||
+        !string.IsNullOrWhiteSpace(_letter)        ||
+        _softwareKind != "any"                     ||
+        _selectedIncludesSoftware != null;
+
+    void Submit()
+    {
+        if(!HasAnyCriteria()) return;
+
+        var parts = new List<string>();
+        if(!string.IsNullOrWhiteSpace(_query)) parts.Add("q=" + System.Uri.EscapeDataString(_query.Trim()));
+        foreach(int t in _selectedTypes) parts.Add("types=" + t);
+        if(_yearFrom.HasValue) parts.Add("yearFrom=" + _yearFrom);
+        if(_yearTo.HasValue)   parts.Add("yearTo="   + _yearTo);
+        if(_selectedCountry != null) parts.Add("country=" + _selectedCountry.Id);
+        if(_selectedCompany != null) parts.Add("companyId=" + _selectedCompany.EntityId);
+        if(!string.IsNullOrWhiteSpace(_contains))    parts.Add("contains="    + System.Uri.EscapeDataString(_contains));
+        if(!string.IsNullOrWhiteSpace(_notContains)) parts.Add("notContains=" + System.Uri.EscapeDataString(_notContains));
+        if(_exact) parts.Add("exact=true");
+        if(_hasImage == "yes") parts.Add("hasImage=true");
+        else if(_hasImage == "no") parts.Add("hasImage=false");
+        if(_yearKnown == "yes") parts.Add("yearKnown=true");
+        else if(_yearKnown == "no") parts.Add("yearKnown=false");
+        if(_countryKnown == "yes") parts.Add("countryKnown=true");
+        else if(_countryKnown == "no") parts.Add("countryKnown=false");
+        if(_inCollection == "yes") parts.Add("inCollection=true");
+        else if(_inCollection == "no") parts.Add("inCollection=false");
+        if(!string.IsNullOrWhiteSpace(_letter)) parts.Add("letter=" + System.Uri.EscapeDataString(_letter));
+        if(_softwareKind != "any" && int.TryParse(_softwareKind, out int sk)) parts.Add("softwareKind=" + sk);
+        if(_selectedIncludesSoftware != null) parts.Add("includesSoftwareId=" + _selectedIncludesSoftware.EntityId);
+        if(_sort != "relevance") parts.Add("sort=" + _sort);
+
+        Nav.NavigateTo("/search?" + string.Join("&", parts));
+    }
+
+    string CategoryLabel(SearchEntityType type) => type switch
+    {
+        SearchEntityType.Company             => L["Companies"],
+        SearchEntityType.Computer            => L["Computers"],
+        SearchEntityType.Console             => L["Consoles"],
+        SearchEntityType.Smartphone          => L["Smartphones"],
+        SearchEntityType.Book                => L["Books"],
+        SearchEntityType.Document            => L["Documents"],
+        SearchEntityType.Magazine            => L["Magazines"],
+        SearchEntityType.Gpu                 => L["GPUs"],
+        SearchEntityType.Processor           => L["Processors"],
+        SearchEntityType.SoundSynth          => L["Sound synthesizers"],
+        SearchEntityType.Person              => L["People"],
+        SearchEntityType.Software            => L["Software"],
+        SearchEntityType.SoftwareCompilation => L["Software Compilations"],
+        _                                    => type.ToString()
+    };
+}

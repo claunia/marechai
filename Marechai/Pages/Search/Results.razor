@@ -1,0 +1,304 @@
+@*
+// MARECHAI: Master repository of computing history artifacts information
+// Copyright © 2003-2026 Natalia Portillo
+*@
+@page "/search"
+@using System.Collections.Generic
+@using System.Linq
+@using System.Threading.Tasks
+@using System.Web
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@using Marechai.Helpers
+@using Marechai.Services
+@using Marechai.Shared
+@inject SearchService SearchService
+@inject NavigationManager Nav
+@inject StringLocalizer<NavMenu> L
+
+<PageTitle>@L["Search Results"] – Marechai</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="pa-4">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-4">
+        <MudIcon Icon="@Icons.Material.Filled.Search" Size="Size.Large" Color="Color.Primary"/>
+        <MudText Typo="Typo.h4">@L["Search Results"]</MudText>
+        @if(!string.IsNullOrWhiteSpace(Q))
+        {
+            <MudChip T="string" Color="Color.Primary" Variant="Variant.Outlined">@Q</MudChip>
+        }
+        <MudSpacer/>
+        <MudButton Href="@AdvancedHref()"
+                   StartIcon="@Icons.Material.Filled.Tune"
+                   Variant="Variant.Outlined"
+                   Color="Color.Primary">
+            @L["Advanced Search"]
+        </MudButton>
+    </MudStack>
+
+    @if(_loading)
+    {
+        <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-4"/>
+    }
+    else if(_results == null && string.IsNullOrWhiteSpace(Q) && !HasAnyFilter())
+    {
+        <MudAlert Severity="Severity.Info">@L["Type at least 3 characters to search."]</MudAlert>
+    }
+    else if(_results == null || _results.Results == null || _results.Results.Count == 0)
+    {
+        <MudAlert Severity="Severity.Info">@L["No results found."]</MudAlert>
+    }
+    else
+    {
+        <MudText Typo="Typo.body2" Color="Color.Default" Class="mb-3">
+            @string.Format(L["{0} results across {1} categories."],
+                _results.Results.Count,
+                _results.TotalByType?.AdditionalData?.Count ?? 0)
+        </MudText>
+
+        <MudExpansionPanels MultiExpansion="true">
+            @foreach(IGrouping<int, SearchResultDto> group in _results.Results.GroupBy(r => r.EntityType.GetValueOrDefault())
+                                                                              .OrderByDescending(g => g.Count()))
+            {
+                SearchEntityType type = (SearchEntityType)group.Key;
+                <MudExpansionPanel IsInitiallyExpanded="true">
+                    <TitleContent>
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                            <MudIcon Icon="@SearchIcons.For(type)" Color="Color.Primary"/>
+                            <MudText Typo="Typo.h6">@CategoryLabel(type)</MudText>
+                            <MudChip T="string" Size="Size.Small" Color="Color.Default">@group.Count()</MudChip>
+                        </MudStack>
+                    </TitleContent>
+                    <ChildContent>
+                        <MudList T="SearchResultDto" Dense="true" ReadOnly="false">
+                            @foreach(SearchResultDto r in group)
+                            {
+                                <MudListItem T="SearchResultDto" OnClick="@(() => Navigate(r))">
+                                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3" Style="width:100%;">
+                                        <MudStack Spacing="0" Style="flex-grow:1;min-width:0;">
+                                            <MudText Typo="Typo.body1">@r.DisplayName</MudText>
+                                            @if(!string.IsNullOrWhiteSpace(r.AltName))
+                                            {
+                                                <MudText Typo="Typo.caption" Color="Color.Default">@r.AltName</MudText>
+                                            }
+                                        </MudStack>
+                                        @if(r.Year.HasValue)
+                                        {
+                                            <MudText Typo="Typo.body2" Color="Color.Default">@r.Year</MudText>
+                                        }
+                                        @if(!string.IsNullOrWhiteSpace(r.CountryName))
+                                        {
+                                            <MudText Typo="Typo.body2" Color="Color.Default">@r.CountryName</MudText>
+                                        }
+                                    </MudStack>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    </ChildContent>
+                </MudExpansionPanel>
+            }
+        </MudExpansionPanels>
+    }
+</MudContainer>
+
+@code {
+    SearchResultsPageDto _results;
+    bool _loading;
+    string _lastQ;
+    int[] _lastTypes;
+    int? _lastYearFrom;
+    int? _lastYearTo;
+    int? _lastCountry;
+    string _lastContains;
+    string _lastNotContains;
+    bool _lastExact;
+    bool? _lastHasImage;
+    bool? _lastYearKnown;
+    bool? _lastCountryKnown;
+    int? _lastCompanyId;
+    string _lastLetter;
+    int? _lastSoftwareKind;
+    long? _lastIncludesSoftwareId;
+    bool? _lastInCollection;
+    string _lastSort;
+
+    [SupplyParameterFromQuery(Name = "q")]            public string Q { get; set; }
+    [SupplyParameterFromQuery(Name = "types")]        public int[] Types { get; set; }
+    [SupplyParameterFromQuery(Name = "yearFrom")]     public int? YearFrom { get; set; }
+    [SupplyParameterFromQuery(Name = "yearTo")]       public int? YearTo { get; set; }
+    [SupplyParameterFromQuery(Name = "country")]      public int? Country { get; set; }
+    [SupplyParameterFromQuery(Name = "contains")]     public string Contains { get; set; }
+    [SupplyParameterFromQuery(Name = "notContains")]  public string NotContains { get; set; }
+    [SupplyParameterFromQuery(Name = "exact")]        public bool Exact { get; set; }
+    [SupplyParameterFromQuery(Name = "hasImage")]     public bool? HasImage { get; set; }
+    [SupplyParameterFromQuery(Name = "yearKnown")]    public bool? YearKnown { get; set; }
+    [SupplyParameterFromQuery(Name = "countryKnown")] public bool? CountryKnown { get; set; }
+    [SupplyParameterFromQuery(Name = "companyId")]    public int? CompanyId { get; set; }
+    [SupplyParameterFromQuery(Name = "letter")]       public string Letter { get; set; }
+    [SupplyParameterFromQuery(Name = "softwareKind")] public int? SoftwareKind { get; set; }
+    [SupplyParameterFromQuery(Name = "includesSoftwareId")] public long? IncludesSoftwareId { get; set; }
+    [SupplyParameterFromQuery(Name = "inCollection")] public bool? InCollection { get; set; }
+    [SupplyParameterFromQuery(Name = "sort")]         public string Sort { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if(string.Equals(Q, _lastQ, StringComparison.Ordinal) &&
+           Equal(Types, _lastTypes) &&
+           YearFrom == _lastYearFrom && YearTo == _lastYearTo &&
+           Country == _lastCountry &&
+           string.Equals(Contains, _lastContains, StringComparison.Ordinal) &&
+           string.Equals(NotContains, _lastNotContains, StringComparison.Ordinal) &&
+           Exact == _lastExact && HasImage == _lastHasImage &&
+           YearKnown == _lastYearKnown && CountryKnown == _lastCountryKnown &&
+           CompanyId == _lastCompanyId &&
+           string.Equals(Letter, _lastLetter, StringComparison.Ordinal) &&
+           SoftwareKind == _lastSoftwareKind &&
+           IncludesSoftwareId == _lastIncludesSoftwareId &&
+           InCollection == _lastInCollection &&
+           string.Equals(Sort, _lastSort, StringComparison.Ordinal))
+            return;
+
+        _lastQ = Q;
+        _lastTypes = Types?.ToArray();
+        _lastYearFrom = YearFrom;
+        _lastYearTo = YearTo;
+        _lastCountry = Country;
+        _lastContains = Contains;
+        _lastNotContains = NotContains;
+        _lastExact = Exact;
+        _lastHasImage = HasImage;
+        _lastYearKnown = YearKnown;
+        _lastCountryKnown = CountryKnown;
+        _lastCompanyId = CompanyId;
+        _lastLetter = Letter;
+        _lastSoftwareKind = SoftwareKind;
+        _lastIncludesSoftwareId = IncludesSoftwareId;
+        _lastInCollection = InCollection;
+        _lastSort = Sort;
+
+        await LoadAsync();
+    }
+
+    async Task LoadAsync()
+    {
+        // Allow filter-only searches (no q): require at least one criterion.
+        bool hasAnyCriteria = !string.IsNullOrWhiteSpace(Q) ||
+                              (Types != null && Types.Length > 0) ||
+                              YearFrom.HasValue || YearTo.HasValue ||
+                              Country.HasValue ||
+                              !string.IsNullOrWhiteSpace(Contains) ||
+                              !string.IsNullOrWhiteSpace(NotContains) ||
+                              Exact || HasImage.HasValue ||
+                              YearKnown.HasValue || CountryKnown.HasValue ||
+                              CompanyId.HasValue || SoftwareKind.HasValue ||
+                              IncludesSoftwareId.HasValue ||
+                              InCollection.HasValue ||
+                              !string.IsNullOrWhiteSpace(Letter);
+        if(!hasAnyCriteria) { _results = null; return; }
+
+        _loading = true;
+        StateHasChanged();
+
+        // Honor blocker prefix in q (only when q is non-empty).
+        SearchEntityType? prefixType = null;
+        string strippedQ             = string.Empty;
+        if(!string.IsNullOrWhiteSpace(Q))
+        {
+            (strippedQ, prefixType) = SearchPrefixParser.Parse(Q);
+        }
+
+        int[] types = (Types is { Length: > 0 } ? Types : null)
+                      ?? (prefixType.HasValue ? new[] { (int)prefixType.Value } : null);
+
+        var req = new SearchRequestDto
+        {
+            Query        = strippedQ ?? string.Empty,
+            EntityTypes  = types?.Select(t => (int?)t).ToList(),
+            YearFrom     = YearFrom,
+            YearTo       = YearTo,
+            CountryId    = Country.HasValue ? (short?)Country.Value : null,
+            Contains     = Contains,
+            NotContains  = NotContains,
+            ExactMatch   = Exact,
+            HasImage     = HasImage,
+            YearKnown    = YearKnown,
+            CountryKnown = CountryKnown,
+            CompanyId    = CompanyId,
+            SoftwareKind = SoftwareKind,
+            IncludesSoftwareId = IncludesSoftwareId,
+            InCollection = InCollection,
+            Letter       = Letter,
+            Sort         = Sort,
+            Skip         = 0,
+            Take         = 200
+        };
+
+        _results = await SearchService.SearchAsync(req);
+        _loading = false;
+        StateHasChanged();
+    }
+
+    void Navigate(SearchResultDto r) => Nav.NavigateTo(SearchUrlBuilder.For(r));
+
+    bool HasAnyFilter() =>
+        (Types != null && Types.Length > 0) ||
+        YearFrom.HasValue || YearTo.HasValue ||
+        Country.HasValue ||
+        !string.IsNullOrWhiteSpace(Contains) ||
+        !string.IsNullOrWhiteSpace(NotContains) ||
+        Exact || HasImage.HasValue ||
+        YearKnown.HasValue || CountryKnown.HasValue ||
+        CompanyId.HasValue || SoftwareKind.HasValue ||
+        IncludesSoftwareId.HasValue ||
+        InCollection.HasValue ||
+        !string.IsNullOrWhiteSpace(Letter);
+
+    string AdvancedHref()
+    {
+        var parts = new List<string>();
+        if(!string.IsNullOrWhiteSpace(Q)) parts.Add("q=" + Uri.EscapeDataString(Q));
+        if(Types != null) foreach(int t in Types) parts.Add("types=" + t);
+        if(YearFrom.HasValue) parts.Add("yearFrom=" + YearFrom);
+        if(YearTo.HasValue) parts.Add("yearTo=" + YearTo);
+        if(Country.HasValue) parts.Add("country=" + Country);
+        if(CompanyId.HasValue) parts.Add("companyId=" + CompanyId);
+        if(!string.IsNullOrWhiteSpace(Contains)) parts.Add("contains=" + Uri.EscapeDataString(Contains));
+        if(!string.IsNullOrWhiteSpace(NotContains)) parts.Add("notContains=" + Uri.EscapeDataString(NotContains));
+        if(Exact) parts.Add("exact=true");
+        if(HasImage.HasValue) parts.Add("hasImage=" + HasImage.Value.ToString().ToLowerInvariant());
+        if(YearKnown.HasValue) parts.Add("yearKnown=" + YearKnown.Value.ToString().ToLowerInvariant());
+        if(CountryKnown.HasValue) parts.Add("countryKnown=" + CountryKnown.Value.ToString().ToLowerInvariant());
+        if(InCollection.HasValue) parts.Add("inCollection=" + InCollection.Value.ToString().ToLowerInvariant());
+        if(!string.IsNullOrWhiteSpace(Letter)) parts.Add("letter=" + Uri.EscapeDataString(Letter));
+        if(SoftwareKind.HasValue) parts.Add("softwareKind=" + SoftwareKind);
+        if(IncludesSoftwareId.HasValue) parts.Add("includesSoftwareId=" + IncludesSoftwareId);
+        if(!string.IsNullOrWhiteSpace(Sort)) parts.Add("sort=" + Uri.EscapeDataString(Sort));
+        return parts.Count == 0 ? "/search/advanced" : "/search/advanced?" + string.Join("&", parts);
+    }
+
+    string CategoryLabel(SearchEntityType type) => type switch
+    {
+        SearchEntityType.Company             => L["Companies"],
+        SearchEntityType.Computer            => L["Computers"],
+        SearchEntityType.Console             => L["Consoles"],
+        SearchEntityType.Smartphone          => L["Smartphones"],
+        SearchEntityType.Book                => L["Books"],
+        SearchEntityType.Document            => L["Documents"],
+        SearchEntityType.Magazine            => L["Magazines"],
+        SearchEntityType.Gpu                 => L["GPUs"],
+        SearchEntityType.Processor           => L["Processors"],
+        SearchEntityType.SoundSynth          => L["Sound synthesizers"],
+        SearchEntityType.Person              => L["People"],
+        SearchEntityType.Software            => L["Software"],
+        SearchEntityType.SoftwareCompilation => L["Software Compilations"],
+        _                                    => type.ToString()
+    };
+
+    static bool Equal(int[] a, int[] b)
+    {
+        if(a == null && b == null) return true;
+        if(a == null || b == null) return (a?.Length ?? 0) == 0 && (b?.Length ?? 0) == 0;
+        if(a.Length != b.Length) return false;
+        for(int i = 0; i < a.Length; i++) if(a[i] != b[i]) return false;
+        return true;
+    }
+}

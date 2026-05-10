@@ -195,6 +195,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<Message>                             Messages                            { get; set; }
     public virtual DbSet<MessageState>                        MessageStates                       { get; set; }
     public virtual DbSet<MessageReport>                       MessageReports                      { get; set; }
+    public virtual DbSet<SearchEntry>                         SearchEntries                       { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -209,7 +210,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                      b => b.UseMicrosoftJson()
                              .UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery))
            .UseLazyLoadingProxies()
-           .AddInterceptors(new MariaDb12CollationInterceptor());
+           .AddMarechaiInterceptors();
     }
 
     public async Task<int> SaveChangesWithUserAsync(string userId)
@@ -3138,6 +3139,39 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .WithMany()
                   .HasForeignKey(e => e.UsedById)
                   .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<SearchEntry>(entity =>
+        {
+            entity.ToTable("SearchEntries");
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.EntityType)
+                  .HasConversion<byte>()
+                  .IsRequired();
+
+            entity.Property(e => e.EntityId).IsRequired();
+
+            entity.Property(e => e.DisplayName)
+                  .HasMaxLength(512)
+                  .IsRequired();
+
+            entity.Property(e => e.AltName).HasMaxLength(512);
+
+            entity.Property(e => e.NormalizedName)
+                  .HasMaxLength(1024)
+                  .IsRequired();
+
+            entity.Property(e => e.Soundex).HasMaxLength(10);
+
+            entity.HasIndex(e => new { e.EntityType, e.EntityId }).IsUnique();
+            entity.HasIndex(e => new { e.EntityType, e.Year });
+            entity.HasIndex(e => new { e.EntityType, e.CountryId });
+            entity.HasIndex(e => new { e.EntityType, e.CompanyId });
+            entity.HasIndex(e => new { e.EntityType, e.Kind });
+            entity.HasIndex(e => e.Soundex);
+            // FULLTEXT (with ngram parser) on NormalizedName is created via raw SQL in the migration
+            // body because Pomelo's IsFullText() does not expose the parser option.
         });
     }
 }

@@ -4,6 +4,7 @@ using Marechai.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Marechai.Database.Migrations
 {
     [DbContext(typeof(MarechaiContext))]
-    partial class MarechaiContextModelSnapshot : ModelSnapshot
+    [Migration("20260510133828_AddSearchEntries")]
+    partial class AddSearchEntries
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -6553,9 +6556,6 @@ namespace Marechai.Database.Migrations
                     b.Property<bool>("HasImage")
                         .HasColumnType("bit(1)");
 
-                    b.Property<byte?>("Kind")
-                        .HasColumnType("tinyint unsigned");
-
                     b.Property<string>("NormalizedName")
                         .IsRequired()
                         .HasMaxLength(1024)
@@ -6576,18 +6576,14 @@ namespace Marechai.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Soundex");
-
-                    b.HasIndex("EntityType", "CompanyId");
-
                     b.HasIndex("EntityType", "CountryId");
 
                     b.HasIndex("EntityType", "EntityId")
                         .IsUnique();
 
-                    b.HasIndex("EntityType", "Kind");
-
                     b.HasIndex("EntityType", "Year");
+
+                    b.HasIndex("Soundex");
 
                     b.ToTable("SearchEntries", (string)null);
                 });

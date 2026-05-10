@@ -32,7 +32,7 @@ class Program
         var optionsBuilder = new DbContextOptionsBuilder<MarechaiContext>();
 
         optionsBuilder.UseLazyLoadingProxies()
-                      .AddInterceptors(new MariaDb12CollationInterceptor())
+                      .AddMarechaiInterceptors()
                       .UseMySql(marechaiConn,
                                 new MariaDbServerVersion(new Version(12, 0, 2)),
                                 b => b.UseMicrosoftJson().EnableStringComparisonTranslations()
