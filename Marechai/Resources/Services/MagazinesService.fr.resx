@@ -495,4 +495,16 @@
   <data name="Cover deleted." xml:space="preserve">
     <value>Couverture supprimée.</value>
   </data>
+  <data name="Machine Families" xml:space="preserve">
+    <value>Familles de machines</value>
+  </data>
+  <data name="No people associated with this issue." xml:space="preserve">
+    <value>Aucune personne associée à ce numéro.</value>
+  </data>
+  <data name="No machines associated with this issue." xml:space="preserve">
+    <value>Aucune machine associée à ce numéro.</value>
+  </data>
+  <data name="No machine families associated with this issue." xml:space="preserve">
+    <value>Aucune famille de machines associée à ce numéro.</value>
+  </data>
 </root>

@@ -1,108 +1,251 @@
 @using Marechai.ApiClient.Models
 @using Marechai.Services
 @using Microsoft.AspNetCore.Components.Forms
+@using System.Threading
 
 @inject IStringLocalizer<MagazinesService> L
 @inject MagazinesService Service
 
 <MudDialog>
     <DialogContent>
-        <MudTextField @bind-Value="Caption"
-                      Label="@L["Caption"]"
-                      Variant="Variant.Outlined"
-                      Required="true"
-                      RequiredError="@L["Caption is required."]"
-                      Class="mb-4"/>
+        <MudTabs Elevation="0" Rounded="true" ApplyEffectsToContainer="true" TabPanelsClass="pa-4">
+            @* Tab 1 - Basic Info *@
+            <MudTabPanel Text="@L["Basic Info"]" Icon="@Icons.Material.Filled.Info">
+                <MudTextField @bind-Value="Caption"
+                              Label="@L["Caption"]"
+                              Variant="Variant.Outlined"
+                              Required="true"
+                              RequiredError="@L["Caption is required."]"
+                              Class="mb-4"/>
 
-        <MudTextField @bind-Value="NativeCaption"
-                      Label="@L["Native caption"]"
-                      Variant="Variant.Outlined"
-                      Class="mb-4"/>
+                <MudTextField @bind-Value="NativeCaption"
+                              Label="@L["Native caption"]"
+                              Variant="Variant.Outlined"
+                              Class="mb-4"/>
 
-        <MudNumericField T="uint?" @bind-Value="IssueNumber"
-                         Label="@L["Issue Number"]"
-                         Variant="Variant.Outlined"
-                         Min="1u"
-                         Clearable="true"
-                         Class="mb-4"/>
+                <MudNumericField T="uint?" @bind-Value="IssueNumber"
+                                 Label="@L["Issue Number"]"
+                                 Variant="Variant.Outlined"
+                                 Min="1u"
+                                 Clearable="true"
+                                 Class="mb-4"/>
 
-        <MudDatePicker @bind-Date="Published"
-                       Label="@L["Published"]"
-                       Variant="Variant.Outlined"
-                       Clearable="true"
-                       Class="mb-4"/>
+                <MudDatePicker @bind-Date="Published"
+                               Label="@L["Published"]"
+                               Variant="Variant.Outlined"
+                               Clearable="true"
+                               Class="mb-4"/>
 
-        <MudSelect T="int" @bind-Value="PublishedPrecision"
-                   Label="@L["Date precision"]"
-                   Variant="Variant.Outlined"
-                   Class="mb-4">
-            <MudSelectItem T="int" Value="0">@L["Full date"]</MudSelectItem>
-            <MudSelectItem T="int" Value="1">@L["Month and year only"]</MudSelectItem>
-            <MudSelectItem T="int" Value="2">@L["Year only"]</MudSelectItem>
-        </MudSelect>
+                <MudSelect T="int" @bind-Value="PublishedPrecision"
+                           Label="@L["Date precision"]"
+                           Variant="Variant.Outlined"
+                           Class="mb-4">
+                    <MudSelectItem T="int" Value="0">@L["Full date"]</MudSelectItem>
+                    <MudSelectItem T="int" Value="1">@L["Month and year only"]</MudSelectItem>
+                    <MudSelectItem T="int" Value="2">@L["Year only"]</MudSelectItem>
+                </MudSelect>
 
-        <MudTextField @bind-Value="ProductCode"
-                      Label="@L["Product code"]"
-                      Variant="Variant.Outlined"
-                      MaxLength="18"
-                      Class="mb-4"/>
+                <MudTextField @bind-Value="ProductCode"
+                              Label="@L["Product code"]"
+                              Variant="Variant.Outlined"
+                              MaxLength="18"
+                              Class="mb-4"/>
 
-        <MudNumericField T="short?" @bind-Value="Pages"
-                         Label="@L["Pages"]"
-                         Variant="Variant.Outlined"
-                         Min="(short)1"
-                         Clearable="true"
-                         Class="mb-4"/>
+                <MudNumericField T="short?" @bind-Value="Pages"
+                                 Label="@L["Pages"]"
+                                 Variant="Variant.Outlined"
+                                 Min="(short)1"
+                                 Clearable="true"
+                                 Class="mb-4"/>
 
-        <MudTextField @bind-Value="InternetArchiveUrl"
-                      Label="@L["Internet Archive link"]"
-                      Variant="Variant.Outlined"
-                      MaxLength="2048"
-                      InputType="InputType.Url"
-                      Placeholder="https://archive.org/details/..."
-                      Class="mb-4"/>
+                <MudTextField @bind-Value="InternetArchiveUrl"
+                              Label="@L["Internet Archive link"]"
+                              Variant="Variant.Outlined"
+                              MaxLength="2048"
+                              InputType="InputType.Url"
+                              Placeholder="https://archive.org/details/..."
+                              Class="mb-4"/>
+            </MudTabPanel>
 
-        @if(IsEdit)
-        {
-            <MudDivider Class="my-4"/>
-            <MudText Typo="Typo.h6" Class="mb-2">@L["Cover"]</MudText>
-
-            @if(_hasCover)
+            @* Tab 2 - Cover (only for existing issues) *@
+            @if(IsEdit)
             {
-                <MudText Typo="Typo.body2" Class="mb-2">@L["This issue has a cover image."]</MudText>
-                <MudButton Variant="Variant.Outlined" Color="Color.Error" Size="Size.Small"
-                           OnClick="DeleteCover" Class="mb-4">
-                    @L["Delete Cover"]
-                </MudButton>
-            }
-            else
-            {
-                <MudText Typo="Typo.body2" Class="mb-2">@L["No cover image."]</MudText>
-            }
+                <MudTabPanel Text="@L["Cover"]" Icon="@Icons.Material.Filled.Image">
+                    @if(_hasCover)
+                    {
+                        <MudText Typo="Typo.body2" Class="mb-2">@L["This issue has a cover image."]</MudText>
+                        <MudButton Variant="Variant.Outlined" Color="Color.Error" Size="Size.Small"
+                                   OnClick="DeleteCover" Class="mb-4">
+                            @L["Delete Cover"]
+                        </MudButton>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.body2" Class="mb-2">@L["No cover image."]</MudText>
+                    }
 
-            <MudFileUpload T="IBrowserFile" Accept=".jpg,.jpeg,.png,.webp,.tiff,.tif,.bmp"
-                           FilesChanged="OnCoverFileSelected" MaximumFileCount="1">
-                <CustomContent Context="ctx">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary"
-                               StartIcon="@Icons.Material.Filled.CloudUpload"
-                               Disabled="_isUploadingCover"
-                               OnClick="@ctx.OpenFilePickerAsync">
-                        @L["Upload Cover"]
-                    </MudButton>
-                </CustomContent>
-            </MudFileUpload>
+                    <MudFileUpload T="IBrowserFile" Accept=".jpg,.jpeg,.png,.webp,.tiff,.tif,.bmp"
+                                   FilesChanged="OnCoverFileSelected" MaximumFileCount="1">
+                        <CustomContent Context="ctx">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                                       StartIcon="@Icons.Material.Filled.CloudUpload"
+                                       Disabled="_isUploadingCover"
+                                       OnClick="@ctx.OpenFilePickerAsync">
+                                @L["Upload Cover"]
+                            </MudButton>
+                        </CustomContent>
+                    </MudFileUpload>
 
-            @if(_isUploadingCover)
-            {
-                <MudProgressLinear Indeterminate="true" Class="mt-2"/>
-            }
+                    @if(_isUploadingCover)
+                    {
+                        <MudProgressLinear Indeterminate="true" Class="mt-2"/>
+                    }
 
-            @if(!string.IsNullOrWhiteSpace(_coverMessage))
-            {
-                <MudAlert Severity="@_coverMessageSeverity" Class="mt-2" ShowCloseIcon="true"
-                          CloseIconClicked="() => _coverMessage = null">@_coverMessage</MudAlert>
+                    @if(!string.IsNullOrWhiteSpace(_coverMessage))
+                    {
+                        <MudAlert Severity="@_coverMessageSeverity" Class="mt-2" ShowCloseIcon="true"
+                                  CloseIconClicked="() => _coverMessage = null">@_coverMessage</MudAlert>
+                    }
+                </MudTabPanel>
+
+                @* Tab 3 - People *@
+                <MudTabPanel Text="@L["People"]" Icon="@Icons.Material.Filled.People">
+                    @if(_issuePeople is { Count: > 0 })
+                    {
+                        <MudList T="PersonByMagazineDto" Dense="true">
+                            @foreach(PersonByMagazineDto person in _issuePeople)
+                            {
+                                <MudListItem T="PersonByMagazineDto">
+                                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                        <MudText>@FormatPerson(person)</MudText>
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                                       OnClick="() => RemovePerson(person)"/>
+                                    </MudStack>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.body2" Class="mb-2">@L["No people associated with this issue."]</MudText>
+                    }
+
+                    <MudPaper Class="pa-4 mt-2" Elevation="1">
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                            <MudAutocomplete T="PersonDto"
+                                             Label="@L["Search Person"]"
+                                             @bind-Value="_selectedPerson"
+                                             SearchFunc="SearchPeople"
+                                             ToStringFunc="@(p => p is null ? string.Empty : FormatPersonDto(p))"
+                                             Variant="Variant.Outlined"
+                                             Clearable="true"
+                                             Style="flex: 1;"/>
+                            <MudSelect T="DocumentRoleDto"
+                                       @bind-Value="_selectedPersonRole"
+                                       Label="@L["Role"]"
+                                       ToStringFunc="@(r => r?.Name ?? string.Empty)"
+                                       Variant="Variant.Outlined"
+                                       Style="max-width: 200px;">
+                                @if(_allRoles is not null)
+                                {
+                                    @foreach(DocumentRoleDto role in _allRoles)
+                                    {
+                                        <MudSelectItem T="DocumentRoleDto" Value="role">@role.Name</MudSelectItem>
+                                    }
+                                }
+                            </MudSelect>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                                       OnClick="AddPerson"
+                                       Disabled="@(_selectedPerson is null || _selectedPersonRole is null)">
+                                @L["Add"]
+                            </MudButton>
+                        </MudStack>
+                    </MudPaper>
+                </MudTabPanel>
+
+                @* Tab 4 - Machines *@
+                <MudTabPanel Text="@L["Machines"]" Icon="@Icons.Material.Filled.Computer">
+                    @if(_issueMachines is { Count: > 0 })
+                    {
+                        <MudList T="MagazineByMachineDto" Dense="true">
+                            @foreach(MagazineByMachineDto machine in _issueMachines)
+                            {
+                                <MudListItem T="MagazineByMachineDto">
+                                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                        <MudText>@(machine.Machine ?? $"Machine #{machine.MachineId}")</MudText>
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                                       OnClick="() => RemoveMachine(machine)"/>
+                                    </MudStack>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.body2" Class="mb-2">@L["No machines associated with this issue."]</MudText>
+                    }
+
+                    <MudPaper Class="pa-4 mt-2" Elevation="1">
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                            <MudAutocomplete T="MachineDto"
+                                             Label="@L["Search Machine"]"
+                                             @bind-Value="_selectedMachine"
+                                             SearchFunc="SearchMachines"
+                                             ToStringFunc="@(m => m?.Name ?? string.Empty)"
+                                             Variant="Variant.Outlined"
+                                             Clearable="true"
+                                             Style="flex: 1;"/>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                                       OnClick="AddMachine"
+                                       Disabled="@(_selectedMachine is null)">
+                                @L["Add"]
+                            </MudButton>
+                        </MudStack>
+                    </MudPaper>
+                </MudTabPanel>
+
+                @* Tab 5 - Machine Families *@
+                <MudTabPanel Text="@L["Machine Families"]" Icon="@Icons.Material.Filled.AccountTree">
+                    @if(_issueMachineFamilies is { Count: > 0 })
+                    {
+                        <MudList T="MagazineByMachineFamilyDto" Dense="true">
+                            @foreach(MagazineByMachineFamilyDto family in _issueMachineFamilies)
+                            {
+                                <MudListItem T="MagazineByMachineFamilyDto">
+                                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                        <MudText>@(family.MachineFamily ?? $"Family #{family.MachineFamilyId}")</MudText>
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                                       OnClick="() => RemoveMachineFamily(family)"/>
+                                    </MudStack>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.body2" Class="mb-2">@L["No machine families associated with this issue."]</MudText>
+                    }
+
+                    <MudPaper Class="pa-4 mt-2" Elevation="1">
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                            <MudAutocomplete T="MachineFamilyDto"
+                                             Label="@L["Search Machine Family"]"
+                                             @bind-Value="_selectedMachineFamily"
+                                             SearchFunc="SearchMachineFamilies"
+                                             ToStringFunc="@(f => f?.Name ?? string.Empty)"
+                                             Variant="Variant.Outlined"
+                                             Clearable="true"
+                                             Style="flex: 1;"/>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                                       OnClick="AddMachineFamily"
+                                       Disabled="@(_selectedMachineFamily is null)">
+                                @L["Add"]
+                            </MudButton>
+                        </MudStack>
+                    </MudPaper>
+                </MudTabPanel>
             }
-        }
+        </MudTabs>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
@@ -127,12 +270,47 @@
     [Parameter] public long      IssueId            { get; set; }
     [Parameter] public bool      HasCover           { get; set; }
 
+    // Cover state
     bool     _hasCover;
     bool     _isUploadingCover;
     string   _coverMessage;
     Severity _coverMessageSeverity = Severity.Info;
 
-    protected override void OnInitialized() => _hasCover = HasCover;
+    // Roles (shared between People junction)
+    List<DocumentRoleDto> _allRoles;
+
+    // People junction state
+    List<PersonByMagazineDto> _issuePeople;
+    PersonDto                 _selectedPerson;
+    DocumentRoleDto           _selectedPersonRole;
+    List<PersonDto>           _allPeople;
+
+    // Machines junction state
+    List<MagazineByMachineDto> _issueMachines;
+    MachineDto                 _selectedMachine;
+    List<MachineDto>           _allMachines;
+
+    // Machine Families junction state
+    List<MagazineByMachineFamilyDto> _issueMachineFamilies;
+    MachineFamilyDto                 _selectedMachineFamily;
+    List<MachineFamilyDto>           _allMachineFamilies;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _hasCover = HasCover;
+
+        // Junction data is only relevant for existing issues
+        if(!IsEdit) return;
+
+        _allRoles           = await Service.GetDocumentRolesAsync();
+        _allPeople          = await Service.GetAllPeopleAsync();
+        _allMachines        = await Service.GetAllMachinesAsync();
+        _allMachineFamilies = await Service.GetAllMachineFamiliesAsync();
+
+        _issuePeople          = await Service.GetPeopleByMagazineAsync(IssueId);
+        _issueMachines        = await Service.GetMachinesByMagazineAsync(IssueId);
+        _issueMachineFamilies = await Service.GetMachineFamiliesByMagazineAsync(IssueId);
+    }
 
     void Cancel() => MudDialog.Cancel();
 
@@ -154,6 +332,8 @@
             InternetArchiveUrl = string.IsNullOrWhiteSpace(InternetArchiveUrl) ? null : InternetArchiveUrl.Trim()
         }));
     }
+
+    // --- Cover handlers ---
 
     async Task OnCoverFileSelected(IBrowserFile file)
     {
@@ -224,6 +404,169 @@
         {
             _coverMessage         = error;
             _coverMessageSeverity = Severity.Error;
+        }
+    }
+
+    // --- Search functions ---
+
+    Task<IEnumerable<PersonDto>> SearchPeople(string value, CancellationToken ct)
+    {
+        IEnumerable<PersonDto> results = _allPeople ?? [];
+
+        if(!string.IsNullOrWhiteSpace(value))
+        {
+            results = _allPeople?.Where(p =>
+                (p.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (p.Surname?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (p.DisplayName?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (p.Alias?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false)) ?? [];
+        }
+
+        return Task.FromResult(results);
+    }
+
+    Task<IEnumerable<MachineDto>> SearchMachines(string value, CancellationToken ct)
+    {
+        IEnumerable<MachineDto> results = _allMachines ?? [];
+
+        if(!string.IsNullOrWhiteSpace(value))
+            results = _allMachines?.Where(m => m.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ?? [];
+
+        return Task.FromResult(results);
+    }
+
+    Task<IEnumerable<MachineFamilyDto>> SearchMachineFamilies(string value, CancellationToken ct)
+    {
+        IEnumerable<MachineFamilyDto> results = _allMachineFamilies ?? [];
+
+        if(!string.IsNullOrWhiteSpace(value))
+            results = _allMachineFamilies?.Where(f => f.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ?? [];
+
+        return Task.FromResult(results);
+    }
+
+    // --- Format helpers ---
+
+    static string FormatPersonDto(PersonDto p)
+    {
+        if(!string.IsNullOrWhiteSpace(p.DisplayName)) return p.DisplayName;
+        if(!string.IsNullOrWhiteSpace(p.Alias))       return p.Alias;
+
+        return string.IsNullOrWhiteSpace(p.Surname) ? p.Name ?? string.Empty : $"{p.Name} {p.Surname}";
+    }
+
+    static string FormatPerson(PersonByMagazineDto p)
+    {
+        string name = p.DisplayName ?? p.Alias ?? $"{p.Name} {p.Surname}".Trim();
+
+        return string.IsNullOrWhiteSpace(p.Role) ? name : $"{name} ({p.Role})";
+    }
+
+    // --- People junction actions ---
+
+    async Task AddPerson()
+    {
+        if(_selectedPerson is null || _selectedPersonRole is null)
+            return;
+
+        var dto = new PersonByMagazineDto
+        {
+            PersonId   = (int?)_selectedPerson.Id,
+            MagazineId = IssueId,
+            RoleId     = _selectedPersonRole.Id
+        };
+
+        (long? id, string error) = await Service.AddPersonToMagazineAsync(dto);
+
+        if(id is not null)
+        {
+            _issuePeople        = await Service.GetPeopleByMagazineAsync(IssueId);
+            _selectedPerson     = null;
+            _selectedPersonRole = null;
+            StateHasChanged();
+        }
+    }
+
+    async Task RemovePerson(PersonByMagazineDto person)
+    {
+        if(person.Id is null) return;
+
+        (bool succeeded, string error) = await Service.RemovePersonFromMagazineAsync(person.Id.Value);
+
+        if(succeeded)
+        {
+            _issuePeople = await Service.GetPeopleByMagazineAsync(IssueId);
+            StateHasChanged();
+        }
+    }
+
+    // --- Machines junction actions ---
+
+    async Task AddMachine()
+    {
+        if(_selectedMachine is null) return;
+
+        var dto = new MagazineByMachineDto
+        {
+            MagazineId = IssueId,
+            MachineId  = (int?)_selectedMachine.Id
+        };
+
+        (long? id, string error) = await Service.AddMachineToMagazineAsync(dto);
+
+        if(id is not null)
+        {
+            _issueMachines   = await Service.GetMachinesByMagazineAsync(IssueId);
+            _selectedMachine = null;
+            StateHasChanged();
+        }
+    }
+
+    async Task RemoveMachine(MagazineByMachineDto machine)
+    {
+        if(machine.Id is null) return;
+
+        (bool succeeded, string error) = await Service.RemoveMachineFromMagazineAsync(machine.Id.Value);
+
+        if(succeeded)
+        {
+            _issueMachines = await Service.GetMachinesByMagazineAsync(IssueId);
+            StateHasChanged();
+        }
+    }
+
+    // --- Machine Families junction actions ---
+
+    async Task AddMachineFamily()
+    {
+        if(_selectedMachineFamily is null) return;
+
+        var dto = new MagazineByMachineFamilyDto
+        {
+            MagazineId      = IssueId,
+            MachineFamilyId = (int?)_selectedMachineFamily.Id
+        };
+
+        (long? id, string error) = await Service.AddMachineFamilyToMagazineAsync(dto);
+
+        if(id is not null)
+        {
+            _issueMachineFamilies  = await Service.GetMachineFamiliesByMagazineAsync(IssueId);
+            _selectedMachineFamily = null;
+            StateHasChanged();
+        }
+    }
+
+    async Task RemoveMachineFamily(MagazineByMachineFamilyDto family)
+    {
+        if(family.Id is null) return;
+
+        (bool succeeded, string error) = await Service.RemoveMachineFamilyFromMagazineAsync(family.Id.Value);
+
+        if(succeeded)
+        {
+            _issueMachineFamilies = await Service.GetMachineFamiliesByMagazineAsync(IssueId);
+            StateHasChanged();
         }
     }
 }

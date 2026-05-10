@@ -465,4 +465,16 @@
   <data name="Cover deleted." xml:space="preserve">
     <value>Cover deleted.</value>
   </data>
+  <data name="Machine Families" xml:space="preserve">
+    <value>Machine Families</value>
+  </data>
+  <data name="No people associated with this issue." xml:space="preserve">
+    <value>No people associated with this issue.</value>
+  </data>
+  <data name="No machines associated with this issue." xml:space="preserve">
+    <value>No machines associated with this issue.</value>
+  </data>
+  <data name="No machine families associated with this issue." xml:space="preserve">
+    <value>No machine families associated with this issue.</value>
+  </data>
 </root>

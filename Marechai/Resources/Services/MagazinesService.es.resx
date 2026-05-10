@@ -417,4 +417,16 @@
   <data name="Cover deleted." xml:space="preserve">
     <value>Portada eliminada.</value>
   </data>
+  <data name="Machine Families" xml:space="preserve">
+    <value>Familias de máquinas</value>
+  </data>
+  <data name="No people associated with this issue." xml:space="preserve">
+    <value>No hay personas asociadas a este número.</value>
+  </data>
+  <data name="No machines associated with this issue." xml:space="preserve">
+    <value>No hay máquinas asociadas a este número.</value>
+  </data>
+  <data name="No machine families associated with this issue." xml:space="preserve">
+    <value>No hay familias de máquinas asociadas a este número.</value>
+  </data>
 </root>
