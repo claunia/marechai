@@ -17,7 +17,7 @@ public class MobyGamesCoverDownloadState : BaseModel<long>
     public string CoverPageUrl { get; set; }
 
     [Required]
-    [StringLength(128)]
+    [StringLength(1024)]
     public string CoverType { get; set; }
 
     [Required]
