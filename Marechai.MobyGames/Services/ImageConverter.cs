@@ -159,10 +159,51 @@ public static class ImageConverter
             case "jxl":
                 outputPath = Path.Combine(outputPath, $"{id}.jxl");
 
-                return ConvertUsingImageMagick(originalPath, outputPath, width, height);
+                return ConvertToJxl(originalPath, outputPath, width, height);
 
             default:
                 return false;
+        }
+    }
+
+    static bool ConvertToJxl(string originalPath, string outputPath, int width, int height)
+    {
+        var convert = new Process
+        {
+            StartInfo =
+            {
+                FileName               = "convert",
+                CreateNoWindow         = true,
+                RedirectStandardError  = true,
+                RedirectStandardOutput = true,
+                ArgumentList =
+                {
+                    "-resize",
+                    $"{width}x{height}>",
+                    "-strip",
+                    "-define",
+                    "jxl:encoder=vardct",
+                    "-define",
+                    "jxl:distance=4",
+                    "-define",
+                    "jxl:effort=9",
+                    originalPath,
+                    outputPath
+                }
+            }
+        };
+
+        try
+        {
+            convert.Start();
+            convert.StandardOutput.ReadToEnd();
+            convert.WaitForExit();
+
+            return convert.ExitCode == 0;
+        }
+        catch(Exception)
+        {
+            return false;
         }
     }
 
