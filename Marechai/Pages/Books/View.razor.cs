@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Marechai.Helpers;
+using Marechai.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 
@@ -38,6 +39,7 @@ public partial class View
     List<CompanyByBookDto>       _companies;
     long                         _lastId;
     bool                         _isCollected;
+    PhotoLightbox                _lightbox;
     bool                         _loaded;
     List<BookByMachineFamilyDto> _machineFamilies;
     List<BookByMachineDto>       _machines;

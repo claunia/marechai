@@ -178,7 +178,7 @@
                 <MudIcon Icon="@Icons.Material.Filled.Image" Color="Color.Primary"/>
                 <MudText Typo="Typo.h6">@L["Cover"]</MudText>
             </MudStack>
-            <div class="d-flex justify-center">
+            <div class="d-flex justify-center" style="cursor: pointer;" @onclick="() => _lightbox.Show(new List<Guid> { _book.CoverGuid.Value }, _book.CoverGuid.Value)">
                 <picture>
                     <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/jxl/4k/@(_book.CoverGuid).jxl" type="image/jxl">
                     <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/avif/4k/@(_book.CoverGuid).avif" type="image/avif">
@@ -350,3 +350,5 @@
         </MudCardContent>
     </MudCard>
 }
+
+<PhotoLightbox @ref="_lightbox" BaseUrl="@AssetUrls.BaseUrl" Category="book-covers"/>
