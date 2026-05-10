@@ -507,4 +507,13 @@
   <data name="No machine families associated with this issue." xml:space="preserve">
     <value>Keine Maschinenfamilien mit dieser Ausgabe verknüpft.</value>
   </data>
+  <data name="Software" xml:space="preserve">
+    <value>Software</value>
+  </data>
+  <data name="Search Software" xml:space="preserve">
+    <value>Software suchen</value>
+  </data>
+  <data name="No software associated with this issue." xml:space="preserve">
+    <value>Keine Software mit dieser Ausgabe verknüpft.</value>
+  </data>
 </root>

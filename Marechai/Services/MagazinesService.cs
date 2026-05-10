@@ -270,6 +270,20 @@ public class MagazinesService(Marechai.ApiClient.Client client)
         }
     }
 
+    public async Task<List<MagazineBySoftwareDto>> GetSoftwareByMagazineAsync(long id)
+    {
+        try
+        {
+            List<MagazineBySoftwareDto> software = await client.Magazines[id].Software.GetAsync();
+
+            return software ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
     // --- CRUD methods ---
 
     public async Task<(long? id, string error)> CreateAsync(MagazineDto dto)
@@ -644,6 +658,44 @@ public class MagazinesService(Marechai.ApiClient.Client client)
         }
     }
 
+    // --- Software junction methods ---
+
+    public async Task<(long? id, string error)> AddSoftwareToMagazineAsync(MagazineBySoftwareDto dto)
+    {
+        try
+        {
+            long? id = await client.MagazinesBySoftware.PostAsync(dto);
+
+            return (id, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string error)> RemoveSoftwareFromMagazineAsync(long id)
+    {
+        try
+        {
+            await client.MagazinesBySoftware[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
     // --- Picker helper methods ---
 
     public async Task<List<DocumentRoleDto>> GetDocumentRolesAsync()
@@ -709,6 +761,20 @@ public class MagazinesService(Marechai.ApiClient.Client client)
             List<MachineFamilyDto> families = await client.MachineFamilies.GetAsync();
 
             return families ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<SoftwareDto>> GetAllSoftwareAsync()
+    {
+        try
+        {
+            List<SoftwareDto> software = await client.Software.GetAsync();
+
+            return software ?? [];
         }
         catch
         {

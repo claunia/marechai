@@ -23,40 +23,21 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using Marechai.Data;
+using System.Text.Json.Serialization;
 
-namespace Marechai.Database.Models;
+namespace Marechai.Data.Dtos;
 
-public class MagazineIssue : BaseModel<long>
+public class MagazineBySoftwareDto : BaseDto<long>
 {
+    [JsonPropertyName("magazine_id")]
     [Required]
     public long MagazineId { get; set; }
+    [JsonPropertyName("magazine")]
+    public string? Magazine { get; set; }
+    [JsonPropertyName("software_id")]
     [Required]
-    public string Caption { get;       set; }
-    public string NativeCaption { get; set; }
-    [DisplayFormat(DataFormatString = "{0:d}")]
-    [DataType(DataType.Date)]
-    public DateTime? Published { get; set; }
-    [DefaultValue(DatePrecision.Full)]
-    public DatePrecision PublishedPrecision { get; set; }
-    [StringLength(18)]
-    public string ProductCode { get; set; }
-    public short? Pages       { get; set; }
-    public uint?  IssueNumber { get; set; }
-    [Url]
-    [StringLength(2048)]
-    public string InternetArchiveUrl     { get; set; }
-    public Guid?  CoverGuid              { get; set; }
-    public string OriginalCoverExtension { get; set; }
-
-    public virtual Magazine                              Magazine        { get; set; }
-    public virtual ICollection<PeopleByMagazine>         People          { get; set; }
-    public virtual ICollection<MagazinesByMachine>       Machines        { get; set; }
-    public virtual ICollection<MagazinesByMachineFamily> MachineFamilies { get; set; }
-    public virtual ICollection<MagazinesBySoftware>      Software        { get; set; }
-    public virtual ICollection<Media>                    Coverdiscs      { get; set; }
+    public ulong SoftwareId { get; set; }
+    [JsonPropertyName("software")]
+    public string? Software { get; set; }
 }

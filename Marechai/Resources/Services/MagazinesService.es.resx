@@ -429,4 +429,13 @@
   <data name="No machine families associated with this issue." xml:space="preserve">
     <value>No hay familias de máquinas asociadas a este número.</value>
   </data>
+  <data name="Software" xml:space="preserve">
+    <value>Software</value>
+  </data>
+  <data name="Search Software" xml:space="preserve">
+    <value>Buscar Software</value>
+  </data>
+  <data name="No software associated with this issue." xml:space="preserve">
+    <value>No hay software asociado a este número.</value>
+  </data>
 </root>

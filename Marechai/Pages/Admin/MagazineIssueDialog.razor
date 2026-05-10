@@ -244,6 +244,47 @@
                         </MudStack>
                     </MudPaper>
                 </MudTabPanel>
+
+                @* Tab 6 - Software *@
+                <MudTabPanel Text="@L["Software"]" Icon="@Icons.Material.Filled.Apps">
+                    @if(_issueSoftware is { Count: > 0 })
+                    {
+                        <MudList T="MagazineBySoftwareDto" Dense="true">
+                            @foreach(MagazineBySoftwareDto software in _issueSoftware)
+                            {
+                                <MudListItem T="MagazineBySoftwareDto">
+                                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                        <MudText>@(software.Software ?? $"Software #{software.SoftwareId}")</MudText>
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                                       OnClick="() => RemoveSoftware(software)"/>
+                                    </MudStack>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.body2" Class="mb-2">@L["No software associated with this issue."]</MudText>
+                    }
+
+                    <MudPaper Class="pa-4 mt-2" Elevation="1">
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                            <MudAutocomplete T="SoftwareDto"
+                                             Label="@L["Search Software"]"
+                                             @bind-Value="_selectedSoftware"
+                                             SearchFunc="SearchSoftware"
+                                             ToStringFunc="@(s => s?.Name ?? string.Empty)"
+                                             Variant="Variant.Outlined"
+                                             Clearable="true"
+                                             Style="flex: 1;"/>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                                       OnClick="AddSoftware"
+                                       Disabled="@(_selectedSoftware is null)">
+                                @L["Add"]
+                            </MudButton>
+                        </MudStack>
+                    </MudPaper>
+                </MudTabPanel>
             }
         </MudTabs>
     </DialogContent>
@@ -295,6 +336,11 @@
     MachineFamilyDto                 _selectedMachineFamily;
     List<MachineFamilyDto>           _allMachineFamilies;
 
+    // Software junction state
+    List<MagazineBySoftwareDto> _issueSoftware;
+    SoftwareDto                 _selectedSoftware;
+    List<SoftwareDto>           _allSoftware;
+
     protected override async Task OnInitializedAsync()
     {
         _hasCover = HasCover;
@@ -306,10 +352,12 @@
         _allPeople          = await Service.GetAllPeopleAsync();
         _allMachines        = await Service.GetAllMachinesAsync();
         _allMachineFamilies = await Service.GetAllMachineFamiliesAsync();
+        _allSoftware        = await Service.GetAllSoftwareAsync();
 
         _issuePeople          = await Service.GetPeopleByMagazineAsync(IssueId);
         _issueMachines        = await Service.GetMachinesByMagazineAsync(IssueId);
         _issueMachineFamilies = await Service.GetMachineFamiliesByMagazineAsync(IssueId);
+        _issueSoftware        = await Service.GetSoftwareByMagazineAsync(IssueId);
     }
 
     void Cancel() => MudDialog.Cancel();
@@ -445,6 +493,16 @@
         return Task.FromResult(results);
     }
 
+    Task<IEnumerable<SoftwareDto>> SearchSoftware(string value, CancellationToken ct)
+    {
+        IEnumerable<SoftwareDto> results = _allSoftware ?? [];
+
+        if(!string.IsNullOrWhiteSpace(value))
+            results = _allSoftware?.Where(s => s.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ?? [];
+
+        return Task.FromResult(results);
+    }
+
     // --- Format helpers ---
 
     static string FormatPersonDto(PersonDto p)
@@ -566,6 +624,41 @@
         if(succeeded)
         {
             _issueMachineFamilies = await Service.GetMachineFamiliesByMagazineAsync(IssueId);
+            StateHasChanged();
+        }
+    }
+
+    // --- Software junction actions ---
+
+    async Task AddSoftware()
+    {
+        if(_selectedSoftware is null) return;
+
+        var dto = new MagazineBySoftwareDto
+        {
+            MagazineId = IssueId,
+            SoftwareId = _selectedSoftware.Id ?? 0
+        };
+
+        (long? id, string error) = await Service.AddSoftwareToMagazineAsync(dto);
+
+        if(id is not null)
+        {
+            _issueSoftware    = await Service.GetSoftwareByMagazineAsync(IssueId);
+            _selectedSoftware = null;
+            StateHasChanged();
+        }
+    }
+
+    async Task RemoveSoftware(MagazineBySoftwareDto software)
+    {
+        if(software.Id is null) return;
+
+        (bool succeeded, string error) = await Service.RemoveSoftwareFromMagazineAsync(software.Id.Value);
+
+        if(succeeded)
+        {
+            _issueSoftware = await Service.GetSoftwareByMagazineAsync(IssueId);
             StateHasChanged();
         }
     }

@@ -477,4 +477,13 @@
   <data name="No machine families associated with this issue." xml:space="preserve">
     <value>No machine families associated with this issue.</value>
   </data>
+  <data name="Software" xml:space="preserve">
+    <value>Software</value>
+  </data>
+  <data name="Search Software" xml:space="preserve">
+    <value>Search Software</value>
+  </data>
+  <data name="No software associated with this issue." xml:space="preserve">
+    <value>No software associated with this issue.</value>
+  </data>
 </root>

@@ -507,4 +507,13 @@
   <data name="No machine families associated with this issue." xml:space="preserve">
     <value>Aucune famille de machines associée à ce numéro.</value>
   </data>
+  <data name="Software" xml:space="preserve">
+    <value>Logiciel</value>
+  </data>
+  <data name="Search Software" xml:space="preserve">
+    <value>Rechercher un logiciel</value>
+  </data>
+  <data name="No software associated with this issue." xml:space="preserve">
+    <value>Aucun logiciel associé à ce numéro.</value>
+  </data>
 </root>

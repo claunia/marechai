@@ -25,6 +25,7 @@ using Marechai.ApiClient.Machines;
 using Marechai.ApiClient.Magazines;
 using Marechai.ApiClient.MagazinesByMachine;
 using Marechai.ApiClient.MagazinesByMachineFamily;
+using Marechai.ApiClient.MagazinesBySoftware;
 using Marechai.ApiClient.Medias;
 using Marechai.ApiClient.MemoriesByMachine;
 using Marechai.ApiClient.Messages;
@@ -193,6 +194,11 @@ namespace Marechai.ApiClient
         public global::Marechai.ApiClient.MagazinesByMachineFamily.MagazinesByMachineFamilyRequestBuilder MagazinesByMachineFamily
         {
             get => new global::Marechai.ApiClient.MagazinesByMachineFamily.MagazinesByMachineFamilyRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The magazinesBySoftware property</summary>
+        public global::Marechai.ApiClient.MagazinesBySoftware.MagazinesBySoftwareRequestBuilder MagazinesBySoftware
+        {
+            get => new global::Marechai.ApiClient.MagazinesBySoftware.MagazinesBySoftwareRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The medias property</summary>
         public global::Marechai.ApiClient.Medias.MediasRequestBuilder Medias

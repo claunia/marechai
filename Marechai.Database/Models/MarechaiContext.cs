@@ -105,6 +105,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<MagazineIssue>                       MagazineIssues                      { get; set; }
     public virtual DbSet<MagazinesByMachine>                  MagazinesByMachines                 { get; set; }
     public virtual DbSet<MagazinesByMachineFamily>            MagazinesByMachinesFamilies         { get; set; }
+    public virtual DbSet<MagazinesBySoftware>                 MagazinesBySoftware                 { get; set; }
     public virtual DbSet<MagazineSynopsis>                    MagazineSynopses                    { get; set; }
     public virtual DbSet<MarechaiDb>                          MarechaiDb                          { get; set; }
     public virtual DbSet<MasteringText>                       MasteringTexts                      { get; set; }
@@ -1429,6 +1430,17 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
             entity.HasOne(d => d.Magazine).WithMany(p => p.MachineFamilies).HasForeignKey(d => d.MagazineId);
 
             entity.HasOne(d => d.MachineFamily).WithMany(p => p.Magazines).HasForeignKey(d => d.MachineFamilyId);
+        });
+
+        modelBuilder.Entity<MagazinesBySoftware>(entity =>
+        {
+            entity.HasIndex(e => e.MagazineId);
+
+            entity.HasIndex(e => e.SoftwareId);
+
+            entity.HasOne(d => d.Magazine).WithMany(p => p.Software).HasForeignKey(d => d.MagazineId);
+
+            entity.HasOne(d => d.Software).WithMany(p => p.Magazines).HasForeignKey(d => d.SoftwareId);
         });
 
         modelBuilder.Entity<MemoryByMachine>(entity =>
