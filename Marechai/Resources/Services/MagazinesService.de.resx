@@ -453,4 +453,19 @@
     <data name="Back to Magazines" xml:space="preserve">
         <value>Zurück zu Magazinen</value>
     </data>
+    <data name="Import Issues" xml:space="preserve">
+        <value>Ausgaben importieren</value>
+    </data>
+    <data name="Upload a CSV file to import magazine issues in bulk. Download the template first to see the expected format." xml:space="preserve">
+        <value>Laden Sie eine CSV-Datei hoch, um Zeitschriftenausgaben im Massenverfahren zu importieren. Laden Sie zunächst die Vorlage herunter, um das erwartete Format zu sehen.</value>
+    </data>
+    <data name="{0} rows parsed. {1} auto-rejected (duplicate or validation error). Selected rows will be REJECTED — unselected rows will be imported." xml:space="preserve">
+        <value>{0} Zeilen verarbeitet. {1} automatisch abgelehnt (Duplikat oder Validierungsfehler). Ausgewählte Zeilen werden ABGELEHNT — nicht ausgewählte werden importiert.</value>
+    </data>
+    <data name="Duplicate issue" xml:space="preserve">
+        <value>Doppelte Ausgabe</value>
+    </data>
+    <data name="Caption, issue number, or published year is required." xml:space="preserve">
+        <value>Titel, Ausgabennummer oder Erscheinungsjahr ist erforderlich.</value>
+    </data>
 </root>

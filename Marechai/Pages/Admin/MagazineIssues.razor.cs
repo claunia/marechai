@@ -179,6 +179,27 @@ public partial class MagazineIssues
         }
     }
 
+    async Task OpenImportDialog()
+    {
+        DialogParameters<MagazineIssueImportDialog> parameters = new()
+        {
+            { x => x.MagazineId, MagazineId }
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<MagazineIssueImportDialog>(L["Import Issues"],
+                                                                                            parameters,
+                                                                                            new DialogOptions
+                                                                                            {
+                                                                                                MaxWidth  = MaxWidth.Large,
+                                                                                                FullWidth = true
+                                                                                            });
+
+        DialogResult result = await dialog.Result;
+
+        if(result is { Canceled: false })
+            await ReloadAsync();
+    }
+
     async Task ConfirmDelete(MagazineIssueDto issue)
     {
         string displayName = issue.IssueNumber.HasValue

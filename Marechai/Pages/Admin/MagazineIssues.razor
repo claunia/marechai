@@ -38,6 +38,7 @@
 <MudPaper Elevation="2" Class="rounded-lg">
     <MudToolBar Dense="true">
         <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="OpenAddDialog">@L["Add Issue"]</MudButton>
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Upload" OnClick="OpenImportDialog" Class="ml-2">@L["Import CSV"]</MudButton>
         <MudSpacer/>
         <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="ReloadAsync"/>
     </MudToolBar>
