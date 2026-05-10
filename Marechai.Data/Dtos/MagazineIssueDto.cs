@@ -23,6 +23,7 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
@@ -51,4 +52,8 @@ public class MagazineIssueDto : BaseDto<long>
     public uint? IssueNumber { get; set; }
     [JsonPropertyName("internet_archive_url")]
     public string? InternetArchiveUrl { get; set; }
+    [JsonPropertyName("cover_guid")]
+    public Guid? CoverGuid { get; set; }
+    [JsonPropertyName("original_cover_extension")]
+    public string? OriginalCoverExtension { get; set; }
 }

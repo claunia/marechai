@@ -471,4 +471,28 @@
     <data name="Internet Archive link" xml:space="preserve">
         <value>Lien Internet Archive</value>
     </data>
+  <data name="Cover" xml:space="preserve">
+    <value>Couverture</value>
+  </data>
+  <data name="This issue has a cover image." xml:space="preserve">
+    <value>Ce numéro a une image de couverture.</value>
+  </data>
+  <data name="No cover image." xml:space="preserve">
+    <value>Pas d&apos;image de couverture.</value>
+  </data>
+  <data name="Delete Cover" xml:space="preserve">
+    <value>Supprimer la couverture</value>
+  </data>
+  <data name="Upload Cover" xml:space="preserve">
+    <value>Téléverser la couverture</value>
+  </data>
+  <data name="Cover uploaded successfully." xml:space="preserve">
+    <value>Couverture téléversée avec succès.</value>
+  </data>
+  <data name="Failed to upload cover." xml:space="preserve">
+    <value>Échec du téléversement de la couverture.</value>
+  </data>
+  <data name="Cover deleted." xml:space="preserve">
+    <value>Couverture supprimée.</value>
+  </data>
 </root>

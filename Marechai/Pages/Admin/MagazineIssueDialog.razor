@@ -1,6 +1,9 @@
+@using Marechai.ApiClient.Models
 @using Marechai.Services
+@using Microsoft.AspNetCore.Components.Forms
 
 @inject IStringLocalizer<MagazinesService> L
+@inject MagazinesService Service
 
 <MudDialog>
     <DialogContent>
@@ -58,6 +61,48 @@
                       InputType="InputType.Url"
                       Placeholder="https://archive.org/details/..."
                       Class="mb-4"/>
+
+        @if(IsEdit)
+        {
+            <MudDivider Class="my-4"/>
+            <MudText Typo="Typo.h6" Class="mb-2">@L["Cover"]</MudText>
+
+            @if(_hasCover)
+            {
+                <MudText Typo="Typo.body2" Class="mb-2">@L["This issue has a cover image."]</MudText>
+                <MudButton Variant="Variant.Outlined" Color="Color.Error" Size="Size.Small"
+                           OnClick="DeleteCover" Class="mb-4">
+                    @L["Delete Cover"]
+                </MudButton>
+            }
+            else
+            {
+                <MudText Typo="Typo.body2" Class="mb-2">@L["No cover image."]</MudText>
+            }
+
+            <MudFileUpload T="IBrowserFile" Accept=".jpg,.jpeg,.png,.webp,.tiff,.tif,.bmp"
+                           FilesChanged="OnCoverFileSelected" MaximumFileCount="1">
+                <CustomContent Context="ctx">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.CloudUpload"
+                               Disabled="_isUploadingCover"
+                               OnClick="@ctx.OpenFilePickerAsync">
+                        @L["Upload Cover"]
+                    </MudButton>
+                </CustomContent>
+            </MudFileUpload>
+
+            @if(_isUploadingCover)
+            {
+                <MudProgressLinear Indeterminate="true" Class="mt-2"/>
+            }
+
+            @if(!string.IsNullOrWhiteSpace(_coverMessage))
+            {
+                <MudAlert Severity="@_coverMessageSeverity" Class="mt-2" ShowCloseIcon="true"
+                          CloseIconClicked="() => _coverMessage = null">@_coverMessage</MudAlert>
+            }
+        }
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
@@ -78,6 +123,16 @@
     [Parameter] public short?    Pages              { get; set; }
     [Parameter] public uint?     IssueNumber        { get; set; }
     [Parameter] public string    InternetArchiveUrl { get; set; }
+    [Parameter] public bool      IsEdit             { get; set; }
+    [Parameter] public long      IssueId            { get; set; }
+    [Parameter] public bool      HasCover           { get; set; }
+
+    bool     _hasCover;
+    bool     _isUploadingCover;
+    string   _coverMessage;
+    Severity _coverMessageSeverity = Severity.Info;
+
+    protected override void OnInitialized() => _hasCover = HasCover;
 
     void Cancel() => MudDialog.Cancel();
 
@@ -98,5 +153,77 @@
             IssueNumber        = IssueNumber,
             InternetArchiveUrl = string.IsNullOrWhiteSpace(InternetArchiveUrl) ? null : InternetArchiveUrl.Trim()
         }));
+    }
+
+    async Task OnCoverFileSelected(IBrowserFile file)
+    {
+        if(file is null) return;
+
+        _isUploadingCover = true;
+        _coverMessage     = null;
+        StateHasChanged();
+
+        try
+        {
+            using var stream = file.OpenReadStream(50 * 1024 * 1024); // 50MB limit
+            using var ms     = new System.IO.MemoryStream();
+            await stream.CopyToAsync(ms);
+            ms.Position = 0;
+
+            string contentType = System.IO.Path.GetExtension(file.Name)?.ToLowerInvariant() switch
+            {
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png"            => "image/png",
+                ".webp"           => "image/webp",
+                ".tiff" or ".tif" => "image/tiff",
+                ".bmp"            => "image/bmp",
+                _                 => "application/octet-stream"
+            };
+
+            var multipartBody = new Microsoft.Kiota.Abstractions.MultipartBody();
+            multipartBody.AddOrReplacePart("file", contentType, ms, file.Name);
+
+            MagazineIssueDto result = await Service.UploadIssueCoverAsync(IssueId, multipartBody);
+
+            if(result is not null)
+            {
+                _hasCover             = true;
+                _coverMessage         = L["Cover uploaded successfully."];
+                _coverMessageSeverity = Severity.Success;
+            }
+            else
+            {
+                _coverMessage         = L["Failed to upload cover."];
+                _coverMessageSeverity = Severity.Error;
+            }
+        }
+        catch(Exception ex)
+        {
+            _coverMessage         = ex.Message;
+            _coverMessageSeverity = Severity.Error;
+        }
+        finally
+        {
+            _isUploadingCover = false;
+            StateHasChanged();
+        }
+    }
+
+    async Task DeleteCover()
+    {
+        (bool succeeded, string error) = await Service.DeleteIssueCoverAsync(IssueId);
+
+        if(succeeded)
+        {
+            _hasCover             = false;
+            _coverMessage         = L["Cover deleted."];
+            _coverMessageSeverity = Severity.Success;
+            StateHasChanged();
+        }
+        else
+        {
+            _coverMessage         = error;
+            _coverMessageSeverity = Severity.Error;
+        }
     }
 }

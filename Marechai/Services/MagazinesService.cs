@@ -408,6 +408,38 @@ public class MagazinesService(Marechai.ApiClient.Client client)
         }
     }
 
+    // --- Magazine Issue Cover methods ---
+
+    public async Task<(bool succeeded, string error)> DeleteIssueCoverAsync(long issueId)
+    {
+        try
+        {
+            await client.Magazines.Issues[issueId].Cover.DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<MagazineIssueDto> UploadIssueCoverAsync(long issueId, MultipartBody body)
+    {
+        try
+        {
+            return await client.Magazines.Issues[issueId].Cover.Upload.PostAsync(body);
+        }
+        catch(ProblemDetails)
+        {
+            return null;
+        }
+    }
+
     // --- Synopsis methods ---
 
     public async Task<List<DocumentSynopsisDto>> GetSynopsesAsync(long magazineId)

@@ -22,6 +22,8 @@ namespace Marechai.ApiClient.Models
 #else
         public string Caption { get; set; }
 #endif
+        /// <summary>The cover_guid property</summary>
+        public Guid? CoverGuid { get; set; }
         /// <summary>The id property</summary>
         public long? Id { get; set; }
         /// <summary>The internet_archive_url property</summary>
@@ -51,6 +53,14 @@ namespace Marechai.ApiClient.Models
 #nullable restore
 #else
         public string NativeCaption { get; set; }
+#endif
+        /// <summary>The original_cover_extension property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? OriginalCoverExtension { get; set; }
+#nullable restore
+#else
+        public string OriginalCoverExtension { get; set; }
 #endif
         /// <summary>The pages property</summary>
         public int? Pages { get; set; }
@@ -92,12 +102,14 @@ namespace Marechai.ApiClient.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "caption", n => { Caption = n.GetStringValue(); } },
+                { "cover_guid", n => { CoverGuid = n.GetGuidValue(); } },
                 { "id", n => { Id = n.GetLongValue(); } },
                 { "internet_archive_url", n => { InternetArchiveUrl = n.GetStringValue(); } },
                 { "issue_number", n => { IssueNumber = n.GetIntValue(); } },
                 { "magazine_id", n => { MagazineId = n.GetLongValue(); } },
                 { "magazine_title", n => { MagazineTitle = n.GetStringValue(); } },
                 { "native_caption", n => { NativeCaption = n.GetStringValue(); } },
+                { "original_cover_extension", n => { OriginalCoverExtension = n.GetStringValue(); } },
                 { "pages", n => { Pages = n.GetIntValue(); } },
                 { "product_code", n => { ProductCode = n.GetStringValue(); } },
                 { "published", n => { Published = n.GetDateTimeOffsetValue(); } },
@@ -112,12 +124,14 @@ namespace Marechai.ApiClient.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("caption", Caption);
+            writer.WriteGuidValue("cover_guid", CoverGuid);
             writer.WriteLongValue("id", Id);
             writer.WriteStringValue("internet_archive_url", InternetArchiveUrl);
             writer.WriteIntValue("issue_number", IssueNumber);
             writer.WriteLongValue("magazine_id", MagazineId);
             writer.WriteStringValue("magazine_title", MagazineTitle);
             writer.WriteStringValue("native_caption", NativeCaption);
+            writer.WriteStringValue("original_cover_extension", OriginalCoverExtension);
             writer.WriteIntValue("pages", Pages);
             writer.WriteStringValue("product_code", ProductCode);
             writer.WriteDateTimeOffsetValue("published", Published);
