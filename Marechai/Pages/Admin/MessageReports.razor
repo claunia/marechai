@@ -49,7 +49,7 @@ else
         </HeaderContent>
         <RowTemplate>
             <MudTd>@(context.CreatedOn?.ToLocalTime().ToString("yyyy-MM-dd HH:mm"))</MudTd>
-            <MudTd>@(context.Reporter?.UserSummaryDto?.DisplayName ?? L["(deleted)"])</MudTd>
+            <MudTd>@(context.Reporter?.DisplayName ?? L["(deleted)"])</MudTd>
             <MudTd>@FormatReason(context.Reason)</MudTd>
             <MudTd>@(context.Explanation ?? "")</MudTd>
             <MudTd>

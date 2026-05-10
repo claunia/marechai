@@ -37,18 +37,18 @@ namespace Marechai.ApiClient.Models
         /// <summary>The reporter property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public global::Marechai.ApiClient.Models.MessageReportDto.MessageReportDto_reporter? Reporter { get; set; }
+        public global::Marechai.ApiClient.Models.UserSummaryDto? Reporter { get; set; }
 #nullable restore
 #else
-        public global::Marechai.ApiClient.Models.MessageReportDto.MessageReportDto_reporter Reporter { get; set; }
+        public global::Marechai.ApiClient.Models.UserSummaryDto Reporter { get; set; }
 #endif
         /// <summary>The resolved_by property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public global::Marechai.ApiClient.Models.MessageReportDto.MessageReportDto_resolved_by? ResolvedBy { get; set; }
+        public global::Marechai.ApiClient.Models.UserSummaryDto? ResolvedBy { get; set; }
 #nullable restore
 #else
-        public global::Marechai.ApiClient.Models.MessageReportDto.MessageReportDto_resolved_by ResolvedBy { get; set; }
+        public global::Marechai.ApiClient.Models.UserSummaryDto ResolvedBy { get; set; }
 #endif
         /// <summary>The resolved_on property</summary>
         public DateTimeOffset? ResolvedOn { get; set; }
@@ -84,8 +84,8 @@ namespace Marechai.ApiClient.Models
                 { "is_resolved", n => { IsResolved = n.GetBoolValue(); } },
                 { "message_id", n => { MessageId = n.GetLongValue(); } },
                 { "reason", n => { Reason = n.GetIntValue(); } },
-                { "reporter", n => { Reporter = n.GetObjectValue<global::Marechai.ApiClient.Models.MessageReportDto.MessageReportDto_reporter>(global::Marechai.ApiClient.Models.MessageReportDto.MessageReportDto_reporter.CreateFromDiscriminatorValue); } },
-                { "resolved_by", n => { ResolvedBy = n.GetObjectValue<global::Marechai.ApiClient.Models.MessageReportDto.MessageReportDto_resolved_by>(global::Marechai.ApiClient.Models.MessageReportDto.MessageReportDto_resolved_by.CreateFromDiscriminatorValue); } },
+                { "reporter", n => { Reporter = n.GetObjectValue<global::Marechai.ApiClient.Models.UserSummaryDto>(global::Marechai.ApiClient.Models.UserSummaryDto.CreateFromDiscriminatorValue); } },
+                { "resolved_by", n => { ResolvedBy = n.GetObjectValue<global::Marechai.ApiClient.Models.UserSummaryDto>(global::Marechai.ApiClient.Models.UserSummaryDto.CreateFromDiscriminatorValue); } },
                 { "resolved_on", n => { ResolvedOn = n.GetDateTimeOffsetValue(); } },
             };
         }
@@ -103,160 +103,10 @@ namespace Marechai.ApiClient.Models
             writer.WriteBoolValue("is_resolved", IsResolved);
             writer.WriteLongValue("message_id", MessageId);
             writer.WriteIntValue("reason", Reason);
-            writer.WriteObjectValue<global::Marechai.ApiClient.Models.MessageReportDto.MessageReportDto_reporter>("reporter", Reporter);
-            writer.WriteObjectValue<global::Marechai.ApiClient.Models.MessageReportDto.MessageReportDto_resolved_by>("resolved_by", ResolvedBy);
+            writer.WriteObjectValue<global::Marechai.ApiClient.Models.UserSummaryDto>("reporter", Reporter);
+            writer.WriteObjectValue<global::Marechai.ApiClient.Models.UserSummaryDto>("resolved_by", ResolvedBy);
             writer.WriteDateTimeOffsetValue("resolved_on", ResolvedOn);
             writer.WriteAdditionalData(AdditionalData);
-        }
-        /// <summary>
-        /// Composed type wrapper for classes <see cref="global::Marechai.ApiClient.Models.MessageReportDto_reporterMember1"/>, <see cref="global::Marechai.ApiClient.Models.UserSummaryDto"/>
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class MessageReportDto_reporter : IComposedTypeWrapper, IParsable
-        {
-            /// <summary>Composed type representation for type <see cref="global::Marechai.ApiClient.Models.MessageReportDto_reporterMember1"/></summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-            public global::Marechai.ApiClient.Models.MessageReportDto_reporterMember1? MessageReportDtoReporterMember1 { get; set; }
-#nullable restore
-#else
-            public global::Marechai.ApiClient.Models.MessageReportDto_reporterMember1 MessageReportDtoReporterMember1 { get; set; }
-#endif
-            /// <summary>Composed type representation for type <see cref="global::Marechai.ApiClient.Models.UserSummaryDto"/></summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-            public global::Marechai.ApiClient.Models.UserSummaryDto? UserSummaryDto { get; set; }
-#nullable restore
-#else
-            public global::Marechai.ApiClient.Models.UserSummaryDto UserSummaryDto { get; set; }
-#endif
-            /// <summary>
-            /// Creates a new instance of the appropriate class based on discriminator value
-            /// </summary>
-            /// <returns>A <see cref="global::Marechai.ApiClient.Models.MessageReportDto.MessageReportDto_reporter"/></returns>
-            /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-            public static global::Marechai.ApiClient.Models.MessageReportDto.MessageReportDto_reporter CreateFromDiscriminatorValue(IParseNode parseNode)
-            {
-                if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
-                var mappingValue = parseNode.GetChildNode("")?.GetStringValue();
-                var result = new global::Marechai.ApiClient.Models.MessageReportDto.MessageReportDto_reporter();
-                if("".Equals(mappingValue, StringComparison.OrdinalIgnoreCase))
-                {
-                    result.MessageReportDtoReporterMember1 = new global::Marechai.ApiClient.Models.MessageReportDto_reporterMember1();
-                }
-                else if("UserSummaryDto".Equals(mappingValue, StringComparison.OrdinalIgnoreCase))
-                {
-                    result.UserSummaryDto = new global::Marechai.ApiClient.Models.UserSummaryDto();
-                }
-                return result;
-            }
-            /// <summary>
-            /// The deserialization information for the current model
-            /// </summary>
-            /// <returns>A IDictionary&lt;string, Action&lt;IParseNode&gt;&gt;</returns>
-            public virtual IDictionary<string, Action<IParseNode>> GetFieldDeserializers()
-            {
-                if(MessageReportDtoReporterMember1 != null)
-                {
-                    return MessageReportDtoReporterMember1.GetFieldDeserializers();
-                }
-                else if(UserSummaryDto != null)
-                {
-                    return UserSummaryDto.GetFieldDeserializers();
-                }
-                return new Dictionary<string, Action<IParseNode>>();
-            }
-            /// <summary>
-            /// Serializes information the current object
-            /// </summary>
-            /// <param name="writer">Serialization writer to use to serialize this model</param>
-            public virtual void Serialize(ISerializationWriter writer)
-            {
-                if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-                if(MessageReportDtoReporterMember1 != null)
-                {
-                    writer.WriteObjectValue<global::Marechai.ApiClient.Models.MessageReportDto_reporterMember1>(null, MessageReportDtoReporterMember1);
-                }
-                else if(UserSummaryDto != null)
-                {
-                    writer.WriteObjectValue<global::Marechai.ApiClient.Models.UserSummaryDto>(null, UserSummaryDto);
-                }
-            }
-        }
-        /// <summary>
-        /// Composed type wrapper for classes <see cref="global::Marechai.ApiClient.Models.MessageReportDto_resolved_byMember1"/>, <see cref="global::Marechai.ApiClient.Models.UserSummaryDto"/>
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class MessageReportDto_resolved_by : IComposedTypeWrapper, IParsable
-        {
-            /// <summary>Composed type representation for type <see cref="global::Marechai.ApiClient.Models.MessageReportDto_resolved_byMember1"/></summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-            public global::Marechai.ApiClient.Models.MessageReportDto_resolved_byMember1? MessageReportDtoResolvedByMember1 { get; set; }
-#nullable restore
-#else
-            public global::Marechai.ApiClient.Models.MessageReportDto_resolved_byMember1 MessageReportDtoResolvedByMember1 { get; set; }
-#endif
-            /// <summary>Composed type representation for type <see cref="global::Marechai.ApiClient.Models.UserSummaryDto"/></summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-            public global::Marechai.ApiClient.Models.UserSummaryDto? UserSummaryDto { get; set; }
-#nullable restore
-#else
-            public global::Marechai.ApiClient.Models.UserSummaryDto UserSummaryDto { get; set; }
-#endif
-            /// <summary>
-            /// Creates a new instance of the appropriate class based on discriminator value
-            /// </summary>
-            /// <returns>A <see cref="global::Marechai.ApiClient.Models.MessageReportDto.MessageReportDto_resolved_by"/></returns>
-            /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-            public static global::Marechai.ApiClient.Models.MessageReportDto.MessageReportDto_resolved_by CreateFromDiscriminatorValue(IParseNode parseNode)
-            {
-                if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
-                var mappingValue = parseNode.GetChildNode("")?.GetStringValue();
-                var result = new global::Marechai.ApiClient.Models.MessageReportDto.MessageReportDto_resolved_by();
-                if("".Equals(mappingValue, StringComparison.OrdinalIgnoreCase))
-                {
-                    result.MessageReportDtoResolvedByMember1 = new global::Marechai.ApiClient.Models.MessageReportDto_resolved_byMember1();
-                }
-                else if("UserSummaryDto".Equals(mappingValue, StringComparison.OrdinalIgnoreCase))
-                {
-                    result.UserSummaryDto = new global::Marechai.ApiClient.Models.UserSummaryDto();
-                }
-                return result;
-            }
-            /// <summary>
-            /// The deserialization information for the current model
-            /// </summary>
-            /// <returns>A IDictionary&lt;string, Action&lt;IParseNode&gt;&gt;</returns>
-            public virtual IDictionary<string, Action<IParseNode>> GetFieldDeserializers()
-            {
-                if(MessageReportDtoResolvedByMember1 != null)
-                {
-                    return MessageReportDtoResolvedByMember1.GetFieldDeserializers();
-                }
-                else if(UserSummaryDto != null)
-                {
-                    return UserSummaryDto.GetFieldDeserializers();
-                }
-                return new Dictionary<string, Action<IParseNode>>();
-            }
-            /// <summary>
-            /// Serializes information the current object
-            /// </summary>
-            /// <param name="writer">Serialization writer to use to serialize this model</param>
-            public virtual void Serialize(ISerializationWriter writer)
-            {
-                if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-                if(MessageReportDtoResolvedByMember1 != null)
-                {
-                    writer.WriteObjectValue<global::Marechai.ApiClient.Models.MessageReportDto_resolved_byMember1>(null, MessageReportDtoResolvedByMember1);
-                }
-                else if(UserSummaryDto != null)
-                {
-                    writer.WriteObjectValue<global::Marechai.ApiClient.Models.UserSummaryDto>(null, UserSummaryDto);
-                }
-            }
         }
     }
 }

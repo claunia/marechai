@@ -24,6 +24,7 @@
 *******************************************************************************/
 
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Marechai.Data.Dtos;
@@ -36,8 +37,14 @@ public class MessageReportDto : BaseDto<long>
     [JsonPropertyName("conversation_id")]
     public long? ConversationId { get; set; }
 
+    /// <summary>
+    ///     Marked <see cref="RequiredAttribute" /> only so the OpenAPI schema emits a direct <c>$ref</c> instead of
+    ///     <c>oneOf:[null,$ref]</c>; the wire value can still legitimately be JSON null when the originating account has
+    ///     been deleted.
+    /// </summary>
+    [Required]
     [JsonPropertyName("reporter")]
-    public UserSummaryDto? Reporter { get; set; }
+    public UserSummaryDto Reporter { get; set; }
 
     [JsonPropertyName("reason")]
     public ReviewReportReason Reason { get; set; }
@@ -48,8 +55,14 @@ public class MessageReportDto : BaseDto<long>
     [JsonPropertyName("is_resolved")]
     public bool IsResolved { get; set; }
 
+    /// <summary>
+    ///     Marked <see cref="RequiredAttribute" /> only so the OpenAPI schema emits a direct <c>$ref</c> instead of
+    ///     <c>oneOf:[null,$ref]</c>; the wire value is JSON null on unresolved reports (and that null still deserializes
+    ///     to a null reference at the consumer despite the attribute).
+    /// </summary>
+    [Required]
     [JsonPropertyName("resolved_by")]
-    public UserSummaryDto? ResolvedBy { get; set; }
+    public UserSummaryDto ResolvedBy { get; set; }
 
     [JsonPropertyName("resolved_on")]
     public DateTime? ResolvedOn { get; set; }

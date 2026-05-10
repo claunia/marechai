@@ -24,6 +24,7 @@
 *******************************************************************************/
 
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Marechai.Data.Dtos;
@@ -33,8 +34,14 @@ public class MessageDto : BaseDto<long>
     [JsonPropertyName("conversation_id")]
     public long ConversationId { get; set; }
 
+    /// <summary>
+    ///     Marked <see cref="RequiredAttribute" /> only so the OpenAPI schema emits a direct <c>$ref</c> instead of
+    ///     <c>oneOf:[null,$ref]</c> (which Kiota turns into a discriminator-based wrapper that never populates). The wire
+    ///     value can still legitimately be JSON null when the originating account has been deleted.
+    /// </summary>
+    [Required]
     [JsonPropertyName("sender")]
-    public UserSummaryDto? Sender { get; set; }
+    public UserSummaryDto Sender { get; set; }
 
     [JsonPropertyName("is_system_authored")]
     public bool IsSystemAuthored { get; set; }
