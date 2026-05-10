@@ -50,6 +50,14 @@
                          Min="(short)1"
                          Clearable="true"
                          Class="mb-4"/>
+
+        <MudTextField @bind-Value="InternetArchiveUrl"
+                      Label="@L["Internet Archive link"]"
+                      Variant="Variant.Outlined"
+                      MaxLength="2048"
+                      InputType="InputType.Url"
+                      Placeholder="https://archive.org/details/..."
+                      Class="mb-4"/>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
@@ -69,6 +77,7 @@
     [Parameter] public string    ProductCode        { get; set; }
     [Parameter] public short?    Pages              { get; set; }
     [Parameter] public uint?     IssueNumber        { get; set; }
+    [Parameter] public string    InternetArchiveUrl { get; set; }
 
     void Cancel() => MudDialog.Cancel();
 
@@ -86,7 +95,8 @@
             PublishedPrecision = PublishedPrecision,
             ProductCode        = ProductCode,
             Pages              = Pages,
-            IssueNumber        = IssueNumber
+            IssueNumber        = IssueNumber,
+            InternetArchiveUrl = string.IsNullOrWhiteSpace(InternetArchiveUrl) ? null : InternetArchiveUrl.Trim()
         }));
     }
 }

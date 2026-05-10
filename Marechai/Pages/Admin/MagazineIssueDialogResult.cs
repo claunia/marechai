@@ -12,4 +12,5 @@ public sealed class MagazineIssueDialogResult
     public string    ProductCode        { get; set; }
     public short?    Pages              { get; set; }
     public uint?     IssueNumber        { get; set; }
+    public string    InternetArchiveUrl { get; set; }
 }

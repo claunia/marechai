@@ -60,7 +60,8 @@ public class MagazineIssuesController(MarechaiContext context) : ControllerBase
                                                                   PublishedPrecision = b.PublishedPrecision,
                                                                   ProductCode        = b.ProductCode,
                                                                   Pages              = b.Pages,
-                                                                  IssueNumber        = b.IssueNumber
+                                                                  IssueNumber        = b.IssueNumber,
+                                                                  InternetArchiveUrl = b.InternetArchiveUrl
                                                               })
                                                              .ToListAsync();
 
@@ -80,7 +81,8 @@ public class MagazineIssuesController(MarechaiContext context) : ControllerBase
                                                                    PublishedPrecision = b.PublishedPrecision,
                                                                    ProductCode        = b.ProductCode,
                                                                    Pages              = b.Pages,
-                                                                   IssueNumber        = b.IssueNumber
+                                                                   IssueNumber        = b.IssueNumber,
+                                                                   InternetArchiveUrl = b.InternetArchiveUrl
                                                                })
                                                               .FirstOrDefaultAsync();
 
@@ -107,6 +109,7 @@ public class MagazineIssuesController(MarechaiContext context) : ControllerBase
         model.ProductCode        = dto.ProductCode;
         model.Pages              = dto.Pages;
         model.IssueNumber        = dto.IssueNumber;
+        model.InternetArchiveUrl = dto.InternetArchiveUrl;
 
         string newsName = await BuildMagazineIssueNewsNameAsync(model);
 
@@ -143,7 +146,8 @@ public class MagazineIssuesController(MarechaiContext context) : ControllerBase
             PublishedPrecision = dto.PublishedPrecision,
             ProductCode        = dto.ProductCode,
             Pages              = dto.Pages,
-            IssueNumber        = dto.IssueNumber
+            IssueNumber        = dto.IssueNumber,
+            InternetArchiveUrl = dto.InternetArchiveUrl
         };
 
         await context.MagazineIssues.AddAsync(model);

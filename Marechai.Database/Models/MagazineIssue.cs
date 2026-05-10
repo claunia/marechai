@@ -47,6 +47,9 @@ public class MagazineIssue : BaseModel<long>
     public string ProductCode { get; set; }
     public short? Pages       { get; set; }
     public uint?  IssueNumber { get; set; }
+    [Url]
+    [StringLength(2048)]
+    public string InternetArchiveUrl { get; set; }
 
     public virtual Magazine                              Magazine        { get; set; }
     public virtual ICollection<PeopleByMagazine>         People          { get; set; }

@@ -55,6 +55,20 @@
             </PropertyColumn>
             <PropertyColumn Property="x => x.ProductCode" Title="@L["Product code"]"/>
             <PropertyColumn Property="x => x.Pages" Title="@L["Pages"]"/>
+            <TemplateColumn Title="@L["Internet Archive link"]" Sortable="false" Filterable="false">
+                <CellTemplate>
+                    @if(!string.IsNullOrWhiteSpace(context.Item.InternetArchiveUrl))
+                    {
+                        <MudTooltip Text="@context.Item.InternetArchiveUrl">
+                            <MudIconButton Icon="@Icons.Material.Filled.OpenInNew"
+                                           Size="Size.Small"
+                                           Color="Color.Primary"
+                                           Href="@context.Item.InternetArchiveUrl"
+                                           Target="_blank"/>
+                        </MudTooltip>
+                    }
+                </CellTemplate>
+            </TemplateColumn>
             <TemplateColumn Title="@L["Actions"]" Sortable="false" Filterable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">

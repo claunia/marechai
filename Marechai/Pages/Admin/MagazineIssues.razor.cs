@@ -101,7 +101,8 @@ public partial class MagazineIssues
                 PublishedPrecision = data.PublishedPrecision,
                 ProductCode        = data.ProductCode,
                 Pages              = data.Pages.HasValue ? (int?)data.Pages.Value : null,
-                IssueNumber        = data.IssueNumber.HasValue ? (int?)data.IssueNumber.Value : null
+                IssueNumber        = data.IssueNumber.HasValue ? (int?)data.IssueNumber.Value : null,
+                InternetArchiveUrl = data.InternetArchiveUrl
             };
 
             (long? id, string errorMessage) = await Service.CreateIssueAsync(dto);
@@ -138,7 +139,8 @@ public partial class MagazineIssues
             { x => x.PublishedPrecision, (int)(full.PublishedPrecision ?? 0) },
             { x => x.ProductCode, full.ProductCode },
             { x => x.Pages, full.Pages.HasValue ? (short?)full.Pages.Value : null },
-            { x => x.IssueNumber, full.IssueNumber.HasValue && full.IssueNumber.Value >= 0 ? (uint?)full.IssueNumber.Value : null }
+            { x => x.IssueNumber, full.IssueNumber.HasValue && full.IssueNumber.Value >= 0 ? (uint?)full.IssueNumber.Value : null },
+            { x => x.InternetArchiveUrl, full.InternetArchiveUrl }
         };
 
         IDialogReference dialog = await DialogService.ShowAsync<MagazineIssueDialog>(L["Edit Issue"], parameters,
@@ -162,7 +164,8 @@ public partial class MagazineIssues
                 PublishedPrecision = data.PublishedPrecision,
                 ProductCode        = data.ProductCode,
                 Pages              = data.Pages.HasValue ? (int?)data.Pages.Value : null,
-                IssueNumber        = data.IssueNumber.HasValue ? (int?)data.IssueNumber.Value : null
+                IssueNumber        = data.IssueNumber.HasValue ? (int?)data.IssueNumber.Value : null,
+                InternetArchiveUrl = data.InternetArchiveUrl
             };
 
             (bool succeeded, string errorMessage) = await Service.UpdateIssueAsync(full.Id ?? 0, dto);

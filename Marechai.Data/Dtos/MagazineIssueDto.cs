@@ -49,4 +49,6 @@ public class MagazineIssueDto : BaseDto<long>
     public short? Pages { get; set; }
     [JsonPropertyName("issue_number")]
     public uint? IssueNumber { get; set; }
+    [JsonPropertyName("internet_archive_url")]
+    public string? InternetArchiveUrl { get; set; }
 }

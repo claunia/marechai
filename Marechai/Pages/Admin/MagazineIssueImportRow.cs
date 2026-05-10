@@ -37,6 +37,7 @@ public sealed class MagazineIssueImportRow
     public int?   PublishedDay   { get; set; }
     public string ProductCode    { get; set; }
     public short? Pages          { get; set; }
+    public string InternetArchiveUrl { get; set; }
 
     public bool   IsDuplicate     { get; set; }
     public string ValidationError { get; set; }

@@ -24,6 +24,14 @@ namespace Marechai.ApiClient.Models
 #endif
         /// <summary>The id property</summary>
         public long? Id { get; set; }
+        /// <summary>The internet_archive_url property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? InternetArchiveUrl { get; set; }
+#nullable restore
+#else
+        public string InternetArchiveUrl { get; set; }
+#endif
         /// <summary>The issue_number property</summary>
         public int? IssueNumber { get; set; }
         /// <summary>The magazine_id property</summary>
@@ -85,6 +93,7 @@ namespace Marechai.ApiClient.Models
             {
                 { "caption", n => { Caption = n.GetStringValue(); } },
                 { "id", n => { Id = n.GetLongValue(); } },
+                { "internet_archive_url", n => { InternetArchiveUrl = n.GetStringValue(); } },
                 { "issue_number", n => { IssueNumber = n.GetIntValue(); } },
                 { "magazine_id", n => { MagazineId = n.GetLongValue(); } },
                 { "magazine_title", n => { MagazineTitle = n.GetStringValue(); } },
@@ -104,6 +113,7 @@ namespace Marechai.ApiClient.Models
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("caption", Caption);
             writer.WriteLongValue("id", Id);
+            writer.WriteStringValue("internet_archive_url", InternetArchiveUrl);
             writer.WriteIntValue("issue_number", IssueNumber);
             writer.WriteLongValue("magazine_id", MagazineId);
             writer.WriteStringValue("magazine_title", MagazineTitle);

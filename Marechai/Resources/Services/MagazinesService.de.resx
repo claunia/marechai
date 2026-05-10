@@ -468,4 +468,7 @@
     <data name="Caption, issue number, or published year is required." xml:space="preserve">
         <value>Titel, Ausgabennummer oder Erscheinungsjahr ist erforderlich.</value>
     </data>
+    <data name="Internet Archive link" xml:space="preserve">
+        <value>Internet Archive-Link</value>
+    </data>
 </root>

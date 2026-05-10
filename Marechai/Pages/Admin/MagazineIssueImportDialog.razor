@@ -135,6 +135,16 @@
                             </TemplateColumn>
                             <PropertyColumn Property="x => x.ProductCode" Title="@L["Product code"]"/>
                             <PropertyColumn Property="x => x.Pages" Title="@L["Pages"]"/>
+                            <TemplateColumn Title="@L["Internet Archive link"]" Sortable="false" Filterable="false">
+                                <CellTemplate>
+                                    @if(!string.IsNullOrWhiteSpace(context.Item.InternetArchiveUrl))
+                                    {
+                                        <MudTooltip Text="@context.Item.InternetArchiveUrl">
+                                            <MudIcon Icon="@Icons.Material.Filled.Link" Size="Size.Small" Color="Color.Primary"/>
+                                        </MudTooltip>
+                                    }
+                                </CellTemplate>
+                            </TemplateColumn>
                         </Columns>
                     </MudDataGrid>
                 </MudStack>
@@ -272,7 +282,7 @@
     [
         "Caption", "NativeCaption", "IssueNumber",
         "PublishedYear", "PublishedMonth", "PublishedDay",
-        "ProductCode", "Pages"
+        "ProductCode", "Pages", "InternetArchiveUrl"
     ];
 
     [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
@@ -354,9 +364,10 @@
         {
             var importRow = new MagazineIssueImportRow
             {
-                Caption       = GetValueOrNull(row, "Caption"),
-                NativeCaption = GetValueOrNull(row, "NativeCaption"),
-                ProductCode   = GetValueOrNull(row, "ProductCode")
+                Caption            = GetValueOrNull(row, "Caption"),
+                NativeCaption      = GetValueOrNull(row, "NativeCaption"),
+                ProductCode        = GetValueOrNull(row, "ProductCode"),
+                InternetArchiveUrl = GetValueOrNull(row, "InternetArchiveUrl")
             };
 
             if(TryParseInt(row, "IssueNumber", out int issueNumber))
@@ -459,7 +470,8 @@
                 PublishedPrecision = row.PublishedPrecision,
                 ProductCode        = row.ProductCode,
                 Pages              = row.Pages,
-                IssueNumber        = row.IssueNumber
+                IssueNumber        = row.IssueNumber,
+                InternetArchiveUrl = row.InternetArchiveUrl
             };
 
             (long? id, string error) = await MagazinesService.CreateIssueAsync(dto);
@@ -492,14 +504,15 @@
         {
             var dict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
-                ["Caption"]        = row.Caption ?? "",
-                ["NativeCaption"]  = row.NativeCaption ?? "",
-                ["IssueNumber"]    = row.IssueNumber?.ToString() ?? "",
-                ["PublishedYear"]  = row.PublishedYear?.ToString() ?? "",
-                ["PublishedMonth"] = row.PublishedMonth?.ToString() ?? "",
-                ["PublishedDay"]   = row.PublishedDay?.ToString() ?? "",
-                ["ProductCode"]    = row.ProductCode ?? "",
-                ["Pages"]          = row.Pages?.ToString() ?? ""
+                ["Caption"]            = row.Caption ?? "",
+                ["NativeCaption"]      = row.NativeCaption ?? "",
+                ["IssueNumber"]        = row.IssueNumber?.ToString() ?? "",
+                ["PublishedYear"]      = row.PublishedYear?.ToString() ?? "",
+                ["PublishedMonth"]     = row.PublishedMonth?.ToString() ?? "",
+                ["PublishedDay"]       = row.PublishedDay?.ToString() ?? "",
+                ["ProductCode"]        = row.ProductCode ?? "",
+                ["Pages"]              = row.Pages?.ToString() ?? "",
+                ["InternetArchiveUrl"] = row.InternetArchiveUrl ?? ""
             };
 
             rows.Add(dict);
