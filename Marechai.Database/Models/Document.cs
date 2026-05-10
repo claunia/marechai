@@ -24,11 +24,16 @@
 *******************************************************************************/
 
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Marechai.Database.Models;
 
 public class Document : DocumentBase
 {
+    [Url]
+    [StringLength(2048)]
+    public string InternetArchiveUrl { get; set; }
+
     public virtual Iso31661Numeric Country { get; set; }
 
     public virtual ICollection<PeopleByDocument>         People          { get; set; }

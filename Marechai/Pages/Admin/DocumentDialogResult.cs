@@ -10,4 +10,5 @@ public sealed class DocumentDialogResult
     public int?      CountryId   { get; set; }
     public DateTime? Published          { get; set; }
     public int       PublishedPrecision  { get; set; }
+    public string   InternetArchiveUrl { get; set; }
 }

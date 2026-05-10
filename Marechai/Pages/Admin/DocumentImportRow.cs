@@ -38,6 +38,7 @@ public sealed class DocumentImportRow
     public int?    PublishedMonth { get; set; }
     public int?    PublishedDay   { get; set; }
     public string CountryInput   { get; set; }
+    public string InternetArchiveUrl { get; set; }
 
     public List<Iso31661NumericDto>    MatchedCountries { get; set; } = [];
     public Iso31661NumericDto         SelectedCountry  { get; set; }

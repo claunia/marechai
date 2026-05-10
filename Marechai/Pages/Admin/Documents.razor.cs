@@ -56,7 +56,8 @@ public partial class Documents
                 CountryId   = data.CountryId,
 
                 PublishedPrecision = data.PublishedPrecision,
-                Published   = data.Published.HasValue ? new DateTimeOffset(data.Published.Value, TimeSpan.Zero) : null
+                Published   = data.Published.HasValue ? new DateTimeOffset(data.Published.Value, TimeSpan.Zero) : null,
+                InternetArchiveUrl = data.InternetArchiveUrl
             };
 
             (long? id, string errorMessage) = await DocumentsService.CreateAsync(dto);
@@ -92,6 +93,7 @@ public partial class Documents
             { x => x.CountryId, fullDocument.CountryId },
             { x => x.Published, fullDocument.Published?.UtcDateTime },
             { x => x.PublishedPrecision, fullDocument.PublishedPrecision ?? 0 },
+            { x => x.InternetArchiveUrl, fullDocument.InternetArchiveUrl }
         };
 
         IDialogReference dialog = await DialogService.ShowAsync<DocumentDialog>(L["Edit Document"], parameters,
@@ -114,7 +116,8 @@ public partial class Documents
 
                 PublishedPrecision = data.PublishedPrecision,
                 CountryId   = data.CountryId,
-                Published   = data.Published.HasValue ? new DateTimeOffset(data.Published.Value, TimeSpan.Zero) : null
+                Published   = data.Published.HasValue ? new DateTimeOffset(data.Published.Value, TimeSpan.Zero) : null,
+                InternetArchiveUrl = data.InternetArchiveUrl
             };
 
             (bool succeeded, string errorMessage) = await DocumentsService.UpdateAsync(document.Id ?? 0, dto);

@@ -113,6 +113,20 @@
                     </td>
                 </tr>
             }
+            @if(!string.IsNullOrEmpty(_document.InternetArchiveUrl))
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Internet Archive link"]</strong></td>
+                    <td>
+                        <MudLink Href="@_document.InternetArchiveUrl" Target="_blank" Underline="Underline.Always">
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+                                <MudIcon Icon="@Icons.Material.Filled.OpenInNew" Size="Size.Small"/>
+                                <span>@L["View on Internet Archive"]</span>
+                            </MudStack>
+                        </MudLink>
+                    </td>
+                </tr>
+            }
             </tbody>
         </MudSimpleTable>
     </MudCardContent>

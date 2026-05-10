@@ -23,6 +23,12 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System.Text.Json.Serialization;
+
 namespace Marechai.Data.Dtos;
 
-public class DocumentDto : DocumentBaseDto {}
+public class DocumentDto : DocumentBaseDto
+{
+    [JsonPropertyName("internet_archive_url")]
+    public string? InternetArchiveUrl { get; set; }
+}

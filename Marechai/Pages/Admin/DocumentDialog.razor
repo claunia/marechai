@@ -49,6 +49,14 @@
                                  Variant="Variant.Outlined"
                                  Clearable="true"
                                  Class="mb-4"/>
+
+                <MudTextField @bind-Value="InternetArchiveUrl"
+                              Label="@L["Internet Archive link"]"
+                              Variant="Variant.Outlined"
+                              MaxLength="2048"
+                              InputType="InputType.Url"
+                              Placeholder="https://archive.org/details/..."
+                              Class="mb-4"/>
             </MudTabPanel>
 
             @* Tab 2 - Synopsis (only for existing documents) *@
@@ -377,6 +385,7 @@
     [Parameter] public int?      CountryId   { get; set; }
     [Parameter] public DateTime? Published   { get; set; }
     [Parameter] public int       PublishedPrecision { get; set; }
+    [Parameter] public string   InternetArchiveUrl { get; set; }
 
     [Inject] DocumentsService DocumentsService { get; set; } = null!;
     [Inject] TranslationService TranslationService { get; set; } = null!;
@@ -771,7 +780,8 @@
             SortTitle   = SortTitle,
             CountryId   = _selectedCountry?.Id,
             Published   = Published,
-            PublishedPrecision = PublishedPrecision
+            PublishedPrecision = PublishedPrecision,
+            InternetArchiveUrl = string.IsNullOrWhiteSpace(InternetArchiveUrl) ? null : InternetArchiveUrl.Trim()
         }));
     }
 }

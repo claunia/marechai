@@ -133,7 +133,8 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
                            Published          = d.Published,
                            PublishedPrecision = d.PublishedPrecision,
                            CountryId          = d.CountryId,
-                           Country            = d.Country.Name
+                           Country            = d.Country.Name,
+                           InternetArchiveUrl = d.InternetArchiveUrl
                        })
                       .ToListAsync(cancellationToken);
     }
@@ -175,7 +176,8 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
                            Published          = d.Published,
                            PublishedPrecision = d.PublishedPrecision,
                            CountryId          = d.CountryId,
-                           Country            = d.Country.Name
+                           Country            = d.Country.Name,
+                           InternetArchiveUrl = d.InternetArchiveUrl
                        })
                       .ToListAsync(cancellationToken);
     }
@@ -212,7 +214,8 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
                            Published          = b.Published,
                            PublishedPrecision = b.PublishedPrecision,
                            CountryId          = b.CountryId,
-                           Country            = b.Country.Name
+                           Country            = b.Country.Name,
+                           InternetArchiveUrl = b.InternetArchiveUrl
                        })
                       .ToListAsync(cancellationToken);
     }
@@ -231,7 +234,8 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
                                                               Published   = b.Published,
                                                               PublishedPrecision = b.PublishedPrecision,
                                                               CountryId   = b.CountryId,
-                                                              Country     = b.Country.Name
+                                                              Country     = b.Country.Name,
+                                                              InternetArchiveUrl = b.InternetArchiveUrl
                                                           })
                                                          .FirstOrDefaultAsync();
 
@@ -256,6 +260,7 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
         model.Published   = dto.Published;
         model.PublishedPrecision = dto.PublishedPrecision;
         model.CountryId   = dto.CountryId;
+        model.InternetArchiveUrl = dto.InternetArchiveUrl;
 
         await context.News.AddAsync(new News
         {
@@ -288,7 +293,8 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
             SortTitle   = dto.SortTitle,
             Published   = dto.Published,
             PublishedPrecision = dto.PublishedPrecision,
-            CountryId   = dto.CountryId
+            CountryId   = dto.CountryId,
+            InternetArchiveUrl = dto.InternetArchiveUrl
         };
 
         await context.Documents.AddAsync(model);

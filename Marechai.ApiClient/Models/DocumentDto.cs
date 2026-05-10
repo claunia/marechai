@@ -26,6 +26,14 @@ namespace Marechai.ApiClient.Models
         public int? CountryId { get; set; }
         /// <summary>The id property</summary>
         public long? Id { get; set; }
+        /// <summary>The internet_archive_url property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? InternetArchiveUrl { get; set; }
+#nullable restore
+#else
+        public string InternetArchiveUrl { get; set; }
+#endif
         /// <summary>The native_title property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -82,6 +90,7 @@ namespace Marechai.ApiClient.Models
                 { "country", n => { Country = n.GetStringValue(); } },
                 { "country_id", n => { CountryId = n.GetIntValue(); } },
                 { "id", n => { Id = n.GetLongValue(); } },
+                { "internet_archive_url", n => { InternetArchiveUrl = n.GetStringValue(); } },
                 { "native_title", n => { NativeTitle = n.GetStringValue(); } },
                 { "published", n => { Published = n.GetDateTimeOffsetValue(); } },
                 { "published_precision", n => { PublishedPrecision = n.GetIntValue(); } },
@@ -99,6 +108,7 @@ namespace Marechai.ApiClient.Models
             writer.WriteStringValue("country", Country);
             writer.WriteIntValue("country_id", CountryId);
             writer.WriteLongValue("id", Id);
+            writer.WriteStringValue("internet_archive_url", InternetArchiveUrl);
             writer.WriteStringValue("native_title", NativeTitle);
             writer.WriteDateTimeOffsetValue("published", Published);
             writer.WriteIntValue("published_precision", PublishedPrecision);
