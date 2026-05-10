@@ -43,9 +43,12 @@ public class PromoArtDownloadService
 
         await using var context = await _contextFactory.CreateDbContextAsync();
 
+        // Only consider import states whose SoftwareId still exists in Softwares — stale states
+        // (Software deleted after import) would otherwise cause an FK violation on insert.
         var importedGames = await context.MobyGamesImportStates
                                          .Where(s => s.Status     == MobyGamesImportStatus.Imported &&
-                                                     s.SoftwareId != null)
+                                                     s.SoftwareId != null &&
+                                                     context.Softwares.Any(sw => sw.Id == s.SoftwareId.Value))
                                          .OrderBy(s => s.MobyGameId)
                                          .ToListAsync();
 
@@ -209,6 +212,28 @@ public class PromoArtDownloadService
 
                     // Create SoftwarePromoArt record
                     await using var dbContext = await _contextFactory.CreateDbContextAsync();
+
+                    // Defensive: re-check the FK target exists (Software may have been deleted
+                    // between the initial filter and now). Avoids crashing the whole batch on FK
+                    // violation when the import state is stale.
+                    bool softwareExists = await dbContext.Softwares
+                                                         .AnyAsync(sw => sw.Id == game.SoftwareId!.Value);
+
+                    if(!softwareExists)
+                    {
+                        Console.WriteLine($" \e[33mSKIPPED\e[0m (Software {game.SoftwareId} no longer exists)");
+
+                        // Best-effort: clean up the downloaded original since we won't link it.
+                        try { File.Delete(originalFilePath); } catch { /* ignore */ }
+
+                        existingState.Status       = MobyGamesCoverDownloadStatus.Failed;
+                        existingState.ErrorMessage = $"Software {game.SoftwareId} no longer exists";
+                        existingState.ProcessedOn  = DateTime.UtcNow;
+                        await _stateService.UpdateStateAsync(existingState);
+                        failedCount++;
+
+                        continue;
+                    }
 
                     var promoArt = new SoftwarePromoArt
                     {
