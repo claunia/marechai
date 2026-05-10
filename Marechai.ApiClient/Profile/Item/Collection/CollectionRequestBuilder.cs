@@ -4,6 +4,7 @@ using Marechai.ApiClient.Models;
 using Marechai.ApiClient.Profile.Item.Collection.Books;
 using Marechai.ApiClient.Profile.Item.Collection.Documents;
 using Marechai.ApiClient.Profile.Item.Collection.Machines;
+using Marechai.ApiClient.Profile.Item.Collection.MagazineIssues;
 using Marechai.ApiClient.Profile.Item.Collection.SoftwareReleases;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
@@ -35,6 +36,11 @@ namespace Marechai.ApiClient.Profile.Item.Collection
         public global::Marechai.ApiClient.Profile.Item.Collection.Machines.MachinesRequestBuilder Machines
         {
             get => new global::Marechai.ApiClient.Profile.Item.Collection.Machines.MachinesRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The magazineIssues property</summary>
+        public global::Marechai.ApiClient.Profile.Item.Collection.MagazineIssues.MagazineIssuesRequestBuilder MagazineIssues
+        {
+            get => new global::Marechai.ApiClient.Profile.Item.Collection.MagazineIssues.MagazineIssuesRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The softwareReleases property</summary>
         public global::Marechai.ApiClient.Profile.Item.Collection.SoftwareReleases.SoftwareReleasesRequestBuilder SoftwareReleases

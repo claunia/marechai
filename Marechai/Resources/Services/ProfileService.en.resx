@@ -344,4 +344,7 @@
     <data name="Download a copy of your data, or permanently delete your Marechai account." xml:space="preserve">
         <value>Download a copy of your data, or permanently delete your Marechai account.</value>
     </data>
+  <data name="Magazine Issues" xml:space="preserve">
+    <value>Magazine Issues</value>
+  </data>
 </root>

@@ -80,7 +80,7 @@
                 <MudText Typo="Typo.body2" Style="color: rgba(255,255,255,0.8);">@_profile.Location</MudText>
             </MudStack>
         }
-        @if(_summary is not null && (_summary.BookCount > 0 || _summary.DocumentCount > 0 || _summary.MachineCount > 0 || _summary.SoftwareReleaseCount > 0))
+        @if(_summary is not null && (_summary.BookCount > 0 || _summary.DocumentCount > 0 || _summary.MachineCount > 0 || _summary.SoftwareReleaseCount > 0 || _summary.MagazineIssueCount > 0))
         {
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Wrap="Wrap.Wrap" Justify="Justify.Center">
                 @if(_summary.BookCount > 0)
@@ -95,6 +95,13 @@
                     <MudChip T="string" Color="Color.Default" Size="Size.Small" Icon="@Icons.Material.Filled.Article"
                              Style="color: white; background: rgba(255,255,255,0.2);">
                         @_summary.DocumentCount @L["Documents"]
+                    </MudChip>
+                }
+                @if(_summary.MagazineIssueCount > 0)
+                {
+                    <MudChip T="string" Color="Color.Default" Size="Size.Small" Icon="@Icons.Material.Filled.Bookmarks"
+                             Style="color: white; background: rgba(255,255,255,0.2);">
+                        @_summary.MagazineIssueCount @L["Magazine Issues"]
                     </MudChip>
                 }
                 @if(_collectedComputers?.Count > 0)
@@ -239,6 +246,41 @@
                             {
                                 <MudListItem T="CollectedDocumentDto" Href="@($"/document/{doc.DocumentId}")">
                                     <MudText Typo="Typo.body1">@doc.Title</MudText>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    </ChildContent>
+                </MudExpansionPanel>
+            </MudExpansionPanels>
+        }
+
+        @if(_collectedMagazineIssues?.Count > 0)
+        {
+            <MudExpansionPanels Class="mb-4">
+                <MudExpansionPanel>
+                    <TitleContent>
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                            <MudIcon Icon="@Icons.Material.Filled.Bookmarks" Color="Color.Primary"/>
+                            <MudText Typo="Typo.h6">@L["Magazine Issues"]</MudText>
+                            <MudChip T="string" Color="Color.Primary" Size="Size.Small">@_collectedMagazineIssues.Count</MudChip>
+                        </MudStack>
+                    </TitleContent>
+                    <ChildContent>
+                        <MudList T="CollectedMagazineIssueDto" Dense="true">
+                            @foreach(CollectedMagazineIssueDto issue in _collectedMagazineIssues)
+                            {
+                                <MudListItem T="CollectedMagazineIssueDto" Href="@($"/magazine/issue/{issue.MagazineIssueId}")">
+                                    <MudText Typo="Typo.body1">
+                                        @if(!string.IsNullOrWhiteSpace(issue.MagazineTitle))
+                                        {
+                                            <text>@issue.MagazineTitle &mdash; </text>
+                                        }
+                                        @issue.Caption
+                                        @if(issue.IssueNumber.HasValue)
+                                        {
+                                            <text> (#@issue.IssueNumber.Value)</text>
+                                        }
+                                    </MudText>
                                 </MudListItem>
                             }
                         </MudList>

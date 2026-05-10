@@ -646,6 +646,54 @@
                         <MudAlert Severity="Severity.Info" Class="mb-4">No documents in your collection yet.</MudAlert>
                     }
 
+                    @* ── Magazine Issues ── *@
+                    <MudText Typo="Typo.h6" Class="mb-2">
+                        <MudIcon Icon="@Icons.Material.Filled.Bookmarks" Class="mr-1"/>
+                        Magazine Issues (@(_myMagazineIssues?.Count ?? 0))
+                    </MudText>
+                    @if(_myMagazineIssues?.Count > 0)
+                    {
+                        <MudSimpleTable Elevation="1" Dense="true" Class="mb-4">
+                            <thead>
+                            <tr>
+                                <th>Issue</th>
+                                <th style="width: 120px;">Added</th>
+                                <th style="width: 80px;"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach(CollectedMagazineIssueDto issue in _myMagazineIssues)
+                            {
+                                <tr>
+                                    <td>
+                                        <MudLink Href="@($"/magazine/issue/{issue.MagazineIssueId}")">
+                                            @if(!string.IsNullOrWhiteSpace(issue.MagazineTitle))
+                                            {
+                                                <text>@issue.MagazineTitle &mdash; </text>
+                                            }
+                                            @issue.Caption
+                                            @if(issue.IssueNumber.HasValue)
+                                            {
+                                                <text> (#@issue.IssueNumber.Value)</text>
+                                            }
+                                        </MudLink>
+                                    </td>
+                                    <td>@issue.CollectedOn?.Date.ToShortDateString()</td>
+                                    <td>
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                       Color="Color.Error" Size="Size.Small"
+                                                       OnClick="@(() => RemoveMagazineIssueAsync(issue.MagazineIssueId))"/>
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </MudSimpleTable>
+                    }
+                    else
+                    {
+                        <MudAlert Severity="Severity.Info" Class="mb-4">No magazine issues in your collection yet.</MudAlert>
+                    }
+
                     @* ── Machines ── *@
                     <MudText Typo="Typo.h6" Class="mb-2">
                         <MudIcon Icon="@Icons.Material.Filled.Computer" Class="mr-1"/>

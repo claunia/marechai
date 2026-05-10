@@ -107,19 +107,27 @@ public sealed class CollectionService(Client client, ILogger<CollectionService> 
         }
     }
 
+    public async Task<List<CollectedMagazineIssueDto>> GetCollectedMagazineIssuesAsync(string username)
+    {
+        try
+        {
+            return await client.Profile[username].Collection.MagazineIssues.GetAsync();
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Error loading collected magazine issues for {Username}", username);
+
+            return null;
+        }
+    }
+
     // ── Authenticated: manage own collection ──
 
     public async Task<bool> IsBookCollectedAsync(long bookId)
     {
         try
         {
-            await client.Auth.Me.Collection.Books[bookId].GetAsync();
-
-            return true;
-        }
-        catch(ApiException ex) when(ex.ResponseStatusCode == 404)
-        {
-            return false;
+            return await client.Auth.Me.Collection.Books[bookId].GetAsync() ?? false;
         }
         catch(Exception ex)
         {
@@ -358,6 +366,68 @@ public sealed class CollectionService(Client client, ILogger<CollectionService> 
         catch(Exception ex)
         {
             logger.LogError(ex, "Error removing software release {ReleaseId} from collection", releaseId);
+
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<bool> IsMagazineIssueCollectedAsync(long issueId)
+    {
+        try
+        {
+            return await client.Auth.Me.Collection.MagazineIssues[issueId].GetAsync() ?? false;
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Error checking if magazine issue {IssueId} is collected", issueId);
+
+            return false;
+        }
+    }
+
+    public async Task<(bool success, string error)> AddMagazineIssueToCollectionAsync(long issueId)
+    {
+        try
+        {
+            await client.Auth.Me.Collection.MagazineIssues[issueId].PostAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex) when(ex.ResponseStatusCode == 409)
+        {
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            logger.LogError(ex, "API error adding magazine issue {IssueId} to collection", issueId);
+
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Error adding magazine issue {IssueId} to collection", issueId);
+
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool success, string error)> RemoveMagazineIssueFromCollectionAsync(long issueId)
+    {
+        try
+        {
+            await client.Auth.Me.Collection.MagazineIssues[issueId].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            logger.LogError(ex, "API error removing magazine issue {IssueId} from collection", issueId);
+
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Error removing magazine issue {IssueId} from collection", issueId);
 
             return (false, ex.Message);
         }

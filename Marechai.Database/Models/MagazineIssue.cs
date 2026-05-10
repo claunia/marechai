@@ -59,4 +59,5 @@ public class MagazineIssue : BaseModel<long>
     public virtual ICollection<MagazinesByMachineFamily> MachineFamilies { get; set; }
     public virtual ICollection<MagazinesBySoftware>      Software        { get; set; }
     public virtual ICollection<Media>                    Coverdiscs      { get; set; }
+    public virtual ICollection<CollectedMagazineIssue>   CollectedBy     { get; set; }
 }

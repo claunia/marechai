@@ -20,6 +20,8 @@ namespace Marechai.ApiClient.Models
         public int? DocumentCount { get; set; }
         /// <summary>The machine_count property</summary>
         public int? MachineCount { get; set; }
+        /// <summary>The magazine_issue_count property</summary>
+        public int? MagazineIssueCount { get; set; }
         /// <summary>The software_release_count property</summary>
         public int? SoftwareReleaseCount { get; set; }
         /// <summary>
@@ -50,6 +52,7 @@ namespace Marechai.ApiClient.Models
                 { "book_count", n => { BookCount = n.GetIntValue(); } },
                 { "document_count", n => { DocumentCount = n.GetIntValue(); } },
                 { "machine_count", n => { MachineCount = n.GetIntValue(); } },
+                { "magazine_issue_count", n => { MagazineIssueCount = n.GetIntValue(); } },
                 { "software_release_count", n => { SoftwareReleaseCount = n.GetIntValue(); } },
             };
         }
@@ -63,6 +66,7 @@ namespace Marechai.ApiClient.Models
             writer.WriteIntValue("book_count", BookCount);
             writer.WriteIntValue("document_count", DocumentCount);
             writer.WriteIntValue("machine_count", MachineCount);
+            writer.WriteIntValue("magazine_issue_count", MagazineIssueCount);
             writer.WriteIntValue("software_release_count", SoftwareReleaseCount);
             writer.WriteAdditionalData(AdditionalData);
         }

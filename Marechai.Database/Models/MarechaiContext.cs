@@ -167,6 +167,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<SoftwarePlatformsByMachine>          SoftwarePlatformsByMachine          { get; set; }
     public virtual DbSet<CollectedBook>                       CollectedBooks                      { get; set; }
     public virtual DbSet<CollectedDocument>                   CollectedDocuments                  { get; set; }
+    public virtual DbSet<CollectedMagazineIssue>              CollectedMagazineIssues             { get; set; }
     public virtual DbSet<CollectedSoftwareRelease>            CollectedSoftwareReleases           { get; set; }
     public virtual DbSet<SoftwareGenre>                      SoftwareGenres                      { get; set; }
     public virtual DbSet<GenreBySoftware>                    GenresBySoftware                    { get; set; }
@@ -2751,6 +2752,23 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
             entity.HasOne(e => e.SoftwareRelease)
                   .WithMany(p => p.CollectedBy)
                   .HasForeignKey(e => e.SoftwareReleaseId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<CollectedMagazineIssue>(entity =>
+        {
+            entity.HasKey(e => new { e.UserId, e.MagazineIssueId });
+
+            entity.HasIndex(e => e.MagazineIssueId);
+
+            entity.HasOne(e => e.User)
+                  .WithMany(p => p.CollectedMagazineIssues)
+                  .HasForeignKey(e => e.UserId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.MagazineIssue)
+                  .WithMany(p => p.CollectedBy)
+                  .HasForeignKey(e => e.MagazineIssueId)
                   .OnDelete(DeleteBehavior.Cascade);
         });
 

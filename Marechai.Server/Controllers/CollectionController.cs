@@ -67,7 +67,8 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
                                        Books    = context.CollectedBooks.Count(c => c.UserId == userId),
                                        Docs     = context.CollectedDocuments.Count(c => c.UserId == userId),
                                        Machines = context.OwnedMachines.Count(c => c.UserId == userId),
-                                       Releases = context.CollectedSoftwareReleases.Count(c => c.UserId == userId)
+                                       Releases = context.CollectedSoftwareReleases.Count(c => c.UserId == userId),
+                                       Issues   = context.CollectedMagazineIssues.Count(c => c.UserId == userId)
                                    })
                                   .FirstOrDefaultAsync();
 
@@ -76,7 +77,8 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
             BookCount            = counts?.Books    ?? 0,
             DocumentCount        = counts?.Docs     ?? 0,
             MachineCount         = counts?.Machines ?? 0,
-            SoftwareReleaseCount = counts?.Releases ?? 0
+            SoftwareReleaseCount = counts?.Releases ?? 0,
+            MagazineIssueCount   = counts?.Issues   ?? 0
         };
 
         return Ok(summary);
@@ -223,14 +225,46 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
         return Ok(releases);
     }
 
+    [HttpGet("profile/{username}/collection/magazine-issues")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(List<CollectedMagazineIssueDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [Produces("application/json")]
+    public async Task<ActionResult<List<CollectedMagazineIssueDto>>> GetCollectedMagazineIssuesAsync(string username)
+    {
+        ApplicationUser user = await userManager.FindByNameAsync(username);
+
+        if(user is null) return NotFound();
+
+        List<CollectedMagazineIssueDto> issues = await context.CollectedMagazineIssues
+                                                              .Where(c => c.UserId == user.Id)
+                                                              .Include(c => c.MagazineIssue)
+                                                              .ThenInclude(i => i.Magazine)
+                                                              .OrderByDescending(c => c.CreatedOn)
+                                                              .Select(c => new CollectedMagazineIssueDto
+                                                              {
+                                                                  MagazineIssueId    = c.MagazineIssueId,
+                                                                  MagazineId         = c.MagazineIssue.MagazineId,
+                                                                  MagazineTitle      = c.MagazineIssue.Magazine.Title,
+                                                                  Caption            = c.MagazineIssue.Caption,
+                                                                  IssueNumber        = c.MagazineIssue.IssueNumber,
+                                                                  Published          = c.MagazineIssue.Published,
+                                                                  PublishedPrecision = (int)c.MagazineIssue.PublishedPrecision,
+                                                                  CoverGuid          = c.MagazineIssue.CoverGuid,
+                                                                  CollectedOn        = c.CreatedOn
+                                                              })
+                                                              .ToListAsync();
+
+        return Ok(issues);
+    }
+
     // ── Authenticated endpoints: manage own collection ──
 
     // Books
 
     [HttpGet("auth/me/collection/books/{bookId:long}")]
     [Authorize]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<bool>(StatusCodes.Status200OK)]
     public async Task<IActionResult> IsBookCollectedAsync(long bookId)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
@@ -238,7 +272,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
 
         bool exists = await context.CollectedBooks.AnyAsync(c => c.UserId == userId && c.BookId == bookId);
 
-        return exists ? Ok() : NotFound();
+        return Ok(exists);
     }
 
     [HttpPost("auth/me/collection/books/{bookId:long}")]
@@ -475,6 +509,72 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
         if(entry is null) return NotFound();
 
         context.CollectedSoftwareReleases.Remove(entry);
+        await context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    // Magazine Issues
+
+    [HttpGet("auth/me/collection/magazine-issues/{issueId:long}")]
+    [Authorize]
+    [ProducesResponseType<bool>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> IsMagazineIssueCollectedAsync(long issueId)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        if(userId is null) return Unauthorized();
+
+        bool exists =
+            await context.CollectedMagazineIssues.AnyAsync(c => c.UserId == userId && c.MagazineIssueId == issueId);
+
+        return Ok(exists);
+    }
+
+    [HttpPost("auth/me/collection/magazine-issues/{issueId:long}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> AddMagazineIssueToCollectionAsync(long issueId)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        if(userId is null) return Unauthorized();
+
+        bool issueExists = await context.MagazineIssues.AnyAsync(i => i.Id == issueId);
+        if(!issueExists) return NotFound();
+
+        bool alreadyCollected =
+            await context.CollectedMagazineIssues.AnyAsync(c => c.UserId == userId && c.MagazineIssueId == issueId);
+
+        if(alreadyCollected) return Conflict();
+
+        context.CollectedMagazineIssues.Add(new CollectedMagazineIssue
+        {
+            UserId          = userId,
+            MagazineIssueId = issueId
+        });
+
+        await context.SaveChangesAsync();
+
+        return StatusCode(StatusCodes.Status201Created);
+    }
+
+    [HttpDelete("auth/me/collection/magazine-issues/{issueId:long}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> RemoveMagazineIssueFromCollectionAsync(long issueId)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        if(userId is null) return Unauthorized();
+
+        CollectedMagazineIssue entry =
+            await context.CollectedMagazineIssues
+                         .FirstOrDefaultAsync(c => c.UserId == userId && c.MagazineIssueId == issueId);
+
+        if(entry is null) return NotFound();
+
+        context.CollectedMagazineIssues.Remove(entry);
         await context.SaveChangesAsync();
 
         return NoContent();

@@ -27,14 +27,17 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Marechai.Services;
 using Marechai.Shared;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Marechai.Pages.Magazines;
 
 public partial class IssueView
 {
     MagazineIssueDto                 _issue;
+    bool                             _isCollected;
     long                             _lastId;
     PhotoLightbox                    _lightbox;
     bool                             _loaded;
@@ -42,9 +45,13 @@ public partial class IssueView
     List<MagazineByMachineDto>       _machines        = [];
     string                           _magazineTitle;
     List<MagazineBySoftwareDto>      _software        = [];
+    bool                             _togglingCollection;
 
     [Inject]
     NavigationManager Nav { get; set; }
+
+    [CascadingParameter]
+    Task<AuthenticationState> AuthState { get; set; }
 
     [Parameter]
     public long Id { get; set; }
@@ -53,8 +60,9 @@ public partial class IssueView
     {
         if(Id == _lastId) return;
 
-        _lastId = Id;
-        _loaded = false;
+        _lastId      = Id;
+        _loaded      = false;
+        _isCollected = false;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -86,8 +94,34 @@ public partial class IssueView
         _machineFamilies = full.MachineFamilies ?? [];
         _software        = full.Software        ?? [];
 
+        // Skip the 401-bound collection check for anonymous viewers.
+        AuthenticationState authState = await AuthState;
+
+        if(authState.User.Identity?.IsAuthenticated == true)
+            _isCollected = await CollectionSvc.IsMagazineIssueCollectedAsync(Id);
+
         _loaded = true;
         StateHasChanged();
+    }
+
+    async Task ToggleCollectionAsync()
+    {
+        _togglingCollection = true;
+
+        if(_isCollected)
+        {
+            (bool success, _) = await CollectionSvc.RemoveMagazineIssueFromCollectionAsync(Id);
+
+            if(success) _isCollected = false;
+        }
+        else
+        {
+            (bool success, _) = await CollectionSvc.AddMagazineIssueToCollectionAsync(Id);
+
+            if(success) _isCollected = true;
+        }
+
+        _togglingCollection = false;
     }
 
     /// <summary>

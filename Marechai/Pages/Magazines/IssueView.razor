@@ -30,6 +30,7 @@
 @inherits OwningComponentBase<MagazinesService>
 @inject IStringLocalizer<MagazinesService> L
 @inject ApiAssetUrlProvider                AssetUrls
+@inject CollectionService                  CollectionSvc
 
 @if(!_loaded)
 {
@@ -83,6 +84,18 @@
                 <MudText Typo="Typo.body2" Style="color: white;">@FormatDate(_issue.Published.Value, _issue.PublishedPrecision)</MudText>
             }
         </MudStack>
+        <AuthorizeView>
+            <Authorized>
+                <MudButton Variant="Variant.Filled"
+                           Color="@(_isCollected ? Color.Success : Color.Default)"
+                           StartIcon="@(_isCollected ? Icons.Material.Filled.Bookmark : Icons.Material.Outlined.BookmarkBorder)"
+                           OnClick="ToggleCollectionAsync"
+                           Disabled="_togglingCollection"
+                           Size="Size.Small">
+                    @(_isCollected ? L["In Collection"] : L["Add to Collection"])
+                </MudButton>
+            </Authorized>
+        </AuthorizeView>
     </MudStack>
 </MudPaper>
 

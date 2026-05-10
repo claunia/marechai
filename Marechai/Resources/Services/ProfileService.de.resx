@@ -438,4 +438,7 @@
         <value>Laden Sie eine Kopie Ihrer Daten herunter oder löschen Sie Ihr Marechai-Konto endgültig.</value>
         <comment>Download a copy of your data, or permanently delete your Marechai account.</comment>
     </data>
+  <data name="Magazine Issues" xml:space="preserve">
+    <value>Zeitschriftenausgaben</value>
+  </data>
 </root>

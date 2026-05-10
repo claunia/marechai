@@ -462,4 +462,10 @@
   <data name="Invalid year." xml:space="preserve">
     <value>Año no válido.</value>
   </data>
+  <data name="Add to Collection" xml:space="preserve">
+    <value>Agregar a colección</value>
+  </data>
+  <data name="In Collection" xml:space="preserve">
+    <value>En colección</value>
+  </data>
 </root>

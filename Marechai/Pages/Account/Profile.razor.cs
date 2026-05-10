@@ -74,6 +74,7 @@ public partial class Profile
     bool                               _isLoadingCollection;
     List<CollectedBookDto>            _myBooks;
     List<CollectedDocumentDto>        _myDocuments;
+    List<CollectedMagazineIssueDto>   _myMagazineIssues;
     List<CollectedMachineDto>         _myMachines;
     List<CollectedSoftwareReleaseDto> _myReleases;
 
@@ -317,6 +318,7 @@ public partial class Profile
         _myDocuments = await CollectionSvc.GetCollectedDocumentsAsync(_profile.UserName);
         _myMachines  = await CollectionSvc.GetCollectedMachinesAsync(_profile.UserName);
         _myReleases  = await CollectionSvc.GetCollectedSoftwareReleasesAsync(_profile.UserName);
+        _myMagazineIssues = await CollectionSvc.GetCollectedMagazineIssuesAsync(_profile.UserName);
 
         _isLoadingCollection = false;
         StateHasChanged();
@@ -360,6 +362,16 @@ public partial class Profile
 
         if(success)
             _myReleases?.RemoveAll(r => r.SoftwareReleaseId == releaseId);
+    }
+
+    async Task RemoveMagazineIssueAsync(long? issueId)
+    {
+        if(issueId is null) return;
+
+        (bool success, _) = await CollectionSvc.RemoveMagazineIssueFromCollectionAsync(issueId.Value);
+
+        if(success)
+            _myMagazineIssues?.RemoveAll(i => i.MagazineIssueId == issueId);
     }
 
     // ── Appearance / theme methods ──

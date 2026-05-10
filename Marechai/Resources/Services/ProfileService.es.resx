@@ -430,4 +430,7 @@
         <value>Descarga una copia de tus datos o elimina permanentemente tu cuenta de Marechai.</value>
         <comment>Download a copy of your data, or permanently delete your Marechai account.</comment>
     </data>
+  <data name="Magazine Issues" xml:space="preserve">
+    <value>Números de revista</value>
+  </data>
 </root>

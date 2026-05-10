@@ -23,24 +23,37 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Text.Json.Serialization;
 
 namespace Marechai.Data.Dtos;
 
-public class UserCollectionSummaryDto
+public class CollectedMagazineIssueDto
 {
-    [JsonPropertyName("book_count")]
-    public int BookCount { get; set; }
+    [JsonPropertyName("magazine_issue_id")]
+    public long MagazineIssueId { get; set; }
 
-    [JsonPropertyName("document_count")]
-    public int DocumentCount { get; set; }
+    [JsonPropertyName("magazine_id")]
+    public long MagazineId { get; set; }
 
-    [JsonPropertyName("machine_count")]
-    public int MachineCount { get; set; }
+    [JsonPropertyName("magazine_title")]
+    public string MagazineTitle { get; set; }
 
-    [JsonPropertyName("software_release_count")]
-    public int SoftwareReleaseCount { get; set; }
+    [JsonPropertyName("caption")]
+    public string Caption { get; set; }
 
-    [JsonPropertyName("magazine_issue_count")]
-    public int MagazineIssueCount { get; set; }
+    [JsonPropertyName("issue_number")]
+    public uint? IssueNumber { get; set; }
+
+    [JsonPropertyName("published")]
+    public DateTimeOffset? Published { get; set; }
+
+    [JsonPropertyName("published_precision")]
+    public int PublishedPrecision { get; set; }
+
+    [JsonPropertyName("cover_guid")]
+    public Guid? CoverGuid { get; set; }
+
+    [JsonPropertyName("collected_on")]
+    public DateTimeOffset CollectedOn { get; set; }
 }

@@ -108,6 +108,7 @@ public class ApplicationUser : IdentityUser
     public virtual ICollection<OwnedMachine>              OwnedMachines             { get; set; }
     public virtual ICollection<CollectedBook>             CollectedBooks            { get; set; }
     public virtual ICollection<CollectedDocument>         CollectedDocuments        { get; set; }
+    public virtual ICollection<CollectedMagazineIssue>    CollectedMagazineIssues   { get; set; }
     public virtual ICollection<CollectedSoftwareRelease>  CollectedSoftwareReleases { get; set; }
     public virtual ICollection<Dump>                      Dumps                     { get; set; }
     public virtual ICollection<SoftwareUserRating>        SoftwareRatings           { get; set; }

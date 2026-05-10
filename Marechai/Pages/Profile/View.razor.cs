@@ -40,6 +40,7 @@ public partial class View
     List<CollectedMachineDto>         _collectedConsoles;
     List<CollectedDocumentDto>        _collectedDocuments;
     List<CollectedMachineDto>         _collectedMachines;
+    List<CollectedMagazineIssueDto>   _collectedMagazineIssues;
     List<CollectedMachineDto>         _collectedSmartphones;
     List<CollectedSoftwareReleaseDto> _collectedReleases;
     List<SoftwareUserReviewDto>       _userReviews;
@@ -84,6 +85,7 @@ public partial class View
             _collectedConsoles    = _collectedMachines?.Where(m => m.Type == 2).ToList();
             _collectedSmartphones = _collectedMachines?.Where(m => m.Type == 3).ToList();
             _collectedReleases  = await CollectionSvc.GetCollectedSoftwareReleasesAsync(Username);
+            _collectedMagazineIssues = await CollectionSvc.GetCollectedMagazineIssuesAsync(Username);
 
             // Load reviews
             _userReviews = await Service.GetUserReviewsAsync(Username);
