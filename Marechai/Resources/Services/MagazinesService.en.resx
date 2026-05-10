@@ -486,4 +486,28 @@
   <data name="No software associated with this issue." xml:space="preserve">
     <value>No software associated with this issue.</value>
   </data>
+  <data name="Others" xml:space="preserve">
+    <value>Others</value>
+  </data>
+  <data name="No issues found for this year." xml:space="preserve">
+    <value>No issues found for this year.</value>
+  </data>
+  <data name="Issue #{0}" xml:space="preserve">
+    <value>Issue #{0}</value>
+  </data>
+  <data name="Summary" xml:space="preserve">
+    <value>Summary</value>
+  </data>
+  <data name="View on Internet Archive" xml:space="preserve">
+    <value>View on Internet Archive</value>
+  </data>
+  <data name="Magazine Issue not found." xml:space="preserve">
+    <value>Magazine Issue not found.</value>
+  </data>
+  <data name="Magazine" xml:space="preserve">
+    <value>Magazine</value>
+  </data>
+  <data name="Invalid year." xml:space="preserve">
+    <value>Invalid year.</value>
+  </data>
 </root>

@@ -1,0 +1,137 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2026 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/magazine/{MagazineId:long}/year/{Year}"
+@using Marechai.ApiClient.Models
+@inherits OwningComponentBase<MagazinesService>
+@inject IStringLocalizer<MagazinesService> L
+@inject ApiAssetUrlProvider                AssetUrls
+
+@if(!_loaded)
+{
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+    </div>
+
+    return;
+}
+
+@if(_invalidYear)
+{
+    <MudAlert Severity="Severity.Warning">@L["Invalid year."]</MudAlert>
+
+    return;
+}
+
+@if(_magazine is null)
+{
+    <MudAlert Severity="Severity.Warning">@L["Magazine not found."]</MudAlert>
+
+    return;
+}
+
+@* ── Slim header band ── *@
+<MudPaper Class="pa-4 mb-4" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 12px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Wrap="Wrap.Wrap">
+        <MudIconButton Icon="@Icons.Material.Filled.ArrowBack"
+                       Color="Color.Inherit"
+                       Style="color: white;"
+                       Href="@($"/magazine/{MagazineId}")"/>
+        <MudText Typo="Typo.h5" Style="color: white; font-weight: 600;">@_magazine.Title</MudText>
+        <MudChip T="string"
+                 Color="Color.Surface"
+                 Variant="Variant.Filled"
+                 Style="color: #333; font-weight: 600;">
+            @(_yearValue.HasValue ? _yearValue.Value.ToString() : L["Others"])
+        </MudChip>
+    </MudStack>
+</MudPaper>
+
+@if(_issues.Count == 0)
+{
+    <MudAlert Severity="Severity.Info">@L["No issues found for this year."]</MudAlert>
+
+    return;
+}
+
+<MudGrid Spacing="2">
+    @foreach(MagazineIssueDto issue in _issues)
+    {
+        <MudItem xs="8" sm="6" md="4" lg="2">
+            <MudCard Class="rounded-lg" Style="cursor: pointer; height: 100%; display: flex; flex-direction: column;"
+                     Elevation="3"
+                     @onclick="@(() => Nav.NavigateTo($"/magazine/issue/{issue.Id}"))">
+                <div style="padding: 6px; background-color: var(--mud-palette-surface);">
+                    <div style="aspect-ratio: 3/4;
+                                background-color: var(--mud-palette-background-grey);
+                                border: 1px solid var(--mud-palette-divider);
+                                border-radius: 4px;
+                                box-shadow: inset 0 0 0 1px rgba(0,0,0,0.04);
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                overflow: hidden;">
+                        @if(issue.CoverGuid.HasValue)
+                        {
+                            <picture>
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/jxl/hd/@(issue.CoverGuid).jxl" type="image/jxl">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/avif/hd/@(issue.CoverGuid).avif" type="image/avif">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/heif/hd/@(issue.CoverGuid).heic" type="image/heic">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/webp/hd/@(issue.CoverGuid).webp" type="image/webp">
+                                <img alt="@issue.Caption"
+                                     src="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/jpeg/hd/@(issue.CoverGuid).jpg"
+                                     loading="lazy"
+                                     style="width: 100%; height: 100%; object-fit: cover; display: block;"/>
+                            </picture>
+                        }
+                        else
+                        {
+                            <MudIcon Icon="@Icons.Material.Filled.MenuBook" Color="Color.Default" Style="font-size: 2.5rem; opacity: 0.4;"/>
+                        }
+                    </div>
+                </div>
+                <MudCardContent Class="pa-2" Style="flex-grow: 1;">
+                    <MudText Typo="Typo.body2" Style="font-weight: 600; line-height: 1.2;">@issue.Caption</MudText>
+                    <MudStack Row="true" Spacing="1" Class="mt-1" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
+                        @if(issue.IssueNumber.HasValue)
+                        {
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">@string.Format(L["Issue #{0}"], issue.IssueNumber.Value)</MudText>
+                        }
+                        @if(issue.IssueNumber.HasValue && issue.Published.HasValue)
+                        {
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">·</MudText>
+                        }
+                        @if(issue.Published.HasValue)
+                        {
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">@FormatDate(issue.Published.Value, issue.PublishedPrecision)</MudText>
+                        }
+                    </MudStack>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    }
+</MudGrid>

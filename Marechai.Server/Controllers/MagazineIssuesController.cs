@@ -43,7 +43,10 @@ namespace Marechai.Server.Controllers;
 
 [Route("/magazines/issues")]
 [ApiController]
-public class MagazineIssuesController(MarechaiContext context, IConfiguration configuration) : ControllerBase
+public class MagazineIssuesController(
+    MarechaiContext                    context,
+    IConfiguration                     configuration,
+    IDbContextFactory<MarechaiContext> dbFactory) : ControllerBase
 {
     static readonly HashSet<string> _allowedExtensions = [".jpg", ".jpeg", ".png", ".webp", ".tiff", ".tif", ".bmp"];
 
@@ -101,6 +104,118 @@ public class MagazineIssuesController(MarechaiContext context, IConfiguration co
                                                                    OriginalCoverExtension = b.OriginalCoverExtension
                                                                })
                                                               .FirstOrDefaultAsync();
+
+    /// <summary>
+    /// Consolidated payload for the public /magazine/issue/{Id} view page. Returns the issue
+    /// head plus the parent magazine title and the three issue-level junction collections
+    /// (machines, machine families, software) in a single response. Each query runs on an
+    /// independent <see cref="MarechaiContext"/> from the factory because <c>DbContext</c>
+    /// is not thread-safe; sharing the request-scoped context across parallel branches
+    /// throws <see cref="InvalidOperationException"/>.
+    /// </summary>
+    [HttpGet("{id:long}/full")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<MagazineIssueFullDto>> GetFullAsync(long id)
+    {
+        await using var headCtx     = await dbFactory.CreateDbContextAsync();
+        await using var machinesCtx = await dbFactory.CreateDbContextAsync();
+        await using var familiesCtx = await dbFactory.CreateDbContextAsync();
+        await using var softwareCtx = await dbFactory.CreateDbContextAsync();
+
+        var headTask = headCtx.MagazineIssues.AsNoTracking()
+                              .Where(b => b.Id == id)
+                              .Select(b => new
+                               {
+                                   b.Id,
+                                   b.MagazineId,
+                                   MagazineTitle          = b.Magazine.Title,
+                                   b.Caption,
+                                   b.NativeCaption,
+                                   b.Published,
+                                   b.PublishedPrecision,
+                                   b.ProductCode,
+                                   b.Pages,
+                                   b.IssueNumber,
+                                   b.InternetArchiveUrl,
+                                   b.CoverGuid,
+                                   b.OriginalCoverExtension
+                               })
+                              .FirstOrDefaultAsync();
+
+        // Mirrors MagazinesByMachineController.GetByMagazine.
+        Task<List<MagazineByMachineDto>> machinesTask = machinesCtx.MagazinesByMachines.AsNoTracking()
+            .Where(p => p.MagazineId == id)
+            .Select(p => new MagazineByMachineDto
+             {
+                 Id         = p.Id,
+                 MagazineId = p.MagazineId,
+                 MachineId  = p.MachineId,
+                 Machine    = p.Machine.Name
+             })
+            .OrderBy(p => p.Machine)
+            .ToListAsync();
+
+        // Mirrors MagazinesByMachineFamilyController.GetByMagazine.
+        Task<List<MagazineByMachineFamilyDto>> familiesTask = familiesCtx.MagazinesByMachinesFamilies.AsNoTracking()
+            .Where(p => p.MagazineId == id)
+            .Select(p => new MagazineByMachineFamilyDto
+             {
+                 Id              = p.Id,
+                 MagazineId      = p.MagazineId,
+                 MachineFamilyId = p.MachineFamilyId,
+                 MachineFamily   = p.MachineFamily.Name
+             })
+            .OrderBy(p => p.MachineFamily)
+            .ToListAsync();
+
+        // Mirrors MagazinesBySoftwareController.GetByMagazine.
+        Task<List<MagazineBySoftwareDto>> softwareTask = softwareCtx.MagazinesBySoftware.AsNoTracking()
+            .Where(p => p.MagazineId == id)
+            .Select(p => new MagazineBySoftwareDto
+             {
+                 Id         = p.Id,
+                 MagazineId = p.MagazineId,
+                 SoftwareId = p.SoftwareId,
+                 Software   = p.Software.Name
+             })
+            .OrderBy(p => p.Software)
+            .ToListAsync();
+
+        await Task.WhenAll(headTask, machinesTask, familiesTask, softwareTask);
+
+        var head = headTask.Result;
+
+        if(head is null) return NotFound();
+
+        var issue = new MagazineIssueDto
+        {
+            Id                     = head.Id,
+            MagazineId             = head.MagazineId,
+            MagazineTitle          = head.MagazineTitle,
+            Caption                = head.Caption,
+            NativeCaption          = head.NativeCaption,
+            Published              = head.Published,
+            PublishedPrecision     = head.PublishedPrecision,
+            ProductCode            = head.ProductCode,
+            Pages                  = head.Pages,
+            IssueNumber            = head.IssueNumber,
+            InternetArchiveUrl     = head.InternetArchiveUrl,
+            CoverGuid              = head.CoverGuid,
+            OriginalCoverExtension = head.OriginalCoverExtension
+        };
+
+        return new MagazineIssueFullDto
+        {
+            Issue           = issue,
+            MagazineTitle   = head.MagazineTitle,
+            Machines        = machinesTask.Result,
+            MachineFamilies = familiesTask.Result,
+            Software        = softwareTask.Result
+        };
+    }
 
     [HttpPut("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]

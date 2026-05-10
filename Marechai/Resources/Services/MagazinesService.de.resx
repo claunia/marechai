@@ -516,4 +516,28 @@
   <data name="No software associated with this issue." xml:space="preserve">
     <value>Keine Software mit dieser Ausgabe verknüpft.</value>
   </data>
+  <data name="Others" xml:space="preserve">
+    <value>Sonstige</value>
+  </data>
+  <data name="No issues found for this year." xml:space="preserve">
+    <value>Keine Ausgaben für dieses Jahr gefunden.</value>
+  </data>
+  <data name="Issue #{0}" xml:space="preserve">
+    <value>Ausgabe #{0}</value>
+  </data>
+  <data name="Summary" xml:space="preserve">
+    <value>Zusammenfassung</value>
+  </data>
+  <data name="View on Internet Archive" xml:space="preserve">
+    <value>Auf Internet Archive ansehen</value>
+  </data>
+  <data name="Magazine Issue not found." xml:space="preserve">
+    <value>Zeitschriftenausgabe nicht gefunden.</value>
+  </data>
+  <data name="Magazine" xml:space="preserve">
+    <value>Zeitschrift</value>
+  </data>
+  <data name="Invalid year." xml:space="preserve">
+    <value>Ungültiges Jahr.</value>
+  </data>
 </root>

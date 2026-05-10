@@ -261,6 +261,91 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
                 })
                .ToListAsync();
 
+    /// <summary>
+    /// Distinct list of publication years across all issues for the magazine. Years are
+    /// returned in descending order (newest first); a single trailing <c>null</c> entry
+    /// represents the "Others" bucket (issues with no <see cref="MagazineIssue.Published"/>
+    /// value). Used by the public magazine view to render year navigation pills without
+    /// materializing every issue row.
+    /// </summary>
+    [HttpGet("{id:long}/issue-years")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<List<int?>>> GetIssueYearsAsync(long id)
+    {
+        List<int?> raw = await context.MagazineIssues.AsNoTracking()
+                                      .Where(i => i.MagazineId == id)
+                                      .Select(i => i.Published.HasValue ? (int?)i.Published.Value.Year : null)
+                                      .Distinct()
+                                      .ToListAsync();
+
+        // Sort client-side: years descending (newest first), nulls last for the "Others" pill.
+        return raw.OrderByDescending(y => y.HasValue).ThenByDescending(y => y).ToList();
+    }
+
+    /// <summary>
+    /// Issues for the magazine published in the given year, ordered chronologically then
+    /// by issue number. Returns the lean issue DTO without <see cref="MagazineIssueDto.MagazineTitle"/>
+    /// (already known by the caller — saves one join).
+    /// </summary>
+    [HttpGet("{id:long}/issues/by-year/{year:int}")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<MagazineIssueDto>> GetIssuesByYearAsync(long id, int year) =>
+        context.MagazineIssues.AsNoTracking()
+               .Where(i => i.MagazineId == id && i.Published.HasValue && i.Published.Value.Year == year)
+               .OrderBy(i => i.Published)
+               .ThenBy(i => i.IssueNumber)
+               .ThenBy(i => i.Caption)
+               .Select(i => new MagazineIssueDto
+                {
+                    Id                     = i.Id,
+                    MagazineId             = i.MagazineId,
+                    Caption                = i.Caption,
+                    NativeCaption          = i.NativeCaption,
+                    Published              = i.Published,
+                    PublishedPrecision     = i.PublishedPrecision,
+                    ProductCode            = i.ProductCode,
+                    Pages                  = i.Pages,
+                    IssueNumber            = i.IssueNumber,
+                    InternetArchiveUrl     = i.InternetArchiveUrl,
+                    CoverGuid              = i.CoverGuid,
+                    OriginalCoverExtension = i.OriginalCoverExtension
+                })
+               .ToListAsync();
+
+    /// <summary>
+    /// Issues for the magazine that lack a <see cref="MagazineIssue.Published"/> date —
+    /// i.e. the "Others" bucket. Ordered by issue number then caption.
+    /// </summary>
+    [HttpGet("{id:long}/issues/no-year")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<MagazineIssueDto>> GetIssuesNoYearAsync(long id) =>
+        context.MagazineIssues.AsNoTracking()
+               .Where(i => i.MagazineId == id && !i.Published.HasValue)
+               .OrderBy(i => i.IssueNumber)
+               .ThenBy(i => i.Caption)
+               .Select(i => new MagazineIssueDto
+                {
+                    Id                     = i.Id,
+                    MagazineId             = i.MagazineId,
+                    Caption                = i.Caption,
+                    NativeCaption          = i.NativeCaption,
+                    Published              = i.Published,
+                    PublishedPrecision     = i.PublishedPrecision,
+                    ProductCode            = i.ProductCode,
+                    Pages                  = i.Pages,
+                    IssueNumber            = i.IssueNumber,
+                    InternetArchiveUrl     = i.InternetArchiveUrl,
+                    CoverGuid              = i.CoverGuid,
+                    OriginalCoverExtension = i.OriginalCoverExtension
+                })
+               .ToListAsync();
+
     [HttpGet("{id:long}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]

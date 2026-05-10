@@ -23,24 +23,28 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Marechai.Shared;
 using Microsoft.AspNetCore.Components;
 
 namespace Marechai.Pages.Magazines;
 
-public partial class View
+public partial class IssueView
 {
-    List<CompanyByMagazineDto>       _companies;
-    List<int?>                       _issueYears;
+    MagazineIssueDto                 _issue;
     long                             _lastId;
+    PhotoLightbox                    _lightbox;
     bool                             _loaded;
-    List<MagazineByMachineFamilyDto> _machineFamilies;
-    List<MagazineByMachineDto>       _machines;
-    MagazineDto                      _magazine;
-    List<PersonByMagazineDto>        _people;
-    DocumentSynopsisDto              _synopsis;
+    List<MagazineByMachineFamilyDto> _machineFamilies = [];
+    List<MagazineByMachineDto>       _machines        = [];
+    string                           _magazineTitle;
+    List<MagazineBySoftwareDto>      _software        = [];
+
+    [Inject]
+    NavigationManager Nav { get; set; }
 
     [Parameter]
     public long Id { get; set; }
@@ -64,9 +68,11 @@ public partial class View
             return;
         }
 
-        _magazine = await Service.GetMagazineAsync(Id);
+        // Single round-trip via /magazines/issues/{id}/full — head + magazine title +
+        // 3 junction collections fan out server-side over independent DbContexts.
+        MagazineIssueFullDto full = await Service.GetIssueFullAsync(Id);
 
-        if(_magazine is null)
+        if(full?.Issue is null)
         {
             _loaded = true;
             StateHasChanged();
@@ -74,26 +80,25 @@ public partial class View
             return;
         }
 
-        // Fan-out the 6 child collections in parallel — they are independent server-side
-        // (each is a separate /magazines/{id}/<x> endpoint) so a single Task.WhenAll
-        // collapses six round-trips into one wall-clock RTT.
-        Task<DocumentSynopsisDto>              synopsisTask   = Service.GetMagazineSynopsisAsync(Id);
-        Task<List<PersonByMagazineDto>>        peopleTask     = Service.GetPeopleByMagazineAsync(Id);
-        Task<List<CompanyByMagazineDto>>       companiesTask  = Service.GetCompaniesByMagazineAsync(Id);
-        Task<List<MagazineByMachineDto>>       machinesTask   = Service.GetMachinesByMagazineAsync(Id);
-        Task<List<MagazineByMachineFamilyDto>> familiesTask   = Service.GetMachineFamiliesByMagazineAsync(Id);
-        Task<List<int?>>                       issueYearsTask = Service.GetIssueYearsAsync(Id);
-
-        await Task.WhenAll(synopsisTask, peopleTask, companiesTask, machinesTask, familiesTask, issueYearsTask);
-
-        _synopsis        = synopsisTask.Result;
-        _people          = peopleTask.Result;
-        _companies       = companiesTask.Result;
-        _machines        = machinesTask.Result;
-        _machineFamilies = familiesTask.Result;
-        _issueYears      = issueYearsTask.Result;
+        _issue           = full.Issue;
+        _magazineTitle   = full.MagazineTitle ?? full.Issue.MagazineTitle;
+        _machines        = full.Machines        ?? [];
+        _machineFamilies = full.MachineFamilies ?? [];
+        _software        = full.Software        ?? [];
 
         _loaded = true;
         StateHasChanged();
     }
+
+    /// <summary>
+    /// Format a publication date according to its precision: year-only, month-and-year,
+    /// or short date — never <see cref="DateTime.ToLongDateString"/>, since the wire value
+    /// is sometimes incomplete (e.g. only the year is meaningful when precision == 2).
+    /// </summary>
+    static string FormatDate(DateTimeOffset published, int? precision) => (precision ?? 0) switch
+    {
+        2 => published.Year.ToString(),
+        1 => published.ToString("MMMM yyyy"),
+        _ => published.DateTime.ToShortDateString()
+    };
 }

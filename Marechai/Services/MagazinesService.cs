@@ -25,6 +25,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
@@ -368,6 +371,69 @@ public class MagazinesService(Marechai.ApiClient.Client client)
         }
     }
 
+    /// <summary>
+    /// Loads the consolidated payload for the public /magazine/issue/{id} view page in a
+    /// single round-trip (head + magazine title + machines + machine families + software).
+    /// </summary>
+    public async Task<MagazineIssueFullDto> GetIssueFullAsync(long id)
+    {
+        try
+        {
+            return await client.Magazines.Issues[id].Full.GetAsync();
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Distinct list of publication years for the magazine's issues, descending. A trailing
+    /// <c>null</c> entry means the magazine has issues with no publication date (the "Others"
+    /// pill bucket on the magazine view page).
+    /// </summary>
+    public async Task<List<int?>> GetIssueYearsAsync(long magazineId)
+    {
+        try
+        {
+            List<int?> years = await client.Magazines[magazineId].IssueYears.GetAsync();
+
+            return years ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<MagazineIssueDto>> GetIssuesByYearAsync(long magazineId, int year)
+    {
+        try
+        {
+            List<MagazineIssueDto> issues = await client.Magazines[magazineId].Issues.ByYear[year].GetAsync();
+
+            return issues ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<MagazineIssueDto>> GetIssuesNoYearAsync(long magazineId)
+    {
+        try
+        {
+            List<MagazineIssueDto> issues = await client.Magazines[magazineId].Issues.NoYear.GetAsync();
+
+            return issues ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
     public async Task<(long? id, string error)> CreateIssueAsync(MagazineIssueDto dto)
     {
         try
@@ -375,6 +441,10 @@ public class MagazinesService(Marechai.ApiClient.Client client)
             long? id = await client.Magazines.Issues.PostAsync(dto);
 
             return (id, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            return (null, FormatProblem(ex, "Failed to create the issue."));
         }
         catch(ApiException ex)
         {
@@ -394,6 +464,10 @@ public class MagazinesService(Marechai.ApiClient.Client client)
 
             return (true, null);
         }
+        catch(ProblemDetails ex)
+        {
+            return (false, FormatProblem(ex, "Failed to update the issue."));
+        }
         catch(ApiException ex)
         {
             return (false, ex.Message);
@@ -411,6 +485,10 @@ public class MagazinesService(Marechai.ApiClient.Client client)
             await client.Magazines.Issues[id].DeleteAsync();
 
             return (true, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            return (false, FormatProblem(ex, "Failed to delete the issue."));
         }
         catch(ApiException ex)
         {
@@ -794,5 +872,44 @@ public class MagazinesService(Marechai.ApiClient.Client client)
         {
             return [];
         }
+    }
+
+    /// <summary>
+    /// Renders a Kiota-thrown <see cref="ProblemDetails"/> into a human-readable string for
+    /// surfacing in toasts / inline error messages. The Kiota-generated <c>ProblemDetails</c>
+    /// extends <see cref="Microsoft.Kiota.Abstractions.ApiException"/> but does NOT override
+    /// <see cref="Exception.Message"/>, so calling <c>ex.Message</c> yields the useless
+    /// <c>"Exception of type 'Marechai.ApiClient.Models.ProblemDetails' was thrown."</c>.
+    /// Validation errors specifically arrive as <c>ValidationProblemDetails</c> (RFC 9457
+    /// shape) with the per-field messages under <c>AdditionalData["errors"]</c>; we expand
+    /// those into a single multi-line string so the user can see exactly which field failed.
+    /// </summary>
+    static string FormatProblem(ProblemDetails ex, string fallback)
+    {
+        var sb = new StringBuilder();
+
+        if(!string.IsNullOrWhiteSpace(ex.Detail))
+            sb.Append(ex.Detail);
+        else if(!string.IsNullOrWhiteSpace(ex.Title))
+            sb.Append(ex.Title);
+        else
+            sb.Append(fallback);
+
+        if(ex.AdditionalData != null && ex.AdditionalData.TryGetValue("errors", out object errorsObj) &&
+           errorsObj is JsonElement { ValueKind: JsonValueKind.Object } errorsJson)
+        {
+            foreach(JsonProperty fieldEntry in errorsJson.EnumerateObject())
+            {
+                if(fieldEntry.Value.ValueKind != JsonValueKind.Array) continue;
+
+                IEnumerable<string> messages = fieldEntry.Value.EnumerateArray()
+                                                         .Where(e => e.ValueKind == JsonValueKind.String)
+                                                         .Select(e => e.GetString());
+
+                foreach(string msg in messages) sb.Append(' ').Append(fieldEntry.Name).Append(": ").Append(msg);
+            }
+        }
+
+        return sb.ToString();
     }
 }

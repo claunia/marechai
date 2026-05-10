@@ -2,7 +2,7 @@
 @attribute [Authorize(Roles = "Admin, UberAdmin")]
 @using Marechai.ApiClient.Models
 @using Marechai.Services
-@inherits OwningComponentBase<MagazinesService>
+@inject MagazinesService Service
 @inject IStringLocalizer<MagazinesService> L
 @inject IDialogService DialogService
 @inject NavigationManager NavigationManager

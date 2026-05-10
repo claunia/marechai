@@ -1,0 +1,273 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2026 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/magazine/issue/{Id:long}"
+@using Marechai.ApiClient.Models
+@inherits OwningComponentBase<MagazinesService>
+@inject IStringLocalizer<MagazinesService> L
+@inject ApiAssetUrlProvider                AssetUrls
+
+@if(!_loaded)
+{
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+    </div>
+
+    return;
+}
+
+@if(_issue is null)
+{
+    <MudAlert Severity="Severity.Warning">@L["Magazine Issue not found."]</MudAlert>
+
+    return;
+}
+
+@* ── Hero Header ── *@
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
+    <MudStack AlignItems="AlignItems.Center" Spacing="3">
+        @if(_issue.CoverGuid.HasValue)
+        {
+            <picture>
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/jxl/hd/@(_issue.CoverGuid).jxl" type="image/jxl">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/avif/hd/@(_issue.CoverGuid).avif" type="image/avif">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/heif/hd/@(_issue.CoverGuid).heic" type="image/heic">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/webp/hd/@(_issue.CoverGuid).webp" type="image/webp">
+                <img alt="@_issue.Caption" height="200"
+                     src="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/jpeg/hd/@(_issue.CoverGuid).jpg"
+                     style="object-fit: contain; border-radius: 4px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));"/>
+            </picture>
+        }
+        else
+        {
+            <MudIcon Icon="@Icons.Material.Filled.MenuBook" Size="Size.Large" Style="color: white;"/>
+        }
+        <MudText Typo="Typo.h4" Align="Align.Center" Style="color: white; font-weight: 700;">@_issue.Caption</MudText>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Wrap="Wrap.Wrap" Justify="Justify.Center">
+            @if(!string.IsNullOrWhiteSpace(_magazineTitle))
+            {
+                <MudLink Href="@($"/magazine/{_issue.MagazineId}")" Style="color: white;" Underline="Underline.Always">
+                    @_magazineTitle
+                </MudLink>
+            }
+            @if(_issue.IssueNumber.HasValue)
+            {
+                <MudText Typo="Typo.body2" Style="color: white;">@string.Format(L["Issue #{0}"], _issue.IssueNumber.Value)</MudText>
+            }
+            @if(_issue.Published.HasValue)
+            {
+                <MudText Typo="Typo.body2" Style="color: white;">@FormatDate(_issue.Published.Value, _issue.PublishedPrecision)</MudText>
+            }
+        </MudStack>
+    </MudStack>
+</MudPaper>
+
+<MudTabs Elevation="2" Rounded="true" Centered="true" Class="mb-4 rounded-lg">
+    @* ── Tab 1: Summary ── *@
+    <MudTabPanel Text="@L["Summary"]" Icon="@Icons.Material.Filled.Info">
+        <MudCard Elevation="0" Class="mb-4">
+            <MudCardContent>
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+                    <MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Primary"/>
+                    <MudText Typo="Typo.h6">@L["General"]</MudText>
+                </MudStack>
+                <MudSimpleTable Elevation="0" Dense="true">
+                    <tbody>
+                    <tr>
+                        <td style="width: 33%; text-align: right;"><strong>@L["Caption"]</strong></td>
+                        <td>@_issue.Caption</td>
+                    </tr>
+                    @if(!string.IsNullOrEmpty(_issue.NativeCaption))
+                    {
+                        <tr>
+                            <td style="width: 33%; text-align: right;"><strong>@L["Native caption"]</strong></td>
+                            <td>@_issue.NativeCaption</td>
+                        </tr>
+                    }
+                    @if(!string.IsNullOrWhiteSpace(_magazineTitle))
+                    {
+                        <tr>
+                            <td style="width: 33%; text-align: right;"><strong>@L["Magazine"]</strong></td>
+                            <td><MudLink Href="@($"/magazine/{_issue.MagazineId}")">@_magazineTitle</MudLink></td>
+                        </tr>
+                    }
+                    @if(_issue.IssueNumber.HasValue)
+                    {
+                        <tr>
+                            <td style="width: 33%; text-align: right;"><strong>@L["Issue Number"]</strong></td>
+                            <td>@_issue.IssueNumber.Value</td>
+                        </tr>
+                    }
+                    @if(_issue.Published.HasValue)
+                    {
+                        <tr>
+                            <td style="width: 33%; text-align: right;"><strong>@L["Published"]</strong></td>
+                            <td>@FormatDate(_issue.Published.Value, _issue.PublishedPrecision)</td>
+                        </tr>
+                    }
+                    @if(_issue.Pages.HasValue)
+                    {
+                        <tr>
+                            <td style="width: 33%; text-align: right;"><strong>@L["Pages"]</strong></td>
+                            <td>@_issue.Pages.Value</td>
+                        </tr>
+                    }
+                    @if(!string.IsNullOrEmpty(_issue.ProductCode))
+                    {
+                        <tr>
+                            <td style="width: 33%; text-align: right;"><strong>@L["Product code"]</strong></td>
+                            <td>@_issue.ProductCode</td>
+                        </tr>
+                    }
+                    @if(!string.IsNullOrEmpty(_issue.InternetArchiveUrl))
+                    {
+                        <tr>
+                            <td style="width: 33%; text-align: right;"><strong>@L["Internet Archive link"]</strong></td>
+                            <td>
+                                <MudLink Href="@_issue.InternetArchiveUrl" Target="_blank" Underline="Underline.Always">
+                                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+                                        <MudIcon Icon="@Icons.Material.Filled.OpenInNew" Size="Size.Small"/>
+                                        <span>@L["View on Internet Archive"]</span>
+                                    </MudStack>
+                                </MudLink>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </MudSimpleTable>
+            </MudCardContent>
+        </MudCard>
+
+        @if(_issue.CoverGuid.HasValue)
+        {
+            <MudCard Elevation="0">
+                <MudCardContent>
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+                        <MudIcon Icon="@Icons.Material.Filled.Image" Color="Color.Primary"/>
+                        <MudText Typo="Typo.h6">@L["Cover"]</MudText>
+                    </MudStack>
+                    <div class="d-flex justify-center" style="cursor: pointer;"
+                         @onclick="() => _lightbox.Show(new List<Guid> { _issue.CoverGuid.Value }, _issue.CoverGuid.Value)">
+                        <picture>
+                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/jxl/4k/@(_issue.CoverGuid).jxl" type="image/jxl">
+                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/avif/4k/@(_issue.CoverGuid).avif" type="image/avif">
+                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/heif/4k/@(_issue.CoverGuid).heic" type="image/heic">
+                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/webp/4k/@(_issue.CoverGuid).webp" type="image/webp">
+                            <img alt="@_issue.Caption"
+                                 src="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/jpeg/4k/@(_issue.CoverGuid).jpg"
+                                 style="max-height: 600px; max-width: 100%; object-fit: contain; border-radius: 4px;"/>
+                        </picture>
+                    </div>
+                </MudCardContent>
+            </MudCard>
+        }
+    </MudTabPanel>
+
+    @* ── Tab 2: Machines ── *@
+    <MudTabPanel Text="@L["Machines"]" Icon="@Icons.Material.Filled.Computer">
+        @if(_machines.Count == 0 && _machineFamilies.Count == 0)
+        {
+            <MudAlert Severity="Severity.Info">@L["No machines associated with this issue."]</MudAlert>
+        }
+        else
+        {
+            @if(_machines.Count > 0)
+            {
+                <MudText Typo="Typo.subtitle1" Class="mb-2">@L["Machines"]</MudText>
+                <MudGrid Spacing="2" Class="mb-4">
+                    @foreach(MagazineByMachineDto machine in _machines)
+                    {
+                        <MudItem xs="12" sm="6" md="4">
+                            <MudCard Elevation="2" Class="rounded-lg" Style="cursor: pointer; height: 100%;"
+                                     @onclick="@(() => Nav.NavigateTo($"/machine/{machine.MachineId}"))">
+                                <MudCardContent Class="pa-3">
+                                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                        <MudIcon Icon="@Icons.Material.Filled.Computer" Color="Color.Primary"/>
+                                        <MudText Typo="Typo.body1">@machine.Machine</MudText>
+                                    </MudStack>
+                                </MudCardContent>
+                            </MudCard>
+                        </MudItem>
+                    }
+                </MudGrid>
+            }
+
+            @if(_machineFamilies.Count > 0)
+            {
+                @if(_machines.Count > 0)
+                {
+                    <MudDivider Class="my-3"/>
+                }
+                <MudText Typo="Typo.subtitle1" Class="mb-2">@L["Machine families"]</MudText>
+                <MudGrid Spacing="2">
+                    @foreach(MagazineByMachineFamilyDto family in _machineFamilies)
+                    {
+                        <MudItem xs="12" sm="6" md="4">
+                            <MudCard Elevation="2" Class="rounded-lg" Style="height: 100%;">
+                                <MudCardContent Class="pa-3">
+                                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                        <MudIcon Icon="@Icons.Material.Filled.DevicesOther" Color="Color.Primary"/>
+                                        <MudText Typo="Typo.body1">@family.MachineFamily</MudText>
+                                    </MudStack>
+                                </MudCardContent>
+                            </MudCard>
+                        </MudItem>
+                    }
+                </MudGrid>
+            }
+        }
+    </MudTabPanel>
+
+    @* ── Tab 3: Software ── *@
+    <MudTabPanel Text="@L["Software"]" Icon="@Icons.Material.Filled.Apps">
+        @if(_software.Count == 0)
+        {
+            <MudAlert Severity="Severity.Info">@L["No software associated with this issue."]</MudAlert>
+        }
+        else
+        {
+            <MudGrid Spacing="2">
+                @foreach(MagazineBySoftwareDto sw in _software)
+                {
+                    <MudItem xs="12" sm="6" md="4">
+                        <MudCard Elevation="2" Class="rounded-lg" Style="cursor: pointer; height: 100%;"
+                                 @onclick="@(() => Nav.NavigateTo($"/software/{sw.SoftwareId}"))">
+                            <MudCardContent Class="pa-3">
+                                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                    <MudIcon Icon="@Icons.Material.Filled.Apps" Color="Color.Primary"/>
+                                    <MudText Typo="Typo.body1">@sw.Software</MudText>
+                                </MudStack>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudItem>
+                }
+            </MudGrid>
+        }
+    </MudTabPanel>
+</MudTabs>
+
+<PhotoLightbox @ref="_lightbox" BaseUrl="@AssetUrls.BaseUrl" Category="magazine-issue-covers"/>
