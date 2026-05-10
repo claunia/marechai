@@ -132,6 +132,8 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
                            Title                     = m.Title,
                            NativeTitle               = m.NativeTitle,
                            SortTitle                 = m.SortTitle,
+                           Published                 = m.Published,
+                           PublishedPrecision        = m.PublishedPrecision,
                            FirstPublication          = m.FirstPublication,
                            FirstPublicationPrecision = m.FirstPublicationPrecision,
                            Issn                      = m.Issn,
@@ -176,6 +178,8 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
                            Title                     = m.Title,
                            NativeTitle               = m.NativeTitle,
                            SortTitle                 = m.SortTitle,
+                           Published                 = m.Published,
+                           PublishedPrecision        = m.PublishedPrecision,
                            FirstPublication          = m.FirstPublication,
                            FirstPublicationPrecision = m.FirstPublicationPrecision,
                            Issn                      = m.Issn,
@@ -215,6 +219,8 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
                            Title                     = b.Title,
                            NativeTitle               = b.NativeTitle,
                            SortTitle                 = b.SortTitle,
+                           Published                 = b.Published,
+                           PublishedPrecision        = b.PublishedPrecision,
                            FirstPublication          = b.FirstPublication,
                            FirstPublicationPrecision = b.FirstPublicationPrecision,
                            Issn                      = b.Issn,
@@ -357,6 +363,8 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
                                                               Title            = b.Title,
                                                               NativeTitle      = b.NativeTitle,
                                                               SortTitle        = b.SortTitle,
+                                                              Published                 = b.Published,
+                                                              PublishedPrecision        = b.PublishedPrecision,
                                                               FirstPublication = b.FirstPublication,
                                                               FirstPublicationPrecision = b.FirstPublicationPrecision,
                                                               Issn             = b.Issn,
@@ -383,6 +391,8 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
         model.Title            = dto.Title;
         model.NativeTitle      = dto.NativeTitle;
         model.SortTitle        = dto.SortTitle;
+        model.Published                 = dto.Published;
+        model.PublishedPrecision        = dto.PublishedPrecision;
         model.FirstPublication = dto.FirstPublication;
         model.FirstPublicationPrecision = dto.FirstPublicationPrecision;
         model.CountryId        = dto.CountryId;
@@ -417,6 +427,8 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
             Title            = dto.Title,
             NativeTitle      = dto.NativeTitle,
             SortTitle        = dto.SortTitle,
+            Published                 = dto.Published,
+            PublishedPrecision        = dto.PublishedPrecision,
             FirstPublication = dto.FirstPublication,
             FirstPublicationPrecision = dto.FirstPublicationPrecision,
             CountryId        = dto.CountryId,

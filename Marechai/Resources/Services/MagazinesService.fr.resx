@@ -546,4 +546,8 @@
   <data name="In Collection" xml:space="preserve">
     <value>Dans la collection</value>
   </data>
+  <data name="Last publication" xml:space="preserve">
+    <value>Dernière publication</value>
+    <comment>Last publication</comment>
+  </data>
 </root>
