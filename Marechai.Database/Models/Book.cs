@@ -39,6 +39,9 @@ public class Book : DocumentBase
     public long?  SourceId   { get; set; }
     public Guid?  CoverGuid              { get; set; }
     public string OriginalCoverExtension { get; set; }
+    [Url]
+    [StringLength(2048)]
+    public string InternetArchiveUrl { get; set; }
 
     public virtual Book                              Previous        { get; set; }
     public virtual Book                              Source          { get; set; }

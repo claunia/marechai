@@ -154,7 +154,8 @@ public class BooksController(
                            Pages                  = b.Pages,
                            Country                = b.Country.Name,
                            CoverGuid              = b.CoverGuid,
-                           OriginalCoverExtension = b.OriginalCoverExtension
+                           OriginalCoverExtension = b.OriginalCoverExtension,
+                           InternetArchiveUrl     = b.InternetArchiveUrl
                        })
                       .ToListAsync(cancellationToken);
     }
@@ -200,7 +201,8 @@ public class BooksController(
                            Pages                  = b.Pages,
                            Country                = b.Country.Name,
                            CoverGuid              = b.CoverGuid,
-                           OriginalCoverExtension = b.OriginalCoverExtension
+                           OriginalCoverExtension = b.OriginalCoverExtension,
+                           InternetArchiveUrl     = b.InternetArchiveUrl
                        })
                       .ToListAsync(cancellationToken);
     }
@@ -245,7 +247,8 @@ public class BooksController(
                            SourceId               = b.SourceId,
                            Country                = b.Country.Name,
                            CoverGuid              = b.CoverGuid,
-                           OriginalCoverExtension = b.OriginalCoverExtension
+                           OriginalCoverExtension = b.OriginalCoverExtension,
+                           InternetArchiveUrl     = b.InternetArchiveUrl
                        })
                       .ToListAsync(cancellationToken);
     }
@@ -271,7 +274,8 @@ public class BooksController(
                                                           SourceId               = b.SourceId,
                                                           Country                = b.Country.Name,
                                                           CoverGuid              = b.CoverGuid,
-                                                          OriginalCoverExtension = b.OriginalCoverExtension
+                                                          OriginalCoverExtension = b.OriginalCoverExtension,
+                                                          InternetArchiveUrl     = b.InternetArchiveUrl
                                                       })
                                                      .FirstOrDefaultAsync();
 
@@ -326,6 +330,7 @@ public class BooksController(
                                    CountryName            = b.Country.Name,
                                    b.CoverGuid,
                                    b.OriginalCoverExtension,
+                                   b.InternetArchiveUrl,
                                    PreviousTitle = b.PreviousId.HasValue ? b.Previous.Title : null,
                                    SourceTitle   = b.SourceId.HasValue ? b.Source.Title : null
                                })
@@ -430,7 +435,8 @@ public class BooksController(
             SourceId               = head.SourceId,
             Country                = head.CountryName,
             CoverGuid              = head.CoverGuid,
-            OriginalCoverExtension = head.OriginalCoverExtension
+            OriginalCoverExtension = head.OriginalCoverExtension,
+            InternetArchiveUrl     = head.InternetArchiveUrl
         };
 
         List<PersonByBookDto> people = peopleTask.Result.OrderBy(p => p.FullName).ThenBy(p => p.Role).ToList();
@@ -475,6 +481,7 @@ public class BooksController(
         model.Edition     = dto.Edition;
         model.PreviousId  = dto.PreviousId;
         model.SourceId    = dto.SourceId;
+        model.InternetArchiveUrl = dto.InternetArchiveUrl;
 
         await context.News.AddAsync(new News
         {
@@ -512,7 +519,8 @@ public class BooksController(
             Pages       = dto.Pages,
             Edition     = dto.Edition,
             PreviousId  = dto.PreviousId,
-            SourceId    = dto.SourceId
+            SourceId    = dto.SourceId,
+            InternetArchiveUrl = dto.InternetArchiveUrl
         };
 
         await context.Books.AddAsync(model);

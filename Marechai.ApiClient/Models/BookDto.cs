@@ -30,6 +30,14 @@ namespace Marechai.ApiClient.Models
         public int? Edition { get; set; }
         /// <summary>The id property</summary>
         public long? Id { get; set; }
+        /// <summary>The internet_archive_url property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? InternetArchiveUrl { get; set; }
+#nullable restore
+#else
+        public string InternetArchiveUrl { get; set; }
+#endif
         /// <summary>The isbn property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -110,6 +118,7 @@ namespace Marechai.ApiClient.Models
                 { "cover_guid", n => { CoverGuid = n.GetGuidValue(); } },
                 { "edition", n => { Edition = n.GetIntValue(); } },
                 { "id", n => { Id = n.GetLongValue(); } },
+                { "internet_archive_url", n => { InternetArchiveUrl = n.GetStringValue(); } },
                 { "isbn", n => { Isbn = n.GetStringValue(); } },
                 { "native_title", n => { NativeTitle = n.GetStringValue(); } },
                 { "original_cover_extension", n => { OriginalCoverExtension = n.GetStringValue(); } },
@@ -134,6 +143,7 @@ namespace Marechai.ApiClient.Models
             writer.WriteGuidValue("cover_guid", CoverGuid);
             writer.WriteIntValue("edition", Edition);
             writer.WriteLongValue("id", Id);
+            writer.WriteStringValue("internet_archive_url", InternetArchiveUrl);
             writer.WriteStringValue("isbn", Isbn);
             writer.WriteStringValue("native_title", NativeTitle);
             writer.WriteStringValue("original_cover_extension", OriginalCoverExtension);

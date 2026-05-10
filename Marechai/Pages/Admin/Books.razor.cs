@@ -61,7 +61,8 @@ public partial class Books
                 PublishedPrecision = data.PublishedPrecision,
                 Published   = data.Published.HasValue ? new DateTimeOffset(data.Published.Value, TimeSpan.Zero) : null,
                 PreviousId  = data.PreviousId,
-                SourceId    = data.SourceId
+                SourceId    = data.SourceId,
+                InternetArchiveUrl = data.InternetArchiveUrl
             };
 
             (long? id, string errorMessage) = await BooksService.CreateAsync(dto);
@@ -99,7 +100,8 @@ public partial class Books
             { x => x.PublishedPrecision, fullBook.PublishedPrecision ?? 0 },
             { x => x.PreviousId, fullBook.PreviousId },
             { x => x.SourceId, fullBook.SourceId },
-            { x => x.HasCover, fullBook.CoverGuid is not null }
+            { x => x.HasCover, fullBook.CoverGuid is not null },
+            { x => x.InternetArchiveUrl, fullBook.InternetArchiveUrl }
         };
 
         IDialogReference dialog = await DialogService.ShowAsync<BookDialog>(L["Edit Book"], parameters,
@@ -127,7 +129,8 @@ public partial class Books
                 CountryId   = data.CountryId,
                 Published   = data.Published.HasValue ? new DateTimeOffset(data.Published.Value, TimeSpan.Zero) : null,
                 PreviousId  = data.PreviousId,
-                SourceId    = data.SourceId
+                SourceId    = data.SourceId,
+                InternetArchiveUrl = data.InternetArchiveUrl
             };
 
             (bool succeeded, string errorMessage) = await BooksService.UpdateAsync(book.Id ?? 0, dto);

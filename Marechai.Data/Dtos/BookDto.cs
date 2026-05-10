@@ -44,4 +44,6 @@ public class BookDto : DocumentBaseDto
     public Guid? CoverGuid { get; set; }
     [JsonPropertyName("original_cover_extension")]
     public string? OriginalCoverExtension { get; set; }
+    [JsonPropertyName("internet_archive_url")]
+    public string? InternetArchiveUrl { get; set; }
 }

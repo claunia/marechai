@@ -15,4 +15,5 @@ public sealed class BookDialogResult
     public int       PublishedPrecision  { get; set; }
     public long?     PreviousId  { get; set; }
     public long?     SourceId    { get; set; }
+    public string   InternetArchiveUrl { get; set; }
 }

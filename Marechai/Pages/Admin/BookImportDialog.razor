@@ -168,6 +168,20 @@
                                     </div>
                                 </CellTemplate>
                             </TemplateColumn>
+                            <TemplateColumn Title="@L["Internet Archive link"]">
+                                <CellTemplate>
+                                    @if(!string.IsNullOrWhiteSpace(context.Item.InternetArchiveUrl))
+                                    {
+                                        <MudTooltip Text="@context.Item.InternetArchiveUrl">
+                                            <MudIconButton Icon="@Icons.Material.Filled.OpenInNew"
+                                                           Size="Size.Small"
+                                                           Color="Color.Primary"
+                                                           Href="@context.Item.InternetArchiveUrl"
+                                                           Target="_blank"/>
+                                        </MudTooltip>
+                                    }
+                                </CellTemplate>
+                            </TemplateColumn>
                         </Columns>
                     </MudDataGrid>
                 </MudStack>
@@ -305,7 +319,7 @@
     static readonly string[] CsvHeaders =
     [
         "Title", "NativeTitle", "SortTitle", "ISBN", "Edition", "Pages",
-        "PublishedYear", "PublishedMonth", "PublishedDay", "Country"
+        "PublishedYear", "PublishedMonth", "PublishedDay", "Country", "InternetArchiveUrl"
     ];
 
     static readonly Dictionary<string, string> CountryAliases = new(StringComparer.OrdinalIgnoreCase)
@@ -430,7 +444,8 @@
                 NativeTitle  = GetValueOrNull(row, "NativeTitle"),
                 SortTitle    = GetValueOrNull(row, "SortTitle"),
                 Isbn         = GetValueOrNull(row, "ISBN"),
-                CountryInput = GetValueOrNull(row, "Country")
+                CountryInput = GetValueOrNull(row, "Country"),
+                InternetArchiveUrl = GetValueOrNull(row, "InternetArchiveUrl")
             };
 
             if(TryParseInt(row, "Edition", out int edition))
@@ -562,7 +577,8 @@
                 Pages              = row.Pages,
                 CountryId          = row.SelectedCountry?.Id,
                 Published          = row.PublishedDate.HasValue ? new DateTimeOffset(row.PublishedDate.Value) : null,
-                PublishedPrecision = row.PublishedPrecision
+                PublishedPrecision = row.PublishedPrecision,
+                InternetArchiveUrl = row.InternetArchiveUrl
             };
 
             (long? id, string error) = await BooksService.CreateAsync(dto);
@@ -604,7 +620,8 @@
                 ["PublishedYear"]  = row.PublishedYear?.ToString() ?? "",
                 ["PublishedMonth"] = row.PublishedMonth?.ToString() ?? "",
                 ["PublishedDay"]   = row.PublishedDay?.ToString() ?? "",
-                ["Country"]        = row.CountryInput ?? ""
+                ["Country"]        = row.CountryInput ?? "",
+                ["InternetArchiveUrl"] = row.InternetArchiveUrl ?? ""
             };
 
             rows.Add(dict);

@@ -354,4 +354,10 @@
     <data name="There are no companies in the database." xml:space="preserve">
         <value>No hay compañías en la base de datos.</value>
     </data>
+  <data name="Internet Archive link" xml:space="preserve">
+    <value>Enlace a Internet Archive</value>
+  </data>
+  <data name="View on Internet Archive" xml:space="preserve">
+    <value>Ver en Internet Archive</value>
+  </data>
 </root>
