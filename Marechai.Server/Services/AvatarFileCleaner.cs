@@ -58,7 +58,7 @@ public sealed class AvatarFileCleaner(IConfiguration configuration, ILogger<Avat
         }
 
         // Delete all generated variants (format × size × {full, thumb}).
-        string[] formats = ["jpeg", "webp", "heif", "avif"];
+        string[] formats = ["jpeg", "webp", "avif"];
         string[] sizes   = ["hd", "1440p", "4k"];
 
         foreach(string format in formats)

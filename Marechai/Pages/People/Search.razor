@@ -67,7 +67,6 @@
                             <picture>
                                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/people/jxl/hd/@(person.Photo).jxl, @(AssetUrls.BaseUrl)/assets/photos/people/jxl/1440p/@(person.Photo).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/people/jxl/4k/@(person.Photo).jxl 3x" type="image/jxl">
                                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/people/avif/hd/@(person.Photo).avif, @(AssetUrls.BaseUrl)/assets/photos/people/avif/1440p/@(person.Photo).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/people/avif/4k/@(person.Photo).avif 3x" type="image/avif">
-                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/people/heif/hd/@(person.Photo).heic, @(AssetUrls.BaseUrl)/assets/photos/people/heif/1440p/@(person.Photo).heic 2x, @(AssetUrls.BaseUrl)/assets/photos/people/heif/4k/@(person.Photo).heic 3x" type="image/heic">
                                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/people/webp/hd/@(person.Photo).webp, @(AssetUrls.BaseUrl)/assets/photos/people/webp/1440p/@(person.Photo).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/people/webp/4k/@(person.Photo).webp 3x" type="image/webp">
                                 <img alt="@(person.DisplayName ?? person.Alias ?? $"{person.Name} {person.Surname}".Trim())" height="48"
                                      src="@(AssetUrls.BaseUrl)/assets/photos/people/jpeg/hd/@(person.Photo).jpg"

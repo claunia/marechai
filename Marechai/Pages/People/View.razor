@@ -55,7 +55,6 @@
             <picture>
                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/people/jxl/hd/@(_person.Photo).jxl, @(AssetUrls.BaseUrl)/assets/photos/people/jxl/1440p/@(_person.Photo).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/people/jxl/4k/@(_person.Photo).jxl 3x" type="image/jxl">
                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/people/avif/hd/@(_person.Photo).avif, @(AssetUrls.BaseUrl)/assets/photos/people/avif/1440p/@(_person.Photo).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/people/avif/4k/@(_person.Photo).avif 3x" type="image/avif">
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/people/heif/hd/@(_person.Photo).heic, @(AssetUrls.BaseUrl)/assets/photos/people/heif/1440p/@(_person.Photo).heic 2x, @(AssetUrls.BaseUrl)/assets/photos/people/heif/4k/@(_person.Photo).heic 3x" type="image/heic">
                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/people/webp/hd/@(_person.Photo).webp, @(AssetUrls.BaseUrl)/assets/photos/people/webp/1440p/@(_person.Photo).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/people/webp/4k/@(_person.Photo).webp 3x" type="image/webp">
                 <img alt="@(_person.DisplayName ?? _person.Alias ?? $"{_person.Name} {_person.Surname}".Trim())" height="200"
                      src="@(AssetUrls.BaseUrl)/assets/photos/people/jpeg/hd/@(_person.Photo).jpg"

@@ -64,13 +64,6 @@ public class Photos
         paths.Add(Path.Combine(itemPhotosRoot, "webp", "1440p"));
         paths.Add(Path.Combine(itemPhotosRoot, "webp", "4k"));
 
-        paths.Add(Path.Combine(itemThumbsRoot, "heif", "hd"));
-        paths.Add(Path.Combine(itemThumbsRoot, "heif", "1440p"));
-        paths.Add(Path.Combine(itemThumbsRoot, "heif", "4k"));
-        paths.Add(Path.Combine(itemPhotosRoot, "heif", "hd"));
-        paths.Add(Path.Combine(itemPhotosRoot, "heif", "1440p"));
-        paths.Add(Path.Combine(itemPhotosRoot, "heif", "4k"));
-
         paths.Add(Path.Combine(itemThumbsRoot, "avif", "hd"));
         paths.Add(Path.Combine(itemThumbsRoot, "avif", "1440p"));
         paths.Add(Path.Combine(itemThumbsRoot, "avif", "4k"));
@@ -190,11 +183,6 @@ public class Photos
                 return ConvertUsingImageMagick(originalPath, outputPath, width, height);
             case "webp":
                 outputPath = Path.Combine(outputPath, $"{id}.webp");
-
-                return ConvertUsingImageMagick(originalPath, outputPath, width, height);
-
-            case "heif":
-                outputPath = Path.Combine(outputPath, $"{id}.heic");
 
                 return ConvertUsingImageMagick(originalPath, outputPath, width, height);
 
@@ -357,12 +345,6 @@ public class Photos
             new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "WEBP", "4k",    false, scan, item); FinishedRenderingWebp4k?.Invoke(r); }),
             new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "WEBP", "1440p", false, scan, item); FinishedRenderingWebp1440?.Invoke(r); }),
             new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "WEBP", "hd",    false, scan, item); FinishedRenderingWebpHd?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "HEIF", "4k",    true,  scan, item); FinishedRenderingHeif4kThumbnail?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "HEIF", "1440p", true,  scan, item); FinishedRenderingHeif1440Thumbnail?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "HEIF", "hd",    true,  scan, item); FinishedRenderingHeifHdThumbnail?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "HEIF", "4k",    false, scan, item); FinishedRenderingHeif4K?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "HEIF", "1440p", false, scan, item); FinishedRenderingHeif1440?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "HEIF", "hd",    false, scan, item); FinishedRenderingHeifHd?.Invoke(r); }),
             new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "AVIF", "4k",    true,  scan, item); FinishedRenderingAvif4kThumbnail?.Invoke(r); }),
             new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "AVIF", "1440p", true,  scan, item); FinishedRenderingAvif1440Thumbnail?.Invoke(r); }),
             new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "AVIF", "hd",    true,  scan, item); FinishedRenderingAvifHdThumbnail?.Invoke(r); }),
@@ -398,12 +380,6 @@ public class Photos
     public event ConversionFinished FinishedRenderingWebpHd;
     public event ConversionFinished FinishedRenderingWebp1440;
     public event ConversionFinished FinishedRenderingWebp4k;
-    public event ConversionFinished FinishedRenderingHeifHdThumbnail;
-    public event ConversionFinished FinishedRenderingHeif1440Thumbnail;
-    public event ConversionFinished FinishedRenderingHeif4kThumbnail;
-    public event ConversionFinished FinishedRenderingHeifHd;
-    public event ConversionFinished FinishedRenderingHeif1440;
-    public event ConversionFinished FinishedRenderingHeif4K;
     public event ConversionFinished FinishedRenderingAvifHdThumbnail;
     public event ConversionFinished FinishedRenderingAvif1440Thumbnail;
     public event ConversionFinished FinishedRenderingAvif4kThumbnail;

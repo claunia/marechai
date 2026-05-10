@@ -57,7 +57,6 @@
             <picture>
                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/jxl/hd/@(_book.CoverGuid).jxl, @(AssetUrls.BaseUrl)/assets/photos/book-covers/jxl/1440p/@(_book.CoverGuid).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/book-covers/jxl/4k/@(_book.CoverGuid).jxl 3x" type="image/jxl">
                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/avif/hd/@(_book.CoverGuid).avif, @(AssetUrls.BaseUrl)/assets/photos/book-covers/avif/1440p/@(_book.CoverGuid).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/book-covers/avif/4k/@(_book.CoverGuid).avif 3x" type="image/avif">
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/heif/hd/@(_book.CoverGuid).heic, @(AssetUrls.BaseUrl)/assets/photos/book-covers/heif/1440p/@(_book.CoverGuid).heic 2x, @(AssetUrls.BaseUrl)/assets/photos/book-covers/heif/4k/@(_book.CoverGuid).heic 3x" type="image/heic">
                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/webp/hd/@(_book.CoverGuid).webp, @(AssetUrls.BaseUrl)/assets/photos/book-covers/webp/1440p/@(_book.CoverGuid).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/book-covers/webp/4k/@(_book.CoverGuid).webp 3x" type="image/webp">
                 <img alt="@_book.Title" height="200"
                      src="@(AssetUrls.BaseUrl)/assets/photos/book-covers/jpeg/hd/@(_book.CoverGuid).jpg"
@@ -182,7 +181,6 @@
                 <picture>
                     <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/jxl/4k/@(_book.CoverGuid).jxl" type="image/jxl">
                     <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/avif/4k/@(_book.CoverGuid).avif" type="image/avif">
-                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/heif/4k/@(_book.CoverGuid).heic" type="image/heic">
                     <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/webp/4k/@(_book.CoverGuid).webp" type="image/webp">
                     <img alt="@_book.Title" src="@(AssetUrls.BaseUrl)/assets/photos/book-covers/jpeg/4k/@(_book.CoverGuid).jpg"
                          style="max-height: 600px; max-width: 100%; object-fit: contain; border-radius: 4px;"/>

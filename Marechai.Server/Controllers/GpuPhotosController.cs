@@ -487,7 +487,7 @@ public class GpuPhotosController(MarechaiContext context, IConfiguration configu
         DeleteFilesByPattern(Path.Combine(photosRoot, "originals"), $"{guidStr}.*");
 
         // Delete all format/resolution variants (full + thumbnails)
-        string[] formats     = ["jpeg", "webp", "heif", "avif"];
+        string[] formats     = ["jpeg", "webp", "avif"];
         string[] resolutions = ["hd", "1440p", "4k"];
 
         foreach(string format in formats)
@@ -496,7 +496,6 @@ public class GpuPhotosController(MarechaiContext context, IConfiguration configu
             {
                 "jpeg" => ".jpg",
                 "webp" => ".webp",
-                "heif" => ".heic",
                 "avif" => ".avif",
                 _      => $".{format}"
             };

@@ -28,7 +28,7 @@ public static class ImageConverter
         paths.Add(itemThumbsRoot);
         paths.Add(itemOriginalPhotosRoot);
 
-        foreach(string format in new[] { "jpeg", "webp", "heif", "avif", "jxl" })
+        foreach(string format in new[] { "jpeg", "webp", "avif", "jxl" })
         {
             foreach(string resolution in new[] { "hd", "1440p", "4k" })
             {
@@ -46,7 +46,7 @@ public static class ImageConverter
     public static void ConvertAll(string assetRootPath, Guid id, string originalFilePath, string sourceFormat,
                                   string itemName)
     {
-        string[] formats     = ["JPEG", "WEBP", "HEIF", "AVIF", "JXL"];
+        string[] formats     = ["JPEG", "WEBP", "AVIF", "JXL"];
         string[] resolutions = ["hd", "1440p", "4k"];
 
         List<Task> pool = [];
@@ -126,11 +126,6 @@ public static class ImageConverter
 
             case "webp":
                 outputPath = Path.Combine(outputPath, $"{id}.webp");
-
-                return ConvertUsingImageMagick(originalPath, outputPath, width, height);
-
-            case "heif":
-                outputPath = Path.Combine(outputPath, $"{id}.heic");
 
                 return ConvertUsingImageMagick(originalPath, outputPath, width, height);
 
