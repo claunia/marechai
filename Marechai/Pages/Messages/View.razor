@@ -34,15 +34,15 @@
                 {
                     if(p.IsSystem == true)
                     {
-                        <MudChip T="string" Size="Size.Small" Color="Color.Error" Variant="Variant.Filled">@L["System"]</MudChip>
+                        <MudChip T="string" Size="Size.Small" Color="Color.Error" Variant="Variant.Filled" Style="color: white;">@L["System"]</MudChip>
                     }
                     else if(p.IsAdmin == true)
                     {
-                        <MudChip T="string" Size="Size.Small" Color="Color.Info" Variant="Variant.Filled">@p.DisplayName <small>(@L["Admin"])</small></MudChip>
+                        <MudChip T="string" Size="Size.Small" Variant="Variant.Filled" Style="background-color: #ff9800; color: #1a1a1a;">@p.DisplayName <small>(@L["Admin"])</small></MudChip>
                     }
                     else
                     {
-                        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="background-color: rgba(255,255,255,0.85);">@p.DisplayName</MudChip>
+                        <MudChip T="string" Size="Size.Small" Variant="Variant.Filled" Style="background-color: rgba(255,255,255,0.92); color: #0d47a1;">@p.DisplayName</MudChip>
                     }
                 }
             </MudStack>
