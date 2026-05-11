@@ -54,6 +54,21 @@ public partial class View
 
     string DisplayName => _profile?.DisplayName ?? _profile?.UserName ?? Username;
 
+    /// <summary>
+    ///     Adapter that exposes the public profile's role flags as the <see cref="UserSummaryDto" /> shape
+    ///     consumed by <c>UserBadge</c>. Computed on the fly because PublicProfileDto and UserSummaryDto are
+    ///     wire-distinct DTOs that happen to overlap on the role-status fields.
+    /// </summary>
+    UserSummaryDto _profileBadge => _profile is null
+                                        ? null
+                                        : new UserSummaryDto
+                                        {
+                                            UserName       = _profile.UserName,
+                                            DisplayName    = _profile.DisplayName,
+                                            IsAdmin        = _profile.IsAdmin == true,
+                                            IsCollaborator = _profile.IsCollaborator == true
+                                        };
+
     bool HasLinks => !string.IsNullOrWhiteSpace(_profile?.Website)  ||
                      !string.IsNullOrWhiteSpace(_profile?.GitHub)   ||
                      !string.IsNullOrWhiteSpace(_profile?.Twitter)  ||

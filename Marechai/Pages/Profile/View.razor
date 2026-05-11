@@ -66,12 +66,23 @@
         }
         <MudText Typo="Typo.h4" Align="Align.Center" Style="color: white; font-weight: 700;">
             @DisplayName
+            @if(_profile is { IsCollaborator: true, IsAdmin: false })
+            {
+                <UserBadge User="@_profileBadge" StarLarge="true" ExtraStarStyle="margin-left: 12px;"/>
+            }
         </MudText>
         @if(!string.IsNullOrWhiteSpace(_profile.DisplayName))
         {
             <MudText Typo="Typo.subtitle1" Align="Align.Center" Style="color: rgba(255,255,255,0.8);">
                 @@@_profile.UserName
             </MudText>
+        }
+        @if(_profile is { IsCollaborator: true, IsAdmin: false })
+        {
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+                <MudIcon Icon="@Icons.Material.Filled.Star" Style="color: #ce93d8; font-size: 18px;"/>
+                <MudText Typo="Typo.body2" Style="color: rgba(255,255,255,0.85); font-weight: 500;">@L["Collaborator"]</MudText>
+            </MudStack>
         }
         @if(!string.IsNullOrWhiteSpace(_profile.Location))
         {

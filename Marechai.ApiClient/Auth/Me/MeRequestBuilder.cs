@@ -5,6 +5,7 @@ using Marechai.ApiClient.Auth.Me.Collection;
 using Marechai.ApiClient.Auth.Me.Delete;
 using Marechai.ApiClient.Auth.Me.Export;
 using Marechai.ApiClient.Auth.Me.PublicProfile;
+using Marechai.ApiClient.Auth.Me.Suggestions;
 using Marechai.ApiClient.Auth.Me.Theme;
 using Marechai.ApiClient.Auth.Me.TwoFactor;
 using Marechai.ApiClient.Models;
@@ -48,6 +49,11 @@ namespace Marechai.ApiClient.Auth.Me
         public global::Marechai.ApiClient.Auth.Me.PublicProfile.PublicProfileRequestBuilder PublicProfile
         {
             get => new global::Marechai.ApiClient.Auth.Me.PublicProfile.PublicProfileRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The suggestions property</summary>
+        public global::Marechai.ApiClient.Auth.Me.Suggestions.SuggestionsRequestBuilder Suggestions
+        {
+            get => new global::Marechai.ApiClient.Auth.Me.Suggestions.SuggestionsRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The theme property</summary>
         public global::Marechai.ApiClient.Auth.Me.Theme.ThemeRequestBuilder Theme

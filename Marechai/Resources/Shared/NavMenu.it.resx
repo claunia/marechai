@@ -426,4 +426,5 @@
     <data name="Embedded software" xml:space="preserve">
         <value>Software integrato</value>
     </data>
+    <data name="Suggestions Queue" xml:space="preserve"><value>Coda dei suggerimenti</value></data>
 </root>

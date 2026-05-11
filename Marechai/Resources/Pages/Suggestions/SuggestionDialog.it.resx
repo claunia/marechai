@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:schema id="root">
+        <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+        <xs:element name="root" ns1:IsDataSet="true">
+            <xs:complexType>
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element name="metadata">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0" />
+                            </xs:sequence>
+                            <xs:attribute name="name" use="required" type="xsd:string" />
+                            <xs:attribute name="type" type="xsd:string" />
+                            <xs:attribute name="mimetype" type="xsd:string" />
+                            <xs:attribute ref="xml:space" />
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="assembly">
+                        <xs:complexType>
+                            <xs:attribute name="alias" type="xsd:string" />
+                            <xs:attribute name="name" type="xsd:string" />
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="data">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
+                            </xs:sequence>
+                            <xs:attribute name="name" type="xsd:string" use="required" />
+                            <xs:attribute name="type" type="xsd:string" />
+                            <xs:attribute name="mimetype" type="xsd:string" />
+                            <xs:attribute ref="xml:space" />
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="resheader">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                            </xs:sequence>
+                            <xs:attribute name="name" type="xsd:string" use="required" />
+                        </xs:complexType>
+                    </xs:element>
+                </xs:choice>
+            </xs:complexType>
+        </xs:element>
+    </xs:schema>
+    <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+    <resheader name="version"><value>2.0</value></resheader>
+    <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e305</value></resheader>
+    <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e305</value></resheader>
+    <data name="This entity type does not yet support suggestions." xml:space="preserve"><value>Questo tipo di entità non supporta ancora i suggerimenti.</value></data>
+    <data name="Edit the fields you want to suggest changes to. Leave a field unchanged to skip it." xml:space="preserve"><value>Modifica i campi di cui vuoi suggerire modifiche. Lascia un campo invariato per saltarlo.</value></data>
+    <data name="Field kind not supported in this dialog yet." xml:space="preserve"><value>Tipo di campo non ancora supportato in questa finestra.</value></data>
+    <data name="Optional comment (References, sources, etc...)" xml:space="preserve"><value>Commento opzionale (riferimenti, fonti, ecc.)</value></data>
+    <data name="Cancel" xml:space="preserve"><value>Annulla</value></data>
+    <data name="Submit suggestion" xml:space="preserve"><value>Invia suggerimento</value></data>
+    <data name="No changes detected — modify at least one field before submitting." xml:space="preserve"><value>Nessuna modifica rilevata — modifica almeno un campo prima di inviare.</value></data>
+    <data name="Failed to submit suggestion." xml:space="preserve"><value>Invio del suggerimento fallito.</value></data>
+    <data name="Suggestion submitted. An administrator will review it." xml:space="preserve"><value>Suggerimento inviato. Un amministratore lo esaminerà.</value></data>
+</root>

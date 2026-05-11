@@ -487,4 +487,5 @@
     <data name="Embedded software" xml:space="preserve">
         <value>Software embebido</value>
     </data>
+    <data name="Suggestions Queue" xml:space="preserve"><value>Cola de sugerencias</value></data>
 </root>

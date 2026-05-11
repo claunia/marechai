@@ -8190,6 +8190,68 @@ namespace Marechai.Database.Migrations
                     b.ToTable("storage_by_machine", (string)null);
                 });
 
+            modelBuilder.Entity("Marechai.Database.Models.Suggestion", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("AppliedFields")
+                        .HasColumnType("json");
+
+                    b.Property<string>("CreatedById")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<DateTime>("CreatedOn"));
+
+                    b.Property<long?>("EntityId")
+                        .HasColumnType("bigint");
+
+                    b.Property<byte>("EntityType")
+                        .HasColumnType("tinyint unsigned");
+
+                    b.Property<string>("ReviewedById")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime?>("ReviewedOn")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<byte>("Status")
+                        .HasColumnType("tinyint unsigned");
+
+                    b.Property<string>("SuggestedValues")
+                        .HasColumnType("json");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("UpdatedOn"));
+
+                    b.Property<string>("UserComment")
+                        .HasMaxLength(2000)
+                        .HasColumnType("varchar(2000)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ReviewedById");
+
+                    b.HasIndex("EntityType", "EntityId");
+
+                    b.HasIndex("Status", "CreatedOn");
+
+                    b.ToTable("Suggestions", (string)null);
+                });
+
             modelBuilder.Entity("Marechai.Database.Models.UnM49", b =>
                 {
                     b.Property<short>("Id")
@@ -10451,6 +10513,24 @@ namespace Marechai.Database.Migrations
                         .HasConstraintName("fk_storage_by_machine_machine");
 
                     b.Navigation("Machine");
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.Suggestion", b =>
+                {
+                    b.HasOne("Marechai.Database.Models.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Marechai.Database.Models.ApplicationUser", "ReviewedBy")
+                        .WithMany()
+                        .HasForeignKey("ReviewedById")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("ReviewedBy");
                 });
 
             modelBuilder.Entity("Marechai.Database.Models.UnM49", b =>

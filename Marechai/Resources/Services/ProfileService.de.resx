@@ -441,4 +441,20 @@
   <data name="Magazine Issues" xml:space="preserve">
     <value>Zeitschriftenausgaben</value>
   </data>
+    <data name="My Suggestions" xml:space="preserve"><value>Meine Vorschläge</value></data>
+    <data name="Suggestions you submitted, including their current review status." xml:space="preserve"><value>Von dir eingereichte Vorschläge, einschließlich ihres aktuellen Überprüfungsstatus.</value></data>
+    <data name="You haven&apos;t submitted any suggestions yet." xml:space="preserve"><value>Du hast noch keine Vorschläge eingereicht.</value></data>
+    <data name="Withdraw" xml:space="preserve"><value>Zurückziehen</value></data>
+    <data name="Pending" xml:space="preserve"><value>Ausstehend</value></data>
+    <data name="Accepted" xml:space="preserve"><value>Angenommen</value></data>
+    <data name="Partially accepted" xml:space="preserve"><value>Teilweise angenommen</value></data>
+    <data name="Rejected" xml:space="preserve"><value>Abgelehnt</value></data>
+    <data name="Stale" xml:space="preserve"><value>Veraltet</value></data>
+    <data name="Withdrawn" xml:space="preserve"><value>Zurückgezogen</value></data>
+    <data name="Entity" xml:space="preserve"><value>Entität</value></data>
+    <data name="Item" xml:space="preserve"><value>Element</value></data>
+    <data name="Status" xml:space="preserve"><value>Status</value></data>
+    <data name="Submitted" xml:space="preserve"><value>Eingereicht</value></data>
+    <data name="Reviewed" xml:space="preserve"><value>Überprüft</value></data>
+    <data name="Collaborator" xml:space="preserve"><value>Mitwirkender</value></data>
 </root>

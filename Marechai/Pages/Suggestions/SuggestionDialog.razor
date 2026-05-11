@@ -1,0 +1,273 @@
+@using System.Globalization
+@using System.Text.Json
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@using Marechai.Suggestions
+@inject IStringLocalizer<SuggestionDialog> L
+@inject ISnackbar               Snackbar
+@inject SuggestionsService      Service
+
+@*
+    Generic suggestion-creation dialog. Renders one form input per field-descriptor in the
+    metadata for the given <paramref name="EntityType" />, defaulting each input to the current
+    value extracted from <paramref name="CurrentDto" />. On submit, only fields whose current
+    value differs from the input value are sent to the server.
+
+    Phase 0 ships an empty Company metadata, so the dialog renders a "no fields available"
+    placeholder until Phase 1 wires the real Company field set.
+*@
+
+<MudDialog>
+    <DialogContent>
+        @if(_metadata is null || _metadata.Fields.Count == 0)
+        {
+            <MudAlert Severity="Severity.Warning">@L["This entity type does not yet support suggestions."]</MudAlert>
+        }
+        else
+        {
+            <MudText Typo="Typo.body2" Class="mb-3">@L["Edit the fields you want to suggest changes to. Leave a field unchanged to skip it."]</MudText>
+
+            @foreach(SuggestionFieldDescriptor field in _metadata.Fields)
+            {
+                <div class="mb-2">
+                    @{ string label = L[field.LabelKey]; }
+                    @switch(field.Kind)
+                    {
+                        case SuggestionFieldKind.Text:
+                        case SuggestionFieldKind.Url:
+                            <MudTextField T="string" Label="@label"
+                                          MaxLength="@(field.MaxLength ?? 4096)"
+                                          InputType="@(field.Kind == SuggestionFieldKind.Url ? InputType.Url : InputType.Text)"
+                                          Value="@GetString(field.Name)"
+                                          ValueChanged="@(v => SetValue(field.Name, v))"/>
+                            break;
+                        case SuggestionFieldKind.MultilineText:
+                            <MudTextField T="string" Label="@label" Lines="3"
+                                          MaxLength="@(field.MaxLength ?? 4096)"
+                                          Value="@GetString(field.Name)"
+                                          ValueChanged="@(v => SetValue(field.Name, v))"/>
+                            break;
+                        case SuggestionFieldKind.Int:
+                            <MudNumericField T="int?" Label="@label"
+                                             Value="@GetInt(field.Name)"
+                                             ValueChanged="@(v => SetValue(field.Name, v))"/>
+                            break;
+                        case SuggestionFieldKind.Short:
+                            <MudNumericField T="short?" Label="@label"
+                                             Value="@GetShort(field.Name)"
+                                             ValueChanged="@(v => SetValue(field.Name, v))"/>
+                            break;
+                        case SuggestionFieldKind.Bool:
+                            <MudCheckBox T="bool?" Label="@label"
+                                         Value="@GetBool(field.Name)"
+                                         ValueChanged="@(v => SetValue(field.Name, v))"/>
+                            break;
+                        case SuggestionFieldKind.Date:
+                            <MudDatePicker Label="@label" Editable="true" Clearable="true"
+                                           Date="@GetDate(field.Name)"
+                                           DateChanged="@(d => SetValue(field.Name, d))"/>
+                            break;
+                        case SuggestionFieldKind.Enum:
+                            <MudSelect T="int?" Label="@label" Clearable="true"
+                                       Value="@GetInt(field.Name)"
+                                       ValueChanged="@(v => SetValue(field.Name, v))">
+                                @if(field.EnumOptions is not null)
+                                {
+                                    @foreach(SuggestionEnumOption opt in field.EnumOptions)
+                                    {
+                                        <MudSelectItem T="int?" Value="@(((int?)opt.Value))">@L[opt.LabelKey]</MudSelectItem>
+                                    }
+                                }
+                            </MudSelect>
+                            break;
+                        default:
+                            <MudAlert Severity="Severity.Info">@L["Field kind not supported in this dialog yet."]</MudAlert>
+                            break;
+                    }
+                </div>
+            }
+
+            <MudTextField T="string" Label="@L["Optional comment (References, sources, etc...)"]" Lines="2"
+                          MaxLength="2000"
+                          @bind-Value="_userComment"/>
+
+            @if(!string.IsNullOrWhiteSpace(_validationError))
+            {
+                <MudAlert Severity="Severity.Error" Class="mt-2">@_validationError</MudAlert>
+            }
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit"
+                   Disabled="@(_metadata is null || _metadata.Fields.Count == 0 || _submitting)">
+            @if(_submitting)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true"/>
+            }
+            else
+            {
+                @L["Submit suggestion"]
+            }
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code
+{
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public SuggestionEntityType EntityType { get; set; }
+    [Parameter] public long                 EntityId   { get; set; }
+
+    /// <summary>The current entity DTO snapshot. The dialog reads field values from it via the metadata.</summary>
+    [Parameter] public object CurrentDto { get; set; }
+
+    SuggestionMetadata _metadata;
+    Dictionary<string, object> _current = new(StringComparer.Ordinal);
+    Dictionary<string, object> _input   = new(StringComparer.Ordinal);
+    string _userComment;
+    string _validationError;
+    bool   _submitting;
+
+    protected override void OnInitialized()
+    {
+        _metadata = SuggestionMetadataRegistry.Get(EntityType);
+
+        if(_metadata is null) return;
+
+        _current = _metadata.ExtractCurrentValues(CurrentDto) ?? new Dictionary<string, object>(StringComparer.Ordinal);
+
+        // Seed the input map with current values (so unchanged fields stay equal).
+        foreach(KeyValuePair<string, object> kv in _current) _input[kv.Key] = kv.Value;
+    }
+
+    string GetString(string name)
+    {
+        if(_input.TryGetValue(name, out object v) && v is not null)
+            return v switch
+            {
+                JsonElement je => je.ValueKind == JsonValueKind.Null ? null : je.ToString(),
+                _              => v.ToString()
+            };
+        return null;
+    }
+
+    int? GetInt(string name)
+    {
+        if(!_input.TryGetValue(name, out object v) || v is null) return null;
+        return v switch
+        {
+            int i           => i,
+            short s         => s,
+            long l          => (int?)l,
+            JsonElement je  => je.ValueKind == JsonValueKind.Number ? je.GetInt32() : null,
+            string str      => int.TryParse(str, NumberStyles.Integer, CultureInfo.InvariantCulture, out int p) ? p : null,
+            _               => null
+        };
+    }
+
+    short? GetShort(string name)
+    {
+        int? i = GetInt(name);
+        return i.HasValue ? (short)i.Value : null;
+    }
+
+    bool? GetBool(string name)
+    {
+        if(!_input.TryGetValue(name, out object v) || v is null) return null;
+        return v switch
+        {
+            bool b         => b,
+            JsonElement je => je.ValueKind switch
+            {
+                JsonValueKind.True  => true,
+                JsonValueKind.False => false,
+                _                   => (bool?)null
+            },
+            _              => null
+        };
+    }
+
+    DateTime? GetDate(string name)
+    {
+        if(!_input.TryGetValue(name, out object v) || v is null) return null;
+        return v switch
+        {
+            DateTime dt    => dt,
+            JsonElement je => je.ValueKind == JsonValueKind.String && DateTime.TryParse(je.GetString(), CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out DateTime p) ? p : null,
+            string str     => DateTime.TryParse(str, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out DateTime p) ? p : null,
+            _              => null
+        };
+    }
+
+    void SetValue(string name, object value)
+    {
+        // Normalize empty strings to null so the diff is clean.
+        if(value is string s && string.IsNullOrEmpty(s)) value = null;
+        _input[name] = value;
+    }
+
+    void Cancel() => MudDialog.Cancel();
+
+    async Task Submit()
+    {
+        _validationError = null;
+
+        // Build a diff: only fields whose value differs from the current snapshot.
+        var diff = new Dictionary<string, object>(StringComparer.Ordinal);
+        foreach(SuggestionFieldDescriptor f in _metadata.Fields)
+        {
+            object curr = _current.TryGetValue(f.Name, out object c) ? c : null;
+            object next = _input.TryGetValue(f.Name, out object n)   ? n : null;
+
+            if(!ValuesEqual(curr, next)) diff[f.Name] = next;
+        }
+
+        if(diff.Count == 0)
+        {
+            _validationError = L["No changes detected — modify at least one field before submitting."];
+            return;
+        }
+
+        _submitting = true;
+        try
+        {
+            string json = JsonSerializer.Serialize(diff);
+            var dto = new SuggestionDto
+            {
+                EntityType          = (int?)EntityType,
+                EntityId            = EntityId,
+                Status              = (int?)SuggestionStatus.Pending,
+                UserComment         = string.IsNullOrWhiteSpace(_userComment) ? null : _userComment.Trim(),
+                SuggestedValuesJson = json
+            };
+
+            var (created, error) = await Service.CreateAsync(dto);
+
+            if(created is null)
+            {
+                _validationError = string.IsNullOrWhiteSpace(error) ? L["Failed to submit suggestion."].Value : error;
+                return;
+            }
+
+            Snackbar.Add(L["Suggestion submitted. An administrator will review it."], Severity.Success);
+            MudDialog.Close(DialogResult.Ok(created));
+        }
+        finally
+        {
+            _submitting = false;
+        }
+    }
+
+    static bool ValuesEqual(object a, object b)
+    {
+        if(a is null && b is null) return true;
+        if(a is null || b is null) return false;
+
+        // Compare via stringified form for cross-shape (JsonElement vs raw) comparisons.
+        string sa = a is JsonElement ja ? ja.ToString() : a.ToString();
+        string sb = b is JsonElement jb ? jb.ToString() : b.ToString();
+        return string.Equals(sa, sb, StringComparison.Ordinal);
+    }
+}

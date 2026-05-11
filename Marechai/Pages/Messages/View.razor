@@ -42,7 +42,10 @@
                     }
                     else
                     {
-                        <MudChip T="string" Size="Size.Small" Variant="Variant.Filled" Style="background-color: rgba(255,255,255,0.92); color: #0d47a1;">@p.DisplayName</MudChip>
+                        <MudChip T="string" Size="Size.Small" Variant="Variant.Filled" Style="background-color: rgba(255,255,255,0.92); color: #0d47a1;">
+                            @p.DisplayName
+                            <UserBadge User="@p"/>
+                        </MudChip>
                     }
                 }
             </MudStack>
@@ -91,6 +94,10 @@
                             else if(sender?.IsAdmin == true)
                             {
                                 <MudChip T="string" Size="Size.Small" Color="Color.Info">@L["Admin"]</MudChip>
+                            }
+                            else
+                            {
+                                <UserBadge User="@sender"/>
                             }
                             <MudText Typo="Typo.caption" Color="Color.Default">@(m.CreatedOn?.LocalDateTime.ToString("yyyy-MM-dd HH:mm"))</MudText>
                         </MudStack>

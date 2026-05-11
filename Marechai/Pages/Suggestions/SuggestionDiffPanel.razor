@@ -1,0 +1,121 @@
+@using System.Text.Json
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@using Marechai.Suggestions
+@inject IStringLocalizer<SuggestionDiffPanel> L
+
+@*
+    Renders a 3-column diff (Field / Current value / Suggested value) with a checkbox per row
+    so the admin can pick exactly which fields to accept. Bound HashSet<string> in the parent
+    receives the accepted-field-names set.
+
+    Suggested-side cells are highlighted to draw the eye toward the changed values.
+*@
+
+@if(_suggestedDict is null)
+{
+    <MudText Color="Color.Secondary">@L["No suggestion data."]</MudText>
+}
+else if(_suggestedDict.Count == 0)
+{
+    <MudAlert Severity="Severity.Info">@L["This suggestion has no field changes."]</MudAlert>
+}
+else
+{
+    <MudSimpleTable Hover="true" Dense="true" Bordered="true" Style="width: 100%;">
+        <thead>
+            <tr>
+                <th style="width: 60px;">@L["Accept"]</th>
+                <th style="width: 28%;">@L["Field"]</th>
+                <th style="width: 36%;">@L["Current value"]</th>
+                <th style="width: 36%;">@L["Suggested value"]</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(KeyValuePair<string, JsonElement> entry in _suggestedDict)
+            {
+                string fieldName = entry.Key;
+                _currentDict.TryGetValue(fieldName, out JsonElement currentValue);
+                bool isChecked = AcceptedFieldNames.Contains(fieldName);
+
+                <tr>
+                    <td>
+                        <MudCheckBox T="bool" Value="@isChecked"
+                                     ValueChanged="@(v => ToggleAccepted(fieldName, v))"
+                                     Disabled="@ReadOnly"/>
+                    </td>
+                    <td>@FormatLabel(fieldName)</td>
+                    <td><span class="text-muted">@FormatValue(fieldName, currentValue)</span></td>
+                    <td><strong style="color: #1976d2;">@FormatValue(fieldName, entry.Value)</strong></td>
+                </tr>
+            }
+        </tbody>
+    </MudSimpleTable>
+}
+
+@code
+{
+    [Parameter] public SuggestionDto      Suggestion        { get; set; }
+    [Parameter] public string             CurrentValuesJson { get; set; }
+    [Parameter] public HashSet<string>    AcceptedFieldNames { get; set; } = new(StringComparer.Ordinal);
+    [Parameter] public EventCallback<HashSet<string>> AcceptedFieldNamesChanged { get; set; }
+    [Parameter] public bool               ReadOnly          { get; set; }
+
+    SuggestionMetadata _metadata;
+    Dictionary<string, JsonElement> _suggestedDict;
+    Dictionary<string, JsonElement> _currentDict = new(StringComparer.Ordinal);
+
+    protected override void OnParametersSet()
+    {
+        if(Suggestion?.EntityType is null) { _suggestedDict = null; return; }
+
+        _metadata = SuggestionMetadataRegistry.Get((SuggestionEntityType)Suggestion.EntityType.Value);
+
+        _suggestedDict = ParseJsonObject(Suggestion.SuggestedValuesJson);
+        _currentDict   = ParseJsonObject(CurrentValuesJson);
+    }
+
+    static Dictionary<string, JsonElement> ParseJsonObject(string json)
+    {
+        if(string.IsNullOrWhiteSpace(json)) return new Dictionary<string, JsonElement>(StringComparer.Ordinal);
+        try
+        {
+            return JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json) ??
+                   new Dictionary<string, JsonElement>(StringComparer.Ordinal);
+        }
+        catch { return new Dictionary<string, JsonElement>(StringComparer.Ordinal); }
+    }
+
+    string FormatLabel(string fieldName)
+    {
+        if(_metadata is not null && _metadata.FieldsByName.TryGetValue(fieldName, out SuggestionFieldDescriptor d))
+            return L[d.LabelKey];
+        return fieldName;
+    }
+
+    string FormatValue(string fieldName, JsonElement value)
+    {
+        if(value.ValueKind == JsonValueKind.Undefined || value.ValueKind == JsonValueKind.Null) return "—";
+
+        if(_metadata is not null)
+            return _metadata.FormatDisplayValue(fieldName, value);
+
+        return value.ValueKind switch
+        {
+            JsonValueKind.String => value.GetString() ?? string.Empty,
+            JsonValueKind.True   => "true",
+            JsonValueKind.False  => "false",
+            _                    => value.ToString()
+        };
+    }
+
+    async Task ToggleAccepted(string fieldName, bool isChecked)
+    {
+        AcceptedFieldNames ??= new HashSet<string>(StringComparer.Ordinal);
+        if(isChecked) AcceptedFieldNames.Add(fieldName);
+        else          AcceptedFieldNames.Remove(fieldName);
+
+        if(AcceptedFieldNamesChanged.HasDelegate)
+            await AcceptedFieldNamesChanged.InvokeAsync(AcceptedFieldNames);
+    }
+}

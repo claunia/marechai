@@ -47,4 +47,7 @@ public class UserSummaryDto
 
     [JsonPropertyName("is_admin")]
     public bool IsAdmin { get; set; }
+
+    [JsonPropertyName("is_collaborator")]
+    public bool IsCollaborator { get; set; }
 }

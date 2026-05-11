@@ -140,7 +140,8 @@ public class MessagesController(MarechaiContext context, UserManager<Application
             .Distinct()
             .ToList();
 
-        HashSet<string> adminUserIds = await GetAdminIdsAsync(participantIds);
+        HashSet<string> adminUserIds        = await GetAdminIdsAsync(participantIds);
+        HashSet<string> collaboratorUserIds = await GetCollaboratorIdsAsync(participantIds);
 
         var result = rows.Select(r => new ConversationSummaryDto
         {
@@ -161,12 +162,13 @@ public class MessagesController(MarechaiContext context, UserManager<Application
                                 },
             Participants = r.Participants.Select(p => new UserSummaryDto
             {
-                Id          = p.Id,
-                UserName    = p.UserName,
-                DisplayName = p.DisplayName ?? p.UserName,
-                AvatarUrl   = BuildAvatarUrl(p.UseGravatar, p.Email, p.AvatarGuid),
-                IsSystem    = p.IsSystemAccount,
-                IsAdmin     = adminUserIds.Contains(p.Id)
+                Id             = p.Id,
+                UserName       = p.UserName,
+                DisplayName    = p.DisplayName ?? p.UserName,
+                AvatarUrl      = BuildAvatarUrl(p.UseGravatar, p.Email, p.AvatarGuid),
+                IsSystem       = p.IsSystemAccount,
+                IsAdmin        = adminUserIds.Contains(p.Id),
+                IsCollaborator = collaboratorUserIds.Contains(p.Id)
             }).ToList()
         }).ToList();
 
@@ -237,7 +239,8 @@ public class MessagesController(MarechaiContext context, UserManager<Application
         foreach(var m in rawMessages)
             if(m.SenderId is not null) allRelatedIds.Add(m.SenderId);
 
-        HashSet<string> adminIds = await GetAdminIdsAsync(allRelatedIds.ToList());
+        HashSet<string> adminIds        = await GetAdminIdsAsync(allRelatedIds.ToList());
+        HashSet<string> collaboratorIds = await GetCollaboratorIdsAsync(allRelatedIds.ToList());
 
         var dto = new ConversationDto
         {
@@ -248,12 +251,13 @@ public class MessagesController(MarechaiContext context, UserManager<Application
                                .Where(p => p.User != null)
                                .Select(p => new UserSummaryDto
                                {
-                                   Id          = p.User!.Id,
-                                   UserName    = p.User.UserName,
-                                   DisplayName = p.User.DisplayName ?? p.User.UserName,
-                                   AvatarUrl   = BuildAvatarUrl(p.User.UseGravatar, p.User.Email, p.User.AvatarGuid),
-                                   IsSystem    = p.User.IsSystemAccount,
-                                   IsAdmin     = adminIds.Contains(p.User.Id)
+                                   Id             = p.User!.Id,
+                                   UserName       = p.User.UserName,
+                                   DisplayName    = p.User.DisplayName ?? p.User.UserName,
+                                   AvatarUrl      = BuildAvatarUrl(p.User.UseGravatar, p.User.Email, p.User.AvatarGuid),
+                                   IsSystem       = p.User.IsSystemAccount,
+                                   IsAdmin        = adminIds.Contains(p.User.Id),
+                                   IsCollaborator = collaboratorIds.Contains(p.User.Id)
                                })
                                .ToList(),
             Messages = rawMessages.Select(m => new MessageDto
@@ -269,12 +273,13 @@ public class MessagesController(MarechaiContext context, UserManager<Application
                              ? null
                              : new UserSummaryDto
                              {
-                                 Id          = m.SenderId,
-                                 UserName    = m.SenderUserName,
-                                 DisplayName = m.SenderDisplayName ?? m.SenderUserName,
-                                 AvatarUrl   = BuildAvatarUrl(m.SenderUseGravatar, m.SenderEmail, m.SenderAvatarGuid),
-                                 IsSystem    = m.SenderIsSystem,
-                                 IsAdmin     = adminIds.Contains(m.SenderId)
+                                 Id             = m.SenderId,
+                                 UserName       = m.SenderUserName,
+                                 DisplayName    = m.SenderDisplayName ?? m.SenderUserName,
+                                 AvatarUrl      = BuildAvatarUrl(m.SenderUseGravatar, m.SenderEmail, m.SenderAvatarGuid),
+                                 IsSystem       = m.SenderIsSystem,
+                                 IsAdmin        = adminIds.Contains(m.SenderId),
+                                 IsCollaborator = collaboratorIds.Contains(m.SenderId)
                              }
             }).ToList()
         };
@@ -721,17 +726,19 @@ public class MessagesController(MarechaiContext context, UserManager<Application
             })
             .ToListAsync();
 
-        var hitIds   = hits.Select(h => h.Id).ToList();
-        var adminIds = await GetAdminIdsAsync(hitIds);
+        var hitIds          = hits.Select(h => h.Id).ToList();
+        var adminIds        = await GetAdminIdsAsync(hitIds);
+        var collaboratorIds = await GetCollaboratorIdsAsync(hitIds);
 
         return Ok(hits.Select(h => new UserSummaryDto
         {
-            Id          = h.Id,
-            UserName    = h.UserName,
-            DisplayName = h.DisplayName ?? h.UserName,
-            AvatarUrl   = BuildAvatarUrl(h.UseGravatar, h.Email, h.AvatarGuid),
-            IsSystem    = h.IsSystemAccount,
-            IsAdmin     = adminIds.Contains(h.Id)
+            Id             = h.Id,
+            UserName       = h.UserName,
+            DisplayName    = h.DisplayName ?? h.UserName,
+            AvatarUrl      = BuildAvatarUrl(h.UseGravatar, h.Email, h.AvatarGuid),
+            IsSystem       = h.IsSystemAccount,
+            IsAdmin        = adminIds.Contains(h.Id),
+            IsCollaborator = collaboratorIds.Contains(h.Id)
         }).ToList());
     }
 
@@ -872,6 +879,18 @@ public class MessagesController(MarechaiContext context, UserManager<Application
             if(userIds.Contains(u.Id)) result.Add(u.Id);
 
         foreach(ApplicationUser u in await userManager.GetUsersInRoleAsync("UberAdmin"))
+            if(userIds.Contains(u.Id)) result.Add(u.Id);
+
+        return result;
+    }
+
+    /// <summary>Returns the subset of <paramref name="userIds" /> that are in role Collaborator.</summary>
+    async Task<HashSet<string>> GetCollaboratorIdsAsync(IReadOnlyCollection<string> userIds)
+    {
+        var result = new HashSet<string>(StringComparer.Ordinal);
+        if(userIds.Count == 0) return result;
+
+        foreach(ApplicationUser u in await userManager.GetUsersInRoleAsync("Collaborator"))
             if(userIds.Contains(u.Id)) result.Add(u.Id);
 
         return result;

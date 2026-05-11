@@ -973,3 +973,39 @@ public enum MobyGamesReviewImportStatus : byte
     Skipped   = 3,
     NoReviews = 4
 }
+
+public enum SuggestionEntityType : byte
+{
+    Company          = 1,
+    Machine          = 2,
+    MachineFamily    = 3,
+    Processor        = 4,
+    Gpu              = 5,
+    SoundSynth       = 6,
+    Software         = 7,
+    SoftwareFamily   = 8,
+    SoftwareRelease  = 9,
+    SoftwareVersion  = 10,
+    Book             = 11,
+    Document         = 12,
+    Magazine         = 13,
+    MagazineIssue    = 14,
+    Person           = 15,
+    Screen           = 16
+}
+
+public enum SuggestionStatus : byte
+{
+    [Display(Name = "Pending")]
+    Pending            = 0,
+    [Display(Name = "Accepted")]
+    Accepted           = 1,
+    [Display(Name = "Partially accepted")]
+    PartiallyAccepted  = 2,
+    [Display(Name = "Rejected")]
+    Rejected           = 3,
+    [Display(Name = "Stale")]
+    Stale              = 4,
+    [Display(Name = "Withdrawn")]
+    Withdrawn          = 5
+}

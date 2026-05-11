@@ -46,4 +46,10 @@ public sealed record PublicProfileDto
 
     [JsonPropertyName("originalAvatarExtension")]
     public string? OriginalAvatarExtension { get; set; }
+
+    [JsonPropertyName("isAdmin")]
+    public bool IsAdmin { get; set; }
+
+    [JsonPropertyName("isCollaborator")]
+    public bool IsCollaborator { get; set; }
 }

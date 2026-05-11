@@ -817,7 +817,7 @@ public class AuthController
 
         if(user is null) return Unauthorized();
 
-        return Ok(ProfileController.MapToPublicProfile(user));
+        return Ok(await ProfileController.MapToPublicProfileAsync(user, userManager));
     }
 
     [HttpPut]
@@ -857,7 +857,7 @@ public class AuthController
 
         if(!result.Succeeded) return BadRequest(result.Errors);
 
-        return Ok(ProfileController.MapToPublicProfile(user));
+        return Ok(await ProfileController.MapToPublicProfileAsync(user, userManager));
     }
 
     [HttpPost]
@@ -922,7 +922,7 @@ public class AuthController
 
         await userManager.UpdateAsync(user);
 
-        return Ok(ProfileController.MapToPublicProfile(user));
+        return Ok(await ProfileController.MapToPublicProfileAsync(user, userManager));
     }
 
     [HttpDelete]

@@ -40,6 +40,8 @@ namespace Marechai.ApiClient.Models
 #endif
         /// <summary>The is_admin property</summary>
         public bool? IsAdmin { get; set; }
+        /// <summary>The is_collaborator property</summary>
+        public bool? IsCollaborator { get; set; }
         /// <summary>The is_system property</summary>
         public bool? IsSystem { get; set; }
         /// <summary>The user_name property</summary>
@@ -79,6 +81,7 @@ namespace Marechai.ApiClient.Models
                 { "display_name", n => { DisplayName = n.GetStringValue(); } },
                 { "id", n => { Id = n.GetStringValue(); } },
                 { "is_admin", n => { IsAdmin = n.GetBoolValue(); } },
+                { "is_collaborator", n => { IsCollaborator = n.GetBoolValue(); } },
                 { "is_system", n => { IsSystem = n.GetBoolValue(); } },
                 { "user_name", n => { UserName = n.GetStringValue(); } },
             };
@@ -94,6 +97,7 @@ namespace Marechai.ApiClient.Models
             writer.WriteStringValue("display_name", DisplayName);
             writer.WriteStringValue("id", Id);
             writer.WriteBoolValue("is_admin", IsAdmin);
+            writer.WriteBoolValue("is_collaborator", IsCollaborator);
             writer.WriteBoolValue("is_system", IsSystem);
             writer.WriteStringValue("user_name", UserName);
             writer.WriteAdditionalData(AdditionalData);

@@ -154,58 +154,7 @@
                     }
                 </MudTabPanel>
 
-                @* Tab 3 - People *@
-                <MudTabPanel Text="@L["People"]" Icon="@Icons.Material.Filled.People">
-                    @if(_magazinePeople is { Count: > 0 })
-                    {
-                        <MudList T="PersonByMagazineDto" Dense="true">
-                            @foreach(PersonByMagazineDto person in _magazinePeople)
-                            {
-                                <MudListItem T="PersonByMagazineDto">
-                                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                                        <MudText>@FormatPerson(person)</MudText>
-                                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
-                                                       OnClick="() => RemovePerson(person)"/>
-                                    </MudStack>
-                                </MudListItem>
-                            }
-                        </MudList>
-                    }
-
-                    <MudPaper Class="pa-4 mt-2" Elevation="1">
-                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
-                            <MudAutocomplete T="PersonDto"
-                                             Label="@L["Search Person"]"
-                                             @bind-Value="_selectedPerson"
-                                             SearchFunc="SearchPeople"
-                                             ToStringFunc="@(p => p is null ? string.Empty : FormatPersonDto(p))"
-                                             Variant="Variant.Outlined"
-                                             Clearable="true"
-                                             Style="flex: 1;"/>
-                            <MudSelect T="DocumentRoleDto"
-                                       @bind-Value="_selectedPersonRole"
-                                       Label="@L["Role"]"
-                                       ToStringFunc="@(r => r?.Name ?? string.Empty)"
-                                       Variant="Variant.Outlined"
-                                       Style="max-width: 200px;">
-                                @if(_allRoles is not null)
-                                {
-                                    @foreach(DocumentRoleDto role in _allRoles)
-                                    {
-                                        <MudSelectItem T="DocumentRoleDto" Value="role">@role.Name</MudSelectItem>
-                                    }
-                                }
-                            </MudSelect>
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
-                                       OnClick="AddPerson"
-                                       Disabled="@(_selectedPerson is null || _selectedPersonRole is null)">
-                                @L["Add"]
-                            </MudButton>
-                        </MudStack>
-                    </MudPaper>
-                </MudTabPanel>
-
-                @* Tab 4 - Companies *@
+                @* Tab 3 - Companies *@
                 <MudTabPanel Text="@L["Companies"]" Icon="@Icons.Material.Filled.Business">
                     @if(_magazineCompanies is { Count: > 0 })
                     {
@@ -256,79 +205,6 @@
                     </MudPaper>
                 </MudTabPanel>
 
-                @* Tab 5 - Machines *@
-                <MudTabPanel Text="@L["Machines"]" Icon="@Icons.Material.Filled.Computer">
-                    @if(_magazineMachines is { Count: > 0 })
-                    {
-                        <MudList T="MagazineByMachineDto" Dense="true">
-                            @foreach(MagazineByMachineDto machine in _magazineMachines)
-                            {
-                                <MudListItem T="MagazineByMachineDto">
-                                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                                        <MudText>@(machine.Machine ?? $"Machine #{machine.MachineId}")</MudText>
-                                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
-                                                       OnClick="() => RemoveMachine(machine)"/>
-                                    </MudStack>
-                                </MudListItem>
-                            }
-                        </MudList>
-                    }
-
-                    <MudPaper Class="pa-4 mt-2" Elevation="1">
-                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
-                            <MudAutocomplete T="MachineDto"
-                                             Label="@L["Search Machine"]"
-                                             @bind-Value="_selectedMachine"
-                                             SearchFunc="SearchMachines"
-                                             ToStringFunc="@(m => m?.Name ?? string.Empty)"
-                                             Variant="Variant.Outlined"
-                                             Clearable="true"
-                                             Style="flex: 1;"/>
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
-                                       OnClick="AddMachine"
-                                       Disabled="@(_selectedMachine is null)">
-                                @L["Add"]
-                            </MudButton>
-                        </MudStack>
-                    </MudPaper>
-                </MudTabPanel>
-
-                @* Tab 6 - Machine Families *@
-                <MudTabPanel Text="@L["Machine Families"]" Icon="@Icons.Material.Filled.AccountTree">
-                    @if(_magazineMachineFamilies is { Count: > 0 })
-                    {
-                        <MudList T="MagazineByMachineFamilyDto" Dense="true">
-                            @foreach(MagazineByMachineFamilyDto family in _magazineMachineFamilies)
-                            {
-                                <MudListItem T="MagazineByMachineFamilyDto">
-                                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                                        <MudText>@(family.MachineFamily ?? $"Family #{family.MachineFamilyId}")</MudText>
-                                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
-                                                       OnClick="() => RemoveMachineFamily(family)"/>
-                                    </MudStack>
-                                </MudListItem>
-                            }
-                        </MudList>
-                    }
-
-                    <MudPaper Class="pa-4 mt-2" Elevation="1">
-                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
-                            <MudAutocomplete T="MachineFamilyDto"
-                                             Label="@L["Search Machine Family"]"
-                                             @bind-Value="_selectedMachineFamily"
-                                             SearchFunc="SearchMachineFamilies"
-                                             ToStringFunc="@(f => f?.Name ?? string.Empty)"
-                                             Variant="Variant.Outlined"
-                                             Clearable="true"
-                                             Style="flex: 1;"/>
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
-                                       OnClick="AddMachineFamily"
-                                       Disabled="@(_selectedMachineFamily is null)">
-                                @L["Add"]
-                            </MudButton>
-                        </MudStack>
-                    </MudPaper>
-                </MudTabPanel>
             }
         </MudTabs>
 
@@ -362,12 +238,6 @@
     int                        _translationCurrent;
     int                        _translationTotal;
 
-    // People junction
-    List<PersonByMagazineDto> _magazinePeople;
-    PersonDto                 _selectedPerson;
-    DocumentRoleDto           _selectedPersonRole;
-    List<PersonDto>           _allPeople;
-
     // Companies junction
     List<CompanyByMagazineDto> _magazineCompanies;
     CompanyDto                 _selectedCompany;
@@ -376,16 +246,6 @@
 
     // Roles
     List<DocumentRoleDto> _allRoles;
-
-    // Machines junction
-    List<MagazineByMachineDto> _magazineMachines;
-    MachineDto                 _selectedMachine;
-    List<MachineDto>           _allMachines;
-
-    // Machine Families junction
-    List<MagazineByMachineFamilyDto> _magazineMachineFamilies;
-    MachineFamilyDto                 _selectedMachineFamily;
-    List<MachineFamilyDto>           _allMachineFamilies;
 
     [CascadingParameter]
     IMudDialogInstance MudDialog { get; set; } = null!;
@@ -418,15 +278,9 @@
         if(!IsNew)
         {
             _allRoles           = await MagazinesService.GetDocumentRolesAsync();
-            _allPeople          = await MagazinesService.GetAllPeopleAsync();
             _allCompanies       = await MagazinesService.GetAllCompaniesAsync();
-            _allMachines        = await MagazinesService.GetAllMachinesAsync();
-            _allMachineFamilies = await MagazinesService.GetAllMachineFamiliesAsync();
 
-            _magazinePeople          = await MagazinesService.GetPeopleByMagazineAsync(MagazineId);
             _magazineCompanies       = await MagazinesService.GetCompaniesByMagazineAsync(MagazineId);
-            _magazineMachines        = await MagazinesService.GetMachinesByMagazineAsync(MagazineId);
-            _magazineMachineFamilies = await MagazinesService.GetMachineFamiliesByMagazineAsync(MagazineId);
             _existingSynopses        = await MagazinesService.GetSynopsesAsync(MagazineId);
         }
     }
@@ -443,22 +297,6 @@
         return Task.FromResult(results);
     }
 
-    Task<IEnumerable<PersonDto>> SearchPeople(string value, CancellationToken ct)
-    {
-        IEnumerable<PersonDto> results = _allPeople ?? [];
-
-        if(!string.IsNullOrWhiteSpace(value))
-        {
-            results = _allPeople?.Where(p =>
-                (p.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                (p.Surname?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                (p.DisplayName?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                (p.Alias?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false)) ?? [];
-        }
-
-        return Task.FromResult(results);
-    }
-
     Task<IEnumerable<CompanyDto>> SearchCompanies(string value, CancellationToken ct)
     {
         IEnumerable<CompanyDto> results = _allCompanies ?? [];
@@ -469,42 +307,7 @@
         return Task.FromResult(results);
     }
 
-    Task<IEnumerable<MachineDto>> SearchMachines(string value, CancellationToken ct)
-    {
-        IEnumerable<MachineDto> results = _allMachines ?? [];
-
-        if(!string.IsNullOrWhiteSpace(value))
-            results = _allMachines?.Where(m => m.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ?? [];
-
-        return Task.FromResult(results);
-    }
-
-    Task<IEnumerable<MachineFamilyDto>> SearchMachineFamilies(string value, CancellationToken ct)
-    {
-        IEnumerable<MachineFamilyDto> results = _allMachineFamilies ?? [];
-
-        if(!string.IsNullOrWhiteSpace(value))
-            results = _allMachineFamilies?.Where(f => f.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ?? [];
-
-        return Task.FromResult(results);
-    }
-
     // --- Format helpers ---
-
-    static string FormatPersonDto(PersonDto p)
-    {
-        if(!string.IsNullOrWhiteSpace(p.DisplayName)) return p.DisplayName;
-        if(!string.IsNullOrWhiteSpace(p.Alias))       return p.Alias;
-
-        return string.IsNullOrWhiteSpace(p.Surname) ? p.Name ?? string.Empty : $"{p.Name} {p.Surname}";
-    }
-
-    static string FormatPerson(PersonByMagazineDto p)
-    {
-        string name = p.DisplayName ?? p.Alias ?? $"{p.Name} {p.Surname}".Trim();
-
-        return string.IsNullOrWhiteSpace(p.Role) ? name : $"{name} ({p.Role})";
-    }
 
     static string FormatCompany(CompanyByMagazineDto c) =>
         string.IsNullOrWhiteSpace(c.Role) ? c.Company ?? string.Empty : $"{c.Company} ({c.Role})";
@@ -629,44 +432,6 @@
         }
     }
 
-    // --- People junction actions ---
-
-    async Task AddPerson()
-    {
-        if(_selectedPerson is null || _selectedPersonRole is null)
-            return;
-
-        var dto = new PersonByMagazineDto
-        {
-            PersonId   = (int?)_selectedPerson.Id,
-            MagazineId = MagazineId,
-            RoleId     = _selectedPersonRole.Id
-        };
-
-        (long? id, string error) = await MagazinesService.AddPersonToMagazineAsync(dto);
-
-        if(id is not null)
-        {
-            _magazinePeople     = await MagazinesService.GetPeopleByMagazineAsync(MagazineId);
-            _selectedPerson     = null;
-            _selectedPersonRole = null;
-            StateHasChanged();
-        }
-    }
-
-    async Task RemovePerson(PersonByMagazineDto person)
-    {
-        if(person.Id is null) return;
-
-        (bool succeeded, string error) = await MagazinesService.RemovePersonFromMagazineAsync(person.Id.Value);
-
-        if(succeeded)
-        {
-            _magazinePeople = await MagazinesService.GetPeopleByMagazineAsync(MagazineId);
-            StateHasChanged();
-        }
-    }
-
     // --- Companies junction actions ---
 
     async Task AddCompany()
@@ -701,76 +466,6 @@
         if(succeeded)
         {
             _magazineCompanies = await MagazinesService.GetCompaniesByMagazineAsync(MagazineId);
-            StateHasChanged();
-        }
-    }
-
-    // --- Machines junction actions ---
-
-    async Task AddMachine()
-    {
-        if(_selectedMachine is null) return;
-
-        var dto = new MagazineByMachineDto
-        {
-            MagazineId = MagazineId,
-            MachineId  = (int?)_selectedMachine.Id
-        };
-
-        (long? id, string error) = await MagazinesService.AddMachineToMagazineAsync(dto);
-
-        if(id is not null)
-        {
-            _magazineMachines = await MagazinesService.GetMachinesByMagazineAsync(MagazineId);
-            _selectedMachine  = null;
-            StateHasChanged();
-        }
-    }
-
-    async Task RemoveMachine(MagazineByMachineDto machine)
-    {
-        if(machine.Id is null) return;
-
-        (bool succeeded, string error) = await MagazinesService.RemoveMachineFromMagazineAsync(machine.Id.Value);
-
-        if(succeeded)
-        {
-            _magazineMachines = await MagazinesService.GetMachinesByMagazineAsync(MagazineId);
-            StateHasChanged();
-        }
-    }
-
-    // --- Machine Families junction actions ---
-
-    async Task AddMachineFamily()
-    {
-        if(_selectedMachineFamily is null) return;
-
-        var dto = new MagazineByMachineFamilyDto
-        {
-            MagazineId      = MagazineId,
-            MachineFamilyId = (int?)_selectedMachineFamily.Id
-        };
-
-        (long? id, string error) = await MagazinesService.AddMachineFamilyToMagazineAsync(dto);
-
-        if(id is not null)
-        {
-            _magazineMachineFamilies = await MagazinesService.GetMachineFamiliesByMagazineAsync(MagazineId);
-            _selectedMachineFamily   = null;
-            StateHasChanged();
-        }
-    }
-
-    async Task RemoveMachineFamily(MagazineByMachineFamilyDto family)
-    {
-        if(family.Id is null) return;
-
-        (bool succeeded, string error) = await MagazinesService.RemoveMachineFamilyFromMagazineAsync(family.Id.Value);
-
-        if(succeeded)
-        {
-            _magazineMachineFamilies = await MagazinesService.GetMachineFamiliesByMagazineAsync(MagazineId);
             StateHasChanged();
         }
     }

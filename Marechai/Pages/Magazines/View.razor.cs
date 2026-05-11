@@ -36,10 +36,7 @@ public partial class View
     List<int?>                       _issueYears;
     long                             _lastId;
     bool                             _loaded;
-    List<MagazineByMachineFamilyDto> _machineFamilies;
-    List<MagazineByMachineDto>       _machines;
     MagazineDto                      _magazine;
-    List<PersonByMagazineDto>        _people;
     DocumentSynopsisDto              _synopsis;
 
     [Parameter]
@@ -74,23 +71,17 @@ public partial class View
             return;
         }
 
-        // Fan-out the 6 child collections in parallel — they are independent server-side
+        // Fan-out the 3 child collections in parallel — they are independent server-side
         // (each is a separate /magazines/{id}/<x> endpoint) so a single Task.WhenAll
-        // collapses six round-trips into one wall-clock RTT.
+        // collapses three round-trips into one wall-clock RTT.
         Task<DocumentSynopsisDto>              synopsisTask   = Service.GetMagazineSynopsisAsync(Id);
-        Task<List<PersonByMagazineDto>>        peopleTask     = Service.GetPeopleByMagazineAsync(Id);
         Task<List<CompanyByMagazineDto>>       companiesTask  = Service.GetCompaniesByMagazineAsync(Id);
-        Task<List<MagazineByMachineDto>>       machinesTask   = Service.GetMachinesByMagazineAsync(Id);
-        Task<List<MagazineByMachineFamilyDto>> familiesTask   = Service.GetMachineFamiliesByMagazineAsync(Id);
         Task<List<int?>>                       issueYearsTask = Service.GetIssueYearsAsync(Id);
 
-        await Task.WhenAll(synopsisTask, peopleTask, companiesTask, machinesTask, familiesTask, issueYearsTask);
+        await Task.WhenAll(synopsisTask, companiesTask, issueYearsTask);
 
         _synopsis        = synopsisTask.Result;
-        _people          = peopleTask.Result;
         _companies       = companiesTask.Result;
-        _machines        = machinesTask.Result;
-        _machineFamilies = familiesTask.Result;
         _issueYears      = issueYearsTask.Result;
 
         _loaded = true;

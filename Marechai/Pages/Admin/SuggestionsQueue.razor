@@ -1,0 +1,183 @@
+@page "/admin/suggestions-queue"
+@attribute [Authorize(Roles = "Admin, UberAdmin")]
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@using Marechai.Pages.Suggestions
+@inject SuggestionsService Service
+@inject IDialogService     DialogService
+@inject ISnackbar          Snackbar
+@inject IStringLocalizer<SuggestionsQueue> L
+@inject NavigationManager  Navigation
+
+<MudPaper Class="pa-6 mb-6" Elevation="0"
+          Style="background: linear-gradient(135deg, #4527a0 0%, #7e57c2 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Filled.RateReview" Style="color: white; font-size: 48px;"/>
+        <MudStack Spacing="1">
+            <MudText Typo="Typo.h4" Style="color: white; font-weight: 700;">@L["Suggestions Queue"]</MudText>
+            <MudText Typo="Typo.body2" Style="color: rgba(255,255,255,0.85);">
+                @L["Review user-suggested changes to catalog entities."]
+            </MudText>
+        </MudStack>
+    </MudStack>
+</MudPaper>
+
+<MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3" Class="mb-4">
+    <AuthorizeView Roles="UberAdmin">
+        <Authorized>
+            <MudCheckBox T="bool" Value="@_includeHistory" ValueChanged="@(async v => { _includeHistory = v; await LoadAsync(); })"
+                         Label="@L["Show past suggestions"]" Color="Color.Primary"/>
+        </Authorized>
+    </AuthorizeView>
+
+    <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadAsync" Color="Color.Primary"
+                   aria-label="@L["Refresh"]"/>
+
+    <MudText Typo="Typo.body2" Color="Color.Secondary">
+        @string.Format(L["{0} suggestion(s) shown"].Value, _suggestions.Count)
+    </MudText>
+</MudStack>
+
+@if(!_loaded)
+{
+    <MudProgressLinear Indeterminate="true"/>
+}
+else if(_suggestions.Count == 0)
+{
+    <MudAlert Severity="Severity.Info">@L["No suggestions to review."]</MudAlert>
+}
+else
+{
+    <MudTable Items="_suggestions" Hover="true" Dense="true" Striped="true">
+        <HeaderContent>
+            <MudTh>@L["Entity"]</MudTh>
+            <MudTh>@L["Item"]</MudTh>
+            <MudTh>@L["Suggested by"]</MudTh>
+            <MudTh>@L["Status"]</MudTh>
+            <MudTh>@L["Submitted"]</MudTh>
+            <MudTh></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>
+                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Primary">@(context.EntityType.HasValue ? ((SuggestionEntityType)context.EntityType.Value).ToString() : string.Empty)</MudChip>
+            </MudTd>
+            <MudTd>
+                @if(!string.IsNullOrWhiteSpace(context.EntityDisplayName))
+                {
+                    <text>@context.EntityDisplayName</text>
+                    <MudText Typo="Typo.caption" Color="Color.Secondary"> #@context.EntityId</MudText>
+                }
+                else
+                {
+                    <text>#@context.EntityId</text>
+                }
+            </MudTd>
+            <MudTd>
+                @{
+                    UserSummaryDto u = new()
+                    {
+                        UserName       = context.CreatedByUserName,
+                        DisplayName    = context.CreatedByDisplayName ?? context.CreatedByUserName,
+                        IsCollaborator = false // role lookup not needed in the queue header
+                    };
+                }
+                @if(!string.IsNullOrEmpty(context.CreatedByUserName))
+                {
+                    <MudLink Href="@($"/profile/{context.CreatedByUserName}")">
+                        @(context.CreatedByDisplayName ?? context.CreatedByUserName)
+                    </MudLink>
+                }
+                else
+                {
+                    <text>—</text>
+                }
+            </MudTd>
+            <MudTd>
+                <MudChip T="string" Size="Size.Small" Color="@StatusColor((SuggestionStatus?)context.Status)" Variant="Variant.Filled">
+                    @StatusLabel((SuggestionStatus?)context.Status)
+                </MudChip>
+            </MudTd>
+            <MudTd>@(context.CreatedOn?.LocalDateTime.ToString("g"))</MudTd>
+            <MudTd>
+                @if((SuggestionStatus?)context.Status == SuggestionStatus.Pending)
+                {
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                               StartIcon="@Icons.Material.Filled.Visibility"
+                               OnClick="@(() => OpenReviewAsync(context))">
+                        @L["Review"]
+                    </MudButton>
+                }
+                else
+                {
+                    <MudButton Variant="Variant.Text" Color="Color.Default" Size="Size.Small"
+                               StartIcon="@Icons.Material.Filled.History"
+                               OnClick="@(() => OpenReviewAsync(context))">
+                        @L["View"]
+                    </MudButton>
+                }
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+}
+
+@code
+{
+    List<SuggestionDto> _suggestions    = new();
+    bool                _loaded;
+    bool                _includeHistory;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(!firstRender) return;
+        await LoadAsync();
+    }
+
+    async Task LoadAsync()
+    {
+        _loaded      = false;
+        _suggestions = await Service.GetQueueAsync(_includeHistory);
+        _loaded      = true;
+        StateHasChanged();
+    }
+
+    async Task OpenReviewAsync(SuggestionDto suggestion)
+    {
+        var parameters = new DialogParameters
+        {
+            ["Suggestion"] = suggestion
+        };
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Large
+        };
+        IDialogReference dlg = await DialogService.ShowAsync<SuggestionReviewDialog>(L["Review suggestion"], parameters, options);
+        DialogResult result = await dlg.Result;
+
+        if(result is { Canceled: false })
+            await LoadAsync();
+    }
+
+    Color StatusColor(SuggestionStatus? status) => status switch
+    {
+        SuggestionStatus.Pending           => Color.Warning,
+        SuggestionStatus.Accepted          => Color.Success,
+        SuggestionStatus.PartiallyAccepted => Color.Info,
+        SuggestionStatus.Rejected          => Color.Error,
+        SuggestionStatus.Stale             => Color.Default,
+        SuggestionStatus.Withdrawn         => Color.Default,
+        _                                  => Color.Default
+    };
+
+    string StatusLabel(SuggestionStatus? status) => status switch
+    {
+        SuggestionStatus.Pending           => L["Pending"],
+        SuggestionStatus.Accepted          => L["Accepted"],
+        SuggestionStatus.PartiallyAccepted => L["Partially accepted"],
+        SuggestionStatus.Rejected          => L["Rejected"],
+        SuggestionStatus.Stale             => L["Stale"],
+        SuggestionStatus.Withdrawn         => L["Withdrawn"],
+        _                                  => "—"
+    };
+}

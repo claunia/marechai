@@ -38,6 +38,8 @@ namespace Marechai.ApiClient.Models
         public long? Id { get; set; }
         /// <summary>The is_anonymous property</summary>
         public bool? IsAnonymous { get; set; }
+        /// <summary>The is_collaborator property</summary>
+        public bool? IsCollaborator { get; set; }
         /// <summary>The rating property</summary>
         public float? Rating { get; set; }
         /// <summary>The report_count property</summary>
@@ -129,6 +131,7 @@ namespace Marechai.ApiClient.Models
                 { "display_name", n => { DisplayName = n.GetStringValue(); } },
                 { "id", n => { Id = n.GetLongValue(); } },
                 { "is_anonymous", n => { IsAnonymous = n.GetBoolValue(); } },
+                { "is_collaborator", n => { IsCollaborator = n.GetBoolValue(); } },
                 { "rating", n => { Rating = n.GetFloatValue(); } },
                 { "report_count", n => { ReportCount = n.GetIntValue(); } },
                 { "software_id", n => { SoftwareId = n.GetIntValue(); } },
@@ -156,6 +159,7 @@ namespace Marechai.ApiClient.Models
             writer.WriteStringValue("display_name", DisplayName);
             writer.WriteLongValue("id", Id);
             writer.WriteBoolValue("is_anonymous", IsAnonymous);
+            writer.WriteBoolValue("is_collaborator", IsCollaborator);
             writer.WriteFloatValue("rating", Rating);
             writer.WriteIntValue("report_count", ReportCount);
             writer.WriteIntValue("software_id", SoftwareId);

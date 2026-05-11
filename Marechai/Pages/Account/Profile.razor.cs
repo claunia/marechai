@@ -78,6 +78,9 @@ public partial class Profile
     List<CollectedMachineDto>         _myMachines;
     List<CollectedSoftwareReleaseDto> _myReleases;
 
+    // ── Suggestions state ──
+    List<SuggestionDto> _mySuggestions = new();
+
     // ── Appearance / theme state ──
     string _savedThemeId;
     string _pendingThemeId;
@@ -320,9 +323,48 @@ public partial class Profile
         _myReleases  = await CollectionSvc.GetCollectedSoftwareReleasesAsync(_profile.UserName);
         _myMagazineIssues = await CollectionSvc.GetCollectedMagazineIssuesAsync(_profile.UserName);
 
+        // Also load my suggestions on the same render pass.
+        _mySuggestions = await SuggestionsSvc.GetMyAsync();
+
         _isLoadingCollection = false;
         StateHasChanged();
     }
+
+    async Task WithdrawSuggestionAsync(SuggestionDto suggestion)
+    {
+        if(suggestion?.Id is null) return;
+
+        (bool success, _) = await SuggestionsSvc.WithdrawAsync(suggestion.Id.Value);
+
+        if(success)
+        {
+            // Re-fetch the list so status reflects the soft-withdraw (Pending → Withdrawn).
+            _mySuggestions = await SuggestionsSvc.GetMyAsync();
+            StateHasChanged();
+        }
+    }
+
+    MudBlazor.Color SuggestionStatusColor(Marechai.Data.SuggestionStatus? s) => s switch
+    {
+        Marechai.Data.SuggestionStatus.Pending           => MudBlazor.Color.Warning,
+        Marechai.Data.SuggestionStatus.Accepted          => MudBlazor.Color.Success,
+        Marechai.Data.SuggestionStatus.PartiallyAccepted => MudBlazor.Color.Info,
+        Marechai.Data.SuggestionStatus.Rejected          => MudBlazor.Color.Error,
+        Marechai.Data.SuggestionStatus.Stale             => MudBlazor.Color.Default,
+        Marechai.Data.SuggestionStatus.Withdrawn         => MudBlazor.Color.Default,
+        _                                                 => MudBlazor.Color.Default
+    };
+
+    string SuggestionStatusLabel(Marechai.Data.SuggestionStatus? s) => s switch
+    {
+        Marechai.Data.SuggestionStatus.Pending           => L["Pending"],
+        Marechai.Data.SuggestionStatus.Accepted          => L["Accepted"],
+        Marechai.Data.SuggestionStatus.PartiallyAccepted => L["Partially accepted"],
+        Marechai.Data.SuggestionStatus.Rejected          => L["Rejected"],
+        Marechai.Data.SuggestionStatus.Stale             => L["Stale"],
+        Marechai.Data.SuggestionStatus.Withdrawn         => L["Withdrawn"],
+        _                                                 => "—"
+    };
 
     async Task RemoveBookAsync(long? bookId)
     {

@@ -56,7 +56,22 @@ public class ProfileController(UserManager<ApplicationUser> userManager, Marecha
 
         if(user is null) return NotFound();
 
-        return Ok(MapToPublicProfile(user));
+        return Ok(await MapToPublicProfileAsync(user, userManager));
+    }
+
+    internal static async Task<PublicProfileDto> MapToPublicProfileAsync(ApplicationUser user,
+                                                                         UserManager<ApplicationUser> mgr)
+    {
+        PublicProfileDto dto = MapToPublicProfile(user);
+
+        if(mgr is not null)
+        {
+            dto.IsAdmin = await mgr.IsInRoleAsync(user, "Admin")
+                       || await mgr.IsInRoleAsync(user, "UberAdmin");
+            dto.IsCollaborator = await mgr.IsInRoleAsync(user, "Collaborator");
+        }
+
+        return dto;
     }
 
     internal static PublicProfileDto MapToPublicProfile(ApplicationUser user) => new()
@@ -143,26 +158,28 @@ public class ProfileController(UserManager<ApplicationUser> userManager, Marecha
                                              .Where(r => r.UserId == user.Id)
                                              .ToDictionaryAsync(r => r.SoftwareId, r => r.Rating);
 
-        string avatarUrl = GetAvatarUrl(user);
+        string avatarUrl       = GetAvatarUrl(user);
+        bool   isCollaborator  = await userManager.IsInRoleAsync(user, "Collaborator");
 
         return Ok(reviews.Select(r => new SoftwareUserReviewDto
         {
-            Id           = r.Id,
-            UserId       = r.UserId,
-            UserName     = user.UserName,
-            DisplayName  = user.DisplayName,
-            AvatarUrl    = avatarUrl,
-            SoftwareId   = r.SoftwareId,
-            SoftwareName = r.SoftwareName,
-            TheGood      = r.TheGood,
-            TheBad       = r.TheBad,
-            TheUgly      = r.TheUgly,
-            IsAnonymous  = r.IsAnonymous,
-            Rating       = ratingsBySoftware.TryGetValue(r.SoftwareId, out float rating) ? rating : null,
-            ThumbsUp     = r.ThumbsUp,
-            ThumbsDown   = r.ThumbsDown,
-            CreatedOn    = r.CreatedOn,
-            UpdatedOn    = r.UpdatedOn
+            Id             = r.Id,
+            UserId         = r.UserId,
+            UserName       = user.UserName,
+            DisplayName    = user.DisplayName,
+            AvatarUrl      = avatarUrl,
+            SoftwareId     = r.SoftwareId,
+            SoftwareName   = r.SoftwareName,
+            TheGood        = r.TheGood,
+            TheBad         = r.TheBad,
+            TheUgly        = r.TheUgly,
+            IsAnonymous    = r.IsAnonymous,
+            Rating         = ratingsBySoftware.TryGetValue(r.SoftwareId, out float rating) ? rating : null,
+            ThumbsUp       = r.ThumbsUp,
+            ThumbsDown     = r.ThumbsDown,
+            CreatedOn      = r.CreatedOn,
+            UpdatedOn      = r.UpdatedOn,
+            IsCollaborator = isCollaborator
         }).ToList());
     }
 }

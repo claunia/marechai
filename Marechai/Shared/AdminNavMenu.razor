@@ -25,6 +25,8 @@
 *******************************************************************************/
 }
 @inject StringLocalizer<NavMenu> L
+@inject Marechai.Services.SuggestionsService SuggestionsSvc
+@implements IDisposable
 
 <AuthorizeView Roles="Admin, UberAdmin">
     <Authorized>
@@ -39,6 +41,18 @@
             <MudNavLink Href="/admin/invitation-codes" Icon="@Icons.Material.Filled.CardGiftcard">@L["Invitation Codes"]</MudNavLink>
             <MudNavLink Href="/admin/review-reports" Icon="@Icons.Material.Filled.Flag">@L["Review Reports"]</MudNavLink>
             <MudNavLink Href="/admin/messages/reports" Icon="@Icons.Material.Filled.Report">@L["Message Reports"]</MudNavLink>
+            <MudNavLink Href="/admin/suggestions-queue" Icon="@Icons.Material.Filled.RateReview">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <span>@L["Suggestions Queue"]</span>
+                    @if(_pendingCount > 0)
+                    {
+                        <MudChip T="string" Size="Size.Small" Color="Color.Warning"
+                                 Variant="Variant.Filled" Style="height: 18px; padding: 0 6px;">
+                            @_pendingCount
+                        </MudChip>
+                    }
+                </MudStack>
+            </MudNavLink>
             <MudNavLink Href="/admin/companies" Icon="@Icons.Material.Filled.Business">@L["Company Management"]</MudNavLink>
             <MudNavLink Href="/admin/machines" Icon="@Icons.Material.Filled.Computer">@L["Machine Management"]</MudNavLink>
             <MudNavLink Href="/admin/machine-families" Icon="@Icons.Material.Filled.AccountTree">@L["Machine Family Management"]</MudNavLink>
@@ -66,4 +80,38 @@
 @code {
     [Parameter]
     public EventCallback OnSwitchToNormalMode { get; set; }
+
+    int _pendingCount;
+    System.Threading.Timer _pollTimer;
+
+    protected override void OnInitialized()
+    {
+        _ = RefreshAsync();
+        _pollTimer = new System.Threading.Timer(async _ => await RefreshAsync(),
+                                                null,
+                                                System.TimeSpan.FromSeconds(60),
+                                                System.TimeSpan.FromSeconds(60));
+    }
+
+    async System.Threading.Tasks.Task RefreshAsync()
+    {
+        try
+        {
+            int n = await SuggestionsSvc.GetPendingCountAsync();
+            if(n != _pendingCount)
+            {
+                _pendingCount = n;
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+        catch
+        {
+            // ignore polling failures (e.g. anonymous or network errors)
+        }
+    }
+
+    public void Dispose()
+    {
+        _pollTimer?.Dispose();
+    }
 }

@@ -1,0 +1,85 @@
+@using Marechai.ApiClient.Models
+@inject IStringLocalizer<UserBadge> L
+
+@*
+    Shared user-status badge with two modes:
+
+      Mode = StarOnly (default):
+          Renders ONLY the collaborator star (or nothing). Caller renders the user's own
+          DisplayName/UserName and any other chips. This is the recommended mode for inline
+          insertion next to existing custom username rendering (Messages chips, Profile hero,
+          Software reviews byline, Company People credits) that already has its own styling.
+
+      Mode = Full:
+          Renders DisplayName + admin chip + system chip + collaborator star as a self-contained
+          inline-flex stack. Use for new UI surfaces (suggestion queue, etc.) that don't need to
+          match an existing inline rendering.
+
+    The collaborator star is suppressed when User.IsAdmin or User.IsSystem are true — admin/system
+    status outranks collaborator visually.
+*@
+
+@if(Mode == BadgeMode.StarOnly)
+{
+    @if(ShowStar)
+    {
+        <MudTooltip Text="@L["Collaborator"]">
+            <MudIcon Icon="@Icons.Material.Filled.Star" Style="@StarStyle"/>
+        </MudTooltip>
+    }
+}
+else if(User is null)
+{
+    <span class="text-muted">@L["(deleted)"]</span>
+}
+else
+{
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1" Style="display: inline-flex;">
+        <span>@(User.DisplayName ?? User.UserName ?? L["(unknown)"].ToString())</span>
+
+        @if(User.IsSystem == true)
+        {
+            <MudChip T="string" Size="Size.Small" Color="Color.Error" Variant="Variant.Filled"
+                     Style="color: white; height: 18px; padding: 0 6px;">@L["System"]</MudChip>
+        }
+        else if(User.IsAdmin == true)
+        {
+            <MudChip T="string" Size="Size.Small" Color="Color.Info" Variant="Variant.Filled"
+                     Style="height: 18px; padding: 0 6px;">@L["Admin"]</MudChip>
+        }
+        else if(User.IsCollaborator == true)
+        {
+            <MudTooltip Text="@L["Collaborator"]">
+                <MudIcon Icon="@Icons.Material.Filled.Star" Style="@StarStyle"/>
+            </MudTooltip>
+        }
+    </MudStack>
+}
+
+@code
+{
+    /// <summary>The user whose badge state should be rendered.</summary>
+    [Parameter] public UserSummaryDto User { get; set; }
+
+    /// <summary>How the badge content is rendered. Default is <see cref="BadgeMode.StarOnly" />.</summary>
+    [Parameter] public BadgeMode Mode { get; set; } = BadgeMode.StarOnly;
+
+    /// <summary>If true, renders the collaborator star at a larger size (Profile hero).</summary>
+    [Parameter] public bool StarLarge { get; set; }
+
+    /// <summary>Optional inline style override applied to the star icon (e.g. extra margin).</summary>
+    [Parameter] public string ExtraStarStyle { get; set; } = "margin-left: 4px;";
+
+    bool ShowStar => User is { IsCollaborator: true, IsAdmin: false, IsSystem: false };
+
+    /// <summary>Purple shade for the collaborator star — matches the Marechai admin gradient theme.</summary>
+    const string PurpleStarColor = "#7e57c2";
+
+    string StarStyle => $"color: {PurpleStarColor}; font-size: {(StarLarge ? "22px" : "16px")}; vertical-align: middle; {ExtraStarStyle}";
+
+    public enum BadgeMode
+    {
+        StarOnly = 0,
+        Full     = 1
+    }
+}

@@ -32,6 +32,7 @@
 @inject AuthService AuthService
 @inject NavigationManager Navigation
 @inject CollectionService CollectionSvc
+@inject SuggestionsService SuggestionsSvc
 @inject ThemeStateService ThemeState
 @inject IDialogService DialogService
 @inject IStringLocalizer<ProfileService> L
@@ -784,6 +785,63 @@
                 }
             </MudItem>
         </MudGrid>
+    </MudTabPanel>
+
+    @* ── My Suggestions Tab ── *@
+    <MudTabPanel Text="My Suggestions" Icon="@Icons.Material.Filled.RateReview">
+        <MudText Typo="Typo.h5" GutterBottom="true">@L["My Suggestions"]</MudText>
+        <MudText Typo="Typo.body2" Class="mb-4">@L["Suggestions you submitted, including their current review status."]</MudText>
+
+        @if(_mySuggestions?.Count > 0)
+        {
+            <MudTable Items="_mySuggestions" Hover="true" Dense="true" Striped="true">
+                <HeaderContent>
+                    <MudTh>@L["Entity"]</MudTh>
+                    <MudTh>@L["Item"]</MudTh>
+                    <MudTh>@L["Status"]</MudTh>
+                    <MudTh>@L["Submitted"]</MudTh>
+                    <MudTh>@L["Reviewed"]</MudTh>
+                    <MudTh></MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd>
+                        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined">@(context.EntityType.HasValue ? ((Marechai.Data.SuggestionEntityType)context.EntityType.Value).ToString() : string.Empty)</MudChip>
+                    </MudTd>
+                    <MudTd>
+                        @if(!string.IsNullOrWhiteSpace(context.EntityDisplayName))
+                        {
+                            <text>@context.EntityDisplayName</text>
+                            <MudText Typo="Typo.caption" Color="Color.Secondary"> #@context.EntityId</MudText>
+                        }
+                        else
+                        {
+                            <text>#@context.EntityId</text>
+                        }
+                    </MudTd>
+                    <MudTd>
+                        <MudChip T="string" Size="Size.Small" Color="@SuggestionStatusColor((Marechai.Data.SuggestionStatus?)context.Status)" Variant="Variant.Filled">
+                            @SuggestionStatusLabel((Marechai.Data.SuggestionStatus?)context.Status)
+                        </MudChip>
+                    </MudTd>
+                    <MudTd>@(context.CreatedOn?.LocalDateTime.ToString("g"))</MudTd>
+                    <MudTd>@(context.ReviewedOn?.LocalDateTime.ToString("g") ?? "—")</MudTd>
+                    <MudTd>
+                        @if((Marechai.Data.SuggestionStatus?)context.Status == Marechai.Data.SuggestionStatus.Pending)
+                        {
+                            <MudButton Variant="Variant.Outlined" Color="Color.Error" Size="Size.Small"
+                                       StartIcon="@Icons.Material.Filled.Undo"
+                                       OnClick="@(() => WithdrawSuggestionAsync(context))">
+                                @L["Withdraw"]
+                            </MudButton>
+                        }
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+        }
+        else
+        {
+            <MudAlert Severity="Severity.Info">@L["You haven't submitted any suggestions yet."]</MudAlert>
+        }
     </MudTabPanel>
 </MudTabs>
 

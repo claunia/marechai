@@ -1,0 +1,146 @@
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@using Marechai.Pages.Suggestions
+@inject SuggestionsService Service
+@inject ISnackbar          Snackbar
+@inject IStringLocalizer<SuggestionsQueue> L
+
+@*
+    Admin-side review dialog. Loads the live diff for the suggestion via /suggestions/{id}/diff,
+    renders SuggestionDiffPanel with checkboxes per field, and posts the review back when the
+    admin clicks Accept Selected or Reject All.
+*@
+
+<MudDialog>
+    <DialogContent>
+        @if(!_loaded)
+        {
+            <MudProgressLinear Indeterminate="true"/>
+        }
+        else if(_diff is null)
+        {
+            <MudAlert Severity="Severity.Error">@L["Failed to load suggestion details."]</MudAlert>
+        }
+        else
+        {
+            <MudStack Spacing="2" Class="mb-3">
+                @if(_diff.EntityMissing == true)
+                {
+                    <MudAlert Severity="Severity.Warning">@L["The targeted entity has been deleted. Accepting will close the suggestion as stale."]</MudAlert>
+                }
+                <MudText Typo="Typo.body2">
+                    <strong>@L["Entity"]:</strong> @(Suggestion.EntityType.HasValue ? ((SuggestionEntityType)Suggestion.EntityType.Value).ToString() : "") #@Suggestion.EntityId
+                    @if(!string.IsNullOrWhiteSpace(Suggestion.EntityDisplayName))
+                    {
+                        <text> — @Suggestion.EntityDisplayName</text>
+                    }
+                </MudText>
+                @if(!string.IsNullOrWhiteSpace(Suggestion.UserComment))
+                {
+                    <MudPaper Outlined="true" Class="pa-2">
+                        <MudText Typo="Typo.body2"><strong>@L["User comment:"]</strong></MudText>
+                        <MudText Typo="Typo.body2">@Suggestion.UserComment</MudText>
+                    </MudPaper>
+                }
+            </MudStack>
+
+            <SuggestionDiffPanel Suggestion="@Suggestion"
+                                 CurrentValuesJson="@_diff.CurrentValuesJson"
+                                 AcceptedFieldNames="@_accepted"
+                                 AcceptedFieldNamesChanged="OnAcceptedChanged"
+                                 ReadOnly="@((SuggestionStatus?)Suggestion.Status != SuggestionStatus.Pending)"/>
+        }
+
+        @if(!string.IsNullOrEmpty(_error))
+        {
+            <MudAlert Severity="Severity.Error" Class="mt-3">@_error</MudAlert>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        @if((SuggestionStatus?)Suggestion.Status == SuggestionStatus.Pending)
+        {
+            <MudButton Color="Color.Error" Variant="Variant.Outlined"
+                       OnClick="RejectAll" Disabled="@_submitting">
+                @L["Reject all"]
+            </MudButton>
+            <MudButton Color="Color.Primary" Variant="Variant.Filled"
+                       OnClick="AcceptSelected" Disabled="@(_submitting || _accepted.Count == 0)">
+                @if(_submitting)
+                {
+                    <MudProgressCircular Size="Size.Small" Indeterminate="true"/>
+                }
+                else
+                {
+                    @($"{L["Accept selected"].Value} ({_accepted.Count})")
+                }
+            </MudButton>
+        }
+    </DialogActions>
+</MudDialog>
+
+@code
+{
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; }
+    [Parameter] public SuggestionDto Suggestion { get; set; }
+
+    SuggestionDiffDto _diff;
+    HashSet<string>   _accepted = new(StringComparer.Ordinal);
+    bool              _loaded;
+    bool              _submitting;
+    string            _error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _diff   = await Service.GetDiffAsync(Suggestion.Id ?? 0);
+        _loaded = true;
+    }
+
+    void OnAcceptedChanged(HashSet<string> updated)
+    {
+        // The HashSet is shared by reference with the child, so _accepted is already updated.
+        // We just need StateHasChanged so the Accept Selected button re-evaluates Disabled / count.
+        _accepted = updated ?? new HashSet<string>(StringComparer.Ordinal);
+        StateHasChanged();
+    }
+
+    void Cancel() => MudDialog.Cancel();
+
+    async Task AcceptSelected()
+    {
+        await SubmitAsync(_accepted);
+    }
+
+    async Task RejectAll()
+    {
+        await SubmitAsync(new HashSet<string>(StringComparer.Ordinal));
+    }
+
+    async Task SubmitAsync(HashSet<string> accepted)
+    {
+        _submitting = true;
+        _error      = null;
+        try
+        {
+            var review = new SuggestionReviewDto
+            {
+                AcceptedFieldNames = accepted.ToList()
+            };
+
+            var (updated, error) = await Service.ReviewAsync(Suggestion.Id ?? 0, review);
+
+            if(updated is null)
+            {
+                _error = string.IsNullOrWhiteSpace(error) ? L["Failed to submit review."].Value : error;
+                return;
+            }
+
+            Snackbar.Add(L["Suggestion reviewed."], Severity.Success);
+            MudDialog.Close(DialogResult.Ok(updated));
+        }
+        finally
+        {
+            _submitting = false;
+        }
+    }
+}

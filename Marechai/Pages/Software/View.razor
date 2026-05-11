@@ -1077,6 +1077,7 @@
                                 <MudAvatar Size="Size.Small" Color="Color.Primary">@(userReview.DisplayName?[..1] ?? "?")</MudAvatar>
                             }
                             <MudLink Href="@($"/profile/{userReview.UserName}")">@(userReview.DisplayName ?? userReview.UserName)</MudLink>
+                            <UserBadge User="@(new Marechai.ApiClient.Models.UserSummaryDto { UserName = userReview.UserName, DisplayName = userReview.DisplayName, IsCollaborator = userReview.IsCollaborator == true })"/>
                         }
                         else
                         {

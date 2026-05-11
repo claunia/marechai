@@ -1864,6 +1864,16 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                                     })
                                    .ToListAsync();
 
+        // Batch lookup of Collaborator role membership across all reviewer ids in this batch.
+        var reviewerIds = reviews.Where(r => r.UserId != null).Select(r => r.UserId).Distinct().ToHashSet(StringComparer.Ordinal);
+        var collaboratorIds = new HashSet<string>(StringComparer.Ordinal);
+
+        if(reviewerIds.Count > 0)
+        {
+            foreach(ApplicationUser u in await userManager.GetUsersInRoleAsync("Collaborator"))
+                if(reviewerIds.Contains(u.Id)) collaboratorIds.Add(u.Id);
+        }
+
         return reviews.Select(r =>
         {
             bool showIdentity = !r.IsAnonymous || isAdmin || r.UserId == callerId;
@@ -1887,7 +1897,8 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                 CurrentUserVote = r.CallerVote,
                 ReportCount     = isAdmin ? r.ReportCount : 0,
                 CreatedOn       = r.CreatedOn,
-                UpdatedOn       = r.UpdatedOn
+                UpdatedOn       = r.UpdatedOn,
+                IsCollaborator  = showIdentity && r.UserId != null && collaboratorIds.Contains(r.UserId)
             };
         }).ToList();
     }

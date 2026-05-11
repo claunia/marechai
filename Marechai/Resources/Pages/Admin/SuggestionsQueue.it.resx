@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:schema id="root">
+        <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+        <xs:element name="root" ns1:IsDataSet="true">
+            <xs:complexType>
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element name="metadata">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0" />
+                            </xs:sequence>
+                            <xs:attribute name="name" use="required" type="xsd:string" />
+                            <xs:attribute name="type" type="xsd:string" />
+                            <xs:attribute name="mimetype" type="xsd:string" />
+                            <xs:attribute ref="xml:space" />
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="assembly">
+                        <xs:complexType>
+                            <xs:attribute name="alias" type="xsd:string" />
+                            <xs:attribute name="name" type="xsd:string" />
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="data">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
+                            </xs:sequence>
+                            <xs:attribute name="name" type="xsd:string" use="required" />
+                            <xs:attribute name="type" type="xsd:string" />
+                            <xs:attribute name="mimetype" type="xsd:string" />
+                            <xs:attribute ref="xml:space" />
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="resheader">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                            </xs:sequence>
+                            <xs:attribute name="name" type="xsd:string" use="required" />
+                        </xs:complexType>
+                    </xs:element>
+                </xs:choice>
+            </xs:complexType>
+        </xs:element>
+    </xs:schema>
+    <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+    <resheader name="version"><value>2.0</value></resheader>
+    <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e305</value></resheader>
+    <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e305</value></resheader>
+    <data name="Suggestions Queue" xml:space="preserve"><value>Coda dei suggerimenti</value></data>
+    <data name="Review user-suggested changes to catalog entities." xml:space="preserve"><value>Esamina le modifiche suggerite dagli utenti alle entità del catalogo.</value></data>
+    <data name="Show past suggestions" xml:space="preserve"><value>Mostra suggerimenti precedenti</value></data>
+    <data name="Refresh" xml:space="preserve"><value>Aggiorna</value></data>
+    <data name="{0} suggestion(s) shown" xml:space="preserve"><value>{0} suggerimento/i mostrato/i</value></data>
+    <data name="No suggestions to review." xml:space="preserve"><value>Nessun suggerimento da esaminare.</value></data>
+    <data name="Entity" xml:space="preserve"><value>Entità</value></data>
+    <data name="Item" xml:space="preserve"><value>Elemento</value></data>
+    <data name="Suggested by" xml:space="preserve"><value>Suggerito da</value></data>
+    <data name="Status" xml:space="preserve"><value>Stato</value></data>
+    <data name="Submitted" xml:space="preserve"><value>Inviato</value></data>
+    <data name="Review" xml:space="preserve"><value>Esamina</value></data>
+    <data name="View" xml:space="preserve"><value>Vedi</value></data>
+    <data name="Pending" xml:space="preserve"><value>In sospeso</value></data>
+    <data name="Accepted" xml:space="preserve"><value>Accettato</value></data>
+    <data name="Partially accepted" xml:space="preserve"><value>Parzialmente accettato</value></data>
+    <data name="Rejected" xml:space="preserve"><value>Rifiutato</value></data>
+    <data name="Stale" xml:space="preserve"><value>Obsoleto</value></data>
+    <data name="Withdrawn" xml:space="preserve"><value>Ritirato</value></data>
+    <data name="Cancel" xml:space="preserve"><value>Annulla</value></data>
+    <data name="Reject all" xml:space="preserve"><value>Rifiuta tutto</value></data>
+    <data name="Accept selected" xml:space="preserve"><value>Accetta selezionati</value></data>
+    <data name="Review suggestion" xml:space="preserve"><value>Esamina suggerimento</value></data>
+    <data name="Failed to load suggestion details." xml:space="preserve"><value>Caricamento dei dettagli del suggerimento fallito.</value></data>
+    <data name="Failed to submit review." xml:space="preserve"><value>Invio della revisione fallito.</value></data>
+    <data name="Suggestion reviewed." xml:space="preserve"><value>Suggerimento esaminato.</value></data>
+    <data name="User comment:" xml:space="preserve"><value>Commento dell'utente:</value></data>
+    <data name="The targeted entity has been deleted. Accepting will close the suggestion as stale." xml:space="preserve"><value>L'entità di destinazione è stata eliminata. L'accettazione chiuderà il suggerimento come obsoleto.</value></data>
+</root>

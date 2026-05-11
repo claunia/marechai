@@ -56,6 +56,10 @@ namespace Marechai.ApiClient.Models
 #else
         public string GitHub { get; set; }
 #endif
+        /// <summary>The isAdmin property</summary>
+        public bool? IsAdmin { get; set; }
+        /// <summary>The isCollaborator property</summary>
+        public bool? IsCollaborator { get; set; }
         /// <summary>The linkedIn property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -145,6 +149,8 @@ namespace Marechai.ApiClient.Models
                 { "displayName", n => { DisplayName = n.GetStringValue(); } },
                 { "facebook", n => { Facebook = n.GetStringValue(); } },
                 { "gitHub", n => { GitHub = n.GetStringValue(); } },
+                { "isAdmin", n => { IsAdmin = n.GetBoolValue(); } },
+                { "isCollaborator", n => { IsCollaborator = n.GetBoolValue(); } },
                 { "linkedIn", n => { LinkedIn = n.GetStringValue(); } },
                 { "location", n => { Location = n.GetStringValue(); } },
                 { "mastodon", n => { Mastodon = n.GetStringValue(); } },
@@ -168,6 +174,8 @@ namespace Marechai.ApiClient.Models
             writer.WriteStringValue("displayName", DisplayName);
             writer.WriteStringValue("facebook", Facebook);
             writer.WriteStringValue("gitHub", GitHub);
+            writer.WriteBoolValue("isAdmin", IsAdmin);
+            writer.WriteBoolValue("isCollaborator", IsCollaborator);
             writer.WriteStringValue("linkedIn", LinkedIn);
             writer.WriteStringValue("location", Location);
             writer.WriteStringValue("mastodon", Mastodon);

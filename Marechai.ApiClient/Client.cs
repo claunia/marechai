@@ -51,6 +51,7 @@ using Marechai.ApiClient.SoftwarePlatformsByMachine;
 using Marechai.ApiClient.SoundSynths;
 using Marechai.ApiClient.SoundSynthsByMachine;
 using Marechai.ApiClient.StorageByMachine;
+using Marechai.ApiClient.Suggestions;
 using Marechai.ApiClient.UnM49;
 using Marechai.ApiClient.Users;
 using Microsoft.Kiota.Abstractions.Extensions;
@@ -325,6 +326,11 @@ namespace Marechai.ApiClient
         public global::Marechai.ApiClient.StorageByMachine.StorageByMachineRequestBuilder StorageByMachine
         {
             get => new global::Marechai.ApiClient.StorageByMachine.StorageByMachineRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The suggestions property</summary>
+        public global::Marechai.ApiClient.Suggestions.SuggestionsRequestBuilder Suggestions
+        {
+            get => new global::Marechai.ApiClient.Suggestions.SuggestionsRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The unM49 property</summary>
         public global::Marechai.ApiClient.UnM49.UnM49RequestBuilder UnM49

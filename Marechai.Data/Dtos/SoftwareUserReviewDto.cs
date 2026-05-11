@@ -64,4 +64,6 @@ public class SoftwareUserReviewDto : BaseDto<long>
     public DateTime CreatedOn { get; set; }
     [JsonPropertyName("updated_on")]
     public DateTime UpdatedOn { get; set; }
+    [JsonPropertyName("is_collaborator")]
+    public bool IsCollaborator { get; set; }
 }

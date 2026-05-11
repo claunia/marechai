@@ -196,6 +196,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<MessageState>                        MessageStates                       { get; set; }
     public virtual DbSet<MessageReport>                       MessageReports                      { get; set; }
     public virtual DbSet<SearchEntry>                         SearchEntries                       { get; set; }
+    public virtual DbSet<Suggestion>                          Suggestions                         { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -3172,6 +3173,29 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
             entity.HasIndex(e => e.Soundex);
             // FULLTEXT (with ngram parser) on NormalizedName is created via raw SQL in the migration
             // body because Pomelo's IsFullText() does not expose the parser option.
+        });
+
+        modelBuilder.Entity<Suggestion>(entity =>
+        {
+            entity.ToTable("Suggestions");
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.EntityType).HasConversion<byte>().IsRequired();
+            entity.Property(e => e.Status).HasConversion<byte>().IsRequired();
+
+            entity.HasIndex(e => new { e.EntityType, e.EntityId });
+            entity.HasIndex(e => e.CreatedById);
+            entity.HasIndex(e => new { e.Status, e.CreatedOn });
+
+            entity.HasOne(e => e.CreatedBy)
+                  .WithMany()
+                  .HasForeignKey(e => e.CreatedById)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.ReviewedBy)
+                  .WithMany()
+                  .HasForeignKey(e => e.ReviewedById)
+                  .OnDelete(DeleteBehavior.SetNull);
         });
     }
 }

@@ -171,33 +171,6 @@
     </MudCard>
 }
 
-@* ── People Card ── *@
-<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-    <MudExpansionPanel Disabled="@(_people.Count == 0)">
-        <TitleContent>
-            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
-                <MudIcon Icon="@Icons.Material.Filled.People" Color="Color.Primary"/>
-                <MudText Typo="Typo.h6">@L["People"]</MudText>
-                <MudChip T="string" Size="Size.Small" Color="@(_people.Count > 0 ? Color.Success : Color.Error)">@_people.Count</MudChip>
-            </MudStack>
-        </TitleContent>
-        <ChildContent>
-            <MudList T="PersonByMagazineDto" Dense="true">
-                @foreach(PersonByMagazineDto person in _people)
-                {
-                    <MudListItem T="PersonByMagazineDto" Icon="@Icons.Material.Filled.Person">
-                        @(person.DisplayName ?? person.Alias ?? $"{person.Name} {person.Surname}".Trim())
-                        @if(!string.IsNullOrEmpty(person.Role))
-                        {
-                            <MudText Typo="Typo.caption" Color="Color.Secondary" Class="ml-2" Style="display: inline;">— @person.Role</MudText>
-                        }
-                    </MudListItem>
-                }
-            </MudList>
-        </ChildContent>
-    </MudExpansionPanel>
-</MudExpansionPanels>
-
 @* ── Companies Card ── *@
 <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
     <MudExpansionPanel Disabled="@(_companies.Count == 0)">
@@ -218,52 +191,6 @@
                         {
                             <MudText Typo="Typo.caption" Color="Color.Secondary" Class="ml-2" Style="display: inline;">— @company.Role</MudText>
                         }
-                    </MudListItem>
-                }
-            </MudList>
-        </ChildContent>
-    </MudExpansionPanel>
-</MudExpansionPanels>
-
-@* ── Machines Card ── *@
-<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-    <MudExpansionPanel Disabled="@(_machines.Count == 0)">
-        <TitleContent>
-            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
-                <MudIcon Icon="@Icons.Material.Filled.Computer" Color="Color.Primary"/>
-                <MudText Typo="Typo.h6">@L["Machines"]</MudText>
-                <MudChip T="string" Size="Size.Small" Color="@(_machines.Count > 0 ? Color.Success : Color.Error)">@_machines.Count</MudChip>
-            </MudStack>
-        </TitleContent>
-        <ChildContent>
-            <MudList T="MagazineByMachineDto" Dense="true">
-                @foreach(MagazineByMachineDto machine in _machines)
-                {
-                    <MudListItem T="MagazineByMachineDto" Href="@($"/machine/{machine.MachineId}")" Icon="@Icons.Material.Filled.Computer">
-                        @machine.Machine
-                    </MudListItem>
-                }
-            </MudList>
-        </ChildContent>
-    </MudExpansionPanel>
-</MudExpansionPanels>
-
-@* ── Machine Families Card ── *@
-<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-    <MudExpansionPanel Disabled="@(_machineFamilies.Count == 0)">
-        <TitleContent>
-            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
-                <MudIcon Icon="@Icons.Material.Filled.DevicesOther" Color="Color.Primary"/>
-                <MudText Typo="Typo.h6">@L["Machine families"]</MudText>
-                <MudChip T="string" Size="Size.Small" Color="@(_machineFamilies.Count > 0 ? Color.Success : Color.Error)">@_machineFamilies.Count</MudChip>
-            </MudStack>
-        </TitleContent>
-        <ChildContent>
-            <MudList T="MagazineByMachineFamilyDto" Dense="true">
-                @foreach(MagazineByMachineFamilyDto family in _machineFamilies)
-                {
-                    <MudListItem T="MagazineByMachineFamilyDto" Icon="@Icons.Material.Filled.DevicesOther">
-                        @family.MachineFamily
                     </MudListItem>
                 }
             </MudList>

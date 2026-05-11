@@ -428,9 +428,15 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
 
         if(item is null) return NotFound();
 
+        string entityName = item.Name;
+
         context.Companies.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        // Mark any pending suggestions for this company as Stale and notify the suggesting users.
+        await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntityAsync(
+            context, Marechai.Data.SuggestionEntityType.Company, id, entityName);
 
         return Ok();
     }

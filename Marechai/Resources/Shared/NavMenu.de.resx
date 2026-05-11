@@ -426,4 +426,5 @@
     <data name="Embedded software" xml:space="preserve">
         <value>Eingebettete Software</value>
     </data>
+    <data name="Suggestions Queue" xml:space="preserve"><value>Vorschläge-Warteschlange</value></data>
 </root>

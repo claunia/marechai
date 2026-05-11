@@ -30,7 +30,9 @@ using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Marechai.Data;
 using Marechai.Helpers;
+using Marechai.Pages.Suggestions;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 
 namespace Marechai.Pages.Companies;
 
@@ -108,6 +110,26 @@ public partial class View
         {
             // Component was disposed during async loading — ignore
         }
+    }
+
+    async Task OpenSuggestionDialog()
+    {
+        if(_company is null) return;
+
+        var parameters = new DialogParameters
+        {
+            ["EntityType"] = SuggestionEntityType.Company,
+            ["EntityId"]   = (long)_company.Id.GetValueOrDefault(),
+            ["CurrentDto"] = (object)_company
+        };
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Medium
+        };
+
+        await DialogService.ShowAsync<SuggestionDialog>(L["Suggest changes"], parameters, options);
     }
 
 }
