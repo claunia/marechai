@@ -213,6 +213,26 @@ public class DocumentsService(Marechai.ApiClient.Client client)
         }
     }
 
+    /// <summary>
+    ///     Fetch the per-language synopsis with explicit language fallback support. Returns the
+    ///     full DTO so callers can compare the served <c>LanguageCode</c> against the requested
+    ///     code to detect a fallback (English when the requested language is missing).
+    /// </summary>
+    public async Task<DocumentSynopsisDto> GetSynopsisAsync(long id, string lang = "eng")
+    {
+        try
+        {
+            return await client.Documents[id].Synopsis.GetAsync(rc =>
+            {
+                if(!string.IsNullOrWhiteSpace(lang)) rc.QueryParameters.Lang = lang;
+            });
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
     public async Task<List<PersonByDocumentDto>> GetPeopleByDocumentAsync(long id)
     {
         try

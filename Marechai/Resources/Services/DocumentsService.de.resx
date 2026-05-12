@@ -399,4 +399,22 @@
   <data name="View on Internet Archive" xml:space="preserve">
     <value>Auf Internet Archive ansehen</value>
   </data>
+  <data name="Suggest synopsis" xml:space="preserve">
+    <value>Klappentext vorschlagen</value>
+  </data>
+  <data name="Suggest translation" xml:space="preserve">
+    <value>Übersetzung vorschlagen</value>
+  </data>
+  <data name="Suggest changes" xml:space="preserve">
+    <value>Änderungen vorschlagen</value>
+  </data>
+  <data name="Choose language for synopsis" xml:space="preserve">
+    <value>Sprache für Klappentext auswählen</value>
+  </data>
+  <data name="We do not have a synopsis for this document, you could collaborate by suggesting one" xml:space="preserve">
+    <value>Wir haben keinen Klappentext für dieses Dokument — Sie können mithelfen, indem Sie einen vorschlagen</value>
+  </data>
+  <data name="We do not have a synopsis in your language, you could collaborate by translating the English synopsis we show below" xml:space="preserve">
+    <value>Wir haben keinen Klappentext in Ihrer Sprache — Sie können mithelfen, indem Sie den unten gezeigten englischen Klappentext übersetzen</value>
+  </data>
 </root>

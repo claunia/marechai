@@ -415,9 +415,24 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
 
         if(synopsis is null) return NotFound();
 
+        // Capture display data BEFORE the cascade.
+        string documentTitle = await context.Documents.AsNoTracking()
+                                            .Where(d => d.Id == id)
+                                            .Select(d => d.Title)
+                                            .FirstOrDefaultAsync();
+        string langName = await context.Iso639.AsNoTracking()
+                                       .Where(l => l.Id == languageCode)
+                                       .Select(l => l.ReferenceName)
+                                       .FirstOrDefaultAsync();
+        string subkeyLabel = $"({langName ?? languageCode} synopsis)";
+
         context.DocumentSynopses.Remove(synopsis);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntitySubkeyAsync(
+            context, Marechai.Data.SuggestionEntityType.DocumentSynopsis,
+            id, languageCode, documentTitle ?? $"#{id}", subkeyLabel);
 
         return Ok();
     }
@@ -437,9 +452,15 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
 
         if(item is null) return NotFound();
 
+        string entityName = item.Title;
+
         context.Documents.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        // Cascade: mark stale every per-language synopsis suggestion for this document.
+        await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntityAsync(
+            context, Marechai.Data.SuggestionEntityType.DocumentSynopsis, id, entityName);
 
         return Ok();
     }

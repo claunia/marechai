@@ -32,6 +32,8 @@
 @inject IStringLocalizer<DocumentsService> L
 @inject ApiAssetUrlProvider                AssetUrls
 @inject CollectionService                  CollectionSvc
+@inject IDialogService                     DialogService
+@inject SuggestionsService                 Suggestions
 
 @if(!_loaded)
 {
@@ -133,15 +135,82 @@
 </MudCard>
 
 @* ── Synopsis Card ── *@
-@if(!string.IsNullOrWhiteSpace(_synopsis?.Text))
+@if(!_hasAnyDescription)
 {
     <MudCard Elevation="2" Class="mb-4 rounded-lg">
         <MudCardContent>
-            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
-                <MudIcon Icon="@Icons.Material.Filled.Description" Color="Color.Primary"/>
-                <MudText Typo="Typo.h6">@L["Synopsis"]</MudText>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-3">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIcon Icon="@Icons.Material.Filled.Description" Color="Color.Primary"/>
+                    <MudText Typo="Typo.h6">@L["Synopsis"]</MudText>
+                </MudStack>
             </MudStack>
-            <div class="markdown-body">@SafeMarkdownRenderer.Render(_synopsis.Text)</div>
+            <AuthorizeView>
+                <Authorized>
+                    <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Class="mb-2">
+                        @L["We do not have a synopsis for this document, you could collaborate by suggesting one"]
+                    </MudAlert>
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.AddComment"
+                               OnClick="OpenDescriptionPickerAsync">
+                        @L["Suggest synopsis"]
+                    </MudButton>
+                </Authorized>
+                <NotAuthorized>
+                    <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">
+                        @L["We do not have a synopsis for this document, you could collaborate by suggesting one"]
+                    </MudAlert>
+                </NotAuthorized>
+            </AuthorizeView>
+        </MudCardContent>
+    </MudCard>
+}
+else
+{
+    @if(_descriptionFellBack)
+    {
+        <AuthorizeView>
+            <Authorized>
+                <MudAlert Severity="Severity.Info"
+                          Variant="Variant.Outlined"
+                          Class="mb-3">
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Spacing="3" Style="width: 100%;">
+                        <MudText>
+                            @L["We do not have a synopsis in your language, you could collaborate by translating the English synopsis we show below"]
+                        </MudText>
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.Translate"
+                                   OnClick="OpenDescriptionPickerAsync">
+                            @L["Suggest translation"]
+                        </MudButton>
+                    </MudStack>
+                </MudAlert>
+            </Authorized>
+        </AuthorizeView>
+    }
+
+    <MudCard Elevation="2" Class="mb-4 rounded-lg">
+        <MudCardContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-3">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIcon Icon="@Icons.Material.Filled.Description" Color="Color.Primary"/>
+                    <MudText Typo="Typo.h6">@L["Synopsis"]</MudText>
+                </MudStack>
+                <AuthorizeView>
+                    <Authorized>
+                        <MudTooltip Text="@L["Suggest changes"]">
+                            <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                           Size="Size.Small"
+                                           Color="Color.Secondary"
+                                           OnClick="OpenDescriptionPickerAsync"
+                                           aria-label="@L["Suggest changes"]"/>
+                        </MudTooltip>
+                    </Authorized>
+                </AuthorizeView>
+            </MudStack>
+            <div class="markdown-body">@SafeMarkdownRenderer.Render(_synopsis?.Text ?? string.Empty)</div>
         </MudCardContent>
     </MudCard>
 }
