@@ -62,14 +62,25 @@ else
                 <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Primary">@(context.EntityType.HasValue ? ((SuggestionEntityType)context.EntityType.Value).ToString() : string.Empty)</MudChip>
             </MudTd>
             <MudTd>
+                @if(!context.EntityId.HasValue)
+                {
+                    <MudChip T="string" Size="Size.Small" Color="Color.Success" Variant="Variant.Filled" Class="mr-1">@L["New"]</MudChip>
+                }
                 @if(!string.IsNullOrWhiteSpace(context.EntityDisplayName))
                 {
                     <text>@context.EntityDisplayName</text>
-                    <MudText Typo="Typo.caption" Color="Color.Secondary"> #@context.EntityId</MudText>
+                    @if(context.EntityId.HasValue)
+                    {
+                        <MudText Typo="Typo.caption" Color="Color.Secondary"> #@context.EntityId</MudText>
+                    }
                 }
-                else
+                else if(context.EntityId.HasValue)
                 {
                     <text>#@context.EntityId</text>
+                }
+                @if(!string.IsNullOrEmpty(context.Subkey))
+                {
+                    <MudText Typo="Typo.caption" Color="Color.Secondary"> @SubkeyLabel(context)</MudText>
                 }
             </MudTd>
             <MudTd>
@@ -179,5 +190,32 @@ else
         SuggestionStatus.Stale             => L["Stale"],
         SuggestionStatus.Withdrawn         => L["Withdrawn"],
         _                                  => "—"
+    };
+
+    /// <summary>
+    ///     Compact secondary tag for per-subkey suggestions, e.g. <c>"(Spanish description)"</c>
+    ///     for a CompanyDescription review. Falls back to the raw subkey when the entity type
+    ///     does not have a known label format.
+    /// </summary>
+    static string SubkeyLabel(SuggestionDto s)
+    {
+        if(string.IsNullOrEmpty(s.Subkey)) return string.Empty;
+
+        if(s.EntityType == (int?)SuggestionEntityType.CompanyDescription)
+            return $"({LanguageDisplayName(s.Subkey)} description)";
+
+        return $"({s.Subkey})";
+    }
+
+    static string LanguageDisplayName(string iso639_3) => iso639_3 switch
+    {
+        "eng" => "English",
+        "spa" => "Spanish",
+        "deu" => "German",
+        "fra" => "French",
+        "ita" => "Italian",
+        "lat" => "Latin",
+        "por" => "Portuguese",
+        _     => iso639_3
     };
 }

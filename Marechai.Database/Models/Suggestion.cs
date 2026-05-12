@@ -47,6 +47,15 @@ public class Suggestion : BaseModel<long>
     /// </summary>
     public long? EntityId { get; set; }
 
+    /// <summary>
+    ///     Optional discriminator within an entity for per-sub-key suggestions (e.g. the
+    ///     ISO-639-3 language code on a <see cref="SuggestionEntityType.CompanyDescription" />
+    ///     suggestion). Used together with <see cref="EntityType" /> and <see cref="EntityId" />
+    ///     for dedupe and review lookups. <c>null</c> for entity types that do not need it.
+    /// </summary>
+    [StringLength(32)]
+    public string Subkey { get; set; }
+
     /// <summary>Current lifecycle status of the suggestion.</summary>
     public SuggestionStatus Status { get; set; }
 
@@ -63,6 +72,14 @@ public class Suggestion : BaseModel<long>
     /// <summary>Optional free-text comment from the suggesting user explaining the change.</summary>
     [MaxLength(2000)]
     public string UserComment { get; set; }
+
+    /// <summary>
+    ///     Optional free-text comment from the reviewing admin (e.g. a reason for rejection
+    ///     or partial acceptance). Set on review; shown to the suggesting user in the
+    ///     dispatched system message and on their <c>/profile</c> "My Suggestions" list.
+    /// </summary>
+    [MaxLength(2000)]
+    public string AdminReviewComment { get; set; }
 
     /// <summary>
     ///     Heterogeneous payload of suggested values, keyed by canonical field name as defined

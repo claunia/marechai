@@ -14,6 +14,14 @@ namespace Marechai.ApiClient.Models
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
+        /// <summary>The current_labels property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public global::Marechai.ApiClient.Models.SuggestionDiffDto_current_labels? CurrentLabels { get; set; }
+#nullable restore
+#else
+        public global::Marechai.ApiClient.Models.SuggestionDiffDto_current_labels CurrentLabels { get; set; }
+#endif
         /// <summary>The current_values_json property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -24,6 +32,22 @@ namespace Marechai.ApiClient.Models
 #endif
         /// <summary>The entity_missing property</summary>
         public bool? EntityMissing { get; set; }
+        /// <summary>The entity_secondary_label property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? EntitySecondaryLabel { get; set; }
+#nullable restore
+#else
+        public string EntitySecondaryLabel { get; set; }
+#endif
+        /// <summary>The suggested_labels property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public global::Marechai.ApiClient.Models.SuggestionDiffDto_suggested_labels? SuggestedLabels { get; set; }
+#nullable restore
+#else
+        public global::Marechai.ApiClient.Models.SuggestionDiffDto_suggested_labels SuggestedLabels { get; set; }
+#endif
         /// <summary>The suggestion property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -57,8 +81,11 @@ namespace Marechai.ApiClient.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
+                { "current_labels", n => { CurrentLabels = n.GetObjectValue<global::Marechai.ApiClient.Models.SuggestionDiffDto_current_labels>(global::Marechai.ApiClient.Models.SuggestionDiffDto_current_labels.CreateFromDiscriminatorValue); } },
                 { "current_values_json", n => { CurrentValuesJson = n.GetStringValue(); } },
                 { "entity_missing", n => { EntityMissing = n.GetBoolValue(); } },
+                { "entity_secondary_label", n => { EntitySecondaryLabel = n.GetStringValue(); } },
+                { "suggested_labels", n => { SuggestedLabels = n.GetObjectValue<global::Marechai.ApiClient.Models.SuggestionDiffDto_suggested_labels>(global::Marechai.ApiClient.Models.SuggestionDiffDto_suggested_labels.CreateFromDiscriminatorValue); } },
                 { "suggestion", n => { Suggestion = n.GetObjectValue<global::Marechai.ApiClient.Models.SuggestionDto>(global::Marechai.ApiClient.Models.SuggestionDto.CreateFromDiscriminatorValue); } },
             };
         }
@@ -69,8 +96,11 @@ namespace Marechai.ApiClient.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
+            writer.WriteObjectValue<global::Marechai.ApiClient.Models.SuggestionDiffDto_current_labels>("current_labels", CurrentLabels);
             writer.WriteStringValue("current_values_json", CurrentValuesJson);
             writer.WriteBoolValue("entity_missing", EntityMissing);
+            writer.WriteStringValue("entity_secondary_label", EntitySecondaryLabel);
+            writer.WriteObjectValue<global::Marechai.ApiClient.Models.SuggestionDiffDto_suggested_labels>("suggested_labels", SuggestedLabels);
             writer.WriteObjectValue<global::Marechai.ApiClient.Models.SuggestionDto>("suggestion", Suggestion);
             writer.WriteAdditionalData(AdditionalData);
         }

@@ -14,6 +14,14 @@ namespace Marechai.ApiClient.Models
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
+        /// <summary>The admin_review_comment property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? AdminReviewComment { get; set; }
+#nullable restore
+#else
+        public string AdminReviewComment { get; set; }
+#endif
         /// <summary>The applied_fields_json property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -82,6 +90,14 @@ namespace Marechai.ApiClient.Models
         public DateTimeOffset? ReviewedOn { get; set; }
         /// <summary>The status property</summary>
         public int? Status { get; set; }
+        /// <summary>The subkey property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? Subkey { get; set; }
+#nullable restore
+#else
+        public string Subkey { get; set; }
+#endif
         /// <summary>The suggested_values_json property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -123,6 +139,7 @@ namespace Marechai.ApiClient.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
+                { "admin_review_comment", n => { AdminReviewComment = n.GetStringValue(); } },
                 { "applied_fields_json", n => { AppliedFieldsJson = n.GetStringValue(); } },
                 { "created_by_display_name", n => { CreatedByDisplayName = n.GetStringValue(); } },
                 { "created_by_id", n => { CreatedById = n.GetStringValue(); } },
@@ -136,6 +153,7 @@ namespace Marechai.ApiClient.Models
                 { "reviewed_by_id", n => { ReviewedById = n.GetStringValue(); } },
                 { "reviewed_on", n => { ReviewedOn = n.GetDateTimeOffsetValue(); } },
                 { "status", n => { Status = n.GetIntValue(); } },
+                { "subkey", n => { Subkey = n.GetStringValue(); } },
                 { "suggested_values_json", n => { SuggestedValuesJson = n.GetStringValue(); } },
                 { "user_comment", n => { UserComment = n.GetStringValue(); } },
             };
@@ -147,6 +165,7 @@ namespace Marechai.ApiClient.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
+            writer.WriteStringValue("admin_review_comment", AdminReviewComment);
             writer.WriteStringValue("applied_fields_json", AppliedFieldsJson);
             writer.WriteStringValue("created_by_display_name", CreatedByDisplayName);
             writer.WriteStringValue("created_by_id", CreatedById);
@@ -160,6 +179,7 @@ namespace Marechai.ApiClient.Models
             writer.WriteStringValue("reviewed_by_id", ReviewedById);
             writer.WriteDateTimeOffsetValue("reviewed_on", ReviewedOn);
             writer.WriteIntValue("status", Status);
+            writer.WriteStringValue("subkey", Subkey);
             writer.WriteStringValue("suggested_values_json", SuggestedValuesJson);
             writer.WriteStringValue("user_comment", UserComment);
             writer.WriteAdditionalData(AdditionalData);

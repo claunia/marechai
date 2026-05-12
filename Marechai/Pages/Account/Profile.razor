@@ -808,20 +808,40 @@
                         <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined">@(context.EntityType.HasValue ? ((Marechai.Data.SuggestionEntityType)context.EntityType.Value).ToString() : string.Empty)</MudChip>
                     </MudTd>
                     <MudTd>
+                        @if(!context.EntityId.HasValue)
+                        {
+                            <MudChip T="string" Size="Size.Small" Color="Color.Success" Variant="Variant.Filled" Class="mr-1">@L["New"]</MudChip>
+                        }
                         @if(!string.IsNullOrWhiteSpace(context.EntityDisplayName))
                         {
                             <text>@context.EntityDisplayName</text>
-                            <MudText Typo="Typo.caption" Color="Color.Secondary"> #@context.EntityId</MudText>
+                            @if(context.EntityId.HasValue)
+                            {
+                                <MudText Typo="Typo.caption" Color="Color.Secondary"> #@context.EntityId</MudText>
+                            }
                         }
-                        else
+                        else if(context.EntityId.HasValue)
                         {
                             <text>#@context.EntityId</text>
+                        }
+                        @if(!string.IsNullOrEmpty(context.Subkey))
+                        {
+                            <MudText Typo="Typo.caption" Color="Color.Secondary"> @SuggestionSubkeyLabel(context)</MudText>
                         }
                     </MudTd>
                     <MudTd>
                         <MudChip T="string" Size="Size.Small" Color="@SuggestionStatusColor((Marechai.Data.SuggestionStatus?)context.Status)" Variant="Variant.Filled">
                             @SuggestionStatusLabel((Marechai.Data.SuggestionStatus?)context.Status)
                         </MudChip>
+                        @if(!string.IsNullOrWhiteSpace(context.AdminReviewComment))
+                        {
+                            <MudTooltip Text="@context.AdminReviewComment" Placement="Placement.Top">
+                                <MudIcon Icon="@Icons.Material.Filled.ChatBubbleOutline"
+                                         Size="Size.Small"
+                                         Color="Color.Secondary"
+                                         Class="ml-1"/>
+                            </MudTooltip>
+                        }
                     </MudTd>
                     <MudTd>@(context.CreatedOn?.LocalDateTime.ToString("g"))</MudTd>
                     <MudTd>@(context.ReviewedOn?.LocalDateTime.ToString("g") ?? "—")</MudTd>

@@ -50,12 +50,13 @@
     <resheader name="version"><value>2.0</value></resheader>
     <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e305</value></resheader>
     <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e305</value></resheader>
-    <data name="No suggestion data." xml:space="preserve"><value>Aucune donnée de suggestion.</value></data>
-    <data name="This suggestion has no field changes." xml:space="preserve"><value>Cette suggestion n'a aucun changement de champ.</value></data>
-    <data name="Accept" xml:space="preserve"><value>Accepter</value></data>
-    <data name="Field" xml:space="preserve"><value>Champ</value></data>
-    <data name="Current value" xml:space="preserve"><value>Valeur actuelle</value></data>
-    <data name="Suggested value" xml:space="preserve"><value>Valeur suggérée</value></data>
-    <data name="unchanged" xml:space="preserve"><value>inchangées</value></data>
-    <data name="Show full diff ({0} lines)" xml:space="preserve"><value>Afficher le diff complet ({0} lignes)</value></data>
+    <data name="This entity type does not support new-entity suggestions." xml:space="preserve"><value>Dieser Entitätstyp unterstützt keine Vorschläge für neue Entitäten.</value></data>
+    <data name="Fill in the fields you know. Only the marked field is required." xml:space="preserve"><value>Fülle die Felder aus, die du kennst. Nur das markierte Feld ist erforderlich.</value></data>
+    <data name="Field kind not supported in this dialog yet." xml:space="preserve"><value>Feldtyp wird in diesem Dialog noch nicht unterstützt.</value></data>
+    <data name="Optional comment (References, sources, etc...)" xml:space="preserve"><value>Optionaler Kommentar (Referenzen, Quellen usw.)</value></data>
+    <data name="Cancel" xml:space="preserve"><value>Abbrechen</value></data>
+    <data name="Submit suggestion" xml:space="preserve"><value>Vorschlag einreichen</value></data>
+    <data name="The primary field is required." xml:space="preserve"><value>Das Primärfeld ist erforderlich.</value></data>
+    <data name="Failed to submit suggestion." xml:space="preserve"><value>Vorschlag konnte nicht eingereicht werden.</value></data>
+    <data name="Suggestion submitted. An administrator will review it." xml:space="preserve"><value>Vorschlag eingereicht. Ein Administrator wird ihn prüfen.</value></data>
 </root>

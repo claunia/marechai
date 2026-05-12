@@ -7,73 +7,75 @@
 @using Marechai.Data
 @using Marechai.Services
 @using Marechai.Suggestions
-@inject IStringLocalizer<SuggestionDialog> L
-@inject ISnackbar               Snackbar
-@inject SuggestionsService      Service
-@inject CompaniesService        CompaniesService
+@inject IStringLocalizer<NewEntitySuggestionDialog> L
+@inject ISnackbar              Snackbar
+@inject SuggestionsService     Service
+@inject CompaniesService       CompaniesService
 
 @*
-    Generic suggestion-creation dialog. Renders one form input per field-descriptor in the
-    metadata for the given <paramref name="EntityType" />, defaulting each input to the current
-    value extracted from <paramref name="CurrentDto" />. On submit, only fields whose current
-    value differs from the input value are sent to the server.
-
-    Phase 0 ships an empty Company metadata, so the dialog renders a "no fields available"
-    placeholder until Phase 1 wires the real Company field set.
+    Suggest a brand-new entity (e.g. a new Company). Renders one form input per field
+    descriptor in the metadata, starting from an empty payload. Submit is disabled until the
+    metadata's primary field (Name for Company) is non-empty. The server enforces the same
+    rule and rejects submissions whose primary field is missing.
 *@
 
 <MudDialog>
     <DialogContent>
         @if(_metadata is null || _metadata.Fields.Count == 0)
         {
-            <MudAlert Severity="Severity.Warning">@L["This entity type does not yet support suggestions."]</MudAlert>
+            <MudAlert Severity="Severity.Warning">@L["This entity type does not support new-entity suggestions."]</MudAlert>
         }
         else
         {
-            <MudText Typo="Typo.body2" Class="mb-3">@L["Edit the fields you want to suggest changes to. Leave a field unchanged to skip it."]</MudText>
+            <MudText Typo="Typo.body2" Class="mb-3">@L["Fill in the fields you know. Only the marked field is required."]</MudText>
 
             @foreach(SuggestionFieldDescriptor field in _metadata.Fields)
             {
                 <div class="mb-2">
-                    @{ string label = L[field.LabelKey]; }
+                    @{
+                        string label   = L[field.LabelKey];
+                        bool   primary = field.Name == _metadata.PrimaryFieldName;
+                        string fullLabel = primary ? label + " *" : label;
+                    }
                     @switch(field.Kind)
                     {
                         case SuggestionFieldKind.Text:
                         case SuggestionFieldKind.Url:
-                            <MudTextField T="string" Label="@label"
+                            <MudTextField T="string" Label="@fullLabel"
                                           MaxLength="@(field.MaxLength ?? 4096)"
                                           InputType="@(field.Kind == SuggestionFieldKind.Url ? InputType.Url : InputType.Text)"
                                           Value="@GetString(field.Name)"
-                                          ValueChanged="@(v => SetValue(field.Name, v))"/>
+                                          ValueChanged="@(v => SetValue(field.Name, v))"
+                                          Required="@primary"/>
                             break;
                         case SuggestionFieldKind.MultilineText:
-                            <MudTextField T="string" Label="@label" Lines="3"
+                            <MudTextField T="string" Label="@fullLabel" Lines="3"
                                           MaxLength="@(field.MaxLength ?? 4096)"
                                           Value="@GetString(field.Name)"
                                           ValueChanged="@(v => SetValue(field.Name, v))"/>
                             break;
                         case SuggestionFieldKind.Int:
-                            <MudNumericField T="int?" Label="@label"
+                            <MudNumericField T="int?" Label="@fullLabel"
                                              Value="@GetInt(field.Name)"
                                              ValueChanged="@(v => SetValue(field.Name, v))"/>
                             break;
                         case SuggestionFieldKind.Short:
-                            <MudNumericField T="short?" Label="@label"
+                            <MudNumericField T="short?" Label="@fullLabel"
                                              Value="@GetShort(field.Name)"
                                              ValueChanged="@(v => SetValue(field.Name, v))"/>
                             break;
                         case SuggestionFieldKind.Bool:
-                            <MudCheckBox T="bool?" Label="@label"
+                            <MudCheckBox T="bool?" Label="@fullLabel"
                                          Value="@GetBool(field.Name)"
                                          ValueChanged="@(v => SetValue(field.Name, v))"/>
                             break;
                         case SuggestionFieldKind.Date:
-                            <MudDatePicker Label="@label" Editable="true" Clearable="true"
+                            <MudDatePicker Label="@fullLabel" Editable="true" Clearable="true"
                                            Date="@GetDate(field.Name)"
                                            DateChanged="@(d => SetValue(field.Name, d))"/>
                             break;
                         case SuggestionFieldKind.Enum:
-                            <MudSelect T="int?" Label="@label" Clearable="true"
+                            <MudSelect T="int?" Label="@fullLabel" Clearable="true"
                                        Value="@GetInt(field.Name)"
                                        ValueChanged="@(v => SetValue(field.Name, v))">
                                 @if(field.EnumOptions is not null)
@@ -86,7 +88,7 @@
                             </MudSelect>
                             break;
                         case SuggestionFieldKind.ForeignKeyCountry:
-                            <MudAutocomplete T="Iso31661NumericDto" Label="@label"
+                            <MudAutocomplete T="Iso31661NumericDto" Label="@fullLabel"
                                              Value="@GetCountry(field.Name)"
                                              ValueChanged="@(c => SetValue(field.Name, c?.Id))"
                                              SearchFunc="SearchCountries"
@@ -94,7 +96,7 @@
                                              Clearable="true"/>
                             break;
                         case SuggestionFieldKind.ForeignKeyCompany:
-                            <MudAutocomplete T="CompanyDto" Label="@label"
+                            <MudAutocomplete T="CompanyDto" Label="@fullLabel"
                                              Value="@GetCompany(field.Name)"
                                              ValueChanged="@(c => SetValue(field.Name, c?.Id))"
                                              SearchFunc="SearchCompanies"
@@ -121,7 +123,7 @@
     <DialogActions>
         <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
         <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit"
-                   Disabled="@(_metadata is null || _metadata.Fields.Count == 0 || _submitting)">
+                   Disabled="@(_metadata is null || _metadata.Fields.Count == 0 || _submitting || !PrimaryFieldFilled)">
             @if(_submitting)
             {
                 <MudProgressCircular Size="Size.Small" Indeterminate="true"/>
@@ -139,33 +141,31 @@
     [CascadingParameter] IMudDialogInstance MudDialog { get; set; }
 
     [Parameter] public SuggestionEntityType EntityType { get; set; }
-    [Parameter] public long                 EntityId   { get; set; }
-
-    /// <summary>The current entity DTO snapshot. The dialog reads field values from it via the metadata.</summary>
-    [Parameter] public object CurrentDto { get; set; }
 
     SuggestionMetadata _metadata;
-    Dictionary<string, object> _current = new(StringComparer.Ordinal);
-    Dictionary<string, object> _input   = new(StringComparer.Ordinal);
+    Dictionary<string, object> _input = new(StringComparer.Ordinal);
     string _userComment;
     string _validationError;
     bool   _submitting;
 
-    // FK picker caches (lazily loaded on first need).
+    // FK picker caches.
     List<Iso31661NumericDto> _countries;
     List<CompanyDto>         _companies;
     bool                     _fkLoadStarted;
 
+    bool PrimaryFieldFilled
+    {
+        get
+        {
+            if(_metadata?.PrimaryFieldName is null) return true;
+            string s = GetString(_metadata.PrimaryFieldName);
+            return !string.IsNullOrWhiteSpace(s);
+        }
+    }
+
     protected override void OnInitialized()
     {
         _metadata = SuggestionMetadataRegistry.Get(EntityType);
-
-        if(_metadata is null) return;
-
-        _current = _metadata.ExtractCurrentValues(CurrentDto) ?? new Dictionary<string, object>(StringComparer.Ordinal);
-
-        // Seed the input map with current values (so unchanged fields stay equal).
-        foreach(KeyValuePair<string, object> kv in _current) _input[kv.Key] = kv.Value;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -256,7 +256,6 @@
 
     void SetValue(string name, object value)
     {
-        // Normalize empty strings to null so the diff is clean.
         if(value is string s && string.IsNullOrEmpty(s)) value = null;
         _input[name] = value;
     }
@@ -301,30 +300,29 @@
     {
         _validationError = null;
 
-        // Build a diff: only fields whose value differs from the current snapshot.
-        var diff = new Dictionary<string, object>(StringComparer.Ordinal);
+        // Build the payload from filled-in fields. Skip null/empty so the wire payload stays compact.
+        var payload = new Dictionary<string, object>(StringComparer.Ordinal);
         foreach(SuggestionFieldDescriptor f in _metadata.Fields)
         {
-            object curr = _current.TryGetValue(f.Name, out object c) ? c : null;
-            object next = _input.TryGetValue(f.Name, out object n)   ? n : null;
-
-            if(!ValuesEqual(curr, next)) diff[f.Name] = next;
+            if(!_input.TryGetValue(f.Name, out object v) || v is null) continue;
+            if(v is string s && string.IsNullOrWhiteSpace(s)) continue;
+            payload[f.Name] = v;
         }
 
-        if(diff.Count == 0)
+        if(_metadata.PrimaryFieldName is not null && !payload.ContainsKey(_metadata.PrimaryFieldName))
         {
-            _validationError = L["No changes detected — modify at least one field before submitting."];
+            _validationError = L["The primary field is required."];
             return;
         }
 
         _submitting = true;
         try
         {
-            string json = JsonSerializer.Serialize(diff);
+            string json = JsonSerializer.Serialize(payload);
             var dto = new SuggestionDto
             {
                 EntityType          = (int?)EntityType,
-                EntityId            = EntityId,
+                EntityId            = null, // brand-new entity
                 Status              = (int?)SuggestionStatus.Pending,
                 UserComment         = string.IsNullOrWhiteSpace(_userComment) ? null : _userComment.Trim(),
                 SuggestedValuesJson = json
@@ -345,16 +343,5 @@
         {
             _submitting = false;
         }
-    }
-
-    static bool ValuesEqual(object a, object b)
-    {
-        if(a is null && b is null) return true;
-        if(a is null || b is null) return false;
-
-        // Compare via stringified form for cross-shape (JsonElement vs raw) comparisons.
-        string sa = a is JsonElement ja ? ja.ToString() : a.ToString();
-        string sb = b is JsonElement jb ? jb.ToString() : b.ToString();
-        return string.Equals(sa, sb, StringComparison.Ordinal);
     }
 }

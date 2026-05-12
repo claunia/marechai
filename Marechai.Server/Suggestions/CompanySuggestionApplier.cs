@@ -57,12 +57,15 @@ internal static class CompanySuggestionApplier
     public const string FieldWebsite          = "website";
     public const string FieldTwitter          = "twitter";
     public const string FieldFacebook         = "facebook";
+    public const string FieldCountryId        = "country_id";
+    public const string FieldSoldToId         = "sold_to_id";
 
     public static readonly IReadOnlyCollection<string> KnownFieldNames = new HashSet<string>(StringComparer.Ordinal)
     {
         FieldName, FieldLegalName, FieldStatus, FieldFounded, FieldFoundedPrecision,
         FieldSold, FieldSoldPrecision, FieldAddress, FieldCity, FieldProvince,
-        FieldPostalCode, FieldWebsite, FieldTwitter, FieldFacebook
+        FieldPostalCode, FieldWebsite, FieldTwitter, FieldFacebook,
+        FieldCountryId, FieldSoldToId
     };
 
     /// <summary>Read the current values of every suggestable field from the entity row.</summary>
@@ -86,7 +89,9 @@ internal static class CompanySuggestionApplier
             [FieldPostalCode]        = c.PostalCode,
             [FieldWebsite]           = c.Website,
             [FieldTwitter]           = c.Twitter,
-            [FieldFacebook]          = c.Facebook
+            [FieldFacebook]          = c.Facebook,
+            [FieldCountryId]         = (int?)c.CountryId,
+            [FieldSoldToId]          = c.SoldToId
         };
     }
 
@@ -184,6 +189,38 @@ internal static class CompanySuggestionApplier
                         c.Facebook = TruncString(ToStringValue(value), 45);
                         applied.Add(fieldName);
                         break;
+                    case FieldCountryId:
+                        int? countryVal = ToInt(value);
+                        if(!countryVal.HasValue)
+                        {
+                            // Explicit null clears the FK.
+                            c.CountryId = null;
+                            applied.Add(fieldName);
+                        }
+                        else if(await context.Iso31661Numeric.AsNoTracking()
+                                             .AnyAsync(co => co.Id == (short)countryVal.Value))
+                        {
+                            c.CountryId = (short)countryVal.Value;
+                            applied.Add(fieldName);
+                        }
+                        // else: silently skip — FK does not exist.
+                        break;
+                    case FieldSoldToId:
+                        int? soldToVal = ToInt(value);
+                        if(!soldToVal.HasValue)
+                        {
+                            c.SoldToId = null;
+                            applied.Add(fieldName);
+                        }
+                        else if(soldToVal.Value != c.Id &&
+                                await context.Companies.AsNoTracking()
+                                             .AnyAsync(co => co.Id == soldToVal.Value))
+                        {
+                            c.SoldToId = soldToVal.Value;
+                            applied.Add(fieldName);
+                        }
+                        // else: silently skip — FK does not exist or self-reference.
+                        break;
                 }
             }
             catch
@@ -195,6 +232,144 @@ internal static class CompanySuggestionApplier
         if(applied.Count > 0) await context.SaveChangesAsync();
 
         return (applied, false);
+    }
+
+    /// <summary>
+    ///     Create a brand-new <see cref="Company" /> row from an accepted suggestion. Only
+    ///     fields whose names appear in <paramref name="accepted" /> are populated. <c>name</c>
+    ///     is mandatory: if the admin didn't accept it, returns <c>(null, empty)</c> so the
+    ///     controller treats the whole review as a Rejection.
+    /// </summary>
+    /// <param name="creditedUserId">
+    ///     The Identity user id to attribute the row to in audit history (the suggesting user,
+    ///     NOT the reviewing admin). Forwarded to <c>SaveChangesWithUserAsync</c>.
+    /// </param>
+    public static async Task<(int? newId, HashSet<string> applied)> CreateAsync(
+        MarechaiContext context,
+        Dictionary<string, object> suggested,
+        HashSet<string> accepted,
+        string creditedUserId)
+    {
+        var applied = new HashSet<string>(StringComparer.Ordinal);
+
+        // Name is mandatory at creation time. If the admin didn't tick it, abort.
+        if(!accepted.Contains(FieldName)) return (null, applied);
+        if(!suggested.TryGetValue(FieldName, out object nameVal)) return (null, applied);
+
+        string name = ToStringValue(nameVal);
+        if(string.IsNullOrWhiteSpace(name)) return (null, applied);
+
+        var c = new Company { Name = name.Trim() };
+        applied.Add(FieldName);
+
+        foreach(string fieldName in accepted)
+        {
+            if(fieldName == FieldName) continue;
+            if(!suggested.TryGetValue(fieldName, out object value)) continue;
+
+            try
+            {
+                switch(fieldName)
+                {
+                    case FieldLegalName:
+                        c.LegalName = ToStringValue(value);
+                        applied.Add(fieldName);
+                        break;
+                    case FieldStatus:
+                        int? statusVal = ToInt(value);
+                        if(statusVal.HasValue && statusVal.Value is >= 0 and <= 6)
+                        {
+                            c.Status = (CompanyStatus)statusVal.Value;
+                            applied.Add(fieldName);
+                        }
+                        break;
+                    case FieldFounded:
+                        c.Founded = ToDate(value);
+                        applied.Add(fieldName);
+                        break;
+                    case FieldFoundedPrecision:
+                        int? fpVal = ToInt(value);
+                        if(fpVal.HasValue && fpVal.Value is >= 0 and <= 2)
+                        {
+                            c.FoundedPrecision = (DatePrecision)fpVal.Value;
+                            applied.Add(fieldName);
+                        }
+                        break;
+                    case FieldSold:
+                        c.Sold = ToDate(value);
+                        applied.Add(fieldName);
+                        break;
+                    case FieldSoldPrecision:
+                        int? spVal = ToInt(value);
+                        if(spVal.HasValue && spVal.Value is >= 0 and <= 2)
+                        {
+                            c.SoldPrecision = (DatePrecision)spVal.Value;
+                            applied.Add(fieldName);
+                        }
+                        break;
+                    case FieldAddress:
+                        c.Address = TruncString(ToStringValue(value), 80);
+                        applied.Add(fieldName);
+                        break;
+                    case FieldCity:
+                        c.City = TruncString(ToStringValue(value), 80);
+                        applied.Add(fieldName);
+                        break;
+                    case FieldProvince:
+                        c.Province = TruncString(ToStringValue(value), 80);
+                        applied.Add(fieldName);
+                        break;
+                    case FieldPostalCode:
+                        c.PostalCode = TruncString(ToStringValue(value), 25);
+                        applied.Add(fieldName);
+                        break;
+                    case FieldWebsite:
+                        c.Website = TruncString(ToStringValue(value), 255);
+                        applied.Add(fieldName);
+                        break;
+                    case FieldTwitter:
+                        c.Twitter = TruncString(ToStringValue(value), 45);
+                        applied.Add(fieldName);
+                        break;
+                    case FieldFacebook:
+                        c.Facebook = TruncString(ToStringValue(value), 45);
+                        applied.Add(fieldName);
+                        break;
+                    case FieldCountryId:
+                        int? countryVal = ToInt(value);
+                        if(countryVal.HasValue &&
+                           await context.Iso31661Numeric.AsNoTracking()
+                                        .AnyAsync(co => co.Id == (short)countryVal.Value))
+                        {
+                            c.CountryId = (short)countryVal.Value;
+                            applied.Add(fieldName);
+                        }
+                        break;
+                    case FieldSoldToId:
+                        int? soldToVal = ToInt(value);
+                        if(soldToVal.HasValue &&
+                           await context.Companies.AsNoTracking()
+                                        .AnyAsync(co => co.Id == soldToVal.Value))
+                        {
+                            c.SoldToId = soldToVal.Value;
+                            applied.Add(fieldName);
+                        }
+                        break;
+                }
+            }
+            catch
+            {
+                // Coerce failure: silently skip this field.
+            }
+        }
+
+        await context.Companies.AddAsync(c);
+        if(string.IsNullOrEmpty(creditedUserId))
+            await context.SaveChangesAsync();
+        else
+            await context.SaveChangesWithUserAsync(creditedUserId);
+
+        return (c.Id, applied);
     }
 
     static string ToStringValue(object v)

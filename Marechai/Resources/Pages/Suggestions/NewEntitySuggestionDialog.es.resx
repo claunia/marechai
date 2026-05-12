@@ -50,12 +50,13 @@
     <resheader name="version"><value>2.0</value></resheader>
     <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e305</value></resheader>
     <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e305</value></resheader>
-    <data name="No suggestion data." xml:space="preserve"><value>Aucune donnée de suggestion.</value></data>
-    <data name="This suggestion has no field changes." xml:space="preserve"><value>Cette suggestion n'a aucun changement de champ.</value></data>
-    <data name="Accept" xml:space="preserve"><value>Accepter</value></data>
-    <data name="Field" xml:space="preserve"><value>Champ</value></data>
-    <data name="Current value" xml:space="preserve"><value>Valeur actuelle</value></data>
-    <data name="Suggested value" xml:space="preserve"><value>Valeur suggérée</value></data>
-    <data name="unchanged" xml:space="preserve"><value>inchangées</value></data>
-    <data name="Show full diff ({0} lines)" xml:space="preserve"><value>Afficher le diff complet ({0} lignes)</value></data>
+    <data name="This entity type does not support new-entity suggestions." xml:space="preserve"><value>Este tipo de entidad no admite sugerencias de entidades nuevas.</value></data>
+    <data name="Fill in the fields you know. Only the marked field is required." xml:space="preserve"><value>Rellena los campos que conozcas. Solo el campo marcado es obligatorio.</value></data>
+    <data name="Field kind not supported in this dialog yet." xml:space="preserve"><value>Tipo de campo aún no admitido en este diálogo.</value></data>
+    <data name="Optional comment (References, sources, etc...)" xml:space="preserve"><value>Comentario opcional (referencias, fuentes, etc.)</value></data>
+    <data name="Cancel" xml:space="preserve"><value>Cancelar</value></data>
+    <data name="Submit suggestion" xml:space="preserve"><value>Enviar sugerencia</value></data>
+    <data name="The primary field is required." xml:space="preserve"><value>El campo principal es obligatorio.</value></data>
+    <data name="Failed to submit suggestion." xml:space="preserve"><value>Error al enviar la sugerencia.</value></data>
+    <data name="Suggestion submitted. An administrator will review it." xml:space="preserve"><value>Sugerencia enviada. Un administrador la revisará.</value></data>
 </root>

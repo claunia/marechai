@@ -45,7 +45,12 @@ public enum SuggestionFieldKind
     Bool              = 6,
     Enum              = 7,
     ForeignKeyCountry = 8,
-    ForeignKeyCompany = 9
+    ForeignKeyCompany = 9,
+    /// <summary>
+    ///     A long-form markdown body. Rendered with <c>&lt;MarkdownEditor&gt;</c> in the
+    ///     suggest dialog and as a colored inline line-diff in the review panel.
+    /// </summary>
+    Markdown          = 10
 }
 
 /// <summary>One enum option for fields with <see cref="SuggestionFieldKind.Enum" />.</summary>
@@ -69,6 +74,13 @@ public abstract class SuggestionMetadata
     public abstract SuggestionEntityType EntityType { get; }
 
     public abstract IReadOnlyList<SuggestionFieldDescriptor> Fields { get; }
+
+    /// <summary>
+    ///     Optional name of the field that MUST be filled in for a new-entity suggestion to be
+    ///     submitted (e.g. <c>"name"</c> for Company). Returns <c>null</c> when the entity type
+    ///     does not support new-entity suggestions or has no mandatory field.
+    /// </summary>
+    public virtual string PrimaryFieldName => null;
 
     Dictionary<string, SuggestionFieldDescriptor> _byName;
 

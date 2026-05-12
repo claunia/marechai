@@ -23,6 +23,7 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
@@ -48,4 +49,29 @@ public class SuggestionDiffDto
     /// <summary>True if the targeted entity no longer exists (only possible briefly between delete and stale-mark).</summary>
     [JsonPropertyName("entity_missing")]
     public bool EntityMissing { get; set; }
+
+    /// <summary>
+    ///     Optional secondary label for the entity, e.g. <c>"(Spanish description)"</c> for a
+    ///     <see cref="SuggestionEntityType.CompanyDescription" /> review. Lets the queue and
+    ///     review dialog tag the row without re-querying.
+    /// </summary>
+    [JsonPropertyName("entity_secondary_label")]
+    public string? EntitySecondaryLabel { get; set; }
+
+    /// <summary>
+    ///     Optional per-field display labels for the CURRENT side of the diff. Populated by the
+    ///     server only for foreign-key fields (e.g. <c>{ "country_id": "Spain", "sold_to_id": "Apple" }</c>),
+    ///     so the diff panel can render the resolved entity name instead of the raw integer id.
+    ///     Empty/missing key → fall back to <c>SuggestionMetadata.FormatDisplayValue</c>.
+    /// </summary>
+    [JsonPropertyName("current_labels")]
+    public Dictionary<string, string>? CurrentLabels { get; set; }
+
+    /// <summary>
+    ///     Optional per-field display labels for the SUGGESTED side of the diff. Same semantics
+    ///     as <see cref="CurrentLabels" /> but for the proposed values. Populated only for
+    ///     foreign-key fields.
+    /// </summary>
+    [JsonPropertyName("suggested_labels")]
+    public Dictionary<string, string>? SuggestedLabels { get; set; }
 }

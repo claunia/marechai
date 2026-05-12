@@ -67,6 +67,40 @@ internal static class SuggestionsHelper
                      && s.Status == SuggestionStatus.Pending)
             .ToListAsync();
 
+        await ApplyStaleAsync(context, stale, entityType, entityDisplayName, subkeyLabel: null);
+    }
+
+    /// <summary>
+    ///     Mark Pending suggestions stale for a specific entity AND a specific
+    ///     <see cref="Suggestion.Subkey" />. Used by per-subkey delete hooks (e.g. removing one
+    ///     language of a company description without deleting the company itself).
+    /// </summary>
+    public static async Task MarkStaleForEntitySubkeyAsync(MarechaiContext context,
+                                                           SuggestionEntityType entityType,
+                                                           long entityId,
+                                                           string subkey,
+                                                           string entityDisplayName,
+                                                           string subkeyLabel = null)
+    {
+        if(context is null) throw new ArgumentNullException(nameof(context));
+        if(string.IsNullOrEmpty(subkey)) throw new ArgumentException("Subkey is required.", nameof(subkey));
+
+        List<Suggestion> stale = await context.Suggestions
+            .Where(s => s.EntityType == entityType
+                     && s.EntityId == entityId
+                     && s.Subkey == subkey
+                     && s.Status == SuggestionStatus.Pending)
+            .ToListAsync();
+
+        await ApplyStaleAsync(context, stale, entityType, entityDisplayName, subkeyLabel);
+    }
+
+    static async Task ApplyStaleAsync(MarechaiContext context,
+                                      List<Suggestion> stale,
+                                      SuggestionEntityType entityType,
+                                      string entityDisplayName,
+                                      string subkeyLabel)
+    {
         if(stale.Count == 0) return;
 
         DateTime now = DateTime.UtcNow;
@@ -86,9 +120,10 @@ internal static class SuggestionsHelper
         foreach(IGrouping<string, Suggestion> g in grouped)
         {
             string typeLabel = EntityLabel(entityType);
-            string subject   = $"Your suggestion for {typeLabel} '{entityDisplayName}' is no longer applicable";
+            string suffix    = string.IsNullOrEmpty(subkeyLabel) ? string.Empty : " " + subkeyLabel;
+            string subject   = $"Your suggestion for {typeLabel} '{entityDisplayName}'{suffix} is no longer applicable";
             string body =
-                $"The {typeLabel} **{entityDisplayName}** that you suggested changes for has been removed " +
+                $"The {typeLabel} **{entityDisplayName}**{suffix} that you suggested changes for has been removed " +
                 $"by an administrator, so your suggestion can no longer be reviewed. " +
                 $"It has been closed automatically.";
 
@@ -102,23 +137,24 @@ internal static class SuggestionsHelper
     /// <summary>Friendly lower-case label for the entity type used in message text. Mirrors the controller's helper.</summary>
     static string EntityLabel(SuggestionEntityType type) => type switch
     {
-        SuggestionEntityType.Company         => "company",
-        SuggestionEntityType.Machine         => "machine",
-        SuggestionEntityType.MachineFamily   => "machine family",
-        SuggestionEntityType.Processor       => "processor",
-        SuggestionEntityType.Gpu             => "GPU",
-        SuggestionEntityType.SoundSynth      => "sound synth",
-        SuggestionEntityType.Software        => "software",
-        SuggestionEntityType.SoftwareFamily  => "software family",
-        SuggestionEntityType.SoftwareRelease => "software release",
-        SuggestionEntityType.SoftwareVersion => "software version",
-        SuggestionEntityType.Book            => "book",
-        SuggestionEntityType.Document        => "document",
-        SuggestionEntityType.Magazine        => "magazine",
-        SuggestionEntityType.MagazineIssue   => "magazine issue",
-        SuggestionEntityType.Person          => "person",
-        SuggestionEntityType.Screen          => "screen",
-        _                                    => type.ToString().ToLowerInvariant()
+        SuggestionEntityType.Company             => "company",
+        SuggestionEntityType.CompanyDescription  => "company description",
+        SuggestionEntityType.Machine             => "machine",
+        SuggestionEntityType.MachineFamily       => "machine family",
+        SuggestionEntityType.Processor           => "processor",
+        SuggestionEntityType.Gpu                 => "GPU",
+        SuggestionEntityType.SoundSynth          => "sound synth",
+        SuggestionEntityType.Software            => "software",
+        SuggestionEntityType.SoftwareFamily      => "software family",
+        SuggestionEntityType.SoftwareRelease     => "software release",
+        SuggestionEntityType.SoftwareVersion     => "software version",
+        SuggestionEntityType.Book                => "book",
+        SuggestionEntityType.Document            => "document",
+        SuggestionEntityType.Magazine            => "magazine",
+        SuggestionEntityType.MagazineIssue       => "magazine issue",
+        SuggestionEntityType.Person              => "person",
+        SuggestionEntityType.Screen              => "screen",
+        _                                        => type.ToString().ToLowerInvariant()
     };
 
     /// <summary>Serialize a values dictionary to a compact JSON string for the wire.</summary>

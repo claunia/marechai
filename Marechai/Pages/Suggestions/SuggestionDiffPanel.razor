@@ -1,15 +1,18 @@
 @using System.Text.Json
+@using DiffPlex.DiffBuilder
+@using DiffPlex.DiffBuilder.Model
 @using Marechai.ApiClient.Models
 @using Marechai.Data
 @using Marechai.Suggestions
 @inject IStringLocalizer<SuggestionDiffPanel> L
 
 @*
-    Renders a 3-column diff (Field / Current value / Suggested value) with a checkbox per row
-    so the admin can pick exactly which fields to accept. Bound HashSet<string> in the parent
-    receives the accepted-field-names set.
+    Renders a diff table per suggested field with a checkbox per row so the admin can pick
+    exactly which fields to accept. Bound HashSet<string> in the parent receives the
+    accepted-field-names set.
 
-    Suggested-side cells are highlighted to draw the eye toward the changed values.
+    For Markdown-kind fields, the row spans full width and renders a colored inline line-diff
+    (green inserts / red deletes / muted unchanged context) instead of the side-by-side cells.
 *@
 
 @if(_suggestedDict is null)
@@ -37,17 +40,67 @@ else
                 string fieldName = entry.Key;
                 _currentDict.TryGetValue(fieldName, out JsonElement currentValue);
                 bool isChecked = AcceptedFieldNames.Contains(fieldName);
+                SuggestionFieldDescriptor descriptor = GetFieldDescriptor(fieldName);
+                bool isMarkdown = descriptor?.Kind == SuggestionFieldKind.Markdown;
 
-                <tr>
-                    <td>
-                        <MudCheckBox T="bool" Value="@isChecked"
-                                     ValueChanged="@(v => ToggleAccepted(fieldName, v))"
-                                     Disabled="@ReadOnly"/>
-                    </td>
-                    <td>@FormatLabel(fieldName)</td>
-                    <td><span class="text-muted">@FormatValue(fieldName, currentValue)</span></td>
-                    <td><strong style="color: #1976d2;">@FormatValue(fieldName, entry.Value)</strong></td>
-                </tr>
+                if(isMarkdown)
+                {
+                    string currentText  = JsonElementToText(currentValue);
+                    string suggestedText = JsonElementToText(entry.Value);
+                    DiffPaneModel diff   = InlineDiffBuilder.Diff(currentText, suggestedText, ignoreWhiteSpace: false, ignoreCase: false);
+                    int inserted = 0, deleted = 0, unchanged = 0;
+                    foreach(DiffPiece line in diff.Lines)
+                    {
+                        switch(line.Type)
+                        {
+                            case ChangeType.Inserted: inserted++; break;
+                            case ChangeType.Deleted:  deleted++; break;
+                            default:                  unchanged++; break;
+                        }
+                    }
+
+                    <tr>
+                        <td>
+                            <MudCheckBox T="bool" Value="@isChecked"
+                                         ValueChanged="@(v => ToggleAccepted(fieldName, v))"
+                                         Disabled="@(ReadOnly || IsRequired(fieldName))"/>
+                        </td>
+                        <td colspan="3">
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-2">
+                                <strong>@FormatLabel(fieldName)</strong>
+                                <MudChip T="string" Size="Size.Small" Color="Color.Success" Variant="Variant.Outlined">+@inserted</MudChip>
+                                <MudChip T="string" Size="Size.Small" Color="Color.Error" Variant="Variant.Outlined">−@deleted</MudChip>
+                                <MudChip T="string" Size="Size.Small" Color="Color.Default" Variant="Variant.Outlined">@unchanged @L["unchanged"]</MudChip>
+                            </MudStack>
+                            @{ bool collapse = diff.Lines.Count > 500; }
+                            @if(collapse)
+                            {
+                                <MudExpansionPanels Elevation="0" Dense="true">
+                                    <MudExpansionPanel Text="@L["Show full diff ({0} lines)", diff.Lines.Count]">
+                                        @MarkdownDiffMarkup(diff)
+                                    </MudExpansionPanel>
+                                </MudExpansionPanels>
+                            }
+                            else
+                            {
+                                @MarkdownDiffMarkup(diff)
+                            }
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td>
+                            <MudCheckBox T="bool" Value="@isChecked"
+                                         ValueChanged="@(v => ToggleAccepted(fieldName, v))"
+                                         Disabled="@(ReadOnly || IsRequired(fieldName))"/>
+                        </td>
+                        <td>@FormatLabel(fieldName)</td>
+                        <td><span class="text-muted">@FormatCurrent(fieldName, currentValue)</span></td>
+                        <td><strong style="color: #1976d2;">@FormatSuggested(fieldName, entry.Value)</strong></td>
+                    </tr>
+                }
             }
         </tbody>
     </MudSimpleTable>
@@ -57,13 +110,21 @@ else
 {
     [Parameter] public SuggestionDto      Suggestion        { get; set; }
     [Parameter] public string             CurrentValuesJson { get; set; }
+    [Parameter] public Dictionary<string, string> CurrentLabels   { get; set; }
+    [Parameter] public Dictionary<string, string> SuggestedLabels { get; set; }
     [Parameter] public HashSet<string>    AcceptedFieldNames { get; set; } = new(StringComparer.Ordinal);
     [Parameter] public EventCallback<HashSet<string>> AcceptedFieldNamesChanged { get; set; }
     [Parameter] public bool               ReadOnly          { get; set; }
+    /// <summary>
+    ///     Optional set of field names that MUST be accepted (checkbox forced on + disabled).
+    ///     Used by the new-entity review flow to require <c>name</c> for additions.
+    /// </summary>
+    [Parameter] public IReadOnlyCollection<string> RequireFields { get; set; }
 
     SuggestionMetadata _metadata;
     Dictionary<string, JsonElement> _suggestedDict;
     Dictionary<string, JsonElement> _currentDict = new(StringComparer.Ordinal);
+    long? _seededRequireForId;
 
     protected override void OnParametersSet()
     {
@@ -74,6 +135,35 @@ else
         _suggestedDict = ParseJsonObject(Suggestion.SuggestedValuesJson);
         _currentDict   = ParseJsonObject(CurrentValuesJson);
     }
+
+    /// <summary>
+    ///     After the first render, seed any RequireFields into the accepted set AND notify the
+    ///     parent so its <c>Disabled</c> bindings re-evaluate. Done in <see cref="OnAfterRenderAsync" />
+    ///     instead of <see cref="OnParametersSet" /> so the parent's button correctly enables on
+    ///     first display (mutating the shared HashSet inside OnParametersSet doesn't trigger a
+    ///     parent re-render). Guarded by <c>_seededRequireForId</c> so re-renders don't loop.
+    /// </summary>
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(RequireFields is null || RequireFields.Count == 0 || _suggestedDict is null) return;
+        if(_seededRequireForId == Suggestion?.Id) return;
+
+        AcceptedFieldNames ??= new HashSet<string>(StringComparer.Ordinal);
+        bool added = false;
+        foreach(string r in RequireFields)
+        {
+            if(_suggestedDict.ContainsKey(r) && AcceptedFieldNames.Add(r))
+                added = true;
+        }
+
+        _seededRequireForId = Suggestion?.Id;
+
+        if(added && AcceptedFieldNamesChanged.HasDelegate)
+            await AcceptedFieldNamesChanged.InvokeAsync(AcceptedFieldNames);
+    }
+
+    bool IsRequired(string fieldName) =>
+        RequireFields is not null && RequireFields.Contains(fieldName);
 
     static Dictionary<string, JsonElement> ParseJsonObject(string json)
     {
@@ -86,11 +176,17 @@ else
         catch { return new Dictionary<string, JsonElement>(StringComparer.Ordinal); }
     }
 
-    string FormatLabel(string fieldName)
+    SuggestionFieldDescriptor GetFieldDescriptor(string fieldName)
     {
         if(_metadata is not null && _metadata.FieldsByName.TryGetValue(fieldName, out SuggestionFieldDescriptor d))
-            return L[d.LabelKey];
-        return fieldName;
+            return d;
+        return null;
+    }
+
+    string FormatLabel(string fieldName)
+    {
+        SuggestionFieldDescriptor d = GetFieldDescriptor(fieldName);
+        return d is null ? fieldName : L[d.LabelKey];
     }
 
     string FormatValue(string fieldName, JsonElement value)
@@ -109,8 +205,69 @@ else
         };
     }
 
+    string FormatCurrent(string fieldName, JsonElement value)
+    {
+        if(CurrentLabels is not null && CurrentLabels.TryGetValue(fieldName, out string label) &&
+           !string.IsNullOrEmpty(label))
+            return label;
+        return FormatValue(fieldName, value);
+    }
+
+    string FormatSuggested(string fieldName, JsonElement value)
+    {
+        if(SuggestedLabels is not null && SuggestedLabels.TryGetValue(fieldName, out string label) &&
+           !string.IsNullOrEmpty(label))
+            return label;
+        return FormatValue(fieldName, value);
+    }
+
+    static string JsonElementToText(JsonElement value)
+    {
+        if(value.ValueKind == JsonValueKind.Undefined || value.ValueKind == JsonValueKind.Null) return string.Empty;
+        return value.ValueKind == JsonValueKind.String ? value.GetString() ?? string.Empty : value.ToString();
+    }
+
+    RenderFragment MarkdownDiffMarkup(DiffPaneModel diff) => builder =>
+    {
+        builder.OpenElement(0, "div");
+        builder.AddAttribute(1, "class", "suggestion-markdown-diff");
+        builder.AddAttribute(2, "style",
+                             "font-family: var(--mud-default-font-family-monospace, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace); " +
+                             "font-size: 0.85rem; line-height: 1.5; max-height: 500px; overflow: auto; " +
+                             "border: 1px solid var(--mud-palette-lines-default); border-radius: 4px; padding: 4px 0; " +
+                             "background: var(--mud-palette-surface);");
+        int seq = 100;
+        foreach(DiffPiece line in diff.Lines)
+        {
+            string text   = line.Text ?? string.Empty;
+            string prefix = line.Type switch
+            {
+                ChangeType.Inserted => "+ ",
+                ChangeType.Deleted  => "- ",
+                _                   => "  "
+            };
+            string style = line.Type switch
+            {
+                ChangeType.Inserted =>
+                    "background-color: rgba(46, 160, 67, 0.18); border-left: 3px solid var(--mud-palette-success); padding: 2px 6px; white-space: pre-wrap; color: var(--mud-palette-text-primary);",
+                ChangeType.Deleted =>
+                    "background-color: rgba(248, 81, 73, 0.18); border-left: 3px solid var(--mud-palette-error); padding: 2px 6px; white-space: pre-wrap; color: var(--mud-palette-text-primary); text-decoration: line-through;",
+                _ =>
+                    "padding: 2px 6px; white-space: pre-wrap; color: var(--mud-palette-text-secondary);"
+            };
+            builder.OpenElement(seq++, "div");
+            builder.AddAttribute(seq++, "style", style);
+            builder.AddContent(seq++, prefix + text);
+            builder.CloseElement();
+        }
+        builder.CloseElement();
+    };
+
     async Task ToggleAccepted(string fieldName, bool isChecked)
     {
+        // Required fields cannot be toggled off (the checkbox is also disabled visually).
+        if(!isChecked && IsRequired(fieldName)) return;
+
         AcceptedFieldNames ??= new HashSet<string>(StringComparer.Ordinal);
         if(isChecked) AcceptedFieldNames.Add(fieldName);
         else          AcceptedFieldNames.Remove(fieldName);

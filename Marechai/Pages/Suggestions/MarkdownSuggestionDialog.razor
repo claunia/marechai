@@ -1,0 +1,183 @@
+@using System.Text.Json
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@using Marechai.Helpers
+@using Microsoft.JSInterop
+@inject IStringLocalizer<CompaniesService> L
+@inject ISnackbar               Snackbar
+@inject SuggestionsService      Service
+@inject IJSRuntime              JS
+
+@*
+    Markdown-editor suggestion dialog. Used for per-language CompanyDescription suggestions
+    today; designed to be reusable for other Markdown-bodied entity properties in the future.
+    Submit is disabled while the markdown is empty/whitespace, and the server validator
+    rejects empty markdown too (defence in depth).
+*@
+
+<MudDialog Style="max-height: 90vh;">
+    <DialogContent>
+        <MudText Typo="Typo.subtitle1" Class="mb-2">
+            @L["{0} description for {1}", LanguageDisplayName, EntityDisplayName]
+        </MudText>
+
+        @if(IsEdit)
+        {
+            <MudText Typo="Typo.body2" Class="mb-3" Color="Color.Secondary">
+                @L["Edit the existing description below. Your suggestion will be reviewed by an administrator."]
+            </MudText>
+        }
+        else
+        {
+            <MudText Typo="Typo.body2" Class="mb-3" Color="Color.Secondary">
+                @L["Write the new description below. Your suggestion will be reviewed by an administrator."]
+            </MudText>
+        }
+
+        <div id="@_containerId">
+            <MarkdownEditor Value="@_markdown"
+                            ValueChanged="OnEditorValueChanged"
+                            @ref="_editor"
+                            SpellChecker="false"
+                            MinHeight="300px"
+                            MaxHeight="500px"
+                            Placeholder="@L["Enter description in Markdown..."]"/>
+        </div>
+
+        <MudTextField T="string"
+                      Label="@L["Optional comment (References, sources, etc...)"]"
+                      Lines="2"
+                      MaxLength="2000"
+                      Class="mt-3"
+                      @bind-Value="_userComment"/>
+
+        @if(!string.IsNullOrWhiteSpace(_validationError))
+        {
+            <MudAlert Severity="Severity.Error" Class="mt-2">@_validationError</MudAlert>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary"
+                   Variant="Variant.Filled"
+                   OnClick="Submit"
+                   Disabled="@_submitting">
+            @if(_submitting)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true"/>
+            }
+            else
+            {
+                @L["Submit suggestion"]
+            }
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    public const int MaxMarkdownLength = 262144;
+
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public SuggestionEntityType EntityType          { get; set; }
+    [Parameter] public long                 EntityId            { get; set; }
+    [Parameter] public string               Subkey              { get; set; }
+    [Parameter] public string               EntityDisplayName   { get; set; }
+    [Parameter] public string               LanguageDisplayName { get; set; }
+    [Parameter] public string               InitialMarkdown     { get; set; }
+    [Parameter] public bool                 IsEdit              { get; set; }
+
+    MarkdownEditor _editor;
+    string         _markdown;
+    string         _userComment;
+    string         _validationError;
+    bool           _submitting;
+    readonly string _containerId = "md-suggest-" + System.Guid.NewGuid().ToString("N");
+
+    protected override void OnInitialized()
+    {
+        _markdown = InitialMarkdown ?? string.Empty;
+    }
+
+    /// <summary>
+    ///     Bind callback for the editor's <c>ValueChanged</c>. Note: in the current PSC.Blazor
+    ///     + MudDialog combination this callback is unreliable — diagnostics show <c>changes=0</c>
+    ///     even after typing, so we cannot trust <see cref="_markdown" /> to track the editor.
+    ///     We keep this binding so the field at least starts at the seeded value, and rely on
+    ///     a direct DOM read at submit time (see <see cref="Submit" />) to capture user edits.
+    /// </summary>
+    void OnEditorValueChanged(string value)
+    {
+        _markdown = value ?? string.Empty;
+    }
+
+    void Cancel() => MudDialog.Cancel();
+
+    async Task Submit()
+    {
+        _validationError = null;
+
+        // The PSC.Blazor.MarkdownEditor + MudDialog combination produces a phantom binding:
+        // the JS-side EasyMDE pushes ValueChanged to a stale C# instance from a prior render
+        // cycle, while our @ref captures a different (uninitialized) instance. Result:
+        // _markdown stays at the seeded value despite the user typing, and PSC's own
+        // GetValueAsync returns null because Initialized is false on our @ref'd instance.
+        // The only reliable read is to walk the DOM and call CodeMirror.getValue() on the
+        // live editor — that is exactly what marechaiReadEasyMdeValue does.
+        try
+        {
+            string fresh = await JS.InvokeAsync<string>("marechaiReadEasyMdeValue", "#" + _containerId);
+            if(fresh is not null) _markdown = fresh;
+        }
+        catch
+        {
+            // If the JS helper can't be reached, fall back to whatever the bound field holds.
+        }
+
+        if(string.IsNullOrWhiteSpace(_markdown))
+        {
+            _validationError = L["Description cannot be empty."];
+            return;
+        }
+
+        if(_markdown.Length > MaxMarkdownLength)
+        {
+            _validationError = L["Description is too long ({0} / {1} characters).", _markdown.Length, MaxMarkdownLength];
+            return;
+        }
+
+        _submitting = true;
+        try
+        {
+            var payload = new Dictionary<string, object>(StringComparer.Ordinal)
+            {
+                ["markdown"] = _markdown
+            };
+
+            var dto = new SuggestionDto
+            {
+                EntityType          = (int?)EntityType,
+                EntityId            = EntityId,
+                Subkey              = Subkey,
+                Status              = (int?)SuggestionStatus.Pending,
+                UserComment         = string.IsNullOrWhiteSpace(_userComment) ? null : _userComment.Trim(),
+                SuggestedValuesJson = JsonSerializer.Serialize(payload)
+            };
+
+            var (created, error) = await Service.CreateAsync(dto);
+
+            if(created is null)
+            {
+                _validationError = string.IsNullOrWhiteSpace(error) ? L["Failed to submit suggestion."].Value : error;
+                return;
+            }
+
+            Snackbar.Add(L["Description suggestion submitted. Thank you for contributing!"], Severity.Success);
+            MudDialog.Close(DialogResult.Ok(created));
+        }
+        finally
+        {
+            _submitting = false;
+        }
+    }
+}

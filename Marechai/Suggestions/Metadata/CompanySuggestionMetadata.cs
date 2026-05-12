@@ -54,6 +54,8 @@ public sealed class CompanySuggestionMetadata : SuggestionMetadata
     public const string FieldWebsite          = "website";
     public const string FieldTwitter          = "twitter";
     public const string FieldFacebook         = "facebook";
+    public const string FieldCountryId        = "country_id";
+    public const string FieldSoldToId         = "sold_to_id";
 
     static readonly IReadOnlyList<SuggestionEnumOption> StatusOptions = new[]
     {
@@ -88,7 +90,9 @@ public sealed class CompanySuggestionMetadata : SuggestionMetadata
         new(FieldPostalCode,       "Postal code",       SuggestionFieldKind.Text, MaxLength: 25),
         new(FieldWebsite,          "Website",           SuggestionFieldKind.Url,  MaxLength: 255),
         new(FieldTwitter,          "Twitter",           SuggestionFieldKind.Text, MaxLength: 45),
-        new(FieldFacebook,         "Facebook",          SuggestionFieldKind.Text, MaxLength: 45)
+        new(FieldFacebook,         "Facebook",          SuggestionFieldKind.Text, MaxLength: 45),
+        new(FieldCountryId,        "Country",           SuggestionFieldKind.ForeignKeyCountry),
+        new(FieldSoldToId,         "Sold to / Merged with", SuggestionFieldKind.ForeignKeyCompany)
     };
 
     static CompanySuggestionMetadata() => SuggestionMetadataRegistry.Register(new CompanySuggestionMetadata());
@@ -99,6 +103,8 @@ public sealed class CompanySuggestionMetadata : SuggestionMetadata
     public override SuggestionEntityType EntityType => SuggestionEntityType.Company;
 
     public override IReadOnlyList<SuggestionFieldDescriptor> Fields => s_fields;
+
+    public override string PrimaryFieldName => FieldName;
 
     public override Dictionary<string, object> ExtractCurrentValues(object currentDto)
     {
@@ -120,6 +126,8 @@ public sealed class CompanySuggestionMetadata : SuggestionMetadata
         result[FieldWebsite]           = c.Website;
         result[FieldTwitter]           = c.Twitter;
         result[FieldFacebook]          = c.Facebook;
+        result[FieldCountryId]         = c.CountryId; // int? on Kiota wire (server stores short)
+        result[FieldSoldToId]          = c.SoldToId;  // int? on Kiota wire
 
         return result;
     }
@@ -156,6 +164,13 @@ public sealed class CompanySuggestionMetadata : SuggestionMetadata
                 2 => "Year only",
                 _ => string.Empty
             };
+        }
+
+        // FK ids: fall back to "#{id}" when the server didn't resolve a display label.
+        if(fieldName == FieldCountryId || fieldName == FieldSoldToId)
+        {
+            int? i = ToInt(value);
+            return i.HasValue ? $"#{i.Value}" : string.Empty;
         }
 
         if(value is JsonElement je)

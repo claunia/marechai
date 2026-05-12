@@ -29,10 +29,13 @@
 @page "/companies/country/{CountryId:int}"
 @page "/companies/{StartingCharacter}"
 @using Marechai.ApiClient.Models
+@using Marechai.Data
+@using Marechai.Pages.Suggestions
 @inherits OwningComponentBase<CompaniesService>
 @inject IStringLocalizer<CompaniesService>  L
 @inject IStringLocalizer<CountriesService> CountryL
 @inject ApiAssetUrlProvider                AssetUrls
+@inject IDialogService                     DialogService
 
 @if(_companies is null)
 {
@@ -45,9 +48,23 @@
 
 @* ── Hero Header ── *@
 <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
-    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3" Class="mb-3">
-        <MudIcon Icon="@Icons.Material.Filled.Business" Size="Size.Large" Style="color: white;"/>
-        <MudText Typo="Typo.h4" Style="color: white;">@L["Companies"]</MudText>
+    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-3">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+            <MudIcon Icon="@Icons.Material.Filled.Business" Size="Size.Large" Style="color: white;"/>
+            <MudText Typo="Typo.h4" Style="color: white;">@L["Companies"]</MudText>
+        </MudStack>
+        <AuthorizeView>
+            <Authorized>
+                <MudTooltip Text="@L["Suggest a new company to be added to the catalogue."]">
+                    <MudButton Variant="Variant.Outlined" Size="Size.Small" Color="Color.Inherit"
+                               StartIcon="@Icons.Material.Filled.AddBusiness"
+                               OnClick="OpenNewCompanyDialog"
+                               Style="color: white; border-color: rgba(255,255,255,0.7);">
+                        @L["Suggest new company"]
+                    </MudButton>
+                </MudTooltip>
+            </Authorized>
+        </AuthorizeView>
     </MudStack>
     @if(CountryId.HasValue)
     {

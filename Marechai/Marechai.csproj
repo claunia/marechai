@@ -28,6 +28,7 @@
     <PackageReference Include="Humanizer"/>
     <PackageReference Include="MudBlazor"/>
     <PackageReference Include="Markdig"/>
+    <PackageReference Include="DiffPlex"/>
     <PackageReference Include="HtmlSanitizer"/>
     <PackageReference Include="PSC.Blazor.Components.MarkdownEditor"/>
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization"/>

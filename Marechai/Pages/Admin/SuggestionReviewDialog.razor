@@ -1,6 +1,7 @@
 @using Marechai.ApiClient.Models
 @using Marechai.Data
 @using Marechai.Pages.Suggestions
+@using Marechai.Suggestions
 @inject SuggestionsService Service
 @inject ISnackbar          Snackbar
 @inject IStringLocalizer<SuggestionsQueue> L
@@ -28,11 +29,30 @@
                 {
                     <MudAlert Severity="Severity.Warning">@L["The targeted entity has been deleted. Accepting will close the suggestion as stale."]</MudAlert>
                 }
+                @if(!Suggestion.EntityId.HasValue)
+                {
+                    <MudAlert Severity="Severity.Info">@L["This is a brand-new entity suggestion. Name must be accepted to create it."]</MudAlert>
+                }
                 <MudText Typo="Typo.body2">
-                    <strong>@L["Entity"]:</strong> @(Suggestion.EntityType.HasValue ? ((SuggestionEntityType)Suggestion.EntityType.Value).ToString() : "") #@Suggestion.EntityId
-                    @if(!string.IsNullOrWhiteSpace(Suggestion.EntityDisplayName))
+                    @if(!Suggestion.EntityId.HasValue)
                     {
-                        <text> — @Suggestion.EntityDisplayName</text>
+                        <strong>@L["New {0}:", EntityTypeLabel]</strong>
+                        <text> </text>
+                        <text>@(Suggestion.EntityDisplayName ?? "—")</text>
+                    }
+                    else
+                    {
+                        <strong>@L["Entity"]:</strong>
+                        <text> </text>
+                        @($"{EntityTypeLabel} #{Suggestion.EntityId}")
+                        @if(!string.IsNullOrWhiteSpace(Suggestion.EntityDisplayName))
+                        {
+                            <text> — @Suggestion.EntityDisplayName</text>
+                        }
+                    }
+                    @if(!string.IsNullOrEmpty(_diff?.EntitySecondaryLabel))
+                    {
+                        <text> @_diff.EntitySecondaryLabel</text>
                     }
                 </MudText>
                 @if(!string.IsNullOrWhiteSpace(Suggestion.UserComment))
@@ -46,9 +66,30 @@
 
             <SuggestionDiffPanel Suggestion="@Suggestion"
                                  CurrentValuesJson="@_diff.CurrentValuesJson"
+                                 CurrentLabels="@_currentLabels"
+                                 SuggestedLabels="@_suggestedLabels"
+                                 RequireFields="@_requireFields"
                                  AcceptedFieldNames="@_accepted"
                                  AcceptedFieldNamesChanged="OnAcceptedChanged"
                                  ReadOnly="@((SuggestionStatus?)Suggestion.Status != SuggestionStatus.Pending)"/>
+
+            @if((SuggestionStatus?)Suggestion.Status == SuggestionStatus.Pending)
+            {
+                <MudTextField T="string"
+                              @bind-Value="_adminComment"
+                              Label="@L["Reviewer comment (optional — included in the message back to the user)"]"
+                              Lines="3"
+                              MaxLength="2000"
+                              Variant="Variant.Outlined"
+                              Class="mt-3"/>
+            }
+            else if(!string.IsNullOrWhiteSpace(Suggestion.AdminReviewComment))
+            {
+                <MudPaper Outlined="true" Class="pa-2 mt-3">
+                    <MudText Typo="Typo.body2"><strong>@L["Reviewer comment:"]</strong></MudText>
+                    <MudText Typo="Typo.body2" Style="white-space: pre-wrap;">@Suggestion.AdminReviewComment</MudText>
+                </MudPaper>
+            }
         }
 
         @if(!string.IsNullOrEmpty(_error))
@@ -89,11 +130,57 @@
     bool              _loaded;
     bool              _submitting;
     string            _error;
+    string            _adminComment;
+    Dictionary<string, string> _currentLabels;
+    Dictionary<string, string> _suggestedLabels;
+    string[]          _requireFields;
+
+    string EntityTypeLabel =>
+        Suggestion.EntityType.HasValue
+            ? ((SuggestionEntityType)Suggestion.EntityType.Value).ToString()
+            : string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         _diff   = await Service.GetDiffAsync(Suggestion.Id ?? 0);
+        _currentLabels   = ToStringMap(_diff?.CurrentLabels?.AdditionalData);
+        _suggestedLabels = ToStringMap(_diff?.SuggestedLabels?.AdditionalData);
+
+        // For brand-new entity suggestions, force the metadata-declared primary field (e.g.
+        // "name" on Company) into the accepted set: it MUST be checked or the server will
+        // refuse to create the entity, so the admin shouldn't be able to uncheck it.
+        if(!Suggestion.EntityId.HasValue && Suggestion.EntityType.HasValue)
+        {
+            SuggestionMetadata md = SuggestionMetadataRegistry.Get((SuggestionEntityType)Suggestion.EntityType.Value);
+            if(md?.PrimaryFieldName is not null)
+                _requireFields = new[] { md.PrimaryFieldName };
+        }
+
         _loaded = true;
+    }
+
+    /// <summary>
+    ///     Kiota deserialises the per-field FK label maps into an <see cref="IAdditionalDataHolder" />
+    ///     wrapper (each value boxed as <see cref="System.Text.Json.JsonElement" />). Convert to
+    ///     a plain <c>Dictionary&lt;string, string&gt;</c> for the diff panel.
+    /// </summary>
+    static Dictionary<string, string> ToStringMap(IDictionary<string, object> source)
+    {
+        if(source is null || source.Count == 0) return null;
+        var result = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach(KeyValuePair<string, object> kv in source)
+        {
+            if(kv.Value is null) continue;
+            string s = kv.Value switch
+            {
+                string str                                                  => str,
+                System.Text.Json.JsonElement je when je.ValueKind == System.Text.Json.JsonValueKind.String => je.GetString(),
+                System.Text.Json.JsonElement je                             => je.ToString(),
+                _                                                           => kv.Value.ToString()
+            };
+            if(!string.IsNullOrEmpty(s)) result[kv.Key] = s;
+        }
+        return result.Count == 0 ? null : result;
     }
 
     void OnAcceptedChanged(HashSet<string> updated)
@@ -124,7 +211,8 @@
         {
             var review = new SuggestionReviewDto
             {
-                AcceptedFieldNames = accepted.ToList()
+                AcceptedFieldNames = accepted.ToList(),
+                AdminComment       = string.IsNullOrWhiteSpace(_adminComment) ? null : _adminComment.Trim()
             };
 
             var (updated, error) = await Service.ReviewAsync(Suggestion.Id ?? 0, review);

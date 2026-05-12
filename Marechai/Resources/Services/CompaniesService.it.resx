@@ -522,4 +522,29 @@
         <value>Solo anno</value>
         <comment>Year only</comment>
     </data>
-    <data name="Suggest changes" xml:space="preserve"><value>Suggerisci modifiche</value></data></root>
+    <data name="Suggest changes" xml:space="preserve"><value>Suggerisci modifiche</value></data>    <data name="Suggest description" xml:space="preserve"><value>Suggerisci descrizione</value></data>
+    <data name="Suggest translation" xml:space="preserve"><value>Suggerisci traduzione</value></data>
+    <data name="We do not have a description for this company, you could collaborate by suggesting one" xml:space="preserve"><value>Non abbiamo una descrizione per questa azienda, puoi collaborare suggerendone una</value></data>
+    <data name="We do not have a description in your language, you could collaborate by translating the English description we show below" xml:space="preserve"><value>Non abbiamo una descrizione nella tua lingua, puoi collaborare traducendo la descrizione in inglese mostrata sotto</value></data>
+    <data name="Choose language for description" xml:space="preserve"><value>Scegli la lingua per la descrizione</value></data>
+    <data name="Choose the language for the description you want to suggest." xml:space="preserve"><value>Scegli la lingua della descrizione che vuoi suggerire.</value></data>
+    <data name="{0} description for {1}" xml:space="preserve"><value>Descrizione in {0} per {1}</value></data>
+    <data name="Has description" xml:space="preserve"><value>Ha descrizione</value></data>
+    <data name="Empty" xml:space="preserve"><value>Vuoto</value></data>
+    <data name="You have a pending suggestion" xml:space="preserve"><value>Hai un suggerimento in sospeso</value></data>
+    <data name="Description (Markdown)" xml:space="preserve"><value>Descrizione (Markdown)</value></data>
+    <data name="Edit the existing description below. Your suggestion will be reviewed by an administrator." xml:space="preserve"><value>Modifica la descrizione esistente di seguito. Un amministratore esaminerà il tuo suggerimento.</value></data>
+    <data name="Write the new description below. Your suggestion will be reviewed by an administrator." xml:space="preserve"><value>Scrivi sotto la nuova descrizione. Un amministratore esaminerà il tuo suggerimento.</value></data>
+    <data name="Enter description in Markdown..." xml:space="preserve"><value>Inserisci la descrizione in Markdown...</value></data>
+    <data name="Character count: {0} / {1}" xml:space="preserve"><value>Conteggio caratteri: {0} / {1}</value></data>
+    <data name="Optional comment (References, sources, etc...)" xml:space="preserve"><value>Commento opzionale (riferimenti, fonti, ecc.)</value></data>
+    <data name="Submit suggestion" xml:space="preserve"><value>Invia suggerimento</value></data>
+    <data name="Description suggestion submitted. Thank you for contributing!" xml:space="preserve"><value>Suggerimento di descrizione inviato. Grazie per il tuo contributo!</value></data>
+    <data name="Description cannot be empty." xml:space="preserve"><value>La descrizione non può essere vuota.</value></data>
+    <data name="Description is too long ({0} / {1} characters)." xml:space="preserve"><value>La descrizione è troppo lunga ({0} / {1} caratteri).</value></data>
+    <data name="No changes detected — modify the description before submitting." xml:space="preserve"><value>Nessuna modifica rilevata — modifica la descrizione prima di inviare.</value></data>
+    <data name="Failed to submit suggestion." xml:space="preserve"><value>Invio del suggerimento non riuscito.</value></data>
+    <data name="Suggest new company" xml:space="preserve"><value>Suggerisci nuova azienda</value></data>
+    <data name="Suggest a new company to be added to the catalogue." xml:space="preserve"><value>Suggerisci una nuova azienda da aggiungere al catalogo.</value></data>
+    <data name="Sold to / Merged with" xml:space="preserve"><value>Venduta a / Fusa con</value></data>
+</root>

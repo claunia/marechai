@@ -56,4 +56,6 @@
     <data name="Field" xml:space="preserve"><value>Campo</value></data>
     <data name="Current value" xml:space="preserve"><value>Valore attuale</value></data>
     <data name="Suggested value" xml:space="preserve"><value>Valore suggerito</value></data>
+    <data name="unchanged" xml:space="preserve"><value>invariate</value></data>
+    <data name="Show full diff ({0} lines)" xml:space="preserve"><value>Mostra diff completo ({0} righe)</value></data>
 </root>

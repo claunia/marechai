@@ -27,7 +27,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Marechai.Data;
+using Marechai.Pages.Suggestions;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 
 namespace Marechai.Pages.Companies;
 
@@ -97,5 +100,26 @@ public partial class Index
         _filteredCompanies = string.IsNullOrWhiteSpace(_searchText)
             ? _companies
             : _companies.Where(c => c.Name != null && c.Name.Contains(_searchText, System.StringComparison.OrdinalIgnoreCase)).ToList();
+    }
+
+    /// <summary>
+    ///     Open the metadata-driven new-entity dialog targeted at <see cref="SuggestionEntityType.Company" />.
+    ///     The dialog handles submission + validation; this page does not need to refresh on success
+    ///     because the new company only appears in the listing once an admin accepts the suggestion.
+    /// </summary>
+    async Task OpenNewCompanyDialog()
+    {
+        var parameters = new DialogParameters<NewEntitySuggestionDialog>
+        {
+            { x => x.EntityType, SuggestionEntityType.Company }
+        };
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Medium
+        };
+
+        await DialogService.ShowAsync<NewEntitySuggestionDialog>(L["Suggest new company"], parameters, options);
     }
 }

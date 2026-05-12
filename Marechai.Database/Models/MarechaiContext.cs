@@ -3183,7 +3183,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
             entity.Property(e => e.EntityType).HasConversion<byte>().IsRequired();
             entity.Property(e => e.Status).HasConversion<byte>().IsRequired();
 
-            entity.HasIndex(e => new { e.EntityType, e.EntityId });
+            entity.HasIndex(e => new { e.EntityType, e.EntityId, e.Subkey, e.Status });
             entity.HasIndex(e => e.CreatedById);
             entity.HasIndex(e => new { e.Status, e.CreatedOn });
 

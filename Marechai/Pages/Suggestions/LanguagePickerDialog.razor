@@ -1,0 +1,114 @@
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@using Marechai.Helpers
+@inject IStringLocalizer<CompaniesService> L
+
+@*
+    Language picker dialog: user chooses which language they want to suggest a description for.
+    Each language button shows a status chip (Has description / Empty / Pending suggestion).
+    A pending suggestion DISABLES the button (user must withdraw before resubmitting).
+
+    Closes with DialogResult.Ok(string) where the string is the chosen ISO-639-3 code, or
+    DialogResult.Cancel() if dismissed.
+*@
+
+<MudDialog>
+    <DialogContent>
+        <MudText Typo="Typo.body2" Class="mb-3">
+            @L["Choose the language for the description you want to suggest."]
+        </MudText>
+
+        <MudStack Spacing="2">
+            @foreach((string code, string nameKey) in _languageOptions)
+            {
+                bool hasDescription = ExistingLanguages?.Contains(code) == true;
+                bool hasPending     = PendingLanguages?.Contains(code)  == true;
+                bool isPreselected  = code == DefaultLanguage;
+
+                <MudButton Variant="@(isPreselected ? Variant.Filled : Variant.Outlined)"
+                           Color="@(isPreselected ? Color.Primary : Color.Default)"
+                           FullWidth="true"
+                           Disabled="@hasPending"
+                           OnClick="@(() => Choose(code))"
+                           StartIcon="@Icons.Material.Filled.Translate">
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Style="width: 100%;">
+                        <MudText>@L[nameKey]</MudText>
+                        @if(hasPending)
+                        {
+                            <MudChip T="string" Size="Size.Small" Color="Color.Warning" Variant="Variant.Filled">
+                                @L["You have a pending suggestion"]
+                            </MudChip>
+                        }
+                        else if(hasDescription)
+                        {
+                            <MudChip T="string" Size="Size.Small" Color="Color.Success" Variant="Variant.Outlined">
+                                @L["Has description"]
+                            </MudChip>
+                        }
+                        else
+                        {
+                            <MudChip T="string" Size="Size.Small" Color="Color.Default" Variant="Variant.Outlined">
+                                @L["Empty"]
+                            </MudChip>
+                        }
+                    </MudStack>
+                </MudButton>
+            }
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; }
+
+    /// <summary>
+    ///     ISO-639-3 codes of languages that already have a description for this entity.
+    ///     Drives the "Has description" / "Empty" status chip.
+    /// </summary>
+    [Parameter] public HashSet<string> ExistingLanguages { get; set; }
+
+    /// <summary>
+    ///     ISO-639-3 codes of languages where the current user already has a pending
+    ///     description suggestion for this entity. Disables the button to prevent 409 dedupe.
+    /// </summary>
+    [Parameter] public HashSet<string> PendingLanguages { get; set; }
+
+    /// <summary>
+    ///     ISO-639-3 code of the user's UI language (or <c>"eng"</c> fallback). Highlighted
+    ///     as the default option.
+    /// </summary>
+    [Parameter] public string DefaultLanguage { get; set; } = "eng";
+
+    // The 5 fully-supported UI languages, plus lat/por which exist server-side. Latin and
+    // Portuguese are only shown when the entity already has a description in them OR the
+    // user's UI language happens to be one of them (rare). Keep them out of the default list.
+    static readonly (string Code, string NameKey)[] _baseLanguages =
+    [
+        ("eng", "English"),
+        ("spa", "Spanish"),
+        ("deu", "German"),
+        ("fra", "French"),
+        ("ita", "Italian")
+    ];
+
+    List<(string Code, string NameKey)> _languageOptions;
+
+    protected override void OnInitialized()
+    {
+        _languageOptions = new List<(string, string)>(_baseLanguages);
+
+        // Include lat/por only if relevant (already has a description, or user's UI language).
+        foreach(string extra in new[] { "lat", "por" })
+        {
+            if(ExistingLanguages?.Contains(extra) == true || DefaultLanguage == extra)
+                _languageOptions.Add((extra, extra == "lat" ? "Latin" : "Portuguese"));
+        }
+    }
+
+    void Choose(string code) => MudDialog.Close(DialogResult.Ok(code));
+
+    void Cancel() => MudDialog.Cancel();
+}

@@ -670,4 +670,29 @@
         <value>Error al eliminar persona.</value>
         <comment>Error message when removing a person fails</comment>
     </data>
-<data name="Date precision" xml:space="preserve"><value>Precisión de fecha</value></data><data name="Full date" xml:space="preserve"><value>Fecha completa</value></data><data name="Month and year only" xml:space="preserve"><value>Solo mes y año</value></data><data name="Year only" xml:space="preserve"><value>Solo año</value></data>    <data name="Suggest changes" xml:space="preserve"><value>Sugerir cambios</value></data></root>
+<data name="Date precision" xml:space="preserve"><value>Precisión de fecha</value></data><data name="Full date" xml:space="preserve"><value>Fecha completa</value></data><data name="Month and year only" xml:space="preserve"><value>Solo mes y año</value></data><data name="Year only" xml:space="preserve"><value>Solo año</value></data>    <data name="Suggest changes" xml:space="preserve"><value>Sugerir cambios</value></data>    <data name="Suggest description" xml:space="preserve"><value>Sugerir descripción</value></data>
+    <data name="Suggest translation" xml:space="preserve"><value>Sugerir traducción</value></data>
+    <data name="We do not have a description for this company, you could collaborate by suggesting one" xml:space="preserve"><value>No tenemos una descripción de esta empresa, puedes colaborar sugiriendo una</value></data>
+    <data name="We do not have a description in your language, you could collaborate by translating the English description we show below" xml:space="preserve"><value>No tenemos una descripción en tu idioma, puedes colaborar traduciendo la descripción en inglés que mostramos abajo</value></data>
+    <data name="Choose language for description" xml:space="preserve"><value>Elige el idioma de la descripción</value></data>
+    <data name="Choose the language for the description you want to suggest." xml:space="preserve"><value>Elige el idioma de la descripción que quieres sugerir.</value></data>
+    <data name="{0} description for {1}" xml:space="preserve"><value>Descripción en {0} para {1}</value></data>
+    <data name="Has description" xml:space="preserve"><value>Tiene descripción</value></data>
+    <data name="Empty" xml:space="preserve"><value>Vacío</value></data>
+    <data name="You have a pending suggestion" xml:space="preserve"><value>Tienes una sugerencia pendiente</value></data>
+    <data name="Description (Markdown)" xml:space="preserve"><value>Descripción (Markdown)</value></data>
+    <data name="Edit the existing description below. Your suggestion will be reviewed by an administrator." xml:space="preserve"><value>Edita la descripción existente abajo. Un administrador revisará tu sugerencia.</value></data>
+    <data name="Write the new description below. Your suggestion will be reviewed by an administrator." xml:space="preserve"><value>Escribe abajo la nueva descripción. Un administrador revisará tu sugerencia.</value></data>
+    <data name="Enter description in Markdown..." xml:space="preserve"><value>Escribe la descripción en Markdown...</value></data>
+    <data name="Character count: {0} / {1}" xml:space="preserve"><value>Caracteres: {0} / {1}</value></data>
+    <data name="Optional comment (References, sources, etc...)" xml:space="preserve"><value>Comentario opcional (referencias, fuentes, etc.)</value></data>
+    <data name="Submit suggestion" xml:space="preserve"><value>Enviar sugerencia</value></data>
+    <data name="Description suggestion submitted. Thank you for contributing!" xml:space="preserve"><value>Sugerencia de descripción enviada. ¡Gracias por colaborar!</value></data>
+    <data name="Description cannot be empty." xml:space="preserve"><value>La descripción no puede estar vacía.</value></data>
+    <data name="Description is too long ({0} / {1} characters)." xml:space="preserve"><value>La descripción es demasiado larga ({0} / {1} caracteres).</value></data>
+    <data name="No changes detected — modify the description before submitting." xml:space="preserve"><value>No se detectaron cambios — modifica la descripción antes de enviar.</value></data>
+    <data name="Failed to submit suggestion." xml:space="preserve"><value>No se pudo enviar la sugerencia.</value></data>
+    <data name="Suggest new company" xml:space="preserve"><value>Sugerir nueva empresa</value></data>
+    <data name="Suggest a new company to be added to the catalogue." xml:space="preserve"><value>Sugiere una nueva empresa para añadir al catálogo.</value></data>
+    <data name="Sold to / Merged with" xml:space="preserve"><value>Vendida a / Fusionada con</value></data>
+</root>

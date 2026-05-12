@@ -70,6 +70,7 @@ public static class SuggestionMetadataRegistry
             // but for safety we also call it here so the registry is hydrated even if the
             // per-entity class hasn't been touched anywhere else in the process.
             Marechai.Suggestions.Metadata.CompanySuggestionMetadata.EnsureRegistered();
+            Marechai.Suggestions.Metadata.CompanyDescriptionSuggestionMetadata.EnsureRegistered();
             s_seeded = true;
         }
     }

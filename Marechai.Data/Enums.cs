@@ -991,7 +991,12 @@ public enum SuggestionEntityType : byte
     Magazine         = 13,
     MagazineIssue    = 14,
     Person           = 15,
-    Screen           = 16
+    Screen           = 16,
+    /// <summary>
+    ///     A markdown description of a Company, scoped per language. The Subkey on the
+    ///     Suggestion row holds the ISO-639-3 language code (e.g. "eng", "spa").
+    /// </summary>
+    CompanyDescription = 17
 }
 
 public enum SuggestionStatus : byte

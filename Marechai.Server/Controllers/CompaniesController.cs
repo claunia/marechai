@@ -438,6 +438,10 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
         await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntityAsync(
             context, Marechai.Data.SuggestionEntityType.Company, id, entityName);
 
+        // Cascade: also mark stale every per-language description suggestion for this company.
+        await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntityAsync(
+            context, Marechai.Data.SuggestionEntityType.CompanyDescription, id, entityName);
+
         return Ok();
     }
 
@@ -555,9 +559,25 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
 
         if(description is null) return NotFound();
 
+        // Capture display data BEFORE the cascade, while the company + language rows are still
+        // available for the system message body.
+        string companyName  = await context.Companies.AsNoTracking()
+                                           .Where(c => c.Id == id)
+                                           .Select(c => c.Name)
+                                           .FirstOrDefaultAsync();
+        string langName     = await context.Iso639.AsNoTracking()
+                                           .Where(l => l.Id == languageCode)
+                                           .Select(l => l.ReferenceName)
+                                           .FirstOrDefaultAsync();
+        string subkeyLabel  = $"({langName ?? languageCode} description)";
+
         context.CompanyDescriptions.Remove(description);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntitySubkeyAsync(
+            context, Marechai.Data.SuggestionEntityType.CompanyDescription,
+            id, languageCode, companyName ?? $"#{id}", subkeyLabel);
 
         return Ok();
     }

@@ -44,6 +44,14 @@ public class SuggestionDto : BaseDto<long>
     [JsonPropertyName("entity_id")]
     public long? EntityId { get; set; }
 
+    /// <summary>
+    ///     Optional discriminator within an entity (e.g. ISO-639-3 language code on a
+    ///     <see cref="SuggestionEntityType.CompanyDescription" /> suggestion). <c>null</c> for
+    ///     entity types that do not need it.
+    /// </summary>
+    [JsonPropertyName("subkey")]
+    public string? Subkey { get; set; }
+
     [JsonPropertyName("entity_display_name")]
     public string? EntityDisplayName { get; set; }
 
@@ -73,6 +81,13 @@ public class SuggestionDto : BaseDto<long>
 
     [JsonPropertyName("user_comment")]
     public string? UserComment { get; set; }
+
+    /// <summary>
+    ///     Optional free-text comment from the reviewing admin. <c>null</c> while Pending or
+    ///     when the admin chose not to leave a comment.
+    /// </summary>
+    [JsonPropertyName("admin_review_comment")]
+    public string? AdminReviewComment { get; set; }
 
     /// <summary>JSON object: { "fieldName": value, ... }. Empty rejection-state suggestions never reach the wire.</summary>
     [JsonPropertyName("suggested_values_json")]

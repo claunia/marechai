@@ -366,6 +366,32 @@ public partial class Profile
         _                                                 => "—"
     };
 
+    /// <summary>
+    ///     Compact secondary tag for per-subkey suggestions (e.g. <c>"(Spanish description)"</c>
+    ///     for a <see cref="Marechai.Data.SuggestionEntityType.CompanyDescription" /> entry).
+    /// </summary>
+    static string SuggestionSubkeyLabel(Marechai.ApiClient.Models.SuggestionDto s)
+    {
+        if(string.IsNullOrEmpty(s.Subkey)) return string.Empty;
+
+        if(s.EntityType == (int?)Marechai.Data.SuggestionEntityType.CompanyDescription)
+            return $"({SuggestionLanguageDisplayName(s.Subkey)} description)";
+
+        return $"({s.Subkey})";
+    }
+
+    static string SuggestionLanguageDisplayName(string iso639_3) => iso639_3 switch
+    {
+        "eng" => "English",
+        "spa" => "Spanish",
+        "deu" => "German",
+        "fra" => "French",
+        "ita" => "Italian",
+        "lat" => "Latin",
+        "por" => "Portuguese",
+        _     => iso639_3
+    };
+
     async Task RemoveBookAsync(long? bookId)
     {
         if(bookId is null) return;

@@ -43,6 +43,11 @@ public partial class View
     List<MachineDto>     _consoles;
     List<MachineDto>     _smartphones;
     string               _description;
+    string               _descriptionLanguageServed;
+    bool                 _descriptionFellBack;
+    bool                 _hasAnyDescription;
+    HashSet<string>      _existingDescriptionLangs = new(StringComparer.Ordinal);
+    HashSet<string>      _pendingDescriptionLangs  = new(StringComparer.Ordinal);
     List<GpuDto>         _gpus;
     List<SoundSynthDto>  _soundSynths;
     List<ProcessorDto>   _processors;
@@ -99,7 +104,7 @@ public partial class View
         _software        = await Service.GetSoftwareAsync(Id);
         _people          = await Service.GetPeopleAsync(Id);
 
-        _description = await Service.GetDescriptionTextAsync(Id, UiLanguage.GetIso639_3());
+        await LoadDescriptionStateAsync();
         _soldTo      = await Service.GetSoldToAsync(_company.SoldToId);
         _logos       = await CompanyLogosService.GetByCompany(Id);
 
@@ -109,6 +114,34 @@ public partial class View
         catch(ObjectDisposedException)
         {
             // Component was disposed during async loading — ignore
+        }
+    }
+
+    /// <summary>
+    ///     Load the description for the current UI language with English fallback, plus the
+    ///     metadata (which languages already have a description) used to drive the picker
+    ///     status chips. Sets <see cref="_descriptionFellBack" /> when the served language
+    ///     differs from the requested UI language.
+    /// </summary>
+    async Task LoadDescriptionStateAsync()
+    {
+        string requested = UiLanguage.GetIso639_3();
+        CompanyDescriptionDto served = await Service.GetDescriptionAsync(Id, requested);
+
+        _description               = served?.Html ?? served?.Markdown ?? string.Empty;
+        _descriptionLanguageServed = served?.LanguageCode;
+        _hasAnyDescription         = !string.IsNullOrWhiteSpace(_description);
+        _descriptionFellBack       = _hasAnyDescription
+                                  && _descriptionLanguageServed is not null
+                                  && !string.Equals(_descriptionLanguageServed, requested, StringComparison.Ordinal);
+
+        // Lightweight metadata fetch so the picker can show "Has description" / "Empty" chips.
+        List<CompanyDescriptionDto> all = await Service.GetDescriptionsAsync(Id);
+        _existingDescriptionLangs = new HashSet<string>(StringComparer.Ordinal);
+        foreach(CompanyDescriptionDto d in all ?? new List<CompanyDescriptionDto>())
+        {
+            if(!string.IsNullOrEmpty(d.LanguageCode))
+                _existingDescriptionLangs.Add(d.LanguageCode);
         }
     }
 
@@ -131,5 +164,108 @@ public partial class View
 
         await DialogService.ShowAsync<SuggestionDialog>(L["Suggest changes"], parameters, options);
     }
+
+    /// <summary>
+    ///     Open the language picker. On selection, opens the markdown editor pre-loaded with
+    ///     the existing description for that language (or empty for a new translation).
+    ///     Refreshes the description card on success so the user immediately sees their pending
+    ///     suggestion's status (the description itself only updates when the admin accepts).
+    /// </summary>
+    async Task OpenDescriptionPickerAsync()
+    {
+        if(_company is null || !_company.Id.HasValue) return;
+
+        // Refresh per-user pending list lazily so anonymous users never hit /auth/me/suggestions.
+        await RefreshPendingDescriptionLangsAsync();
+
+        var pickerParams = new DialogParameters
+        {
+            ["ExistingLanguages"] = _existingDescriptionLangs,
+            ["PendingLanguages"]  = _pendingDescriptionLangs,
+            ["DefaultLanguage"]   = UiLanguage.GetIso639_3()
+        };
+        var pickerOptions = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Small
+        };
+
+        var pickerRef = await DialogService.ShowAsync<LanguagePickerDialog>(
+            L["Choose language for description"], pickerParams, pickerOptions);
+        var pickerResult = await pickerRef.Result;
+
+        if(pickerResult.Canceled || pickerResult.Data is not string langCode) return;
+
+        // Pre-fetch the existing markdown for the chosen language (may be null/empty).
+        CompanyDescriptionDto existing = await Service.GetDescriptionAsync(_company.Id.Value, langCode);
+        bool isEdit       = existing is not null && string.Equals(existing.LanguageCode, langCode, StringComparison.Ordinal);
+        string initialMd  = isEdit ? (existing?.Markdown ?? string.Empty) : string.Empty;
+
+        var editorParams = new DialogParameters
+        {
+            ["EntityType"]          = SuggestionEntityType.CompanyDescription,
+            ["EntityId"]            = (long)_company.Id.Value,
+            ["Subkey"]              = langCode,
+            ["EntityDisplayName"]   = _company.Name ?? $"#{_company.Id.Value}",
+            ["LanguageDisplayName"] = LanguageDisplayName(langCode),
+            ["InitialMarkdown"]     = initialMd,
+            ["IsEdit"]              = isEdit
+        };
+        var editorOptions = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Large
+        };
+
+        var editorRef = await DialogService.ShowAsync<MarkdownSuggestionDialog>(
+            L["Suggest description"], editorParams, editorOptions);
+        var editorResult = await editorRef.Result;
+
+        if(!editorResult.Canceled && editorResult.Data is not null)
+        {
+            // Add the just-submitted language to the pending set so a follow-up click on the
+            // same language disables the button without a round-trip.
+            _pendingDescriptionLangs.Add(langCode);
+            StateHasChanged();
+        }
+    }
+
+    async Task RefreshPendingDescriptionLangsAsync()
+    {
+        var auth = await AuthState.GetAuthenticationStateAsync();
+        if(!(auth.User?.Identity?.IsAuthenticated ?? false))
+        {
+            _pendingDescriptionLangs.Clear();
+            return;
+        }
+
+        List<SuggestionDto> mine = await Suggestions.GetMyAsync();
+        var fresh = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach(SuggestionDto s in mine ?? new List<SuggestionDto>())
+        {
+            if(s.EntityType == (int?)SuggestionEntityType.CompanyDescription
+            && s.EntityId == (long?)Id
+            && s.Status == (int?)SuggestionStatus.Pending
+            && !string.IsNullOrEmpty(s.Subkey))
+                fresh.Add(s.Subkey);
+        }
+
+        _pendingDescriptionLangs = fresh;
+    }
+
+    static string LanguageDisplayName(string iso639_3) => iso639_3 switch
+    {
+        "eng" => "English",
+        "spa" => "Spanish",
+        "deu" => "German",
+        "fra" => "French",
+        "ita" => "Italian",
+        "lat" => "Latin",
+        "por" => "Portuguese",
+        _     => iso639_3
+    };
 
 }

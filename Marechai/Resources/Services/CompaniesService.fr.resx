@@ -522,4 +522,29 @@
         <value>Année uniquement</value>
         <comment>Year only</comment>
     </data>
-    <data name="Suggest changes" xml:space="preserve"><value>Suggérer des modifications</value></data></root>
+    <data name="Suggest changes" xml:space="preserve"><value>Suggérer des modifications</value></data>    <data name="Suggest description" xml:space="preserve"><value>Suggérer une description</value></data>
+    <data name="Suggest translation" xml:space="preserve"><value>Suggérer une traduction</value></data>
+    <data name="We do not have a description for this company, you could collaborate by suggesting one" xml:space="preserve"><value>Nous n'avons pas de description pour cette entreprise, vous pouvez collaborer en en suggérant une</value></data>
+    <data name="We do not have a description in your language, you could collaborate by translating the English description we show below" xml:space="preserve"><value>Nous n'avons pas de description dans votre langue, vous pouvez collaborer en traduisant la description anglaise affichée ci-dessous</value></data>
+    <data name="Choose language for description" xml:space="preserve"><value>Choisir la langue de la description</value></data>
+    <data name="Choose the language for the description you want to suggest." xml:space="preserve"><value>Choisissez la langue de la description que vous voulez suggérer.</value></data>
+    <data name="{0} description for {1}" xml:space="preserve"><value>Description en {0} pour {1}</value></data>
+    <data name="Has description" xml:space="preserve"><value>A une description</value></data>
+    <data name="Empty" xml:space="preserve"><value>Vide</value></data>
+    <data name="You have a pending suggestion" xml:space="preserve"><value>Vous avez une suggestion en attente</value></data>
+    <data name="Description (Markdown)" xml:space="preserve"><value>Description (Markdown)</value></data>
+    <data name="Edit the existing description below. Your suggestion will be reviewed by an administrator." xml:space="preserve"><value>Modifiez la description existante ci-dessous. Votre suggestion sera examinée par un administrateur.</value></data>
+    <data name="Write the new description below. Your suggestion will be reviewed by an administrator." xml:space="preserve"><value>Rédigez la nouvelle description ci-dessous. Votre suggestion sera examinée par un administrateur.</value></data>
+    <data name="Enter description in Markdown..." xml:space="preserve"><value>Saisissez la description en Markdown...</value></data>
+    <data name="Character count: {0} / {1}" xml:space="preserve"><value>Nombre de caractères : {0} / {1}</value></data>
+    <data name="Optional comment (References, sources, etc...)" xml:space="preserve"><value>Commentaire facultatif (références, sources, etc.)</value></data>
+    <data name="Submit suggestion" xml:space="preserve"><value>Envoyer la suggestion</value></data>
+    <data name="Description suggestion submitted. Thank you for contributing!" xml:space="preserve"><value>Suggestion de description envoyée. Merci pour votre contribution !</value></data>
+    <data name="Description cannot be empty." xml:space="preserve"><value>La description ne peut pas être vide.</value></data>
+    <data name="Description is too long ({0} / {1} characters)." xml:space="preserve"><value>La description est trop longue ({0} / {1} caractères).</value></data>
+    <data name="No changes detected — modify the description before submitting." xml:space="preserve"><value>Aucune modification détectée — modifiez la description avant d'envoyer.</value></data>
+    <data name="Failed to submit suggestion." xml:space="preserve"><value>Échec de l'envoi de la suggestion.</value></data>
+    <data name="Suggest new company" xml:space="preserve"><value>Suggérer une nouvelle entreprise</value></data>
+    <data name="Suggest a new company to be added to the catalogue." xml:space="preserve"><value>Suggérer une nouvelle entreprise à ajouter au catalogue.</value></data>
+    <data name="Sold to / Merged with" xml:space="preserve"><value>Vendu à / Fusionné avec</value></data>
+</root>

@@ -78,4 +78,9 @@
     <data name="Suggestion reviewed." xml:space="preserve"><value>Suggerimento esaminato.</value></data>
     <data name="User comment:" xml:space="preserve"><value>Commento dell'utente:</value></data>
     <data name="The targeted entity has been deleted. Accepting will close the suggestion as stale." xml:space="preserve"><value>L'entità di destinazione è stata eliminata. L'accettazione chiuderà il suggerimento come obsoleto.</value></data>
+    <data name="Reviewer comment (optional — included in the message back to the user)" xml:space="preserve"><value>Commento del revisore (opzionale — incluso nel messaggio inviato all'utente)</value></data>
+    <data name="Reviewer comment:" xml:space="preserve"><value>Commento del revisore:</value></data>
+    <data name="New" xml:space="preserve"><value>Nuova</value></data>
+    <data name="This is a brand-new entity suggestion. Name must be accepted to create it." xml:space="preserve"><value>È una nuova proposta di entità. Il nome deve essere accettato per crearla.</value></data>
+    <data name="New {0}:" xml:space="preserve"><value>Nuova {0}:</value></data>
 </root>
