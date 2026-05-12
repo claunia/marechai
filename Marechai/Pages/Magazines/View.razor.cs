@@ -245,4 +245,42 @@ public partial class View
         "por" => "Portuguese",
         _     => iso639_3
     };
+
+    /// <summary>
+    ///     Open the dedicated Magazine entity-edit suggestion dialog. Lets any authenticated
+    ///     user propose changes to scalar fields (title, native title, sort title, ISSN, first
+    ///     publication, published, country) AND atomic add/remove on the Companies junction.
+    ///     Each change is queued as an independent operation (scalar field set, junction add,
+    ///     junction remove) and serialised under a unique field-name key so each operation is
+    ///     accepted or rejected independently by an admin.
+    /// </summary>
+    async Task OpenMagazineSuggestionDialogAsync()
+    {
+        if(_magazine is null) return;
+
+        // Lesson 1 (canonical): capture the route parameter Id, NOT _magazine.Id.Value. Async
+        // loads can leave _magazine.Id null/0 in race scenarios and the cast silently produces
+        // 0 → server treats it as an addition request and rejects with 400.
+        long magazineId = Id;
+
+        var dlgParams = new DialogParameters
+        {
+            ["EntityId"]   = magazineId,
+            ["CurrentDto"] = _magazine
+        };
+        var dlgOptions = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Large
+        };
+
+        var dlgRef = await DialogService.ShowAsync<MagazineSuggestionDialog>(
+            L["Suggest changes"], dlgParams, dlgOptions);
+
+        // Match Book/Document/Machine View behaviour: don't refetch on success — the snackbar
+        // inside the dialog provides feedback, and the suggestion is invisible to the public
+        // page until an admin accepts it.
+        await dlgRef.Result;
+    }
 }

@@ -568,4 +568,37 @@
   <data name="We do not have a synopsis in your language, you could collaborate by translating the English synopsis we show below" xml:space="preserve">
     <value>Nous n'avons pas de synopsis dans votre langue, vous pouvez collaborer en traduisant le synopsis anglais affiché ci-dessous</value>
   </data>
+  <data name="Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently." xml:space="preserve">
+    <value>Modifiez n'importe quel champ ou relation ci-dessous. Seules vos modifications seront soumises à examen ; un administrateur peut accepter ou refuser chacune indépendamment.</value>
+  </data>
+  <data name="Undo" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="Add company" xml:space="preserve">
+    <value>Ajouter une entreprise</value>
+  </data>
+  <data name="Optional comment (References, sources, etc...)" xml:space="preserve">
+    <value>Commentaire facultatif (références, sources, etc.)</value>
+  </data>
+  <data name="Submit suggestion" xml:space="preserve">
+    <value>Envoyer la suggestion</value>
+  </data>
+  <data name="No changes detected — modify at least one field before submitting." xml:space="preserve">
+    <value>Aucun changement détecté — modifiez au moins un champ avant l'envoi.</value>
+  </data>
+  <data name="Failed to submit suggestion." xml:space="preserve">
+    <value>Échec de l'envoi de la suggestion.</value>
+  </data>
+  <data name="Suggestion submitted. An administrator will review it." xml:space="preserve">
+    <value>Suggestion envoyée. Un administrateur l'examinera.</value>
+  </data>
+  <data name="First publication precision" xml:space="preserve">
+    <value>Précision de la première publication</value>
+  </data>
+  <data name="8 characters (eg. 0123-4567)" xml:space="preserve">
+    <value>8 caractères (p. ex. 0123-4567)</value>
+  </data>
+  <data name="ISSN must be exactly 8 characters." xml:space="preserve">
+    <value>L'ISSN doit comporter exactement 8 caractères.</value>
+  </data>
 </root>

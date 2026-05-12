@@ -490,4 +490,37 @@
   <data name="We do not have a synopsis in your language, you could collaborate by translating the English synopsis we show below" xml:space="preserve">
     <value>No tenemos una sinopsis en tu idioma, puedes colaborar traduciendo la sinopsis en inglés que mostramos abajo</value>
   </data>
+  <data name="Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently." xml:space="preserve">
+    <value>Edita cualquier campo o relación abajo. Solo se enviarán tus cambios para revisión; un administrador puede aceptarlos o rechazarlos uno por uno.</value>
+  </data>
+  <data name="Undo" xml:space="preserve">
+    <value>Deshacer</value>
+  </data>
+  <data name="Add company" xml:space="preserve">
+    <value>Añadir compañía</value>
+  </data>
+  <data name="Optional comment (References, sources, etc...)" xml:space="preserve">
+    <value>Comentario opcional (referencias, fuentes, etc.)</value>
+  </data>
+  <data name="Submit suggestion" xml:space="preserve">
+    <value>Enviar sugerencia</value>
+  </data>
+  <data name="No changes detected — modify at least one field before submitting." xml:space="preserve">
+    <value>No se detectaron cambios — modifica al menos un campo antes de enviar.</value>
+  </data>
+  <data name="Failed to submit suggestion." xml:space="preserve">
+    <value>No se pudo enviar la sugerencia.</value>
+  </data>
+  <data name="Suggestion submitted. An administrator will review it." xml:space="preserve">
+    <value>Sugerencia enviada. Un administrador la revisará.</value>
+  </data>
+  <data name="First publication precision" xml:space="preserve">
+    <value>Precisión de la primera publicación</value>
+  </data>
+  <data name="8 characters (eg. 0123-4567)" xml:space="preserve">
+    <value>8 caracteres (p. ej. 0123-4567)</value>
+  </data>
+  <data name="ISSN must be exactly 8 characters." xml:space="preserve">
+    <value>El ISSN debe tener exactamente 8 caracteres.</value>
+  </data>
 </root>

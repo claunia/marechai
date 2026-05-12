@@ -568,4 +568,37 @@
   <data name="We do not have a synopsis in your language, you could collaborate by translating the English synopsis we show below" xml:space="preserve">
     <value>Wir haben keinen Klappentext in Ihrer Sprache — Sie können mithelfen, indem Sie den unten gezeigten englischen Klappentext übersetzen</value>
   </data>
+  <data name="Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently." xml:space="preserve">
+    <value>Bearbeite unten beliebige Felder oder Beziehungen. Nur deine Änderungen werden zur Überprüfung gesendet; ein Administrator kann jede einzeln annehmen oder ablehnen.</value>
+  </data>
+  <data name="Undo" xml:space="preserve">
+    <value>Rückgängig</value>
+  </data>
+  <data name="Add company" xml:space="preserve">
+    <value>Firma hinzufügen</value>
+  </data>
+  <data name="Optional comment (References, sources, etc...)" xml:space="preserve">
+    <value>Optionaler Kommentar (Referenzen, Quellen usw.)</value>
+  </data>
+  <data name="Submit suggestion" xml:space="preserve">
+    <value>Vorschlag senden</value>
+  </data>
+  <data name="No changes detected — modify at least one field before submitting." xml:space="preserve">
+    <value>Keine Änderungen erkannt — bitte ändere mindestens ein Feld vor dem Absenden.</value>
+  </data>
+  <data name="Failed to submit suggestion." xml:space="preserve">
+    <value>Vorschlag konnte nicht gesendet werden.</value>
+  </data>
+  <data name="Suggestion submitted. An administrator will review it." xml:space="preserve">
+    <value>Vorschlag eingereicht. Ein Administrator wird ihn prüfen.</value>
+  </data>
+  <data name="First publication precision" xml:space="preserve">
+    <value>Genauigkeit der ersten Veröffentlichung</value>
+  </data>
+  <data name="8 characters (eg. 0123-4567)" xml:space="preserve">
+    <value>8 Zeichen (z. B. 0123-4567)</value>
+  </data>
+  <data name="ISSN must be exactly 8 characters." xml:space="preserve">
+    <value>Die ISSN muss genau 8 Zeichen lang sein.</value>
+  </data>
 </root>

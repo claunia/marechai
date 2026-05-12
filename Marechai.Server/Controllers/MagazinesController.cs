@@ -596,7 +596,10 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
 
         await context.SaveChangesWithUserAsync(userId);
 
-        // Cascade: mark stale every per-language synopsis suggestion for this magazine.
+        // Cascade: mark stale every entity-edit suggestion for this magazine AND every
+        // per-language synopsis suggestion.
+        await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntityAsync(
+            context, Marechai.Data.SuggestionEntityType.Magazine, id, entityName);
         await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntityAsync(
             context, Marechai.Data.SuggestionEntityType.MagazineSynopsis, id, entityName);
 
