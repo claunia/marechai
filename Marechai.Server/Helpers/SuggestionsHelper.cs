@@ -146,6 +146,7 @@ internal static class SuggestionsHelper
         SuggestionEntityType.MagazineSynopsis    => "magazine synopsis",
         SuggestionEntityType.GpuDescription      => "GPU description",
         SuggestionEntityType.ProcessorDescription => "processor description",
+        SuggestionEntityType.SoundSynthDescription => "sound synth description",
         SuggestionEntityType.MachineFamily       => "machine family",
         SuggestionEntityType.Processor           => "processor",
         SuggestionEntityType.Gpu                 => "GPU",

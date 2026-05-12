@@ -422,9 +422,19 @@ public class SoundSynthsController(
 
         if(item is null) return NotFound();
 
+        string entityName = item.Name;
+
         context.SoundSynths.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        // Mark any pending suggestions for this SoundSynth as Stale and notify the suggesting users.
+        await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntityAsync(
+            context, Marechai.Data.SuggestionEntityType.SoundSynth, id, entityName);
+
+        // Cascade: also mark stale every per-language description suggestion for this SoundSynth.
+        await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntityAsync(
+            context, Marechai.Data.SuggestionEntityType.SoundSynthDescription, id, entityName);
 
         return Ok();
     }
@@ -546,9 +556,25 @@ public class SoundSynthsController(
 
         if(description is null) return NotFound();
 
+        // Capture display data BEFORE the cascade, while the SoundSynth + language rows are still
+        // available for the system message body.
+        string soundSynthName = await context.SoundSynths.AsNoTracking()
+                                            .Where(s => s.Id == id)
+                                            .Select(s => s.Name)
+                                            .FirstOrDefaultAsync();
+        string langName = await context.Iso639.AsNoTracking()
+                                       .Where(l => l.Id == languageCode)
+                                       .Select(l => l.ReferenceName)
+                                       .FirstOrDefaultAsync();
+        string subkeyLabel = $"({langName ?? languageCode} description)";
+
         context.SoundSynthDescriptions.Remove(description);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntitySubkeyAsync(
+            context, Marechai.Data.SuggestionEntityType.SoundSynthDescription,
+            id, languageCode, soundSynthName ?? $"#{id}", subkeyLabel);
 
         return Ok();
     }

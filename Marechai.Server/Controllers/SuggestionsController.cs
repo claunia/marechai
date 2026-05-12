@@ -282,6 +282,23 @@ public class SuggestionsController(MarechaiContext context,
                                "Description cannot be empty. Use the admin delete flow to remove a description.",
                                statusCode: StatusCodes.Status400BadRequest);
         }
+        else if(dto.EntityType == SuggestionEntityType.SoundSynthDescription)
+        {
+            if(subkey is null ||
+               !Suggestions.SoundSynthDescriptionSuggestionApplier.IsAllowedLanguage(subkey))
+                return Problem(title: "Invalid language",
+                               detail:
+                               "Description suggestions must specify a supported ISO-639-3 language code (eng, spa, deu, fra, ita, lat, por).",
+                               statusCode: StatusCodes.Status400BadRequest);
+
+            if(!values.TryGetValue(Suggestions.SoundSynthDescriptionSuggestionApplier.FieldMarkdown,
+                                   out object mdValue) ||
+               string.IsNullOrWhiteSpace(ExtractStringForValidation(mdValue)))
+                return Problem(title: "Empty description",
+                               detail:
+                               "Description cannot be empty. Use the admin delete flow to remove a description.",
+                               statusCode: StatusCodes.Status400BadRequest);
+        }
         else
         {
             // Subkey is only meaningful for *Description / *Synopsis entity types today; reject stray
@@ -738,7 +755,8 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.DocumentSynopsis   => Suggestions.DocumentSynopsisSuggestionApplier.KnownFieldNames,
         SuggestionEntityType.MagazineSynopsis   => Suggestions.MagazineSynopsisSuggestionApplier.KnownFieldNames,
         SuggestionEntityType.GpuDescription     => Suggestions.GpuDescriptionSuggestionApplier.KnownFieldNames,
-        SuggestionEntityType.ProcessorDescription => Suggestions.ProcessorDescriptionSuggestionApplier.KnownFieldNames,
+        SuggestionEntityType.ProcessorDescription  => Suggestions.ProcessorDescriptionSuggestionApplier.KnownFieldNames,
+        SuggestionEntityType.SoundSynthDescription => Suggestions.SoundSynthDescriptionSuggestionApplier.KnownFieldNames,
         // Phase 3+ adds more cases here.
         _ => null
     };
@@ -799,6 +817,12 @@ public class SuggestionsController(MarechaiContext context,
                     context, entityId, subkey, suggested, accepted);
                 return new ApplyResult(applied, missing);
             }
+            case SuggestionEntityType.SoundSynthDescription:
+            {
+                var (applied, missing) = await Suggestions.SoundSynthDescriptionSuggestionApplier.ApplyAsync(
+                    context, entityId, subkey, suggested, accepted);
+                return new ApplyResult(applied, missing);
+            }
             default:
                 throw new NotImplementedException($"Suggestions for {type} are not implemented yet.");
         }
@@ -826,6 +850,8 @@ public class SuggestionsController(MarechaiContext context,
                 await Suggestions.GpuDescriptionSuggestionApplier.GetCurrentValuesAsync(context, entityId, subkey),
             SuggestionEntityType.ProcessorDescription =>
                 await Suggestions.ProcessorDescriptionSuggestionApplier.GetCurrentValuesAsync(context, entityId, subkey),
+            SuggestionEntityType.SoundSynthDescription =>
+                await Suggestions.SoundSynthDescriptionSuggestionApplier.GetCurrentValuesAsync(context, entityId, subkey),
             _ => null
         };
     }
@@ -875,6 +901,12 @@ public class SuggestionsController(MarechaiContext context,
                 return await context.Processors.AsNoTracking()
                                     .Where(p => p.Id == (int)entityId)
                                     .Select(p => p.Name)
+                                    .FirstOrDefaultAsync();
+            case SuggestionEntityType.SoundSynth:
+            case SuggestionEntityType.SoundSynthDescription:
+                return await context.SoundSynths.AsNoTracking()
+                                    .Where(s => s.Id == (int)entityId)
+                                    .Select(s => s.Name)
                                     .FirstOrDefaultAsync();
             default:
                 return null;
@@ -1048,6 +1080,14 @@ public class SuggestionsController(MarechaiContext context,
                 return $"({langName ?? subkey} description)";
             }
             case SuggestionEntityType.ProcessorDescription:
+            {
+                string langName = await context.Iso639.AsNoTracking()
+                                               .Where(l => l.Id == subkey)
+                                               .Select(l => l.ReferenceName)
+                                               .FirstOrDefaultAsync();
+                return $"({langName ?? subkey} description)";
+            }
+            case SuggestionEntityType.SoundSynthDescription:
             {
                 string langName = await context.Iso639.AsNoTracking()
                                                .Where(l => l.Id == subkey)
@@ -1288,6 +1328,8 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.GpuDescription     => $"/gpu/{entityId}",
         SuggestionEntityType.Processor          => $"/processor/{entityId}",
         SuggestionEntityType.ProcessorDescription => $"/processor/{entityId}",
+        SuggestionEntityType.SoundSynth           => $"/soundsynth/{entityId}",
+        SuggestionEntityType.SoundSynthDescription => $"/soundsynth/{entityId}",
         _                                       => null
     };
 
@@ -1314,6 +1356,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.MagazineSynopsis    => "magazine synopsis",
         SuggestionEntityType.GpuDescription      => "GPU description",
         SuggestionEntityType.ProcessorDescription => "processor description",
+        SuggestionEntityType.SoundSynthDescription => "sound synth description",
         SuggestionEntityType.MachineFamily       => "machine family",
         SuggestionEntityType.Processor           => "processor",
         SuggestionEntityType.Gpu                 => "GPU",
