@@ -75,6 +75,7 @@ public static class SuggestionMetadataRegistry
             Marechai.Suggestions.Metadata.BookSynopsisSuggestionMetadata.EnsureRegistered();
             Marechai.Suggestions.Metadata.DocumentSynopsisSuggestionMetadata.EnsureRegistered();
             Marechai.Suggestions.Metadata.MagazineSynopsisSuggestionMetadata.EnsureRegistered();
+            Marechai.Suggestions.Metadata.GpuDescriptionSuggestionMetadata.EnsureRegistered();
             s_seeded = true;
         }
     }

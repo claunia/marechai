@@ -1016,7 +1016,12 @@ public enum SuggestionEntityType : byte
     ///     A markdown synopsis of a Magazine, scoped per language. The Subkey on the
     ///     Suggestion row holds the ISO-639-3 language code (e.g. "eng", "spa").
     /// </summary>
-    MagazineSynopsis = 21
+    MagazineSynopsis = 21,
+    /// <summary>
+    ///     A markdown description of a GPU, scoped per language. The Subkey on the
+    ///     Suggestion row holds the ISO-639-3 language code (e.g. "eng", "spa").
+    /// </summary>
+    GpuDescription = 22
 }
 
 public enum SuggestionStatus : byte

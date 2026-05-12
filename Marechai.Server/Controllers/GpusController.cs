@@ -452,9 +452,19 @@ public class GpusController(MarechaiContext context, IDbContextFactory<MarechaiC
 
         if(item is null) return NotFound();
 
+        string entityName = item.Name;
+
         context.Gpus.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        // Mark any pending suggestions for this GPU as Stale and notify the suggesting users.
+        await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntityAsync(
+            context, Marechai.Data.SuggestionEntityType.Gpu, id, entityName);
+
+        // Cascade: also mark stale every per-language description suggestion for this GPU.
+        await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntityAsync(
+            context, Marechai.Data.SuggestionEntityType.GpuDescription, id, entityName);
 
         return Ok();
     }
@@ -585,9 +595,25 @@ public class GpusController(MarechaiContext context, IDbContextFactory<MarechaiC
 
         if(description is null) return NotFound();
 
+        // Capture display data BEFORE the cascade, while the GPU + language rows are still
+        // available for the system message body.
+        string gpuName = await context.Gpus.AsNoTracking()
+                                      .Where(g => g.Id == id)
+                                      .Select(g => g.Name)
+                                      .FirstOrDefaultAsync();
+        string langName = await context.Iso639.AsNoTracking()
+                                       .Where(l => l.Id == languageCode)
+                                       .Select(l => l.ReferenceName)
+                                       .FirstOrDefaultAsync();
+        string subkeyLabel = $"({langName ?? languageCode} description)";
+
         context.GpuDescriptions.Remove(description);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntitySubkeyAsync(
+            context, Marechai.Data.SuggestionEntityType.GpuDescription,
+            id, languageCode, gpuName ?? $"#{id}", subkeyLabel);
 
         return Ok();
     }

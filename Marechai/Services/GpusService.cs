@@ -277,6 +277,26 @@ public class GpusService(Marechai.ApiClient.Client client)
         }
     }
 
+    /// <summary>
+    ///     Fetch the full description DTO so the caller can detect language fallback (the
+    ///     <c>LanguageCode</c> on the returned object is the language actually served, not the
+    ///     language requested). Returns <c>null</c> when no description exists in any language.
+    /// </summary>
+    public async Task<GpuDescriptionDto> GetDescriptionAsync(int id, string lang = "eng")
+    {
+        try
+        {
+            return await client.Gpus[id].Description.GetAsync(rc =>
+            {
+                if(!string.IsNullOrWhiteSpace(lang)) rc.QueryParameters.Lang = lang;
+            });
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
     public async Task<List<GpuDescriptionDto>> GetDescriptionsAsync(int gpuId)
     {
         try

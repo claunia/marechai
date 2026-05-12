@@ -534,4 +534,22 @@
         <value>Media</value>
         <comment>Media tab</comment>
     </data>
+  <data name="Suggest description" xml:space="preserve">
+    <value>Suggérer une description</value>
+  </data>
+  <data name="Suggest translation" xml:space="preserve">
+    <value>Suggérer une traduction</value>
+  </data>
+  <data name="Suggest changes" xml:space="preserve">
+    <value>Suggérer des modifications</value>
+  </data>
+  <data name="Choose language for description" xml:space="preserve">
+    <value>Choisir la langue de la description</value>
+  </data>
+  <data name="We do not have a description in your language, you could collaborate by translating the English description we show below" xml:space="preserve">
+    <value>Nous n'avons pas de description dans votre langue, vous pouvez collaborer en traduisant la description anglaise affichée ci-dessous</value>
+  </data>
+  <data name="We do not have a description for this GPU, you could collaborate by suggesting one" xml:space="preserve">
+    <value>Nous n'avons pas de description pour ce GPU, vous pouvez collaborer en en suggérant une</value>
+  </data>
 </root>

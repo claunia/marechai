@@ -248,6 +248,23 @@ public class SuggestionsController(MarechaiContext context,
                                "Synopsis cannot be empty. Use the admin delete flow to remove a synopsis.",
                                statusCode: StatusCodes.Status400BadRequest);
         }
+        else if(dto.EntityType == SuggestionEntityType.GpuDescription)
+        {
+            if(subkey is null ||
+               !Suggestions.GpuDescriptionSuggestionApplier.IsAllowedLanguage(subkey))
+                return Problem(title: "Invalid language",
+                               detail:
+                               "Description suggestions must specify a supported ISO-639-3 language code (eng, spa, deu, fra, ita, lat, por).",
+                               statusCode: StatusCodes.Status400BadRequest);
+
+            if(!values.TryGetValue(Suggestions.GpuDescriptionSuggestionApplier.FieldMarkdown,
+                                   out object mdValue) ||
+               string.IsNullOrWhiteSpace(ExtractStringForValidation(mdValue)))
+                return Problem(title: "Empty description",
+                               detail:
+                               "Description cannot be empty. Use the admin delete flow to remove a description.",
+                               statusCode: StatusCodes.Status400BadRequest);
+        }
         else
         {
             // Subkey is only meaningful for *Description / *Synopsis entity types today; reject stray
@@ -703,6 +720,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.BookSynopsis       => Suggestions.BookSynopsisSuggestionApplier.KnownFieldNames,
         SuggestionEntityType.DocumentSynopsis   => Suggestions.DocumentSynopsisSuggestionApplier.KnownFieldNames,
         SuggestionEntityType.MagazineSynopsis   => Suggestions.MagazineSynopsisSuggestionApplier.KnownFieldNames,
+        SuggestionEntityType.GpuDescription     => Suggestions.GpuDescriptionSuggestionApplier.KnownFieldNames,
         // Phase 3+ adds more cases here.
         _ => null
     };
@@ -751,6 +769,12 @@ public class SuggestionsController(MarechaiContext context,
                     context, entityId, subkey, suggested, accepted);
                 return new ApplyResult(applied, missing);
             }
+            case SuggestionEntityType.GpuDescription:
+            {
+                var (applied, missing) = await Suggestions.GpuDescriptionSuggestionApplier.ApplyAsync(
+                    context, entityId, subkey, suggested, accepted);
+                return new ApplyResult(applied, missing);
+            }
             default:
                 throw new NotImplementedException($"Suggestions for {type} are not implemented yet.");
         }
@@ -774,6 +798,8 @@ public class SuggestionsController(MarechaiContext context,
                 await Suggestions.DocumentSynopsisSuggestionApplier.GetCurrentValuesAsync(context, entityId, subkey),
             SuggestionEntityType.MagazineSynopsis =>
                 await Suggestions.MagazineSynopsisSuggestionApplier.GetCurrentValuesAsync(context, entityId, subkey),
+            SuggestionEntityType.GpuDescription =>
+                await Suggestions.GpuDescriptionSuggestionApplier.GetCurrentValuesAsync(context, entityId, subkey),
             _ => null
         };
     }
@@ -811,6 +837,12 @@ public class SuggestionsController(MarechaiContext context,
                 return await context.Magazines.AsNoTracking()
                                     .Where(m => m.Id == entityId)
                                     .Select(m => m.Title)
+                                    .FirstOrDefaultAsync();
+            case SuggestionEntityType.Gpu:
+            case SuggestionEntityType.GpuDescription:
+                return await context.Gpus.AsNoTracking()
+                                    .Where(g => g.Id == (int)entityId)
+                                    .Select(g => g.Name)
                                     .FirstOrDefaultAsync();
             default:
                 return null;
@@ -974,6 +1006,14 @@ public class SuggestionsController(MarechaiContext context,
                                                .Select(l => l.ReferenceName)
                                                .FirstOrDefaultAsync();
                 return $"({langName ?? subkey} synopsis)";
+            }
+            case SuggestionEntityType.GpuDescription:
+            {
+                string langName = await context.Iso639.AsNoTracking()
+                                               .Where(l => l.Id == subkey)
+                                               .Select(l => l.ReferenceName)
+                                               .FirstOrDefaultAsync();
+                return $"({langName ?? subkey} description)";
             }
             default:
                 return null;
@@ -1204,6 +1244,8 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.DocumentSynopsis   => $"/document/{entityId}",
         SuggestionEntityType.Magazine           => $"/magazine/{entityId}",
         SuggestionEntityType.MagazineSynopsis   => $"/magazine/{entityId}",
+        SuggestionEntityType.Gpu                => $"/gpu/{entityId}",
+        SuggestionEntityType.GpuDescription     => $"/gpu/{entityId}",
         _                                       => null
     };
 
@@ -1228,6 +1270,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.BookSynopsis        => "book synopsis",
         SuggestionEntityType.DocumentSynopsis    => "document synopsis",
         SuggestionEntityType.MagazineSynopsis    => "magazine synopsis",
+        SuggestionEntityType.GpuDescription      => "GPU description",
         SuggestionEntityType.MachineFamily       => "machine family",
         SuggestionEntityType.Processor           => "processor",
         SuggestionEntityType.Gpu                 => "GPU",
