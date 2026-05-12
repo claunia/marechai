@@ -197,10 +197,27 @@ public class SuggestionsController(MarechaiContext context,
                                "Description cannot be empty. Use the admin delete flow to remove a description.",
                                statusCode: StatusCodes.Status400BadRequest);
         }
+        else if(dto.EntityType == SuggestionEntityType.BookSynopsis)
+        {
+            if(subkey is null ||
+               !Suggestions.BookSynopsisSuggestionApplier.IsAllowedLanguage(subkey))
+                return Problem(title: "Invalid language",
+                               detail:
+                               "Synopsis suggestions must specify a supported ISO-639-3 language code (eng, spa, deu, fra, ita, lat, por).",
+                               statusCode: StatusCodes.Status400BadRequest);
+
+            if(!values.TryGetValue(Suggestions.BookSynopsisSuggestionApplier.FieldMarkdown,
+                                   out object mdValue) ||
+               string.IsNullOrWhiteSpace(ExtractStringForValidation(mdValue)))
+                return Problem(title: "Empty synopsis",
+                               detail:
+                               "Synopsis cannot be empty. Use the admin delete flow to remove a synopsis.",
+                               statusCode: StatusCodes.Status400BadRequest);
+        }
         else
         {
-            // Subkey is only meaningful for *Description entity types today; reject stray values so the
-            // dedupe index doesn't get polluted with random strings.
+            // Subkey is only meaningful for *Description / *Synopsis entity types today; reject stray
+            // values so the dedupe index doesn't get polluted with random strings.
             if(subkey is not null)
                 return Problem(title: "Invalid suggestion",
                                detail:
@@ -649,6 +666,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.Company            => Suggestions.CompanySuggestionApplier.KnownFieldNames,
         SuggestionEntityType.CompanyDescription => Suggestions.CompanyDescriptionSuggestionApplier.KnownFieldNames,
         SuggestionEntityType.MachineDescription => Suggestions.MachineDescriptionSuggestionApplier.KnownFieldNames,
+        SuggestionEntityType.BookSynopsis       => Suggestions.BookSynopsisSuggestionApplier.KnownFieldNames,
         // Phase 3+ adds more cases here.
         _ => null
     };
@@ -679,6 +697,12 @@ public class SuggestionsController(MarechaiContext context,
                     context, entityId, subkey, suggested, accepted);
                 return new ApplyResult(applied, missing);
             }
+            case SuggestionEntityType.BookSynopsis:
+            {
+                var (applied, missing) = await Suggestions.BookSynopsisSuggestionApplier.ApplyAsync(
+                    context, entityId, subkey, suggested, accepted);
+                return new ApplyResult(applied, missing);
+            }
             default:
                 throw new NotImplementedException($"Suggestions for {type} are not implemented yet.");
         }
@@ -696,6 +720,8 @@ public class SuggestionsController(MarechaiContext context,
                 await Suggestions.CompanyDescriptionSuggestionApplier.GetCurrentValuesAsync(context, entityId, subkey),
             SuggestionEntityType.MachineDescription =>
                 await Suggestions.MachineDescriptionSuggestionApplier.GetCurrentValuesAsync(context, entityId, subkey),
+            SuggestionEntityType.BookSynopsis =>
+                await Suggestions.BookSynopsisSuggestionApplier.GetCurrentValuesAsync(context, entityId, subkey),
             _ => null
         };
     }
@@ -715,6 +741,12 @@ public class SuggestionsController(MarechaiContext context,
                 return await context.Machines.AsNoTracking()
                                     .Where(m => m.Id == (int)entityId)
                                     .Select(m => m.Name)
+                                    .FirstOrDefaultAsync();
+            case SuggestionEntityType.Book:
+            case SuggestionEntityType.BookSynopsis:
+                return await context.Books.AsNoTracking()
+                                    .Where(b => b.Id == entityId)
+                                    .Select(b => b.Title)
                                     .FirstOrDefaultAsync();
             default:
                 return null;
@@ -854,6 +886,14 @@ public class SuggestionsController(MarechaiContext context,
                                                .Select(l => l.ReferenceName)
                                                .FirstOrDefaultAsync();
                 return $"({langName ?? subkey} description)";
+            }
+            case SuggestionEntityType.BookSynopsis:
+            {
+                string langName = await context.Iso639.AsNoTracking()
+                                               .Where(l => l.Id == subkey)
+                                               .Select(l => l.ReferenceName)
+                                               .FirstOrDefaultAsync();
+                return $"({langName ?? subkey} synopsis)";
             }
             default:
                 return null;
@@ -1078,6 +1118,8 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.CompanyDescription => $"/company/{entityId}",
         SuggestionEntityType.Machine            => $"/machine/{entityId}",
         SuggestionEntityType.MachineDescription => $"/machine/{entityId}",
+        SuggestionEntityType.Book               => $"/book/{entityId}",
+        SuggestionEntityType.BookSynopsis       => $"/book/{entityId}",
         _                                       => null
     };
 
@@ -1099,6 +1141,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.CompanyDescription  => "company description",
         SuggestionEntityType.Machine             => "machine",
         SuggestionEntityType.MachineDescription  => "machine description",
+        SuggestionEntityType.BookSynopsis        => "book synopsis",
         SuggestionEntityType.MachineFamily       => "machine family",
         SuggestionEntityType.Processor           => "processor",
         SuggestionEntityType.Gpu                 => "GPU",

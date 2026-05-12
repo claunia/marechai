@@ -641,9 +641,25 @@ public class BooksController(
 
         if(synopsis is null) return NotFound();
 
+        // Capture display data BEFORE the cascade, while the book + language rows are still
+        // available for the system message body.
+        string bookTitle = await context.Books.AsNoTracking()
+                                        .Where(b => b.Id == id)
+                                        .Select(b => b.Title)
+                                        .FirstOrDefaultAsync();
+        string langName  = await context.Iso639.AsNoTracking()
+                                        .Where(l => l.Id == languageCode)
+                                        .Select(l => l.ReferenceName)
+                                        .FirstOrDefaultAsync();
+        string subkeyLabel = $"({langName ?? languageCode} synopsis)";
+
         context.BookSynopses.Remove(synopsis);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntitySubkeyAsync(
+            context, Marechai.Data.SuggestionEntityType.BookSynopsis,
+            id, languageCode, bookTitle ?? $"#{id}", subkeyLabel);
 
         return Ok();
     }
@@ -664,9 +680,15 @@ public class BooksController(
 
         if(item is null) return NotFound();
 
+        string entityName = item.Title;
+
         context.Books.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        // Cascade: mark stale every per-language synopsis suggestion for this book.
+        await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntityAsync(
+            context, Marechai.Data.SuggestionEntityType.BookSynopsis, id, entityName);
 
         return Ok();
     }

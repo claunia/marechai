@@ -213,6 +213,26 @@ public class BooksService(Marechai.ApiClient.Client client)
         }
     }
 
+    /// <summary>
+    ///     Fetch the full synopsis DTO so the caller can detect language fallback (the
+    ///     <c>LanguageCode</c> on the returned object is the language actually served, not the
+    ///     language requested). Returns <c>null</c> when no synopsis exists in any language.
+    /// </summary>
+    public async Task<DocumentSynopsisDto> GetSynopsisAsync(long id, string lang = "eng")
+    {
+        try
+        {
+            return await client.Books[id].Synopsis.GetAsync(rc =>
+            {
+                if(!string.IsNullOrWhiteSpace(lang)) rc.QueryParameters.Lang = lang;
+            });
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
     public async Task<List<PersonByBookDto>> GetPeopleByBookAsync(long id)
     {
         try

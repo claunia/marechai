@@ -360,4 +360,22 @@
   <data name="View on Internet Archive" xml:space="preserve">
     <value>Ver en Internet Archive</value>
   </data>
+  <data name="Suggest synopsis" xml:space="preserve">
+    <value>Sugerir sinopsis</value>
+  </data>
+  <data name="Suggest translation" xml:space="preserve">
+    <value>Sugerir traducción</value>
+  </data>
+  <data name="Suggest changes" xml:space="preserve">
+    <value>Sugerir cambios</value>
+  </data>
+  <data name="Choose language for synopsis" xml:space="preserve">
+    <value>Elige el idioma de la sinopsis</value>
+  </data>
+  <data name="We do not have a synopsis for this book, you could collaborate by suggesting one" xml:space="preserve">
+    <value>No tenemos una sinopsis de este libro, puedes colaborar sugiriendo una</value>
+  </data>
+  <data name="We do not have a synopsis in your language, you could collaborate by translating the English synopsis we show below" xml:space="preserve">
+    <value>No tenemos una sinopsis en tu idioma, puedes colaborar traduciendo la sinopsis en inglés que mostramos abajo</value>
+  </data>
 </root>
