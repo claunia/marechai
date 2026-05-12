@@ -553,9 +553,24 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
 
         if(synopsis is null) return NotFound();
 
+        // Capture display data BEFORE the cascade.
+        string magazineTitle = await context.Magazines.AsNoTracking()
+                                            .Where(m => m.Id == id)
+                                            .Select(m => m.Title)
+                                            .FirstOrDefaultAsync();
+        string langName = await context.Iso639.AsNoTracking()
+                                       .Where(l => l.Id == languageCode)
+                                       .Select(l => l.ReferenceName)
+                                       .FirstOrDefaultAsync();
+        string subkeyLabel = $"({langName ?? languageCode} synopsis)";
+
         context.MagazineSynopses.Remove(synopsis);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntitySubkeyAsync(
+            context, Marechai.Data.SuggestionEntityType.MagazineSynopsis,
+            id, languageCode, magazineTitle ?? $"#{id}", subkeyLabel);
 
         return Ok();
     }
@@ -575,9 +590,15 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
 
         if(item is null) return NotFound();
 
+        string entityName = item.Title;
+
         context.Magazines.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        // Cascade: mark stale every per-language synopsis suggestion for this magazine.
+        await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntityAsync(
+            context, Marechai.Data.SuggestionEntityType.MagazineSynopsis, id, entityName);
 
         return Ok();
     }

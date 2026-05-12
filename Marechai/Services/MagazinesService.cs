@@ -217,6 +217,26 @@ public class MagazinesService(Marechai.ApiClient.Client client)
         }
     }
 
+    /// <summary>
+    ///     Fetches the synopsis for the given magazine in the requested language. Returns the
+    ///     full DTO so callers can compare the served <c>LanguageCode</c> against the requested
+    ///     code to detect a fallback (English when the requested language is missing).
+    /// </summary>
+    public async Task<DocumentSynopsisDto> GetSynopsisAsync(long id, string lang = "eng")
+    {
+        try
+        {
+            return await client.Magazines[id].Synopsis.GetAsync(rc =>
+            {
+                if(!string.IsNullOrWhiteSpace(lang)) rc.QueryParameters.Lang = lang;
+            });
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
     public async Task<List<PersonByMagazineDto>> GetPeopleByMagazineAsync(long id)
     {
         try

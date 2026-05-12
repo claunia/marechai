@@ -1011,7 +1011,12 @@ public enum SuggestionEntityType : byte
     ///     A markdown synopsis of a Document, scoped per language. The Subkey on the
     ///     Suggestion row holds the ISO-639-3 language code (e.g. "eng", "spa").
     /// </summary>
-    DocumentSynopsis = 20
+    DocumentSynopsis = 20,
+    /// <summary>
+    ///     A markdown synopsis of a Magazine, scoped per language. The Subkey on the
+    ///     Suggestion row holds the ISO-639-3 language code (e.g. "eng", "spa").
+    /// </summary>
+    MagazineSynopsis = 21
 }
 
 public enum SuggestionStatus : byte

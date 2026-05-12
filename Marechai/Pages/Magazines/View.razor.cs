@@ -23,10 +23,16 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Marechai.Data;
+using Marechai.Helpers;
+using Marechai.Pages.Suggestions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
+using MudBlazor;
 
 namespace Marechai.Pages.Magazines;
 
@@ -38,6 +44,14 @@ public partial class View
     bool                             _loaded;
     MagazineDto                      _magazine;
     DocumentSynopsisDto              _synopsis;
+    string                           _descriptionLanguageServed;
+    bool                             _descriptionFellBack;
+    bool                             _hasAnyDescription;
+    HashSet<string>                  _existingDescriptionLangs = new(StringComparer.Ordinal);
+    HashSet<string>                  _pendingDescriptionLangs  = new(StringComparer.Ordinal);
+
+    [CascadingParameter]
+    Task<AuthenticationState> AuthState { get; set; }
 
     [Parameter]
     public long Id { get; set; }
@@ -71,20 +85,164 @@ public partial class View
             return;
         }
 
-        // Fan-out the 3 child collections in parallel — they are independent server-side
+        // Load the per-language synopsis state with English fallback detection. Replaces the
+        // previous single GetMagazineSynopsisAsync call which couldn't tell whether the served
+        // language matched the requested UI language.
+        await LoadDescriptionStateAsync();
+
+        // Fan-out the remaining child collections in parallel — they are independent server-side
         // (each is a separate /magazines/{id}/<x> endpoint) so a single Task.WhenAll
-        // collapses three round-trips into one wall-clock RTT.
-        Task<DocumentSynopsisDto>              synopsisTask   = Service.GetMagazineSynopsisAsync(Id);
-        Task<List<CompanyByMagazineDto>>       companiesTask  = Service.GetCompaniesByMagazineAsync(Id);
-        Task<List<int?>>                       issueYearsTask = Service.GetIssueYearsAsync(Id);
+        // collapses two round-trips into one wall-clock RTT.
+        Task<List<CompanyByMagazineDto>> companiesTask  = Service.GetCompaniesByMagazineAsync(Id);
+        Task<List<int?>>                 issueYearsTask = Service.GetIssueYearsAsync(Id);
 
-        await Task.WhenAll(synopsisTask, companiesTask, issueYearsTask);
+        await Task.WhenAll(companiesTask, issueYearsTask);
 
-        _synopsis        = synopsisTask.Result;
-        _companies       = companiesTask.Result;
-        _issueYears      = issueYearsTask.Result;
+        _companies  = companiesTask.Result;
+        _issueYears = issueYearsTask.Result;
 
         _loaded = true;
         StateHasChanged();
     }
+
+    /// <summary>
+    ///     Load the synopsis for the current UI language with English fallback, plus the
+    ///     metadata (which languages already have a synopsis) used to drive the picker
+    ///     status chips. Sets <see cref="_descriptionFellBack" /> when the served language
+    ///     differs from the requested UI language.
+    /// </summary>
+    async Task LoadDescriptionStateAsync()
+    {
+        string requested = UiLanguage.GetIso639_3();
+        DocumentSynopsisDto served = await Service.GetSynopsisAsync(Id, requested);
+
+        _synopsis                  = served;
+        _descriptionLanguageServed = served?.LanguageCode;
+        _hasAnyDescription         = served is not null && !string.IsNullOrWhiteSpace(served.Text);
+        _descriptionFellBack       = _hasAnyDescription
+                                  && _descriptionLanguageServed is not null
+                                  && !string.Equals(_descriptionLanguageServed, requested, StringComparison.Ordinal);
+
+        // Lightweight metadata fetch so the picker can show "Has synopsis" / "Empty" chips.
+        List<DocumentSynopsisDto> all = await Service.GetSynopsesAsync(Id);
+        _existingDescriptionLangs = new HashSet<string>(StringComparer.Ordinal);
+        foreach(DocumentSynopsisDto d in all ?? new List<DocumentSynopsisDto>())
+        {
+            if(!string.IsNullOrEmpty(d.LanguageCode))
+                _existingDescriptionLangs.Add(d.LanguageCode);
+        }
+
+        // If the picker had no served synopsis but other languages exist, the page should
+        // still go down the "fallback / pencil" branch rather than the "no synopsis" branch.
+        if(!_hasAnyDescription && _existingDescriptionLangs.Count > 0)
+            _hasAnyDescription = true;
+    }
+
+    /// <summary>
+    ///     Open the language picker. On selection, opens the markdown editor pre-loaded with
+    ///     the existing synopsis for that language (or empty for a new translation). Refreshes
+    ///     the synopsis card on success so the user immediately sees their pending suggestion's
+    ///     status (the synopsis itself only updates when the admin accepts).
+    /// </summary>
+    async Task OpenDescriptionPickerAsync()
+    {
+        if(_magazine is null) return;
+
+        // Lesson 1: capture the route parameter Id, NOT _magazine.Id.Value. Async loads can leave
+        // _magazine.Id null/0 in race scenarios and the cast silently produces 0 → server treats
+        // it as an addition request and rejects with 400.
+        long magazineId = Id;
+
+        // Refresh per-user pending list lazily so anonymous users never hit /auth/me/suggestions.
+        await RefreshPendingDescriptionLangsAsync();
+
+        var pickerParams = new DialogParameters
+        {
+            ["ExistingLanguages"] = _existingDescriptionLangs,
+            ["PendingLanguages"]  = _pendingDescriptionLangs,
+            ["DefaultLanguage"]   = UiLanguage.GetIso639_3()
+        };
+        var pickerOptions = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Small
+        };
+
+        var pickerRef = await DialogService.ShowAsync<LanguagePickerDialog>(
+            L["Choose language for synopsis"], pickerParams, pickerOptions);
+        var pickerResult = await pickerRef.Result;
+
+        if(pickerResult.Canceled || pickerResult.Data is not string langCode) return;
+
+        // Pre-fetch the existing markdown for the chosen language (may be null/empty).
+        DocumentSynopsisDto existing = await Service.GetSynopsisAsync(magazineId, langCode);
+        bool   isEdit    = existing is not null && string.Equals(existing.LanguageCode, langCode, StringComparison.Ordinal);
+        string initialMd = isEdit ? (existing?.Text ?? string.Empty) : string.Empty;
+
+        var editorParams = new DialogParameters
+        {
+            ["EntityType"]          = SuggestionEntityType.MagazineSynopsis,
+            ["EntityId"]            = magazineId,
+            ["Subkey"]              = langCode,
+            ["EntityDisplayName"]   = _magazine.Title ?? $"#{magazineId}",
+            ["LanguageDisplayName"] = LanguageDisplayName(langCode),
+            ["InitialMarkdown"]     = initialMd,
+            ["IsEdit"]              = isEdit
+        };
+        var editorOptions = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Large
+        };
+
+        var editorRef = await DialogService.ShowAsync<MarkdownSuggestionDialog>(
+            L["Suggest synopsis"], editorParams, editorOptions);
+        var editorResult = await editorRef.Result;
+
+        if(!editorResult.Canceled && editorResult.Data is not null)
+        {
+            // Add the just-submitted language to the pending set so a follow-up click on the
+            // same language disables the button without a round-trip.
+            _pendingDescriptionLangs.Add(langCode);
+            StateHasChanged();
+        }
+    }
+
+    async Task RefreshPendingDescriptionLangsAsync()
+    {
+        AuthenticationState auth = await AuthState;
+        if(!(auth.User?.Identity?.IsAuthenticated ?? false))
+        {
+            _pendingDescriptionLangs.Clear();
+            return;
+        }
+
+        List<SuggestionDto> mine = await Suggestions.GetMyAsync();
+        var fresh = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach(SuggestionDto s in mine ?? new List<SuggestionDto>())
+        {
+            if(s.EntityType == (int?)SuggestionEntityType.MagazineSynopsis
+            && s.EntityId   == Id
+            && s.Status     == (int?)SuggestionStatus.Pending
+            && !string.IsNullOrEmpty(s.Subkey))
+                fresh.Add(s.Subkey);
+        }
+
+        _pendingDescriptionLangs = fresh;
+    }
+
+    static string LanguageDisplayName(string iso639_3) => iso639_3 switch
+    {
+        "eng" => "English",
+        "spa" => "Spanish",
+        "deu" => "German",
+        "fra" => "French",
+        "ita" => "Italian",
+        "lat" => "Latin",
+        "por" => "Portuguese",
+        _     => iso639_3
+    };
 }
