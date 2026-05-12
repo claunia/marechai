@@ -636,6 +636,12 @@ public class SuggestionsController(MarechaiContext context,
         if(s.EntityType == SuggestionEntityType.Gpu && s.EntityId.HasValue && s.SuggestedValues is not null)
             await ResolveGpuRemoveLabelsAsync(s.EntityId.Value, s.SuggestedValues, currentLabels);
 
+        // Same pattern for Processor entity-edit suggestions (single Instruction Set
+        // Extensions junction). Mirrors the Gpu shape: int-keyed, no cover, simple-FK
+        // junction without a role column.
+        if(s.EntityType == SuggestionEntityType.Processor && s.EntityId.HasValue && s.SuggestedValues is not null)
+            await ResolveProcessorRemoveLabelsAsync(s.EntityId.Value, s.SuggestedValues, currentLabels);
+
         return Ok(new SuggestionDiffDto
         {
             Suggestion           = suggestionDto,
@@ -871,6 +877,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.Magazine      => true,
         SuggestionEntityType.MagazineIssue => true,
         SuggestionEntityType.Gpu           => true,
+        SuggestionEntityType.Processor     => true,
         _                                  => GetKnownFieldNames(type) is not null
     };
 
@@ -901,6 +908,9 @@ public class SuggestionsController(MarechaiContext context,
 
         if(type == SuggestionEntityType.Gpu)
             return Suggestions.GpuSuggestionApplier.IsKnownFieldName(fieldName);
+
+        if(type == SuggestionEntityType.Processor)
+            return Suggestions.ProcessorSuggestionApplier.IsKnownFieldName(fieldName);
 
         IReadOnlyCollection<string> set = GetKnownFieldNames(type);
         return set is not null && set.Contains(fieldName);
@@ -1016,6 +1026,12 @@ public class SuggestionsController(MarechaiContext context,
                     context, entityId, suggested, accepted);
                 return new ApplyResult(applied, missing);
             }
+            case SuggestionEntityType.Processor:
+            {
+                var (applied, missing) = await Suggestions.ProcessorSuggestionApplier.ApplyAsync(
+                    context, entityId, suggested, accepted);
+                return new ApplyResult(applied, missing);
+            }
             default:
                 throw new NotImplementedException($"Suggestions for {type} are not implemented yet.");
         }
@@ -1061,6 +1077,8 @@ public class SuggestionsController(MarechaiContext context,
                 await Suggestions.MagazineIssueSuggestionApplier.GetCurrentValuesAsync(context, entityId),
             SuggestionEntityType.Gpu =>
                 await Suggestions.GpuSuggestionApplier.GetCurrentValuesAsync(context, entityId),
+            SuggestionEntityType.Processor =>
+                await Suggestions.ProcessorSuggestionApplier.GetCurrentValuesAsync(context, entityId),
             _ => null
         };
     }
@@ -1450,6 +1468,11 @@ public class SuggestionsController(MarechaiContext context,
             case SuggestionEntityType.Gpu:
             {
                 await ResolveGpuLabelsAsync(entityId, values, labels);
+                break;
+            }
+            case SuggestionEntityType.Processor:
+            {
+                await ResolveProcessorLabelsAsync(entityId, values, labels);
                 break;
             }
         }
@@ -2547,6 +2570,121 @@ public class SuggestionsController(MarechaiContext context,
                        ? $"{dims} with {colors} grays from {palette} palette"
                        : $"{dims} with {colors} colors from {palette} palette";
         return grayscale ? $"{dims} with {colors} grays" : $"{dims} with {colors} colors";
+    }
+
+    /// <summary>
+    ///     Build readable labels for the heterogeneous payload of a Processor suggestion.
+    ///     Handles scalar FK fields (<c>company_id</c>, <c>instruction_set_id</c>) plus
+    ///     junction-add operation keys
+    ///     (<c>instruction_set_extensions.add.&lt;uuid&gt;</c> resolved from the suggested
+    ///     payload's <c>extension_id</c>). Junction-remove labels are populated separately by
+    ///     <see cref="ResolveProcessorRemoveLabelsAsync" />.
+    /// </summary>
+    async Task ResolveProcessorLabelsAsync(long? entityId,
+                                           Dictionary<string, JsonElement> values,
+                                           Dictionary<string, string> labels)
+    {
+        // ---- Scalar FK labels ---------------------------------------------------------
+        if(values.TryGetValue(Suggestions.ProcessorSuggestionApplier.FieldCompanyId, out JsonElement companyE))
+        {
+            int? id = JsonElementToInt(companyE);
+            if(id.HasValue)
+            {
+                string name = await context.Companies.AsNoTracking()
+                                           .Where(c => c.Id == id.Value)
+                                           .Select(c => c.Name)
+                                           .FirstOrDefaultAsync();
+                if(!string.IsNullOrEmpty(name))
+                    labels[Suggestions.ProcessorSuggestionApplier.FieldCompanyId] = name;
+            }
+        }
+
+        if(values.TryGetValue(Suggestions.ProcessorSuggestionApplier.FieldInstructionSetId, out JsonElement isE))
+        {
+            int? id = JsonElementToInt(isE);
+            if(id.HasValue)
+            {
+                string name = await context.InstructionSets.AsNoTracking()
+                                           .Where(i => i.Id == id.Value)
+                                           .Select(i => i.Name)
+                                           .FirstOrDefaultAsync();
+                if(!string.IsNullOrEmpty(name))
+                    labels[Suggestions.ProcessorSuggestionApplier.FieldInstructionSetId] = name;
+            }
+        }
+
+        if(!entityId.HasValue) return;
+
+        // ---- Junction-add labels (resolved from the suggested payload's id field) -----
+        foreach(KeyValuePair<string, JsonElement> kv in values)
+        {
+            if(!Suggestions.ProcessorSuggestionApplier.TryParseJunctionKey(kv.Key, out string group, out string op, out _))
+                continue;
+            if(op != "add" || kv.Value.ValueKind != JsonValueKind.Object) continue;
+
+            string label = await BuildProcessorAddLabelAsync(group, kv.Value);
+            if(!string.IsNullOrEmpty(label)) labels[kv.Key] = label;
+        }
+    }
+
+    /// <summary>
+    ///     Resolve readable labels for every Processor junction-remove operation in the
+    ///     suggested payload by looking up the existing junction row in the database. The
+    ///     resolved labels are written to <paramref name="currentLabels" /> so the diff panel
+    ///     renders them in the strikethrough cell of the JunctionRemove row. Iterates the RAW
+    ///     <c>SuggestedValues</c> dict (not the JsonElement-parsed view) because remove ops
+    ///     carry a null value and <see cref="ParseValuesForLabels" /> drops null entries.
+    /// </summary>
+    async Task ResolveProcessorRemoveLabelsAsync(long processorId,
+                                                 Dictionary<string, object> rawSuggested,
+                                                 Dictionary<string, string> currentLabels)
+    {
+        foreach(KeyValuePair<string, object> kv in rawSuggested)
+        {
+            if(!Suggestions.ProcessorSuggestionApplier.TryParseJunctionKey(kv.Key, out string group, out string op, out string token))
+                continue;
+            if(op != "remove") continue;
+            if(!long.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out long rowId)) continue;
+
+            string label = await BuildProcessorRemoveLabelAsync(group, (int)processorId, rowId);
+            if(!string.IsNullOrEmpty(label)) currentLabels[kv.Key] = label;
+        }
+    }
+
+    async Task<string> BuildProcessorAddLabelAsync(string group, JsonElement payload)
+    {
+        switch(group)
+        {
+            case Suggestions.ProcessorSuggestionApplier.GroupInstructionSetExtensions:
+            {
+                int? id = ReadIntField(payload, "extension_id");
+                if(!id.HasValue) return null;
+                string name = await context.InstructionSetExtensions.AsNoTracking()
+                                           .Where(e => e.Id == id.Value)
+                                           .Select(e => e.Extension)
+                                           .FirstOrDefaultAsync();
+                return string.IsNullOrEmpty(name) ? $"Extension #{id.Value}" : name;
+            }
+            default:
+                return null;
+        }
+    }
+
+    async Task<string> BuildProcessorRemoveLabelAsync(string group, int processorId, long rowId)
+    {
+        switch(group)
+        {
+            case Suggestions.ProcessorSuggestionApplier.GroupInstructionSetExtensions:
+            {
+                string name = await context.InstructionSetExtensionsByProcessor.AsNoTracking()
+                                           .Where(r => r.Id == rowId && r.ProcessorId == processorId)
+                                           .Select(r => r.Extension.Extension)
+                                           .FirstOrDefaultAsync();
+                return name;
+            }
+            default:
+                return null;
+        }
     }
 
     /// <summary>

@@ -279,4 +279,35 @@ public partial class View
         "por" => "Portuguese",
         _     => iso639_3
     };
+
+    /// <summary>
+    ///     Open the dedicated collaborative-edit suggestion dialog for the Processor entity.
+    ///     Mirrors the Gpu port's pencil-button handler: dedicated dialog (not a generic
+    ///     SuggestionDialog), scalar + Instruction Set Extensions junction add/remove
+    ///     operations packed into a single Suggestion JSON payload submitted via the
+    ///     universal POST /suggestions endpoint.
+    /// </summary>
+    async Task OpenProcessorSuggestionDialogAsync()
+    {
+        if(_processor is null) return;
+
+        // Use the route parameter Id (always valid — the page wouldn't have rendered
+        // otherwise) rather than _processor.Id.Value, to sidestep the async-race trap where
+        // the inner-scope DTO load could in theory leave Id unpopulated.
+        long processorId = Id;
+
+        var parameters = new DialogParameters
+        {
+            ["EntityId"]   = processorId,
+            ["CurrentDto"] = _processor
+        };
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Large
+        };
+
+        await DialogService.ShowAsync<ProcessorSuggestionDialog>(L["Suggest changes"], parameters, options);
+    }
 }

@@ -182,6 +182,44 @@ public class ProcessorsService(Marechai.ApiClient.Client client)
         }
     }
 
+    /// <summary>
+    ///     Returns every instruction set extension known to the server. Used by the
+    ///     collaborative <c>ProcessorSuggestionDialog</c> autocomplete picker when queuing
+    ///     a junction-add operation.
+    /// </summary>
+    public async Task<List<InstructionSetExtensionDto>> GetAllExtensionsAsync()
+    {
+        try
+        {
+            List<InstructionSetExtensionDto> extensions = await client.InstructionSetExtensions.GetAsync();
+
+            return extensions ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    /// <summary>
+    ///     Returns every instruction set known to the server. Used by the collaborative
+    ///     <c>ProcessorSuggestionDialog</c> autocomplete picker for the scalar
+    ///     <c>instruction_set_id</c> field.
+    /// </summary>
+    public async Task<List<InstructionSetDto>> GetAllInstructionSetsAsync()
+    {
+        try
+        {
+            List<InstructionSetDto> sets = await client.InstructionSets.GetAsync();
+
+            return sets ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
     public async Task<List<InstructionSetExtensionByProcessorDto>> GetExtensionsByProcessorAsync(int processorId)
     {
         try

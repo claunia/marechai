@@ -737,4 +737,34 @@
   <data name="We do not have a description for this processor, you could collaborate by suggesting one" xml:space="preserve">
     <value>No tenemos una descripción para este procesador, puedes colaborar sugiriendo una</value>
   </data>
+  <data name="General" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="Undo" xml:space="preserve">
+    <value>Deshacer</value>
+  </data>
+  <data name="Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently." xml:space="preserve">
+    <value>Edite cualquier campo o relación de abajo. Solo se enviarán para revisión los cambios que realice; un administrador podrá aceptar o rechazar cada uno por separado.</value>
+  </data>
+  <data name="Optional comment (References, sources, etc...)" xml:space="preserve">
+    <value>Comentario opcional (Referencias, fuentes, etc...)</value>
+  </data>
+  <data name="No changes detected — modify at least one field before submitting." xml:space="preserve">
+    <value>No se detectaron cambios — modifique al menos un campo antes de enviar.</value>
+  </data>
+  <data name="Submit suggestion" xml:space="preserve">
+    <value>Enviar sugerencia</value>
+  </data>
+  <data name="Failed to submit suggestion." xml:space="preserve">
+    <value>No se pudo enviar la sugerencia.</value>
+  </data>
+  <data name="Suggestion submitted. An administrator will review it." xml:space="preserve">
+    <value>Sugerencia enviada. Un administrador la revisará.</value>
+  </data>
+  <data name="Process (nm)" xml:space="preserve">
+    <value>Proceso (nm)</value>
+  </data>
+  <data name="Die size (mm²)" xml:space="preserve">
+    <value>Tamaño del die (mm²)</value>
+  </data>
 </root>

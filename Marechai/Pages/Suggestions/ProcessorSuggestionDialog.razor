@@ -1,0 +1,690 @@
+@using System
+@using System.Globalization
+@using System.Linq
+@using System.Text.Json
+@using System.Threading
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@using Marechai.Services
+@using Marechai.Suggestions
+@using Marechai.Suggestions.Metadata
+
+@inject IStringLocalizer<ProcessorsService> L
+@inject ISnackbar          Snackbar
+@inject ProcessorsService  ProcessorsService
+@inject SuggestionsService SuggestionsService
+
+@*
+    Dedicated suggestion dialog for editing a Processor. Mirrors the admin ProcessorDialog
+    editing surface but produces a Suggestion JSON payload instead of writing directly. Each
+    junction add/remove operation is queued in local state and serialised under a unique
+    field-name key (instruction_set_extensions.add.<uuid> or instruction_set_extensions.remove.<row_id>)
+    so the admin can later accept or reject each operation independently in the diff panel.
+*@
+
+<MudDialog>
+    <DialogContent>
+        @if(_loading)
+        {
+            <MudProgressLinear Indeterminate="true"/>
+        }
+        else
+        {
+            <MudText Typo="Typo.body2" Class="mb-3">
+                @L["Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently."]
+            </MudText>
+
+            @* ── Scalar fields: General ── *@
+            <MudPaper Outlined="true" Class="pa-3 mb-3">
+                <MudText Typo="Typo.h6" Class="mb-2">@L["General"]</MudText>
+
+                <MudTextField T="string" Label="@L["Name"]"
+                              MaxLength="50"
+                              Value="@_name"
+                              ValueChanged="@(v => { _name = v; })"
+                              Required="true"
+                              Class="mb-3"/>
+
+                <MudTextField T="string" Label="@L["Model code"]"
+                              MaxLength="45"
+                              Value="@_modelCode"
+                              ValueChanged="@(v => { _modelCode = v; })"
+                              Class="mb-3"/>
+
+                <MudAutocomplete T="CompanyDto" Label="@L["Manufacturer"]"
+                                 Value="@_selectedCompany"
+                                 ValueChanged="@(c => { _selectedCompany = c; })"
+                                 SearchFunc="SearchCompanies"
+                                 ToStringFunc="@(c => c?.Name ?? string.Empty)"
+                                 Clearable="true"
+                                 Class="mb-3"/>
+
+                <MudDatePicker Label="@L["Introduction date"]" Editable="true" Clearable="true"
+                               Date="@_introduced"
+                               DateChanged="@(d => { _introduced = d; })" Class="mb-3"/>
+
+                <MudSelect T="int" Label="@L["Date precision"]"
+                           Value="@_introducedPrecision"
+                           ValueChanged="@(v => { _introducedPrecision = v; })" Class="mb-3">
+                    <MudSelectItem T="int" Value="0">@L["Full date"]</MudSelectItem>
+                    <MudSelectItem T="int" Value="1">@L["Month and year only"]</MudSelectItem>
+                    <MudSelectItem T="int" Value="2">@L["Year only"]</MudSelectItem>
+                </MudSelect>
+
+                <MudAutocomplete T="InstructionSetDto" Label="@L["Instruction set"]"
+                                 Value="@_selectedInstructionSet"
+                                 ValueChanged="@(i => { _selectedInstructionSet = i; })"
+                                 SearchFunc="SearchInstructionSets"
+                                 ToStringFunc="@(i => i?.Name ?? string.Empty)"
+                                 Clearable="true"
+                                 Class="mb-3"/>
+
+                <MudTextField T="string" Label="@L["Package"]"
+                              MaxLength="45"
+                              Value="@_package"
+                              ValueChanged="@(v => { _package = v; })"
+                              Class="mb-3"/>
+
+                <MudStack Row="true" Spacing="2" Class="mb-3">
+                    <MudTextField T="string" Label="@L["Process"]"
+                                  MaxLength="45"
+                                  Value="@_process"
+                                  ValueChanged="@(v => { _process = v; })"
+                                  Style="flex: 1;"/>
+                    <MudNumericField T="float?" Label="@L["Process (nm)"]" Value="@_processNm"
+                                     ValueChanged="@(v => { _processNm = v; })" Clearable="true" Style="flex: 1;"
+                                     Min="0f"/>
+                </MudStack>
+
+                <MudStack Row="true" Spacing="2" Class="mb-3">
+                    <MudNumericField T="float?" Label="@L["Die size (mm²)"]" Value="@_dieSize"
+                                     ValueChanged="@(v => { _dieSize = v; })" Clearable="true" Style="flex: 1;"
+                                     Min="0f"/>
+                    <MudNumericField T="long?" Label="@L["Transistors"]" Value="@_transistors"
+                                     ValueChanged="@(v => { _transistors = v; })" Clearable="true" Style="flex: 1;"
+                                     Min="1L"/>
+                </MudStack>
+
+                <MudNumericField T="double?" Label="@L["Speed (MHz)"]" Value="@_speed"
+                                 ValueChanged="@(v => { _speed = v; })" Clearable="true"
+                                 Min="0d" Class="mb-3"/>
+            </MudPaper>
+
+            @* ── Scalar fields: Registers ── *@
+            <MudPaper Outlined="true" Class="pa-3 mb-3">
+                <MudText Typo="Typo.h6" Class="mb-2">@L["Registers"]</MudText>
+
+                <MudStack Row="true" Spacing="2" Class="mb-3">
+                    <MudNumericField T="int?" Label="@L["GPRs"]" Value="@_gprs"
+                                     ValueChanged="@(v => { _gprs = v; })" Clearable="true" Style="flex: 1;" Min="0"/>
+                    <MudNumericField T="int?" Label="@L["GPR size (bits)"]" Value="@_gprSize"
+                                     ValueChanged="@(v => { _gprSize = v; })" Clearable="true" Style="flex: 1;" Min="0"/>
+                </MudStack>
+
+                <MudStack Row="true" Spacing="2" Class="mb-3">
+                    <MudNumericField T="int?" Label="@L["FPRs"]" Value="@_fprs"
+                                     ValueChanged="@(v => { _fprs = v; })" Clearable="true" Style="flex: 1;" Min="0"/>
+                    <MudNumericField T="int?" Label="@L["FPR size (bits)"]" Value="@_fprSize"
+                                     ValueChanged="@(v => { _fprSize = v; })" Clearable="true" Style="flex: 1;" Min="0"/>
+                </MudStack>
+
+                <MudStack Row="true" Spacing="2" Class="mb-3">
+                    <MudNumericField T="int?" Label="@L["SIMD registers"]" Value="@_simdRegisters"
+                                     ValueChanged="@(v => { _simdRegisters = v; })" Clearable="true" Style="flex: 1;" Min="0"/>
+                    <MudNumericField T="int?" Label="@L["SIMD size (bits)"]" Value="@_simdSize"
+                                     ValueChanged="@(v => { _simdSize = v; })" Clearable="true" Style="flex: 1;" Min="0"/>
+                </MudStack>
+            </MudPaper>
+
+            @* ── Scalar fields: Multi-core + bus ── *@
+            <MudPaper Outlined="true" Class="pa-3 mb-3">
+                <MudText Typo="Typo.h6" Class="mb-2">@L["Multi-core"] / @L["Bus"]</MudText>
+
+                <MudStack Row="true" Spacing="2" Class="mb-3">
+                    <MudNumericField T="int?" Label="@L["Cores"]" Value="@_cores"
+                                     ValueChanged="@(v => { _cores = v; })" Clearable="true" Style="flex: 1;" Min="1"/>
+                    <MudNumericField T="int?" Label="@L["Threads per core"]" Value="@_threadsPerCore"
+                                     ValueChanged="@(v => { _threadsPerCore = v; })" Clearable="true" Style="flex: 1;" Min="1"/>
+                </MudStack>
+
+                <MudStack Row="true" Spacing="2">
+                    <MudNumericField T="int?" Label="@L["Data bus (bits)"]" Value="@_dataBus"
+                                     ValueChanged="@(v => { _dataBus = v; })" Clearable="true" Style="flex: 1;" Min="1"/>
+                    <MudNumericField T="int?" Label="@L["Address bus (bits)"]" Value="@_addressBus"
+                                     ValueChanged="@(v => { _addressBus = v; })" Clearable="true" Style="flex: 1;" Min="1"/>
+                </MudStack>
+            </MudPaper>
+
+            @* ── Scalar fields: Cache ── *@
+            <MudPaper Outlined="true" Class="pa-3 mb-3">
+                <MudText Typo="Typo.h6" Class="mb-2">@L["Cache"]</MudText>
+
+                <MudStack Row="true" Spacing="2" Class="mb-3">
+                    <MudNumericField T="float?" Label="@L["L1 instruction (KiB)"]" Value="@_l1Instruction"
+                                     ValueChanged="@(v => { _l1Instruction = v; })" Clearable="true" Style="flex: 1;" Min="0f"/>
+                    <MudNumericField T="float?" Label="@L["L1 data (KiB)"]" Value="@_l1Data"
+                                     ValueChanged="@(v => { _l1Data = v; })" Clearable="true" Style="flex: 1;" Min="0f"/>
+                </MudStack>
+
+                <MudStack Row="true" Spacing="2">
+                    <MudNumericField T="float?" Label="@L["L2 (KiB)"]" Value="@_l2"
+                                     ValueChanged="@(v => { _l2 = v; })" Clearable="true" Style="flex: 1;" Min="0f"/>
+                    <MudNumericField T="float?" Label="@L["L3 (KiB)"]" Value="@_l3"
+                                     ValueChanged="@(v => { _l3 = v; })" Clearable="true" Style="flex: 1;" Min="0f"/>
+                </MudStack>
+            </MudPaper>
+
+            @* ── Junctions ── *@
+            <MudExpansionPanels MultiExpansion="true" Class="mb-3">
+
+                @* Instruction Set Extensions *@
+                <MudExpansionPanel Text="@($"{L["Instruction set extensions"]} ({CountActive(_extensionRows, _extensionRemoves) + _extensionAdds.Count})")"
+                                   Expanded="@HasOps(_extensionAdds, _extensionRemoves)">
+                    @foreach(InstructionSetExtensionByProcessorDto r in _extensionRows ?? new())
+                    {
+                        bool removed = _extensionRemoves.Contains(r.Id ?? 0);
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText Style="@(removed ? "text-decoration: line-through;" : "")">@FormatExtensionRow(r)</MudText>
+                            @if(removed)
+                            {
+                                <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                           OnClick="@(() => UndoRemove(_extensionRemoves, r.Id ?? 0))">@L["Undo"]</MudButton>
+                            }
+                            else
+                            {
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                               OnClick="@(() => MarkRemove(_extensionRemoves, r.Id ?? 0))"/>
+                            }
+                        </MudStack>
+                    }
+                    @foreach(KeyValuePair<string, JunctionAddState> kv in _extensionAdds)
+                    {
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText><strong>+ @kv.Value.Display</strong></MudText>
+                            <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                       OnClick="@(() => _extensionAdds.Remove(kv.Key))">@L["Undo"]</MudButton>
+                        </MudStack>
+                    }
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-2">
+                        <MudAutocomplete T="InstructionSetExtensionDto" Value="@_pickExtension"
+                                         ValueChanged="@(e => { _pickExtension = e; })"
+                                         SearchFunc="SearchExtensions" Clearable="true"
+                                         ToStringFunc="@(e => e?.Extension ?? string.Empty)"
+                                         Style="flex: 1;"/>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
+                                   OnClick="AddExtension"
+                                   Disabled="@(_pickExtension is null)">@L["Add Extension"]</MudButton>
+                    </MudStack>
+                </MudExpansionPanel>
+
+            </MudExpansionPanels>
+
+            <MudTextField T="string" Label="@L["Optional comment (References, sources, etc...)"]" Lines="2"
+                          MaxLength="2000" @bind-Value="_userComment"/>
+
+            @if(!string.IsNullOrWhiteSpace(_validationError))
+            {
+                <MudAlert Severity="Severity.Error" Class="mt-2">@_validationError</MudAlert>
+            }
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit"
+                   Disabled="@(_loading || _submitting || !HasAnyChange())">
+            @if(_submitting)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true"/>
+            }
+            else
+            {
+                @L["Submit suggestion"]
+            }
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code
+{
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public long         EntityId   { get; set; }
+    [Parameter] public ProcessorDto CurrentDto { get; set; }
+
+    sealed class JunctionAddState
+    {
+        public Dictionary<string, object> Payload { get; set; }
+        public string                     Display { get; set; }
+    }
+
+    bool _loading = true;
+    bool _submitting;
+    string _validationError;
+    string _userComment;
+
+    // Scalar state (mirrors the original CurrentDto values; diff'd at submit time)
+    string             _name;
+    string             _modelCode;
+    CompanyDto         _selectedCompany;
+    InstructionSetDto  _selectedInstructionSet;
+    DateTime?          _introduced;
+    int                _introducedPrecision;
+    string             _package;
+    string             _process;
+    float?             _processNm;
+    float?             _dieSize;
+    long?              _transistors;
+    double?            _speed;
+    int?               _gprs;
+    int?               _gprSize;
+    int?               _fprs;
+    int?               _fprSize;
+    int?               _cores;
+    int?               _threadsPerCore;
+    int?               _dataBus;
+    int?               _addressBus;
+    int?               _simdRegisters;
+    int?               _simdSize;
+    float?             _l1Instruction;
+    float?             _l1Data;
+    float?             _l2;
+    float?             _l3;
+
+    // Snapshot of the original scalar values (for diff computation at Submit time)
+    string    _orig_name;
+    string    _orig_modelCode;
+    int?      _orig_companyId;
+    int?      _orig_instructionSetId;
+    DateTime? _orig_introduced;
+    int       _orig_introducedPrecision;
+    string    _orig_package;
+    string    _orig_process;
+    float?    _orig_processNm;
+    float?    _orig_dieSize;
+    long?     _orig_transistors;
+    double?   _orig_speed;
+    int?      _orig_gprs;
+    int?      _orig_gprSize;
+    int?      _orig_fprs;
+    int?      _orig_fprSize;
+    int?      _orig_cores;
+    int?      _orig_threadsPerCore;
+    int?      _orig_dataBus;
+    int?      _orig_addressBus;
+    int?      _orig_simdRegisters;
+    int?      _orig_simdSize;
+    float?    _orig_l1Instruction;
+    float?    _orig_l1Data;
+    float?    _orig_l2;
+    float?    _orig_l3;
+
+    // Picker source lists
+    List<CompanyDto>                _allCompanies;
+    List<InstructionSetDto>         _allInstructionSets;
+    List<InstructionSetExtensionDto> _allExtensions;
+
+    // Existing junction rows
+    List<InstructionSetExtensionByProcessorDto> _extensionRows;
+
+    // Pending operations: removes (set of existing row ids) + adds (uuid → state)
+    HashSet<long> _extensionRemoves = new();
+
+    Dictionary<string, JunctionAddState> _extensionAdds = new();
+
+    // Picker state
+    InstructionSetExtensionDto _pickExtension;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Seed scalar state from the current DTO snapshot.
+        if(CurrentDto is not null)
+        {
+            _name                     = CurrentDto.Name;
+            _modelCode                = CurrentDto.ModelCode;
+            _introduced               = CurrentDto.Introduced?.UtcDateTime;
+            _introducedPrecision      = CurrentDto.IntroducedPrecision ?? 0;
+            _package                  = CurrentDto.Package;
+            _process                  = CurrentDto.Process;
+            _processNm                = CurrentDto.ProcessNm;
+            _dieSize                  = CurrentDto.DieSize;
+            _transistors              = CurrentDto.Transistors;
+            _speed                    = CurrentDto.Speed;
+            _gprs                     = CurrentDto.Gprs;
+            _gprSize                  = CurrentDto.GprSize;
+            _fprs                     = CurrentDto.Fprs;
+            _fprSize                  = CurrentDto.FprSize;
+            _cores                    = CurrentDto.Cores;
+            _threadsPerCore           = CurrentDto.ThreadsPerCore;
+            _dataBus                  = CurrentDto.DataBus;
+            _addressBus               = CurrentDto.AddressBus;
+            _simdRegisters            = CurrentDto.SimdRegisters;
+            _simdSize                 = CurrentDto.SimdSize;
+            _l1Instruction            = CurrentDto.L1Instruction;
+            _l1Data                   = CurrentDto.L1Data;
+            _l2                       = CurrentDto.L2;
+            _l3                       = CurrentDto.L3;
+
+            _orig_name                = _name;
+            _orig_modelCode           = _modelCode;
+            _orig_companyId           = CurrentDto.CompanyId;
+            _orig_instructionSetId    = CurrentDto.InstructionSetId;
+            _orig_introduced          = _introduced;
+            _orig_introducedPrecision = _introducedPrecision;
+            _orig_package             = _package;
+            _orig_process             = _process;
+            _orig_processNm           = _processNm;
+            _orig_dieSize             = _dieSize;
+            _orig_transistors         = _transistors;
+            _orig_speed               = _speed;
+            _orig_gprs                = _gprs;
+            _orig_gprSize             = _gprSize;
+            _orig_fprs                = _fprs;
+            _orig_fprSize             = _fprSize;
+            _orig_cores               = _cores;
+            _orig_threadsPerCore      = _threadsPerCore;
+            _orig_dataBus             = _dataBus;
+            _orig_addressBus          = _addressBus;
+            _orig_simdRegisters       = _simdRegisters;
+            _orig_simdSize            = _simdSize;
+            _orig_l1Instruction       = _l1Instruction;
+            _orig_l1Data              = _l1Data;
+            _orig_l2                  = _l2;
+            _orig_l3                  = _l3;
+        }
+
+        Task<List<CompanyDto>>                            companiesT  = ProcessorsService.GetCompaniesAsync();
+        Task<List<InstructionSetDto>>                     setsT       = ProcessorsService.GetAllInstructionSetsAsync();
+        Task<List<InstructionSetExtensionDto>>            extsT       = ProcessorsService.GetAllExtensionsAsync();
+        Task<List<InstructionSetExtensionByProcessorDto>> extByProcT  = ProcessorsService.GetExtensionsByProcessorAsync((int)EntityId);
+
+        await Task.WhenAll(companiesT, setsT, extsT, extByProcT);
+
+        _allCompanies       = companiesT.Result;
+        _allInstructionSets = setsT.Result;
+        _allExtensions      = extsT.Result;
+        _extensionRows      = extByProcT.Result;
+
+        if(_orig_companyId.HasValue && _allCompanies is not null)
+            _selectedCompany = _allCompanies.Find(c => c.Id == _orig_companyId.Value);
+
+        if(_orig_instructionSetId.HasValue && _allInstructionSets is not null)
+            _selectedInstructionSet = _allInstructionSets.Find(i => i.Id == _orig_instructionSetId.Value);
+
+        _loading = false;
+    }
+
+    // ───────────────────────────── Search functions ─────────────────────────────
+
+    Task<IEnumerable<CompanyDto>> SearchCompanies(string value, CancellationToken ct)
+    {
+        IEnumerable<CompanyDto> r = _allCompanies ?? [];
+        if(!string.IsNullOrWhiteSpace(value))
+            r = r.Where(c => c.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
+        return Task.FromResult(r.Take(50));
+    }
+
+    Task<IEnumerable<InstructionSetDto>> SearchInstructionSets(string value, CancellationToken ct)
+    {
+        IEnumerable<InstructionSetDto> r = _allInstructionSets ?? [];
+        if(!string.IsNullOrWhiteSpace(value))
+            r = r.Where(i => i.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
+        return Task.FromResult(r.Take(50));
+    }
+
+    Task<IEnumerable<InstructionSetExtensionDto>> SearchExtensions(string value, CancellationToken ct)
+    {
+        // Dedup against existing rows minus removed plus pending adds — same extension cannot
+        // be linked twice to the same processor.
+        HashSet<int?> assigned = new(GetEffectiveIds(_extensionRows, _extensionRemoves,
+                                                     r => r.ExtensionId,
+                                                     _extensionAdds,
+                                                     p => GetIntField(p, "extension_id")));
+        IEnumerable<InstructionSetExtensionDto> r = (_allExtensions ?? []).Where(x => !assigned.Contains(x.Id));
+        if(!string.IsNullOrWhiteSpace(value))
+            r = r.Where(x => x.Extension?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
+        return Task.FromResult(r.Take(50));
+    }
+
+    static IEnumerable<int?> GetEffectiveIds<T>(List<T> rows, HashSet<long> removes,
+                                                Func<T, int?> idSelector,
+                                                Dictionary<string, JunctionAddState> adds,
+                                                Func<Dictionary<string, object>, int?> addIdSelector) where T : class
+    {
+        if(rows is not null)
+            foreach(T r in rows)
+            {
+                long rowId = (r as dynamic).Id ?? 0L;
+                if(rowId != 0 && removes.Contains(rowId)) continue;
+                int? id = idSelector(r);
+                if(id.HasValue) yield return id;
+            }
+
+        if(adds is not null)
+            foreach(JunctionAddState a in adds.Values)
+            {
+                int? id = addIdSelector(a.Payload);
+                if(id.HasValue) yield return id;
+            }
+    }
+
+    static int? GetIntField(Dictionary<string, object> payload, string key)
+    {
+        if(payload is null || !payload.TryGetValue(key, out object v) || v is null) return null;
+        return v switch
+        {
+            int i      => i,
+            long l     => (int?)l,
+            short s    => s,
+            string str => int.TryParse(str, NumberStyles.Integer, CultureInfo.InvariantCulture, out int p) ? p : null,
+            _          => null
+        };
+    }
+
+    // ───────────────────────────── Format helpers ─────────────────────────────
+
+    /// <summary>
+    ///     Format an existing junction row. Kiota's <see cref="InstructionSetExtensionByProcessorDto" />
+    ///     exposes the resolved extension name via the <c>Extensions</c> string property
+    ///     (server-side projection); fall back to a lookup in the pre-loaded
+    ///     <c>_allExtensions</c> list by id if it's missing.
+    /// </summary>
+    string FormatExtensionRow(InstructionSetExtensionByProcessorDto r)
+    {
+        if(r is null) return string.Empty;
+        if(!string.IsNullOrWhiteSpace(r.Extensions)) return r.Extensions;
+        InstructionSetExtensionDto full = _allExtensions?.Find(x => x.Id == r.ExtensionId);
+        if(full is not null && !string.IsNullOrWhiteSpace(full.Extension)) return full.Extension;
+        return $"#{r.ExtensionId}";
+    }
+
+    // ───────────────────────────── Junction queue helpers ─────────────────────────────
+
+    void MarkRemove(HashSet<long> set, long id)
+    {
+        if(id == 0) return;
+        set.Add(id);
+    }
+
+    void UndoRemove(HashSet<long> set, long id) => set.Remove(id);
+
+    static int CountActive<T>(List<T> rows, HashSet<long> removes) where T : class
+    {
+        if(rows is null) return 0;
+        int n = 0;
+        foreach(T r in rows)
+        {
+            long id = (r as dynamic).Id ?? 0L;
+            if(id == 0 || !removes.Contains(id)) n++;
+        }
+        return n;
+    }
+
+    static bool HasOps(Dictionary<string, JunctionAddState> adds, HashSet<long> removes) =>
+        (adds is { Count: > 0 }) || (removes is { Count: > 0 });
+
+    static string NewKey(string group, string op) => $"{group}.{op}.{Guid.NewGuid():N}";
+
+    // ───────────────────────────── Add handlers ─────────────────────────────
+
+    void AddExtension()
+    {
+        if(_pickExtension is null) return;
+        string key = NewKey(ProcessorSuggestionMetadata.GroupInstructionSetExtensions, "add");
+        _extensionAdds[key] = new JunctionAddState
+        {
+            Payload = new Dictionary<string, object>(StringComparer.Ordinal) { ["extension_id"] = _pickExtension.Id },
+            Display = _pickExtension.Extension ?? $"#{_pickExtension.Id}"
+        };
+        _pickExtension = null;
+    }
+
+    // ───────────────────────────── Submit ─────────────────────────────
+
+    bool HasAnyChange()
+    {
+        if(!Equals(_orig_name, _name)) return true;
+        if(!Equals(_orig_modelCode, _modelCode)) return true;
+        if(_orig_companyId != _selectedCompany?.Id) return true;
+        if(_orig_instructionSetId != _selectedInstructionSet?.Id) return true;
+        if(!Nullable.Equals(_orig_introduced, _introduced)) return true;
+        if(_orig_introducedPrecision != _introducedPrecision) return true;
+        if(!Equals(_orig_package, _package)) return true;
+        if(!Equals(_orig_process, _process)) return true;
+        if(!Nullable.Equals(_orig_processNm, _processNm)) return true;
+        if(!Nullable.Equals(_orig_dieSize, _dieSize)) return true;
+        if(!Nullable.Equals(_orig_transistors, _transistors)) return true;
+        if(!Nullable.Equals(_orig_speed, _speed)) return true;
+        if(!Nullable.Equals(_orig_gprs, _gprs)) return true;
+        if(!Nullable.Equals(_orig_gprSize, _gprSize)) return true;
+        if(!Nullable.Equals(_orig_fprs, _fprs)) return true;
+        if(!Nullable.Equals(_orig_fprSize, _fprSize)) return true;
+        if(!Nullable.Equals(_orig_cores, _cores)) return true;
+        if(!Nullable.Equals(_orig_threadsPerCore, _threadsPerCore)) return true;
+        if(!Nullable.Equals(_orig_dataBus, _dataBus)) return true;
+        if(!Nullable.Equals(_orig_addressBus, _addressBus)) return true;
+        if(!Nullable.Equals(_orig_simdRegisters, _simdRegisters)) return true;
+        if(!Nullable.Equals(_orig_simdSize, _simdSize)) return true;
+        if(!Nullable.Equals(_orig_l1Instruction, _l1Instruction)) return true;
+        if(!Nullable.Equals(_orig_l1Data, _l1Data)) return true;
+        if(!Nullable.Equals(_orig_l2, _l2)) return true;
+        if(!Nullable.Equals(_orig_l3, _l3)) return true;
+
+        if(_extensionAdds.Count > 0) return true;
+        if(_extensionRemoves.Count > 0) return true;
+
+        return false;
+    }
+
+    void Cancel() => MudDialog.Cancel();
+
+    async Task Submit()
+    {
+        _validationError = null;
+        if(_loading) return;
+
+        // Name is required: never let the user clear it.
+        if(string.IsNullOrWhiteSpace(_name))
+        {
+            _validationError = L["Name is required."];
+            return;
+        }
+
+        var diff = new Dictionary<string, object>(StringComparer.Ordinal);
+
+        if(!Equals(_orig_name, _name))           diff[ProcessorSuggestionMetadata.FieldName]      = _name;
+        if(!Equals(_orig_modelCode, _modelCode)) diff[ProcessorSuggestionMetadata.FieldModelCode] = _modelCode;
+        if(_orig_companyId != _selectedCompany?.Id)
+            diff[ProcessorSuggestionMetadata.FieldCompanyId] = _selectedCompany?.Id;
+        if(_orig_instructionSetId != _selectedInstructionSet?.Id)
+            diff[ProcessorSuggestionMetadata.FieldInstructionSetId] = _selectedInstructionSet?.Id;
+        if(!Nullable.Equals(_orig_introduced, _introduced))
+            diff[ProcessorSuggestionMetadata.FieldIntroduced] = _introduced?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        if(_orig_introducedPrecision != _introducedPrecision)
+            diff[ProcessorSuggestionMetadata.FieldIntroducedPrecision] = _introducedPrecision;
+        if(!Equals(_orig_package, _package)) diff[ProcessorSuggestionMetadata.FieldPackage] = _package;
+        if(!Equals(_orig_process, _process)) diff[ProcessorSuggestionMetadata.FieldProcess] = _process;
+        if(!Nullable.Equals(_orig_processNm, _processNm))
+            diff[ProcessorSuggestionMetadata.FieldProcessNm] = _processNm;
+        if(!Nullable.Equals(_orig_dieSize, _dieSize))
+            diff[ProcessorSuggestionMetadata.FieldDieSize] = _dieSize;
+        if(!Nullable.Equals(_orig_transistors, _transistors))
+            diff[ProcessorSuggestionMetadata.FieldTransistors] = _transistors;
+        if(!Nullable.Equals(_orig_speed, _speed))
+            diff[ProcessorSuggestionMetadata.FieldSpeed] = _speed;
+        if(!Nullable.Equals(_orig_gprs, _gprs))
+            diff[ProcessorSuggestionMetadata.FieldGprs] = _gprs;
+        if(!Nullable.Equals(_orig_gprSize, _gprSize))
+            diff[ProcessorSuggestionMetadata.FieldGprSize] = _gprSize;
+        if(!Nullable.Equals(_orig_fprs, _fprs))
+            diff[ProcessorSuggestionMetadata.FieldFprs] = _fprs;
+        if(!Nullable.Equals(_orig_fprSize, _fprSize))
+            diff[ProcessorSuggestionMetadata.FieldFprSize] = _fprSize;
+        if(!Nullable.Equals(_orig_cores, _cores))
+            diff[ProcessorSuggestionMetadata.FieldCores] = _cores;
+        if(!Nullable.Equals(_orig_threadsPerCore, _threadsPerCore))
+            diff[ProcessorSuggestionMetadata.FieldThreadsPerCore] = _threadsPerCore;
+        if(!Nullable.Equals(_orig_dataBus, _dataBus))
+            diff[ProcessorSuggestionMetadata.FieldDataBus] = _dataBus;
+        if(!Nullable.Equals(_orig_addressBus, _addressBus))
+            diff[ProcessorSuggestionMetadata.FieldAddressBus] = _addressBus;
+        if(!Nullable.Equals(_orig_simdRegisters, _simdRegisters))
+            diff[ProcessorSuggestionMetadata.FieldSimdRegisters] = _simdRegisters;
+        if(!Nullable.Equals(_orig_simdSize, _simdSize))
+            diff[ProcessorSuggestionMetadata.FieldSimdSize] = _simdSize;
+        if(!Nullable.Equals(_orig_l1Instruction, _l1Instruction))
+            diff[ProcessorSuggestionMetadata.FieldL1Instruction] = _l1Instruction;
+        if(!Nullable.Equals(_orig_l1Data, _l1Data))
+            diff[ProcessorSuggestionMetadata.FieldL1Data] = _l1Data;
+        if(!Nullable.Equals(_orig_l2, _l2))
+            diff[ProcessorSuggestionMetadata.FieldL2] = _l2;
+        if(!Nullable.Equals(_orig_l3, _l3))
+            diff[ProcessorSuggestionMetadata.FieldL3] = _l3;
+
+        AddJunctionOps(diff, _extensionAdds, _extensionRemoves,
+                       ProcessorSuggestionMetadata.GroupInstructionSetExtensions);
+
+        if(diff.Count == 0)
+        {
+            _validationError = L["No changes detected — modify at least one field before submitting."];
+            return;
+        }
+
+        _submitting = true;
+        try
+        {
+            string json = JsonSerializer.Serialize(diff);
+            var dto = new SuggestionDto
+            {
+                EntityType          = (int?)SuggestionEntityType.Processor,
+                EntityId            = EntityId,
+                Status              = (int?)SuggestionStatus.Pending,
+                UserComment         = string.IsNullOrWhiteSpace(_userComment) ? null : _userComment.Trim(),
+                SuggestedValuesJson = json
+            };
+
+            var (created, error) = await SuggestionsService.CreateAsync(dto);
+
+            if(created is null)
+            {
+                _validationError = string.IsNullOrWhiteSpace(error) ? L["Failed to submit suggestion."].Value : error;
+                return;
+            }
+
+            Snackbar.Add(L["Suggestion submitted. An administrator will review it."], Severity.Success);
+            MudDialog.Close(DialogResult.Ok(created));
+        }
+        finally
+        {
+            _submitting = false;
+        }
+    }
+
+    static void AddJunctionOps(Dictionary<string, object> diff,
+                               Dictionary<string, JunctionAddState> adds,
+                               HashSet<long> removes,
+                               string group)
+    {
+        foreach(KeyValuePair<string, JunctionAddState> kv in adds) diff[kv.Key] = kv.Value.Payload;
+        foreach(long id in removes) diff[$"{group}.remove.{id.ToString(CultureInfo.InvariantCulture)}"] = null;
+    }
+}

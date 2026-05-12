@@ -205,4 +205,76 @@
   <data name="Software" xml:space="preserve">
     <value>Logiciel</value>
   </data>
+  <data name="Manufacturer" xml:space="preserve">
+    <value>Fabricant</value>
+  </data>
+  <data name="Model code" xml:space="preserve">
+    <value>Code du modèle</value>
+  </data>
+  <data name="Speed (MHz)" xml:space="preserve">
+    <value>Vitesse (MHz)</value>
+  </data>
+  <data name="Process (nm)" xml:space="preserve">
+    <value>Processus (nm)</value>
+  </data>
+  <data name="Die size (mm²)" xml:space="preserve">
+    <value>Taille de la puce (mm²)</value>
+  </data>
+  <data name="Transistors" xml:space="preserve">
+    <value>Transistors</value>
+  </data>
+  <data name="Package" xml:space="preserve">
+    <value>Boîtier</value>
+  </data>
+  <data name="Process" xml:space="preserve">
+    <value>Processus</value>
+  </data>
+  <data name="GPRs" xml:space="preserve">
+    <value>GPRs</value>
+  </data>
+  <data name="GPR size (bits)" xml:space="preserve">
+    <value>Taille des GPR (bits)</value>
+  </data>
+  <data name="FPRs" xml:space="preserve">
+    <value>FPRs</value>
+  </data>
+  <data name="FPR size (bits)" xml:space="preserve">
+    <value>Taille des FPR (bits)</value>
+  </data>
+  <data name="Cores" xml:space="preserve">
+    <value>Cœurs</value>
+  </data>
+  <data name="Threads per core" xml:space="preserve">
+    <value>Threads par cœur</value>
+  </data>
+  <data name="Data bus (bits)" xml:space="preserve">
+    <value>Bus de données (bits)</value>
+  </data>
+  <data name="Address bus (bits)" xml:space="preserve">
+    <value>Bus d'adresses (bits)</value>
+  </data>
+  <data name="SIMD registers" xml:space="preserve">
+    <value>Registres SIMD</value>
+  </data>
+  <data name="SIMD size (bits)" xml:space="preserve">
+    <value>Taille SIMD (bits)</value>
+  </data>
+  <data name="L1 instruction (KiB)" xml:space="preserve">
+    <value>L1 instructions (Kio)</value>
+  </data>
+  <data name="L1 data (KiB)" xml:space="preserve">
+    <value>L1 données (Kio)</value>
+  </data>
+  <data name="L2 (KiB)" xml:space="preserve">
+    <value>L2 (Kio)</value>
+  </data>
+  <data name="L3 (KiB)" xml:space="preserve">
+    <value>L3 (Kio)</value>
+  </data>
+  <data name="Instruction set" xml:space="preserve">
+    <value>Jeu d'instructions</value>
+  </data>
+  <data name="Instruction set extensions" xml:space="preserve">
+    <value>Extensions du jeu d'instructions</value>
+  </data>
 </root>

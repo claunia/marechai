@@ -656,4 +656,34 @@
   <data name="We do not have a description for this processor, you could collaborate by suggesting one" xml:space="preserve">
     <value>Nous n'avons pas de description pour ce processeur, vous pouvez collaborer en en suggérant une</value>
   </data>
+  <data name="General" xml:space="preserve">
+    <value>Général</value>
+  </data>
+  <data name="Undo" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently." xml:space="preserve">
+    <value>Modifiez n'importe quel champ ou jonction ci-dessous. Seules vos modifications seront soumises à révision ; un administrateur pourra accepter ou rejeter chacune indépendamment.</value>
+  </data>
+  <data name="Optional comment (References, sources, etc...)" xml:space="preserve">
+    <value>Commentaire facultatif (Références, sources, etc...)</value>
+  </data>
+  <data name="No changes detected — modify at least one field before submitting." xml:space="preserve">
+    <value>Aucune modification détectée — modifiez au moins un champ avant de soumettre.</value>
+  </data>
+  <data name="Submit suggestion" xml:space="preserve">
+    <value>Soumettre la suggestion</value>
+  </data>
+  <data name="Failed to submit suggestion." xml:space="preserve">
+    <value>Échec de la soumission de la suggestion.</value>
+  </data>
+  <data name="Suggestion submitted. An administrator will review it." xml:space="preserve">
+    <value>Suggestion soumise. Un administrateur l'examinera.</value>
+  </data>
+  <data name="Process (nm)" xml:space="preserve">
+    <value>Processus (nm)</value>
+  </data>
+  <data name="Die size (mm²)" xml:space="preserve">
+    <value>Taille de la puce (mm²)</value>
+  </data>
 </root>
