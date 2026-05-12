@@ -719,4 +719,22 @@
         <value>Máquinas</value>
         <comment>Machines</comment>
     </data>
+  <data name="Suggest description" xml:space="preserve">
+    <value>Sugerir descripción</value>
+  </data>
+  <data name="Suggest translation" xml:space="preserve">
+    <value>Sugerir traducción</value>
+  </data>
+  <data name="Suggest changes" xml:space="preserve">
+    <value>Sugerir cambios</value>
+  </data>
+  <data name="Choose language for description" xml:space="preserve">
+    <value>Elige el idioma de la descripción</value>
+  </data>
+  <data name="We do not have a description in your language, you could collaborate by translating the English description we show below" xml:space="preserve">
+    <value>No tenemos una descripción en tu idioma, puedes colaborar traduciendo la descripción en inglés que mostramos abajo</value>
+  </data>
+  <data name="We do not have a description for this processor, you could collaborate by suggesting one" xml:space="preserve">
+    <value>No tenemos una descripción para este procesador, puedes colaborar sugiriendo una</value>
+  </data>
 </root>

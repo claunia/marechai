@@ -739,4 +739,22 @@
     <data name="Machines" xml:space="preserve">
         <value>Machines</value>
     </data>
+  <data name="Suggest description" xml:space="preserve">
+    <value>Suggest description</value>
+  </data>
+  <data name="Suggest translation" xml:space="preserve">
+    <value>Suggest translation</value>
+  </data>
+  <data name="Suggest changes" xml:space="preserve">
+    <value>Suggest changes</value>
+  </data>
+  <data name="Choose language for description" xml:space="preserve">
+    <value>Choose language for description</value>
+  </data>
+  <data name="We do not have a description in your language, you could collaborate by translating the English description we show below" xml:space="preserve">
+    <value>We do not have a description in your language, you could collaborate by translating the English description we show below</value>
+  </data>
+  <data name="We do not have a description for this processor, you could collaborate by suggesting one" xml:space="preserve">
+    <value>We do not have a description for this processor, you could collaborate by suggesting one</value>
+  </data>
 </root>

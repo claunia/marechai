@@ -1021,7 +1021,12 @@ public enum SuggestionEntityType : byte
     ///     A markdown description of a GPU, scoped per language. The Subkey on the
     ///     Suggestion row holds the ISO-639-3 language code (e.g. "eng", "spa").
     /// </summary>
-    GpuDescription = 22
+    GpuDescription = 22,
+    /// <summary>
+    ///     A markdown description of a Processor, scoped per language. The Subkey on the
+    ///     Suggestion row holds the ISO-639-3 language code (e.g. "eng", "spa").
+    /// </summary>
+    ProcessorDescription = 23
 }
 
 public enum SuggestionStatus : byte

@@ -533,9 +533,19 @@ public class ProcessorsController(MarechaiContext context, IDbContextFactory<Mar
 
         if(item is null) return NotFound();
 
+        string entityName = item.Name;
+
         context.Processors.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        // Mark any pending suggestions for this Processor as Stale and notify the suggesting users.
+        await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntityAsync(
+            context, Marechai.Data.SuggestionEntityType.Processor, id, entityName);
+
+        // Cascade: also mark stale every per-language description suggestion for this Processor.
+        await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntityAsync(
+            context, Marechai.Data.SuggestionEntityType.ProcessorDescription, id, entityName);
 
         return Ok();
     }
@@ -672,9 +682,25 @@ public class ProcessorsController(MarechaiContext context, IDbContextFactory<Mar
 
         if(description is null) return NotFound();
 
+        // Capture display data BEFORE the cascade, while the Processor + language rows are still
+        // available for the system message body.
+        string processorName = await context.Processors.AsNoTracking()
+                                            .Where(p => p.Id == id)
+                                            .Select(p => p.Name)
+                                            .FirstOrDefaultAsync();
+        string langName = await context.Iso639.AsNoTracking()
+                                       .Where(l => l.Id == languageCode)
+                                       .Select(l => l.ReferenceName)
+                                       .FirstOrDefaultAsync();
+        string subkeyLabel = $"({langName ?? languageCode} description)";
+
         context.ProcessorDescriptions.Remove(description);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntitySubkeyAsync(
+            context, Marechai.Data.SuggestionEntityType.ProcessorDescription,
+            id, languageCode, processorName ?? $"#{id}", subkeyLabel);
 
         return Ok();
     }

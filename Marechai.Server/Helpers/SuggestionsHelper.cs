@@ -145,6 +145,7 @@ internal static class SuggestionsHelper
         SuggestionEntityType.DocumentSynopsis    => "document synopsis",
         SuggestionEntityType.MagazineSynopsis    => "magazine synopsis",
         SuggestionEntityType.GpuDescription      => "GPU description",
+        SuggestionEntityType.ProcessorDescription => "processor description",
         SuggestionEntityType.MachineFamily       => "machine family",
         SuggestionEntityType.Processor           => "processor",
         SuggestionEntityType.Gpu                 => "GPU",
