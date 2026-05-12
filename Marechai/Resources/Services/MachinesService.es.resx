@@ -1047,4 +1047,20 @@
     <data name="We do not have a description for this smartphone, you could collaborate by suggesting one" xml:space="preserve">
         <value>No tenemos una descripción de este smartphone, puedes colaborar sugiriendo uno</value>
     </data>
+
+  <data name="Prototype" xml:space="preserve">
+    <value>Prototipo</value>
+  </data>
+  <data name="Undo" xml:space="preserve">
+    <value>Deshacer</value>
+  </data>
+  <data name="No changes detected — modify at least one field before submitting." xml:space="preserve">
+    <value>No se detectaron cambios — modifica al menos un campo antes de enviar.</value>
+  </data>
+  <data name="Suggestion submitted. An administrator will review it." xml:space="preserve">
+    <value>Sugerencia enviada. Un administrador la revisará.</value>
+  </data>
+  <data name="Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently." xml:space="preserve">
+    <value>Edita cualquier campo o relación abajo. Solo se enviarán tus cambios para revisión; un administrador puede aceptarlos o rechazarlos uno por uno.</value>
+  </data>
 </root>

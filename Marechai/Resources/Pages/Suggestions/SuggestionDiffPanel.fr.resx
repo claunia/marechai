@@ -58,4 +58,62 @@
     <data name="Suggested value" xml:space="preserve"><value>Valeur suggérée</value></data>
     <data name="unchanged" xml:space="preserve"><value>inchangées</value></data>
     <data name="Show full diff ({0} lines)" xml:space="preserve"><value>Afficher le diff complet ({0} lignes)</value></data>
+
+  <data name="Add" xml:space="preserve">
+    <value>Ajouter</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="(new junction row)" xml:space="preserve">
+    <value>(nouvelle ligne de relation)</value>
+  </data>
+  <data name="(existing junction row)" xml:space="preserve">
+    <value>(ligne de relation existante)</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="Model" xml:space="preserve">
+    <value>Modèle</value>
+  </data>
+  <data name="Company" xml:space="preserve">
+    <value>Entreprise</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Prototype" xml:space="preserve">
+    <value>Prototype</value>
+  </data>
+  <data name="Introduction date" xml:space="preserve">
+    <value>Date d'introduction</value>
+  </data>
+  <data name="Date precision" xml:space="preserve">
+    <value>Précision de la date</value>
+  </data>
+  <data name="Family" xml:space="preserve">
+    <value>Famille</value>
+  </data>
+  <data name="GPUs" xml:space="preserve">
+    <value>GPU</value>
+  </data>
+  <data name="Processors" xml:space="preserve">
+    <value>Processeurs</value>
+  </data>
+  <data name="Sound Synthesizers" xml:space="preserve">
+    <value>Synthétiseurs sonores</value>
+  </data>
+  <data name="Screens" xml:space="preserve">
+    <value>Écrans</value>
+  </data>
+  <data name="Memory" xml:space="preserve">
+    <value>Mémoire</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>Stockage</value>
+  </data>
+  <data name="Software Platforms" xml:space="preserve">
+    <value>Plateformes logicielles</value>
+  </data>
 </root>

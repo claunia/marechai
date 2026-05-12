@@ -1,0 +1,969 @@
+@using System
+@using System.Globalization
+@using System.Linq
+@using System.Text.Json
+@using System.Threading
+@using Humanizer
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@using Marechai.Services
+@using Marechai.Suggestions
+@using Marechai.Suggestions.Metadata
+
+@inject IStringLocalizer<MachinesService> L
+@inject ISnackbar          Snackbar
+@inject MachinesService    MachinesService
+@inject SuggestionsService SuggestionsService
+
+@*
+    Dedicated suggestion dialog for editing a Machine. Mirrors the admin MachineDialog editing
+    surface but produces a Suggestion JSON payload instead of writing directly. Each junction
+    add/remove operation is queued in local state and serialised under a unique field-name
+    key (<group>.add.<uuid> or <group>.remove.<row_id>) so the admin can later accept or
+    reject each operation independently in the diff panel.
+*@
+
+<MudDialog>
+    <DialogContent>
+        @if(_loading)
+        {
+            <MudProgressLinear Indeterminate="true"/>
+        }
+        else
+        {
+            <MudText Typo="Typo.body2" Class="mb-3">
+                @L["Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently."]
+            </MudText>
+
+            @* ── Scalar fields ── *@
+            <MudPaper Outlined="true" Class="pa-3 mb-3">
+                <MudText Typo="Typo.h6" Class="mb-2">@L["General"]</MudText>
+
+                <MudTextField T="string" Label="@L["Name"]"
+                              MaxLength="255"
+                              Value="@_name"
+                              ValueChanged="@(v => { _name = v; })"
+                              Class="mb-3"/>
+
+                <MudTextField T="string" Label="@L["Model"]"
+                              MaxLength="50"
+                              Value="@_model"
+                              ValueChanged="@(v => { _model = v; })"
+                              Class="mb-3"/>
+
+                <MudAutocomplete T="CompanyDto" Label="@L["Company"]"
+                                 Value="@_selectedCompany"
+                                 ValueChanged="@(c => { _selectedCompany = c; })"
+                                 SearchFunc="SearchCompanies"
+                                 ToStringFunc="@(c => c?.Name ?? string.Empty)"
+                                 Clearable="true"
+                                 Class="mb-3"/>
+
+                <MudSelect T="int" Label="@L["Type"]" Value="@_type" ValueChanged="@(v => { _type = v; })" Class="mb-3">
+                    <MudSelectItem T="int" Value="0">@L["Unknown"]</MudSelectItem>
+                    <MudSelectItem T="int" Value="1">@L["Computer"]</MudSelectItem>
+                    <MudSelectItem T="int" Value="2">@L["Console"]</MudSelectItem>
+                    <MudSelectItem T="int" Value="3">@L["Smartphone"]</MudSelectItem>
+                </MudSelect>
+
+                <MudCheckBox T="bool" Label="@L["Prototype"]" Value="@_prototype"
+                             ValueChanged="@(v => { _prototype = v; })" Class="mb-3"/>
+
+                <MudDatePicker Label="@L["Introduction date"]" Editable="true" Clearable="true"
+                               Disabled="@_prototype"
+                               Date="@_introduced"
+                               DateChanged="@(d => { _introduced = d; })" Class="mb-3"/>
+
+                <MudSelect T="int" Label="@L["Date precision"]"
+                           Value="@_introducedPrecision"
+                           ValueChanged="@(v => { _introducedPrecision = v; })" Class="mb-3">
+                    <MudSelectItem T="int" Value="0">@L["Full date"]</MudSelectItem>
+                    <MudSelectItem T="int" Value="1">@L["Month and year only"]</MudSelectItem>
+                    <MudSelectItem T="int" Value="2">@L["Year only"]</MudSelectItem>
+                </MudSelect>
+
+                <MudAutocomplete T="MachineFamilyDto" Label="@L["Family"]"
+                                 Value="@_selectedFamily"
+                                 ValueChanged="@(f => { _selectedFamily = f; })"
+                                 SearchFunc="SearchFamilies"
+                                 ToStringFunc="@(f => f?.Name ?? string.Empty)"
+                                 Clearable="true"/>
+            </MudPaper>
+
+            @* ── Junctions ── *@
+            <MudExpansionPanels MultiExpansion="true" Class="mb-3">
+
+                @* GPUs *@
+                <MudExpansionPanel Text="@($"{L["GPUs"]} ({CountActive(_gpuRows, _gpuRemoves) + _gpuAdds.Count})")"
+                                   Expanded="@HasOps(_gpuAdds, _gpuRemoves)">
+                    @foreach(GpuByMachineDto g in _gpuRows ?? new())
+                    {
+                        bool removed = _gpuRemoves.Contains(g.Id ?? 0);
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText Style="@(removed ? "text-decoration: line-through;" : "")">@FormatGpu(g)</MudText>
+                            @if(removed)
+                            {
+                                <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                           OnClick="@(() => UndoRemove(_gpuRemoves, g.Id ?? 0))">@L["Undo"]</MudButton>
+                            }
+                            else
+                            {
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                               OnClick="@(() => MarkRemove(_gpuRemoves, g.Id ?? 0))"/>
+                            }
+                        </MudStack>
+                    }
+                    @foreach(KeyValuePair<string, JunctionAddState> kv in _gpuAdds)
+                    {
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText><strong>+ @kv.Value.Display</strong></MudText>
+                            <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                       OnClick="@(() => _gpuAdds.Remove(kv.Key))">@L["Undo"]</MudButton>
+                        </MudStack>
+                    }
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-2">
+                        <MudAutocomplete T="GpuDto" Value="@_pickGpu" ValueChanged="@(g => { _pickGpu = g; })"
+                                         SearchFunc="SearchGpus" Clearable="true"
+                                         ToStringFunc="@(g => g is null ? string.Empty : $"{g.Name} ({g.Company})")"
+                                         Style="flex: 1;"/>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
+                                   OnClick="AddGpu" Disabled="@(_pickGpu is null)">@L["Add GPU"]</MudButton>
+                    </MudStack>
+                </MudExpansionPanel>
+
+                @* Processors *@
+                <MudExpansionPanel Text="@($"{L["Processors"]} ({CountActive(_processorRows, _processorRemoves) + _processorAdds.Count})")"
+                                   Expanded="@HasOps(_processorAdds, _processorRemoves)">
+                    @foreach(ProcessorByMachineDto p in _processorRows ?? new())
+                    {
+                        bool removed = _processorRemoves.Contains(p.Id ?? 0);
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText Style="@(removed ? "text-decoration: line-through;" : "")">@FormatProcessor(p)</MudText>
+                            @if(removed)
+                            {
+                                <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                           OnClick="@(() => UndoRemove(_processorRemoves, p.Id ?? 0))">@L["Undo"]</MudButton>
+                            }
+                            else
+                            {
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                               OnClick="@(() => MarkRemove(_processorRemoves, p.Id ?? 0))"/>
+                            }
+                        </MudStack>
+                    }
+                    @foreach(KeyValuePair<string, JunctionAddState> kv in _processorAdds)
+                    {
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText><strong>+ @kv.Value.Display</strong></MudText>
+                            <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                       OnClick="@(() => _processorAdds.Remove(kv.Key))">@L["Undo"]</MudButton>
+                        </MudStack>
+                    }
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-2">
+                        <MudAutocomplete T="ProcessorDto" Value="@_pickProcessor" ValueChanged="@(p => { _pickProcessor = p; })"
+                                         SearchFunc="SearchProcessors" Clearable="true"
+                                         ToStringFunc="@(p => p is null ? string.Empty : $"{p.Name} ({p.Company})")"
+                                         Style="flex: 1;"/>
+                        <MudNumericField T="float?" Value="@_pickProcessorSpeed" ValueChanged="@(v => { _pickProcessorSpeed = v; })"
+                                         Label="@L["Speed (MHz)"]" Clearable="true" Style="max-width: 160px;"/>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
+                                   OnClick="AddProcessor" Disabled="@(_pickProcessor is null)">@L["Add Processor"]</MudButton>
+                    </MudStack>
+                </MudExpansionPanel>
+
+                @* Sound Synthesizers *@
+                <MudExpansionPanel Text="@($"{L["Sound Synthesizers"]} ({CountActive(_soundSynthRows, _soundSynthRemoves) + _soundSynthAdds.Count})")"
+                                   Expanded="@HasOps(_soundSynthAdds, _soundSynthRemoves)">
+                    @foreach(SoundSynthByMachineDto s in _soundSynthRows ?? new())
+                    {
+                        bool removed = _soundSynthRemoves.Contains(s.Id ?? 0);
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText Style="@(removed ? "text-decoration: line-through;" : "")">@FormatSoundSynth(s)</MudText>
+                            @if(removed)
+                            {
+                                <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                           OnClick="@(() => UndoRemove(_soundSynthRemoves, s.Id ?? 0))">@L["Undo"]</MudButton>
+                            }
+                            else
+                            {
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                               OnClick="@(() => MarkRemove(_soundSynthRemoves, s.Id ?? 0))"/>
+                            }
+                        </MudStack>
+                    }
+                    @foreach(KeyValuePair<string, JunctionAddState> kv in _soundSynthAdds)
+                    {
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText><strong>+ @kv.Value.Display</strong></MudText>
+                            <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                       OnClick="@(() => _soundSynthAdds.Remove(kv.Key))">@L["Undo"]</MudButton>
+                        </MudStack>
+                    }
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-2">
+                        <MudAutocomplete T="SoundSynthDto" Value="@_pickSoundSynth" ValueChanged="@(s => { _pickSoundSynth = s; })"
+                                         SearchFunc="SearchSoundSynths" Clearable="true"
+                                         ToStringFunc="@(s => s is null ? string.Empty : $"{s.Name} ({s.Company})")"
+                                         Style="flex: 1;"/>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
+                                   OnClick="AddSoundSynth" Disabled="@(_pickSoundSynth is null)">@L["Add Sound Synth"]</MudButton>
+                    </MudStack>
+                </MudExpansionPanel>
+
+                @* Screens *@
+                <MudExpansionPanel Text="@($"{L["Screens"]} ({CountActive(_screenRows, _screenRemoves) + _screenAdds.Count})")"
+                                   Expanded="@HasOps(_screenAdds, _screenRemoves)">
+                    @foreach(ScreenByMachineDto s in _screenRows ?? new())
+                    {
+                        bool removed = _screenRemoves.Contains(s.Id ?? 0);
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText Style="@(removed ? "text-decoration: line-through;" : "")">@FormatScreen(s)</MudText>
+                            @if(removed)
+                            {
+                                <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                           OnClick="@(() => UndoRemove(_screenRemoves, s.Id ?? 0))">@L["Undo"]</MudButton>
+                            }
+                            else
+                            {
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                               OnClick="@(() => MarkRemove(_screenRemoves, s.Id ?? 0))"/>
+                            }
+                        </MudStack>
+                    }
+                    @foreach(KeyValuePair<string, JunctionAddState> kv in _screenAdds)
+                    {
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText><strong>+ @kv.Value.Display</strong></MudText>
+                            <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                       OnClick="@(() => _screenAdds.Remove(kv.Key))">@L["Undo"]</MudButton>
+                        </MudStack>
+                    }
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-2">
+                        <MudAutocomplete T="ScreenDto" Value="@_pickScreen" ValueChanged="@(s => { _pickScreen = s; })"
+                                         SearchFunc="SearchScreens" Clearable="true"
+                                         ToStringFunc="@(s => s is null ? string.Empty : FormatScreenDto(s))"
+                                         Style="flex: 1;"/>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
+                                   OnClick="AddScreen" Disabled="@(_pickScreen is null)">@L["Add Screen"]</MudButton>
+                    </MudStack>
+                </MudExpansionPanel>
+
+                @* Memory *@
+                <MudExpansionPanel Text="@($"{L["Memory"]} ({CountActive(_memoryRows, _memoryRemoves) + _memoryAdds.Count})")"
+                                   Expanded="@HasOps(_memoryAdds, _memoryRemoves)">
+                    @foreach(MemoryByMachineDto m in _memoryRows ?? new())
+                    {
+                        bool removed = _memoryRemoves.Contains(m.Id ?? 0);
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText Style="@(removed ? "text-decoration: line-through;" : "")">@FormatMemory(m)</MudText>
+                            @if(removed)
+                            {
+                                <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                           OnClick="@(() => UndoRemove(_memoryRemoves, m.Id ?? 0))">@L["Undo"]</MudButton>
+                            }
+                            else
+                            {
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                               OnClick="@(() => MarkRemove(_memoryRemoves, m.Id ?? 0))"/>
+                            }
+                        </MudStack>
+                    }
+                    @foreach(KeyValuePair<string, JunctionAddState> kv in _memoryAdds)
+                    {
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText><strong>+ @kv.Value.Display</strong></MudText>
+                            <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                       OnClick="@(() => _memoryAdds.Remove(kv.Key))">@L["Undo"]</MudButton>
+                        </MudStack>
+                    }
+                    <MudPaper Class="pa-2 mt-2" Elevation="0" Outlined="true">
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-2">
+                            <MudSelect T="int" Value="@_pickMemoryType" ValueChanged="@(v => { _pickMemoryType = v; })"
+                                       Label="@L["Memory Type"]" Style="flex: 1;">
+                                @foreach(MemoryType mt in Enum.GetValues<MemoryType>())
+                                {
+                                    int v = (int)mt;
+                                    <MudSelectItem T="int" Value="v">@mt.Humanize()</MudSelectItem>
+                                }
+                            </MudSelect>
+                            <MudSelect T="int" Value="@_pickMemoryUsage" ValueChanged="@(v => { _pickMemoryUsage = v; })"
+                                       Label="@L["Memory Usage"]" Style="flex: 1;">
+                                @foreach(MemoryUsage mu in Enum.GetValues<MemoryUsage>())
+                                {
+                                    int v = (int)mu;
+                                    <MudSelectItem T="int" Value="v">@mu.Humanize()</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudStack>
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                            <MudNumericField T="long?" Value="@_pickMemorySize" ValueChanged="@(v => { _pickMemorySize = v; })"
+                                             Label="@L["Size (bytes)"]" Clearable="true" Style="flex: 1;"/>
+                            <MudNumericField T="double?" Value="@_pickMemorySpeed" ValueChanged="@(v => { _pickMemorySpeed = v; })"
+                                             Label="@L["Speed (MHz) memory"]" Clearable="true" Style="flex: 1;"/>
+                            <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
+                                       OnClick="AddMemory">@L["Add Memory"]</MudButton>
+                        </MudStack>
+                    </MudPaper>
+                </MudExpansionPanel>
+
+                @* Storage *@
+                <MudExpansionPanel Text="@($"{L["Storage"]} ({CountActive(_storageRows, _storageRemoves) + _storageAdds.Count})")"
+                                   Expanded="@HasOps(_storageAdds, _storageRemoves)">
+                    @foreach(StorageByMachineDto s in _storageRows ?? new())
+                    {
+                        bool removed = _storageRemoves.Contains(s.Id ?? 0);
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText Style="@(removed ? "text-decoration: line-through;" : "")">@FormatStorage(s)</MudText>
+                            @if(removed)
+                            {
+                                <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                           OnClick="@(() => UndoRemove(_storageRemoves, s.Id ?? 0))">@L["Undo"]</MudButton>
+                            }
+                            else
+                            {
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                               OnClick="@(() => MarkRemove(_storageRemoves, s.Id ?? 0))"/>
+                            }
+                        </MudStack>
+                    }
+                    @foreach(KeyValuePair<string, JunctionAddState> kv in _storageAdds)
+                    {
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText><strong>+ @kv.Value.Display</strong></MudText>
+                            <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                       OnClick="@(() => _storageAdds.Remove(kv.Key))">@L["Undo"]</MudButton>
+                        </MudStack>
+                    }
+                    <MudPaper Class="pa-2 mt-2" Elevation="0" Outlined="true">
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                            <MudSelect T="int" Value="@_pickStorageType" ValueChanged="@(v => { _pickStorageType = v; })"
+                                       Label="@L["Storage Type"]" Style="flex: 1;">
+                                @foreach(StorageType st in Enum.GetValues<StorageType>())
+                                {
+                                    int v = (int)st;
+                                    <MudSelectItem T="int" Value="v">@st.Humanize()</MudSelectItem>
+                                }
+                            </MudSelect>
+                            <MudSelect T="int" Value="@_pickStorageInterface" ValueChanged="@(v => { _pickStorageInterface = v; })"
+                                       Label="@L["Storage Interface"]" Style="flex: 1;">
+                                @foreach(StorageInterface si in Enum.GetValues<StorageInterface>())
+                                {
+                                    int v = (int)si;
+                                    <MudSelectItem T="int" Value="v">@si.Humanize()</MudSelectItem>
+                                }
+                            </MudSelect>
+                            <MudNumericField T="long?" Value="@_pickStorageCapacity" ValueChanged="@(v => { _pickStorageCapacity = v; })"
+                                             Label="@L["Capacity (bytes)"]" Clearable="true" Style="max-width: 180px;"/>
+                            <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
+                                       OnClick="AddStorage">@L["Add Storage"]</MudButton>
+                        </MudStack>
+                    </MudPaper>
+                </MudExpansionPanel>
+
+                @* Software Platforms *@
+                <MudExpansionPanel Text="@($"{L["Software Platforms"]} ({CountActive(_softwarePlatformRows, _softwarePlatformRemoves) + _softwarePlatformAdds.Count})")"
+                                   Expanded="@HasOps(_softwarePlatformAdds, _softwarePlatformRemoves)">
+                    @foreach(SoftwarePlatformByMachineDto s in _softwarePlatformRows ?? new())
+                    {
+                        bool removed = _softwarePlatformRemoves.Contains(s.Id ?? 0);
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText Style="@(removed ? "text-decoration: line-through;" : "")">@s.Name</MudText>
+                            @if(removed)
+                            {
+                                <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                           OnClick="@(() => UndoRemove(_softwarePlatformRemoves, s.Id ?? 0))">@L["Undo"]</MudButton>
+                            }
+                            else
+                            {
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                               OnClick="@(() => MarkRemove(_softwarePlatformRemoves, s.Id ?? 0))"/>
+                            }
+                        </MudStack>
+                    }
+                    @foreach(KeyValuePair<string, JunctionAddState> kv in _softwarePlatformAdds)
+                    {
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText><strong>+ @kv.Value.Display</strong></MudText>
+                            <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                       OnClick="@(() => _softwarePlatformAdds.Remove(kv.Key))">@L["Undo"]</MudButton>
+                        </MudStack>
+                    }
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-2">
+                        <MudAutocomplete T="SoftwarePlatformDto" Value="@_pickSoftwarePlatform" ValueChanged="@(s => { _pickSoftwarePlatform = s; })"
+                                         SearchFunc="SearchSoftwarePlatforms" Clearable="true"
+                                         ToStringFunc="@(s => s?.Name ?? string.Empty)"
+                                         Style="flex: 1;"/>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
+                                   OnClick="AddSoftwarePlatform" Disabled="@(_pickSoftwarePlatform is null)">@L["Add Software Platform"]</MudButton>
+                    </MudStack>
+                </MudExpansionPanel>
+
+            </MudExpansionPanels>
+
+            <MudTextField T="string" Label="@L["Optional comment (References, sources, etc...)"]" Lines="2"
+                          MaxLength="2000" @bind-Value="_userComment"/>
+
+            @if(!string.IsNullOrWhiteSpace(_validationError))
+            {
+                <MudAlert Severity="Severity.Error" Class="mt-2">@_validationError</MudAlert>
+            }
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit"
+                   Disabled="@(_loading || _submitting || !HasAnyChange())">
+            @if(_submitting)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true"/>
+            }
+            else
+            {
+                @L["Submit suggestion"]
+            }
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code
+{
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public long       EntityId   { get; set; }
+    [Parameter] public MachineDto CurrentDto { get; set; }
+
+    sealed class JunctionAddState
+    {
+        public Dictionary<string, object> Payload { get; set; }
+        public string                     Display { get; set; }
+    }
+
+    bool _loading = true;
+    bool _submitting;
+    string _validationError;
+    string _userComment;
+
+    // Scalar state (mirrors the original CurrentDto values; diff'd at submit time)
+    string _name;
+    string _model;
+    int _type;
+    bool _prototype;
+    DateTime? _introduced;
+    int _introducedPrecision;
+    CompanyDto _selectedCompany;
+    MachineFamilyDto _selectedFamily;
+
+    // Snapshot of the original scalar values (for diff computation at Submit time)
+    string _orig_name;
+    string _orig_model;
+    int _orig_type;
+    bool _orig_prototype;
+    DateTime? _orig_introduced;
+    int _orig_introducedPrecision;
+    int? _orig_companyId;
+    int? _orig_familyId;
+
+    // Picker source lists
+    List<CompanyDto>          _allCompanies;
+    List<MachineFamilyDto>    _allFamilies;
+    List<GpuDto>              _allGpus;
+    List<ProcessorDto>        _allProcessors;
+    List<SoundSynthDto>       _allSoundSynths;
+    List<ScreenDto>           _allScreens;
+    List<SoftwarePlatformDto> _allSoftwarePlatforms;
+
+    // Existing junction rows
+    List<GpuByMachineDto>              _gpuRows;
+    List<ProcessorByMachineDto>        _processorRows;
+    List<SoundSynthByMachineDto>       _soundSynthRows;
+    List<ScreenByMachineDto>           _screenRows;
+    List<MemoryByMachineDto>           _memoryRows;
+    List<StorageByMachineDto>          _storageRows;
+    List<SoftwarePlatformByMachineDto> _softwarePlatformRows;
+
+    // Pending operations: removes (set of existing row ids) + adds (uuid → state)
+    HashSet<long> _gpuRemoves              = new();
+    HashSet<long> _processorRemoves        = new();
+    HashSet<long> _soundSynthRemoves       = new();
+    HashSet<long> _screenRemoves           = new();
+    HashSet<long> _memoryRemoves           = new();
+    HashSet<long> _storageRemoves          = new();
+    HashSet<long> _softwarePlatformRemoves = new();
+
+    Dictionary<string, JunctionAddState> _gpuAdds              = new();
+    Dictionary<string, JunctionAddState> _processorAdds        = new();
+    Dictionary<string, JunctionAddState> _soundSynthAdds       = new();
+    Dictionary<string, JunctionAddState> _screenAdds           = new();
+    Dictionary<string, JunctionAddState> _memoryAdds           = new();
+    Dictionary<string, JunctionAddState> _storageAdds          = new();
+    Dictionary<string, JunctionAddState> _softwarePlatformAdds = new();
+
+    // Picker state
+    GpuDto              _pickGpu;
+    ProcessorDto        _pickProcessor;
+    float?              _pickProcessorSpeed;
+    SoundSynthDto       _pickSoundSynth;
+    ScreenDto           _pickScreen;
+    SoftwarePlatformDto _pickSoftwarePlatform;
+
+    int     _pickMemoryType;
+    int     _pickMemoryUsage;
+    long?   _pickMemorySize;
+    double? _pickMemorySpeed;
+
+    int   _pickStorageType;
+    int   _pickStorageInterface;
+    long? _pickStorageCapacity;
+
+    static readonly Dictionary<int, string> MemoryTypeNames =
+        Enum.GetValues<MemoryType>().ToDictionary(e => (int)e, e => e.Humanize());
+
+    static readonly Dictionary<int, string> MemoryUsageNames =
+        Enum.GetValues<MemoryUsage>().ToDictionary(e => (int)e, e => e.Humanize());
+
+    static readonly Dictionary<int, string> StorageTypeNames =
+        Enum.GetValues<StorageType>().ToDictionary(e => (int)e, e => e.Humanize());
+
+    static readonly Dictionary<int, string> StorageInterfaceNames =
+        Enum.GetValues<StorageInterface>().ToDictionary(e => (int)e, e => e.Humanize());
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Seed scalar state from the current DTO snapshot.
+        if(CurrentDto is not null)
+        {
+            _name                    = CurrentDto.Name;
+            _model                   = CurrentDto.Model;
+            _type                    = CurrentDto.Type ?? 0;
+            _prototype               = CurrentDto.Prototype ?? false;
+            _introduced              = CurrentDto.Introduced?.UtcDateTime;
+            _introducedPrecision     = CurrentDto.IntroducedPrecision ?? 0;
+            _orig_name               = _name;
+            _orig_model              = _model;
+            _orig_type               = _type;
+            _orig_prototype          = _prototype;
+            _orig_introduced         = _introduced;
+            _orig_introducedPrecision = _introducedPrecision;
+            _orig_companyId          = CurrentDto.CompanyId;
+            _orig_familyId           = CurrentDto.FamilyId;
+        }
+
+        int machineId = (int)EntityId;
+
+        Task<List<CompanyDto>>          companiesT = MachinesService.GetCompaniesAsync();
+        Task<List<MachineFamilyDto>>    familiesT  = MachinesService.GetFamiliesAsync();
+        Task<List<GpuDto>>              allGpusT   = MachinesService.GetAllGpusAsync();
+        Task<List<ProcessorDto>>        allProcsT  = MachinesService.GetAllProcessorsAsync();
+        Task<List<SoundSynthDto>>       allSoundsT = MachinesService.GetAllSoundSynthsAsync();
+        Task<List<ScreenDto>>           allScrnT   = MachinesService.GetAllScreensAsync();
+        Task<List<SoftwarePlatformDto>> allSpT     = MachinesService.GetAllSoftwarePlatformsAsync();
+
+        Task<List<GpuByMachineDto>>              gpusByT       = MachinesService.GetGpusByMachineAsync(machineId);
+        Task<List<ProcessorByMachineDto>>        procsByT      = MachinesService.GetProcessorsByMachineAsync(machineId);
+        Task<List<SoundSynthByMachineDto>>       soundsByT     = MachinesService.GetSoundSynthsByMachineAsync(machineId);
+        Task<List<ScreenByMachineDto>>           screensByT    = MachinesService.GetScreensByMachineAsync(machineId);
+        Task<List<MemoryByMachineDto>>           memByT        = MachinesService.GetMemoryByMachineAsync(machineId);
+        Task<List<StorageByMachineDto>>          storByT       = MachinesService.GetStorageByMachineAsync(machineId);
+        Task<List<SoftwarePlatformByMachineDto>> spByT         = MachinesService.GetSoftwarePlatformsByMachineAsync(machineId);
+
+        await Task.WhenAll(companiesT, familiesT, allGpusT, allProcsT, allSoundsT, allScrnT, allSpT,
+                           gpusByT, procsByT, soundsByT, screensByT, memByT, storByT, spByT);
+
+        _allCompanies         = companiesT.Result;
+        _allFamilies          = familiesT.Result;
+        _allGpus              = allGpusT.Result;
+        _allProcessors        = allProcsT.Result;
+        _allSoundSynths       = allSoundsT.Result;
+        _allScreens           = allScrnT.Result;
+        _allSoftwarePlatforms = allSpT.Result;
+
+        _gpuRows              = gpusByT.Result;
+        _processorRows        = procsByT.Result;
+        _soundSynthRows       = soundsByT.Result;
+        _screenRows           = screensByT.Result;
+        _memoryRows           = memByT.Result;
+        _storageRows          = storByT.Result;
+        _softwarePlatformRows = spByT.Result;
+
+        if(_orig_companyId.HasValue && _allCompanies is not null)
+            _selectedCompany = _allCompanies.Find(c => c.Id == _orig_companyId.Value);
+
+        if(_orig_familyId.HasValue && _allFamilies is not null)
+            _selectedFamily = _allFamilies.Find(f => f.Id == _orig_familyId.Value);
+
+        _loading = false;
+    }
+
+    // ───────────────────────────── Search functions ─────────────────────────────
+
+    Task<IEnumerable<CompanyDto>> SearchCompanies(string value, CancellationToken ct)
+    {
+        IEnumerable<CompanyDto> r = _allCompanies ?? [];
+        if(!string.IsNullOrWhiteSpace(value))
+            r = r.Where(c => c.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
+        return Task.FromResult(r);
+    }
+
+    Task<IEnumerable<MachineFamilyDto>> SearchFamilies(string value, CancellationToken ct)
+    {
+        IEnumerable<MachineFamilyDto> r = _allFamilies ?? [];
+        if(!string.IsNullOrWhiteSpace(value))
+            r = r.Where(f => f.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
+        return Task.FromResult(r);
+    }
+
+    Task<IEnumerable<GpuDto>> SearchGpus(string value, CancellationToken ct)
+    {
+        HashSet<int?> assigned = new(GetEffectiveIds(_gpuRows, _gpuRemoves, g => g.GpuId, _gpuAdds, p => GetIntField(p, "gpu_id")));
+        IEnumerable<GpuDto> r = (_allGpus ?? []).Where(g => !assigned.Contains(g.Id));
+        if(!string.IsNullOrWhiteSpace(value))
+            r = r.Where(g => $"{g.Name} ({g.Company})".Contains(value, StringComparison.OrdinalIgnoreCase));
+        return Task.FromResult(r);
+    }
+
+    Task<IEnumerable<ProcessorDto>> SearchProcessors(string value, CancellationToken ct)
+    {
+        IEnumerable<ProcessorDto> r = _allProcessors ?? [];
+        if(!string.IsNullOrWhiteSpace(value))
+            r = r.Where(p => $"{p.Name} ({p.Company})".Contains(value, StringComparison.OrdinalIgnoreCase));
+        return Task.FromResult(r);
+    }
+
+    Task<IEnumerable<SoundSynthDto>> SearchSoundSynths(string value, CancellationToken ct)
+    {
+        HashSet<int?> assigned = new(GetEffectiveIds(_soundSynthRows, _soundSynthRemoves, s => s.SoundSynthId, _soundSynthAdds, p => GetIntField(p, "sound_synth_id")));
+        IEnumerable<SoundSynthDto> r = (_allSoundSynths ?? []).Where(s => !assigned.Contains(s.Id));
+        if(!string.IsNullOrWhiteSpace(value))
+            r = r.Where(s => $"{s.Name} ({s.Company})".Contains(value, StringComparison.OrdinalIgnoreCase));
+        return Task.FromResult(r);
+    }
+
+    Task<IEnumerable<ScreenDto>> SearchScreens(string value, CancellationToken ct)
+    {
+        HashSet<int?> assigned = new(GetEffectiveIds(_screenRows, _screenRemoves, s => s.ScreenId, _screenAdds, p => GetIntField(p, "screen_id")));
+        IEnumerable<ScreenDto> r = (_allScreens ?? []).Where(s => !assigned.Contains(s.Id));
+        if(!string.IsNullOrWhiteSpace(value))
+            r = r.Where(s => FormatScreenDto(s).Contains(value, StringComparison.OrdinalIgnoreCase));
+        return Task.FromResult(r);
+    }
+
+    Task<IEnumerable<SoftwarePlatformDto>> SearchSoftwarePlatforms(string value, CancellationToken ct)
+    {
+        HashSet<int?> assigned = new(GetEffectiveIds(_softwarePlatformRows, _softwarePlatformRemoves,
+                                                     s => s.SoftwarePlatformId,
+                                                     _softwarePlatformAdds,
+                                                     p => GetIntField(p, "software_platform_id")));
+        IEnumerable<SoftwarePlatformDto> r = (_allSoftwarePlatforms ?? []).Where(s => !assigned.Contains((int?)s.Id));
+        if(!string.IsNullOrWhiteSpace(value))
+            r = r.Where(s => s.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
+        return Task.FromResult(r);
+    }
+
+    static IEnumerable<int?> GetEffectiveIds<T>(List<T> rows, HashSet<long> removes,
+                                                Func<T, int?> idSelector,
+                                                Dictionary<string, JunctionAddState> adds,
+                                                Func<Dictionary<string, object>, int?> addIdSelector) where T : class
+    {
+        if(rows is not null)
+            foreach(T r in rows)
+            {
+                long rowId = (r as dynamic).Id ?? 0L;
+                if(rowId != 0 && removes.Contains(rowId)) continue;
+                int? id = idSelector(r);
+                if(id.HasValue) yield return id;
+            }
+
+        if(adds is not null)
+            foreach(JunctionAddState a in adds.Values)
+            {
+                int? id = addIdSelector(a.Payload);
+                if(id.HasValue) yield return id;
+            }
+    }
+
+    static int? GetIntField(Dictionary<string, object> payload, string key)
+    {
+        if(payload is null || !payload.TryGetValue(key, out object v) || v is null) return null;
+        return v switch
+        {
+            int i      => i,
+            long l     => (int?)l,
+            short s    => s,
+            string str => int.TryParse(str, NumberStyles.Integer, CultureInfo.InvariantCulture, out int p) ? p : null,
+            _          => null
+        };
+    }
+
+    // ───────────────────────────── Format helpers ─────────────────────────────
+
+    static string FormatGpu(GpuByMachineDto g) => $"{g.Name} ({g.Company})";
+
+    static string FormatProcessor(ProcessorByMachineDto p) =>
+        p.Speed is > 0 ? $"{p.Name} ({p.Company}) @ {p.Speed} MHz" : $"{p.Name} ({p.Company})";
+
+    static string FormatSoundSynth(SoundSynthByMachineDto s) => $"{s.Name} ({s.Company})";
+
+    string FormatScreen(ScreenByMachineDto s)
+    {
+        ScreenDto sd = s.Screen?.ScreenDto;
+        return sd is null ? $"Screen #{s.ScreenId}" : FormatScreenDto(sd);
+    }
+
+    static string FormatScreenDto(ScreenDto s) =>
+        string.IsNullOrWhiteSpace(s.Type) ? $"{s.Diagonal}\"" : $"{s.Diagonal}\" {s.Type}";
+
+    string FormatMemory(MemoryByMachineDto m)
+    {
+        string type  = m.Type.HasValue && MemoryTypeNames.TryGetValue(m.Type.Value, out string tn) ? tn : L["Unknown"].Value;
+        string usage = m.Usage.HasValue && MemoryUsageNames.TryGetValue(m.Usage.Value, out string un) ? un : L["Unknown"].Value;
+        string size  = m.Size.HasValue ? FormatBytes(m.Size.Value) : L["Unknown"].Value;
+        return $"{size} {type} ({usage})";
+    }
+
+    string FormatStorage(StorageByMachineDto s)
+    {
+        string type  = s.Type.HasValue && StorageTypeNames.TryGetValue(s.Type.Value, out string tn) ? tn : L["Unknown"].Value;
+        string iface = s.Interface.HasValue && StorageInterfaceNames.TryGetValue(s.Interface.Value, out string ifn) ? ifn : L["Unknown"].Value;
+        string cap   = s.Capacity.HasValue ? FormatBytes(s.Capacity.Value) : "";
+        return string.IsNullOrEmpty(cap) ? $"{type} ({iface})" : $"{type} ({iface}) - {cap}";
+    }
+
+    static string FormatBytes(long bytes) => bytes switch
+    {
+        >= 1073741824 => $"{bytes / 1073741824.0:F1} GiB",
+        >= 1048576    => $"{bytes / 1048576.0:F1} MiB",
+        >= 1024       => $"{bytes / 1024.0:F1} KiB",
+        _             => $"{bytes} bytes"
+    };
+
+    // ───────────────────────────── Junction queue helpers ─────────────────────────────
+
+    void MarkRemove(HashSet<long> set, long id)
+    {
+        if(id == 0) return;
+        set.Add(id);
+    }
+
+    void UndoRemove(HashSet<long> set, long id) => set.Remove(id);
+
+    static int CountActive<T>(List<T> rows, HashSet<long> removes) where T : class
+    {
+        if(rows is null) return 0;
+        int n = 0;
+        foreach(T r in rows)
+        {
+            long id = (r as dynamic).Id ?? 0L;
+            if(id == 0 || !removes.Contains(id)) n++;
+        }
+        return n;
+    }
+
+    static bool HasOps(Dictionary<string, JunctionAddState> adds, HashSet<long> removes) =>
+        (adds is { Count: > 0 }) || (removes is { Count: > 0 });
+
+    static string NewKey(string group, string op) => $"{group}.{op}.{Guid.NewGuid():N}";
+
+    // ───────────────────────────── Add handlers ─────────────────────────────
+
+    void AddGpu()
+    {
+        if(_pickGpu is null) return;
+        string key = NewKey(MachineSuggestionMetadata.GroupGpus, "add");
+        _gpuAdds[key] = new JunctionAddState
+        {
+            Payload = new Dictionary<string, object>(StringComparer.Ordinal) { ["gpu_id"] = _pickGpu.Id },
+            Display = $"{_pickGpu.Name} ({_pickGpu.Company})"
+        };
+        _pickGpu = null;
+    }
+
+    void AddProcessor()
+    {
+        if(_pickProcessor is null) return;
+        string key = NewKey(MachineSuggestionMetadata.GroupProcessors, "add");
+        var payload = new Dictionary<string, object>(StringComparer.Ordinal)
+        {
+            ["processor_id"] = _pickProcessor.Id
+        };
+        if(_pickProcessorSpeed.HasValue) payload["speed"] = _pickProcessorSpeed.Value;
+        string display = _pickProcessorSpeed is > 0
+                             ? $"{_pickProcessor.Name} ({_pickProcessor.Company}) @ {_pickProcessorSpeed} MHz"
+                             : $"{_pickProcessor.Name} ({_pickProcessor.Company})";
+        _processorAdds[key] = new JunctionAddState { Payload = payload, Display = display };
+        _pickProcessor      = null;
+        _pickProcessorSpeed = null;
+    }
+
+    void AddSoundSynth()
+    {
+        if(_pickSoundSynth is null) return;
+        string key = NewKey(MachineSuggestionMetadata.GroupSoundSynths, "add");
+        _soundSynthAdds[key] = new JunctionAddState
+        {
+            Payload = new Dictionary<string, object>(StringComparer.Ordinal) { ["sound_synth_id"] = _pickSoundSynth.Id },
+            Display = $"{_pickSoundSynth.Name} ({_pickSoundSynth.Company})"
+        };
+        _pickSoundSynth = null;
+    }
+
+    void AddScreen()
+    {
+        if(_pickScreen is null) return;
+        string key = NewKey(MachineSuggestionMetadata.GroupScreens, "add");
+        _screenAdds[key] = new JunctionAddState
+        {
+            Payload = new Dictionary<string, object>(StringComparer.Ordinal) { ["screen_id"] = _pickScreen.Id },
+            Display = FormatScreenDto(_pickScreen)
+        };
+        _pickScreen = null;
+    }
+
+    void AddMemory()
+    {
+        string key = NewKey(MachineSuggestionMetadata.GroupMemory, "add");
+        var payload = new Dictionary<string, object>(StringComparer.Ordinal)
+        {
+            ["type"]  = _pickMemoryType,
+            ["usage"] = _pickMemoryUsage
+        };
+        if(_pickMemorySize.HasValue)  payload["size"]  = _pickMemorySize.Value;
+        if(_pickMemorySpeed.HasValue) payload["speed"] = _pickMemorySpeed.Value;
+
+        string typeName  = MemoryTypeNames.TryGetValue(_pickMemoryType, out string tn) ? tn : L["Unknown"].Value;
+        string usageName = MemoryUsageNames.TryGetValue(_pickMemoryUsage, out string un) ? un : L["Unknown"].Value;
+        string sizeStr   = _pickMemorySize.HasValue ? FormatBytes(_pickMemorySize.Value) : L["Unknown"].Value;
+        string speedStr  = _pickMemorySpeed.HasValue ? $" @ {_pickMemorySpeed} MHz" : string.Empty;
+        string display   = $"{sizeStr} {typeName} ({usageName}){speedStr}";
+
+        _memoryAdds[key] = new JunctionAddState { Payload = payload, Display = display };
+        _pickMemorySize  = null;
+        _pickMemorySpeed = null;
+    }
+
+    void AddStorage()
+    {
+        string key = NewKey(MachineSuggestionMetadata.GroupStorage, "add");
+        var payload = new Dictionary<string, object>(StringComparer.Ordinal)
+        {
+            ["type"]      = _pickStorageType,
+            ["interface"] = _pickStorageInterface
+        };
+        if(_pickStorageCapacity.HasValue) payload["capacity"] = _pickStorageCapacity.Value;
+
+        string typeName  = StorageTypeNames.TryGetValue(_pickStorageType, out string tn) ? tn : L["Unknown"].Value;
+        string ifaceName = StorageInterfaceNames.TryGetValue(_pickStorageInterface, out string ifn) ? ifn : L["Unknown"].Value;
+        string capStr    = _pickStorageCapacity.HasValue ? $" - {FormatBytes(_pickStorageCapacity.Value)}" : string.Empty;
+        string display   = $"{typeName} ({ifaceName}){capStr}";
+
+        _storageAdds[key]    = new JunctionAddState { Payload = payload, Display = display };
+        _pickStorageCapacity = null;
+    }
+
+    void AddSoftwarePlatform()
+    {
+        if(_pickSoftwarePlatform is null) return;
+        string key = NewKey(MachineSuggestionMetadata.GroupSoftwarePlatforms, "add");
+        _softwarePlatformAdds[key] = new JunctionAddState
+        {
+            Payload = new Dictionary<string, object>(StringComparer.Ordinal) { ["software_platform_id"] = (long)(_pickSoftwarePlatform.Id ?? 0) },
+            Display = _pickSoftwarePlatform.Name ?? string.Empty
+        };
+        _pickSoftwarePlatform = null;
+    }
+
+    // ───────────────────────────── Submit ─────────────────────────────
+
+    bool HasAnyChange()
+    {
+        if(!Equals(_orig_name, _name)) return true;
+        if(!Equals(_orig_model, _model)) return true;
+        if(_orig_type != _type) return true;
+        if(_orig_prototype != _prototype) return true;
+        if(!Nullable.Equals(_orig_introduced, _introduced)) return true;
+        if(_orig_introducedPrecision != _introducedPrecision) return true;
+        if(_orig_companyId != _selectedCompany?.Id) return true;
+        if(_orig_familyId != _selectedFamily?.Id) return true;
+
+        if(_gpuAdds.Count + _processorAdds.Count + _soundSynthAdds.Count + _screenAdds.Count
+         + _memoryAdds.Count + _storageAdds.Count + _softwarePlatformAdds.Count > 0) return true;
+
+        if(_gpuRemoves.Count + _processorRemoves.Count + _soundSynthRemoves.Count + _screenRemoves.Count
+         + _memoryRemoves.Count + _storageRemoves.Count + _softwarePlatformRemoves.Count > 0) return true;
+
+        return false;
+    }
+
+    void Cancel() => MudDialog.Cancel();
+
+    async Task Submit()
+    {
+        _validationError = null;
+        if(_loading) return;
+
+        var diff = new Dictionary<string, object>(StringComparer.Ordinal);
+
+        if(!Equals(_orig_name, _name))                  diff[MachineSuggestionMetadata.FieldName]  = _name;
+        if(!Equals(_orig_model, _model))                diff[MachineSuggestionMetadata.FieldModel] = _model;
+        if(_orig_type != _type)                         diff[MachineSuggestionMetadata.FieldType]  = _type;
+        if(_orig_prototype != _prototype)               diff[MachineSuggestionMetadata.FieldPrototype] = _prototype;
+        if(!Nullable.Equals(_orig_introduced, _introduced))
+            diff[MachineSuggestionMetadata.FieldIntroduced] = _introduced?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        if(_orig_introducedPrecision != _introducedPrecision)
+            diff[MachineSuggestionMetadata.FieldIntroducedPrecision] = _introducedPrecision;
+        if(_orig_companyId != _selectedCompany?.Id)
+            diff[MachineSuggestionMetadata.FieldCompanyId] = _selectedCompany?.Id;
+        if(_orig_familyId != _selectedFamily?.Id)
+            diff[MachineSuggestionMetadata.FieldFamilyId] = _selectedFamily?.Id;
+
+        AddJunctionOps(diff, _gpuAdds, _gpuRemoves, MachineSuggestionMetadata.GroupGpus);
+        AddJunctionOps(diff, _processorAdds, _processorRemoves, MachineSuggestionMetadata.GroupProcessors);
+        AddJunctionOps(diff, _soundSynthAdds, _soundSynthRemoves, MachineSuggestionMetadata.GroupSoundSynths);
+        AddJunctionOps(diff, _screenAdds, _screenRemoves, MachineSuggestionMetadata.GroupScreens);
+        AddJunctionOps(diff, _memoryAdds, _memoryRemoves, MachineSuggestionMetadata.GroupMemory);
+        AddJunctionOps(diff, _storageAdds, _storageRemoves, MachineSuggestionMetadata.GroupStorage);
+        AddJunctionOps(diff, _softwarePlatformAdds, _softwarePlatformRemoves, MachineSuggestionMetadata.GroupSoftwarePlatforms);
+
+        if(diff.Count == 0)
+        {
+            _validationError = L["No changes detected — modify at least one field before submitting."];
+            return;
+        }
+
+        _submitting = true;
+        try
+        {
+            string json = JsonSerializer.Serialize(diff);
+            var dto = new SuggestionDto
+            {
+                EntityType          = (int?)SuggestionEntityType.Machine,
+                EntityId            = EntityId,
+                Status              = (int?)SuggestionStatus.Pending,
+                UserComment         = string.IsNullOrWhiteSpace(_userComment) ? null : _userComment.Trim(),
+                SuggestedValuesJson = json
+            };
+
+            var (created, error) = await SuggestionsService.CreateAsync(dto);
+
+            if(created is null)
+            {
+                _validationError = string.IsNullOrWhiteSpace(error) ? L["Failed to submit suggestion."].Value : error;
+                return;
+            }
+
+            Snackbar.Add(L["Suggestion submitted. An administrator will review it."], Severity.Success);
+            MudDialog.Close(DialogResult.Ok(created));
+        }
+        finally
+        {
+            _submitting = false;
+        }
+    }
+
+    static void AddJunctionOps(Dictionary<string, object> diff,
+                               Dictionary<string, JunctionAddState> adds,
+                               HashSet<long> removes,
+                               string group)
+    {
+        foreach(KeyValuePair<string, JunctionAddState> kv in adds) diff[kv.Key] = kv.Value.Payload;
+        foreach(long id in removes) diff[$"{group}.remove.{id.ToString(CultureInfo.InvariantCulture)}"] = null;
+    }
+}

@@ -50,7 +50,27 @@ public enum SuggestionFieldKind
     ///     A long-form markdown body. Rendered with <c>&lt;MarkdownEditor&gt;</c> in the
     ///     suggest dialog and as a colored inline line-diff in the review panel.
     /// </summary>
-    Markdown          = 10
+    Markdown          = 10,
+    /// <summary>
+    ///     A foreign-key picker for <see cref="Marechai.ApiClient.Models.MachineFamilyDto" />.
+    ///     Backed by <see cref="Marechai.Services.MachinesService.GetFamiliesAsync" />.
+    /// </summary>
+    ForeignKeyMachineFamily = 11,
+    /// <summary>
+    ///     Marker for a junction-row insertion operation in the diff panel. The field name
+    ///     follows the convention <c>&lt;group&gt;.add.&lt;client_uuid&gt;</c> and the value
+    ///     carries the row payload (object). Renders as a green "+ Add &lt;Group&gt;" row in the
+    ///     review diff with the readable target label resolved server-side via
+    ///     <c>SuggestedLabels</c>.
+    /// </summary>
+    JunctionAdd       = 12,
+    /// <summary>
+    ///     Marker for a junction-row removal operation in the diff panel. The field name
+    ///     follows the convention <c>&lt;group&gt;.remove.&lt;row_id&gt;</c> and the value is
+    ///     <c>null</c>. Renders as a red "− Remove &lt;Group&gt;" row in the review diff with
+    ///     the readable target label resolved server-side via <c>CurrentLabels</c>.
+    /// </summary>
+    JunctionRemove    = 13
 }
 
 /// <summary>One enum option for fields with <see cref="SuggestionFieldKind.Enum" />.</summary>
@@ -97,6 +117,30 @@ public abstract class SuggestionMetadata
 
     /// <summary>Pull the current values of all suggestable fields from a freshly loaded DTO snapshot.</summary>
     public abstract Dictionary<string, object> ExtractCurrentValues(object currentDto);
+
+    /// <summary>
+    ///     Returns <c>true</c> when the given field name is acceptable for this entity. Default
+    ///     implementation checks the static <see cref="Fields" /> list. Override for entities
+    ///     that accept dynamic field-name patterns (e.g. <c>&lt;group&gt;.add.&lt;uuid&gt;</c>
+    ///     for junction operations).
+    /// </summary>
+    public virtual bool IsKnownFieldName(string name) => name is not null && FieldsByName.ContainsKey(name);
+
+    /// <summary>
+    ///     Returns the rendering kind for a given field name. Default falls back to the static
+    ///     descriptor; override to map dynamic field-name patterns to <see cref="SuggestionFieldKind.JunctionAdd" />
+    ///     or <see cref="SuggestionFieldKind.JunctionRemove" />.
+    /// </summary>
+    public virtual SuggestionFieldKind GetFieldKind(string name) =>
+        FieldsByName.TryGetValue(name, out SuggestionFieldDescriptor d) ? d.Kind : SuggestionFieldKind.Text;
+
+    /// <summary>
+    ///     Returns the localiser-key for a given field name. Default falls back to the static
+    ///     descriptor's <c>LabelKey</c>; override to synthesise labels for dynamic keys (e.g.
+    ///     <c>"Add GPU"</c> for <c>gpus.add.&lt;uuid&gt;</c>).
+    /// </summary>
+    public virtual string GetFieldLabelKey(string name) =>
+        FieldsByName.TryGetValue(name, out SuggestionFieldDescriptor d) ? d.LabelKey : name;
 
     /// <summary>
     ///     Format a raw value (string / JsonElement / number / null) into a human-readable string

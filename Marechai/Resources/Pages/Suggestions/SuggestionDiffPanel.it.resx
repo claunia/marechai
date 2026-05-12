@@ -58,4 +58,62 @@
     <data name="Suggested value" xml:space="preserve"><value>Valore suggerito</value></data>
     <data name="unchanged" xml:space="preserve"><value>invariate</value></data>
     <data name="Show full diff ({0} lines)" xml:space="preserve"><value>Mostra diff completo ({0} righe)</value></data>
+
+  <data name="Add" xml:space="preserve">
+    <value>Aggiungi</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Rimuovi</value>
+  </data>
+  <data name="(new junction row)" xml:space="preserve">
+    <value>(nuova riga di relazione)</value>
+  </data>
+  <data name="(existing junction row)" xml:space="preserve">
+    <value>(riga di relazione esistente)</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nome</value>
+  </data>
+  <data name="Model" xml:space="preserve">
+    <value>Modello</value>
+  </data>
+  <data name="Company" xml:space="preserve">
+    <value>Azienda</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="Prototype" xml:space="preserve">
+    <value>Prototipo</value>
+  </data>
+  <data name="Introduction date" xml:space="preserve">
+    <value>Data di introduzione</value>
+  </data>
+  <data name="Date precision" xml:space="preserve">
+    <value>Precisione della data</value>
+  </data>
+  <data name="Family" xml:space="preserve">
+    <value>Famiglia</value>
+  </data>
+  <data name="GPUs" xml:space="preserve">
+    <value>GPU</value>
+  </data>
+  <data name="Processors" xml:space="preserve">
+    <value>Processori</value>
+  </data>
+  <data name="Sound Synthesizers" xml:space="preserve">
+    <value>Sintetizzatori sonori</value>
+  </data>
+  <data name="Screens" xml:space="preserve">
+    <value>Schermi</value>
+  </data>
+  <data name="Memory" xml:space="preserve">
+    <value>Memoria</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>Memoria di massa</value>
+  </data>
+  <data name="Software Platforms" xml:space="preserve">
+    <value>Piattaforme software</value>
+  </data>
 </root>

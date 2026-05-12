@@ -145,14 +145,12 @@ public class SuggestionsController(MarechaiContext context,
                            statusCode: StatusCodes.Status400BadRequest);
 
         // ---- Field-name validation: only known field names are accepted -------------
-        IReadOnlyCollection<string> knownFields = GetKnownFieldNames(dto.EntityType);
-
-        if(knownFields is null)
+        if(!IsEntityTypeSupported(dto.EntityType))
             return Problem(title: "Unsupported entity",
                            detail: $"Suggestions for {dto.EntityType} are not yet supported.",
                            statusCode: StatusCodes.Status400BadRequest);
 
-        List<string> unknown = values.Keys.Where(k => !knownFields.Contains(k)).ToList();
+        List<string> unknown = values.Keys.Where(k => !IsKnownFieldName(dto.EntityType, k)).ToList();
 
         if(unknown.Count > 0)
             return Problem(title: "Invalid suggestion",
@@ -578,8 +576,20 @@ public class SuggestionsController(MarechaiContext context,
 
         Dictionary<string, JsonElement> currentDict   = ParseValuesForLabels(current);
         Dictionary<string, JsonElement> suggestedDict = ParseValuesForLabels(s.SuggestedValues);
-        Dictionary<string, string> currentLabels      = await ResolveLabelsAsync(s.EntityType, currentDict);
-        Dictionary<string, string> suggestedLabels    = await ResolveLabelsAsync(s.EntityType, suggestedDict);
+        Dictionary<string, string> currentLabels      = await ResolveLabelsAsync(s.EntityType, s.EntityId, currentDict);
+        Dictionary<string, string> suggestedLabels    = await ResolveLabelsAsync(s.EntityType, s.EntityId, suggestedDict);
+
+        // Machine entity-edit suggestions encode junction add/remove ops as dynamic keys in
+        // the SUGGESTED payload only. Adds resolve from the suggested payload's id field
+        // (already handled by ResolveMachineLabelsAsync via the suggested-side ResolveLabelsAsync
+        // pass above). Removes need a DB lookup of the existing junction row, but the label
+        // belongs in the CURRENT-side map so the diff panel renders the readable name in the
+        // strikethrough cell. The current-side GetCurrentValuesAsync only returns scalar fields,
+        // so we make a dedicated pass here. CRITICAL: iterate over the RAW SuggestedValues dict
+        // (NOT the parsed suggestedDict) because ParseValuesForLabels skips null-valued entries
+        // and junction-remove keys carry a null value by design.
+        if(s.EntityType == SuggestionEntityType.Machine && s.EntityId.HasValue && s.SuggestedValues is not null)
+            await ResolveMachineRemoveLabelsAsync((int)s.EntityId.Value, s.SuggestedValues, currentLabels);
 
         return Ok(new SuggestionDiffDto
         {
@@ -797,6 +807,33 @@ public class SuggestionsController(MarechaiContext context,
         _ => null
     };
 
+    /// <summary>
+    ///     Returns <c>true</c> when the entity type has a registered suggestion applier (either
+    ///     a static <c>KnownFieldNames</c> set or a dynamic <c>IsKnownFieldName</c> predicate).
+    /// </summary>
+    static bool IsEntityTypeSupported(SuggestionEntityType type) => type switch
+    {
+        SuggestionEntityType.Machine => true,
+        _                            => GetKnownFieldNames(type) is not null
+    };
+
+    /// <summary>
+    ///     Per-entity field-name validator. Wraps the static <c>KnownFieldNames</c> HashSet
+    ///     check for entities with a fixed scalar field set, and dispatches to a per-applier
+    ///     <c>IsKnownFieldName</c> predicate for entities that accept dynamic field-name
+    ///     patterns (e.g. <c>&lt;group&gt;.add.&lt;uuid&gt;</c> for Machine junction operations).
+    /// </summary>
+    static bool IsKnownFieldName(SuggestionEntityType type, string fieldName)
+    {
+        if(string.IsNullOrEmpty(fieldName)) return false;
+
+        if(type == SuggestionEntityType.Machine)
+            return Suggestions.MachineSuggestionApplier.IsKnownFieldName(fieldName);
+
+        IReadOnlyCollection<string> set = GetKnownFieldNames(type);
+        return set is not null && set.Contains(fieldName);
+    }
+
     async Task<ApplyResult> ApplyAcceptedFieldsAsync(SuggestionEntityType type,
                                                      long entityId,
                                                      string subkey,
@@ -871,6 +908,12 @@ public class SuggestionsController(MarechaiContext context,
                     context, entityId, subkey, suggested, accepted);
                 return new ApplyResult(applied, missing);
             }
+            case SuggestionEntityType.Machine:
+            {
+                var (applied, missing) = await Suggestions.MachineSuggestionApplier.ApplyAsync(
+                    context, entityId, suggested, accepted);
+                return new ApplyResult(applied, missing);
+            }
             default:
                 throw new NotImplementedException($"Suggestions for {type} are not implemented yet.");
         }
@@ -904,6 +947,8 @@ public class SuggestionsController(MarechaiContext context,
                 await Suggestions.PersonDescriptionSuggestionApplier.GetCurrentValuesAsync(context, entityId, subkey),
             SuggestionEntityType.SoftwareDescription =>
                 await Suggestions.SoftwareDescriptionSuggestionApplier.GetCurrentValuesAsync(context, entityId, subkey),
+            SuggestionEntityType.Machine =>
+                await Suggestions.MachineSuggestionApplier.GetCurrentValuesAsync(context, entityId),
             _ => null
         };
     }
@@ -1214,9 +1259,14 @@ public class SuggestionsController(MarechaiContext context,
     ///     a dictionary mapping field-name → label (e.g. <c>"country_id" → "Spain"</c>) for any
     ///     FK fields with a recognised id; non-FK fields and unresolved ids are omitted. The
     ///     diff panel falls back to <c>SuggestionMetadata.FormatDisplayValue</c> for missing
-    ///     entries.
+    ///     entries. The <paramref name="entityId" /> is used by entity types with junction
+    ///     operations (Machine) to scope row lookups; junction-add labels resolve from the
+    ///     suggested payload's id field. Junction-remove labels are resolved separately by
+    ///     <see cref="ResolveMachineRemoveLabelsAsync" /> so they land in the current-side
+    ///     label map.
     /// </summary>
     async Task<Dictionary<string, string>> ResolveLabelsAsync(SuggestionEntityType type,
+                                                              long? entityId,
                                                               Dictionary<string, JsonElement> values)
     {
         var labels = new Dictionary<string, string>(StringComparer.Ordinal);
@@ -1255,6 +1305,11 @@ public class SuggestionsController(MarechaiContext context,
                 }
                 break;
             }
+            case SuggestionEntityType.Machine:
+            {
+                await ResolveMachineLabelsAsync(entityId, values, labels);
+                break;
+            }
         }
 
         return labels;
@@ -1267,11 +1322,286 @@ public class SuggestionsController(MarechaiContext context,
         _                    => null
     };
 
+    static long? JsonElementToLong(JsonElement e) => e.ValueKind switch
+    {
+        JsonValueKind.Number => e.TryGetInt64(out long i) ? i : null,
+        JsonValueKind.String => long.TryParse(e.GetString(), NumberStyles.Integer, CultureInfo.InvariantCulture, out long p) ? p : null,
+        _                    => null
+    };
+
+    static double? JsonElementToDouble(JsonElement e) => e.ValueKind switch
+    {
+        JsonValueKind.Number => e.TryGetDouble(out double i) ? i : null,
+        JsonValueKind.String => double.TryParse(e.GetString(), NumberStyles.Float, CultureInfo.InvariantCulture, out double p) ? p : null,
+        _                    => null
+    };
+
     static short? JsonElementToShort(JsonElement e)
     {
         int? i = JsonElementToInt(e);
         return i.HasValue && i.Value is >= short.MinValue and <= short.MaxValue ? (short)i.Value : null;
     }
+
+    /// <summary>
+    ///     Build readable labels for the heterogeneous payload of a Machine suggestion. Handles
+    ///     scalar FK fields (<c>company_id</c>, <c>family_id</c>) plus junction-add operation
+    ///     keys (<c>&lt;group&gt;.add.&lt;uuid&gt;</c> resolved from the suggested payload's id
+    ///     field). Junction-remove labels are populated separately by
+    ///     <see cref="ResolveMachineRemoveLabelsAsync" /> directly into the current-side label
+    ///     map so the diff panel renders them in the strikethrough cell.
+    /// </summary>
+    async Task ResolveMachineLabelsAsync(long? entityId,
+                                         Dictionary<string, JsonElement> values,
+                                         Dictionary<string, string> labels)
+    {
+        // ---- Scalar FK labels -----------------------------------------------------
+        if(values.TryGetValue(Suggestions.MachineSuggestionApplier.FieldCompanyId, out JsonElement compE))
+        {
+            int? id = JsonElementToInt(compE);
+            if(id.HasValue)
+            {
+                string name = await context.Companies.AsNoTracking()
+                                           .Where(c => c.Id == id.Value)
+                                           .Select(c => c.Name)
+                                           .FirstOrDefaultAsync();
+                if(!string.IsNullOrEmpty(name))
+                    labels[Suggestions.MachineSuggestionApplier.FieldCompanyId] = name;
+            }
+        }
+
+        if(values.TryGetValue(Suggestions.MachineSuggestionApplier.FieldFamilyId, out JsonElement famE))
+        {
+            int? id = JsonElementToInt(famE);
+            if(id.HasValue)
+            {
+                string name = await context.MachineFamilies.AsNoTracking()
+                                           .Where(f => f.Id == id.Value)
+                                           .Select(f => f.Name)
+                                           .FirstOrDefaultAsync();
+                if(!string.IsNullOrEmpty(name))
+                    labels[Suggestions.MachineSuggestionApplier.FieldFamilyId] = name;
+            }
+        }
+
+        if(!entityId.HasValue) return;
+
+        // ---- Junction-add labels (resolved from the suggested payload's id field) -----
+        foreach(KeyValuePair<string, JsonElement> kv in values)
+        {
+            if(!Suggestions.MachineSuggestionApplier.TryParseJunctionKey(kv.Key, out string group, out string op, out _))
+                continue;
+            if(op != "add" || kv.Value.ValueKind != JsonValueKind.Object) continue;
+
+            string label = await BuildAddLabelAsync(group, kv.Value);
+            if(!string.IsNullOrEmpty(label)) labels[kv.Key] = label;
+        }
+    }
+
+    /// <summary>
+    ///     Resolve readable labels for every Machine junction-remove operation in the suggested
+    ///     payload by looking up the existing junction row in the database. The resolved labels
+    ///     are written to <paramref name="currentLabels" /> so the diff panel renders them in
+    ///     the strikethrough cell of the JunctionRemove row. Iterates the RAW
+    ///     <c>SuggestedValues</c> dict (not the JsonElement-parsed view) because remove ops
+    ///     carry a null value and <see cref="ParseValuesForLabels" /> drops null entries.
+    /// </summary>
+    async Task ResolveMachineRemoveLabelsAsync(int machineId,
+                                               Dictionary<string, object> rawSuggested,
+                                               Dictionary<string, string> currentLabels)
+    {
+        foreach(KeyValuePair<string, object> kv in rawSuggested)
+        {
+            if(!Suggestions.MachineSuggestionApplier.TryParseJunctionKey(kv.Key, out string group, out string op, out string token))
+                continue;
+            if(op != "remove") continue;
+            if(!long.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out long rowId)) continue;
+
+            string label = await BuildRemoveLabelAsync(group, machineId, rowId);
+            if(!string.IsNullOrEmpty(label)) currentLabels[kv.Key] = label;
+        }
+    }
+
+    async Task<string> BuildAddLabelAsync(string group, JsonElement payload)
+    {
+        switch(group)
+        {
+            case Suggestions.MachineSuggestionApplier.GroupGpus:
+            {
+                int? id = ReadIntField(payload, "gpu_id");
+                if(!id.HasValue) return null;
+                var row = await context.Gpus.AsNoTracking()
+                                       .Where(g => g.Id == id.Value)
+                                       .Select(g => new { g.Name, CompanyName = g.Company.Name })
+                                       .FirstOrDefaultAsync();
+                return row is null ? $"GPU #{id.Value}" : $"{row.Name} ({row.CompanyName})";
+            }
+            case Suggestions.MachineSuggestionApplier.GroupProcessors:
+            {
+                int? id    = ReadIntField(payload, "processor_id");
+                if(!id.HasValue) return null;
+                double? sp = ReadDoubleField(payload, "speed");
+                var row = await context.Processors.AsNoTracking()
+                                       .Where(p => p.Id == id.Value)
+                                       .Select(p => new { p.Name, CompanyName = p.Company.Name })
+                                       .FirstOrDefaultAsync();
+                if(row is null) return $"Processor #{id.Value}";
+                return sp is > 0 ? $"{row.Name} ({row.CompanyName}) @ {sp} MHz" : $"{row.Name} ({row.CompanyName})";
+            }
+            case Suggestions.MachineSuggestionApplier.GroupSoundSynths:
+            {
+                int? id = ReadIntField(payload, "sound_synth_id");
+                if(!id.HasValue) return null;
+                var row = await context.SoundSynths.AsNoTracking()
+                                       .Where(s => s.Id == id.Value)
+                                       .Select(s => new { s.Name, CompanyName = s.Company.Name })
+                                       .FirstOrDefaultAsync();
+                return row is null ? $"Sound synth #{id.Value}" : $"{row.Name} ({row.CompanyName})";
+            }
+            case Suggestions.MachineSuggestionApplier.GroupScreens:
+            {
+                int? id = ReadIntField(payload, "screen_id");
+                if(!id.HasValue) return null;
+                var row = await context.Screens.AsNoTracking()
+                                       .Where(s => s.Id == id.Value)
+                                       .Select(s => new { s.Diagonal, s.Type })
+                                       .FirstOrDefaultAsync();
+                if(row is null) return $"Screen #{id.Value}";
+                return string.IsNullOrWhiteSpace(row.Type) ? $"{row.Diagonal}\"" : $"{row.Diagonal}\" {row.Type}";
+            }
+            case Suggestions.MachineSuggestionApplier.GroupMemory:
+            {
+                int?    type  = ReadIntField(payload, "type");
+                int?    usage = ReadIntField(payload, "usage");
+                long?   size  = ReadLongField(payload, "size");
+                double? speed = ReadDoubleField(payload, "speed");
+                string typeName  = type.HasValue && Enum.IsDefined(typeof(MemoryType), type.Value)
+                                       ? ((MemoryType)type.Value).ToString()
+                                       : "Unknown";
+                string usageName = usage.HasValue && Enum.IsDefined(typeof(MemoryUsage), usage.Value)
+                                       ? ((MemoryUsage)usage.Value).ToString()
+                                       : "Unknown";
+                string sizeStr = size.HasValue ? FormatBytesShort(size.Value) : "Unknown";
+                string speedStr = speed.HasValue ? $" @ {speed} MHz" : string.Empty;
+                return $"{sizeStr} {typeName} ({usageName}){speedStr}";
+            }
+            case Suggestions.MachineSuggestionApplier.GroupStorage:
+            {
+                int?  type     = ReadIntField(payload, "type");
+                int?  iface    = ReadIntField(payload, "interface");
+                long? capacity = ReadLongField(payload, "capacity");
+                string typeName  = type.HasValue && Enum.IsDefined(typeof(StorageType), type.Value)
+                                       ? ((StorageType)type.Value).ToString()
+                                       : "Unknown";
+                string ifaceName = iface.HasValue && Enum.IsDefined(typeof(StorageInterface), iface.Value)
+                                       ? ((StorageInterface)iface.Value).ToString()
+                                       : "Unknown";
+                string capStr = capacity.HasValue ? $" - {FormatBytesShort(capacity.Value)}" : string.Empty;
+                return $"{typeName} ({ifaceName}){capStr}";
+            }
+            case Suggestions.MachineSuggestionApplier.GroupSoftwarePlatforms:
+            {
+                long? rawId = ReadLongField(payload, "software_platform_id");
+                if(!rawId.HasValue || rawId.Value < 0) return null;
+                ulong id = (ulong)rawId.Value;
+                string name = await context.SoftwarePlatforms.AsNoTracking()
+                                           .Where(p => p.Id == id)
+                                           .Select(p => p.Name)
+                                           .FirstOrDefaultAsync();
+                return string.IsNullOrEmpty(name) ? $"Software platform #{id}" : name;
+            }
+            default:
+                return null;
+        }
+    }
+
+    async Task<string> BuildRemoveLabelAsync(string group, int machineId, long rowId)
+    {
+        switch(group)
+        {
+            case Suggestions.MachineSuggestionApplier.GroupGpus:
+            {
+                var row = await context.GpusByMachine.AsNoTracking()
+                                       .Where(r => r.Id == rowId && r.MachineId == machineId)
+                                       .Select(r => new { r.Gpu.Name, CompanyName = r.Gpu.Company.Name })
+                                       .FirstOrDefaultAsync();
+                return row is null ? null : $"{row.Name} ({row.CompanyName})";
+            }
+            case Suggestions.MachineSuggestionApplier.GroupProcessors:
+            {
+                var row = await context.ProcessorsByMachine.AsNoTracking()
+                                       .Where(r => r.Id == rowId && r.MachineId == machineId)
+                                       .Select(r => new { r.Processor.Name, CompanyName = r.Processor.Company.Name, r.Speed })
+                                       .FirstOrDefaultAsync();
+                if(row is null) return null;
+                return row.Speed is > 0 ? $"{row.Name} ({row.CompanyName}) @ {row.Speed} MHz" : $"{row.Name} ({row.CompanyName})";
+            }
+            case Suggestions.MachineSuggestionApplier.GroupSoundSynths:
+            {
+                var row = await context.SoundByMachine.AsNoTracking()
+                                       .Where(r => r.Id == rowId && r.MachineId == machineId)
+                                       .Select(r => new { r.SoundSynth.Name, CompanyName = r.SoundSynth.Company.Name })
+                                       .FirstOrDefaultAsync();
+                return row is null ? null : $"{row.Name} ({row.CompanyName})";
+            }
+            case Suggestions.MachineSuggestionApplier.GroupScreens:
+            {
+                var row = await context.ScreensByMachine.AsNoTracking()
+                                       .Where(r => r.Id == rowId && r.MachineId == machineId)
+                                       .Select(r => new { r.Screen.Diagonal, r.Screen.Type })
+                                       .FirstOrDefaultAsync();
+                if(row is null) return null;
+                return string.IsNullOrWhiteSpace(row.Type) ? $"{row.Diagonal}\"" : $"{row.Diagonal}\" {row.Type}";
+            }
+            case Suggestions.MachineSuggestionApplier.GroupMemory:
+            {
+                var row = await context.MemoryByMachine.AsNoTracking()
+                                       .Where(r => r.Id == rowId && r.MachineId == machineId)
+                                       .Select(r => new { r.Type, r.Usage, r.Size, r.Speed })
+                                       .FirstOrDefaultAsync();
+                if(row is null) return null;
+                string sizeStr = row.Size.HasValue ? FormatBytesShort(row.Size.Value) : "Unknown";
+                string speedStr = row.Speed.HasValue ? $" @ {row.Speed} MHz" : string.Empty;
+                return $"{sizeStr} {row.Type} ({row.Usage}){speedStr}";
+            }
+            case Suggestions.MachineSuggestionApplier.GroupStorage:
+            {
+                var row = await context.StorageByMachine.AsNoTracking()
+                                       .Where(r => r.Id == rowId && r.MachineId == machineId)
+                                       .Select(r => new { r.Type, r.Interface, r.Capacity })
+                                       .FirstOrDefaultAsync();
+                if(row is null) return null;
+                string capStr = row.Capacity.HasValue ? $" - {FormatBytesShort(row.Capacity.Value)}" : string.Empty;
+                return $"{row.Type} ({row.Interface}){capStr}";
+            }
+            case Suggestions.MachineSuggestionApplier.GroupSoftwarePlatforms:
+            {
+                var row = await context.SoftwarePlatformsByMachine.AsNoTracking()
+                                       .Where(r => r.Id == rowId && r.MachineId == machineId)
+                                       .Select(r => new { Name = r.SoftwarePlatform.Name })
+                                       .FirstOrDefaultAsync();
+                return row is null ? null : row.Name;
+            }
+            default:
+                return null;
+        }
+    }
+
+    static int? ReadIntField(JsonElement obj, string key) =>
+        obj.TryGetProperty(key, out JsonElement v) ? JsonElementToInt(v) : null;
+
+    static long? ReadLongField(JsonElement obj, string key) =>
+        obj.TryGetProperty(key, out JsonElement v) ? JsonElementToLong(v) : null;
+
+    static double? ReadDoubleField(JsonElement obj, string key) =>
+        obj.TryGetProperty(key, out JsonElement v) ? JsonElementToDouble(v) : null;
+
+    static string FormatBytesShort(long bytes) => bytes switch
+    {
+        >= 1073741824 => $"{bytes / 1073741824.0:F1} GiB",
+        >= 1048576    => $"{bytes / 1048576.0:F1} MiB",
+        >= 1024       => $"{bytes / 1024.0:F1} KiB",
+        _             => $"{bytes} B"
+    };
 
     // ───────────────────────────── Helpers ─────────────────────────────
 

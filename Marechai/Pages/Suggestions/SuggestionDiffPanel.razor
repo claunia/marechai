@@ -40,8 +40,10 @@ else
                 string fieldName = entry.Key;
                 _currentDict.TryGetValue(fieldName, out JsonElement currentValue);
                 bool isChecked = AcceptedFieldNames.Contains(fieldName);
-                SuggestionFieldDescriptor descriptor = GetFieldDescriptor(fieldName);
-                bool isMarkdown = descriptor?.Kind == SuggestionFieldKind.Markdown;
+                SuggestionFieldKind kind = ResolveFieldKind(fieldName);
+                bool isMarkdown = kind == SuggestionFieldKind.Markdown;
+                bool isJunctionAdd    = kind == SuggestionFieldKind.JunctionAdd;
+                bool isJunctionRemove = kind == SuggestionFieldKind.JunctionRemove;
 
                 if(isMarkdown)
                 {
@@ -85,6 +87,46 @@ else
                             {
                                 @MarkdownDiffMarkup(diff)
                             }
+                        </td>
+                    </tr>
+                }
+                else if(isJunctionAdd)
+                {
+                    string label = SuggestedLabels is not null && SuggestedLabels.TryGetValue(fieldName, out string addLabel)
+                                       ? addLabel
+                                       : L["(new junction row)"];
+                    <tr style="background-color: rgba(46, 160, 67, 0.08);">
+                        <td>
+                            <MudCheckBox T="bool" Value="@isChecked"
+                                         ValueChanged="@(v => ToggleAccepted(fieldName, v))"
+                                         Disabled="@(ReadOnly || IsRequired(fieldName))"/>
+                        </td>
+                        <td colspan="3">
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                <MudChip T="string" Size="Size.Small" Color="Color.Success" Variant="Variant.Filled">+ @L["Add"]</MudChip>
+                                <strong>@FormatLabel(fieldName)</strong>
+                                <MudText Typo="Typo.body2">@label</MudText>
+                            </MudStack>
+                        </td>
+                    </tr>
+                }
+                else if(isJunctionRemove)
+                {
+                    string label = CurrentLabels is not null && CurrentLabels.TryGetValue(fieldName, out string remLabel)
+                                       ? remLabel
+                                       : L["(existing junction row)"];
+                    <tr style="background-color: rgba(248, 81, 73, 0.08);">
+                        <td>
+                            <MudCheckBox T="bool" Value="@isChecked"
+                                         ValueChanged="@(v => ToggleAccepted(fieldName, v))"
+                                         Disabled="@(ReadOnly || IsRequired(fieldName))"/>
+                        </td>
+                        <td colspan="3">
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                <MudChip T="string" Size="Size.Small" Color="Color.Error" Variant="Variant.Filled">− @L["Remove"]</MudChip>
+                                <strong>@FormatLabel(fieldName)</strong>
+                                <MudText Typo="Typo.body2" Style="text-decoration: line-through;">@label</MudText>
+                            </MudStack>
                         </td>
                     </tr>
                 }
@@ -183,10 +225,25 @@ else
         return null;
     }
 
+    /// <summary>
+    ///     Resolve the rendering kind for a field. First checks the static descriptor; falls
+    ///     back to the metadata's <see cref="SuggestionMetadata.GetFieldKind" /> hook so dynamic
+    ///     field-name patterns (e.g. <c>gpus.add.&lt;uuid&gt;</c>) can map to JunctionAdd /
+    ///     JunctionRemove kinds without a static <see cref="SuggestionFieldDescriptor" />.
+    /// </summary>
+    SuggestionFieldKind ResolveFieldKind(string fieldName)
+    {
+        SuggestionFieldDescriptor d = GetFieldDescriptor(fieldName);
+        if(d is not null) return d.Kind;
+        return _metadata?.GetFieldKind(fieldName) ?? SuggestionFieldKind.Text;
+    }
+
     string FormatLabel(string fieldName)
     {
         SuggestionFieldDescriptor d = GetFieldDescriptor(fieldName);
-        return d is null ? fieldName : L[d.LabelKey];
+        if(d is not null) return L[d.LabelKey];
+        string key = _metadata?.GetFieldLabelKey(fieldName) ?? fieldName;
+        return L[key];
     }
 
     string FormatValue(string fieldName, JsonElement value)

@@ -80,6 +80,7 @@ public static class SuggestionMetadataRegistry
             Marechai.Suggestions.Metadata.SoundSynthDescriptionSuggestionMetadata.EnsureRegistered();
             Marechai.Suggestions.Metadata.PersonDescriptionSuggestionMetadata.EnsureRegistered();
             Marechai.Suggestions.Metadata.SoftwareDescriptionSuggestionMetadata.EnsureRegistered();
+            Marechai.Suggestions.Metadata.MachineSuggestionMetadata.EnsureRegistered();
             s_seeded = true;
         }
     }

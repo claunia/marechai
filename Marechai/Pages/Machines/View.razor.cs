@@ -275,6 +275,31 @@ public partial class View
         _pendingDescriptionLangs = fresh;
     }
 
+    /// <summary>
+    ///     Open the dedicated Machine suggestion dialog (scalar fields + 7 junctions). Mirrors
+    ///     the canonical pencil-icon → suggestion-dialog pattern from Companies/View. Uses the
+    ///     route parameter <c>Id</c> directly, matching <c>OpenDescriptionPickerAsync</c>'s
+    ///     defensive convention.
+    /// </summary>
+    async Task OpenMachineSuggestionDialog()
+    {
+        if(_machine is null) return;
+
+        var parameters = new DialogParameters
+        {
+            ["EntityId"]   = (long)Id,
+            ["CurrentDto"] = _machine
+        };
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Large
+        };
+
+        await DialogService.ShowAsync<MachineSuggestionDialog>(L["Suggest changes"], parameters, options);
+    }
+
     static string LanguageDisplayName(string iso639_3) => iso639_3 switch
     {
         "eng" => "English",

@@ -58,4 +58,62 @@
     <data name="Suggested value" xml:space="preserve"><value>Valor sugerido</value></data>
     <data name="unchanged" xml:space="preserve"><value>sin cambios</value></data>
     <data name="Show full diff ({0} lines)" xml:space="preserve"><value>Mostrar diferencias completas ({0} líneas)</value></data>
+
+  <data name="Add" xml:space="preserve">
+    <value>Añadir</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
+  <data name="(new junction row)" xml:space="preserve">
+    <value>(nueva fila de relación)</value>
+  </data>
+  <data name="(existing junction row)" xml:space="preserve">
+    <value>(fila de relación existente)</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="Model" xml:space="preserve">
+    <value>Modelo</value>
+  </data>
+  <data name="Company" xml:space="preserve">
+    <value>Empresa</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="Prototype" xml:space="preserve">
+    <value>Prototipo</value>
+  </data>
+  <data name="Introduction date" xml:space="preserve">
+    <value>Fecha de introducción</value>
+  </data>
+  <data name="Date precision" xml:space="preserve">
+    <value>Precisión de la fecha</value>
+  </data>
+  <data name="Family" xml:space="preserve">
+    <value>Familia</value>
+  </data>
+  <data name="GPUs" xml:space="preserve">
+    <value>GPUs</value>
+  </data>
+  <data name="Processors" xml:space="preserve">
+    <value>Procesadores</value>
+  </data>
+  <data name="Sound Synthesizers" xml:space="preserve">
+    <value>Sintetizadores de sonido</value>
+  </data>
+  <data name="Screens" xml:space="preserve">
+    <value>Pantallas</value>
+  </data>
+  <data name="Memory" xml:space="preserve">
+    <value>Memoria</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>Almacenamiento</value>
+  </data>
+  <data name="Software Platforms" xml:space="preserve">
+    <value>Plataformas de software</value>
+  </data>
 </root>
