@@ -696,9 +696,19 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
         if(item is null) return NotFound();
 
+        string entityName = item.Name;
+
         context.Softwares.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        // Mark any pending suggestions for this Software as Stale and notify the suggesting users.
+        await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntityAsync(
+            context, Marechai.Data.SuggestionEntityType.Software, (long)id, entityName);
+
+        // Cascade: also mark stale every per-language description suggestion for this Software.
+        await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntityAsync(
+            context, Marechai.Data.SuggestionEntityType.SoftwareDescription, (long)id, entityName);
 
         return Ok();
     }
@@ -1293,9 +1303,25 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
         if(description is null) return NotFound();
 
+        // Capture display data BEFORE the cascade, while the Software + language rows are still
+        // available for the system message body.
+        string softwareName = await context.Softwares.AsNoTracking()
+                                           .Where(s => s.Id == id)
+                                           .Select(s => s.Name)
+                                           .FirstOrDefaultAsync();
+        string langName = await context.Iso639.AsNoTracking()
+                                       .Where(l => l.Id == languageCode)
+                                       .Select(l => l.ReferenceName)
+                                       .FirstOrDefaultAsync();
+        string subkeyLabel = $"({langName ?? languageCode} description)";
+
         context.SoftwareDescriptions.Remove(description);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntitySubkeyAsync(
+            context, Marechai.Data.SuggestionEntityType.SoftwareDescription,
+            (long)id, languageCode, softwareName ?? $"#{id}", subkeyLabel);
 
         return Ok();
     }

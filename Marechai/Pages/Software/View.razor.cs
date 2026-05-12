@@ -32,6 +32,7 @@ using Marechai.ApiClient.Models;
 using Marechai.Data;
 using Marechai.Helpers;
 using Marechai.Pages.Admin;
+using Marechai.Pages.Suggestions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
@@ -45,6 +46,11 @@ public partial class View
     List<PersonBySoftwareDto>                    _credits = [];
     Dictionary<string, List<PersonBySoftwareDto>> _creditsByRole = new();
     string                                      _description;
+    string                                      _descriptionLanguageServed;
+    bool                                        _descriptionFellBack;
+    bool                                        _hasAnyDescription;
+    HashSet<string>                              _existingDescriptionLangs = new(StringComparer.Ordinal);
+    HashSet<string>                              _pendingDescriptionLangs  = new(StringComparer.Ordinal);
     List<SoftwareGenreDto>                       _genres = [];
     Dictionary<string, List<SoftwareGenreDto>>   _genresByType = new();
     List<SoftwareAttributeDto>                   _attributes = [];
@@ -94,6 +100,9 @@ public partial class View
 
     [SupplyParameterFromQuery(Name = "tab")]
     public string TabParam { get; set; }
+
+    [CascadingParameter]
+    Task<AuthenticationState> AuthState { get; set; }
 
     [Inject]
     NavigationManager NavManager { get; set; }
@@ -157,7 +166,6 @@ public partial class View
             // Phase 1 (header + Overview)
             Task<List<SoftwareGenreDto>>            genresTask        = Service.GetGenresAsync(Id);
             Task<List<SoftwareDto>>                 addonsTask        = Service.GetAddonsAsync(Id);
-            Task<string>                            descriptionTask   = Service.GetDescriptionTextAsync(Id, UiLanguage.GetIso639_3());
             Task<List<SoftwareCoverDto>>            coversTask        = Service.GetCoversBySoftwareAsync(Id);
             Task<MarechaiScoreDto>                  marechaiScoreTask = AuthService.GetMarechaiScoreAsync(Id);
             Task<UserReviewSummaryDto>              userSummaryTask   = AuthService.GetUserReviewSummaryAsync(Id);
@@ -179,12 +187,11 @@ public partial class View
             Task<List<SoftwareUserReviewDto>>       userReviewsTask   = AuthService.GetUserReviewsAsync(Id);
 
             // ── Phase 1 await ──
-            await Task.WhenAll(genresTask, addonsTask, descriptionTask, coversTask,
+            await Task.WhenAll(genresTask, addonsTask, coversTask,
                                marechaiScoreTask, userSummaryTask, authStateTask, myRatingTask);
 
             _genres            = genresTask.Result;
             _addons            = addonsTask.Result;
-            _description       = descriptionTask.Result;
             _covers            = coversTask.Result;
             _marechaiScore     = marechaiScoreTask.Result;
             _userReviewSummary = userSummaryTask.Result;
@@ -211,6 +218,12 @@ public partial class View
                 SoftwareUserRatingDto myRating = myRatingTask.Result;
                 _myRatingFloat = myRating is not null ? myRating.Rating.GetValueOrDefault() : 0;
             }
+
+            // Resolve the language-aware description state (rendered HTML + fall-back flag +
+            // the existing-languages set used by the language picker). Done after Phase 1
+            // awaits so the connection pool isn't oversubscribed and the new dependent
+            // calls (full DTO + descriptions list) chain naturally.
+            await LoadDescriptionStateAsync();
 
             // First render: Overview tab + header are fully populated.
             _loaded = true;
@@ -456,4 +469,140 @@ public partial class View
             Snackbar.Add(L["Report submitted. Thank you."], Severity.Success);
         }
     }
+
+    /// <summary>
+    ///     Load the description for the user's UI language, falling back to whatever the server
+    ///     returns (typically English). Sets <see cref="_descriptionFellBack" /> when the served
+    ///     language differs from the requested one. Also pulls the lightweight metadata list so
+    ///     the language picker can render "Has description" / "Empty" chips.
+    /// </summary>
+    async Task LoadDescriptionStateAsync()
+    {
+        string requested = UiLanguage.GetIso639_3();
+        SoftwareDescriptionDto served = await Service.GetDescriptionAsync(Id, requested);
+
+        _description               = served?.Html ?? served?.Markdown ?? string.Empty;
+        _descriptionLanguageServed = served?.LanguageCode;
+        _hasAnyDescription         = !string.IsNullOrWhiteSpace(_description);
+        _descriptionFellBack       = _hasAnyDescription
+                                  && _descriptionLanguageServed is not null
+                                  && !string.Equals(_descriptionLanguageServed, requested, StringComparison.Ordinal);
+
+        // Lightweight metadata fetch so the picker can show "Has description" / "Empty" chips.
+        List<SoftwareDescriptionDto> all = await Service.GetDescriptionsAsync(Id);
+        _existingDescriptionLangs = new HashSet<string>(StringComparer.Ordinal);
+        foreach(SoftwareDescriptionDto d in all ?? new List<SoftwareDescriptionDto>())
+        {
+            if(!string.IsNullOrEmpty(d.LanguageCode))
+                _existingDescriptionLangs.Add(d.LanguageCode);
+        }
+    }
+
+    /// <summary>
+    ///     Open the language picker. On selection, opens the markdown editor pre-loaded with
+    ///     the existing description for that language (or empty for a new translation).
+    ///     Refreshes the description card on success so the user immediately sees their pending
+    ///     suggestion's status (the description itself only updates when the admin accepts).
+    /// </summary>
+    async Task OpenDescriptionPickerAsync()
+    {
+        if(_software is null) return;
+
+        // Use the route parameter Id (always valid — the page wouldn't have rendered otherwise)
+        // rather than _software.Id.Value. This sidesteps the OwningComponentBase trap where the
+        // inner-scope DTO load could in theory leave Id unpopulated.
+        long softwareId = Id;
+
+        // Refresh per-user pending list lazily so anonymous users never hit /auth/me/suggestions.
+        await RefreshPendingDescriptionLangsAsync();
+
+        var pickerParams = new DialogParameters
+        {
+            ["ExistingLanguages"] = _existingDescriptionLangs,
+            ["PendingLanguages"]  = _pendingDescriptionLangs,
+            ["DefaultLanguage"]   = UiLanguage.GetIso639_3()
+        };
+        var pickerOptions = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Small
+        };
+
+        var pickerRef = await DialogService.ShowAsync<LanguagePickerDialog>(
+            L["Choose language for description"], pickerParams, pickerOptions);
+        var pickerResult = await pickerRef.Result;
+
+        if(pickerResult.Canceled || pickerResult.Data is not string langCode) return;
+
+        // Pre-fetch the existing markdown for the chosen language (may be null/empty).
+        SoftwareDescriptionDto existing = await Service.GetDescriptionAsync(Id, langCode);
+        bool isEdit       = existing is not null && string.Equals(existing.LanguageCode, langCode, StringComparison.Ordinal);
+        string initialMd  = isEdit ? (existing?.Markdown ?? string.Empty) : string.Empty;
+
+        var editorParams = new DialogParameters
+        {
+            ["EntityType"]          = SuggestionEntityType.SoftwareDescription,
+            ["EntityId"]            = softwareId,
+            ["Subkey"]              = langCode,
+            ["EntityDisplayName"]   = _software.Name ?? $"#{softwareId}",
+            ["LanguageDisplayName"] = LanguageDisplayName(langCode),
+            ["InitialMarkdown"]     = initialMd,
+            ["IsEdit"]              = isEdit
+        };
+        var editorOptions = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Large
+        };
+
+        var editorRef = await DialogService.ShowAsync<MarkdownSuggestionDialog>(
+            L["Suggest description"], editorParams, editorOptions);
+        var editorResult = await editorRef.Result;
+
+        if(!editorResult.Canceled && editorResult.Data is not null)
+        {
+            // Add the just-submitted language to the pending set so a follow-up click on the
+            // same language disables the button without a round-trip.
+            _pendingDescriptionLangs.Add(langCode);
+            StateHasChanged();
+        }
+    }
+
+    async Task RefreshPendingDescriptionLangsAsync()
+    {
+        AuthenticationState auth = await AuthState;
+        if(!(auth.User?.Identity?.IsAuthenticated ?? false))
+        {
+            _pendingDescriptionLangs.Clear();
+            return;
+        }
+
+        List<SuggestionDto> mine = await Suggestions.GetMyAsync();
+        var fresh = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach(SuggestionDto s in mine ?? new List<SuggestionDto>())
+        {
+            if(s.EntityType == (int?)SuggestionEntityType.SoftwareDescription
+            && s.EntityId == (long?)Id
+            && s.Status == (int?)SuggestionStatus.Pending
+            && !string.IsNullOrEmpty(s.Subkey))
+                fresh.Add(s.Subkey);
+        }
+
+        _pendingDescriptionLangs = fresh;
+    }
+
+    static string LanguageDisplayName(string iso639_3) => iso639_3 switch
+    {
+        "eng" => "English",
+        "spa" => "Spanish",
+        "deu" => "German",
+        "fra" => "French",
+        "ita" => "Italian",
+        "lat" => "Latin",
+        "por" => "Portuguese",
+        _     => iso639_3
+    };
 }

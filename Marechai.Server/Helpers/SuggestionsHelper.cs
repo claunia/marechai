@@ -153,6 +153,7 @@ internal static class SuggestionsHelper
         SuggestionEntityType.Gpu                 => "GPU",
         SuggestionEntityType.SoundSynth          => "sound synth",
         SuggestionEntityType.Software            => "software",
+        SuggestionEntityType.SoftwareDescription => "software description",
         SuggestionEntityType.SoftwareFamily      => "software family",
         SuggestionEntityType.SoftwareRelease     => "software release",
         SuggestionEntityType.SoftwareVersion     => "software version",
