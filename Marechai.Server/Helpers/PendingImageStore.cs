@@ -1,0 +1,289 @@
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2026 Natalia Portillo
+*******************************************************************************/
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
+using System.Threading.Tasks;
+
+namespace Marechai.Server.Helpers;
+
+/// <summary>
+///     Sidecar-based store for collaborator-uploaded images that are pending admin review
+///     (currently book covers, designed for reuse with magazine issue covers and other
+///     image kinds in the future).
+///     <para>
+///         Each upload writes two files under
+///         <c>{assetRootPath}/photos/{itemFolder}/pending/</c>:
+///         <list type="bullet">
+///             <item><description><c>{guid}.{ext}</c> — the raw image (jpg/png/webp).</description></item>
+///             <item><description><c>{guid}.json</c> — sidecar metadata (uploader, entity id, timestamp, content type).</description></item>
+///         </list>
+///     </para>
+///     <para>
+///         The sidecar lets the controller authorize "is this user the uploader?", scoped
+///         cleanup ("delete every pending upload by user X for entity Y") and orphan-sweep
+///         queries without touching the database. No EF migration required.
+///     </para>
+/// </summary>
+public static class PendingImageStore
+{
+    /// <summary>Minimum extension whitelist applied to every pending upload, regardless of item kind.</summary>
+    public static readonly HashSet<string> AllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ".jpg", ".jpeg", ".png", ".webp"
+    };
+
+    /// <summary>Matching content types for the whitelist above.</summary>
+    public static readonly HashSet<string> AllowedContentTypes = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "image/jpeg", "image/png", "image/webp"
+    };
+
+    public sealed class PendingMetadata
+    {
+        public Guid     Guid           { get; set; }
+        public string   Extension      { get; set; }
+        public byte     EntityType     { get; set; }
+        public long     EntityId       { get; set; }
+        public string   UploadedById   { get; set; }
+        public DateTime UploadedOn     { get; set; }
+        public string   ContentType    { get; set; }
+        public long     SizeBytes      { get; set; }
+    }
+
+    /// <summary>
+    ///     Returns the absolute path to the pending folder for the given item kind. Creates
+    ///     the directory tree if missing. The item folder is the same identifier used by
+    ///     <see cref="Marechai.Helpers.Photos.EnsureCreated" /> (e.g. <c>"book-covers"</c>).
+    /// </summary>
+    public static string EnsurePendingDir(string assetRootPath, string itemFolder)
+    {
+        string pendingDir = Path.Combine(assetRootPath, "photos", itemFolder, "pending");
+        Directory.CreateDirectory(pendingDir);
+        return pendingDir;
+    }
+
+    /// <summary>
+    ///     Persist a freshly-uploaded image plus its sidecar. Returns the new guid.
+    /// </summary>
+    public static async Task<Guid> StoreAsync(string assetRootPath, string itemFolder, string extension,
+                                              byte entityType, long entityId, string uploadedById,
+                                              string contentType, Stream contents)
+    {
+        if(string.IsNullOrEmpty(extension)) throw new ArgumentException("Extension required.", nameof(extension));
+        if(!AllowedExtensions.Contains(extension))
+            throw new ArgumentException($"Extension '{extension}' is not in the allowed list.", nameof(extension));
+        if(string.IsNullOrEmpty(uploadedById))
+            throw new ArgumentException("Uploader id required.", nameof(uploadedById));
+
+        string pendingDir = EnsurePendingDir(assetRootPath, itemFolder);
+        Guid   guid       = Guid.NewGuid();
+        string ext        = extension.StartsWith('.') ? extension.ToLowerInvariant() : "." + extension.ToLowerInvariant();
+        string filePath   = Path.Combine(pendingDir, guid.ToString() + ext);
+        string sidecar    = Path.Combine(pendingDir, guid.ToString() + ".json");
+
+        long size;
+        await using(var fs = new FileStream(filePath, FileMode.CreateNew, FileAccess.Write))
+        {
+            await contents.CopyToAsync(fs);
+            size = fs.Length;
+        }
+
+        var meta = new PendingMetadata
+        {
+            Guid         = guid,
+            Extension    = ext.TrimStart('.'),
+            EntityType   = entityType,
+            EntityId     = entityId,
+            UploadedById = uploadedById,
+            UploadedOn   = DateTime.UtcNow,
+            ContentType  = contentType,
+            SizeBytes    = size
+        };
+        await File.WriteAllTextAsync(sidecar, JsonSerializer.Serialize(meta));
+
+        return guid;
+    }
+
+    /// <summary>Look up the sidecar metadata for a given guid; returns null when no sidecar exists.</summary>
+    public static async Task<PendingMetadata> GetMetadataAsync(string assetRootPath, string itemFolder, Guid guid)
+    {
+        string pendingDir = EnsurePendingDir(assetRootPath, itemFolder);
+        string sidecar    = Path.Combine(pendingDir, guid.ToString() + ".json");
+        if(!File.Exists(sidecar)) return null;
+
+        try
+        {
+            string json = await File.ReadAllTextAsync(sidecar);
+            return JsonSerializer.Deserialize<PendingMetadata>(json);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    /// <summary>
+    ///     Returns the absolute path of the image file for a guid (looking up the extension
+    ///     from the sidecar). Returns null if either the sidecar or the file is missing.
+    /// </summary>
+    public static async Task<string> GetImagePathAsync(string assetRootPath, string itemFolder, Guid guid)
+    {
+        PendingMetadata meta = await GetMetadataAsync(assetRootPath, itemFolder, guid);
+        if(meta is null) return null;
+
+        string pendingDir = EnsurePendingDir(assetRootPath, itemFolder);
+        string filePath   = Path.Combine(pendingDir, guid.ToString() + "." + meta.Extension);
+        return File.Exists(filePath) ? filePath : null;
+    }
+
+    /// <summary>Delete the image+sidecar for a given guid. Silently absorbs missing files.</summary>
+    public static void Delete(string assetRootPath, string itemFolder, Guid guid)
+    {
+        string pendingDir = EnsurePendingDir(assetRootPath, itemFolder);
+        string sidecar    = Path.Combine(pendingDir, guid.ToString() + ".json");
+
+        // Try to read extension from sidecar so we delete the matching image; fall back to a
+        // glob if the sidecar is unreadable or missing.
+        try
+        {
+            if(File.Exists(sidecar))
+            {
+                string  json = File.ReadAllText(sidecar);
+                var meta = JsonSerializer.Deserialize<PendingMetadata>(json);
+                if(meta is not null && !string.IsNullOrEmpty(meta.Extension))
+                {
+                    string filePath = Path.Combine(pendingDir, guid.ToString() + "." + meta.Extension);
+                    if(File.Exists(filePath)) File.Delete(filePath);
+                }
+            }
+        }
+        catch
+        {
+            // ignored
+        }
+
+        // Fallback: glob delete in case extension lookup failed.
+        try
+        {
+            foreach(string f in Directory.GetFiles(pendingDir, guid.ToString() + ".*"))
+            {
+                if(!f.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+                {
+                    try { File.Delete(f); } catch { /* ignored */ }
+                }
+            }
+        }
+        catch
+        {
+            // ignored
+        }
+
+        try { if(File.Exists(sidecar)) File.Delete(sidecar); } catch { /* ignored */ }
+    }
+
+    /// <summary>
+    ///     Delete every pending image+sidecar uploaded by <paramref name="userId" /> for the
+    ///     given (entity type, entity id) combination. Used to enforce the "user has at most
+    ///     one pending image per entity" rule when they upload a replacement.
+    /// </summary>
+    public static int DeleteByUploaderForEntity(string assetRootPath, string itemFolder,
+                                                string userId, byte entityType, long entityId)
+    {
+        if(string.IsNullOrEmpty(userId)) return 0;
+
+        string pendingDir = EnsurePendingDir(assetRootPath, itemFolder);
+        int    removed    = 0;
+
+        IEnumerable<string> sidecars;
+        try { sidecars = Directory.EnumerateFiles(pendingDir, "*.json"); }
+        catch { return 0; }
+
+        foreach(string sidecar in sidecars.ToList())
+        {
+            try
+            {
+                var meta = JsonSerializer.Deserialize<PendingMetadata>(File.ReadAllText(sidecar));
+                if(meta is null) continue;
+                if(meta.EntityType != entityType || meta.EntityId != entityId) continue;
+                if(!string.Equals(meta.UploadedById, userId, StringComparison.Ordinal)) continue;
+
+                Delete(assetRootPath, itemFolder, meta.Guid);
+                removed++;
+            }
+            catch
+            {
+                // ignored
+            }
+        }
+
+        return removed;
+    }
+
+    /// <summary>
+    ///     Returns true if the calling user is allowed to read/delete the pending image. The
+    ///     uploader and any admin role are allowed; everyone else is denied.
+    /// </summary>
+    public static bool CanAccess(PendingMetadata meta, string callerUserId, bool callerIsAdmin)
+    {
+        if(meta is null) return false;
+        if(callerIsAdmin) return true;
+        return string.Equals(meta.UploadedById, callerUserId, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    ///     Move a pending image into the entity's <c>originals/</c> folder under the SAME
+    ///     guid+extension (so the existing conversion worker picks it up unchanged). Deletes
+    ///     the sidecar afterward. Returns the absolute path of the moved file or null when
+    ///     the source is missing.
+    /// </summary>
+    public static async Task<(string movedPath, string extension)> PromoteToOriginalsAsync(
+        string assetRootPath, string itemFolder, Guid guid)
+    {
+        PendingMetadata meta = await GetMetadataAsync(assetRootPath, itemFolder, guid);
+        if(meta is null) return (null, null);
+
+        string pendingDir   = EnsurePendingDir(assetRootPath, itemFolder);
+        string srcPath      = Path.Combine(pendingDir, guid.ToString() + "." + meta.Extension);
+        if(!File.Exists(srcPath)) return (null, null);
+
+        string originalsDir = Path.Combine(assetRootPath, "photos", itemFolder, "originals");
+        Directory.CreateDirectory(originalsDir);
+
+        string destPath = Path.Combine(originalsDir, guid.ToString() + "." + meta.Extension);
+        if(File.Exists(destPath)) File.Delete(destPath);
+
+        File.Move(srcPath, destPath);
+
+        // Sidecar can go now; the image lives in originals.
+        string sidecar = Path.Combine(pendingDir, guid.ToString() + ".json");
+        try { if(File.Exists(sidecar)) File.Delete(sidecar); } catch { /* ignored */ }
+
+        return (destPath, meta.Extension);
+    }
+}

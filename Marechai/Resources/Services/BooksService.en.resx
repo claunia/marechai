@@ -1,413 +1,352 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- ReSharper disable MarkupTextTypo -->
-<root>
-    <!--
-      Microsoft ResX Schema
-
-      Version 2.0
-
-      The primary goals of this format is to allow a simple XML format
-      that is mostly human readable. The generation and parsing of the
-      various data types are done through the TypeConverter classes
-      associated with the data types.
-
-      Example:
-
-      ... ado.net/XML headers & schema ...
-      <resheader name="resmimetype">text/microsoft-resx</resheader>
-      <resheader name="version">2.0</resheader>
-      <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-      <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-      <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-      <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-      <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-          <value>[base64 mime encoded serialized .NET Framework object]</value>
-      </data>
-      <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-          <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-          <comment>This is a comment</comment>
-      </data>
-
-      There are any number of "resheader" rows that contain simple
-      name/value pairs.
-
-      Each data row contains a name, and value. The row also contains a
-      type or mimetype. Type corresponds to a .NET class that support
-      text/value conversion through the TypeConverter architecture.
-      Classes that don't support this are serialized and stored with the
-      mimetype set.
-
-      The mimetype is used for serialized objects, and tells the
-      ResXResourceReader how to depersist the object. This is currently not
-      extensible. For a given mimetype the value must be set accordingly:
-
-      Note - application/x-microsoft.net.object.binary.base64 is the format
-      that the ResXResourceWriter will generate, however the reader can
-      read any of the formats listed below.
-
-      mimetype: application/x-microsoft.net.object.binary.base64
-      value   : The object must be serialized with
-              : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-              : and then encoded with base64 encoding.
-
-      mimetype: application/x-microsoft.net.object.soap.base64
-      value   : The object must be serialized with
-              : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-              : and then encoded with base64 encoding.
-
-      mimetype: application/x-microsoft.net.object.bytearray.base64
-      value   : The object must be serialized into a byte array
-              : using a System.ComponentModel.TypeConverter
-              : and then encoded with base64 encoding.
-      -->
-    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root"
-                xmlns="">
-        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
-        <xsd:element name="root" msdata:IsDataSet="true">
-            <xsd:complexType>
-                <xsd:choice maxOccurs="unbounded">
-                    <xsd:element name="metadata">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
-                            </xsd:sequence>
-                            <xsd:attribute name="name" use="required" type="xsd:string"/>
-                            <xsd:attribute name="type" type="xsd:string"/>
-                            <xsd:attribute name="mimetype" type="xsd:string"/>
-                            <xsd:attribute ref="xml:space"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="assembly">
-                        <xsd:complexType>
-                            <xsd:attribute name="alias" type="xsd:string"/>
-                            <xsd:attribute name="name" type="xsd:string"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="data">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
-                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
-                            </xsd:sequence>
-                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
-                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
-                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
-                            <xsd:attribute ref="xml:space"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="resheader">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
-                            </xsd:sequence>
-                            <xsd:attribute name="name" type="xsd:string" use="required"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                </xsd:choice>
-            </xsd:complexType>
-        </xsd:element>
-    </xsd:schema>
-    <resheader name="resmimetype">
-        <value>text/microsoft-resx</value>
-    </resheader>
-    <resheader name="version">
-        <value>2.0</value>
-    </resheader>
-    <resheader name="reader">
-        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:schema id="root">
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xs:element name="root" ns1:IsDataSet="true">
+      <xs:complexType>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="metadata">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" />
+              </xs:sequence>
+              <xs:attribute name="name" use="required" type="xsd:string" />
+              <xs:attribute name="type" type="xsd:string" />
+              <xs:attribute name="mimetype" type="xsd:string" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="assembly">
+            <xs:complexType>
+              <xs:attribute name="alias" type="xsd:string" />
+              <xs:attribute name="name" type="xsd:string" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="data">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" ns1:Ordinal="1" />
+              <xs:attribute name="type" type="xsd:string" ns1:Ordinal="3" />
+              <xs:attribute name="mimetype" type="xsd:string" ns1:Ordinal="4" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="resheader">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" />
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
             PublicKeyToken=b77a5c561934e089
         </value>
-    </resheader>
-    <resheader name="writer">
-        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
             PublicKeyToken=b77a5c561934e089
         </value>
-    </resheader>
-    <data name="Books" xml:space="preserve">
-        <value>Books</value>
-    </data>
-    <data name="Here you can consult our database." xml:space="preserve">
-        <value>Here you can consult our database.</value>
-    </data>
-    <data name="The database contains information about books related to computing history." xml:space="preserve">
-        <value>The database contains information about books related to computing history.</value>
-    </data>
-    <data name="There are {0} books in the database at this moment." xml:space="preserve">
-        <value>There are {0} books in the database at this moment.</value>
-    </data>
-    <data name="Search by companies" xml:space="preserve">
-        <value>Search by companies</value>
-    </data>
-    <data name="All companies" xml:space="preserve">
-        <value>All companies</value>
-    </data>
-    <data name="Search books alphabetically" xml:space="preserve">
-        <value>Search books alphabetically</value>
-    </data>
-    <data name="All books" xml:space="preserve">
-        <value>All books</value>
-    </data>
-    <data name="Search books by year" xml:space="preserve">
-        <value>Search books by year</value>
-    </data>
-    <data name="Search results:" xml:space="preserve">
-        <value>Search results:</value>
-    </data>
-    <data name="Books starting with {0}" xml:space="preserve">
-        <value>Books starting with {0}</value>
-    </data>
-    <data name="Books published in {0}" xml:space="preserve">
-        <value>Books published in {0}</value>
-    </data>
-    <data name="{0} books found in the database." xml:space="preserve">
-        <value>{0} books found in the database.</value>
-    </data>
-    <data name="There are no books found in the database that start with this letter." xml:space="preserve">
-        <value>There are no books found in the database that start with this letter.</value>
-    </data>
-    <data name="There are no books found published this year." xml:space="preserve">
-        <value>There are no books found published this year.</value>
-    </data>
-    <data name="Book not found." xml:space="preserve">
-        <value>Book not found.</value>
-    </data>
-    <data name="General" xml:space="preserve">
-        <value>General</value>
-    </data>
-    <data name="Title" xml:space="preserve">
-        <value>Title</value>
-    </data>
-    <data name="Native title" xml:space="preserve">
-        <value>Native title</value>
-    </data>
-    <data name="ISBN" xml:space="preserve">
-        <value>ISBN</value>
-    </data>
-    <data name="Pages" xml:space="preserve">
-        <value>Pages</value>
-    </data>
-    <data name="Edition" xml:space="preserve">
-        <value>Edition</value>
-    </data>
-    <data name="Published" xml:space="preserve">
-        <value>Published</value>
-    </data>
-    <data name="Country" xml:space="preserve">
-        <value>Country</value>
-    </data>
-    <data name="Cover" xml:space="preserve">
-        <value>Cover</value>
-    </data>
-    <data name="Synopsis" xml:space="preserve">
-        <value>Synopsis</value>
-    </data>
-    <data name="People" xml:space="preserve">
-        <value>People</value>
-    </data>
-    <data name="Companies" xml:space="preserve">
-        <value>Companies</value>
-    </data>
-    <data name="Machines" xml:space="preserve">
-        <value>Machines</value>
-    </data>
-    <data name="Machine families" xml:space="preserve">
-        <value>Machine families</value>
-    </data>
-    <data name="Previous edition" xml:space="preserve">
-        <value>Previous edition</value>
-    </data>
-    <data name="Source book" xml:space="preserve">
-        <value>Source book</value>
-    </data>
-    <data name="Book Management" xml:space="preserve">
-        <value>Book Management</value>
-    </data>
-    <data name="Manage books related to computing history." xml:space="preserve">
-        <value>Manage books related to computing history.</value>
-    </data>
-    <data name="Add Book" xml:space="preserve">
-        <value>Add Book</value>
-    </data>
-    <data name="Edit Book" xml:space="preserve">
-        <value>Edit Book</value>
-    </data>
-    <data name="Delete Book" xml:space="preserve">
-        <value>Delete Book</value>
-    </data>
-    <data name="Book created successfully." xml:space="preserve">
-        <value>Book created successfully.</value>
-    </data>
-    <data name="Book updated successfully." xml:space="preserve">
-        <value>Book updated successfully.</value>
-    </data>
-    <data name="Book deleted successfully." xml:space="preserve">
-        <value>Book deleted successfully.</value>
-    </data>
-    <data name="Are you sure you want to delete book '{0}'? This action cannot be undone." xml:space="preserve">
-        <value>Are you sure you want to delete book '{0}'? This action cannot be undone.</value>
-    </data>
-    <data name="Title is required." xml:space="preserve">
-        <value>Title is required.</value>
-    </data>
-    <data name="Basic Info" xml:space="preserve">
-        <value>Basic Info</value>
-    </data>
-    <data name="Sort title" xml:space="preserve">
-        <value>Sort title</value>
-    </data>
-    <data name="Actions" xml:space="preserve">
-        <value>Actions</value>
-    </data>
-    <data name="Cancel" xml:space="preserve">
-        <value>Cancel</value>
-    </data>
-    <data name="Save" xml:space="preserve">
-        <value>Save</value>
-    </data>
-    <data name="Language" xml:space="preserve">
-        <value>Language</value>
-    </data>
-    <data name="Synopsis text" xml:space="preserve">
-        <value>Synopsis text</value>
-    </data>
-    <data name="Synopsis text (Markdown)" xml:space="preserve">
-        <value>Synopsis text (Markdown)</value>
-    </data>
-    <data name="Save Synopsis" xml:space="preserve">
-        <value>Save Synopsis</value>
-    </data>
-    <data name="Delete Synopsis" xml:space="preserve">
-        <value>Delete Synopsis</value>
-    </data>
-    <data name="Synopsis saved." xml:space="preserve">
-        <value>Synopsis saved.</value>
-    </data>
-    <data name="Synopsis deleted." xml:space="preserve">
-        <value>Synopsis deleted.</value>
-    </data>
-    <data name="Existing synopses:" xml:space="preserve">
-        <value>Existing synopses:</value>
-    </data>
-    <data name="Search Person" xml:space="preserve">
-        <value>Search Person</value>
-    </data>
-    <data name="Role" xml:space="preserve">
-        <value>Role</value>
-    </data>
-    <data name="Add" xml:space="preserve">
-        <value>Add</value>
-    </data>
-    <data name="Search Company" xml:space="preserve">
-        <value>Search Company</value>
-    </data>
-    <data name="Search Machine" xml:space="preserve">
-        <value>Search Machine</value>
-    </data>
-    <data name="Search Machine Family" xml:space="preserve">
-        <value>Search Machine Family</value>
-    </data>
-    <data name="This book has a cover image." xml:space="preserve">
-        <value>This book has a cover image.</value>
-    </data>
-    <data name="No cover image." xml:space="preserve">
-        <value>No cover image.</value>
-    </data>
-    <data name="Delete Cover" xml:space="preserve">
-        <value>Delete Cover</value>
-    </data>
-    <data name="Upload Cover" xml:space="preserve">
-        <value>Upload Cover</value>
-    </data>
-    <data name="Cover uploaded successfully." xml:space="preserve">
-        <value>Cover uploaded successfully.</value>
-    </data>
-    <data name="Failed to upload cover." xml:space="preserve">
-        <value>Failed to upload cover.</value>
-    </data>
-    <data name="Cover deleted." xml:space="preserve">
-        <value>Cover deleted.</value>
-    </data>
-    <data name="Import CSV" xml:space="preserve">
-        <value>Import CSV</value>
-    </data>
-    <data name="Upload a CSV file to import books in bulk. Download the template first to see the expected format." xml:space="preserve">
-        <value>Upload a CSV file to import books in bulk. Download the template first to see the expected format.</value>
-    </data>
-    <data name="Download Template" xml:space="preserve">
-        <value>Download Template</value>
-    </data>
-    <data name="Processing..." xml:space="preserve">
-        <value>Processing...</value>
-    </data>
-    <data name="Upload CSV" xml:space="preserve">
-        <value>Upload CSV</value>
-    </data>
-    <data name="Error reading CSV: {0}" xml:space="preserve">
-        <value>Error reading CSV: {0}</value>
-    </data>
-    <data name="The CSV file is empty or has no data rows." xml:space="preserve">
-        <value>The CSV file is empty or has no data rows.</value>
-    </data>
-    <data name="{0} rows parsed. {1} auto-rejected (no country match or validation error). Selected rows will be REJECTED — unselected rows will be imported." xml:space="preserve">
-        <value>{0} rows parsed. {1} auto-rejected (no country match or validation error). Selected rows will be REJECTED — unselected rows will be imported.</value>
-    </data>
-    <data name="Importing {0} of {1}..." xml:space="preserve">
-        <value>Importing {0} of {1}...</value>
-    </data>
-    <data name="Import complete. {0} imported, {1} rejected, {2} failed." xml:space="preserve">
-        <value>Import complete. {0} imported, {1} rejected, {2} failed.</value>
-    </data>
-    <data name="The following items were not imported:" xml:space="preserve">
-        <value>The following items were not imported:</value>
-    </data>
-    <data name="Download Rejected" xml:space="preserve">
-        <value>Download Rejected</value>
-    </data>
-    <data name="Import" xml:space="preserve">
-        <value>Import</value>
-    </data>
-    <data name="Close" xml:space="preserve">
-        <value>Close</value>
-    </data>
-    <data name="Unknown error" xml:space="preserve">
-        <value>Unknown error</value>
-    </data>
-    <data name="Rejected" xml:space="preserve">
-        <value>Rejected</value>
-    </data>
-    <data name="Duplicate book" xml:space="preserve">
-        <value>Duplicate book</value>
-    </data>
-    <data name="Status" xml:space="preserve">
-        <value>Status</value>
-    </data>
-    <data name="Date precision" xml:space="preserve">
-        <value>Date precision</value>
-    </data>
-    <data name="Full date" xml:space="preserve">
-        <value>Full date</value>
-    </data>
-    <data name="Month and year only" xml:space="preserve">
-        <value>Month and year only</value>
-    </data>
-    <data name="Year only" xml:space="preserve">
-        <value>Year only</value>
-    </data>
-    <data name="Book publishers" xml:space="preserve">
-        <value>Book publishers</value>
-    </data>
-    <data name="Companies which name starts with {0}." xml:space="preserve">
-        <value>Companies which name starts with {0}.</value>
-    </data>
-    <data name="{0} companies found in the database." xml:space="preserve">
-        <value>{0} companies found in the database.</value>
-    </data>
-    <data name="Filter companies..." xml:space="preserve">
-        <value>Filter companies...</value>
-    </data>
-    <data name="There are no companies in the database." xml:space="preserve">
-        <value>There are no companies in the database.</value>
-    </data>
+  </resheader>
+  <data name="Books" xml:space="preserve">
+    <value>Books</value>
+  </data>
+  <data name="Here you can consult our database." xml:space="preserve">
+    <value>Here you can consult our database.</value>
+  </data>
+  <data name="The database contains information about books related to computing history." xml:space="preserve">
+    <value>The database contains information about books related to computing history.</value>
+  </data>
+  <data name="There are {0} books in the database at this moment." xml:space="preserve">
+    <value>There are {0} books in the database at this moment.</value>
+  </data>
+  <data name="Search by companies" xml:space="preserve">
+    <value>Search by companies</value>
+  </data>
+  <data name="All companies" xml:space="preserve">
+    <value>All companies</value>
+  </data>
+  <data name="Search books alphabetically" xml:space="preserve">
+    <value>Search books alphabetically</value>
+  </data>
+  <data name="All books" xml:space="preserve">
+    <value>All books</value>
+  </data>
+  <data name="Search books by year" xml:space="preserve">
+    <value>Search books by year</value>
+  </data>
+  <data name="Search results:" xml:space="preserve">
+    <value>Search results:</value>
+  </data>
+  <data name="Books starting with {0}" xml:space="preserve">
+    <value>Books starting with {0}</value>
+  </data>
+  <data name="Books published in {0}" xml:space="preserve">
+    <value>Books published in {0}</value>
+  </data>
+  <data name="{0} books found in the database." xml:space="preserve">
+    <value>{0} books found in the database.</value>
+  </data>
+  <data name="There are no books found in the database that start with this letter." xml:space="preserve">
+    <value>There are no books found in the database that start with this letter.</value>
+  </data>
+  <data name="There are no books found published this year." xml:space="preserve">
+    <value>There are no books found published this year.</value>
+  </data>
+  <data name="Book not found." xml:space="preserve">
+    <value>Book not found.</value>
+  </data>
+  <data name="General" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="Native title" xml:space="preserve">
+    <value>Native title</value>
+  </data>
+  <data name="ISBN" xml:space="preserve">
+    <value>ISBN</value>
+  </data>
+  <data name="Pages" xml:space="preserve">
+    <value>Pages</value>
+  </data>
+  <data name="Edition" xml:space="preserve">
+    <value>Edition</value>
+  </data>
+  <data name="Published" xml:space="preserve">
+    <value>Published</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>Country</value>
+  </data>
+  <data name="Cover" xml:space="preserve">
+    <value>Cover</value>
+  </data>
+  <data name="Synopsis" xml:space="preserve">
+    <value>Synopsis</value>
+  </data>
+  <data name="People" xml:space="preserve">
+    <value>People</value>
+  </data>
+  <data name="Companies" xml:space="preserve">
+    <value>Companies</value>
+  </data>
+  <data name="Machines" xml:space="preserve">
+    <value>Machines</value>
+  </data>
+  <data name="Machine families" xml:space="preserve">
+    <value>Machine families</value>
+  </data>
+  <data name="Previous edition" xml:space="preserve">
+    <value>Previous edition</value>
+  </data>
+  <data name="Source book" xml:space="preserve">
+    <value>Source book</value>
+  </data>
+  <data name="Book Management" xml:space="preserve">
+    <value>Book Management</value>
+  </data>
+  <data name="Manage books related to computing history." xml:space="preserve">
+    <value>Manage books related to computing history.</value>
+  </data>
+  <data name="Add Book" xml:space="preserve">
+    <value>Add Book</value>
+  </data>
+  <data name="Edit Book" xml:space="preserve">
+    <value>Edit Book</value>
+  </data>
+  <data name="Delete Book" xml:space="preserve">
+    <value>Delete Book</value>
+  </data>
+  <data name="Book created successfully." xml:space="preserve">
+    <value>Book created successfully.</value>
+  </data>
+  <data name="Book updated successfully." xml:space="preserve">
+    <value>Book updated successfully.</value>
+  </data>
+  <data name="Book deleted successfully." xml:space="preserve">
+    <value>Book deleted successfully.</value>
+  </data>
+  <data name="Are you sure you want to delete book '{0}'? This action cannot be undone." xml:space="preserve">
+    <value>Are you sure you want to delete book '{0}'? This action cannot be undone.</value>
+  </data>
+  <data name="Title is required." xml:space="preserve">
+    <value>Title is required.</value>
+  </data>
+  <data name="Basic Info" xml:space="preserve">
+    <value>Basic Info</value>
+  </data>
+  <data name="Sort title" xml:space="preserve">
+    <value>Sort title</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="Synopsis text" xml:space="preserve">
+    <value>Synopsis text</value>
+  </data>
+  <data name="Synopsis text (Markdown)" xml:space="preserve">
+    <value>Synopsis text (Markdown)</value>
+  </data>
+  <data name="Save Synopsis" xml:space="preserve">
+    <value>Save Synopsis</value>
+  </data>
+  <data name="Delete Synopsis" xml:space="preserve">
+    <value>Delete Synopsis</value>
+  </data>
+  <data name="Synopsis saved." xml:space="preserve">
+    <value>Synopsis saved.</value>
+  </data>
+  <data name="Synopsis deleted." xml:space="preserve">
+    <value>Synopsis deleted.</value>
+  </data>
+  <data name="Existing synopses:" xml:space="preserve">
+    <value>Existing synopses:</value>
+  </data>
+  <data name="Search Person" xml:space="preserve">
+    <value>Search Person</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Search Company" xml:space="preserve">
+    <value>Search Company</value>
+  </data>
+  <data name="Search Machine" xml:space="preserve">
+    <value>Search Machine</value>
+  </data>
+  <data name="Search Machine Family" xml:space="preserve">
+    <value>Search Machine Family</value>
+  </data>
+  <data name="This book has a cover image." xml:space="preserve">
+    <value>This book has a cover image.</value>
+  </data>
+  <data name="No cover image." xml:space="preserve">
+    <value>No cover image.</value>
+  </data>
+  <data name="Delete Cover" xml:space="preserve">
+    <value>Delete Cover</value>
+  </data>
+  <data name="Upload Cover" xml:space="preserve">
+    <value>Upload Cover</value>
+  </data>
+  <data name="Cover uploaded successfully." xml:space="preserve">
+    <value>Cover uploaded successfully.</value>
+  </data>
+  <data name="Failed to upload cover." xml:space="preserve">
+    <value>Failed to upload cover.</value>
+  </data>
+  <data name="Cover deleted." xml:space="preserve">
+    <value>Cover deleted.</value>
+  </data>
+  <data name="Import CSV" xml:space="preserve">
+    <value>Import CSV</value>
+  </data>
+  <data name="Upload a CSV file to import books in bulk. Download the template first to see the expected format." xml:space="preserve">
+    <value>Upload a CSV file to import books in bulk. Download the template first to see the expected format.</value>
+  </data>
+  <data name="Download Template" xml:space="preserve">
+    <value>Download Template</value>
+  </data>
+  <data name="Processing..." xml:space="preserve">
+    <value>Processing...</value>
+  </data>
+  <data name="Upload CSV" xml:space="preserve">
+    <value>Upload CSV</value>
+  </data>
+  <data name="Error reading CSV: {0}" xml:space="preserve">
+    <value>Error reading CSV: {0}</value>
+  </data>
+  <data name="The CSV file is empty or has no data rows." xml:space="preserve">
+    <value>The CSV file is empty or has no data rows.</value>
+  </data>
+  <data name="{0} rows parsed. {1} auto-rejected (no country match or validation error). Selected rows will be REJECTED — unselected rows will be imported." xml:space="preserve">
+    <value>{0} rows parsed. {1} auto-rejected (no country match or validation error). Selected rows will be REJECTED — unselected rows will be imported.</value>
+  </data>
+  <data name="Importing {0} of {1}..." xml:space="preserve">
+    <value>Importing {0} of {1}...</value>
+  </data>
+  <data name="Import complete. {0} imported, {1} rejected, {2} failed." xml:space="preserve">
+    <value>Import complete. {0} imported, {1} rejected, {2} failed.</value>
+  </data>
+  <data name="The following items were not imported:" xml:space="preserve">
+    <value>The following items were not imported:</value>
+  </data>
+  <data name="Download Rejected" xml:space="preserve">
+    <value>Download Rejected</value>
+  </data>
+  <data name="Import" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="Unknown error" xml:space="preserve">
+    <value>Unknown error</value>
+  </data>
+  <data name="Rejected" xml:space="preserve">
+    <value>Rejected</value>
+  </data>
+  <data name="Duplicate book" xml:space="preserve">
+    <value>Duplicate book</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Date precision" xml:space="preserve">
+    <value>Date precision</value>
+  </data>
+  <data name="Full date" xml:space="preserve">
+    <value>Full date</value>
+  </data>
+  <data name="Month and year only" xml:space="preserve">
+    <value>Month and year only</value>
+  </data>
+  <data name="Year only" xml:space="preserve">
+    <value>Year only</value>
+  </data>
+  <data name="Book publishers" xml:space="preserve">
+    <value>Book publishers</value>
+  </data>
+  <data name="Companies which name starts with {0}." xml:space="preserve">
+    <value>Companies which name starts with {0}.</value>
+  </data>
+  <data name="{0} companies found in the database." xml:space="preserve">
+    <value>{0} companies found in the database.</value>
+  </data>
+  <data name="Filter companies..." xml:space="preserve">
+    <value>Filter companies...</value>
+  </data>
+  <data name="There are no companies in the database." xml:space="preserve">
+    <value>There are no companies in the database.</value>
+  </data>
   <data name="Internet Archive link" xml:space="preserve">
     <value>Internet Archive link</value>
   </data>
@@ -431,5 +370,65 @@
   </data>
   <data name="We do not have a synopsis in your language, you could collaborate by translating the English synopsis we show below" xml:space="preserve">
     <value>We do not have a synopsis in your language, you could collaborate by translating the English synopsis we show below</value>
+  </data>
+  <data name="Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently." xml:space="preserve">
+    <value>Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently.</value>
+  </data>
+  <data name="No changes detected — modify at least one field before submitting." xml:space="preserve">
+    <value>No changes detected — modify at least one field before submitting.</value>
+  </data>
+  <data name="Suggestion submitted. An administrator will review it." xml:space="preserve">
+    <value>Suggestion submitted. An administrator will review it.</value>
+  </data>
+  <data name="Submit suggestion" xml:space="preserve">
+    <value>Submit suggestion</value>
+  </data>
+  <data name="Failed to submit suggestion." xml:space="preserve">
+    <value>Failed to submit suggestion.</value>
+  </data>
+  <data name="Optional comment (References, sources, etc...)" xml:space="preserve">
+    <value>Optional comment (References, sources, etc...)</value>
+  </data>
+  <data name="Undo" xml:space="preserve">
+    <value>Undo</value>
+  </data>
+  <data name="Internet Archive URL" xml:space="preserve">
+    <value>Internet Archive URL</value>
+  </data>
+  <data name="Previous book" xml:space="preserve">
+    <value>Previous book</value>
+  </data>
+  <data name="Add person" xml:space="preserve">
+    <value>Add person</value>
+  </data>
+  <data name="Add company" xml:space="preserve">
+    <value>Add company</value>
+  </data>
+  <data name="Add machine" xml:space="preserve">
+    <value>Add machine</value>
+  </data>
+  <data name="Add machine family" xml:space="preserve">
+    <value>Add machine family</value>
+  </data>
+  <data name="ISBN must be between 10 and 13 characters." xml:space="preserve">
+    <value>ISBN must be between 10 and 13 characters.</value>
+  </data>
+  <data name="Upload cover" xml:space="preserve">
+    <value>Upload cover</value>
+  </data>
+  <data name="Replace cover" xml:space="preserve">
+    <value>Replace cover</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="Allowed: JPG, PNG, WebP up to 50 MB. The image is uploaded directly to the API for review and only takes effect once an administrator accepts the suggestion." xml:space="preserve">
+    <value>Allowed: JPG, PNG, WebP up to 50 MB. The image is uploaded directly to the API for review and only takes effect once an administrator accepts the suggestion.</value>
+  </data>
+  <data name="You must be signed in to upload a cover." xml:space="preserve">
+    <value>You must be signed in to upload a cover.</value>
+  </data>
+  <data name="Cover upload failed." xml:space="preserve">
+    <value>Cover upload failed.</value>
   </data>
 </root>

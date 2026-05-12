@@ -686,6 +686,10 @@ public class BooksController(
 
         await context.SaveChangesWithUserAsync(userId);
 
+        // Cascade: mark stale every entity-level Book suggestion for this book.
+        await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntityAsync(
+            context, Marechai.Data.SuggestionEntityType.Book, id, entityName);
+
         // Cascade: mark stale every per-language synopsis suggestion for this book.
         await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntityAsync(
             context, Marechai.Data.SuggestionEntityType.BookSynopsis, id, entityName);
@@ -798,6 +802,133 @@ public class BooksController(
         book.OriginalCoverExtension = null;
         await context.SaveChangesWithUserAsync(userId);
 
+        return NoContent();
+    }
+
+    // ───────────────────────────── Pending cover (collaborator upload) ─────────────────────────────
+
+    /// <summary>
+    ///     Allowed file extensions for collaborator-uploaded pending covers. Stricter than
+    ///     the admin upload (which also accepts TIFF/BMP) — pending covers go through admin
+    ///     review and we want to constrain the surface to web-friendly formats only.
+    /// </summary>
+    static readonly HashSet<string> _pendingAllowedExtensions =
+        Marechai.Server.Helpers.PendingImageStore.AllowedExtensions;
+
+    static readonly HashSet<string> _pendingAllowedContentTypes =
+        Marechai.Server.Helpers.PendingImageStore.AllowedContentTypes;
+
+    /// <summary>
+    ///     Upload a pending cover for a book that the caller is suggesting an edit on.
+    ///     Accepts JPG/PNG/WebP up to 50 MB; the file is stored unchanged in
+    ///     <c>book-covers/pending/&lt;guid&gt;.&lt;ext&gt;</c> with a sidecar JSON file recording
+    ///     the uploader. Auto-deletes any prior pending covers from the same uploader for
+    ///     the same book so a user always has at most one pending cover per book in flight.
+    ///     The returned <c>{guid, extension}</c> must be embedded in the
+    ///     <c>cover_pending_guid</c> + <c>cover_pending_extension</c> fields of the
+    ///     subsequent suggestion submission.
+    /// </summary>
+    [HttpPost("{id:long}/cover/pending")]
+    [Authorize]
+    [RequestSizeLimit(50 * 1024 * 1024)]
+    [ProducesResponseType(typeof(PendingImageUploadDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<PendingImageUploadDto>> UploadPendingCoverAsync(long id, IFormFile file)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        if(userId is null) return Unauthorized();
+
+        if(file is null || file.Length == 0)
+            return BadRequest("No file provided.");
+
+        if(file.Length > 50 * 1024 * 1024)
+            return BadRequest("File exceeds 50 MB limit.");
+
+        string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
+        if(!_pendingAllowedExtensions.Contains(extension))
+            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP.");
+
+        if(!string.IsNullOrEmpty(file.ContentType) &&
+           !_pendingAllowedContentTypes.Contains(file.ContentType.ToLowerInvariant()))
+            return BadRequest("Unsupported content type.");
+
+        // Verify the targeted book exists; we don't want stray uploads for nonexistent ids.
+        bool bookExists = await context.Books.AsNoTracking().AnyAsync(b => b.Id == id);
+        if(!bookExists) return NotFound();
+
+        // Cleanup: each user gets at most ONE pending cover per book. Replace any prior
+        // upload before storing the new one.
+        Marechai.Server.Helpers.PendingImageStore.DeleteByUploaderForEntity(
+            _assetRootPath, "book-covers", userId, (byte)Marechai.Data.SuggestionEntityType.Book, id);
+
+        await using var stream = file.OpenReadStream();
+        Guid guid = await Marechai.Server.Helpers.PendingImageStore.StoreAsync(
+            _assetRootPath, "book-covers", extension,
+            (byte)Marechai.Data.SuggestionEntityType.Book, id, userId,
+            file.ContentType, stream);
+
+        return Ok(new PendingImageUploadDto { Guid = guid, Extension = extension.TrimStart('.') });
+    }
+
+    /// <summary>
+    ///     Serve a pending cover image. Authorization: the uploader OR any admin/uberadmin
+    ///     can view (so the dialog preview works for the contributor and the review queue
+    ///     works for the moderator).
+    /// </summary>
+    [HttpGet("cover/pending/{guid:guid}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetPendingCoverAsync(Guid guid)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        if(userId is null) return Unauthorized();
+
+        var meta = await Marechai.Server.Helpers.PendingImageStore.GetMetadataAsync(
+            _assetRootPath, "book-covers", guid);
+        if(meta is null) return NotFound();
+
+        bool isAdmin = User.IsInRole("Admin") || User.IsInRole("UberAdmin");
+        if(!Marechai.Server.Helpers.PendingImageStore.CanAccess(meta, userId, isAdmin))
+            return Forbid();
+
+        string filePath = await Marechai.Server.Helpers.PendingImageStore.GetImagePathAsync(
+            _assetRootPath, "book-covers", guid);
+        if(filePath is null) return NotFound();
+
+        string contentType = !string.IsNullOrEmpty(meta.ContentType) ? meta.ContentType : "application/octet-stream";
+        return PhysicalFile(filePath, contentType);
+    }
+
+    /// <summary>
+    ///     Explicitly delete a pending cover (uploader OR admin). Useful for the
+    ///     "remove cover before submit" UX in the dialog and for admin-side cleanup of
+    ///     orphaned pending uploads.
+    /// </summary>
+    [HttpDelete("cover/pending/{guid:guid}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeletePendingCoverAsync(Guid guid)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        if(userId is null) return Unauthorized();
+
+        var meta = await Marechai.Server.Helpers.PendingImageStore.GetMetadataAsync(
+            _assetRootPath, "book-covers", guid);
+        if(meta is null) return NotFound();
+
+        bool isAdmin = User.IsInRole("Admin") || User.IsInRole("UberAdmin");
+        if(!Marechai.Server.Helpers.PendingImageStore.CanAccess(meta, userId, isAdmin))
+            return Forbid();
+
+        Marechai.Server.Helpers.PendingImageStore.Delete(_assetRootPath, "book-covers", guid);
         return NoContent();
     }
 

@@ -70,7 +70,17 @@ public enum SuggestionFieldKind
     ///     <c>null</c>. Renders as a red "− Remove &lt;Group&gt;" row in the review diff with
     ///     the readable target label resolved server-side via <c>CurrentLabels</c>.
     /// </summary>
-    JunctionRemove    = 13
+    JunctionRemove    = 13,
+    /// <summary>
+    ///     Pending image upload (e.g. a collaborator-uploaded book cover). The wire value
+    ///     is a guid string referencing a file under
+    ///     <c>{itemFolder}/pending/&lt;guid&gt;.&lt;ext&gt;</c>. The diff panel renders a small
+    ///     thumbnail (clickable to open a full-size lightbox) using the per-entity
+    ///     pending-image GET endpoint. On accept, the applier promotes the file into
+    ///     <c>originals/</c> and runs the conversion worker for the usual format/resolution
+    ///     variants.
+    /// </summary>
+    Image             = 14
 }
 
 /// <summary>One enum option for fields with <see cref="SuggestionFieldKind.Enum" />.</summary>

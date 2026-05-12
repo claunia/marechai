@@ -39,6 +39,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Marechai.Server.Controllers;
 
@@ -58,7 +59,8 @@ namespace Marechai.Server.Controllers;
 [ApiController]
 [Authorize]
 public class SuggestionsController(MarechaiContext context,
-                                   UserManager<ApplicationUser> userManager) : ControllerBase
+                                   UserManager<ApplicationUser> userManager,
+                                   IConfiguration configuration) : ControllerBase
 {
     public const string CollaboratorRole = "Collaborator";
     public const string CuratorRole      = "Curator";
@@ -72,6 +74,14 @@ public class SuggestionsController(MarechaiContext context,
 
     static readonly TimeSpan s_rateDayWindow   = TimeSpan.FromHours(24);
     static readonly TimeSpan s_rateBurstWindow = TimeSpan.FromMinutes(1);
+
+    /// <summary>
+    ///     Asset root path for media uploads. Captured from configuration so the per-entity
+    ///     applier dispatch (<see cref="ApplyAcceptedFieldsAsync" />) can pass it to entities
+    ///     that promote pending uploads (e.g. Book covers via
+    ///     <see cref="Marechai.Server.Helpers.PendingImageStore.PromoteToOriginalsAsync" />).
+    /// </summary>
+    readonly string _assetRootPath = configuration["AssetRootPath"]!;
 
     static readonly JsonSerializerOptions s_json = new()
     {
@@ -591,6 +601,14 @@ public class SuggestionsController(MarechaiContext context,
         if(s.EntityType == SuggestionEntityType.Machine && s.EntityId.HasValue && s.SuggestedValues is not null)
             await ResolveMachineRemoveLabelsAsync((int)s.EntityId.Value, s.SuggestedValues, currentLabels);
 
+        // Same pattern for Book entity-edit suggestions: junction-remove labels need a DB
+        // lookup constrained to the targeted book and the result lands in the current-side
+        // label map so the diff panel renders the readable name in the strikethrough cell.
+        // CRITICAL (same lesson as Machine): iterate the RAW SuggestedValues dict because
+        // ParseValuesForLabels skips null-valued entries and remove keys carry a null value.
+        if(s.EntityType == SuggestionEntityType.Book && s.EntityId.HasValue && s.SuggestedValues is not null)
+            await ResolveBookRemoveLabelsAsync(s.EntityId.Value, s.SuggestedValues, currentLabels);
+
         return Ok(new SuggestionDiffDto
         {
             Suggestion           = suggestionDto,
@@ -693,6 +711,13 @@ public class SuggestionsController(MarechaiContext context,
         s.AppliedFields = accepted.ToDictionary(k => k, _ => string.Empty, StringComparer.Ordinal);
 
         await context.SaveChangesAsync();
+
+        // Pending-image cleanup: every suggestion that carried a cover_pending_guid in its
+        // payload but did NOT end up applying the cover (rejected, or partially accepted
+        // with the cover unchecked) leaves an orphaned pending file on disk. Sweep them
+        // here so the pending folder doesn't grow unbounded. Cleanup is best-effort —
+        // failures don't block the review flow.
+        CleanupPendingMedia(s, accepted);
 
         // Grant Collaborator role + send appropriate system message.
         bool granted = false;
@@ -814,6 +839,7 @@ public class SuggestionsController(MarechaiContext context,
     static bool IsEntityTypeSupported(SuggestionEntityType type) => type switch
     {
         SuggestionEntityType.Machine => true,
+        SuggestionEntityType.Book    => true,
         _                            => GetKnownFieldNames(type) is not null
     };
 
@@ -829,6 +855,9 @@ public class SuggestionsController(MarechaiContext context,
 
         if(type == SuggestionEntityType.Machine)
             return Suggestions.MachineSuggestionApplier.IsKnownFieldName(fieldName);
+
+        if(type == SuggestionEntityType.Book)
+            return Suggestions.BookSuggestionApplier.IsKnownFieldName(fieldName);
 
         IReadOnlyCollection<string> set = GetKnownFieldNames(type);
         return set is not null && set.Contains(fieldName);
@@ -914,6 +943,12 @@ public class SuggestionsController(MarechaiContext context,
                     context, entityId, suggested, accepted);
                 return new ApplyResult(applied, missing);
             }
+            case SuggestionEntityType.Book:
+            {
+                var (applied, missing) = await Suggestions.BookSuggestionApplier.ApplyAsync(
+                    context, entityId, suggested, accepted, _assetRootPath);
+                return new ApplyResult(applied, missing);
+            }
             default:
                 throw new NotImplementedException($"Suggestions for {type} are not implemented yet.");
         }
@@ -949,6 +984,8 @@ public class SuggestionsController(MarechaiContext context,
                 await Suggestions.SoftwareDescriptionSuggestionApplier.GetCurrentValuesAsync(context, entityId, subkey),
             SuggestionEntityType.Machine =>
                 await Suggestions.MachineSuggestionApplier.GetCurrentValuesAsync(context, entityId),
+            SuggestionEntityType.Book =>
+                await Suggestions.BookSuggestionApplier.GetCurrentValuesAsync(context, entityId),
             _ => null
         };
     }
@@ -1310,6 +1347,11 @@ public class SuggestionsController(MarechaiContext context,
                 await ResolveMachineLabelsAsync(entityId, values, labels);
                 break;
             }
+            case SuggestionEntityType.Book:
+            {
+                await ResolveBookLabelsAsync(entityId, values, labels);
+                break;
+            }
         }
 
         return labels;
@@ -1602,6 +1644,268 @@ public class SuggestionsController(MarechaiContext context,
         >= 1024       => $"{bytes / 1024.0:F1} KiB",
         _             => $"{bytes} B"
     };
+
+    static string ReadStringField(JsonElement obj, string key) =>
+        obj.TryGetProperty(key, out JsonElement v) && v.ValueKind == JsonValueKind.String ? v.GetString() : null;
+
+    // ─────────────── Book entity-edit label resolution (scalars + junction ops) ───────────────
+
+    /// <summary>
+    ///     Build readable labels for the heterogeneous payload of a Book suggestion. Handles
+    ///     scalar FK fields (<c>country_id</c>, <c>previous_id</c>, <c>source_id</c>) plus
+    ///     junction-add operation keys (<c>&lt;group&gt;.add.&lt;uuid&gt;</c> resolved from the
+    ///     suggested payload's id field). Junction-remove labels are populated separately by
+    ///     <see cref="ResolveBookRemoveLabelsAsync" /> directly into the current-side label
+    ///     map so the diff panel renders them in the strikethrough cell.
+    /// </summary>
+    async Task ResolveBookLabelsAsync(long? entityId,
+                                      Dictionary<string, JsonElement> values,
+                                      Dictionary<string, string> labels)
+    {
+        // ---- Scalar FK labels -----------------------------------------------------
+        if(values.TryGetValue(Suggestions.BookSuggestionApplier.FieldCountryId, out JsonElement countryE))
+        {
+            short? id = JsonElementToShort(countryE);
+            if(id.HasValue)
+            {
+                string name = await context.Iso31661Numeric.AsNoTracking()
+                                           .Where(c => c.Id == id.Value)
+                                           .Select(c => c.Name)
+                                           .FirstOrDefaultAsync();
+                if(!string.IsNullOrEmpty(name))
+                    labels[Suggestions.BookSuggestionApplier.FieldCountryId] = name;
+            }
+        }
+
+        if(values.TryGetValue(Suggestions.BookSuggestionApplier.FieldPreviousId, out JsonElement prevE))
+        {
+            long? id = JsonElementToLong(prevE);
+            if(id.HasValue)
+            {
+                string title = await context.Books.AsNoTracking()
+                                            .Where(b => b.Id == id.Value)
+                                            .Select(b => b.Title)
+                                            .FirstOrDefaultAsync();
+                if(!string.IsNullOrEmpty(title))
+                    labels[Suggestions.BookSuggestionApplier.FieldPreviousId] = title;
+            }
+        }
+
+        if(values.TryGetValue(Suggestions.BookSuggestionApplier.FieldSourceId, out JsonElement srcE))
+        {
+            long? id = JsonElementToLong(srcE);
+            if(id.HasValue)
+            {
+                string title = await context.Books.AsNoTracking()
+                                            .Where(b => b.Id == id.Value)
+                                            .Select(b => b.Title)
+                                            .FirstOrDefaultAsync();
+                if(!string.IsNullOrEmpty(title))
+                    labels[Suggestions.BookSuggestionApplier.FieldSourceId] = title;
+            }
+        }
+
+        if(!entityId.HasValue) return;
+
+        // ---- Junction-add labels (resolved from the suggested payload's id field) -----
+        foreach(KeyValuePair<string, JsonElement> kv in values)
+        {
+            if(!Suggestions.BookSuggestionApplier.TryParseJunctionKey(kv.Key, out string group, out string op, out _))
+                continue;
+            if(op != "add" || kv.Value.ValueKind != JsonValueKind.Object) continue;
+
+            string label = await BuildBookAddLabelAsync(group, kv.Value);
+            if(!string.IsNullOrEmpty(label)) labels[kv.Key] = label;
+        }
+    }
+
+    /// <summary>
+    ///     Resolve readable labels for every Book junction-remove operation in the suggested
+    ///     payload by looking up the existing junction row in the database. The resolved labels
+    ///     are written to <paramref name="currentLabels" /> so the diff panel renders them in
+    ///     the strikethrough cell of the JunctionRemove row. Iterates the RAW
+    ///     <c>SuggestedValues</c> dict (not the JsonElement-parsed view) because remove ops
+    ///     carry a null value and <see cref="ParseValuesForLabels" /> drops null entries.
+    /// </summary>
+    async Task ResolveBookRemoveLabelsAsync(long bookId,
+                                            Dictionary<string, object> rawSuggested,
+                                            Dictionary<string, string> currentLabels)
+    {
+        foreach(KeyValuePair<string, object> kv in rawSuggested)
+        {
+            if(!Suggestions.BookSuggestionApplier.TryParseJunctionKey(kv.Key, out string group, out string op, out string token))
+                continue;
+            if(op != "remove") continue;
+            if(!long.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out long rowId)) continue;
+
+            string label = await BuildBookRemoveLabelAsync(group, bookId, rowId);
+            if(!string.IsNullOrEmpty(label)) currentLabels[kv.Key] = label;
+        }
+    }
+
+    async Task<string> BuildBookAddLabelAsync(string group, JsonElement payload)
+    {
+        switch(group)
+        {
+            case Suggestions.BookSuggestionApplier.GroupPeople:
+            {
+                int?   id     = ReadIntField(payload, "person_id");
+                string roleId = ReadStringField(payload, "role_id");
+                if(!id.HasValue) return null;
+                var row = await context.People.AsNoTracking()
+                                       .Where(p => p.Id == id.Value)
+                                       .Select(p => new { Display = p.DisplayName ?? p.Alias ?? (p.Name + " " + p.Surname) })
+                                       .FirstOrDefaultAsync();
+                string display = row is null ? $"Person #{id.Value}" : row.Display;
+                if(!string.IsNullOrEmpty(roleId))
+                {
+                    string roleName = await context.DocumentRoles.AsNoTracking()
+                                                   .Where(r => r.Id == roleId)
+                                                   .Select(r => r.Name)
+                                                   .FirstOrDefaultAsync();
+                    if(!string.IsNullOrEmpty(roleName))
+                        display = $"{display} ({roleName})";
+                }
+                return display;
+            }
+            case Suggestions.BookSuggestionApplier.GroupCompanies:
+            {
+                int?   id     = ReadIntField(payload, "company_id");
+                string roleId = ReadStringField(payload, "role_id");
+                if(!id.HasValue) return null;
+                string name = await context.Companies.AsNoTracking()
+                                           .Where(c => c.Id == id.Value)
+                                           .Select(c => c.Name)
+                                           .FirstOrDefaultAsync();
+                string display = string.IsNullOrEmpty(name) ? $"Company #{id.Value}" : name;
+                if(!string.IsNullOrEmpty(roleId))
+                {
+                    string roleName = await context.DocumentRoles.AsNoTracking()
+                                                   .Where(r => r.Id == roleId)
+                                                   .Select(r => r.Name)
+                                                   .FirstOrDefaultAsync();
+                    if(!string.IsNullOrEmpty(roleName))
+                        display = $"{display} ({roleName})";
+                }
+                return display;
+            }
+            case Suggestions.BookSuggestionApplier.GroupMachines:
+            {
+                int? id = ReadIntField(payload, "machine_id");
+                if(!id.HasValue) return null;
+                string name = await context.Machines.AsNoTracking()
+                                           .Where(m => m.Id == id.Value)
+                                           .Select(m => m.Name)
+                                           .FirstOrDefaultAsync();
+                return string.IsNullOrEmpty(name) ? $"Machine #{id.Value}" : name;
+            }
+            case Suggestions.BookSuggestionApplier.GroupMachineFamilies:
+            {
+                int? id = ReadIntField(payload, "machine_family_id");
+                if(!id.HasValue) return null;
+                string name = await context.MachineFamilies.AsNoTracking()
+                                           .Where(f => f.Id == id.Value)
+                                           .Select(f => f.Name)
+                                           .FirstOrDefaultAsync();
+                return string.IsNullOrEmpty(name) ? $"Machine family #{id.Value}" : name;
+            }
+            default:
+                return null;
+        }
+    }
+
+    async Task<string> BuildBookRemoveLabelAsync(string group, long bookId, long rowId)
+    {
+        switch(group)
+        {
+            case Suggestions.BookSuggestionApplier.GroupPeople:
+            {
+                var row = await context.PeopleByBooks.AsNoTracking()
+                                       .Where(r => r.Id == rowId && r.BookId == bookId)
+                                       .Select(r => new
+                                       {
+                                           Display  = r.Person.DisplayName ?? r.Person.Alias ?? (r.Person.Name + " " + r.Person.Surname),
+                                           RoleName = r.Role.Name
+                                       })
+                                       .FirstOrDefaultAsync();
+                if(row is null) return null;
+                return string.IsNullOrEmpty(row.RoleName) ? row.Display : $"{row.Display} ({row.RoleName})";
+            }
+            case Suggestions.BookSuggestionApplier.GroupCompanies:
+            {
+                var row = await context.CompaniesByBooks.AsNoTracking()
+                                       .Where(r => r.Id == rowId && r.BookId == bookId)
+                                       .Select(r => new { r.Company.Name, RoleName = r.Role.Name })
+                                       .FirstOrDefaultAsync();
+                if(row is null) return null;
+                return string.IsNullOrEmpty(row.RoleName) ? row.Name : $"{row.Name} ({row.RoleName})";
+            }
+            case Suggestions.BookSuggestionApplier.GroupMachines:
+            {
+                var row = await context.BooksByMachines.AsNoTracking()
+                                       .Where(r => r.Id == rowId && r.BookId == bookId)
+                                       .Select(r => new { r.Machine.Name })
+                                       .FirstOrDefaultAsync();
+                return row?.Name;
+            }
+            case Suggestions.BookSuggestionApplier.GroupMachineFamilies:
+            {
+                var row = await context.BooksByMachineFamilies.AsNoTracking()
+                                       .Where(r => r.Id == rowId && r.BookId == bookId)
+                                       .Select(r => new { r.MachineFamily.Name })
+                                       .FirstOrDefaultAsync();
+                return row?.Name;
+            }
+            default:
+                return null;
+        }
+    }
+
+    /// <summary>
+    ///     Sweep pending image uploads referenced by a now-terminal suggestion. Called from
+    ///     <see cref="ReviewAsync" /> after the per-entity applier has run. For every
+    ///     <c>cover_pending_guid</c> in the suggested payload that did NOT make it into the
+    ///     <paramref name="accepted" /> set, delete the orphaned pending file + sidecar.
+    ///     The accepted path is already cleaned up by the applier (the file is moved into
+    ///     <c>originals/</c> and the sidecar removed) so we only need to handle rejection /
+    ///     partial-accept-without-cover here. Best-effort: failures are swallowed.
+    /// </summary>
+    void CleanupPendingMedia(Suggestion s, HashSet<string> accepted)
+    {
+        if(s?.SuggestedValues is null || string.IsNullOrEmpty(_assetRootPath)) return;
+
+        try
+        {
+            switch(s.EntityType)
+            {
+                case SuggestionEntityType.Book:
+                {
+                    if(!s.SuggestedValues.TryGetValue(
+                           Suggestions.BookSuggestionApplier.FieldCoverPendingGuid, out object guidRaw))
+                        return;
+
+                    string guidStr = guidRaw switch
+                    {
+                        string str         => str,
+                        JsonElement je when je.ValueKind == JsonValueKind.String => je.GetString(),
+                        _                  => guidRaw?.ToString()
+                    };
+                    if(string.IsNullOrEmpty(guidStr) || !Guid.TryParse(guidStr, out Guid pendingGuid)) return;
+
+                    // If the cover field was accepted, the applier already promoted the file
+                    // (and removed the sidecar). Only sweep when it wasn't accepted.
+                    if(accepted.Contains(Suggestions.BookSuggestionApplier.FieldCoverPendingGuid)) return;
+
+                    Marechai.Server.Helpers.PendingImageStore.Delete(_assetRootPath, "book-covers", pendingGuid);
+                    break;
+                }
+            }
+        }
+        catch
+        {
+            // ignored — review must not fail because of pending-media cleanup
+        }
+    }
 
     // ───────────────────────────── Helpers ─────────────────────────────
 

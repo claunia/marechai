@@ -1,64 +1,87 @@
 <?xml version='1.0' encoding='utf-8'?>
 <root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:schema id="root">
-        <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
-        <xs:element name="root" ns1:IsDataSet="true">
+  <xs:schema id="root">
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xs:element name="root" ns1:IsDataSet="true">
+      <xs:complexType>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="metadata">
             <xs:complexType>
-                <xs:choice maxOccurs="unbounded">
-                    <xs:element name="metadata">
-                        <xs:complexType>
-                            <xs:sequence>
-                                <xs:element name="value" type="xsd:string" minOccurs="0" />
-                            </xs:sequence>
-                            <xs:attribute name="name" use="required" type="xsd:string" />
-                            <xs:attribute name="type" type="xsd:string" />
-                            <xs:attribute name="mimetype" type="xsd:string" />
-                            <xs:attribute ref="xml:space" />
-                        </xs:complexType>
-                    </xs:element>
-                    <xs:element name="assembly">
-                        <xs:complexType>
-                            <xs:attribute name="alias" type="xsd:string" />
-                            <xs:attribute name="name" type="xsd:string" />
-                        </xs:complexType>
-                    </xs:element>
-                    <xs:element name="data">
-                        <xs:complexType>
-                            <xs:sequence>
-                                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
-                                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
-                            </xs:sequence>
-                            <xs:attribute name="name" type="xsd:string" use="required" />
-                            <xs:attribute name="type" type="xsd:string" />
-                            <xs:attribute name="mimetype" type="xsd:string" />
-                            <xs:attribute ref="xml:space" />
-                        </xs:complexType>
-                    </xs:element>
-                    <xs:element name="resheader">
-                        <xs:complexType>
-                            <xs:sequence>
-                                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
-                            </xs:sequence>
-                            <xs:attribute name="name" type="xsd:string" use="required" />
-                        </xs:complexType>
-                    </xs:element>
-                </xs:choice>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" />
+              </xs:sequence>
+              <xs:attribute name="name" use="required" type="xsd:string" />
+              <xs:attribute name="type" type="xsd:string" />
+              <xs:attribute name="mimetype" type="xsd:string" />
+              <xs:attribute ref="xml:space" />
             </xs:complexType>
-        </xs:element>
-    </xs:schema>
-    <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
-    <resheader name="version"><value>2.0</value></resheader>
-    <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e305</value></resheader>
-    <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e305</value></resheader>
-    <data name="No suggestion data." xml:space="preserve"><value>Aucune donnée de suggestion.</value></data>
-    <data name="This suggestion has no field changes." xml:space="preserve"><value>Cette suggestion n'a aucun changement de champ.</value></data>
-    <data name="Accept" xml:space="preserve"><value>Accepter</value></data>
-    <data name="Field" xml:space="preserve"><value>Champ</value></data>
-    <data name="Current value" xml:space="preserve"><value>Valeur actuelle</value></data>
-    <data name="Suggested value" xml:space="preserve"><value>Valeur suggérée</value></data>
-    <data name="unchanged" xml:space="preserve"><value>inchangées</value></data>
-    <data name="Show full diff ({0} lines)" xml:space="preserve"><value>Afficher le diff complet ({0} lignes)</value></data>
-
+          </xs:element>
+          <xs:element name="assembly">
+            <xs:complexType>
+              <xs:attribute name="alias" type="xsd:string" />
+              <xs:attribute name="name" type="xsd:string" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="data">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" />
+              <xs:attribute name="type" type="xsd:string" />
+              <xs:attribute name="mimetype" type="xsd:string" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="resheader">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" />
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e305</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e305</value>
+  </resheader>
+  <data name="No suggestion data." xml:space="preserve">
+    <value>Aucune donnée de suggestion.</value>
+  </data>
+  <data name="This suggestion has no field changes." xml:space="preserve">
+    <value>Cette suggestion n'a aucun changement de champ.</value>
+  </data>
+  <data name="Accept" xml:space="preserve">
+    <value>Accepter</value>
+  </data>
+  <data name="Field" xml:space="preserve">
+    <value>Champ</value>
+  </data>
+  <data name="Current value" xml:space="preserve">
+    <value>Valeur actuelle</value>
+  </data>
+  <data name="Suggested value" xml:space="preserve">
+    <value>Valeur suggérée</value>
+  </data>
+  <data name="unchanged" xml:space="preserve">
+    <value>inchangées</value>
+  </data>
+  <data name="Show full diff ({0} lines)" xml:space="preserve">
+    <value>Afficher le diff complet ({0} lignes)</value>
+  </data>
   <data name="Add" xml:space="preserve">
     <value>Ajouter</value>
   </data>
@@ -115,5 +138,56 @@
   </data>
   <data name="Software Platforms" xml:space="preserve">
     <value>Plateformes logicielles</value>
+  </data>
+  <data name="People" xml:space="preserve">
+    <value>Personnes</value>
+  </data>
+  <data name="Companies" xml:space="preserve">
+    <value>Entreprises</value>
+  </data>
+  <data name="Machines" xml:space="preserve">
+    <value>Machines</value>
+  </data>
+  <data name="Machine families" xml:space="preserve">
+    <value>Familles de machines</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Titre</value>
+  </data>
+  <data name="Native title" xml:space="preserve">
+    <value>Titre original</value>
+  </data>
+  <data name="Sort title" xml:space="preserve">
+    <value>Titre de tri</value>
+  </data>
+  <data name="ISBN" xml:space="preserve">
+    <value>ISBN</value>
+  </data>
+  <data name="Pages" xml:space="preserve">
+    <value>Pages</value>
+  </data>
+  <data name="Edition" xml:space="preserve">
+    <value>Édition</value>
+  </data>
+  <data name="Published" xml:space="preserve">
+    <value>Publié</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>Pays</value>
+  </data>
+  <data name="Previous book" xml:space="preserve">
+    <value>Livre précédent</value>
+  </data>
+  <data name="Source book" xml:space="preserve">
+    <value>Livre source</value>
+  </data>
+  <data name="Internet Archive URL" xml:space="preserve">
+    <value>URL Internet Archive</value>
+  </data>
+  <data name="Cover" xml:space="preserve">
+    <value>Couverture</value>
+  </data>
+  <data name="(no image)" xml:space="preserve">
+    <value>(aucune image)</value>
   </data>
 </root>

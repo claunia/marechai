@@ -269,6 +269,42 @@ public partial class View
         _     => iso639_3
     };
 
+    /// <summary>
+    ///     Open the entity-edit suggestion dialog for the Book. Lets any authenticated user
+    ///     suggest changes to scalar Book fields AND atomic add/remove operations on Book's 4
+    ///     junction tables (People, Companies, Machines, MachineFamilies). Each operation is
+    ///     accepted or rejected independently by an admin.
+    /// </summary>
+    async Task OpenBookSuggestionDialogAsync()
+    {
+        if(_book is null) return;
+
+        // Lesson 1: capture the route parameter Id, NOT _book.Id.Value. Async loads can leave
+        // _book.Id null/0 in race scenarios and the cast silently produces 0 → server treats it
+        // as an addition request and rejects with 400.
+        long bookId = Id;
+
+        var dlgParams = new DialogParameters
+        {
+            ["EntityId"]   = bookId,
+            ["CurrentDto"] = _book
+        };
+        var dlgOptions = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Large
+        };
+
+        var dlgRef = await DialogService.ShowAsync<BookSuggestionDialog>(
+            L["Suggest changes"], dlgParams, dlgOptions);
+
+        // Match Machine View behaviour: don't refetch on success — the snackbar inside the
+        // dialog provides feedback, and the suggestion is invisible to the public page until
+        // an admin accepts it.
+        await dlgRef.Result;
+    }
+
     async Task ToggleCollectionAsync()
     {
         _togglingCollection = true;

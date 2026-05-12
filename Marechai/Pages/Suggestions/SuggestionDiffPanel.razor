@@ -3,8 +3,13 @@
 @using DiffPlex.DiffBuilder.Model
 @using Marechai.ApiClient.Models
 @using Marechai.Data
+@using Marechai.Services
 @using Marechai.Suggestions
+@using Microsoft.JSInterop
 @inject IStringLocalizer<SuggestionDiffPanel> L
+@inject IJSRuntime           JS
+@inject TokenProvider        TokenProvider
+@inject ApiAssetUrlProvider  ApiAssetUrls
 
 @*
     Renders a diff table per suggested field with a checkbox per row so the admin can pick
@@ -44,6 +49,7 @@ else
                 bool isMarkdown = kind == SuggestionFieldKind.Markdown;
                 bool isJunctionAdd    = kind == SuggestionFieldKind.JunctionAdd;
                 bool isJunctionRemove = kind == SuggestionFieldKind.JunctionRemove;
+                bool isImage          = kind == SuggestionFieldKind.Image;
 
                 if(isMarkdown)
                 {
@@ -86,6 +92,53 @@ else
                             else
                             {
                                 @MarkdownDiffMarkup(diff)
+                            }
+                        </td>
+                    </tr>
+                }
+                else if(isImage)
+                {
+                    // Pending-cover render. The CURRENT side is the existing book cover (a
+                    // guid in the public asset CDN — no auth needed, so a plain <img> tag
+                    // works). The SUGGESTED side is the just-uploaded pending image (JWT-
+                    // protected, so we fetch it via JS interop and apply a blob URL after
+                    // render). Lightbox click on either opens a full-size view.
+                    string currentGuid   = JsonElementToText(currentValue);
+                    string suggestedGuid = JsonElementToText(entry.Value);
+                    string suggestedImgId = $"diffimg-sug-{Suggestion?.Id}-{fieldName}";
+                    if(!string.IsNullOrEmpty(suggestedGuid)) _pendingImageRefs[suggestedImgId] = suggestedGuid;
+
+                    <tr style="background-color: rgba(25, 118, 210, 0.05);">
+                        <td>
+                            <MudCheckBox T="bool" Value="@isChecked"
+                                         ValueChanged="@(v => ToggleAccepted(fieldName, v))"
+                                         Disabled="@(ReadOnly || IsRequired(fieldName))"/>
+                        </td>
+                        <td>@FormatLabel(fieldName)</td>
+                        <td>
+                            @if(!string.IsNullOrEmpty(currentGuid))
+                            {
+                                string currentUrl = $"{ApiAssetUrls.BaseUrl}/assets/photos/book-covers/jpeg/hd/{currentGuid}.jpg";
+                                <a href="@currentUrl" target="_blank" rel="noopener">
+                                    <img src="@currentUrl" alt="Current cover"
+                                         style="max-height: 100px; max-width: 80px; object-fit: contain; cursor: zoom-in; border-radius: 3px;"/>
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="text-muted">@L["(no image)"]</span>
+                            }
+                        </td>
+                        <td>
+                            @if(!string.IsNullOrEmpty(suggestedGuid))
+                            {
+                                <img id="@suggestedImgId" alt="Suggested cover"
+                                     style="max-height: 100px; max-width: 80px; object-fit: contain; cursor: zoom-in; border-radius: 3px; box-shadow: 0 0 0 2px #1976d2;"
+                                     @onclick="@(() => OpenImageInNewTab(suggestedGuid, isPending: true))"/>
+                            }
+                            else
+                            {
+                                <span class="text-muted">@L["(no image)"]</span>
                             }
                         </td>
                     </tr>
@@ -168,6 +221,16 @@ else
     Dictionary<string, JsonElement> _currentDict = new(StringComparer.Ordinal);
     long? _seededRequireForId;
 
+    /// <summary>
+    ///     Map of <c>img id → guid</c> populated during the render pass for any
+    ///     <see cref="SuggestionFieldKind.Image" /> fields. Consumed in
+    ///     <see cref="OnAfterRenderAsync" /> so the JS interop helper fetches each pending
+    ///     image with the JWT in an Authorization header (which a plain <c>&lt;img src&gt;</c>
+    ///     can't carry) and applies the resulting blob URL to the matching element.
+    /// </summary>
+    Dictionary<string, string> _pendingImageRefs = new(StringComparer.Ordinal);
+    HashSet<string>            _appliedImageRefs = new(StringComparer.Ordinal);
+
     protected override void OnParametersSet()
     {
         if(Suggestion?.EntityType is null) { _suggestedDict = null; return; }
@@ -176,6 +239,34 @@ else
 
         _suggestedDict = ParseJsonObject(Suggestion.SuggestedValuesJson);
         _currentDict   = ParseJsonObject(CurrentValuesJson);
+
+        // Reset the per-render pending-image lookup; the table-rendering loop will
+        // repopulate it with whatever Image-kind fields exist in the current diff.
+        // The applied-set is reset too so a different suggestion (e.g. when the parent
+        // navigates between rows) re-fetches its blobs instead of reusing stale URLs.
+        _pendingImageRefs = new Dictionary<string, string>(StringComparer.Ordinal);
+        _appliedImageRefs = new HashSet<string>(StringComparer.Ordinal);
+    }
+
+    /// <summary>
+    ///     Lightbox-style open: fetch the pending image with auth, then open the resulting
+    ///     blob URL in a new tab. Only used for pending (collaborator-uploaded) images;
+    ///     existing covers are served from the public asset CDN and don't need auth.
+    /// </summary>
+    async Task OpenImageInNewTab(string guid, bool isPending)
+    {
+        if(string.IsNullOrEmpty(guid)) return;
+        try
+        {
+            string token = await TokenProvider.GetTokenAsync();
+            if(string.IsNullOrEmpty(token)) return;
+            await JS.InvokeAsync<object>("MarechaiPendingCover.openPendingCoverInNewTab",
+                                         ApiAssetUrls.BaseUrl, token, guid);
+        }
+        catch
+        {
+            // best-effort
+        }
     }
 
     /// <summary>
@@ -187,6 +278,34 @@ else
     /// </summary>
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        // Apply any pending-image blob URLs that were registered during the last render.
+        // Each img-id → guid pair is fetched via JS with the JWT in an Authorization header
+        // (a plain <img src> can't carry one). Already-applied refs are skipped via
+        // _appliedImageRefs so successive re-renders don't re-fetch.
+        if(_pendingImageRefs.Count > 0)
+        {
+            string token = await TokenProvider.GetTokenAsync();
+            if(!string.IsNullOrEmpty(token))
+            {
+                foreach(KeyValuePair<string, string> kv in _pendingImageRefs)
+                {
+                    string refKey = kv.Key + "|" + kv.Value;
+                    if(_appliedImageRefs.Contains(refKey)) continue;
+                    try
+                    {
+                        await JS.InvokeVoidAsync("MarechaiPendingCover.applyPendingCoverImage",
+                                                 ApiAssetUrls.BaseUrl, token, kv.Value, kv.Key);
+                        _appliedImageRefs.Add(refKey);
+                    }
+                    catch
+                    {
+                        // best-effort — admin will see the broken-image fallback if the
+                        // pending file got swept while the dialog was open.
+                    }
+                }
+            }
+        }
+
         if(RequireFields is null || RequireFields.Count == 0 || _suggestedDict is null) return;
         if(_seededRequireForId == Suggestion?.Id) return;
 
