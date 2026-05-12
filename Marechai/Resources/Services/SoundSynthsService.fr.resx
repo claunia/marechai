@@ -512,4 +512,31 @@
   <data name="We do not have a description for this sound synth, you could collaborate by suggesting one" xml:space="preserve">
     <value>Nous n'avons pas de description pour ce synthétiseur sonore, vous pouvez collaborer en en suggérant une</value>
   </data>
+  <data name="General" xml:space="preserve">
+    <value>Général</value>
+  </data>
+  <data name="Audio specifications" xml:space="preserve">
+    <value>Spécifications audio</value>
+  </data>
+  <data name="Undo" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="Optional comment (References, sources, etc...)" xml:space="preserve">
+    <value>Commentaire facultatif (Références, sources, etc...)</value>
+  </data>
+  <data name="No changes detected — modify at least one field before submitting." xml:space="preserve">
+    <value>Aucune modification détectée — modifiez au moins un champ avant de soumettre.</value>
+  </data>
+  <data name="Submit suggestion" xml:space="preserve">
+    <value>Soumettre la suggestion</value>
+  </data>
+  <data name="Failed to submit suggestion." xml:space="preserve">
+    <value>Échec de la soumission de la suggestion.</value>
+  </data>
+  <data name="Suggestion submitted. An administrator will review it." xml:space="preserve">
+    <value>Suggestion soumise. Un administrateur l'examinera.</value>
+  </data>
+  <data name="Edit any field below to suggest changes to this sound synthesizer." xml:space="preserve">
+    <value>Modifiez un champ ci-dessous pour suggérer des modifications à ce synthétiseur sonore.</value>
+  </data>
 </root>

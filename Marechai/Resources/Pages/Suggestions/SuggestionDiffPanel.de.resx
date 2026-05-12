@@ -277,4 +277,22 @@
   <data name="Instruction set extensions" xml:space="preserve">
     <value>Befehlssatzerweiterungen</value>
   </data>
+  <data name="Voices" xml:space="preserve">
+    <value>Stimmen</value>
+  </data>
+  <data name="Frequency (Hz)" xml:space="preserve">
+    <value>Frequenz (Hz)</value>
+  </data>
+  <data name="Depth (bits)" xml:space="preserve">
+    <value>Tiefe (Bit)</value>
+  </data>
+  <data name="Square wave channels" xml:space="preserve">
+    <value>Rechteckwellen-Kanäle</value>
+  </data>
+  <data name="White noise channels" xml:space="preserve">
+    <value>Weißes-Rauschen-Kanäle</value>
+  </data>
+  <data name="Synthesizer type" xml:space="preserve">
+    <value>Synthesizer-Typ</value>
+  </data>
 </root>

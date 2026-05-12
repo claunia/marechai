@@ -878,6 +878,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.MagazineIssue => true,
         SuggestionEntityType.Gpu           => true,
         SuggestionEntityType.Processor     => true,
+        SuggestionEntityType.SoundSynth    => true,
         _                                  => GetKnownFieldNames(type) is not null
     };
 
@@ -911,6 +912,9 @@ public class SuggestionsController(MarechaiContext context,
 
         if(type == SuggestionEntityType.Processor)
             return Suggestions.ProcessorSuggestionApplier.IsKnownFieldName(fieldName);
+
+        if(type == SuggestionEntityType.SoundSynth)
+            return Suggestions.SoundSynthSuggestionApplier.IsKnownFieldName(fieldName);
 
         IReadOnlyCollection<string> set = GetKnownFieldNames(type);
         return set is not null && set.Contains(fieldName);
@@ -1032,6 +1036,12 @@ public class SuggestionsController(MarechaiContext context,
                     context, entityId, suggested, accepted);
                 return new ApplyResult(applied, missing);
             }
+            case SuggestionEntityType.SoundSynth:
+            {
+                var (applied, missing) = await Suggestions.SoundSynthSuggestionApplier.ApplyAsync(
+                    context, entityId, suggested, accepted);
+                return new ApplyResult(applied, missing);
+            }
             default:
                 throw new NotImplementedException($"Suggestions for {type} are not implemented yet.");
         }
@@ -1079,6 +1089,8 @@ public class SuggestionsController(MarechaiContext context,
                 await Suggestions.GpuSuggestionApplier.GetCurrentValuesAsync(context, entityId),
             SuggestionEntityType.Processor =>
                 await Suggestions.ProcessorSuggestionApplier.GetCurrentValuesAsync(context, entityId),
+            SuggestionEntityType.SoundSynth =>
+                await Suggestions.SoundSynthSuggestionApplier.GetCurrentValuesAsync(context, entityId),
             _ => null
         };
     }
@@ -1473,6 +1485,11 @@ public class SuggestionsController(MarechaiContext context,
             case SuggestionEntityType.Processor:
             {
                 await ResolveProcessorLabelsAsync(entityId, values, labels);
+                break;
+            }
+            case SuggestionEntityType.SoundSynth:
+            {
+                await ResolveSoundSynthLabelsAsync(entityId, values, labels);
                 break;
             }
         }
@@ -2684,6 +2701,32 @@ public class SuggestionsController(MarechaiContext context,
             }
             default:
                 return null;
+        }
+    }
+
+    /// <summary>
+    ///     Build readable labels for a SoundSynth suggestion. SoundSynth has no in-scope
+    ///     junctions (both visible junctions are owned by the other side per established
+    ///     convention), so this only resolves the scalar <c>company_id</c> FK label.
+    /// </summary>
+    async Task ResolveSoundSynthLabelsAsync(long? entityId,
+                                            Dictionary<string, JsonElement> values,
+                                            Dictionary<string, string> labels)
+    {
+        _ = entityId; // unused — no junctions.
+
+        if(values.TryGetValue(Suggestions.SoundSynthSuggestionApplier.FieldCompanyId, out JsonElement companyE))
+        {
+            int? id = JsonElementToInt(companyE);
+            if(id.HasValue)
+            {
+                string name = await context.Companies.AsNoTracking()
+                                           .Where(c => c.Id == id.Value)
+                                           .Select(c => c.Name)
+                                           .FirstOrDefaultAsync();
+                if(!string.IsNullOrEmpty(name))
+                    labels[Suggestions.SoundSynthSuggestionApplier.FieldCompanyId] = name;
+            }
         }
     }
 

@@ -1,0 +1,318 @@
+@using System
+@using System.Globalization
+@using System.Text.Json
+@using System.Threading
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@using Marechai.Services
+@using Marechai.Suggestions
+@using Marechai.Suggestions.Metadata
+
+@inject IStringLocalizer<SoundSynthsService> L
+@inject ISnackbar          Snackbar
+@inject SoundSynthsService SoundSynthsService
+@inject SuggestionsService SuggestionsService
+
+@*
+    Dedicated suggestion dialog for editing a sound synthesizer. Mirrors the admin
+    SoundSynthDialog editing surface but produces a Suggestion JSON payload instead of
+    writing directly. Scalar-only — both visible junctions (SoundByMachine,
+    SoundSynthBySoftwareRelease) are owned by the other side per the established
+    convention and stay admin-only.
+*@
+
+<MudDialog>
+    <DialogContent>
+        @if(_loading)
+        {
+            <MudProgressLinear Indeterminate="true"/>
+        }
+        else
+        {
+            <MudText Typo="Typo.body2" Class="mb-3">
+                @L["Edit any field below to suggest changes to this sound synthesizer."]
+            </MudText>
+
+            @* ── General ── *@
+            <MudPaper Outlined="true" Class="pa-3 mb-3">
+                <MudText Typo="Typo.h6" Class="mb-2">@L["General"]</MudText>
+
+                <MudTextField T="string" Label="@L["Name"]"
+                              MaxLength="50"
+                              Value="@_name"
+                              ValueChanged="@(v => { _name = v; })"
+                              Required="true"
+                              Class="mb-3"/>
+
+                <MudAutocomplete T="CompanyDto" Label="@L["Manufacturer"]"
+                                 Value="@_selectedCompany"
+                                 ValueChanged="@(c => { _selectedCompany = c; })"
+                                 SearchFunc="SearchCompanies"
+                                 ToStringFunc="@(c => c?.Name ?? string.Empty)"
+                                 Clearable="true"
+                                 Class="mb-3"/>
+
+                <MudTextField T="string" Label="@L["Model code"]"
+                              MaxLength="45"
+                              Value="@_modelCode"
+                              ValueChanged="@(v => { _modelCode = v; })"
+                              Class="mb-3"/>
+
+                <MudDatePicker Label="@L["Introduction date"]" Editable="true" Clearable="true"
+                               Date="@_introduced"
+                               DateChanged="@(d => { _introduced = d; })" Class="mb-3"/>
+
+                <MudSelect T="int" Label="@L["Date precision"]"
+                           Value="@_introducedPrecision"
+                           ValueChanged="@(v => { _introducedPrecision = v; })">
+                    <MudSelectItem T="int" Value="0">@L["Full date"]</MudSelectItem>
+                    <MudSelectItem T="int" Value="1">@L["Month and year only"]</MudSelectItem>
+                    <MudSelectItem T="int" Value="2">@L["Year only"]</MudSelectItem>
+                </MudSelect>
+            </MudPaper>
+
+            @* ── Audio specifications ── *@
+            <MudPaper Outlined="true" Class="pa-3 mb-3">
+                <MudText Typo="Typo.h6" Class="mb-2">@L["Audio specifications"]</MudText>
+
+                <MudStack Row="true" Spacing="2" Class="mb-3">
+                    <MudNumericField T="int?" Label="@L["Voices"]"
+                                     Value="@_voices"
+                                     ValueChanged="@(v => { _voices = v; })"
+                                     Clearable="true" Min="1" Style="flex: 1;"/>
+                    <MudNumericField T="double?" Label="@L["Frequency (Hz)"]"
+                                     Value="@_frequency"
+                                     ValueChanged="@(v => { _frequency = v; })"
+                                     Clearable="true" Min="0d" Style="flex: 1;"/>
+                </MudStack>
+
+                <MudStack Row="true" Spacing="2" Class="mb-3">
+                    <MudNumericField T="int?" Label="@L["Depth (bits)"]"
+                                     Value="@_depth"
+                                     ValueChanged="@(v => { _depth = v; })"
+                                     Clearable="true" Min="1" Style="flex: 1;"/>
+                    <MudNumericField T="int?" Label="@L["Square wave channels"]"
+                                     Value="@_squareWave"
+                                     ValueChanged="@(v => { _squareWave = v; })"
+                                     Clearable="true" Min="1" Style="flex: 1;"/>
+                    <MudNumericField T="int?" Label="@L["White noise channels"]"
+                                     Value="@_whiteNoise"
+                                     ValueChanged="@(v => { _whiteNoise = v; })"
+                                     Clearable="true" Min="1" Style="flex: 1;"/>
+                </MudStack>
+
+                <MudSelect T="int?" Label="@L["Synthesizer type"]"
+                           Value="@_type"
+                           ValueChanged="@(v => { _type = v; })"
+                           Clearable="true">
+                    @foreach(SoundSynthType st in Enum.GetValues<SoundSynthType>())
+                    {
+                        <MudSelectItem T="int?" Value="@((int?)st)">@st.ToString()</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudPaper>
+
+            <MudTextField T="string" Label="@L["Optional comment (References, sources, etc...)"]" Lines="2"
+                          MaxLength="2000" @bind-Value="_userComment"/>
+
+            @if(!string.IsNullOrWhiteSpace(_validationError))
+            {
+                <MudAlert Severity="Severity.Error" Class="mt-2">@_validationError</MudAlert>
+            }
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit"
+                   Disabled="@(_loading || _submitting || !HasAnyChange())">
+            @if(_submitting)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true"/>
+            }
+            else
+            {
+                @L["Submit suggestion"]
+            }
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code
+{
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public long          EntityId   { get; set; }
+    [Parameter] public SoundSynthDto CurrentDto { get; set; }
+
+    bool _loading = true;
+    bool _submitting;
+    string _validationError;
+    string _userComment;
+
+    // Scalar state (mirrors the original CurrentDto values; diff'd at submit time)
+    string     _name;
+    string     _modelCode;
+    CompanyDto _selectedCompany;
+    DateTime?  _introduced;
+    int        _introducedPrecision;
+    int?       _voices;
+    double?    _frequency;
+    int?       _depth;
+    int?       _squareWave;
+    int?       _whiteNoise;
+    int?       _type;
+
+    // Snapshot of the original scalar values (for diff computation at Submit time)
+    string    _orig_name;
+    string    _orig_modelCode;
+    int?      _orig_companyId;
+    DateTime? _orig_introduced;
+    int       _orig_introducedPrecision;
+    int?      _orig_voices;
+    double?   _orig_frequency;
+    int?      _orig_depth;
+    int?      _orig_squareWave;
+    int?      _orig_whiteNoise;
+    int?      _orig_type;
+
+    // Picker source list
+    List<CompanyDto> _allCompanies;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Seed scalar state from the current DTO snapshot.
+        if(CurrentDto is not null)
+        {
+            _name                     = CurrentDto.Name;
+            _modelCode                = CurrentDto.ModelCode;
+            _introduced               = CurrentDto.Introduced?.UtcDateTime;
+            _introducedPrecision      = CurrentDto.IntroducedPrecision ?? 0;
+            _voices                   = CurrentDto.Voices;
+            _frequency                = CurrentDto.Frequency;
+            _depth                    = CurrentDto.Depth;
+            _squareWave               = CurrentDto.SquareWave;
+            _whiteNoise               = CurrentDto.WhiteNoise;
+            _type                     = CurrentDto.Type;
+            _orig_name                = _name;
+            _orig_modelCode           = _modelCode;
+            _orig_companyId           = CurrentDto.CompanyId;
+            _orig_introduced          = _introduced;
+            _orig_introducedPrecision = _introducedPrecision;
+            _orig_voices              = _voices;
+            _orig_frequency           = _frequency;
+            _orig_depth               = _depth;
+            _orig_squareWave          = _squareWave;
+            _orig_whiteNoise          = _whiteNoise;
+            _orig_type                = _type;
+        }
+
+        _allCompanies = await SoundSynthsService.GetCompaniesAsync();
+
+        if(_orig_companyId.HasValue && _allCompanies is not null)
+            _selectedCompany = _allCompanies.Find(c => c.Id == _orig_companyId.Value);
+
+        _loading = false;
+    }
+
+    // ───────────────────────────── Search functions ─────────────────────────────
+
+    Task<IEnumerable<CompanyDto>> SearchCompanies(string value, CancellationToken ct)
+    {
+        IEnumerable<CompanyDto> r = _allCompanies ?? [];
+        if(!string.IsNullOrWhiteSpace(value))
+            r = r.Where(c => c.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
+        return Task.FromResult(r.Take(50));
+    }
+
+    // ───────────────────────────── Submit ─────────────────────────────
+
+    bool HasAnyChange()
+    {
+        if(!Equals(_orig_name, _name)) return true;
+        if(!Equals(_orig_modelCode, _modelCode)) return true;
+        if(_orig_companyId != _selectedCompany?.Id) return true;
+        if(!Nullable.Equals(_orig_introduced, _introduced)) return true;
+        if(_orig_introducedPrecision != _introducedPrecision) return true;
+        if(!Nullable.Equals(_orig_voices, _voices)) return true;
+        if(!Nullable.Equals(_orig_frequency, _frequency)) return true;
+        if(!Nullable.Equals(_orig_depth, _depth)) return true;
+        if(!Nullable.Equals(_orig_squareWave, _squareWave)) return true;
+        if(!Nullable.Equals(_orig_whiteNoise, _whiteNoise)) return true;
+        if(!Nullable.Equals(_orig_type, _type)) return true;
+
+        return false;
+    }
+
+    void Cancel() => MudDialog.Cancel();
+
+    async Task Submit()
+    {
+        _validationError = null;
+        if(_loading) return;
+
+        // Name is required: never let the user clear it.
+        if(string.IsNullOrWhiteSpace(_name))
+        {
+            _validationError = L["Name is required."];
+            return;
+        }
+
+        var diff = new Dictionary<string, object>(StringComparer.Ordinal);
+
+        if(!Equals(_orig_name, _name))           diff[SoundSynthSuggestionMetadata.FieldName]      = _name;
+        if(!Equals(_orig_modelCode, _modelCode)) diff[SoundSynthSuggestionMetadata.FieldModelCode] = _modelCode;
+        if(_orig_companyId != _selectedCompany?.Id)
+            diff[SoundSynthSuggestionMetadata.FieldCompanyId] = _selectedCompany?.Id;
+        if(!Nullable.Equals(_orig_introduced, _introduced))
+            diff[SoundSynthSuggestionMetadata.FieldIntroduced] = _introduced?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        if(_orig_introducedPrecision != _introducedPrecision)
+            diff[SoundSynthSuggestionMetadata.FieldIntroducedPrecision] = _introducedPrecision;
+        if(!Nullable.Equals(_orig_voices, _voices))
+            diff[SoundSynthSuggestionMetadata.FieldVoices] = _voices;
+        if(!Nullable.Equals(_orig_frequency, _frequency))
+            diff[SoundSynthSuggestionMetadata.FieldFrequency] = _frequency;
+        if(!Nullable.Equals(_orig_depth, _depth))
+            diff[SoundSynthSuggestionMetadata.FieldDepth] = _depth;
+        if(!Nullable.Equals(_orig_squareWave, _squareWave))
+            diff[SoundSynthSuggestionMetadata.FieldSquareWave] = _squareWave;
+        if(!Nullable.Equals(_orig_whiteNoise, _whiteNoise))
+            diff[SoundSynthSuggestionMetadata.FieldWhiteNoise] = _whiteNoise;
+        if(!Nullable.Equals(_orig_type, _type))
+            diff[SoundSynthSuggestionMetadata.FieldType] = _type;
+
+        if(diff.Count == 0)
+        {
+            _validationError = L["No changes detected — modify at least one field before submitting."];
+            return;
+        }
+
+        _submitting = true;
+        try
+        {
+            string json = JsonSerializer.Serialize(diff);
+            var dto = new SuggestionDto
+            {
+                EntityType          = (int?)SuggestionEntityType.SoundSynth,
+                EntityId            = EntityId,
+                Status              = (int?)SuggestionStatus.Pending,
+                UserComment         = string.IsNullOrWhiteSpace(_userComment) ? null : _userComment.Trim(),
+                SuggestedValuesJson = json
+            };
+
+            var (created, error) = await SuggestionsService.CreateAsync(dto);
+
+            if(created is null)
+            {
+                _validationError = string.IsNullOrWhiteSpace(error) ? L["Failed to submit suggestion."].Value : error;
+                return;
+            }
+
+            Snackbar.Add(L["Suggestion submitted. An administrator will review it."], Severity.Success);
+            MudDialog.Close(DialogResult.Ok(created));
+        }
+        finally
+        {
+            _submitting = false;
+        }
+    }
+}

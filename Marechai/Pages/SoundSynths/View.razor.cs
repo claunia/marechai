@@ -291,4 +291,35 @@ public partial class View
         "por" => "Portuguese",
         _     => iso639_3
     };
+
+    /// <summary>
+    ///     Open the entity-edit suggestion dialog for the SoundSynth scalar fields. The
+    ///     user can modify any subset of the 11 scalar fields and submit; an admin can
+    ///     later accept or reject each field independently in the diff panel.
+    /// </summary>
+    async Task OpenSoundSynthSuggestionDialogAsync()
+    {
+        if(_synth is null) return;
+
+        // Use the route parameter Id (always valid — the page wouldn't have rendered
+        // otherwise) rather than _synth.Id.Value to sidestep async race conditions where
+        // the cast could silently produce 0 → server treats as addition request.
+        long soundSynthId = Id;
+
+        var parameters = new DialogParameters
+        {
+            ["EntityId"]   = soundSynthId,
+            ["CurrentDto"] = _synth
+        };
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Large
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<SoundSynthSuggestionDialog>(
+            L["Suggest changes"], parameters, options);
+        await dialog.Result;
+    }
 }

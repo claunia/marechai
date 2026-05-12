@@ -525,4 +525,43 @@
   <data name="We do not have a description for this sound synth, you could collaborate by suggesting one" xml:space="preserve">
     <value>We do not have a description for this sound synth, you could collaborate by suggesting one</value>
   </data>
+  <data name="General" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="Audio specifications" xml:space="preserve">
+    <value>Audio specifications</value>
+  </data>
+  <data name="Date precision" xml:space="preserve">
+    <value>Date precision</value>
+  </data>
+  <data name="Full date" xml:space="preserve">
+    <value>Full date</value>
+  </data>
+  <data name="Month and year only" xml:space="preserve">
+    <value>Month and year only</value>
+  </data>
+  <data name="Year only" xml:space="preserve">
+    <value>Year only</value>
+  </data>
+  <data name="Undo" xml:space="preserve">
+    <value>Undo</value>
+  </data>
+  <data name="Optional comment (References, sources, etc...)" xml:space="preserve">
+    <value>Optional comment (References, sources, etc...)</value>
+  </data>
+  <data name="No changes detected — modify at least one field before submitting." xml:space="preserve">
+    <value>No changes detected — modify at least one field before submitting.</value>
+  </data>
+  <data name="Submit suggestion" xml:space="preserve">
+    <value>Submit suggestion</value>
+  </data>
+  <data name="Failed to submit suggestion." xml:space="preserve">
+    <value>Failed to submit suggestion.</value>
+  </data>
+  <data name="Suggestion submitted. An administrator will review it." xml:space="preserve">
+    <value>Suggestion submitted. An administrator will review it.</value>
+  </data>
+  <data name="Edit any field below to suggest changes to this sound synthesizer." xml:space="preserve">
+    <value>Edit any field below to suggest changes to this sound synthesizer.</value>
+  </data>
 </root>
