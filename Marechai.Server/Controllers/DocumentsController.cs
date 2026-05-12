@@ -458,7 +458,11 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
 
         await context.SaveChangesWithUserAsync(userId);
 
-        // Cascade: mark stale every per-language synopsis suggestion for this document.
+        // Cascade: mark stale every entity-edit suggestion for this document AND every
+        // per-language synopsis suggestion. Both share the same Document FK so deleting the
+        // row leaves both flavours of pending suggestion targeting a now-missing row.
+        await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntityAsync(
+            context, Marechai.Data.SuggestionEntityType.Document, id, entityName);
         await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntityAsync(
             context, Marechai.Data.SuggestionEntityType.DocumentSynopsis, id, entityName);
 

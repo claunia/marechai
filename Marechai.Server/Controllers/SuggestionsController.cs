@@ -609,6 +609,14 @@ public class SuggestionsController(MarechaiContext context,
         if(s.EntityType == SuggestionEntityType.Book && s.EntityId.HasValue && s.SuggestedValues is not null)
             await ResolveBookRemoveLabelsAsync(s.EntityId.Value, s.SuggestedValues, currentLabels);
 
+        // Same pattern for Document entity-edit suggestions: junction-remove labels need a DB
+        // lookup constrained to the targeted document and the result lands in the current-side
+        // label map so the diff panel renders the readable name in the strikethrough cell.
+        // CRITICAL (same lesson as Machine/Book): iterate the RAW SuggestedValues dict because
+        // ParseValuesForLabels skips null-valued entries and remove keys carry a null value.
+        if(s.EntityType == SuggestionEntityType.Document && s.EntityId.HasValue && s.SuggestedValues is not null)
+            await ResolveDocumentRemoveLabelsAsync(s.EntityId.Value, s.SuggestedValues, currentLabels);
+
         return Ok(new SuggestionDiffDto
         {
             Suggestion           = suggestionDto,
@@ -838,9 +846,10 @@ public class SuggestionsController(MarechaiContext context,
     /// </summary>
     static bool IsEntityTypeSupported(SuggestionEntityType type) => type switch
     {
-        SuggestionEntityType.Machine => true,
-        SuggestionEntityType.Book    => true,
-        _                            => GetKnownFieldNames(type) is not null
+        SuggestionEntityType.Machine  => true,
+        SuggestionEntityType.Book     => true,
+        SuggestionEntityType.Document => true,
+        _                             => GetKnownFieldNames(type) is not null
     };
 
     /// <summary>
@@ -858,6 +867,9 @@ public class SuggestionsController(MarechaiContext context,
 
         if(type == SuggestionEntityType.Book)
             return Suggestions.BookSuggestionApplier.IsKnownFieldName(fieldName);
+
+        if(type == SuggestionEntityType.Document)
+            return Suggestions.DocumentSuggestionApplier.IsKnownFieldName(fieldName);
 
         IReadOnlyCollection<string> set = GetKnownFieldNames(type);
         return set is not null && set.Contains(fieldName);
@@ -949,6 +961,12 @@ public class SuggestionsController(MarechaiContext context,
                     context, entityId, suggested, accepted, _assetRootPath);
                 return new ApplyResult(applied, missing);
             }
+            case SuggestionEntityType.Document:
+            {
+                var (applied, missing) = await Suggestions.DocumentSuggestionApplier.ApplyAsync(
+                    context, entityId, suggested, accepted);
+                return new ApplyResult(applied, missing);
+            }
             default:
                 throw new NotImplementedException($"Suggestions for {type} are not implemented yet.");
         }
@@ -986,6 +1004,8 @@ public class SuggestionsController(MarechaiContext context,
                 await Suggestions.MachineSuggestionApplier.GetCurrentValuesAsync(context, entityId),
             SuggestionEntityType.Book =>
                 await Suggestions.BookSuggestionApplier.GetCurrentValuesAsync(context, entityId),
+            SuggestionEntityType.Document =>
+                await Suggestions.DocumentSuggestionApplier.GetCurrentValuesAsync(context, entityId),
             _ => null
         };
     }
@@ -1350,6 +1370,11 @@ public class SuggestionsController(MarechaiContext context,
             case SuggestionEntityType.Book:
             {
                 await ResolveBookLabelsAsync(entityId, values, labels);
+                break;
+            }
+            case SuggestionEntityType.Document:
+            {
+                await ResolveDocumentLabelsAsync(entityId, values, labels);
                 break;
             }
         }
@@ -1852,6 +1877,189 @@ public class SuggestionsController(MarechaiContext context,
             {
                 var row = await context.BooksByMachineFamilies.AsNoTracking()
                                        .Where(r => r.Id == rowId && r.BookId == bookId)
+                                       .Select(r => new { r.MachineFamily.Name })
+                                       .FirstOrDefaultAsync();
+                return row?.Name;
+            }
+            default:
+                return null;
+        }
+    }
+
+    /// <summary>
+    ///     Build readable labels for the heterogeneous payload of a Document suggestion. Handles
+    ///     the scalar FK field (<c>country_id</c>) plus junction-add operation keys
+    ///     (<c>&lt;group&gt;.add.&lt;uuid&gt;</c> resolved from the suggested payload's id field).
+    ///     Junction-remove labels are populated separately by
+    ///     <see cref="ResolveDocumentRemoveLabelsAsync" /> directly into the current-side label
+    ///     map so the diff panel renders them in the strikethrough cell.
+    /// </summary>
+    async Task ResolveDocumentLabelsAsync(long? entityId,
+                                          Dictionary<string, JsonElement> values,
+                                          Dictionary<string, string> labels)
+    {
+        // ---- Scalar FK label ----------------------------------------------------------
+        if(values.TryGetValue(Suggestions.DocumentSuggestionApplier.FieldCountryId, out JsonElement countryE))
+        {
+            short? id = JsonElementToShort(countryE);
+            if(id.HasValue)
+            {
+                string name = await context.Iso31661Numeric.AsNoTracking()
+                                           .Where(c => c.Id == id.Value)
+                                           .Select(c => c.Name)
+                                           .FirstOrDefaultAsync();
+                if(!string.IsNullOrEmpty(name))
+                    labels[Suggestions.DocumentSuggestionApplier.FieldCountryId] = name;
+            }
+        }
+
+        if(!entityId.HasValue) return;
+
+        // ---- Junction-add labels (resolved from the suggested payload's id field) -----
+        foreach(KeyValuePair<string, JsonElement> kv in values)
+        {
+            if(!Suggestions.DocumentSuggestionApplier.TryParseJunctionKey(kv.Key, out string group, out string op, out _))
+                continue;
+            if(op != "add" || kv.Value.ValueKind != JsonValueKind.Object) continue;
+
+            string label = await BuildDocumentAddLabelAsync(group, kv.Value);
+            if(!string.IsNullOrEmpty(label)) labels[kv.Key] = label;
+        }
+    }
+
+    /// <summary>
+    ///     Resolve readable labels for every Document junction-remove operation in the
+    ///     suggested payload by looking up the existing junction row in the database. The
+    ///     resolved labels are written to <paramref name="currentLabels" /> so the diff panel
+    ///     renders them in the strikethrough cell of the JunctionRemove row. Iterates the RAW
+    ///     <c>SuggestedValues</c> dict (not the JsonElement-parsed view) because remove ops
+    ///     carry a null value and <see cref="ParseValuesForLabels" /> drops null entries.
+    /// </summary>
+    async Task ResolveDocumentRemoveLabelsAsync(long documentId,
+                                                Dictionary<string, object> rawSuggested,
+                                                Dictionary<string, string> currentLabels)
+    {
+        foreach(KeyValuePair<string, object> kv in rawSuggested)
+        {
+            if(!Suggestions.DocumentSuggestionApplier.TryParseJunctionKey(kv.Key, out string group, out string op, out string token))
+                continue;
+            if(op != "remove") continue;
+            if(!long.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out long rowId)) continue;
+
+            string label = await BuildDocumentRemoveLabelAsync(group, documentId, rowId);
+            if(!string.IsNullOrEmpty(label)) currentLabels[kv.Key] = label;
+        }
+    }
+
+    async Task<string> BuildDocumentAddLabelAsync(string group, JsonElement payload)
+    {
+        switch(group)
+        {
+            case Suggestions.DocumentSuggestionApplier.GroupPeople:
+            {
+                int?   id     = ReadIntField(payload, "person_id");
+                string roleId = ReadStringField(payload, "role_id");
+                if(!id.HasValue) return null;
+                var row = await context.People.AsNoTracking()
+                                       .Where(p => p.Id == id.Value)
+                                       .Select(p => new { Display = p.DisplayName ?? p.Alias ?? (p.Name + " " + p.Surname) })
+                                       .FirstOrDefaultAsync();
+                string display = row is null ? $"Person #{id.Value}" : row.Display;
+                if(!string.IsNullOrEmpty(roleId))
+                {
+                    string roleName = await context.DocumentRoles.AsNoTracking()
+                                                   .Where(r => r.Id == roleId)
+                                                   .Select(r => r.Name)
+                                                   .FirstOrDefaultAsync();
+                    if(!string.IsNullOrEmpty(roleName))
+                        display = $"{display} ({roleName})";
+                }
+                return display;
+            }
+            case Suggestions.DocumentSuggestionApplier.GroupCompanies:
+            {
+                int?   id     = ReadIntField(payload, "company_id");
+                string roleId = ReadStringField(payload, "role_id");
+                if(!id.HasValue) return null;
+                string name = await context.Companies.AsNoTracking()
+                                           .Where(c => c.Id == id.Value)
+                                           .Select(c => c.Name)
+                                           .FirstOrDefaultAsync();
+                string display = string.IsNullOrEmpty(name) ? $"Company #{id.Value}" : name;
+                if(!string.IsNullOrEmpty(roleId))
+                {
+                    string roleName = await context.DocumentRoles.AsNoTracking()
+                                                   .Where(r => r.Id == roleId)
+                                                   .Select(r => r.Name)
+                                                   .FirstOrDefaultAsync();
+                    if(!string.IsNullOrEmpty(roleName))
+                        display = $"{display} ({roleName})";
+                }
+                return display;
+            }
+            case Suggestions.DocumentSuggestionApplier.GroupMachines:
+            {
+                int? id = ReadIntField(payload, "machine_id");
+                if(!id.HasValue) return null;
+                string name = await context.Machines.AsNoTracking()
+                                           .Where(m => m.Id == id.Value)
+                                           .Select(m => m.Name)
+                                           .FirstOrDefaultAsync();
+                return string.IsNullOrEmpty(name) ? $"Machine #{id.Value}" : name;
+            }
+            case Suggestions.DocumentSuggestionApplier.GroupMachineFamilies:
+            {
+                int? id = ReadIntField(payload, "machine_family_id");
+                if(!id.HasValue) return null;
+                string name = await context.MachineFamilies.AsNoTracking()
+                                           .Where(f => f.Id == id.Value)
+                                           .Select(f => f.Name)
+                                           .FirstOrDefaultAsync();
+                return string.IsNullOrEmpty(name) ? $"Machine family #{id.Value}" : name;
+            }
+            default:
+                return null;
+        }
+    }
+
+    async Task<string> BuildDocumentRemoveLabelAsync(string group, long documentId, long rowId)
+    {
+        switch(group)
+        {
+            case Suggestions.DocumentSuggestionApplier.GroupPeople:
+            {
+                var row = await context.PeopleByDocuments.AsNoTracking()
+                                       .Where(r => r.Id == rowId && r.DocumentId == documentId)
+                                       .Select(r => new
+                                       {
+                                           Display  = r.Person.DisplayName ?? r.Person.Alias ?? (r.Person.Name + " " + r.Person.Surname),
+                                           RoleName = r.Role.Name
+                                       })
+                                       .FirstOrDefaultAsync();
+                if(row is null) return null;
+                return string.IsNullOrEmpty(row.RoleName) ? row.Display : $"{row.Display} ({row.RoleName})";
+            }
+            case Suggestions.DocumentSuggestionApplier.GroupCompanies:
+            {
+                var row = await context.CompaniesByDocuments.AsNoTracking()
+                                       .Where(r => r.Id == rowId && r.DocumentId == documentId)
+                                       .Select(r => new { r.Company.Name, RoleName = r.Role.Name })
+                                       .FirstOrDefaultAsync();
+                if(row is null) return null;
+                return string.IsNullOrEmpty(row.RoleName) ? row.Name : $"{row.Name} ({row.RoleName})";
+            }
+            case Suggestions.DocumentSuggestionApplier.GroupMachines:
+            {
+                var row = await context.DocumentsByMachines.AsNoTracking()
+                                       .Where(r => r.Id == rowId && r.DocumentId == documentId)
+                                       .Select(r => new { r.Machine.Name })
+                                       .FirstOrDefaultAsync();
+                return row?.Name;
+            }
+            case Suggestions.DocumentSuggestionApplier.GroupMachineFamilies:
+            {
+                var row = await context.DocumentsByMachineFamilies.AsNoTracking()
+                                       .Where(r => r.Id == rowId && r.DocumentId == documentId)
                                        .Select(r => new { r.MachineFamily.Name })
                                        .FirstOrDefaultAsync();
                 return row?.Name;

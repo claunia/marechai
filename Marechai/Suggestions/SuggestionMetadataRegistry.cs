@@ -82,6 +82,7 @@ public static class SuggestionMetadataRegistry
             Marechai.Suggestions.Metadata.SoftwareDescriptionSuggestionMetadata.EnsureRegistered();
             Marechai.Suggestions.Metadata.MachineSuggestionMetadata.EnsureRegistered();
             Marechai.Suggestions.Metadata.BookSuggestionMetadata.EnsureRegistered();
+            Marechai.Suggestions.Metadata.DocumentSuggestionMetadata.EnsureRegistered();
             s_seeded = true;
         }
     }
