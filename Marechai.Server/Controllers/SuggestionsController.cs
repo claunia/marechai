@@ -299,6 +299,23 @@ public class SuggestionsController(MarechaiContext context,
                                "Description cannot be empty. Use the admin delete flow to remove a description.",
                                statusCode: StatusCodes.Status400BadRequest);
         }
+        else if(dto.EntityType == SuggestionEntityType.PersonDescription)
+        {
+            if(subkey is null ||
+               !Suggestions.PersonDescriptionSuggestionApplier.IsAllowedLanguage(subkey))
+                return Problem(title: "Invalid language",
+                               detail:
+                               "Biography suggestions must specify a supported ISO-639-3 language code (eng, spa, deu, fra, ita, lat, por).",
+                               statusCode: StatusCodes.Status400BadRequest);
+
+            if(!values.TryGetValue(Suggestions.PersonDescriptionSuggestionApplier.FieldMarkdown,
+                                   out object mdValue) ||
+               string.IsNullOrWhiteSpace(ExtractStringForValidation(mdValue)))
+                return Problem(title: "Empty biography",
+                               detail:
+                               "Biography cannot be empty. Use the admin delete flow to remove a biography.",
+                               statusCode: StatusCodes.Status400BadRequest);
+        }
         else
         {
             // Subkey is only meaningful for *Description / *Synopsis entity types today; reject stray
@@ -757,6 +774,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.GpuDescription     => Suggestions.GpuDescriptionSuggestionApplier.KnownFieldNames,
         SuggestionEntityType.ProcessorDescription  => Suggestions.ProcessorDescriptionSuggestionApplier.KnownFieldNames,
         SuggestionEntityType.SoundSynthDescription => Suggestions.SoundSynthDescriptionSuggestionApplier.KnownFieldNames,
+        SuggestionEntityType.PersonDescription     => Suggestions.PersonDescriptionSuggestionApplier.KnownFieldNames,
         // Phase 3+ adds more cases here.
         _ => null
     };
@@ -823,6 +841,12 @@ public class SuggestionsController(MarechaiContext context,
                     context, entityId, subkey, suggested, accepted);
                 return new ApplyResult(applied, missing);
             }
+            case SuggestionEntityType.PersonDescription:
+            {
+                var (applied, missing) = await Suggestions.PersonDescriptionSuggestionApplier.ApplyAsync(
+                    context, entityId, subkey, suggested, accepted);
+                return new ApplyResult(applied, missing);
+            }
             default:
                 throw new NotImplementedException($"Suggestions for {type} are not implemented yet.");
         }
@@ -852,6 +876,8 @@ public class SuggestionsController(MarechaiContext context,
                 await Suggestions.ProcessorDescriptionSuggestionApplier.GetCurrentValuesAsync(context, entityId, subkey),
             SuggestionEntityType.SoundSynthDescription =>
                 await Suggestions.SoundSynthDescriptionSuggestionApplier.GetCurrentValuesAsync(context, entityId, subkey),
+            SuggestionEntityType.PersonDescription =>
+                await Suggestions.PersonDescriptionSuggestionApplier.GetCurrentValuesAsync(context, entityId, subkey),
             _ => null
         };
     }
@@ -907,6 +933,12 @@ public class SuggestionsController(MarechaiContext context,
                 return await context.SoundSynths.AsNoTracking()
                                     .Where(s => s.Id == (int)entityId)
                                     .Select(s => s.Name)
+                                    .FirstOrDefaultAsync();
+            case SuggestionEntityType.Person:
+            case SuggestionEntityType.PersonDescription:
+                return await context.People.AsNoTracking()
+                                    .Where(p => p.Id == (int)entityId)
+                                    .Select(p => p.DisplayName ?? (p.Name + " " + p.Surname))
                                     .FirstOrDefaultAsync();
             default:
                 return null;
@@ -1094,6 +1126,14 @@ public class SuggestionsController(MarechaiContext context,
                                                .Select(l => l.ReferenceName)
                                                .FirstOrDefaultAsync();
                 return $"({langName ?? subkey} description)";
+            }
+            case SuggestionEntityType.PersonDescription:
+            {
+                string langName = await context.Iso639.AsNoTracking()
+                                               .Where(l => l.Id == subkey)
+                                               .Select(l => l.ReferenceName)
+                                               .FirstOrDefaultAsync();
+                return $"({langName ?? subkey} biography)";
             }
             default:
                 return null;
@@ -1330,6 +1370,8 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.ProcessorDescription => $"/processor/{entityId}",
         SuggestionEntityType.SoundSynth           => $"/soundsynth/{entityId}",
         SuggestionEntityType.SoundSynthDescription => $"/soundsynth/{entityId}",
+        SuggestionEntityType.Person                => $"/person/{entityId}",
+        SuggestionEntityType.PersonDescription     => $"/person/{entityId}",
         _                                       => null
     };
 
@@ -1357,6 +1399,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.GpuDescription      => "GPU description",
         SuggestionEntityType.ProcessorDescription => "processor description",
         SuggestionEntityType.SoundSynthDescription => "sound synth description",
+        SuggestionEntityType.PersonDescription   => "person biography",
         SuggestionEntityType.MachineFamily       => "machine family",
         SuggestionEntityType.Processor           => "processor",
         SuggestionEntityType.Gpu                 => "GPU",

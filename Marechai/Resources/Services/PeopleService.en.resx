@@ -396,4 +396,23 @@
     <data name="Biography" xml:space="preserve">
         <value>Biography</value>
     </data>
+  <data name="Suggest biography" xml:space="preserve">
+    <value>Suggest biography</value>
+  </data>
+  <data name="Suggest translation" xml:space="preserve">
+    <value>Suggest translation</value>
+  </data>
+  <data name="Suggest changes" xml:space="preserve">
+    <value>Suggest changes</value>
+  </data>
+  <data name="Choose language for biography" xml:space="preserve">
+    <value>Choose language for biography</value>
+  </data>
+  <data name="We do not have a biography for this person, you could collaborate by suggesting one" xml:space="preserve">
+    <value>We do not have a biography for this person, you could collaborate by suggesting one</value>
+  </data>
+  <data name="We do not have a biography in your language, you could collaborate by translating the English biography we show below" xml:space="preserve">
+    <value>We do not have a biography in your language, you could collaborate by translating the English biography we show below</value>
+  </data>
+
 </root>

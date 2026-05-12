@@ -338,4 +338,23 @@
         <value>Biografia</value>
         <comment>Biography</comment>
     </data>
+  <data name="Suggest biography" xml:space="preserve">
+    <value>Suggerisci biografia</value>
+  </data>
+  <data name="Suggest translation" xml:space="preserve">
+    <value>Suggerisci traduzione</value>
+  </data>
+  <data name="Suggest changes" xml:space="preserve">
+    <value>Suggerisci modifiche</value>
+  </data>
+  <data name="Choose language for biography" xml:space="preserve">
+    <value>Scegli la lingua della biografia</value>
+  </data>
+  <data name="We do not have a biography for this person, you could collaborate by suggesting one" xml:space="preserve">
+    <value>Non abbiamo una biografia per questa persona, potresti collaborare suggerendone una</value>
+  </data>
+  <data name="We do not have a biography in your language, you could collaborate by translating the English biography we show below" xml:space="preserve">
+    <value>Non abbiamo una biografia nella tua lingua, potresti collaborare traducendo la biografia inglese che mostriamo qui sotto</value>
+  </data>
+
 </root>

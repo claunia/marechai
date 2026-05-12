@@ -645,9 +645,19 @@ public class PeopleController(
 
         if(item is null) return NotFound();
 
+        string entityName = item.DisplayName ?? item.Alias ?? $"{item.Name} {item.Surname}".Trim();
+
         context.People.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        // Mark any pending suggestions for this Person as Stale and notify the suggesting users.
+        await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntityAsync(
+            context, Marechai.Data.SuggestionEntityType.Person, id, entityName);
+
+        // Cascade: also mark stale every per-language biography suggestion for this Person.
+        await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntityAsync(
+            context, Marechai.Data.SuggestionEntityType.PersonDescription, id, entityName);
 
         return Ok();
     }
@@ -778,9 +788,25 @@ public class PeopleController(
 
         if(description is null) return NotFound();
 
+        // Capture display data BEFORE the cascade, while the Person + language rows are still
+        // available for the system message body.
+        string personName = await context.People.AsNoTracking()
+                                        .Where(p => p.Id == id)
+                                        .Select(p => p.DisplayName ?? (p.Name + " " + p.Surname))
+                                        .FirstOrDefaultAsync();
+        string langName = await context.Iso639.AsNoTracking()
+                                       .Where(l => l.Id == languageCode)
+                                       .Select(l => l.ReferenceName)
+                                       .FirstOrDefaultAsync();
+        string subkeyLabel = $"({langName ?? languageCode} biography)";
+
         context.PersonDescriptions.Remove(description);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntitySubkeyAsync(
+            context, Marechai.Data.SuggestionEntityType.PersonDescription,
+            id, languageCode, personName ?? $"#{id}", subkeyLabel);
 
         return Ok();
     }

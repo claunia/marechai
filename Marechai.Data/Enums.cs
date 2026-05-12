@@ -1031,7 +1031,12 @@ public enum SuggestionEntityType : byte
     ///     A markdown description of a sound synthesizer, scoped per language. The Subkey on
     ///     the Suggestion row holds the ISO-639-3 language code (e.g. "eng", "spa").
     /// </summary>
-    SoundSynthDescription = 24
+    SoundSynthDescription = 24,
+    /// <summary>
+    ///     A markdown biography of a Person, scoped per language. The Subkey on the
+    ///     Suggestion row holds the ISO-639-3 language code (e.g. "eng", "spa").
+    /// </summary>
+    PersonDescription = 25
 }
 
 public enum SuggestionStatus : byte

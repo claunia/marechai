@@ -349,6 +349,26 @@ public class PeopleService(Marechai.ApiClient.Client client)
         }
     }
 
+    /// <summary>
+    ///     Fetch the full biography DTO so the caller can detect language fallback (the
+    ///     <c>LanguageCode</c> on the returned object is the language actually served, not the
+    ///     language requested). Returns <c>null</c> when no biography exists in any language.
+    /// </summary>
+    public async Task<PersonDescriptionDto> GetDescriptionAsync(int id, string lang = "eng")
+    {
+        try
+        {
+            return await client.People[id].Description.GetAsync(rc =>
+            {
+                if(!string.IsNullOrWhiteSpace(lang)) rc.QueryParameters.Lang = lang;
+            });
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
     public async Task<List<PersonDescriptionDto>> GetDescriptionsAsync(int personId)
     {
         try

@@ -78,6 +78,7 @@ public static class SuggestionMetadataRegistry
             Marechai.Suggestions.Metadata.GpuDescriptionSuggestionMetadata.EnsureRegistered();
             Marechai.Suggestions.Metadata.ProcessorDescriptionSuggestionMetadata.EnsureRegistered();
             Marechai.Suggestions.Metadata.SoundSynthDescriptionSuggestionMetadata.EnsureRegistered();
+            Marechai.Suggestions.Metadata.PersonDescriptionSuggestionMetadata.EnsureRegistered();
             s_seeded = true;
         }
     }
