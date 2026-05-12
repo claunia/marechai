@@ -160,7 +160,7 @@ public class SuggestionsController(MarechaiContext context,
                            statusCode: StatusCodes.Status400BadRequest);
 
         // ---- Per-entity-type Subkey + value validation ------------------------------
-        // CompanyDescription requires a Subkey (ISO-639-3 language code) + a non-empty markdown.
+        // CompanyDescription / MachineDescription require a Subkey (ISO-639-3 language code) + a non-empty markdown.
         string subkey = string.IsNullOrWhiteSpace(dto.Subkey) ? null : dto.Subkey.Trim();
 
         if(dto.EntityType == SuggestionEntityType.CompanyDescription)
@@ -180,9 +180,26 @@ public class SuggestionsController(MarechaiContext context,
                                "Description cannot be empty. Use the admin delete flow to remove a description.",
                                statusCode: StatusCodes.Status400BadRequest);
         }
+        else if(dto.EntityType == SuggestionEntityType.MachineDescription)
+        {
+            if(subkey is null ||
+               !Suggestions.MachineDescriptionSuggestionApplier.IsAllowedLanguage(subkey))
+                return Problem(title: "Invalid language",
+                               detail:
+                               "Description suggestions must specify a supported ISO-639-3 language code (eng, spa, deu, fra, ita, lat, por).",
+                               statusCode: StatusCodes.Status400BadRequest);
+
+            if(!values.TryGetValue(Suggestions.MachineDescriptionSuggestionApplier.FieldMarkdown,
+                                   out object mdValue) ||
+               string.IsNullOrWhiteSpace(ExtractStringForValidation(mdValue)))
+                return Problem(title: "Empty description",
+                               detail:
+                               "Description cannot be empty. Use the admin delete flow to remove a description.",
+                               statusCode: StatusCodes.Status400BadRequest);
+        }
         else
         {
-            // Subkey is only meaningful for CompanyDescription today; reject stray values so the
+            // Subkey is only meaningful for *Description entity types today; reject stray values so the
             // dedupe index doesn't get polluted with random strings.
             if(subkey is not null)
                 return Problem(title: "Invalid suggestion",
@@ -631,6 +648,7 @@ public class SuggestionsController(MarechaiContext context,
     {
         SuggestionEntityType.Company            => Suggestions.CompanySuggestionApplier.KnownFieldNames,
         SuggestionEntityType.CompanyDescription => Suggestions.CompanyDescriptionSuggestionApplier.KnownFieldNames,
+        SuggestionEntityType.MachineDescription => Suggestions.MachineDescriptionSuggestionApplier.KnownFieldNames,
         // Phase 3+ adds more cases here.
         _ => null
     };
@@ -655,6 +673,12 @@ public class SuggestionsController(MarechaiContext context,
                     context, entityId, subkey, suggested, accepted);
                 return new ApplyResult(applied, missing);
             }
+            case SuggestionEntityType.MachineDescription:
+            {
+                var (applied, missing) = await Suggestions.MachineDescriptionSuggestionApplier.ApplyAsync(
+                    context, entityId, subkey, suggested, accepted);
+                return new ApplyResult(applied, missing);
+            }
             default:
                 throw new NotImplementedException($"Suggestions for {type} are not implemented yet.");
         }
@@ -670,6 +694,8 @@ public class SuggestionsController(MarechaiContext context,
                 await Suggestions.CompanySuggestionApplier.GetCurrentValuesAsync(context, entityId),
             SuggestionEntityType.CompanyDescription =>
                 await Suggestions.CompanyDescriptionSuggestionApplier.GetCurrentValuesAsync(context, entityId, subkey),
+            SuggestionEntityType.MachineDescription =>
+                await Suggestions.MachineDescriptionSuggestionApplier.GetCurrentValuesAsync(context, entityId, subkey),
             _ => null
         };
     }
@@ -683,6 +709,12 @@ public class SuggestionsController(MarechaiContext context,
                 return await context.Companies.AsNoTracking()
                                     .Where(c => c.Id == (int)entityId)
                                     .Select(c => c.Name)
+                                    .FirstOrDefaultAsync();
+            case SuggestionEntityType.Machine:
+            case SuggestionEntityType.MachineDescription:
+                return await context.Machines.AsNoTracking()
+                                    .Where(m => m.Id == (int)entityId)
+                                    .Select(m => m.Name)
                                     .FirstOrDefaultAsync();
             default:
                 return null;
@@ -808,6 +840,14 @@ public class SuggestionsController(MarechaiContext context,
         switch(type)
         {
             case SuggestionEntityType.CompanyDescription:
+            {
+                string langName = await context.Iso639.AsNoTracking()
+                                               .Where(l => l.Id == subkey)
+                                               .Select(l => l.ReferenceName)
+                                               .FirstOrDefaultAsync();
+                return $"({langName ?? subkey} description)";
+            }
+            case SuggestionEntityType.MachineDescription:
             {
                 string langName = await context.Iso639.AsNoTracking()
                                                .Where(l => l.Id == subkey)
@@ -1036,6 +1076,8 @@ public class SuggestionsController(MarechaiContext context,
     {
         SuggestionEntityType.Company            => $"/company/{entityId}",
         SuggestionEntityType.CompanyDescription => $"/company/{entityId}",
+        SuggestionEntityType.Machine            => $"/machine/{entityId}",
+        SuggestionEntityType.MachineDescription => $"/machine/{entityId}",
         _                                       => null
     };
 
@@ -1056,6 +1098,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.Company             => "company",
         SuggestionEntityType.CompanyDescription  => "company description",
         SuggestionEntityType.Machine             => "machine",
+        SuggestionEntityType.MachineDescription  => "machine description",
         SuggestionEntityType.MachineFamily       => "machine family",
         SuggestionEntityType.Processor           => "processor",
         SuggestionEntityType.Gpu                 => "GPU",

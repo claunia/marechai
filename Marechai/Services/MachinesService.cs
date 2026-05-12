@@ -651,6 +651,26 @@ public class MachinesService(Marechai.ApiClient.Client client)
         }
     }
 
+    /// <summary>
+    ///     Fetch the full description DTO so the caller can detect language fallback (the
+    ///     <c>LanguageCode</c> on the returned object is the language actually served, not the
+    ///     language requested). Returns <c>null</c> when no description exists in any language.
+    /// </summary>
+    public async Task<MachineDescriptionDto> GetDescriptionAsync(int id, string lang = "eng")
+    {
+        try
+        {
+            return await client.Machines[id].Description.GetAsync(rc =>
+            {
+                if(!string.IsNullOrWhiteSpace(lang)) rc.QueryParameters.Lang = lang;
+            });
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
     public async Task<List<MachineDescriptionDto>> GetDescriptionsAsync(int machineId)
     {
         try

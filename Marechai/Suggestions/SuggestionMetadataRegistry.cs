@@ -71,6 +71,7 @@ public static class SuggestionMetadataRegistry
             // per-entity class hasn't been touched anywhere else in the process.
             Marechai.Suggestions.Metadata.CompanySuggestionMetadata.EnsureRegistered();
             Marechai.Suggestions.Metadata.CompanyDescriptionSuggestionMetadata.EnsureRegistered();
+            Marechai.Suggestions.Metadata.MachineDescriptionSuggestionMetadata.EnsureRegistered();
             s_seeded = true;
         }
     }

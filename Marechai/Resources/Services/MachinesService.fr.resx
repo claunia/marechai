@@ -637,4 +637,58 @@
         <value>Media</value>
         <comment>Media tab</comment>
     </data>
+    <data name="Suggest description" xml:space="preserve">
+        <value>Suggérer une description</value>
+    </data>
+    <data name="Suggest translation" xml:space="preserve">
+        <value>Suggérer une traduction</value>
+    </data>
+    <data name="Suggest changes" xml:space="preserve">
+        <value>Suggérer des modifications</value>
+    </data>
+    <data name="We do not have a description in your language, you could collaborate by translating the English description we show below" xml:space="preserve">
+        <value>Nous n'avons pas de description dans votre langue, vous pouvez collaborer en traduisant la description anglaise affichée ci-dessous</value>
+    </data>
+    <data name="Choose language for description" xml:space="preserve">
+        <value>Choisir la langue de la description</value>
+    </data>
+    <data name="Choose the language for the description you want to suggest." xml:space="preserve">
+        <value>Choisissez la langue de la description que vous voulez suggérer.</value>
+    </data>
+    <data name="You have a pending suggestion" xml:space="preserve">
+        <value>Vous avez une suggestion en attente</value>
+    </data>
+    <data name="Has description" xml:space="preserve">
+        <value>A une description</value>
+    </data>
+    <data name="Empty" xml:space="preserve">
+        <value>Vide</value>
+    </data>
+    <data name="Edit the existing description below. Your suggestion will be reviewed by an administrator." xml:space="preserve">
+        <value>Modifiez la description existante ci-dessous. Votre suggestion sera examinée par un administrateur.</value>
+    </data>
+    <data name="Write the new description below. Your suggestion will be reviewed by an administrator." xml:space="preserve">
+        <value>Rédigez la nouvelle description ci-dessous. Votre suggestion sera examinée par un administrateur.</value>
+    </data>
+    <data name="Optional comment (References, sources, etc...)" xml:space="preserve">
+        <value>Commentaire facultatif (références, sources, etc.)</value>
+    </data>
+    <data name="Submit suggestion" xml:space="preserve">
+        <value>Envoyer la suggestion</value>
+    </data>
+    <data name="Description suggestion submitted. Thank you for contributing!" xml:space="preserve">
+        <value>Suggestion de description envoyée. Merci pour votre contribution !</value>
+    </data>
+    <data name="Failed to submit suggestion." xml:space="preserve">
+        <value>Échec de l'envoi de la suggestion.</value>
+    </data>
+    <data name="We do not have a description for this computer, you could collaborate by suggesting one" xml:space="preserve">
+        <value>Nous n'avons pas de description pour cet ordinateur, vous pouvez collaborer en en suggérant une</value>
+    </data>
+    <data name="We do not have a description for this console, you could collaborate by suggesting one" xml:space="preserve">
+        <value>Nous n'avons pas de description pour cette console, vous pouvez collaborer en en suggérant une</value>
+    </data>
+    <data name="We do not have a description for this smartphone, you could collaborate by suggesting one" xml:space="preserve">
+        <value>Nous n'avons pas de description pour ce smartphone, vous pouvez collaborer en en suggérant une</value>
+    </data>
 </root>

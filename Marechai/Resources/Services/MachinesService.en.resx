@@ -514,4 +514,58 @@
     <data name="Software" xml:space="preserve">
         <value>Software</value>
     </data>
+    <data name="Suggest description" xml:space="preserve">
+        <value>Suggest description</value>
+    </data>
+    <data name="Suggest translation" xml:space="preserve">
+        <value>Suggest translation</value>
+    </data>
+    <data name="Suggest changes" xml:space="preserve">
+        <value>Suggest changes</value>
+    </data>
+    <data name="We do not have a description in your language, you could collaborate by translating the English description we show below" xml:space="preserve">
+        <value>We do not have a description in your language, you could collaborate by translating the English description we show below</value>
+    </data>
+    <data name="Choose language for description" xml:space="preserve">
+        <value>Choose language for description</value>
+    </data>
+    <data name="Choose the language for the description you want to suggest." xml:space="preserve">
+        <value>Choose the language for the description you want to suggest.</value>
+    </data>
+    <data name="You have a pending suggestion" xml:space="preserve">
+        <value>You have a pending suggestion</value>
+    </data>
+    <data name="Has description" xml:space="preserve">
+        <value>Has description</value>
+    </data>
+    <data name="Empty" xml:space="preserve">
+        <value>Empty</value>
+    </data>
+    <data name="Edit the existing description below. Your suggestion will be reviewed by an administrator." xml:space="preserve">
+        <value>Edit the existing description below. Your suggestion will be reviewed by an administrator.</value>
+    </data>
+    <data name="Write the new description below. Your suggestion will be reviewed by an administrator." xml:space="preserve">
+        <value>Write the new description below. Your suggestion will be reviewed by an administrator.</value>
+    </data>
+    <data name="Optional comment (References, sources, etc...)" xml:space="preserve">
+        <value>Optional comment (References, sources, etc...)</value>
+    </data>
+    <data name="Submit suggestion" xml:space="preserve">
+        <value>Submit suggestion</value>
+    </data>
+    <data name="Description suggestion submitted. Thank you for contributing!" xml:space="preserve">
+        <value>Description suggestion submitted. Thank you for contributing!</value>
+    </data>
+    <data name="Failed to submit suggestion." xml:space="preserve">
+        <value>Failed to submit suggestion.</value>
+    </data>
+    <data name="We do not have a description for this computer, you could collaborate by suggesting one" xml:space="preserve">
+        <value>We do not have a description for this computer, you could collaborate by suggesting one</value>
+    </data>
+    <data name="We do not have a description for this console, you could collaborate by suggesting one" xml:space="preserve">
+        <value>We do not have a description for this console, you could collaborate by suggesting one</value>
+    </data>
+    <data name="We do not have a description for this smartphone, you could collaborate by suggesting one" xml:space="preserve">
+        <value>We do not have a description for this smartphone, you could collaborate by suggesting one</value>
+    </data>
 </root>
