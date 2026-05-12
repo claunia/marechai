@@ -98,14 +98,20 @@ else
                 }
                 else if(isImage)
                 {
-                    // Pending-cover render. The CURRENT side is the existing book cover (a
-                    // guid in the public asset CDN — no auth needed, so a plain <img> tag
-                    // works). The SUGGESTED side is the just-uploaded pending image (JWT-
-                    // protected, so we fetch it via JS interop and apply a blob URL after
-                    // render). Lightbox click on either opens a full-size view.
+                    // Pending-cover render. The CURRENT side is the existing cover (a guid in
+                    // the public asset CDN — no auth needed, so a plain <img> tag works). The
+                    // SUGGESTED side is the just-uploaded pending image (JWT-protected, so
+                    // we fetch it via JS interop and apply a blob URL after render). Lightbox
+                    // click on either opens a full-size view. The asset folder is keyed by
+                    // entity type (Book → book-covers, MagazineIssue → magazine-issue-covers).
                     string currentGuid   = JsonElementToText(currentValue);
                     string suggestedGuid = JsonElementToText(entry.Value);
                     string suggestedImgId = $"diffimg-sug-{Suggestion?.Id}-{fieldName}";
+                    string itemFolder = (Suggestion?.EntityType) switch
+                    {
+                        (int)SuggestionEntityType.MagazineIssue => "magazine-issue-covers",
+                        _                                       => "book-covers"
+                    };
                     if(!string.IsNullOrEmpty(suggestedGuid)) _pendingImageRefs[suggestedImgId] = suggestedGuid;
 
                     <tr style="background-color: rgba(25, 118, 210, 0.05);">
@@ -118,7 +124,7 @@ else
                         <td>
                             @if(!string.IsNullOrEmpty(currentGuid))
                             {
-                                string currentUrl = $"{ApiAssetUrls.BaseUrl}/assets/photos/book-covers/jpeg/hd/{currentGuid}.jpg";
+                                string currentUrl = $"{ApiAssetUrls.BaseUrl}/assets/photos/{itemFolder}/jpeg/hd/{currentGuid}.jpg";
                                 <a href="@currentUrl" target="_blank" rel="noopener">
                                     <img src="@currentUrl" alt="Current cover"
                                          style="max-height: 100px; max-width: 80px; object-fit: contain; cursor: zoom-in; border-radius: 3px;"/>
@@ -260,8 +266,12 @@ else
         {
             string token = await TokenProvider.GetTokenAsync();
             if(string.IsNullOrEmpty(token)) return;
-            await JS.InvokeAsync<object>("MarechaiPendingCover.openPendingCoverInNewTab",
-                                         ApiAssetUrls.BaseUrl, token, guid);
+            string fnName = (Suggestion?.EntityType) switch
+            {
+                (int)SuggestionEntityType.MagazineIssue => "MarechaiPendingCover.openPendingMagazineIssueCoverInNewTab",
+                _                                       => "MarechaiPendingCover.openPendingCoverInNewTab"
+            };
+            await JS.InvokeAsync<object>(fnName, ApiAssetUrls.BaseUrl, token, guid);
         }
         catch
         {
@@ -287,13 +297,18 @@ else
             string token = await TokenProvider.GetTokenAsync();
             if(!string.IsNullOrEmpty(token))
             {
+                string applyFnName = (Suggestion?.EntityType) switch
+                {
+                    (int)SuggestionEntityType.MagazineIssue => "MarechaiPendingCover.applyPendingMagazineIssueCoverImage",
+                    _                                       => "MarechaiPendingCover.applyPendingCoverImage"
+                };
                 foreach(KeyValuePair<string, string> kv in _pendingImageRefs)
                 {
                     string refKey = kv.Key + "|" + kv.Value;
                     if(_appliedImageRefs.Contains(refKey)) continue;
                     try
                     {
-                        await JS.InvokeVoidAsync("MarechaiPendingCover.applyPendingCoverImage",
+                        await JS.InvokeVoidAsync(applyFnName,
                                                  ApiAssetUrls.BaseUrl, token, kv.Value, kv.Key);
                         _appliedImageRefs.Add(refKey);
                     }

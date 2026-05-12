@@ -622,6 +622,13 @@ public class SuggestionsController(MarechaiContext context,
         if(s.EntityType == SuggestionEntityType.Magazine && s.EntityId.HasValue && s.SuggestedValues is not null)
             await ResolveMagazineRemoveLabelsAsync(s.EntityId.Value, s.SuggestedValues, currentLabels);
 
+        // Same pattern for MagazineIssue entity-edit suggestions (4 junctions: people,
+        // machines, machine_families, software). NB: the People/Machines/MachineFamilies/
+        // Software junctions all hang off MagazineIssue, not the parent Magazine — see
+        // MagazineIssueSuggestionApplier for the column-name caveat.
+        if(s.EntityType == SuggestionEntityType.MagazineIssue && s.EntityId.HasValue && s.SuggestedValues is not null)
+            await ResolveMagazineIssueRemoveLabelsAsync(s.EntityId.Value, s.SuggestedValues, currentLabels);
+
         return Ok(new SuggestionDiffDto
         {
             Suggestion           = suggestionDto,
@@ -851,11 +858,12 @@ public class SuggestionsController(MarechaiContext context,
     /// </summary>
     static bool IsEntityTypeSupported(SuggestionEntityType type) => type switch
     {
-        SuggestionEntityType.Machine  => true,
-        SuggestionEntityType.Book     => true,
-        SuggestionEntityType.Document => true,
-        SuggestionEntityType.Magazine => true,
-        _                             => GetKnownFieldNames(type) is not null
+        SuggestionEntityType.Machine       => true,
+        SuggestionEntityType.Book          => true,
+        SuggestionEntityType.Document      => true,
+        SuggestionEntityType.Magazine      => true,
+        SuggestionEntityType.MagazineIssue => true,
+        _                                  => GetKnownFieldNames(type) is not null
     };
 
     /// <summary>
@@ -879,6 +887,9 @@ public class SuggestionsController(MarechaiContext context,
 
         if(type == SuggestionEntityType.Magazine)
             return Suggestions.MagazineSuggestionApplier.IsKnownFieldName(fieldName);
+
+        if(type == SuggestionEntityType.MagazineIssue)
+            return Suggestions.MagazineIssueSuggestionApplier.IsKnownFieldName(fieldName);
 
         IReadOnlyCollection<string> set = GetKnownFieldNames(type);
         return set is not null && set.Contains(fieldName);
@@ -982,6 +993,12 @@ public class SuggestionsController(MarechaiContext context,
                     context, entityId, suggested, accepted);
                 return new ApplyResult(applied, missing);
             }
+            case SuggestionEntityType.MagazineIssue:
+            {
+                var (applied, missing) = await Suggestions.MagazineIssueSuggestionApplier.ApplyAsync(
+                    context, entityId, suggested, accepted, _assetRootPath);
+                return new ApplyResult(applied, missing);
+            }
             default:
                 throw new NotImplementedException($"Suggestions for {type} are not implemented yet.");
         }
@@ -1023,6 +1040,8 @@ public class SuggestionsController(MarechaiContext context,
                 await Suggestions.DocumentSuggestionApplier.GetCurrentValuesAsync(context, entityId),
             SuggestionEntityType.Magazine =>
                 await Suggestions.MagazineSuggestionApplier.GetCurrentValuesAsync(context, entityId),
+            SuggestionEntityType.MagazineIssue =>
+                await Suggestions.MagazineIssueSuggestionApplier.GetCurrentValuesAsync(context, entityId),
             _ => null
         };
     }
@@ -1060,6 +1079,11 @@ public class SuggestionsController(MarechaiContext context,
                 return await context.Magazines.AsNoTracking()
                                     .Where(m => m.Id == entityId)
                                     .Select(m => m.Title)
+                                    .FirstOrDefaultAsync();
+            case SuggestionEntityType.MagazineIssue:
+                return await context.MagazineIssues.AsNoTracking()
+                                    .Where(mi => mi.Id == entityId)
+                                    .Select(mi => mi.Caption)
                                     .FirstOrDefaultAsync();
             case SuggestionEntityType.Gpu:
             case SuggestionEntityType.GpuDescription:
@@ -1397,6 +1421,11 @@ public class SuggestionsController(MarechaiContext context,
             case SuggestionEntityType.Magazine:
             {
                 await ResolveMagazineLabelsAsync(entityId, values, labels);
+                break;
+            }
+            case SuggestionEntityType.MagazineIssue:
+            {
+                await ResolveMagazineIssueLabelsAsync(entityId, values, labels);
                 break;
             }
         }
@@ -2205,6 +2234,161 @@ public class SuggestionsController(MarechaiContext context,
     }
 
     /// <summary>
+    ///     Build readable labels for a MagazineIssue suggestion's heterogeneous payload. The
+    ///     issue itself has NO scalar FK fields exposed in the suggestion surface (the parent
+    ///     <c>magazine_id</c> is admin-only re-parenting), so this only handles the four
+    ///     junction-add operations. Junction-remove labels are populated separately by
+    ///     <see cref="ResolveMagazineIssueRemoveLabelsAsync" />.
+    /// </summary>
+    async Task ResolveMagazineIssueLabelsAsync(long? entityId,
+                                               Dictionary<string, JsonElement> values,
+                                               Dictionary<string, string> labels)
+    {
+        if(!entityId.HasValue) return;
+
+        foreach(KeyValuePair<string, JsonElement> kv in values)
+        {
+            if(!Suggestions.MagazineIssueSuggestionApplier.TryParseJunctionKey(kv.Key, out string group, out string op, out _))
+                continue;
+            if(op != "add" || kv.Value.ValueKind != JsonValueKind.Object) continue;
+
+            string label = await BuildMagazineIssueAddLabelAsync(group, kv.Value);
+            if(!string.IsNullOrEmpty(label)) labels[kv.Key] = label;
+        }
+    }
+
+    /// <summary>
+    ///     Resolve readable labels for every MagazineIssue junction-remove operation in the
+    ///     suggested payload by looking up the existing junction row in the database. The
+    ///     resolved labels are written to <paramref name="currentLabels" /> so the diff panel
+    ///     renders them in the strikethrough cell of the JunctionRemove row. Iterates the RAW
+    ///     <c>SuggestedValues</c> dict (not the JsonElement-parsed view) because remove ops
+    ///     carry a null value and <see cref="ParseValuesForLabels" /> drops null entries.
+    /// </summary>
+    async Task ResolveMagazineIssueRemoveLabelsAsync(long issueId,
+                                                     Dictionary<string, object> rawSuggested,
+                                                     Dictionary<string, string> currentLabels)
+    {
+        foreach(KeyValuePair<string, object> kv in rawSuggested)
+        {
+            if(!Suggestions.MagazineIssueSuggestionApplier.TryParseJunctionKey(kv.Key, out string group, out string op, out string token))
+                continue;
+            if(op != "remove") continue;
+            if(!long.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out long rowId)) continue;
+
+            string label = await BuildMagazineIssueRemoveLabelAsync(group, issueId, rowId);
+            if(!string.IsNullOrEmpty(label)) currentLabels[kv.Key] = label;
+        }
+    }
+
+    async Task<string> BuildMagazineIssueAddLabelAsync(string group, JsonElement payload)
+    {
+        switch(group)
+        {
+            case Suggestions.MagazineIssueSuggestionApplier.GroupPeople:
+            {
+                int?   id     = ReadIntField(payload, "person_id");
+                string roleId = ReadStringField(payload, "role_id");
+                if(!id.HasValue) return null;
+                var row = await context.People.AsNoTracking()
+                                       .Where(p => p.Id == id.Value)
+                                       .Select(p => new { Display = p.DisplayName ?? p.Alias ?? (p.Name + " " + p.Surname) })
+                                       .FirstOrDefaultAsync();
+                string display = row is null ? $"Person #{id.Value}" : row.Display;
+                if(!string.IsNullOrEmpty(roleId))
+                {
+                    string roleName = await context.DocumentRoles.AsNoTracking()
+                                                   .Where(r => r.Id == roleId)
+                                                   .Select(r => r.Name)
+                                                   .FirstOrDefaultAsync();
+                    if(!string.IsNullOrEmpty(roleName))
+                        display = $"{display} ({roleName})";
+                }
+                return display;
+            }
+            case Suggestions.MagazineIssueSuggestionApplier.GroupMachines:
+            {
+                int? id = ReadIntField(payload, "machine_id");
+                if(!id.HasValue) return null;
+                string name = await context.Machines.AsNoTracking()
+                                           .Where(m => m.Id == id.Value)
+                                           .Select(m => m.Name)
+                                           .FirstOrDefaultAsync();
+                return string.IsNullOrEmpty(name) ? $"Machine #{id.Value}" : name;
+            }
+            case Suggestions.MagazineIssueSuggestionApplier.GroupMachineFamilies:
+            {
+                int? id = ReadIntField(payload, "machine_family_id");
+                if(!id.HasValue) return null;
+                string name = await context.MachineFamilies.AsNoTracking()
+                                           .Where(f => f.Id == id.Value)
+                                           .Select(f => f.Name)
+                                           .FirstOrDefaultAsync();
+                return string.IsNullOrEmpty(name) ? $"Machine family #{id.Value}" : name;
+            }
+            case Suggestions.MagazineIssueSuggestionApplier.GroupSoftware:
+            {
+                long? id = ReadLongField(payload, "software_id");
+                if(!id.HasValue || id.Value < 0) return null;
+                ulong sidU = (ulong)id.Value;
+                string name = await context.Softwares.AsNoTracking()
+                                           .Where(s => s.Id == sidU)
+                                           .Select(s => s.Name)
+                                           .FirstOrDefaultAsync();
+                return string.IsNullOrEmpty(name) ? $"Software #{id.Value}" : name;
+            }
+            default:
+                return null;
+        }
+    }
+
+    async Task<string> BuildMagazineIssueRemoveLabelAsync(string group, long issueId, long rowId)
+    {
+        switch(group)
+        {
+            case Suggestions.MagazineIssueSuggestionApplier.GroupPeople:
+            {
+                var row = await context.PeopleByMagazines.AsNoTracking()
+                                       .Where(r => r.Id == rowId && r.MagazineId == issueId)
+                                       .Select(r => new
+                                       {
+                                           Display  = r.Person.DisplayName ?? r.Person.Alias ?? (r.Person.Name + " " + r.Person.Surname),
+                                           RoleName = r.Role.Name
+                                       })
+                                       .FirstOrDefaultAsync();
+                if(row is null) return null;
+                return string.IsNullOrEmpty(row.RoleName) ? row.Display : $"{row.Display} ({row.RoleName})";
+            }
+            case Suggestions.MagazineIssueSuggestionApplier.GroupMachines:
+            {
+                var row = await context.MagazinesByMachines.AsNoTracking()
+                                       .Where(r => r.Id == rowId && r.MagazineId == issueId)
+                                       .Select(r => new { r.Machine.Name })
+                                       .FirstOrDefaultAsync();
+                return row?.Name;
+            }
+            case Suggestions.MagazineIssueSuggestionApplier.GroupMachineFamilies:
+            {
+                var row = await context.MagazinesByMachinesFamilies.AsNoTracking()
+                                       .Where(r => r.Id == rowId && r.MagazineId == issueId)
+                                       .Select(r => new { r.MachineFamily.Name })
+                                       .FirstOrDefaultAsync();
+                return row?.Name;
+            }
+            case Suggestions.MagazineIssueSuggestionApplier.GroupSoftware:
+            {
+                var row = await context.MagazinesBySoftware.AsNoTracking()
+                                       .Where(r => r.Id == rowId && r.MagazineId == issueId)
+                                       .Select(r => new { r.Software.Name })
+                                       .FirstOrDefaultAsync();
+                return row?.Name;
+            }
+            default:
+                return null;
+        }
+    }
+
+    /// <summary>
     ///     Sweep pending image uploads referenced by a now-terminal suggestion. Called from
     ///     <see cref="ReviewAsync" /> after the per-entity applier has run. For every
     ///     <c>cover_pending_guid</c> in the suggested payload that did NOT make it into the
@@ -2240,6 +2424,27 @@ public class SuggestionsController(MarechaiContext context,
                     if(accepted.Contains(Suggestions.BookSuggestionApplier.FieldCoverPendingGuid)) return;
 
                     Marechai.Server.Helpers.PendingImageStore.Delete(_assetRootPath, "book-covers", pendingGuid);
+                    break;
+                }
+                case SuggestionEntityType.MagazineIssue:
+                {
+                    if(!s.SuggestedValues.TryGetValue(
+                           Suggestions.MagazineIssueSuggestionApplier.FieldCoverPendingGuid, out object guidRaw))
+                        return;
+
+                    string guidStr = guidRaw switch
+                    {
+                        string str         => str,
+                        JsonElement je when je.ValueKind == JsonValueKind.String => je.GetString(),
+                        _                  => guidRaw?.ToString()
+                    };
+                    if(string.IsNullOrEmpty(guidStr) || !Guid.TryParse(guidStr, out Guid pendingGuid)) return;
+
+                    // If the cover field was accepted, the applier already promoted the file
+                    // (and removed the sidecar). Only sweep when it wasn't accepted.
+                    if(accepted.Contains(Suggestions.MagazineIssueSuggestionApplier.FieldCoverPendingGuid)) return;
+
+                    Marechai.Server.Helpers.PendingImageStore.Delete(_assetRootPath, "magazine-issue-covers", pendingGuid);
                     break;
                 }
             }
@@ -2381,6 +2586,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.DocumentSynopsis   => $"/document/{entityId}",
         SuggestionEntityType.Magazine           => $"/magazine/{entityId}",
         SuggestionEntityType.MagazineSynopsis   => $"/magazine/{entityId}",
+        SuggestionEntityType.MagazineIssue      => $"/magazine/issue/{entityId}",
         SuggestionEntityType.Gpu                => $"/gpu/{entityId}",
         SuggestionEntityType.GpuDescription     => $"/gpu/{entityId}",
         SuggestionEntityType.Processor          => $"/processor/{entityId}",

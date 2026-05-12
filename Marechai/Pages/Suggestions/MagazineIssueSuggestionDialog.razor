@@ -1,0 +1,882 @@
+@using System
+@using System.Globalization
+@using System.Linq
+@using System.Text.Json
+@using System.Threading
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@using Marechai.Services
+@using Marechai.Suggestions
+@using Marechai.Suggestions.Metadata
+@using Microsoft.JSInterop
+
+@inject IStringLocalizer<MagazinesService> L
+@inject ISnackbar           Snackbar
+@inject MagazinesService    MagazinesService
+@inject SuggestionsService  SuggestionsService
+@inject IJSRuntime          JS
+@inject TokenProvider       TokenProvider
+@inject ApiAssetUrlProvider ApiAssetUrls
+
+@*
+    Dedicated suggestion dialog for editing a MagazineIssue. Mirrors BookSuggestionDialog
+    minus the Book-only scalars (title/sort_title/isbn/edition/country_id/previous_id/source_id)
+    and minus the parent magazine_id (admin-only re-parenting). The 4 junctions are People,
+    Machines, MachineFamilies, Software (the latter replaces Book's Companies group). Each
+    junction add/remove operation is queued in local state and serialised under a unique
+    field-name key (<group>.add.<uuid> or <group>.remove.<row_id>) so the admin can later
+    accept or reject each operation independently in the diff panel.
+*@
+
+<MudDialog>
+    <DialogContent>
+        @if(_loading)
+        {
+            <MudProgressLinear Indeterminate="true"/>
+        }
+        else
+        {
+            <MudText Typo="Typo.body2" Class="mb-3">
+                @L["Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently."]
+            </MudText>
+
+            @* ── Read-only parent magazine context (admin-only re-parenting) ── *@
+            @if(!string.IsNullOrEmpty(_magazineTitle))
+            {
+                <MudAlert Severity="Severity.Info" Class="mb-3" Dense="true">
+                    @string.Format(L["Issue of magazine: {0}"], _magazineTitle)
+                </MudAlert>
+            }
+
+            @* ── Scalar fields ── *@
+            <MudPaper Outlined="true" Class="pa-3 mb-3">
+                <MudText Typo="Typo.h6" Class="mb-2">@L["General"]</MudText>
+
+                <MudTextField T="string" Label="@L["Caption"]"
+                              MaxLength="255"
+                              Value="@_caption"
+                              ValueChanged="@(v => { _caption = v; })"
+                              Required="true"
+                              Class="mb-3"/>
+
+                <MudTextField T="string" Label="@L["Native caption"]"
+                              MaxLength="255"
+                              Value="@_nativeCaption"
+                              ValueChanged="@(v => { _nativeCaption = v; })"
+                              Class="mb-3"/>
+
+                <MudStack Row="true" Spacing="2" Class="mb-3">
+                    <MudNumericField T="int?" Label="@L["Issue number"]" Value="@_issueNumber"
+                                     ValueChanged="@(v => { _issueNumber = v; })" Min="0" Clearable="true" Style="flex: 1;"/>
+                    <MudNumericField T="int?" Label="@L["Pages"]" Value="@_pages"
+                                     ValueChanged="@(v => { _pages = v; })" Min="0" Clearable="true" Style="flex: 1;"/>
+                </MudStack>
+
+                <MudTextField T="string" Label="@L["Product code"]"
+                              MaxLength="18"
+                              Value="@_productCode"
+                              ValueChanged="@(v => { _productCode = v; })"
+                              Class="mb-3"/>
+
+                <MudDatePicker Label="@L["Published"]" Editable="true" Clearable="true"
+                               Date="@_published"
+                               DateChanged="@(d => { _published = d; })" Class="mb-3"/>
+
+                <MudSelect T="int" Label="@L["Date precision"]"
+                           Value="@_publishedPrecision"
+                           ValueChanged="@(v => { _publishedPrecision = v; })" Class="mb-3">
+                    <MudSelectItem T="int" Value="0">@L["Full date"]</MudSelectItem>
+                    <MudSelectItem T="int" Value="1">@L["Month and year only"]</MudSelectItem>
+                    <MudSelectItem T="int" Value="2">@L["Year only"]</MudSelectItem>
+                </MudSelect>
+
+                <MudTextField T="string" Label="@L["Internet Archive URL"]"
+                              MaxLength="2048"
+                              Value="@_internetArchiveUrl"
+                              ValueChanged="@(v => { _internetArchiveUrl = v; })"/>
+            </MudPaper>
+
+            @* ── Cover ── *@
+            <MudPaper Outlined="true" Class="pa-3 mb-3">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-2">
+                    <MudText Typo="Typo.h6">@L["Cover"]</MudText>
+                </MudStack>
+                <MudText Typo="Typo.caption" Class="mb-2">
+                    @L["Allowed: JPG, PNG, WebP up to 50 MB. The image is uploaded directly to the API for review and only takes effect once an administrator accepts the suggestion."]
+                </MudText>
+
+                @* Plain HTML file input — uploaded directly to the API via JS interop
+                   (NOT Blazor's <InputFile>, which would round-trip the file through
+                   the SignalR circuit and double the bandwidth). The input is hidden
+                   and triggered by the buttons below. *@
+                <input type="file" id="@_coverInputId" accept="image/jpeg,image/png,image/webp" style="display:none"
+                       @onchange="OnCoverInputChanged"/>
+
+                @if(string.IsNullOrEmpty(_pendingCoverGuid))
+                {
+                    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.UploadFile"
+                               Disabled="@_uploadingCover" OnClick="TriggerCoverPicker">
+                        @if(_uploadingCover)
+                        {
+                            <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
+                        }
+                        @L["Upload cover"]
+                    </MudButton>
+                }
+                else
+                {
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                        <img id="@_coverImgId" alt="Pending cover" style="max-height: 120px; max-width: 90px; object-fit: contain; border-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.2);"/>
+                        <MudStack Spacing="1">
+                            <MudText Typo="Typo.body2"><strong>@_pendingCoverFilename</strong></MudText>
+                            <MudStack Row="true" Spacing="1">
+                                <MudButton Size="Size.Small" Variant="Variant.Outlined"
+                                           StartIcon="@Icons.Material.Filled.SwapHoriz"
+                                           Disabled="@_uploadingCover" OnClick="TriggerCoverPicker">@L["Replace cover"]</MudButton>
+                                <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Error"
+                                           StartIcon="@Icons.Material.Filled.Delete"
+                                           Disabled="@_uploadingCover" OnClick="RemovePendingCover">@L["Remove"]</MudButton>
+                            </MudStack>
+                        </MudStack>
+                    </MudStack>
+                }
+
+                @if(!string.IsNullOrEmpty(_coverError))
+                {
+                    <MudAlert Severity="Severity.Error" Class="mt-2">@_coverError</MudAlert>
+                }
+            </MudPaper>
+
+            @* ── Junctions ── *@
+            <MudExpansionPanels MultiExpansion="true" Class="mb-3">
+
+                @* People *@
+                <MudExpansionPanel Text="@($"{L["People"]} ({CountActive(_peopleRows, _peopleRemoves) + _peopleAdds.Count})")"
+                                   Expanded="@HasOps(_peopleAdds, _peopleRemoves)">
+                    @foreach(PersonByMagazineDto p in _peopleRows ?? new())
+                    {
+                        bool removed = _peopleRemoves.Contains(p.Id ?? 0);
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText Style="@(removed ? "text-decoration: line-through;" : "")">@FormatPerson(p)</MudText>
+                            @if(removed)
+                            {
+                                <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                           OnClick="@(() => UndoRemove(_peopleRemoves, p.Id ?? 0))">@L["Undo"]</MudButton>
+                            }
+                            else
+                            {
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                               OnClick="@(() => MarkRemove(_peopleRemoves, p.Id ?? 0))"/>
+                            }
+                        </MudStack>
+                    }
+                    @foreach(KeyValuePair<string, JunctionAddState> kv in _peopleAdds)
+                    {
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText><strong>+ @kv.Value.Display</strong></MudText>
+                            <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                       OnClick="@(() => _peopleAdds.Remove(kv.Key))">@L["Undo"]</MudButton>
+                        </MudStack>
+                    }
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-2">
+                        <MudAutocomplete T="PersonDto" Value="@_pickPerson" ValueChanged="@(p => { _pickPerson = p; })"
+                                         SearchFunc="SearchPeople" Clearable="true"
+                                         ToStringFunc="@(p => p is null ? string.Empty : FormatPersonDto(p))"
+                                         Style="flex: 1;"/>
+                        <MudSelect T="DocumentRoleDto" Value="@_pickPersonRole" ValueChanged="@(r => { _pickPersonRole = r; })"
+                                   Label="@L["Role"]" Style="max-width: 200px;"
+                                   ToStringFunc="@(r => r?.Name ?? string.Empty)">
+                            @foreach(DocumentRoleDto role in _roles ?? new())
+                            {
+                                <MudSelectItem T="DocumentRoleDto" Value="role">@role.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
+                                   OnClick="AddPerson"
+                                   Disabled="@(_pickPerson is null || _pickPersonRole is null)">@L["Add person"]</MudButton>
+                    </MudStack>
+                </MudExpansionPanel>
+
+                @* Machines *@
+                <MudExpansionPanel Text="@($"{L["Machines"]} ({CountActive(_machineRows, _machineRemoves) + _machineAdds.Count})")"
+                                   Expanded="@HasOps(_machineAdds, _machineRemoves)">
+                    @foreach(MagazineByMachineDto m in _machineRows ?? new())
+                    {
+                        bool removed = _machineRemoves.Contains(m.Id ?? 0);
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText Style="@(removed ? "text-decoration: line-through;" : "")">@(m.Machine ?? $"#{m.MachineId}")</MudText>
+                            @if(removed)
+                            {
+                                <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                           OnClick="@(() => UndoRemove(_machineRemoves, m.Id ?? 0))">@L["Undo"]</MudButton>
+                            }
+                            else
+                            {
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                               OnClick="@(() => MarkRemove(_machineRemoves, m.Id ?? 0))"/>
+                            }
+                        </MudStack>
+                    }
+                    @foreach(KeyValuePair<string, JunctionAddState> kv in _machineAdds)
+                    {
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText><strong>+ @kv.Value.Display</strong></MudText>
+                            <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                       OnClick="@(() => _machineAdds.Remove(kv.Key))">@L["Undo"]</MudButton>
+                        </MudStack>
+                    }
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-2">
+                        <MudAutocomplete T="MachineDto" Value="@_pickMachine" ValueChanged="@(m => { _pickMachine = m; })"
+                                         SearchFunc="SearchMachines" Clearable="true"
+                                         ToStringFunc="@(m => m?.Name ?? string.Empty)"
+                                         Style="flex: 1;"/>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
+                                   OnClick="AddMachine"
+                                   Disabled="@(_pickMachine is null)">@L["Add machine"]</MudButton>
+                    </MudStack>
+                </MudExpansionPanel>
+
+                @* Machine Families *@
+                <MudExpansionPanel Text="@($"{L["Machine families"]} ({CountActive(_machineFamilyRows, _machineFamilyRemoves) + _machineFamilyAdds.Count})")"
+                                   Expanded="@HasOps(_machineFamilyAdds, _machineFamilyRemoves)">
+                    @foreach(MagazineByMachineFamilyDto f in _machineFamilyRows ?? new())
+                    {
+                        bool removed = _machineFamilyRemoves.Contains(f.Id ?? 0);
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText Style="@(removed ? "text-decoration: line-through;" : "")">@(f.MachineFamily ?? $"#{f.MachineFamilyId}")</MudText>
+                            @if(removed)
+                            {
+                                <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                           OnClick="@(() => UndoRemove(_machineFamilyRemoves, f.Id ?? 0))">@L["Undo"]</MudButton>
+                            }
+                            else
+                            {
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                               OnClick="@(() => MarkRemove(_machineFamilyRemoves, f.Id ?? 0))"/>
+                            }
+                        </MudStack>
+                    }
+                    @foreach(KeyValuePair<string, JunctionAddState> kv in _machineFamilyAdds)
+                    {
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText><strong>+ @kv.Value.Display</strong></MudText>
+                            <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                       OnClick="@(() => _machineFamilyAdds.Remove(kv.Key))">@L["Undo"]</MudButton>
+                        </MudStack>
+                    }
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-2">
+                        <MudAutocomplete T="MachineFamilyDto" Value="@_pickMachineFamily" ValueChanged="@(f => { _pickMachineFamily = f; })"
+                                         SearchFunc="SearchMachineFamilies" Clearable="true"
+                                         ToStringFunc="@(f => f?.Name ?? string.Empty)"
+                                         Style="flex: 1;"/>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
+                                   OnClick="AddMachineFamily"
+                                   Disabled="@(_pickMachineFamily is null)">@L["Add machine family"]</MudButton>
+                    </MudStack>
+                </MudExpansionPanel>
+
+                @* Software *@
+                <MudExpansionPanel Text="@($"{L["Software"]} ({CountActive(_softwareRows, _softwareRemoves) + _softwareAdds.Count})")"
+                                   Expanded="@HasOps(_softwareAdds, _softwareRemoves)">
+                    @foreach(MagazineBySoftwareDto s in _softwareRows ?? new())
+                    {
+                        bool removed = _softwareRemoves.Contains(s.Id ?? 0);
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText Style="@(removed ? "text-decoration: line-through;" : "")">@(s.Software ?? $"#{s.SoftwareId}")</MudText>
+                            @if(removed)
+                            {
+                                <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                           OnClick="@(() => UndoRemove(_softwareRemoves, s.Id ?? 0))">@L["Undo"]</MudButton>
+                            }
+                            else
+                            {
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                               OnClick="@(() => MarkRemove(_softwareRemoves, s.Id ?? 0))"/>
+                            }
+                        </MudStack>
+                    }
+                    @foreach(KeyValuePair<string, JunctionAddState> kv in _softwareAdds)
+                    {
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText><strong>+ @kv.Value.Display</strong></MudText>
+                            <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                       OnClick="@(() => _softwareAdds.Remove(kv.Key))">@L["Undo"]</MudButton>
+                        </MudStack>
+                    }
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-2">
+                        <MudAutocomplete T="SoftwareDto" Value="@_pickSoftware" ValueChanged="@(s => { _pickSoftware = s; })"
+                                         SearchFunc="SearchSoftware" Clearable="true"
+                                         ToStringFunc="@(s => s?.Name ?? string.Empty)"
+                                         Style="flex: 1;"/>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
+                                   OnClick="AddSoftware"
+                                   Disabled="@(_pickSoftware is null)">@L["Add software"]</MudButton>
+                    </MudStack>
+                </MudExpansionPanel>
+
+            </MudExpansionPanels>
+
+            <MudTextField T="string" Label="@L["Optional comment (References, sources, etc...)"]" Lines="2"
+                          MaxLength="2000" @bind-Value="_userComment"/>
+
+            @if(!string.IsNullOrWhiteSpace(_validationError))
+            {
+                <MudAlert Severity="Severity.Error" Class="mt-2">@_validationError</MudAlert>
+            }
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit"
+                   Disabled="@(_loading || _submitting || !HasAnyChange())">
+            @if(_submitting)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true"/>
+            }
+            else
+            {
+                @L["Submit suggestion"]
+            }
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code
+{
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public long             EntityId   { get; set; }
+    [Parameter] public MagazineIssueDto CurrentDto { get; set; }
+
+    sealed class JunctionAddState
+    {
+        public Dictionary<string, object> Payload { get; set; }
+        public string                     Display { get; set; }
+    }
+
+    bool _loading = true;
+    bool _submitting;
+    string _validationError;
+    string _userComment;
+
+    // Read-only parent magazine context (admin-only re-parenting)
+    string _magazineTitle;
+
+    // Scalar state (mirrors the original CurrentDto values; diff'd at submit time)
+    string    _caption;
+    string    _nativeCaption;
+    int?      _issueNumber;
+    int?      _pages;
+    string    _productCode;
+    DateTime? _published;
+    int       _publishedPrecision;
+    string    _internetArchiveUrl;
+
+    // Snapshot of the original scalar values (for diff computation at Submit time)
+    string    _orig_caption;
+    string    _orig_nativeCaption;
+    int?      _orig_issueNumber;
+    int?      _orig_pages;
+    string    _orig_productCode;
+    DateTime? _orig_published;
+    int       _orig_publishedPrecision;
+    string    _orig_internetArchiveUrl;
+
+    // Picker source lists
+    List<PersonDto>          _allPeople;
+    List<MachineDto>         _allMachines;
+    List<MachineFamilyDto>   _allMachineFamilies;
+    List<SoftwareDto>        _allSoftware;
+    List<DocumentRoleDto>    _roles;
+
+    // Existing junction rows
+    List<PersonByMagazineDto>         _peopleRows;
+    List<MagazineByMachineDto>        _machineRows;
+    List<MagazineByMachineFamilyDto>  _machineFamilyRows;
+    List<MagazineBySoftwareDto>       _softwareRows;
+
+    // Pending operations: removes (set of existing row ids) + adds (uuid → state)
+    HashSet<long> _peopleRemoves        = new();
+    HashSet<long> _machineRemoves       = new();
+    HashSet<long> _machineFamilyRemoves = new();
+    HashSet<long> _softwareRemoves      = new();
+
+    Dictionary<string, JunctionAddState> _peopleAdds        = new();
+    Dictionary<string, JunctionAddState> _machineAdds       = new();
+    Dictionary<string, JunctionAddState> _machineFamilyAdds = new();
+    Dictionary<string, JunctionAddState> _softwareAdds      = new();
+
+    // Picker state
+    PersonDto         _pickPerson;
+    DocumentRoleDto   _pickPersonRole;
+    MachineDto        _pickMachine;
+    MachineFamilyDto  _pickMachineFamily;
+    SoftwareDto       _pickSoftware;
+
+    // Cover-pending state. Upload is direct browser → API (single hop) via the
+    // pending-cover.js JS interop helper. The dialog only stores the returned guid +
+    // extension; the actual file lives on the API server until accepted/rejected.
+    string _coverInputId      = $"cover-input-{Guid.NewGuid():N}";
+    string _coverImgId        = $"cover-img-{Guid.NewGuid():N}";
+    string _pendingCoverGuid;
+    string _pendingCoverExtension;
+    string _pendingCoverFilename;
+    bool   _uploadingCover;
+    string _coverError;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Seed scalar state from the current DTO snapshot.
+        if(CurrentDto is not null)
+        {
+            _caption                 = CurrentDto.Caption;
+            _nativeCaption           = CurrentDto.NativeCaption;
+            _issueNumber             = (int?)CurrentDto.IssueNumber;
+            _pages                   = CurrentDto.Pages;
+            _productCode             = CurrentDto.ProductCode;
+            _published               = CurrentDto.Published?.UtcDateTime;
+            _publishedPrecision      = CurrentDto.PublishedPrecision ?? 0;
+            _internetArchiveUrl      = CurrentDto.InternetArchiveUrl;
+            _magazineTitle           = CurrentDto.MagazineTitle;
+
+            _orig_caption            = _caption;
+            _orig_nativeCaption      = _nativeCaption;
+            _orig_issueNumber        = _issueNumber;
+            _orig_pages              = _pages;
+            _orig_productCode        = _productCode;
+            _orig_published          = _published;
+            _orig_publishedPrecision = _publishedPrecision;
+            _orig_internetArchiveUrl = _internetArchiveUrl;
+        }
+
+        Task<List<PersonDto>>                    allPeopleT     = MagazinesService.GetAllPeopleAsync();
+        Task<List<MachineDto>>                   allMachinesT   = MagazinesService.GetAllMachinesAsync();
+        Task<List<MachineFamilyDto>>             allFamiliesT   = MagazinesService.GetAllMachineFamiliesAsync();
+        Task<List<SoftwareDto>>                  allSoftwareT   = MagazinesService.GetAllSoftwareAsync();
+        Task<List<DocumentRoleDto>>              rolesT         = MagazinesService.GetDocumentRolesAsync();
+        // Note: these "by Magazine" methods actually fetch by MagazineIssue id — the
+        // junction-table FK column is named MagazineId for historical reasons but points
+        // to MagazineIssue.Id. See MagazineIssueSuggestionApplier for details.
+        Task<List<PersonByMagazineDto>>          peopleByT      = MagazinesService.GetPeopleByMagazineAsync(EntityId);
+        Task<List<MagazineByMachineDto>>         machinesByT    = MagazinesService.GetMachinesByMagazineAsync(EntityId);
+        Task<List<MagazineByMachineFamilyDto>>   familiesByT    = MagazinesService.GetMachineFamiliesByMagazineAsync(EntityId);
+        Task<List<MagazineBySoftwareDto>>        softwareByT    = MagazinesService.GetSoftwareByMagazineAsync(EntityId);
+
+        await Task.WhenAll(allPeopleT, allMachinesT, allFamiliesT, allSoftwareT, rolesT,
+                           peopleByT, machinesByT, familiesByT, softwareByT);
+
+        _allPeople           = allPeopleT.Result;
+        _allMachines         = allMachinesT.Result;
+        _allMachineFamilies  = allFamiliesT.Result;
+        _allSoftware         = allSoftwareT.Result;
+        _roles               = rolesT.Result;
+
+        _peopleRows          = peopleByT.Result;
+        _machineRows         = machinesByT.Result;
+        _machineFamilyRows   = familiesByT.Result;
+        _softwareRows        = softwareByT.Result;
+
+        _loading = false;
+    }
+
+    // ───────────────────────────── Search functions ─────────────────────────────
+
+    Task<IEnumerable<PersonDto>> SearchPeople(string value, CancellationToken ct)
+    {
+        IEnumerable<PersonDto> r = _allPeople ?? [];
+        if(!string.IsNullOrWhiteSpace(value))
+            r = r.Where(p => FormatPersonDto(p).Contains(value, StringComparison.OrdinalIgnoreCase));
+        return Task.FromResult(r.Take(50));
+    }
+
+    Task<IEnumerable<MachineDto>> SearchMachines(string value, CancellationToken ct)
+    {
+        // Dedup against existing rows minus removed plus pending adds — same machine cannot
+        // be linked twice to the same issue.
+        HashSet<int?> assigned = new(GetEffectiveIds(_machineRows, _machineRemoves,
+                                                     m => m.MachineId,
+                                                     _machineAdds,
+                                                     p => GetIntField(p, "machine_id")));
+        IEnumerable<MachineDto> r = (_allMachines ?? []).Where(m => !assigned.Contains(m.Id));
+        if(!string.IsNullOrWhiteSpace(value))
+            r = r.Where(m => m.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
+        return Task.FromResult(r.Take(50));
+    }
+
+    Task<IEnumerable<MachineFamilyDto>> SearchMachineFamilies(string value, CancellationToken ct)
+    {
+        HashSet<int?> assigned = new(GetEffectiveIds(_machineFamilyRows, _machineFamilyRemoves,
+                                                     f => f.MachineFamilyId,
+                                                     _machineFamilyAdds,
+                                                     p => GetIntField(p, "machine_family_id")));
+        IEnumerable<MachineFamilyDto> r = (_allMachineFamilies ?? []).Where(f => !assigned.Contains(f.Id));
+        if(!string.IsNullOrWhiteSpace(value))
+            r = r.Where(f => f.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
+        return Task.FromResult(r.Take(50));
+    }
+
+    Task<IEnumerable<SoftwareDto>> SearchSoftware(string value, CancellationToken ct)
+    {
+        HashSet<int?> assigned = new(GetEffectiveIds(_softwareRows, _softwareRemoves,
+                                                     s => s.SoftwareId,
+                                                     _softwareAdds,
+                                                     p => GetIntField(p, "software_id")));
+        IEnumerable<SoftwareDto> r = (_allSoftware ?? []).Where(s => !assigned.Contains(s.Id));
+        if(!string.IsNullOrWhiteSpace(value))
+            r = r.Where(s => s.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
+        return Task.FromResult(r.Take(50));
+    }
+
+    static IEnumerable<int?> GetEffectiveIds<T>(List<T> rows, HashSet<long> removes,
+                                                Func<T, int?> idSelector,
+                                                Dictionary<string, JunctionAddState> adds,
+                                                Func<Dictionary<string, object>, int?> addIdSelector) where T : class
+    {
+        if(rows is not null)
+            foreach(T r in rows)
+            {
+                long rowId = (r as dynamic).Id ?? 0L;
+                if(rowId != 0 && removes.Contains(rowId)) continue;
+                int? id = idSelector(r);
+                if(id.HasValue) yield return id;
+            }
+
+        if(adds is not null)
+            foreach(JunctionAddState a in adds.Values)
+            {
+                int? id = addIdSelector(a.Payload);
+                if(id.HasValue) yield return id;
+            }
+    }
+
+    static int? GetIntField(Dictionary<string, object> payload, string key)
+    {
+        if(payload is null || !payload.TryGetValue(key, out object v) || v is null) return null;
+        return v switch
+        {
+            int i      => i,
+            long l     => (int?)l,
+            short s    => s,
+            string str => int.TryParse(str, NumberStyles.Integer, CultureInfo.InvariantCulture, out int p) ? p : null,
+            _          => null
+        };
+    }
+
+    // ───────────────────────────── Format helpers ─────────────────────────────
+
+    static string FormatPersonDto(PersonDto p) =>
+        !string.IsNullOrEmpty(p?.DisplayName) ? p.DisplayName
+        : !string.IsNullOrEmpty(p?.Alias) ? p.Alias
+        : $"{p?.Name} {p?.Surname}".Trim();
+
+    static string FormatPerson(PersonByMagazineDto p)
+    {
+        string name = !string.IsNullOrEmpty(p.DisplayName) ? p.DisplayName
+                    : !string.IsNullOrEmpty(p.Alias) ? p.Alias
+                    : $"{p.Name} {p.Surname}".Trim();
+        return string.IsNullOrEmpty(p.Role) ? name : $"{name} ({p.Role})";
+    }
+
+    // ───────────────────────────── Junction queue helpers ─────────────────────────────
+
+    void MarkRemove(HashSet<long> set, long id)
+    {
+        if(id == 0) return;
+        set.Add(id);
+    }
+
+    void UndoRemove(HashSet<long> set, long id) => set.Remove(id);
+
+    static int CountActive<T>(List<T> rows, HashSet<long> removes) where T : class
+    {
+        if(rows is null) return 0;
+        int n = 0;
+        foreach(T r in rows)
+        {
+            long id = (r as dynamic).Id ?? 0L;
+            if(id == 0 || !removes.Contains(id)) n++;
+        }
+        return n;
+    }
+
+    static bool HasOps(Dictionary<string, JunctionAddState> adds, HashSet<long> removes) =>
+        (adds is { Count: > 0 }) || (removes is { Count: > 0 });
+
+    static string NewKey(string group, string op) => $"{group}.{op}.{Guid.NewGuid():N}";
+
+    // ───────────────────────────── Add handlers ─────────────────────────────
+
+    void AddPerson()
+    {
+        if(_pickPerson is null || _pickPersonRole is null) return;
+        string key = NewKey(MagazineIssueSuggestionMetadata.GroupPeople, "add");
+        var payload = new Dictionary<string, object>(StringComparer.Ordinal)
+        {
+            ["person_id"] = _pickPerson.Id,
+            ["role_id"]   = _pickPersonRole.Id
+        };
+        _peopleAdds[key] = new JunctionAddState
+        {
+            Payload = payload,
+            Display = $"{FormatPersonDto(_pickPerson)} ({_pickPersonRole.Name})"
+        };
+        _pickPerson     = null;
+        _pickPersonRole = null;
+    }
+
+    void AddMachine()
+    {
+        if(_pickMachine is null) return;
+        string key = NewKey(MagazineIssueSuggestionMetadata.GroupMachines, "add");
+        _machineAdds[key] = new JunctionAddState
+        {
+            Payload = new Dictionary<string, object>(StringComparer.Ordinal) { ["machine_id"] = _pickMachine.Id },
+            Display = _pickMachine.Name ?? string.Empty
+        };
+        _pickMachine = null;
+    }
+
+    void AddMachineFamily()
+    {
+        if(_pickMachineFamily is null) return;
+        string key = NewKey(MagazineIssueSuggestionMetadata.GroupMachineFamilies, "add");
+        _machineFamilyAdds[key] = new JunctionAddState
+        {
+            Payload = new Dictionary<string, object>(StringComparer.Ordinal) { ["machine_family_id"] = _pickMachineFamily.Id },
+            Display = _pickMachineFamily.Name ?? string.Empty
+        };
+        _pickMachineFamily = null;
+    }
+
+    void AddSoftware()
+    {
+        if(_pickSoftware is null) return;
+        string key = NewKey(MagazineIssueSuggestionMetadata.GroupSoftware, "add");
+        _softwareAdds[key] = new JunctionAddState
+        {
+            Payload = new Dictionary<string, object>(StringComparer.Ordinal) { ["software_id"] = _pickSoftware.Id },
+            Display = _pickSoftware.Name ?? string.Empty
+        };
+        _pickSoftware = null;
+    }
+
+    // ───────────────────────────── Cover upload (direct browser → API) ─────────────────────────────
+
+    /// <summary>
+    ///     Trigger the hidden &lt;input type="file"&gt; via a JS click. Cleaner UX than
+    ///     rendering a raw file input next to the styled buttons.
+    /// </summary>
+    async Task TriggerCoverPicker()
+    {
+        _coverError = null;
+        try { await JS.InvokeVoidAsync("MarechaiPendingCover.clickInput", _coverInputId); }
+        catch(Exception ex) { _coverError = ex.Message; }
+    }
+
+    /// <summary>
+    ///     Fired by the @onchange on the hidden &lt;input type="file"&gt; right after the user
+    ///     selects a file. The actual upload happens in JS so the file bytes go directly to
+    ///     the API server (single hop) instead of being relayed through SignalR. The Blazor
+    ///     side just receives the resulting {guid, extension} for the diff payload.
+    /// </summary>
+    async Task OnCoverInputChanged()
+    {
+        _coverError = null;
+        _uploadingCover = true;
+        StateHasChanged();
+
+        try
+        {
+            string token = await TokenProvider.GetTokenAsync();
+            if(string.IsNullOrEmpty(token))
+            {
+                _coverError = L["You must be signed in to upload a cover."];
+                return;
+            }
+
+            string oldGuid = _pendingCoverGuid;
+
+            UploadResult res = await JS.InvokeAsync<UploadResult>(
+                "MarechaiPendingCover.uploadMagazineIssueCover",
+                ApiAssetUrls.BaseUrl, token, EntityId, _coverInputId);
+
+            if(res is null || !res.ok || string.IsNullOrEmpty(res.guid))
+            {
+                _coverError = string.IsNullOrEmpty(res?.error) ? L["Cover upload failed."].Value : res.error;
+                return;
+            }
+
+            _pendingCoverGuid      = res.guid;
+            _pendingCoverExtension = res.extension ?? string.Empty;
+            _pendingCoverFilename  = $"{res.guid[..8]}…{(_pendingCoverExtension is { Length: > 0 } ? "." + _pendingCoverExtension : string.Empty)}";
+
+            // After Blazor re-renders the <img> element appears; apply the blob now.
+            StateHasChanged();
+            await Task.Yield();
+            await JS.InvokeVoidAsync("MarechaiPendingCover.applyPendingMagazineIssueCoverImage",
+                                     ApiAssetUrls.BaseUrl, token, _pendingCoverGuid, _coverImgId);
+
+            // Note: the server already deleted the prior pending file for this (user, issue)
+            // pair on the new upload, so we don't need to call deletePending for oldGuid.
+            _ = oldGuid;
+        }
+        catch(Exception ex)
+        {
+            _coverError = ex.Message;
+        }
+        finally
+        {
+            _uploadingCover = false;
+            StateHasChanged();
+        }
+    }
+
+    /// <summary>
+    ///     Drop the pending cover from this in-flight suggestion. Tells the API to delete
+    ///     the file too so we don't leak storage on cancel.
+    /// </summary>
+    async Task RemovePendingCover()
+    {
+        _coverError = null;
+        if(string.IsNullOrEmpty(_pendingCoverGuid)) return;
+
+        string guidToDelete = _pendingCoverGuid;
+        _pendingCoverGuid = null;
+        _pendingCoverExtension = null;
+        _pendingCoverFilename = null;
+        StateHasChanged();
+
+        try
+        {
+            string token = await TokenProvider.GetTokenAsync();
+            if(!string.IsNullOrEmpty(token))
+                await JS.InvokeAsync<UploadResult>(
+                    "MarechaiPendingCover.deletePendingMagazineIssueCover",
+                    ApiAssetUrls.BaseUrl, token, guidToDelete);
+        }
+        catch
+        {
+            // best-effort — orphan-sweep on review will catch leftovers
+        }
+    }
+
+    sealed class UploadResult
+    {
+        public bool   ok        { get; set; }
+        public int    status    { get; set; }
+        public string guid      { get; set; }
+        public string extension { get; set; }
+        public string error     { get; set; }
+    }
+
+    // ───────────────────────────── Submit ─────────────────────────────
+
+    bool HasAnyChange()
+    {
+        if(!Equals(_orig_caption, _caption)) return true;
+        if(!Equals(_orig_nativeCaption, _nativeCaption)) return true;
+        if(!Nullable.Equals(_orig_issueNumber, _issueNumber)) return true;
+        if(!Nullable.Equals(_orig_pages, _pages)) return true;
+        if(!Equals(_orig_productCode, _productCode)) return true;
+        if(!Nullable.Equals(_orig_published, _published)) return true;
+        if(_orig_publishedPrecision != _publishedPrecision) return true;
+        if(!Equals(_orig_internetArchiveUrl, _internetArchiveUrl)) return true;
+
+        if(_peopleAdds.Count + _machineAdds.Count + _machineFamilyAdds.Count + _softwareAdds.Count > 0) return true;
+        if(_peopleRemoves.Count + _machineRemoves.Count + _machineFamilyRemoves.Count + _softwareRemoves.Count > 0) return true;
+
+        if(!string.IsNullOrEmpty(_pendingCoverGuid)) return true;
+
+        return false;
+    }
+
+    void Cancel() => MudDialog.Cancel();
+
+    async Task Submit()
+    {
+        _validationError = null;
+        if(_loading) return;
+
+        // Caption is required: never let the user clear it.
+        if(string.IsNullOrWhiteSpace(_caption))
+        {
+            _validationError = L["Caption is required."];
+            return;
+        }
+
+        // Product code length validation if provided.
+        if(!string.IsNullOrWhiteSpace(_productCode) && _productCode.Trim().Length > 18)
+        {
+            _validationError = L["Product code must be at most 18 characters."];
+            return;
+        }
+
+        var diff = new Dictionary<string, object>(StringComparer.Ordinal);
+
+        if(!Equals(_orig_caption, _caption))             diff[MagazineIssueSuggestionMetadata.FieldCaption]       = _caption;
+        if(!Equals(_orig_nativeCaption, _nativeCaption)) diff[MagazineIssueSuggestionMetadata.FieldNativeCaption] = _nativeCaption;
+        if(!Nullable.Equals(_orig_issueNumber, _issueNumber)) diff[MagazineIssueSuggestionMetadata.FieldIssueNumber] = _issueNumber;
+        if(!Nullable.Equals(_orig_pages, _pages))             diff[MagazineIssueSuggestionMetadata.FieldPages]       = _pages;
+        if(!Equals(_orig_productCode, _productCode))          diff[MagazineIssueSuggestionMetadata.FieldProductCode] = _productCode;
+        if(!Nullable.Equals(_orig_published, _published))
+            diff[MagazineIssueSuggestionMetadata.FieldPublished] = _published?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        if(_orig_publishedPrecision != _publishedPrecision)
+            diff[MagazineIssueSuggestionMetadata.FieldPublishedPrecision] = _publishedPrecision;
+        if(!Equals(_orig_internetArchiveUrl, _internetArchiveUrl))
+            diff[MagazineIssueSuggestionMetadata.FieldInternetArchiveUrl] = _internetArchiveUrl;
+
+        // Cover-pending: emit the guid only. The applier reads the extension from the
+        // pending-image sidecar (so we don't need to round-trip it on the wire).
+        if(!string.IsNullOrEmpty(_pendingCoverGuid))
+            diff[MagazineIssueSuggestionMetadata.FieldCoverPendingGuid] = _pendingCoverGuid;
+
+        AddJunctionOps(diff, _peopleAdds,        _peopleRemoves,        MagazineIssueSuggestionMetadata.GroupPeople);
+        AddJunctionOps(diff, _machineAdds,       _machineRemoves,       MagazineIssueSuggestionMetadata.GroupMachines);
+        AddJunctionOps(diff, _machineFamilyAdds, _machineFamilyRemoves, MagazineIssueSuggestionMetadata.GroupMachineFamilies);
+        AddJunctionOps(diff, _softwareAdds,      _softwareRemoves,      MagazineIssueSuggestionMetadata.GroupSoftware);
+
+        if(diff.Count == 0)
+        {
+            _validationError = L["No changes detected — modify at least one field before submitting."];
+            return;
+        }
+
+        _submitting = true;
+        try
+        {
+            string json = JsonSerializer.Serialize(diff);
+            var dto = new SuggestionDto
+            {
+                EntityType          = (int?)SuggestionEntityType.MagazineIssue,
+                EntityId            = EntityId,
+                Status              = (int?)SuggestionStatus.Pending,
+                UserComment         = string.IsNullOrWhiteSpace(_userComment) ? null : _userComment.Trim(),
+                SuggestedValuesJson = json
+            };
+
+            var (created, error) = await SuggestionsService.CreateAsync(dto);
+
+            if(created is null)
+            {
+                _validationError = string.IsNullOrWhiteSpace(error) ? L["Failed to submit suggestion."].Value : error;
+                return;
+            }
+
+            Snackbar.Add(L["Suggestion submitted. An administrator will review it."], Severity.Success);
+            MudDialog.Close(DialogResult.Ok(created));
+        }
+        finally
+        {
+            _submitting = false;
+        }
+    }
+
+    static void AddJunctionOps(Dictionary<string, object> diff,
+                               Dictionary<string, JunctionAddState> adds,
+                               HashSet<long> removes,
+                               string group)
+    {
+        foreach(KeyValuePair<string, JunctionAddState> kv in adds) diff[kv.Key] = kv.Value.Payload;
+        foreach(long id in removes) diff[$"{group}.remove.{id.ToString(CultureInfo.InvariantCulture)}"] = null;
+    }
+}

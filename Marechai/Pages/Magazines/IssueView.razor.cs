@@ -27,10 +27,12 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Marechai.Pages.Suggestions;
 using Marechai.Services;
 using Marechai.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using MudBlazor;
 
 namespace Marechai.Pages.Magazines;
 
@@ -135,4 +137,25 @@ public partial class IssueView
         1 => published.ToString("MMMM yyyy"),
         _ => published.DateTime.ToShortDateString()
     };
+
+    /// <summary>
+    /// Open the collaborative suggestion dialog scoped to this magazine issue. Captures
+    /// the route parameter <see cref="Id"/> directly (NOT <c>_issue.Id</c> — async race
+    /// lesson from the Book/Machine ports: the OwningComponentBase + async DTO load can
+    /// momentarily leave <c>_issue</c> null, and reading <c>.Value</c> off a nullable
+    /// would 0-cast and trigger the addition-suggestion path on the server (400).
+    /// </summary>
+    async Task OpenIssueSuggestionDialogAsync()
+    {
+        if(_issue is null) return;
+        long issueId = Id;
+        var parameters = new DialogParameters
+        {
+            ["EntityId"]   = issueId,
+            ["CurrentDto"] = _issue
+        };
+        var options = new DialogOptions { MaxWidth = MaxWidth.Large, FullWidth = true };
+        var dialog  = await DialogService.ShowAsync<MagazineIssueSuggestionDialog>(L["Suggest changes"], parameters, options);
+        await dialog.Result;
+    }
 }

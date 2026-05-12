@@ -314,9 +314,15 @@ public class MagazineIssuesController(
 
         if(item is null) return NotFound();
 
+        string entityName = item.Caption;
+
         context.MagazineIssues.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        // Cascade: mark stale every entity-level MagazineIssue suggestion for this issue.
+        await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntityAsync(
+            context, Marechai.Data.SuggestionEntityType.MagazineIssue, id, entityName);
 
         return Ok();
     }
@@ -494,5 +500,127 @@ public class MagazineIssuesController(
 
         foreach(string file in System.IO.Directory.GetFiles(directory, pattern))
             System.IO.File.Delete(file);
+    }
+
+    // ───────── Pending cover endpoints (collaborator suggestions) ─────────
+    // Mirror of BooksController.UploadPendingCoverAsync / GetPendingCoverAsync /
+    // DeletePendingCoverAsync. Each user gets at most ONE pending cover per issue in
+    // flight; the file lives under photos/magazine-issue-covers/pending/<guid>.<ext>
+    // with a sidecar JSON recording the uploader. On accept the
+    // MagazineIssueSuggestionApplier promotes the file into originals/ and runs the
+    // ConversionWorker for AVIF/JXL/WebP/JPEG variants.
+
+    /// <summary>
+    ///     Upload a pending cover for a magazine issue that the caller is suggesting an edit
+    ///     on. Accepts JPG/PNG/WebP up to 50 MB; the file is stored unchanged in
+    ///     <c>magazine-issue-covers/pending/&lt;guid&gt;.&lt;ext&gt;</c> with a sidecar JSON
+    ///     file recording the uploader. Auto-deletes any prior pending covers from the same
+    ///     uploader for the same issue so a user always has at most one pending cover per
+    ///     issue in flight. The returned <c>{guid, extension}</c> must be embedded in the
+    ///     <c>cover_pending_guid</c> field of the subsequent suggestion submission.
+    /// </summary>
+    [HttpPost("{id:long}/cover/pending")]
+    [Authorize]
+    [RequestSizeLimit(50 * 1024 * 1024)]
+    [ProducesResponseType(typeof(PendingImageUploadDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<PendingImageUploadDto>> UploadPendingCoverAsync(long id, IFormFile file)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        if(userId is null) return Unauthorized();
+
+        if(file is null || file.Length == 0)
+            return BadRequest("No file provided.");
+
+        if(file.Length > 50 * 1024 * 1024)
+            return BadRequest("File exceeds 50 MB limit.");
+
+        string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
+        if(!Marechai.Server.Helpers.PendingImageStore.AllowedExtensions.Contains(extension))
+            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP.");
+
+        if(!string.IsNullOrEmpty(file.ContentType) &&
+           !Marechai.Server.Helpers.PendingImageStore.AllowedContentTypes.Contains(file.ContentType.ToLowerInvariant()))
+            return BadRequest("Unsupported content type.");
+
+        // Verify the targeted issue exists; we don't want stray uploads for nonexistent ids.
+        bool issueExists = await context.MagazineIssues.AsNoTracking().AnyAsync(mi => mi.Id == id);
+        if(!issueExists) return NotFound();
+
+        // Cleanup: each user gets at most ONE pending cover per issue. Replace any prior
+        // upload before storing the new one.
+        Marechai.Server.Helpers.PendingImageStore.DeleteByUploaderForEntity(
+            _assetRootPath, "magazine-issue-covers", userId,
+            (byte)Marechai.Data.SuggestionEntityType.MagazineIssue, id);
+
+        await using var stream = file.OpenReadStream();
+        Guid guid = await Marechai.Server.Helpers.PendingImageStore.StoreAsync(
+            _assetRootPath, "magazine-issue-covers", extension,
+            (byte)Marechai.Data.SuggestionEntityType.MagazineIssue, id, userId,
+            file.ContentType, stream);
+
+        return Ok(new PendingImageUploadDto { Guid = guid, Extension = extension.TrimStart('.') });
+    }
+
+    /// <summary>
+    ///     Serve a pending magazine-issue cover image. Authorization: the uploader OR any
+    ///     admin/uberadmin can view (so the dialog preview works for the contributor and the
+    ///     review queue works for the moderator).
+    /// </summary>
+    [HttpGet("cover/pending/{guid:guid}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetPendingCoverAsync(Guid guid)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        if(userId is null) return Unauthorized();
+
+        var meta = await Marechai.Server.Helpers.PendingImageStore.GetMetadataAsync(
+            _assetRootPath, "magazine-issue-covers", guid);
+        if(meta is null) return NotFound();
+
+        bool isAdmin = User.IsInRole("Admin") || User.IsInRole("UberAdmin");
+        if(!Marechai.Server.Helpers.PendingImageStore.CanAccess(meta, userId, isAdmin))
+            return Forbid();
+
+        string filePath = await Marechai.Server.Helpers.PendingImageStore.GetImagePathAsync(
+            _assetRootPath, "magazine-issue-covers", guid);
+        if(filePath is null) return NotFound();
+
+        string contentType = !string.IsNullOrEmpty(meta.ContentType) ? meta.ContentType : "application/octet-stream";
+        return PhysicalFile(filePath, contentType);
+    }
+
+    /// <summary>
+    ///     Explicitly delete a pending magazine-issue cover (uploader OR admin). Useful for
+    ///     the "remove cover before submit" UX in the dialog and for admin-side cleanup of
+    ///     orphaned pending uploads.
+    /// </summary>
+    [HttpDelete("cover/pending/{guid:guid}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeletePendingCoverAsync(Guid guid)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        if(userId is null) return Unauthorized();
+
+        var meta = await Marechai.Server.Helpers.PendingImageStore.GetMetadataAsync(
+            _assetRootPath, "magazine-issue-covers", guid);
+        if(meta is null) return NotFound();
+
+        bool isAdmin = User.IsInRole("Admin") || User.IsInRole("UberAdmin");
+        if(!Marechai.Server.Helpers.PendingImageStore.CanAccess(meta, userId, isAdmin))
+            return Forbid();
+
+        Marechai.Server.Helpers.PendingImageStore.Delete(_assetRootPath, "magazine-issue-covers", guid);
+        return NoContent();
     }
 }

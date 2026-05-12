@@ -582,4 +582,46 @@
   <data name="ISSN must be exactly 8 characters." xml:space="preserve">
     <value>ISSN must be exactly 8 characters.</value>
   </data>
+  <data name="Add machine" xml:space="preserve">
+    <value>Add machine</value>
+  </data>
+  <data name="Add machine family" xml:space="preserve">
+    <value>Add machine family</value>
+  </data>
+  <data name="Add person" xml:space="preserve">
+    <value>Add person</value>
+  </data>
+  <data name="Cover upload failed." xml:space="preserve">
+    <value>Cover upload failed.</value>
+  </data>
+  <data name="Internet Archive URL" xml:space="preserve">
+    <value>Internet Archive URL</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="Replace cover" xml:space="preserve">
+    <value>Replace cover</value>
+  </data>
+  <data name="Upload cover" xml:space="preserve">
+    <value>Upload cover</value>
+  </data>
+  <data name="You must be signed in to upload a cover." xml:space="preserve">
+    <value>You must be signed in to upload a cover.</value>
+  </data>
+  <data name="Allowed: JPG, PNG, WebP up to 50 MB. The image is uploaded directly to the API for review and only takes effect once an administrator accepts the suggestion." xml:space="preserve">
+    <value>Allowed: JPG, PNG, WebP up to 50 MB. The image is uploaded directly to the API for review and only takes effect once an administrator accepts the suggestion.</value>
+  </data>
+  <data name="Add software" xml:space="preserve">
+    <value>Add software</value>
+  </data>
+  <data name="Issue number" xml:space="preserve">
+    <value>Issue number</value>
+  </data>
+  <data name="Issue of magazine: {0}" xml:space="preserve">
+    <value>Issue of magazine: {0}</value>
+  </data>
+  <data name="Product code must be at most 18 characters." xml:space="preserve">
+    <value>Product code must be at most 18 characters.</value>
+  </data>
 </root>

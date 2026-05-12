@@ -601,4 +601,46 @@
   <data name="ISSN must be exactly 8 characters." xml:space="preserve">
     <value>Die ISSN muss genau 8 Zeichen lang sein.</value>
   </data>
+  <data name="Add machine" xml:space="preserve">
+    <value>Maschine hinzufügen</value>
+  </data>
+  <data name="Add machine family" xml:space="preserve">
+    <value>Maschinenfamilie hinzufügen</value>
+  </data>
+  <data name="Add person" xml:space="preserve">
+    <value>Person hinzufügen</value>
+  </data>
+  <data name="Cover upload failed." xml:space="preserve">
+    <value>Hochladen des Covers fehlgeschlagen.</value>
+  </data>
+  <data name="Internet Archive URL" xml:space="preserve">
+    <value>Internet-Archive-URL</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Entfernen</value>
+  </data>
+  <data name="Replace cover" xml:space="preserve">
+    <value>Cover ersetzen</value>
+  </data>
+  <data name="Upload cover" xml:space="preserve">
+    <value>Cover hochladen</value>
+  </data>
+  <data name="You must be signed in to upload a cover." xml:space="preserve">
+    <value>Du musst angemeldet sein, um ein Cover hochzuladen.</value>
+  </data>
+  <data name="Allowed: JPG, PNG, WebP up to 50 MB. The image is uploaded directly to the API for review and only takes effect once an administrator accepts the suggestion." xml:space="preserve">
+    <value>Erlaubt: JPG, PNG, WebP bis 50 MB. Das Bild wird direkt an die API zur Prüfung gesendet und erst nach Annahme durch einen Administrator angewendet.</value>
+  </data>
+  <data name="Add software" xml:space="preserve">
+    <value>Software hinzufügen</value>
+  </data>
+  <data name="Issue number" xml:space="preserve">
+    <value>Ausgabennummer</value>
+  </data>
+  <data name="Issue of magazine: {0}" xml:space="preserve">
+    <value>Ausgabe der Zeitschrift: {0}</value>
+  </data>
+  <data name="Product code must be at most 18 characters." xml:space="preserve">
+    <value>Der Produktcode darf höchstens 18 Zeichen lang sein.</value>
+  </data>
 </root>

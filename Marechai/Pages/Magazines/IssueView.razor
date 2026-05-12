@@ -27,10 +27,13 @@
 
 @page "/magazine/issue/{Id:long}"
 @using Marechai.ApiClient.Models
+@using Marechai.Pages.Suggestions
 @inherits OwningComponentBase<MagazinesService>
 @inject IStringLocalizer<MagazinesService> L
 @inject ApiAssetUrlProvider                AssetUrls
 @inject CollectionService                  CollectionSvc
+@inject IDialogService                     DialogService
+@inject SuggestionsService                 Suggestions
 
 @if(!_loaded)
 {
@@ -103,9 +106,20 @@
     <MudTabPanel Text="@L["Summary"]" Icon="@Icons.Material.Filled.Info">
         <MudCard Elevation="0" Class="mb-4">
             <MudCardContent>
-                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
-                    <MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Primary"/>
-                    <MudText Typo="Typo.h6">@L["General"]</MudText>
+                <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-3">
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                        <MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Primary"/>
+                        <MudText Typo="Typo.h6">@L["General"]</MudText>
+                    </MudStack>
+                    <AuthorizeView>
+                        <Authorized>
+                            <MudTooltip Text="@L["Suggest changes"]">
+                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary"
+                                               Size="Size.Small"
+                                               OnClick="OpenIssueSuggestionDialogAsync"/>
+                            </MudTooltip>
+                        </Authorized>
+                    </AuthorizeView>
                 </MudStack>
                 <MudSimpleTable Elevation="0" Dense="true">
                     <tbody>

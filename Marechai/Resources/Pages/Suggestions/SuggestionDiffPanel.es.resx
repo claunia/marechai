@@ -190,4 +190,19 @@
   <data name="(no image)" xml:space="preserve">
     <value>(sin imagen)</value>
   </data>
+  <data name="Caption" xml:space="preserve">
+    <value>Título</value>
+  </data>
+  <data name="Native caption" xml:space="preserve">
+    <value>Título original</value>
+  </data>
+  <data name="Issue number" xml:space="preserve">
+    <value>Número del ejemplar</value>
+  </data>
+  <data name="Product code" xml:space="preserve">
+    <value>Código de producto</value>
+  </data>
+  <data name="Software" xml:space="preserve">
+    <value>Software</value>
+  </data>
 </root>
