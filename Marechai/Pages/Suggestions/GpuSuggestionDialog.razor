@@ -1,0 +1,512 @@
+@using System
+@using System.Globalization
+@using System.Linq
+@using System.Text.Json
+@using System.Threading
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@using Marechai.Services
+@using Marechai.Suggestions
+@using Marechai.Suggestions.Metadata
+
+@inject IStringLocalizer<GpusService> L
+@inject ISnackbar         Snackbar
+@inject GpusService       GpusService
+@inject SuggestionsService SuggestionsService
+
+@*
+    Dedicated suggestion dialog for editing a GPU. Mirrors the admin GpuDialog editing
+    surface but produces a Suggestion JSON payload instead of writing directly. Each
+    junction add/remove operation is queued in local state and serialised under a unique
+    field-name key (resolutions.add.<uuid> or resolutions.remove.<row_id>) so the admin
+    can later accept or reject each operation independently in the diff panel.
+*@
+
+<MudDialog>
+    <DialogContent>
+        @if(_loading)
+        {
+            <MudProgressLinear Indeterminate="true"/>
+        }
+        else
+        {
+            <MudText Typo="Typo.body2" Class="mb-3">
+                @L["Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently."]
+            </MudText>
+
+            @* ── Scalar fields ── *@
+            <MudPaper Outlined="true" Class="pa-3 mb-3">
+                <MudText Typo="Typo.h6" Class="mb-2">@L["General"]</MudText>
+
+                <MudTextField T="string" Label="@L["Name"]"
+                              MaxLength="128"
+                              Value="@_name"
+                              ValueChanged="@(v => { _name = v; })"
+                              Required="true"
+                              Class="mb-3"/>
+
+                <MudTextField T="string" Label="@L["Model code"]"
+                              MaxLength="45"
+                              Value="@_modelCode"
+                              ValueChanged="@(v => { _modelCode = v; })"
+                              Class="mb-3"/>
+
+                <MudAutocomplete T="CompanyDto" Label="@L["Manufacturer"]"
+                                 Value="@_selectedCompany"
+                                 ValueChanged="@(c => { _selectedCompany = c; })"
+                                 SearchFunc="SearchCompanies"
+                                 ToStringFunc="@(c => c?.Name ?? string.Empty)"
+                                 Clearable="true"
+                                 Class="mb-3"/>
+
+                <MudDatePicker Label="@L["Introduction date"]" Editable="true" Clearable="true"
+                               Date="@_introduced"
+                               DateChanged="@(d => { _introduced = d; })" Class="mb-3"/>
+
+                <MudSelect T="int" Label="@L["Date precision"]"
+                           Value="@_introducedPrecision"
+                           ValueChanged="@(v => { _introducedPrecision = v; })" Class="mb-3">
+                    <MudSelectItem T="int" Value="0">@L["Full date"]</MudSelectItem>
+                    <MudSelectItem T="int" Value="1">@L["Month and year only"]</MudSelectItem>
+                    <MudSelectItem T="int" Value="2">@L["Year only"]</MudSelectItem>
+                </MudSelect>
+
+                <MudTextField T="string" Label="@L["Package"]"
+                              MaxLength="45"
+                              Value="@_package"
+                              ValueChanged="@(v => { _package = v; })"
+                              Class="mb-3"/>
+
+                <MudStack Row="true" Spacing="2" Class="mb-3">
+                    <MudTextField T="string" Label="@L["Process"]"
+                                  MaxLength="45"
+                                  Value="@_process"
+                                  ValueChanged="@(v => { _process = v; })"
+                                  Style="flex: 1;"/>
+                    <MudNumericField T="float?" Label="@L["Process (nm)"]" Value="@_processNm"
+                                     ValueChanged="@(v => { _processNm = v; })" Clearable="true" Style="flex: 1;"
+                                     Min="0f"/>
+                </MudStack>
+
+                <MudStack Row="true" Spacing="2">
+                    <MudNumericField T="float?" Label="@L["Die size (mm²)"]" Value="@_dieSize"
+                                     ValueChanged="@(v => { _dieSize = v; })" Clearable="true" Style="flex: 1;"
+                                     Min="0f"/>
+                    <MudNumericField T="long?" Label="@L["Transistors"]" Value="@_transistors"
+                                     ValueChanged="@(v => { _transistors = v; })" Clearable="true" Style="flex: 1;"
+                                     Min="1L"/>
+                </MudStack>
+            </MudPaper>
+
+            @* ── Junctions ── *@
+            <MudExpansionPanels MultiExpansion="true" Class="mb-3">
+
+                @* Resolutions *@
+                <MudExpansionPanel Text="@($"{L["Supported resolutions"]} ({CountActive(_resolutionRows, _resolutionRemoves) + _resolutionAdds.Count})")"
+                                   Expanded="@HasOps(_resolutionAdds, _resolutionRemoves)">
+                    @foreach(ResolutionByGpuDto r in _resolutionRows ?? new())
+                    {
+                        bool removed = _resolutionRemoves.Contains(r.Id ?? 0);
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText Style="@(removed ? "text-decoration: line-through;" : "")">@FormatResolutionRow(r)</MudText>
+                            @if(removed)
+                            {
+                                <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                           OnClick="@(() => UndoRemove(_resolutionRemoves, r.Id ?? 0))">@L["Undo"]</MudButton>
+                            }
+                            else
+                            {
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                               OnClick="@(() => MarkRemove(_resolutionRemoves, r.Id ?? 0))"/>
+                            }
+                        </MudStack>
+                    }
+                    @foreach(KeyValuePair<string, JunctionAddState> kv in _resolutionAdds)
+                    {
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText><strong>+ @kv.Value.Display</strong></MudText>
+                            <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                       OnClick="@(() => _resolutionAdds.Remove(kv.Key))">@L["Undo"]</MudButton>
+                        </MudStack>
+                    }
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-2">
+                        <MudAutocomplete T="ResolutionDto" Value="@_pickResolution" ValueChanged="@(r => { _pickResolution = r; })"
+                                         SearchFunc="SearchResolutions" Clearable="true"
+                                         ToStringFunc="@(r => r is null ? string.Empty : FormatResolutionDto(r))"
+                                         Style="flex: 1;"/>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
+                                   OnClick="AddResolution"
+                                   Disabled="@(_pickResolution is null)">@L["Add Resolution"]</MudButton>
+                    </MudStack>
+                </MudExpansionPanel>
+
+            </MudExpansionPanels>
+
+            <MudTextField T="string" Label="@L["Optional comment (References, sources, etc...)"]" Lines="2"
+                          MaxLength="2000" @bind-Value="_userComment"/>
+
+            @if(!string.IsNullOrWhiteSpace(_validationError))
+            {
+                <MudAlert Severity="Severity.Error" Class="mt-2">@_validationError</MudAlert>
+            }
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit"
+                   Disabled="@(_loading || _submitting || !HasAnyChange())">
+            @if(_submitting)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true"/>
+            }
+            else
+            {
+                @L["Submit suggestion"]
+            }
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code
+{
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public long   EntityId   { get; set; }
+    [Parameter] public GpuDto CurrentDto { get; set; }
+
+    sealed class JunctionAddState
+    {
+        public Dictionary<string, object> Payload { get; set; }
+        public string                     Display { get; set; }
+    }
+
+    bool _loading = true;
+    bool _submitting;
+    string _validationError;
+    string _userComment;
+
+    // Scalar state (mirrors the original CurrentDto values; diff'd at submit time)
+    string     _name;
+    string     _modelCode;
+    CompanyDto _selectedCompany;
+    DateTime?  _introduced;
+    int        _introducedPrecision;
+    string     _package;
+    string     _process;
+    float?     _processNm;
+    float?     _dieSize;
+    long?      _transistors;
+
+    // Snapshot of the original scalar values (for diff computation at Submit time)
+    string    _orig_name;
+    string    _orig_modelCode;
+    int?      _orig_companyId;
+    DateTime? _orig_introduced;
+    int       _orig_introducedPrecision;
+    string    _orig_package;
+    string    _orig_process;
+    float?    _orig_processNm;
+    float?    _orig_dieSize;
+    long?     _orig_transistors;
+
+    // Picker source lists
+    List<CompanyDto>    _allCompanies;
+    List<ResolutionDto> _allResolutions;
+
+    // Existing junction rows
+    List<ResolutionByGpuDto> _resolutionRows;
+
+    // Pending operations: removes (set of existing row ids) + adds (uuid → state)
+    HashSet<long> _resolutionRemoves = new();
+
+    Dictionary<string, JunctionAddState> _resolutionAdds = new();
+
+    // Picker state
+    ResolutionDto _pickResolution;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Seed scalar state from the current DTO snapshot.
+        if(CurrentDto is not null)
+        {
+            _name                     = CurrentDto.Name;
+            _modelCode                = CurrentDto.ModelCode;
+            _introduced               = CurrentDto.Introduced?.UtcDateTime;
+            _introducedPrecision      = CurrentDto.IntroducedPrecision ?? 0;
+            _package                  = CurrentDto.Package;
+            _process                  = CurrentDto.Process;
+            _processNm                = CurrentDto.ProcessNm;
+            _dieSize                  = CurrentDto.DieSize;
+            _transistors              = CurrentDto.Transistors;
+            _orig_name                = _name;
+            _orig_modelCode           = _modelCode;
+            _orig_companyId           = CurrentDto.CompanyId;
+            _orig_introduced          = _introduced;
+            _orig_introducedPrecision = _introducedPrecision;
+            _orig_package             = _package;
+            _orig_process             = _process;
+            _orig_processNm           = _processNm;
+            _orig_dieSize             = _dieSize;
+            _orig_transistors         = _transistors;
+        }
+
+        Task<List<CompanyDto>>         allCompaniesT  = GpusService.GetCompaniesAsync();
+        Task<List<ResolutionDto>>      allResolutionsT = GpusService.GetAllResolutionsAsync();
+        Task<List<ResolutionByGpuDto>> resolutionsByT  = GpusService.GetResolutionsByGpuAsync((int)EntityId);
+
+        await Task.WhenAll(allCompaniesT, allResolutionsT, resolutionsByT);
+
+        _allCompanies    = allCompaniesT.Result;
+        _allResolutions  = allResolutionsT.Result;
+        _resolutionRows  = resolutionsByT.Result;
+
+        if(_orig_companyId.HasValue && _allCompanies is not null)
+            _selectedCompany = _allCompanies.Find(c => c.Id == _orig_companyId.Value);
+
+        _loading = false;
+    }
+
+    // ───────────────────────────── Search functions ─────────────────────────────
+
+    Task<IEnumerable<CompanyDto>> SearchCompanies(string value, CancellationToken ct)
+    {
+        IEnumerable<CompanyDto> r = _allCompanies ?? [];
+        if(!string.IsNullOrWhiteSpace(value))
+            r = r.Where(c => c.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
+        return Task.FromResult(r.Take(50));
+    }
+
+    Task<IEnumerable<ResolutionDto>> SearchResolutions(string value, CancellationToken ct)
+    {
+        // Dedup against existing rows minus removed plus pending adds — same resolution
+        // cannot be linked twice to the same GPU.
+        HashSet<int?> assigned = new(GetEffectiveIds(_resolutionRows, _resolutionRemoves,
+                                                     r => r.ResolutionId,
+                                                     _resolutionAdds,
+                                                     p => GetIntField(p, "resolution_id")));
+        IEnumerable<ResolutionDto> r = (_allResolutions ?? []).Where(x => !assigned.Contains(x.Id));
+        if(!string.IsNullOrWhiteSpace(value))
+            r = r.Where(x => FormatResolutionDto(x).Contains(value, StringComparison.OrdinalIgnoreCase));
+        return Task.FromResult(r.Take(50));
+    }
+
+    static IEnumerable<int?> GetEffectiveIds<T>(List<T> rows, HashSet<long> removes,
+                                                Func<T, int?> idSelector,
+                                                Dictionary<string, JunctionAddState> adds,
+                                                Func<Dictionary<string, object>, int?> addIdSelector) where T : class
+    {
+        if(rows is not null)
+            foreach(T r in rows)
+            {
+                long rowId = (r as dynamic).Id ?? 0L;
+                if(rowId != 0 && removes.Contains(rowId)) continue;
+                int? id = idSelector(r);
+                if(id.HasValue) yield return id;
+            }
+
+        if(adds is not null)
+            foreach(JunctionAddState a in adds.Values)
+            {
+                int? id = addIdSelector(a.Payload);
+                if(id.HasValue) yield return id;
+            }
+    }
+
+    static int? GetIntField(Dictionary<string, object> payload, string key)
+    {
+        if(payload is null || !payload.TryGetValue(key, out object v) || v is null) return null;
+        return v switch
+        {
+            int i      => i,
+            long l     => (int?)l,
+            short s    => s,
+            string str => int.TryParse(str, NumberStyles.Integer, CultureInfo.InvariantCulture, out int p) ? p : null,
+            _          => null
+        };
+    }
+
+    // ───────────────────────────── Format helpers ─────────────────────────────
+
+    /// <summary>
+    ///     Format a Kiota-generated <see cref="ResolutionDto" /> for display. Kiota DTOs do
+    ///     NOT carry a <c>ToString()</c> override (unlike <c>Marechai.Data.Dtos.ResolutionDto</c>
+    ///     server-side), so calling <c>.ToString()</c> on the wire DTO just returns the type
+    ///     name. Mirrors the admin's <c>GpuDialog.FormatResolutionDto</c> shape.
+    /// </summary>
+    string FormatResolutionDto(ResolutionDto r)
+    {
+        if(r is null) return string.Empty;
+
+        string dims = $"{r.Width}×{r.Height}";
+
+        if(r.Chars == true)
+            return $"{dims} {string.Format(L["{0} characters"], r.Colors)}";
+
+        if(r.Grayscale == true)
+            return $"{dims} {string.Format(L["{0} grays"], r.Colors)}";
+
+        if(r.Palette is not null and > 0)
+            return $"{dims} {string.Format(L["{0} colors from {1} palette"], r.Colors, r.Palette)}";
+
+        return $"{dims} {string.Format(L["{0} colors"], r.Colors)}";
+    }
+
+    /// <summary>
+    ///     Format an existing <see cref="ResolutionByGpuDto" /> junction row. Kiota's
+    ///     composed-type deserialization may leave the nested <c>Resolution</c> property null
+    ///     (see <c>Marechai/Pages/Admin/GpuDialog.razor</c> "Kiota composed type
+    ///     deserialization is broken" workaround), so look up the full DTO from the pre-loaded
+    ///     <c>_allResolutions</c> list by id and format that.
+    /// </summary>
+    string FormatResolutionRow(ResolutionByGpuDto r)
+    {
+        if(r is null) return string.Empty;
+
+        ResolutionDto full = r.Resolution ?? _allResolutions?.Find(x => x.Id == r.ResolutionId);
+        if(full is not null) return FormatResolutionDto(full);
+
+        return $"#{r.ResolutionId}";
+    }
+
+    // ───────────────────────────── Junction queue helpers ─────────────────────────────
+
+    void MarkRemove(HashSet<long> set, long id)
+    {
+        if(id == 0) return;
+        set.Add(id);
+    }
+
+    void UndoRemove(HashSet<long> set, long id) => set.Remove(id);
+
+    static int CountActive<T>(List<T> rows, HashSet<long> removes) where T : class
+    {
+        if(rows is null) return 0;
+        int n = 0;
+        foreach(T r in rows)
+        {
+            long id = (r as dynamic).Id ?? 0L;
+            if(id == 0 || !removes.Contains(id)) n++;
+        }
+        return n;
+    }
+
+    static bool HasOps(Dictionary<string, JunctionAddState> adds, HashSet<long> removes) =>
+        (adds is { Count: > 0 }) || (removes is { Count: > 0 });
+
+    static string NewKey(string group, string op) => $"{group}.{op}.{Guid.NewGuid():N}";
+
+    // ───────────────────────────── Add handlers ─────────────────────────────
+
+    void AddResolution()
+    {
+        if(_pickResolution is null) return;
+        string key = NewKey(GpuSuggestionMetadata.GroupResolutions, "add");
+        _resolutionAdds[key] = new JunctionAddState
+        {
+            Payload = new Dictionary<string, object>(StringComparer.Ordinal) { ["resolution_id"] = _pickResolution.Id },
+            Display = FormatResolutionDto(_pickResolution)
+        };
+        _pickResolution = null;
+    }
+
+    // ───────────────────────────── Submit ─────────────────────────────
+
+    bool HasAnyChange()
+    {
+        if(!Equals(_orig_name, _name)) return true;
+        if(!Equals(_orig_modelCode, _modelCode)) return true;
+        if(_orig_companyId != _selectedCompany?.Id) return true;
+        if(!Nullable.Equals(_orig_introduced, _introduced)) return true;
+        if(_orig_introducedPrecision != _introducedPrecision) return true;
+        if(!Equals(_orig_package, _package)) return true;
+        if(!Equals(_orig_process, _process)) return true;
+        if(!Nullable.Equals(_orig_processNm, _processNm)) return true;
+        if(!Nullable.Equals(_orig_dieSize, _dieSize)) return true;
+        if(!Nullable.Equals(_orig_transistors, _transistors)) return true;
+
+        if(_resolutionAdds.Count > 0) return true;
+        if(_resolutionRemoves.Count > 0) return true;
+
+        return false;
+    }
+
+    void Cancel() => MudDialog.Cancel();
+
+    async Task Submit()
+    {
+        _validationError = null;
+        if(_loading) return;
+
+        // Name is required: never let the user clear it.
+        if(string.IsNullOrWhiteSpace(_name))
+        {
+            _validationError = L["Name is required."];
+            return;
+        }
+
+        var diff = new Dictionary<string, object>(StringComparer.Ordinal);
+
+        if(!Equals(_orig_name, _name))           diff[GpuSuggestionMetadata.FieldName]      = _name;
+        if(!Equals(_orig_modelCode, _modelCode)) diff[GpuSuggestionMetadata.FieldModelCode] = _modelCode;
+        if(_orig_companyId != _selectedCompany?.Id)
+            diff[GpuSuggestionMetadata.FieldCompanyId] = _selectedCompany?.Id;
+        if(!Nullable.Equals(_orig_introduced, _introduced))
+            diff[GpuSuggestionMetadata.FieldIntroduced] = _introduced?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        if(_orig_introducedPrecision != _introducedPrecision)
+            diff[GpuSuggestionMetadata.FieldIntroducedPrecision] = _introducedPrecision;
+        if(!Equals(_orig_package, _package)) diff[GpuSuggestionMetadata.FieldPackage] = _package;
+        if(!Equals(_orig_process, _process)) diff[GpuSuggestionMetadata.FieldProcess] = _process;
+        if(!Nullable.Equals(_orig_processNm, _processNm))
+            diff[GpuSuggestionMetadata.FieldProcessNm] = _processNm;
+        if(!Nullable.Equals(_orig_dieSize, _dieSize))
+            diff[GpuSuggestionMetadata.FieldDieSize] = _dieSize;
+        if(!Nullable.Equals(_orig_transistors, _transistors))
+            diff[GpuSuggestionMetadata.FieldTransistors] = _transistors;
+
+        AddJunctionOps(diff, _resolutionAdds, _resolutionRemoves, GpuSuggestionMetadata.GroupResolutions);
+
+        if(diff.Count == 0)
+        {
+            _validationError = L["No changes detected — modify at least one field before submitting."];
+            return;
+        }
+
+        _submitting = true;
+        try
+        {
+            string json = JsonSerializer.Serialize(diff);
+            var dto = new SuggestionDto
+            {
+                EntityType          = (int?)SuggestionEntityType.Gpu,
+                EntityId            = EntityId,
+                Status              = (int?)SuggestionStatus.Pending,
+                UserComment         = string.IsNullOrWhiteSpace(_userComment) ? null : _userComment.Trim(),
+                SuggestedValuesJson = json
+            };
+
+            var (created, error) = await SuggestionsService.CreateAsync(dto);
+
+            if(created is null)
+            {
+                _validationError = string.IsNullOrWhiteSpace(error) ? L["Failed to submit suggestion."].Value : error;
+                return;
+            }
+
+            Snackbar.Add(L["Suggestion submitted. An administrator will review it."], Severity.Success);
+            MudDialog.Close(DialogResult.Ok(created));
+        }
+        finally
+        {
+            _submitting = false;
+        }
+    }
+
+    static void AddJunctionOps(Dictionary<string, object> diff,
+                               Dictionary<string, JunctionAddState> adds,
+                               HashSet<long> removes,
+                               string group)
+    {
+        foreach(KeyValuePair<string, JunctionAddState> kv in adds) diff[kv.Key] = kv.Value.Payload;
+        foreach(long id in removes) diff[$"{group}.remove.{id.ToString(CultureInfo.InvariantCulture)}"] = null;
+    }
+}

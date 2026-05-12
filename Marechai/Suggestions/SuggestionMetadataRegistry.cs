@@ -85,6 +85,7 @@ public static class SuggestionMetadataRegistry
             Marechai.Suggestions.Metadata.DocumentSuggestionMetadata.EnsureRegistered();
             Marechai.Suggestions.Metadata.MagazineSuggestionMetadata.EnsureRegistered();
             Marechai.Suggestions.Metadata.MagazineIssueSuggestionMetadata.EnsureRegistered();
+            Marechai.Suggestions.Metadata.GpuSuggestionMetadata.EnsureRegistered();
             s_seeded = true;
         }
     }

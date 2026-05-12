@@ -298,4 +298,40 @@ public partial class View
         "por" => "Portuguese",
         _     => iso639_3
     };
+
+    /// <summary>
+    ///     Open the dedicated GPU edit-suggestion dialog. Captures the route parameter Id
+    ///     to a local long (not _gpu.Id.Value) to sidestep async race conditions where the
+    ///     full DTO load could leave Id unpopulated. Sentinel rows (DB_NONE/DB_FRAMEBUFFER/
+    ///     DB_SOFTWARE) are placeholders with no editable details and are guarded out of
+    ///     the View by _isSentinel; the pencil button is also wrapped in AuthorizeView so
+    ///     anonymous users never see it.
+    /// </summary>
+    async Task OpenGpuSuggestionDialogAsync()
+    {
+        if(_gpu is null) return;
+
+        long gpuId = Id;
+
+        var dialogParams = new DialogParameters
+        {
+            ["EntityId"]   = gpuId,
+            ["CurrentDto"] = _gpu
+        };
+        var dialogOptions = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Large
+        };
+
+        var dialogRef = await DialogService.ShowAsync<GpuSuggestionDialog>(
+            L["Suggest changes"],
+            dialogParams, dialogOptions);
+
+        // Don't need to inspect the result here — Snackbar surfaces success/failure inside
+        // the dialog itself. Pulling the result via await keeps the dialog Task alive
+        // until the user closes it.
+        await dialogRef.Result;
+    }
 }

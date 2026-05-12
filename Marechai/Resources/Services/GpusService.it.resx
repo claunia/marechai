@@ -552,4 +552,28 @@
   <data name="We do not have a description for this GPU, you could collaborate by suggesting one" xml:space="preserve">
     <value>Non abbiamo una descrizione per questa GPU, puoi collaborare suggerendone una</value>
   </data>
+  <data name="General" xml:space="preserve">
+    <value>Generale</value>
+  </data>
+  <data name="Undo" xml:space="preserve">
+    <value>Annulla</value>
+  </data>
+  <data name="Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently." xml:space="preserve">
+    <value>Modifica qualsiasi campo o relazione qui sotto. Solo le tue modifiche verranno inviate per la revisione; un amministratore può accettare o rifiutare ciascuna in modo indipendente.</value>
+  </data>
+  <data name="Optional comment (References, sources, etc...)" xml:space="preserve">
+    <value>Commento facoltativo (riferimenti, fonti, ecc...)</value>
+  </data>
+  <data name="No changes detected — modify at least one field before submitting." xml:space="preserve">
+    <value>Nessuna modifica rilevata — modifica almeno un campo prima dell'invio.</value>
+  </data>
+  <data name="Submit suggestion" xml:space="preserve">
+    <value>Invia suggerimento</value>
+  </data>
+  <data name="Failed to submit suggestion." xml:space="preserve">
+    <value>Impossibile inviare il suggerimento.</value>
+  </data>
+  <data name="Suggestion submitted. An administrator will review it." xml:space="preserve">
+    <value>Suggerimento inviato. Un amministratore lo esaminerà.</value>
+  </data>
 </root>

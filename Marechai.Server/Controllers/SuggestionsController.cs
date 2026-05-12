@@ -629,6 +629,13 @@ public class SuggestionsController(MarechaiContext context,
         if(s.EntityType == SuggestionEntityType.MagazineIssue && s.EntityId.HasValue && s.SuggestedValues is not null)
             await ResolveMagazineIssueRemoveLabelsAsync(s.EntityId.Value, s.SuggestedValues, currentLabels);
 
+        // Same pattern for Gpu entity-edit suggestions (single Resolutions junction). The
+        // junction-remove labels need a DB lookup of the existing ResolutionsByGpu row
+        // joined to the underlying Resolution, and the result lands in the current-side
+        // label map so the diff panel renders the readable name in the strikethrough cell.
+        if(s.EntityType == SuggestionEntityType.Gpu && s.EntityId.HasValue && s.SuggestedValues is not null)
+            await ResolveGpuRemoveLabelsAsync(s.EntityId.Value, s.SuggestedValues, currentLabels);
+
         return Ok(new SuggestionDiffDto
         {
             Suggestion           = suggestionDto,
@@ -863,6 +870,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.Document      => true,
         SuggestionEntityType.Magazine      => true,
         SuggestionEntityType.MagazineIssue => true,
+        SuggestionEntityType.Gpu           => true,
         _                                  => GetKnownFieldNames(type) is not null
     };
 
@@ -890,6 +898,9 @@ public class SuggestionsController(MarechaiContext context,
 
         if(type == SuggestionEntityType.MagazineIssue)
             return Suggestions.MagazineIssueSuggestionApplier.IsKnownFieldName(fieldName);
+
+        if(type == SuggestionEntityType.Gpu)
+            return Suggestions.GpuSuggestionApplier.IsKnownFieldName(fieldName);
 
         IReadOnlyCollection<string> set = GetKnownFieldNames(type);
         return set is not null && set.Contains(fieldName);
@@ -999,6 +1010,12 @@ public class SuggestionsController(MarechaiContext context,
                     context, entityId, suggested, accepted, _assetRootPath);
                 return new ApplyResult(applied, missing);
             }
+            case SuggestionEntityType.Gpu:
+            {
+                var (applied, missing) = await Suggestions.GpuSuggestionApplier.ApplyAsync(
+                    context, entityId, suggested, accepted);
+                return new ApplyResult(applied, missing);
+            }
             default:
                 throw new NotImplementedException($"Suggestions for {type} are not implemented yet.");
         }
@@ -1042,6 +1059,8 @@ public class SuggestionsController(MarechaiContext context,
                 await Suggestions.MagazineSuggestionApplier.GetCurrentValuesAsync(context, entityId),
             SuggestionEntityType.MagazineIssue =>
                 await Suggestions.MagazineIssueSuggestionApplier.GetCurrentValuesAsync(context, entityId),
+            SuggestionEntityType.Gpu =>
+                await Suggestions.GpuSuggestionApplier.GetCurrentValuesAsync(context, entityId),
             _ => null
         };
     }
@@ -1426,6 +1445,11 @@ public class SuggestionsController(MarechaiContext context,
             case SuggestionEntityType.MagazineIssue:
             {
                 await ResolveMagazineIssueLabelsAsync(entityId, values, labels);
+                break;
+            }
+            case SuggestionEntityType.Gpu:
+            {
+                await ResolveGpuLabelsAsync(entityId, values, labels);
                 break;
             }
         }
@@ -2386,6 +2410,143 @@ public class SuggestionsController(MarechaiContext context,
             default:
                 return null;
         }
+    }
+
+    // ─────────────── Gpu entity-edit label resolution (scalars + junction ops) ───────────────
+
+    /// <summary>
+    ///     Build readable labels for the heterogeneous payload of a Gpu suggestion. Handles
+    ///     the scalar FK field (<c>company_id</c>) plus junction-add operation keys
+    ///     (<c>resolutions.add.&lt;uuid&gt;</c> resolved from the suggested payload's
+    ///     <c>resolution_id</c>). Junction-remove labels are populated separately by
+    ///     <see cref="ResolveGpuRemoveLabelsAsync" />.
+    /// </summary>
+    async Task ResolveGpuLabelsAsync(long? entityId,
+                                     Dictionary<string, JsonElement> values,
+                                     Dictionary<string, string> labels)
+    {
+        // ---- Scalar FK label ----------------------------------------------------------
+        if(values.TryGetValue(Suggestions.GpuSuggestionApplier.FieldCompanyId, out JsonElement companyE))
+        {
+            int? id = JsonElementToInt(companyE);
+            if(id.HasValue)
+            {
+                string name = await context.Companies.AsNoTracking()
+                                           .Where(c => c.Id == id.Value)
+                                           .Select(c => c.Name)
+                                           .FirstOrDefaultAsync();
+                if(!string.IsNullOrEmpty(name))
+                    labels[Suggestions.GpuSuggestionApplier.FieldCompanyId] = name;
+            }
+        }
+
+        if(!entityId.HasValue) return;
+
+        // ---- Junction-add labels (resolved from the suggested payload's id field) -----
+        foreach(KeyValuePair<string, JsonElement> kv in values)
+        {
+            if(!Suggestions.GpuSuggestionApplier.TryParseJunctionKey(kv.Key, out string group, out string op, out _))
+                continue;
+            if(op != "add" || kv.Value.ValueKind != JsonValueKind.Object) continue;
+
+            string label = await BuildGpuAddLabelAsync(group, kv.Value);
+            if(!string.IsNullOrEmpty(label)) labels[kv.Key] = label;
+        }
+    }
+
+    /// <summary>
+    ///     Resolve readable labels for every Gpu junction-remove operation in the suggested
+    ///     payload by looking up the existing junction row in the database. The resolved
+    ///     labels are written to <paramref name="currentLabels" /> so the diff panel renders
+    ///     them in the strikethrough cell of the JunctionRemove row. Iterates the RAW
+    ///     <c>SuggestedValues</c> dict (not the JsonElement-parsed view) because remove ops
+    ///     carry a null value and <see cref="ParseValuesForLabels" /> drops null entries.
+    /// </summary>
+    async Task ResolveGpuRemoveLabelsAsync(long gpuId,
+                                           Dictionary<string, object> rawSuggested,
+                                           Dictionary<string, string> currentLabels)
+    {
+        foreach(KeyValuePair<string, object> kv in rawSuggested)
+        {
+            if(!Suggestions.GpuSuggestionApplier.TryParseJunctionKey(kv.Key, out string group, out string op, out string token))
+                continue;
+            if(op != "remove") continue;
+            if(!long.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out long rowId)) continue;
+
+            string label = await BuildGpuRemoveLabelAsync(group, (int)gpuId, rowId);
+            if(!string.IsNullOrEmpty(label)) currentLabels[kv.Key] = label;
+        }
+    }
+
+    async Task<string> BuildGpuAddLabelAsync(string group, JsonElement payload)
+    {
+        switch(group)
+        {
+            case Suggestions.GpuSuggestionApplier.GroupResolutions:
+            {
+                int? id = ReadIntField(payload, "resolution_id");
+                if(!id.HasValue) return null;
+                var res = await context.Resolutions.AsNoTracking()
+                                       .Where(r => r.Id == id.Value)
+                                       .Select(r => new { r.Width, r.Height, r.Colors, r.Palette, r.Chars, r.Grayscale })
+                                       .FirstOrDefaultAsync();
+                if(res is null) return $"Resolution #{id.Value}";
+                return FormatResolutionLabel(res.Width, res.Height, res.Colors, res.Palette, res.Chars, res.Grayscale);
+            }
+            default:
+                return null;
+        }
+    }
+
+    async Task<string> BuildGpuRemoveLabelAsync(string group, int gpuId, long rowId)
+    {
+        switch(group)
+        {
+            case Suggestions.GpuSuggestionApplier.GroupResolutions:
+            {
+                var row = await context.ResolutionsByGpu.AsNoTracking()
+                                       .Where(r => r.Id == rowId && r.GpuId == gpuId)
+                                       .Select(r => new
+                                       {
+                                           r.Resolution.Width,
+                                           r.Resolution.Height,
+                                           r.Resolution.Colors,
+                                           r.Resolution.Palette,
+                                           r.Resolution.Chars,
+                                           r.Resolution.Grayscale
+                                       })
+                                       .FirstOrDefaultAsync();
+                if(row is null) return null;
+                return FormatResolutionLabel(row.Width, row.Height, row.Colors, row.Palette, row.Chars, row.Grayscale);
+            }
+            default:
+                return null;
+        }
+    }
+
+    /// <summary>
+    ///     Server-side label format for a Resolution row. Mirrors the broad shape of the
+    ///     client's <see cref="Marechai.Data.Dtos.ResolutionDto.ToString" /> without taking a
+    ///     hard dependency on the DTO from the controller layer.
+    /// </summary>
+    static string FormatResolutionLabel(int width, int height, long? colors, long? palette, bool chars, bool grayscale)
+    {
+        string dims = $"{width}x{height}";
+        if(chars)
+        {
+            if(colors is null) return $"{dims} characters";
+            if(palette is not null && colors != palette)
+                return grayscale
+                           ? $"{dims} characters with {colors} grays from {palette} palette"
+                           : $"{dims} characters with {colors} colors from {palette} palette";
+            return grayscale ? $"{dims} characters with {colors} grays" : $"{dims} characters with {colors} colors";
+        }
+        if(colors is null) return dims;
+        if(palette is not null && colors != palette)
+            return grayscale
+                       ? $"{dims} with {colors} grays from {palette} palette"
+                       : $"{dims} with {colors} colors from {palette} palette";
+        return grayscale ? $"{dims} with {colors} grays" : $"{dims} with {colors} colors";
     }
 
     /// <summary>
