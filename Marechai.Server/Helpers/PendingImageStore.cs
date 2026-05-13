@@ -74,6 +74,14 @@ public static class PendingImageStore
         public DateTime UploadedOn     { get; set; }
         public string   ContentType    { get; set; }
         public long     SizeBytes      { get; set; }
+        /// <summary>
+        ///     Optional parent-entity scope used by features where the pending image is
+        ///     associated with an existing parent record AND uploaded BEFORE the suggestion
+        ///     row exists (e.g. the GPU-photo collaborative-upload flow stores the parent
+        ///     <c>GpuId</c> here so the per-uploader cap and cleanup can be scoped per GPU).
+        ///     Null for legacy single-image flows (book/issue/person covers).
+        /// </summary>
+        public long?    ParentEntityId { get; set; }
     }
 
     /// <summary>
@@ -91,9 +99,22 @@ public static class PendingImageStore
     /// <summary>
     ///     Persist a freshly-uploaded image plus its sidecar. Returns the new guid.
     /// </summary>
+    public static Task<Guid> StoreAsync(string assetRootPath, string itemFolder, string extension,
+                                        byte entityType, long entityId, string uploadedById,
+                                        string contentType, Stream contents) =>
+        StoreAsync(assetRootPath, itemFolder, extension, entityType, entityId, uploadedById, contentType, contents,
+                   parentEntityId: null);
+
+    /// <summary>
+    ///     Persist a freshly-uploaded image plus its sidecar with an optional parent-entity
+    ///     scope. <paramref name="parentEntityId" /> is null for legacy single-image flows
+    ///     (book/issue/person covers) and set to the parent record id for batch flows where
+    ///     the same uploader can stage multiple in-flight images for the same parent (e.g.
+    ///     GPU photos: parentEntityId = GpuId so the per-uploader cap is scoped per GPU).
+    /// </summary>
     public static async Task<Guid> StoreAsync(string assetRootPath, string itemFolder, string extension,
                                               byte entityType, long entityId, string uploadedById,
-                                              string contentType, Stream contents)
+                                              string contentType, Stream contents, long? parentEntityId)
     {
         if(string.IsNullOrEmpty(extension)) throw new ArgumentException("Extension required.", nameof(extension));
         if(!AllowedExtensions.Contains(extension))
@@ -116,14 +137,15 @@ public static class PendingImageStore
 
         var meta = new PendingMetadata
         {
-            Guid         = guid,
-            Extension    = ext.TrimStart('.'),
-            EntityType   = entityType,
-            EntityId     = entityId,
-            UploadedById = uploadedById,
-            UploadedOn   = DateTime.UtcNow,
-            ContentType  = contentType,
-            SizeBytes    = size
+            Guid           = guid,
+            Extension      = ext.TrimStart('.'),
+            EntityType     = entityType,
+            EntityId       = entityId,
+            UploadedById   = uploadedById,
+            UploadedOn     = DateTime.UtcNow,
+            ContentType    = contentType,
+            SizeBytes      = size,
+            ParentEntityId = parentEntityId
         };
         await File.WriteAllTextAsync(sidecar, JsonSerializer.Serialize(meta));
 
@@ -231,6 +253,84 @@ public static class PendingImageStore
                 var meta = JsonSerializer.Deserialize<PendingMetadata>(File.ReadAllText(sidecar));
                 if(meta is null) continue;
                 if(meta.EntityType != entityType || meta.EntityId != entityId) continue;
+                if(!string.Equals(meta.UploadedById, userId, StringComparison.Ordinal)) continue;
+
+                Delete(assetRootPath, itemFolder, meta.Guid);
+                removed++;
+            }
+            catch
+            {
+                // ignored
+            }
+        }
+
+        return removed;
+    }
+
+    /// <summary>
+    ///     Count pending images uploaded by <paramref name="userId" /> and scoped to the
+    ///     given (entity type, parent entity id) combination. Used by batch flows (e.g.
+    ///     GPU photos) to enforce a per-uploader cap (currently 15 in-flight pending photos
+    ///     per parent entity).
+    /// </summary>
+    public static int CountByUploaderForParentEntity(string assetRootPath, string itemFolder,
+                                                     string userId, byte entityType, long parentEntityId)
+    {
+        if(string.IsNullOrEmpty(userId)) return 0;
+
+        string pendingDir = EnsurePendingDir(assetRootPath, itemFolder);
+        int    count      = 0;
+
+        IEnumerable<string> sidecars;
+        try { sidecars = Directory.EnumerateFiles(pendingDir, "*.json"); }
+        catch { return 0; }
+
+        foreach(string sidecar in sidecars)
+        {
+            try
+            {
+                var meta = JsonSerializer.Deserialize<PendingMetadata>(File.ReadAllText(sidecar));
+                if(meta is null) continue;
+                if(meta.EntityType != entityType) continue;
+                if(meta.ParentEntityId != parentEntityId) continue;
+                if(!string.Equals(meta.UploadedById, userId, StringComparison.Ordinal)) continue;
+                count++;
+            }
+            catch
+            {
+                // ignored
+            }
+        }
+
+        return count;
+    }
+
+    /// <summary>
+    ///     Delete every pending image+sidecar uploaded by <paramref name="userId" /> and
+    ///     scoped to the given (entity type, parent entity id) combination. Used to clean up
+    ///     orphan pending uploads when a batch suggestion (e.g. GPU photos) is cancelled,
+    ///     rejected, withdrawn or marked stale.
+    /// </summary>
+    public static int DeleteByUploaderForParentEntity(string assetRootPath, string itemFolder,
+                                                      string userId, byte entityType, long parentEntityId)
+    {
+        if(string.IsNullOrEmpty(userId)) return 0;
+
+        string pendingDir = EnsurePendingDir(assetRootPath, itemFolder);
+        int    removed    = 0;
+
+        IEnumerable<string> sidecars;
+        try { sidecars = Directory.EnumerateFiles(pendingDir, "*.json"); }
+        catch { return 0; }
+
+        foreach(string sidecar in sidecars.ToList())
+        {
+            try
+            {
+                var meta = JsonSerializer.Deserialize<PendingMetadata>(File.ReadAllText(sidecar));
+                if(meta is null) continue;
+                if(meta.EntityType != entityType) continue;
+                if(meta.ParentEntityId != parentEntityId) continue;
                 if(!string.Equals(meta.UploadedById, userId, StringComparison.Ordinal)) continue;
 
                 Delete(assetRootPath, itemFolder, meta.Guid);

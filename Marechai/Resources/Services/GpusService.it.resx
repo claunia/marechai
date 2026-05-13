@@ -585,4 +585,79 @@
   <data name="Fill in the fields below to suggest a new GPU. Name is required; any resolutions you queue will be added together with the scalar fields once an administrator accepts the suggestion." xml:space="preserve">
     <value>Compila i campi sottostanti per suggerire una nuova GPU. Il nome è obbligatorio; eventuali risoluzioni in coda verranno aggiunte insieme ai campi scalari una volta che un amministratore accetta il suggerimento.</value>
   </data>
+  <data name="Suggest GPU photos" xml:space="preserve">
+    <value>Suggerisci foto della GPU</value>
+  </data>
+  <data name="Suggest more GPU photos" xml:space="preserve">
+    <value>Suggerisci altre foto della GPU</value>
+  </data>
+  <data name="No photos for this GPU yet — help us by uploading some." xml:space="preserve">
+    <value>Ancora nessuna foto per questa GPU — aiutaci caricandone alcune.</value>
+  </data>
+  <data name="Suggest photos for {0}. Upload up to {1} JPG, PNG or WebP files (max 50 MB each). All photos in this batch share the same license and source URL." xml:space="preserve">
+    <value>Suggerisci foto per {0}. Carica fino a {1} file JPG, PNG o WebP (max 50 MB ciascuno). Tutte le foto di questo lotto condividono la stessa licenza e URL di origine.</value>
+  </data>
+  <data name="Batch metadata" xml:space="preserve">
+    <value>Metadati del lotto</value>
+  </data>
+  <data name="License (Creative Commons or Public Domain)" xml:space="preserve">
+    <value>Licenza (Creative Commons o Pubblico Dominio)</value>
+  </data>
+  <data name="Source URL (optional, applies to all photos)" xml:space="preserve">
+    <value>URL di origine (opzionale, si applica a tutte le foto)</value>
+  </data>
+  <data name="Photos: {0}/{1}" xml:space="preserve">
+    <value>Foto: {0}/{1}</value>
+  </data>
+  <data name="Add photos" xml:space="preserve">
+    <value>Aggiungi foto</value>
+  </data>
+  <data name="Pick one or more files at a time. Each photo is uploaded immediately and held on the server until you submit the batch." xml:space="preserve">
+    <value>Seleziona uno o più file alla volta. Ogni foto viene caricata immediatamente e mantenuta sul server fino all'invio del lotto.</value>
+  </data>
+  <data name="No photos staged yet. Use the Add photos button above to pick files from your device." xml:space="preserve">
+    <value>Nessuna foto preparata. Usa il pulsante Aggiungi foto sopra per scegliere file dal tuo dispositivo.</value>
+  </data>
+  <data name="Comment (optional)" xml:space="preserve">
+    <value>Commento (opzionale)</value>
+  </data>
+  <data name="Note for the reviewer (optional)" xml:space="preserve">
+    <value>Nota per il revisore (opzionale)</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Invia</value>
+  </data>
+  <data name="You must be logged in to upload photos." xml:space="preserve">
+    <value>Devi essere connesso per caricare foto.</value>
+  </data>
+  <data name="Pick a license and at least one successfully-uploaded photo before submitting." xml:space="preserve">
+    <value>Seleziona una licenza e almeno una foto caricata correttamente prima di inviare.</value>
+  </data>
+  <data name="Selected license is not allowed for collaborator uploads." xml:space="preserve">
+    <value>La licenza selezionata non è consentita per i caricamenti dei collaboratori.</value>
+  </data>
+  <data name="Photos submitted for review. An administrator will accept or reject each one." xml:space="preserve">
+    <value>Foto inviate per la revisione. Un amministratore accetterà o rifiuterà ciascuna.</value>
+  </data>
+  <data name="You have staged photos that have not been submitted yet. Closing this dialog will delete them. Continue?" xml:space="preserve">
+    <value>Hai foto preparate che non sono ancora state inviate. Chiudere questa finestra le eliminerà. Continuare?</value>
+  </data>
+  <data name="Batch metadata (applies to every accepted photo)" xml:space="preserve">
+    <value>Metadati del lotto (validi per ogni foto accettata)</value>
+  </data>
+  <data name="License" xml:space="preserve">
+    <value>Licenza</value>
+  </data>
+  <data name="Source URL" xml:space="preserve">
+    <value>URL di origine</value>
+  </data>
+  <data name="(none)" xml:space="preserve">
+    <value>(nessuno)</value>
+  </data>
+  <data name="Accepting {0} of {1} photo(s). Rejected photos and their pending files will be deleted on submit." xml:space="preserve">
+    <value>Accettazione di {0} di {1} foto. Le foto rifiutate e i relativi file in sospeso verranno eliminati al momento dell'invio.</value>
+  </data>
+  <data name="Accept this photo" xml:space="preserve">
+    <value>Accetta questa foto</value>
+  </data>
 </root>

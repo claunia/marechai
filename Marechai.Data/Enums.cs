@@ -1041,7 +1041,17 @@ public enum SuggestionEntityType : byte
     ///     A markdown description of a Software, scoped per language. The Subkey on the
     ///     Suggestion row holds the ISO-639-3 language code (e.g. "eng", "spa").
     /// </summary>
-    SoftwareDescription = 26
+    SoftwareDescription = 26,
+    /// <summary>
+    ///     A batch of one or more pending GPU photos uploaded by a collaborator for review by an
+    ///     admin. The EntityId on the Suggestion row holds the parent Gpu Id. The SuggestedValues
+    ///     JSON carries one suggestion-level <c>license_id</c> + <c>source_url</c> applied to all
+    ///     photos in the batch and a <c>photos</c> array (max 15 entries) of pending image
+    ///     descriptors (<c>guid</c>, <c>extension</c>, per-photo <c>comment</c>). Per-photo
+    ///     accept/reject is signalled by including/omitting the field-name key
+    ///     <c>photo.{guid}</c> in <c>AppliedFields</c>.
+    /// </summary>
+    GpuPhoto = 27
 }
 
 public enum SuggestionStatus : byte

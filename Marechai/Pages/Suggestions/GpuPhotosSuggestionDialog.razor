@@ -1,0 +1,184 @@
+@*
+    GpuPhotosSuggestionDialog — collaborative GPU-photo batch upload.
+
+    A logged-in user can stage 1-15 pending photos for an existing GPU, set a
+    suggestion-level license (Creative Commons / Public Domain only) and an
+    optional source URL, optionally annotate each photo with a comment, then
+    submit ONE Suggestion row that an admin reviews per-photo. Accepted photos
+    are promoted to the same originals/ folder admins write to and run through
+    the same fire-and-forget conversion worker.
+
+    Architecture notes:
+    * Each file upload is direct browser → API via XHR (in gpu-photo-upload.js)
+      with byte-level progress reported back through DotNetObjectReference
+      callbacks — NOT through Blazor's InputFile component (which would
+      double-hop the bytes via SignalR and only emit completion events).
+    * License + source URL are batch-level (apply to every accepted photo).
+    * Per-photo comment is the only per-photo metadata.
+    * Cancel button cleans up every staged pending file via DELETE so the
+      pending/ folder doesn't leak orphans.
+*@
+@using System
+@using System.Collections.Generic
+@using System.Globalization
+@using System.Linq
+@using System.Text.Json
+@using System.Threading.Tasks
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@using Marechai.Services
+@using Microsoft.JSInterop
+
+@inject IStringLocalizer<GpusService>   L
+@inject ISnackbar                       Snackbar
+@inject GpuPhotosService                GpuPhotosService
+@inject SuggestionsService              SuggestionsService
+@inject IJSRuntime                      JS
+@inject TokenProvider                   TokenProvider
+@inject ApiAssetUrlProvider             ApiAssetUrls
+
+<MudDialog>
+    <DialogContent>
+        @if(_loading)
+        {
+            <MudProgressLinear Indeterminate="true"/>
+        }
+        else
+        {
+            <MudText Typo="Typo.body2" Class="mb-3">
+                @string.Format(L["Suggest photos for {0}. Upload up to {1} JPG, PNG or WebP files (max 50 MB each). All photos in this batch share the same license and source URL."].Value, GpuName, MaxPhotos)
+            </MudText>
+
+            @* ── Suggestion-level fields (apply to every photo in the batch) ── *@
+            <MudPaper Outlined="true" Class="pa-3 mb-3">
+                <MudText Typo="Typo.subtitle2" Class="mb-2">@L["Batch metadata"]</MudText>
+
+                <MudSelect T="int?" Label="@L["License (Creative Commons or Public Domain)"]"
+                           Value="@_licenseId"
+                           ValueChanged="@(v => { _licenseId = v; })"
+                           Required="true"
+                           Class="mb-3">
+                    @foreach(LicenseDto lic in _allowedLicenses)
+                    {
+                        <MudSelectItem T="int?" Value="@((int?)lic.Id)">@FormatLicense(lic)</MudSelectItem>
+                    }
+                </MudSelect>
+
+                <MudTextField T="string" Label="@L["Source URL (optional, applies to all photos)"]"
+                              MaxLength="500"
+                              Value="@_sourceUrl"
+                              ValueChanged="@(v => { _sourceUrl = v; })"
+                              Placeholder="https://example.com/page-where-photo-came-from"/>
+            </MudPaper>
+
+            @* ── File-picker trigger ── *@
+            <MudPaper Outlined="true" Class="pa-3 mb-3">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-2">
+                    <MudText Typo="Typo.subtitle2">@string.Format(L["Photos: {0}/{1}"].Value, _staged.Count, MaxPhotos)</MudText>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.AddPhotoAlternate"
+                               Disabled="@(_staged.Count >= MaxPhotos)"
+                               OnClick="TriggerFilePicker">
+                        @L["Add photos"]
+                    </MudButton>
+                </MudStack>
+                <MudText Typo="Typo.caption">
+                    @L["Pick one or more files at a time. Each photo is uploaded immediately and held on the server until you submit the batch."]
+                </MudText>
+
+                @* Hidden file input — JS owns the file reads (avoids the SignalR double-hop). *@
+                <input type="file" id="@_fileInputId" accept="image/jpeg,image/png,image/webp" multiple style="display:none"
+                       @onchange="OnFilesPicked"/>
+            </MudPaper>
+
+            @* ── Per-staged-photo cards ── *@
+            @if(_staged.Count == 0)
+            {
+                <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Class="mb-3">
+                    @L["No photos staged yet. Use the Add photos button above to pick files from your device."]
+                </MudAlert>
+            }
+            else
+            {
+                <MudStack Spacing="2" Class="mb-3">
+                    @foreach(StagedPhoto p in _staged)
+                    {
+                        <MudPaper Outlined="true" Class="pa-3" Key="@p.ClientGuid">
+                            <MudStack Row="true" Spacing="3" AlignItems="AlignItems.Start">
+                                @* Thumbnail (or placeholder while uploading) *@
+                                <div style="width: 100px; height: 100px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--mud-palette-background-grey); border-radius: 4px;">
+                                    @if(p.Status == StagedPhotoStatus.Ready)
+                                    {
+                                        <img id="@p.ImgElementId" alt="@p.FileName"
+                                             style="max-width: 100px; max-height: 100px; object-fit: contain; border-radius: 4px;"/>
+                                    }
+                                    else if(p.Status == StagedPhotoStatus.Uploading)
+                                    {
+                                        <MudIcon Icon="@Icons.Material.Filled.CloudUpload" Color="Color.Default"/>
+                                    }
+                                    else
+                                    {
+                                        <MudIcon Icon="@Icons.Material.Filled.ErrorOutline" Color="Color.Error"/>
+                                    }
+                                </div>
+
+                                <MudStack Spacing="1" Style="flex: 1; min-width: 0;">
+                                    <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                                        <MudText Typo="Typo.body2"><strong>@p.FileName</strong></MudText>
+                                        <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small"
+                                                       Color="Color.Error"
+                                                       OnClick="@(() => RemoveStagedPhotoAsync(p.ClientGuid))"/>
+                                    </MudStack>
+
+                                    <MudText Typo="Typo.caption">@FormatBytes(p.SizeBytes)</MudText>
+
+                                    @if(p.Status == StagedPhotoStatus.Uploading)
+                                    {
+                                        <MudProgressLinear Color="Color.Primary"
+                                                           Value="@p.UploadPercent"
+                                                           Min="0" Max="100" Class="my-1"/>
+                                        <MudText Typo="Typo.caption">@($"{p.UploadPercent:0}%")</MudText>
+                                    }
+                                    else if(p.Status == StagedPhotoStatus.Error)
+                                    {
+                                        <MudAlert Severity="Severity.Error" Dense="true" Class="my-1">@p.ErrorText</MudAlert>
+                                    }
+                                    else if(p.Status == StagedPhotoStatus.Ready)
+                                    {
+                                        <MudTextField T="string" Label="@L["Comment (optional)"]"
+                                                      Lines="2" MaxLength="500"
+                                                      Value="@p.Comment"
+                                                      ValueChanged="@(v => { p.Comment = v; })"
+                                                      Class="mt-1"/>
+                                    }
+                                </MudStack>
+                            </MudStack>
+                        </MudPaper>
+                    }
+                </MudStack>
+            }
+
+            <MudTextField T="string" Label="@L["Note for the reviewer (optional)"]"
+                          Lines="2" MaxLength="2000"
+                          Value="@_userComment"
+                          ValueChanged="@(v => { _userComment = v; })"/>
+
+            @if(!string.IsNullOrEmpty(_validationError))
+            {
+                <MudAlert Severity="Severity.Error" Class="mt-3">@_validationError</MudAlert>
+            }
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="OnCancelAsync" Disabled="@_submitting">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled"
+                   OnClick="SubmitAsync"
+                   Disabled="@(_loading || _submitting || !CanSubmit())">
+            @if(_submitting)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
+            }
+            @L["Submit"]
+        </MudButton>
+    </DialogActions>
+</MudDialog>

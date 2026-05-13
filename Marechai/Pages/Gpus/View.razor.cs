@@ -334,4 +334,41 @@ public partial class View
         // until the user closes it.
         await dialogRef.Result;
     }
+
+    /// <summary>
+    ///     Open the collaborative GPU-photos batch upload dialog. The user can stage 1-15
+    ///     pending photos, set a suggestion-level license + source URL, optionally annotate
+    ///     each photo with a comment, then submit ONE Suggestion row that an admin reviews
+    ///     per-photo.
+    /// </summary>
+    async Task OpenSuggestPhotosDialog()
+    {
+        int gpuId = Id;
+        if(gpuId <= 0) return;
+
+        var dialogParams = new DialogParameters
+        {
+            ["GpuId"]   = gpuId,
+            ["GpuName"] = _gpu?.Name ?? string.Empty
+        };
+        var dialogOptions = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Large
+        };
+
+        var dialogRef = await DialogService.ShowAsync<GpuPhotosSuggestionDialog>(
+            L["Suggest GPU photos"], dialogParams, dialogOptions);
+
+        DialogResult result = await dialogRef.Result;
+
+        // If the suggestion was submitted (DialogResult.Ok), reload the photos list so the
+        // page stays in sync once an admin accepts. We don't need to refresh anything else.
+        if(result is { Canceled: false })
+        {
+            // Photos won't appear until an admin accepts them; nothing to refresh now.
+            // Method left as a hook in case future revisions want to surface a hint.
+        }
+    }
 }

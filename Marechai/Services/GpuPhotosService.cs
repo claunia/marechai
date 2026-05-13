@@ -138,4 +138,23 @@ public class GpuPhotosService(Marechai.ApiClient.Client client, IRequestAdapter 
             return [];
         }
     }
+
+    /// <summary>
+    ///     Delete a pending GPU photo (a not-yet-submitted file the collaborator staged via
+    ///     <c>POST /gpus/photos/pending</c>). Used by the suggestion dialog when the user
+    ///     removes a photo from the staging list before submission, OR when they cancel the
+    ///     dialog with photos still staged.
+    /// </summary>
+    public async Task<bool> DeletePendingPhotoAsync(Guid guid)
+    {
+        try
+        {
+            await client.Gpus.Photos.Pending[guid].DeleteAsync();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 }

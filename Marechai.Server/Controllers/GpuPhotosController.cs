@@ -33,9 +33,7 @@ using Marechai.Data;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Marechai.Helpers;
-using MetadataExtractor;
-using MetadataExtractor.Formats.Exif;
-using MetadataExtractor.Formats.Exif.Makernotes;
+using Marechai.Server.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -287,109 +285,7 @@ public class GpuPhotosController(MarechaiContext context, IConfiguration configu
             OriginalExtension = extension.TrimStart('.')
         };
 
-        try
-        {
-            IReadOnlyList<MetadataExtractor.Directory> directories = ImageMetadataReader.ReadMetadata(ms);
-
-            var exifIfd0 = directories.OfType<ExifIfd0Directory>().FirstOrDefault();
-            var exifSub  = directories.OfType<ExifSubIfdDirectory>().FirstOrDefault();
-
-            if(exifIfd0 is not null)
-            {
-                if(exifIfd0.TryGetUInt16(ExifDirectoryBase.TagOrientation, out ushort orientation))
-                    model.Orientation = (Orientation)orientation;
-
-                model.CameraManufacturer = exifIfd0.GetDescription(ExifDirectoryBase.TagMake);
-                model.CameraModel        = exifIfd0.GetDescription(ExifDirectoryBase.TagModel);
-                model.SoftwareUsed       = exifIfd0.GetDescription(ExifDirectoryBase.TagSoftware);
-                model.Author             = exifIfd0.GetDescription(ExifDirectoryBase.TagArtist);
-
-                if(exifIfd0.TryGetDouble(ExifDirectoryBase.TagXResolution, out double xRes))
-                    model.HorizontalResolution = xRes;
-
-                if(exifIfd0.TryGetDouble(ExifDirectoryBase.TagYResolution, out double yRes))
-                    model.VerticalResolution = yRes;
-
-                if(exifIfd0.TryGetUInt16(ExifDirectoryBase.TagResolutionUnit, out ushort resUnit))
-                    model.ResolutionUnit = (ResolutionUnit)resUnit;
-            }
-
-            if(exifSub is not null)
-            {
-                if(exifSub.TryGetDouble(ExifDirectoryBase.TagFNumber, out double fNumber))
-                    model.Focal = fNumber;
-
-                if(exifSub.TryGetDouble(ExifDirectoryBase.TagAperture, out double aperture))
-                    model.Aperture = aperture;
-
-                if(exifSub.TryGetDouble(ExifDirectoryBase.TagExposureTime, out double exposureTime))
-                    model.ExposureTime = exposureTime;
-
-                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagExposureProgram, out ushort exposureProgram))
-                    model.ExposureProgram = (ExposureProgram)exposureProgram;
-
-                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagIsoEquivalent, out ushort isoRating))
-                    model.IsoRating = isoRating;
-
-                model.ExifVersion = exifSub.GetDescription(ExifDirectoryBase.TagExifVersion);
-
-                if(exifSub.TryGetDateTime(ExifDirectoryBase.TagDateTimeOriginal, out DateTime creationDate))
-                    model.CreationDate = creationDate;
-
-                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagMeteringMode, out ushort meteringMode))
-                    model.MeteringMode = (MeteringMode)meteringMode;
-
-                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagFlash, out ushort flash))
-                    model.Flash = (Flash)flash;
-
-                if(exifSub.TryGetDouble(ExifDirectoryBase.TagFocalLength, out double focalLength))
-                    model.FocalLength = focalLength;
-
-                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagColorSpace, out ushort colorSpace))
-                    model.ColorSpace = (ColorSpace)colorSpace;
-
-                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagExposureMode, out ushort exposureMode))
-                    model.ExposureMethod = (ExposureMode)exposureMode;
-
-                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagWhiteBalance, out ushort whiteBalance))
-                    model.WhiteBalance = (WhiteBalance)whiteBalance;
-
-                if(exifSub.TryGetDouble(ExifDirectoryBase.TagDigitalZoomRatio, out double digitalZoom))
-                    model.DigitalZoomRatio = digitalZoom;
-
-                if(exifSub.TryGetUInt16(ExifDirectoryBase.Tag35MMFilmEquivFocalLength, out ushort focalLengthEquiv))
-                    model.FocalLengthEquivalent = focalLengthEquiv;
-
-                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagSceneCaptureType, out ushort sceneCaptureType))
-                    model.SceneCaptureType = (SceneCaptureType)sceneCaptureType;
-
-                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagContrast, out ushort contrast))
-                    model.Contrast = (Contrast)contrast;
-
-                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagSaturation, out ushort saturation))
-                    model.Saturation = (Saturation)saturation;
-
-                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagSharpness, out ushort sharpness))
-                    model.Sharpness = (Sharpness)sharpness;
-
-                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagSubjectDistanceRange, out ushort subjectDistRange))
-                    model.SubjectDistanceRange = (SubjectDistanceRange)subjectDistRange;
-
-                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagSensingMethod, out ushort sensingMethod))
-                    model.SensingMethod = (SensingMethod)sensingMethod;
-
-                if(exifSub.TryGetUInt16(0x9208, out ushort lightSource))
-                    model.LightSource = (LightSource)lightSource;
-
-                model.Lens = exifSub.GetDescription(ExifDirectoryBase.TagLensModel);
-
-                model.Comments = exifSub.GetDescription(ExifDirectoryBase.TagUserComment);
-            }
-        }
-        catch
-        {
-            // EXIF extraction failed — continue without metadata
-        }
+        PhotoExifExtractor.ExtractInto(model, ms);
 
         // Save original file to disk
         Photos.EnsureCreated(_assetRootPath, false, "gpus");
@@ -514,6 +410,156 @@ public class GpuPhotosController(MarechaiContext context, IConfiguration configu
         }
 
         return Ok();
+    }
+
+    /// <summary>
+    ///     Maximum in-flight pending photos a single collaborator may stage for a given GPU
+    ///     before they submit (or cancel) the suggestion. Mirrors the per-batch cap enforced
+    ///     by the dialog.
+    /// </summary>
+    const int PendingPhotosPerUserPerGpuCap = 15;
+
+    /// <summary>Allowed extensions for collaborator-uploaded GPU photos (must match server JS validation).</summary>
+    static readonly HashSet<string> _pendingAllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ".jpg", ".jpeg", ".png", ".webp"
+    };
+
+    /// <summary>Allowed content types for collaborator-uploaded GPU photos (must match server JS validation).</summary>
+    static readonly HashSet<string> _pendingAllowedContentTypes = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "image/jpeg", "image/png", "image/webp"
+    };
+
+    /// <summary>
+    ///     Stage a single pending GPU photo for a brand-new collaborative suggestion. The
+    ///     uploader keeps each pending file on the server (sidecar tracks ownership + parent
+    ///     <c>gpuId</c>) until they call <c>POST /suggestions</c> referencing the returned
+    ///     <c>guid</c>. Per-uploader cap of 15 in-flight pending photos per GPU.
+    /// </summary>
+    [HttpPost("pending")]
+    [Authorize]
+    [RequestSizeLimit(50 * 1024 * 1024)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<PendingImageUploadDto>> UploadPendingAsync(IFormFile file,
+        [FromQuery] int gpuId)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        if(file is null || file.Length == 0) return BadRequest("No file provided.");
+
+        if(file.Length > 50 * 1024 * 1024) return BadRequest("File exceeds 50 MB limit.");
+
+        string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
+
+        if(!_pendingAllowedExtensions.Contains(extension))
+            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP.");
+
+        if(!string.IsNullOrEmpty(file.ContentType) &&
+           !_pendingAllowedContentTypes.Contains(file.ContentType.ToLowerInvariant()))
+            return BadRequest("Unsupported content type.");
+
+        bool gpuExists = await context.Gpus.AnyAsync(g => g.Id == gpuId);
+
+        if(!gpuExists) return NotFound("GPU not found.");
+
+        int currentCount = PendingImageStore.CountByUploaderForParentEntity(_assetRootPath, "gpus", userId,
+            (byte)SuggestionEntityType.GpuPhoto, gpuId);
+
+        if(currentCount >= PendingPhotosPerUserPerGpuCap)
+            return Conflict($"You already have {currentCount} pending photos for this GPU. Maximum is " +
+                            $"{PendingPhotosPerUserPerGpuCap} per GPU. Submit or remove some first.");
+
+        Guid guid;
+
+        await using(Stream stream = file.OpenReadStream())
+        {
+            // EntityId stays 0 because the suggestion row that will reference these photos
+            // doesn't exist yet. ParentEntityId carries the gpuId so the per-uploader cap
+            // and cleanup-by-parent helpers can scope correctly.
+            guid = await PendingImageStore.StoreAsync(_assetRootPath, "gpus", extension,
+                (byte)SuggestionEntityType.GpuPhoto, entityId: 0L, userId, file.ContentType, stream,
+                parentEntityId: gpuId);
+        }
+
+        return Ok(new PendingImageUploadDto
+        {
+            Guid      = guid,
+            Extension = extension.TrimStart('.')
+        });
+    }
+
+    /// <summary>
+    ///     Delete a pending photo before it has been submitted as part of a suggestion. Only
+    ///     the original uploader (or an admin) may delete.
+    /// </summary>
+    [HttpDelete("pending/{guid:guid}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> DeletePendingAsync(Guid guid)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        PendingImageStore.PendingMetadata meta =
+            await PendingImageStore.GetMetadataAsync(_assetRootPath, "gpus", guid);
+
+        if(meta is null) return NotFound();
+        if(meta.EntityType != (byte)SuggestionEntityType.GpuPhoto) return NotFound();
+
+        bool isAdmin = User.IsInRole("Admin") || User.IsInRole("UberAdmin");
+
+        if(!PendingImageStore.CanAccess(meta, userId, isAdmin)) return Forbid();
+
+        PendingImageStore.Delete(_assetRootPath, "gpus", guid);
+
+        return NoContent();
+    }
+
+    /// <summary>
+    ///     Stream the binary contents of a pending GPU photo. Used by the dialog thumbnail
+    ///     preview AND by the admin SuggestionDiffPanel preview. Auth-gated: only the
+    ///     uploader and admins can read.
+    /// </summary>
+    [HttpGet("pending/{guid:guid}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> GetPendingAsync(Guid guid)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        PendingImageStore.PendingMetadata meta =
+            await PendingImageStore.GetMetadataAsync(_assetRootPath, "gpus", guid);
+
+        if(meta is null) return NotFound();
+        if(meta.EntityType != (byte)SuggestionEntityType.GpuPhoto) return NotFound();
+
+        bool isAdmin = User.IsInRole("Admin") || User.IsInRole("UberAdmin");
+
+        if(!PendingImageStore.CanAccess(meta, userId, isAdmin)) return Forbid();
+
+        string path = await PendingImageStore.GetImagePathAsync(_assetRootPath, "gpus", guid);
+
+        if(path is null || !System.IO.File.Exists(path)) return NotFound();
+
+        var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+
+        return File(stream, meta.ContentType ?? "application/octet-stream");
     }
 
     static void DeleteFilesByPattern(string directory, string pattern)
