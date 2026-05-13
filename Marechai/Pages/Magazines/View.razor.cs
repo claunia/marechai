@@ -283,4 +283,44 @@ public partial class View
         // page until an admin accepts it.
         await dlgRef.Result;
     }
+
+    /// <summary>
+    ///     Open the dedicated MagazineIssue suggestion dialog in addition mode (entityId=null,
+    ///     pre-filled with this magazine's id as the parent). Lets any authenticated user
+    ///     propose a brand-new issue for this magazine. The dialog handles cover upload,
+    ///     scalar fields, and people/machines/machine-families/software junctions; on accept
+    ///     by an admin a new MagazineIssue row materialises with the parent magazine
+    ///     pre-set. Magazine selection is locked to the current magazine — re-parenting an
+    ///     issue is admin-only.
+    /// </summary>
+    async Task OpenSuggestNewIssueDialog()
+    {
+        if(_magazine is null) return;
+
+        // Capture the route parameter Id (NOT _magazine.Id.Value) for the same reason as
+        // the edit-mode handler above: async loads can leave _magazine.Id null/0 in race
+        // scenarios.
+        long magazineId = Id;
+
+        var parameters = new DialogParameters<MagazineIssueSuggestionDialog>
+        {
+            { x => x.EntityId,                  0L                       },
+            { x => x.CurrentDto,                (MagazineIssueDto)null   },
+            { x => x.IsCreation,                true                     },
+            { x => x.PrefillMagazineId,         (long?)magazineId        },
+            { x => x.PrefillMagazineLabel,      _magazine.Title          },
+            { x => x.PrefillPublished,          (DateTime?)null          },
+            { x => x.PrefillPublishedPrecision, (DatePrecision?)null     }
+        };
+
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Large
+        };
+
+        await DialogService.ShowAsync<MagazineIssueSuggestionDialog>(
+            L["Suggest new magazine issue"], parameters, options);
+    }
 }

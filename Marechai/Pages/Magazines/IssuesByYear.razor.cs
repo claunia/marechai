@@ -27,7 +27,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Marechai.Data;
+using Marechai.Pages.Suggestions;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 
 namespace Marechai.Pages.Magazines;
 
@@ -110,4 +113,46 @@ public partial class IssuesByYear
         1 => published.ToString("MMMM yyyy"),
         _ => published.DateTime.ToShortDateString()
     };
+
+    /// <summary>
+    ///     Open the dedicated MagazineIssue suggestion dialog in addition mode (entityId=null,
+    ///     parent magazine id pre-filled). When the route year is a 4-digit value, also
+    ///     pre-fills the published date to Jan 1 of that year and the precision to
+    ///     <see cref="DatePrecision.Year" /> so the user lands in the dialog with the year
+    ///     already populated and only needs to refine it (or accept it as-is). For the
+    ///     literal "others" route, no date prefill is supplied.
+    /// </summary>
+    async Task OpenSuggestNewIssueDialog()
+    {
+        if(_magazine is null) return;
+
+        DateTime?       prefillPublished  = null;
+        DatePrecision?  prefillPrecision  = null;
+        if(_yearValue.HasValue)
+        {
+            prefillPublished = new DateTime(_yearValue.Value, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            prefillPrecision = DatePrecision.YearOnly;
+        }
+
+        var parameters = new DialogParameters<MagazineIssueSuggestionDialog>
+        {
+            { x => x.EntityId,                  0L                       },
+            { x => x.CurrentDto,                (MagazineIssueDto)null   },
+            { x => x.IsCreation,                true                     },
+            { x => x.PrefillMagazineId,         (long?)MagazineId        },
+            { x => x.PrefillMagazineLabel,      _magazine.Title          },
+            { x => x.PrefillPublished,          prefillPublished         },
+            { x => x.PrefillPublishedPrecision, prefillPrecision         }
+        };
+
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Large
+        };
+
+        await DialogService.ShowAsync<MagazineIssueSuggestionDialog>(
+            L["Suggest new magazine issue"], parameters, options);
+    }
 }

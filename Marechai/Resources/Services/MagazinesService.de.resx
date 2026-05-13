@@ -652,4 +652,19 @@
   <data name="Fill in the fields below to suggest a new magazine. Title is required; any companies you queue will be added together with the scalar fields once an administrator accepts the suggestion." xml:space="preserve">
     <value>Füllen Sie die folgenden Felder aus, um eine neue Zeitschrift vorzuschlagen. Der Titel ist erforderlich; alle in die Warteschlange eingereihten Unternehmen werden zusammen mit den skalaren Feldern hinzugefügt, sobald ein Administrator den Vorschlag akzeptiert.</value>
   </data>
+  <data name="Suggest new magazine issue" xml:space="preserve">
+    <value>Neue Zeitschriftenausgabe vorschlagen</value>
+  </data>
+  <data name="Suggest new issue" xml:space="preserve">
+    <value>Neue Ausgabe vorschlagen</value>
+  </data>
+  <data name="No issues recorded yet." xml:space="preserve">
+    <value>Noch keine Ausgaben erfasst.</value>
+  </data>
+  <data name="Cannot submit: parent magazine is missing." xml:space="preserve">
+    <value>Senden nicht möglich: übergeordnete Zeitschrift fehlt.</value>
+  </data>
+  <data name="Fill in the fields below to suggest a new magazine issue. Caption is required; you can attach a cover image and queue people, machines, machine families and software that will all be added together once an administrator accepts the suggestion." xml:space="preserve">
+    <value>Füllen Sie die Felder unten aus, um eine neue Zeitschriftenausgabe vorzuschlagen. Die Beschriftung ist erforderlich; Sie können ein Titelbild anhängen und Personen, Maschinen, Maschinenfamilien und Software in die Warteschlange stellen, die alle zusammen hinzugefügt werden, sobald ein Administrator den Vorschlag akzeptiert.</value>
+  </data>
 </root>

@@ -27,9 +27,12 @@
 
 @page "/magazine/{MagazineId:long}/year/{Year}"
 @using Marechai.ApiClient.Models
+@using Marechai.Data
+@using Marechai.Pages.Suggestions
 @inherits OwningComponentBase<MagazinesService>
 @inject IStringLocalizer<MagazinesService> L
 @inject ApiAssetUrlProvider                AssetUrls
+@inject IDialogService                     DialogService
 
 @if(!_loaded)
 {
@@ -56,18 +59,30 @@
 
 @* ── Slim header band ── *@
 <MudPaper Class="pa-4 mb-4" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 12px;">
-    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Wrap="Wrap.Wrap">
-        <MudIconButton Icon="@Icons.Material.Filled.ArrowBack"
-                       Color="Color.Inherit"
-                       Style="color: white;"
-                       Href="@($"/magazine/{MagazineId}")"/>
-        <MudText Typo="Typo.h5" Style="color: white; font-weight: 600;">@_magazine.Title</MudText>
-        <MudChip T="string"
-                 Color="Color.Surface"
-                 Variant="Variant.Filled"
-                 Style="color: #333; font-weight: 600;">
-            @(_yearValue.HasValue ? _yearValue.Value.ToString() : L["Others"])
-        </MudChip>
+    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Wrap="Wrap.Wrap">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Wrap="Wrap.Wrap">
+            <MudIconButton Icon="@Icons.Material.Filled.ArrowBack"
+                           Color="Color.Inherit"
+                           Style="color: white;"
+                           Href="@($"/magazine/{MagazineId}")"/>
+            <MudText Typo="Typo.h5" Style="color: white; font-weight: 600;">@_magazine.Title</MudText>
+            <MudChip T="string"
+                     Color="Color.Surface"
+                     Variant="Variant.Filled"
+                     Style="color: #333; font-weight: 600;">
+                @(_yearValue.HasValue ? _yearValue.Value.ToString() : L["Others"])
+            </MudChip>
+        </MudStack>
+        <AuthorizeView>
+            <Authorized>
+                <MudButton Variant="Variant.Outlined" Size="Size.Small" Color="Color.Inherit"
+                           StartIcon="@Icons.Material.Filled.AddCircle"
+                           Style="color: white; border-color: rgba(255,255,255,0.7);"
+                           OnClick="OpenSuggestNewIssueDialog">
+                    @L["Suggest new issue"]
+                </MudButton>
+            </Authorized>
+        </AuthorizeView>
     </MudStack>
 </MudPaper>
 

@@ -63,6 +63,15 @@ public sealed class MagazineIssueSuggestionMetadata : SuggestionMetadata
     /// </summary>
     public const string FieldCoverPendingGuid = "cover_pending_guid";
 
+    /// <summary>
+    ///     Pseudo-scalar carrying the parent magazine id for brand-new-issue creation
+    ///     (addition mode). Mirrors <c>MagazineIssueSuggestionApplier.FieldMagazineId</c>.
+    ///     Intentionally NOT in <c>s_scalarFieldNames</c>: only the addition path consumes
+    ///     this key, and the server applier rejects it in <c>ApplyAsync</c> because
+    ///     re-parenting an existing issue is admin-only.
+    /// </summary>
+    public const string FieldMagazineId = "magazine_id";
+
     // ---- Junction group identifiers (mirror server-side) -------------------------------
     public const string GroupPeople          = "people";
     public const string GroupMachines        = "machines";

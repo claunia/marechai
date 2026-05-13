@@ -37,7 +37,14 @@
         else
         {
             <MudText Typo="Typo.body2" Class="mb-3">
-                @L["Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently."]
+                @if(IsCreation)
+                {
+                    @L["Fill in the fields below to suggest a new magazine issue. Caption is required; you can attach a cover image and queue people, machines, machine families and software that will all be added together once an administrator accepts the suggestion."]
+                }
+                else
+                {
+                    @L["Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently."]
+                }
             </MudText>
 
             @* ── Read-only parent magazine context (admin-only re-parenting) ── *@
@@ -97,6 +104,13 @@
             </MudPaper>
 
             @* ── Cover ── *@
+            @* In creation mode, hide the cover panel until the user has typed a caption.
+               This prevents orphan uploads when the user closes the dialog without
+               supplying the mandatory caption — the file is still cleaned up by the
+               per-(uploader, EntityId=0) sweep on the next NEW upload, but suppressing
+               the trigger entirely is a cleaner UX. *@
+            @if(!IsCreation || !string.IsNullOrWhiteSpace(_caption))
+            {
             <MudPaper Outlined="true" Class="pa-3 mb-3">
                 <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-2">
                     <MudText Typo="Typo.h6">@L["Cover"]</MudText>
@@ -146,6 +160,7 @@
                     <MudAlert Severity="Severity.Error" Class="mt-2">@_coverError</MudAlert>
                 }
             </MudPaper>
+            }
 
             @* ── Junctions ── *@
             <MudExpansionPanels MultiExpansion="true" Class="mb-3">
@@ -328,7 +343,7 @@
     <DialogActions>
         <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
         <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit"
-                   Disabled="@(_loading || _submitting || !HasAnyChange())">
+                   Disabled="@(_loading || _submitting || (!IsCreation && !HasAnyChange()) || (IsCreation && !HasMandatoryFieldsForCreation()))">
             @if(_submitting)
             {
                 <MudProgressCircular Size="Size.Small" Indeterminate="true"/>
@@ -347,6 +362,44 @@
 
     [Parameter] public long             EntityId   { get; set; }
     [Parameter] public MagazineIssueDto CurrentDto { get; set; }
+
+    /// <summary>
+    ///     When <c>true</c>, the dialog operates in addition mode: <see cref="CurrentDto" /> is
+    ///     ignored, no existing-row queries are issued, the cover upload targets the
+    ///     <c>POST /magazines/issues/cover/pending/new</c> endpoint, and <see cref="Submit" />
+    ///     emits a suggestion with <c>EntityId == null</c>. The submit button is gated on
+    ///     <see cref="HasMandatoryFieldsForCreation" /> rather than <see cref="HasAnyChange" />.
+    /// </summary>
+    [Parameter] public bool IsCreation { get; set; }
+
+    /// <summary>
+    ///     Required in creation mode: the parent Magazine.Id under which the new issue will
+    ///     be created. Locked in the UI (the magazine selector is rendered disabled with
+    ///     <see cref="PrefillMagazineLabel" /> as the displayed text). Re-parenting an
+    ///     existing issue is admin-only, so this is also irrelevant outside creation mode.
+    /// </summary>
+    [Parameter] public long? PrefillMagazineId { get; set; }
+
+    /// <summary>
+    ///     Display label for the parent magazine, shown in the read-only context alert in
+    ///     creation mode. Pre-populated from the parent view (which already has the magazine
+    ///     title loaded) to avoid an extra round-trip to fetch <see cref="MagazineDto.Title" />.
+    /// </summary>
+    [Parameter] public string PrefillMagazineLabel { get; set; }
+
+    /// <summary>
+    ///     Optional pre-fill for the Published date in creation mode (e.g. Jan 1 of the
+    ///     route year when the dialog is opened from <c>IssuesByYear.razor</c>). Not used
+    ///     in edit mode (the snapshot from <see cref="CurrentDto" /> takes precedence).
+    /// </summary>
+    [Parameter] public DateTime? PrefillPublished { get; set; }
+
+    /// <summary>
+    ///     Optional pre-fill for the published-date precision in creation mode (e.g.
+    ///     <c>DatePrecision.Year</c> when the dialog is opened from <c>IssuesByYear.razor</c>
+    ///     with a 4-digit year route param). Not used in edit mode.
+    /// </summary>
+    [Parameter] public DatePrecision? PrefillPublishedPrecision { get; set; }
 
     sealed class JunctionAddState
     {
@@ -426,8 +479,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // Seed scalar state from the current DTO snapshot.
-        if(CurrentDto is not null)
+        // Seed scalar state from the current DTO snapshot (only in edit mode).
+        if(!IsCreation && CurrentDto is not null)
         {
             _caption                 = CurrentDto.Caption;
             _nativeCaption           = CurrentDto.NativeCaption;
@@ -449,11 +502,42 @@
             _orig_internetArchiveUrl = _internetArchiveUrl;
         }
 
+        // In creation mode, seed from the prefill parameters supplied by the parent view
+        // (parent magazine context, optional year-prefill from IssuesByYear). The
+        // _orig_* snapshot stays at default values — diff vs snapshot is unused in
+        // creation mode (Submit emits all non-empty fields rather than a diff).
+        if(IsCreation)
+        {
+            _magazineTitle = PrefillMagazineLabel;
+            if(PrefillPublished.HasValue) _published = PrefillPublished;
+            if(PrefillPublishedPrecision.HasValue) _publishedPrecision = (int)PrefillPublishedPrecision.Value;
+        }
+
         Task<List<PersonDto>>                    allPeopleT     = MagazinesService.GetAllPeopleAsync();
         Task<List<MachineDto>>                   allMachinesT   = MagazinesService.GetAllMachinesAsync();
         Task<List<MachineFamilyDto>>             allFamiliesT   = MagazinesService.GetAllMachineFamiliesAsync();
         Task<List<SoftwareDto>>                  allSoftwareT   = MagazinesService.GetAllSoftwareAsync();
         Task<List<DocumentRoleDto>>              rolesT         = MagazinesService.GetDocumentRolesAsync();
+
+        if(IsCreation)
+        {
+            await Task.WhenAll(allPeopleT, allMachinesT, allFamiliesT, allSoftwareT, rolesT);
+
+            _allPeople           = allPeopleT.Result;
+            _allMachines         = allMachinesT.Result;
+            _allMachineFamilies  = allFamiliesT.Result;
+            _allSoftware         = allSoftwareT.Result;
+            _roles               = rolesT.Result;
+
+            _peopleRows         = new List<PersonByMagazineDto>();
+            _machineRows        = new List<MagazineByMachineDto>();
+            _machineFamilyRows  = new List<MagazineByMachineFamilyDto>();
+            _softwareRows       = new List<MagazineBySoftwareDto>();
+
+            _loading = false;
+            return;
+        }
+
         // Note: these "by Magazine" methods actually fetch by MagazineIssue id — the
         // junction-table FK column is named MagazineId for historical reasons but points
         // to MagazineIssue.Id. See MagazineIssueSuggestionApplier for details.
@@ -696,9 +780,13 @@
 
             string oldGuid = _pendingCoverGuid;
 
-            UploadResult res = await JS.InvokeAsync<UploadResult>(
-                "MarechaiPendingCover.uploadMagazineIssueCover",
-                ApiAssetUrls.BaseUrl, token, EntityId, _coverInputId);
+            UploadResult res = IsCreation
+                ? await JS.InvokeAsync<UploadResult>(
+                      "MarechaiPendingCover.uploadNewMagazineIssueCover",
+                      ApiAssetUrls.BaseUrl, token, _coverInputId)
+                : await JS.InvokeAsync<UploadResult>(
+                      "MarechaiPendingCover.uploadMagazineIssueCover",
+                      ApiAssetUrls.BaseUrl, token, EntityId, _coverInputId);
 
             if(res is null || !res.ok || string.IsNullOrEmpty(res.guid))
             {
@@ -792,12 +880,15 @@
 
     void Cancel() => MudDialog.Cancel();
 
+    bool HasMandatoryFieldsForCreation() =>
+        !string.IsNullOrWhiteSpace(_caption) && PrefillMagazineId.HasValue;
+
     async Task Submit()
     {
         _validationError = null;
         if(_loading) return;
 
-        // Caption is required: never let the user clear it.
+        // Caption is required: never let the user clear it (edit mode) or omit it (creation mode).
         if(string.IsNullOrWhiteSpace(_caption))
         {
             _validationError = L["Caption is required."];
@@ -811,34 +902,74 @@
             return;
         }
 
+        // Creation mode: caller MUST supply PrefillMagazineId — Submit-button gate already
+        // enforces this but we re-check here as a defence in depth (URL-tampering, racing
+        // parameter binding etc.) to prevent a malformed addition from reaching the wire.
+        if(IsCreation && !PrefillMagazineId.HasValue)
+        {
+            _validationError = L["Cannot submit: parent magazine is missing."];
+            return;
+        }
+
         var diff = new Dictionary<string, object>(StringComparer.Ordinal);
 
-        if(!Equals(_orig_caption, _caption))             diff[MagazineIssueSuggestionMetadata.FieldCaption]       = _caption;
-        if(!Equals(_orig_nativeCaption, _nativeCaption)) diff[MagazineIssueSuggestionMetadata.FieldNativeCaption] = _nativeCaption;
-        if(!Nullable.Equals(_orig_issueNumber, _issueNumber)) diff[MagazineIssueSuggestionMetadata.FieldIssueNumber] = _issueNumber;
-        if(!Nullable.Equals(_orig_pages, _pages))             diff[MagazineIssueSuggestionMetadata.FieldPages]       = _pages;
-        if(!Equals(_orig_productCode, _productCode))          diff[MagazineIssueSuggestionMetadata.FieldProductCode] = _productCode;
-        if(!Nullable.Equals(_orig_published, _published))
-            diff[MagazineIssueSuggestionMetadata.FieldPublished] = _published?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-        if(_orig_publishedPrecision != _publishedPrecision)
-            diff[MagazineIssueSuggestionMetadata.FieldPublishedPrecision] = _publishedPrecision;
-        if(!Equals(_orig_internetArchiveUrl, _internetArchiveUrl))
-            diff[MagazineIssueSuggestionMetadata.FieldInternetArchiveUrl] = _internetArchiveUrl;
-
-        // Cover-pending: emit the guid only. The applier reads the extension from the
-        // pending-image sidecar (so we don't need to round-trip it on the wire).
-        if(!string.IsNullOrEmpty(_pendingCoverGuid))
-            diff[MagazineIssueSuggestionMetadata.FieldCoverPendingGuid] = _pendingCoverGuid;
-
-        AddJunctionOps(diff, _peopleAdds,        _peopleRemoves,        MagazineIssueSuggestionMetadata.GroupPeople);
-        AddJunctionOps(diff, _machineAdds,       _machineRemoves,       MagazineIssueSuggestionMetadata.GroupMachines);
-        AddJunctionOps(diff, _machineFamilyAdds, _machineFamilyRemoves, MagazineIssueSuggestionMetadata.GroupMachineFamilies);
-        AddJunctionOps(diff, _softwareAdds,      _softwareRemoves,      MagazineIssueSuggestionMetadata.GroupSoftware);
-
-        if(diff.Count == 0)
+        if(IsCreation)
         {
-            _validationError = L["No changes detected — modify at least one field before submitting."];
-            return;
+            // Brand-new entity: emit every populated scalar plus the cover and all queued
+            // junction adds. Remove ops are ignored (no existing rows in creation mode).
+            diff[MagazineIssueSuggestionMetadata.FieldMagazineId] = PrefillMagazineId.Value;
+            diff[MagazineIssueSuggestionMetadata.FieldCaption]    = _caption;
+            if(!string.IsNullOrWhiteSpace(_nativeCaption))
+                diff[MagazineIssueSuggestionMetadata.FieldNativeCaption] = _nativeCaption;
+            if(_issueNumber.HasValue)
+                diff[MagazineIssueSuggestionMetadata.FieldIssueNumber] = _issueNumber;
+            if(_pages.HasValue)
+                diff[MagazineIssueSuggestionMetadata.FieldPages] = _pages;
+            if(!string.IsNullOrWhiteSpace(_productCode))
+                diff[MagazineIssueSuggestionMetadata.FieldProductCode] = _productCode;
+            if(_published.HasValue)
+                diff[MagazineIssueSuggestionMetadata.FieldPublished] = _published.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            if(_publishedPrecision != 0)
+                diff[MagazineIssueSuggestionMetadata.FieldPublishedPrecision] = _publishedPrecision;
+            if(!string.IsNullOrWhiteSpace(_internetArchiveUrl))
+                diff[MagazineIssueSuggestionMetadata.FieldInternetArchiveUrl] = _internetArchiveUrl;
+            if(!string.IsNullOrEmpty(_pendingCoverGuid))
+                diff[MagazineIssueSuggestionMetadata.FieldCoverPendingGuid] = _pendingCoverGuid;
+
+            foreach(KeyValuePair<string, JunctionAddState> kv in _peopleAdds)        diff[kv.Key] = kv.Value.Payload;
+            foreach(KeyValuePair<string, JunctionAddState> kv in _machineAdds)       diff[kv.Key] = kv.Value.Payload;
+            foreach(KeyValuePair<string, JunctionAddState> kv in _machineFamilyAdds) diff[kv.Key] = kv.Value.Payload;
+            foreach(KeyValuePair<string, JunctionAddState> kv in _softwareAdds)      diff[kv.Key] = kv.Value.Payload;
+        }
+        else
+        {
+            if(!Equals(_orig_caption, _caption))             diff[MagazineIssueSuggestionMetadata.FieldCaption]       = _caption;
+            if(!Equals(_orig_nativeCaption, _nativeCaption)) diff[MagazineIssueSuggestionMetadata.FieldNativeCaption] = _nativeCaption;
+            if(!Nullable.Equals(_orig_issueNumber, _issueNumber)) diff[MagazineIssueSuggestionMetadata.FieldIssueNumber] = _issueNumber;
+            if(!Nullable.Equals(_orig_pages, _pages))             diff[MagazineIssueSuggestionMetadata.FieldPages]       = _pages;
+            if(!Equals(_orig_productCode, _productCode))          diff[MagazineIssueSuggestionMetadata.FieldProductCode] = _productCode;
+            if(!Nullable.Equals(_orig_published, _published))
+                diff[MagazineIssueSuggestionMetadata.FieldPublished] = _published?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            if(_orig_publishedPrecision != _publishedPrecision)
+                diff[MagazineIssueSuggestionMetadata.FieldPublishedPrecision] = _publishedPrecision;
+            if(!Equals(_orig_internetArchiveUrl, _internetArchiveUrl))
+                diff[MagazineIssueSuggestionMetadata.FieldInternetArchiveUrl] = _internetArchiveUrl;
+
+            // Cover-pending: emit the guid only. The applier reads the extension from the
+            // pending-image sidecar (so we don't need to round-trip it on the wire).
+            if(!string.IsNullOrEmpty(_pendingCoverGuid))
+                diff[MagazineIssueSuggestionMetadata.FieldCoverPendingGuid] = _pendingCoverGuid;
+
+            AddJunctionOps(diff, _peopleAdds,        _peopleRemoves,        MagazineIssueSuggestionMetadata.GroupPeople);
+            AddJunctionOps(diff, _machineAdds,       _machineRemoves,       MagazineIssueSuggestionMetadata.GroupMachines);
+            AddJunctionOps(diff, _machineFamilyAdds, _machineFamilyRemoves, MagazineIssueSuggestionMetadata.GroupMachineFamilies);
+            AddJunctionOps(diff, _softwareAdds,      _softwareRemoves,      MagazineIssueSuggestionMetadata.GroupSoftware);
+
+            if(diff.Count == 0)
+            {
+                _validationError = L["No changes detected — modify at least one field before submitting."];
+                return;
+            }
         }
 
         _submitting = true;
@@ -848,7 +979,7 @@
             var dto = new SuggestionDto
             {
                 EntityType          = (int?)SuggestionEntityType.MagazineIssue,
-                EntityId            = EntityId,
+                EntityId            = IsCreation ? null : EntityId,
                 Status              = (int?)SuggestionStatus.Pending,
                 UserComment         = string.IsNullOrWhiteSpace(_userComment) ? null : _userComment.Trim(),
                 SuggestedValuesJson = json

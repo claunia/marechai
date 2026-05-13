@@ -633,4 +633,19 @@
   <data name="Fill in the fields below to suggest a new magazine. Title is required; any companies you queue will be added together with the scalar fields once an administrator accepts the suggestion." xml:space="preserve">
     <value>Fill in the fields below to suggest a new magazine. Title is required; any companies you queue will be added together with the scalar fields once an administrator accepts the suggestion.</value>
   </data>
+  <data name="Suggest new magazine issue" xml:space="preserve">
+    <value>Suggest new magazine issue</value>
+  </data>
+  <data name="Suggest new issue" xml:space="preserve">
+    <value>Suggest new issue</value>
+  </data>
+  <data name="No issues recorded yet." xml:space="preserve">
+    <value>No issues recorded yet.</value>
+  </data>
+  <data name="Cannot submit: parent magazine is missing." xml:space="preserve">
+    <value>Cannot submit: parent magazine is missing.</value>
+  </data>
+  <data name="Fill in the fields below to suggest a new magazine issue. Caption is required; you can attach a cover image and queue people, machines, machine families and software that will all be added together once an administrator accepts the suggestion." xml:space="preserve">
+    <value>Fill in the fields below to suggest a new magazine issue. Caption is required; you can attach a cover image and queue people, machines, machine families and software that will all be added together once an administrator accepts the suggestion.</value>
+  </data>
 </root>

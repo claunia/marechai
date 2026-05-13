@@ -100,7 +100,8 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.Machine,
         SuggestionEntityType.Magazine,
         SuggestionEntityType.Book,
-        SuggestionEntityType.Document
+        SuggestionEntityType.Document,
+        SuggestionEntityType.MagazineIssue
     };
 
     // ───────────────────────────── POST /suggestions ─────────────────────────────
@@ -1319,6 +1320,15 @@ public class SuggestionsController(MarechaiContext context,
                     return "A new document suggestion must include a non-empty 'title' field.";
                 return null;
             }
+            case SuggestionEntityType.MagazineIssue:
+            {
+                if(!values.TryGetValue(Suggestions.MagazineIssueSuggestionApplier.FieldMagazineId, out object _))
+                    return "A new magazine issue suggestion must include a 'magazine_id' field referencing the parent magazine.";
+                if(!values.TryGetValue(Suggestions.MagazineIssueSuggestionApplier.FieldCaption, out object n) ||
+                   string.IsNullOrWhiteSpace(ExtractStringForValidation(n)))
+                    return "A new magazine issue suggestion must include a non-empty 'caption' field.";
+                return null;
+            }
             default:
                 return $"Brand-new {type} suggestions are not supported.";
         }
@@ -1380,6 +1390,15 @@ public class SuggestionsController(MarechaiContext context,
                 }
                 return null;
             }
+            case SuggestionEntityType.MagazineIssue:
+            {
+                if(values.TryGetValue(Suggestions.MagazineIssueSuggestionApplier.FieldCaption, out object n))
+                {
+                    string s = ExtractStringForValidation(n);
+                    return string.IsNullOrWhiteSpace(s) ? null : s.Trim();
+                }
+                return null;
+            }
             default:
                 return null;
         }
@@ -1421,6 +1440,11 @@ public class SuggestionsController(MarechaiContext context,
                 // Document titles repeat across editions, translations and reprints (e.g.
                 // "User's Manual" appears for many machines / decades). Dedupe on title only
                 // would over-block; rely on admin moderation to spot true duplicates instead.
+                return false;
+            case SuggestionEntityType.MagazineIssue:
+                // Issue captions repeat across years/months (e.g. "Issue 1", "January",
+                // "Annual") and even within a single magazine. Dedupe on caption only would
+                // over-block; rely on admin moderation to spot true duplicates instead.
                 return false;
             default:
                 return false;
@@ -1472,6 +1496,12 @@ public class SuggestionsController(MarechaiContext context,
             {
                 var (id, applied) = await Suggestions.DocumentSuggestionApplier.CreateAsync(
                     context, suggested, accepted, creditedUserId);
+                return (id, applied);
+            }
+            case SuggestionEntityType.MagazineIssue:
+            {
+                var (id, applied) = await Suggestions.MagazineIssueSuggestionApplier.CreateAsync(
+                    context, suggested, accepted, creditedUserId, _assetRootPath);
                 return (id, applied);
             }
             default:
@@ -2536,7 +2566,13 @@ public class SuggestionsController(MarechaiContext context,
                                                Dictionary<string, JsonElement> values,
                                                Dictionary<string, string> labels)
     {
-        if(!entityId.HasValue) return;
+        // NOTE: do NOT early-return on `!entityId.HasValue` — junction-add labels in addition
+        // mode (entityId == null, brand-new issue) look up the linked entity (Person, Machine,
+        // MachineFamily, Software) directly from the suggested payload's id field, so they
+        // don't need the parent issue id. Only the junction-remove label resolver needs an
+        // existing issue id (no rows to remove from a brand-new issue) and is gated
+        // separately at the call site.
+        _ = entityId;
 
         foreach(KeyValuePair<string, JsonElement> kv in values)
         {

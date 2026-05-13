@@ -273,6 +273,66 @@ window.MarechaiPendingCover = (function () {
         }
     }
 
+    /**
+     * Upload a pending cover for a brand-new magazine issue (no issueId yet) to the
+     * /magazines/issues/cover/pending/new endpoint. Mirror of uploadNewBookCover.
+     * Used by the addition-mode (entityId=null) MagazineIssue suggestion dialog.
+     *
+     * @param {string} apiBaseUrl
+     * @param {string} jwtToken
+     * @param {Element|string} fileInputElementOrId
+     * @returns {Promise<{ok: boolean, status: number, guid?: string, extension?: string, error?: string}>}
+     */
+    async function uploadNewMagazineIssueCover(apiBaseUrl, jwtToken, fileInputElementOrId) {
+        const input = (typeof fileInputElementOrId === 'string')
+            ? document.getElementById(fileInputElementOrId)
+            : fileInputElementOrId;
+
+        if (!input || !input.files || input.files.length === 0) {
+            return { ok: false, status: 0, error: 'No file selected.' };
+        }
+
+        const file = input.files[0];
+
+        if (file.size > 50 * 1024 * 1024) {
+            return { ok: false, status: 0, error: 'File exceeds 50 MB limit.' };
+        }
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+        if (file.type && !allowedTypes.includes(file.type.toLowerCase())) {
+            return { ok: false, status: 0, error: 'Unsupported file type. Allowed: JPG, PNG, WebP.' };
+        }
+
+        const fd = new FormData();
+        fd.append('file', file, file.name);
+
+        const url = `${apiBaseUrl.replace(/\/+$/, '')}/magazines/issues/cover/pending/new`;
+
+        try {
+            const resp = await fetch(url, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${jwtToken}` },
+                body: fd
+            });
+
+            if (!resp.ok) {
+                let detail = '';
+                try {
+                    const body = await resp.text();
+                    try {
+                        const j = JSON.parse(body);
+                        detail = j.detail || j.title || body;
+                    } catch { detail = body; }
+                } catch { /* ignored */ }
+                return { ok: false, status: resp.status, error: detail || `HTTP ${resp.status}` };
+            }
+
+            const json = await resp.json();
+            return { ok: true, status: resp.status, guid: json.guid, extension: json.extension };
+        } catch (err) {
+            return { ok: false, status: 0, error: err && err.message ? err.message : String(err) };
+        }
+    }
+
     async function deletePendingMagazineIssueCover(apiBaseUrl, jwtToken, guid) {
         const url = `${apiBaseUrl.replace(/\/+$/, '')}/magazines/issues/cover/pending/${encodeURIComponent(guid)}`;
         try {
@@ -456,6 +516,7 @@ window.MarechaiPendingCover = (function () {
         applyPendingCoverImage,
         openPendingCoverInNewTab,
         uploadMagazineIssueCover,
+        uploadNewMagazineIssueCover,
         deletePendingMagazineIssueCover,
         applyPendingMagazineIssueCoverImage,
         openPendingMagazineIssueCoverInNewTab,

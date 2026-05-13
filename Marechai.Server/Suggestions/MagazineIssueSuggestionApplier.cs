@@ -82,6 +82,14 @@ internal static class MagazineIssueSuggestionApplier
     /// </summary>
     public const string FieldCoverPendingGuid = "cover_pending_guid";
 
+    /// <summary>
+    ///     Pseudo-scalar carrying the parent magazine id for brand-new-issue creation
+    ///     (<see cref="CreateAsync" />). Intentionally NOT in <c>s_scalarFieldNames</c>:
+    ///     <see cref="ApplyAsync" /> rejects it because re-parenting an existing issue is
+    ///     admin-only. Only the addition path consumes this key.
+    /// </summary>
+    public const string FieldMagazineId = "magazine_id";
+
     static readonly HashSet<string> s_scalarFieldNames = new(StringComparer.Ordinal)
     {
         FieldCaption, FieldNativeCaption,
@@ -103,14 +111,16 @@ internal static class MagazineIssueSuggestionApplier
 
     /// <summary>
     ///     Returns <c>true</c> when the field-name is a recognised MagazineIssue field name.
-    ///     Accepts scalar field names AND any junction operation key matching
-    ///     <c>&lt;group&gt;.{add,remove}.&lt;token&gt;</c>. NOTE: <c>magazine_id</c> is
-    ///     intentionally rejected (admin-only re-parenting).
+    ///     Accepts scalar field names AND <see cref="FieldMagazineId" /> (consumed only by
+    ///     <see cref="CreateAsync" /> in addition mode \u2014 <see cref="ApplyAsync" /> still
+    ///     rejects it because re-parenting an existing issue is admin-only) AND any junction
+    ///     operation key matching <c>&lt;group&gt;.{add,remove}.&lt;token&gt;</c>.
     /// </summary>
     public static bool IsKnownFieldName(string fieldName)
     {
         if(string.IsNullOrEmpty(fieldName)) return false;
         if(s_scalarFieldNames.Contains(fieldName)) return true;
+        if(fieldName == FieldMagazineId) return true;
         return TryParseJunctionKey(fieldName, out _, out _, out _);
     }
 
@@ -165,6 +175,115 @@ internal static class MagazineIssueSuggestionApplier
             // the extension lives in the pending sidecar so it isn't echoed here.
             [FieldCoverPendingGuid] = mi.CoverGuid?.ToString()
         };
+    }
+
+    /// <summary>
+    ///     Create a brand-new MagazineIssue from an accepted suggestion (entity_id == null
+    ///     path). Returns the new id + the field-name set that was actually applied. Returns
+    ///     <c>(null, empty)</c> when creation can't proceed (e.g. admin didn't tick the
+    ///     mandatory <c>caption</c> or <c>magazine_id</c> field, or the parent magazine no
+    ///     longer exists). Junction <c>*.add.*</c> keys are applied in a second pass against
+    ///     the freshly-minted <c>MagazineIssueId</c>; <c>*.remove.*</c> keys are silently
+    ///     skipped (a brand-new entity has nothing to remove from). Cover-pending guid
+    ///     promotion happens BEFORE persistence so the cover guid + extension are part of
+    ///     the initial row.
+    /// </summary>
+    /// <param name="creditedUserId">
+    ///     The Identity user id to attribute the row to in audit history (the suggesting
+    ///     user, NOT the reviewing admin). Forwarded to <c>SaveChangesWithUserAsync</c>.
+    /// </param>
+    public static async Task<(long? newId, HashSet<string> applied)> CreateAsync(
+        MarechaiContext context,
+        Dictionary<string, object> suggested,
+        HashSet<string> accepted,
+        string creditedUserId,
+        string assetRootPath)
+    {
+        var applied = new HashSet<string>(StringComparer.Ordinal);
+
+        // Two mandatory fields: parent magazine_id (FK existence check) and caption (non-
+        // whitespace). Reject the addition outright if either is missing or invalid.
+        if(!accepted.Contains(FieldMagazineId) || !suggested.TryGetValue(FieldMagazineId, out object magIdRaw))
+            return (null, applied);
+        long? magIdParsed = ToLong(magIdRaw);
+        if(!magIdParsed.HasValue || magIdParsed.Value <= 0) return (null, applied);
+        long magazineId = magIdParsed.Value;
+        if(!await context.Magazines.AsNoTracking().AnyAsync(m => m.Id == magazineId))
+            return (null, applied);
+
+        if(!accepted.Contains(FieldCaption) || !suggested.TryGetValue(FieldCaption, out object captionVal))
+            return (null, applied);
+        string caption = ToStringValue(captionVal);
+        if(string.IsNullOrWhiteSpace(caption)) return (null, applied);
+
+        var mi = new MagazineIssue
+        {
+            MagazineId = magazineId,
+            Caption    = caption.Trim()
+        };
+        applied.Add(FieldMagazineId);
+        applied.Add(FieldCaption);
+
+        // Apply remaining accepted scalar fields via the same coercion+validation table the
+        // edit path uses. Junction operations and the cover are handled in dedicated passes.
+        foreach(string fieldName in accepted)
+        {
+            if(fieldName == FieldCaption) continue;
+            if(fieldName == FieldMagazineId) continue;
+            if(fieldName == FieldCoverPendingGuid) continue;
+            if(!s_scalarFieldNames.Contains(fieldName)) continue;
+            if(!suggested.TryGetValue(fieldName, out object value)) continue;
+
+            try
+            {
+                if(await ApplyScalar(context, mi, fieldName, value)) applied.Add(fieldName);
+            }
+            catch
+            {
+                // Coerce failure: silently skip this field.
+            }
+        }
+
+        // Cover-pending: promote the file BEFORE saving so the new row carries the cover
+        // guid + extension from the moment it's persisted. Failure here just skips the
+        // cover; the rest of the entity still gets created.
+        if(accepted.Contains(FieldCoverPendingGuid) &&
+           suggested.TryGetValue(FieldCoverPendingGuid, out object coverGuidRaw))
+        {
+            string guidStr = ToStringValue(coverGuidRaw);
+            if(!string.IsNullOrEmpty(guidStr) && Guid.TryParse(guidStr, out Guid pendingGuid))
+            {
+                if(await PromoteMagazineIssueCoverAsync(mi, assetRootPath, pendingGuid))
+                    applied.Add(FieldCoverPendingGuid);
+            }
+        }
+
+        await context.MagazineIssues.AddAsync(mi);
+
+        if(string.IsNullOrEmpty(creditedUserId))
+            await context.SaveChangesAsync();
+        else
+            await context.SaveChangesWithUserAsync(creditedUserId);
+
+        // Now apply junction adds with the freshly-minted issue id. Remove keys are silently
+        // ignored — a brand-new entity has nothing to remove from.
+        foreach(string fieldName in accepted)
+        {
+            if(!TryParseJunctionKey(fieldName, out string group, out string op, out string _)) continue;
+            if(op != "add") continue;
+            if(!suggested.TryGetValue(fieldName, out object value)) continue;
+
+            try
+            {
+                if(await ApplyJunctionAdd(context, mi.Id, group, value)) applied.Add(fieldName);
+            }
+            catch
+            {
+                // Coerce failure: silently skip this junction add.
+            }
+        }
+
+        return (mi.Id, applied);
     }
 
     /// <summary>
