@@ -1063,4 +1063,4 @@
   <data name="Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently." xml:space="preserve">
     <value>Edita cualquier campo o relación abajo. Solo se enviarán tus cambios para revisión; un administrador puede aceptarlos o rechazarlos uno por uno.</value>
   </data>
-</root>
+<data name="Fill in the fields below to suggest a new machine. Name, company and type are required; any junctions you add will be queued for admin review along with the scalar fields." xml:space="preserve"><value>Rellena los campos a continuación para sugerir una nueva máquina. Nombre, empresa y tipo son obligatorios; cualquier relación que añadas se enviará a revisión junto con los campos escalares.</value></data><data name="Name, company and type are required to suggest a new machine." xml:space="preserve"><value>El nombre, la empresa y el tipo son obligatorios para sugerir una nueva máquina.</value></data></root>

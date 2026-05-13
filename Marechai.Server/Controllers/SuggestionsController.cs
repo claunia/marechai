@@ -96,7 +96,8 @@ public class SuggestionsController(MarechaiContext context,
     /// </summary>
     static readonly HashSet<SuggestionEntityType> s_supportsAddition = new()
     {
-        SuggestionEntityType.Company
+        SuggestionEntityType.Company,
+        SuggestionEntityType.Machine
     };
 
     // ───────────────────────────── POST /suggestions ─────────────────────────────
@@ -1283,6 +1284,17 @@ public class SuggestionsController(MarechaiContext context,
                     return "A new company suggestion must include a non-empty 'name' field.";
                 return null;
             }
+            case SuggestionEntityType.Machine:
+            {
+                if(!values.TryGetValue(Suggestions.MachineSuggestionApplier.FieldName, out object n) ||
+                   string.IsNullOrWhiteSpace(ExtractStringForValidation(n)))
+                    return "A new machine suggestion must include a non-empty 'name' field.";
+                if(!values.ContainsKey(Suggestions.MachineSuggestionApplier.FieldType))
+                    return "A new machine suggestion must include a 'type' field (computer, console or smartphone).";
+                if(!values.ContainsKey(Suggestions.MachineSuggestionApplier.FieldCompanyId))
+                    return "A new machine suggestion must include a 'company_id' field referencing the manufacturer.";
+                return null;
+            }
             default:
                 return $"Brand-new {type} suggestions are not supported.";
         }
@@ -1302,6 +1314,15 @@ public class SuggestionsController(MarechaiContext context,
             case SuggestionEntityType.Company:
             {
                 if(values.TryGetValue(Suggestions.CompanySuggestionApplier.FieldName, out object n))
+                {
+                    string s = ExtractStringForValidation(n);
+                    return string.IsNullOrWhiteSpace(s) ? null : s.Trim();
+                }
+                return null;
+            }
+            case SuggestionEntityType.Machine:
+            {
+                if(values.TryGetValue(Suggestions.MachineSuggestionApplier.FieldName, out object n))
                 {
                     string s = ExtractStringForValidation(n);
                     return string.IsNullOrWhiteSpace(s) ? null : s.Trim();
@@ -1328,6 +1349,12 @@ public class SuggestionsController(MarechaiContext context,
             case SuggestionEntityType.Company:
                 return await context.Companies.AsNoTracking()
                                     .AnyAsync(c => c.Name != null && c.Name.ToLower() == normalisedName);
+            case SuggestionEntityType.Machine:
+                // Machine names are not globally unique (same name can legitimately exist under
+                // different companies, e.g. "Series 1" by multiple manufacturers). Dedupe on
+                // name only would over-block; rely on admin moderation to spot duplicates within
+                // a manufacturer instead.
+                return false;
             default:
                 return false;
         }
@@ -1353,6 +1380,12 @@ public class SuggestionsController(MarechaiContext context,
             case SuggestionEntityType.Company:
             {
                 var (id, applied) = await Suggestions.CompanySuggestionApplier.CreateAsync(
+                    context, suggested, accepted, creditedUserId);
+                return (id, applied);
+            }
+            case SuggestionEntityType.Machine:
+            {
+                var (id, applied) = await Suggestions.MachineSuggestionApplier.CreateAsync(
                     context, suggested, accepted, creditedUserId);
                 return (id, applied);
             }
@@ -1665,9 +1698,10 @@ public class SuggestionsController(MarechaiContext context,
             }
         }
 
-        if(!entityId.HasValue) return;
-
         // ---- Junction-add labels (resolved from the suggested payload's id field) -----
+        // These do NOT depend on the parent entity existing — they look up the linked entity
+        // (GPU, Processor, etc.) directly from the payload's id field, so they work for both
+        // edit-mode (entityId.HasValue) AND addition-mode (entityId is null) suggestions.
         foreach(KeyValuePair<string, JsonElement> kv in values)
         {
             if(!Suggestions.MachineSuggestionApplier.TryParseJunctionKey(kv.Key, out string group, out string op, out _))

@@ -24,6 +24,10 @@
 *******************************************************************************/
 
 using System.Threading.Tasks;
+using Marechai.ApiClient.Models;
+using Marechai.Data;
+using Marechai.Pages.Suggestions;
+using MudBlazor;
 
 namespace Marechai.Pages.Smartphones;
 
@@ -44,5 +48,31 @@ public partial class Index
 
         _loaded = true;
         StateHasChanged();
+    }
+
+    /// <summary>
+    ///     Open the unified Machine suggestion dialog in creation mode pre-selecting and locking
+    ///     the type to <see cref="MachineType.Smartphone" />. The dialog handles submission +
+    ///     validation; this page does not refresh on success because the new machine only appears
+    ///     in the listing once an admin accepts the suggestion.
+    /// </summary>
+    async Task OpenSuggestNewSmartphoneDialog()
+    {
+        var parameters = new DialogParameters<MachineSuggestionDialog>
+        {
+            { x => x.EntityId,    0L                                    },
+            { x => x.CurrentDto,  (MachineDto)null                       },
+            { x => x.IsCreation,  true                                   },
+            { x => x.PrefillType, (MachineType?)MachineType.Smartphone   }
+        };
+
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Large
+        };
+
+        await DialogService.ShowAsync<MachineSuggestionDialog>(L["Suggest new smartphone"], parameters, options);
     }
 }

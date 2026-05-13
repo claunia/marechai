@@ -32,7 +32,14 @@
         else
         {
             <MudText Typo="Typo.body2" Class="mb-3">
-                @L["Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently."]
+                @if(IsCreation)
+                {
+                    @L["Fill in the fields below to suggest a new machine. Name, company and type are required; any junctions you add will be queued for admin review along with the scalar fields."]
+                }
+                else
+                {
+                    @L["Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently."]
+                }
             </MudText>
 
             @* ── Scalar fields ── *@
@@ -59,7 +66,8 @@
                                  Clearable="true"
                                  Class="mb-3"/>
 
-                <MudSelect T="int" Label="@L["Type"]" Value="@_type" ValueChanged="@(v => { _type = v; })" Class="mb-3">
+                <MudSelect T="int" Label="@L["Type"]" Value="@_type" ValueChanged="@(v => { _type = v; })"
+                           Disabled="@(IsCreation && PrefillType.HasValue)" Class="mb-3">
                     <MudSelectItem T="int" Value="0">@L["Unknown"]</MudSelectItem>
                     <MudSelectItem T="int" Value="1">@L["Computer"]</MudSelectItem>
                     <MudSelectItem T="int" Value="2">@L["Console"]</MudSelectItem>
@@ -411,7 +419,7 @@
     <DialogActions>
         <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
         <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit"
-                   Disabled="@(_loading || _submitting || !HasAnyChange())">
+                   Disabled="@(_loading || _submitting || (!IsCreation && !HasAnyChange()) || (IsCreation && !HasMandatoryFieldsForCreation()))">
             @if(_submitting)
             {
                 <MudProgressCircular Size="Size.Small" Indeterminate="true"/>
@@ -430,6 +438,21 @@
 
     [Parameter] public long       EntityId   { get; set; }
     [Parameter] public MachineDto CurrentDto { get; set; }
+
+    /// <summary>
+    ///     When <c>true</c>, the dialog is in creation mode: <c>CurrentDto</c> is null,
+    ///     <c>EntityId</c> is ignored (the submitted suggestion will carry <c>EntityId=null</c>),
+    ///     and the submit gate switches from "any change vs snapshot" to
+    ///     "all mandatory creation fields populated".
+    /// </summary>
+    [Parameter] public bool         IsCreation  { get; set; }
+
+    /// <summary>
+    ///     Pre-select and lock the machine Type when in creation mode. Set by the caller based
+    ///     on the entry-point landing page (Computer / Console / Smartphone). When null in
+    ///     creation mode the Type select is editable and defaults to <c>Unknown</c>.
+    /// </summary>
+    [Parameter] public MachineType? PrefillType { get; set; }
 
     sealed class JunctionAddState
     {
@@ -546,9 +569,17 @@
             _orig_companyId          = CurrentDto.CompanyId;
             _orig_familyId           = CurrentDto.FamilyId;
         }
+        else if(IsCreation)
+        {
+            // Brand-new entity. Snapshot is "empty" so any populated field counts as a change.
+            _type            = (int)(PrefillType ?? MachineType.Unknown);
+            _orig_type       = _type;  // type carries through to Submit() even when locked
+            _orig_companyId  = null;
+            _orig_familyId   = null;
+        }
 
-        int machineId = (int)EntityId;
-
+        // Load picker corpora always. Existing-junction-by-machine loads are skipped in
+        // creation mode because there's no parent row yet.
         Task<List<CompanyDto>>          companiesT = MachinesService.GetCompaniesAsync();
         Task<List<MachineFamilyDto>>    familiesT  = MachinesService.GetFamiliesAsync();
         Task<List<GpuDto>>              allGpusT   = MachinesService.GetAllGpusAsync();
@@ -556,6 +587,33 @@
         Task<List<SoundSynthDto>>       allSoundsT = MachinesService.GetAllSoundSynthsAsync();
         Task<List<ScreenDto>>           allScrnT   = MachinesService.GetAllScreensAsync();
         Task<List<SoftwarePlatformDto>> allSpT     = MachinesService.GetAllSoftwarePlatformsAsync();
+
+        if(IsCreation)
+        {
+            await Task.WhenAll(companiesT, familiesT, allGpusT, allProcsT, allSoundsT, allScrnT, allSpT);
+
+            _allCompanies         = companiesT.Result;
+            _allFamilies          = familiesT.Result;
+            _allGpus              = allGpusT.Result;
+            _allProcessors        = allProcsT.Result;
+            _allSoundSynths       = allSoundsT.Result;
+            _allScreens           = allScrnT.Result;
+            _allSoftwarePlatforms = allSpT.Result;
+
+            // Junction rows stay empty in creation mode (no parent row to load from).
+            _gpuRows              = new List<GpuByMachineDto>();
+            _processorRows        = new List<ProcessorByMachineDto>();
+            _soundSynthRows       = new List<SoundSynthByMachineDto>();
+            _screenRows           = new List<ScreenByMachineDto>();
+            _memoryRows           = new List<MemoryByMachineDto>();
+            _storageRows          = new List<StorageByMachineDto>();
+            _softwarePlatformRows = new List<SoftwarePlatformByMachineDto>();
+
+            _loading = false;
+            return;
+        }
+
+        int machineId = (int)EntityId;
 
         Task<List<GpuByMachineDto>>              gpusByT       = MachinesService.GetGpusByMachineAsync(machineId);
         Task<List<ProcessorByMachineDto>>        procsByT      = MachinesService.GetProcessorsByMachineAsync(machineId);
@@ -892,6 +950,14 @@
         return false;
     }
 
+    bool HasMandatoryFieldsForCreation()
+    {
+        if(string.IsNullOrWhiteSpace(_name)) return false;
+        if(_selectedCompany?.Id is not int) return false;
+        if(_type <= 0 || !Enum.IsDefined(typeof(MachineType), _type)) return false;
+        return true;
+    }
+
     void Cancel() => MudDialog.Cancel();
 
     async Task Submit()
@@ -901,31 +967,68 @@
 
         var diff = new Dictionary<string, object>(StringComparer.Ordinal);
 
-        if(!Equals(_orig_name, _name))                  diff[MachineSuggestionMetadata.FieldName]  = _name;
-        if(!Equals(_orig_model, _model))                diff[MachineSuggestionMetadata.FieldModel] = _model;
-        if(_orig_type != _type)                         diff[MachineSuggestionMetadata.FieldType]  = _type;
-        if(_orig_prototype != _prototype)               diff[MachineSuggestionMetadata.FieldPrototype] = _prototype;
-        if(!Nullable.Equals(_orig_introduced, _introduced))
-            diff[MachineSuggestionMetadata.FieldIntroduced] = _introduced?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-        if(_orig_introducedPrecision != _introducedPrecision)
-            diff[MachineSuggestionMetadata.FieldIntroducedPrecision] = _introducedPrecision;
-        if(_orig_companyId != _selectedCompany?.Id)
-            diff[MachineSuggestionMetadata.FieldCompanyId] = _selectedCompany?.Id;
-        if(_orig_familyId != _selectedFamily?.Id)
-            diff[MachineSuggestionMetadata.FieldFamilyId] = _selectedFamily?.Id;
-
-        AddJunctionOps(diff, _gpuAdds, _gpuRemoves, MachineSuggestionMetadata.GroupGpus);
-        AddJunctionOps(diff, _processorAdds, _processorRemoves, MachineSuggestionMetadata.GroupProcessors);
-        AddJunctionOps(diff, _soundSynthAdds, _soundSynthRemoves, MachineSuggestionMetadata.GroupSoundSynths);
-        AddJunctionOps(diff, _screenAdds, _screenRemoves, MachineSuggestionMetadata.GroupScreens);
-        AddJunctionOps(diff, _memoryAdds, _memoryRemoves, MachineSuggestionMetadata.GroupMemory);
-        AddJunctionOps(diff, _storageAdds, _storageRemoves, MachineSuggestionMetadata.GroupStorage);
-        AddJunctionOps(diff, _softwarePlatformAdds, _softwarePlatformRemoves, MachineSuggestionMetadata.GroupSoftwarePlatforms);
-
-        if(diff.Count == 0)
+        if(IsCreation)
         {
-            _validationError = L["No changes detected — modify at least one field before submitting."];
-            return;
+            // Brand-new entity: emit every populated scalar plus all queued junction adds.
+            // Remove ops are ignored (the dialog never produces them in creation mode because
+            // _xxxRows is empty, but defensive: junction-remove keys would be meaningless on a
+            // non-existent parent).
+            diff[MachineSuggestionMetadata.FieldName]      = _name;
+            diff[MachineSuggestionMetadata.FieldCompanyId] = _selectedCompany?.Id;
+            diff[MachineSuggestionMetadata.FieldType]      = _type;
+            if(!string.IsNullOrWhiteSpace(_model))
+                diff[MachineSuggestionMetadata.FieldModel] = _model;
+            if(_prototype)
+                diff[MachineSuggestionMetadata.FieldPrototype] = _prototype;
+            if(_introduced.HasValue)
+                diff[MachineSuggestionMetadata.FieldIntroduced] = _introduced.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            if(_introducedPrecision != 0)
+                diff[MachineSuggestionMetadata.FieldIntroducedPrecision] = _introducedPrecision;
+            if(_selectedFamily?.Id is int famId)
+                diff[MachineSuggestionMetadata.FieldFamilyId] = famId;
+
+            foreach(KeyValuePair<string, JunctionAddState> kv in _gpuAdds)              diff[kv.Key] = kv.Value.Payload;
+            foreach(KeyValuePair<string, JunctionAddState> kv in _processorAdds)        diff[kv.Key] = kv.Value.Payload;
+            foreach(KeyValuePair<string, JunctionAddState> kv in _soundSynthAdds)       diff[kv.Key] = kv.Value.Payload;
+            foreach(KeyValuePair<string, JunctionAddState> kv in _screenAdds)           diff[kv.Key] = kv.Value.Payload;
+            foreach(KeyValuePair<string, JunctionAddState> kv in _memoryAdds)           diff[kv.Key] = kv.Value.Payload;
+            foreach(KeyValuePair<string, JunctionAddState> kv in _storageAdds)          diff[kv.Key] = kv.Value.Payload;
+            foreach(KeyValuePair<string, JunctionAddState> kv in _softwarePlatformAdds) diff[kv.Key] = kv.Value.Payload;
+
+            if(!HasMandatoryFieldsForCreation())
+            {
+                _validationError = L["Name, company and type are required to suggest a new machine."];
+                return;
+            }
+        }
+        else
+        {
+            if(!Equals(_orig_name, _name))                  diff[MachineSuggestionMetadata.FieldName]  = _name;
+            if(!Equals(_orig_model, _model))                diff[MachineSuggestionMetadata.FieldModel] = _model;
+            if(_orig_type != _type)                         diff[MachineSuggestionMetadata.FieldType]  = _type;
+            if(_orig_prototype != _prototype)               diff[MachineSuggestionMetadata.FieldPrototype] = _prototype;
+            if(!Nullable.Equals(_orig_introduced, _introduced))
+                diff[MachineSuggestionMetadata.FieldIntroduced] = _introduced?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            if(_orig_introducedPrecision != _introducedPrecision)
+                diff[MachineSuggestionMetadata.FieldIntroducedPrecision] = _introducedPrecision;
+            if(_orig_companyId != _selectedCompany?.Id)
+                diff[MachineSuggestionMetadata.FieldCompanyId] = _selectedCompany?.Id;
+            if(_orig_familyId != _selectedFamily?.Id)
+                diff[MachineSuggestionMetadata.FieldFamilyId] = _selectedFamily?.Id;
+
+            AddJunctionOps(diff, _gpuAdds, _gpuRemoves, MachineSuggestionMetadata.GroupGpus);
+            AddJunctionOps(diff, _processorAdds, _processorRemoves, MachineSuggestionMetadata.GroupProcessors);
+            AddJunctionOps(diff, _soundSynthAdds, _soundSynthRemoves, MachineSuggestionMetadata.GroupSoundSynths);
+            AddJunctionOps(diff, _screenAdds, _screenRemoves, MachineSuggestionMetadata.GroupScreens);
+            AddJunctionOps(diff, _memoryAdds, _memoryRemoves, MachineSuggestionMetadata.GroupMemory);
+            AddJunctionOps(diff, _storageAdds, _storageRemoves, MachineSuggestionMetadata.GroupStorage);
+            AddJunctionOps(diff, _softwarePlatformAdds, _softwarePlatformRemoves, MachineSuggestionMetadata.GroupSoftwarePlatforms);
+
+            if(diff.Count == 0)
+            {
+                _validationError = L["No changes detected — modify at least one field before submitting."];
+                return;
+            }
         }
 
         _submitting = true;
@@ -935,7 +1038,7 @@
             var dto = new SuggestionDto
             {
                 EntityType          = (int?)SuggestionEntityType.Machine,
-                EntityId            = EntityId,
+                EntityId            = IsCreation ? null : EntityId,
                 Status              = (int?)SuggestionStatus.Pending,
                 UserComment         = string.IsNullOrWhiteSpace(_userComment) ? null : _userComment.Trim(),
                 SuggestedValuesJson = json

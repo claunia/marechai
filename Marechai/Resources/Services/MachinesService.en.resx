@@ -568,4 +568,4 @@
     <data name="We do not have a description for this smartphone, you could collaborate by suggesting one" xml:space="preserve">
         <value>We do not have a description for this smartphone, you could collaborate by suggesting one</value>
     </data>
-</root>
+<data name="Fill in the fields below to suggest a new machine. Name, company and type are required; any junctions you add will be queued for admin review along with the scalar fields." xml:space="preserve"><value>Fill in the fields below to suggest a new machine. Name, company and type are required; any junctions you add will be queued for admin review along with the scalar fields.</value></data><data name="Name, company and type are required to suggest a new machine." xml:space="preserve"><value>Name, company and type are required to suggest a new machine.</value></data></root>

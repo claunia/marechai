@@ -138,6 +138,107 @@ internal static class MachineSuggestionApplier
     }
 
     /// <summary>
+    ///     Create a brand-new Machine row from an accepted addition-mode suggestion. <c>name</c>,
+    ///     <c>type</c> and <c>company_id</c> are mandatory at creation time (mirroring the
+    ///     <c>[Required]</c> attributes on the entity); if the admin didn't tick any of them — or
+    ///     if any of them fail coercion / FK validation — the method returns <c>(null, empty)</c>
+    ///     so the controller treats the whole review as a rejection. After the Machine row is
+    ///     persisted, any accepted junction-add operations are applied with the freshly-minted
+    ///     id; <c>*.remove.*</c> keys are silently ignored because there is nothing to remove
+    ///     from on a brand-new entity.
+    /// </summary>
+    /// <param name="creditedUserId">
+    ///     The Identity user id to attribute the row to in audit history (the suggesting user,
+    ///     NOT the reviewing admin). Forwarded to <c>SaveChangesWithUserAsync</c>.
+    /// </param>
+    public static async Task<(int? newId, HashSet<string> applied)> CreateAsync(
+        MarechaiContext context,
+        Dictionary<string, object> suggested,
+        HashSet<string> accepted,
+        string creditedUserId)
+    {
+        var applied = new HashSet<string>(StringComparer.Ordinal);
+
+        // Validate the three mandatory fields up-front so we can build a valid Machine row
+        // before invoking ApplyScalar for the optional fields.
+        if(!accepted.Contains(FieldName) || !suggested.TryGetValue(FieldName, out object nameVal))
+            return (null, applied);
+
+        string name = ToStringValue(nameVal);
+        if(string.IsNullOrWhiteSpace(name)) return (null, applied);
+
+        if(!accepted.Contains(FieldType) || !suggested.TryGetValue(FieldType, out object typeVal))
+            return (null, applied);
+
+        int? typeInt = ToInt(typeVal);
+        if(!typeInt.HasValue || !Enum.IsDefined(typeof(MachineType), typeInt.Value)) return (null, applied);
+
+        if(!accepted.Contains(FieldCompanyId) || !suggested.TryGetValue(FieldCompanyId, out object companyVal))
+            return (null, applied);
+
+        int? companyInt = ToInt(companyVal);
+        if(!companyInt.HasValue) return (null, applied);
+        if(!await context.Companies.AsNoTracking().AnyAsync(c => c.Id == companyInt.Value))
+            return (null, applied);
+
+        var m = new Machine
+        {
+            Name      = name.Trim(),
+            Type      = (MachineType)typeInt.Value,
+            CompanyId = companyInt.Value
+        };
+
+        applied.Add(FieldName);
+        applied.Add(FieldType);
+        applied.Add(FieldCompanyId);
+
+        // Apply remaining accepted scalar fields via the same coercion+validation table the
+        // edit path uses. Junction operations are handled in a second pass after persistence.
+        foreach(string fieldName in accepted)
+        {
+            if(fieldName == FieldName || fieldName == FieldType || fieldName == FieldCompanyId) continue;
+            if(!s_scalarFieldNames.Contains(fieldName)) continue;
+            if(!suggested.TryGetValue(fieldName, out object value)) continue;
+
+            try
+            {
+                if(await ApplyScalar(context, m, fieldName, value)) applied.Add(fieldName);
+            }
+            catch
+            {
+                // Coerce failure: silently skip this field.
+            }
+        }
+
+        await context.Machines.AddAsync(m);
+
+        if(string.IsNullOrEmpty(creditedUserId))
+            await context.SaveChangesAsync();
+        else
+            await context.SaveChangesWithUserAsync(creditedUserId);
+
+        // Now apply junction adds with the freshly-minted machine id. Remove keys are silently
+        // ignored — a brand-new entity has nothing to remove from.
+        foreach(string fieldName in accepted)
+        {
+            if(!TryParseJunctionKey(fieldName, out string group, out string op, out string _)) continue;
+            if(op != "add") continue;
+            if(!suggested.TryGetValue(fieldName, out object value)) continue;
+
+            try
+            {
+                if(await ApplyJunctionAdd(context, m.Id, group, value)) applied.Add(fieldName);
+            }
+            catch
+            {
+                // Coerce failure: silently skip this junction add.
+            }
+        }
+
+        return (m.Id, applied);
+    }
+
+    /// <summary>
     ///     Apply the accepted fields onto the Machine row + junction tables. Each junction
     ///     operation is atomic — failure to coerce one entry skips it without affecting the
     ///     others.

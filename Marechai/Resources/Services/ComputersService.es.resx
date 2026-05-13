@@ -123,4 +123,4 @@
     <value>No se encontraron ordenadores en la base de datos introducidos en ese año.</value>
         <comment>No computers in DB from that year</comment>
   </data>
-<data name="Date precision" xml:space="preserve"><value>Precisión de fecha</value></data><data name="Full date" xml:space="preserve"><value>Fecha completa</value></data><data name="Month and year only" xml:space="preserve"><value>Solo mes y año</value></data><data name="Year only" xml:space="preserve"><value>Solo año</value></data></root>
+<data name="Date precision" xml:space="preserve"><value>Precisión de fecha</value></data><data name="Full date" xml:space="preserve"><value>Fecha completa</value></data><data name="Month and year only" xml:space="preserve"><value>Solo mes y año</value></data><data name="Year only" xml:space="preserve"><value>Solo año</value></data><data name="Suggest a new computer to be added to the catalogue." xml:space="preserve"><value>Sugerir un nuevo ordenador para añadirlo al catálogo.</value></data><data name="Suggest new computer" xml:space="preserve"><value>Sugerir nuevo ordenador</value></data></root>

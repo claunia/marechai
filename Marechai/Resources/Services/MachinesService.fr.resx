@@ -710,4 +710,4 @@
   <data name="Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently." xml:space="preserve">
     <value>Modifiez n'importe quel champ ou relation ci-dessous. Seules vos modifications seront soumises à examen ; un administrateur peut accepter ou refuser chacune indépendamment.</value>
   </data>
-</root>
+<data name="Fill in the fields below to suggest a new machine. Name, company and type are required; any junctions you add will be queued for admin review along with the scalar fields." xml:space="preserve"><value>Remplissez les champs ci-dessous pour suggérer une nouvelle machine. Le nom, l’entreprise et le type sont requis ; toutes les associations ajoutées seront mises en file pour examen administrateur avec les champs scalaires.</value></data><data name="Name, company and type are required to suggest a new machine." xml:space="preserve"><value>Le nom, l’entreprise et le type sont requis pour suggérer une nouvelle machine.</value></data></root>
