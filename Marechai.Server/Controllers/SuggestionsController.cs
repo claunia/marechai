@@ -105,7 +105,8 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.Gpu,
         SuggestionEntityType.Processor,
         SuggestionEntityType.SoundSynth,
-        SuggestionEntityType.Person
+        SuggestionEntityType.Person,
+        SuggestionEntityType.SoftwareRelease
     };
 
     // ───────────────────────────── POST /suggestions ─────────────────────────────
@@ -1364,6 +1365,22 @@ public class SuggestionsController(MarechaiContext context,
                     return "A new person suggestion must include a non-empty 'surname' field.";
                 return null;
             }
+            case SuggestionEntityType.SoftwareRelease:
+            {
+                // Per-field validation in priority order so the user gets a specific error
+                // for whichever mandatory field is missing first (title → publisher →
+                // platform → software). Matches the dialog's own per-field defence-in-depth.
+                if(!values.TryGetValue(Suggestions.SoftwareReleaseSuggestionApplier.FieldTitle, out object t) ||
+                   string.IsNullOrWhiteSpace(ExtractStringForValidation(t)))
+                    return "A new software release suggestion must include a non-empty 'title' field.";
+                if(!values.ContainsKey(Suggestions.SoftwareReleaseSuggestionApplier.FieldPublisherId))
+                    return "A new software release suggestion must include a 'publisher_id' field referencing the publisher.";
+                if(!values.ContainsKey(Suggestions.SoftwareReleaseSuggestionApplier.FieldPlatformId))
+                    return "A new software release suggestion must include a 'platform_id' field referencing the platform.";
+                if(!values.ContainsKey(Suggestions.SoftwareReleaseSuggestionApplier.FieldSoftwareId))
+                    return "A new software release suggestion must include a 'software_id' field referencing the parent software.";
+                return null;
+            }
             default:
                 return $"Brand-new {type} suggestions are not supported.";
         }
@@ -1471,6 +1488,15 @@ public class SuggestionsController(MarechaiContext context,
                 string combined    = string.Join(" ", new[] { namePart, surnamePart }.Where(p => !string.IsNullOrEmpty(p)));
                 return string.IsNullOrWhiteSpace(combined) ? null : combined;
             }
+            case SuggestionEntityType.SoftwareRelease:
+            {
+                if(values.TryGetValue(Suggestions.SoftwareReleaseSuggestionApplier.FieldTitle, out object n))
+                {
+                    string s = ExtractStringForValidation(n);
+                    return string.IsNullOrWhiteSpace(s) ? null : s.Trim();
+                }
+                return null;
+            }
             default:
                 return null;
         }
@@ -1541,6 +1567,12 @@ public class SuggestionsController(MarechaiContext context,
                 // distinct historical figures share names like "John Smith"). Dedupe on the
                 // first name alone would massively over-block; rely on admin moderation to
                 // spot true duplicates by combining name+surname+birth date+context.
+                return false;
+            case SuggestionEntityType.SoftwareRelease:
+                // Release titles legitimately repeat across regions, platforms and re-issues
+                // (the SAME software release "Doom" exists for many platforms/regions/years
+                // each as a distinct release). Dedupe on title only would massively
+                // over-block; rely on admin moderation to spot true duplicates instead.
                 return false;
             default:
                 return false;
@@ -1623,6 +1655,14 @@ public class SuggestionsController(MarechaiContext context,
                 var (id, applied) = await Suggestions.PersonSuggestionApplier.CreateAsync(
                     context, suggested, accepted, creditedUserId, _assetRootPath);
                 return (id, applied);
+            }
+            case SuggestionEntityType.SoftwareRelease:
+            {
+                var (id, applied) = await Suggestions.SoftwareReleaseSuggestionApplier.CreateAsync(
+                    context, suggested, accepted, creditedUserId);
+                // SoftwareRelease.Id is ulong; implicit cast to long? for the unified
+                // dispatch return tuple matches the Software ulong-PK precedent.
+                return ((long?)id, applied);
             }
             default:
                 throw new NotImplementedException($"Creating a new {type} from a suggestion is not implemented yet.");
@@ -3483,7 +3523,11 @@ public class SuggestionsController(MarechaiContext context,
             }
         }
 
-        if(!entityId.HasValue) return;
+        // Junction-add labels look up the linked entity (gpu / sound synth / language /
+        // region / barcode payload / etc.) directly from the suggested payload's id /
+        // payload fields and don't need the parent releaseId. Run them in BOTH edit and
+        // creation mode (entityId is null in addition mode).
+        _ = entityId;
 
         // ---- Junction-add labels (resolved from the suggested payload's id field) -----
         foreach(KeyValuePair<string, JsonElement> kv in values)
@@ -3522,6 +3566,9 @@ public class SuggestionsController(MarechaiContext context,
                 Suggestions.SoftwareReleaseSuggestionApplier.GroupProductCodes => await BuildSoftwareReleaseProductCodeRemoveLabelAsync(releaseIdU, token),
                 Suggestions.SoftwareReleaseSuggestionApplier.GroupSpecs        => await BuildSoftwareReleaseAttributeRemoveLabelAsync(releaseIdU, token, Suggestions.SoftwareReleaseSuggestionApplier.AttributeCategorySpec),
                 Suggestions.SoftwareReleaseSuggestionApplier.GroupRatings      => await BuildSoftwareReleaseAttributeRemoveLabelAsync(releaseIdU, token, Suggestions.SoftwareReleaseSuggestionApplier.AttributeCategoryRating),
+                Suggestions.SoftwareReleaseSuggestionApplier.GroupMinGpus      => await BuildSoftwareReleaseMinGpuRemoveLabelAsync(releaseIdU, token),
+                Suggestions.SoftwareReleaseSuggestionApplier.GroupRecGpus      => await BuildSoftwareReleaseRecGpuRemoveLabelAsync(releaseIdU, token),
+                Suggestions.SoftwareReleaseSuggestionApplier.GroupSoundSynths  => await BuildSoftwareReleaseSoundSynthRemoveLabelAsync(releaseIdU, token),
                 _                                                              => null
             };
             if(!string.IsNullOrEmpty(label)) currentLabels[kv.Key] = label;
@@ -3581,6 +3628,27 @@ public class SuggestionsController(MarechaiContext context,
                 string value = ReadStringField(payload, "value");
                 if(string.IsNullOrWhiteSpace(key) || string.IsNullOrWhiteSpace(value)) return null;
                 return $"{key.Trim()}: {value.Trim()}";
+            }
+            case Suggestions.SoftwareReleaseSuggestionApplier.GroupMinGpus:
+            case Suggestions.SoftwareReleaseSuggestionApplier.GroupRecGpus:
+            {
+                int? gpuId = ReadIntField(payload, "gpu_id");
+                if(!gpuId.HasValue) return null;
+                string name = await context.Gpus.AsNoTracking()
+                                           .Where(g => g.Id == gpuId.Value)
+                                           .Select(g => g.Name)
+                                           .FirstOrDefaultAsync();
+                return string.IsNullOrEmpty(name) ? $"GPU #{gpuId.Value}" : name;
+            }
+            case Suggestions.SoftwareReleaseSuggestionApplier.GroupSoundSynths:
+            {
+                int? synthId = ReadIntField(payload, "sound_synth_id");
+                if(!synthId.HasValue) return null;
+                string name = await context.SoundSynths.AsNoTracking()
+                                           .Where(s => s.Id == synthId.Value)
+                                           .Select(s => s.Name)
+                                           .FirstOrDefaultAsync();
+                return string.IsNullOrEmpty(name) ? $"Sound synth #{synthId.Value}" : name;
             }
             default:
                 return null;
@@ -3649,6 +3717,36 @@ public class SuggestionsController(MarechaiContext context,
                                .FirstOrDefaultAsync();
         if(row is null) return null;
         return $"{row.Key}: {row.Value}";
+    }
+
+    async Task<string> BuildSoftwareReleaseMinGpuRemoveLabelAsync(ulong releaseId, string token)
+    {
+        if(!int.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out int gpuId)) return null;
+        string name = await context.MinimumGpuBySoftwareRelease.AsNoTracking()
+                                   .Where(x => x.ReleaseId == releaseId && x.GpuId == gpuId)
+                                   .Select(x => x.Gpu.Name)
+                                   .FirstOrDefaultAsync();
+        return string.IsNullOrEmpty(name) ? null : name;
+    }
+
+    async Task<string> BuildSoftwareReleaseRecGpuRemoveLabelAsync(ulong releaseId, string token)
+    {
+        if(!int.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out int gpuId)) return null;
+        string name = await context.RecommendedGpuBySoftwareRelease.AsNoTracking()
+                                   .Where(x => x.ReleaseId == releaseId && x.GpuId == gpuId)
+                                   .Select(x => x.Gpu.Name)
+                                   .FirstOrDefaultAsync();
+        return string.IsNullOrEmpty(name) ? null : name;
+    }
+
+    async Task<string> BuildSoftwareReleaseSoundSynthRemoveLabelAsync(ulong releaseId, string token)
+    {
+        if(!int.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out int synthId)) return null;
+        string name = await context.SoundSynthBySoftwareRelease.AsNoTracking()
+                                   .Where(x => x.ReleaseId == releaseId && x.SoundSynthId == synthId)
+                                   .Select(x => x.SoundSynth.Name)
+                                   .FirstOrDefaultAsync();
+        return string.IsNullOrEmpty(name) ? null : name;
     }
 
     /// <summary>

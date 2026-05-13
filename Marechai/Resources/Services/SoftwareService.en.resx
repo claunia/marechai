@@ -1752,4 +1752,13 @@
   <data name="Person" xml:space="preserve">
     <value>Person</value>
   </data>
+  <data name="Suggest new release" xml:space="preserve">
+    <value>Suggest new release</value>
+  </data>
+  <data name="Suggest a new release to be added to the catalogue." xml:space="preserve">
+    <value>Suggest a new release to be added to the catalogue.</value>
+  </data>
+  <data name="No releases recorded yet." xml:space="preserve">
+    <value>No releases recorded yet.</value>
+  </data>
 </root>

@@ -49,6 +49,14 @@ public sealed class SoftwareReleaseSuggestionMetadata : SuggestionMetadata
     public const string FieldReleaseDate          = "release_date";
     public const string FieldReleaseDatePrecision = "release_date_precision";
 
+    /// <summary>
+    ///     Pseudo-field carrying the parent Software FK at addition time only. Mirrors
+    ///     the server-side <c>SoftwareReleaseSuggestionApplier.FieldSoftwareId</c>; not in
+    ///     <c>s_scalarFieldNames</c> on either side because re-parenting on edit stays
+    ///     admin-only. Whitelisted in <see cref="IsKnownFieldName" />.
+    /// </summary>
+    public const string FieldSoftwareId = "software_id";
+
     // ---- Junction group identifiers (mirror server-side) -------------------------------
     public const string GroupRegions      = "regions";
     public const string GroupLanguages    = "languages";
@@ -56,10 +64,14 @@ public sealed class SoftwareReleaseSuggestionMetadata : SuggestionMetadata
     public const string GroupProductCodes = "product_codes";
     public const string GroupSpecs        = "specs";
     public const string GroupRatings      = "ratings";
+    public const string GroupMinGpus      = "min_gpus";
+    public const string GroupRecGpus      = "rec_gpus";
+    public const string GroupSoundSynths  = "sound_synths";
 
     static readonly HashSet<string> s_junctionGroups = new(StringComparer.Ordinal)
     {
-        GroupRegions, GroupLanguages, GroupBarcodes, GroupProductCodes, GroupSpecs, GroupRatings
+        GroupRegions, GroupLanguages, GroupBarcodes, GroupProductCodes, GroupSpecs, GroupRatings,
+        GroupMinGpus, GroupRecGpus, GroupSoundSynths
     };
 
     static readonly HashSet<string> s_scalarFieldNames = new(StringComparer.Ordinal)
@@ -112,6 +124,7 @@ public sealed class SoftwareReleaseSuggestionMetadata : SuggestionMetadata
     {
         if(string.IsNullOrEmpty(name)) return false;
         if(s_scalarFieldNames.Contains(name)) return true;
+        if(name == FieldSoftwareId) return true;
         return TryParseJunctionKey(name, out _, out _, out _);
     }
 
@@ -143,6 +156,9 @@ public sealed class SoftwareReleaseSuggestionMetadata : SuggestionMetadata
         GroupProductCodes => "Product codes",
         GroupSpecs        => "Specifications",
         GroupRatings      => "Ratings",
+        GroupMinGpus      => "Minimum GPUs",
+        GroupRecGpus      => "Recommended GPUs",
+        GroupSoundSynths  => "Sound synthesizers",
         _                 => group
     };
 

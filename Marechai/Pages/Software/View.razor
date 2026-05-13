@@ -699,18 +699,37 @@ else
 }
 
 @* ── Releases Card (flat list) ── *@
-@if(_releases.Count > 0)
-{
 <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-    <MudExpansionPanel>
+    <MudExpansionPanel Expanded="@(_releases.Count > 0)">
         <TitleContent>
-            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
-                <MudIcon Icon="@Icons.Material.Filled.NewReleases" Color="Color.Primary"/>
-                <MudText Typo="Typo.h6">@L["Releases"]</MudText>
-                <MudChip T="string" Size="Size.Small" Color="Color.Success">@_releases.Count</MudChip>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Style="width: 100%;">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIcon Icon="@Icons.Material.Filled.NewReleases" Color="Color.Primary"/>
+                    <MudText Typo="Typo.h6">@L["Releases"]</MudText>
+                    <MudChip T="string" Size="Size.Small" Color="Color.Success">@_releases.Count</MudChip>
+                </MudStack>
+                <AuthorizeView>
+                    <Authorized>
+                        <MudTooltip Text="@L["Suggest a new release to be added to the catalogue."]">
+                            <span @onclick:stopPropagation="true">
+                                <MudIconButton Icon="@Icons.Material.Filled.AddCircle"
+                                               Size="Size.Small"
+                                               Color="Color.Primary"
+                                               OnClick="OpenSuggestNewReleaseDialogAsync"
+                                               aria-label="@L["Suggest new release"]"/>
+                            </span>
+                        </MudTooltip>
+                    </Authorized>
+                </AuthorizeView>
             </MudStack>
         </TitleContent>
         <ChildContent>
+            @if(_releases.Count == 0)
+            {
+                <MudText Typo="Typo.body2" Color="Color.Secondary">@L["No releases recorded yet."]</MudText>
+            }
+            else
+            {
             <MudList T="SoftwareReleaseDto" Dense="true">
                 @foreach(SoftwareReleaseDto release in _releases)
                 {
@@ -754,10 +773,10 @@ else
                     </MudListItem>
                 }
             </MudList>
+            }
         </ChildContent>
     </MudExpansionPanel>
 </MudExpansionPanels>
-}
 
 @* ── Compilations Card ── *@
 @if(_compilations.Count > 0)

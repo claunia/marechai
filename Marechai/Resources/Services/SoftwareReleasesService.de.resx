@@ -532,4 +532,28 @@
   <data name="Value" xml:space="preserve">
     <value>Wert</value>
   </data>
+  <data name="Title is required." xml:space="preserve">
+    <value>Der Titel ist erforderlich.</value>
+  </data>
+  <data name="Platform is required." xml:space="preserve">
+    <value>Die Plattform ist erforderlich.</value>
+  </data>
+  <data name="Cannot submit: parent software is missing." xml:space="preserve">
+    <value>Senden nicht möglich: Das übergeordnete Programm fehlt.</value>
+  </data>
+  <data name="Sound synthesizers" xml:space="preserve">
+    <value>Tonsynthesizer</value>
+  </data>
+  <data name="Add minimum GPU" xml:space="preserve">
+    <value>Mindest-GPU hinzufügen</value>
+  </data>
+  <data name="Add recommended GPU" xml:space="preserve">
+    <value>Empfohlene GPU hinzufügen</value>
+  </data>
+  <data name="Add sound synthesizer" xml:space="preserve">
+    <value>Tonsynthesizer hinzufügen</value>
+  </data>
+  <data name="Suggest a new release to be added to the catalogue. Title, publisher and platform are required; everything else is optional. An administrator will review your submission before it is published." xml:space="preserve">
+    <value>Eine neue Veröffentlichung zur Aufnahme in den Katalog vorschlagen. Titel, Herausgeber und Plattform sind erforderlich; alles andere ist optional. Ein Administrator überprüft deinen Vorschlag, bevor er veröffentlicht wird.</value>
+  </data>
 </root>

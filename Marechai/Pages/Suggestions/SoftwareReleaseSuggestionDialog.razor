@@ -34,9 +34,18 @@
         }
         else
         {
-            <MudText Typo="Typo.body2" Class="mb-3">
-                @L["Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently."]
-            </MudText>
+            @if(IsCreation)
+            {
+                <MudText Typo="Typo.body2" Class="mb-3">
+                    @L["Suggest a new release to be added to the catalogue. Title, publisher and platform are required; everything else is optional. An administrator will review your submission before it is published."]
+                </MudText>
+            }
+            else
+            {
+                <MudText Typo="Typo.body2" Class="mb-3">
+                    @L["Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently."]
+                </MudText>
+            }
 
             @* ── Read-only parent Software / Version context (admin-only re-parenting) ── *@
             @if(!string.IsNullOrEmpty(_parentLabel))
@@ -217,8 +226,7 @@
 
                 @* Product codes *@
                 <MudExpansionPanel Text="@($"{L["Product codes"]} ({CountActiveProductCodes() + _productCodeAdds.Count})")"
-                                   Expanded="@(_productCodeAdds.Count > 0 || _productCodeRemoves.Count > 0)">
-                    @foreach(SoftwareProductCodeDto p in _productCodeRows ?? new())
+                                   Expanded="@(_productCodeAdds.Count > 0 || _productCodeRemoves.Count > 0)">                    @foreach(SoftwareProductCodeDto p in _productCodeRows ?? new())
                     {
                         long pid = (long)(p.Id ?? 0);
                         bool removed = _productCodeRemoves.Contains(pid);
@@ -263,6 +271,126 @@
                     </MudStack>
                 </MudExpansionPanel>
 
+                @* Minimum GPUs *@
+                <MudExpansionPanel Text="@($"{L["Minimum GPUs"]} ({CountActiveMinGpus() + _minGpuAdds.Count})")"
+                                   Expanded="@(_minGpuAdds.Count > 0 || _minGpuRemoves.Count > 0)">
+                    @foreach(GpuBySoftwareReleaseDto g in _minGpuRows ?? new())
+                    {
+                        int gid = g.GpuId ?? 0;
+                        bool removed = _minGpuRemoves.Contains(gid);
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText Style="@(removed ? "text-decoration: line-through;" : "")">@(g.Gpu ?? $"#{gid}")</MudText>
+                            @if(removed)
+                            {
+                                <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                           OnClick="@(() => _minGpuRemoves.Remove(gid))">@L["Undo"]</MudButton>
+                            }
+                            else
+                            {
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                               OnClick="@(() => { if(gid != 0) _minGpuRemoves.Add(gid); })"/>
+                            }
+                        </MudStack>
+                    }
+                    @foreach(KeyValuePair<string, JunctionAddState> kv in _minGpuAdds)
+                    {
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText><strong>+ @kv.Value.Display</strong></MudText>
+                            <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                       OnClick="@(() => _minGpuAdds.Remove(kv.Key))">@L["Undo"]</MudButton>
+                        </MudStack>
+                    }
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-2">
+                        <MudAutocomplete T="GpuDto" Value="@_pickMinGpu" ValueChanged="@(g => { _pickMinGpu = g; })"
+                                         SearchFunc="SearchMinGpus" Clearable="true"
+                                         ToStringFunc="@(g => g?.Name ?? string.Empty)"
+                                         Style="flex: 1;"/>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
+                                   OnClick="AddMinGpu"
+                                   Disabled="@(_pickMinGpu is null)">@L["Add minimum GPU"]</MudButton>
+                    </MudStack>
+                </MudExpansionPanel>
+
+                @* Recommended GPUs *@
+                <MudExpansionPanel Text="@($"{L["Recommended GPUs"]} ({CountActiveRecGpus() + _recGpuAdds.Count})")"
+                                   Expanded="@(_recGpuAdds.Count > 0 || _recGpuRemoves.Count > 0)">
+                    @foreach(GpuBySoftwareReleaseDto g in _recGpuRows ?? new())
+                    {
+                        int gid = g.GpuId ?? 0;
+                        bool removed = _recGpuRemoves.Contains(gid);
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText Style="@(removed ? "text-decoration: line-through;" : "")">@(g.Gpu ?? $"#{gid}")</MudText>
+                            @if(removed)
+                            {
+                                <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                           OnClick="@(() => _recGpuRemoves.Remove(gid))">@L["Undo"]</MudButton>
+                            }
+                            else
+                            {
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                               OnClick="@(() => { if(gid != 0) _recGpuRemoves.Add(gid); })"/>
+                            }
+                        </MudStack>
+                    }
+                    @foreach(KeyValuePair<string, JunctionAddState> kv in _recGpuAdds)
+                    {
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText><strong>+ @kv.Value.Display</strong></MudText>
+                            <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                       OnClick="@(() => _recGpuAdds.Remove(kv.Key))">@L["Undo"]</MudButton>
+                        </MudStack>
+                    }
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-2">
+                        <MudAutocomplete T="GpuDto" Value="@_pickRecGpu" ValueChanged="@(g => { _pickRecGpu = g; })"
+                                         SearchFunc="SearchRecGpus" Clearable="true"
+                                         ToStringFunc="@(g => g?.Name ?? string.Empty)"
+                                         Style="flex: 1;"/>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
+                                   OnClick="AddRecGpu"
+                                   Disabled="@(_pickRecGpu is null)">@L["Add recommended GPU"]</MudButton>
+                    </MudStack>
+                </MudExpansionPanel>
+
+                @* Sound synthesizers *@
+                <MudExpansionPanel Text="@($"{L["Sound synthesizers"]} ({CountActiveSoundSynths() + _soundSynthAdds.Count})")"
+                                   Expanded="@(_soundSynthAdds.Count > 0 || _soundSynthRemoves.Count > 0)">
+                    @foreach(SoundSynthBySoftwareReleaseDto s in _soundSynthRows ?? new())
+                    {
+                        int sid = s.SoundSynthId ?? 0;
+                        bool removed = _soundSynthRemoves.Contains(sid);
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText Style="@(removed ? "text-decoration: line-through;" : "")">@(s.SoundSynth ?? $"#{sid}")</MudText>
+                            @if(removed)
+                            {
+                                <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                           OnClick="@(() => _soundSynthRemoves.Remove(sid))">@L["Undo"]</MudButton>
+                            }
+                            else
+                            {
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                               OnClick="@(() => { if(sid != 0) _soundSynthRemoves.Add(sid); })"/>
+                            }
+                        </MudStack>
+                    }
+                    @foreach(KeyValuePair<string, JunctionAddState> kv in _soundSynthAdds)
+                    {
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText><strong>+ @kv.Value.Display</strong></MudText>
+                            <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                       OnClick="@(() => _soundSynthAdds.Remove(kv.Key))">@L["Undo"]</MudButton>
+                        </MudStack>
+                    }
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-2">
+                        <MudAutocomplete T="SoundSynthDto" Value="@_pickSoundSynth" ValueChanged="@(s => { _pickSoundSynth = s; })"
+                                         SearchFunc="SearchSoundSynths" Clearable="true"
+                                         ToStringFunc="@(s => s?.Name ?? string.Empty)"
+                                         Style="flex: 1;"/>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
+                                   OnClick="AddSoundSynth"
+                                   Disabled="@(_pickSoundSynth is null)">@L["Add sound synthesizer"]</MudButton>
+                    </MudStack>
+                </MudExpansionPanel>
+
             </MudExpansionPanels>
 
             <MudTextField T="string" Label="@L["Optional comment (References, sources, etc...)"]" Lines="2"
@@ -277,7 +405,7 @@
     <DialogActions>
         <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
         <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit"
-                   Disabled="@(_loading || _submitting || !HasAnyChange())">
+                   Disabled="@(_loading || _submitting || (!IsCreation && !HasAnyChange()) || (IsCreation && !HasMandatoryFieldsForCreation()))">
             @if(_submitting)
             {
                 <MudProgressCircular Size="Size.Small" Indeterminate="true"/>
@@ -296,6 +424,23 @@
 
     [Parameter] public long               EntityId   { get; set; }
     [Parameter] public SoftwareReleaseDto CurrentDto { get; set; }
+
+    /// <summary>
+    ///     When <c>true</c> the dialog runs in CREATION mode for a brand-new release. The
+    ///     parent Software is prefilled via <see cref="PrefillSoftwareId" /> +
+    ///     <see cref="PrefillSoftwareLabel" />, the diff snapshot is skipped, mandatory-
+    ///     field validation runs in <see cref="Submit" />, and the wire payload includes
+    ///     <c>software_id</c> + every non-empty scalar + every queued junction-add. Remove
+    ///     ops are dropped (a brand-new entity has nothing to remove from). When
+    ///     <c>false</c> the dialog runs in EDIT mode against an existing release id.
+    /// </summary>
+    [Parameter] public bool IsCreation { get; set; }
+
+    /// <summary>Parent Software FK — prefilled and locked when <see cref="IsCreation" /> is <c>true</c>.</summary>
+    [Parameter] public ulong? PrefillSoftwareId { get; set; }
+
+    /// <summary>Display label for the prefilled parent Software (e.g. its name).</summary>
+    [Parameter] public string PrefillSoftwareLabel { get; set; }
 
     sealed class JunctionAddState
     {
@@ -330,36 +475,50 @@
     List<CompanyDto>          _allCompanies;
     List<UnM49Dto>            _allRegions;
     List<Iso639Dto>           _allLanguages;
+    List<GpuDto>              _allGpus;
+    List<SoundSynthDto>       _allSoundSynths;
 
     // Existing junction rows
     List<UnM49BySoftwareReleaseDto>    _regionRows;
     List<LanguageBySoftwareReleaseDto> _languageRows;
     List<SoftwareBarcodeDto>           _barcodeRows;
     List<SoftwareProductCodeDto>       _productCodeRows;
+    List<GpuBySoftwareReleaseDto>      _minGpuRows;
+    List<GpuBySoftwareReleaseDto>      _recGpuRows;
+    List<SoundSynthBySoftwareReleaseDto> _soundSynthRows;
 
     // Pending junction operations: removes (typed per-junction PK shape) + adds (uuid → state)
     HashSet<short>  _regionRemoves      = new();
     HashSet<string> _languageRemoves    = new(StringComparer.Ordinal);
     HashSet<long>   _barcodeRemoves     = new();
     HashSet<long>   _productCodeRemoves = new();
+    HashSet<int>    _minGpuRemoves      = new();
+    HashSet<int>    _recGpuRemoves      = new();
+    HashSet<int>    _soundSynthRemoves  = new();
 
     Dictionary<string, JunctionAddState> _regionAdds      = new();
     Dictionary<string, JunctionAddState> _languageAdds    = new();
     Dictionary<string, JunctionAddState> _barcodeAdds     = new();
     Dictionary<string, JunctionAddState> _productCodeAdds = new();
+    Dictionary<string, JunctionAddState> _minGpuAdds      = new();
+    Dictionary<string, JunctionAddState> _recGpuAdds      = new();
+    Dictionary<string, JunctionAddState> _soundSynthAdds  = new();
 
     // Picker state
-    UnM49Dto  _pickRegion;
-    Iso639Dto _pickLanguage;
-    int       _pickBarcodeType;
-    string    _pickBarcodeCode;
-    int       _pickProductCodeIssuer;
-    string    _pickProductCodeCode;
+    UnM49Dto       _pickRegion;
+    Iso639Dto      _pickLanguage;
+    int            _pickBarcodeType;
+    string         _pickBarcodeCode;
+    int            _pickProductCodeIssuer;
+    string         _pickProductCodeCode;
+    GpuDto         _pickMinGpu;
+    GpuDto         _pickRecGpu;
+    SoundSynthDto  _pickSoundSynth;
 
     protected override async Task OnInitializedAsync()
     {
-        // Seed scalar state from the current DTO snapshot.
-        if(CurrentDto is not null)
+        // Seed scalar state from the current DTO snapshot \u2014 EDIT mode only.
+        if(!IsCreation && CurrentDto is not null)
         {
             _title                = CurrentDto.Title;
             _orig_title           = _title;
@@ -380,27 +539,62 @@
                 parent = string.IsNullOrEmpty(parent) ? L["Compilation"] : $"{parent} ({L["Compilation"]})";
             _parentLabel = parent;
         }
+        else if(IsCreation)
+        {
+            // Creation mode: seed the read-only parent label from the prefill so the
+            // existing "Release of: {0}" alert renders naturally. The actual software_id
+            // travels on the wire from Submit() via PrefillSoftwareId, never editable.
+            _parentLabel = PrefillSoftwareLabel;
+        }
 
         Task<List<SoftwarePlatformDto>>           platformsT = ReleasesService.GetAllPlatformsAsync();
         Task<List<CompanyDto>>                    companiesT = ReleasesService.GetAllCompaniesAsync();
         Task<List<UnM49Dto>>                      regionsT   = ReleasesService.GetAllUnM49Async();
         Task<List<Iso639Dto>>                     languagesT = ReleasesService.GetAllLanguagesAsync();
-        Task<List<UnM49BySoftwareReleaseDto>>     regionRowsT     = ReleasesService.GetReleaseRegionsAsync((int)EntityId);
-        Task<List<LanguageBySoftwareReleaseDto>>  languageRowsT   = ReleasesService.GetReleaseLanguagesAsync((int)EntityId);
-        Task<List<SoftwareBarcodeDto>>            barcodeRowsT    = ReleasesService.GetBarcodesAsync((int)EntityId);
-        Task<List<SoftwareProductCodeDto>>        productCodeRowsT = ReleasesService.GetProductCodesAsync((int)EntityId);
+        Task<List<GpuDto>>                        gpusT      = ReleasesService.GetAllGpusAsync();
+        Task<List<SoundSynthDto>>                 synthsT    = ReleasesService.GetAllSoundSynthsAsync();
 
-        await Task.WhenAll(platformsT, companiesT, regionsT, languagesT,
-                           regionRowsT, languageRowsT, barcodeRowsT, productCodeRowsT);
+        if(IsCreation)
+        {
+            // No parent yet \u2014 skip per-parent junction Get calls and start with empty rows.
+            await Task.WhenAll(platformsT, companiesT, regionsT, languagesT, gpusT, synthsT);
+            _regionRows      = new List<UnM49BySoftwareReleaseDto>();
+            _languageRows    = new List<LanguageBySoftwareReleaseDto>();
+            _barcodeRows     = new List<SoftwareBarcodeDto>();
+            _productCodeRows = new List<SoftwareProductCodeDto>();
+            _minGpuRows      = new List<GpuBySoftwareReleaseDto>();
+            _recGpuRows      = new List<GpuBySoftwareReleaseDto>();
+            _soundSynthRows  = new List<SoundSynthBySoftwareReleaseDto>();
+        }
+        else
+        {
+            Task<List<UnM49BySoftwareReleaseDto>>     regionRowsT      = ReleasesService.GetReleaseRegionsAsync((int)EntityId);
+            Task<List<LanguageBySoftwareReleaseDto>>  languageRowsT    = ReleasesService.GetReleaseLanguagesAsync((int)EntityId);
+            Task<List<SoftwareBarcodeDto>>            barcodeRowsT     = ReleasesService.GetBarcodesAsync((int)EntityId);
+            Task<List<SoftwareProductCodeDto>>        productCodeRowsT = ReleasesService.GetProductCodesAsync((int)EntityId);
+            Task<List<GpuBySoftwareReleaseDto>>       minGpuRowsT      = ReleasesService.GetMinimumGpusAsync((int)EntityId);
+            Task<List<GpuBySoftwareReleaseDto>>       recGpuRowsT      = ReleasesService.GetRecommendedGpusAsync((int)EntityId);
+            Task<List<SoundSynthBySoftwareReleaseDto>> soundSynthRowsT = ReleasesService.GetSoundSynthsAsync((int)EntityId);
+
+            await Task.WhenAll(platformsT, companiesT, regionsT, languagesT, gpusT, synthsT,
+                               regionRowsT, languageRowsT, barcodeRowsT, productCodeRowsT,
+                               minGpuRowsT, recGpuRowsT, soundSynthRowsT);
+
+            _regionRows       = regionRowsT.Result;
+            _languageRows     = languageRowsT.Result;
+            _barcodeRows      = barcodeRowsT.Result;
+            _productCodeRows  = productCodeRowsT.Result;
+            _minGpuRows       = minGpuRowsT.Result;
+            _recGpuRows       = recGpuRowsT.Result;
+            _soundSynthRows   = soundSynthRowsT.Result;
+        }
 
         _allPlatforms     = platformsT.Result;
         _allCompanies     = companiesT.Result;
         _allRegions       = regionsT.Result;
         _allLanguages     = languagesT.Result;
-        _regionRows       = regionRowsT.Result;
-        _languageRows     = languageRowsT.Result;
-        _barcodeRows      = barcodeRowsT.Result;
-        _productCodeRows  = productCodeRowsT.Result;
+        _allGpus          = gpusT.Result;
+        _allSoundSynths   = synthsT.Result;
 
         // Hydrate the scalar autocomplete selections so the user sees the current values.
         if(_orig_platformId.HasValue && _allPlatforms is not null)
@@ -469,6 +663,53 @@
         return Task.FromResult(r.Take(50));
     }
 
+    Task<IEnumerable<GpuDto>> SearchMinGpus(string value, CancellationToken ct) =>
+        SearchGpus(value, _minGpuRows, _minGpuRemoves, _minGpuAdds);
+
+    Task<IEnumerable<GpuDto>> SearchRecGpus(string value, CancellationToken ct) =>
+        SearchGpus(value, _recGpuRows, _recGpuRemoves, _recGpuAdds);
+
+    Task<IEnumerable<GpuDto>> SearchGpus(string value,
+                                        List<GpuBySoftwareReleaseDto> rows,
+                                        HashSet<int> removes,
+                                        Dictionary<string, JunctionAddState> adds)
+    {
+        HashSet<int> assigned = new();
+        if(rows is not null)
+            foreach(GpuBySoftwareReleaseDto row in rows)
+            {
+                int gid = row.GpuId ?? 0;
+                if(gid == 0 || removes.Contains(gid)) continue;
+                assigned.Add(gid);
+            }
+        foreach(JunctionAddState a in adds.Values)
+            if(GetIntField(a.Payload, "gpu_id") is int v) assigned.Add(v);
+
+        IEnumerable<GpuDto> r = (_allGpus ?? []).Where(g => g.Id is int id && !assigned.Contains(id));
+        if(!string.IsNullOrWhiteSpace(value))
+            r = r.Where(g => g.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
+        return Task.FromResult(r.Take(50));
+    }
+
+    Task<IEnumerable<SoundSynthDto>> SearchSoundSynths(string value, CancellationToken ct)
+    {
+        HashSet<int> assigned = new();
+        if(_soundSynthRows is not null)
+            foreach(SoundSynthBySoftwareReleaseDto row in _soundSynthRows)
+            {
+                int sid = row.SoundSynthId ?? 0;
+                if(sid == 0 || _soundSynthRemoves.Contains(sid)) continue;
+                assigned.Add(sid);
+            }
+        foreach(JunctionAddState a in _soundSynthAdds.Values)
+            if(GetIntField(a.Payload, "sound_synth_id") is int v) assigned.Add(v);
+
+        IEnumerable<SoundSynthDto> r = (_allSoundSynths ?? []).Where(s => s.Id is int id && !assigned.Contains(id));
+        if(!string.IsNullOrWhiteSpace(value))
+            r = r.Where(s => s.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
+        return Task.FromResult(r.Take(50));
+    }
+
     static int? GetIntField(Dictionary<string, object> payload, string key)
     {
         if(payload is null || !payload.TryGetValue(key, out object v) || v is null) return null;
@@ -534,6 +775,33 @@
         {
             long pid = (long)(p.Id ?? 0);
             if(pid == 0 || !_productCodeRemoves.Contains(pid)) n++;
+        }
+        return n;
+    }
+
+    int CountActiveMinGpus() => CountActiveGpus(_minGpuRows, _minGpuRemoves);
+    int CountActiveRecGpus() => CountActiveGpus(_recGpuRows, _recGpuRemoves);
+
+    static int CountActiveGpus(List<GpuBySoftwareReleaseDto> rows, HashSet<int> removes)
+    {
+        if(rows is null) return 0;
+        int n = 0;
+        foreach(GpuBySoftwareReleaseDto r in rows)
+        {
+            int gid = r.GpuId ?? 0;
+            if(gid == 0 || !removes.Contains(gid)) n++;
+        }
+        return n;
+    }
+
+    int CountActiveSoundSynths()
+    {
+        if(_soundSynthRows is null) return 0;
+        int n = 0;
+        foreach(SoundSynthBySoftwareReleaseDto r in _soundSynthRows)
+        {
+            int sid = r.SoundSynthId ?? 0;
+            if(sid == 0 || !_soundSynthRemoves.Contains(sid)) n++;
         }
         return n;
     }
@@ -623,6 +891,42 @@
         _pickProductCodeCode = string.Empty;
     }
 
+    void AddMinGpu()
+    {
+        if(_pickMinGpu is null || !_pickMinGpu.Id.HasValue) return;
+        string key = NewKey(SoftwareReleaseSuggestionMetadata.GroupMinGpus, "add");
+        _minGpuAdds[key] = new JunctionAddState
+        {
+            Payload = new Dictionary<string, object>(StringComparer.Ordinal) { ["gpu_id"] = _pickMinGpu.Id.Value },
+            Display = _pickMinGpu.Name ?? $"#{_pickMinGpu.Id.Value}"
+        };
+        _pickMinGpu = null;
+    }
+
+    void AddRecGpu()
+    {
+        if(_pickRecGpu is null || !_pickRecGpu.Id.HasValue) return;
+        string key = NewKey(SoftwareReleaseSuggestionMetadata.GroupRecGpus, "add");
+        _recGpuAdds[key] = new JunctionAddState
+        {
+            Payload = new Dictionary<string, object>(StringComparer.Ordinal) { ["gpu_id"] = _pickRecGpu.Id.Value },
+            Display = _pickRecGpu.Name ?? $"#{_pickRecGpu.Id.Value}"
+        };
+        _pickRecGpu = null;
+    }
+
+    void AddSoundSynth()
+    {
+        if(_pickSoundSynth is null || !_pickSoundSynth.Id.HasValue) return;
+        string key = NewKey(SoftwareReleaseSuggestionMetadata.GroupSoundSynths, "add");
+        _soundSynthAdds[key] = new JunctionAddState
+        {
+            Payload = new Dictionary<string, object>(StringComparer.Ordinal) { ["sound_synth_id"] = _pickSoundSynth.Id.Value },
+            Display = _pickSoundSynth.Name ?? $"#{_pickSoundSynth.Id.Value}"
+        };
+        _pickSoundSynth = null;
+    }
+
     // ───────────────────────────── Submit ─────────────────────────────
 
     bool HasAnyChange()
@@ -636,11 +940,24 @@
         if(!Equals(_orig_releaseDate, newDate)) return true;
         if(_orig_releaseDatePrecision != _releaseDatePrecision) return true;
 
-        if(_regionAdds.Count + _languageAdds.Count + _barcodeAdds.Count + _productCodeAdds.Count > 0) return true;
-        if(_regionRemoves.Count + _languageRemoves.Count + _barcodeRemoves.Count + _productCodeRemoves.Count > 0) return true;
+        if(_regionAdds.Count + _languageAdds.Count + _barcodeAdds.Count + _productCodeAdds.Count
+           + _minGpuAdds.Count + _recGpuAdds.Count + _soundSynthAdds.Count > 0) return true;
+        if(_regionRemoves.Count + _languageRemoves.Count + _barcodeRemoves.Count + _productCodeRemoves.Count
+           + _minGpuRemoves.Count + _recGpuRemoves.Count + _soundSynthRemoves.Count > 0) return true;
 
         return false;
     }
+
+    /// <summary>
+    ///     UX gate for the Submit button in CREATION mode. Server still only requires
+    ///     PublisherId on the entity, but a release without title / publisher / platform is
+    ///     of little use in the queue — require all three plus the prefilled parent.
+    /// </summary>
+    bool HasMandatoryFieldsForCreation() =>
+        PrefillSoftwareId.HasValue
+        && !string.IsNullOrWhiteSpace(_title)
+        && _selectedPublisher is not null
+        && _selectedPlatform is not null;
 
     void Cancel() => MudDialog.Cancel();
 
@@ -649,45 +966,106 @@
         _validationError = null;
         if(_loading) return;
 
-        // Publisher is required server-side ([Required] on the entity) — never let the
-        // user clear it.
-        if(_selectedPublisher is null || !_selectedPublisher.Id.HasValue)
+        if(IsCreation)
         {
-            _validationError = L["Publisher is required."];
-            return;
+            // Defence-in-depth: in creation mode the parent Software MUST be prefilled.
+            if(!PrefillSoftwareId.HasValue)
+            {
+                _validationError = L["Cannot submit: parent software is missing."];
+                return;
+            }
+            // Per-field validation in priority order — surface a specific error for the
+            // first missing mandatory field (matches the server's ValidateAdditionPayload).
+            if(string.IsNullOrWhiteSpace(_title))
+            {
+                _validationError = L["Title is required."];
+                return;
+            }
+            if(_selectedPublisher is null || !_selectedPublisher.Id.HasValue)
+            {
+                _validationError = L["Publisher is required."];
+                return;
+            }
+            if(_selectedPlatform is null || !_selectedPlatform.Id.HasValue)
+            {
+                _validationError = L["Platform is required."];
+                return;
+            }
+        }
+        else
+        {
+            // Publisher is required server-side ([Required] on the entity) — never let the
+            // user clear it.
+            if(_selectedPublisher is null || !_selectedPublisher.Id.HasValue)
+            {
+                _validationError = L["Publisher is required."];
+                return;
+            }
         }
 
         var diff = new Dictionary<string, object>(StringComparer.Ordinal);
 
-        if(!Equals(_orig_title, _title))
-            diff[SoftwareReleaseSuggestionMetadata.FieldTitle] = _title;
+        if(IsCreation)
+        {
+            // Emit the parent FK pseudo-field + every populated scalar (no diff vs.
+            // snapshot — there is no snapshot in creation mode). The applier consumes
+            // software_id explicitly; ApplyAsync rejects it on edit (re-parenting stays
+            // admin-only).
+            diff[SoftwareReleaseSuggestionMetadata.FieldSoftwareId] = PrefillSoftwareId.Value;
+            diff[SoftwareReleaseSuggestionMetadata.FieldTitle]      = _title;
+            diff[SoftwareReleaseSuggestionMetadata.FieldPublisherId] = _selectedPublisher.Id.Value;
+            diff[SoftwareReleaseSuggestionMetadata.FieldPlatformId]  = _selectedPlatform.Id.Value;
+            string createDate = _releaseDate?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            if(!string.IsNullOrEmpty(createDate))
+                diff[SoftwareReleaseSuggestionMetadata.FieldReleaseDate] = createDate;
+            if(_releaseDatePrecision != 0)
+                diff[SoftwareReleaseSuggestionMetadata.FieldReleaseDatePrecision] = _releaseDatePrecision;
+        }
+        else
+        {
+            if(!Equals(_orig_title, _title))
+                diff[SoftwareReleaseSuggestionMetadata.FieldTitle] = _title;
 
-        int? newPlatformId  = _selectedPlatform?.Id;
-        int? newPublisherId = _selectedPublisher?.Id;
-        if(!Nullable.Equals(_orig_platformId, newPlatformId))
-            diff[SoftwareReleaseSuggestionMetadata.FieldPlatformId] = newPlatformId;
-        if(!Nullable.Equals(_orig_publisherId, newPublisherId))
-            diff[SoftwareReleaseSuggestionMetadata.FieldPublisherId] = newPublisherId;
+            int? newPlatformId  = _selectedPlatform?.Id;
+            int? newPublisherId = _selectedPublisher?.Id;
+            if(!Nullable.Equals(_orig_platformId, newPlatformId))
+                diff[SoftwareReleaseSuggestionMetadata.FieldPlatformId] = newPlatformId;
+            if(!Nullable.Equals(_orig_publisherId, newPublisherId))
+                diff[SoftwareReleaseSuggestionMetadata.FieldPublisherId] = newPublisherId;
 
-        string newDate = _releaseDate?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-        if(!Equals(_orig_releaseDate, newDate))
-            diff[SoftwareReleaseSuggestionMetadata.FieldReleaseDate] = newDate;
-        if(_orig_releaseDatePrecision != _releaseDatePrecision)
-            diff[SoftwareReleaseSuggestionMetadata.FieldReleaseDatePrecision] = _releaseDatePrecision;
+            string newDate = _releaseDate?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            if(!Equals(_orig_releaseDate, newDate))
+                diff[SoftwareReleaseSuggestionMetadata.FieldReleaseDate] = newDate;
+            if(_orig_releaseDatePrecision != _releaseDatePrecision)
+                diff[SoftwareReleaseSuggestionMetadata.FieldReleaseDatePrecision] = _releaseDatePrecision;
+        }
 
         AddJunctionAdds(diff, _regionAdds);
         AddJunctionAdds(diff, _languageAdds);
         AddJunctionAdds(diff, _barcodeAdds);
         AddJunctionAdds(diff, _productCodeAdds);
+        AddJunctionAdds(diff, _minGpuAdds);
+        AddJunctionAdds(diff, _recGpuAdds);
+        AddJunctionAdds(diff, _soundSynthAdds);
 
-        foreach(short id in _regionRemoves)
-            diff[$"{SoftwareReleaseSuggestionMetadata.GroupRegions}.remove.{id.ToString(CultureInfo.InvariantCulture)}"] = null;
-        foreach(string code in _languageRemoves)
-            diff[$"{SoftwareReleaseSuggestionMetadata.GroupLanguages}.remove.{code}"] = null;
-        foreach(long id in _barcodeRemoves)
-            diff[$"{SoftwareReleaseSuggestionMetadata.GroupBarcodes}.remove.{id.ToString(CultureInfo.InvariantCulture)}"] = null;
-        foreach(long id in _productCodeRemoves)
-            diff[$"{SoftwareReleaseSuggestionMetadata.GroupProductCodes}.remove.{id.ToString(CultureInfo.InvariantCulture)}"] = null;
+        // Drop ALL remove ops in creation mode — a brand-new entity has nothing to remove.
+        if(!IsCreation)
+        {
+            foreach(short id in _regionRemoves)
+                diff[$"{SoftwareReleaseSuggestionMetadata.GroupRegions}.remove.{id.ToString(CultureInfo.InvariantCulture)}"] = null;
+            foreach(string code in _languageRemoves)
+                diff[$"{SoftwareReleaseSuggestionMetadata.GroupLanguages}.remove.{code}"] = null;
+            foreach(long id in _barcodeRemoves)
+                diff[$"{SoftwareReleaseSuggestionMetadata.GroupBarcodes}.remove.{id.ToString(CultureInfo.InvariantCulture)}"] = null;
+            foreach(long id in _productCodeRemoves)
+                diff[$"{SoftwareReleaseSuggestionMetadata.GroupProductCodes}.remove.{id.ToString(CultureInfo.InvariantCulture)}"] = null;
+            foreach(int id in _minGpuRemoves)
+                diff[$"{SoftwareReleaseSuggestionMetadata.GroupMinGpus}.remove.{id.ToString(CultureInfo.InvariantCulture)}"] = null;
+            foreach(int id in _recGpuRemoves)
+                diff[$"{SoftwareReleaseSuggestionMetadata.GroupRecGpus}.remove.{id.ToString(CultureInfo.InvariantCulture)}"] = null;
+            foreach(int id in _soundSynthRemoves)
+                diff[$"{SoftwareReleaseSuggestionMetadata.GroupSoundSynths}.remove.{id.ToString(CultureInfo.InvariantCulture)}"] = null;
+        }
 
         if(diff.Count == 0)
         {
@@ -702,7 +1080,7 @@
             var dto = new SuggestionDto
             {
                 EntityType          = (int?)SuggestionEntityType.SoftwareRelease,
-                EntityId            = EntityId,
+                EntityId            = IsCreation ? null : EntityId,
                 Status              = (int?)SuggestionStatus.Pending,
                 UserComment         = string.IsNullOrWhiteSpace(_userComment) ? null : _userComment.Trim(),
                 SuggestedValuesJson = json

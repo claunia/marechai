@@ -59,6 +59,16 @@ internal static class SoftwareReleaseSuggestionApplier
         FieldTitle, FieldPlatformId, FieldPublisherId, FieldReleaseDate, FieldReleaseDatePrecision
     };
 
+    /// <summary>
+    ///     Pseudo-field carrying the parent Software FK at addition time only (consumed by
+    ///     <see cref="CreateAsync" />). Intentionally NOT in <c>s_scalarFieldNames</c>:
+    ///     <see cref="ApplyAsync" /> rejects it as an unknown scalar to keep edit-mode
+    ///     re-parenting protection (changing the parent Software of an existing release
+    ///     stays admin-only). It IS whitelisted in <see cref="IsKnownFieldName" /> so the
+    ///     controller's field-name validator accepts it on the wire.
+    /// </summary>
+    public const string FieldSoftwareId = "software_id";
+
     // ---- Junction group identifiers ---------------------------------------------------
     public const string GroupRegions      = "regions";
     public const string GroupLanguages    = "languages";
@@ -66,6 +76,9 @@ internal static class SoftwareReleaseSuggestionApplier
     public const string GroupProductCodes = "product_codes";
     public const string GroupSpecs        = "specs";
     public const string GroupRatings      = "ratings";
+    public const string GroupMinGpus      = "min_gpus";
+    public const string GroupRecGpus      = "rec_gpus";
+    public const string GroupSoundSynths  = "sound_synths";
 
     // SoftwareAttribute.Category discriminator literals (database-bound strings).
     public const string AttributeCategorySpec   = "Spec";
@@ -82,13 +95,17 @@ internal static class SoftwareReleaseSuggestionApplier
         GroupBarcodes,
         GroupProductCodes,
         GroupSpecs,
-        GroupRatings
+        GroupRatings,
+        GroupMinGpus,
+        GroupRecGpus,
+        GroupSoundSynths
     };
 
     public static bool IsKnownFieldName(string fieldName)
     {
         if(string.IsNullOrEmpty(fieldName)) return false;
         if(s_scalarFieldNames.Contains(fieldName)) return true;
+        if(fieldName == FieldSoftwareId) return true;
         return TryParseJunctionKey(fieldName, out _, out _, out _);
     }
 
@@ -101,6 +118,9 @@ internal static class SoftwareReleaseSuggestionApplier
     ///         <item><c>product_codes</c>: token = row Id (ulong) — surrogate key.</item>
     ///         <item><c>specs</c>: token = row Id (long) — surrogate key on SoftwareAttribute.</item>
     ///         <item><c>ratings</c>: token = row Id (long) — surrogate key on SoftwareAttribute.</item>
+    ///         <item><c>min_gpus</c>: token = gpu_id (int) — composite-key junction.</item>
+    ///         <item><c>rec_gpus</c>: token = gpu_id (int) — composite-key junction.</item>
+    ///         <item><c>sound_synths</c>: token = sound_synth_id (int) — composite-key junction.</item>
     ///     </list>
     ///     For <c>add</c> ops the token is a client-generated GUID (uniqueness scaffold);
     ///     the actual payload arrives as the field value.
@@ -139,6 +159,128 @@ internal static class SoftwareReleaseSuggestionApplier
             [FieldReleaseDate]          = r.ReleaseDate?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
             [FieldReleaseDatePrecision] = (int)r.ReleaseDatePrecision
         };
+    }
+
+    /// <summary>
+    ///     Create a brand-new SoftwareRelease from an accepted suggestion (entity_id ==
+    ///     null path). Returns the new id (ulong) + the field-name set that was actually
+    ///     applied. Returns <c>(null, empty)</c> when creation can't proceed (mandatory
+    ///     fields missing or FK validation fails). Junction <c>*.add.*</c> keys are
+    ///     applied in a second pass against the freshly-minted release Id; <c>*.remove.*</c>
+    ///     keys are silently skipped (a brand-new entity has nothing to remove from).
+    ///
+    ///     <para>
+    ///         Mandatory fields: <c>software_id</c> (parent Software FK existence-checked),
+    ///         <c>publisher_id</c> ([Required] FK existence-checked), <c>title</c> (non-
+    ///         whitespace), <c>platform_id</c> (FK existence-checked). The dialog gates the
+    ///         submit button on the same four fields; this server check is defence-in-depth.
+    ///     </para>
+    /// </summary>
+    /// <param name="creditedUserId">
+    ///     The Identity user id to attribute the row to in audit history (the suggesting
+    ///     user, NOT the reviewing admin). Forwarded to <c>SaveChangesWithUserAsync</c>.
+    /// </param>
+    public static async Task<(ulong? newId, HashSet<string> applied)> CreateAsync(
+        MarechaiContext context,
+        Dictionary<string, object> suggested,
+        HashSet<string> accepted,
+        string creditedUserId)
+    {
+        var applied = new HashSet<string>(StringComparer.Ordinal);
+
+        // Mandatory: parent Software FK (consumed only here, not in ApplyAsync).
+        if(!accepted.Contains(FieldSoftwareId) || !suggested.TryGetValue(FieldSoftwareId, out object softwareIdRaw))
+            return (null, applied);
+        ulong? softwareIdParsed = ToUlong(softwareIdRaw);
+        if(!softwareIdParsed.HasValue || softwareIdParsed.Value == 0) return (null, applied);
+        ulong softwareId = softwareIdParsed.Value;
+        if(!await context.Softwares.AsNoTracking().AnyAsync(s => s.Id == softwareId))
+            return (null, applied);
+
+        // Mandatory: PublisherId ([Required] on the entity, FK existence-checked).
+        if(!accepted.Contains(FieldPublisherId) || !suggested.TryGetValue(FieldPublisherId, out object pubIdRaw))
+            return (null, applied);
+        int? publisherId = ToInt(pubIdRaw);
+        if(!publisherId.HasValue) return (null, applied);
+        if(!await context.Companies.AsNoTracking().AnyAsync(c => c.Id == publisherId.Value))
+            return (null, applied);
+
+        // Mandatory: Title (non-whitespace per the dialog gate; nullable on the entity but
+        // we require it here for queue-display + reviewer sanity).
+        if(!accepted.Contains(FieldTitle) || !suggested.TryGetValue(FieldTitle, out object titleVal))
+            return (null, applied);
+        string title = ToStringValue(titleVal);
+        if(string.IsNullOrWhiteSpace(title)) return (null, applied);
+
+        // Mandatory: Platform FK existence-checked (nullable on the entity but the dialog
+        // gates submit on it being present).
+        if(!accepted.Contains(FieldPlatformId) || !suggested.TryGetValue(FieldPlatformId, out object platIdRaw))
+            return (null, applied);
+        ulong? platformId = ToUlong(platIdRaw);
+        if(!platformId.HasValue) return (null, applied);
+        if(!await context.SoftwarePlatforms.AsNoTracking().AnyAsync(p => p.Id == platformId.Value))
+            return (null, applied);
+
+        var r = new SoftwareRelease
+        {
+            SoftwareId    = softwareId,
+            PublisherId   = publisherId.Value,
+            Title         = title.Trim(),
+            PlatformId    = platformId.Value,
+            IsCompilation = false
+        };
+        applied.Add(FieldSoftwareId);
+        applied.Add(FieldPublisherId);
+        applied.Add(FieldTitle);
+        applied.Add(FieldPlatformId);
+
+        // Apply remaining accepted scalar fields (release_date, release_date_precision).
+        // Mandatory fields are handled above; junctions and software_id pseudo-field skip.
+        foreach(string fieldName in accepted)
+        {
+            if(fieldName == FieldSoftwareId) continue;
+            if(fieldName == FieldTitle) continue;
+            if(fieldName == FieldPublisherId) continue;
+            if(fieldName == FieldPlatformId) continue;
+            if(!s_scalarFieldNames.Contains(fieldName)) continue;
+            if(!suggested.TryGetValue(fieldName, out object value)) continue;
+
+            try
+            {
+                if(await ApplyScalar(context, r, fieldName, value)) applied.Add(fieldName);
+            }
+            catch
+            {
+                // Coerce failure: silently skip this field.
+            }
+        }
+
+        await context.SoftwareReleases.AddAsync(r);
+
+        if(string.IsNullOrEmpty(creditedUserId))
+            await context.SaveChangesAsync();
+        else
+            await context.SaveChangesWithUserAsync(creditedUserId);
+
+        // Now apply junction adds with the freshly-minted release id. Remove keys are
+        // silently ignored — a brand-new entity has nothing to remove from.
+        foreach(string fieldName in accepted)
+        {
+            if(!TryParseJunctionKey(fieldName, out string group, out string op, out string _)) continue;
+            if(op != "add") continue;
+            if(!suggested.TryGetValue(fieldName, out object value)) continue;
+
+            try
+            {
+                if(await ApplyJunctionAdd(context, r.Id, group, value)) applied.Add(fieldName);
+            }
+            catch
+            {
+                // Coerce failure: silently skip this junction add.
+            }
+        }
+
+        return (r.Id, applied);
     }
 
     public static async Task<(HashSet<string> applied, bool entityMissing)> ApplyAsync(
@@ -326,6 +468,54 @@ internal static class SoftwareReleaseSuggestionApplier
                 return await AddSoftwareAttributeAsync(context, releaseId, payload, AttributeCategorySpec);
             case GroupRatings:
                 return await AddSoftwareAttributeAsync(context, releaseId, payload, AttributeCategoryRating);
+            case GroupMinGpus:
+            {
+                int? gpuId = GetInt(payload, "gpu_id");
+                if(!gpuId.HasValue) return false;
+                if(!await context.Gpus.AsNoTracking().AnyAsync(g => g.Id == gpuId.Value)) return false;
+                if(await context.MinimumGpuBySoftwareRelease.AsNoTracking()
+                                .AnyAsync(x => x.ReleaseId == releaseId && x.GpuId == gpuId.Value))
+                    return false;
+                await context.MinimumGpuBySoftwareRelease.AddAsync(new MinimumGpuBySoftwareRelease
+                {
+                    ReleaseId = releaseId,
+                    GpuId     = gpuId.Value
+                });
+                await context.SaveChangesAsync();
+                return true;
+            }
+            case GroupRecGpus:
+            {
+                int? gpuId = GetInt(payload, "gpu_id");
+                if(!gpuId.HasValue) return false;
+                if(!await context.Gpus.AsNoTracking().AnyAsync(g => g.Id == gpuId.Value)) return false;
+                if(await context.RecommendedGpuBySoftwareRelease.AsNoTracking()
+                                .AnyAsync(x => x.ReleaseId == releaseId && x.GpuId == gpuId.Value))
+                    return false;
+                await context.RecommendedGpuBySoftwareRelease.AddAsync(new RecommendedGpuBySoftwareRelease
+                {
+                    ReleaseId = releaseId,
+                    GpuId     = gpuId.Value
+                });
+                await context.SaveChangesAsync();
+                return true;
+            }
+            case GroupSoundSynths:
+            {
+                int? synthId = GetInt(payload, "sound_synth_id");
+                if(!synthId.HasValue) return false;
+                if(!await context.SoundSynths.AsNoTracking().AnyAsync(s => s.Id == synthId.Value)) return false;
+                if(await context.SoundSynthBySoftwareRelease.AsNoTracking()
+                                .AnyAsync(x => x.ReleaseId == releaseId && x.SoundSynthId == synthId.Value))
+                    return false;
+                await context.SoundSynthBySoftwareRelease.AddAsync(new SoundSynthBySoftwareRelease
+                {
+                    ReleaseId    = releaseId,
+                    SoundSynthId = synthId.Value
+                });
+                await context.SaveChangesAsync();
+                return true;
+            }
             default:
                 return false;
         }
@@ -409,6 +599,30 @@ internal static class SoftwareReleaseSuggestionApplier
                 return await RemoveSoftwareAttributeAsync(context, releaseId, token, AttributeCategorySpec);
             case GroupRatings:
                 return await RemoveSoftwareAttributeAsync(context, releaseId, token, AttributeCategoryRating);
+            case GroupMinGpus:
+            {
+                if(!int.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out int gpuId))
+                    return false;
+                return await context.MinimumGpuBySoftwareRelease
+                                    .Where(x => x.ReleaseId == releaseId && x.GpuId == gpuId)
+                                    .ExecuteDeleteAsync() > 0;
+            }
+            case GroupRecGpus:
+            {
+                if(!int.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out int gpuId))
+                    return false;
+                return await context.RecommendedGpuBySoftwareRelease
+                                    .Where(x => x.ReleaseId == releaseId && x.GpuId == gpuId)
+                                    .ExecuteDeleteAsync() > 0;
+            }
+            case GroupSoundSynths:
+            {
+                if(!int.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out int synthId))
+                    return false;
+                return await context.SoundSynthBySoftwareRelease
+                                    .Where(x => x.ReleaseId == releaseId && x.SoundSynthId == synthId)
+                                    .ExecuteDeleteAsync() > 0;
+            }
             default:
                 return false;
         }

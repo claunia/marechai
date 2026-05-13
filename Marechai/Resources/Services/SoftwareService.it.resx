@@ -1856,4 +1856,13 @@
   <data name="Credits" xml:space="preserve">
     <value>Crediti</value>
   </data>
+  <data name="Suggest new release" xml:space="preserve">
+    <value>Proponi nuovo rilascio</value>
+  </data>
+  <data name="Suggest a new release to be added to the catalogue." xml:space="preserve">
+    <value>Proponi un nuovo rilascio da aggiungere al catalogo.</value>
+  </data>
+  <data name="No releases recorded yet." xml:space="preserve">
+    <value>Nessun rilascio ancora registrato.</value>
+  </data>
 </root>

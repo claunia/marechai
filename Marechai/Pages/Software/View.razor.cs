@@ -722,4 +722,48 @@ public partial class View
 
         // No reload needed — pending suggestions only take effect after admin review.
     }
+
+    /// <summary>
+    ///     Opens the SoftwareReleaseSuggestionDialog in CREATION mode for a brand-new
+    ///     release tied to this Software. The dialog is the same one used for editing
+    ///     existing releases (in-place reuse via the <c>IsCreation</c> parameter): the
+    ///     parent <c>software_id</c> + display label are prefilled and shown as a read-only
+    ///     "Release of: {0}" alert. Specs / ratings / barcodes / product-codes / regions /
+    ///     languages / min-GPUs / rec-GPUs / sound synthesizers can all be queued at
+    ///     creation time and persist in a single accepted suggestion.
+    /// </summary>
+    async Task OpenSuggestNewReleaseDialogAsync()
+    {
+        if(AuthState is null) return;
+
+        AuthenticationState state = await AuthState;
+        if(state?.User?.Identity?.IsAuthenticated != true) return;
+
+        long softwareId = Id;
+        if(softwareId <= 0 || _software is null) return;
+
+        var parameters = new DialogParameters<SoftwareReleaseSuggestionDialog>
+        {
+            { x => x.EntityId,             0L },
+            { x => x.CurrentDto,           (SoftwareReleaseDto)null },
+            { x => x.IsCreation,           true },
+            { x => x.PrefillSoftwareId,    (ulong?)softwareId },
+            { x => x.PrefillSoftwareLabel, _software.Name }
+        };
+
+        var options = new DialogOptions
+        {
+            MaxWidth         = MaxWidth.Large,
+            FullWidth        = true,
+            CloseOnEscapeKey = true
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<SoftwareReleaseSuggestionDialog>(
+            L["Suggest new release"], parameters, options);
+
+        DialogResult result = await dialog.Result;
+        if(result is null || result.Canceled) return;
+
+        // No reload needed — pending suggestions only take effect after admin review.
+    }
 }
