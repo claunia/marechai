@@ -766,4 +766,43 @@ public partial class View
 
         // No reload needed — pending suggestions only take effect after admin review.
     }
+
+    /// <summary>
+    ///     Opens the SoftwarePromoArtSuggestionDialog so a logged-in collaborator can stage
+    ///     1-30 pending promo art images for this Software, choose a group (free-text
+    ///     autocomplete over existing groups), optionally annotate each with a caption, then
+    ///     submit ONE Suggestion row that an admin reviews per-image. Accepted images are
+    ///     persisted with the pending Guid as the new SoftwarePromoArt row Id and run
+    ///     through the same fire-and-forget conversion worker the admin upload uses.
+    /// </summary>
+    async Task OpenSuggestPromoArtDialog()
+    {
+        if(AuthState is null) return;
+
+        AuthenticationState state = await AuthState;
+        if(state?.User?.Identity?.IsAuthenticated != true) return;
+
+        if(Id <= 0 || _software is null) return;
+
+        var parameters = new DialogParameters<SoftwarePromoArtSuggestionDialog>
+        {
+            { x => x.SoftwareId,   (ulong)Id },
+            { x => x.SoftwareName, _software.Name ?? string.Empty }
+        };
+
+        var options = new DialogOptions
+        {
+            MaxWidth         = MaxWidth.Large,
+            FullWidth        = true,
+            CloseOnEscapeKey = true
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<SoftwarePromoArtSuggestionDialog>(
+            L["Suggest promo art"], parameters, options);
+
+        DialogResult result = await dialog.Result;
+        if(result is null || result.Canceled) return;
+
+        // No reload needed — promo art only appears after admin acceptance.
+    }
 }

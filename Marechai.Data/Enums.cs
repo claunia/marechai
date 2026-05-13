@@ -1083,7 +1083,22 @@ public enum SuggestionEntityType : byte
     ///     <c>AppliedFields</c>. The same enum value covers all three Machine kinds because
     ///     they share the underlying <see cref="MachineType" />-discriminated table.
     /// </summary>
-    MachinePhoto = 30
+    MachinePhoto = 30,
+    /// <summary>
+    ///     A batch of one or more pending Software promo art images uploaded by a collaborator
+    ///     for review by an admin. The EntityId on the Suggestion row holds the parent
+    ///     Software Id. The SuggestedValues JSON carries one suggestion-level
+    ///     <c>group_name</c> (max 256 chars; the server does get-or-create on
+    ///     <see cref="Marechai.Database.Models.SoftwarePromoArtGroup" /> on accept) and a
+    ///     <c>photos</c> array (max 30 entries) of pending image descriptors
+    ///     (<c>guid</c>, <c>extension</c>, per-photo <c>caption</c>). Per-photo accept/reject
+    ///     is signalled by including/omitting the field-name key <c>promo.{guid}</c> in
+    ///     <c>AppliedFields</c>. The pending Guid becomes the new SoftwarePromoArt row Id
+    ///     directly. Unlike other batch-photo entity types this one carries NO
+    ///     <c>license_id</c> and NO <c>source_url</c> because the underlying
+    ///     <see cref="Marechai.Database.Models.SoftwarePromoArt" /> table has no such columns.
+    /// </summary>
+    SoftwarePromoArt = 31
 }
 
 public enum SuggestionStatus : byte

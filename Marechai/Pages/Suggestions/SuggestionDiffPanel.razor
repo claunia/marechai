@@ -44,6 +44,10 @@ else if(Suggestion?.EntityType == (int)SuggestionEntityType.MachinePhoto)
 {
     @RenderMachinePhotoBatch()
 }
+else if(Suggestion?.EntityType == (int)SuggestionEntityType.SoftwarePromoArt)
+{
+    @RenderSoftwarePromoArtBatch()
+}
 else
 {
     <MudSimpleTable Hover="true" Dense="true" Bordered="true" Style="width: 100%;">
@@ -291,6 +295,7 @@ else
                 (int)SuggestionEntityType.ProcessorPhoto => "MarechaiProcessorPhotoUpload.openPendingPhotoInNewTab",
                 (int)SuggestionEntityType.SoundSynthPhoto => "MarechaiSoundSynthPhotoUpload.openPendingPhotoInNewTab",
                 (int)SuggestionEntityType.MachinePhoto    => "MarechaiMachinePhotoUpload.openPendingPhotoInNewTab",
+                (int)SuggestionEntityType.SoftwarePromoArt => "MarechaiSoftwarePromoArtUpload.openPendingPhotoInNewTab",
                 _                                       => "MarechaiPendingCover.openPendingCoverInNewTab"
             };
             await JS.InvokeAsync<object>(fnName, ApiAssetUrls.BaseUrl, token, guid);
@@ -327,6 +332,7 @@ else
                     (int)SuggestionEntityType.ProcessorPhoto => "MarechaiProcessorPhotoUpload.applyPendingPhotoImage",
                     (int)SuggestionEntityType.SoundSynthPhoto => "MarechaiSoundSynthPhotoUpload.applyPendingPhotoImage",
                     (int)SuggestionEntityType.MachinePhoto    => "MarechaiMachinePhotoUpload.applyPendingPhotoImage",
+                    (int)SuggestionEntityType.SoftwarePromoArt => "MarechaiSoftwarePromoArtUpload.applyPendingPhotoImage",
                     _                                       => "MarechaiPendingCover.applyPendingCoverImage"
                 };
                 foreach(KeyValuePair<string, string> kv in _pendingImageRefs)
@@ -901,6 +907,93 @@ else
                             @if(!string.IsNullOrEmpty(comment))
                             {
                                 <MudText Typo="Typo.body2" Class="mt-1"><em>@comment</em></MudText>
+                            }
+                        </MudStack>
+                    </MudStack>
+                </MudPaper>
+            }
+        </MudStack>
+    };
+
+    /// <summary>
+    ///     Custom renderer for <see cref="SuggestionEntityType.SoftwarePromoArt" /> batch
+    ///     suggestions. Differs from the GpuPhoto / MachinePhoto renderers in three ways:
+    ///     (a) NO suggestion-level <c>license_id</c> or <c>source_url</c> rows because the
+    ///     SoftwarePromoArt table has no such columns; (b) one suggestion-level
+    ///     <c>group_name</c> row at the top (free-text — the server does get-or-create on
+    ///     <see cref="SoftwarePromoArtGroup" /> on accept); (c) per-image annotation is
+    ///     <c>caption</c> not <c>comment</c>; (d) per-image accept-key prefix is
+    ///     <c>promo.</c> not <c>photo.</c>; (e) per-img element id prefix is
+    ///     <c>software-promo-art-pending-</c>.
+    /// </summary>
+    RenderFragment RenderSoftwarePromoArtBatch() => __builder =>
+    {
+        string groupName = SuggestedLabels is not null &&
+                           SuggestedLabels.TryGetValue("group_name", out string g) &&
+                           !string.IsNullOrEmpty(g)
+                               ? g
+                               : (_suggestedDict.TryGetValue("group_name", out JsonElement gje) &&
+                                  gje.ValueKind == JsonValueKind.String
+                                      ? gje.GetString()
+                                      : "");
+
+        List<JsonElement> photos = _suggestedDict.TryGetValue("photos", out JsonElement pje) &&
+                                   pje.ValueKind == JsonValueKind.Array
+                                       ? pje.EnumerateArray().ToList()
+                                       : new List<JsonElement>();
+
+        int totalPhotos    = photos.Count;
+        int acceptedPhotos = AcceptedFieldNames?.Count(k => k.StartsWith("promo.", StringComparison.Ordinal)) ?? 0;
+
+        <MudPaper Outlined="true" Class="pa-3 mb-3">
+            <MudText Typo="Typo.subtitle2" Class="mb-2">@L["Group (applies to every accepted image)"]</MudText>
+            <MudText Typo="Typo.body2"><strong>@(string.IsNullOrEmpty(groupName) ? L["(none)"].Value : groupName)</strong></MudText>
+        </MudPaper>
+
+        <MudText Typo="Typo.body2" Class="mb-2">
+            @string.Format(L["Accepting {0} of {1} image(s). Rejected images and their pending files will be deleted on submit."].Value, acceptedPhotos, totalPhotos)
+        </MudText>
+
+        <MudStack Spacing="2" Class="mb-2">
+            @for(int i = 0; i < photos.Count; i++)
+            {
+                JsonElement photo = photos[i];
+                string guidStr = photo.TryGetProperty("guid", out JsonElement gj) && gj.ValueKind == JsonValueKind.String
+                                     ? gj.GetString()
+                                     : "";
+                string extension = photo.TryGetProperty("extension", out JsonElement xj) && xj.ValueKind == JsonValueKind.String
+                                       ? xj.GetString()
+                                       : "";
+                string caption = photo.TryGetProperty("caption", out JsonElement cj) && cj.ValueKind == JsonValueKind.String
+                                     ? cj.GetString()
+                                     : "";
+                if(string.IsNullOrEmpty(guidStr) || !Guid.TryParse(guidStr, out _)) continue;
+
+                string acceptKey = "promo." + guidStr;
+                bool   accepted  = AcceptedFieldNames is not null && AcceptedFieldNames.Contains(acceptKey);
+                string imgId     = "software-promo-art-pending-" + guidStr.Replace("-", "");
+                int    photoNum  = i + 1;
+
+                _pendingImageRefs[imgId] = guidStr;
+
+                <MudPaper Outlined="true" Class="pa-3" @key="@guidStr">
+                    <MudStack Row="true" Spacing="3" AlignItems="AlignItems.Start">
+                        <div style="width: 120px; height: 120px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--mud-palette-background-grey); border-radius: 4px; cursor: pointer;"
+                             @onclick="@(() => OpenImageInNewTab(guidStr, true))">
+                            <img id="@imgId" alt="@($"Image {photoNum}")"
+                                 style="max-width: 120px; max-height: 120px; object-fit: contain; border-radius: 4px;"/>
+                        </div>
+                        <MudStack Spacing="1" Style="flex: 1; min-width: 0;">
+                            <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                                <MudText Typo="Typo.body2"><strong>@($"Image {photoNum}")</strong> <span class="text-muted">— @extension</span></MudText>
+                                <MudCheckBox T="bool" Value="@accepted"
+                                             ValueChanged="@(v => ToggleAccepted(acceptKey, v))"
+                                             Disabled="@ReadOnly"
+                                             Label="@L["Accept this image"]"/>
+                            </MudStack>
+                            @if(!string.IsNullOrEmpty(caption))
+                            {
+                                <MudText Typo="Typo.body2" Class="mt-1"><em>@caption</em></MudText>
                             }
                         </MudStack>
                     </MudStack>

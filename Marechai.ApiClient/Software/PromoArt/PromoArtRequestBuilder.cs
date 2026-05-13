@@ -2,6 +2,7 @@
 #pragma warning disable CS0618
 using Marechai.ApiClient.Software.PromoArt.Groups;
 using Marechai.ApiClient.Software.PromoArt.Item;
+using Marechai.ApiClient.Software.PromoArt.Pending;
 using Marechai.ApiClient.Software.PromoArt.Upload;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions;
@@ -21,6 +22,11 @@ namespace Marechai.ApiClient.Software.PromoArt
         public global::Marechai.ApiClient.Software.PromoArt.Groups.GroupsRequestBuilder Groups
         {
             get => new global::Marechai.ApiClient.Software.PromoArt.Groups.GroupsRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The pending property</summary>
+        public global::Marechai.ApiClient.Software.PromoArt.Pending.PendingRequestBuilder Pending
+        {
+            get => new global::Marechai.ApiClient.Software.PromoArt.Pending.PendingRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The upload property</summary>
         public global::Marechai.ApiClient.Software.PromoArt.Upload.UploadRequestBuilder Upload

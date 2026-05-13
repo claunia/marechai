@@ -966,18 +966,51 @@ else
 }
 
 @* ── Promo Art Card ── *@
-@if(_promoArt.Count > 0)
-{
-    <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-        <MudExpansionPanel>
-            <TitleContent>
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel Expanded="@(_promoArt.Count > 0)">
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Style="width: 100%;">
                 <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                     <MudIcon Icon="@Icons.Material.Filled.Campaign" Color="Color.Primary"/>
                     <MudText Typo="Typo.h6">@L["Promo Art"]</MudText>
-                    <MudChip T="string" Size="Size.Small" Color="Color.Success">@_promoArt.Count</MudChip>
+                    @if(_promoArt.Count > 0)
+                    {
+                        <MudChip T="string" Size="Size.Small" Color="Color.Success">@_promoArt.Count</MudChip>
+                    }
                 </MudStack>
-            </TitleContent>
-            <ChildContent>
+                <AuthorizeView>
+                    <Authorized>
+                        <span @onclick:stopPropagation="true">
+                            <MudTooltip Text="@L["Suggest more promo art"]">
+                                <MudIconButton Icon="@Icons.Material.Filled.AddPhotoAlternate"
+                                               Size="Size.Small" Color="Color.Primary"
+                                               OnClick="OpenSuggestPromoArtDialog"/>
+                            </MudTooltip>
+                        </span>
+                    </Authorized>
+                </AuthorizeView>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            @if(_promoArt.Count == 0)
+            {
+                <MudStack AlignItems="AlignItems.Center" Spacing="2" Class="py-3">
+                    <MudText Typo="Typo.body2" Align="Align.Center">
+                        @L["No promo art for this software yet — help us by uploading some."]
+                    </MudText>
+                    <AuthorizeView>
+                        <Authorized>
+                            <MudButton Variant="Variant.Outlined" Color="Color.Primary"
+                                       StartIcon="@Icons.Material.Filled.AddPhotoAlternate"
+                                       OnClick="OpenSuggestPromoArtDialog">
+                                @L["Suggest promo art"]
+                            </MudButton>
+                        </Authorized>
+                    </AuthorizeView>
+                </MudStack>
+            }
+            else
+            {
                 @foreach(var group in _promoArtByGroup)
                 {
                     <MudText Typo="Typo.subtitle1" Class="mt-3 mb-2"><strong>@L[group.Key]</strong></MudText>
@@ -1005,10 +1038,10 @@ else
                         }
                     </div>
                 }
-            </ChildContent>
-        </MudExpansionPanel>
-    </MudExpansionPanels>
-}
+            }
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
 
 @if(_fullscreenPromo is not null)
 {

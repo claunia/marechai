@@ -29,9 +29,11 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Marechai.Data;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Marechai.Helpers;
+using Marechai.Server.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -347,6 +349,164 @@ public class SoftwarePromoArtController(MarechaiContext context, IConfiguration 
         }
 
         return Ok();
+    }
+
+    /// <summary>
+    ///     Maximum in-flight pending promo art images a single collaborator may stage for a
+    ///     given Software before they submit (or cancel) the suggestion. Mirrors the
+    ///     per-batch cap enforced by the dialog.
+    /// </summary>
+    const int PendingPhotosPerUserPerSoftwareCap = 30;
+
+    /// <summary>
+    ///     Allowed extensions for collaborator-uploaded promo art images (narrower than the
+    ///     admin upload set; must match server-side JS validation).
+    /// </summary>
+    static readonly HashSet<string> _pendingAllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ".jpg", ".jpeg", ".png", ".webp"
+    };
+
+    /// <summary>
+    ///     Allowed content types for collaborator-uploaded promo art images (narrower than
+    ///     the admin upload set; must match server-side JS validation).
+    /// </summary>
+    static readonly HashSet<string> _pendingAllowedContentTypes = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "image/jpeg", "image/png", "image/webp"
+    };
+
+    /// <summary>
+    ///     Stage a single pending promo art image for a brand-new collaborative suggestion.
+    ///     The uploader keeps each pending file on the server (sidecar tracks ownership +
+    ///     parent <c>softwareId</c>) until they call <c>POST /suggestions</c> referencing the
+    ///     returned <c>guid</c>. Per-uploader cap of 30 in-flight pending images per Software.
+    /// </summary>
+    [HttpPost("pending")]
+    [Authorize]
+    [RequestSizeLimit(50 * 1024 * 1024)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<PendingImageUploadDto>> UploadPendingAsync(IFormFile          file,
+                                                                              [FromQuery] ulong softwareId)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        if(file is null || file.Length == 0) return BadRequest("No file provided.");
+
+        if(file.Length > 50 * 1024 * 1024) return BadRequest("File exceeds 50 MB limit.");
+
+        string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
+
+        if(!_pendingAllowedExtensions.Contains(extension))
+            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP.");
+
+        if(!string.IsNullOrEmpty(file.ContentType) &&
+           !_pendingAllowedContentTypes.Contains(file.ContentType.ToLowerInvariant()))
+            return BadRequest("Unsupported content type.");
+
+        bool softwareExists = await context.Softwares.AnyAsync(s => s.Id == softwareId);
+
+        if(!softwareExists) return NotFound("Software not found.");
+
+        long parentEntityId = (long)softwareId;
+
+        int currentCount = PendingImageStore.CountByUploaderForParentEntity(_assetRootPath, "software-promo-art",
+            userId, (byte)SuggestionEntityType.SoftwarePromoArt, parentEntityId);
+
+        if(currentCount >= PendingPhotosPerUserPerSoftwareCap)
+            return Conflict($"You already have {currentCount} pending promo art images for this software. Maximum " +
+                            $"is {PendingPhotosPerUserPerSoftwareCap} per software. Submit or remove some first.");
+
+        Guid guid;
+
+        await using(Stream stream = file.OpenReadStream())
+        {
+            // EntityId stays 0 because the suggestion row that will reference these images
+            // doesn't exist yet. ParentEntityId carries the softwareId so the per-uploader
+            // cap and cleanup-by-parent helpers can scope correctly.
+            guid = await PendingImageStore.StoreAsync(_assetRootPath, "software-promo-art", extension,
+                (byte)SuggestionEntityType.SoftwarePromoArt, entityId: 0L, userId, file.ContentType, stream,
+                parentEntityId: parentEntityId);
+        }
+
+        return Ok(new PendingImageUploadDto
+        {
+            Guid      = guid,
+            Extension = extension.TrimStart('.')
+        });
+    }
+
+    /// <summary>
+    ///     Delete a pending promo art image before it has been submitted as part of a
+    ///     suggestion. Only the original uploader (or an admin) may delete.
+    /// </summary>
+    [HttpDelete("pending/{guid:guid}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> DeletePendingAsync(Guid guid)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        PendingImageStore.PendingMetadata meta =
+            await PendingImageStore.GetMetadataAsync(_assetRootPath, "software-promo-art", guid);
+
+        if(meta is null) return NotFound();
+        if(meta.EntityType != (byte)SuggestionEntityType.SoftwarePromoArt) return NotFound();
+
+        bool isAdmin = User.IsInRole("Admin") || User.IsInRole("UberAdmin");
+
+        if(!PendingImageStore.CanAccess(meta, userId, isAdmin)) return Forbid();
+
+        PendingImageStore.Delete(_assetRootPath, "software-promo-art", guid);
+
+        return NoContent();
+    }
+
+    /// <summary>
+    ///     Stream the binary contents of a pending promo art image. Used by the dialog
+    ///     thumbnail preview AND by the admin SuggestionDiffPanel preview. Auth-gated: only
+    ///     the uploader and admins can read.
+    /// </summary>
+    [HttpGet("pending/{guid:guid}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> GetPendingAsync(Guid guid)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        PendingImageStore.PendingMetadata meta =
+            await PendingImageStore.GetMetadataAsync(_assetRootPath, "software-promo-art", guid);
+
+        if(meta is null) return NotFound();
+        if(meta.EntityType != (byte)SuggestionEntityType.SoftwarePromoArt) return NotFound();
+
+        bool isAdmin = User.IsInRole("Admin") || User.IsInRole("UberAdmin");
+
+        if(!PendingImageStore.CanAccess(meta, userId, isAdmin)) return Forbid();
+
+        string path = await PendingImageStore.GetImagePathAsync(_assetRootPath, "software-promo-art", guid);
+
+        if(path is null || !System.IO.File.Exists(path)) return NotFound();
+
+        var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+
+        return File(stream, meta.ContentType ?? "application/octet-stream");
     }
 
     static void DeleteFilesByPattern(string directory, string pattern)

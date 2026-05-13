@@ -1705,6 +1705,25 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
+    /// <summary>
+    ///     Delete a pending Software promo art image (a not-yet-submitted file the
+    ///     collaborator staged via <c>POST /software/promo-art/pending</c>). Used by the
+    ///     suggestion dialog when the user removes an image from the staging list before
+    ///     submission, OR when they cancel the dialog with images still staged.
+    /// </summary>
+    public async Task<bool> DeletePendingPromoArtAsync(Guid guid)
+    {
+        try
+        {
+            await client.Software.PromoArt.Pending[guid].DeleteAsync();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     // ── Videos ──
 
     public async Task<List<SoftwareVideoDto>> GetVideosBySoftwareAsync(int softwareId)
