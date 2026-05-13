@@ -808,4 +808,61 @@
   <data name="Fill in the fields below to suggest a new processor. Name is required; any instruction set extensions you queue will be added together with the scalar fields once an administrator accepts the suggestion." xml:space="preserve">
     <value>Fill in the fields below to suggest a new processor. Name is required; any instruction set extensions you queue will be added together with the scalar fields once an administrator accepts the suggestion.</value>
   </data>
+  <data name="Add photos" xml:space="preserve">
+    <value>Add photos</value>
+  </data>
+  <data name="Batch metadata" xml:space="preserve">
+    <value>Batch metadata</value>
+  </data>
+  <data name="Comment (optional)" xml:space="preserve">
+    <value>Comment (optional)</value>
+  </data>
+  <data name="License (Creative Commons or Public Domain)" xml:space="preserve">
+    <value>License (Creative Commons or Public Domain)</value>
+  </data>
+  <data name="No photos staged yet. Use the Add photos button above to pick files from your device." xml:space="preserve">
+    <value>No photos staged yet. Use the Add photos button above to pick files from your device.</value>
+  </data>
+  <data name="Note for the reviewer (optional)" xml:space="preserve">
+    <value>Note for the reviewer (optional)</value>
+  </data>
+  <data name="Photos: {0}/{1}" xml:space="preserve">
+    <value>Photos: {0}/{1}</value>
+  </data>
+  <data name="Photos submitted for review. An administrator will accept or reject each one." xml:space="preserve">
+    <value>Photos submitted for review. An administrator will accept or reject each one.</value>
+  </data>
+  <data name="Pick a license and at least one successfully-uploaded photo before submitting." xml:space="preserve">
+    <value>Pick a license and at least one successfully-uploaded photo before submitting.</value>
+  </data>
+  <data name="Pick one or more files at a time. Each photo is uploaded immediately and held on the server until you submit the batch." xml:space="preserve">
+    <value>Pick one or more files at a time. Each photo is uploaded immediately and held on the server until you submit the batch.</value>
+  </data>
+  <data name="Selected license is not allowed for collaborator uploads." xml:space="preserve">
+    <value>Selected license is not allowed for collaborator uploads.</value>
+  </data>
+  <data name="Source URL (optional, applies to all photos)" xml:space="preserve">
+    <value>Source URL (optional, applies to all photos)</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Submit</value>
+  </data>
+  <data name="Suggest photos for {0}. Upload up to {1} JPG, PNG or WebP files (max 50 MB each). All photos in this batch share the same license and source URL." xml:space="preserve">
+    <value>Suggest photos for {0}. Upload up to {1} JPG, PNG or WebP files (max 50 MB each). All photos in this batch share the same license and source URL.</value>
+  </data>
+  <data name="You have staged photos that have not been submitted yet. Closing this dialog will delete them. Continue?" xml:space="preserve">
+    <value>You have staged photos that have not been submitted yet. Closing this dialog will delete them. Continue?</value>
+  </data>
+  <data name="You must be logged in to upload photos." xml:space="preserve">
+    <value>You must be logged in to upload photos.</value>
+  </data>
+  <data name="Suggest more processor photos" xml:space="preserve">
+    <value>Suggest more processor photos</value>
+  </data>
+  <data name="No photos for this processor yet — help us by uploading some." xml:space="preserve">
+    <value>No photos for this processor yet — help us by uploading some.</value>
+  </data>
+  <data name="Suggest processor photos" xml:space="preserve">
+    <value>Suggest processor photos</value>
+  </data>
 </root>

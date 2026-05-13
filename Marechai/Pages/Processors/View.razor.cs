@@ -310,4 +310,39 @@ public partial class View
 
         await DialogService.ShowAsync<ProcessorSuggestionDialog>(L["Suggest changes"], parameters, options);
     }
+
+    /// <summary>
+    ///     Open the collaborative processor-photo upload dialog. Lets the signed-in user stage 1-15
+    ///     pending photos, set a suggestion-level license + source URL, optionally annotate
+    ///     each photo with a comment, then submit ONE Suggestion row that an admin reviews
+    ///     per-photo.
+    /// </summary>
+    async Task OpenSuggestPhotosDialog()
+    {
+        int processorId = Id;
+        if(processorId <= 0) return;
+
+        var dialogParams = new DialogParameters
+        {
+            ["ProcessorId"]   = processorId,
+            ["ProcessorName"] = _processor?.Name ?? string.Empty
+        };
+        var dialogOptions = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Large
+        };
+
+        var dialogRef = await DialogService.ShowAsync<ProcessorPhotosSuggestionDialog>(
+            L["Suggest processor photos"], dialogParams, dialogOptions);
+
+        DialogResult result = await dialogRef.Result;
+
+        if(result is { Canceled: false })
+        {
+            // Photos won't appear until an admin accepts them; nothing to refresh now.
+            // Method left as a hook in case future revisions want to surface a hint.
+        }
+    }
 }

@@ -517,10 +517,21 @@ else
 {
     <MudCard Elevation="2" Class="mb-4 rounded-lg">
         <MudCardContent>
-            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
-                <MudIcon Icon="@Icons.Material.Filled.PhotoLibrary" Color="Color.Primary"/>
-                <MudText Typo="Typo.h6">@L["Photos"]</MudText>
-                <MudChip T="string" Size="Size.Small" Color="Color.Secondary">@_photos.Count</MudChip>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-3">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIcon Icon="@Icons.Material.Filled.PhotoLibrary" Color="Color.Primary"/>
+                    <MudText Typo="Typo.h6">@L["Photos"]</MudText>
+                    <MudChip T="string" Size="Size.Small" Color="Color.Secondary">@_photos.Count</MudChip>
+                </MudStack>
+                <AuthorizeView>
+                    <Authorized>
+                        <MudTooltip Text="@L["Suggest more processor photos"]">
+                            <MudIconButton Icon="@Icons.Material.Filled.AddPhotoAlternate"
+                                           Color="Color.Primary" Size="Size.Small"
+                                           OnClick="OpenSuggestPhotosDialog"/>
+                        </MudTooltip>
+                    </Authorized>
+                </AuthorizeView>
             </MudStack>
 
             <MudGrid>
@@ -553,6 +564,26 @@ else
             </MudGrid>
         </MudCardContent>
     </MudCard>
+}
+else
+{
+    @* No photos yet — show empty-state hint with an AuthorizeView-gated upload button.
+       NO MudCard wrapper per the design: the absence-of-photos message is intentionally
+       slim so it doesn't compete visually with the populated cards on other processors. *@
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3" Class="mb-4 pa-3"
+              Style="background: var(--mud-palette-background-grey); border-radius: 8px;">
+        <MudIcon Icon="@Icons.Material.Filled.PhotoLibrary" Color="Color.Default"/>
+        <MudText Typo="Typo.body1" Style="flex: 1;">@L["No photos for this processor yet — help us by uploading some."]</MudText>
+        <AuthorizeView>
+            <Authorized>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.AddPhotoAlternate"
+                           OnClick="OpenSuggestPhotosDialog">
+                    @L["Suggest processor photos"]
+                </MudButton>
+            </Authorized>
+        </AuthorizeView>
+    </MudStack>
 }
 
 @* ── Videos Card ── *@
