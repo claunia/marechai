@@ -605,4 +605,83 @@ public partial class View
         "por" => "Portuguese",
         _     => iso639_3
     };
+
+    /// <summary>
+    ///     Opens the dedicated SoftwareSuggestionDialog for editing the General Information
+    ///     of this software (5 scalar fields + Genres junction). Captures the route
+    ///     parameter <see cref="Id" /> locally instead of dereferencing
+    ///     <c>_software.Id</c> — async timing on Blazor re-renders can leave the DTO null/0
+    ///     and the cast to long would silently produce 0 which the server treats as an
+    ///     addition request.
+    /// </summary>
+    async Task OpenSoftwareSuggestionDialogAsync()
+    {
+        if(AuthState is null) return;
+
+        AuthenticationState state = await AuthState;
+        if(state?.User?.Identity?.IsAuthenticated != true) return;
+
+        long softwareId = Id;
+        if(softwareId <= 0) return;
+
+        var parameters = new DialogParameters
+        {
+            ["EntityId"]   = softwareId,
+            ["CurrentDto"] = _software
+        };
+
+        var options = new DialogOptions
+        {
+            MaxWidth         = MaxWidth.Large,
+            FullWidth        = true,
+            CloseOnEscapeKey = true
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<SoftwareSuggestionDialog>(
+            L["Suggest changes"], parameters, options);
+
+        DialogResult result = await dialog.Result;
+        if(result is null || result.Canceled) return;
+
+        // No reload needed — the suggestion goes into the pending queue and only takes
+        // effect after admin review. The description-pending cache is independent.
+    }
+
+    /// <summary>
+    ///     Opens the dedicated SoftwareCompaniesSuggestionDialog for editing the Companies
+    ///     card of this software. Companion to <see cref="OpenSoftwareSuggestionDialogAsync" />
+    ///     which handles General Info scalars + Genres. The companies dialog is a separate
+    ///     surface so the Companies card has its own focused edit affordance, mirroring the
+    ///     per-card pencil pattern used by the description / synopsis editors.
+    /// </summary>
+    async Task OpenSoftwareCompaniesSuggestionDialogAsync()
+    {
+        if(AuthState is null) return;
+
+        AuthenticationState state = await AuthState;
+        if(state?.User?.Identity?.IsAuthenticated != true) return;
+
+        long softwareId = Id;
+        if(softwareId <= 0) return;
+
+        var parameters = new DialogParameters
+        {
+            ["EntityId"] = softwareId
+        };
+
+        var options = new DialogOptions
+        {
+            MaxWidth         = MaxWidth.Medium,
+            FullWidth        = true,
+            CloseOnEscapeKey = true
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<SoftwareCompaniesSuggestionDialog>(
+            L["Suggest companies changes"], parameters, options);
+
+        DialogResult result = await dialog.Result;
+        if(result is null || result.Canceled) return;
+
+        // No reload needed — pending suggestions only take effect after admin review.
+    }
 }

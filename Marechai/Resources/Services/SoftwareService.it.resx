@@ -1,51 +1,51 @@
-<?xml version="1.0" encoding="utf-8"?>
-<root>
-    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
-        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
-        <xsd:element name="root" msdata:IsDataSet="true">
-            <xsd:complexType>
-                <xsd:choice maxOccurs="unbounded">
-                    <xsd:element name="metadata">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
-                            </xsd:sequence>
-                            <xsd:attribute name="name" use="required" type="xsd:string"/>
-                            <xsd:attribute name="type" type="xsd:string"/>
-                            <xsd:attribute name="mimetype" type="xsd:string"/>
-                            <xsd:attribute ref="xml:space"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="assembly">
-                        <xsd:complexType>
-                            <xsd:attribute name="alias" type="xsd:string"/>
-                            <xsd:attribute name="name" type="xsd:string"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="data">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
-                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
-                            </xsd:sequence>
-                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
-                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
-                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
-                            <xsd:attribute ref="xml:space"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="resheader">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
-                            </xsd:sequence>
-                            <xsd:attribute name="name" type="xsd:string" use="required"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                </xsd:choice>
-            </xsd:complexType>
-        </xsd:element>
-    </xsd:schema>
+<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:schema id="root">
+        <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+        <xs:element name="root" ns1:IsDataSet="true">
+            <xs:complexType>
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element name="metadata">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0" />
+                            </xs:sequence>
+                            <xs:attribute name="name" use="required" type="xsd:string" />
+                            <xs:attribute name="type" type="xsd:string" />
+                            <xs:attribute name="mimetype" type="xsd:string" />
+                            <xs:attribute ref="xml:space" />
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="assembly">
+                        <xs:complexType>
+                            <xs:attribute name="alias" type="xsd:string" />
+                            <xs:attribute name="name" type="xsd:string" />
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="data">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
+                            </xs:sequence>
+                            <xs:attribute name="name" type="xsd:string" use="required" ns1:Ordinal="1" />
+                            <xs:attribute name="type" type="xsd:string" ns1:Ordinal="3" />
+                            <xs:attribute name="mimetype" type="xsd:string" ns1:Ordinal="4" />
+                            <xs:attribute ref="xml:space" />
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="resheader">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                            </xs:sequence>
+                            <xs:attribute name="name" type="xsd:string" use="required" />
+                        </xs:complexType>
+                    </xs:element>
+                </xs:choice>
+            </xs:complexType>
+        </xs:element>
+    </xs:schema>
     <resheader name="resmimetype">
         <value>text/microsoft-resx</value>
     </resheader>
@@ -387,7 +387,7 @@
         <comment>Software deleted successfully.</comment>
     </data>
     <data name="Are you sure you want to delete software '{0}'? This action cannot be undone." xml:space="preserve">
-        <value>Sei sicuro di voler eliminare il software &quot;{0}&quot;? Questa azione non può essere annullata.</value>
+        <value>Sei sicuro di voler eliminare il software "{0}"? Questa azione non può essere annullata.</value>
         <comment>Are you sure you want to delete software '{0}'? This action cannot be undone.</comment>
     </data>
     <data name="Failed to load software details." xml:space="preserve">
@@ -537,7 +537,7 @@
     <data name="There are no companies in the database." xml:space="preserve">
         <value>Non ci sono aziende nel database.</value>
     </data>
-    <!--Genre,specificationandratingdisplay-->
+    
     <data name="Genres" xml:space="preserve">
         <value>Generi</value>
     </data>
@@ -754,7 +754,7 @@
     <data name="Windows XP" xml:space="preserve">
         <value>Windows XP</value>
     </data>
-    <!-- Genre search UI -->
+    
     <data name="Search software by genre" xml:space="preserve">
         <value>Cerca software per genere</value>
         <comment>Search software by genre</comment>
@@ -767,7 +767,7 @@
         <value>Non è stato trovato software per questo genere.</value>
         <comment>No software found for genre</comment>
     </data>
-    <!-- Genre names -->
+    
     <data name="Puzzle" xml:space="preserve">
         <value>Puzzle</value>
     </data>
@@ -1095,7 +1095,7 @@
     <data name="Metroidvania" xml:space="preserve">
         <value>Metroidvania</value>
     </data>
-    <!-- Software View tabs -->
+    
     <data name="Overview" xml:space="preserve">
         <value>Panoramica</value>
     </data>
@@ -1487,7 +1487,7 @@
         <value>2 giocatori</value>
     </data>
     <data name="5.25&quot; Floppy Disk" xml:space="preserve">
-        <value>Floppy disk da 5,25&quot;</value>
+        <value>Floppy disk da 5,25"</value>
     </data>
     <data name="4 Players" xml:space="preserve">
         <value>4 giocatori</value>
@@ -1502,7 +1502,7 @@
         <value>32 giocatori</value>
     </data>
     <data name="3&quot; Floppy Disk" xml:space="preserve">
-        <value>Floppy disk da 3&quot;</value>
+        <value>Floppy disk da 3"</value>
     </data>
     <data name="6 Players" xml:space="preserve">
         <value>6 giocatori</value>
@@ -1841,4 +1841,4 @@
     <value>Non abbiamo una descrizione nella tua lingua, potresti collaborare traducendo la descrizione inglese che mostriamo qui sotto</value>
   </data>
 
-</root>
+<data name="Predecessor" xml:space="preserve"><value>Predecessore</value></data><data name="Base software" xml:space="preserve"><value>Software di base</value></data><data name="Kind" xml:space="preserve"><value>Tipo</value></data><data name="Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently." xml:space="preserve"><value>Modifica qualsiasi campo o relazione qui sotto. Solo le tue modifiche saranno inviate per la revisione; un amministratore può accettarle o rifiutarle una per una.</value></data><data name="Optional comment (References, sources, etc...)" xml:space="preserve"><value>Commento opzionale (riferimenti, fonti, ecc.)</value></data><data name="No changes detected — modify at least one field before submitting." xml:space="preserve"><value>Nessuna modifica rilevata — modifica almeno un campo prima di inviare.</value></data><data name="Submit suggestion" xml:space="preserve"><value>Invia suggerimento</value></data><data name="Failed to submit suggestion." xml:space="preserve"><value>Invio del suggerimento non riuscito.</value></data><data name="Suggestion submitted. An administrator will review it." xml:space="preserve"><value>Suggerimento inviato. Un amministratore lo esaminerà.</value></data><data name="Add Genre" xml:space="preserve"><value>Aggiungi genere</value></data><data name="Undo" xml:space="preserve"><value>Annulla</value></data><data name="Invalid software kind." xml:space="preserve"><value>Tipo di software non valido.</value></data><data name="Add company" xml:space="preserve"><value>Aggiungi azienda</value></data><data name="Suggest companies changes" xml:space="preserve"><value>Suggerisci modifiche alle aziende</value></data><data name="No companies linked yet." xml:space="preserve"><value>Nessuna azienda collegata.</value></data></root>

@@ -1,0 +1,536 @@
+@using System
+@using System.Globalization
+@using System.Linq
+@using System.Text.Json
+@using System.Threading
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@using Marechai.Services
+@using Marechai.Suggestions
+@using Marechai.Suggestions.Metadata
+
+@inject IStringLocalizer<SoftwareService> L
+@inject ISnackbar          Snackbar
+@inject SoftwareService    SoftwareService
+@inject SuggestionsService SuggestionsService
+
+@*
+    Dedicated suggestion dialog for editing the General Information of a Software entry.
+    Mirrors the admin SoftwareDialog scalar editing surface (5 fields) plus the in-scope
+    Genres junction (composite-key (SoftwareId, GenreId), simple FK without role). The
+    other Software-side junctions (Companies, People credits) are admin-only and out of
+    scope per the established convention.
+
+    Software has THREE characteristics that no prior scalar+junctions port had at once:
+      • ulong PK + ulong? scalar FKs (Family / Predecessor / BaseSoftware), all widened
+        to int? on the Kiota wire. The dialog keeps a 3-layer split (db=ulong,
+        wire=int?, dialog state=ulong?) to preserve precision and avoid CS8121 pattern
+        failures on `_selectedX?.Id is ulong` (Kiota id is int?).
+      • Predecessor + BaseSoftware autocompletes use server-side typeahead via the
+        existing SoftwareService.SearchSoftwareAsync(query) with Take=20 + Search=,
+        because the full software corpus is too large to pre-load. Family stays
+        pre-loaded. Existing FK selections are hydrated from the database via
+        SoftwareService.GetSoftwareByIdAsync(int) on dialog open so the autocomplete
+        shows the current value without forcing a retype.
+      • Kind is a NON-NULLABLE enum scalar (first port with this shape). The dialog uses
+        a non-clearable MudSelect<int> over Enum.GetValues<SoftwareKind>(); the applier
+        rejects null + validates Enum.IsDefined.
+
+    Genres remove token = the genre id itself (the composite-key junction has no
+    surrogate Id), so the local `_genreRemoves` set tracks the TO-BE-REMOVED genre ids
+    rather than per-link row ids.
+*@
+
+<MudDialog>
+    <DialogContent>
+        @if(_loading)
+        {
+            <MudProgressLinear Indeterminate="true"/>
+        }
+        else
+        {
+            <MudText Typo="Typo.body2" Class="mb-3">
+                @L["Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently."]
+            </MudText>
+
+            @* ── Scalar fields ── *@
+            <MudPaper Outlined="true" Class="pa-3 mb-3">
+                <MudText Typo="Typo.h6" Class="mb-2">@L["General"]</MudText>
+
+                <MudTextField T="string" Label="@L["Name"]"
+                              Value="@_name"
+                              ValueChanged="@(v => { _name = v; })"
+                              Required="true"
+                              Class="mb-3"/>
+
+                <MudSelect T="int" Label="@L["Kind"]"
+                           Value="@_kind"
+                           ValueChanged="@(v => { _kind = v; })"
+                           Class="mb-3">
+                    @foreach(SoftwareKind kk in Enum.GetValues<SoftwareKind>())
+                    {
+                        <MudSelectItem T="int" Value="@((int)kk)">@FormatKindLabel(kk)</MudSelectItem>
+                    }
+                </MudSelect>
+
+                <MudAutocomplete T="SoftwareFamilyDto" Label="@L["Family"]"
+                                 Value="@_selectedFamily"
+                                 ValueChanged="@(f => { _selectedFamily = f; })"
+                                 SearchFunc="SearchFamilies"
+                                 ToStringFunc="@(f => f?.Name ?? string.Empty)"
+                                 Clearable="true"
+                                 Class="mb-3"/>
+
+                <MudAutocomplete T="SoftwareDto" Label="@L["Predecessor"]"
+                                 Value="@_selectedPredecessor"
+                                 ValueChanged="@(s => { _selectedPredecessor = s; })"
+                                 SearchFunc="SearchSoftwareTypeahead"
+                                 ToStringFunc="@(s => s?.Name ?? string.Empty)"
+                                 MinCharacters="2"
+                                 DebounceInterval="300"
+                                 ResetValueOnEmptyText="false"
+                                 Clearable="true"
+                                 Class="mb-3"/>
+
+                <MudAutocomplete T="SoftwareDto" Label="@L["Base software"]"
+                                 Value="@_selectedBaseSoftware"
+                                 ValueChanged="@(s => { _selectedBaseSoftware = s; })"
+                                 SearchFunc="SearchSoftwareTypeahead"
+                                 ToStringFunc="@(s => s?.Name ?? string.Empty)"
+                                 MinCharacters="2"
+                                 DebounceInterval="300"
+                                 ResetValueOnEmptyText="false"
+                                 Clearable="true"/>
+            </MudPaper>
+
+            @* ── Junctions ── *@
+            <MudExpansionPanels MultiExpansion="true" Class="mb-3">
+
+                @* Genres — split into one panel per SoftwareGenreType (Genre / Perspective
+                   / Gameplay / Setting). Each panel only shows existing rows of its type
+                   and only allows picking new genres of that same type, mirroring the
+                   public Software/View.razor genre-grouping render. *@
+                @foreach(SoftwareGenreType gt in Enum.GetValues<SoftwareGenreType>())
+                {
+                    int gtInt = (int)gt;
+                    <MudExpansionPanel Text="@($"{L[FormatGenreTypeKey(gt)]} ({CountActiveGenresOfType(gtInt)})")"
+                                       Expanded="@HasGenreOpsOfType(gtInt)">
+                        @foreach(SoftwareGenreDto g in (_genreRows ?? new()).Where(g => (g.Type ?? 0) == gtInt))
+                        {
+                            bool removed = g.Id.HasValue && _genreRemoves.Contains(g.Id.Value);
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                                <MudText Style="@(removed ? "text-decoration: line-through;" : "")">@(g.Name ?? $"#{g.Id}")</MudText>
+                                @if(removed)
+                                {
+                                    <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                               OnClick="@(() => _genreRemoves.Remove(g.Id.Value))">@L["Undo"]</MudButton>
+                                }
+                                else if(g.Id.HasValue)
+                                {
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                                   OnClick="@(() => _genreRemoves.Add(g.Id.Value))"/>
+                                }
+                            </MudStack>
+                        }
+                        @foreach(KeyValuePair<string, JunctionAddState> kv in _genreAdds.Where(kv => kv.Value.Type == gtInt))
+                        {
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                                <MudText><strong>+ @kv.Value.Display</strong></MudText>
+                                <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                           OnClick="@(() => _genreAdds.Remove(kv.Key))">@L["Undo"]</MudButton>
+                            </MudStack>
+                        }
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-2">
+                            <MudAutocomplete T="SoftwareGenreDto"
+                                             Value="@(_pickGenreByType.TryGetValue(gtInt, out var picked) ? picked : null)"
+                                             ValueChanged="@(g => { _pickGenreByType[gtInt] = g; })"
+                                             SearchFunc="@((value, ct) => SearchGenresOfType(gtInt, value, ct))"
+                                             Clearable="true"
+                                             ToStringFunc="@(g => g?.Name ?? string.Empty)"
+                                             Style="flex: 1;"/>
+                            <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
+                                       OnClick="@(() => AddGenre(gtInt))"
+                                       Disabled="@(!_pickGenreByType.TryGetValue(gtInt, out var pp) || pp is null)">@L["Add"]</MudButton>
+                        </MudStack>
+                    </MudExpansionPanel>
+                }
+
+            </MudExpansionPanels>
+
+            <MudTextField T="string" Label="@L["Optional comment (References, sources, etc...)"]" Lines="2"
+                          MaxLength="2000" @bind-Value="_userComment"/>
+
+            @if(!string.IsNullOrWhiteSpace(_validationError))
+            {
+                <MudAlert Severity="Severity.Error" Class="mt-2">@_validationError</MudAlert>
+            }
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit"
+                   Disabled="@(_loading || _submitting || !HasAnyChange())">
+            @if(_submitting)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true"/>
+            }
+            else
+            {
+                @L["Submit suggestion"]
+            }
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code
+{
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public long        EntityId   { get; set; }
+    [Parameter] public SoftwareDto CurrentDto { get; set; }
+
+    sealed class JunctionAddState
+    {
+        public Dictionary<string, object> Payload { get; set; }
+        public string                     Display { get; set; }
+        // Genre type (0..3 SoftwareGenreType) so the per-type panel can filter its own
+        // queued adds without touching the wire payload shape.
+        public int                        Type    { get; set; }
+    }
+
+    bool   _loading = true;
+    bool   _submitting;
+    string _validationError;
+    string _userComment;
+
+    // Scalar editing state (mirrors the original CurrentDto values; diff'd at submit time)
+    string             _name;
+    int                _kind;          // SoftwareKind cast to int — non-nullable.
+    SoftwareFamilyDto  _selectedFamily;
+    SoftwareDto        _selectedPredecessor;
+    SoftwareDto        _selectedBaseSoftware;
+
+    // Snapshot of the original scalar values (for diff computation at Submit time).
+    // FK ids declared as ulong? to match the database type. The Kiota DTOs widen to int?
+    // on the wire; we cast on entry/exit. This 3-layer pattern (db=ulong, wire=int?,
+    // dialog state=ulong?) avoids the CS8121 `is ulong` pattern failure that bit the
+    // Person port with short? scalar FKs.
+    string _orig_name;
+    int    _orig_kind;
+    ulong? _orig_familyId;
+    ulong? _orig_predecessorId;
+    ulong? _orig_baseSoftwareId;
+
+    // Picker source lists (small enough to pre-load)
+    List<SoftwareFamilyDto> _allFamilies;
+    List<SoftwareGenreDto>  _allGenres;
+
+    // Existing junction rows
+    List<SoftwareGenreDto> _genreRows;
+
+    // Pending genre operations: removes (set of genre ids) + adds (uuid → state).
+    // NOTE: removes uses the GENRE id (not a row id) because GenreBySoftware has a
+    // composite primary key (SoftwareId, GenreId) with no surrogate Id column.
+    HashSet<int>                         _genreRemoves = new();
+    Dictionary<string, JunctionAddState> _genreAdds    = new();
+
+    // Per-type picker state — one MudAutocomplete value per SoftwareGenreType (0..3) so
+    // the four panels each carry independent picker state without leaking selections
+    // across types.
+    Dictionary<int, SoftwareGenreDto> _pickGenreByType = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Seed scalar state from the current DTO snapshot.
+        if(CurrentDto is not null)
+        {
+            _name = CurrentDto.Name;
+            _kind = CurrentDto.Kind ?? 0;
+
+            // Cast Kiota wire-type int? back to ulong? for in-dialog state. Negatives are
+            // impossible for these FK columns.
+            _orig_familyId       = CurrentDto.FamilyId.HasValue       && CurrentDto.FamilyId.Value       >= 0 ? (ulong?)(ulong)CurrentDto.FamilyId.Value       : null;
+            _orig_predecessorId  = CurrentDto.PredecessorId.HasValue  && CurrentDto.PredecessorId.Value  >= 0 ? (ulong?)(ulong)CurrentDto.PredecessorId.Value  : null;
+            _orig_baseSoftwareId = CurrentDto.BaseSoftwareId.HasValue && CurrentDto.BaseSoftwareId.Value >= 0 ? (ulong?)(ulong)CurrentDto.BaseSoftwareId.Value : null;
+            _orig_name           = _name;
+            _orig_kind           = _kind;
+        }
+
+        // Pre-load Family list (small) + genres (small) + existing genre rows for this
+        // software. Predecessor + BaseSoftware are typeahead-only — too large to pre-load.
+        Task<List<SoftwareFamilyDto>> familiesT  = SoftwareService.GetAllFamiliesAsync();
+        Task<List<SoftwareGenreDto>>  allGenresT = SoftwareService.GetAllGenresAsync();
+        Task<List<SoftwareGenreDto>>  genreRowsT = SoftwareService.GetGenresAsync((int)EntityId);
+        await Task.WhenAll(familiesT, allGenresT, genreRowsT);
+
+        _allFamilies = familiesT.Result;
+        _allGenres   = allGenresT.Result;
+        _genreRows   = genreRowsT.Result;
+
+        if(_orig_familyId.HasValue && _allFamilies is not null)
+        {
+            // Family Kiota Id is int? — match against the (int)cast of the originally-
+            // selected ulong (always safe for the legitimate row range).
+            int orig = (int)_orig_familyId.Value;
+            _selectedFamily = _allFamilies.Find(f => f.Id == orig);
+        }
+
+        // Hydrate Predecessor + BaseSoftware display names by fetching the targeted
+        // SoftwareDto rows so the autocompletes show the existing selection without
+        // forcing the user to retype. Each is a single round-trip GET; both run in parallel.
+        if(_orig_predecessorId.HasValue)
+        {
+            try { _selectedPredecessor = await SoftwareService.GetSoftwareByIdAsync((int)_orig_predecessorId.Value); }
+            catch { /* leave null on failure — user can retype */ }
+        }
+        if(_orig_baseSoftwareId.HasValue)
+        {
+            try { _selectedBaseSoftware = await SoftwareService.GetSoftwareByIdAsync((int)_orig_baseSoftwareId.Value); }
+            catch { /* leave null on failure — user can retype */ }
+        }
+
+        _loading = false;
+    }
+
+    // ───────────────────────────── Search functions ─────────────────────────────
+
+    Task<IEnumerable<SoftwareFamilyDto>> SearchFamilies(string value, CancellationToken ct)
+    {
+        IEnumerable<SoftwareFamilyDto> r = _allFamilies ?? [];
+        if(!string.IsNullOrWhiteSpace(value))
+            r = r.Where(f => f.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
+        return Task.FromResult(r.Take(50));
+    }
+
+    /// <summary>
+    ///     Server typeahead for Predecessor + BaseSoftware autocompletes. Hits
+    ///     <c>SoftwareService.SearchSoftwareAsync</c> which calls
+    ///     <c>client.Software.GetAsync(Search=value, Take=20)</c>. Pre-loading the full
+    ///     software corpus on dialog open would be impractical (thousands of rows).
+    /// </summary>
+    async Task<IEnumerable<SoftwareDto>> SearchSoftwareTypeahead(string value, CancellationToken ct)
+    {
+        if(string.IsNullOrWhiteSpace(value) || value.Length < 2) return [];
+        List<SoftwareDto> hits = await SoftwareService.SearchSoftwareAsync(value);
+        // Exclude the current entity to disallow self-reference.
+        return hits.Where(s => s.Id != (int)EntityId);
+    }
+
+    Task<IEnumerable<SoftwareGenreDto>> SearchGenresOfType(int type, string value, CancellationToken ct)
+    {
+        // Dedup against existing rows minus removed plus pending adds — same genre cannot
+        // be linked twice to the same software. Filter by the type of the panel so the
+        // user can only pick genres whose Type matches the panel they're inside.
+        var assigned = new HashSet<int>();
+        if(_genreRows is not null)
+            foreach(SoftwareGenreDto g in _genreRows)
+                if(g.Id.HasValue && !_genreRemoves.Contains(g.Id.Value))
+                    assigned.Add(g.Id.Value);
+        foreach(JunctionAddState a in _genreAdds.Values)
+        {
+            int? id = GetIntField(a.Payload, "genre_id");
+            if(id.HasValue) assigned.Add(id.Value);
+        }
+
+        IEnumerable<SoftwareGenreDto> r = (_allGenres ?? [])
+                                          .Where(x => x.Id.HasValue && !assigned.Contains(x.Id.Value))
+                                          .Where(x => (x.Type ?? 0) == type);
+        if(!string.IsNullOrWhiteSpace(value))
+            r = r.Where(x => x.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
+        return Task.FromResult(r.Take(50));
+    }
+
+    static int? GetIntField(Dictionary<string, object> payload, string key)
+    {
+        if(payload is null || !payload.TryGetValue(key, out object v) || v is null) return null;
+        return v switch
+        {
+            int i      => i,
+            long l     => (int?)l,
+            short s    => s,
+            string str => int.TryParse(str, NumberStyles.Integer, CultureInfo.InvariantCulture, out int p) ? p : null,
+            _          => null
+        };
+    }
+
+    // ───────────────────────────── Format helpers ─────────────────────────────
+
+    /// <summary>
+    ///     Localised label for a <see cref="SoftwareKind" /> enum value. Matches the
+    ///     display strings used in the public Software/View.razor "Kind" row so the
+    ///     suggestion dialog stays consistent with what the user sees on the page.
+    /// </summary>
+    string FormatKindLabel(SoftwareKind k) => k switch
+    {
+        SoftwareKind.Software            => L["Software"],
+        SoftwareKind.OperatingSystem     => L["Operating System"],
+        SoftwareKind.Game                => L["Game"],
+        SoftwareKind.Dlc                 => L["DLC / Addon"],
+        SoftwareKind.SystemSoftware      => L["System software"],
+        SoftwareKind.Application         => L["Application"],
+        SoftwareKind.DevelopmentSoftware => L["Development software"],
+        SoftwareKind.ServerSoftware      => L["Server software"],
+        SoftwareKind.Middleware          => L["Middleware"],
+        SoftwareKind.Firmware            => L["Firmware"],
+        SoftwareKind.EmbeddedSoftware    => L["Embedded software"],
+        _                                => k.ToString()
+    };
+
+    // ───────────────────────────── Junction queue helpers ─────────────────────────────
+
+    int CountActiveGenresOfType(int type)
+    {
+        int n = 0;
+        if(_genreRows is not null)
+            foreach(SoftwareGenreDto g in _genreRows)
+                if((g.Type ?? 0) == type && (!g.Id.HasValue || !_genreRemoves.Contains(g.Id.Value))) n++;
+        foreach(JunctionAddState a in _genreAdds.Values)
+            if(a.Type == type) n++;
+        return n;
+    }
+
+    bool HasGenreOpsOfType(int type)
+    {
+        foreach(JunctionAddState a in _genreAdds.Values)
+            if(a.Type == type) return true;
+        if(_genreRows is not null)
+            foreach(SoftwareGenreDto g in _genreRows)
+                if((g.Type ?? 0) == type && g.Id.HasValue && _genreRemoves.Contains(g.Id.Value))
+                    return true;
+        return false;
+    }
+
+    /// <summary>
+    ///     Map a <see cref="SoftwareGenreType" /> enum value to its localiser key. Mirrors
+    ///     the SoftwareGenreType.Display(Name=...) attribute values so the labels stay
+    ///     consistent with the public Software/View.razor genre-grouping render.
+    /// </summary>
+    static string FormatGenreTypeKey(SoftwareGenreType t) => t switch
+    {
+        SoftwareGenreType.Genre       => "Genre",
+        SoftwareGenreType.Perspective => "Perspective",
+        SoftwareGenreType.Gameplay    => "Gameplay",
+        SoftwareGenreType.Setting     => "Setting",
+        _                             => t.ToString()
+    };
+
+    static string NewKey(string group, string op) => $"{group}.{op}.{Guid.NewGuid():N}";
+
+    void AddGenre(int type)
+    {
+        if(!_pickGenreByType.TryGetValue(type, out SoftwareGenreDto pick) || pick is null || !pick.Id.HasValue) return;
+        string key = NewKey(SoftwareSuggestionMetadata.GroupGenres, "add");
+        _genreAdds[key] = new JunctionAddState
+        {
+            Payload = new Dictionary<string, object>(StringComparer.Ordinal) { ["genre_id"] = pick.Id.Value },
+            Display = pick.Name ?? $"#{pick.Id.Value}",
+            Type    = type
+        };
+        _pickGenreByType[type] = null;
+    }
+
+    // ───────────────────────────── Submit ─────────────────────────────
+
+    bool HasAnyChange()
+    {
+        if(!Equals(_orig_name, _name)) return true;
+        if(_orig_kind != _kind) return true;
+
+        ulong? newFamilyId       = _selectedFamily?.Id.HasValue       == true ? (ulong?)(ulong)_selectedFamily.Id.Value       : null;
+        ulong? newPredecessorId  = _selectedPredecessor?.Id.HasValue  == true ? (ulong?)(ulong)_selectedPredecessor.Id.Value  : null;
+        ulong? newBaseSoftwareId = _selectedBaseSoftware?.Id.HasValue == true ? (ulong?)(ulong)_selectedBaseSoftware.Id.Value : null;
+
+        if(_orig_familyId       != newFamilyId)       return true;
+        if(_orig_predecessorId  != newPredecessorId)  return true;
+        if(_orig_baseSoftwareId != newBaseSoftwareId) return true;
+
+        if(_genreAdds.Count > 0)    return true;
+        if(_genreRemoves.Count > 0) return true;
+
+        return false;
+    }
+
+    void Cancel() => MudDialog.Cancel();
+
+    async Task Submit()
+    {
+        _validationError = null;
+        if(_loading) return;
+
+        // Name is required: never let the user clear it.
+        if(string.IsNullOrWhiteSpace(_name))
+        {
+            _validationError = L["Name is required."];
+            return;
+        }
+
+        // Kind is required AND non-nullable on the entity. Validate it's a defined enum
+        // value before bothering the server (the applier double-checks via Enum.IsDefined
+        // anyway).
+        if(!Enum.IsDefined(typeof(SoftwareKind), _kind))
+        {
+            _validationError = L["Invalid software kind."];
+            return;
+        }
+
+        var diff = new Dictionary<string, object>(StringComparer.Ordinal);
+
+        if(!Equals(_orig_name, _name)) diff[SoftwareSuggestionMetadata.FieldName] = _name;
+        if(_orig_kind != _kind)        diff[SoftwareSuggestionMetadata.FieldKind] = _kind;
+
+        ulong? newFamilyId       = _selectedFamily?.Id.HasValue       == true ? (ulong?)(ulong)_selectedFamily.Id.Value       : null;
+        ulong? newPredecessorId  = _selectedPredecessor?.Id.HasValue  == true ? (ulong?)(ulong)_selectedPredecessor.Id.Value  : null;
+        ulong? newBaseSoftwareId = _selectedBaseSoftware?.Id.HasValue == true ? (ulong?)(ulong)_selectedBaseSoftware.Id.Value : null;
+
+        // Wire FK ids as long? — JSON numeric serialisation handles ulong values up to
+        // 2^63-1 cleanly; the server applier's ToUlong helper accepts both int and long.
+        if(_orig_familyId != newFamilyId)
+            diff[SoftwareSuggestionMetadata.FieldFamilyId]       = newFamilyId.HasValue ? (long?)(long)newFamilyId.Value : null;
+        if(_orig_predecessorId != newPredecessorId)
+            diff[SoftwareSuggestionMetadata.FieldPredecessorId]  = newPredecessorId.HasValue ? (long?)(long)newPredecessorId.Value : null;
+        if(_orig_baseSoftwareId != newBaseSoftwareId)
+            diff[SoftwareSuggestionMetadata.FieldBaseSoftwareId] = newBaseSoftwareId.HasValue ? (long?)(long)newBaseSoftwareId.Value : null;
+
+        // Junction ops: genres adds keyed by uuid, removes keyed by genre id (composite
+        // junction has no surrogate row id).
+        foreach(KeyValuePair<string, JunctionAddState> kv in _genreAdds)
+            diff[kv.Key] = kv.Value.Payload;
+        foreach(int gid in _genreRemoves)
+            diff[$"{SoftwareSuggestionMetadata.GroupGenres}.remove.{gid.ToString(CultureInfo.InvariantCulture)}"] = null;
+
+        if(diff.Count == 0)
+        {
+            _validationError = L["No changes detected — modify at least one field before submitting."];
+            return;
+        }
+
+        _submitting = true;
+        try
+        {
+            string json = JsonSerializer.Serialize(diff);
+            var dto = new SuggestionDto
+            {
+                EntityType          = (int?)SuggestionEntityType.Software,
+                EntityId            = EntityId,
+                Status              = (int?)SuggestionStatus.Pending,
+                UserComment         = string.IsNullOrWhiteSpace(_userComment) ? null : _userComment.Trim(),
+                SuggestedValuesJson = json
+            };
+
+            var (created, error) = await SuggestionsService.CreateAsync(dto);
+
+            if(created is null)
+            {
+                _validationError = string.IsNullOrWhiteSpace(error) ? L["Failed to submit suggestion."].Value : error;
+                return;
+            }
+
+            Snackbar.Add(L["Suggestion submitted. An administrator will review it."], Severity.Success);
+            MudDialog.Close(DialogResult.Ok(created));
+        }
+        finally
+        {
+            _submitting = false;
+        }
+    }
+}

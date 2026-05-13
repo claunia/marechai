@@ -570,7 +570,7 @@
     <data name="There are no companies in the database." xml:space="preserve">
         <value>No hay compañías en la base de datos.</value>
     </data>
-    <!--Genre,specificationandratingdisplay-->
+    
     <data name="Genres" xml:space="preserve">
         <value>Géneros</value>
     </data>
@@ -787,7 +787,7 @@
     <data name="Windows XP" xml:space="preserve">
         <value>Windows XP</value>
     </data>
-    <!-- Genre search UI -->
+    
     <data name="Search software by genre" xml:space="preserve">
         <value>Buscar software por género</value>
         <comment>Search software by genre</comment>
@@ -800,7 +800,7 @@
         <value>No se ha encontrado software para este género.</value>
         <comment>No software found for genre</comment>
     </data>
-    <!-- Genre names -->
+    
     <data name="Puzzle" xml:space="preserve">
         <value>Rompecabezas</value>
     </data>
@@ -1125,7 +1125,7 @@
     <data name="Metroidvania" xml:space="preserve">
         <value>Metroidvania</value>
     </data>
-    <!-- Software View tabs -->
+    
     <data name="Overview" xml:space="preserve">
         <value>Resumen</value>
     </data>
@@ -1517,7 +1517,7 @@
         <value>2 jugadores</value>
     </data>
     <data name="5.25&quot; Floppy Disk" xml:space="preserve">
-        <value>Disquete de 5,25&quot;</value>
+        <value>Disquete de 5,25"</value>
     </data>
     <data name="4 Players" xml:space="preserve">
         <value>4 jugadores</value>
@@ -1532,7 +1532,7 @@
         <value>32 jugadores</value>
     </data>
     <data name="3&quot; Floppy Disk" xml:space="preserve">
-        <value>Disquete de 3&quot;</value>
+        <value>Disquete de 3"</value>
     </data>
     <data name="6 Players" xml:space="preserve">
         <value>6 jugadores</value>
@@ -1871,4 +1871,4 @@
     <value>No tenemos una descripción en tu idioma, podrías colaborar traduciendo la descripción en inglés que mostramos a continuación</value>
   </data>
 
-</root>
+<data name="Predecessor" xml:space="preserve"><value>Predecesor</value></data><data name="Base software" xml:space="preserve"><value>Software base</value></data><data name="Kind" xml:space="preserve"><value>Tipo</value></data><data name="Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently." xml:space="preserve"><value>Edita cualquier campo o relación abajo. Solo se enviarán tus cambios para revisión; un administrador puede aceptarlos o rechazarlos uno por uno.</value></data><data name="Optional comment (References, sources, etc...)" xml:space="preserve"><value>Comentario opcional (referencias, fuentes, etc.)</value></data><data name="No changes detected — modify at least one field before submitting." xml:space="preserve"><value>No se detectaron cambios — modifica al menos un campo antes de enviar.</value></data><data name="Submit suggestion" xml:space="preserve"><value>Enviar sugerencia</value></data><data name="Failed to submit suggestion." xml:space="preserve"><value>No se pudo enviar la sugerencia.</value></data><data name="Suggestion submitted. An administrator will review it." xml:space="preserve"><value>Sugerencia enviada. Un administrador la revisará.</value></data><data name="Add Genre" xml:space="preserve"><value>Añadir género</value></data><data name="Undo" xml:space="preserve"><value>Deshacer</value></data><data name="Invalid software kind." xml:space="preserve"><value>Tipo de software no válido.</value></data><data name="Add company" xml:space="preserve"><value>Añadir empresa</value></data><data name="Suggest companies changes" xml:space="preserve"><value>Sugerir cambios de empresas</value></data><data name="No companies linked yet." xml:space="preserve"><value>Aún no hay empresas vinculadas.</value></data></root>

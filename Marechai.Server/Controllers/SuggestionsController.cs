@@ -642,6 +642,13 @@ public class SuggestionsController(MarechaiContext context,
         if(s.EntityType == SuggestionEntityType.Processor && s.EntityId.HasValue && s.SuggestedValues is not null)
             await ResolveProcessorRemoveLabelsAsync(s.EntityId.Value, s.SuggestedValues, currentLabels);
 
+        // Same pattern for Software entity-edit suggestions (single Genres junction).
+        // Software is ulong-keyed; the junction is a composite-key table (SoftwareId,
+        // GenreId) with NO surrogate Id, so the remove token IS the genre id rather than a
+        // row id — see SoftwareSuggestionApplier.ApplyJunctionRemove for the lookup.
+        if(s.EntityType == SuggestionEntityType.Software && s.EntityId.HasValue && s.SuggestedValues is not null)
+            await ResolveSoftwareRemoveLabelsAsync(s.EntityId.Value, s.SuggestedValues, currentLabels);
+
         return Ok(new SuggestionDiffDto
         {
             Suggestion           = suggestionDto,
@@ -879,6 +886,8 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.Gpu           => true,
         SuggestionEntityType.Processor     => true,
         SuggestionEntityType.SoundSynth    => true,
+        SuggestionEntityType.Person        => true,
+        SuggestionEntityType.Software      => true,
         _                                  => GetKnownFieldNames(type) is not null
     };
 
@@ -915,6 +924,12 @@ public class SuggestionsController(MarechaiContext context,
 
         if(type == SuggestionEntityType.SoundSynth)
             return Suggestions.SoundSynthSuggestionApplier.IsKnownFieldName(fieldName);
+
+        if(type == SuggestionEntityType.Person)
+            return Suggestions.PersonSuggestionApplier.IsKnownFieldName(fieldName);
+
+        if(type == SuggestionEntityType.Software)
+            return Suggestions.SoftwareSuggestionApplier.IsKnownFieldName(fieldName);
 
         IReadOnlyCollection<string> set = GetKnownFieldNames(type);
         return set is not null && set.Contains(fieldName);
@@ -1042,6 +1057,18 @@ public class SuggestionsController(MarechaiContext context,
                     context, entityId, suggested, accepted);
                 return new ApplyResult(applied, missing);
             }
+            case SuggestionEntityType.Person:
+            {
+                var (applied, missing) = await Suggestions.PersonSuggestionApplier.ApplyAsync(
+                    context, entityId, suggested, accepted, _assetRootPath);
+                return new ApplyResult(applied, missing);
+            }
+            case SuggestionEntityType.Software:
+            {
+                var (applied, missing) = await Suggestions.SoftwareSuggestionApplier.ApplyAsync(
+                    context, entityId, suggested, accepted);
+                return new ApplyResult(applied, missing);
+            }
             default:
                 throw new NotImplementedException($"Suggestions for {type} are not implemented yet.");
         }
@@ -1091,6 +1118,10 @@ public class SuggestionsController(MarechaiContext context,
                 await Suggestions.ProcessorSuggestionApplier.GetCurrentValuesAsync(context, entityId),
             SuggestionEntityType.SoundSynth =>
                 await Suggestions.SoundSynthSuggestionApplier.GetCurrentValuesAsync(context, entityId),
+            SuggestionEntityType.Person =>
+                await Suggestions.PersonSuggestionApplier.GetCurrentValuesAsync(context, entityId),
+            SuggestionEntityType.Software =>
+                await Suggestions.SoftwareSuggestionApplier.GetCurrentValuesAsync(context, entityId),
             _ => null
         };
     }
@@ -1490,6 +1521,16 @@ public class SuggestionsController(MarechaiContext context,
             case SuggestionEntityType.SoundSynth:
             {
                 await ResolveSoundSynthLabelsAsync(entityId, values, labels);
+                break;
+            }
+            case SuggestionEntityType.Person:
+            {
+                await ResolvePersonLabelsAsync(entityId, values, labels);
+                break;
+            }
+            case SuggestionEntityType.Software:
+            {
+                await ResolveSoftwareLabelsAsync(entityId, values, labels);
                 break;
             }
         }
@@ -2731,6 +2772,251 @@ public class SuggestionsController(MarechaiContext context,
     }
 
     /// <summary>
+    ///     Build readable labels for a Person suggestion. Person has no in-scope junctions
+    ///     (the five Person junctions are owned by the other side per the established
+    ///     convention), so this only resolves the scalar <c>country_of_birth_id</c> FK
+    ///     label.
+    /// </summary>
+    async Task ResolvePersonLabelsAsync(long? entityId,
+                                        Dictionary<string, JsonElement> values,
+                                        Dictionary<string, string> labels)
+    {
+        _ = entityId; // unused — no junctions.
+
+        if(values.TryGetValue(Suggestions.PersonSuggestionApplier.FieldCountryOfBirthId, out JsonElement countryE))
+        {
+            short? id = countryE.ValueKind == JsonValueKind.Number && countryE.TryGetInt16(out short v)
+                            ? v
+                            : (short?)null;
+            if(id.HasValue)
+            {
+                string name = await context.Iso31661Numeric.AsNoTracking()
+                                           .Where(c => c.Id == id.Value)
+                                           .Select(c => c.Name)
+                                           .FirstOrDefaultAsync();
+                if(!string.IsNullOrEmpty(name))
+                    labels[Suggestions.PersonSuggestionApplier.FieldCountryOfBirthId] = name;
+            }
+        }
+    }
+
+    // ─────────────── Software entity-edit label resolution (scalars + junction ops) ───────────────
+
+    /// <summary>
+    ///     Build readable labels for a Software suggestion. Resolves three scalar FK fields
+    ///     (<c>family_id</c>, <c>predecessor_id</c>, <c>base_software_id</c>) plus
+    ///     junction-add operation keys (<c>genres.add.&lt;uuid&gt;</c> resolved from the
+    ///     suggested payload's <c>genre_id</c>). Junction-remove labels are populated
+    ///     separately by <see cref="ResolveSoftwareRemoveLabelsAsync" />. Software is
+    ///     <c>ulong</c>-keyed but Kiota widens FK ids to <c>int?</c> on the wire so the
+    ///     payload values are coerced as int and re-cast to ulong for the EF queries.
+    /// </summary>
+    async Task ResolveSoftwareLabelsAsync(long? entityId,
+                                          Dictionary<string, JsonElement> values,
+                                          Dictionary<string, string> labels)
+    {
+        // ---- Scalar FK labels ---------------------------------------------------------
+        if(values.TryGetValue(Suggestions.SoftwareSuggestionApplier.FieldFamilyId, out JsonElement familyE))
+        {
+            long? id = JsonElementToLong(familyE);
+            if(id.HasValue && id.Value >= 0)
+            {
+                ulong fidU = (ulong)id.Value;
+                string name = await context.SoftwareFamilies.AsNoTracking()
+                                           .Where(f => f.Id == fidU)
+                                           .Select(f => f.Name)
+                                           .FirstOrDefaultAsync();
+                if(!string.IsNullOrEmpty(name))
+                    labels[Suggestions.SoftwareSuggestionApplier.FieldFamilyId] = name;
+            }
+        }
+
+        if(values.TryGetValue(Suggestions.SoftwareSuggestionApplier.FieldPredecessorId, out JsonElement predecessorE))
+        {
+            long? id = JsonElementToLong(predecessorE);
+            if(id.HasValue && id.Value >= 0)
+            {
+                ulong pidU = (ulong)id.Value;
+                string name = await context.Softwares.AsNoTracking()
+                                           .Where(x => x.Id == pidU)
+                                           .Select(x => x.Name)
+                                           .FirstOrDefaultAsync();
+                if(!string.IsNullOrEmpty(name))
+                    labels[Suggestions.SoftwareSuggestionApplier.FieldPredecessorId] = name;
+            }
+        }
+
+        if(values.TryGetValue(Suggestions.SoftwareSuggestionApplier.FieldBaseSoftwareId, out JsonElement baseE))
+        {
+            long? id = JsonElementToLong(baseE);
+            if(id.HasValue && id.Value >= 0)
+            {
+                ulong bidU = (ulong)id.Value;
+                string name = await context.Softwares.AsNoTracking()
+                                           .Where(x => x.Id == bidU)
+                                           .Select(x => x.Name)
+                                           .FirstOrDefaultAsync();
+                if(!string.IsNullOrEmpty(name))
+                    labels[Suggestions.SoftwareSuggestionApplier.FieldBaseSoftwareId] = name;
+            }
+        }
+
+        if(!entityId.HasValue) return;
+
+        // ---- Junction-add labels (resolved from the suggested payload's id field) -----
+        foreach(KeyValuePair<string, JsonElement> kv in values)
+        {
+            if(!Suggestions.SoftwareSuggestionApplier.TryParseJunctionKey(kv.Key, out string group, out string op, out _))
+                continue;
+            if(op != "add" || kv.Value.ValueKind != JsonValueKind.Object) continue;
+
+            string label = group switch
+            {
+                Suggestions.SoftwareSuggestionApplier.GroupGenres    => await BuildSoftwareGenreAddLabelAsync(group, kv.Value),
+                Suggestions.SoftwareSuggestionApplier.GroupCompanies => await BuildSoftwareCompanyAddLabelAsync(group, kv.Value),
+                _                                                    => null
+            };
+            if(!string.IsNullOrEmpty(label)) labels[kv.Key] = label;
+        }
+    }
+
+    /// <summary>
+    ///     Resolve readable labels for every Software junction-remove operation in the
+    ///     suggested payload by looking up the targeted genre row. The resolved labels are
+    ///     written to <paramref name="currentLabels" /> so the diff panel renders them in the
+    ///     strikethrough cell of the JunctionRemove row. Iterates the RAW
+    ///     <c>SuggestedValues</c> dict (not the JsonElement-parsed view) because remove ops
+    ///     carry a null value and <see cref="ParseValuesForLabels" /> drops null entries.
+    ///     Note: the genres remove token is the genre id itself (composite-key junction has
+    ///     no surrogate row id), so the lookup verifies the link exists for THIS software
+    ///     before resolving the genre name.
+    /// </summary>
+    async Task ResolveSoftwareRemoveLabelsAsync(long softwareId,
+                                                Dictionary<string, object> rawSuggested,
+                                                Dictionary<string, string> currentLabels)
+    {
+        foreach(KeyValuePair<string, object> kv in rawSuggested)
+        {
+            if(!Suggestions.SoftwareSuggestionApplier.TryParseJunctionKey(kv.Key, out string group, out string op, out string token))
+                continue;
+            if(op != "remove") continue;
+
+            string label = null;
+            switch(group)
+            {
+                case Suggestions.SoftwareSuggestionApplier.GroupGenres:
+                {
+                    if(!int.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out int genreId)) continue;
+                    label = await BuildSoftwareGenreRemoveLabelAsync(group, (ulong)softwareId, genreId);
+                    break;
+                }
+                case Suggestions.SoftwareSuggestionApplier.GroupCompanies:
+                {
+                    // 2-component composite token "{companyId}_{roleId}".
+                    string[] parts = token.Split('_', 2);
+                    if(parts.Length != 2 || string.IsNullOrEmpty(parts[1])) continue;
+                    if(!int.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out int companyId)) continue;
+                    label = await BuildSoftwareCompanyRemoveLabelAsync(group, (ulong)softwareId, companyId, parts[1]);
+                    break;
+                }
+            }
+            if(!string.IsNullOrEmpty(label)) currentLabels[kv.Key] = label;
+        }
+    }
+
+    async Task<string> BuildSoftwareGenreAddLabelAsync(string group, JsonElement payload)
+    {
+        switch(group)
+        {
+            case Suggestions.SoftwareSuggestionApplier.GroupGenres:
+            {
+                int? id = ReadIntField(payload, "genre_id");
+                if(!id.HasValue) return null;
+                string name = await context.SoftwareGenres.AsNoTracking()
+                                           .Where(g => g.Id == id.Value)
+                                           .Select(g => g.Name)
+                                           .FirstOrDefaultAsync();
+                return string.IsNullOrEmpty(name) ? $"Genre #{id.Value}" : name;
+            }
+            default:
+                return null;
+        }
+    }
+
+    async Task<string> BuildSoftwareGenreRemoveLabelAsync(string group, ulong softwareId, int genreId)
+    {
+        switch(group)
+        {
+            case Suggestions.SoftwareSuggestionApplier.GroupGenres:
+            {
+                // Verify the link exists for THIS software; only then resolve the name from
+                // the genres table. Returning null for a stale remove op leaves the diff
+                // panel cell blank rather than showing a misleading label.
+                string name = await context.GenresBySoftware.AsNoTracking()
+                                           .Where(r => r.SoftwareId == softwareId && r.GenreId == genreId)
+                                           .Select(r => r.Genre.Name)
+                                           .FirstOrDefaultAsync();
+                return string.IsNullOrEmpty(name) ? null : name;
+            }
+            default:
+                return null;
+        }
+    }
+
+    async Task<string> BuildSoftwareCompanyAddLabelAsync(string group, JsonElement payload)
+    {
+        switch(group)
+        {
+            case Suggestions.SoftwareSuggestionApplier.GroupCompanies:
+            {
+                int?   id     = ReadIntField(payload, "company_id");
+                string roleId = ReadStringField(payload, "role_id");
+                if(!id.HasValue) return null;
+                string name = await context.Companies.AsNoTracking()
+                                           .Where(c => c.Id == id.Value)
+                                           .Select(c => c.Name)
+                                           .FirstOrDefaultAsync();
+                string display = string.IsNullOrEmpty(name) ? $"Company #{id.Value}" : name;
+                if(!string.IsNullOrEmpty(roleId))
+                {
+                    string roleName = await context.SoftwareRoles.AsNoTracking()
+                                                   .Where(r => r.Id == roleId)
+                                                   .Select(r => r.Name)
+                                                   .FirstOrDefaultAsync();
+                    if(!string.IsNullOrEmpty(roleName))
+                        display = $"{display} ({roleName})";
+                }
+                return display;
+            }
+            default:
+                return null;
+        }
+    }
+
+    async Task<string> BuildSoftwareCompanyRemoveLabelAsync(string group, ulong softwareId, int companyId, string roleId)
+    {
+        switch(group)
+        {
+            case Suggestions.SoftwareSuggestionApplier.GroupCompanies:
+            {
+                // Verify the link exists for THIS software (composite-key guard); only then
+                // resolve readable names. Stale remove ops yield null → diff panel cell
+                // stays blank rather than showing a misleading label.
+                var row = await context.SoftwareCompanyRoles.AsNoTracking()
+                                       .Where(r => r.SoftwareId == softwareId &&
+                                                   r.CompanyId  == companyId  &&
+                                                   r.RoleId     == roleId)
+                                       .Select(r => new { CompanyName = r.Company.Name, RoleName = r.Role.Name })
+                                       .FirstOrDefaultAsync();
+                if(row is null) return null;
+                return string.IsNullOrEmpty(row.RoleName) ? row.CompanyName : $"{row.CompanyName} ({row.RoleName})";
+            }
+            default:
+                return null;
+        }
+    }
+
+    /// <summary>
     ///     Sweep pending image uploads referenced by a now-terminal suggestion. Called from
     ///     <see cref="ReviewAsync" /> after the per-entity applier has run. For every
     ///     <c>cover_pending_guid</c> in the suggested payload that did NOT make it into the
@@ -2787,6 +3073,27 @@ public class SuggestionsController(MarechaiContext context,
                     if(accepted.Contains(Suggestions.MagazineIssueSuggestionApplier.FieldCoverPendingGuid)) return;
 
                     Marechai.Server.Helpers.PendingImageStore.Delete(_assetRootPath, "magazine-issue-covers", pendingGuid);
+                    break;
+                }
+                case SuggestionEntityType.Person:
+                {
+                    if(!s.SuggestedValues.TryGetValue(
+                           Suggestions.PersonSuggestionApplier.FieldCoverPendingGuid, out object guidRaw))
+                        return;
+
+                    string guidStr = guidRaw switch
+                    {
+                        string str         => str,
+                        JsonElement je when je.ValueKind == JsonValueKind.String => je.GetString(),
+                        _                  => guidRaw?.ToString()
+                    };
+                    if(string.IsNullOrEmpty(guidStr) || !Guid.TryParse(guidStr, out Guid pendingGuid)) return;
+
+                    // If the photo field was accepted, the applier already promoted the file
+                    // (and removed the sidecar). Only sweep when it wasn't accepted.
+                    if(accepted.Contains(Suggestions.PersonSuggestionApplier.FieldCoverPendingGuid)) return;
+
+                    Marechai.Server.Helpers.PendingImageStore.Delete(_assetRootPath, "people", pendingGuid);
                     break;
                 }
             }
