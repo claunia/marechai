@@ -110,6 +110,7 @@ else
                     string itemFolder = (Suggestion?.EntityType) switch
                     {
                         (int)SuggestionEntityType.MagazineIssue => "magazine-issue-covers",
+                        (int)SuggestionEntityType.Person        => "people",
                         _                                       => "book-covers"
                     };
                     if(!string.IsNullOrEmpty(suggestedGuid)) _pendingImageRefs[suggestedImgId] = suggestedGuid;
@@ -269,6 +270,7 @@ else
             string fnName = (Suggestion?.EntityType) switch
             {
                 (int)SuggestionEntityType.MagazineIssue => "MarechaiPendingCover.openPendingMagazineIssueCoverInNewTab",
+                (int)SuggestionEntityType.Person        => "MarechaiPendingCover.openPendingPersonPhotoInNewTab",
                 _                                       => "MarechaiPendingCover.openPendingCoverInNewTab"
             };
             await JS.InvokeAsync<object>(fnName, ApiAssetUrls.BaseUrl, token, guid);
@@ -300,6 +302,7 @@ else
                 string applyFnName = (Suggestion?.EntityType) switch
                 {
                     (int)SuggestionEntityType.MagazineIssue => "MarechaiPendingCover.applyPendingMagazineIssueCoverImage",
+                    (int)SuggestionEntityType.Person        => "MarechaiPendingCover.applyPendingPersonPhotoImage",
                     _                                       => "MarechaiPendingCover.applyPendingCoverImage"
                 };
                 foreach(KeyValuePair<string, string> kv in _pendingImageRefs)

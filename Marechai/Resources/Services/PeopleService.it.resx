@@ -1,51 +1,51 @@
-<?xml version="1.0" encoding="utf-8"?>
-<root>
-    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
-        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
-        <xsd:element name="root" msdata:IsDataSet="true">
-            <xsd:complexType>
-                <xsd:choice maxOccurs="unbounded">
-                    <xsd:element name="metadata">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
-                            </xsd:sequence>
-                            <xsd:attribute name="name" use="required" type="xsd:string"/>
-                            <xsd:attribute name="type" type="xsd:string"/>
-                            <xsd:attribute name="mimetype" type="xsd:string"/>
-                            <xsd:attribute ref="xml:space"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="assembly">
-                        <xsd:complexType>
-                            <xsd:attribute name="alias" type="xsd:string"/>
-                            <xsd:attribute name="name" type="xsd:string"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="data">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
-                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
-                            </xsd:sequence>
-                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
-                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
-                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
-                            <xsd:attribute ref="xml:space"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="resheader">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
-                            </xsd:sequence>
-                            <xsd:attribute name="name" type="xsd:string" use="required"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                </xsd:choice>
-            </xsd:complexType>
-        </xsd:element>
-    </xsd:schema>
+<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:schema id="root">
+        <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+        <xs:element name="root" ns1:IsDataSet="true">
+            <xs:complexType>
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element name="metadata">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0" />
+                            </xs:sequence>
+                            <xs:attribute name="name" use="required" type="xsd:string" />
+                            <xs:attribute name="type" type="xsd:string" />
+                            <xs:attribute name="mimetype" type="xsd:string" />
+                            <xs:attribute ref="xml:space" />
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="assembly">
+                        <xs:complexType>
+                            <xs:attribute name="alias" type="xsd:string" />
+                            <xs:attribute name="name" type="xsd:string" />
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="data">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
+                            </xs:sequence>
+                            <xs:attribute name="name" type="xsd:string" use="required" ns1:Ordinal="1" />
+                            <xs:attribute name="type" type="xsd:string" ns1:Ordinal="3" />
+                            <xs:attribute name="mimetype" type="xsd:string" ns1:Ordinal="4" />
+                            <xs:attribute ref="xml:space" />
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="resheader">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                            </xs:sequence>
+                            <xs:attribute name="name" type="xsd:string" use="required" />
+                        </xs:complexType>
+                    </xs:element>
+                </xs:choice>
+            </xs:complexType>
+        </xs:element>
+    </xs:schema>
     <resheader name="resmimetype">
         <value>text/microsoft-resx</value>
     </resheader>
@@ -219,7 +219,7 @@
         <comment>Person deleted successfully.</comment>
     </data>
     <data name="Are you sure you want to delete person '{0}'? This action cannot be undone." xml:space="preserve">
-        <value>Sei sicuro di voler eliminare la persona &quot;{0}&quot;? Questa azione non può essere annullata.</value>
+        <value>Sei sicuro di voler eliminare la persona "{0}"? Questa azione non può essere annullata.</value>
         <comment>Are you sure you want to delete person '{0}'? This action cannot be undone.</comment>
     </data>
     <data name="Cancel" xml:space="preserve">
@@ -357,4 +357,4 @@
     <value>Non abbiamo una biografia nella tua lingua, potresti collaborare traducendo la biografia inglese che mostriamo qui sotto</value>
   </data>
 
-</root>
+<data name="Photo" xml:space="preserve"><value>Foto</value></data><data name="Upload photo" xml:space="preserve"><value>Carica foto</value></data><data name="Replace photo" xml:space="preserve"><value>Sostituisci foto</value></data><data name="Remove" xml:space="preserve"><value>Rimuovi</value></data><data name="Edit any field below. Only your changes will be sent for review; an administrator can accept or reject each one independently." xml:space="preserve"><value>Modifica qualsiasi campo qui sotto. Saranno inviate per revisione solo le tue modifiche; un amministratore potrà accettarle o rifiutarle singolarmente.</value></data><data name="Optional comment (References, sources, etc...)" xml:space="preserve"><value>Commento opzionale (riferimenti, fonti, ecc.)</value></data><data name="No changes detected — modify at least one field before submitting." xml:space="preserve"><value>Nessuna modifica rilevata — modifica almeno un campo prima di inviare.</value></data><data name="Submit suggestion" xml:space="preserve"><value>Invia suggerimento</value></data><data name="Failed to submit suggestion." xml:space="preserve"><value>Invio del suggerimento non riuscito.</value></data><data name="Suggestion submitted. An administrator will review it." xml:space="preserve"><value>Suggerimento inviato. Un amministratore lo esaminerà.</value></data><data name="You must be signed in to upload a photo." xml:space="preserve"><value>Devi aver effettuato l'accesso per caricare una foto.</value></data><data name="Photo upload failed." xml:space="preserve"><value>Caricamento della foto non riuscito.</value></data><data name="Allowed: JPG, PNG, WebP up to 50 MB. The image is uploaded directly to the API for review and only takes effect once an administrator accepts the suggestion." xml:space="preserve"><value>Consentito: JPG, PNG, WebP fino a 50 MB. L'immagine viene caricata direttamente sull'API per la revisione e verrà applicata solo dopo l'approvazione di un amministratore.</value></data></root>

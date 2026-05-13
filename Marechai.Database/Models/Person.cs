@@ -55,9 +55,10 @@ public class Person : BaseModel<int>
     public string Webpage { get; set; }
     [Remote("VerifyTwitter", "People", "Admin")]
     public string Twitter { get;          set; }
-    public string Facebook { get; set; }
-    public Guid   Photo    { get; set; }
-    public string Alias    { get; set; }
+    public string  Facebook                { get; set; }
+    public Guid    Photo                   { get; set; }
+    public string  OriginalPhotoExtension  { get; set; }
+    public string  Alias                   { get; set; }
     [DisplayName("Name to be displayed")]
     public string DisplayName { get; set; }
     [NotMapped]

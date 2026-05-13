@@ -240,4 +240,45 @@ public partial class View
         "por" => "Portuguese",
         _     => iso639_3
     };
+
+    /// <summary>
+    ///     Opens the dedicated PersonSuggestionDialog for editing the person's general
+    ///     details (and pending photo). Captures the route parameter <see cref="Id" />
+    ///     locally instead of dereferencing <c>_person.Id</c> — async timing on Blazor
+    ///     re-renders can leave the DTO null/0 and the cast to long would silently produce
+    ///     0 which the server treats as an addition request.
+    /// </summary>
+    async Task OpenPersonSuggestionDialogAsync()
+    {
+        if(AuthState is null) return;
+
+        AuthenticationState state = await AuthState;
+        if(state?.User?.Identity?.IsAuthenticated != true) return;
+
+        long personId = Id;
+        if(personId <= 0) return;
+
+        var parameters = new DialogParameters
+        {
+            ["EntityId"]   = personId,
+            ["CurrentDto"] = _person
+        };
+
+        var options = new DialogOptions
+        {
+            MaxWidth   = MaxWidth.Large,
+            FullWidth  = true,
+            CloseOnEscapeKey = true
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<PersonSuggestionDialog>(
+            L["Suggest changes"], parameters, options);
+
+        DialogResult result = await dialog.Result;
+        if(result is null || result.Canceled) return;
+
+        // Refresh pending-langs cache so the biography UI reflects any side-effects of
+        // accepting/rejecting a suggestion that touched the description fork.
+        await RefreshPendingDescriptionLangsAsync();
+    }
 }

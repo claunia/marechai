@@ -272,6 +272,122 @@ window.MarechaiPendingCover = (function () {
         }
     }
 
+    // ---- Person photo variants ---------------------------------------------------
+    // Direct-browser-to-API upload mirroring the Book/MagazineIssue helpers. Person
+    // photos POST to /people/{id}/photo/pending and read/delete via
+    // /people/photo/pending/{guid}. Kept as separate functions for grep-friendliness
+    // and so the existing Book/MagazineIssue wiring isn't perturbed.
+
+    async function uploadPersonPhoto(apiBaseUrl, jwtToken, personId, fileInputElementOrId) {
+        const input = (typeof fileInputElementOrId === 'string')
+            ? document.getElementById(fileInputElementOrId)
+            : fileInputElementOrId;
+
+        if (!input || !input.files || input.files.length === 0) {
+            return { ok: false, status: 0, error: 'No file selected.' };
+        }
+
+        const file = input.files[0];
+
+        if (file.size > 50 * 1024 * 1024) {
+            return { ok: false, status: 0, error: 'File exceeds 50 MB limit.' };
+        }
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+        if (file.type && !allowedTypes.includes(file.type.toLowerCase())) {
+            return { ok: false, status: 0, error: 'Unsupported file type. Allowed: JPG, PNG, WebP.' };
+        }
+
+        const fd = new FormData();
+        fd.append('file', file, file.name);
+
+        const url = `${apiBaseUrl.replace(/\/+$/, '')}/people/${encodeURIComponent(personId)}/photo/pending`;
+
+        try {
+            const resp = await fetch(url, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${jwtToken}` },
+                body: fd
+            });
+
+            if (!resp.ok) {
+                let detail = '';
+                try {
+                    const body = await resp.text();
+                    try {
+                        const j = JSON.parse(body);
+                        detail = j.detail || j.title || body;
+                    } catch { detail = body; }
+                } catch { /* ignored */ }
+                return { ok: false, status: resp.status, error: detail || `HTTP ${resp.status}` };
+            }
+
+            const json = await resp.json();
+            return { ok: true, status: resp.status, guid: json.guid, extension: json.extension };
+        } catch (err) {
+            return { ok: false, status: 0, error: err && err.message ? err.message : String(err) };
+        }
+    }
+
+    async function deletePendingPersonPhoto(apiBaseUrl, jwtToken, guid) {
+        const url = `${apiBaseUrl.replace(/\/+$/, '')}/people/photo/pending/${encodeURIComponent(guid)}`;
+        try {
+            const resp = await fetch(url, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${jwtToken}` }
+            });
+            return { ok: resp.ok, status: resp.status };
+        } catch (err) {
+            return { ok: false, status: 0, error: err && err.message ? err.message : String(err) };
+        }
+    }
+
+    async function applyPendingPersonPhotoImage(apiBaseUrl, jwtToken, guid, imgElementOrId) {
+        const img = (typeof imgElementOrId === 'string')
+            ? document.getElementById(imgElementOrId)
+            : imgElementOrId;
+        if (!img) return { ok: false, status: 0, error: 'Image element not found.' };
+
+        if (img.dataset && img.dataset.pendingCoverUrl) {
+            try { URL.revokeObjectURL(img.dataset.pendingCoverUrl); } catch { /* ignored */ }
+            delete img.dataset.pendingCoverUrl;
+        }
+
+        const url = `${apiBaseUrl.replace(/\/+$/, '')}/people/photo/pending/${encodeURIComponent(guid)}`;
+
+        try {
+            const resp = await fetch(url, {
+                headers: { 'Authorization': `Bearer ${jwtToken}` }
+            });
+            if (!resp.ok) {
+                return { ok: false, status: resp.status, error: `HTTP ${resp.status}` };
+            }
+            const blob = await resp.blob();
+            const objUrl = URL.createObjectURL(blob);
+            img.src = objUrl;
+            if (img.dataset) img.dataset.pendingCoverUrl = objUrl;
+            return { ok: true, status: resp.status };
+        } catch (err) {
+            return { ok: false, status: 0, error: err && err.message ? err.message : String(err) };
+        }
+    }
+
+    async function openPendingPersonPhotoInNewTab(apiBaseUrl, jwtToken, guid) {
+        const url = `${apiBaseUrl.replace(/\/+$/, '')}/people/photo/pending/${encodeURIComponent(guid)}`;
+        try {
+            const resp = await fetch(url, {
+                headers: { 'Authorization': `Bearer ${jwtToken}` }
+            });
+            if (!resp.ok) return null;
+            const blob = await resp.blob();
+            const objUrl = URL.createObjectURL(blob);
+            window.open(objUrl, '_blank', 'noopener');
+            setTimeout(() => { try { URL.revokeObjectURL(objUrl); } catch { /* ignored */ } }, 60000);
+            return objUrl;
+        } catch {
+            return null;
+        }
+    }
+
     return {
         uploadBookCover,
         deletePendingCover,
@@ -281,6 +397,10 @@ window.MarechaiPendingCover = (function () {
         deletePendingMagazineIssueCover,
         applyPendingMagazineIssueCoverImage,
         openPendingMagazineIssueCoverInNewTab,
+        uploadPersonPhoto,
+        deletePendingPersonPhoto,
+        applyPendingPersonPhotoImage,
+        openPendingPersonPhotoInNewTab,
         clickInput
     };
 })();

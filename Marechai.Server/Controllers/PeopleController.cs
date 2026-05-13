@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
@@ -36,6 +37,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Markdig;
 
 namespace Marechai.Server.Controllers;
@@ -44,8 +46,17 @@ namespace Marechai.Server.Controllers;
 [ApiController]
 public class PeopleController(
     MarechaiContext                    context,
+    IConfiguration                     configuration,
     IDbContextFactory<MarechaiContext> dbFactory) : ControllerBase
 {
+    static readonly HashSet<string> _pendingAllowedExtensions =
+        Marechai.Server.Helpers.PendingImageStore.AllowedExtensions;
+
+    static readonly HashSet<string> _pendingAllowedContentTypes =
+        Marechai.Server.Helpers.PendingImageStore.AllowedContentTypes;
+
+    readonly string _assetRootPath = configuration["AssetRootPath"]!;
+
     [HttpGet("count")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -809,5 +820,118 @@ public class PeopleController(
             id, languageCode, personName ?? $"#{id}", subkeyLabel);
 
         return Ok();
+    }
+
+    /// <summary>
+    ///     Upload a pending photo for a person that the caller is suggesting an edit on.
+    ///     Accepts JPG/PNG/WebP up to 50 MB; the file is stored unchanged in
+    ///     <c>people/pending/&lt;guid&gt;.&lt;ext&gt;</c> with a sidecar JSON file recording
+    ///     the uploader. Auto-deletes any prior pending photos from the same uploader for
+    ///     the same person so a user always has at most one pending photo per person in
+    ///     flight. The returned <c>{guid, extension}</c> must be embedded in the
+    ///     <c>cover_pending_guid</c> field of the subsequent suggestion submission.
+    /// </summary>
+    [HttpPost("{id:int}/photo/pending")]
+    [Authorize]
+    [RequestSizeLimit(50 * 1024 * 1024)]
+    [ProducesResponseType(typeof(PendingImageUploadDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<PendingImageUploadDto>> UploadPendingPhotoAsync(int id, IFormFile file)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        if(userId is null) return Unauthorized();
+
+        if(file is null || file.Length == 0)
+            return BadRequest("No file provided.");
+
+        if(file.Length > 50 * 1024 * 1024)
+            return BadRequest("File exceeds 50 MB limit.");
+
+        string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
+        if(!_pendingAllowedExtensions.Contains(extension))
+            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP.");
+
+        if(!string.IsNullOrEmpty(file.ContentType) &&
+           !_pendingAllowedContentTypes.Contains(file.ContentType.ToLowerInvariant()))
+            return BadRequest("Unsupported content type.");
+
+        // Verify the targeted person exists; we don't want stray uploads for nonexistent ids.
+        bool personExists = await context.People.AsNoTracking().AnyAsync(p => p.Id == id);
+        if(!personExists) return NotFound();
+
+        // Cleanup: each user gets at most ONE pending photo per person. Replace any prior
+        // upload before storing the new one.
+        Marechai.Server.Helpers.PendingImageStore.DeleteByUploaderForEntity(
+            _assetRootPath, "people", userId, (byte)Marechai.Data.SuggestionEntityType.Person, id);
+
+        await using var stream = file.OpenReadStream();
+        Guid guid = await Marechai.Server.Helpers.PendingImageStore.StoreAsync(
+            _assetRootPath, "people", extension,
+            (byte)Marechai.Data.SuggestionEntityType.Person, id, userId,
+            file.ContentType, stream);
+
+        return Ok(new PendingImageUploadDto { Guid = guid, Extension = extension.TrimStart('.') });
+    }
+
+    /// <summary>
+    ///     Serve a pending photo image. Authorization: the uploader OR any admin/uberadmin
+    ///     can view (so the dialog preview works for the contributor and the review queue
+    ///     works for the moderator).
+    /// </summary>
+    [HttpGet("photo/pending/{guid:guid}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetPendingPhotoAsync(Guid guid)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        if(userId is null) return Unauthorized();
+
+        var meta = await Marechai.Server.Helpers.PendingImageStore.GetMetadataAsync(
+            _assetRootPath, "people", guid);
+        if(meta is null) return NotFound();
+
+        bool isAdmin = User.IsInRole("Admin") || User.IsInRole("UberAdmin");
+        if(!Marechai.Server.Helpers.PendingImageStore.CanAccess(meta, userId, isAdmin))
+            return Forbid();
+
+        string filePath = await Marechai.Server.Helpers.PendingImageStore.GetImagePathAsync(
+            _assetRootPath, "people", guid);
+        if(filePath is null) return NotFound();
+
+        string contentType = !string.IsNullOrEmpty(meta.ContentType) ? meta.ContentType : "application/octet-stream";
+        return PhysicalFile(filePath, contentType);
+    }
+
+    /// <summary>
+    ///     Explicitly delete a pending photo (uploader OR admin). Useful for the
+    ///     "remove photo before submit" UX in the dialog and for admin-side cleanup of
+    ///     orphaned pending uploads.
+    /// </summary>
+    [HttpDelete("photo/pending/{guid:guid}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeletePendingPhotoAsync(Guid guid)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        if(userId is null) return Unauthorized();
+
+        var meta = await Marechai.Server.Helpers.PendingImageStore.GetMetadataAsync(
+            _assetRootPath, "people", guid);
+        if(meta is null) return NotFound();
+
+        bool isAdmin = User.IsInRole("Admin") || User.IsInRole("UberAdmin");
+        if(!Marechai.Server.Helpers.PendingImageStore.CanAccess(meta, userId, isAdmin))
+            return Forbid();
+
+        Marechai.Server.Helpers.PendingImageStore.Delete(_assetRootPath, "people", guid);
+        return NoContent();
     }
 }
