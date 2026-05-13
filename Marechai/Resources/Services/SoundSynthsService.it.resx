@@ -1,51 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<root>
-    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
-        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
-        <xsd:element name="root" msdata:IsDataSet="true">
-            <xsd:complexType>
-                <xsd:choice maxOccurs="unbounded">
-                    <xsd:element name="metadata">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
-                            </xsd:sequence>
-                            <xsd:attribute name="name" use="required" type="xsd:string"/>
-                            <xsd:attribute name="type" type="xsd:string"/>
-                            <xsd:attribute name="mimetype" type="xsd:string"/>
-                            <xsd:attribute ref="xml:space"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="assembly">
-                        <xsd:complexType>
-                            <xsd:attribute name="alias" type="xsd:string"/>
-                            <xsd:attribute name="name" type="xsd:string"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="data">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
-                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
-                            </xsd:sequence>
-                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
-                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
-                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
-                            <xsd:attribute ref="xml:space"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="resheader">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
-                            </xsd:sequence>
-                            <xsd:attribute name="name" type="xsd:string" use="required"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                </xsd:choice>
-            </xsd:complexType>
-        </xsd:element>
-    </xsd:schema>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:schema id="root">
+        <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+        <xs:element name="root" ns1:IsDataSet="true">
+            <xs:complexType>
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element name="metadata">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0" />
+                            </xs:sequence>
+                            <xs:attribute name="name" use="required" type="xsd:string" />
+                            <xs:attribute name="type" type="xsd:string" />
+                            <xs:attribute name="mimetype" type="xsd:string" />
+                            <xs:attribute ref="xml:space" />
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="assembly">
+                        <xs:complexType>
+                            <xs:attribute name="alias" type="xsd:string" />
+                            <xs:attribute name="name" type="xsd:string" />
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="data">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
+                            </xs:sequence>
+                            <xs:attribute name="name" type="xsd:string" use="required" ns1:Ordinal="1" />
+                            <xs:attribute name="type" type="xsd:string" ns1:Ordinal="3" />
+                            <xs:attribute name="mimetype" type="xsd:string" ns1:Ordinal="4" />
+                            <xs:attribute ref="xml:space" />
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="resheader">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                            </xs:sequence>
+                            <xs:attribute name="name" type="xsd:string" use="required" />
+                        </xs:complexType>
+                    </xs:element>
+                </xs:choice>
+            </xs:complexType>
+        </xs:element>
+    </xs:schema>
     <resheader name="resmimetype">
         <value>text/microsoft-resx</value>
     </resheader>
@@ -247,7 +247,7 @@
         <comment>Sound synth deleted successfully.</comment>
     </data>
     <data name="Are you sure you want to delete sound synth '{0}'? This action cannot be undone." xml:space="preserve">
-        <value>Sei sicuro di voler eliminare il sintetizzatore sonoro &quot;{0}&quot;? Questa azione non può essere annullata.</value>
+        <value>Sei sicuro di voler eliminare il sintetizzatore sonoro "{0}"? Questa azione non può essere annullata.</value>
         <comment>Are you sure you want to delete sound synth '{0}'? This action cannot be undone.</comment>
     </data>
     <data name="Name is required." xml:space="preserve">
@@ -423,7 +423,7 @@
         <comment>Video ID</comment>
     </data>
     <data name="Use this when the URL above cannot be parsed (non-YouTube providers)." xml:space="preserve">
-        <value>Usalo quando l&apos;URL sopra non può essere analizzato (fornitori diversi da YouTube).</value>
+        <value>Usalo quando l'URL sopra non può essere analizzato (fornitori diversi da YouTube).</value>
         <comment>Use this when the URL above cannot be parsed (non-YouTube providers).</comment>
     </data>
     <data name="Saving..." xml:space="preserve">
@@ -548,4 +548,4 @@
   <data name="Fill in at least the name to suggest a new sound synthesizer. All other fields are optional and can be added by other contributors later." xml:space="preserve">
     <value>Inserisci almeno il nome per suggerire un nuovo sintetizzatore audio. Tutti gli altri campi sono opzionali e potranno essere aggiunti in seguito da altri contributori.</value>
   </data>
-</root>
+<data name="Suggest photos for {0}. Upload up to {1} JPG, PNG or WebP files (max 50 MB each). All photos in this batch share the same license and source URL." xml:space="preserve"><value>Suggerisci foto per {0}. Carica fino a {1} file JPG, PNG o WebP (max 50 MB ciascuno). Tutte le foto di questo lotto condividono la stessa licenza e URL di origine.</value></data><data name="Batch metadata" xml:space="preserve"><value>Metadati del lotto</value></data><data name="License (Creative Commons or Public Domain)" xml:space="preserve"><value>Licenza (Creative Commons o Pubblico Dominio)</value></data><data name="Source URL (optional, applies to all photos)" xml:space="preserve"><value>URL di origine (opzionale, si applica a tutte le foto)</value></data><data name="Photos: {0}/{1}" xml:space="preserve"><value>Foto: {0}/{1}</value></data><data name="Add photos" xml:space="preserve"><value>Aggiungi foto</value></data><data name="Pick one or more files at a time. Each photo is uploaded immediately and held on the server until you submit the batch." xml:space="preserve"><value>Seleziona uno o più file alla volta. Ogni foto viene caricata immediatamente e mantenuta sul server fino all'invio del lotto.</value></data><data name="No photos staged yet. Use the Add photos button above to pick files from your device." xml:space="preserve"><value>Nessuna foto preparata. Usa il pulsante Aggiungi foto sopra per scegliere file dal tuo dispositivo.</value></data><data name="Comment (optional)" xml:space="preserve"><value>Commento (opzionale)</value></data><data name="Note for the reviewer (optional)" xml:space="preserve"><value>Nota per il revisore (opzionale)</value></data><data name="Submit" xml:space="preserve"><value>Invia</value></data><data name="You must be logged in to upload photos." xml:space="preserve"><value>Devi essere connesso per caricare foto.</value></data><data name="Pick a license and at least one successfully-uploaded photo before submitting." xml:space="preserve"><value>Seleziona una licenza e almeno una foto caricata correttamente prima di inviare.</value></data><data name="Selected license is not allowed for collaborator uploads." xml:space="preserve"><value>La licenza selezionata non è consentita per i caricamenti dei collaboratori.</value></data><data name="Photos submitted for review. An administrator will accept or reject each one." xml:space="preserve"><value>Foto inviate per la revisione. Un amministratore accetterà o rifiuterà ciascuna.</value></data><data name="You have staged photos that have not been submitted yet. Closing this dialog will delete them. Continue?" xml:space="preserve"><value>Hai foto preparate che non sono ancora state inviate. Chiudere questa finestra le eliminerà. Continuare?</value></data><data name="Batch metadata (applies to every accepted photo)" xml:space="preserve"><value>Metadati del lotto (validi per ogni foto accettata)</value></data><data name="License" xml:space="preserve"><value>Licenza</value></data><data name="Source URL" xml:space="preserve"><value>URL di origine</value></data><data name="(none)" xml:space="preserve"><value>(nessuno)</value></data><data name="Accepting {0} of {1} photo(s). Rejected photos and their pending files will be deleted on submit." xml:space="preserve"><value>Accettazione di {0} di {1} foto. Le foto rifiutate e i relativi file in sospeso verranno eliminati al momento dell'invio.</value></data><data name="Accept this photo" xml:space="preserve"><value>Accetta questa foto</value></data><data name="Suggest sound synth photos" xml:space="preserve"><value>Suggerisci foto del sintetizzatore</value></data><data name="Suggest more sound synth photos" xml:space="preserve"><value>Suggerisci altre foto del sintetizzatore</value></data><data name="No photos for this sound synth yet — help us by uploading some." xml:space="preserve"><value>Nessuna foto per questo sintetizzatore — aiutaci caricandone alcune.</value></data></root>

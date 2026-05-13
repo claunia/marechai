@@ -138,4 +138,23 @@ public class SoundSynthPhotosService(Marechai.ApiClient.Client client, IRequestA
             return [];
         }
     }
+
+    /// <summary>
+    ///     Delete a pending sound synth photo (a not-yet-submitted file the collaborator
+    ///     staged via <c>POST /sound-synths/photos/pending</c>). Used by the suggestion
+    ///     dialog when the user removes a photo from the staging list before submission,
+    ///     OR when they cancel the dialog with photos still staged.
+    /// </summary>
+    public async Task<bool> DeletePendingPhotoAsync(Guid guid)
+    {
+        try
+        {
+            await client.SoundSynths.Photos.Pending[guid].DeleteAsync();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 }

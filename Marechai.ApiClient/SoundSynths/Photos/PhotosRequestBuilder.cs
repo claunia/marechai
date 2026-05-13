@@ -2,6 +2,7 @@
 #pragma warning disable CS0618
 using Marechai.ApiClient.Models;
 using Marechai.ApiClient.SoundSynths.Photos.Item;
+using Marechai.ApiClient.SoundSynths.Photos.Pending;
 using Marechai.ApiClient.SoundSynths.Photos.Upload;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
@@ -19,6 +20,11 @@ namespace Marechai.ApiClient.SoundSynths.Photos
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class PhotosRequestBuilder : BaseRequestBuilder
     {
+        /// <summary>The pending property</summary>
+        public global::Marechai.ApiClient.SoundSynths.Photos.Pending.PendingRequestBuilder Pending
+        {
+            get => new global::Marechai.ApiClient.SoundSynths.Photos.Pending.PendingRequestBuilder(PathParameters, RequestAdapter);
+        }
         /// <summary>The upload property</summary>
         public global::Marechai.ApiClient.SoundSynths.Photos.Upload.UploadRequestBuilder Upload
         {

@@ -397,6 +397,18 @@ public class SuggestionsController(MarechaiContext context,
                                statusCode: StatusCodes.Status400BadRequest);
         }
 
+        // ---- SoundSynth photo batch payload validation (suggestion-level + per-photo sidecars) ----
+        if(dto.EntityType == SuggestionEntityType.SoundSynthPhoto)
+        {
+            var (ok, err) = await Suggestions.SoundSynthPhotoSuggestionApplier.ValidateAsync(
+                                context, dto.EntityId, values, _assetRootPath, userId);
+
+            if(!ok)
+                return Problem(title: "Invalid sound synth photo suggestion",
+                               detail: err,
+                               statusCode: StatusCodes.Status400BadRequest);
+        }
+
         // ---- Existence check on target entity (edits only) --------------------------
         // For additions, the entity does not exist yet; the display name is derived from the
         // suggested 'name' payload field at projection time.
@@ -454,13 +466,14 @@ public class SuggestionsController(MarechaiContext context,
                 return NotFound();
 
             // ---- Per-entity dedupe: one Pending per (user, entity, subkey) --------------
-            // GpuPhoto and ProcessorPhoto batches are intentionally exempt — a collaborator
-            // can have multiple pending photo batches for the same parent at once (the
-            // per-uploader cap of 15 in-flight pending PHOTOS per parent is enforced
+            // GpuPhoto, ProcessorPhoto and SoundSynthPhoto batches are intentionally exempt — a
+            // collaborator can have multiple pending photo batches for the same parent at once
+            // (the per-uploader cap of 15 in-flight pending PHOTOS per parent is enforced
             // separately by the upload endpoint via
             // PendingImageStore.CountByUploaderForParentEntity).
             if(dto.EntityType != SuggestionEntityType.GpuPhoto &&
-               dto.EntityType != SuggestionEntityType.ProcessorPhoto)
+               dto.EntityType != SuggestionEntityType.ProcessorPhoto &&
+               dto.EntityType != SuggestionEntityType.SoundSynthPhoto)
             {
                 bool dupe = await context.Suggestions.AnyAsync(s =>
                     s.CreatedById == userId
@@ -801,12 +814,12 @@ public class SuggestionsController(MarechaiContext context,
             accepted = applied;
         }
 
-        // Compute terminal status. GpuPhoto and ProcessorPhoto batches need entity-specific
-        // accounting because the wire payload's scalar key set (`license_id`, `source_url`,
-        // `photos`) bears no relation to the per-photo accept toggles (`photo.<guid>`) the
-        // admin actually checks: `accepted.Count == suggested.Count` is meaningless there.
-        // For these batches we compare the COUNT of accepted `photo.<guid>` keys against
-        // the size of the `photos` JSON array.
+        // Compute terminal status. GpuPhoto, ProcessorPhoto and SoundSynthPhoto batches need
+        // entity-specific accounting because the wire payload's scalar key set (`license_id`,
+        // `source_url`, `photos`) bears no relation to the per-photo accept toggles
+        // (`photo.<guid>`) the admin actually checks: `accepted.Count == suggested.Count` is
+        // meaningless there. For these batches we compare the COUNT of accepted `photo.<guid>`
+        // keys against the size of the `photos` JSON array.
         SuggestionStatus newStatus;
 
         if(s.EntityType == SuggestionEntityType.GpuPhoto)
@@ -824,6 +837,18 @@ public class SuggestionsController(MarechaiContext context,
         else if(s.EntityType == SuggestionEntityType.ProcessorPhoto)
         {
             int totalPhotos = CountSuggestedProcessorPhotos(s);
+            int acceptedPhotos = accepted.Count(k => k.StartsWith("photo.", StringComparison.Ordinal));
+
+            if(acceptedPhotos == 0)
+                newStatus = SuggestionStatus.Rejected;
+            else if(totalPhotos > 0 && acceptedPhotos >= totalPhotos)
+                newStatus = SuggestionStatus.Accepted;
+            else
+                newStatus = SuggestionStatus.PartiallyAccepted;
+        }
+        else if(s.EntityType == SuggestionEntityType.SoundSynthPhoto)
+        {
+            int totalPhotos = CountSuggestedSoundSynthPhotos(s);
             int acceptedPhotos = accepted.Count(k => k.StartsWith("photo.", StringComparison.Ordinal));
 
             if(acceptedPhotos == 0)
@@ -986,6 +1011,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.SoftwareRelease => true,
         SuggestionEntityType.GpuPhoto        => true,
         SuggestionEntityType.ProcessorPhoto  => true,
+        SuggestionEntityType.SoundSynthPhoto => true,
         _                                  => GetKnownFieldNames(type) is not null
     };
 
@@ -1037,6 +1063,9 @@ public class SuggestionsController(MarechaiContext context,
 
         if(type == SuggestionEntityType.ProcessorPhoto)
             return Suggestions.ProcessorPhotoSuggestionApplier.IsKnownFieldName(fieldName);
+
+        if(type == SuggestionEntityType.SoundSynthPhoto)
+            return Suggestions.SoundSynthPhotoSuggestionApplier.IsKnownFieldName(fieldName);
 
         IReadOnlyCollection<string> set = GetKnownFieldNames(type);
         return set is not null && set.Contains(fieldName);
@@ -1195,6 +1224,12 @@ public class SuggestionsController(MarechaiContext context,
                     context, entityId, suggested, accepted, creditedUserId, _assetRootPath);
                 return new ApplyResult(applied, missing);
             }
+            case SuggestionEntityType.SoundSynthPhoto:
+            {
+                var (applied, missing) = await Suggestions.SoundSynthPhotoSuggestionApplier.ApplyAsync(
+                    context, entityId, suggested, accepted, creditedUserId, _assetRootPath);
+                return new ApplyResult(applied, missing);
+            }
             default:
                 throw new NotImplementedException($"Suggestions for {type} are not implemented yet.");
         }
@@ -1254,6 +1289,8 @@ public class SuggestionsController(MarechaiContext context,
                 await Suggestions.GpuPhotoSuggestionApplier.GetCurrentValuesAsync(context, entityId),
             SuggestionEntityType.ProcessorPhoto =>
                 await Suggestions.ProcessorPhotoSuggestionApplier.GetCurrentValuesAsync(context, entityId),
+            SuggestionEntityType.SoundSynthPhoto =>
+                await Suggestions.SoundSynthPhotoSuggestionApplier.GetCurrentValuesAsync(context, entityId),
             _ => null
         };
     }
@@ -1313,6 +1350,7 @@ public class SuggestionsController(MarechaiContext context,
                                     .FirstOrDefaultAsync();
             case SuggestionEntityType.SoundSynth:
             case SuggestionEntityType.SoundSynthDescription:
+            case SuggestionEntityType.SoundSynthPhoto:
                 return await context.SoundSynths.AsNoTracking()
                                     .Where(s => s.Id == (int)entityId)
                                     .Select(s => s.Name)
@@ -2085,6 +2123,23 @@ public class SuggestionsController(MarechaiContext context,
                                                   .FirstOrDefaultAsync();
                         if(!string.IsNullOrEmpty(name))
                             labels[Suggestions.ProcessorPhotoSuggestionApplier.FieldLicenseId] = name;
+                    }
+                }
+                break;
+            }
+            case SuggestionEntityType.SoundSynthPhoto:
+            {
+                if(values.TryGetValue(Suggestions.SoundSynthPhotoSuggestionApplier.FieldLicenseId, out JsonElement lj))
+                {
+                    int? id = JsonElementToInt(lj);
+                    if(id.HasValue)
+                    {
+                        string name = await context.Licenses.AsNoTracking()
+                                                  .Where(l => l.Id == id.Value)
+                                                  .Select(l => l.Name)
+                                                  .FirstOrDefaultAsync();
+                        if(!string.IsNullOrEmpty(name))
+                            labels[Suggestions.SoundSynthPhotoSuggestionApplier.FieldLicenseId] = name;
                     }
                 }
                 break;
@@ -4112,6 +4167,38 @@ public class SuggestionsController(MarechaiContext context,
 
                     break;
                 }
+                case SuggestionEntityType.SoundSynthPhoto:
+                {
+                    // Sweep every per-photo pending file the suggester referenced that did NOT
+                    // end up accepted. The applier already deletes rejected pending files when
+                    // the admin submits the review (see SoundSynthPhotoSuggestionApplier.ApplyAsync's
+                    // "rejected → Delete" branch), so this catch-all only fires for the
+                    // never-reviewed paths (withdraw, stale, controller exception fallback).
+                    if(!s.SuggestedValues.TryGetValue(
+                           Suggestions.SoundSynthPhotoSuggestionApplier.FieldPhotos, out object photosRaw))
+                        return;
+
+                    if(photosRaw is not JsonElement arr || arr.ValueKind != JsonValueKind.Array) return;
+
+                    foreach(JsonElement photo in arr.EnumerateArray())
+                    {
+                        if(photo.ValueKind != JsonValueKind.Object) continue;
+                        if(!photo.TryGetProperty("guid", out JsonElement gj) ||
+                           gj.ValueKind != JsonValueKind.String) continue;
+                        if(!Guid.TryParse(gj.GetString(), out Guid pg)) continue;
+
+                        string acceptKey = Suggestions.SoundSynthPhotoSuggestionApplier.PhotoAcceptKey(pg);
+
+                        // Skip files that were just promoted (the applier deleted the sidecar
+                        // already; calling Delete here is harmless thanks to the silent
+                        // fallback but we save the IO).
+                        if(accepted.Contains(acceptKey)) continue;
+
+                        Marechai.Server.Helpers.PendingImageStore.Delete(_assetRootPath, "sound-synths", pg);
+                    }
+
+                    break;
+                }
             }
         }
         catch
@@ -4153,6 +4240,27 @@ public class SuggestionsController(MarechaiContext context,
     {
         if(s?.SuggestedValues is null) return 0;
         if(!s.SuggestedValues.TryGetValue(Suggestions.ProcessorPhotoSuggestionApplier.FieldPhotos, out object raw))
+            return 0;
+
+        return raw switch
+        {
+            JsonElement je when je.ValueKind == JsonValueKind.Array => je.GetArrayLength(),
+            System.Collections.ICollection col                      => col.Count,
+            System.Collections.IEnumerable enumerable               => enumerable.Cast<object>().Count(),
+            _                                                       => 0
+        };
+    }
+
+    /// <summary>
+    ///     Count the photos referenced by a SoundSynth-photo batch suggestion's
+    ///     <c>SuggestedValues["photos"]</c> array. Returns 0 when the array is missing or
+    ///     malformed (defensive — the validator at submit time should catch malformed
+    ///     payloads before persistence, but this guards against post-hoc DB hand-edits).
+    /// </summary>
+    static int CountSuggestedSoundSynthPhotos(Suggestion s)
+    {
+        if(s?.SuggestedValues is null) return 0;
+        if(!s.SuggestedValues.TryGetValue(Suggestions.SoundSynthPhotoSuggestionApplier.FieldPhotos, out object raw))
             return 0;
 
         return raw switch
@@ -4312,6 +4420,37 @@ public class SuggestionsController(MarechaiContext context,
                 if(roleGranted) body += "\n\nYou are now a Collaborator!";
             }
         }
+        else if(s.EntityType == SuggestionEntityType.SoundSynthPhoto)
+        {
+            int photoTotal    = CountSuggestedSoundSynthPhotos(s);
+            int photoAccepted = (s.AppliedFields ?? new Dictionary<string, string>())
+                .Count(kv => kv.Key.StartsWith("photo.", StringComparison.Ordinal));
+
+            string plural = photoTotal == 1 ? "photo" : "photos";
+
+            if(photoAccepted == 0)
+            {
+                subject = "Your sound synth photo upload was not accepted";
+                body =
+                    $"Your suggested upload of {photoTotal} {plural} for {entityRef} was reviewed but no photos were accepted. " +
+                    $"Thank you for contributing — feel free to refine and try again.";
+            }
+            else if(photoAccepted == photoTotal)
+            {
+                subject = "Your sound synth photo upload was accepted";
+                body =
+                    $"Your suggested upload of {photoTotal} {plural} for {entityRef} was accepted. Thank you!";
+                if(roleGranted) body += "\n\nYou are now a Collaborator!";
+            }
+            else
+            {
+                subject = "Your sound synth photo upload was partially accepted";
+                body =
+                    $"Your suggested upload for {entityRef} was reviewed. " +
+                    $"{photoAccepted} of {photoTotal} {plural} were accepted; the rest were declined.";
+                if(roleGranted) body += "\n\nYou are now a Collaborator!";
+            }
+        }
         else if(wasAddition)
         {
             // Addition flow: name-mandatory, so partial acceptance is impossible.
@@ -4394,6 +4533,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.ProcessorPhoto       => $"/processor/{entityId}",
         SuggestionEntityType.SoundSynth           => $"/soundsynth/{entityId}",
         SuggestionEntityType.SoundSynthDescription => $"/soundsynth/{entityId}",
+        SuggestionEntityType.SoundSynthPhoto       => $"/soundsynth/{entityId}",
         SuggestionEntityType.Person                => $"/person/{entityId}",
         SuggestionEntityType.PersonDescription     => $"/person/{entityId}",
         SuggestionEntityType.Software              => $"/software/{entityId}",
@@ -4426,6 +4566,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.GpuDescription      => "GPU description",
         SuggestionEntityType.GpuPhoto            => "GPU photo upload",
         SuggestionEntityType.ProcessorPhoto      => "processor photo upload",
+        SuggestionEntityType.SoundSynthPhoto     => "sound synth photo upload",
         SuggestionEntityType.ProcessorDescription => "processor description",
         SuggestionEntityType.SoundSynthDescription => "sound synth description",
         SuggestionEntityType.PersonDescription   => "person biography",

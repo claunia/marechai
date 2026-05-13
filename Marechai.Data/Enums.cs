@@ -1061,7 +1061,17 @@ public enum SuggestionEntityType : byte
     ///     accept/reject is signalled by including/omitting the field-name key
     ///     <c>photo.{guid}</c> in <c>AppliedFields</c>.
     /// </summary>
-    ProcessorPhoto = 28
+    ProcessorPhoto = 28,
+    /// <summary>
+    ///     A batch of one or more pending SoundSynth photos uploaded by a collaborator for review
+    ///     by an admin. The EntityId on the Suggestion row holds the parent SoundSynth Id. The
+    ///     SuggestedValues JSON carries one suggestion-level <c>license_id</c> + <c>source_url</c>
+    ///     applied to all photos in the batch and a <c>photos</c> array (max 15 entries) of pending
+    ///     image descriptors (<c>guid</c>, <c>extension</c>, per-photo <c>comment</c>). Per-photo
+    ///     accept/reject is signalled by including/omitting the field-name key
+    ///     <c>photo.{guid}</c> in <c>AppliedFields</c>.
+    /// </summary>
+    SoundSynthPhoto = 29
 }
 
 public enum SuggestionStatus : byte

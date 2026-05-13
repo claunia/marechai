@@ -322,4 +322,39 @@ public partial class View
             L["Suggest changes"], parameters, options);
         await dialog.Result;
     }
+
+    /// <summary>
+    ///     Open the collaborative sound-synth-photo upload dialog. Lets the signed-in user stage 1-15
+    ///     pending photos, set a suggestion-level license + source URL, optionally annotate
+    ///     each photo with a comment, then submit ONE Suggestion row that an admin reviews
+    ///     per-photo.
+    /// </summary>
+    async Task OpenSuggestPhotosDialog()
+    {
+        int soundSynthId = Id;
+        if(soundSynthId <= 0) return;
+
+        var dialogParams = new DialogParameters
+        {
+            ["SoundSynthId"]   = soundSynthId,
+            ["SoundSynthName"] = _synth?.Name ?? string.Empty
+        };
+        var dialogOptions = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Large
+        };
+
+        var dialogRef = await DialogService.ShowAsync<SoundSynthPhotosSuggestionDialog>(
+            L["Suggest sound synth photos"], dialogParams, dialogOptions);
+
+        DialogResult result = await dialogRef.Result;
+
+        if(result is { Canceled: false })
+        {
+            // Photos won't appear until an admin accepts them; nothing to refresh now.
+            // Method left as a hook in case future revisions want to surface a hint.
+        }
+    }
 }
