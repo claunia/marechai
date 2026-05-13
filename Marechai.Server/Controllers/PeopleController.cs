@@ -307,9 +307,18 @@ public class PeopleController(
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<PersonDto>> GetAsync([FromQuery] int? skip = null, [FromQuery] int? take = null,
+                                          [FromQuery] string search = null,
                                           CancellationToken cancellationToken = default)
     {
-        IQueryable<Person> ordered = context.People
+        IQueryable<Person> baseQ = context.People;
+
+        if(!string.IsNullOrWhiteSpace(search))
+            baseQ = baseQ.Where(p => (p.DisplayName != null && p.DisplayName.Contains(search))   ||
+                                     (p.Alias       != null && p.Alias.Contains(search))         ||
+                                     (p.Name        != null && p.Name.Contains(search))          ||
+                                     (p.Surname     != null && p.Surname.Contains(search)));
+
+        IQueryable<Person> ordered = baseQ
                                             .OrderBy(p => MarechaiContext.NaturalSortKey(p.DisplayName))
                                             .ThenBy(p => MarechaiContext.NaturalSortKey(p.Alias))
                                             .ThenBy(p => MarechaiContext.NaturalSortKey(p.Name))

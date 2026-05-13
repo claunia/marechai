@@ -4,6 +4,7 @@ using Marechai.ApiClient.Books.ByLetter;
 using Marechai.ApiClient.Books.ByYear;
 using Marechai.ApiClient.Books.Companies;
 using Marechai.ApiClient.Books.Count;
+using Marechai.ApiClient.Books.Cover;
 using Marechai.ApiClient.Books.Item;
 using Marechai.ApiClient.Books.MaximumYear;
 using Marechai.ApiClient.Books.MinimumYear;
@@ -43,6 +44,11 @@ namespace Marechai.ApiClient.Books
         public global::Marechai.ApiClient.Books.Count.CountRequestBuilder Count
         {
             get => new global::Marechai.ApiClient.Books.Count.CountRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The cover property</summary>
+        public global::Marechai.ApiClient.Books.Cover.CoverRequestBuilder Cover
+        {
+            get => new global::Marechai.ApiClient.Books.Cover.CoverRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The maximumYear property</summary>
         public global::Marechai.ApiClient.Books.MaximumYear.MaximumYearRequestBuilder MaximumYear

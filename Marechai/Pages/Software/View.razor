@@ -604,34 +604,53 @@ else
 </MudExpansionPanels>
 
 @* ── Credits Card ── *@
-@if(_credits.Count > 0)
-{
 <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-    <MudExpansionPanel>
+    <MudExpansionPanel Expanded="@(_credits.Count > 0)">
         <TitleContent>
-            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
-                <MudIcon Icon="@Icons.Material.Filled.People" Color="Color.Primary"/>
-                <MudText Typo="Typo.h6">@L["Credits"]</MudText>
-                <MudChip T="string" Size="Size.Small" Color="Color.Success">@_credits.Count</MudChip>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Style="width: 100%;">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIcon Icon="@Icons.Material.Filled.People" Color="Color.Primary"/>
+                    <MudText Typo="Typo.h6">@L["Credits"]</MudText>
+                    <MudChip T="string" Size="Size.Small" Color="Color.Success">@_credits.Count</MudChip>
+                </MudStack>
+                <AuthorizeView>
+                    <Authorized>
+                        <MudTooltip Text="@L["Suggest changes"]">
+                            <span @onclick:stopPropagation="true">
+                                <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                               Size="Size.Small"
+                                               Color="Color.Secondary"
+                                               OnClick="OpenSoftwareCreditsSuggestionDialogAsync"
+                                               aria-label="@L["Suggest changes"]"/>
+                            </span>
+                        </MudTooltip>
+                    </Authorized>
+                </AuthorizeView>
             </MudStack>
         </TitleContent>
         <ChildContent>
-            @foreach(var group in _creditsByRole)
+            @if(_credits.Count == 0)
             {
-                <MudText Typo="Typo.subtitle1" Class="mt-3 mb-2"><strong>@L[group.Key]</strong></MudText>
-                <MudList T="PersonBySoftwareDto" Dense="true">
-                    @foreach(PersonBySoftwareDto credit in group.Value)
-                    {
-                        <MudListItem T="PersonBySoftwareDto" Href="@($"/person/{credit.PersonId}")" Icon="@Icons.Material.Filled.Person">
-                            @(credit.DisplayName ?? credit.Alias ?? $"{credit.Name} {credit.Surname}")
-                        </MudListItem>
-                    }
-                </MudList>
+                <MudText Typo="Typo.body2" Color="Color.Secondary">@L["No credits linked yet."]</MudText>
+            }
+            else
+            {
+                @foreach(var group in _creditsByRole)
+                {
+                    <MudText Typo="Typo.subtitle1" Class="mt-3 mb-2"><strong>@L[group.Key]</strong></MudText>
+                    <MudList T="PersonBySoftwareDto" Dense="true">
+                        @foreach(PersonBySoftwareDto credit in group.Value)
+                        {
+                            <MudListItem T="PersonBySoftwareDto" Href="@($"/person/{credit.PersonId}")" Icon="@Icons.Material.Filled.Person">
+                                @(credit.DisplayName ?? credit.Alias ?? $"{credit.Name} {credit.Surname}")
+                            </MudListItem>
+                        }
+                    </MudList>
+                }
             }
         </ChildContent>
     </MudExpansionPanel>
 </MudExpansionPanels>
-}
 
 </MudTabPanel>
 

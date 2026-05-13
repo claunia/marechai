@@ -732,6 +732,47 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
+    /// <summary>
+    ///     Returns the DISTINCT free-text role strings already in use across the
+    ///     <c>PeopleBySoftware</c> table. Used by the credits suggestion dialog as the
+    ///     autocomplete corpus for the role field, allowing reuse of established roles
+    ///     while still accepting custom new entries.
+    /// </summary>
+    public async Task<List<string>> GetCreditsRolesAsync()
+    {
+        try
+        {
+            List<string> roles = await client.Software.Credits.Roles.GetAsync();
+            return roles ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    /// <summary>
+    ///     Server-typeahead person picker (people corpus is too large to pre-load). Min
+    ///     2 chars — clients should debounce by ~300 ms.
+    /// </summary>
+    public async Task<List<PersonDto>> SearchPeopleAsync(string search)
+    {
+        if(string.IsNullOrWhiteSpace(search) || search.Length < 2) return [];
+        try
+        {
+            List<PersonDto> people = await client.People.GetAsync(config =>
+            {
+                config.QueryParameters.Take   = 20;
+                config.QueryParameters.Search = search;
+            });
+            return people ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
     public async Task<List<SoftwareGenreDto>> GetGenresAsync(int softwareId)
     {
         try

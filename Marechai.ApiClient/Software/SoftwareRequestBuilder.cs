@@ -12,6 +12,7 @@ using Marechai.ApiClient.Software.Companies;
 using Marechai.ApiClient.Software.CompanyRoles;
 using Marechai.ApiClient.Software.Count;
 using Marechai.ApiClient.Software.Covers;
+using Marechai.ApiClient.Software.Credits;
 using Marechai.ApiClient.Software.Families;
 using Marechai.ApiClient.Software.Genres;
 using Marechai.ApiClient.Software.Item;
@@ -98,6 +99,11 @@ namespace Marechai.ApiClient.Software
         public global::Marechai.ApiClient.Software.Covers.CoversRequestBuilder Covers
         {
             get => new global::Marechai.ApiClient.Software.Covers.CoversRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The credits property</summary>
+        public global::Marechai.ApiClient.Software.Credits.CreditsRequestBuilder Credits
+        {
+            get => new global::Marechai.ApiClient.Software.Credits.CreditsRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The families property</summary>
         public global::Marechai.ApiClient.Software.Families.FamiliesRequestBuilder Families

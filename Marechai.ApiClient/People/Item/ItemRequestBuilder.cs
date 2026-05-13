@@ -8,6 +8,7 @@ using Marechai.ApiClient.People.Item.Descriptions;
 using Marechai.ApiClient.People.Item.Documents;
 using Marechai.ApiClient.People.Item.Full;
 using Marechai.ApiClient.People.Item.Magazines;
+using Marechai.ApiClient.People.Item.Photo;
 using Marechai.ApiClient.People.Item.Software;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
@@ -59,6 +60,11 @@ namespace Marechai.ApiClient.People.Item
         public global::Marechai.ApiClient.People.Item.Magazines.MagazinesRequestBuilder Magazines
         {
             get => new global::Marechai.ApiClient.People.Item.Magazines.MagazinesRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The photo property</summary>
+        public global::Marechai.ApiClient.People.Item.Photo.PhotoRequestBuilder Photo
+        {
+            get => new global::Marechai.ApiClient.People.Item.Photo.PhotoRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The software property</summary>
         public global::Marechai.ApiClient.People.Item.Software.SoftwareRequestBuilder Software

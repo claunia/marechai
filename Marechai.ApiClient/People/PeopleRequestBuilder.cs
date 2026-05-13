@@ -7,6 +7,7 @@ using Marechai.ApiClient.People.Count;
 using Marechai.ApiClient.People.Item;
 using Marechai.ApiClient.People.MaximumYear;
 using Marechai.ApiClient.People.MinimumYear;
+using Marechai.ApiClient.People.Photo;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
 using Microsoft.Kiota.Abstractions;
@@ -48,6 +49,11 @@ namespace Marechai.ApiClient.People
         {
             get => new global::Marechai.ApiClient.People.MinimumYear.MinimumYearRequestBuilder(PathParameters, RequestAdapter);
         }
+        /// <summary>The photo property</summary>
+        public global::Marechai.ApiClient.People.Photo.PhotoRequestBuilder Photo
+        {
+            get => new global::Marechai.ApiClient.People.Photo.PhotoRequestBuilder(PathParameters, RequestAdapter);
+        }
         /// <summary>Gets an item from the Marechai.ApiClient.people.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
         /// <returns>A <see cref="global::Marechai.ApiClient.People.Item.ItemRequestBuilder"/></returns>
@@ -78,7 +84,7 @@ namespace Marechai.ApiClient.People
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public PeopleRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/people{?skip*,take*}", pathParameters)
+        public PeopleRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/people{?search*,skip*,take*}", pathParameters)
         {
         }
         /// <summary>
@@ -86,7 +92,7 @@ namespace Marechai.ApiClient.People
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public PeopleRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/people{?skip*,take*}", rawUrl)
+        public PeopleRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/people{?search*,skip*,take*}", rawUrl)
         {
         }
         /// <returns>A List&lt;global::Marechai.ApiClient.Models.PersonDto&gt;</returns>
@@ -183,6 +189,15 @@ namespace Marechai.ApiClient.People
         public partial class PeopleRequestBuilderGetQueryParameters 
         #pragma warning restore CS1591
         {
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("search")]
+            public string? Search { get; set; }
+#nullable restore
+#else
+            [QueryParameter("search")]
+            public string Search { get; set; }
+#endif
             [QueryParameter("skip")]
             public int? Skip { get; set; }
             [QueryParameter("take")]

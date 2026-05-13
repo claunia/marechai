@@ -75,11 +75,13 @@ internal static class SoftwareSuggestionApplier
     // ---- Junction group identifiers (lowercase snake_case prefix in field-name keys) ---
     public const string GroupGenres    = "genres";
     public const string GroupCompanies = "companies";
+    public const string GroupCredits   = "credits";
 
     public static readonly IReadOnlyCollection<string> JunctionGroups = new[]
     {
         GroupGenres,
-        GroupCompanies
+        GroupCompanies,
+        GroupCredits
     };
 
     /// <summary>
@@ -296,6 +298,35 @@ internal static class SoftwareSuggestionApplier
                 await context.SaveChangesAsync();
                 return true;
             }
+            case GroupCredits:
+            {
+                // PeopleBySoftware free-text role + nullable RoleId FK. Per design, we only
+                // populate the free-text Role string and leave RoleId NULL — the FK to the
+                // shared DocumentRole table is not exposed via suggestions. Dedup matches the
+                // unique index (SoftwareId, PersonId, Role) — same person CAN appear under
+                // multiple distinct role strings.
+                int?   personId = GetInt(payload, "person_id");
+                string role     = GetString(payload, "role");
+                if(!personId.HasValue) return false;
+                if(string.IsNullOrWhiteSpace(role)) return false;
+                role = role.Trim();
+                if(role.Length > 256) return false;
+                if(!await context.People.AsNoTracking().AnyAsync(p => p.Id == personId.Value)) return false;
+                if(await context.PeopleBySoftware.AsNoTracking()
+                                .AnyAsync(r => r.SoftwareId == softwareId &&
+                                               r.PersonId   == personId.Value &&
+                                               r.Role       == role))
+                    return false;
+                await context.PeopleBySoftware.AddAsync(new PeopleBySoftware
+                {
+                    SoftwareId = softwareId,
+                    PersonId   = personId.Value,
+                    Role       = role,
+                    RoleId     = null
+                });
+                await context.SaveChangesAsync();
+                return true;
+            }
             default:
                 return false;
         }
@@ -331,6 +362,16 @@ internal static class SoftwareSuggestionApplier
                                     .Where(r => r.SoftwareId == softwareId &&
                                                 r.CompanyId  == companyId  &&
                                                 r.RoleId     == roleId)
+                                    .ExecuteDeleteAsync() > 0;
+            }
+            case GroupCredits:
+            {
+                // PeopleBySoftware has a surrogate long Id, so the remove token is the row
+                // id directly. Gating the delete on SoftwareId guards against cross-software
+                // tampering with row ids harvested from another entity's suggestion list.
+                if(!long.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out long rowId)) return false;
+                return await context.PeopleBySoftware
+                                    .Where(r => r.Id == rowId && r.SoftwareId == softwareId)
                                     .ExecuteDeleteAsync() > 0;
             }
             default:

@@ -2874,6 +2874,7 @@ public class SuggestionsController(MarechaiContext context,
             {
                 Suggestions.SoftwareSuggestionApplier.GroupGenres    => await BuildSoftwareGenreAddLabelAsync(group, kv.Value),
                 Suggestions.SoftwareSuggestionApplier.GroupCompanies => await BuildSoftwareCompanyAddLabelAsync(group, kv.Value),
+                Suggestions.SoftwareSuggestionApplier.GroupCredits   => await BuildSoftwareCreditAddLabelAsync(group, kv.Value),
                 _                                                    => null
             };
             if(!string.IsNullOrEmpty(label)) labels[kv.Key] = label;
@@ -2917,6 +2918,15 @@ public class SuggestionsController(MarechaiContext context,
                     if(parts.Length != 2 || string.IsNullOrEmpty(parts[1])) continue;
                     if(!int.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out int companyId)) continue;
                     label = await BuildSoftwareCompanyRemoveLabelAsync(group, (ulong)softwareId, companyId, parts[1]);
+                    break;
+                }
+                case Suggestions.SoftwareSuggestionApplier.GroupCredits:
+                {
+                    // PeopleBySoftware has a surrogate row Id, so the credits remove token
+                    // is the row id directly (parsed as long). The lookup is gated on
+                    // SoftwareId to keep the displayed label scoped to this entity.
+                    if(!long.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out long rowId)) continue;
+                    label = await BuildSoftwareCreditRemoveLabelAsync(group, (ulong)softwareId, rowId);
                     break;
                 }
             }
@@ -3010,6 +3020,70 @@ public class SuggestionsController(MarechaiContext context,
                                        .FirstOrDefaultAsync();
                 if(row is null) return null;
                 return string.IsNullOrEmpty(row.RoleName) ? row.CompanyName : $"{row.CompanyName} ({row.RoleName})";
+            }
+            default:
+                return null;
+        }
+    }
+
+    async Task<string> BuildSoftwareCreditAddLabelAsync(string group, JsonElement payload)
+    {
+        switch(group)
+        {
+            case Suggestions.SoftwareSuggestionApplier.GroupCredits:
+            {
+                int?   id   = ReadIntField(payload, "person_id");
+                string role = ReadStringField(payload, "role");
+                if(!id.HasValue) return null;
+                var p = await context.People.AsNoTracking()
+                                     .Where(x => x.Id == id.Value)
+                                     .Select(x => new
+                                      {
+                                          x.Name,
+                                          x.Surname,
+                                          x.Alias,
+                                          x.DisplayName
+                                      })
+                                     .FirstOrDefaultAsync();
+                string display = p is null
+                                     ? $"Person #{id.Value}"
+                                     : (!string.IsNullOrEmpty(p.DisplayName) ? p.DisplayName
+                                        : !string.IsNullOrEmpty(p.Alias)     ? p.Alias
+                                        :                                      $"{p.Name} {p.Surname}".Trim());
+                if(string.IsNullOrWhiteSpace(display)) display = $"Person #{id.Value}";
+                return string.IsNullOrEmpty(role) ? display : $"{display} ({role})";
+            }
+            default:
+                return null;
+        }
+    }
+
+    async Task<string> BuildSoftwareCreditRemoveLabelAsync(string group, ulong softwareId, long rowId)
+    {
+        switch(group)
+        {
+            case Suggestions.SoftwareSuggestionApplier.GroupCredits:
+            {
+                // Verify the link exists for THIS software (surrogate-Id guard); only then
+                // resolve readable names. Stale remove ops yield null → diff panel cell
+                // stays blank rather than showing a misleading label.
+                var row = await context.PeopleBySoftware.AsNoTracking()
+                                       .Where(r => r.Id == rowId && r.SoftwareId == softwareId)
+                                       .Select(r => new
+                                        {
+                                            r.Person.Name,
+                                            r.Person.Surname,
+                                            r.Person.Alias,
+                                            r.Person.DisplayName,
+                                            r.Role
+                                        })
+                                       .FirstOrDefaultAsync();
+                if(row is null) return null;
+                string name = !string.IsNullOrEmpty(row.DisplayName) ? row.DisplayName
+                              : !string.IsNullOrEmpty(row.Alias)     ? row.Alias
+                              :                                        $"{row.Name} {row.Surname}".Trim();
+                if(string.IsNullOrWhiteSpace(name)) name = $"Person #{rowId}";
+                return string.IsNullOrEmpty(row.Role) ? name : $"{name} ({row.Role})";
             }
             default:
                 return null;

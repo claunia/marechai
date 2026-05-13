@@ -1658,6 +1658,23 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
            .ThenBy(p => p.FullName)
            .ToList();
 
+    /// <summary>
+    ///     Returns the DISTINCT free-text role strings currently used in the
+    ///     <c>PeopleBySoftware</c> junction. Used by the collaborative-suggestion dialog as
+    ///     the autocomplete data source for the credits role field, allowing reuse of
+    ///     established role labels while still permitting custom new entries.
+    /// </summary>
+    [HttpGet("/software/credits/roles")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public Task<List<string>> GetCreditsRolesAsync() =>
+        context.PeopleBySoftware.AsNoTracking()
+               .Where(r => !string.IsNullOrEmpty(r.Role))
+               .Select(r => r.Role)
+               .Distinct()
+               .OrderBy(r => r)
+               .ToListAsync();
+
     [HttpGet("{id:ulong}/critic-reviews")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]

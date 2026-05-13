@@ -67,11 +67,13 @@ public sealed class SoftwareSuggestionMetadata : SuggestionMetadata
     // ---- Junction group identifiers (mirror server-side) -------------------------------
     public const string GroupGenres    = "genres";
     public const string GroupCompanies = "companies";
+    public const string GroupCredits   = "credits";
 
     static readonly HashSet<string> s_junctionGroups = new(StringComparer.Ordinal)
     {
         GroupGenres,
-        GroupCompanies
+        GroupCompanies,
+        GroupCredits
     };
 
     static readonly HashSet<string> s_scalarFieldNames = new(StringComparer.Ordinal)
@@ -176,6 +178,7 @@ public sealed class SoftwareSuggestionMetadata : SuggestionMetadata
     {
         GroupGenres    => "Genres",
         GroupCompanies => "Companies",
+        GroupCredits   => "Credits",
         _              => group
     };
 

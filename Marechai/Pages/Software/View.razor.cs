@@ -684,4 +684,42 @@ public partial class View
 
         // No reload needed — pending suggestions only take effect after admin review.
     }
+
+    /// <summary>
+    ///     Opens the dedicated SoftwareCreditsSuggestionDialog for editing the Credits card
+    ///     of this software (PeopleBySoftware junction). Per spec, only the free-text
+    ///     <c>Role</c> column is editable; the <c>RoleId</c> FK to DocumentRole stays NULL.
+    ///     Mirrors <see cref="OpenSoftwareCompaniesSuggestionDialogAsync" /> per the
+    ///     per-card pencil convention.
+    /// </summary>
+    async Task OpenSoftwareCreditsSuggestionDialogAsync()
+    {
+        if(AuthState is null) return;
+
+        AuthenticationState state = await AuthState;
+        if(state?.User?.Identity?.IsAuthenticated != true) return;
+
+        long softwareId = Id;
+        if(softwareId <= 0) return;
+
+        var parameters = new DialogParameters
+        {
+            ["EntityId"] = softwareId
+        };
+
+        var options = new DialogOptions
+        {
+            MaxWidth         = MaxWidth.Medium,
+            FullWidth        = true,
+            CloseOnEscapeKey = true
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<SoftwareCreditsSuggestionDialog>(
+            L["Suggest credits changes"], parameters, options);
+
+        DialogResult result = await dialog.Result;
+        if(result is null || result.Canceled) return;
+
+        // No reload needed — pending suggestions only take effect after admin review.
+    }
 }
