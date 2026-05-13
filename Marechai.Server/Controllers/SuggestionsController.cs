@@ -101,7 +101,8 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.Magazine,
         SuggestionEntityType.Book,
         SuggestionEntityType.Document,
-        SuggestionEntityType.MagazineIssue
+        SuggestionEntityType.MagazineIssue,
+        SuggestionEntityType.Gpu
     };
 
     // ───────────────────────────── POST /suggestions ─────────────────────────────
@@ -1329,6 +1330,13 @@ public class SuggestionsController(MarechaiContext context,
                     return "A new magazine issue suggestion must include a non-empty 'caption' field.";
                 return null;
             }
+            case SuggestionEntityType.Gpu:
+            {
+                if(!values.TryGetValue(Suggestions.GpuSuggestionApplier.FieldName, out object n) ||
+                   string.IsNullOrWhiteSpace(ExtractStringForValidation(n)))
+                    return "A new GPU suggestion must include a non-empty 'name' field.";
+                return null;
+            }
             default:
                 return $"Brand-new {type} suggestions are not supported.";
         }
@@ -1399,6 +1407,15 @@ public class SuggestionsController(MarechaiContext context,
                 }
                 return null;
             }
+            case SuggestionEntityType.Gpu:
+            {
+                if(values.TryGetValue(Suggestions.GpuSuggestionApplier.FieldName, out object n))
+                {
+                    string s = ExtractStringForValidation(n);
+                    return string.IsNullOrWhiteSpace(s) ? null : s.Trim();
+                }
+                return null;
+            }
             default:
                 return null;
         }
@@ -1445,6 +1462,12 @@ public class SuggestionsController(MarechaiContext context,
                 // Issue captions repeat across years/months (e.g. "Issue 1", "January",
                 // "Annual") and even within a single magazine. Dedupe on caption only would
                 // over-block; rely on admin moderation to spot true duplicates instead.
+                return false;
+            case SuggestionEntityType.Gpu:
+                // GPU names legitimately repeat across die revisions, OEM rebrands and
+                // manufacturers (e.g. "GeForce 256" exists as multiple distinct die
+                // revisions). Dedupe on name only would over-block; rely on admin moderation
+                // to spot true duplicates instead.
                 return false;
             default:
                 return false;
@@ -1502,6 +1525,12 @@ public class SuggestionsController(MarechaiContext context,
             {
                 var (id, applied) = await Suggestions.MagazineIssueSuggestionApplier.CreateAsync(
                     context, suggested, accepted, creditedUserId, _assetRootPath);
+                return (id, applied);
+            }
+            case SuggestionEntityType.Gpu:
+            {
+                var (id, applied) = await Suggestions.GpuSuggestionApplier.CreateAsync(
+                    context, suggested, accepted, creditedUserId);
                 return (id, applied);
             }
             default:
@@ -2744,7 +2773,11 @@ public class SuggestionsController(MarechaiContext context,
             }
         }
 
-        if(!entityId.HasValue) return;
+        // NOTE: do NOT early-return on `!entityId.HasValue`. Junction-add labels look up the
+        // linked entity (Resolution) directly from the suggested payload's `resolution_id`
+        // field — they don't need the parent gpuId. The companion remove-label resolver is
+        // gated separately at its call site (`if(s.EntityId.HasValue) await ResolveXxxRemoveLabelsAsync(...)`).
+        _ = entityId;
 
         // ---- Junction-add labels (resolved from the suggested payload's id field) -----
         foreach(KeyValuePair<string, JsonElement> kv in values)

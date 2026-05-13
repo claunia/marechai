@@ -137,6 +137,85 @@ internal static class GpuSuggestionApplier
     }
 
     /// <summary>
+    ///     Create a brand-new <see cref="Gpu" /> row from an accepted addition suggestion.
+    ///     Mirrors <see cref="MagazineSuggestionApplier.CreateAsync" /> shape but returns
+    ///     <c>(int? newId, …)</c> because <see cref="Gpu.Id" /> is <c>int</c>. Validates the
+    ///     mandatory <see cref="FieldName" /> first; rejects the addition outright when the
+    ///     admin didn't tick it. After persistence, accepted <c>resolutions.add.*</c> keys
+    ///     are applied with the freshly-minted <c>GpuId</c>; <c>*.remove.*</c> keys are
+    ///     silently skipped (a brand-new entity has nothing to remove from).
+    /// </summary>
+    /// <param name="creditedUserId">
+    ///     The Identity user id to attribute the row to in audit history (the suggesting user,
+    ///     NOT the reviewing admin). Forwarded to <c>SaveChangesWithUserAsync</c>.
+    /// </param>
+    public static async Task<(int? newId, HashSet<string> applied)> CreateAsync(
+        MarechaiContext context,
+        Dictionary<string, object> suggested,
+        HashSet<string> accepted,
+        string creditedUserId)
+    {
+        var applied = new HashSet<string>(StringComparer.Ordinal);
+
+        // Name is the only mandatory field; everything else is optional. Reject the addition
+        // outright if the admin didn't tick Name.
+        if(!accepted.Contains(FieldName) || !suggested.TryGetValue(FieldName, out object nameVal))
+            return (null, applied);
+
+        string name = ToStringValue(nameVal);
+        if(string.IsNullOrWhiteSpace(name)) return (null, applied);
+        if(name.Trim().Length > 128) return (null, applied);
+
+        var g = new Gpu { Name = name.Trim() };
+        applied.Add(FieldName);
+
+        // Apply remaining accepted scalar fields via the same coercion+validation table the
+        // edit path uses. Junction operations are handled in a second pass after persistence.
+        foreach(string fieldName in accepted)
+        {
+            if(fieldName == FieldName) continue;
+            if(!s_scalarFieldNames.Contains(fieldName)) continue;
+            if(!suggested.TryGetValue(fieldName, out object value)) continue;
+
+            try
+            {
+                if(await ApplyScalar(context, g, fieldName, value)) applied.Add(fieldName);
+            }
+            catch
+            {
+                // Coerce failure: silently skip this field.
+            }
+        }
+
+        await context.Gpus.AddAsync(g);
+
+        if(string.IsNullOrEmpty(creditedUserId))
+            await context.SaveChangesAsync();
+        else
+            await context.SaveChangesWithUserAsync(creditedUserId);
+
+        // Now apply junction adds with the freshly-minted gpu id. Remove keys are silently
+        // ignored — a brand-new entity has nothing to remove from.
+        foreach(string fieldName in accepted)
+        {
+            if(!TryParseJunctionKey(fieldName, out string group, out string op, out string _)) continue;
+            if(op != "add") continue;
+            if(!suggested.TryGetValue(fieldName, out object value)) continue;
+
+            try
+            {
+                if(await ApplyJunctionAdd(context, g.Id, group, value)) applied.Add(fieldName);
+            }
+            catch
+            {
+                // Coerce failure: silently skip this junction add.
+            }
+        }
+
+        return (g.Id, applied);
+    }
+
+    /// <summary>
     ///     Apply the accepted fields onto the Gpu row + junction tables. Each junction
     ///     operation is atomic — failure to coerce one entry skips it without affecting the
     ///     others.

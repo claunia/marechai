@@ -52,8 +52,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Marechai.Pages.Suggestions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using MudBlazor;
 
 namespace Marechai.Pages.Gpus;
 
@@ -168,5 +170,29 @@ public partial class Index : IAsyncDisposable
     {
         await UnobserveAsync();
         _selfRef?.Dispose();
+    }
+
+    /// <summary>
+    ///     Open the unified GPU suggestion dialog in creation mode. The dialog handles
+    ///     submission + validation; this page does not refresh on success because the new
+    ///     GPU only appears in the listing once an admin accepts the suggestion.
+    /// </summary>
+    async Task OpenSuggestNewGpuDialog()
+    {
+        var parameters = new DialogParameters<GpuSuggestionDialog>
+        {
+            { x => x.EntityId,   0L              },
+            { x => x.CurrentDto, (GpuDto)null    },
+            { x => x.IsCreation, true            }
+        };
+
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Large
+        };
+
+        await DialogService.ShowAsync<GpuSuggestionDialog>(L["Suggest new GPU"], parameters, options);
     }
 }

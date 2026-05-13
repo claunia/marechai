@@ -576,4 +576,13 @@
   <data name="Suggestion submitted. An administrator will review it." xml:space="preserve">
     <value>Suggerimento inviato. Un amministratore lo esaminerà.</value>
   </data>
+  <data name="Suggest new GPU" xml:space="preserve">
+    <value>Suggerisci nuova GPU</value>
+  </data>
+  <data name="Suggest a new GPU to be added to the catalogue." xml:space="preserve">
+    <value>Suggerisci una nuova GPU da aggiungere al catalogo.</value>
+  </data>
+  <data name="Fill in the fields below to suggest a new GPU. Name is required; any resolutions you queue will be added together with the scalar fields once an administrator accepts the suggestion." xml:space="preserve">
+    <value>Compila i campi sottostanti per suggerire una nuova GPU. Il nome è obbligatorio; eventuali risoluzioni in coda verranno aggiunte insieme ai campi scalari una volta che un amministratore accetta il suggerimento.</value>
+  </data>
 </root>

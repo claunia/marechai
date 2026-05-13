@@ -31,7 +31,14 @@
         else
         {
             <MudText Typo="Typo.body2" Class="mb-3">
-                @L["Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently."]
+                @if(IsCreation)
+                {
+                    @L["Fill in the fields below to suggest a new GPU. Name is required; any resolutions you queue will be added together with the scalar fields once an administrator accepts the suggestion."]
+                }
+                else
+                {
+                    @L["Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently."]
+                }
             </MudText>
 
             @* ── Scalar fields ── *@
@@ -154,7 +161,7 @@
     <DialogActions>
         <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
         <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit"
-                   Disabled="@(_loading || _submitting || !HasAnyChange())">
+                   Disabled="@(_loading || _submitting || (!IsCreation && !HasAnyChange()) || (IsCreation && !HasMandatoryFieldsForCreation()))">
             @if(_submitting)
             {
                 <MudProgressCircular Size="Size.Small" Indeterminate="true"/>
@@ -173,6 +180,15 @@
 
     [Parameter] public long   EntityId   { get; set; }
     [Parameter] public GpuDto CurrentDto { get; set; }
+
+    /// <summary>
+    ///     When <c>true</c>, the dialog operates in brand-new-entity creation mode: the
+    ///     existing-rows-by-parent fetch and the <c>CurrentDto</c> snapshot are skipped, the
+    ///     submit button is gated on <see cref="HasMandatoryFieldsForCreation" /> instead of
+    ///     <see cref="HasAnyChange" />, and <c>Submit()</c> sends <c>EntityId = null</c> on the
+    ///     wire to signal an addition suggestion.
+    /// </summary>
+    [Parameter] public bool IsCreation { get; set; }
 
     sealed class JunctionAddState
     {
@@ -226,8 +242,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // Seed scalar state from the current DTO snapshot.
-        if(CurrentDto is not null)
+        // Seed scalar state from the current DTO snapshot (only in edit mode).
+        if(!IsCreation && CurrentDto is not null)
         {
             _name                     = CurrentDto.Name;
             _modelCode                = CurrentDto.ModelCode;
@@ -250,9 +266,24 @@
             _orig_transistors         = _transistors;
         }
 
-        Task<List<CompanyDto>>         allCompaniesT  = GpusService.GetCompaniesAsync();
-        Task<List<ResolutionDto>>      allResolutionsT = GpusService.GetAllResolutionsAsync();
-        Task<List<ResolutionByGpuDto>> resolutionsByT  = GpusService.GetResolutionsByGpuAsync((int)EntityId);
+        // Load picker corpora always. Existing-junction-by-gpu load is skipped in creation
+        // mode because there's no parent row yet.
+        Task<List<CompanyDto>>    allCompaniesT   = GpusService.GetCompaniesAsync();
+        Task<List<ResolutionDto>> allResolutionsT = GpusService.GetAllResolutionsAsync();
+
+        if(IsCreation)
+        {
+            await Task.WhenAll(allCompaniesT, allResolutionsT);
+
+            _allCompanies   = allCompaniesT.Result;
+            _allResolutions = allResolutionsT.Result;
+            _resolutionRows = new List<ResolutionByGpuDto>();
+
+            _loading = false;
+            return;
+        }
+
+        Task<List<ResolutionByGpuDto>> resolutionsByT = GpusService.GetResolutionsByGpuAsync((int)EntityId);
 
         await Task.WhenAll(allCompaniesT, allResolutionsT, resolutionsByT);
 
@@ -430,6 +461,8 @@
         return false;
     }
 
+    bool HasMandatoryFieldsForCreation() => !string.IsNullOrWhiteSpace(_name);
+
     void Cancel() => MudDialog.Cancel();
 
     async Task Submit()
@@ -437,7 +470,7 @@
         _validationError = null;
         if(_loading) return;
 
-        // Name is required: never let the user clear it.
+        // Name is required: never let the user clear it (edit mode) or omit it (creation mode).
         if(string.IsNullOrWhiteSpace(_name))
         {
             _validationError = L["Name is required."];
@@ -446,29 +479,58 @@
 
         var diff = new Dictionary<string, object>(StringComparer.Ordinal);
 
-        if(!Equals(_orig_name, _name))           diff[GpuSuggestionMetadata.FieldName]      = _name;
-        if(!Equals(_orig_modelCode, _modelCode)) diff[GpuSuggestionMetadata.FieldModelCode] = _modelCode;
-        if(_orig_companyId != _selectedCompany?.Id)
-            diff[GpuSuggestionMetadata.FieldCompanyId] = _selectedCompany?.Id;
-        if(!Nullable.Equals(_orig_introduced, _introduced))
-            diff[GpuSuggestionMetadata.FieldIntroduced] = _introduced?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-        if(_orig_introducedPrecision != _introducedPrecision)
-            diff[GpuSuggestionMetadata.FieldIntroducedPrecision] = _introducedPrecision;
-        if(!Equals(_orig_package, _package)) diff[GpuSuggestionMetadata.FieldPackage] = _package;
-        if(!Equals(_orig_process, _process)) diff[GpuSuggestionMetadata.FieldProcess] = _process;
-        if(!Nullable.Equals(_orig_processNm, _processNm))
-            diff[GpuSuggestionMetadata.FieldProcessNm] = _processNm;
-        if(!Nullable.Equals(_orig_dieSize, _dieSize))
-            diff[GpuSuggestionMetadata.FieldDieSize] = _dieSize;
-        if(!Nullable.Equals(_orig_transistors, _transistors))
-            diff[GpuSuggestionMetadata.FieldTransistors] = _transistors;
-
-        AddJunctionOps(diff, _resolutionAdds, _resolutionRemoves, GpuSuggestionMetadata.GroupResolutions);
-
-        if(diff.Count == 0)
+        if(IsCreation)
         {
-            _validationError = L["No changes detected — modify at least one field before submitting."];
-            return;
+            // Brand-new entity: emit every populated scalar plus all queued junction adds.
+            // Remove ops are ignored (no existing rows in creation mode).
+            diff[GpuSuggestionMetadata.FieldName] = _name;
+            if(!string.IsNullOrWhiteSpace(_modelCode))
+                diff[GpuSuggestionMetadata.FieldModelCode] = _modelCode;
+            if(_selectedCompany?.Id is int icid)
+                diff[GpuSuggestionMetadata.FieldCompanyId] = icid;
+            if(_introduced.HasValue)
+                diff[GpuSuggestionMetadata.FieldIntroduced] = _introduced.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            if(_introducedPrecision != 0)
+                diff[GpuSuggestionMetadata.FieldIntroducedPrecision] = _introducedPrecision;
+            if(!string.IsNullOrWhiteSpace(_package))
+                diff[GpuSuggestionMetadata.FieldPackage] = _package;
+            if(!string.IsNullOrWhiteSpace(_process))
+                diff[GpuSuggestionMetadata.FieldProcess] = _process;
+            if(_processNm.HasValue)
+                diff[GpuSuggestionMetadata.FieldProcessNm] = _processNm;
+            if(_dieSize.HasValue)
+                diff[GpuSuggestionMetadata.FieldDieSize] = _dieSize;
+            if(_transistors.HasValue)
+                diff[GpuSuggestionMetadata.FieldTransistors] = _transistors;
+
+            foreach(KeyValuePair<string, JunctionAddState> kv in _resolutionAdds) diff[kv.Key] = kv.Value.Payload;
+        }
+        else
+        {
+            if(!Equals(_orig_name, _name))           diff[GpuSuggestionMetadata.FieldName]      = _name;
+            if(!Equals(_orig_modelCode, _modelCode)) diff[GpuSuggestionMetadata.FieldModelCode] = _modelCode;
+            if(_orig_companyId != _selectedCompany?.Id)
+                diff[GpuSuggestionMetadata.FieldCompanyId] = _selectedCompany?.Id;
+            if(!Nullable.Equals(_orig_introduced, _introduced))
+                diff[GpuSuggestionMetadata.FieldIntroduced] = _introduced?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            if(_orig_introducedPrecision != _introducedPrecision)
+                diff[GpuSuggestionMetadata.FieldIntroducedPrecision] = _introducedPrecision;
+            if(!Equals(_orig_package, _package)) diff[GpuSuggestionMetadata.FieldPackage] = _package;
+            if(!Equals(_orig_process, _process)) diff[GpuSuggestionMetadata.FieldProcess] = _process;
+            if(!Nullable.Equals(_orig_processNm, _processNm))
+                diff[GpuSuggestionMetadata.FieldProcessNm] = _processNm;
+            if(!Nullable.Equals(_orig_dieSize, _dieSize))
+                diff[GpuSuggestionMetadata.FieldDieSize] = _dieSize;
+            if(!Nullable.Equals(_orig_transistors, _transistors))
+                diff[GpuSuggestionMetadata.FieldTransistors] = _transistors;
+
+            AddJunctionOps(diff, _resolutionAdds, _resolutionRemoves, GpuSuggestionMetadata.GroupResolutions);
+
+            if(diff.Count == 0)
+            {
+                _validationError = L["No changes detected — modify at least one field before submitting."];
+                return;
+            }
         }
 
         _submitting = true;
@@ -478,7 +540,7 @@
             var dto = new SuggestionDto
             {
                 EntityType          = (int?)SuggestionEntityType.Gpu,
-                EntityId            = EntityId,
+                EntityId            = IsCreation ? null : EntityId,
                 Status              = (int?)SuggestionStatus.Pending,
                 UserComment         = string.IsNullOrWhiteSpace(_userComment) ? null : _userComment.Trim(),
                 SuggestedValuesJson = json
