@@ -343,13 +343,23 @@ public class SuggestionsController(MarechaiContext context,
         }
         else
         {
-            // Subkey is only meaningful for *Description / *Synopsis entity types today; reject stray
-            // values so the dedupe index doesn't get polluted with random strings.
+            // Subkey is only meaningful for *Description / *Synopsis entity types today and
+            // for SoftwareRelease (which uses subkey to discriminate which card the user is
+            // editing — `specs`, `ratings`, or null for the general-info dialog — so the
+            // per-(user, entity, subkey) duplicate-pending guard treats those three flows
+            // as independent). Reject stray values for other entity types so the dedupe
+            // index doesn't get polluted with random strings.
             if(subkey is not null)
-                return Problem(title: "Invalid suggestion",
-                               detail:
-                               $"Subkey is not supported for {dto.EntityType} suggestions.",
-                               statusCode: StatusCodes.Status400BadRequest);
+            {
+                bool subkeyAllowed = dto.EntityType == SuggestionEntityType.SoftwareRelease &&
+                                     (subkey == Suggestions.SoftwareReleaseSuggestionApplier.GroupSpecs ||
+                                      subkey == Suggestions.SoftwareReleaseSuggestionApplier.GroupRatings);
+                if(!subkeyAllowed)
+                    return Problem(title: "Invalid suggestion",
+                                   detail:
+                                   $"Subkey is not supported for {dto.EntityType} suggestions.",
+                                   statusCode: StatusCodes.Status400BadRequest);
+            }
         }
 
         // ---- Existence check on target entity (edits only) --------------------------
@@ -3218,6 +3228,8 @@ public class SuggestionsController(MarechaiContext context,
                 Suggestions.SoftwareReleaseSuggestionApplier.GroupLanguages    => await BuildSoftwareReleaseLanguageRemoveLabelAsync(releaseIdU, token),
                 Suggestions.SoftwareReleaseSuggestionApplier.GroupBarcodes     => await BuildSoftwareReleaseBarcodeRemoveLabelAsync(releaseIdU, token),
                 Suggestions.SoftwareReleaseSuggestionApplier.GroupProductCodes => await BuildSoftwareReleaseProductCodeRemoveLabelAsync(releaseIdU, token),
+                Suggestions.SoftwareReleaseSuggestionApplier.GroupSpecs        => await BuildSoftwareReleaseAttributeRemoveLabelAsync(releaseIdU, token, Suggestions.SoftwareReleaseSuggestionApplier.AttributeCategorySpec),
+                Suggestions.SoftwareReleaseSuggestionApplier.GroupRatings      => await BuildSoftwareReleaseAttributeRemoveLabelAsync(releaseIdU, token, Suggestions.SoftwareReleaseSuggestionApplier.AttributeCategoryRating),
                 _                                                              => null
             };
             if(!string.IsNullOrEmpty(label)) currentLabels[kv.Key] = label;
@@ -3270,6 +3282,14 @@ public class SuggestionsController(MarechaiContext context,
                                          : $"#{issuer.Value}";
                 return $"{issuerLabel}: {code}";
             }
+            case Suggestions.SoftwareReleaseSuggestionApplier.GroupSpecs:
+            case Suggestions.SoftwareReleaseSuggestionApplier.GroupRatings:
+            {
+                string key   = ReadStringField(payload, "key");
+                string value = ReadStringField(payload, "value");
+                if(string.IsNullOrWhiteSpace(key) || string.IsNullOrWhiteSpace(value)) return null;
+                return $"{key.Trim()}: {value.Trim()}";
+            }
             default:
                 return null;
         }
@@ -3318,6 +3338,25 @@ public class SuggestionsController(MarechaiContext context,
                                .FirstOrDefaultAsync();
         if(row is null) return null;
         return $"{row.Issuer}: {row.Code}";
+    }
+
+    /// <summary>
+    ///     Resolve the readable label for a SoftwareAttribute (spec or rating) remove
+    ///     operation. Gating on both <c>SoftwareReleaseId</c> and <c>Category</c> mirrors
+    ///     the applier guard so a Specs dialog cannot resolve a Rating row id (the lookup
+    ///     simply returns null in that case).
+    /// </summary>
+    async Task<string> BuildSoftwareReleaseAttributeRemoveLabelAsync(ulong releaseId, string token, string category)
+    {
+        if(!long.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out long rowId)) return null;
+        var row = await context.SoftwareAttributes.AsNoTracking()
+                               .Where(a => a.Id == rowId &&
+                                           a.SoftwareReleaseId == releaseId &&
+                                           a.Category          == category)
+                               .Select(a => new { a.Key, a.Value })
+                               .FirstOrDefaultAsync();
+        if(row is null) return null;
+        return $"{row.Key}: {row.Value}";
     }
 
     /// <summary>

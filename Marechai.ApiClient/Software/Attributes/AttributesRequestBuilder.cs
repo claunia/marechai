@@ -3,6 +3,7 @@
 using Marechai.ApiClient.Models;
 using Marechai.ApiClient.Software.Attributes.DistinctCategories;
 using Marechai.ApiClient.Software.Attributes.DistinctKeys;
+using Marechai.ApiClient.Software.Attributes.DistinctValues;
 using Marechai.ApiClient.Software.Attributes.Item;
 using Marechai.ApiClient.Software.Attributes.LookupReleases;
 using Microsoft.Kiota.Abstractions.Extensions;
@@ -30,6 +31,11 @@ namespace Marechai.ApiClient.Software.Attributes
         public global::Marechai.ApiClient.Software.Attributes.DistinctKeys.DistinctKeysRequestBuilder DistinctKeys
         {
             get => new global::Marechai.ApiClient.Software.Attributes.DistinctKeys.DistinctKeysRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The distinctValues property</summary>
+        public global::Marechai.ApiClient.Software.Attributes.DistinctValues.DistinctValuesRequestBuilder DistinctValues
+        {
+            get => new global::Marechai.ApiClient.Software.Attributes.DistinctValues.DistinctValuesRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The lookupReleases property</summary>
         public global::Marechai.ApiClient.Software.Attributes.LookupReleases.LookupReleasesRequestBuilder LookupReleases

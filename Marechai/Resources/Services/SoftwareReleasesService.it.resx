@@ -502,4 +502,34 @@
   <data name="This product code is already present in the list." xml:space="preserve">
     <value>Questo codice prodotto è già presente nell’elenco.</value>
   </data>
+  <data name="Suggest specifications changes" xml:space="preserve">
+    <value>Suggerisci modifiche alle specifiche</value>
+  </data>
+  <data name="Suggest ratings changes" xml:space="preserve">
+    <value>Suggerisci modifiche alle classificazioni</value>
+  </data>
+  <data name="No specifications recorded yet." xml:space="preserve">
+    <value>Nessuna specifica ancora registrata.</value>
+  </data>
+  <data name="No ratings recorded yet." xml:space="preserve">
+    <value>Nessuna classificazione ancora registrata.</value>
+  </data>
+  <data name="Add specification" xml:space="preserve">
+    <value>Aggiungi specifica</value>
+  </data>
+  <data name="Add rating" xml:space="preserve">
+    <value>Aggiungi classificazione</value>
+  </data>
+  <data name="Specifications" xml:space="preserve">
+    <value>Specifiche</value>
+  </data>
+  <data name="Ratings" xml:space="preserve">
+    <value>Classificazioni</value>
+  </data>
+  <data name="Key" xml:space="preserve">
+    <value>Chiave</value>
+  </data>
+  <data name="Value" xml:space="preserve">
+    <value>Valore</value>
+  </data>
 </root>

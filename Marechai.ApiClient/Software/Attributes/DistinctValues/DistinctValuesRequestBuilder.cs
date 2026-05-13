@@ -8,28 +8,28 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
 using System;
-namespace Marechai.ApiClient.Software.Attributes.DistinctKeys
+namespace Marechai.ApiClient.Software.Attributes.DistinctValues
 {
     /// <summary>
-    /// Builds and executes requests for operations under \software\attributes\distinct-keys
+    /// Builds and executes requests for operations under \software\attributes\distinct-values
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class DistinctKeysRequestBuilder : BaseRequestBuilder
+    public partial class DistinctValuesRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
-        /// Instantiates a new <see cref="global::Marechai.ApiClient.Software.Attributes.DistinctKeys.DistinctKeysRequestBuilder"/> and sets the default values.
+        /// Instantiates a new <see cref="global::Marechai.ApiClient.Software.Attributes.DistinctValues.DistinctValuesRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public DistinctKeysRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/attributes/distinct-keys{?category*}", pathParameters)
+        public DistinctValuesRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/attributes/distinct-values{?category*,key*}", pathParameters)
         {
         }
         /// <summary>
-        /// Instantiates a new <see cref="global::Marechai.ApiClient.Software.Attributes.DistinctKeys.DistinctKeysRequestBuilder"/> and sets the default values.
+        /// Instantiates a new <see cref="global::Marechai.ApiClient.Software.Attributes.DistinctValues.DistinctValuesRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public DistinctKeysRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/attributes/distinct-keys{?category*}", rawUrl)
+        public DistinctValuesRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/attributes/distinct-values{?category*,key*}", rawUrl)
         {
         }
         /// <returns>A List&lt;string&gt;</returns>
@@ -37,11 +37,11 @@ namespace Marechai.ApiClient.Software.Attributes.DistinctKeys
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<List<string>?> GetAsync(Action<RequestConfiguration<global::Marechai.ApiClient.Software.Attributes.DistinctKeys.DistinctKeysRequestBuilder.DistinctKeysRequestBuilderGetQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<List<string>?> GetAsync(Action<RequestConfiguration<global::Marechai.ApiClient.Software.Attributes.DistinctValues.DistinctValuesRequestBuilder.DistinctValuesRequestBuilderGetQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<List<string>> GetAsync(Action<RequestConfiguration<global::Marechai.ApiClient.Software.Attributes.DistinctKeys.DistinctKeysRequestBuilder.DistinctKeysRequestBuilderGetQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<List<string>> GetAsync(Action<RequestConfiguration<global::Marechai.ApiClient.Software.Attributes.DistinctValues.DistinctValuesRequestBuilder.DistinctValuesRequestBuilderGetQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             var requestInfo = ToGetRequestInformation(requestConfiguration);
@@ -52,11 +52,11 @@ namespace Marechai.ApiClient.Software.Attributes.DistinctKeys
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<global::Marechai.ApiClient.Software.Attributes.DistinctKeys.DistinctKeysRequestBuilder.DistinctKeysRequestBuilderGetQueryParameters>>? requestConfiguration = default)
+        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<global::Marechai.ApiClient.Software.Attributes.DistinctValues.DistinctValuesRequestBuilder.DistinctValuesRequestBuilderGetQueryParameters>>? requestConfiguration = default)
         {
 #nullable restore
 #else
-        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<global::Marechai.ApiClient.Software.Attributes.DistinctKeys.DistinctKeysRequestBuilder.DistinctKeysRequestBuilderGetQueryParameters>> requestConfiguration = default)
+        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<global::Marechai.ApiClient.Software.Attributes.DistinctValues.DistinctValuesRequestBuilder.DistinctValuesRequestBuilderGetQueryParameters>> requestConfiguration = default)
         {
 #endif
             var requestInfo = new RequestInformation(Method.GET, UrlTemplate, PathParameters);
@@ -67,15 +67,15 @@ namespace Marechai.ApiClient.Software.Attributes.DistinctKeys
         /// <summary>
         /// Returns a request builder with the provided arbitrary URL. Using this method means any other path or query parameters are ignored.
         /// </summary>
-        /// <returns>A <see cref="global::Marechai.ApiClient.Software.Attributes.DistinctKeys.DistinctKeysRequestBuilder"/></returns>
+        /// <returns>A <see cref="global::Marechai.ApiClient.Software.Attributes.DistinctValues.DistinctValuesRequestBuilder"/></returns>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
-        public global::Marechai.ApiClient.Software.Attributes.DistinctKeys.DistinctKeysRequestBuilder WithUrl(string rawUrl)
+        public global::Marechai.ApiClient.Software.Attributes.DistinctValues.DistinctValuesRequestBuilder WithUrl(string rawUrl)
         {
-            return new global::Marechai.ApiClient.Software.Attributes.DistinctKeys.DistinctKeysRequestBuilder(rawUrl, RequestAdapter);
+            return new global::Marechai.ApiClient.Software.Attributes.DistinctValues.DistinctValuesRequestBuilder(rawUrl, RequestAdapter);
         }
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
         #pragma warning disable CS1591
-        public partial class DistinctKeysRequestBuilderGetQueryParameters 
+        public partial class DistinctValuesRequestBuilderGetQueryParameters 
         #pragma warning restore CS1591
         {
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -87,13 +87,22 @@ namespace Marechai.ApiClient.Software.Attributes.DistinctKeys
             [QueryParameter("category")]
             public string Category { get; set; }
 #endif
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("key")]
+            public string? Key { get; set; }
+#nullable restore
+#else
+            [QueryParameter("key")]
+            public string Key { get; set; }
+#endif
         }
         /// <summary>
         /// Configuration for the request such as headers, query parameters, and middleware options.
         /// </summary>
         [Obsolete("This class is deprecated. Please use the generic RequestConfiguration class generated by the generator.")]
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class DistinctKeysRequestBuilderGetRequestConfiguration : RequestConfiguration<global::Marechai.ApiClient.Software.Attributes.DistinctKeys.DistinctKeysRequestBuilder.DistinctKeysRequestBuilderGetQueryParameters>
+        public partial class DistinctValuesRequestBuilderGetRequestConfiguration : RequestConfiguration<global::Marechai.ApiClient.Software.Attributes.DistinctValues.DistinctValuesRequestBuilder.DistinctValuesRequestBuilderGetQueryParameters>
         {
         }
     }

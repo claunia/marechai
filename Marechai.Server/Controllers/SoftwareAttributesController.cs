@@ -123,9 +123,8 @@ public class SoftwareAttributesController(MarechaiContext context, IMemoryCache 
     }
 
     [HttpGet("distinct-categories")]
-    [Authorize(Roles = "Admin,UberAdmin")]
+    [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public Task<List<string>> GetDistinctCategoriesAsync() => context.SoftwareAttributes
                                                                      .Select(a => a.Category)
                                                                      .Distinct()
@@ -133,9 +132,8 @@ public class SoftwareAttributesController(MarechaiContext context, IMemoryCache 
                                                                      .ToListAsync();
 
     [HttpGet("distinct-keys")]
-    [Authorize(Roles = "Admin,UberAdmin")]
+    [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public Task<List<string>> GetDistinctKeysAsync([FromQuery] string category = null)
     {
         IQueryable<SoftwareAttribute> query = context.SoftwareAttributes;
@@ -143,6 +141,30 @@ public class SoftwareAttributesController(MarechaiContext context, IMemoryCache 
         if(!string.IsNullOrWhiteSpace(category)) query = query.Where(a => a.Category == category);
 
         return query.Select(a => a.Key).Distinct().OrderBy(k => k).ToListAsync();
+    }
+
+    /// <summary>
+    ///     Returns the DISTINCT non-empty <c>Value</c> strings recorded across all software
+    ///     attributes, optionally filtered by category and/or key. Used by the public
+    ///     collaborative suggestions dialogs (specs / ratings) which gate the value picker
+    ///     to STRICT mode over this corpus, so the user can only suggest values that
+    ///     already exist. The optional <paramref name="key" /> filter narrows the corpus to
+    ///     values previously paired with that key (since certain values only make sense
+    ///     under certain keys, e.g. "1 MB" under "RAM" but not under "ESRB Rating").
+    /// </summary>
+    [HttpGet("distinct-values")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public Task<List<string>> GetDistinctValuesAsync([FromQuery] string category = null,
+                                                     [FromQuery] string key      = null)
+    {
+        IQueryable<SoftwareAttribute> query = context.SoftwareAttributes
+                                                     .Where(a => !string.IsNullOrEmpty(a.Value));
+
+        if(!string.IsNullOrWhiteSpace(category)) query = query.Where(a => a.Category == category);
+        if(!string.IsNullOrWhiteSpace(key))      query = query.Where(a => a.Key      == key);
+
+        return query.Select(a => a.Value).Distinct().OrderBy(v => v).ToListAsync();
     }
 
     [HttpGet("lookup-releases")]

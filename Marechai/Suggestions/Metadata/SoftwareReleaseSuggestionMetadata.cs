@@ -54,10 +54,12 @@ public sealed class SoftwareReleaseSuggestionMetadata : SuggestionMetadata
     public const string GroupLanguages    = "languages";
     public const string GroupBarcodes     = "barcodes";
     public const string GroupProductCodes = "product_codes";
+    public const string GroupSpecs        = "specs";
+    public const string GroupRatings      = "ratings";
 
     static readonly HashSet<string> s_junctionGroups = new(StringComparer.Ordinal)
     {
-        GroupRegions, GroupLanguages, GroupBarcodes, GroupProductCodes
+        GroupRegions, GroupLanguages, GroupBarcodes, GroupProductCodes, GroupSpecs, GroupRatings
     };
 
     static readonly HashSet<string> s_scalarFieldNames = new(StringComparer.Ordinal)
@@ -139,6 +141,8 @@ public sealed class SoftwareReleaseSuggestionMetadata : SuggestionMetadata
         GroupLanguages    => "Languages",
         GroupBarcodes     => "Barcodes",
         GroupProductCodes => "Product codes",
+        GroupSpecs        => "Specifications",
+        GroupRatings      => "Ratings",
         _                 => group
     };
 

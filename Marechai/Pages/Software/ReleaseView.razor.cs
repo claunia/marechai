@@ -230,4 +230,53 @@ public partial class ReleaseView
             L["Suggest changes"], parameters, options);
         await dialog.Result;
     }
+
+    /// <summary>
+    ///     Open the dedicated dialog for the Specifications card. Pre-passes the existing
+    ///     spec rows so the dialog doesn't need to re-fetch — it loads only the distinct
+    ///     keys/values picker corpora. After close, refresh the local attributes list to
+    ///     reflect any rows the suggestion server may already have applied (admin viewing).
+    /// </summary>
+    async Task OpenSoftwareReleaseSpecsSuggestionDialogAsync()
+    {
+        long releaseId = Id;
+        if(releaseId <= 0) return;
+
+        var parameters = new DialogParameters
+        {
+            ["EntityId"]     = releaseId,
+            ["ExistingRows"] = _releaseSpecs ?? new List<SoftwareAttributeDto>()
+        };
+        var options = new DialogOptions { MaxWidth = MaxWidth.Medium, FullWidth = true };
+        IDialogReference dialog = await DialogService.ShowAsync<SoftwareReleaseSpecsSuggestionDialog>(
+            L["Suggest specifications changes"], parameters, options);
+        await dialog.Result;
+        await RefreshAttributesAsync();
+    }
+
+    /// <summary>Open the dedicated dialog for the Ratings card. See specs counterpart.</summary>
+    async Task OpenSoftwareReleaseRatingsSuggestionDialogAsync()
+    {
+        long releaseId = Id;
+        if(releaseId <= 0) return;
+
+        var parameters = new DialogParameters
+        {
+            ["EntityId"]     = releaseId,
+            ["ExistingRows"] = _releaseRatings ?? new List<SoftwareAttributeDto>()
+        };
+        var options = new DialogOptions { MaxWidth = MaxWidth.Medium, FullWidth = true };
+        IDialogReference dialog = await DialogService.ShowAsync<SoftwareReleaseRatingsSuggestionDialog>(
+            L["Suggest ratings changes"], parameters, options);
+        await dialog.Result;
+        await RefreshAttributesAsync();
+    }
+
+    async Task RefreshAttributesAsync()
+    {
+        _releaseAttributes = await Service.GetReleaseAttributesAsync(Id);
+        _releaseSpecs      = _releaseAttributes.Where(a => a.Category == "Spec").ToList();
+        _releaseRatings    = _releaseAttributes.Where(a => a.Category == "Rating").ToList();
+        StateHasChanged();
+    }
 }

@@ -1,0 +1,290 @@
+@using System
+@using System.Globalization
+@using System.Linq
+@using System.Text.Json
+@using System.Threading
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@using Marechai.Services
+@using Marechai.Suggestions
+@using Marechai.Suggestions.Metadata
+
+@inject IStringLocalizer<SoftwareReleasesService> L
+@inject ISnackbar                       Snackbar
+@inject SoftwareAttributesService       AttributesService
+@inject SuggestionsService              SuggestionsService
+
+@*
+    Dedicated suggestion dialog for editing the Ratings card of a SoftwareRelease.
+    Companion to SoftwareReleaseSuggestionDialog (General Info + 4 admin-side junctions)
+    and SoftwareReleaseSpecsSuggestionDialog (Specifications card).
+
+    Backed by SoftwareAttribute (BaseModel<long> with Category="Rating" discriminator).
+    See SoftwareReleaseSpecsSuggestionDialog header for the full design notes — this
+    file is the verbatim ratings counterpart with "Spec" → "Rating" and
+    "specifications" → "ratings" substitutions.
+
+    Wire shape: ratings.add.<uuid> = {key, value}; ratings.remove.<rowId> = null.
+*@
+
+<MudDialog>
+    <DialogContent>
+        @if(_loading)
+        {
+            <MudProgressLinear Indeterminate="true"/>
+        }
+        else
+        {
+            <MudText Typo="Typo.body2" Class="mb-3">
+                @L["Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently."]
+            </MudText>
+
+            <MudPaper Outlined="true" Class="pa-3 mb-3">
+                @if((ExistingRows?.Count ?? 0) == 0 && _adds.Count == 0)
+                {
+                    <MudText Typo="Typo.body2" Class="mud-text-secondary mb-2">@L["No ratings recorded yet."]</MudText>
+                }
+                @foreach(SoftwareAttributeDto row in ExistingRows ?? new())
+                {
+                    string token   = row.Id?.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
+                    bool   removed = !string.IsNullOrEmpty(token) && _removeTokens.Contains(token);
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                        <MudText Style="@(removed ? "text-decoration: line-through;" : "")">@FormatRow(row)</MudText>
+                        @if(removed)
+                        {
+                            <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                       OnClick="@(() => _removeTokens.Remove(token))">@L["Undo"]</MudButton>
+                        }
+                        else if(!string.IsNullOrEmpty(token))
+                        {
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                           OnClick="@(() => _removeTokens.Add(token))"/>
+                        }
+                    </MudStack>
+                }
+                @foreach(KeyValuePair<string, AddState> kv in _adds)
+                {
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                        <MudText><strong>+ @kv.Value.Display</strong></MudText>
+                        <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                   OnClick="@(() => _adds.Remove(kv.Key))">@L["Undo"]</MudButton>
+                    </MudStack>
+                }
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-2">
+                    <MudAutocomplete T="string" Value="@_pickKey" ValueChanged="OnKeyChangedAsync"
+                                     SearchFunc="SearchKeys" Clearable="true" Strict="true"
+                                     Label="@L["Key"]" Style="flex: 1;"/>
+                    <MudAutocomplete T="string" Value="@_pickValue" ValueChanged="@(v => { _pickValue = v; })"
+                                     SearchFunc="SearchValues" Clearable="true" Strict="true"
+                                     Disabled="@string.IsNullOrWhiteSpace(_pickKey)"
+                                     Label="@L["Value"]" Style="flex: 1;"/>
+                    <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
+                               OnClick="AddRow"
+                               Disabled="@(string.IsNullOrWhiteSpace(_pickKey) || string.IsNullOrWhiteSpace(_pickValue))">@L["Add rating"]</MudButton>
+                </MudStack>
+            </MudPaper>
+
+            <MudTextField T="string" Label="@L["Optional comment (References, sources, etc...)"]" Lines="2"
+                          MaxLength="2000" @bind-Value="_userComment"/>
+
+            @if(!string.IsNullOrWhiteSpace(_validationError))
+            {
+                <MudAlert Severity="Severity.Error" Class="mt-2">@_validationError</MudAlert>
+            }
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit"
+                   Disabled="@(_loading || _submitting || !HasAnyChange())">
+            @if(_submitting)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true"/>
+            }
+            else
+            {
+                @L["Submit suggestion"]
+            }
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code
+{
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public long EntityId { get; set; }
+
+    /// <summary>Pre-loaded existing rating rows for THIS release (passed by the caller).</summary>
+    [Parameter] public List<SoftwareAttributeDto> ExistingRows { get; set; } = new();
+
+    sealed class AddState
+    {
+        public Dictionary<string, object> Payload { get; set; }
+        public string                     Display { get; set; }
+    }
+
+    bool   _loading = true;
+    bool   _submitting;
+    string _validationError;
+    string _userComment;
+
+    List<string> _allKeys   = new();
+    List<string> _allValues = new();
+
+    HashSet<string>             _removeTokens = new();
+    Dictionary<string, AddState> _adds        = new();
+
+    string _pickKey;
+    string _pickValue;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Load only the keys corpus on open. Values are fetched lazily when the user
+        // picks a key, since rating values are key-specific (e.g. "E" makes sense under
+        // "ESRB" but not under "PEGI").
+        _allKeys   = await AttributesService.GetDistinctKeysAsync("Rating") ?? new();
+        _allValues = new();
+        _loading   = false;
+    }
+
+    async Task OnKeyChangedAsync(string newKey)
+    {
+        _pickKey = newKey;
+        if(string.IsNullOrWhiteSpace(newKey))
+        {
+            _allValues = new();
+            _pickValue = null;
+            return;
+        }
+        _allValues = await AttributesService.GetDistinctValuesAsync("Rating", newKey) ?? new();
+        if(!string.IsNullOrEmpty(_pickValue) && !_allValues.Contains(_pickValue))
+            _pickValue = null;
+    }
+
+    Task<IEnumerable<string>> SearchKeys(string value, CancellationToken ct)
+    {
+        HashSet<string> taken = BuildTakenKeySet();
+        IEnumerable<string> r = (_allKeys ?? Enumerable.Empty<string>()).Where(k => !taken.Contains(k));
+        if(!string.IsNullOrWhiteSpace(value))
+            r = r.Where(s => s?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
+        return Task.FromResult(r.Take(100));
+    }
+
+    Task<IEnumerable<string>> SearchValues(string value, CancellationToken ct)
+    {
+        IEnumerable<string> r = _allValues ?? Enumerable.Empty<string>();
+        if(!string.IsNullOrWhiteSpace(value))
+            r = r.Where(s => s?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
+        return Task.FromResult(r.Take(100));
+    }
+
+    HashSet<string> BuildTakenKeySet()
+    {
+        var taken = new HashSet<string>(StringComparer.Ordinal);
+        if(ExistingRows is not null)
+        {
+            foreach(SoftwareAttributeDto row in ExistingRows)
+            {
+                if(string.IsNullOrEmpty(row.Key)) continue;
+                string token = row.Id?.ToString(CultureInfo.InvariantCulture);
+                if(!string.IsNullOrEmpty(token) && _removeTokens.Contains(token)) continue;
+                taken.Add(row.Key);
+            }
+        }
+        foreach(AddState a in _adds.Values)
+            if(a.Payload?.TryGetValue("key", out object kv) == true && kv is string ks && !string.IsNullOrEmpty(ks))
+                taken.Add(ks);
+        return taken;
+    }
+
+    static string FormatRow(SoftwareAttributeDto a)
+    {
+        if(a is null) return string.Empty;
+        return $"{a.Key}: {a.Value}";
+    }
+
+    static string NewKey(string group, string op) => $"{group}.{op}.{Guid.NewGuid():N}";
+
+    void AddRow()
+    {
+        if(string.IsNullOrWhiteSpace(_pickKey) || string.IsNullOrWhiteSpace(_pickValue)) return;
+
+        string key   = _pickKey.Trim();
+        string value = _pickValue.Trim();
+        if(key.Length   > 128) return;
+        if(value.Length > 512) return;
+
+        HashSet<string> taken = BuildTakenKeySet();
+        if(taken.Contains(key)) return;
+
+        string addKey = NewKey(SoftwareReleaseSuggestionMetadata.GroupRatings, "add");
+        _adds[addKey] = new AddState
+        {
+            Payload = new Dictionary<string, object>(StringComparer.Ordinal)
+            {
+                ["key"]   = key,
+                ["value"] = value
+            },
+            Display = $"{key}: {value}"
+        };
+        _pickKey   = null;
+        _pickValue = null;
+    }
+
+    bool HasAnyChange() => _adds.Count > 0 || _removeTokens.Count > 0;
+
+    void Cancel() => MudDialog.Cancel();
+
+    async Task Submit()
+    {
+        _validationError = null;
+        if(_loading) return;
+
+        if(!HasAnyChange())
+        {
+            _validationError = L["No changes detected — modify at least one field before submitting."];
+            return;
+        }
+
+        var diff = new Dictionary<string, object>(StringComparer.Ordinal);
+
+        foreach(KeyValuePair<string, AddState> kv in _adds)
+            diff[kv.Key] = kv.Value.Payload;
+        foreach(string token in _removeTokens)
+            diff[$"{SoftwareReleaseSuggestionMetadata.GroupRatings}.remove.{token}"] = null;
+
+        _submitting = true;
+        try
+        {
+            string json = JsonSerializer.Serialize(diff);
+            var dto = new SuggestionDto
+            {
+                EntityType          = (int?)SuggestionEntityType.SoftwareRelease,
+                EntityId            = EntityId,
+                // Subkey discriminates the per-(user, entity, subkey) duplicate-pending
+                // guard so a user can have a pending Specs suggestion AND a pending
+                // Ratings suggestion AND a pending general-info suggestion concurrently.
+                Subkey              = SoftwareReleaseSuggestionMetadata.GroupRatings,
+                Status              = (int?)SuggestionStatus.Pending,
+                UserComment         = string.IsNullOrWhiteSpace(_userComment) ? null : _userComment.Trim(),
+                SuggestedValuesJson = json
+            };
+
+            var (created, error) = await SuggestionsService.CreateAsync(dto);
+
+            if(created is null)
+            {
+                _validationError = string.IsNullOrWhiteSpace(error) ? L["Failed to submit suggestion."].Value : error;
+                return;
+            }
+
+            Snackbar.Add(L["Suggestion submitted. An administrator will review it."], Severity.Success);
+            MudDialog.Close(DialogResult.Ok(created));
+        }
+        finally
+        {
+            _submitting = false;
+        }
+    }
+}

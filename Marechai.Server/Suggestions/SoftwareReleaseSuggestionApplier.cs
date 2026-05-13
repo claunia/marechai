@@ -64,13 +64,25 @@ internal static class SoftwareReleaseSuggestionApplier
     public const string GroupLanguages    = "languages";
     public const string GroupBarcodes     = "barcodes";
     public const string GroupProductCodes = "product_codes";
+    public const string GroupSpecs        = "specs";
+    public const string GroupRatings      = "ratings";
+
+    // SoftwareAttribute.Category discriminator literals (database-bound strings).
+    public const string AttributeCategorySpec   = "Spec";
+    public const string AttributeCategoryRating = "Rating";
+
+    // Database column limits — kept in sync with SoftwareAttribute model.
+    const int MAX_ATTRIBUTE_KEY_LENGTH   = 128;
+    const int MAX_ATTRIBUTE_VALUE_LENGTH = 512;
 
     public static readonly IReadOnlyCollection<string> JunctionGroups = new[]
     {
         GroupRegions,
         GroupLanguages,
         GroupBarcodes,
-        GroupProductCodes
+        GroupProductCodes,
+        GroupSpecs,
+        GroupRatings
     };
 
     public static bool IsKnownFieldName(string fieldName)
@@ -87,6 +99,8 @@ internal static class SoftwareReleaseSuggestionApplier
     ///         <item><c>languages</c>: token = ISO-639-3 code (3-char string).</item>
     ///         <item><c>barcodes</c>: token = row Id (ulong) — surrogate key.</item>
     ///         <item><c>product_codes</c>: token = row Id (ulong) — surrogate key.</item>
+    ///         <item><c>specs</c>: token = row Id (long) — surrogate key on SoftwareAttribute.</item>
+    ///         <item><c>ratings</c>: token = row Id (long) — surrogate key on SoftwareAttribute.</item>
     ///     </list>
     ///     For <c>add</c> ops the token is a client-generated GUID (uniqueness scaffold);
     ///     the actual payload arrives as the field value.
@@ -308,9 +322,46 @@ internal static class SoftwareReleaseSuggestionApplier
                 await context.SaveChangesAsync();
                 return true;
             }
+            case GroupSpecs:
+                return await AddSoftwareAttributeAsync(context, releaseId, payload, AttributeCategorySpec);
+            case GroupRatings:
+                return await AddSoftwareAttributeAsync(context, releaseId, payload, AttributeCategoryRating);
             default:
                 return false;
         }
+    }
+
+    /// <summary>
+    ///     Validate and insert a new <see cref="SoftwareAttribute" /> row for the given
+    ///     release. Payload must carry <c>key</c> and <c>value</c> string fields. Dedup
+    ///     matches the unique index <c>(SoftwareReleaseId, Category, Key)</c>: only ONE
+    ///     value is allowed per (release, category, key) so a duplicate-key add is
+    ///     rejected. Both length limits mirror the database column constraints.
+    /// </summary>
+    static async Task<bool> AddSoftwareAttributeAsync(MarechaiContext context, ulong releaseId,
+                                                      Dictionary<string, object> payload, string category)
+    {
+        string key   = GetString(payload, "key");
+        string value = GetString(payload, "value");
+        if(string.IsNullOrWhiteSpace(key) || string.IsNullOrWhiteSpace(value)) return false;
+        key   = key.Trim();
+        value = value.Trim();
+        if(key.Length   > MAX_ATTRIBUTE_KEY_LENGTH)   return false;
+        if(value.Length > MAX_ATTRIBUTE_VALUE_LENGTH) return false;
+        if(await context.SoftwareAttributes.AsNoTracking()
+                        .AnyAsync(a => a.SoftwareReleaseId == releaseId &&
+                                       a.Category          == category   &&
+                                       a.Key               == key))
+            return false;
+        await context.SoftwareAttributes.AddAsync(new SoftwareAttribute
+        {
+            SoftwareReleaseId = releaseId,
+            Category          = category,
+            Key               = key,
+            Value             = value
+        });
+        await context.SaveChangesAsync();
+        return true;
     }
 
     // ───────────────────────────── Junction remove ─────────────────────────────
@@ -354,9 +405,31 @@ internal static class SoftwareReleaseSuggestionApplier
                                     .Where(p => p.Id == rowId && p.ReleaseId == releaseId)
                                     .ExecuteDeleteAsync() > 0;
             }
+            case GroupSpecs:
+                return await RemoveSoftwareAttributeAsync(context, releaseId, token, AttributeCategorySpec);
+            case GroupRatings:
+                return await RemoveSoftwareAttributeAsync(context, releaseId, token, AttributeCategoryRating);
             default:
                 return false;
         }
+    }
+
+    /// <summary>
+    ///     Remove a <see cref="SoftwareAttribute" /> row by surrogate Id. Gating on BOTH
+    ///     <see cref="SoftwareAttribute.SoftwareReleaseId" /> and <see cref="SoftwareAttribute.Category" />
+    ///     prevents cross-entity tampering: a Specs dialog cannot remove a Rating row even
+    ///     if the user knows its id, and an attacker cannot delete attributes belonging to
+    ///     another release by guessing a row id.
+    /// </summary>
+    static async Task<bool> RemoveSoftwareAttributeAsync(MarechaiContext context, ulong releaseId,
+                                                         string token, string category)
+    {
+        if(!long.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out long rowId)) return false;
+        return await context.SoftwareAttributes
+                            .Where(a => a.Id == rowId &&
+                                        a.SoftwareReleaseId == releaseId &&
+                                        a.Category          == category)
+                            .ExecuteDeleteAsync() > 0;
     }
 
     // ───────────────────────────── Coercion helpers ─────────────────────────────

@@ -92,6 +92,30 @@ public class SoftwareAttributesService(Marechai.ApiClient.Client client)
         }
     }
 
+    /// <summary>
+    ///     Returns the DISTINCT non-empty <c>Value</c> strings used across software
+    ///     attributes (optionally filtered by category and/or key). Used by the public
+    ///     collaborative suggestion dialogs (specs / ratings): the dialog calls this with
+    ///     the currently selected key to narrow the value picker corpus to values that
+    ///     have actually been paired with that key (since e.g. "1 MB" only makes sense
+    ///     under "RAM", not under "ESRB Rating").
+    /// </summary>
+    public async Task<List<string>> GetDistinctValuesAsync(string category = null, string key = null)
+    {
+        try
+        {
+            return await client.Software.Attributes.DistinctValues.GetAsync(rc =>
+            {
+                rc.QueryParameters.Category = string.IsNullOrWhiteSpace(category) ? null : category;
+                rc.QueryParameters.Key      = string.IsNullOrWhiteSpace(key)      ? null : key;
+            }) ?? new List<string>();
+        }
+        catch
+        {
+            return new List<string>();
+        }
+    }
+
     public async Task<List<SoftwareReleaseLookupDto>> LookupReleasesAsync(int softwareId)
     {
         try

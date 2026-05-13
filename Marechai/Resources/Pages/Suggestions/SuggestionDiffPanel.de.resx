@@ -319,4 +319,10 @@
   <data name="Product codes" xml:space="preserve">
     <value>Produktcodes</value>
   </data>
+  <data name="Specifications" xml:space="preserve">
+    <value>Spezifikationen</value>
+  </data>
+  <data name="Ratings" xml:space="preserve">
+    <value>Bewertungen</value>
+  </data>
 </root>
