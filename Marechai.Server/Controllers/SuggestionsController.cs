@@ -104,7 +104,8 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.MagazineIssue,
         SuggestionEntityType.Gpu,
         SuggestionEntityType.Processor,
-        SuggestionEntityType.SoundSynth
+        SuggestionEntityType.SoundSynth,
+        SuggestionEntityType.Person
     };
 
     // ───────────────────────────── POST /suggestions ─────────────────────────────
@@ -1353,6 +1354,16 @@ public class SuggestionsController(MarechaiContext context,
                     return "A new sound synthesizer suggestion must include a non-empty 'name' field.";
                 return null;
             }
+            case SuggestionEntityType.Person:
+            {
+                if(!values.TryGetValue(Suggestions.PersonSuggestionApplier.FieldName, out object n) ||
+                   string.IsNullOrWhiteSpace(ExtractStringForValidation(n)))
+                    return "A new person suggestion must include a non-empty 'name' field.";
+                if(!values.TryGetValue(Suggestions.PersonSuggestionApplier.FieldSurname, out object s) ||
+                   string.IsNullOrWhiteSpace(ExtractStringForValidation(s)))
+                    return "A new person suggestion must include a non-empty 'surname' field.";
+                return null;
+            }
             default:
                 return $"Brand-new {type} suggestions are not supported.";
         }
@@ -1450,6 +1461,16 @@ public class SuggestionsController(MarechaiContext context,
                 }
                 return null;
             }
+            case SuggestionEntityType.Person:
+            {
+                // Combine name + surname for the queue display label. Fall back gracefully
+                // when only one is present (the validator will reject the suggestion later
+                // anyway, but we still want a sensible label in the meantime).
+                string namePart    = values.TryGetValue(Suggestions.PersonSuggestionApplier.FieldName,    out object nVal) ? ExtractStringForValidation(nVal)?.Trim() : null;
+                string surnamePart = values.TryGetValue(Suggestions.PersonSuggestionApplier.FieldSurname, out object sVal) ? ExtractStringForValidation(sVal)?.Trim() : null;
+                string combined    = string.Join(" ", new[] { namePart, surnamePart }.Where(p => !string.IsNullOrEmpty(p)));
+                return string.IsNullOrWhiteSpace(combined) ? null : combined;
+            }
             default:
                 return null;
         }
@@ -1514,6 +1535,12 @@ public class SuggestionsController(MarechaiContext context,
                 // rebrands and manufacturers (e.g. "AY-3-8910" by GI vs Yamaha as YM2149,
                 // "SID 6581" vs "SID 8580"). Dedupe on name only would over-block; rely on
                 // admin moderation to spot true duplicates instead.
+                return false;
+            case SuggestionEntityType.Person:
+                // Person names legitimately repeat across history, regions and eras (many
+                // distinct historical figures share names like "John Smith"). Dedupe on the
+                // first name alone would massively over-block; rely on admin moderation to
+                // spot true duplicates by combining name+surname+birth date+context.
                 return false;
             default:
                 return false;
@@ -1589,6 +1616,12 @@ public class SuggestionsController(MarechaiContext context,
             {
                 var (id, applied) = await Suggestions.SoundSynthSuggestionApplier.CreateAsync(
                     context, suggested, accepted, creditedUserId);
+                return (id, applied);
+            }
+            case SuggestionEntityType.Person:
+            {
+                var (id, applied) = await Suggestions.PersonSuggestionApplier.CreateAsync(
+                    context, suggested, accepted, creditedUserId, _assetRootPath);
                 return (id, applied);
             }
             default:

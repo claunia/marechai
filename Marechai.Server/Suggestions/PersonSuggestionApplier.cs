@@ -109,6 +109,91 @@ internal static class PersonSuggestionApplier
     }
 
     /// <summary>
+    ///     Create a brand-new Person row from a suggestion. Both <c>name</c> and
+    ///     <c>surname</c> must be present in <paramref name="accepted" /> and non-empty;
+    ///     every other accepted scalar is then applied via the same coercion+validation
+    ///     table the edit path uses. Person has zero in-scope junctions so there is no
+    ///     second-pass junction loop. Photo promotion happens BEFORE the row is persisted
+    ///     so the cover guid + extension are part of the initial save.
+    /// </summary>
+    /// <param name="creditedUserId">
+    ///     The Identity user id to attribute the row to in audit history (the suggesting
+    ///     user, NOT the reviewing admin). Forwarded to <c>SaveChangesWithUserAsync</c>.
+    /// </param>
+    public static async Task<(int? newId, HashSet<string> applied)> CreateAsync(
+        MarechaiContext context,
+        Dictionary<string, object> suggested,
+        HashSet<string> accepted,
+        string creditedUserId,
+        string assetRootPath)
+    {
+        var applied = new HashSet<string>(StringComparer.Ordinal);
+
+        // Name + Surname are mandatory; everything else (alias, dates, country, contact
+        // links, photo) is optional. Reject the addition outright if the admin didn't
+        // tick both mandatory fields with non-empty values.
+        if(!accepted.Contains(FieldName) || !suggested.TryGetValue(FieldName, out object nameVal))
+            return (null, applied);
+        string name = ToStringValue(nameVal);
+        if(string.IsNullOrWhiteSpace(name) || name.Trim().Length > 100) return (null, applied);
+
+        if(!accepted.Contains(FieldSurname) || !suggested.TryGetValue(FieldSurname, out object surnameVal))
+            return (null, applied);
+        string surname = ToStringValue(surnameVal);
+        if(string.IsNullOrWhiteSpace(surname) || surname.Trim().Length > 100) return (null, applied);
+
+        var p = new Person { Name = name.Trim(), Surname = surname.Trim() };
+        applied.Add(FieldName);
+        applied.Add(FieldSurname);
+
+        // Apply remaining accepted scalar fields via the same coercion+validation table the
+        // edit path uses. The cover-pending field is handled in a dedicated pass below.
+        foreach(string fieldName in accepted)
+        {
+            if(fieldName == FieldName) continue;
+            if(fieldName == FieldSurname) continue;
+            if(fieldName == FieldCoverPendingGuid) continue;
+            if(!s_scalarFieldNames.Contains(fieldName)) continue;
+            if(!suggested.TryGetValue(fieldName, out object value)) continue;
+
+            try
+            {
+                if(await ApplyScalar(context, p, fieldName, value)) applied.Add(fieldName);
+            }
+            catch
+            {
+                // Coerce failure: silently skip this field.
+            }
+        }
+
+        // Cover-pending: promote the file BEFORE saving so the new row carries the photo
+        // guid + extension from the moment it's persisted. Failure here just skips the
+        // photo; the rest of the entity still gets created.
+        if(accepted.Contains(FieldCoverPendingGuid) &&
+           suggested.TryGetValue(FieldCoverPendingGuid, out object coverGuidRaw))
+        {
+            string guidStr = ToStringValue(coverGuidRaw);
+            if(!string.IsNullOrEmpty(guidStr) && Guid.TryParse(guidStr, out Guid pendingGuid))
+            {
+                if(await PromotePersonPhotoAsync(p, assetRootPath, pendingGuid))
+                    applied.Add(FieldCoverPendingGuid);
+            }
+        }
+
+        await context.People.AddAsync(p);
+
+        if(string.IsNullOrEmpty(creditedUserId))
+            await context.SaveChangesAsync();
+        else
+            await context.SaveChangesWithUserAsync(creditedUserId);
+
+        // Person has no in-scope junctions — the five junctions (PeopleByCompany,
+        // PeopleByBook, PeopleByDocument, PeopleByMagazine, PeopleBySoftware) are owned
+        // by the other side per the established convention. No second-pass loop here.
+        return (p.Id, applied);
+    }
+
+    /// <summary>
     ///     Apply the accepted fields onto the Person row. Cover promotion runs first as an
     ///     atomic unit; scalar fields are batched into a single SaveChanges at the end.
     /// </summary>

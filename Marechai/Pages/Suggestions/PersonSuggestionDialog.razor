@@ -35,9 +35,18 @@
         }
         else
         {
-            <MudText Typo="Typo.body2" Class="mb-3">
-                @L["Edit any field below. Only your changes will be sent for review; an administrator can accept or reject each one independently."]
-            </MudText>
+            @if(IsCreation)
+            {
+                <MudText Typo="Typo.body2" Class="mb-3">
+                    @L["Add a new person from scratch. The information will be reviewed by an administrator before being made public. Name and surname are required; everything else (alias, dates, country of birth, photo, contact links) is optional."]
+                </MudText>
+            }
+            else
+            {
+                <MudText Typo="Typo.body2" Class="mb-3">
+                    @L["Edit any field below. Only your changes will be sent for review; an administrator can accept or reject each one independently."]
+                </MudText>
+            }
 
             @* ── Scalar fields ── *@
             <MudPaper Outlined="true" Class="pa-3 mb-3">
@@ -183,7 +192,7 @@
     <DialogActions>
         <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
         <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit"
-                   Disabled="@(_loading || _submitting || !HasAnyChange())">
+                   Disabled="@(_loading || _submitting || (!IsCreation && !HasAnyChange()) || (IsCreation && !HasMandatoryFieldsForCreation()))">
             @if(_submitting)
             {
                 <MudProgressCircular Size="Size.Small" Indeterminate="true"/>
@@ -202,6 +211,15 @@
 
     [Parameter] public long      EntityId   { get; set; }
     [Parameter] public PersonDto CurrentDto { get; set; }
+
+    /// <summary>
+    ///     When <c>true</c>, the dialog runs in creation mode: skips the CurrentDto
+    ///     snapshot, shows a creation-specific header, swaps the photo upload to the
+    ///     <c>/people/photo/pending/new</c> endpoint, and emits all non-empty scalars on
+    ///     submit (rather than a diff). The wire EntityId is sent as <c>null</c> to
+    ///     trigger the addition path on the server.
+    /// </summary>
+    [Parameter] public bool IsCreation { get; set; }
 
     bool _loading = true;
     bool _submitting;
@@ -252,8 +270,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // Seed scalar state from the current DTO snapshot.
-        if(CurrentDto is not null)
+        // Seed scalar state from the current DTO snapshot — skipped in creation mode
+        // because there's no entity to diff against.
+        if(!IsCreation && CurrentDto is not null)
         {
             _name               = CurrentDto.Name;
             _surname            = CurrentDto.Surname;
@@ -337,9 +356,15 @@
                 return;
             }
 
-            UploadResult res = await JS.InvokeAsync<UploadResult>(
-                "MarechaiPendingCover.uploadPersonPhoto",
-                ApiAssetUrls.BaseUrl, token, (int)EntityId, _photoInputId);
+            UploadResult res;
+            if(IsCreation)
+                res = await JS.InvokeAsync<UploadResult>(
+                    "MarechaiPendingCover.uploadNewPersonPhoto",
+                    ApiAssetUrls.BaseUrl, token, _photoInputId);
+            else
+                res = await JS.InvokeAsync<UploadResult>(
+                    "MarechaiPendingCover.uploadPersonPhoto",
+                    ApiAssetUrls.BaseUrl, token, (int)EntityId, _photoInputId);
 
             if(res is null || !res.ok || string.IsNullOrEmpty(res.guid))
             {
@@ -430,50 +455,98 @@
 
     void Cancel() => MudDialog.Cancel();
 
+    /// <summary>
+    ///     Creation-mode equivalent of <see cref="HasAnyChange" />: the Submit button is
+    ///     enabled iff the two mandatory fields (name + surname) are non-empty. Everything
+    ///     else (alias, dates, country, contact links, photo) is optional.
+    /// </summary>
+    bool HasMandatoryFieldsForCreation() =>
+        !string.IsNullOrWhiteSpace(_name) && !string.IsNullOrWhiteSpace(_surname);
+
     async Task Submit()
     {
         _validationError = null;
         if(_loading) return;
 
-        // Name is required: never let the user clear it.
+        // Name is required: never let the user clear it (applies to BOTH edit and creation
+        // mode; creation mode adds the surname check below).
         if(string.IsNullOrWhiteSpace(_name))
         {
             _validationError = L["Name is required."];
             return;
         }
 
+        if(IsCreation && string.IsNullOrWhiteSpace(_surname))
+        {
+            _validationError = L["Name and surname are required."];
+            return;
+        }
+
         var diff = new Dictionary<string, object>(StringComparer.Ordinal);
 
-        if(!Equals(_orig_name, _name))               diff[PersonSuggestionMetadata.FieldName]        = _name;
-        if(!Equals(_orig_surname, _surname))         diff[PersonSuggestionMetadata.FieldSurname]     = _surname;
-        if(!Equals(_orig_alias, _alias))             diff[PersonSuggestionMetadata.FieldAlias]       = _alias;
-        if(!Equals(_orig_displayName, _displayName)) diff[PersonSuggestionMetadata.FieldDisplayName] = _displayName;
-
-        short? newCountryId = _selectedCountry?.Id.HasValue == true ? (short?)_selectedCountry.Id.Value : null;
-        if(_orig_countryId != newCountryId)
-            diff[PersonSuggestionMetadata.FieldCountryOfBirthId] = newCountryId;
-
-        if(!Nullable.Equals(_orig_birthDate, _birthDate))
-            diff[PersonSuggestionMetadata.FieldBirthDate] = _birthDate?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-        if(_orig_birthDatePrecision != _birthDatePrecision)
-            diff[PersonSuggestionMetadata.FieldBirthDatePrecision] = _birthDatePrecision;
-        if(!Nullable.Equals(_orig_deathDate, _deathDate))
-            diff[PersonSuggestionMetadata.FieldDeathDate] = _deathDate?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-        if(_orig_deathDatePrecision != _deathDatePrecision)
-            diff[PersonSuggestionMetadata.FieldDeathDatePrecision] = _deathDatePrecision;
-        if(!Equals(_orig_webpage, _webpage))   diff[PersonSuggestionMetadata.FieldWebpage]  = _webpage;
-        if(!Equals(_orig_twitter, _twitter))   diff[PersonSuggestionMetadata.FieldTwitter]  = _twitter;
-        if(!Equals(_orig_facebook, _facebook)) diff[PersonSuggestionMetadata.FieldFacebook] = _facebook;
-
-        // Photo-pending: emit the guid only. The applier reads the extension from the
-        // pending-image sidecar (so we don't need to round-trip it on the wire).
-        if(!string.IsNullOrEmpty(_pendingPhotoGuid))
-            diff[PersonSuggestionMetadata.FieldCoverPendingGuid] = _pendingPhotoGuid;
-
-        if(diff.Count == 0)
+        if(IsCreation)
         {
-            _validationError = L["No changes detected — modify at least one field before submitting."];
-            return;
+            // Creation mode: emit every populated scalar (no diff vs snapshot — there is
+            // no snapshot). The applier validates name + surname presence again
+            // server-side as defence in depth.
+            diff[PersonSuggestionMetadata.FieldName]    = _name;
+            diff[PersonSuggestionMetadata.FieldSurname] = _surname;
+            if(!string.IsNullOrWhiteSpace(_alias))
+                diff[PersonSuggestionMetadata.FieldAlias] = _alias;
+            if(!string.IsNullOrWhiteSpace(_displayName))
+                diff[PersonSuggestionMetadata.FieldDisplayName] = _displayName;
+            if(_selectedCountry?.Id is int icid)
+                diff[PersonSuggestionMetadata.FieldCountryOfBirthId] = (short)icid;
+            if(_birthDate.HasValue)
+                diff[PersonSuggestionMetadata.FieldBirthDate] = _birthDate.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            if(_birthDatePrecision != 0)
+                diff[PersonSuggestionMetadata.FieldBirthDatePrecision] = _birthDatePrecision;
+            if(_deathDate.HasValue)
+                diff[PersonSuggestionMetadata.FieldDeathDate] = _deathDate.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            if(_deathDatePrecision != 0)
+                diff[PersonSuggestionMetadata.FieldDeathDatePrecision] = _deathDatePrecision;
+            if(!string.IsNullOrWhiteSpace(_webpage))
+                diff[PersonSuggestionMetadata.FieldWebpage] = _webpage;
+            if(!string.IsNullOrWhiteSpace(_twitter))
+                diff[PersonSuggestionMetadata.FieldTwitter] = _twitter;
+            if(!string.IsNullOrWhiteSpace(_facebook))
+                diff[PersonSuggestionMetadata.FieldFacebook] = _facebook;
+            if(!string.IsNullOrEmpty(_pendingPhotoGuid))
+                diff[PersonSuggestionMetadata.FieldCoverPendingGuid] = _pendingPhotoGuid;
+        }
+        else
+        {
+            if(!Equals(_orig_name, _name))               diff[PersonSuggestionMetadata.FieldName]        = _name;
+            if(!Equals(_orig_surname, _surname))         diff[PersonSuggestionMetadata.FieldSurname]     = _surname;
+            if(!Equals(_orig_alias, _alias))             diff[PersonSuggestionMetadata.FieldAlias]       = _alias;
+            if(!Equals(_orig_displayName, _displayName)) diff[PersonSuggestionMetadata.FieldDisplayName] = _displayName;
+
+            short? newCountryId = _selectedCountry?.Id.HasValue == true ? (short?)_selectedCountry.Id.Value : null;
+            if(_orig_countryId != newCountryId)
+                diff[PersonSuggestionMetadata.FieldCountryOfBirthId] = newCountryId;
+
+            if(!Nullable.Equals(_orig_birthDate, _birthDate))
+                diff[PersonSuggestionMetadata.FieldBirthDate] = _birthDate?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            if(_orig_birthDatePrecision != _birthDatePrecision)
+                diff[PersonSuggestionMetadata.FieldBirthDatePrecision] = _birthDatePrecision;
+            if(!Nullable.Equals(_orig_deathDate, _deathDate))
+                diff[PersonSuggestionMetadata.FieldDeathDate] = _deathDate?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            if(_orig_deathDatePrecision != _deathDatePrecision)
+                diff[PersonSuggestionMetadata.FieldDeathDatePrecision] = _deathDatePrecision;
+            if(!Equals(_orig_webpage, _webpage))   diff[PersonSuggestionMetadata.FieldWebpage]  = _webpage;
+            if(!Equals(_orig_twitter, _twitter))   diff[PersonSuggestionMetadata.FieldTwitter]  = _twitter;
+            if(!Equals(_orig_facebook, _facebook)) diff[PersonSuggestionMetadata.FieldFacebook] = _facebook;
+
+            // Photo-pending: emit the guid only. The applier reads the extension from the
+            // pending-image sidecar (so we don't need to round-trip it on the wire).
+            if(!string.IsNullOrEmpty(_pendingPhotoGuid))
+                diff[PersonSuggestionMetadata.FieldCoverPendingGuid] = _pendingPhotoGuid;
+
+            if(diff.Count == 0)
+            {
+                _validationError = L["No changes detected — modify at least one field before submitting."];
+                return;
+            }
         }
 
         _submitting = true;
@@ -483,7 +556,7 @@
             var dto = new SuggestionDto
             {
                 EntityType          = (int?)SuggestionEntityType.Person,
-                EntityId            = EntityId,
+                EntityId            = IsCreation ? null : EntityId,
                 Status              = (int?)SuggestionStatus.Pending,
                 UserComment         = string.IsNullOrWhiteSpace(_userComment) ? null : _userComment.Trim(),
                 SuggestedValuesJson = json
