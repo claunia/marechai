@@ -102,7 +102,8 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.Book,
         SuggestionEntityType.Document,
         SuggestionEntityType.MagazineIssue,
-        SuggestionEntityType.Gpu
+        SuggestionEntityType.Gpu,
+        SuggestionEntityType.Processor
     };
 
     // ───────────────────────────── POST /suggestions ─────────────────────────────
@@ -1337,6 +1338,13 @@ public class SuggestionsController(MarechaiContext context,
                     return "A new GPU suggestion must include a non-empty 'name' field.";
                 return null;
             }
+            case SuggestionEntityType.Processor:
+            {
+                if(!values.TryGetValue(Suggestions.ProcessorSuggestionApplier.FieldName, out object n) ||
+                   string.IsNullOrWhiteSpace(ExtractStringForValidation(n)))
+                    return "A new processor suggestion must include a non-empty 'name' field.";
+                return null;
+            }
             default:
                 return $"Brand-new {type} suggestions are not supported.";
         }
@@ -1416,6 +1424,15 @@ public class SuggestionsController(MarechaiContext context,
                 }
                 return null;
             }
+            case SuggestionEntityType.Processor:
+            {
+                if(values.TryGetValue(Suggestions.ProcessorSuggestionApplier.FieldName, out object n))
+                {
+                    string s = ExtractStringForValidation(n);
+                    return string.IsNullOrWhiteSpace(s) ? null : s.Trim();
+                }
+                return null;
+            }
             default:
                 return null;
         }
@@ -1468,6 +1485,12 @@ public class SuggestionsController(MarechaiContext context,
                 // manufacturers (e.g. "GeForce 256" exists as multiple distinct die
                 // revisions). Dedupe on name only would over-block; rely on admin moderation
                 // to spot true duplicates instead.
+                return false;
+            case SuggestionEntityType.Processor:
+                // Processor names legitimately repeat across die revisions, OEM rebrands and
+                // manufacturers (e.g. "Z80" by Zilog vs Z80-compatible by NEC). Dedupe on
+                // name only would over-block; rely on admin moderation to spot true
+                // duplicates instead.
                 return false;
             default:
                 return false;
@@ -1530,6 +1553,12 @@ public class SuggestionsController(MarechaiContext context,
             case SuggestionEntityType.Gpu:
             {
                 var (id, applied) = await Suggestions.GpuSuggestionApplier.CreateAsync(
+                    context, suggested, accepted, creditedUserId);
+                return (id, applied);
+            }
+            case SuggestionEntityType.Processor:
+            {
+                var (id, applied) = await Suggestions.ProcessorSuggestionApplier.CreateAsync(
                     context, suggested, accepted, creditedUserId);
                 return (id, applied);
             }
@@ -2927,7 +2956,11 @@ public class SuggestionsController(MarechaiContext context,
             }
         }
 
-        if(!entityId.HasValue) return;
+        // Note: junction-add labels look up the linked InstructionSetExtension directly from
+        // the suggested payload's `extension_id` field — they don't need the parent
+        // entityId. Junction-remove labels (which DO need the parent id) are handled by the
+        // companion ResolveProcessorRemoveLabelsAsync, gated separately at the call site.
+        _ = entityId;
 
         // ---- Junction-add labels (resolved from the suggested payload's id field) -----
         foreach(KeyValuePair<string, JsonElement> kv in values)

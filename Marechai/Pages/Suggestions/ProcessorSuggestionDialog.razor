@@ -31,7 +31,14 @@
         else
         {
             <MudText Typo="Typo.body2" Class="mb-3">
-                @L["Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently."]
+                @if(IsCreation)
+                {
+                    @L["Fill in the fields below to suggest a new processor. Name is required; any instruction set extensions you queue will be added together with the scalar fields once an administrator accepts the suggestion."]
+                }
+                else
+                {
+                    @L["Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently."]
+                }
             </MudText>
 
             @* ── Scalar fields: General ── *@
@@ -231,7 +238,7 @@
     <DialogActions>
         <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
         <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit"
-                   Disabled="@(_loading || _submitting || !HasAnyChange())">
+                   Disabled="@(_loading || _submitting || (!IsCreation && !HasAnyChange()) || (IsCreation && !HasMandatoryFieldsForCreation()))">
             @if(_submitting)
             {
                 <MudProgressCircular Size="Size.Small" Indeterminate="true"/>
@@ -250,6 +257,15 @@
 
     [Parameter] public long         EntityId   { get; set; }
     [Parameter] public ProcessorDto CurrentDto { get; set; }
+
+    /// <summary>
+    ///     When <c>true</c>, the dialog operates in brand-new-entity creation mode: the
+    ///     existing-rows-by-parent fetch and the <c>CurrentDto</c> snapshot are skipped, the
+    ///     submit button is gated on <see cref="HasMandatoryFieldsForCreation" /> instead of
+    ///     <see cref="HasAnyChange" />, and <c>Submit()</c> sends <c>EntityId = null</c> on the
+    ///     wire to signal an addition suggestion.
+    /// </summary>
+    [Parameter] public bool IsCreation { get; set; }
 
     sealed class JunctionAddState
     {
@@ -336,8 +352,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // Seed scalar state from the current DTO snapshot.
-        if(CurrentDto is not null)
+        // Seed scalar state from the current DTO snapshot (only in edit mode).
+        if(!IsCreation && CurrentDto is not null)
         {
             _name                     = CurrentDto.Name;
             _modelCode                = CurrentDto.ModelCode;
@@ -392,10 +408,26 @@
             _orig_l3                  = _l3;
         }
 
-        Task<List<CompanyDto>>                            companiesT  = ProcessorsService.GetCompaniesAsync();
-        Task<List<InstructionSetDto>>                     setsT       = ProcessorsService.GetAllInstructionSetsAsync();
-        Task<List<InstructionSetExtensionDto>>            extsT       = ProcessorsService.GetAllExtensionsAsync();
-        Task<List<InstructionSetExtensionByProcessorDto>> extByProcT  = ProcessorsService.GetExtensionsByProcessorAsync((int)EntityId);
+        // Load picker corpora always. Existing-junction-by-processor load is skipped in
+        // creation mode because there's no parent row yet.
+        Task<List<CompanyDto>>                 companiesT = ProcessorsService.GetCompaniesAsync();
+        Task<List<InstructionSetDto>>          setsT      = ProcessorsService.GetAllInstructionSetsAsync();
+        Task<List<InstructionSetExtensionDto>> extsT      = ProcessorsService.GetAllExtensionsAsync();
+
+        if(IsCreation)
+        {
+            await Task.WhenAll(companiesT, setsT, extsT);
+
+            _allCompanies       = companiesT.Result;
+            _allInstructionSets = setsT.Result;
+            _allExtensions      = extsT.Result;
+            _extensionRows      = new List<InstructionSetExtensionByProcessorDto>();
+
+            _loading = false;
+            return;
+        }
+
+        Task<List<InstructionSetExtensionByProcessorDto>> extByProcT = ProcessorsService.GetExtensionsByProcessorAsync((int)EntityId);
 
         await Task.WhenAll(companiesT, setsT, extsT, extByProcT);
 
@@ -575,6 +607,8 @@
         return false;
     }
 
+    bool HasMandatoryFieldsForCreation() => !string.IsNullOrWhiteSpace(_name);
+
     void Cancel() => MudDialog.Cancel();
 
     async Task Submit()
@@ -582,7 +616,7 @@
         _validationError = null;
         if(_loading) return;
 
-        // Name is required: never let the user clear it.
+        // Name is required: never let the user clear it (edit mode) or omit it (creation mode).
         if(string.IsNullOrWhiteSpace(_name))
         {
             _validationError = L["Name is required."];
@@ -591,62 +625,123 @@
 
         var diff = new Dictionary<string, object>(StringComparer.Ordinal);
 
-        if(!Equals(_orig_name, _name))           diff[ProcessorSuggestionMetadata.FieldName]      = _name;
-        if(!Equals(_orig_modelCode, _modelCode)) diff[ProcessorSuggestionMetadata.FieldModelCode] = _modelCode;
-        if(_orig_companyId != _selectedCompany?.Id)
-            diff[ProcessorSuggestionMetadata.FieldCompanyId] = _selectedCompany?.Id;
-        if(_orig_instructionSetId != _selectedInstructionSet?.Id)
-            diff[ProcessorSuggestionMetadata.FieldInstructionSetId] = _selectedInstructionSet?.Id;
-        if(!Nullable.Equals(_orig_introduced, _introduced))
-            diff[ProcessorSuggestionMetadata.FieldIntroduced] = _introduced?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-        if(_orig_introducedPrecision != _introducedPrecision)
-            diff[ProcessorSuggestionMetadata.FieldIntroducedPrecision] = _introducedPrecision;
-        if(!Equals(_orig_package, _package)) diff[ProcessorSuggestionMetadata.FieldPackage] = _package;
-        if(!Equals(_orig_process, _process)) diff[ProcessorSuggestionMetadata.FieldProcess] = _process;
-        if(!Nullable.Equals(_orig_processNm, _processNm))
-            diff[ProcessorSuggestionMetadata.FieldProcessNm] = _processNm;
-        if(!Nullable.Equals(_orig_dieSize, _dieSize))
-            diff[ProcessorSuggestionMetadata.FieldDieSize] = _dieSize;
-        if(!Nullable.Equals(_orig_transistors, _transistors))
-            diff[ProcessorSuggestionMetadata.FieldTransistors] = _transistors;
-        if(!Nullable.Equals(_orig_speed, _speed))
-            diff[ProcessorSuggestionMetadata.FieldSpeed] = _speed;
-        if(!Nullable.Equals(_orig_gprs, _gprs))
-            diff[ProcessorSuggestionMetadata.FieldGprs] = _gprs;
-        if(!Nullable.Equals(_orig_gprSize, _gprSize))
-            diff[ProcessorSuggestionMetadata.FieldGprSize] = _gprSize;
-        if(!Nullable.Equals(_orig_fprs, _fprs))
-            diff[ProcessorSuggestionMetadata.FieldFprs] = _fprs;
-        if(!Nullable.Equals(_orig_fprSize, _fprSize))
-            diff[ProcessorSuggestionMetadata.FieldFprSize] = _fprSize;
-        if(!Nullable.Equals(_orig_cores, _cores))
-            diff[ProcessorSuggestionMetadata.FieldCores] = _cores;
-        if(!Nullable.Equals(_orig_threadsPerCore, _threadsPerCore))
-            diff[ProcessorSuggestionMetadata.FieldThreadsPerCore] = _threadsPerCore;
-        if(!Nullable.Equals(_orig_dataBus, _dataBus))
-            diff[ProcessorSuggestionMetadata.FieldDataBus] = _dataBus;
-        if(!Nullable.Equals(_orig_addressBus, _addressBus))
-            diff[ProcessorSuggestionMetadata.FieldAddressBus] = _addressBus;
-        if(!Nullable.Equals(_orig_simdRegisters, _simdRegisters))
-            diff[ProcessorSuggestionMetadata.FieldSimdRegisters] = _simdRegisters;
-        if(!Nullable.Equals(_orig_simdSize, _simdSize))
-            diff[ProcessorSuggestionMetadata.FieldSimdSize] = _simdSize;
-        if(!Nullable.Equals(_orig_l1Instruction, _l1Instruction))
-            diff[ProcessorSuggestionMetadata.FieldL1Instruction] = _l1Instruction;
-        if(!Nullable.Equals(_orig_l1Data, _l1Data))
-            diff[ProcessorSuggestionMetadata.FieldL1Data] = _l1Data;
-        if(!Nullable.Equals(_orig_l2, _l2))
-            diff[ProcessorSuggestionMetadata.FieldL2] = _l2;
-        if(!Nullable.Equals(_orig_l3, _l3))
-            diff[ProcessorSuggestionMetadata.FieldL3] = _l3;
-
-        AddJunctionOps(diff, _extensionAdds, _extensionRemoves,
-                       ProcessorSuggestionMetadata.GroupInstructionSetExtensions);
-
-        if(diff.Count == 0)
+        if(IsCreation)
         {
-            _validationError = L["No changes detected — modify at least one field before submitting."];
-            return;
+            // Brand-new entity: emit every populated scalar plus all queued junction adds.
+            // Remove ops are ignored (no existing rows in creation mode).
+            diff[ProcessorSuggestionMetadata.FieldName] = _name;
+            if(!string.IsNullOrWhiteSpace(_modelCode))
+                diff[ProcessorSuggestionMetadata.FieldModelCode] = _modelCode;
+            if(_selectedCompany?.Id is int icid)
+                diff[ProcessorSuggestionMetadata.FieldCompanyId] = icid;
+            if(_selectedInstructionSet?.Id is int iisid)
+                diff[ProcessorSuggestionMetadata.FieldInstructionSetId] = iisid;
+            if(_introduced.HasValue)
+                diff[ProcessorSuggestionMetadata.FieldIntroduced] = _introduced.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            if(_introducedPrecision != 0)
+                diff[ProcessorSuggestionMetadata.FieldIntroducedPrecision] = _introducedPrecision;
+            if(!string.IsNullOrWhiteSpace(_package))
+                diff[ProcessorSuggestionMetadata.FieldPackage] = _package;
+            if(!string.IsNullOrWhiteSpace(_process))
+                diff[ProcessorSuggestionMetadata.FieldProcess] = _process;
+            if(_processNm.HasValue)
+                diff[ProcessorSuggestionMetadata.FieldProcessNm] = _processNm;
+            if(_dieSize.HasValue)
+                diff[ProcessorSuggestionMetadata.FieldDieSize] = _dieSize;
+            if(_transistors.HasValue)
+                diff[ProcessorSuggestionMetadata.FieldTransistors] = _transistors;
+            if(_speed.HasValue)
+                diff[ProcessorSuggestionMetadata.FieldSpeed] = _speed;
+            if(_gprs.HasValue)
+                diff[ProcessorSuggestionMetadata.FieldGprs] = _gprs;
+            if(_gprSize.HasValue)
+                diff[ProcessorSuggestionMetadata.FieldGprSize] = _gprSize;
+            if(_fprs.HasValue)
+                diff[ProcessorSuggestionMetadata.FieldFprs] = _fprs;
+            if(_fprSize.HasValue)
+                diff[ProcessorSuggestionMetadata.FieldFprSize] = _fprSize;
+            if(_cores.HasValue)
+                diff[ProcessorSuggestionMetadata.FieldCores] = _cores;
+            if(_threadsPerCore.HasValue)
+                diff[ProcessorSuggestionMetadata.FieldThreadsPerCore] = _threadsPerCore;
+            if(_dataBus.HasValue)
+                diff[ProcessorSuggestionMetadata.FieldDataBus] = _dataBus;
+            if(_addressBus.HasValue)
+                diff[ProcessorSuggestionMetadata.FieldAddressBus] = _addressBus;
+            if(_simdRegisters.HasValue)
+                diff[ProcessorSuggestionMetadata.FieldSimdRegisters] = _simdRegisters;
+            if(_simdSize.HasValue)
+                diff[ProcessorSuggestionMetadata.FieldSimdSize] = _simdSize;
+            if(_l1Instruction.HasValue)
+                diff[ProcessorSuggestionMetadata.FieldL1Instruction] = _l1Instruction;
+            if(_l1Data.HasValue)
+                diff[ProcessorSuggestionMetadata.FieldL1Data] = _l1Data;
+            if(_l2.HasValue)
+                diff[ProcessorSuggestionMetadata.FieldL2] = _l2;
+            if(_l3.HasValue)
+                diff[ProcessorSuggestionMetadata.FieldL3] = _l3;
+
+            foreach(KeyValuePair<string, JunctionAddState> kv in _extensionAdds) diff[kv.Key] = kv.Value.Payload;
+        }
+        else
+        {
+            if(!Equals(_orig_name, _name))           diff[ProcessorSuggestionMetadata.FieldName]      = _name;
+            if(!Equals(_orig_modelCode, _modelCode)) diff[ProcessorSuggestionMetadata.FieldModelCode] = _modelCode;
+            if(_orig_companyId != _selectedCompany?.Id)
+                diff[ProcessorSuggestionMetadata.FieldCompanyId] = _selectedCompany?.Id;
+            if(_orig_instructionSetId != _selectedInstructionSet?.Id)
+                diff[ProcessorSuggestionMetadata.FieldInstructionSetId] = _selectedInstructionSet?.Id;
+            if(!Nullable.Equals(_orig_introduced, _introduced))
+                diff[ProcessorSuggestionMetadata.FieldIntroduced] = _introduced?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            if(_orig_introducedPrecision != _introducedPrecision)
+                diff[ProcessorSuggestionMetadata.FieldIntroducedPrecision] = _introducedPrecision;
+            if(!Equals(_orig_package, _package)) diff[ProcessorSuggestionMetadata.FieldPackage] = _package;
+            if(!Equals(_orig_process, _process)) diff[ProcessorSuggestionMetadata.FieldProcess] = _process;
+            if(!Nullable.Equals(_orig_processNm, _processNm))
+                diff[ProcessorSuggestionMetadata.FieldProcessNm] = _processNm;
+            if(!Nullable.Equals(_orig_dieSize, _dieSize))
+                diff[ProcessorSuggestionMetadata.FieldDieSize] = _dieSize;
+            if(!Nullable.Equals(_orig_transistors, _transistors))
+                diff[ProcessorSuggestionMetadata.FieldTransistors] = _transistors;
+            if(!Nullable.Equals(_orig_speed, _speed))
+                diff[ProcessorSuggestionMetadata.FieldSpeed] = _speed;
+            if(!Nullable.Equals(_orig_gprs, _gprs))
+                diff[ProcessorSuggestionMetadata.FieldGprs] = _gprs;
+            if(!Nullable.Equals(_orig_gprSize, _gprSize))
+                diff[ProcessorSuggestionMetadata.FieldGprSize] = _gprSize;
+            if(!Nullable.Equals(_orig_fprs, _fprs))
+                diff[ProcessorSuggestionMetadata.FieldFprs] = _fprs;
+            if(!Nullable.Equals(_orig_fprSize, _fprSize))
+                diff[ProcessorSuggestionMetadata.FieldFprSize] = _fprSize;
+            if(!Nullable.Equals(_orig_cores, _cores))
+                diff[ProcessorSuggestionMetadata.FieldCores] = _cores;
+            if(!Nullable.Equals(_orig_threadsPerCore, _threadsPerCore))
+                diff[ProcessorSuggestionMetadata.FieldThreadsPerCore] = _threadsPerCore;
+            if(!Nullable.Equals(_orig_dataBus, _dataBus))
+                diff[ProcessorSuggestionMetadata.FieldDataBus] = _dataBus;
+            if(!Nullable.Equals(_orig_addressBus, _addressBus))
+                diff[ProcessorSuggestionMetadata.FieldAddressBus] = _addressBus;
+            if(!Nullable.Equals(_orig_simdRegisters, _simdRegisters))
+                diff[ProcessorSuggestionMetadata.FieldSimdRegisters] = _simdRegisters;
+            if(!Nullable.Equals(_orig_simdSize, _simdSize))
+                diff[ProcessorSuggestionMetadata.FieldSimdSize] = _simdSize;
+            if(!Nullable.Equals(_orig_l1Instruction, _l1Instruction))
+                diff[ProcessorSuggestionMetadata.FieldL1Instruction] = _l1Instruction;
+            if(!Nullable.Equals(_orig_l1Data, _l1Data))
+                diff[ProcessorSuggestionMetadata.FieldL1Data] = _l1Data;
+            if(!Nullable.Equals(_orig_l2, _l2))
+                diff[ProcessorSuggestionMetadata.FieldL2] = _l2;
+            if(!Nullable.Equals(_orig_l3, _l3))
+                diff[ProcessorSuggestionMetadata.FieldL3] = _l3;
+
+            AddJunctionOps(diff, _extensionAdds, _extensionRemoves,
+                           ProcessorSuggestionMetadata.GroupInstructionSetExtensions);
+
+            if(diff.Count == 0)
+            {
+                _validationError = L["No changes detected — modify at least one field before submitting."];
+                return;
+            }
         }
 
         _submitting = true;
@@ -656,7 +751,7 @@
             var dto = new SuggestionDto
             {
                 EntityType          = (int?)SuggestionEntityType.Processor,
-                EntityId            = EntityId,
+                EntityId            = IsCreation ? null : EntityId,
                 Status              = (int?)SuggestionStatus.Pending,
                 UserComment         = string.IsNullOrWhiteSpace(_userComment) ? null : _userComment.Trim(),
                 SuggestedValuesJson = json

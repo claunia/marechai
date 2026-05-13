@@ -799,4 +799,13 @@
   <data name="Die size (mm²)" xml:space="preserve">
     <value>Die size (mm²)</value>
   </data>
+  <data name="Suggest new processor" xml:space="preserve">
+    <value>Suggest new processor</value>
+  </data>
+  <data name="Suggest a new processor to be added to the catalogue." xml:space="preserve">
+    <value>Suggest a new processor to be added to the catalogue.</value>
+  </data>
+  <data name="Fill in the fields below to suggest a new processor. Name is required; any instruction set extensions you queue will be added together with the scalar fields once an administrator accepts the suggestion." xml:space="preserve">
+    <value>Fill in the fields below to suggest a new processor. Name is required; any instruction set extensions you queue will be added together with the scalar fields once an administrator accepts the suggestion.</value>
+  </data>
 </root>

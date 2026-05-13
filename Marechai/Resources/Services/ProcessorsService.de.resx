@@ -686,4 +686,13 @@
   <data name="Die size (mm²)" xml:space="preserve">
     <value>Die-Größe (mm²)</value>
   </data>
+  <data name="Suggest new processor" xml:space="preserve">
+    <value>Neuen Prozessor vorschlagen</value>
+  </data>
+  <data name="Suggest a new processor to be added to the catalogue." xml:space="preserve">
+    <value>Schlage einen neuen Prozessor vor, der dem Katalog hinzugefügt werden soll.</value>
+  </data>
+  <data name="Fill in the fields below to suggest a new processor. Name is required; any instruction set extensions you queue will be added together with the scalar fields once an administrator accepts the suggestion." xml:space="preserve">
+    <value>Fülle die Felder unten aus, um einen neuen Prozessor vorzuschlagen. Der Name ist erforderlich; alle Befehlssatzerweiterungen, die du in die Warteschlange einreihst, werden zusammen mit den skalaren Feldern hinzugefügt, sobald ein Administrator den Vorschlag akzeptiert.</value>
+  </data>
 </root>
