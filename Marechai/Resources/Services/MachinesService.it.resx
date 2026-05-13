@@ -710,4 +710,88 @@
   <data name="Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently." xml:space="preserve">
     <value>Modifica qualsiasi campo o relazione qui sotto. Solo le tue modifiche saranno inviate per la revisione; un amministratore può accettarle o rifiutarle una per una.</value>
   </data>
-<data name="Fill in the fields below to suggest a new machine. Name, company and type are required; any junctions you add will be queued for admin review along with the scalar fields." xml:space="preserve"><value>Compila i campi seguenti per suggerire una nuova macchina. Nome, azienda e tipo sono obbligatori; eventuali relazioni aggiunte saranno messe in coda per la revisione dell’amministratore insieme ai campi scalari.</value></data><data name="Name, company and type are required to suggest a new machine." xml:space="preserve"><value>Nome, azienda e tipo sono richiesti per suggerire una nuova macchina.</value></data></root>
+<data name="Fill in the fields below to suggest a new machine. Name, company and type are required; any junctions you add will be queued for admin review along with the scalar fields." xml:space="preserve"><value>Compila i campi seguenti per suggerire una nuova macchina. Nome, azienda e tipo sono obbligatori; eventuali relazioni aggiunte saranno messe in coda per la revisione dell’amministratore insieme ai campi scalari.</value></data><data name="Name, company and type are required to suggest a new machine." xml:space="preserve"><value>Nome, azienda e tipo sono richiesti per suggerire una nuova macchina.</value></data>  <data name="Add photos" xml:space="preserve">
+    <value>Aggiungi foto</value>
+  </data>
+  <data name="Batch metadata" xml:space="preserve">
+    <value>Metadati del lotto</value>
+  </data>
+  <data name="Comment (optional)" xml:space="preserve">
+    <value>Commento (opzionale)</value>
+  </data>
+  <data name="License (Creative Commons or Public Domain)" xml:space="preserve">
+    <value>Licenza (Creative Commons o Pubblico Dominio)</value>
+  </data>
+  <data name="No photos staged yet. Use the Add photos button above to pick files from your device." xml:space="preserve">
+    <value>Nessuna foto preparata. Usa il pulsante Aggiungi foto sopra per scegliere file dal tuo dispositivo.</value>
+  </data>
+  <data name="Note for the reviewer (optional)" xml:space="preserve">
+    <value>Nota per il revisore (opzionale)</value>
+  </data>
+  <data name="Photos: {0}/{1}" xml:space="preserve">
+    <value>Foto: {0}/{1}</value>
+  </data>
+  <data name="Photos submitted for review. An administrator will accept or reject each one." xml:space="preserve">
+    <value>Foto inviate per la revisione. Un amministratore accetterà o rifiuterà ciascuna.</value>
+  </data>
+  <data name="Pick a license and at least one successfully-uploaded photo before submitting." xml:space="preserve">
+    <value>Seleziona una licenza e almeno una foto caricata correttamente prima di inviare.</value>
+  </data>
+  <data name="Pick one or more files at a time. Each photo is uploaded immediately and held on the server until you submit the batch." xml:space="preserve">
+    <value>Seleziona uno o più file alla volta. Ogni foto viene caricata immediatamente e mantenuta sul server fino all'invio del lotto.</value>
+  </data>
+  <data name="Selected license is not allowed for collaborator uploads." xml:space="preserve">
+    <value>La licenza selezionata non è consentita per i caricamenti dei collaboratori.</value>
+  </data>
+  <data name="Source URL (optional, applies to all photos)" xml:space="preserve">
+    <value>URL di origine (opzionale, si applica a tutte le foto)</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Invia</value>
+  </data>
+  <data name="Suggest photos for {0}. Upload up to {1} JPG, PNG or WebP files (max 50 MB each). All photos in this batch share the same license and source URL." xml:space="preserve">
+    <value>Suggerisci foto per {0}. Carica fino a {1} file JPG, PNG o WebP (max 50 MB ciascuno). Tutte le foto di questo lotto condividono la stessa licenza e URL di origine.</value>
+  </data>
+  <data name="You have staged photos that have not been submitted yet. Closing this dialog will delete them. Continue?" xml:space="preserve">
+    <value>Hai foto preparate che non sono ancora state inviate. Chiudere questa finestra le eliminerà. Continuare?</value>
+  </data>
+  <data name="You must be logged in to upload photos." xml:space="preserve">
+    <value>Devi essere connesso per caricare foto.</value>
+  </data>
+  <data name="Suggest computer photos" xml:space="preserve">
+    <value>Suggerisci foto del computer</value>
+  </data>
+  <data name="Suggest console photos" xml:space="preserve">
+    <value>Suggerisci foto della console</value>
+  </data>
+  <data name="Suggest smartphone photos" xml:space="preserve">
+    <value>Suggerisci foto dello smartphone</value>
+  </data>
+  <data name="Suggest more computer photos" xml:space="preserve">
+    <value>Suggerisci altre foto del computer</value>
+  </data>
+  <data name="Suggest more console photos" xml:space="preserve">
+    <value>Suggerisci altre foto della console</value>
+  </data>
+  <data name="Suggest more smartphone photos" xml:space="preserve">
+    <value>Suggerisci altre foto dello smartphone</value>
+  </data>
+  <data name="No photos for this computer yet — help us by uploading some." xml:space="preserve">
+    <value>Nessuna foto di questo computer ancora — aiutaci caricandone alcune.</value>
+  </data>
+  <data name="No photos for this console yet — help us by uploading some." xml:space="preserve">
+    <value>Nessuna foto di questa console ancora — aiutaci caricandone alcune.</value>
+  </data>
+  <data name="No photos for this smartphone yet — help us by uploading some." xml:space="preserve">
+    <value>Nessuna foto di questo smartphone ancora — aiutaci caricandone alcune.</value>
+  </data>
+  <data name="Suggest photos" xml:space="preserve">
+    <value>Suggerisci foto</value>
+  </data>
+  <data name="Suggest more photos" xml:space="preserve">
+    <value>Suggerisci altre foto</value>
+  </data>
+  <data name="No photos for this device yet — help us by uploading some." xml:space="preserve">
+    <value>Nessuna foto di questo dispositivo ancora — aiutaci caricandone alcune.</value>
+  </data>
+</root>

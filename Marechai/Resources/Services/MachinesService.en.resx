@@ -568,4 +568,88 @@
     <data name="We do not have a description for this smartphone, you could collaborate by suggesting one" xml:space="preserve">
         <value>We do not have a description for this smartphone, you could collaborate by suggesting one</value>
     </data>
-<data name="Fill in the fields below to suggest a new machine. Name, company and type are required; any junctions you add will be queued for admin review along with the scalar fields." xml:space="preserve"><value>Fill in the fields below to suggest a new machine. Name, company and type are required; any junctions you add will be queued for admin review along with the scalar fields.</value></data><data name="Name, company and type are required to suggest a new machine." xml:space="preserve"><value>Name, company and type are required to suggest a new machine.</value></data></root>
+<data name="Fill in the fields below to suggest a new machine. Name, company and type are required; any junctions you add will be queued for admin review along with the scalar fields." xml:space="preserve"><value>Fill in the fields below to suggest a new machine. Name, company and type are required; any junctions you add will be queued for admin review along with the scalar fields.</value></data><data name="Name, company and type are required to suggest a new machine." xml:space="preserve"><value>Name, company and type are required to suggest a new machine.</value></data>  <data name="Add photos" xml:space="preserve">
+    <value>Add photos</value>
+  </data>
+  <data name="Batch metadata" xml:space="preserve">
+    <value>Batch metadata</value>
+  </data>
+  <data name="Comment (optional)" xml:space="preserve">
+    <value>Comment (optional)</value>
+  </data>
+  <data name="License (Creative Commons or Public Domain)" xml:space="preserve">
+    <value>License (Creative Commons or Public Domain)</value>
+  </data>
+  <data name="No photos staged yet. Use the Add photos button above to pick files from your device." xml:space="preserve">
+    <value>No photos staged yet. Use the Add photos button above to pick files from your device.</value>
+  </data>
+  <data name="Note for the reviewer (optional)" xml:space="preserve">
+    <value>Note for the reviewer (optional)</value>
+  </data>
+  <data name="Photos: {0}/{1}" xml:space="preserve">
+    <value>Photos: {0}/{1}</value>
+  </data>
+  <data name="Photos submitted for review. An administrator will accept or reject each one." xml:space="preserve">
+    <value>Photos submitted for review. An administrator will accept or reject each one.</value>
+  </data>
+  <data name="Pick a license and at least one successfully-uploaded photo before submitting." xml:space="preserve">
+    <value>Pick a license and at least one successfully-uploaded photo before submitting.</value>
+  </data>
+  <data name="Pick one or more files at a time. Each photo is uploaded immediately and held on the server until you submit the batch." xml:space="preserve">
+    <value>Pick one or more files at a time. Each photo is uploaded immediately and held on the server until you submit the batch.</value>
+  </data>
+  <data name="Selected license is not allowed for collaborator uploads." xml:space="preserve">
+    <value>Selected license is not allowed for collaborator uploads.</value>
+  </data>
+  <data name="Source URL (optional, applies to all photos)" xml:space="preserve">
+    <value>Source URL (optional, applies to all photos)</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Submit</value>
+  </data>
+  <data name="Suggest photos for {0}. Upload up to {1} JPG, PNG or WebP files (max 50 MB each). All photos in this batch share the same license and source URL." xml:space="preserve">
+    <value>Suggest photos for {0}. Upload up to {1} JPG, PNG or WebP files (max 50 MB each). All photos in this batch share the same license and source URL.</value>
+  </data>
+  <data name="You have staged photos that have not been submitted yet. Closing this dialog will delete them. Continue?" xml:space="preserve">
+    <value>You have staged photos that have not been submitted yet. Closing this dialog will delete them. Continue?</value>
+  </data>
+  <data name="You must be logged in to upload photos." xml:space="preserve">
+    <value>You must be logged in to upload photos.</value>
+  </data>
+  <data name="Suggest computer photos" xml:space="preserve">
+    <value>Suggest computer photos</value>
+  </data>
+  <data name="Suggest console photos" xml:space="preserve">
+    <value>Suggest console photos</value>
+  </data>
+  <data name="Suggest smartphone photos" xml:space="preserve">
+    <value>Suggest smartphone photos</value>
+  </data>
+  <data name="Suggest more computer photos" xml:space="preserve">
+    <value>Suggest more computer photos</value>
+  </data>
+  <data name="Suggest more console photos" xml:space="preserve">
+    <value>Suggest more console photos</value>
+  </data>
+  <data name="Suggest more smartphone photos" xml:space="preserve">
+    <value>Suggest more smartphone photos</value>
+  </data>
+  <data name="No photos for this computer yet — help us by uploading some." xml:space="preserve">
+    <value>No photos for this computer yet — help us by uploading some.</value>
+  </data>
+  <data name="No photos for this console yet — help us by uploading some." xml:space="preserve">
+    <value>No photos for this console yet — help us by uploading some.</value>
+  </data>
+  <data name="No photos for this smartphone yet — help us by uploading some." xml:space="preserve">
+    <value>No photos for this smartphone yet — help us by uploading some.</value>
+  </data>
+  <data name="Suggest photos" xml:space="preserve">
+    <value>Suggest photos</value>
+  </data>
+  <data name="Suggest more photos" xml:space="preserve">
+    <value>Suggest more photos</value>
+  </data>
+  <data name="No photos for this device yet — help us by uploading some." xml:space="preserve">
+    <value>No photos for this device yet — help us by uploading some.</value>
+  </data>
+</root>

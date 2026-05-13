@@ -331,4 +331,76 @@ public partial class View
 
         _togglingCollection = false;
     }
+
+    /// <summary>
+    ///     Resolve the machine kind for user-facing labels. Falls back to <c>Unknown</c>
+    ///     when <see cref="_machine"/> hasn't loaded or carries an out-of-range value.
+    /// </summary>
+    MachineType DeviceKind => _machine?.Type is int t && Enum.IsDefined(typeof(MachineType), t)
+                                  ? (MachineType)t
+                                  : MachineType.Unknown;
+
+    /// <summary>"Suggest computer/console/smartphone photos" — device-specific button label.</summary>
+    string SuggestPhotosLabel => DeviceKind switch
+    {
+        MachineType.Computer   => L["Suggest computer photos"],
+        MachineType.Console    => L["Suggest console photos"],
+        MachineType.Smartphone => L["Suggest smartphone photos"],
+        _                      => L["Suggest photos"]
+    };
+
+    /// <summary>"Suggest more computer/console/smartphone photos" — pencil-icon tooltip on populated cards.</summary>
+    string SuggestMorePhotosLabel => DeviceKind switch
+    {
+        MachineType.Computer   => L["Suggest more computer photos"],
+        MachineType.Console    => L["Suggest more console photos"],
+        MachineType.Smartphone => L["Suggest more smartphone photos"],
+        _                      => L["Suggest more photos"]
+    };
+
+    /// <summary>Empty-state hint shown when the machine has no photos yet.</summary>
+    string NoPhotosHint => DeviceKind switch
+    {
+        MachineType.Computer   => L["No photos for this computer yet — help us by uploading some."],
+        MachineType.Console    => L["No photos for this console yet — help us by uploading some."],
+        MachineType.Smartphone => L["No photos for this smartphone yet — help us by uploading some."],
+        _                      => L["No photos for this device yet — help us by uploading some."]
+    };
+
+    /// <summary>
+    ///     Open the collaborative machine-photo upload dialog. Lets the signed-in user stage
+    ///     1-30 pending photos, set a suggestion-level license + source URL, optionally
+    ///     annotate each photo with a comment, then submit ONE Suggestion row that an admin
+    ///     reviews per-photo. The dialog title and entry-point button are device-specific
+    ///     (computer / console / smartphone) but the underlying suggestion enum value is
+    ///     <see cref="SuggestionEntityType.MachinePhoto"/> for all three.
+    /// </summary>
+    async Task OpenSuggestPhotosDialog()
+    {
+        int machineId = Id;
+        if(machineId <= 0) return;
+
+        var dialogParams = new DialogParameters
+        {
+            ["MachineId"]   = machineId,
+            ["MachineName"] = _machine?.Name ?? string.Empty
+        };
+        var dialogOptions = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Large
+        };
+
+        var dialogRef = await DialogService.ShowAsync<MachinePhotosSuggestionDialog>(
+            SuggestPhotosLabel, dialogParams, dialogOptions);
+
+        DialogResult result = await dialogRef.Result;
+
+        if(result is { Canceled: false })
+        {
+            // Photos won't appear until an admin accepts them; nothing to refresh now.
+            // Method left as a hook in case future revisions want to surface a hint.
+        }
+    }
 }

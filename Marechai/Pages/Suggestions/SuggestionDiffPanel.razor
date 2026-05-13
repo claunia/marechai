@@ -40,6 +40,10 @@ else if(Suggestion?.EntityType == (int)SuggestionEntityType.SoundSynthPhoto)
 {
     @RenderSoundSynthPhotoBatch()
 }
+else if(Suggestion?.EntityType == (int)SuggestionEntityType.MachinePhoto)
+{
+    @RenderMachinePhotoBatch()
+}
 else
 {
     <MudSimpleTable Hover="true" Dense="true" Bordered="true" Style="width: 100%;">
@@ -286,6 +290,7 @@ else
                 (int)SuggestionEntityType.GpuPhoto      => "MarechaiGpuPhotoUpload.openPendingPhotoInNewTab",
                 (int)SuggestionEntityType.ProcessorPhoto => "MarechaiProcessorPhotoUpload.openPendingPhotoInNewTab",
                 (int)SuggestionEntityType.SoundSynthPhoto => "MarechaiSoundSynthPhotoUpload.openPendingPhotoInNewTab",
+                (int)SuggestionEntityType.MachinePhoto    => "MarechaiMachinePhotoUpload.openPendingPhotoInNewTab",
                 _                                       => "MarechaiPendingCover.openPendingCoverInNewTab"
             };
             await JS.InvokeAsync<object>(fnName, ApiAssetUrls.BaseUrl, token, guid);
@@ -321,6 +326,7 @@ else
                     (int)SuggestionEntityType.GpuPhoto      => "MarechaiGpuPhotoUpload.applyPendingPhotoImage",
                     (int)SuggestionEntityType.ProcessorPhoto => "MarechaiProcessorPhotoUpload.applyPendingPhotoImage",
                     (int)SuggestionEntityType.SoundSynthPhoto => "MarechaiSoundSynthPhotoUpload.applyPendingPhotoImage",
+                    (int)SuggestionEntityType.MachinePhoto    => "MarechaiMachinePhotoUpload.applyPendingPhotoImage",
                     _                                       => "MarechaiPendingCover.applyPendingCoverImage"
                 };
                 foreach(KeyValuePair<string, string> kv in _pendingImageRefs)
@@ -771,6 +777,110 @@ else
 
                 // Register the img element id → guid pair so OnAfterRenderAsync can fetch the
                 // blob via JS interop with the JWT in an Authorization header.
+                _pendingImageRefs[imgId] = guidStr;
+
+                <MudPaper Outlined="true" Class="pa-3" @key="@guidStr">
+                    <MudStack Row="true" Spacing="3" AlignItems="AlignItems.Start">
+                        <div style="width: 120px; height: 120px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--mud-palette-background-grey); border-radius: 4px; cursor: pointer;"
+                             @onclick="@(() => OpenImageInNewTab(guidStr, true))">
+                            <img id="@imgId" alt="@($"Photo {photoNum}")"
+                                 style="max-width: 120px; max-height: 120px; object-fit: contain; border-radius: 4px;"/>
+                        </div>
+                        <MudStack Spacing="1" Style="flex: 1; min-width: 0;">
+                            <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                                <MudText Typo="Typo.body2"><strong>@($"Photo {photoNum}")</strong> <span class="text-muted">— @extension</span></MudText>
+                                <MudCheckBox T="bool" Value="@accepted"
+                                             ValueChanged="@(v => ToggleAccepted(acceptKey, v))"
+                                             Disabled="@ReadOnly"
+                                             Label="@L["Accept this photo"]"/>
+                            </MudStack>
+                            @if(!string.IsNullOrEmpty(comment))
+                            {
+                                <MudText Typo="Typo.body2" Class="mt-1"><em>@comment</em></MudText>
+                            }
+                        </MudStack>
+                    </MudStack>
+                </MudPaper>
+            }
+        </MudStack>
+    };
+
+    /// <summary>
+    ///     Custom renderer for <see cref="SuggestionEntityType.MachinePhoto" /> batch
+    ///     suggestions (Computer / Console / Smartphone — they share the same Machine
+    ///     table). Mirrors <see cref="RenderSoundSynthPhotoBatch" /> verbatim — only the
+    ///     thumbnail-fetch JS module differs (handled in OnAfterRenderAsync via the
+    ///     entity-type switch) and the per-img element id prefix changes to
+    ///     <c>machine-photo-pending-</c> so each batch renderer can target its own DOM
+    ///     subtree without colliding.
+    /// </summary>
+    RenderFragment RenderMachinePhotoBatch() => __builder =>
+    {
+        string licenseLabel = SuggestedLabels is not null &&
+                              SuggestedLabels.TryGetValue("license_id", out string lic) &&
+                              !string.IsNullOrEmpty(lic)
+                                  ? lic
+                                  : (_suggestedDict.TryGetValue("license_id", out JsonElement lje)
+                                         ? "#" + JsonElementToText(lje)
+                                         : "");
+
+        string sourceUrl = _suggestedDict.TryGetValue("source_url", out JsonElement sje)
+                               ? JsonElementToText(sje)
+                               : "";
+
+        List<JsonElement> photos = _suggestedDict.TryGetValue("photos", out JsonElement pje) &&
+                                   pje.ValueKind == JsonValueKind.Array
+                                       ? pje.EnumerateArray().ToList()
+                                       : new List<JsonElement>();
+
+        int totalPhotos    = photos.Count;
+        int acceptedPhotos = AcceptedFieldNames?.Count(k => k.StartsWith("photo.", StringComparison.Ordinal)) ?? 0;
+
+        <MudPaper Outlined="true" Class="pa-3 mb-3">
+            <MudText Typo="Typo.subtitle2" Class="mb-2">@L["Batch metadata (applies to every accepted photo)"]</MudText>
+            <MudStack Row="true" Spacing="3">
+                <MudStack Spacing="0" Style="flex: 1;">
+                    <MudText Typo="Typo.caption">@L["License"]</MudText>
+                    <MudText Typo="Typo.body2"><strong>@licenseLabel</strong></MudText>
+                </MudStack>
+                <MudStack Spacing="0" Style="flex: 2;">
+                    <MudText Typo="Typo.caption">@L["Source URL"]</MudText>
+                    @if(string.IsNullOrEmpty(sourceUrl))
+                    {
+                        <MudText Typo="Typo.body2" Class="text-muted">@L["(none)"]</MudText>
+                    }
+                    else
+                    {
+                        <MudLink Href="@sourceUrl" Target="_blank" Underline="Underline.Always">@sourceUrl</MudLink>
+                    }
+                </MudStack>
+            </MudStack>
+        </MudPaper>
+
+        <MudText Typo="Typo.body2" Class="mb-2">
+            @string.Format(L["Accepting {0} of {1} photo(s). Rejected photos and their pending files will be deleted on submit."].Value, acceptedPhotos, totalPhotos)
+        </MudText>
+
+        <MudStack Spacing="2" Class="mb-2">
+            @for(int i = 0; i < photos.Count; i++)
+            {
+                JsonElement photo = photos[i];
+                string guidStr = photo.TryGetProperty("guid", out JsonElement gj) && gj.ValueKind == JsonValueKind.String
+                                     ? gj.GetString()
+                                     : "";
+                string extension = photo.TryGetProperty("extension", out JsonElement xj) && xj.ValueKind == JsonValueKind.String
+                                       ? xj.GetString()
+                                       : "";
+                string comment = photo.TryGetProperty("comment", out JsonElement cj) && cj.ValueKind == JsonValueKind.String
+                                     ? cj.GetString()
+                                     : "";
+                if(string.IsNullOrEmpty(guidStr) || !Guid.TryParse(guidStr, out _)) continue;
+
+                string acceptKey = "photo." + guidStr;
+                bool   accepted  = AcceptedFieldNames is not null && AcceptedFieldNames.Contains(acceptKey);
+                string imgId     = "machine-photo-pending-" + guidStr.Replace("-", "");
+                int    photoNum  = i + 1;
+
                 _pendingImageRefs[imgId] = guidStr;
 
                 <MudPaper Outlined="true" Class="pa-3" @key="@guidStr">
