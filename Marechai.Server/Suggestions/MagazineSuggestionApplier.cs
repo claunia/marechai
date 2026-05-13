@@ -134,6 +134,83 @@ internal static class MagazineSuggestionApplier
     }
 
     /// <summary>
+    ///     Create a brand-new Magazine row from an accepted addition-mode suggestion. Returns
+    ///     <c>(newId, appliedFields)</c> on success, or <c>(null, empty)</c> when the admin
+    ///     didn't tick the mandatory <c>Title</c> field. After the parent is persisted, any
+    ///     accepted <c>*.add.*</c> junction keys are applied with the freshly-minted
+    ///     <c>MagazineId</c>; <c>*.remove.*</c> keys are silently skipped (a brand-new entity
+    ///     has nothing to remove from).
+    /// </summary>
+    /// <param name="creditedUserId">
+    ///     The Identity user id to attribute the row to in audit history (the suggesting user,
+    ///     NOT the reviewing admin). Forwarded to <c>SaveChangesWithUserAsync</c>.
+    /// </param>
+    public static async Task<(long? newId, HashSet<string> applied)> CreateAsync(
+        MarechaiContext context,
+        Dictionary<string, object> suggested,
+        HashSet<string> accepted,
+        string creditedUserId)
+    {
+        var applied = new HashSet<string>(StringComparer.Ordinal);
+
+        // Title is the only mandatory field; everything else (ISSN, dates, country, companies)
+        // is optional. Reject the addition outright if the admin didn't tick Title.
+        if(!accepted.Contains(FieldTitle) || !suggested.TryGetValue(FieldTitle, out object titleVal))
+            return (null, applied);
+
+        string title = ToStringValue(titleVal);
+        if(string.IsNullOrWhiteSpace(title)) return (null, applied);
+
+        var m = new Magazine { Title = title.Trim() };
+        applied.Add(FieldTitle);
+
+        // Apply remaining accepted scalar fields via the same coercion+validation table the
+        // edit path uses. Junction operations are handled in a second pass after persistence.
+        foreach(string fieldName in accepted)
+        {
+            if(fieldName == FieldTitle) continue;
+            if(!s_scalarFieldNames.Contains(fieldName)) continue;
+            if(!suggested.TryGetValue(fieldName, out object value)) continue;
+
+            try
+            {
+                if(await ApplyScalar(context, m, fieldName, value)) applied.Add(fieldName);
+            }
+            catch
+            {
+                // Coerce failure: silently skip this field.
+            }
+        }
+
+        await context.Magazines.AddAsync(m);
+
+        if(string.IsNullOrEmpty(creditedUserId))
+            await context.SaveChangesAsync();
+        else
+            await context.SaveChangesWithUserAsync(creditedUserId);
+
+        // Now apply junction adds with the freshly-minted magazine id. Remove keys are silently
+        // ignored — a brand-new entity has nothing to remove from.
+        foreach(string fieldName in accepted)
+        {
+            if(!TryParseJunctionKey(fieldName, out string group, out string op, out string _)) continue;
+            if(op != "add") continue;
+            if(!suggested.TryGetValue(fieldName, out object value)) continue;
+
+            try
+            {
+                if(await ApplyJunctionAdd(context, m.Id, group, value)) applied.Add(fieldName);
+            }
+            catch
+            {
+                // Coerce failure: silently skip this junction add.
+            }
+        }
+
+        return (m.Id, applied);
+    }
+
+    /// <summary>
     ///     Apply the accepted fields onto the Magazine row + junction tables. Each junction
     ///     operation is atomic — failure to coerce one entry skips it without affecting the
     ///     others.

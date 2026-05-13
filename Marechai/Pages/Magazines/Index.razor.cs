@@ -24,6 +24,9 @@
 *******************************************************************************/
 
 using System.Threading.Tasks;
+using Marechai.ApiClient.Models;
+using Marechai.Pages.Suggestions;
+using MudBlazor;
 
 namespace Marechai.Pages.Magazines;
 
@@ -44,5 +47,29 @@ public partial class Index
 
         _loaded = true;
         StateHasChanged();
+    }
+
+    /// <summary>
+    ///     Open the unified Magazine suggestion dialog in creation mode. The dialog handles
+    ///     submission + validation; this page does not refresh on success because the new
+    ///     magazine only appears in the listing once an admin accepts the suggestion.
+    /// </summary>
+    async Task OpenSuggestNewMagazineDialog()
+    {
+        var parameters = new DialogParameters<MagazineSuggestionDialog>
+        {
+            { x => x.EntityId,   0L                  },
+            { x => x.CurrentDto, (MagazineDto)null   },
+            { x => x.IsCreation, true                }
+        };
+
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Large
+        };
+
+        await DialogService.ShowAsync<MagazineSuggestionDialog>(L["Suggest new magazine"], parameters, options);
     }
 }

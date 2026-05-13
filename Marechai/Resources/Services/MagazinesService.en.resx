@@ -624,4 +624,13 @@
   <data name="Product code must be at most 18 characters." xml:space="preserve">
     <value>Product code must be at most 18 characters.</value>
   </data>
+  <data name="Suggest new magazine" xml:space="preserve">
+    <value>Suggest new magazine</value>
+  </data>
+  <data name="Suggest a new magazine to be added to the catalogue." xml:space="preserve">
+    <value>Suggest a new magazine to be added to the catalogue.</value>
+  </data>
+  <data name="Fill in the fields below to suggest a new magazine. Title is required; any companies you queue will be added together with the scalar fields once an administrator accepts the suggestion." xml:space="preserve">
+    <value>Fill in the fields below to suggest a new magazine. Title is required; any companies you queue will be added together with the scalar fields once an administrator accepts the suggestion.</value>
+  </data>
 </root>

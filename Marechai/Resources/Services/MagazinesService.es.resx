@@ -565,4 +565,13 @@
   <data name="Product code must be at most 18 characters." xml:space="preserve">
     <value>El código de producto debe tener como máximo 18 caracteres.</value>
   </data>
+  <data name="Suggest new magazine" xml:space="preserve">
+    <value>Sugerir nueva revista</value>
+  </data>
+  <data name="Suggest a new magazine to be added to the catalogue." xml:space="preserve">
+    <value>Sugerir una nueva revista para añadirla al catálogo.</value>
+  </data>
+  <data name="Fill in the fields below to suggest a new magazine. Title is required; any companies you queue will be added together with the scalar fields once an administrator accepts the suggestion." xml:space="preserve">
+    <value>Rellena los campos siguientes para sugerir una nueva revista. El título es obligatorio; cualquier empresa que añadas a la cola se incorporará junto con los demás campos cuando un administrador acepte la sugerencia.</value>
+  </data>
 </root>

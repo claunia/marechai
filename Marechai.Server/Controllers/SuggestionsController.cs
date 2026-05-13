@@ -97,7 +97,8 @@ public class SuggestionsController(MarechaiContext context,
     static readonly HashSet<SuggestionEntityType> s_supportsAddition = new()
     {
         SuggestionEntityType.Company,
-        SuggestionEntityType.Machine
+        SuggestionEntityType.Machine,
+        SuggestionEntityType.Magazine
     };
 
     // ───────────────────────────── POST /suggestions ─────────────────────────────
@@ -1295,6 +1296,13 @@ public class SuggestionsController(MarechaiContext context,
                     return "A new machine suggestion must include a 'company_id' field referencing the manufacturer.";
                 return null;
             }
+            case SuggestionEntityType.Magazine:
+            {
+                if(!values.TryGetValue(Suggestions.MagazineSuggestionApplier.FieldTitle, out object n) ||
+                   string.IsNullOrWhiteSpace(ExtractStringForValidation(n)))
+                    return "A new magazine suggestion must include a non-empty 'title' field.";
+                return null;
+            }
             default:
                 return $"Brand-new {type} suggestions are not supported.";
         }
@@ -1329,6 +1337,15 @@ public class SuggestionsController(MarechaiContext context,
                 }
                 return null;
             }
+            case SuggestionEntityType.Magazine:
+            {
+                if(values.TryGetValue(Suggestions.MagazineSuggestionApplier.FieldTitle, out object n))
+                {
+                    string s = ExtractStringForValidation(n);
+                    return string.IsNullOrWhiteSpace(s) ? null : s.Trim();
+                }
+                return null;
+            }
             default:
                 return null;
         }
@@ -1354,6 +1371,11 @@ public class SuggestionsController(MarechaiContext context,
                 // different companies, e.g. "Series 1" by multiple manufacturers). Dedupe on
                 // name only would over-block; rely on admin moderation to spot duplicates within
                 // a manufacturer instead.
+                return false;
+            case SuggestionEntityType.Magazine:
+                // Magazine titles repeat across decades, regions and languages (e.g. "BYTE",
+                // "Computer World"). Dedupe on title only would over-block; rely on admin
+                // moderation to spot true duplicates instead.
                 return false;
             default:
                 return false;
@@ -1386,6 +1408,12 @@ public class SuggestionsController(MarechaiContext context,
             case SuggestionEntityType.Machine:
             {
                 var (id, applied) = await Suggestions.MachineSuggestionApplier.CreateAsync(
+                    context, suggested, accepted, creditedUserId);
+                return (id, applied);
+            }
+            case SuggestionEntityType.Magazine:
+            {
+                var (id, applied) = await Suggestions.MagazineSuggestionApplier.CreateAsync(
                     context, suggested, accepted, creditedUserId);
                 return (id, applied);
             }
@@ -2345,9 +2373,11 @@ public class SuggestionsController(MarechaiContext context,
             }
         }
 
-        if(!entityId.HasValue) return;
-
         // ---- Junction-add labels (resolved from the suggested payload's id field) -----
+        // Note: junction-add labels look up the linked entity (Company, Role) directly from
+        // the suggested payload's id fields, so they DO NOT require a parent entityId. Don't
+        // gate this loop on entityId.HasValue — that breaks creation-mode review where the
+        // parent magazine doesn't exist yet but the queued company adds still need labels.
         foreach(KeyValuePair<string, JsonElement> kv in values)
         {
             if(!Suggestions.MagazineSuggestionApplier.TryParseJunctionKey(kv.Key, out string group, out string op, out _))

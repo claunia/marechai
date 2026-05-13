@@ -26,8 +26,11 @@
 }
 
 @page "/magazines"
+@using Marechai.ApiClient.Models
+@using Marechai.Pages.Suggestions
 @inherits OwningComponentBase<MagazinesService>
 @inject IStringLocalizer<MagazinesService> L
+@inject IDialogService                     DialogService
 
 @if(!_loaded)
 {
@@ -39,9 +42,23 @@
 }
 
 <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
-    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3" Class="mb-3">
-        <MudIcon Icon="@Icons.Material.Filled.MenuBook" Size="Size.Large" Style="color: white;"/>
-        <MudText Typo="Typo.h4" Style="color: white;">@L["Magazines"]</MudText>
+    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-3">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+            <MudIcon Icon="@Icons.Material.Filled.MenuBook" Size="Size.Large" Style="color: white;"/>
+            <MudText Typo="Typo.h4" Style="color: white;">@L["Magazines"]</MudText>
+        </MudStack>
+        <AuthorizeView>
+            <Authorized>
+                <MudTooltip Text="@L["Suggest a new magazine to be added to the catalogue."]">
+                    <MudButton Variant="Variant.Outlined" Size="Size.Small" Color="Color.Inherit"
+                               StartIcon="@Icons.Material.Filled.AddCircle"
+                               OnClick="OpenSuggestNewMagazineDialog"
+                               Style="color: white; border-color: rgba(255,255,255,0.7);">
+                        @L["Suggest new magazine"]
+                    </MudButton>
+                </MudTooltip>
+            </Authorized>
+        </AuthorizeView>
     </MudStack>
     <MudText Typo="Typo.body1" Style="color: rgba(255,255,255,0.85);">@L["Here you can consult our database."]</MudText>
     <MudText Typo="Typo.body1" Style="color: rgba(255,255,255,0.85);">@L["The database contains information about magazines related to computing history."]</MudText>
