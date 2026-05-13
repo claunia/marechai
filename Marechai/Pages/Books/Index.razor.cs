@@ -24,6 +24,9 @@
 *******************************************************************************/
 
 using System.Threading.Tasks;
+using Marechai.ApiClient.Models;
+using Marechai.Pages.Suggestions;
+using MudBlazor;
 
 namespace Marechai.Pages.Books;
 
@@ -44,5 +47,29 @@ public partial class Index
 
         _loaded = true;
         StateHasChanged();
+    }
+
+    /// <summary>
+    ///     Open the unified Book suggestion dialog in creation mode. The dialog handles
+    ///     submission + validation; this page does not refresh on success because the new
+    ///     book only appears in the listing once an admin accepts the suggestion.
+    /// </summary>
+    async Task OpenSuggestNewBookDialog()
+    {
+        var parameters = new DialogParameters<BookSuggestionDialog>
+        {
+            { x => x.EntityId,   0L              },
+            { x => x.CurrentDto, (BookDto)null   },
+            { x => x.IsCreation, true            }
+        };
+
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Large
+        };
+
+        await DialogService.ShowAsync<BookSuggestionDialog>(L["Suggest new book"], parameters, options);
     }
 }

@@ -98,7 +98,8 @@ public class SuggestionsController(MarechaiContext context,
     {
         SuggestionEntityType.Company,
         SuggestionEntityType.Machine,
-        SuggestionEntityType.Magazine
+        SuggestionEntityType.Magazine,
+        SuggestionEntityType.Book
     };
 
     // ───────────────────────────── POST /suggestions ─────────────────────────────
@@ -1303,6 +1304,13 @@ public class SuggestionsController(MarechaiContext context,
                     return "A new magazine suggestion must include a non-empty 'title' field.";
                 return null;
             }
+            case SuggestionEntityType.Book:
+            {
+                if(!values.TryGetValue(Suggestions.BookSuggestionApplier.FieldTitle, out object n) ||
+                   string.IsNullOrWhiteSpace(ExtractStringForValidation(n)))
+                    return "A new book suggestion must include a non-empty 'title' field.";
+                return null;
+            }
             default:
                 return $"Brand-new {type} suggestions are not supported.";
         }
@@ -1346,6 +1354,15 @@ public class SuggestionsController(MarechaiContext context,
                 }
                 return null;
             }
+            case SuggestionEntityType.Book:
+            {
+                if(values.TryGetValue(Suggestions.BookSuggestionApplier.FieldTitle, out object n))
+                {
+                    string s = ExtractStringForValidation(n);
+                    return string.IsNullOrWhiteSpace(s) ? null : s.Trim();
+                }
+                return null;
+            }
             default:
                 return null;
         }
@@ -1376,6 +1393,12 @@ public class SuggestionsController(MarechaiContext context,
                 // Magazine titles repeat across decades, regions and languages (e.g. "BYTE",
                 // "Computer World"). Dedupe on title only would over-block; rely on admin
                 // moderation to spot true duplicates instead.
+                return false;
+            case SuggestionEntityType.Book:
+                // Book titles repeat across editions, languages and reprints (multiple
+                // distinct "Programming in C" books exist for different decades/authors).
+                // Dedupe on title only would over-block; rely on admin moderation to spot
+                // true duplicates instead.
                 return false;
             default:
                 return false;
@@ -1415,6 +1438,12 @@ public class SuggestionsController(MarechaiContext context,
             {
                 var (id, applied) = await Suggestions.MagazineSuggestionApplier.CreateAsync(
                     context, suggested, accepted, creditedUserId);
+                return (id, applied);
+            }
+            case SuggestionEntityType.Book:
+            {
+                var (id, applied) = await Suggestions.BookSuggestionApplier.CreateAsync(
+                    context, suggested, accepted, creditedUserId, _assetRootPath);
                 return (id, applied);
             }
             default:
@@ -2007,9 +2036,12 @@ public class SuggestionsController(MarechaiContext context,
             }
         }
 
-        if(!entityId.HasValue) return;
-
         // ---- Junction-add labels (resolved from the suggested payload's id field) -----
+        // NB: junction-add labels do NOT need the parent entityId — they look up the
+        // linked entity (Person, Company, Machine, MachineFamily) directly from the
+        // payload's id field. Removing the previous `if(!entityId.HasValue) return;`
+        // guard so addition-mode (entityId=null) suggestions also get readable labels in
+        // the diff panel.
         foreach(KeyValuePair<string, JsonElement> kv in values)
         {
             if(!Suggestions.BookSuggestionApplier.TryParseJunctionKey(kv.Key, out string group, out string op, out _))

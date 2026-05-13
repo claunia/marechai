@@ -35,7 +35,14 @@
         else
         {
             <MudText Typo="Typo.body2" Class="mb-3">
-                @L["Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently."]
+                @if(IsCreation)
+                {
+                    @L["Fill in the fields below to suggest a new book. Title is required; you can attach a cover image and queue people, companies, machines and machine families that will all be added together once an administrator accepts the suggestion."]
+                }
+                else
+                {
+                    @L["Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently."]
+                }
             </MudText>
 
             @* ── Scalar fields ── *@
@@ -357,7 +364,7 @@
     <DialogActions>
         <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
         <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit"
-                   Disabled="@(_loading || _submitting || !HasAnyChange())">
+                   Disabled="@(_loading || _submitting || (!IsCreation && !HasAnyChange()) || (IsCreation && !HasMandatoryFieldsForCreation()))">
             @if(_submitting)
             {
                 <MudProgressCircular Size="Size.Small" Indeterminate="true"/>
@@ -376,6 +383,15 @@
 
     [Parameter] public long    EntityId   { get; set; }
     [Parameter] public BookDto CurrentDto { get; set; }
+
+    /// <summary>
+    ///     When <c>true</c>, the dialog operates in addition mode: <see cref="CurrentDto" /> is
+    ///     ignored, no existing-row queries are issued, the cover upload targets the
+    ///     <c>POST /books/cover/pending/new</c> endpoint, and <see cref="Submit" /> emits
+    ///     a suggestion with <c>EntityId == null</c>. The submit button is gated on
+    ///     <see cref="HasMandatoryFieldsForCreation" /> rather than <see cref="HasAnyChange" />.
+    /// </summary>
+    [Parameter] public bool IsCreation { get; set; }
 
     sealed class JunctionAddState
     {
@@ -462,8 +478,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // Seed scalar state from the current DTO snapshot.
-        if(CurrentDto is not null)
+        // Seed scalar state from the current DTO snapshot (only in edit mode).
+        if(!IsCreation && CurrentDto is not null)
         {
             _title                   = CurrentDto.Title;
             _nativeTitle             = CurrentDto.NativeTitle;
@@ -488,12 +504,34 @@
             _orig_internetArchiveUrl = _internetArchiveUrl;
         }
 
+        // Always load picker corpora; existing-by-book queries are skipped in creation mode.
         Task<List<Iso31661NumericDto>>    countriesT     = BooksService.GetCountriesAsync();
         Task<List<PersonDto>>             allPeopleT     = BooksService.GetAllPeopleAsync();
         Task<List<CompanyDto>>            allCompaniesT  = BooksService.GetAllCompaniesAsync();
         Task<List<MachineDto>>            allMachinesT   = BooksService.GetAllMachinesAsync();
         Task<List<MachineFamilyDto>>      allFamiliesT   = BooksService.GetAllMachineFamiliesAsync();
         Task<List<DocumentRoleDto>>       rolesT         = BooksService.GetDocumentRolesAsync();
+
+        if(IsCreation)
+        {
+            await Task.WhenAll(countriesT, allPeopleT, allCompaniesT, allMachinesT, allFamiliesT, rolesT);
+
+            _allCountries        = countriesT.Result;
+            _allPeople           = allPeopleT.Result;
+            _allCompanies        = allCompaniesT.Result;
+            _allMachines         = allMachinesT.Result;
+            _allMachineFamilies  = allFamiliesT.Result;
+            _roles               = rolesT.Result;
+
+            _peopleRows         = new List<PersonByBookDto>();
+            _companyRows        = new List<CompanyByBookDto>();
+            _machineRows        = new List<BookByMachineDto>();
+            _machineFamilyRows  = new List<BookByMachineFamilyDto>();
+
+            _loading = false;
+            return;
+        }
+
         Task<List<PersonByBookDto>>       peopleByT      = BooksService.GetPeopleByBookAsync(EntityId);
         Task<List<CompanyByBookDto>>      companiesByT   = BooksService.GetCompaniesByBookAsync(EntityId);
         Task<List<BookByMachineDto>>      machinesByT    = BooksService.GetMachinesByBookAsync(EntityId);
@@ -779,9 +817,13 @@
             // for this (uploader, book) tuple — see PendingImageStore.DeleteByUploaderForEntity.
             string oldGuid = _pendingCoverGuid;
 
-            UploadResult res = await JS.InvokeAsync<UploadResult>(
-                "MarechaiPendingCover.uploadBookCover",
-                ApiAssetUrls.BaseUrl, token, EntityId, _coverInputId);
+            UploadResult res = IsCreation
+                ? await JS.InvokeAsync<UploadResult>(
+                      "MarechaiPendingCover.uploadNewBookCover",
+                      ApiAssetUrls.BaseUrl, token, _coverInputId)
+                : await JS.InvokeAsync<UploadResult>(
+                      "MarechaiPendingCover.uploadBookCover",
+                      ApiAssetUrls.BaseUrl, token, EntityId, _coverInputId);
 
             if(res is null || !res.ok || string.IsNullOrEmpty(res.guid))
             {
@@ -879,12 +921,14 @@
 
     void Cancel() => MudDialog.Cancel();
 
+    bool HasMandatoryFieldsForCreation() => !string.IsNullOrWhiteSpace(_title);
+
     async Task Submit()
     {
         _validationError = null;
         if(_loading) return;
 
-        // Title is required: never let the user clear it.
+        // Title is required: never let the user clear it (edit mode) or omit it (creation mode).
         if(string.IsNullOrWhiteSpace(_title))
         {
             _validationError = L["Title is required."];
@@ -904,39 +948,77 @@
 
         var diff = new Dictionary<string, object>(StringComparer.Ordinal);
 
-        if(!Equals(_orig_title, _title))             diff[BookSuggestionMetadata.FieldTitle]       = _title;
-        if(!Equals(_orig_nativeTitle, _nativeTitle)) diff[BookSuggestionMetadata.FieldNativeTitle] = _nativeTitle;
-        if(!Equals(_orig_sortTitle, _sortTitle))     diff[BookSuggestionMetadata.FieldSortTitle]   = _sortTitle;
-        if(!Equals(_orig_isbn, _isbn))               diff[BookSuggestionMetadata.FieldIsbn]        = _isbn;
-        if(!Nullable.Equals(_orig_pages, _pages))     diff[BookSuggestionMetadata.FieldPages]      = _pages;
-        if(!Nullable.Equals(_orig_edition, _edition)) diff[BookSuggestionMetadata.FieldEdition]    = _edition;
-        if(!Nullable.Equals(_orig_published, _published))
-            diff[BookSuggestionMetadata.FieldPublished] = _published?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-        if(_orig_publishedPrecision != _publishedPrecision)
-            diff[BookSuggestionMetadata.FieldPublishedPrecision] = _publishedPrecision;
-        if(_orig_countryId != _selectedCountry?.Id)
-            diff[BookSuggestionMetadata.FieldCountryId] = _selectedCountry?.Id;
-        if(_orig_previousId != _selectedPrevious?.Id)
-            diff[BookSuggestionMetadata.FieldPreviousId] = _selectedPrevious?.Id;
-        if(_orig_sourceId != _selectedSource?.Id)
-            diff[BookSuggestionMetadata.FieldSourceId] = _selectedSource?.Id;
-        if(!Equals(_orig_internetArchiveUrl, _internetArchiveUrl))
-            diff[BookSuggestionMetadata.FieldInternetArchiveUrl] = _internetArchiveUrl;
-
-        // Cover-pending: emit the guid only. The applier reads the extension from the
-        // pending-image sidecar (so we don't need to round-trip it on the wire).
-        if(!string.IsNullOrEmpty(_pendingCoverGuid))
-            diff[BookSuggestionMetadata.FieldCoverPendingGuid] = _pendingCoverGuid;
-
-        AddJunctionOps(diff, _peopleAdds,        _peopleRemoves,        BookSuggestionMetadata.GroupPeople);
-        AddJunctionOps(diff, _companyAdds,       _companyRemoves,       BookSuggestionMetadata.GroupCompanies);
-        AddJunctionOps(diff, _machineAdds,       _machineRemoves,       BookSuggestionMetadata.GroupMachines);
-        AddJunctionOps(diff, _machineFamilyAdds, _machineFamilyRemoves, BookSuggestionMetadata.GroupMachineFamilies);
-
-        if(diff.Count == 0)
+        if(IsCreation)
         {
-            _validationError = L["No changes detected — modify at least one field before submitting."];
-            return;
+            // Brand-new entity: emit every populated scalar plus the cover and all queued
+            // junction adds. Remove ops are ignored (no existing rows in creation mode).
+            diff[BookSuggestionMetadata.FieldTitle] = _title;
+            if(!string.IsNullOrWhiteSpace(_nativeTitle))
+                diff[BookSuggestionMetadata.FieldNativeTitle] = _nativeTitle;
+            if(!string.IsNullOrWhiteSpace(_sortTitle))
+                diff[BookSuggestionMetadata.FieldSortTitle] = _sortTitle;
+            if(!string.IsNullOrWhiteSpace(_isbn))
+                diff[BookSuggestionMetadata.FieldIsbn] = _isbn;
+            if(_pages.HasValue)
+                diff[BookSuggestionMetadata.FieldPages] = _pages;
+            if(_edition.HasValue)
+                diff[BookSuggestionMetadata.FieldEdition] = _edition;
+            if(_published.HasValue)
+                diff[BookSuggestionMetadata.FieldPublished] = _published.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            if(_publishedPrecision != 0)
+                diff[BookSuggestionMetadata.FieldPublishedPrecision] = _publishedPrecision;
+            if(_selectedCountry?.Id is int icid)
+                diff[BookSuggestionMetadata.FieldCountryId] = icid;
+            if(_selectedPrevious?.Id is long ipid)
+                diff[BookSuggestionMetadata.FieldPreviousId] = ipid;
+            if(_selectedSource?.Id is long isid)
+                diff[BookSuggestionMetadata.FieldSourceId] = isid;
+            if(!string.IsNullOrWhiteSpace(_internetArchiveUrl))
+                diff[BookSuggestionMetadata.FieldInternetArchiveUrl] = _internetArchiveUrl;
+            if(!string.IsNullOrEmpty(_pendingCoverGuid))
+                diff[BookSuggestionMetadata.FieldCoverPendingGuid] = _pendingCoverGuid;
+
+            foreach(KeyValuePair<string, JunctionAddState> kv in _peopleAdds)        diff[kv.Key] = kv.Value.Payload;
+            foreach(KeyValuePair<string, JunctionAddState> kv in _companyAdds)       diff[kv.Key] = kv.Value.Payload;
+            foreach(KeyValuePair<string, JunctionAddState> kv in _machineAdds)       diff[kv.Key] = kv.Value.Payload;
+            foreach(KeyValuePair<string, JunctionAddState> kv in _machineFamilyAdds) diff[kv.Key] = kv.Value.Payload;
+        }
+        else
+        {
+            if(!Equals(_orig_title, _title))             diff[BookSuggestionMetadata.FieldTitle]       = _title;
+            if(!Equals(_orig_nativeTitle, _nativeTitle)) diff[BookSuggestionMetadata.FieldNativeTitle] = _nativeTitle;
+            if(!Equals(_orig_sortTitle, _sortTitle))     diff[BookSuggestionMetadata.FieldSortTitle]   = _sortTitle;
+            if(!Equals(_orig_isbn, _isbn))               diff[BookSuggestionMetadata.FieldIsbn]        = _isbn;
+            if(!Nullable.Equals(_orig_pages, _pages))     diff[BookSuggestionMetadata.FieldPages]      = _pages;
+            if(!Nullable.Equals(_orig_edition, _edition)) diff[BookSuggestionMetadata.FieldEdition]    = _edition;
+            if(!Nullable.Equals(_orig_published, _published))
+                diff[BookSuggestionMetadata.FieldPublished] = _published?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            if(_orig_publishedPrecision != _publishedPrecision)
+                diff[BookSuggestionMetadata.FieldPublishedPrecision] = _publishedPrecision;
+            if(_orig_countryId != _selectedCountry?.Id)
+                diff[BookSuggestionMetadata.FieldCountryId] = _selectedCountry?.Id;
+            if(_orig_previousId != _selectedPrevious?.Id)
+                diff[BookSuggestionMetadata.FieldPreviousId] = _selectedPrevious?.Id;
+            if(_orig_sourceId != _selectedSource?.Id)
+                diff[BookSuggestionMetadata.FieldSourceId] = _selectedSource?.Id;
+            if(!Equals(_orig_internetArchiveUrl, _internetArchiveUrl))
+                diff[BookSuggestionMetadata.FieldInternetArchiveUrl] = _internetArchiveUrl;
+
+            // Cover-pending: emit the guid only. The applier reads the extension from the
+            // pending-image sidecar (so we don't need to round-trip it on the wire).
+            if(!string.IsNullOrEmpty(_pendingCoverGuid))
+                diff[BookSuggestionMetadata.FieldCoverPendingGuid] = _pendingCoverGuid;
+
+            AddJunctionOps(diff, _peopleAdds,        _peopleRemoves,        BookSuggestionMetadata.GroupPeople);
+            AddJunctionOps(diff, _companyAdds,       _companyRemoves,       BookSuggestionMetadata.GroupCompanies);
+            AddJunctionOps(diff, _machineAdds,       _machineRemoves,       BookSuggestionMetadata.GroupMachines);
+            AddJunctionOps(diff, _machineFamilyAdds, _machineFamilyRemoves, BookSuggestionMetadata.GroupMachineFamilies);
+
+            if(diff.Count == 0)
+            {
+                _validationError = L["No changes detected — modify at least one field before submitting."];
+                return;
+            }
         }
 
         _submitting = true;
@@ -946,7 +1028,7 @@
             var dto = new SuggestionDto
             {
                 EntityType          = (int?)SuggestionEntityType.Book,
-                EntityId            = EntityId,
+                EntityId            = IsCreation ? null : EntityId,
                 Status              = (int?)SuggestionStatus.Pending,
                 UserComment         = string.IsNullOrWhiteSpace(_userComment) ? null : _userComment.Trim(),
                 SuggestedValuesJson = json

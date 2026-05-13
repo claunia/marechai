@@ -437,4 +437,13 @@
   <data name="Cover upload failed." xml:space="preserve">
     <value>Error al subir la portada.</value>
   </data>
+  <data name="Suggest new book" xml:space="preserve">
+    <value>Sugerir nuevo libro</value>
+  </data>
+  <data name="Suggest a new book to be added to the catalogue." xml:space="preserve">
+    <value>Sugerir un nuevo libro para añadir al catálogo.</value>
+  </data>
+  <data name="Fill in the fields below to suggest a new book. Title is required; you can attach a cover image and queue people, companies, machines and machine families that will all be added together once an administrator accepts the suggestion." xml:space="preserve">
+    <value>Rellena los campos siguientes para sugerir un nuevo libro. El título es obligatorio; puedes adjuntar una portada y encolar personas, empresas, máquinas y familias de máquinas que se añadirán junto al libro una vez que un administrador acepte la sugerencia.</value>
+  </data>
 </root>

@@ -529,4 +529,13 @@
   <data name="Cover upload failed." xml:space="preserve">
     <value>Hochladen des Covers fehlgeschlagen.</value>
   </data>
+  <data name="Suggest new book" xml:space="preserve">
+    <value>Neues Buch vorschlagen</value>
+  </data>
+  <data name="Suggest a new book to be added to the catalogue." xml:space="preserve">
+    <value>Schlagen Sie ein neues Buch für den Katalog vor.</value>
+  </data>
+  <data name="Fill in the fields below to suggest a new book. Title is required; you can attach a cover image and queue people, companies, machines and machine families that will all be added together once an administrator accepts the suggestion." xml:space="preserve">
+    <value>Füllen Sie die unten stehenden Felder aus, um ein neues Buch vorzuschlagen. Der Titel ist erforderlich; Sie können ein Titelbild anhängen und Personen, Unternehmen, Maschinen und Maschinenfamilien in die Warteschlange stellen, die alle zusammen hinzugefügt werden, sobald ein Administrator den Vorschlag akzeptiert.</value>
+  </data>
 </root>

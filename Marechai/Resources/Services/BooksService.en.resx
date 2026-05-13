@@ -431,4 +431,13 @@
   <data name="Cover upload failed." xml:space="preserve">
     <value>Cover upload failed.</value>
   </data>
+  <data name="Suggest new book" xml:space="preserve">
+    <value>Suggest new book</value>
+  </data>
+  <data name="Suggest a new book to be added to the catalogue." xml:space="preserve">
+    <value>Suggest a new book to be added to the catalogue.</value>
+  </data>
+  <data name="Fill in the fields below to suggest a new book. Title is required; you can attach a cover image and queue people, companies, machines and machine families that will all be added together once an administrator accepts the suggestion." xml:space="preserve">
+    <value>Fill in the fields below to suggest a new book. Title is required; you can attach a cover image and queue people, companies, machines and machine families that will all be added together once an administrator accepts the suggestion.</value>
+  </data>
 </root>

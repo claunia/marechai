@@ -873,6 +873,55 @@ public class BooksController(
     }
 
     /// <summary>
+    ///     Upload a pending cover for a brand-new book that doesn't exist yet — paired with
+    ///     the addition-mode <c>POST /suggestions</c> flow (entityType=Book, entityId=null).
+    ///     Identical to <see cref="UploadPendingCoverAsync" /> except it skips the
+    ///     book-existence check and stores the file with <c>EntityId=0</c> in the sidecar
+    ///     (since the actual book id only comes into existence when the suggestion is
+    ///     accepted). The "one pending cover per (uploader, entity)" cleanup keys on
+    ///     <c>(uploader, EntityType=Book, EntityId=0)</c>, so the user always has at most
+    ///     one in-flight new-book cover at a time.
+    /// </summary>
+    [HttpPost("cover/pending/new")]
+    [Authorize]
+    [RequestSizeLimit(50 * 1024 * 1024)]
+    [ProducesResponseType(typeof(PendingImageUploadDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<PendingImageUploadDto>> UploadPendingNewBookCoverAsync(IFormFile file)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        if(userId is null) return Unauthorized();
+
+        if(file is null || file.Length == 0)
+            return BadRequest("No file provided.");
+
+        if(file.Length > 50 * 1024 * 1024)
+            return BadRequest("File exceeds 50 MB limit.");
+
+        string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
+        if(!_pendingAllowedExtensions.Contains(extension))
+            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP.");
+
+        if(!string.IsNullOrEmpty(file.ContentType) &&
+           !_pendingAllowedContentTypes.Contains(file.ContentType.ToLowerInvariant()))
+            return BadRequest("Unsupported content type.");
+
+        // Cleanup: each user gets at most ONE pending NEW-book cover at a time. Replace any
+        // prior upload (keyed on EntityId=0) before storing the new one.
+        Marechai.Server.Helpers.PendingImageStore.DeleteByUploaderForEntity(
+            _assetRootPath, "book-covers", userId, (byte)Marechai.Data.SuggestionEntityType.Book, 0L);
+
+        await using var stream = file.OpenReadStream();
+        Guid guid = await Marechai.Server.Helpers.PendingImageStore.StoreAsync(
+            _assetRootPath, "book-covers", extension,
+            (byte)Marechai.Data.SuggestionEntityType.Book, 0L, userId,
+            file.ContentType, stream);
+
+        return Ok(new PendingImageUploadDto { Guid = guid, Extension = extension.TrimStart('.') });
+    }
+
+    /// <summary>
     ///     Serve a pending cover image. Authorization: the uploader OR any admin/uberadmin
     ///     can view (so the dialog preview works for the contributor and the review queue
     ///     works for the moderator).

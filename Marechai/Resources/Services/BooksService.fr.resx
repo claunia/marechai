@@ -529,4 +529,13 @@
   <data name="Cover upload failed." xml:space="preserve">
     <value>Échec du téléversement de la couverture.</value>
   </data>
+  <data name="Suggest new book" xml:space="preserve">
+    <value>Suggérer un nouveau livre</value>
+  </data>
+  <data name="Suggest a new book to be added to the catalogue." xml:space="preserve">
+    <value>Suggérer un nouveau livre à ajouter au catalogue.</value>
+  </data>
+  <data name="Fill in the fields below to suggest a new book. Title is required; you can attach a cover image and queue people, companies, machines and machine families that will all be added together once an administrator accepts the suggestion." xml:space="preserve">
+    <value>Remplissez les champs ci-dessous pour suggérer un nouveau livre. Le titre est obligatoire ; vous pouvez joindre une image de couverture et mettre en file d'attente les personnes, sociétés, machines et familles de machines qui seront toutes ajoutées ensemble lorsqu'un administrateur acceptera la suggestion.</value>
+  </data>
 </root>

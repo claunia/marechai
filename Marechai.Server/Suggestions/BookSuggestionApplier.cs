@@ -163,6 +163,102 @@ internal static class BookSuggestionApplier
     }
 
     /// <summary>
+    ///     Create a brand-new Book row from an accepted addition-mode suggestion. Returns
+    ///     the new entity id (or <c>null</c> on failure to validate the mandatory
+    ///     <see cref="FieldTitle" />), plus the actually-applied field set. After scalar
+    ///     fields are persisted, accepted <c>*.add.*</c> junction keys are applied with
+    ///     the freshly-minted <c>BookId</c>; <c>*.remove.*</c> keys are silently skipped
+    ///     (a brand-new entity has nothing to remove from). Cover-pending guid promotion
+    ///     happens BEFORE persistence so the cover guid + extension are part of the
+    ///     initial row.
+    /// </summary>
+    /// <param name="creditedUserId">
+    ///     The Identity user id to attribute the row to in audit history (the suggesting
+    ///     user, NOT the reviewing admin). Forwarded to <c>SaveChangesWithUserAsync</c>.
+    /// </param>
+    public static async Task<(long? newId, HashSet<string> applied)> CreateAsync(
+        MarechaiContext context,
+        Dictionary<string, object> suggested,
+        HashSet<string> accepted,
+        string creditedUserId,
+        string assetRootPath)
+    {
+        var applied = new HashSet<string>(StringComparer.Ordinal);
+
+        // Title is the only mandatory field; everything else (ISBN, dates, country, FK
+        // references, junctions, cover) is optional. Reject the addition outright if the
+        // admin didn't tick Title.
+        if(!accepted.Contains(FieldTitle) || !suggested.TryGetValue(FieldTitle, out object titleVal))
+            return (null, applied);
+
+        string title = ToStringValue(titleVal);
+        if(string.IsNullOrWhiteSpace(title)) return (null, applied);
+
+        var b = new Book { Title = title.Trim() };
+        applied.Add(FieldTitle);
+
+        // Apply remaining accepted scalar fields via the same coercion+validation table the
+        // edit path uses. Junction operations and the cover are handled in dedicated passes.
+        foreach(string fieldName in accepted)
+        {
+            if(fieldName == FieldTitle) continue;
+            if(fieldName == FieldCoverPendingGuid) continue;
+            if(!s_scalarFieldNames.Contains(fieldName)) continue;
+            if(!suggested.TryGetValue(fieldName, out object value)) continue;
+
+            try
+            {
+                if(await ApplyScalar(context, b, fieldName, value)) applied.Add(fieldName);
+            }
+            catch
+            {
+                // Coerce failure: silently skip this field.
+            }
+        }
+
+        // Cover-pending: promote the file BEFORE saving so the new row carries the cover
+        // guid + extension from the moment it's persisted. Failure here just skips the
+        // cover; the rest of the entity still gets created.
+        if(accepted.Contains(FieldCoverPendingGuid) &&
+           suggested.TryGetValue(FieldCoverPendingGuid, out object coverGuidRaw))
+        {
+            string guidStr = ToStringValue(coverGuidRaw);
+            if(!string.IsNullOrEmpty(guidStr) && Guid.TryParse(guidStr, out Guid pendingGuid))
+            {
+                if(await PromoteBookCoverAsync(b, assetRootPath, pendingGuid))
+                    applied.Add(FieldCoverPendingGuid);
+            }
+        }
+
+        await context.Books.AddAsync(b);
+
+        if(string.IsNullOrEmpty(creditedUserId))
+            await context.SaveChangesAsync();
+        else
+            await context.SaveChangesWithUserAsync(creditedUserId);
+
+        // Now apply junction adds with the freshly-minted book id. Remove keys are silently
+        // ignored — a brand-new entity has nothing to remove from.
+        foreach(string fieldName in accepted)
+        {
+            if(!TryParseJunctionKey(fieldName, out string group, out string op, out string _)) continue;
+            if(op != "add") continue;
+            if(!suggested.TryGetValue(fieldName, out object value)) continue;
+
+            try
+            {
+                if(await ApplyJunctionAdd(context, b.Id, group, value)) applied.Add(fieldName);
+            }
+            catch
+            {
+                // Coerce failure: silently skip this junction add.
+            }
+        }
+
+        return (b.Id, applied);
+    }
+
+    /// <summary>
     ///     Apply the accepted fields onto the Book row + junction tables. Each junction
     ///     operation is atomic — failure to coerce one entry skips it without affecting the
     ///     others.

@@ -70,6 +70,67 @@ window.MarechaiPendingCover = (function () {
     }
 
     /**
+     * Upload a single file to the API's NEW-book pending-cover endpoint.
+     * Used by the "Suggest new book" addition-mode dialog where the book id doesn't
+     * exist yet. Server stores the sidecar with EntityId=0 and enforces the
+     * one-pending-per-uploader rule on that surrogate id.
+     *
+     * @param {string} apiBaseUrl  Absolute base URL of the API server.
+     * @param {string} jwtToken    JWT bearer token (no "Bearer " prefix).
+     * @param {Element|string} fileInputElementOrId  The <input type="file"> element or its id.
+     * @returns {Promise<{ok: boolean, status: number, guid?: string, extension?: string, error?: string}>}
+     */
+    async function uploadNewBookCover(apiBaseUrl, jwtToken, fileInputElementOrId) {
+        const input = (typeof fileInputElementOrId === 'string')
+            ? document.getElementById(fileInputElementOrId)
+            : fileInputElementOrId;
+
+        if (!input || !input.files || input.files.length === 0) {
+            return { ok: false, status: 0, error: 'No file selected.' };
+        }
+
+        const file = input.files[0];
+
+        if (file.size > 50 * 1024 * 1024) {
+            return { ok: false, status: 0, error: 'File exceeds 50 MB limit.' };
+        }
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+        if (file.type && !allowedTypes.includes(file.type.toLowerCase())) {
+            return { ok: false, status: 0, error: 'Unsupported file type. Allowed: JPG, PNG, WebP.' };
+        }
+
+        const fd = new FormData();
+        fd.append('file', file, file.name);
+
+        const url = `${apiBaseUrl.replace(/\/+$/, '')}/books/cover/pending/new`;
+
+        try {
+            const resp = await fetch(url, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${jwtToken}` },
+                body: fd
+            });
+
+            if (!resp.ok) {
+                let detail = '';
+                try {
+                    const body = await resp.text();
+                    try {
+                        const j = JSON.parse(body);
+                        detail = j.detail || j.title || body;
+                    } catch { detail = body; }
+                } catch { /* ignored */ }
+                return { ok: false, status: resp.status, error: detail || `HTTP ${resp.status}` };
+            }
+
+            const json = await resp.json();
+            return { ok: true, status: resp.status, guid: json.guid, extension: json.extension };
+        } catch (err) {
+            return { ok: false, status: 0, error: err && err.message ? err.message : String(err) };
+        }
+    }
+
+    /**
      * Delete a pending cover via the API.
      */
     async function deletePendingCover(apiBaseUrl, jwtToken, guid) {
@@ -390,6 +451,7 @@ window.MarechaiPendingCover = (function () {
 
     return {
         uploadBookCover,
+        uploadNewBookCover,
         deletePendingCover,
         applyPendingCoverImage,
         openPendingCoverInNewTab,
