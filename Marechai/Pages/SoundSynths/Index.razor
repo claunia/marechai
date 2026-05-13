@@ -29,6 +29,7 @@
 @using Marechai.ApiClient.Models
 @inherits OwningComponentBase<SoundSynthsService>
 @inject IStringLocalizer<SoundSynthsService> L
+@inject IDialogService                       DialogService
 
 @if(!_initialized)
 {
@@ -41,9 +42,23 @@
 
 @* ── Hero Header ── *@
 <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
-    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3" Class="mb-3">
-        <MudIcon Icon="@Icons.Material.Filled.MusicNote" Size="Size.Large" Style="color: white;"/>
-        <MudText Typo="Typo.h4" Style="color: white;">@L["Sound synthesizers"]</MudText>
+    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-3">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+            <MudIcon Icon="@Icons.Material.Filled.MusicNote" Size="Size.Large" Style="color: white;"/>
+            <MudText Typo="Typo.h4" Style="color: white;">@L["Sound synthesizers"]</MudText>
+        </MudStack>
+        <AuthorizeView>
+            <Authorized>
+                <MudTooltip Text="@L["Suggest a new sound synthesizer to be added to the catalogue."]">
+                    <MudButton Variant="Variant.Outlined" Size="Size.Small" Color="Color.Inherit"
+                               StartIcon="@Icons.Material.Filled.AddCircle"
+                               OnClick="OpenSuggestNewSoundSynthDialog"
+                               Style="color: white; border-color: rgba(255,255,255,0.7);">
+                        @L["Suggest new sound synthesizer"]
+                    </MudButton>
+                </MudTooltip>
+            </Authorized>
+        </AuthorizeView>
     </MudStack>
     <MudChip T="string" Color="Color.Dark" Variant="Variant.Filled" Class="mt-2" Style="color: white; white-space: normal; height: auto; overflow: visible; text-overflow: unset; padding: 8px 16px;">@string.Format(L["{0} sound synthesizers found in the database."], _total)</MudChip>
 </MudPaper>

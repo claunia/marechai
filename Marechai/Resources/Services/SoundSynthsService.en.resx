@@ -564,4 +564,13 @@
   <data name="Edit any field below to suggest changes to this sound synthesizer." xml:space="preserve">
     <value>Edit any field below to suggest changes to this sound synthesizer.</value>
   </data>
+  <data name="Suggest new sound synthesizer" xml:space="preserve">
+    <value>Suggest new sound synthesizer</value>
+  </data>
+  <data name="Suggest a new sound synthesizer to be added to the catalogue." xml:space="preserve">
+    <value>Suggest a new sound synthesizer to be added to the catalogue.</value>
+  </data>
+  <data name="Fill in at least the name to suggest a new sound synthesizer. All other fields are optional and can be added by other contributors later." xml:space="preserve">
+    <value>Fill in at least the name to suggest a new sound synthesizer. All other fields are optional and can be added by other contributors later.</value>
+  </data>
 </root>

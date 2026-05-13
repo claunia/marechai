@@ -539,4 +539,13 @@
   <data name="Edit any field below to suggest changes to this sound synthesizer." xml:space="preserve">
     <value>Modifiez un champ ci-dessous pour suggérer des modifications à ce synthétiseur sonore.</value>
   </data>
+  <data name="Suggest new sound synthesizer" xml:space="preserve">
+    <value>Suggérer un nouveau synthétiseur sonore</value>
+  </data>
+  <data name="Suggest a new sound synthesizer to be added to the catalogue." xml:space="preserve">
+    <value>Suggérez un nouveau synthétiseur sonore à ajouter au catalogue.</value>
+  </data>
+  <data name="Fill in at least the name to suggest a new sound synthesizer. All other fields are optional and can be added by other contributors later." xml:space="preserve">
+    <value>Renseignez au moins le nom pour suggérer un nouveau synthétiseur sonore. Tous les autres champs sont optionnels et pourront être ajoutés ultérieurement par d'autres contributeurs.</value>
+  </data>
 </root>

@@ -27,8 +27,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Marechai.Pages.Suggestions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using MudBlazor;
 
 namespace Marechai.Pages.SoundSynths;
 
@@ -143,5 +145,31 @@ public partial class Index : IAsyncDisposable
     {
         await UnobserveAsync();
         _selfRef?.Dispose();
+    }
+
+    /// <summary>
+    ///     Open the unified sound synthesizer suggestion dialog in creation mode. The
+    ///     dialog handles submission + validation; this page does not refresh on success
+    ///     because the new synthesizer only appears in the listing once an admin accepts
+    ///     the suggestion.
+    /// </summary>
+    async Task OpenSuggestNewSoundSynthDialog()
+    {
+        var parameters = new DialogParameters<SoundSynthSuggestionDialog>
+        {
+            { x => x.EntityId,   0L                  },
+            { x => x.CurrentDto, (SoundSynthDto)null },
+            { x => x.IsCreation, true                }
+        };
+
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Large
+        };
+
+        await DialogService.ShowAsync<SoundSynthSuggestionDialog>(L["Suggest new sound synthesizer"],
+                                                                  parameters, options);
     }
 }

@@ -29,9 +29,18 @@
         }
         else
         {
-            <MudText Typo="Typo.body2" Class="mb-3">
-                @L["Edit any field below to suggest changes to this sound synthesizer."]
-            </MudText>
+            @if(IsCreation)
+            {
+                <MudText Typo="Typo.body2" Class="mb-3">
+                    @L["Fill in at least the name to suggest a new sound synthesizer. All other fields are optional and can be added by other contributors later."]
+                </MudText>
+            }
+            else
+            {
+                <MudText Typo="Typo.body2" Class="mb-3">
+                    @L["Edit any field below to suggest changes to this sound synthesizer."]
+                </MudText>
+            }
 
             @* ── General ── *@
             <MudPaper Outlined="true" Class="pa-3 mb-3">
@@ -124,7 +133,7 @@
     <DialogActions>
         <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
         <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit"
-                   Disabled="@(_loading || _submitting || !HasAnyChange())">
+                   Disabled="@(_loading || _submitting || (!IsCreation && !HasAnyChange()) || (IsCreation && !HasMandatoryFieldsForCreation()))">
             @if(_submitting)
             {
                 <MudProgressCircular Size="Size.Small" Indeterminate="true"/>
@@ -143,6 +152,7 @@
 
     [Parameter] public long          EntityId   { get; set; }
     [Parameter] public SoundSynthDto CurrentDto { get; set; }
+    [Parameter] public bool          IsCreation { get; set; }
 
     bool _loading = true;
     bool _submitting;
@@ -180,8 +190,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // Seed scalar state from the current DTO snapshot.
-        if(CurrentDto is not null)
+        // Seed scalar state from the current DTO snapshot (edit mode only). In creation
+        // mode all fields start blank and the user fills in at least the name.
+        if(!IsCreation && CurrentDto is not null)
         {
             _name                     = CurrentDto.Name;
             _modelCode                = CurrentDto.ModelCode;
@@ -226,6 +237,8 @@
 
     // ───────────────────────────── Submit ─────────────────────────────
 
+    bool HasMandatoryFieldsForCreation() => !string.IsNullOrWhiteSpace(_name);
+
     bool HasAnyChange()
     {
         if(!Equals(_orig_name, _name)) return true;
@@ -259,31 +272,61 @@
 
         var diff = new Dictionary<string, object>(StringComparer.Ordinal);
 
-        if(!Equals(_orig_name, _name))           diff[SoundSynthSuggestionMetadata.FieldName]      = _name;
-        if(!Equals(_orig_modelCode, _modelCode)) diff[SoundSynthSuggestionMetadata.FieldModelCode] = _modelCode;
-        if(_orig_companyId != _selectedCompany?.Id)
-            diff[SoundSynthSuggestionMetadata.FieldCompanyId] = _selectedCompany?.Id;
-        if(!Nullable.Equals(_orig_introduced, _introduced))
-            diff[SoundSynthSuggestionMetadata.FieldIntroduced] = _introduced?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-        if(_orig_introducedPrecision != _introducedPrecision)
-            diff[SoundSynthSuggestionMetadata.FieldIntroducedPrecision] = _introducedPrecision;
-        if(!Nullable.Equals(_orig_voices, _voices))
-            diff[SoundSynthSuggestionMetadata.FieldVoices] = _voices;
-        if(!Nullable.Equals(_orig_frequency, _frequency))
-            diff[SoundSynthSuggestionMetadata.FieldFrequency] = _frequency;
-        if(!Nullable.Equals(_orig_depth, _depth))
-            diff[SoundSynthSuggestionMetadata.FieldDepth] = _depth;
-        if(!Nullable.Equals(_orig_squareWave, _squareWave))
-            diff[SoundSynthSuggestionMetadata.FieldSquareWave] = _squareWave;
-        if(!Nullable.Equals(_orig_whiteNoise, _whiteNoise))
-            diff[SoundSynthSuggestionMetadata.FieldWhiteNoise] = _whiteNoise;
-        if(!Nullable.Equals(_orig_type, _type))
-            diff[SoundSynthSuggestionMetadata.FieldType] = _type;
-
-        if(diff.Count == 0)
+        if(IsCreation)
         {
-            _validationError = L["No changes detected — modify at least one field before submitting."];
-            return;
+            // In creation mode emit every populated field — there's no original snapshot to
+            // diff against. Name always goes; the rest are gated on non-null/non-empty.
+            diff[SoundSynthSuggestionMetadata.FieldName] = _name;
+
+            if(!string.IsNullOrWhiteSpace(_modelCode))
+                diff[SoundSynthSuggestionMetadata.FieldModelCode] = _modelCode;
+            if(_selectedCompany?.Id is int icid)
+                diff[SoundSynthSuggestionMetadata.FieldCompanyId] = icid;
+            if(_introduced.HasValue)
+                diff[SoundSynthSuggestionMetadata.FieldIntroduced] = _introduced.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            if(_introducedPrecision != 0)
+                diff[SoundSynthSuggestionMetadata.FieldIntroducedPrecision] = _introducedPrecision;
+            if(_voices.HasValue)
+                diff[SoundSynthSuggestionMetadata.FieldVoices] = _voices;
+            if(_frequency.HasValue)
+                diff[SoundSynthSuggestionMetadata.FieldFrequency] = _frequency;
+            if(_depth.HasValue)
+                diff[SoundSynthSuggestionMetadata.FieldDepth] = _depth;
+            if(_squareWave.HasValue)
+                diff[SoundSynthSuggestionMetadata.FieldSquareWave] = _squareWave;
+            if(_whiteNoise.HasValue)
+                diff[SoundSynthSuggestionMetadata.FieldWhiteNoise] = _whiteNoise;
+            if(_type.HasValue)
+                diff[SoundSynthSuggestionMetadata.FieldType] = _type;
+        }
+        else
+        {
+            if(!Equals(_orig_name, _name))           diff[SoundSynthSuggestionMetadata.FieldName]      = _name;
+            if(!Equals(_orig_modelCode, _modelCode)) diff[SoundSynthSuggestionMetadata.FieldModelCode] = _modelCode;
+            if(_orig_companyId != _selectedCompany?.Id)
+                diff[SoundSynthSuggestionMetadata.FieldCompanyId] = _selectedCompany?.Id;
+            if(!Nullable.Equals(_orig_introduced, _introduced))
+                diff[SoundSynthSuggestionMetadata.FieldIntroduced] = _introduced?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            if(_orig_introducedPrecision != _introducedPrecision)
+                diff[SoundSynthSuggestionMetadata.FieldIntroducedPrecision] = _introducedPrecision;
+            if(!Nullable.Equals(_orig_voices, _voices))
+                diff[SoundSynthSuggestionMetadata.FieldVoices] = _voices;
+            if(!Nullable.Equals(_orig_frequency, _frequency))
+                diff[SoundSynthSuggestionMetadata.FieldFrequency] = _frequency;
+            if(!Nullable.Equals(_orig_depth, _depth))
+                diff[SoundSynthSuggestionMetadata.FieldDepth] = _depth;
+            if(!Nullable.Equals(_orig_squareWave, _squareWave))
+                diff[SoundSynthSuggestionMetadata.FieldSquareWave] = _squareWave;
+            if(!Nullable.Equals(_orig_whiteNoise, _whiteNoise))
+                diff[SoundSynthSuggestionMetadata.FieldWhiteNoise] = _whiteNoise;
+            if(!Nullable.Equals(_orig_type, _type))
+                diff[SoundSynthSuggestionMetadata.FieldType] = _type;
+
+            if(diff.Count == 0)
+            {
+                _validationError = L["No changes detected — modify at least one field before submitting."];
+                return;
+            }
         }
 
         _submitting = true;
@@ -293,7 +336,7 @@
             var dto = new SuggestionDto
             {
                 EntityType          = (int?)SuggestionEntityType.SoundSynth,
-                EntityId            = EntityId,
+                EntityId            = IsCreation ? null : EntityId,
                 Status              = (int?)SuggestionStatus.Pending,
                 UserComment         = string.IsNullOrWhiteSpace(_userComment) ? null : _userComment.Trim(),
                 SuggestedValuesJson = json

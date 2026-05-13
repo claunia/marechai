@@ -103,7 +103,8 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.Document,
         SuggestionEntityType.MagazineIssue,
         SuggestionEntityType.Gpu,
-        SuggestionEntityType.Processor
+        SuggestionEntityType.Processor,
+        SuggestionEntityType.SoundSynth
     };
 
     // ───────────────────────────── POST /suggestions ─────────────────────────────
@@ -1345,6 +1346,13 @@ public class SuggestionsController(MarechaiContext context,
                     return "A new processor suggestion must include a non-empty 'name' field.";
                 return null;
             }
+            case SuggestionEntityType.SoundSynth:
+            {
+                if(!values.TryGetValue(Suggestions.SoundSynthSuggestionApplier.FieldName, out object n) ||
+                   string.IsNullOrWhiteSpace(ExtractStringForValidation(n)))
+                    return "A new sound synthesizer suggestion must include a non-empty 'name' field.";
+                return null;
+            }
             default:
                 return $"Brand-new {type} suggestions are not supported.";
         }
@@ -1433,6 +1441,15 @@ public class SuggestionsController(MarechaiContext context,
                 }
                 return null;
             }
+            case SuggestionEntityType.SoundSynth:
+            {
+                if(values.TryGetValue(Suggestions.SoundSynthSuggestionApplier.FieldName, out object n))
+                {
+                    string s = ExtractStringForValidation(n);
+                    return string.IsNullOrWhiteSpace(s) ? null : s.Trim();
+                }
+                return null;
+            }
             default:
                 return null;
         }
@@ -1491,6 +1508,12 @@ public class SuggestionsController(MarechaiContext context,
                 // manufacturers (e.g. "Z80" by Zilog vs Z80-compatible by NEC). Dedupe on
                 // name only would over-block; rely on admin moderation to spot true
                 // duplicates instead.
+                return false;
+            case SuggestionEntityType.SoundSynth:
+                // Sound synthesizer names legitimately repeat across die revisions, OEM
+                // rebrands and manufacturers (e.g. "AY-3-8910" by GI vs Yamaha as YM2149,
+                // "SID 6581" vs "SID 8580"). Dedupe on name only would over-block; rely on
+                // admin moderation to spot true duplicates instead.
                 return false;
             default:
                 return false;
@@ -1559,6 +1582,12 @@ public class SuggestionsController(MarechaiContext context,
             case SuggestionEntityType.Processor:
             {
                 var (id, applied) = await Suggestions.ProcessorSuggestionApplier.CreateAsync(
+                    context, suggested, accepted, creditedUserId);
+                return (id, applied);
+            }
+            case SuggestionEntityType.SoundSynth:
+            {
+                var (id, applied) = await Suggestions.SoundSynthSuggestionApplier.CreateAsync(
                     context, suggested, accepted, creditedUserId);
                 return (id, applied);
             }

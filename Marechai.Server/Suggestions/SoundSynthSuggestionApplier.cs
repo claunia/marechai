@@ -98,6 +98,68 @@ internal static class SoundSynthSuggestionApplier
     }
 
     /// <summary>
+    ///     Create a brand-new <see cref="SoundSynth" /> row from an accepted addition
+    ///     suggestion. Mirrors <see cref="GpuSuggestionApplier.CreateAsync" /> shape but
+    ///     omits the junction-add second pass because SoundSynth has no in-scope junctions
+    ///     (both <c>SoundByMachine</c> and <c>SoundSynthBySoftwareRelease</c> are owned by
+    ///     the other side per established convention and stay admin-only). Returns
+    ///     <c>(int? newId, …)</c> because <see cref="SoundSynth.Id" /> is <c>int</c>.
+    ///     Validates the mandatory <see cref="FieldName" /> first; rejects the addition
+    ///     outright when the admin didn't tick it.
+    /// </summary>
+    /// <param name="creditedUserId">
+    ///     The Identity user id to attribute the row to in audit history (the suggesting
+    ///     user, NOT the reviewing admin). Forwarded to <c>SaveChangesWithUserAsync</c>.
+    /// </param>
+    public static async Task<(int? newId, HashSet<string> applied)> CreateAsync(
+        MarechaiContext context,
+        Dictionary<string, object> suggested,
+        HashSet<string> accepted,
+        string creditedUserId)
+    {
+        var applied = new HashSet<string>(StringComparer.Ordinal);
+
+        // Name is the only mandatory field; everything else is optional. Reject the addition
+        // outright if the admin didn't tick Name.
+        if(!accepted.Contains(FieldName) || !suggested.TryGetValue(FieldName, out object nameVal))
+            return (null, applied);
+
+        string name = ToStringValue(nameVal);
+        if(string.IsNullOrWhiteSpace(name)) return (null, applied);
+        if(name.Trim().Length > 50) return (null, applied);
+
+        var s = new SoundSynth { Name = name.Trim() };
+        applied.Add(FieldName);
+
+        // Apply remaining accepted scalar fields via the same coercion+validation table the
+        // edit path uses. SoundSynth has no junctions so there is no second pass.
+        foreach(string fieldName in accepted)
+        {
+            if(fieldName == FieldName) continue;
+            if(!s_scalarFieldNames.Contains(fieldName)) continue;
+            if(!suggested.TryGetValue(fieldName, out object value)) continue;
+
+            try
+            {
+                if(await ApplyScalar(context, s, fieldName, value)) applied.Add(fieldName);
+            }
+            catch
+            {
+                // Coerce failure: silently skip this field.
+            }
+        }
+
+        await context.SoundSynths.AddAsync(s);
+
+        if(string.IsNullOrEmpty(creditedUserId))
+            await context.SaveChangesAsync();
+        else
+            await context.SaveChangesWithUserAsync(creditedUserId);
+
+        return (s.Id, applied);
+    }
+
+    /// <summary>
     ///     Apply the accepted fields onto the SoundSynth row. Scalar-only — no junction
     ///     branches.
     /// </summary>
