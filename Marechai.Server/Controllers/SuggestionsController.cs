@@ -106,6 +106,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.Processor,
         SuggestionEntityType.SoundSynth,
         SuggestionEntityType.Person,
+        SuggestionEntityType.Software,
         SuggestionEntityType.SoftwareRelease
     };
 
@@ -1381,6 +1382,35 @@ public class SuggestionsController(MarechaiContext context,
                     return "A new software release suggestion must include a 'software_id' field referencing the parent software.";
                 return null;
             }
+            case SuggestionEntityType.Software:
+            {
+                // Software has no user-facing surface without a release, so a brand-new
+                // Software suggestion MUST carry its first-release in the same submission.
+                // Validation order: software name → kind → first_release_title →
+                // first_release_publisher_id → first_release_platform_id (matches the
+                // dialog's per-field defence-in-depth in priority order).
+                if(!values.TryGetValue(Suggestions.SoftwareSuggestionApplier.FieldName, out object n) ||
+                   string.IsNullOrWhiteSpace(ExtractStringForValidation(n)))
+                    return "A new software suggestion must include a non-empty 'name' field.";
+                if(!values.TryGetValue(Suggestions.SoftwareSuggestionApplier.FieldKind, out object k) ||
+                   !TryExtractIntForValidation(k, out int kindValue) ||
+                   !Enum.IsDefined(typeof(Marechai.Data.SoftwareKind), kindValue))
+                    return "A new software suggestion must include a valid 'kind' field.";
+                string firstReleaseTitleKey = Suggestions.SoftwareSuggestionApplier.FirstReleaseScalarPrefix +
+                                              Suggestions.SoftwareReleaseSuggestionApplier.FieldTitle;
+                if(!values.TryGetValue(firstReleaseTitleKey, out object frt) ||
+                   string.IsNullOrWhiteSpace(ExtractStringForValidation(frt)))
+                    return "A new software suggestion must include a non-empty 'first_release_title' field (a software requires its first release at creation time).";
+                string firstReleasePublisherKey = Suggestions.SoftwareSuggestionApplier.FirstReleaseScalarPrefix +
+                                                  Suggestions.SoftwareReleaseSuggestionApplier.FieldPublisherId;
+                if(!values.ContainsKey(firstReleasePublisherKey))
+                    return "A new software suggestion must include a 'first_release_publisher_id' field referencing the first release's publisher.";
+                string firstReleasePlatformKey = Suggestions.SoftwareSuggestionApplier.FirstReleaseScalarPrefix +
+                                                 Suggestions.SoftwareReleaseSuggestionApplier.FieldPlatformId;
+                if(!values.ContainsKey(firstReleasePlatformKey))
+                    return "A new software suggestion must include a 'first_release_platform_id' field referencing the first release's platform.";
+                return null;
+            }
             default:
                 return $"Brand-new {type} suggestions are not supported.";
         }
@@ -1497,6 +1527,17 @@ public class SuggestionsController(MarechaiContext context,
                 }
                 return null;
             }
+            case SuggestionEntityType.Software:
+            {
+                // Display the software's own name in the queue. The first-release title is
+                // shown in the expanded admin diff via the prefixed first_release_title key.
+                if(values.TryGetValue(Suggestions.SoftwareSuggestionApplier.FieldName, out object n))
+                {
+                    string s = ExtractStringForValidation(n);
+                    return string.IsNullOrWhiteSpace(s) ? null : s.Trim();
+                }
+                return null;
+            }
             default:
                 return null;
         }
@@ -1573,6 +1614,13 @@ public class SuggestionsController(MarechaiContext context,
                 // (the SAME software release "Doom" exists for many platforms/regions/years
                 // each as a distinct release). Dedupe on title only would massively
                 // over-block; rely on admin moderation to spot true duplicates instead.
+                return false;
+            case SuggestionEntityType.Software:
+                // Software names legitimately repeat across vendors, ports and unrelated
+                // products of the same name (e.g. "Solitaire" exists as countless distinct
+                // games over decades). Dedupe on name alone would massively over-block;
+                // rely on admin moderation + the mandatory accompanying first-release
+                // (publisher/platform/title) to disambiguate.
                 return false;
             default:
                 return false;
@@ -1662,6 +1710,20 @@ public class SuggestionsController(MarechaiContext context,
                     context, suggested, accepted, creditedUserId);
                 // SoftwareRelease.Id is ulong; implicit cast to long? for the unified
                 // dispatch return tuple matches the Software ulong-PK precedent.
+                return ((long?)id, applied);
+            }
+            case SuggestionEntityType.Software:
+            {
+                // Software has no user-facing surface without a release, so this CreateAsync
+                // orchestrates BOTH a Software AND its first SoftwareRelease in an atomic
+                // EF transaction. The release fields travel on the wire prefixed with
+                // "first_release_" / "first_release."; the applier strips the prefixes,
+                // delegates to SoftwareReleaseSuggestionApplier.CreateAsync, then re-prefixes
+                // the applied keys back so the admin diff panel sees the original wire keys.
+                var (id, applied) = await Suggestions.SoftwareSuggestionApplier.CreateAsync(
+                    context, suggested, accepted, creditedUserId);
+                // Software.Id is ulong; explicit cast to long? — implicit conversion from
+                // ulong? to long? doesn't exist in C# (per the SoftwareRelease port lesson).
                 return ((long?)id, applied);
             }
             default:
@@ -3252,7 +3314,11 @@ public class SuggestionsController(MarechaiContext context,
             }
         }
 
-        if(!entityId.HasValue) return;
+        // Junction-add labels look up the linked entity (genre / company+role / person)
+        // directly from the suggested payload's id field and don't need the parent
+        // softwareId. Run them in BOTH edit and creation mode (entityId is null in
+        // addition mode).
+        _ = entityId;
 
         // ---- Junction-add labels (resolved from the suggested payload's id field) -----
         foreach(KeyValuePair<string, JsonElement> kv in values)
@@ -3270,8 +3336,34 @@ public class SuggestionsController(MarechaiContext context,
             };
             if(!string.IsNullOrEmpty(label)) labels[kv.Key] = label;
         }
-    }
 
+        // ---- First-release-prefixed labels (Software creation mode only) -------------
+        // Forward "first_release_*" / "first_release.*" keys to the SoftwareRelease label
+        // resolver by stripping the prefix into a sub-dict, resolving with releaseId=null
+        // (creation mode), and re-prefixing the emitted labels back to the wire shape so
+        // the admin diff panel renders them under their original keys.
+        var releaseSubValues = new Dictionary<string, JsonElement>(StringComparer.Ordinal);
+        foreach(KeyValuePair<string, JsonElement> kv in values)
+        {
+            if(kv.Key.StartsWith(Suggestions.SoftwareSuggestionApplier.FirstReleaseGroupPrefix, StringComparison.Ordinal))
+                releaseSubValues[kv.Key.Substring(Suggestions.SoftwareSuggestionApplier.FirstReleaseGroupPrefix.Length)] = kv.Value;
+            else if(kv.Key.StartsWith(Suggestions.SoftwareSuggestionApplier.FirstReleaseScalarPrefix, StringComparison.Ordinal))
+                releaseSubValues[kv.Key.Substring(Suggestions.SoftwareSuggestionApplier.FirstReleaseScalarPrefix.Length)] = kv.Value;
+        }
+        if(releaseSubValues.Count > 0)
+        {
+            var releaseLabels = new Dictionary<string, string>(StringComparer.Ordinal);
+            await ResolveSoftwareReleaseLabelsAsync(null, releaseSubValues, releaseLabels);
+            foreach(KeyValuePair<string, string> kv in releaseLabels)
+            {
+                // Junction-op keys contain a dot ("group.op.token"); scalars never do.
+                string prefix = kv.Key.Contains('.', StringComparison.Ordinal)
+                                    ? Suggestions.SoftwareSuggestionApplier.FirstReleaseGroupPrefix
+                                    : Suggestions.SoftwareSuggestionApplier.FirstReleaseScalarPrefix;
+                labels[prefix + kv.Key] = kv.Value;
+            }
+        }
+    }
     /// <summary>
     ///     Resolve readable labels for every Software junction-remove operation in the
     ///     suggested payload by looking up the targeted genre row. The resolved labels are
@@ -3869,6 +3961,31 @@ public class SuggestionsController(MarechaiContext context,
             string s        => s,
             _               => v.ToString()
         };
+    }
+
+    /// <summary>
+    ///     Best-effort coercion of a raw JSON-deserialised value to an <see cref="int" />
+    ///     for "is this a defined enum value" validation. Returns <c>true</c> when a
+    ///     numeric value could be extracted; the caller is responsible for the
+    ///     <see cref="Enum.IsDefined(System.Type, object)" /> check on the result.
+    /// </summary>
+    static bool TryExtractIntForValidation(object v, out int value)
+    {
+        value = 0;
+        switch(v)
+        {
+            case null: return false;
+            case int i: value = i; return true;
+            case short s: value = s; return true;
+            case long l when l >= int.MinValue && l <= int.MaxValue: value = (int)l; return true;
+            case byte b: value = b; return true;
+            case JsonElement je:
+                if(je.ValueKind == JsonValueKind.Number && je.TryGetInt32(out int p)) { value = p; return true; }
+                if(je.ValueKind == JsonValueKind.String && int.TryParse(je.GetString(), System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out int ps)) { value = ps; return true; }
+                return false;
+            case string str: return int.TryParse(str, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out value);
+            default: return false;
+        }
     }
 
     async Task DispatchReviewMessageAsync(Suggestion s, string entityDisplayName,

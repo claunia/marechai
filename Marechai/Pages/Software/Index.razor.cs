@@ -27,6 +27,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Marechai.Pages.Suggestions;
+using MudBlazor;
 
 namespace Marechai.Pages.Software;
 
@@ -69,5 +71,39 @@ public partial class Index
 
         _loaded = true;
         StateHasChanged();
+    }
+
+    /// <summary>
+    ///     Opens the SoftwareSuggestionDialog in CREATION mode for a brand-new Software.
+    ///     Software has no user-facing surface without a release, so the dialog requires
+    ///     the user to fill BOTH the Software fields AND the first-release fields in the
+    ///     same submission. Server-side, the applier orchestrates both inserts inside an
+    ///     EF transaction (atomic — either both succeed or neither does). The dialog UI
+    ///     is the same one used for editing existing software (in-place reuse via the
+    ///     <c>IsCreation</c> parameter).
+    /// </summary>
+    async Task OpenSuggestNewSoftwareDialog()
+    {
+        var parameters = new DialogParameters<SoftwareSuggestionDialog>
+        {
+            { x => x.EntityId,   0L },
+            { x => x.CurrentDto, (SoftwareDto)null },
+            { x => x.IsCreation, true }
+        };
+
+        var options = new DialogOptions
+        {
+            MaxWidth         = MaxWidth.Large,
+            FullWidth        = true,
+            CloseOnEscapeKey = true
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<SoftwareSuggestionDialog>(
+            L["Suggest new software"], parameters, options);
+
+        DialogResult result = await dialog.Result;
+        if(result is null || result.Canceled) return;
+
+        // No reload needed — pending suggestions only take effect after admin review.
     }
 }

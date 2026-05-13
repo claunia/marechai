@@ -28,8 +28,11 @@
 @page "/software"
 @using Marechai.ApiClient.Models
 @using Marechai.Data
+@using Marechai.Pages.Suggestions
+@using MudBlazor
 @inherits OwningComponentBase<SoftwareService>
 @inject IStringLocalizer<SoftwareService> L
+@inject IDialogService                    DialogService
 
 @if(!_loaded)
 {
@@ -41,9 +44,21 @@
 }
 
 <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
-    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3" Class="mb-3">
-        <MudIcon Icon="@Icons.Material.Filled.Apps" Size="Size.Large" Style="color: white;"/>
-        <MudText Typo="Typo.h4" Style="color: white;">@L["Software"]</MudText>
+    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-3">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+            <MudIcon Icon="@Icons.Material.Filled.Apps" Size="Size.Large" Style="color: white;"/>
+            <MudText Typo="Typo.h4" Style="color: white;">@L["Software"]</MudText>
+        </MudStack>
+        <AuthorizeView>
+            <Authorized>
+                <MudTooltip Text="@L["Suggest a new software to be added to the catalogue. A first release is required."]">
+                    <MudButton Variant="Variant.Outlined" Size="Size.Small" Color="Color.Inherit"
+                               StartIcon="@Icons.Material.Filled.AddCircle"
+                               OnClick="OpenSuggestNewSoftwareDialog"
+                               Style="color: white; border-color: rgba(255,255,255,0.7);">@L["Suggest new software"]</MudButton>
+                </MudTooltip>
+            </Authorized>
+        </AuthorizeView>
     </MudStack>
     <MudText Typo="Typo.body1" Style="color: rgba(255,255,255,0.85);">@L["Here you can consult our database."]</MudText>
     <MudText Typo="Typo.body1" Style="color: rgba(255,255,255,0.85);">@L["The database contains information about software related to computing history."]</MudText>

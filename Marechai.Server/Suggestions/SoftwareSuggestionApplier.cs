@@ -84,16 +84,52 @@ internal static class SoftwareSuggestionApplier
         GroupCredits
     };
 
+    // ---- First-release pseudo-prefixes (creation-mode only) ----------------------------
+    /// <summary>
+    ///     Field-name prefix for first-release SCALAR fields embedded in a Software
+    ///     creation payload (e.g. <c>first_release_title</c>, <c>first_release_publisher_id</c>).
+    ///     Stripped before delegating to <see cref="SoftwareReleaseSuggestionApplier" />.
+    ///     Software has no user-facing surface without a release, so a brand-new Software
+    ///     suggestion MUST carry a first-release in the same submission. The two entities
+    ///     are inserted atomically inside <see cref="CreateAsync" /> via an EF transaction.
+    /// </summary>
+    public const string FirstReleaseScalarPrefix = "first_release_";
+
+    /// <summary>
+    ///     Field-name prefix for first-release JUNCTION operation keys (e.g.
+    ///     <c>first_release.regions.add.&lt;uuid&gt;</c>). The dot delimits the original
+    ///     <c>&lt;group&gt;.&lt;op&gt;.&lt;token&gt;</c> shape from the prefix, mirroring
+    ///     the wire convention used for top-level junctions.
+    /// </summary>
+    public const string FirstReleaseGroupPrefix = "first_release.";
+
     /// <summary>
     ///     Returns <c>true</c> when the field-name is a recognised Software field name. Accepts
-    ///     scalar field names AND any junction operation key matching
-    ///     <c>&lt;group&gt;.{add,remove}.&lt;token&gt;</c>.
+    ///     scalar field names, any junction operation key matching
+    ///     <c>&lt;group&gt;.{add,remove}.&lt;token&gt;</c>, and any first-release-prefixed
+    ///     key whose stripped form is recognised by
+    ///     <see cref="SoftwareReleaseSuggestionApplier.IsKnownFieldName" />.
     /// </summary>
     public static bool IsKnownFieldName(string fieldName)
     {
         if(string.IsNullOrEmpty(fieldName)) return false;
         if(s_scalarFieldNames.Contains(fieldName)) return true;
-        return TryParseJunctionKey(fieldName, out _, out _, out _);
+        if(TryParseJunctionKey(fieldName, out _, out _, out _)) return true;
+
+        // Delegate first-release-prefixed keys to the release applier. The dot-prefix
+        // case must match BEFORE the underscore-prefix case because the dot variant is a
+        // strict superset of the underscore variant for keys whose stripped form is a
+        // junction-op key (e.g. "first_release.regions.add.x" also starts with
+        // "first_release_" if the underscore was a literal char rather than the
+        // delimiter — but our prefix uses a literal underscore, not a regex, so order
+        // matters only for keys like "first_release.foo" which are intentionally
+        // junction-only).
+        if(fieldName.StartsWith(FirstReleaseGroupPrefix, StringComparison.Ordinal))
+            return SoftwareReleaseSuggestionApplier.IsKnownFieldName(fieldName.Substring(FirstReleaseGroupPrefix.Length));
+        if(fieldName.StartsWith(FirstReleaseScalarPrefix, StringComparison.Ordinal))
+            return SoftwareReleaseSuggestionApplier.IsKnownFieldName(fieldName.Substring(FirstReleaseScalarPrefix.Length));
+
+        return false;
     }
 
     /// <summary>
@@ -140,6 +176,193 @@ internal static class SoftwareSuggestionApplier
             [FieldKind]           = (int)s.Kind,
             [FieldBaseSoftwareId] = s.BaseSoftwareId
         };
+    }
+
+    /// <summary>
+    ///     Create a brand-new Software AND its first SoftwareRelease in a single atomic
+    ///     transaction. Software has no user-facing surface without a release, so a
+    ///     brand-new Software suggestion MUST carry a first-release in the same submission
+    ///     (validated by <c>SuggestionsController.ValidateAdditionPayload</c>; defence-in-
+    ///     depth here too).
+    ///
+    ///     <para>
+    ///         The accepted/suggested dictionaries may contain three flavours of keys:
+    ///         <list type="bullet">
+    ///             <item>Top-level Software scalars (<c>name</c>, <c>kind</c>, <c>family_id</c>, etc.).</item>
+    ///             <item>Top-level Software junction-add keys (<c>genres.add.&lt;uuid&gt;</c>, etc.).</item>
+    ///             <item>First-release scalars prefixed with <see cref="FirstReleaseScalarPrefix" />
+    ///                   (<c>first_release_title</c>, <c>first_release_publisher_id</c>, etc.).</item>
+    ///             <item>First-release junction-add keys prefixed with <see cref="FirstReleaseGroupPrefix" />
+    ///                   (<c>first_release.regions.add.&lt;uuid&gt;</c>, etc.).</item>
+    ///         </list>
+    ///     </para>
+    ///
+    ///     <para>
+    ///         Mandatory: <c>name</c> (non-whitespace), <c>kind</c> (defined enum value),
+    ///         <c>first_release_title</c>, <c>first_release_publisher_id</c>,
+    ///         <c>first_release_platform_id</c>. The matching <c>software_id</c> is injected
+    ///         from <c>s.Id</c> after the Software is saved; callers do not provide it.
+    ///     </para>
+    ///
+    ///     <para>
+    ///         Returns <c>(s.Id, applied)</c> on success or <c>(null, applied)</c> when any
+    ///         mandatory check fails (transaction rolls back automatically when an exception
+    ///         escapes; we explicitly rollback when the release applier returns null).
+    ///     </para>
+    /// </summary>
+    public static async Task<(ulong? newId, HashSet<string> applied)> CreateAsync(
+        MarechaiContext context,
+        Dictionary<string, object> suggested,
+        HashSet<string> accepted,
+        string creditedUserId)
+    {
+        var applied = new HashSet<string>(StringComparer.Ordinal);
+
+        // ── Validate Software mandatories ──
+        if(!accepted.Contains(FieldName) || !suggested.TryGetValue(FieldName, out object nameRaw))
+            return (null, applied);
+        string name = ToStringValue(nameRaw);
+        if(string.IsNullOrWhiteSpace(name)) return (null, applied);
+        name = name.Trim();
+        if(name.Length > 255) return (null, applied);
+
+        if(!accepted.Contains(FieldKind) || !suggested.TryGetValue(FieldKind, out object kindRaw))
+            return (null, applied);
+        int? kindValue = ToInt(kindRaw);
+        if(!kindValue.HasValue) return (null, applied);
+        if(!Enum.IsDefined(typeof(SoftwareKind), kindValue.Value)) return (null, applied);
+
+        // ── Split payload into software-side vs release-side dicts ──
+        var softwareSuggested = new Dictionary<string, object>(StringComparer.Ordinal);
+        var softwareAccepted  = new HashSet<string>(StringComparer.Ordinal);
+        var releaseSuggested  = new Dictionary<string, object>(StringComparer.Ordinal);
+        var releaseAccepted   = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach(string fieldName in accepted)
+        {
+            if(!suggested.TryGetValue(fieldName, out object value)) continue;
+
+            // Junction-prefixed keys must match BEFORE the scalar prefix because
+            // "first_release." is a strict prefix of "first_release_" comparison-wise
+            // (different next char) — but the underscore variant should not swallow the
+            // dot variant. Test the dot-prefix first to be safe.
+            if(fieldName.StartsWith(FirstReleaseGroupPrefix, StringComparison.Ordinal))
+            {
+                string stripped = fieldName.Substring(FirstReleaseGroupPrefix.Length);
+                releaseSuggested[stripped] = value;
+                releaseAccepted.Add(stripped);
+            }
+            else if(fieldName.StartsWith(FirstReleaseScalarPrefix, StringComparison.Ordinal))
+            {
+                string stripped = fieldName.Substring(FirstReleaseScalarPrefix.Length);
+                releaseSuggested[stripped] = value;
+                releaseAccepted.Add(stripped);
+            }
+            else
+            {
+                softwareSuggested[fieldName] = value;
+                softwareAccepted.Add(fieldName);
+            }
+        }
+
+        // ── Validate first-release mandatories (priority: title → publisher → platform) ──
+        if(!releaseAccepted.Contains(SoftwareReleaseSuggestionApplier.FieldTitle) ||
+           !releaseSuggested.TryGetValue(SoftwareReleaseSuggestionApplier.FieldTitle, out object titleRaw) ||
+           string.IsNullOrWhiteSpace(ToStringValue(titleRaw)))
+            return (null, applied);
+
+        if(!releaseAccepted.Contains(SoftwareReleaseSuggestionApplier.FieldPublisherId) ||
+           !releaseSuggested.ContainsKey(SoftwareReleaseSuggestionApplier.FieldPublisherId))
+            return (null, applied);
+
+        if(!releaseAccepted.Contains(SoftwareReleaseSuggestionApplier.FieldPlatformId) ||
+           !releaseSuggested.ContainsKey(SoftwareReleaseSuggestionApplier.FieldPlatformId))
+            return (null, applied);
+
+        // ── Atomic transaction: insert Software + its first Release together ──
+        await using var tx = await context.Database.BeginTransactionAsync();
+
+        try
+        {
+            var s = new Software
+            {
+                Name = name,
+                Kind = (SoftwareKind)kindValue.Value
+            };
+            // Apply remaining accepted Software scalars (FamilyId / PredecessorId /
+            // BaseSoftwareId) via the existing per-field helper.
+            foreach(string fieldName in softwareAccepted)
+            {
+                if(fieldName == FieldName || fieldName == FieldKind) continue;
+                if(!s_scalarFieldNames.Contains(fieldName)) continue;
+                if(!softwareSuggested.TryGetValue(fieldName, out object value)) continue;
+
+                try { if(await ApplyScalar(context, s, fieldName, value)) applied.Add(fieldName); }
+                catch { /* per-field coercion failure: skip */ }
+            }
+
+            await context.Softwares.AddAsync(s);
+
+            if(string.IsNullOrEmpty(creditedUserId))
+                await context.SaveChangesAsync();
+            else
+                await context.SaveChangesWithUserAsync(creditedUserId);
+
+            applied.Add(FieldName);
+            applied.Add(FieldKind);
+
+            // Software junction adds (genres / companies / credits) with the freshly
+            // minted software id. Remove ops are silently skipped — a brand-new entity
+            // has nothing to remove from.
+            foreach(string fieldName in softwareAccepted)
+            {
+                if(!TryParseJunctionKey(fieldName, out string group, out string op, out _)) continue;
+                if(op != "add") continue;
+                if(!softwareSuggested.TryGetValue(fieldName, out object value)) continue;
+
+                try { if(await ApplyJunctionAdd(context, s.Id, group, value)) applied.Add(fieldName); }
+                catch { /* per-junction coercion failure: skip */ }
+            }
+
+            // ── Inject software_id and delegate to release applier ──
+            // Wire FK as long so the release applier's ToUlong helper accepts it cleanly.
+            // Cast through long to avoid overflow surprises (Software ids stay well within
+            // the positive long range in practice).
+            releaseSuggested[SoftwareReleaseSuggestionApplier.FieldSoftwareId] = (long)s.Id;
+            releaseAccepted.Add(SoftwareReleaseSuggestionApplier.FieldSoftwareId);
+
+            (ulong? releaseId, HashSet<string> releaseApplied) =
+                await SoftwareReleaseSuggestionApplier.CreateAsync(
+                    context, releaseSuggested, releaseAccepted, creditedUserId);
+
+            if(!releaseId.HasValue)
+            {
+                // Mandatory release fields failed validation server-side after passing
+                // the controller's defence-in-depth — treat as full failure and rollback
+                // the Software too. Returning (null, applied) with an empty applied set
+                // signals the caller to leave the suggestion Pending for re-review.
+                await tx.RollbackAsync();
+                return (null, new HashSet<string>(StringComparer.Ordinal));
+            }
+
+            // Re-prefix the release-applied keys back to the wire-shape so the admin
+            // diff panel sees the original keys (first_release_title, etc.).
+            foreach(string releaseKey in releaseApplied)
+            {
+                string wireKey = releaseKey.Contains('.', StringComparison.Ordinal)
+                                     ? FirstReleaseGroupPrefix + releaseKey
+                                     : FirstReleaseScalarPrefix + releaseKey;
+                applied.Add(wireKey);
+            }
+
+            await tx.CommitAsync();
+            return (s.Id, applied);
+        }
+        catch
+        {
+            await tx.RollbackAsync();
+            throw;
+        }
     }
 
     /// <summary>

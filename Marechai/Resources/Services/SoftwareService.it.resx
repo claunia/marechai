@@ -1865,4 +1865,88 @@
   <data name="No releases recorded yet." xml:space="preserve">
     <value>Nessun rilascio ancora registrato.</value>
   </data>
+  <data name="Suggest new software" xml:space="preserve">
+    <value>Suggerisci nuovo software</value>
+  </data>
+  <data name="Suggest a new software to be added to the catalogue. A first release is required." xml:space="preserve">
+    <value>Suggerisci un nuovo software da aggiungere al catalogo. È richiesta una prima versione.</value>
+  </data>
+  <data name="Suggest a new software to be added to the catalogue. A software has no user-facing surface without a release, so a first release is required at the same time. Software fields and the first-release fields below are all reviewed together as a single suggestion; an administrator will accept or reject them as a unit." xml:space="preserve">
+    <value>Suggerisci un nuovo software da aggiungere al catalogo. Un software non ha alcuna presenza visibile senza una versione, quindi al tempo stesso è richiesta una prima versione. I campi del software e quelli della prima versione vengono esaminati insieme come un'unica proposta; un amministratore li accetterà o rifiuterà come blocco unico.</value>
+  </data>
+  <data name="First release details" xml:space="preserve">
+    <value>Dettagli della prima versione</value>
+  </data>
+  <data name="Title, publisher and platform are required. Other fields are optional." xml:space="preserve">
+    <value>Titolo, editore e piattaforma sono obbligatori. Gli altri campi sono facoltativi.</value>
+  </data>
+  <data name="First release title is required." xml:space="preserve">
+    <value>Il titolo della prima versione è obbligatorio.</value>
+  </data>
+  <data name="First release publisher is required." xml:space="preserve">
+    <value>L'editore della prima versione è obbligatorio.</value>
+  </data>
+  <data name="First release platform is required." xml:space="preserve">
+    <value>La piattaforma della prima versione è obbligatoria.</value>
+  </data>
+  <data name="First release: Regions" xml:space="preserve">
+    <value>Prima versione: Regioni</value>
+  </data>
+  <data name="First release: Languages" xml:space="preserve">
+    <value>Prima versione: Lingue</value>
+  </data>
+  <data name="First release: Barcodes" xml:space="preserve">
+    <value>Prima versione: Codici a barre</value>
+  </data>
+  <data name="First release: Product codes" xml:space="preserve">
+    <value>Prima versione: Codici prodotto</value>
+  </data>
+  <data name="First release: Minimum GPUs" xml:space="preserve">
+    <value>Prima versione: GPU minime</value>
+  </data>
+  <data name="First release: Recommended GPUs" xml:space="preserve">
+    <value>Prima versione: GPU consigliate</value>
+  </data>
+  <data name="First release: Sound synthesizers" xml:space="preserve">
+    <value>Prima versione: Sintetizzatori sonori</value>
+  </data>
+  <data name="Barcode" xml:space="preserve">
+    <value>Codice a barre</value>
+  </data>
+  <data name="Product code" xml:space="preserve">
+    <value>Codice prodotto</value>
+  </data>
+  <data name="Issuer" xml:space="preserve">
+    <value>Emittente</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="Add region" xml:space="preserve">
+    <value>Aggiungi regione</value>
+  </data>
+  <data name="Add language" xml:space="preserve">
+    <value>Aggiungi lingua</value>
+  </data>
+  <data name="Add barcode" xml:space="preserve">
+    <value>Aggiungi codice a barre</value>
+  </data>
+  <data name="Add product code" xml:space="preserve">
+    <value>Aggiungi codice prodotto</value>
+  </data>
+  <data name="Add minimum GPU" xml:space="preserve">
+    <value>Aggiungi GPU minima</value>
+  </data>
+  <data name="Add recommended GPU" xml:space="preserve">
+    <value>Aggiungi GPU consigliata</value>
+  </data>
+  <data name="Add sound synthesizer" xml:space="preserve">
+    <value>Aggiungi sintetizzatore sonoro</value>
+  </data>
+  <data name="This barcode is already present in the list." xml:space="preserve">
+    <value>Questo codice a barre è già presente nell'elenco.</value>
+  </data>
+  <data name="This product code is already present in the list." xml:space="preserve">
+    <value>Questo codice prodotto è già presente nell'elenco.</value>
+  </data>
 </root>

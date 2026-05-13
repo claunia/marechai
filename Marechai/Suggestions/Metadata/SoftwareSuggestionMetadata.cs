@@ -81,6 +81,30 @@ public sealed class SoftwareSuggestionMetadata : SuggestionMetadata
         FieldName, FieldFamilyId, FieldPredecessorId, FieldKind, FieldBaseSoftwareId
     };
 
+    // ---- First-release pseudo-prefixes (mirror server-side; creation-mode only) --------
+    /// <summary>
+    ///     Field-name prefix for first-release SCALAR fields embedded in a Software
+    ///     creation payload (e.g. <c>first_release_title</c>). Stripped before delegating
+    ///     to <see cref="SoftwareReleaseSuggestionMetadata" /> for value formatting.
+    /// </summary>
+    public const string FirstReleaseScalarPrefix = "first_release_";
+
+    /// <summary>
+    ///     Field-name prefix for first-release JUNCTION operation keys embedded in a
+    ///     Software creation payload (e.g. <c>first_release.regions.add.&lt;uuid&gt;</c>).
+    /// </summary>
+    public const string FirstReleaseGroupPrefix = "first_release.";
+
+    /// <summary>
+    ///     Lazily-instantiated release-side metadata for delegation. Allocated once on
+    ///     first read; the static ctor of <see cref="SoftwareReleaseSuggestionMetadata" />
+    ///     registers a separate instance with the registry — that's fine because both
+    ///     instances are identical, immutable behaviour bags.
+    /// </summary>
+    static SoftwareReleaseSuggestionMetadata s_releaseMetadata;
+    static SoftwareReleaseSuggestionMetadata ReleaseMetadata =>
+        s_releaseMetadata ??= new SoftwareReleaseSuggestionMetadata();
+
     static readonly IReadOnlyList<SuggestionEnumOption> KindOptions = new[]
     {
         new SuggestionEnumOption(0,  "Generic software"),
@@ -134,19 +158,29 @@ public sealed class SoftwareSuggestionMetadata : SuggestionMetadata
 
     /// <summary>
     ///     Override accepts both static scalar field names AND junction operation keys of the
-    ///     form <c>&lt;group&gt;.{add,remove}.&lt;token&gt;</c>.
+    ///     form <c>&lt;group&gt;.{add,remove}.&lt;token&gt;</c>. Also accepts first-release-
+    ///     prefixed keys (<c>first_release_*</c> / <c>first_release.*</c>) by delegating
+    ///     the stripped key to <see cref="SoftwareReleaseSuggestionMetadata" /> — these
+    ///     only appear in brand-new-Software submissions where a first release is required.
     /// </summary>
     public override bool IsKnownFieldName(string name)
     {
         if(string.IsNullOrEmpty(name)) return false;
         if(s_scalarFieldNames.Contains(name)) return true;
-        return TryParseJunctionKey(name, out _, out _, out _);
+        if(TryParseJunctionKey(name, out _, out _, out _)) return true;
+        if(name.StartsWith(FirstReleaseGroupPrefix, StringComparison.Ordinal))
+            return ReleaseMetadata.IsKnownFieldName(name.Substring(FirstReleaseGroupPrefix.Length));
+        if(name.StartsWith(FirstReleaseScalarPrefix, StringComparison.Ordinal))
+            return ReleaseMetadata.IsKnownFieldName(name.Substring(FirstReleaseScalarPrefix.Length));
+        return false;
     }
 
     /// <summary>
     ///     Override returns <see cref="SuggestionFieldKind.JunctionAdd" /> /
     ///     <see cref="SuggestionFieldKind.JunctionRemove" /> for dynamic junction keys; falls
-    ///     back to the static descriptor lookup for scalar fields.
+    ///     back to the static descriptor lookup for scalar fields. First-release-prefixed
+    ///     keys delegate to the release metadata so the diff panel renders them with the
+    ///     same kind (and thus the same row layout) as a stand-alone release suggestion.
     /// </summary>
     public override SuggestionFieldKind GetFieldKind(string name)
     {
@@ -155,13 +189,19 @@ public sealed class SoftwareSuggestionMetadata : SuggestionMetadata
         if(TryParseJunctionKey(name, out _, out string op, out _))
             return op == "add" ? SuggestionFieldKind.JunctionAdd : SuggestionFieldKind.JunctionRemove;
 
+        if(name.StartsWith(FirstReleaseGroupPrefix, StringComparison.Ordinal))
+            return ReleaseMetadata.GetFieldKind(name.Substring(FirstReleaseGroupPrefix.Length));
+        if(name.StartsWith(FirstReleaseScalarPrefix, StringComparison.Ordinal))
+            return ReleaseMetadata.GetFieldKind(name.Substring(FirstReleaseScalarPrefix.Length));
+
         return SuggestionFieldKind.Text;
     }
 
     /// <summary>
     ///     Override synthesises a localiser key for dynamic junction keys (e.g.
     ///     <c>"Genres"</c> for <c>genres.{add,remove}.&lt;token&gt;</c>); falls back to the
-    ///     static descriptor label for scalar fields.
+    ///     static descriptor label for scalar fields. First-release-prefixed keys return
+    ///     the release-side label key prepended with <c>"First release: "</c>.
     /// </summary>
     public override string GetFieldLabelKey(string name)
     {
@@ -169,6 +209,11 @@ public sealed class SoftwareSuggestionMetadata : SuggestionMetadata
 
         if(TryParseJunctionKey(name, out string group, out _, out _))
             return GroupLabelKey(group);
+
+        if(name.StartsWith(FirstReleaseGroupPrefix, StringComparison.Ordinal))
+            return "First release: " + ReleaseMetadata.GetFieldLabelKey(name.Substring(FirstReleaseGroupPrefix.Length));
+        if(name.StartsWith(FirstReleaseScalarPrefix, StringComparison.Ordinal))
+            return "First release: " + ReleaseMetadata.GetFieldLabelKey(name.Substring(FirstReleaseScalarPrefix.Length));
 
         return name;
     }
@@ -209,6 +254,16 @@ public sealed class SoftwareSuggestionMetadata : SuggestionMetadata
     public override string FormatDisplayValue(string fieldName, object value)
     {
         if(value is null) return string.Empty;
+
+        // First-release-prefixed scalar / junction values: delegate to the release
+        // metadata's formatter so the rendering matches a stand-alone release suggestion.
+        if(fieldName != null)
+        {
+            if(fieldName.StartsWith(FirstReleaseGroupPrefix, StringComparison.Ordinal))
+                return ReleaseMetadata.FormatDisplayValue(fieldName.Substring(FirstReleaseGroupPrefix.Length), value);
+            if(fieldName.StartsWith(FirstReleaseScalarPrefix, StringComparison.Ordinal))
+                return ReleaseMetadata.FormatDisplayValue(fieldName.Substring(FirstReleaseScalarPrefix.Length), value);
+        }
 
         // SoftwareKind enum int → human-readable label. First port to render a non-nullable
         // enum scalar; mirrors SoundSynth's FormatDisplayValue Type arm.
