@@ -428,9 +428,16 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
 
         if(item is null) return NotFound();
 
+        // Capture entity-display label BEFORE Remove + SaveChanges so the stale-cascade
+        // notification can render a useful name. Mirrors MagazineIssuesController convention.
+        string entityName = item.Title;
+
         context.SoftwareReleases.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        await Marechai.Server.Helpers.SuggestionsHelper.MarkStaleForEntityAsync(
+            context, Marechai.Data.SuggestionEntityType.SoftwareRelease, (long)id, entityName);
 
         return Ok();
     }

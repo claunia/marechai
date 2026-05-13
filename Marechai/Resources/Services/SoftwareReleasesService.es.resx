@@ -340,4 +340,55 @@
     <data name="* A new software or platform entry will be created with this name during import." xml:space="preserve">
         <value>* Se creará una nueva entrada de software o plataforma con este nombre durante la importación.</value>
     </data>
+  <data name="Suggest changes" xml:space="preserve">
+    <value>Sugerir cambios</value>
+  </data>
+  <data name="General" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently." xml:space="preserve">
+    <value>Edita cualquier campo o unión a continuación. Solo tus cambios se enviarán a revisión; un administrador puede aceptarlos o rechazarlos individualmente.</value>
+  </data>
+  <data name="Optional comment (References, sources, etc...)" xml:space="preserve">
+    <value>Comentario opcional (referencias, fuentes, etc...)</value>
+  </data>
+  <data name="No changes detected — modify at least one field before submitting." xml:space="preserve">
+    <value>No se detectaron cambios — modifica al menos un campo antes de enviar.</value>
+  </data>
+  <data name="Submit suggestion" xml:space="preserve">
+    <value>Enviar sugerencia</value>
+  </data>
+  <data name="Failed to submit suggestion." xml:space="preserve">
+    <value>No se pudo enviar la sugerencia.</value>
+  </data>
+  <data name="Suggestion submitted. An administrator will review it." xml:space="preserve">
+    <value>Sugerencia enviada. Un administrador la revisará.</value>
+  </data>
+  <data name="Undo" xml:space="preserve">
+    <value>Deshacer</value>
+  </data>
+  <data name="Add barcode" xml:space="preserve">
+    <value>Agregar código de barras</value>
+  </data>
+  <data name="Add product code" xml:space="preserve">
+    <value>Agregar código de producto</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="Product codes" xml:space="preserve">
+    <value>Códigos de producto</value>
+  </data>
+  <data name="Compilation" xml:space="preserve">
+    <value>Recopilación</value>
+  </data>
+  <data name="Release of: {0}" xml:space="preserve">
+    <value>Lanzamiento de: {0}</value>
+  </data>
+  <data name="This barcode is already present in the list." xml:space="preserve">
+    <value>Este código de barras ya está en la lista.</value>
+  </data>
+  <data name="This product code is already present in the list." xml:space="preserve">
+    <value>Este código de producto ya está en la lista.</value>
+  </data>
 </root>

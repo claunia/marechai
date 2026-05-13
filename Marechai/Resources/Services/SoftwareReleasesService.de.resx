@@ -451,4 +451,55 @@
         <value>* Ein neuer Eintrag wird beim Import mit diesem Namen erstellt.</value>
         <comment>* A new software or platform entry will be created with this name during import.</comment>
     </data>
+  <data name="Suggest changes" xml:space="preserve">
+    <value>Änderungen vorschlagen</value>
+  </data>
+  <data name="General" xml:space="preserve">
+    <value>Allgemein</value>
+  </data>
+  <data name="Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently." xml:space="preserve">
+    <value>Bearbeiten Sie unten ein beliebiges Feld oder eine Verbindung. Nur Ihre Änderungen werden zur Überprüfung gesendet; ein Administrator kann jede einzeln annehmen oder ablehnen.</value>
+  </data>
+  <data name="Optional comment (References, sources, etc...)" xml:space="preserve">
+    <value>Optionaler Kommentar (Referenzen, Quellen usw.)</value>
+  </data>
+  <data name="No changes detected — modify at least one field before submitting." xml:space="preserve">
+    <value>Keine Änderungen erkannt — ändern Sie mindestens ein Feld vor dem Absenden.</value>
+  </data>
+  <data name="Submit suggestion" xml:space="preserve">
+    <value>Vorschlag einreichen</value>
+  </data>
+  <data name="Failed to submit suggestion." xml:space="preserve">
+    <value>Vorschlag konnte nicht eingereicht werden.</value>
+  </data>
+  <data name="Suggestion submitted. An administrator will review it." xml:space="preserve">
+    <value>Vorschlag eingereicht. Ein Administrator wird ihn prüfen.</value>
+  </data>
+  <data name="Undo" xml:space="preserve">
+    <value>Rückgängig</value>
+  </data>
+  <data name="Add barcode" xml:space="preserve">
+    <value>Strichcode hinzufügen</value>
+  </data>
+  <data name="Add product code" xml:space="preserve">
+    <value>Produktcode hinzufügen</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="Product codes" xml:space="preserve">
+    <value>Produktcodes</value>
+  </data>
+  <data name="Compilation" xml:space="preserve">
+    <value>Sammlung</value>
+  </data>
+  <data name="Release of: {0}" xml:space="preserve">
+    <value>Veröffentlichung von: {0}</value>
+  </data>
+  <data name="This barcode is already present in the list." xml:space="preserve">
+    <value>Dieser Strichcode ist bereits in der Liste vorhanden.</value>
+  </data>
+  <data name="This product code is already present in the list." xml:space="preserve">
+    <value>Dieser Produktcode ist bereits in der Liste vorhanden.</value>
+  </data>
 </root>

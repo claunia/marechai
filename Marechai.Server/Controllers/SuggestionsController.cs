@@ -649,6 +649,14 @@ public class SuggestionsController(MarechaiContext context,
         if(s.EntityType == SuggestionEntityType.Software && s.EntityId.HasValue && s.SuggestedValues is not null)
             await ResolveSoftwareRemoveLabelsAsync(s.EntityId.Value, s.SuggestedValues, currentLabels);
 
+        // Same pattern for SoftwareRelease entity-edit suggestions (4 junctions: regions,
+        // languages, barcodes, product_codes). Mixes 2 composite-key junctions (regions
+        // short FK, languages string FK) with 2 surrogate-Id junctions (barcodes/
+        // product_codes), so the per-group token parser dispatches by group — see
+        // SoftwareReleaseSuggestionApplier.ApplyJunctionRemove for the per-group lookup.
+        if(s.EntityType == SuggestionEntityType.SoftwareRelease && s.EntityId.HasValue && s.SuggestedValues is not null)
+            await ResolveSoftwareReleaseRemoveLabelsAsync(s.EntityId.Value, s.SuggestedValues, currentLabels);
+
         return Ok(new SuggestionDiffDto
         {
             Suggestion           = suggestionDto,
@@ -886,8 +894,9 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.Gpu           => true,
         SuggestionEntityType.Processor     => true,
         SuggestionEntityType.SoundSynth    => true,
-        SuggestionEntityType.Person        => true,
-        SuggestionEntityType.Software      => true,
+        SuggestionEntityType.Person          => true,
+        SuggestionEntityType.Software        => true,
+        SuggestionEntityType.SoftwareRelease => true,
         _                                  => GetKnownFieldNames(type) is not null
     };
 
@@ -930,6 +939,9 @@ public class SuggestionsController(MarechaiContext context,
 
         if(type == SuggestionEntityType.Software)
             return Suggestions.SoftwareSuggestionApplier.IsKnownFieldName(fieldName);
+
+        if(type == SuggestionEntityType.SoftwareRelease)
+            return Suggestions.SoftwareReleaseSuggestionApplier.IsKnownFieldName(fieldName);
 
         IReadOnlyCollection<string> set = GetKnownFieldNames(type);
         return set is not null && set.Contains(fieldName);
@@ -1069,6 +1081,12 @@ public class SuggestionsController(MarechaiContext context,
                     context, entityId, suggested, accepted);
                 return new ApplyResult(applied, missing);
             }
+            case SuggestionEntityType.SoftwareRelease:
+            {
+                var (applied, missing) = await Suggestions.SoftwareReleaseSuggestionApplier.ApplyAsync(
+                    context, entityId, suggested, accepted);
+                return new ApplyResult(applied, missing);
+            }
             default:
                 throw new NotImplementedException($"Suggestions for {type} are not implemented yet.");
         }
@@ -1122,6 +1140,8 @@ public class SuggestionsController(MarechaiContext context,
                 await Suggestions.PersonSuggestionApplier.GetCurrentValuesAsync(context, entityId),
             SuggestionEntityType.Software =>
                 await Suggestions.SoftwareSuggestionApplier.GetCurrentValuesAsync(context, entityId),
+            SuggestionEntityType.SoftwareRelease =>
+                await Suggestions.SoftwareReleaseSuggestionApplier.GetCurrentValuesAsync(context, entityId),
             _ => null
         };
     }
@@ -1195,6 +1215,30 @@ public class SuggestionsController(MarechaiContext context,
                                     .Where(s => s.Id == (ulong)entityId)
                                     .Select(s => s.Name)
                                     .FirstOrDefaultAsync();
+            case SuggestionEntityType.SoftwareRelease:
+            {
+                // Surface BOTH the parent software/version AND the release title so the
+                // suggestion queue row reads e.g. "Quake 1.01 — Shareware" rather than just
+                // one piece. Falls back gracefully when one side is missing.
+                var row = await context.SoftwareReleases.AsNoTracking()
+                                       .Where(r => r.Id == (ulong)entityId)
+                                       .Select(r => new
+                                        {
+                                            r.Title,
+                                            SoftwareName = r.Software.Name,
+                                            VersionString = r.SoftwareVersion.VersionString
+                                        })
+                                       .FirstOrDefaultAsync();
+                if(row is null) return null;
+                string parent = !string.IsNullOrWhiteSpace(row.SoftwareName)
+                                    ? (string.IsNullOrWhiteSpace(row.VersionString)
+                                           ? row.SoftwareName
+                                           : $"{row.SoftwareName} {row.VersionString}")
+                                    : null;
+                if(string.IsNullOrWhiteSpace(parent)) return row.Title;
+                if(string.IsNullOrWhiteSpace(row.Title)) return parent;
+                return $"{parent} \u2014 {row.Title}";
+            }
             default:
                 return null;
         }
@@ -1531,6 +1575,11 @@ public class SuggestionsController(MarechaiContext context,
             case SuggestionEntityType.Software:
             {
                 await ResolveSoftwareLabelsAsync(entityId, values, labels);
+                break;
+            }
+            case SuggestionEntityType.SoftwareRelease:
+            {
+                await ResolveSoftwareReleaseLabelsAsync(entityId, values, labels);
                 break;
             }
         }
@@ -3090,6 +3139,187 @@ public class SuggestionsController(MarechaiContext context,
         }
     }
 
+    // ─────────────── SoftwareRelease entity-edit label resolution (scalars + junction ops) ───────────────
+
+    /// <summary>
+    ///     Build readable labels for a SoftwareRelease suggestion. Resolves two scalar FK
+    ///     fields (<c>platform_id</c>, <c>publisher_id</c>) plus junction-add operation keys
+    ///     for all four in-scope groups. Junction-remove labels are populated separately by
+    ///     <see cref="ResolveSoftwareReleaseRemoveLabelsAsync" />.
+    /// </summary>
+    async Task ResolveSoftwareReleaseLabelsAsync(long? entityId,
+                                                 Dictionary<string, JsonElement> values,
+                                                 Dictionary<string, string> labels)
+    {
+        // ---- Scalar FK labels ---------------------------------------------------------
+        if(values.TryGetValue(Suggestions.SoftwareReleaseSuggestionApplier.FieldPlatformId, out JsonElement platE))
+        {
+            long? id = JsonElementToLong(platE);
+            if(id.HasValue && id.Value >= 0)
+            {
+                ulong pidU = (ulong)id.Value;
+                string name = await context.SoftwarePlatforms.AsNoTracking()
+                                           .Where(p => p.Id == pidU)
+                                           .Select(p => p.Name)
+                                           .FirstOrDefaultAsync();
+                if(!string.IsNullOrEmpty(name))
+                    labels[Suggestions.SoftwareReleaseSuggestionApplier.FieldPlatformId] = name;
+            }
+        }
+
+        if(values.TryGetValue(Suggestions.SoftwareReleaseSuggestionApplier.FieldPublisherId, out JsonElement pubE))
+        {
+            int? id = JsonElementToInt(pubE);
+            if(id.HasValue)
+            {
+                string name = await context.Companies.AsNoTracking()
+                                           .Where(c => c.Id == id.Value)
+                                           .Select(c => c.Name)
+                                           .FirstOrDefaultAsync();
+                if(!string.IsNullOrEmpty(name))
+                    labels[Suggestions.SoftwareReleaseSuggestionApplier.FieldPublisherId] = name;
+            }
+        }
+
+        if(!entityId.HasValue) return;
+
+        // ---- Junction-add labels (resolved from the suggested payload's id field) -----
+        foreach(KeyValuePair<string, JsonElement> kv in values)
+        {
+            if(!Suggestions.SoftwareReleaseSuggestionApplier.TryParseJunctionKey(kv.Key, out string group, out string op, out _))
+                continue;
+            if(op != "add" || kv.Value.ValueKind != JsonValueKind.Object) continue;
+
+            string label = await BuildSoftwareReleaseAddLabelAsync(group, kv.Value);
+            if(!string.IsNullOrEmpty(label)) labels[kv.Key] = label;
+        }
+    }
+
+    /// <summary>
+    ///     Resolve readable labels for every SoftwareRelease junction-remove operation in the
+    ///     suggested payload. Iterates the RAW <c>SuggestedValues</c> dict because remove ops
+    ///     carry a null value and <see cref="ParseValuesForLabels" /> drops null entries.
+    /// </summary>
+    async Task ResolveSoftwareReleaseRemoveLabelsAsync(long releaseId,
+                                                       Dictionary<string, object> rawSuggested,
+                                                       Dictionary<string, string> currentLabels)
+    {
+        ulong releaseIdU = (ulong)releaseId;
+
+        foreach(KeyValuePair<string, object> kv in rawSuggested)
+        {
+            if(!Suggestions.SoftwareReleaseSuggestionApplier.TryParseJunctionKey(kv.Key, out string group, out string op, out string token))
+                continue;
+            if(op != "remove") continue;
+
+            string label = group switch
+            {
+                Suggestions.SoftwareReleaseSuggestionApplier.GroupRegions      => await BuildSoftwareReleaseRegionRemoveLabelAsync(releaseIdU, token),
+                Suggestions.SoftwareReleaseSuggestionApplier.GroupLanguages    => await BuildSoftwareReleaseLanguageRemoveLabelAsync(releaseIdU, token),
+                Suggestions.SoftwareReleaseSuggestionApplier.GroupBarcodes     => await BuildSoftwareReleaseBarcodeRemoveLabelAsync(releaseIdU, token),
+                Suggestions.SoftwareReleaseSuggestionApplier.GroupProductCodes => await BuildSoftwareReleaseProductCodeRemoveLabelAsync(releaseIdU, token),
+                _                                                              => null
+            };
+            if(!string.IsNullOrEmpty(label)) currentLabels[kv.Key] = label;
+        }
+    }
+
+    async Task<string> BuildSoftwareReleaseAddLabelAsync(string group, JsonElement payload)
+    {
+        switch(group)
+        {
+            case Suggestions.SoftwareReleaseSuggestionApplier.GroupRegions:
+            {
+                int? id = ReadIntField(payload, "unm49_id");
+                if(!id.HasValue || id.Value < short.MinValue || id.Value > short.MaxValue) return null;
+                short sid = (short)id.Value;
+                string name = await context.UnM49.AsNoTracking()
+                                           .Where(u => u.Id == sid)
+                                           .Select(u => u.Name)
+                                           .FirstOrDefaultAsync();
+                return string.IsNullOrEmpty(name) ? $"Region #{sid}" : name;
+            }
+            case Suggestions.SoftwareReleaseSuggestionApplier.GroupLanguages:
+            {
+                string code = ReadStringField(payload, "language_code");
+                if(string.IsNullOrWhiteSpace(code)) return null;
+                code = code.Trim();
+                string name = await context.Iso639.AsNoTracking()
+                                           .Where(l => l.Id == code)
+                                           .Select(l => l.ReferenceName)
+                                           .FirstOrDefaultAsync();
+                return string.IsNullOrEmpty(name) ? code : name;
+            }
+            case Suggestions.SoftwareReleaseSuggestionApplier.GroupBarcodes:
+            {
+                string code = ReadStringField(payload, "code");
+                int? type = ReadIntField(payload, "type");
+                if(string.IsNullOrEmpty(code) || !type.HasValue) return null;
+                string typeLabel = Enum.IsDefined(typeof(BarcodeType), (byte)type.Value)
+                                       ? ((BarcodeType)type.Value).ToString()
+                                       : $"#{type.Value}";
+                return $"{typeLabel}: {code}";
+            }
+            case Suggestions.SoftwareReleaseSuggestionApplier.GroupProductCodes:
+            {
+                string code = ReadStringField(payload, "code");
+                int? issuer = ReadIntField(payload, "issuer");
+                if(string.IsNullOrEmpty(code) || !issuer.HasValue) return null;
+                string issuerLabel = Enum.IsDefined(typeof(ProductCodeIssuer), (byte)issuer.Value)
+                                         ? ((ProductCodeIssuer)issuer.Value).ToString()
+                                         : $"#{issuer.Value}";
+                return $"{issuerLabel}: {code}";
+            }
+            default:
+                return null;
+        }
+    }
+
+    async Task<string> BuildSoftwareReleaseRegionRemoveLabelAsync(ulong releaseId, string token)
+    {
+        if(!short.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out short id)) return null;
+        // Verify the link exists for THIS release (composite-key guard).
+        string name = await context.UnM49BySoftwareRelease.AsNoTracking()
+                                   .Where(x => x.SoftwareReleaseId == releaseId && x.UnM49Id == id)
+                                   .Select(x => x.UnM49.Name)
+                                   .FirstOrDefaultAsync();
+        return string.IsNullOrEmpty(name) ? null : name;
+    }
+
+    async Task<string> BuildSoftwareReleaseLanguageRemoveLabelAsync(ulong releaseId, string token)
+    {
+        // String-keyed composite junction \u2014 token IS the language code.
+        string code = token;
+        if(string.IsNullOrEmpty(code)) return null;
+        string name = await context.LanguageBySoftwareRelease.AsNoTracking()
+                                   .Where(x => x.SoftwareReleaseId == releaseId && x.LanguageCode == code)
+                                   .Select(x => x.Language.ReferenceName)
+                                   .FirstOrDefaultAsync();
+        return string.IsNullOrEmpty(name) ? null : name;
+    }
+
+    async Task<string> BuildSoftwareReleaseBarcodeRemoveLabelAsync(ulong releaseId, string token)
+    {
+        if(!ulong.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out ulong rowId)) return null;
+        var row = await context.SoftwareBarcodes.AsNoTracking()
+                               .Where(b => b.Id == rowId && b.ReleaseId == releaseId)
+                               .Select(b => new { b.Code, b.Type })
+                               .FirstOrDefaultAsync();
+        if(row is null) return null;
+        return $"{row.Type}: {row.Code}";
+    }
+
+    async Task<string> BuildSoftwareReleaseProductCodeRemoveLabelAsync(ulong releaseId, string token)
+    {
+        if(!ulong.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out ulong rowId)) return null;
+        var row = await context.SoftwareProductCodes.AsNoTracking()
+                               .Where(p => p.Id == rowId && p.ReleaseId == releaseId)
+                               .Select(p => new { p.Code, p.Issuer })
+                               .FirstOrDefaultAsync();
+        if(row is null) return null;
+        return $"{row.Issuer}: {row.Code}";
+    }
+
     /// <summary>
     ///     Sweep pending image uploads referenced by a now-terminal suggestion. Called from
     ///     <see cref="ReviewAsync" /> after the per-entity applier has run. For every
@@ -3320,6 +3550,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.PersonDescription     => $"/person/{entityId}",
         SuggestionEntityType.Software              => $"/software/{entityId}",
         SuggestionEntityType.SoftwareDescription   => $"/software/{entityId}",
+        SuggestionEntityType.SoftwareRelease       => $"/software/release/{entityId}",
         _                                       => null
     };
 

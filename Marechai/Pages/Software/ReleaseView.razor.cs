@@ -30,8 +30,10 @@ using System.Threading.Tasks;
 using Humanizer;
 using Marechai.ApiClient.Models;
 using Marechai.Data;
+using Marechai.Pages.Suggestions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using MudBlazor;
 
 namespace Marechai.Pages.Software;
 
@@ -204,4 +206,28 @@ public partial class ReleaseView
     static string GetBarcodeTypeName(int type) => ((BarcodeType)type).Humanize();
 
     static string GetProductCodeIssuerName(int issuer) => ((ProductCodeIssuer)issuer).Humanize();
+
+    /// <summary>
+    ///     Open the collaborative suggestion dialog scoped to this software release.
+    ///     Captures the route parameter <see cref="Id" /> directly (NOT <c>_release.Id</c>
+    ///     \u2014 async race lesson: OwningComponentBase + the async DTO load can momentarily
+    ///     leave the DTO null/0 and the cast to long would silently produce 0 which the
+    ///     server treats as an addition request).
+    /// </summary>
+    async Task OpenSoftwareReleaseSuggestionDialogAsync()
+    {
+        if(_release is null) return;
+        long releaseId = Id;
+        if(releaseId <= 0) return;
+
+        var parameters = new DialogParameters
+        {
+            ["EntityId"]   = releaseId,
+            ["CurrentDto"] = _release
+        };
+        var options = new DialogOptions { MaxWidth = MaxWidth.Large, FullWidth = true };
+        IDialogReference dialog = await DialogService.ShowAsync<SoftwareReleaseSuggestionDialog>(
+            L["Suggest changes"], parameters, options);
+        await dialog.Result;
+    }
 }

@@ -27,11 +27,14 @@
 
 @page "/software/release/{Id:int}"
 @using Marechai.ApiClient.Models
+@using Marechai.Pages.Suggestions
 @inherits OwningComponentBase<SoftwareService>
 @inject IStringLocalizer<SoftwareService>  L
 @inject IStringLocalizer<CountriesService> CountryL
 @inject CollectionService                 CollectionSvc
 @inject ApiAssetUrlProvider               AssetUrls
+@inject IDialogService                    DialogService
+@inject SuggestionsService                Suggestions
 
 @if(!_loaded)
 {
@@ -103,9 +106,20 @@
 @* ── General Information Card ── *@
 <MudCard Elevation="2" Class="mb-4 rounded-lg">
     <MudCardContent>
-        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
-            <MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Primary"/>
-            <MudText Typo="Typo.h6">@L["General"]</MudText>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-3">
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["General"]</MudText>
+            </MudStack>
+            <AuthorizeView>
+                <Authorized>
+                    <MudTooltip Text="@L["Suggest changes"]">
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary"
+                                       Size="Size.Small"
+                                       OnClick="OpenSoftwareReleaseSuggestionDialogAsync"/>
+                    </MudTooltip>
+                </Authorized>
+            </AuthorizeView>
         </MudStack>
         <MudSimpleTable Elevation="0" Dense="true">
             <tbody>

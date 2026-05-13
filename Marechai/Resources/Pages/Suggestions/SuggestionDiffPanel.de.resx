@@ -295,4 +295,28 @@
   <data name="Synthesizer type" xml:space="preserve">
     <value>Synthesizer-Typ</value>
   </data>
-<data name="Surname" xml:space="preserve"><value>Nachname</value></data><data name="Alias" xml:space="preserve"><value>Alias</value></data><data name="Display name" xml:space="preserve"><value>Anzeigename</value></data><data name="Country of birth" xml:space="preserve"><value>Geburtsland</value></data><data name="Birth date" xml:space="preserve"><value>Geburtsdatum</value></data><data name="Birth date precision" xml:space="preserve"><value>Genauigkeit des Geburtsdatums</value></data><data name="Death date" xml:space="preserve"><value>Sterbedatum</value></data><data name="Death date precision" xml:space="preserve"><value>Genauigkeit des Sterbedatums</value></data><data name="Webpage" xml:space="preserve"><value>Webseite</value></data><data name="Twitter" xml:space="preserve"><value>Twitter</value></data><data name="Facebook" xml:space="preserve"><value>Facebook</value></data><data name="Photo" xml:space="preserve"><value>Foto</value></data><data name="Predecessor" xml:space="preserve"><value>Vorgänger</value></data><data name="Base software" xml:space="preserve"><value>Basissoftware</value></data><data name="Kind" xml:space="preserve"><value>Art</value></data><data name="Genres" xml:space="preserve"><value>Genres</value></data></root>
+<data name="Surname" xml:space="preserve"><value>Nachname</value></data><data name="Alias" xml:space="preserve"><value>Alias</value></data><data name="Display name" xml:space="preserve"><value>Anzeigename</value></data><data name="Country of birth" xml:space="preserve"><value>Geburtsland</value></data><data name="Birth date" xml:space="preserve"><value>Geburtsdatum</value></data><data name="Birth date precision" xml:space="preserve"><value>Genauigkeit des Geburtsdatums</value></data><data name="Death date" xml:space="preserve"><value>Sterbedatum</value></data><data name="Death date precision" xml:space="preserve"><value>Genauigkeit des Sterbedatums</value></data><data name="Webpage" xml:space="preserve"><value>Webseite</value></data><data name="Twitter" xml:space="preserve"><value>Twitter</value></data><data name="Facebook" xml:space="preserve"><value>Facebook</value></data><data name="Photo" xml:space="preserve"><value>Foto</value></data><data name="Predecessor" xml:space="preserve"><value>Vorgänger</value></data><data name="Base software" xml:space="preserve"><value>Basissoftware</value></data><data name="Kind" xml:space="preserve"><value>Art</value></data><data name="Genres" xml:space="preserve"><value>Genres</value></data>  <data name="Platform" xml:space="preserve">
+    <value>Plattform</value>
+  </data>
+  <data name="Publisher" xml:space="preserve">
+    <value>Verlag</value>
+  </data>
+  <data name="Release date" xml:space="preserve">
+    <value>Veröffentlichungsdatum</value>
+  </data>
+  <data name="Release date precision" xml:space="preserve">
+    <value>Genauigkeit des Veröffentlichungsdatums</value>
+  </data>
+  <data name="Regions" xml:space="preserve">
+    <value>Regionen</value>
+  </data>
+  <data name="Languages" xml:space="preserve">
+    <value>Sprachen</value>
+  </data>
+  <data name="Barcodes" xml:space="preserve">
+    <value>Strichcodes</value>
+  </data>
+  <data name="Product codes" xml:space="preserve">
+    <value>Produktcodes</value>
+  </data>
+</root>

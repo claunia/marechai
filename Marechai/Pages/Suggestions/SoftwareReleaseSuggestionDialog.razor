@@ -1,0 +1,732 @@
+@using System
+@using System.Collections.Generic
+@using System.Globalization
+@using System.Linq
+@using System.Text.Json
+@using System.Threading
+@using Humanizer
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@using Marechai.Services
+@using Marechai.Suggestions
+@using Marechai.Suggestions.Metadata
+
+@inject IStringLocalizer<SoftwareReleasesService> L
+@inject ISnackbar                  Snackbar
+@inject SoftwareReleasesService    ReleasesService
+@inject SuggestionsService         SuggestionsService
+
+@*
+    Dedicated suggestion dialog for editing a SoftwareRelease. Mirrors the design of
+    MagazineIssueSuggestionDialog (4 in-scope junctions + scalar fields) but with the
+    multi-field-payload junctions for Barcodes (code+type) and ProductCodes
+    (code+issuer), and intentionally drops the cover paper, the parent re-parenting
+    fields (software_id/software_version_id/is_compilation), and all spec/cover/GPU/
+    sound-synth/included-software cards (admin-only). The parent Software/Version is
+    surfaced as a read-only context alert at the top.
+*@
+
+<MudDialog>
+    <DialogContent>
+        @if(_loading)
+        {
+            <MudProgressLinear Indeterminate="true"/>
+        }
+        else
+        {
+            <MudText Typo="Typo.body2" Class="mb-3">
+                @L["Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently."]
+            </MudText>
+
+            @* ── Read-only parent Software / Version context (admin-only re-parenting) ── *@
+            @if(!string.IsNullOrEmpty(_parentLabel))
+            {
+                <MudAlert Severity="Severity.Info" Class="mb-3" Dense="true">
+                    @string.Format(L["Release of: {0}"], _parentLabel)
+                </MudAlert>
+            }
+
+            @* ── Scalar fields ── *@
+            <MudPaper Outlined="true" Class="pa-3 mb-3">
+                <MudText Typo="Typo.h6" Class="mb-2">@L["General"]</MudText>
+
+                <MudTextField T="string" Label="@L["Title"]"
+                              MaxLength="255"
+                              Value="@_title"
+                              ValueChanged="@(v => { _title = v; })"
+                              HelperText="@L["Optional. Used as the display name for compilation releases."]"
+                              Class="mb-3"/>
+
+                <MudAutocomplete T="SoftwarePlatformDto" Value="@_selectedPlatform"
+                                 ValueChanged="@(p => { _selectedPlatform = p; })"
+                                 Label="@L["Platform"]" Clearable="true"
+                                 SearchFunc="SearchPlatforms"
+                                 ToStringFunc="@(p => p?.Name ?? string.Empty)"
+                                 Class="mb-3"/>
+
+                <MudAutocomplete T="CompanyDto" Value="@_selectedPublisher"
+                                 ValueChanged="@(c => { _selectedPublisher = c; })"
+                                 Label="@L["Publisher"]" Required="true"
+                                 SearchFunc="SearchCompanies"
+                                 ToStringFunc="@(c => c?.Name ?? string.Empty)"
+                                 Class="mb-3"/>
+
+                <MudDatePicker Label="@L["Release date"]" Editable="true" Clearable="true"
+                               Date="@_releaseDate"
+                               DateChanged="@(d => { _releaseDate = d; })" Class="mb-3"/>
+
+                <MudSelect T="int" Label="@L["Date precision"]"
+                           Value="@_releaseDatePrecision"
+                           ValueChanged="@(v => { _releaseDatePrecision = v; })">
+                    <MudSelectItem T="int" Value="0">@L["Full date"]</MudSelectItem>
+                    <MudSelectItem T="int" Value="1">@L["Month and year only"]</MudSelectItem>
+                    <MudSelectItem T="int" Value="2">@L["Year only"]</MudSelectItem>
+                </MudSelect>
+            </MudPaper>
+
+            @* ── Junctions ── *@
+            <MudExpansionPanels MultiExpansion="true" Class="mb-3">
+
+                @* Regions *@
+                <MudExpansionPanel Text="@($"{L["Regions"]} ({CountActiveRegions() + _regionAdds.Count})")"
+                                   Expanded="@(_regionAdds.Count > 0 || _regionRemoves.Count > 0)">
+                    @foreach(UnM49BySoftwareReleaseDto r in _regionRows ?? new())
+                    {
+                        short rid = (short)(r.UnM49Id ?? 0);
+                        bool removed = _regionRemoves.Contains(rid);
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText Style="@(removed ? "text-decoration: line-through;" : "")">@(r.RegionName ?? $"#{rid}")</MudText>
+                            @if(removed)
+                            {
+                                <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                           OnClick="@(() => _regionRemoves.Remove(rid))">@L["Undo"]</MudButton>
+                            }
+                            else
+                            {
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                               OnClick="@(() => { if(rid != 0) _regionRemoves.Add(rid); })"/>
+                            }
+                        </MudStack>
+                    }
+                    @foreach(KeyValuePair<string, JunctionAddState> kv in _regionAdds)
+                    {
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText><strong>+ @kv.Value.Display</strong></MudText>
+                            <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                       OnClick="@(() => _regionAdds.Remove(kv.Key))">@L["Undo"]</MudButton>
+                        </MudStack>
+                    }
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-2">
+                        <MudAutocomplete T="UnM49Dto" Value="@_pickRegion" ValueChanged="@(r => { _pickRegion = r; })"
+                                         SearchFunc="SearchRegions" Clearable="true"
+                                         ToStringFunc="@(r => r?.Name ?? string.Empty)"
+                                         Style="flex: 1;"/>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
+                                   OnClick="AddRegion"
+                                   Disabled="@(_pickRegion is null)">@L["Add region"]</MudButton>
+                    </MudStack>
+                </MudExpansionPanel>
+
+                @* Languages *@
+                <MudExpansionPanel Text="@($"{L["Languages"]} ({CountActiveLanguages() + _languageAdds.Count})")"
+                                   Expanded="@(_languageAdds.Count > 0 || _languageRemoves.Count > 0)">
+                    @foreach(LanguageBySoftwareReleaseDto l in _languageRows ?? new())
+                    {
+                        string code = l.LanguageCode ?? string.Empty;
+                        bool removed = _languageRemoves.Contains(code);
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText Style="@(removed ? "text-decoration: line-through;" : "")">@(l.Language ?? code)</MudText>
+                            @if(removed)
+                            {
+                                <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                           OnClick="@(() => _languageRemoves.Remove(code))">@L["Undo"]</MudButton>
+                            }
+                            else
+                            {
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                               OnClick="@(() => { if(!string.IsNullOrEmpty(code)) _languageRemoves.Add(code); })"/>
+                            }
+                        </MudStack>
+                    }
+                    @foreach(KeyValuePair<string, JunctionAddState> kv in _languageAdds)
+                    {
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText><strong>+ @kv.Value.Display</strong></MudText>
+                            <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                       OnClick="@(() => _languageAdds.Remove(kv.Key))">@L["Undo"]</MudButton>
+                        </MudStack>
+                    }
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-2">
+                        <MudAutocomplete T="Iso639Dto" Value="@_pickLanguage" ValueChanged="@(l => { _pickLanguage = l; })"
+                                         SearchFunc="SearchLanguages" Clearable="true"
+                                         ToStringFunc="@(l => l is null ? string.Empty : $"{l.ReferenceName} ({l.Id})")"
+                                         Style="flex: 1;"/>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
+                                   OnClick="AddLanguage"
+                                   Disabled="@(_pickLanguage is null)">@L["Add language"]</MudButton>
+                    </MudStack>
+                </MudExpansionPanel>
+
+                @* Barcodes *@
+                <MudExpansionPanel Text="@($"{L["Barcodes"]} ({CountActiveBarcodes() + _barcodeAdds.Count})")"
+                                   Expanded="@(_barcodeAdds.Count > 0 || _barcodeRemoves.Count > 0)">
+                    @foreach(SoftwareBarcodeDto b in _barcodeRows ?? new())
+                    {
+                        long bid = (long)(b.Id ?? 0);
+                        bool removed = _barcodeRemoves.Contains(bid);
+                        string typeLabel = b.Type.HasValue ? ((BarcodeType)b.Type.Value).Humanize() : string.Empty;
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText Style="@(removed ? "text-decoration: line-through;" : "")">@typeLabel: @b.Code</MudText>
+                            @if(removed)
+                            {
+                                <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                           OnClick="@(() => _barcodeRemoves.Remove(bid))">@L["Undo"]</MudButton>
+                            }
+                            else
+                            {
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                               OnClick="@(() => { if(bid != 0) _barcodeRemoves.Add(bid); })"/>
+                            }
+                        </MudStack>
+                    }
+                    @foreach(KeyValuePair<string, JunctionAddState> kv in _barcodeAdds)
+                    {
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText><strong>+ @kv.Value.Display</strong></MudText>
+                            <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                       OnClick="@(() => _barcodeAdds.Remove(kv.Key))">@L["Undo"]</MudButton>
+                        </MudStack>
+                    }
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-2">
+                        <MudSelect T="int" Value="@_pickBarcodeType" ValueChanged="@(v => { _pickBarcodeType = v; })"
+                                   Label="@L["Type"]" Style="min-width: 160px;">
+                            @foreach(BarcodeType bt in Enum.GetValues<BarcodeType>())
+                            {
+                                int val = (int)bt;
+                                <MudSelectItem T="int" Value="@val">@bt.Humanize()</MudSelectItem>
+                            }
+                        </MudSelect>
+                        <MudTextField T="string" Label="@L["Barcode"]" Value="@_pickBarcodeCode"
+                                      ValueChanged="@(v => { _pickBarcodeCode = v; })"
+                                      MaxLength="64" Style="flex: 1;"/>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
+                                   OnClick="AddBarcode"
+                                   Disabled="@(string.IsNullOrWhiteSpace(_pickBarcodeCode))">@L["Add barcode"]</MudButton>
+                    </MudStack>
+                </MudExpansionPanel>
+
+                @* Product codes *@
+                <MudExpansionPanel Text="@($"{L["Product codes"]} ({CountActiveProductCodes() + _productCodeAdds.Count})")"
+                                   Expanded="@(_productCodeAdds.Count > 0 || _productCodeRemoves.Count > 0)">
+                    @foreach(SoftwareProductCodeDto p in _productCodeRows ?? new())
+                    {
+                        long pid = (long)(p.Id ?? 0);
+                        bool removed = _productCodeRemoves.Contains(pid);
+                        string issuerLabel = p.Issuer.HasValue ? ((ProductCodeIssuer)p.Issuer.Value).Humanize() : string.Empty;
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText Style="@(removed ? "text-decoration: line-through;" : "")">@issuerLabel: @p.Code</MudText>
+                            @if(removed)
+                            {
+                                <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                           OnClick="@(() => _productCodeRemoves.Remove(pid))">@L["Undo"]</MudButton>
+                            }
+                            else
+                            {
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                               OnClick="@(() => { if(pid != 0) _productCodeRemoves.Add(pid); })"/>
+                            }
+                        </MudStack>
+                    }
+                    @foreach(KeyValuePair<string, JunctionAddState> kv in _productCodeAdds)
+                    {
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText><strong>+ @kv.Value.Display</strong></MudText>
+                            <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Default"
+                                       OnClick="@(() => _productCodeAdds.Remove(kv.Key))">@L["Undo"]</MudButton>
+                        </MudStack>
+                    }
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-2">
+                        <MudSelect T="int" Value="@_pickProductCodeIssuer" ValueChanged="@(v => { _pickProductCodeIssuer = v; })"
+                                   Label="@L["Issuer"]" Style="min-width: 180px;">
+                            @foreach(ProductCodeIssuer pi in Enum.GetValues<ProductCodeIssuer>())
+                            {
+                                int val = (int)pi;
+                                <MudSelectItem T="int" Value="@val">@pi.Humanize()</MudSelectItem>
+                            }
+                        </MudSelect>
+                        <MudTextField T="string" Label="@L["Product code"]" Value="@_pickProductCodeCode"
+                                      ValueChanged="@(v => { _pickProductCodeCode = v; })"
+                                      MaxLength="64" Style="flex: 1;"/>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
+                                   OnClick="AddProductCode"
+                                   Disabled="@(string.IsNullOrWhiteSpace(_pickProductCodeCode))">@L["Add product code"]</MudButton>
+                    </MudStack>
+                </MudExpansionPanel>
+
+            </MudExpansionPanels>
+
+            <MudTextField T="string" Label="@L["Optional comment (References, sources, etc...)"]" Lines="2"
+                          MaxLength="2000" @bind-Value="_userComment"/>
+
+            @if(!string.IsNullOrWhiteSpace(_validationError))
+            {
+                <MudAlert Severity="Severity.Error" Class="mt-2">@_validationError</MudAlert>
+            }
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit"
+                   Disabled="@(_loading || _submitting || !HasAnyChange())">
+            @if(_submitting)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true"/>
+            }
+            else
+            {
+                @L["Submit suggestion"]
+            }
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code
+{
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public long               EntityId   { get; set; }
+    [Parameter] public SoftwareReleaseDto CurrentDto { get; set; }
+
+    sealed class JunctionAddState
+    {
+        public Dictionary<string, object> Payload { get; set; }
+        public string                     Display { get; set; }
+    }
+
+    bool _loading = true;
+    bool _submitting;
+    string _validationError;
+    string _userComment;
+
+    // Read-only parent Software / Version context (admin-only re-parenting)
+    string _parentLabel;
+
+    // Scalar state
+    string                _title;
+    SoftwarePlatformDto   _selectedPlatform;
+    CompanyDto            _selectedPublisher;
+    DateTime?             _releaseDate;
+    int                   _releaseDatePrecision;
+
+    // Snapshots of original scalar values (for diff)
+    string _orig_title;
+    int?   _orig_platformId;
+    int?   _orig_publisherId;
+    string _orig_releaseDate; // canonical "yyyy-MM-dd" or null
+    int    _orig_releaseDatePrecision;
+
+    // Picker corpora
+    List<SoftwarePlatformDto> _allPlatforms;
+    List<CompanyDto>          _allCompanies;
+    List<UnM49Dto>            _allRegions;
+    List<Iso639Dto>           _allLanguages;
+
+    // Existing junction rows
+    List<UnM49BySoftwareReleaseDto>    _regionRows;
+    List<LanguageBySoftwareReleaseDto> _languageRows;
+    List<SoftwareBarcodeDto>           _barcodeRows;
+    List<SoftwareProductCodeDto>       _productCodeRows;
+
+    // Pending junction operations: removes (typed per-junction PK shape) + adds (uuid → state)
+    HashSet<short>  _regionRemoves      = new();
+    HashSet<string> _languageRemoves    = new(StringComparer.Ordinal);
+    HashSet<long>   _barcodeRemoves     = new();
+    HashSet<long>   _productCodeRemoves = new();
+
+    Dictionary<string, JunctionAddState> _regionAdds      = new();
+    Dictionary<string, JunctionAddState> _languageAdds    = new();
+    Dictionary<string, JunctionAddState> _barcodeAdds     = new();
+    Dictionary<string, JunctionAddState> _productCodeAdds = new();
+
+    // Picker state
+    UnM49Dto  _pickRegion;
+    Iso639Dto _pickLanguage;
+    int       _pickBarcodeType;
+    string    _pickBarcodeCode;
+    int       _pickProductCodeIssuer;
+    string    _pickProductCodeCode;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Seed scalar state from the current DTO snapshot.
+        if(CurrentDto is not null)
+        {
+            _title                = CurrentDto.Title;
+            _orig_title           = _title;
+            _orig_platformId      = CurrentDto.PlatformId;
+            _orig_publisherId     = CurrentDto.PublisherId;
+            _orig_releaseDate     = CurrentDto.ReleaseDate?.UtcDateTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            _releaseDate          = CurrentDto.ReleaseDate?.UtcDateTime;
+            _orig_releaseDatePrecision = CurrentDto.ReleaseDatePrecision ?? 0;
+            _releaseDatePrecision      = _orig_releaseDatePrecision;
+
+            // Build the read-only parent context label.
+            string parent = !string.IsNullOrEmpty(CurrentDto.Software)
+                                ? (string.IsNullOrEmpty(CurrentDto.SoftwareVersion)
+                                       ? CurrentDto.Software
+                                       : $"{CurrentDto.Software} {CurrentDto.SoftwareVersion}")
+                                : null;
+            if(CurrentDto.IsCompilation == true)
+                parent = string.IsNullOrEmpty(parent) ? L["Compilation"] : $"{parent} ({L["Compilation"]})";
+            _parentLabel = parent;
+        }
+
+        Task<List<SoftwarePlatformDto>>           platformsT = ReleasesService.GetAllPlatformsAsync();
+        Task<List<CompanyDto>>                    companiesT = ReleasesService.GetAllCompaniesAsync();
+        Task<List<UnM49Dto>>                      regionsT   = ReleasesService.GetAllUnM49Async();
+        Task<List<Iso639Dto>>                     languagesT = ReleasesService.GetAllLanguagesAsync();
+        Task<List<UnM49BySoftwareReleaseDto>>     regionRowsT     = ReleasesService.GetReleaseRegionsAsync((int)EntityId);
+        Task<List<LanguageBySoftwareReleaseDto>>  languageRowsT   = ReleasesService.GetReleaseLanguagesAsync((int)EntityId);
+        Task<List<SoftwareBarcodeDto>>            barcodeRowsT    = ReleasesService.GetBarcodesAsync((int)EntityId);
+        Task<List<SoftwareProductCodeDto>>        productCodeRowsT = ReleasesService.GetProductCodesAsync((int)EntityId);
+
+        await Task.WhenAll(platformsT, companiesT, regionsT, languagesT,
+                           regionRowsT, languageRowsT, barcodeRowsT, productCodeRowsT);
+
+        _allPlatforms     = platformsT.Result;
+        _allCompanies     = companiesT.Result;
+        _allRegions       = regionsT.Result;
+        _allLanguages     = languagesT.Result;
+        _regionRows       = regionRowsT.Result;
+        _languageRows     = languageRowsT.Result;
+        _barcodeRows      = barcodeRowsT.Result;
+        _productCodeRows  = productCodeRowsT.Result;
+
+        // Hydrate the scalar autocomplete selections so the user sees the current values.
+        if(_orig_platformId.HasValue && _allPlatforms is not null)
+            _selectedPlatform = _allPlatforms.FirstOrDefault(p => p.Id == _orig_platformId.Value);
+        if(_orig_publisherId.HasValue && _allCompanies is not null)
+            _selectedPublisher = _allCompanies.FirstOrDefault(c => c.Id == _orig_publisherId.Value);
+
+        _loading = false;
+    }
+
+    // ───────────────────────────── Search functions ─────────────────────────────
+
+    Task<IEnumerable<SoftwarePlatformDto>> SearchPlatforms(string value, CancellationToken ct)
+    {
+        IEnumerable<SoftwarePlatformDto> r = _allPlatforms ?? [];
+        if(!string.IsNullOrWhiteSpace(value))
+            r = r.Where(p => p.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
+        return Task.FromResult(r.Take(50));
+    }
+
+    Task<IEnumerable<CompanyDto>> SearchCompanies(string value, CancellationToken ct)
+    {
+        IEnumerable<CompanyDto> r = _allCompanies ?? [];
+        if(!string.IsNullOrWhiteSpace(value))
+            r = r.Where(c => c.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
+        return Task.FromResult(r.Take(50));
+    }
+
+    Task<IEnumerable<UnM49Dto>> SearchRegions(string value, CancellationToken ct)
+    {
+        // Dedup against existing rows minus removed plus pending adds.
+        HashSet<int> assigned = new();
+        if(_regionRows is not null)
+            foreach(UnM49BySoftwareReleaseDto rr in _regionRows)
+            {
+                short rid = (short)(rr.UnM49Id ?? 0);
+                if(rid == 0 || _regionRemoves.Contains(rid)) continue;
+                assigned.Add(rid);
+            }
+        foreach(JunctionAddState a in _regionAdds.Values)
+            if(GetIntField(a.Payload, "unm49_id") is int v) assigned.Add(v);
+
+        IEnumerable<UnM49Dto> r = (_allRegions ?? []).Where(rg => rg.Id is int id && !assigned.Contains(id));
+        if(!string.IsNullOrWhiteSpace(value))
+            r = r.Where(rg => rg.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
+        return Task.FromResult(r.Take(50));
+    }
+
+    Task<IEnumerable<Iso639Dto>> SearchLanguages(string value, CancellationToken ct)
+    {
+        HashSet<string> assigned = new(StringComparer.Ordinal);
+        if(_languageRows is not null)
+            foreach(LanguageBySoftwareReleaseDto lr in _languageRows)
+            {
+                string code = lr.LanguageCode ?? string.Empty;
+                if(string.IsNullOrEmpty(code) || _languageRemoves.Contains(code)) continue;
+                assigned.Add(code);
+            }
+        foreach(JunctionAddState a in _languageAdds.Values)
+            if(GetStringField(a.Payload, "language_code") is string c && !string.IsNullOrEmpty(c)) assigned.Add(c);
+
+        IEnumerable<Iso639Dto> r = (_allLanguages ?? []).Where(l => !string.IsNullOrEmpty(l.Id) && !assigned.Contains(l.Id));
+        if(!string.IsNullOrWhiteSpace(value))
+            r = r.Where(l => (l.ReferenceName?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false)
+                           || (l.Id?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false));
+        return Task.FromResult(r.Take(50));
+    }
+
+    static int? GetIntField(Dictionary<string, object> payload, string key)
+    {
+        if(payload is null || !payload.TryGetValue(key, out object v) || v is null) return null;
+        return v switch
+        {
+            int i      => i,
+            long l     => (int?)l,
+            short s    => s,
+            string str => int.TryParse(str, NumberStyles.Integer, CultureInfo.InvariantCulture, out int p) ? p : null,
+            _          => null
+        };
+    }
+
+    static string GetStringField(Dictionary<string, object> payload, string key)
+    {
+        if(payload is null || !payload.TryGetValue(key, out object v) || v is null) return null;
+        return v as string ?? v.ToString();
+    }
+
+    // ───────────────────────────── Junction queue helpers ─────────────────────────────
+
+    int CountActiveRegions()
+    {
+        if(_regionRows is null) return 0;
+        int n = 0;
+        foreach(UnM49BySoftwareReleaseDto r in _regionRows)
+        {
+            short rid = (short)(r.UnM49Id ?? 0);
+            if(rid == 0 || !_regionRemoves.Contains(rid)) n++;
+        }
+        return n;
+    }
+
+    int CountActiveLanguages()
+    {
+        if(_languageRows is null) return 0;
+        int n = 0;
+        foreach(LanguageBySoftwareReleaseDto l in _languageRows)
+        {
+            string code = l.LanguageCode ?? string.Empty;
+            if(string.IsNullOrEmpty(code) || !_languageRemoves.Contains(code)) n++;
+        }
+        return n;
+    }
+
+    int CountActiveBarcodes()
+    {
+        if(_barcodeRows is null) return 0;
+        int n = 0;
+        foreach(SoftwareBarcodeDto b in _barcodeRows)
+        {
+            long bid = (long)(b.Id ?? 0);
+            if(bid == 0 || !_barcodeRemoves.Contains(bid)) n++;
+        }
+        return n;
+    }
+
+    int CountActiveProductCodes()
+    {
+        if(_productCodeRows is null) return 0;
+        int n = 0;
+        foreach(SoftwareProductCodeDto p in _productCodeRows)
+        {
+            long pid = (long)(p.Id ?? 0);
+            if(pid == 0 || !_productCodeRemoves.Contains(pid)) n++;
+        }
+        return n;
+    }
+
+    static string NewKey(string group, string op) => $"{group}.{op}.{Guid.NewGuid():N}";
+
+    // ───────────────────────────── Add handlers ─────────────────────────────
+
+    void AddRegion()
+    {
+        if(_pickRegion is null || !_pickRegion.Id.HasValue) return;
+        string key = NewKey(SoftwareReleaseSuggestionMetadata.GroupRegions, "add");
+        _regionAdds[key] = new JunctionAddState
+        {
+            Payload = new Dictionary<string, object>(StringComparer.Ordinal) { ["unm49_id"] = _pickRegion.Id.Value },
+            Display = _pickRegion.Name ?? $"#{_pickRegion.Id.Value}"
+        };
+        _pickRegion = null;
+    }
+
+    void AddLanguage()
+    {
+        if(_pickLanguage is null || string.IsNullOrEmpty(_pickLanguage.Id)) return;
+        string key = NewKey(SoftwareReleaseSuggestionMetadata.GroupLanguages, "add");
+        _languageAdds[key] = new JunctionAddState
+        {
+            Payload = new Dictionary<string, object>(StringComparer.Ordinal) { ["language_code"] = _pickLanguage.Id },
+            Display = _pickLanguage.ReferenceName ?? _pickLanguage.Id
+        };
+        _pickLanguage = null;
+    }
+
+    void AddBarcode()
+    {
+        if(string.IsNullOrWhiteSpace(_pickBarcodeCode)) return;
+        string code = _pickBarcodeCode.Trim();
+        // Local dedup: prevent adding a code that already exists in the visible set.
+        bool clash = (_barcodeRows ?? []).Any(b => string.Equals(b.Code, code, StringComparison.Ordinal)
+                                                  && !_barcodeRemoves.Contains((long)(b.Id ?? 0)))
+                     || _barcodeAdds.Values.Any(a => GetStringField(a.Payload, "code") == code);
+        if(clash)
+        {
+            _validationError = L["This barcode is already present in the list."];
+            return;
+        }
+        _validationError = null;
+        string key = NewKey(SoftwareReleaseSuggestionMetadata.GroupBarcodes, "add");
+        BarcodeType bt = (BarcodeType)_pickBarcodeType;
+        _barcodeAdds[key] = new JunctionAddState
+        {
+            Payload = new Dictionary<string, object>(StringComparer.Ordinal)
+            {
+                ["code"] = code,
+                ["type"] = _pickBarcodeType
+            },
+            Display = $"{bt.Humanize()}: {code}"
+        };
+        _pickBarcodeCode = string.Empty;
+    }
+
+    void AddProductCode()
+    {
+        if(string.IsNullOrWhiteSpace(_pickProductCodeCode)) return;
+        string code = _pickProductCodeCode.Trim();
+        ProductCodeIssuer issuer = (ProductCodeIssuer)_pickProductCodeIssuer;
+        bool clash = (_productCodeRows ?? []).Any(p => string.Equals(p.Code, code, StringComparison.Ordinal)
+                                                      && p.Issuer == _pickProductCodeIssuer
+                                                      && !_productCodeRemoves.Contains((long)(p.Id ?? 0)))
+                     || _productCodeAdds.Values.Any(a => GetStringField(a.Payload, "code") == code
+                                                       && GetIntField(a.Payload, "issuer") == _pickProductCodeIssuer);
+        if(clash)
+        {
+            _validationError = L["This product code is already present in the list."];
+            return;
+        }
+        _validationError = null;
+        string key = NewKey(SoftwareReleaseSuggestionMetadata.GroupProductCodes, "add");
+        _productCodeAdds[key] = new JunctionAddState
+        {
+            Payload = new Dictionary<string, object>(StringComparer.Ordinal)
+            {
+                ["code"]   = code,
+                ["issuer"] = _pickProductCodeIssuer
+            },
+            Display = $"{issuer.Humanize()}: {code}"
+        };
+        _pickProductCodeCode = string.Empty;
+    }
+
+    // ───────────────────────────── Submit ─────────────────────────────
+
+    bool HasAnyChange()
+    {
+        if(!Equals(_orig_title, _title)) return true;
+        int? newPlatformId  = _selectedPlatform?.Id;
+        int? newPublisherId = _selectedPublisher?.Id;
+        if(!Nullable.Equals(_orig_platformId, newPlatformId)) return true;
+        if(!Nullable.Equals(_orig_publisherId, newPublisherId)) return true;
+        string newDate = _releaseDate?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        if(!Equals(_orig_releaseDate, newDate)) return true;
+        if(_orig_releaseDatePrecision != _releaseDatePrecision) return true;
+
+        if(_regionAdds.Count + _languageAdds.Count + _barcodeAdds.Count + _productCodeAdds.Count > 0) return true;
+        if(_regionRemoves.Count + _languageRemoves.Count + _barcodeRemoves.Count + _productCodeRemoves.Count > 0) return true;
+
+        return false;
+    }
+
+    void Cancel() => MudDialog.Cancel();
+
+    async Task Submit()
+    {
+        _validationError = null;
+        if(_loading) return;
+
+        // Publisher is required server-side ([Required] on the entity) — never let the
+        // user clear it.
+        if(_selectedPublisher is null || !_selectedPublisher.Id.HasValue)
+        {
+            _validationError = L["Publisher is required."];
+            return;
+        }
+
+        var diff = new Dictionary<string, object>(StringComparer.Ordinal);
+
+        if(!Equals(_orig_title, _title))
+            diff[SoftwareReleaseSuggestionMetadata.FieldTitle] = _title;
+
+        int? newPlatformId  = _selectedPlatform?.Id;
+        int? newPublisherId = _selectedPublisher?.Id;
+        if(!Nullable.Equals(_orig_platformId, newPlatformId))
+            diff[SoftwareReleaseSuggestionMetadata.FieldPlatformId] = newPlatformId;
+        if(!Nullable.Equals(_orig_publisherId, newPublisherId))
+            diff[SoftwareReleaseSuggestionMetadata.FieldPublisherId] = newPublisherId;
+
+        string newDate = _releaseDate?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        if(!Equals(_orig_releaseDate, newDate))
+            diff[SoftwareReleaseSuggestionMetadata.FieldReleaseDate] = newDate;
+        if(_orig_releaseDatePrecision != _releaseDatePrecision)
+            diff[SoftwareReleaseSuggestionMetadata.FieldReleaseDatePrecision] = _releaseDatePrecision;
+
+        AddJunctionAdds(diff, _regionAdds);
+        AddJunctionAdds(diff, _languageAdds);
+        AddJunctionAdds(diff, _barcodeAdds);
+        AddJunctionAdds(diff, _productCodeAdds);
+
+        foreach(short id in _regionRemoves)
+            diff[$"{SoftwareReleaseSuggestionMetadata.GroupRegions}.remove.{id.ToString(CultureInfo.InvariantCulture)}"] = null;
+        foreach(string code in _languageRemoves)
+            diff[$"{SoftwareReleaseSuggestionMetadata.GroupLanguages}.remove.{code}"] = null;
+        foreach(long id in _barcodeRemoves)
+            diff[$"{SoftwareReleaseSuggestionMetadata.GroupBarcodes}.remove.{id.ToString(CultureInfo.InvariantCulture)}"] = null;
+        foreach(long id in _productCodeRemoves)
+            diff[$"{SoftwareReleaseSuggestionMetadata.GroupProductCodes}.remove.{id.ToString(CultureInfo.InvariantCulture)}"] = null;
+
+        if(diff.Count == 0)
+        {
+            _validationError = L["No changes detected — modify at least one field before submitting."];
+            return;
+        }
+
+        _submitting = true;
+        try
+        {
+            string json = JsonSerializer.Serialize(diff);
+            var dto = new SuggestionDto
+            {
+                EntityType          = (int?)SuggestionEntityType.SoftwareRelease,
+                EntityId            = EntityId,
+                Status              = (int?)SuggestionStatus.Pending,
+                UserComment         = string.IsNullOrWhiteSpace(_userComment) ? null : _userComment.Trim(),
+                SuggestedValuesJson = json
+            };
+
+            var (created, error) = await SuggestionsService.CreateAsync(dto);
+
+            if(created is null)
+            {
+                _validationError = string.IsNullOrWhiteSpace(error) ? L["Failed to submit suggestion."].Value : error;
+                return;
+            }
+
+            Snackbar.Add(L["Suggestion submitted. An administrator will review it."], Severity.Success);
+            MudDialog.Close(DialogResult.Ok(created));
+        }
+        finally
+        {
+            _submitting = false;
+        }
+    }
+
+    static void AddJunctionAdds(Dictionary<string, object> diff, Dictionary<string, JunctionAddState> adds)
+    {
+        foreach(KeyValuePair<string, JunctionAddState> kv in adds) diff[kv.Key] = kv.Value.Payload;
+    }
+}
