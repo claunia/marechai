@@ -24,6 +24,9 @@
 *******************************************************************************/
 
 using System.Threading.Tasks;
+using Marechai.ApiClient.Models;
+using Marechai.Pages.Suggestions;
+using MudBlazor;
 
 namespace Marechai.Pages.Documents;
 
@@ -44,5 +47,29 @@ public partial class Index
 
         _loaded = true;
         StateHasChanged();
+    }
+
+    /// <summary>
+    ///     Open the unified Document suggestion dialog in creation mode. The dialog handles
+    ///     submission + validation; this page does not refresh on success because the new
+    ///     document only appears in the listing once an admin accepts the suggestion.
+    /// </summary>
+    async Task OpenSuggestNewDocumentDialog()
+    {
+        var parameters = new DialogParameters<DocumentSuggestionDialog>
+        {
+            { x => x.EntityId,   0L                  },
+            { x => x.CurrentDto, (DocumentDto)null   },
+            { x => x.IsCreation, true                }
+        };
+
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Large
+        };
+
+        await DialogService.ShowAsync<DocumentSuggestionDialog>(L["Suggest new document"], parameters, options);
     }
 }

@@ -99,7 +99,8 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.Company,
         SuggestionEntityType.Machine,
         SuggestionEntityType.Magazine,
-        SuggestionEntityType.Book
+        SuggestionEntityType.Book,
+        SuggestionEntityType.Document
     };
 
     // ───────────────────────────── POST /suggestions ─────────────────────────────
@@ -1311,6 +1312,13 @@ public class SuggestionsController(MarechaiContext context,
                     return "A new book suggestion must include a non-empty 'title' field.";
                 return null;
             }
+            case SuggestionEntityType.Document:
+            {
+                if(!values.TryGetValue(Suggestions.DocumentSuggestionApplier.FieldTitle, out object n) ||
+                   string.IsNullOrWhiteSpace(ExtractStringForValidation(n)))
+                    return "A new document suggestion must include a non-empty 'title' field.";
+                return null;
+            }
             default:
                 return $"Brand-new {type} suggestions are not supported.";
         }
@@ -1363,6 +1371,15 @@ public class SuggestionsController(MarechaiContext context,
                 }
                 return null;
             }
+            case SuggestionEntityType.Document:
+            {
+                if(values.TryGetValue(Suggestions.DocumentSuggestionApplier.FieldTitle, out object n))
+                {
+                    string s = ExtractStringForValidation(n);
+                    return string.IsNullOrWhiteSpace(s) ? null : s.Trim();
+                }
+                return null;
+            }
             default:
                 return null;
         }
@@ -1399,6 +1416,11 @@ public class SuggestionsController(MarechaiContext context,
                 // distinct "Programming in C" books exist for different decades/authors).
                 // Dedupe on title only would over-block; rely on admin moderation to spot
                 // true duplicates instead.
+                return false;
+            case SuggestionEntityType.Document:
+                // Document titles repeat across editions, translations and reprints (e.g.
+                // "User's Manual" appears for many machines / decades). Dedupe on title only
+                // would over-block; rely on admin moderation to spot true duplicates instead.
                 return false;
             default:
                 return false;
@@ -1444,6 +1466,12 @@ public class SuggestionsController(MarechaiContext context,
             {
                 var (id, applied) = await Suggestions.BookSuggestionApplier.CreateAsync(
                     context, suggested, accepted, creditedUserId, _assetRootPath);
+                return (id, applied);
+            }
+            case SuggestionEntityType.Document:
+            {
+                var (id, applied) = await Suggestions.DocumentSuggestionApplier.CreateAsync(
+                    context, suggested, accepted, creditedUserId);
                 return (id, applied);
             }
             default:
@@ -2222,7 +2250,11 @@ public class SuggestionsController(MarechaiContext context,
             }
         }
 
-        if(!entityId.HasValue) return;
+        // NOTE: do NOT early-return on `!entityId.HasValue`. Junction-add labels look up
+        // the linked entity (Person/Company/Machine/MachineFamily) directly from the
+        // suggested payload's id field, so they're resolvable even in addition mode
+        // (entityId == null). Junction-remove labels DO need a parent id and are gated
+        // separately at the call site of ResolveDocumentRemoveLabelsAsync.
 
         // ---- Junction-add labels (resolved from the suggested payload's id field) -----
         foreach(KeyValuePair<string, JsonElement> kv in values)

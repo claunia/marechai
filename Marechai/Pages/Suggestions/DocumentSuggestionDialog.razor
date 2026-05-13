@@ -34,7 +34,14 @@
         else
         {
             <MudText Typo="Typo.body2" Class="mb-3">
-                @L["Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently."]
+                @if(IsCreation)
+                {
+                    @L["Fill in the fields below to suggest a new document. Title is required; you can queue people, companies, machines and machine families that will all be added together once an administrator accepts the suggestion."]
+                }
+                else
+                {
+                    @L["Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently."]
+                }
             </MudText>
 
             @* ── Scalar fields ── *@
@@ -275,7 +282,7 @@
     <DialogActions>
         <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
         <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit"
-                   Disabled="@(_loading || _submitting || !HasAnyChange())">
+                   Disabled="@(_loading || _submitting || (!IsCreation && !HasAnyChange()) || (IsCreation && !HasMandatoryFieldsForCreation()))">
             @if(_submitting)
             {
                 <MudProgressCircular Size="Size.Small" Indeterminate="true"/>
@@ -294,6 +301,15 @@
 
     [Parameter] public long        EntityId   { get; set; }
     [Parameter] public DocumentDto CurrentDto { get; set; }
+
+    /// <summary>
+    ///     When <c>true</c>, the dialog operates in addition mode: scalar state is NOT seeded
+    ///     from <see cref="CurrentDto" />, existing-junction loads are skipped, and the
+    ///     Submit button is gated on <see cref="HasMandatoryFieldsForCreation" /> rather than
+    ///     <see cref="HasAnyChange" />. The wire payload sends <c>EntityId = null</c> to signal
+    ///     the addition path.
+    /// </summary>
+    [Parameter] public bool IsCreation { get; set; }
 
     sealed class JunctionAddState
     {
@@ -359,8 +375,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // Seed scalar state from the current DTO snapshot.
-        if(CurrentDto is not null)
+        // Seed scalar state from the current DTO snapshot (only in edit mode).
+        if(!IsCreation && CurrentDto is not null)
         {
             _title                   = CurrentDto.Title;
             _nativeTitle             = CurrentDto.NativeTitle;
@@ -383,6 +399,27 @@
         Task<List<MachineDto>>                    allMachinesT   = DocumentsService.GetAllMachinesAsync();
         Task<List<MachineFamilyDto>>              allFamiliesT   = DocumentsService.GetAllMachineFamiliesAsync();
         Task<List<DocumentRoleDto>>               rolesT         = DocumentsService.GetDocumentRolesAsync();
+
+        if(IsCreation)
+        {
+            await Task.WhenAll(countriesT, allPeopleT, allCompaniesT, allMachinesT, allFamiliesT, rolesT);
+
+            _allCountries        = countriesT.Result;
+            _allPeople           = allPeopleT.Result;
+            _allCompanies        = allCompaniesT.Result;
+            _allMachines         = allMachinesT.Result;
+            _allMachineFamilies  = allFamiliesT.Result;
+            _roles               = rolesT.Result;
+
+            _peopleRows          = new List<PersonByDocumentDto>();
+            _companyRows         = new List<CompanyByDocumentDto>();
+            _machineRows         = new List<DocumentByMachineDto>();
+            _machineFamilyRows   = new List<DocumentByMachineFamilyDto>();
+
+            _loading = false;
+            return;
+        }
+
         Task<List<PersonByDocumentDto>>           peopleByT      = DocumentsService.GetPeopleByDocumentAsync(EntityId);
         Task<List<CompanyByDocumentDto>>          companiesByT   = DocumentsService.GetCompaniesByDocumentAsync(EntityId);
         Task<List<DocumentByMachineDto>>          machinesByT    = DocumentsService.GetMachinesByDocumentAsync(EntityId);
@@ -625,6 +662,12 @@
         return false;
     }
 
+    /// <summary>
+    ///     Creation-mode submit gate. Documents only require a non-empty Title; everything
+    ///     else (dates, country, junctions, IA url) is optional.
+    /// </summary>
+    bool HasMandatoryFieldsForCreation() => !string.IsNullOrWhiteSpace(_title);
+
     void Cancel() => MudDialog.Cancel();
 
     async Task Submit()
@@ -641,27 +684,53 @@
 
         var diff = new Dictionary<string, object>(StringComparer.Ordinal);
 
-        if(!Equals(_orig_title, _title))             diff[DocumentSuggestionMetadata.FieldTitle]       = _title;
-        if(!Equals(_orig_nativeTitle, _nativeTitle)) diff[DocumentSuggestionMetadata.FieldNativeTitle] = _nativeTitle;
-        if(!Equals(_orig_sortTitle, _sortTitle))     diff[DocumentSuggestionMetadata.FieldSortTitle]   = _sortTitle;
-        if(!Nullable.Equals(_orig_published, _published))
-            diff[DocumentSuggestionMetadata.FieldPublished] = _published?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-        if(_orig_publishedPrecision != _publishedPrecision)
-            diff[DocumentSuggestionMetadata.FieldPublishedPrecision] = _publishedPrecision;
-        if(_orig_countryId != _selectedCountry?.Id)
-            diff[DocumentSuggestionMetadata.FieldCountryId] = _selectedCountry?.Id;
-        if(!Equals(_orig_internetArchiveUrl, _internetArchiveUrl))
-            diff[DocumentSuggestionMetadata.FieldInternetArchiveUrl] = _internetArchiveUrl;
-
-        AddJunctionOps(diff, _peopleAdds,        _peopleRemoves,        DocumentSuggestionMetadata.GroupPeople);
-        AddJunctionOps(diff, _companyAdds,       _companyRemoves,       DocumentSuggestionMetadata.GroupCompanies);
-        AddJunctionOps(diff, _machineAdds,       _machineRemoves,       DocumentSuggestionMetadata.GroupMachines);
-        AddJunctionOps(diff, _machineFamilyAdds, _machineFamilyRemoves, DocumentSuggestionMetadata.GroupMachineFamilies);
-
-        if(diff.Count == 0)
+        if(IsCreation)
         {
-            _validationError = L["No changes detected — modify at least one field before submitting."];
-            return;
+            // Brand-new entity: emit every populated scalar plus all queued junction adds.
+            // Remove ops are ignored (no existing rows in creation mode).
+            diff[DocumentSuggestionMetadata.FieldTitle] = _title;
+            if(!string.IsNullOrWhiteSpace(_nativeTitle))
+                diff[DocumentSuggestionMetadata.FieldNativeTitle] = _nativeTitle;
+            if(!string.IsNullOrWhiteSpace(_sortTitle))
+                diff[DocumentSuggestionMetadata.FieldSortTitle] = _sortTitle;
+            if(_published.HasValue)
+                diff[DocumentSuggestionMetadata.FieldPublished] = _published.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            if(_publishedPrecision != 0)
+                diff[DocumentSuggestionMetadata.FieldPublishedPrecision] = _publishedPrecision;
+            if(_selectedCountry?.Id is int icid)
+                diff[DocumentSuggestionMetadata.FieldCountryId] = icid;
+            if(!string.IsNullOrWhiteSpace(_internetArchiveUrl))
+                diff[DocumentSuggestionMetadata.FieldInternetArchiveUrl] = _internetArchiveUrl;
+
+            foreach(KeyValuePair<string, JunctionAddState> kv in _peopleAdds)        diff[kv.Key] = kv.Value.Payload;
+            foreach(KeyValuePair<string, JunctionAddState> kv in _companyAdds)       diff[kv.Key] = kv.Value.Payload;
+            foreach(KeyValuePair<string, JunctionAddState> kv in _machineAdds)       diff[kv.Key] = kv.Value.Payload;
+            foreach(KeyValuePair<string, JunctionAddState> kv in _machineFamilyAdds) diff[kv.Key] = kv.Value.Payload;
+        }
+        else
+        {
+            if(!Equals(_orig_title, _title))             diff[DocumentSuggestionMetadata.FieldTitle]       = _title;
+            if(!Equals(_orig_nativeTitle, _nativeTitle)) diff[DocumentSuggestionMetadata.FieldNativeTitle] = _nativeTitle;
+            if(!Equals(_orig_sortTitle, _sortTitle))     diff[DocumentSuggestionMetadata.FieldSortTitle]   = _sortTitle;
+            if(!Nullable.Equals(_orig_published, _published))
+                diff[DocumentSuggestionMetadata.FieldPublished] = _published?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            if(_orig_publishedPrecision != _publishedPrecision)
+                diff[DocumentSuggestionMetadata.FieldPublishedPrecision] = _publishedPrecision;
+            if(_orig_countryId != _selectedCountry?.Id)
+                diff[DocumentSuggestionMetadata.FieldCountryId] = _selectedCountry?.Id;
+            if(!Equals(_orig_internetArchiveUrl, _internetArchiveUrl))
+                diff[DocumentSuggestionMetadata.FieldInternetArchiveUrl] = _internetArchiveUrl;
+
+            AddJunctionOps(diff, _peopleAdds,        _peopleRemoves,        DocumentSuggestionMetadata.GroupPeople);
+            AddJunctionOps(diff, _companyAdds,       _companyRemoves,       DocumentSuggestionMetadata.GroupCompanies);
+            AddJunctionOps(diff, _machineAdds,       _machineRemoves,       DocumentSuggestionMetadata.GroupMachines);
+            AddJunctionOps(diff, _machineFamilyAdds, _machineFamilyRemoves, DocumentSuggestionMetadata.GroupMachineFamilies);
+
+            if(diff.Count == 0)
+            {
+                _validationError = L["No changes detected — modify at least one field before submitting."];
+                return;
+            }
         }
 
         _submitting = true;
@@ -671,7 +740,7 @@
             var dto = new SuggestionDto
             {
                 EntityType          = (int?)SuggestionEntityType.Document,
-                EntityId            = EntityId,
+                EntityId            = IsCreation ? null : EntityId,
                 Status              = (int?)SuggestionStatus.Pending,
                 UserComment         = string.IsNullOrWhiteSpace(_userComment) ? null : _userComment.Trim(),
                 SuggestedValuesJson = json

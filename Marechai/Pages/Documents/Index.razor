@@ -28,6 +28,7 @@
 @page "/documents"
 @inherits OwningComponentBase<DocumentsService>
 @inject IStringLocalizer<DocumentsService> L
+@inject IDialogService                     DialogService
 
 @if(!_loaded)
 {
@@ -39,9 +40,23 @@
 }
 
 <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
-    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3" Class="mb-3">
-        <MudIcon Icon="@Icons.Material.Filled.Article" Size="Size.Large" Style="color: white;"/>
-        <MudText Typo="Typo.h4" Style="color: white;">@L["Documents"]</MudText>
+    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-3">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+            <MudIcon Icon="@Icons.Material.Filled.Article" Size="Size.Large" Style="color: white;"/>
+            <MudText Typo="Typo.h4" Style="color: white;">@L["Documents"]</MudText>
+        </MudStack>
+        <AuthorizeView>
+            <Authorized>
+                <MudTooltip Text="@L["Suggest a new document to be added to the catalogue."]">
+                    <MudButton Variant="Variant.Outlined" Size="Size.Small" Color="Color.Inherit"
+                               StartIcon="@Icons.Material.Filled.AddCircle"
+                               OnClick="OpenSuggestNewDocumentDialog"
+                               Style="color: white; border-color: rgba(255,255,255,0.7);">
+                        @L["Suggest new document"]
+                    </MudButton>
+                </MudTooltip>
+            </Authorized>
+        </AuthorizeView>
     </MudStack>
     <MudText Typo="Typo.body1" Style="color: rgba(255,255,255,0.85);">@L["Here you can consult our database."]</MudText>
     <MudText Typo="Typo.body1" Style="color: rgba(255,255,255,0.85);">@L["The database contains information about documents related to computing history."]</MudText>
