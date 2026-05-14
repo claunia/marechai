@@ -48,6 +48,10 @@ else if(Suggestion?.EntityType == (int)SuggestionEntityType.SoftwarePromoArt)
 {
     @RenderSoftwarePromoArtBatch()
 }
+else if(Suggestion?.EntityType == (int)SuggestionEntityType.SoftwareCover)
+{
+    @RenderSoftwareCoverBatch()
+}
 else
 {
     <MudSimpleTable Hover="true" Dense="true" Bordered="true" Style="width: 100%;">
@@ -296,6 +300,7 @@ else
                 (int)SuggestionEntityType.SoundSynthPhoto => "MarechaiSoundSynthPhotoUpload.openPendingPhotoInNewTab",
                 (int)SuggestionEntityType.MachinePhoto    => "MarechaiMachinePhotoUpload.openPendingPhotoInNewTab",
                 (int)SuggestionEntityType.SoftwarePromoArt => "MarechaiSoftwarePromoArtUpload.openPendingPhotoInNewTab",
+                (int)SuggestionEntityType.SoftwareCover    => "MarechaiSoftwareCoverUpload.openPendingPhotoInNewTab",
                 _                                       => "MarechaiPendingCover.openPendingCoverInNewTab"
             };
             await JS.InvokeAsync<object>(fnName, ApiAssetUrls.BaseUrl, token, guid);
@@ -333,6 +338,7 @@ else
                     (int)SuggestionEntityType.SoundSynthPhoto => "MarechaiSoundSynthPhotoUpload.applyPendingPhotoImage",
                     (int)SuggestionEntityType.MachinePhoto    => "MarechaiMachinePhotoUpload.applyPendingPhotoImage",
                     (int)SuggestionEntityType.SoftwarePromoArt => "MarechaiSoftwarePromoArtUpload.applyPendingPhotoImage",
+                    (int)SuggestionEntityType.SoftwareCover    => "MarechaiSoftwareCoverUpload.applyPendingPhotoImage",
                     _                                       => "MarechaiPendingCover.applyPendingCoverImage"
                 };
                 foreach(KeyValuePair<string, string> kv in _pendingImageRefs)
@@ -990,6 +996,86 @@ else
                                              ValueChanged="@(v => ToggleAccepted(acceptKey, v))"
                                              Disabled="@ReadOnly"
                                              Label="@L["Accept this image"]"/>
+                            </MudStack>
+                            @if(!string.IsNullOrEmpty(caption))
+                            {
+                                <MudText Typo="Typo.body2" Class="mt-1"><em>@caption</em></MudText>
+                            }
+                        </MudStack>
+                    </MudStack>
+                </MudPaper>
+            }
+        </MudStack>
+    };
+
+    /// <summary>
+    ///     Custom renderer for <see cref="SuggestionEntityType.SoftwareCover" /> batch
+    ///     suggestions. Differs from the SoftwarePromoArt renderer in three ways: (a) NO
+    ///     suggestion-level top MudPaper because there is no batch-level field at all;
+    ///     (b) per-image MANDATORY <c>type</c> (SoftwareCoverType byte enum) is shown next to
+    ///     the image label; (c) per-image accept-key prefix is <c>cover.</c>; (d) per-img
+    ///     element id prefix is <c>software-cover-pending-</c>; (e) per-image annotation is
+    ///     <c>caption</c>.
+    /// </summary>
+    RenderFragment RenderSoftwareCoverBatch() => __builder =>
+    {
+        List<JsonElement> photos = _suggestedDict.TryGetValue("photos", out JsonElement pje) &&
+                                   pje.ValueKind == JsonValueKind.Array
+                                       ? pje.EnumerateArray().ToList()
+                                       : new List<JsonElement>();
+
+        int totalCovers    = photos.Count;
+        int acceptedCovers = AcceptedFieldNames?.Count(k => k.StartsWith("cover.", StringComparison.Ordinal)) ?? 0;
+
+        <MudText Typo="Typo.body2" Class="mb-2">
+            @string.Format(L["Accepting {0} of {1} cover(s). Rejected images and their pending files will be deleted on submit."].Value, acceptedCovers, totalCovers)
+        </MudText>
+
+        <MudStack Spacing="2" Class="mb-2">
+            @for(int i = 0; i < photos.Count; i++)
+            {
+                JsonElement photo = photos[i];
+                string guidStr = photo.TryGetProperty("guid", out JsonElement gj) && gj.ValueKind == JsonValueKind.String
+                                     ? gj.GetString()
+                                     : "";
+                string extension = photo.TryGetProperty("extension", out JsonElement xj) && xj.ValueKind == JsonValueKind.String
+                                       ? xj.GetString()
+                                       : "";
+                byte? typeByte = null;
+                if(photo.TryGetProperty("type", out JsonElement tj))
+                {
+                    if(tj.ValueKind == JsonValueKind.Number && tj.TryGetByte(out byte tb)) typeByte = tb;
+                    else if(tj.ValueKind == JsonValueKind.String && byte.TryParse(tj.GetString(), out byte stb)) typeByte = stb;
+                }
+                string typeLabel = typeByte.HasValue && Enum.IsDefined(typeof(SoftwareCoverType), typeByte.Value)
+                                       ? L["SoftwareCoverType_" + ((SoftwareCoverType)typeByte.Value).ToString()].Value
+                                       : (typeByte?.ToString() ?? "?");
+                string caption = photo.TryGetProperty("caption", out JsonElement cj) && cj.ValueKind == JsonValueKind.String
+                                     ? cj.GetString()
+                                     : "";
+                if(string.IsNullOrEmpty(guidStr) || !Guid.TryParse(guidStr, out _)) continue;
+
+                string acceptKey = "cover." + guidStr;
+                bool   accepted  = AcceptedFieldNames is not null && AcceptedFieldNames.Contains(acceptKey);
+                string imgId     = "software-cover-pending-" + guidStr.Replace("-", "");
+                int    coverNum  = i + 1;
+
+                _pendingImageRefs[imgId] = guidStr;
+
+                <MudPaper Outlined="true" Class="pa-3" @key="@guidStr">
+                    <MudStack Row="true" Spacing="3" AlignItems="AlignItems.Start">
+                        <div style="width: 120px; height: 120px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--mud-palette-background-grey); border-radius: 4px; cursor: pointer;"
+                             @onclick="@(() => OpenImageInNewTab(guidStr, true))">
+                            <img id="@imgId" alt="@($"Cover {coverNum}")"
+                                 style="max-width: 120px; max-height: 120px; object-fit: contain; border-radius: 4px;"/>
+                        </div>
+                        <MudStack Spacing="1" Style="flex: 1; min-width: 0;">
+                            <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                                <MudText Typo="Typo.body2"><strong>@($"Cover {coverNum}")</strong> <span class="text-muted">— @extension — @typeLabel</span></MudText>
+                                <MudCheckBox T="bool" Value="@accepted"
+                                             ValueChanged="@(v => ToggleAccepted(acceptKey, v))"
+                                             Disabled="@ReadOnly"
+                                             Label="@L["Accept this cover"]"/>
                             </MudStack>
                             @if(!string.IsNullOrEmpty(caption))
                             {

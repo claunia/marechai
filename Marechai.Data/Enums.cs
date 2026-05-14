@@ -1098,7 +1098,22 @@ public enum SuggestionEntityType : byte
     ///     <c>license_id</c> and NO <c>source_url</c> because the underlying
     ///     <see cref="Marechai.Database.Models.SoftwarePromoArt" /> table has no such columns.
     /// </summary>
-    SoftwarePromoArt = 31
+    SoftwarePromoArt = 31,
+    /// <summary>
+    ///     A batch of one or more pending Software cover scans (front, back, manual, media,
+    ///     spine, etc.) uploaded by a collaborator for review by an admin. The EntityId on
+    ///     the Suggestion row holds the parent <see cref="Marechai.Database.Models.SoftwareRelease" />
+    ///     Id (covers are release-scoped, not software-scoped). The SuggestedValues JSON
+    ///     carries ONLY a <c>photos</c> array (max 30 entries) of per-cover descriptors
+    ///     (<c>guid</c>, <c>extension</c>, mandatory per-cover <c>type</c> referencing
+    ///     <see cref="SoftwareCoverType" />, optional per-cover <c>caption</c>); there are NO
+    ///     suggestion-level fields. Per-cover accept/reject is signalled by including/omitting
+    ///     the field-name key <c>cover.{guid}</c> in <c>AppliedFields</c>. The pending Guid
+    ///     becomes the new <see cref="Marechai.Database.Models.SoftwareCover" /> row Id
+    ///     directly (matching the admin upload convention where <c>model.Id</c> IS the
+    ///     <c>originals/{guid}{ext}</c> basename).
+    /// </summary>
+    SoftwareCover = 32
 }
 
 public enum SuggestionStatus : byte

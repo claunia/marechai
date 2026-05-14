@@ -1,0 +1,171 @@
+@*
+    SoftwareCoversSuggestionDialog — collaborative Software cover batch upload.
+
+    A logged-in user can stage 1-30 pending cover images for an existing
+    SoftwareRelease, pick a mandatory Type per image (Front / Back / Inside /
+    Spine / Manual / Media / Other — fixed enum dropdown, NO free input), and
+    optionally annotate each image with a caption, then submit ONE Suggestion
+    row that an admin reviews per-image. Accepted images are persisted with the
+    pending Guid as the new SoftwareCover row Id and run through the same
+    fire-and-forget conversion worker the admin upload uses.
+
+    Architecture notes:
+    * Each file upload is direct browser → API via XHR (in software-cover-upload.js)
+      with byte-level progress reported back through DotNetObjectReference callbacks.
+    * Unlike SoftwarePromoArt this dialog has NO suggestion-level field — every
+      attribute is per-image (type + optional caption).
+    * Cancel button cleans up every staged pending file via DELETE so the
+      pending/ folder doesn't leak orphans.
+*@
+@using System
+@using System.Collections.Generic
+@using System.Globalization
+@using System.Linq
+@using System.Text.Json
+@using System.Threading.Tasks
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@using Marechai.Services
+@using Microsoft.JSInterop
+
+@inject IStringLocalizer<SoftwareReleasesService> L
+@inject ISnackbar                                 Snackbar
+@inject SoftwareReleasesService                   ReleasesService
+@inject SuggestionsService                        SuggestionsService
+@inject IJSRuntime                                JS
+@inject TokenProvider                             TokenProvider
+@inject ApiAssetUrlProvider                       ApiAssetUrls
+
+<MudDialog>
+    <DialogContent>
+        <MudText Typo="Typo.body2" Class="mb-3">
+            @string.Format(L["Suggest covers for {0}. Upload up to {1} JPG, PNG or WebP files (max 50 MB each). Each cover requires a type."].Value, ReleaseTitle, MaxPhotos)
+        </MudText>
+
+        @* ── File-picker trigger ── *@
+        <MudPaper Outlined="true" Class="pa-3 mb-3">
+            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-2">
+                <MudText Typo="Typo.subtitle2">@string.Format(L["Images: {0}/{1}"].Value, _staged.Count, MaxPhotos)</MudText>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.AddPhotoAlternate"
+                           Disabled="@(_staged.Count >= MaxPhotos)"
+                           OnClick="TriggerFilePicker">
+                    @L["Add images"]
+                </MudButton>
+            </MudStack>
+            <MudText Typo="Typo.caption">
+                @L["Pick one or more files at a time. Each image is uploaded immediately and held on the server until you submit the batch."]
+            </MudText>
+
+            @* Hidden file input — JS owns the file reads (avoids the SignalR double-hop). *@
+            <input type="file" id="@_fileInputId" accept="image/jpeg,image/png,image/webp" multiple style="display:none"
+                   @onchange="OnFilesPicked"/>
+        </MudPaper>
+
+        @* ── Per-staged-image cards ── *@
+        @if(_staged.Count == 0)
+        {
+            <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Class="mb-3">
+                @L["No images staged yet. Use the Add images button above to pick files from your device."]
+            </MudAlert>
+        }
+        else
+        {
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                @foreach(StagedCover c in _staged)
+                {
+                    <MudPaper Outlined="true" Class="pa-2" Key="@c.ClientGuid"
+                              Style="width: 220px; flex: 0 0 220px;">
+                        <MudStack Spacing="1">
+                            @* Thumbnail row: image + remove button overlay-ish *@
+                            <div style="position: relative; width: 100%; height: 140px; display: flex; align-items: center; justify-content: center; background: var(--mud-palette-background-grey); border-radius: 4px;">
+                                @if(c.Status == StagedCoverStatus.Ready)
+                                {
+                                    <img id="@c.ImgElementId" alt="@c.FileName"
+                                         style="max-width: 100%; max-height: 140px; object-fit: contain; border-radius: 4px;"/>
+                                }
+                                else if(c.Status == StagedCoverStatus.Uploading)
+                                {
+                                    <MudIcon Icon="@Icons.Material.Filled.CloudUpload" Color="Color.Default" Size="Size.Large"/>
+                                }
+                                else
+                                {
+                                    <MudIcon Icon="@Icons.Material.Filled.ErrorOutline" Color="Color.Error" Size="Size.Large"/>
+                                }
+
+                                <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small"
+                                               Color="Color.Error"
+                                               OnClick="@(() => RemoveStagedAsync(c.ClientGuid))"
+                                               Style="position: absolute; top: 2px; right: 2px; background: rgba(255,255,255,0.85);"/>
+                            </div>
+
+                            @* File label — single line, ellipsised, with size *@
+                            <MudText Typo="Typo.caption" Style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;" title="@c.FileName">
+                                <strong>@c.FileName</strong>
+                            </MudText>
+                            <MudText Typo="Typo.caption" Style="opacity: 0.7;">@FormatBytes(c.SizeBytes)</MudText>
+
+                            @* Status-dependent body *@
+                            @if(c.Status == StagedCoverStatus.Uploading)
+                            {
+                                <MudProgressLinear Color="Color.Primary"
+                                                   Value="@c.UploadPercent"
+                                                   Min="0" Max="100"/>
+                                <MudText Typo="Typo.caption" Align="Align.Right">@($"{c.UploadPercent:0}%")</MudText>
+                            }
+                            else if(c.Status == StagedCoverStatus.Error)
+                            {
+                                <MudAlert Severity="Severity.Error" Dense="true" NoIcon="true" Class="py-0 my-0">@c.ErrorText</MudAlert>
+                            }
+                            else if(c.Status == StagedCoverStatus.Ready)
+                            {
+                                @* Per-image Type (MANDATORY, fixed enum) + optional Caption stacked vertically. *@
+                                <MudSelect T="SoftwareCoverType?" Label="@L["Cover type"]"
+                                           Value="@c.Type"
+                                           ValueChanged="@(v => { c.Type = v; })"
+                                           Required="true"
+                                           Variant="Variant.Outlined"
+                                           Margin="Margin.Dense"
+                                           Dense="true">
+                                    @foreach(SoftwareCoverType t in Enum.GetValues<SoftwareCoverType>())
+                                    {
+                                        <MudSelectItem T="SoftwareCoverType?" Value="@((SoftwareCoverType?)t)">@(L["SoftwareCoverType_" + t].Value)</MudSelectItem>
+                                    }
+                                </MudSelect>
+
+                                <MudTextField T="string" Label="@L["Caption (optional)"]"
+                                              MaxLength="500"
+                                              Value="@c.Caption"
+                                              ValueChanged="@(v => { c.Caption = v; })"
+                                              Variant="Variant.Outlined"
+                                              Margin="Margin.Dense"/>
+                            }
+                        </MudStack>
+                    </MudPaper>
+                }
+            </div>
+        }
+
+        <MudTextField T="string" Label="@L["Note for the reviewer (optional)"]"
+                      Lines="2" MaxLength="2000"
+                      Value="@_userComment"
+                      ValueChanged="@(v => { _userComment = v; })"/>
+
+        @if(!string.IsNullOrEmpty(_validationError))
+        {
+            <MudAlert Severity="Severity.Error" Class="mt-3">@_validationError</MudAlert>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="OnCancelAsync" Disabled="@_submitting">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled"
+                   OnClick="SubmitAsync"
+                   Disabled="@(_submitting || !CanSubmit())">
+            @if(_submitting)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
+            }
+            @L["Submit"]
+        </MudButton>
+    </DialogActions>
+</MudDialog>

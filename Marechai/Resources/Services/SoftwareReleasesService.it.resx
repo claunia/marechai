@@ -1,51 +1,51 @@
-<?xml version="1.0" encoding="utf-8"?>
-<root>
-    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
-        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
-        <xsd:element name="root" msdata:IsDataSet="true">
-            <xsd:complexType>
-                <xsd:choice maxOccurs="unbounded">
-                    <xsd:element name="metadata">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
-                            </xsd:sequence>
-                            <xsd:attribute name="name" use="required" type="xsd:string"/>
-                            <xsd:attribute name="type" type="xsd:string"/>
-                            <xsd:attribute name="mimetype" type="xsd:string"/>
-                            <xsd:attribute ref="xml:space"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="assembly">
-                        <xsd:complexType>
-                            <xsd:attribute name="alias" type="xsd:string"/>
-                            <xsd:attribute name="name" type="xsd:string"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="data">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
-                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
-                            </xsd:sequence>
-                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
-                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
-                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
-                            <xsd:attribute ref="xml:space"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="resheader">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
-                            </xsd:sequence>
-                            <xsd:attribute name="name" type="xsd:string" use="required"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                </xsd:choice>
-            </xsd:complexType>
-        </xsd:element>
-    </xsd:schema>
+<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:schema id="root">
+        <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+        <xs:element name="root" ns1:IsDataSet="true">
+            <xs:complexType>
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element name="metadata">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0" />
+                            </xs:sequence>
+                            <xs:attribute name="name" use="required" type="xsd:string" />
+                            <xs:attribute name="type" type="xsd:string" />
+                            <xs:attribute name="mimetype" type="xsd:string" />
+                            <xs:attribute ref="xml:space" />
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="assembly">
+                        <xs:complexType>
+                            <xs:attribute name="alias" type="xsd:string" />
+                            <xs:attribute name="name" type="xsd:string" />
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="data">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
+                            </xs:sequence>
+                            <xs:attribute name="name" type="xsd:string" use="required" ns1:Ordinal="1" />
+                            <xs:attribute name="type" type="xsd:string" ns1:Ordinal="3" />
+                            <xs:attribute name="mimetype" type="xsd:string" ns1:Ordinal="4" />
+                            <xs:attribute ref="xml:space" />
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="resheader">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                            </xs:sequence>
+                            <xs:attribute name="name" type="xsd:string" use="required" />
+                        </xs:complexType>
+                    </xs:element>
+                </xs:choice>
+            </xs:complexType>
+        </xs:element>
+    </xs:schema>
     <resheader name="resmimetype">
         <value>text/microsoft-resx</value>
     </resheader>
@@ -95,7 +95,7 @@
         <comment>Release deleted successfully.</comment>
     </data>
     <data name="Are you sure you want to delete release '{0}'? This action cannot be undone." xml:space="preserve">
-        <value>Sei sicuro di voler eliminare la pubblicazione &quot;{0}&quot;? Questa azione non può essere annullata.</value>
+        <value>Sei sicuro di voler eliminare la pubblicazione "{0}"? Questa azione non può essere annullata.</value>
         <comment>Are you sure you want to delete release '{0}'? This action cannot be undone.</comment>
     </data>
     <data name="Failed to load release details." xml:space="preserve">
@@ -440,11 +440,11 @@
         <comment>Unknown error</comment>
     </data>
     <data name="Failed to create software '{0}': {1}" xml:space="preserve">
-        <value>Creazione del software &quot;{0}&quot; fallita: {1}</value>
+        <value>Creazione del software "{0}" fallita: {1}</value>
         <comment>Failed to create software '{0}': {1}</comment>
     </data>
     <data name="Failed to create platform '{0}': {1}" xml:space="preserve">
-        <value>Creazione della piattaforma &quot;{0}&quot; fallita: {1}</value>
+        <value>Creazione della piattaforma "{0}" fallita: {1}</value>
         <comment>Failed to create platform '{0}': {1}</comment>
     </data>
     <data name="* A new software or platform entry will be created with this name during import." xml:space="preserve">
@@ -556,4 +556,4 @@
   <data name="Suggest a new release to be added to the catalogue. Title, publisher and platform are required; everything else is optional. An administrator will review your submission before it is published." xml:space="preserve">
     <value>Proponi un nuovo rilascio da aggiungere al catalogo. Titolo, editore e piattaforma sono obbligatori; tutto il resto è facoltativo. Un amministratore esaminerà la tua proposta prima della pubblicazione.</value>
   </data>
-</root>
+<data name="Suggest covers for {0}. Upload up to {1} JPG, PNG or WebP files (max 50 MB each). Each cover requires a type." xml:space="preserve"><value>Suggerisci copertine per {0}. Carica fino a {1} file JPG, PNG o WebP (max 50 MB ciascuno). Ogni copertina richiede un tipo.</value></data><data name="Images: {0}/{1}" xml:space="preserve"><value>Immagini: {0}/{1}</value></data><data name="Add images" xml:space="preserve"><value>Aggiungi immagini</value></data><data name="Pick one or more files at a time. Each image is uploaded immediately and held on the server until you submit the batch." xml:space="preserve"><value>Scegli uno o più file alla volta. Ogni immagine viene caricata immediatamente e conservata sul server fino all'invio del batch.</value></data><data name="No images staged yet. Use the Add images button above to pick files from your device." xml:space="preserve"><value>Nessuna immagine in coda. Usa il pulsante Aggiungi immagini per scegliere i file dal tuo dispositivo.</value></data><data name="Cover type" xml:space="preserve"><value>Tipo di copertina</value></data><data name="Caption (optional)" xml:space="preserve"><value>Didascalia (opzionale)</value></data><data name="Note for the reviewer (optional)" xml:space="preserve"><value>Nota per il revisore (opzionale)</value></data><data name="Submit" xml:space="preserve"><value>Invia</value></data><data name="You must be logged in to upload images." xml:space="preserve"><value>Devi accedere per caricare immagini.</value></data><data name="Add at least one successfully-uploaded image and pick a type for each before submitting." xml:space="preserve"><value>Aggiungi almeno un'immagine caricata correttamente e scegli un tipo per ciascuna prima di inviare.</value></data><data name="Covers submitted for review. An administrator will accept or reject each image." xml:space="preserve"><value>Copertine inviate per la revisione. Un amministratore accetterà o rifiuterà ogni immagine.</value></data><data name="You have staged images that have not been submitted yet. Closing this dialog will delete them. Continue?" xml:space="preserve"><value>Hai immagini preparate non ancora inviate. Chiudere questa finestra le eliminerà. Continuare?</value></data><data name="Accepting {0} of {1} cover(s). Rejected images and their pending files will be deleted on submit." xml:space="preserve"><value>Accettazione di {0} su {1} copertina(e). Le immagini rifiutate e i loro file in attesa saranno eliminati all'invio.</value></data><data name="Accept this cover" xml:space="preserve"><value>Accetta questa copertina</value></data><data name="SoftwareCoverType_Front" xml:space="preserve"><value>Copertina anteriore</value></data><data name="SoftwareCoverType_Back" xml:space="preserve"><value>Copertina posteriore</value></data><data name="SoftwareCoverType_InsideFront" xml:space="preserve"><value>Interno anteriore</value></data><data name="SoftwareCoverType_InsideBack" xml:space="preserve"><value>Interno posteriore</value></data><data name="SoftwareCoverType_Media" xml:space="preserve"><value>Supporto</value></data><data name="SoftwareCoverType_Spine" xml:space="preserve"><value>Dorso</value></data><data name="SoftwareCoverType_Manual" xml:space="preserve"><value>Manuale</value></data><data name="SoftwareCoverType_Other" xml:space="preserve"><value>Altro</value></data></root>

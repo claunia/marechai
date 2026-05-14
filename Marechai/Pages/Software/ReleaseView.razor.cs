@@ -279,4 +279,32 @@ public partial class ReleaseView
         _releaseRatings    = _releaseAttributes.Where(a => a.Category == "Rating").ToList();
         StateHasChanged();
     }
+
+    /// <summary>
+    ///     Open the collaborative cover-upload dialog for this release. Lets a logged-in
+    ///     user stage 1-30 pending cover images (jpg/png/webp), pick a mandatory type per
+    ///     image, optionally caption each one, then submit ONE Suggestion row that an
+    ///     administrator reviews per-image.
+    /// </summary>
+    async Task OpenSuggestCoversDialog()
+    {
+        AuthenticationState authState = await AuthState;
+        if(authState.User.Identity?.IsAuthenticated != true) return;
+        if(_release is null) return;
+
+        var parameters = new DialogParameters
+        {
+            ["SoftwareReleaseId"] = (ulong)_release.Id,
+            ["ReleaseTitle"]      = _release.Title ?? _softwareName ?? string.Empty
+        };
+        var options = new DialogOptions
+        {
+            MaxWidth          = MaxWidth.Large,
+            FullWidth         = true,
+            CloseOnEscapeKey  = true
+        };
+        IDialogReference dialog = await DialogService.ShowAsync<SoftwareCoversSuggestionDialog>(
+            L["Suggest covers"], parameters, options);
+        await dialog.Result;
+    }
 }

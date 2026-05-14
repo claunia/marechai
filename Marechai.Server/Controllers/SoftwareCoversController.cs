@@ -33,6 +33,7 @@ using Marechai.Data;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Marechai.Helpers;
+using Marechai.Server.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -309,5 +310,163 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
 
         foreach(string file in System.IO.Directory.GetFiles(directory, pattern))
             System.IO.File.Delete(file);
+    }
+
+    /// <summary>
+    ///     Maximum in-flight pending cover images a single collaborator may stage for a
+    ///     given <see cref="SoftwareRelease" /> before they submit (or cancel) the suggestion.
+    ///     Mirrors the per-batch cap enforced by the dialog.
+    /// </summary>
+    const int PendingPhotosPerUserPerReleaseCap = 30;
+
+    /// <summary>
+    ///     Allowed extensions for collaborator-uploaded cover images (narrower than the admin
+    ///     upload set; must match server-side JS validation).
+    /// </summary>
+    static readonly HashSet<string> _pendingAllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ".jpg", ".jpeg", ".png", ".webp"
+    };
+
+    /// <summary>
+    ///     Allowed content types for collaborator-uploaded cover images (narrower than the
+    ///     admin upload set; must match server-side JS validation).
+    /// </summary>
+    static readonly HashSet<string> _pendingAllowedContentTypes = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "image/jpeg", "image/png", "image/webp"
+    };
+
+    /// <summary>
+    ///     Stage a single pending cover image for a brand-new collaborative suggestion. The
+    ///     uploader keeps each pending file on the server (sidecar tracks ownership + parent
+    ///     <c>releaseId</c>) until they call <c>POST /suggestions</c> referencing the returned
+    ///     <c>guid</c>. Per-uploader cap of 30 in-flight pending images per release.
+    /// </summary>
+    [HttpPost("pending")]
+    [Authorize]
+    [RequestSizeLimit(50 * 1024 * 1024)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<PendingImageUploadDto>> UploadPendingAsync(IFormFile         file,
+                                                                              [FromQuery] ulong releaseId)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        if(file is null || file.Length == 0) return BadRequest("No file provided.");
+
+        if(file.Length > 50 * 1024 * 1024) return BadRequest("File exceeds 50 MB limit.");
+
+        string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
+
+        if(!_pendingAllowedExtensions.Contains(extension))
+            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP.");
+
+        if(!string.IsNullOrEmpty(file.ContentType) &&
+           !_pendingAllowedContentTypes.Contains(file.ContentType.ToLowerInvariant()))
+            return BadRequest("Unsupported content type.");
+
+        bool releaseExists = await context.SoftwareReleases.AnyAsync(r => r.Id == releaseId);
+
+        if(!releaseExists) return NotFound("Software release not found.");
+
+        long parentEntityId = (long)releaseId;
+
+        int currentCount = PendingImageStore.CountByUploaderForParentEntity(_assetRootPath, "software-covers",
+            userId, (byte)SuggestionEntityType.SoftwareCover, parentEntityId);
+
+        if(currentCount >= PendingPhotosPerUserPerReleaseCap)
+            return Conflict($"You already have {currentCount} pending cover images for this release. Maximum is " +
+                            $"{PendingPhotosPerUserPerReleaseCap} per release. Submit or remove some first.");
+
+        Guid guid;
+
+        await using(Stream stream = file.OpenReadStream())
+        {
+            // EntityId stays 0 because the suggestion row that will reference these images
+            // doesn't exist yet. ParentEntityId carries the releaseId so the per-uploader
+            // cap and cleanup-by-parent helpers can scope correctly.
+            guid = await PendingImageStore.StoreAsync(_assetRootPath, "software-covers", extension,
+                (byte)SuggestionEntityType.SoftwareCover, entityId: 0L, userId, file.ContentType, stream,
+                parentEntityId: parentEntityId);
+        }
+
+        return Ok(new PendingImageUploadDto
+        {
+            Guid      = guid,
+            Extension = extension.TrimStart('.')
+        });
+    }
+
+    /// <summary>
+    ///     Delete a pending cover image before it has been submitted as part of a suggestion.
+    ///     Only the original uploader (or an admin) may delete.
+    /// </summary>
+    [HttpDelete("pending/{guid:guid}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> DeletePendingAsync(Guid guid)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        PendingImageStore.PendingMetadata meta =
+            await PendingImageStore.GetMetadataAsync(_assetRootPath, "software-covers", guid);
+
+        if(meta is null) return NotFound();
+        if(meta.EntityType != (byte)SuggestionEntityType.SoftwareCover) return NotFound();
+
+        bool isAdmin = User.IsInRole("Admin") || User.IsInRole("UberAdmin");
+
+        if(!PendingImageStore.CanAccess(meta, userId, isAdmin)) return Forbid();
+
+        PendingImageStore.Delete(_assetRootPath, "software-covers", guid);
+
+        return NoContent();
+    }
+
+    /// <summary>
+    ///     Stream the binary contents of a pending cover image. Used by the dialog thumbnail
+    ///     preview AND by the admin SuggestionDiffPanel preview. Auth-gated: only the
+    ///     uploader and admins can read.
+    /// </summary>
+    [HttpGet("pending/{guid:guid}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> GetPendingAsync(Guid guid)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        PendingImageStore.PendingMetadata meta =
+            await PendingImageStore.GetMetadataAsync(_assetRootPath, "software-covers", guid);
+
+        if(meta is null) return NotFound();
+        if(meta.EntityType != (byte)SuggestionEntityType.SoftwareCover) return NotFound();
+
+        bool isAdmin = User.IsInRole("Admin") || User.IsInRole("UberAdmin");
+
+        if(!PendingImageStore.CanAccess(meta, userId, isAdmin)) return Forbid();
+
+        string path = await PendingImageStore.GetImagePathAsync(_assetRootPath, "software-covers", guid);
+
+        if(path is null || !System.IO.File.Exists(path)) return NotFound();
+
+        var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+
+        return File(stream, meta.ContentType ?? "application/octet-stream");
     }
 }

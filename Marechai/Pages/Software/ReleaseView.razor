@@ -470,18 +470,51 @@
 </MudCard>
 
 @* ── Covers Card ── *@
-@if(_covers.Count > 0)
-{
-    <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-        <MudExpansionPanel Expanded="true">
-            <TitleContent>
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel Expanded="@(_covers.Count > 0)">
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Style="width: 100%;">
                 <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                     <MudIcon Icon="@Icons.Material.Filled.Photo" Color="Color.Primary"/>
                     <MudText Typo="Typo.h6">@L["Covers"]</MudText>
-                    <MudChip T="string" Size="Size.Small" Color="Color.Success">@_covers.Count</MudChip>
+                    @if(_covers.Count > 0)
+                    {
+                        <MudChip T="string" Size="Size.Small" Color="Color.Success">@_covers.Count</MudChip>
+                    }
                 </MudStack>
-            </TitleContent>
-            <ChildContent>
+                <AuthorizeView>
+                    <Authorized>
+                        <span @onclick:stopPropagation="true">
+                            <MudTooltip Text="@(_covers.Count == 0 ? L["Suggest covers"] : L["Suggest more covers"])">
+                                <MudIconButton Icon="@Icons.Material.Filled.AddPhotoAlternate"
+                                               Size="Size.Small" Color="Color.Primary"
+                                               OnClick="OpenSuggestCoversDialog"/>
+                            </MudTooltip>
+                        </span>
+                    </Authorized>
+                </AuthorizeView>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            @if(_covers.Count == 0)
+            {
+                <MudStack AlignItems="AlignItems.Center" Spacing="2" Class="py-4">
+                    <MudText Typo="Typo.body2" Align="Align.Center">
+                        @L["No covers for this release yet — help us by uploading some."]
+                    </MudText>
+                    <AuthorizeView>
+                        <Authorized>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                                       StartIcon="@Icons.Material.Filled.AddPhotoAlternate"
+                                       OnClick="OpenSuggestCoversDialog">
+                                @L["Suggest covers"]
+                            </MudButton>
+                        </Authorized>
+                    </AuthorizeView>
+                </MudStack>
+            }
+            else
+            {
                 @foreach(var group in _coversByType)
                 {
                     <MudText Typo="Typo.subtitle1" Class="mt-3 mb-2"><strong>@group.Key</strong></MudText>
@@ -508,10 +541,10 @@
                         }
                     </div>
                 }
-            </ChildContent>
-        </MudExpansionPanel>
-    </MudExpansionPanels>
-}
+            }
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
 
 @if(_fullscreenCover is not null)
 {

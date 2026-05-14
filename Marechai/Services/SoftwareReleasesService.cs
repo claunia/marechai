@@ -881,4 +881,23 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
             return (false, e.Message);
         }
     }
+
+    /// <summary>
+    ///     Delete a pending Software cover image (a not-yet-submitted file the collaborator
+    ///     staged via <c>POST /software/covers/pending</c>). Used by the suggestion dialog
+    ///     when the user removes an image from the staging list before submission, OR when
+    ///     they cancel the dialog with images still staged.
+    /// </summary>
+    public async Task<bool> DeletePendingCoverAsync(Guid guid)
+    {
+        try
+        {
+            await client.Software.Covers.Pending[guid].DeleteAsync();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 }
