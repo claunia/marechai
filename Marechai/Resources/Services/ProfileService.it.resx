@@ -514,4 +514,340 @@
     <data name="Invalid recovery code." xml:space="preserve">
         <value>Codice di recupero non valido.</value>
     </data>
+    <data name="Profile" xml:space="preserve">
+        <value>Profilo</value>
+    </data>
+    <data name="Logout" xml:space="preserve">
+        <value>Esci</value>
+    </data>
+    <data name="Login" xml:space="preserve">
+        <value>Accedi</value>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Annulla</value>
+    </data>
+    <data name="Confirm" xml:space="preserve">
+        <value>Conferma</value>
+    </data>
+    <data name="Code source" xml:space="preserve">
+        <value>Origine del codice</value>
+    </data>
+    <data name="Verification code" xml:space="preserve">
+        <value>Codice di verifica</value>
+    </data>
+    <data name="New password must be at least 6 characters." xml:space="preserve">
+        <value>La nuova password deve contenere almeno 6 caratteri.</value>
+    </data>
+    <data name="Password changed successfully." xml:space="preserve">
+        <value>Password cambiata con successo.</value>
+    </data>
+    <data name="Failed to change password." xml:space="preserve">
+        <value>Impossibile cambiare la password.</value>
+    </data>
+    <data name="Minimum 6 characters" xml:space="preserve">
+        <value>Minimo 6 caratteri</value>
+    </data>
+    <data name="Changing..." xml:space="preserve">
+        <value>Modifica in corso...</value>
+    </data>
+    <data name="Change password" xml:space="preserve">
+        <value>Cambia password</value>
+    </data>
+    <data name="For your security, please confirm by entering your current password and a valid two-factor code." xml:space="preserve">
+        <value>Per la tua sicurezza, conferma inserendo la tua password attuale e un codice a due fattori valido.</value>
+    </data>
+    <data name="My Profile" xml:space="preserve">
+        <value>Il mio profilo</value>
+    </data>
+    <data name="Failed to load profile." xml:space="preserve">
+        <value>Impossibile caricare il profilo.</value>
+    </data>
+    <data name="Account Settings" xml:space="preserve">
+        <value>Impostazioni account</value>
+    </data>
+    <data name="Phone Number" xml:space="preserve">
+        <value>Numero di telefono</value>
+    </data>
+    <data name="Saving..." xml:space="preserve">
+        <value>Salvataggio in corso...</value>
+    </data>
+    <data name="Save" xml:space="preserve">
+        <value>Salva</value>
+    </data>
+    <data name="Roles" xml:space="preserve">
+        <value>Ruoli</value>
+    </data>
+    <data name="No roles assigned" xml:space="preserve">
+        <value>Nessun ruolo assegnato</value>
+    </data>
+    <data name="Edit Account" xml:space="preserve">
+        <value>Modifica account</value>
+    </data>
+    <data name="Public Profile" xml:space="preserve">
+        <value>Profilo pubblico</value>
+    </data>
+    <data name="Avatar" xml:space="preserve">
+        <value>Avatar</value>
+    </data>
+    <data name="Use Gravatar" xml:space="preserve">
+        <value>Usa Gravatar</value>
+    </data>
+    <data name="Upload Avatar" xml:space="preserve">
+        <value>Carica avatar</value>
+    </data>
+    <data name="Delete" xml:space="preserve">
+        <value>Elimina</value>
+    </data>
+    <data name="Display Name" xml:space="preserve">
+        <value>Nome visualizzato</value>
+    </data>
+    <data name="Shown instead of your username on your public profile." xml:space="preserve">
+        <value>Visualizzato al posto del tuo nome utente sul tuo profilo pubblico.</value>
+    </data>
+    <data name="Bio" xml:space="preserve">
+        <value>Biografia</value>
+    </data>
+    <data name="Tell people about yourself." xml:space="preserve">
+        <value>Racconta agli altri qualcosa su di te.</value>
+    </data>
+    <data name="Website" xml:space="preserve">
+        <value>Sito web</value>
+    </data>
+    <data name="Location" xml:space="preserve">
+        <value>Posizione</value>
+    </data>
+    <data name="City, country, etc." xml:space="preserve">
+        <value>Città, paese, ecc.</value>
+    </data>
+    <data name="Social Links" xml:space="preserve">
+        <value>Link social</value>
+    </data>
+    <data name="Twitter / X" xml:space="preserve">
+        <value>Twitter / X</value>
+    </data>
+    <data name="Username (without @)" xml:space="preserve">
+        <value>Nome utente (senza @)</value>
+    </data>
+    <data name="GitHub" xml:space="preserve">
+        <value>GitHub</value>
+    </data>
+    <data name="Mastodon" xml:space="preserve">
+        <value>Mastodon</value>
+    </data>
+    <data name="user@instance.social" xml:space="preserve">
+        <value>utente@istanza.social</value>
+    </data>
+    <data name="Facebook" xml:space="preserve">
+        <value>Facebook</value>
+    </data>
+    <data name="Profile name or URL" xml:space="preserve">
+        <value>Nome profilo o URL</value>
+    </data>
+    <data name="LinkedIn" xml:space="preserve">
+        <value>LinkedIn</value>
+    </data>
+    <data name="Profile slug (e.g. john-doe)" xml:space="preserve">
+        <value>Slug del profilo (ad es. mario-rossi)</value>
+    </data>
+    <data name="View Public Profile" xml:space="preserve">
+        <value>Visualizza profilo pubblico</value>
+    </data>
+    <data name="Save Public Profile" xml:space="preserve">
+        <value>Salva profilo pubblico</value>
+    </data>
+    <data name="Appearance" xml:space="preserve">
+        <value>Aspetto</value>
+    </data>
+    <data name="Pick a theme to personalise the look of Marechai. Changes apply instantly and are saved to your profile." xml:space="preserve">
+        <value>Scegli un tema per personalizzare l'aspetto di Marechai. Le modifiche si applicano immediatamente e vengono salvate nel tuo profilo.</value>
+    </data>
+    <data name="Aa Bb 123" xml:space="preserve">
+        <value>Aa Bb 123</value>
+    </data>
+    <data name="Accent" xml:space="preserve">
+        <value>Accento</value>
+    </data>
+    <data name="Dark" xml:space="preserve">
+        <value>Scuro</value>
+    </data>
+    <data name="Light" xml:space="preserve">
+        <value>Chiaro</value>
+    </data>
+    <data name="Reset to default" xml:space="preserve">
+        <value>Ripristina predefinito</value>
+    </data>
+    <data name="Security" xml:space="preserve">
+        <value>Sicurezza</value>
+    </data>
+    <data name="Two-factor authentication is enabled." xml:space="preserve">
+        <value>L'autenticazione a due fattori è &lt;strong&gt;attivata&lt;/strong&gt;.</value>
+    </data>
+    <data name="Two-factor authentication is disabled." xml:space="preserve">
+        <value>L'autenticazione a due fattori è &lt;strong&gt;disattivata&lt;/strong&gt;.</value>
+    </data>
+    <data name="Authenticator app: {0}" xml:space="preserve">
+        <value>App di autenticazione: {0}</value>
+    </data>
+    <data name="Email: {0}" xml:space="preserve">
+        <value>E-mail: {0}</value>
+    </data>
+    <data name="Recovery codes remaining: {0}" xml:space="preserve">
+        <value>Codici di recupero rimanenti: {0}</value>
+    </data>
+    <data name="enabled" xml:space="preserve">
+        <value>attivato</value>
+    </data>
+    <data name="disabled" xml:space="preserve">
+        <value>disattivato</value>
+    </data>
+    <data name="Setup authenticator" xml:space="preserve">
+        <value>Configura autenticatore</value>
+    </data>
+    <data name="Disable" xml:space="preserve">
+        <value>Disattiva</value>
+    </data>
+    <data name="Enable" xml:space="preserve">
+        <value>Attiva</value>
+    </data>
+    <data name="Scan this QR code with your authenticator app, or enter the key manually:" xml:space="preserve">
+        <value>Scansiona questo codice QR con la tua app di autenticazione o inserisci la chiave manualmente:</value>
+    </data>
+    <data name="Manual entry key:" xml:space="preserve">
+        <value>Chiave di inserimento manuale:</value>
+    </data>
+    <data name="Email two-factor" xml:space="preserve">
+        <value>Due fattori via e-mail</value>
+    </data>
+    <data name="Recovery codes" xml:space="preserve">
+        <value>Codici di recupero</value>
+    </data>
+    <data name="Regenerate" xml:space="preserve">
+        <value>Rigenera</value>
+    </data>
+    <data name="Save these recovery codes in a safe place. They will not be shown again." xml:space="preserve">
+        <value>Conserva questi codici di recupero in un luogo sicuro. Non verranno più mostrati.</value>
+    </data>
+    <data name="I have saved them" xml:space="preserve">
+        <value>Li ho salvati</value>
+    </data>
+    <data name="My Collection" xml:space="preserve">
+        <value>La mia collezione</value>
+    </data>
+    <data name="Title" xml:space="preserve">
+        <value>Titolo</value>
+    </data>
+    <data name="Added" xml:space="preserve">
+        <value>Aggiunto</value>
+    </data>
+    <data name="No books in your collection yet." xml:space="preserve">
+        <value>Ancora nessun libro nella tua collezione.</value>
+    </data>
+    <data name="No documents in your collection yet." xml:space="preserve">
+        <value>Ancora nessun documento nella tua collezione.</value>
+    </data>
+    <data name="No magazine issues in your collection yet." xml:space="preserve">
+        <value>Ancora nessun numero di rivista nella tua collezione.</value>
+    </data>
+    <data name="Issue" xml:space="preserve">
+        <value>Numero</value>
+    </data>
+    <data name="No machines in your collection yet." xml:space="preserve">
+        <value>Ancora nessuna macchina nella tua collezione.</value>
+    </data>
+    <data name="Machine" xml:space="preserve">
+        <value>Macchina</value>
+    </data>
+    <data name="No software in your collection yet." xml:space="preserve">
+        <value>Ancora nessun software nella tua collezione.</value>
+    </data>
+    <data name="Books ({0})" xml:space="preserve">
+        <value>Libri ({0})</value>
+    </data>
+    <data name="Documents ({0})" xml:space="preserve">
+        <value>Documenti ({0})</value>
+    </data>
+    <data name="Magazine Issues ({0})" xml:space="preserve">
+        <value>Numeri di rivista ({0})</value>
+    </data>
+    <data name="Machines ({0})" xml:space="preserve">
+        <value>Macchine ({0})</value>
+    </data>
+    <data name="Software ({0})" xml:space="preserve">
+        <value>Software ({0})</value>
+    </data>
+    <data name="Profile updated successfully." xml:space="preserve">
+        <value>Profilo aggiornato con successo.</value>
+    </data>
+    <data name="Failed to update profile." xml:space="preserve">
+        <value>Impossibile aggiornare il profilo.</value>
+    </data>
+    <data name="Public profile updated successfully." xml:space="preserve">
+        <value>Profilo pubblico aggiornato con successo.</value>
+    </data>
+    <data name="Failed to update public profile." xml:space="preserve">
+        <value>Impossibile aggiornare il profilo pubblico.</value>
+    </data>
+    <data name="Avatar uploaded successfully." xml:space="preserve">
+        <value>Avatar caricato con successo.</value>
+    </data>
+    <data name="Failed to upload avatar." xml:space="preserve">
+        <value>Impossibile caricare l'avatar.</value>
+    </data>
+    <data name="Avatar deleted." xml:space="preserve">
+        <value>Avatar eliminato.</value>
+    </data>
+    <data name="Failed to delete avatar." xml:space="preserve">
+        <value>Impossibile eliminare l'avatar.</value>
+    </data>
+    <data name="Theme set to &quot;{0}&quot;." xml:space="preserve">
+        <value>Tema impostato su "{0}".</value>
+    </data>
+    <data name="Failed to save theme." xml:space="preserve">
+        <value>Impossibile salvare il tema.</value>
+    </data>
+    <data name="Theme reset to default." xml:space="preserve">
+        <value>Tema ripristinato al predefinito.</value>
+    </data>
+    <data name="Failed to reset theme." xml:space="preserve">
+        <value>Impossibile ripristinare il tema.</value>
+    </data>
+    <data name="Failed to generate authenticator setup." xml:space="preserve">
+        <value>Impossibile generare la configurazione dell'autenticatore.</value>
+    </data>
+    <data name="Authenticator enabled." xml:space="preserve">
+        <value>Autenticatore attivato.</value>
+    </data>
+    <data name="Password and code are required." xml:space="preserve">
+        <value>Password e codice sono obbligatori.</value>
+    </data>
+    <data name="Email two-factor enabled." xml:space="preserve">
+        <value>Due fattori via e-mail attivati.</value>
+    </data>
+    <data name="Disable authenticator app" xml:space="preserve">
+        <value>Disattiva app di autenticazione</value>
+    </data>
+    <data name="Authenticator disabled." xml:space="preserve">
+        <value>Autenticatore disattivato.</value>
+    </data>
+    <data name="Failed to disable authenticator." xml:space="preserve">
+        <value>Impossibile disattivare l'autenticatore.</value>
+    </data>
+    <data name="Disable email two-factor" xml:space="preserve">
+        <value>Disattiva due fattori via e-mail</value>
+    </data>
+    <data name="Email two-factor disabled." xml:space="preserve">
+        <value>Due fattori via e-mail disattivati.</value>
+    </data>
+    <data name="Failed to disable email two-factor." xml:space="preserve">
+        <value>Impossibile disattivare i due fattori via e-mail.</value>
+    </data>
+    <data name="Regenerate recovery codes" xml:space="preserve">
+        <value>Rigenera codici di recupero</value>
+    </data>
+    <data name="Recovery codes regenerated." xml:space="preserve">
+        <value>Codici di recupero rigenerati.</value>
+    </data>
+    <data name="Failed to regenerate recovery codes." xml:space="preserve">
+        <value>Impossibile rigenerare i codici di recupero.</value>
+    </data>
 </root>

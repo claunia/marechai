@@ -1,48 +1,49 @@
 @inject IDialogService DialogService
+@inject IStringLocalizer<ProfileService> L
 
 <MudDialog>
     <DialogContent>
-        <MudText Typo="Typo.body2" Class="mb-3">For your security, please confirm by entering your current password and a valid two-factor code.</MudText>
+        <MudText Typo="Typo.body2" Class="mb-3">@L["For your security, please confirm by entering your current password and a valid two-factor code."]</MudText>
 
-        <MudTextField @bind-Value="_password" Label="Current password" InputType="InputType.Password" Variant="Variant.Outlined" Class="mb-3"/>
+        <MudTextField @bind-Value="_password" Label="@L["Current password"]" InputType="InputType.Password" Variant="Variant.Outlined" Class="mb-3"/>
 
         @if(AuthenticatorAvailable && EmailAvailable)
         {
-            <MudSelect T="string" @bind-Value="_provider" Label="Code source" Variant="Variant.Outlined" Class="mb-3">
-                <MudSelectItem Value="@("authenticator")">Authenticator app</MudSelectItem>
-                <MudSelectItem Value="@("email")">Email code</MudSelectItem>
-                <MudSelectItem Value="@("recovery")">Recovery code</MudSelectItem>
+            <MudSelect T="string" @bind-Value="_provider" Label="@L["Code source"]" Variant="Variant.Outlined" Class="mb-3">
+                <MudSelectItem Value="@("authenticator")">@L["Authenticator app"]</MudSelectItem>
+                <MudSelectItem Value="@("email")">@L["Email code"]</MudSelectItem>
+                <MudSelectItem Value="@("recovery")">@L["Recovery code"]</MudSelectItem>
             </MudSelect>
         }
         else
         {
-            <MudSelect T="string" @bind-Value="_provider" Label="Code source" Variant="Variant.Outlined" Class="mb-3">
+            <MudSelect T="string" @bind-Value="_provider" Label="@L["Code source"]" Variant="Variant.Outlined" Class="mb-3">
                 @if(AuthenticatorAvailable)
                 {
-                    <MudSelectItem Value="@("authenticator")">Authenticator app</MudSelectItem>
+                    <MudSelectItem Value="@("authenticator")">@L["Authenticator app"]</MudSelectItem>
                 }
                 @if(EmailAvailable)
                 {
-                    <MudSelectItem Value="@("email")">Email code</MudSelectItem>
+                    <MudSelectItem Value="@("email")">@L["Email code"]</MudSelectItem>
                 }
-                <MudSelectItem Value="@("recovery")">Recovery code</MudSelectItem>
+                <MudSelectItem Value="@("recovery")">@L["Recovery code"]</MudSelectItem>
             </MudSelect>
         }
 
         @if(_provider == "email")
         {
-            <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Class="mb-3" OnClick="SendEmailCodeAsync" Disabled="_busy">Send code to my email</MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Class="mb-3" OnClick="SendEmailCodeAsync" Disabled="_busy">@L["Send code to my email"]</MudButton>
             @if(!string.IsNullOrEmpty(_emailMessage))
             {
                 <MudAlert Severity="Severity.Info" Class="mb-3">@_emailMessage</MudAlert>
             }
         }
 
-        <MudTextField @bind-Value="_code" Label="@(_provider == "recovery" ? "Recovery code" : "Verification code")" Variant="Variant.Outlined"/>
+        <MudTextField @bind-Value="_code" Label="@(_provider == "recovery" ? L["Recovery code"] : L["Verification code"])" Variant="Variant.Outlined"/>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit">Confirm</MudButton>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit">@L["Confirm"]</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -74,7 +75,7 @@
         (bool ok, string err) = await AuthService.StartEmailEnableAsync();
         _busy = false;
 
-        _emailMessage = ok ? "Code sent to your email." : err ?? "Could not send code.";
+        _emailMessage = ok ? L["Code sent to your email."] : err ?? L["Could not send code."];
     }
 
     void Cancel() => MudDialog.Cancel();

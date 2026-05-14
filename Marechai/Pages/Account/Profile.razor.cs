@@ -153,14 +153,14 @@ public partial class Profile
     {
         if(string.IsNullOrWhiteSpace(_editUserName))
         {
-            _errorMessage = "Username is required.";
+            _errorMessage = L["Username is required."];
 
             return;
         }
 
         if(string.IsNullOrWhiteSpace(_editEmail))
         {
-            _errorMessage = "Email is required.";
+            _errorMessage = L["Email is required."];
 
             return;
         }
@@ -177,11 +177,11 @@ public partial class Profile
         {
             _profile        = await AuthService.GetProfileAsync();
             _isEditing      = false;
-            _successMessage = "Profile updated successfully.";
+            _successMessage = L["Profile updated successfully."];
         }
         else
         {
-            _errorMessage = errorMessage ?? "Failed to update profile.";
+            _errorMessage = errorMessage ?? L["Failed to update profile."];
         }
     }
 
@@ -213,14 +213,14 @@ public partial class Profile
         if(succeeded)
         {
             _publicProfile        = await AuthService.GetPublicProfileAsync();
-            _publicSuccessMessage = "Public profile updated successfully.";
+            _publicSuccessMessage = L["Public profile updated successfully."];
 
             if(_publicProfile is not null)
                 PopulatePublicProfileFields();
         }
         else
         {
-            _publicErrorMessage = errorMessage ?? "Failed to update public profile.";
+            _publicErrorMessage = errorMessage ?? L["Failed to update public profile."];
         }
     }
 
@@ -259,13 +259,13 @@ public partial class Profile
             if(result is not null)
             {
                 _publicProfile             = result;
-                _avatarMessage             = "Avatar uploaded successfully.";
+                _avatarMessage             = L["Avatar uploaded successfully."];
                 _avatarMessageSeverity     = Severity.Success;
                 PopulatePublicProfileFields();
             }
             else
             {
-                _avatarMessage         = "Failed to upload avatar.";
+                _avatarMessage         = L["Failed to upload avatar."];
                 _avatarMessageSeverity = Severity.Error;
             }
         }
@@ -292,7 +292,7 @@ public partial class Profile
         if(succeeded)
         {
             _publicProfile         = await AuthService.GetPublicProfileAsync();
-            _avatarMessage         = "Avatar deleted.";
+            _avatarMessage         = L["Avatar deleted."];
             _avatarMessageSeverity = Severity.Success;
 
             if(_publicProfile is not null)
@@ -300,7 +300,7 @@ public partial class Profile
         }
         else
         {
-            _avatarMessage         = error ?? "Failed to delete avatar.";
+            _avatarMessage         = error ?? L["Failed to delete avatar."];
             _avatarMessageSeverity = Severity.Error;
         }
 
@@ -472,14 +472,14 @@ public partial class Profile
         if(ok)
         {
             _savedThemeId        = theme.Id;
-            _themeSuccessMessage = $"Theme set to “{theme.DisplayName}”.";
+            _themeSuccessMessage = L["Theme set to \"{0}\".", theme.DisplayName];
         }
         else
         {
             // Roll back the live preview if the server refused.
             ThemeState.Set(previous);
             _savedThemeId      = previousSavedId;
-            _themeErrorMessage = error ?? "Failed to save theme.";
+            _themeErrorMessage = error ?? L["Failed to save theme."];
         }
 
         StateHasChanged();
@@ -505,13 +505,13 @@ public partial class Profile
         {
             ThemeState.Set(ThemeCatalog.Default);
             _savedThemeId        = null;
-            _themeSuccessMessage = "Theme reset to default.";
+            _themeSuccessMessage = L["Theme reset to default."];
         }
         else
         {
             ThemeState.Set(previous);
             _savedThemeId      = previousSavedId;
-            _themeErrorMessage = error ?? "Failed to reset theme.";
+            _themeErrorMessage = error ?? L["Failed to reset theme."];
         }
 
         StateHasChanged();
@@ -536,7 +536,7 @@ public partial class Profile
 
         if(setup is null || string.IsNullOrEmpty(setup.AuthenticatorUri))
         {
-            _securityMessage  = "Failed to generate authenticator setup.";
+            _securityMessage  = L["Failed to generate authenticator setup."];
             _securitySeverity = Severity.Error;
 
             return;
@@ -560,7 +560,7 @@ public partial class Profile
     {
         if(string.IsNullOrWhiteSpace(_authVerifyCode))
         {
-            _securityMessage  = "Verification code is required.";
+            _securityMessage  = L["Verification code is required."];
             _securitySeverity = Severity.Error;
 
             return;
@@ -574,7 +574,7 @@ public partial class Profile
 
         if(!ok)
         {
-            _securityMessage  = err ?? "Invalid verification code.";
+            _securityMessage  = err ?? L["Invalid verification code."];
             _securitySeverity = Severity.Error;
 
             return;
@@ -583,7 +583,7 @@ public partial class Profile
         _authSetup       = null;
         _authQrSvg       = string.Empty;
         _authVerifyCode  = null;
-        _securityMessage = "Authenticator enabled.";
+        _securityMessage = L["Authenticator enabled."];
         _securitySeverity = Severity.Success;
 
         if(codes is { Count: > 0 }) _displayedRecoveryCodes = codes;
@@ -600,12 +600,12 @@ public partial class Profile
         if(ok)
         {
             _emailEnableMode  = true;
-            _securityMessage  = "Code sent to your email.";
+            _securityMessage  = L["Code sent to your email."];
             _securitySeverity = Severity.Info;
         }
         else
         {
-            _securityMessage  = err ?? "Could not send code.";
+            _securityMessage  = err ?? L["Could not send code."];
             _securitySeverity = Severity.Error;
         }
     }
@@ -614,7 +614,7 @@ public partial class Profile
     {
         if(string.IsNullOrWhiteSpace(_emailEnablePassword) || string.IsNullOrWhiteSpace(_emailEnableCode))
         {
-            _securityMessage  = "Password and code are required.";
+            _securityMessage  = L["Password and code are required."];
             _securitySeverity = Severity.Error;
 
             return;
@@ -629,7 +629,7 @@ public partial class Profile
 
         if(!ok)
         {
-            _securityMessage  = err ?? "Invalid verification code.";
+            _securityMessage  = err ?? L["Invalid verification code."];
             _securitySeverity = Severity.Error;
 
             return;
@@ -638,7 +638,7 @@ public partial class Profile
         _emailEnableMode     = false;
         _emailEnablePassword = null;
         _emailEnableCode     = null;
-        _securityMessage     = "Email two-factor enabled.";
+        _securityMessage     = L["Email two-factor enabled."];
         _securitySeverity    = Severity.Success;
 
         if(codes is { Count: > 0 }) _displayedRecoveryCodes = codes;
@@ -648,7 +648,7 @@ public partial class Profile
 
     async Task OpenDisableAuthenticatorDialog()
     {
-        var result = await ShowDisableDialog("Disable authenticator app");
+        var result = await ShowDisableDialog(L["Disable authenticator app"]);
 
         if(result is null) return;
 
@@ -657,7 +657,7 @@ public partial class Profile
                                                                             result.Provider);
         _isSecurityBusy = false;
 
-        _securityMessage  = ok ? "Authenticator disabled." : err ?? "Failed to disable authenticator.";
+        _securityMessage  = ok ? L["Authenticator disabled."] : err ?? L["Failed to disable authenticator."];
         _securitySeverity = ok ? Severity.Success : Severity.Error;
 
         if(ok) await RefreshTwoFactorStatusAsync();
@@ -665,7 +665,7 @@ public partial class Profile
 
     async Task OpenDisableEmailDialog()
     {
-        var result = await ShowDisableDialog("Disable email two-factor");
+        var result = await ShowDisableDialog(L["Disable email two-factor"]);
 
         if(result is null) return;
 
@@ -673,7 +673,7 @@ public partial class Profile
         (bool ok, string err) = await AuthService.DisableEmailAsync(result.Password, result.Code, result.Provider);
         _isSecurityBusy = false;
 
-        _securityMessage  = ok ? "Email two-factor disabled." : err ?? "Failed to disable email two-factor.";
+        _securityMessage  = ok ? L["Email two-factor disabled."] : err ?? L["Failed to disable email two-factor."];
         _securitySeverity = ok ? Severity.Success : Severity.Error;
 
         if(ok) await RefreshTwoFactorStatusAsync();
@@ -681,7 +681,7 @@ public partial class Profile
 
     async Task OpenRegenerateRecoveryDialog()
     {
-        var result = await ShowDisableDialog("Regenerate recovery codes");
+        var result = await ShowDisableDialog(L["Regenerate recovery codes"]);
 
         if(result is null) return;
 
@@ -695,13 +695,13 @@ public partial class Profile
         if(ok)
         {
             _displayedRecoveryCodes = codes;
-            _securityMessage        = "Recovery codes regenerated.";
+            _securityMessage        = L["Recovery codes regenerated."];
             _securitySeverity       = Severity.Success;
             await RefreshTwoFactorStatusAsync();
         }
         else
         {
-            _securityMessage  = err ?? "Failed to regenerate recovery codes.";
+            _securityMessage  = err ?? L["Failed to regenerate recovery codes."];
             _securitySeverity = Severity.Error;
         }
     }

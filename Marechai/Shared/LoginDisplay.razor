@@ -26,27 +26,28 @@
 }
 @inject AuthService AuthService
 @inject NavigationManager Navigation
+@inject IStringLocalizer<Marechai.Services.ProfileService> L
 
 <AuthorizeView>
     <Authorized>
-        <MudTooltip Text="Profile">
+        <MudTooltip Text="@L["Profile"]">
             <MudMenu Icon="@Icons.Material.Filled.AccountCircle" Color="Color.Inherit" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
                 <ChildContent>
-                    <MudMenuItem Icon="@Icons.Material.Filled.Person" Href="/account/profile">Profile</MudMenuItem>
-                    <MudMenuItem Icon="@Icons.Material.Filled.Lock" Href="/account/change-password">Change Password</MudMenuItem>
+                    <MudMenuItem Icon="@Icons.Material.Filled.Person" Href="/account/profile">@L["Profile"]</MudMenuItem>
+                    <MudMenuItem Icon="@Icons.Material.Filled.Lock" Href="/account/change-password">@L["Change password"]</MudMenuItem>
                     <MudDivider/>
-                    <MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="LogoutAsync">Logout</MudMenuItem>
+                    <MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="LogoutAsync">@L["Logout"]</MudMenuItem>
                 </ChildContent>
             </MudMenu>
         </MudTooltip>
     </Authorized>
     <NotAuthorized>
         <MudHidden Breakpoint="Breakpoint.SmAndDown">
-            <MudButton Href="/login" Color="Color.Inherit" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Login">Login</MudButton>
+            <MudButton Href="/login" Color="Color.Inherit" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Login">@L["Login"]</MudButton>
         </MudHidden>
         <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
-            <MudTooltip Text="Login">
-                <MudIconButton Href="/login" Color="Color.Inherit" Icon="@Icons.Material.Filled.Login" aria-label="Login"/>
+            <MudTooltip Text="@L["Login"]">
+                <MudIconButton Href="/login" Color="Color.Inherit" Icon="@Icons.Material.Filled.Login" aria-label="@L["Login"]"/>
             </MudTooltip>
         </MudHidden>
     </NotAuthorized>

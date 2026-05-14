@@ -24,6 +24,7 @@
 *******************************************************************************/
 
 using System.Threading.Tasks;
+using Marechai.Services;
 
 namespace Marechai.Pages.Account;
 
@@ -43,28 +44,28 @@ public partial class ChangePassword
 
         if(string.IsNullOrWhiteSpace(_currentPassword))
         {
-            _errorMessage = "Current password is required.";
+            _errorMessage = L["Current password is required."];
 
             return;
         }
 
         if(string.IsNullOrWhiteSpace(_newPassword))
         {
-            _errorMessage = "New password is required.";
+            _errorMessage = L["New password is required."];
 
             return;
         }
 
         if(_newPassword.Length < 6)
         {
-            _errorMessage = "New password must be at least 6 characters.";
+            _errorMessage = L["New password must be at least 6 characters."];
 
             return;
         }
 
         if(_newPassword != _confirmPassword)
         {
-            _errorMessage = "Passwords do not match.";
+            _errorMessage = L["Passwords do not match."];
 
             return;
         }
@@ -77,14 +78,14 @@ public partial class ChangePassword
 
         if(succeeded)
         {
-            _successMessage  = "Password changed successfully.";
+            _successMessage  = L["Password changed successfully."];
             _currentPassword = null;
             _newPassword     = null;
             _confirmPassword = null;
         }
         else
         {
-            _errorMessage = errorMessage ?? "Failed to change password.";
+            _errorMessage = errorMessage ?? L["Failed to change password."];
         }
     }
 }

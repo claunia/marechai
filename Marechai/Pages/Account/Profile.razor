@@ -40,7 +40,7 @@
 <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
     <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
         <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Large" Style="color: white;"/>
-        <MudText Typo="Typo.h4" Style="color: white;">My Profile</MudText>
+        <MudText Typo="Typo.h4" Style="color: white;">@L["My Profile"]</MudText>
     </MudStack>
 </MudPaper>
 
@@ -55,14 +55,14 @@
 
 @if(_profile is null)
 {
-    <MudAlert Severity="Severity.Error">Failed to load profile.</MudAlert>
+    <MudAlert Severity="Severity.Error">@L["Failed to load profile."]</MudAlert>
 
     return;
 }
 
 <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" Class="mb-4">
     @* ── Account Settings Tab ── *@
-    <MudTabPanel Text="Account Settings" Icon="@Icons.Material.Filled.Settings">
+    <MudTabPanel Text="@L["Account Settings"]" Icon="@Icons.Material.Filled.Settings">
         <MudGrid Justify="Justify.Center" Class="pa-4">
             <MudItem xs="12" sm="8" md="6">
                 @if(!string.IsNullOrWhiteSpace(_successMessage))
@@ -78,7 +78,7 @@
                 @if(_isEditing)
                 {
                     <MudTextField @bind-Value="_editUserName"
-                                  Label="Username"
+                                  Label="@L["Username"]"
                                   Variant="Variant.Outlined"
                                   Adornment="Adornment.Start"
                                   AdornmentIcon="@Icons.Material.Filled.Person"
@@ -86,7 +86,7 @@
                                   Disabled="_isSaving"/>
 
                     <MudTextField @bind-Value="_editEmail"
-                                  Label="Email"
+                                  Label="@L["Email"]"
                                   Variant="Variant.Outlined"
                                   InputType="InputType.Email"
                                   Adornment="Adornment.Start"
@@ -95,7 +95,7 @@
                                   Disabled="_isSaving"/>
 
                     <MudTextField @bind-Value="_editPhoneNumber"
-                                  Label="Phone Number"
+                                  Label="@L["Phone Number"]"
                                   Variant="Variant.Outlined"
                                   Adornment="Adornment.Start"
                                   AdornmentIcon="@Icons.Material.Filled.Phone"
@@ -103,17 +103,17 @@
                                   Disabled="_isSaving"/>
 
                     <MudStack Row="true" Spacing="2" Justify="Justify.FlexEnd">
-                        <MudButton Variant="Variant.Text" Color="Color.Default" OnClick="CancelEdit" Disabled="_isSaving">Cancel</MudButton>
+                        <MudButton Variant="Variant.Text" Color="Color.Default" OnClick="CancelEdit" Disabled="_isSaving">@L["Cancel"]</MudButton>
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveProfileAsync" Disabled="_isSaving"
                                    StartIcon="@(_isSaving ? null : Icons.Material.Filled.Save)">
                             @if(_isSaving)
                             {
                                 <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
-                                <span>Saving...</span>
+                                <span>@L["Saving..."]</span>
                             }
                             else
                             {
-                                <span>Save</span>
+                                <span>@L["Save"]</span>
                             }
                         </MudButton>
                     </MudStack>
@@ -122,19 +122,19 @@
                 {
                     <MudList T="string" Dense="true">
                         <MudListItem T="string" Icon="@Icons.Material.Filled.Person">
-                            <MudText Typo="Typo.caption" Color="Color.Secondary">Username</MudText>
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">@L["Username"]</MudText>
                             <MudText Typo="Typo.body1">@_profile.UserName</MudText>
                         </MudListItem>
                         <MudListItem T="string" Icon="@Icons.Material.Filled.Email">
-                            <MudText Typo="Typo.caption" Color="Color.Secondary">Email</MudText>
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">@L["Email"]</MudText>
                             <MudText Typo="Typo.body1">@_profile.Email</MudText>
                         </MudListItem>
                         <MudListItem T="string" Icon="@Icons.Material.Filled.Phone">
-                            <MudText Typo="Typo.caption" Color="Color.Secondary">Phone Number</MudText>
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">@L["Phone Number"]</MudText>
                             <MudText Typo="Typo.body1">@(_profile.PhoneNumber ?? "—")</MudText>
                         </MudListItem>
                         <MudListItem T="string" Icon="@Icons.Material.Filled.Security">
-                            <MudText Typo="Typo.caption" Color="Color.Secondary">Roles</MudText>
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">@L["Roles"]</MudText>
                             <MudStack Row="true" Spacing="1" Class="mt-1">
                                 @if(_profile.Roles is { Count: > 0 })
                                 {
@@ -145,7 +145,7 @@
                                 }
                                 else
                                 {
-                                    <MudText Typo="Typo.body2" Color="Color.Secondary">No roles assigned</MudText>
+                                    <MudText Typo="Typo.body2" Color="Color.Secondary">@L["No roles assigned"]</MudText>
                                 }
                             </MudStack>
                         </MudListItem>
@@ -155,9 +155,9 @@
 
                     <MudStack Row="true" Spacing="2" Justify="Justify.FlexEnd">
                         <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="StartEdit"
-                                   StartIcon="@Icons.Material.Filled.Edit">Edit Account</MudButton>
+                                   StartIcon="@Icons.Material.Filled.Edit">@L["Edit Account"]</MudButton>
                         <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Href="/account/change-password"
-                                   StartIcon="@Icons.Material.Filled.Lock">Change Password</MudButton>
+                                   StartIcon="@Icons.Material.Filled.Lock">@L["Change password"]</MudButton>
                     </MudStack>
                 }
             </MudItem>
@@ -165,7 +165,7 @@
     </MudTabPanel>
 
     @* ── Public Profile Tab ── *@
-    <MudTabPanel Text="Public Profile" Icon="@Icons.Material.Filled.Public">
+    <MudTabPanel Text="@L["Public Profile"]" Icon="@Icons.Material.Filled.Public">
         <MudGrid Justify="Justify.Center" Class="pa-4">
             <MudItem xs="12" sm="8" md="6">
                 @if(!string.IsNullOrWhiteSpace(_publicSuccessMessage))
@@ -181,13 +181,13 @@
                 }
 
                 @* ── Avatar Section ── *@
-                <MudText Typo="Typo.h6" Class="mb-2">Avatar</MudText>
+                <MudText Typo="Typo.h6" Class="mb-2">@L["Avatar"]</MudText>
 
                 <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3" Class="mb-4">
                     @if(!string.IsNullOrWhiteSpace(_publicProfile?.AvatarUrl))
                     {
                         <MudAvatar Size="Size.Large" Style="width: 96px; height: 96px;">
-                            <MudImage Src="@_publicProfile.AvatarUrl" Alt="Avatar"/>
+                            <MudImage Src="@_publicProfile.AvatarUrl" Alt="@L["Avatar"]"/>
                         </MudAvatar>
                     }
                     else
@@ -199,7 +199,7 @@
 
                     <MudStack Spacing="1">
                         <MudSwitch T="bool" @bind-Value="_editUseGravatar" Color="Color.Primary"
-                                   Label="Use Gravatar" Disabled="_isSavingPublic"/>
+                                   Label="@L["Use Gravatar"]" Disabled="_isSavingPublic"/>
 
                         @if(!_editUseGravatar)
                         {
@@ -211,7 +211,7 @@
                                                    StartIcon="@Icons.Material.Filled.CloudUpload"
                                                    Size="Size.Small" Disabled="_isUploadingAvatar"
                                                    OnClick="@context.OpenFilePickerAsync">
-                                            Upload Avatar
+                                            @L["Upload Avatar"]
                                         </MudButton>
                                     </CustomContent>
                                 </MudFileUpload>
@@ -220,7 +220,7 @@
                                 {
                                     <MudButton Variant="Variant.Outlined" Color="Color.Error" Size="Size.Small"
                                                OnClick="DeleteAvatar" Disabled="_isUploadingAvatar">
-                                        Delete
+                                        @L["Delete"]
                                     </MudButton>
                                 }
                             </MudStack>
@@ -243,9 +243,9 @@
 
                 @* ── Profile Fields ── *@
                 <MudTextField @bind-Value="_editDisplayName"
-                              Label="Display Name"
+                              Label="@L["Display Name"]"
                               Variant="Variant.Outlined"
-                              HelperText="Shown instead of your username on your public profile."
+                              HelperText="@L["Shown instead of your username on your public profile."]"
                               Counter="100" MaxLength="100"
                               Adornment="Adornment.Start"
                               AdornmentIcon="@Icons.Material.Filled.Badge"
@@ -253,16 +253,16 @@
                               Disabled="_isSavingPublic"/>
 
                 <MudTextField @bind-Value="_editBio"
-                              Label="Bio"
+                              Label="@L["Bio"]"
                               Variant="Variant.Outlined"
                               Lines="4"
-                              HelperText="Tell people about yourself."
+                              HelperText="@L["Tell people about yourself."]"
                               Counter="2000" MaxLength="2000"
                               Class="mb-4"
                               Disabled="_isSavingPublic"/>
 
                 <MudTextField @bind-Value="_editWebsite"
-                              Label="Website"
+                              Label="@L["Website"]"
                               Variant="Variant.Outlined"
                               Adornment="Adornment.Start"
                               AdornmentIcon="@Icons.Material.Filled.Language"
@@ -270,57 +270,57 @@
                               Disabled="_isSavingPublic"/>
 
                 <MudTextField @bind-Value="_editLocation"
-                              Label="Location"
+                              Label="@L["Location"]"
                               Variant="Variant.Outlined"
-                              HelperText="City, country, etc."
+                              HelperText="@L["City, country, etc."]"
                               Adornment="Adornment.Start"
                               AdornmentIcon="@Icons.Material.Filled.LocationOn"
                               Class="mb-4"
                               Disabled="_isSavingPublic"/>
 
                 <MudDivider Class="my-4"/>
-                <MudText Typo="Typo.h6" Class="mb-2">Social Links</MudText>
+                <MudText Typo="Typo.h6" Class="mb-2">@L["Social Links"]</MudText>
 
                 <MudTextField @bind-Value="_editTwitter"
-                              Label="Twitter / X"
+                              Label="@L["Twitter / X"]"
                               Variant="Variant.Outlined"
-                              HelperText="@("Username (without @)")"
+                              HelperText="@L["Username (without @)"]"
                               Adornment="Adornment.Start"
                               AdornmentIcon="@Icons.Custom.Brands.X"
                               Class="mb-4"
                               Disabled="_isSavingPublic"/>
 
                 <MudTextField @bind-Value="_editGitHub"
-                              Label="GitHub"
+                              Label="@L["GitHub"]"
                               Variant="Variant.Outlined"
-                              HelperText="Username"
+                              HelperText="@L["Username"]"
                               Adornment="Adornment.Start"
                               AdornmentIcon="@Icons.Custom.Brands.GitHub"
                               Class="mb-4"
                               Disabled="_isSavingPublic"/>
 
                 <MudTextField @bind-Value="_editMastodon"
-                              Label="Mastodon"
+                              Label="@L["Mastodon"]"
                               Variant="Variant.Outlined"
-                              HelperText="@("user@instance.social")"
+                              HelperText="@L["user@instance.social"]"
                               Adornment="Adornment.Start"
                               AdornmentIcon="@Icons.Material.Filled.Forum"
                               Class="mb-4"
                               Disabled="_isSavingPublic"/>
 
                 <MudTextField @bind-Value="_editFacebook"
-                              Label="Facebook"
+                              Label="@L["Facebook"]"
                               Variant="Variant.Outlined"
-                              HelperText="Profile name or URL"
+                              HelperText="@L["Profile name or URL"]"
                               Adornment="Adornment.Start"
                               AdornmentIcon="@Icons.Custom.Brands.Facebook"
                               Class="mb-4"
                               Disabled="_isSavingPublic"/>
 
                 <MudTextField @bind-Value="_editLinkedIn"
-                              Label="LinkedIn"
+                              Label="@L["LinkedIn"]"
                               Variant="Variant.Outlined"
-                              HelperText="Profile slug (e.g. john-doe)"
+                              HelperText="@L["Profile slug (e.g. john-doe)"]"
                               Adornment="Adornment.Start"
                               AdornmentIcon="@Icons.Custom.Brands.LinkedIn"
                               Class="mb-4"
@@ -330,7 +330,7 @@
                     <MudButton Variant="Variant.Outlined" Color="Color.Default"
                                Href="@($"/profile/{_profile?.UserName}")" Target="_blank"
                                StartIcon="@Icons.Material.Filled.Visibility">
-                        View Public Profile
+                        @L["View Public Profile"]
                     </MudButton>
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SavePublicProfileAsync"
                                Disabled="_isSavingPublic"
@@ -338,11 +338,11 @@
                         @if(_isSavingPublic)
                         {
                             <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
-                            <span>Saving...</span>
+                            <span>@L["Saving..."]</span>
                         }
                         else
                         {
-                            <span>Save Public Profile</span>
+                            <span>@L["Save Public Profile"]</span>
                         }
                     </MudButton>
                 </MudStack>
@@ -351,10 +351,10 @@
     </MudTabPanel>
 
     @* ── Appearance Tab ── *@
-    <MudTabPanel Text="Appearance" Icon="@Icons.Material.Filled.Palette">
+    <MudTabPanel Text="@L["Appearance"]" Icon="@Icons.Material.Filled.Palette">
         <MudGrid Justify="Justify.Center" Class="pa-4">
             <MudItem xs="12" sm="10" md="8">
-                <MudText Typo="Typo.body2" Class="mb-4">Pick a theme to personalise the look of Marechai. Changes apply instantly and are saved to your profile.</MudText>
+                <MudText Typo="Typo.body2" Class="mb-4">@L["Pick a theme to personalise the look of Marechai. Changes apply instantly and are saved to your profile."]</MudText>
 
                 @if(!string.IsNullOrWhiteSpace(_themeSuccessMessage))
                 {
@@ -395,14 +395,14 @@
                                         <span style="font-size: 0.75rem; font-weight: 600;">Marechai</span>
                                     </div>
                                     <div style="@($"background: {surface}; padding: 12px; color: {text};")">
-                                        <div style="@($"font-size: 0.8rem; margin-bottom: 6px;")">Aa Bb 123</div>
-                                        <div style="@($"display: inline-block; background: {secondary}; color: #fff; font-size: 0.65rem; padding: 2px 8px; border-radius: 4px;")">Accent</div>
+                                        <div style="@($"font-size: 0.8rem; margin-bottom: 6px;")">@L["Aa Bb 123"]</div>
+                                        <div style="@($"display: inline-block; background: {secondary}; color: #fff; font-size: 0.65rem; padding: 2px 8px; border-radius: 4px;")">@L["Accent"]</div>
                                     </div>
                                 </div>
 
                                 <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-3">
                                     <MudChip T="string" Size="Size.Small" Color="@(theme.IsDark ? Color.Dark : Color.Default)" Variant="Variant.Filled">
-                                        @(theme.IsDark ? "Dark" : "Light")
+                                        @(theme.IsDark ? L["Dark"] : L["Light"])
                                     </MudChip>
                                     <MudSpacer/>
                                     @if(_isSavingTheme && string.Equals(theme.Id, _pendingThemeId, StringComparison.OrdinalIgnoreCase))
@@ -420,7 +420,7 @@
                     <MudStack Row="true" Justify="Justify.FlexEnd" Class="mt-4">
                         <MudButton Variant="Variant.Text" Color="Color.Default" StartIcon="@Icons.Material.Filled.RestartAlt"
                                    OnClick="ResetThemeAsync" Disabled="_isSavingTheme">
-                            Reset to default
+                            @L["Reset to default"]
                         </MudButton>
                     </MudStack>
                 }
@@ -429,7 +429,7 @@
     </MudTabPanel>
 
     @* ── Security Tab (Two-Factor Authentication) ── *@
-    <MudTabPanel Text="Security" Icon="@Icons.Material.Filled.Security">
+    <MudTabPanel Text="@L["Security"]" Icon="@Icons.Material.Filled.Security">
         <MudGrid Justify="Justify.Center" Class="pa-4">
             <MudItem xs="12" sm="10" md="8">
                 @if(_securityMessage is not null)
@@ -439,7 +439,7 @@
 
                 <MudCard Elevation="2" Class="mb-4">
                     <MudCardContent>
-                        <MudText Typo="Typo.h6" Class="mb-2">Two-factor authentication</MudText>
+                        <MudText Typo="Typo.h6" Class="mb-2">@L["Two-factor authentication"]</MudText>
                         @if(_twoFactorStatus is null)
                         {
                             <MudProgressCircular Size="Size.Small" Indeterminate="true"/>
@@ -449,22 +449,22 @@
                             <MudText Typo="Typo.body2" Class="mb-2">
                                 @if(_twoFactorStatus.Enabled == true)
                                 {
-                                    <span>Two-factor authentication is <strong>enabled</strong>.</span>
+                                    @((MarkupString)L["Two-factor authentication is enabled."].Value)
                                 }
                                 else
                                 {
-                                    <span>Two-factor authentication is <strong>disabled</strong>.</span>
+                                    @((MarkupString)L["Two-factor authentication is disabled."].Value)
                                 }
                             </MudText>
 
                             <MudText Typo="Typo.body2">
-                                Authenticator app: @(_twoFactorStatus.AuthenticatorEnabled == true ? "enabled" : "disabled")
+                                @L["Authenticator app: {0}", _twoFactorStatus.AuthenticatorEnabled == true ? L["enabled"] : L["disabled"]]
                             </MudText>
                             <MudText Typo="Typo.body2">
-                                Email: @(_twoFactorStatus.EmailEnabled == true ? "enabled" : "disabled")
+                                @L["Email: {0}", _twoFactorStatus.EmailEnabled == true ? L["enabled"] : L["disabled"]]
                             </MudText>
                             <MudText Typo="Typo.body2">
-                                Recovery codes remaining: @_twoFactorStatus.RecoveryCodesRemaining
+                                @L["Recovery codes remaining: {0}", _twoFactorStatus.RecoveryCodesRemaining]
                             </MudText>
                         }
                     </MudCardContent>
@@ -474,27 +474,27 @@
                 <MudCard Elevation="2" Class="mb-4">
                     <MudCardContent>
                         <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                            <MudText Typo="Typo.h6">Authenticator app</MudText>
+                            <MudText Typo="Typo.h6">@L["Authenticator app"]</MudText>
                             @if(_twoFactorStatus?.AuthenticatorEnabled == true)
                             {
-                                <MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Filled.LockOpen" OnClick="OpenDisableAuthenticatorDialog">Disable</MudButton>
+                                <MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Filled.LockOpen" OnClick="OpenDisableAuthenticatorDialog">@L["Disable"]</MudButton>
                             }
                             else if(_authSetup is null)
                             {
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.PhoneAndroid" OnClick="StartAuthenticatorSetupAsync">Setup authenticator</MudButton>
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.PhoneAndroid" OnClick="StartAuthenticatorSetupAsync">@L["Setup authenticator"]</MudButton>
                             }
                         </MudStack>
 
                         @if(_authSetup is not null && _twoFactorStatus?.AuthenticatorEnabled != true)
                         {
                             <MudDivider Class="my-3"/>
-                            <MudText Typo="Typo.body2" Class="mb-2">Scan this QR code with your authenticator app, or enter the key manually:</MudText>
+                            <MudText Typo="Typo.body2" Class="mb-2">@L["Scan this QR code with your authenticator app, or enter the key manually:"]</MudText>
                             <div class="my-2">@((MarkupString)_authQrSvg)</div>
-                            <MudText Typo="Typo.body2" Class="mb-2"><strong>Manual entry key:</strong> <code>@_authSetup.SharedKey</code></MudText>
-                            <MudTextField @bind-Value="_authVerifyCode" Label="Verification code" Variant="Variant.Outlined" Class="mt-2" Disabled="_isSecurityBusy"/>
+                            <MudText Typo="Typo.body2" Class="mb-2"><strong>@L["Manual entry key:"]</strong> <code>@_authSetup.SharedKey</code></MudText>
+                            <MudTextField @bind-Value="_authVerifyCode" Label="@L["Verification code"]" Variant="Variant.Outlined" Class="mt-2" Disabled="_isSecurityBusy"/>
                             <MudStack Row="true" Class="mt-2">
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="EnableAuthenticatorAsync" Disabled="_isSecurityBusy">Enable</MudButton>
-                                <MudButton Variant="Variant.Text" OnClick="@(() => { _authSetup = null; _authQrSvg = string.Empty; _authVerifyCode = null; })" Disabled="_isSecurityBusy">Cancel</MudButton>
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="EnableAuthenticatorAsync" Disabled="_isSecurityBusy">@L["Enable"]</MudButton>
+                                <MudButton Variant="Variant.Text" OnClick="@(() => { _authSetup = null; _authQrSvg = string.Empty; _authVerifyCode = null; })" Disabled="_isSecurityBusy">@L["Cancel"]</MudButton>
                             </MudStack>
                         }
                     </MudCardContent>
@@ -504,25 +504,25 @@
                 <MudCard Elevation="2" Class="mb-4">
                     <MudCardContent>
                         <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                            <MudText Typo="Typo.h6">Email two-factor</MudText>
+                            <MudText Typo="Typo.h6">@L["Email two-factor"]</MudText>
                             @if(_twoFactorStatus?.EmailEnabled == true)
                             {
-                                <MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Filled.LockOpen" OnClick="OpenDisableEmailDialog">Disable</MudButton>
+                                <MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Filled.LockOpen" OnClick="OpenDisableEmailDialog">@L["Disable"]</MudButton>
                             }
                             else if(!_emailEnableMode)
                             {
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Email" OnClick="StartEmailEnableAsync" Disabled="_isSecurityBusy">Send code to my email</MudButton>
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Email" OnClick="StartEmailEnableAsync" Disabled="_isSecurityBusy">@L["Send code to my email"]</MudButton>
                             }
                         </MudStack>
 
                         @if(_emailEnableMode && _twoFactorStatus?.EmailEnabled != true)
                         {
                             <MudDivider Class="my-3"/>
-                            <MudTextField @bind-Value="_emailEnablePassword" Label="Current password" InputType="InputType.Password" Variant="Variant.Outlined" Class="mb-2" Disabled="_isSecurityBusy"/>
-                            <MudTextField @bind-Value="_emailEnableCode" Label="Email code" Variant="Variant.Outlined" Class="mb-2" Disabled="_isSecurityBusy"/>
+                            <MudTextField @bind-Value="_emailEnablePassword" Label="@L["Current password"]" InputType="InputType.Password" Variant="Variant.Outlined" Class="mb-2" Disabled="_isSecurityBusy"/>
+                            <MudTextField @bind-Value="_emailEnableCode" Label="@L["Email code"]" Variant="Variant.Outlined" Class="mb-2" Disabled="_isSecurityBusy"/>
                             <MudStack Row="true">
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="EnableEmailAsync" Disabled="_isSecurityBusy">Enable</MudButton>
-                                <MudButton Variant="Variant.Text" OnClick="@(() => { _emailEnableMode = false; _emailEnablePassword = null; _emailEnableCode = null; })" Disabled="_isSecurityBusy">Cancel</MudButton>
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="EnableEmailAsync" Disabled="_isSecurityBusy">@L["Enable"]</MudButton>
+                                <MudButton Variant="Variant.Text" OnClick="@(() => { _emailEnableMode = false; _emailEnablePassword = null; _emailEnableCode = null; })" Disabled="_isSecurityBusy">@L["Cancel"]</MudButton>
                             </MudStack>
                         }
                     </MudCardContent>
@@ -534,8 +534,8 @@
                     <MudCard Elevation="2" Class="mb-4">
                         <MudCardContent>
                             <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                                <MudText Typo="Typo.h6">Recovery codes</MudText>
-                                <MudButton Variant="Variant.Outlined" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Refresh" OnClick="OpenRegenerateRecoveryDialog">Regenerate</MudButton>
+                                <MudText Typo="Typo.h6">@L["Recovery codes"]</MudText>
+                                <MudButton Variant="Variant.Outlined" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Refresh" OnClick="OpenRegenerateRecoveryDialog">@L["Regenerate"]</MudButton>
                             </MudStack>
                         </MudCardContent>
                     </MudCard>
@@ -545,14 +545,14 @@
                 @if(_displayedRecoveryCodes is { Count: > 0 })
                 {
                     <MudAlert Severity="Severity.Warning" Class="mb-4">
-                        <MudText Typo="Typo.body2" Class="mb-2"><strong>Save these recovery codes in a safe place. They will not be shown again.</strong></MudText>
+                        <MudText Typo="Typo.body2" Class="mb-2"><strong>@L["Save these recovery codes in a safe place. They will not be shown again."]</strong></MudText>
                         <MudGrid Spacing="2">
                             @foreach(string rc in _displayedRecoveryCodes)
                             {
                                 <MudItem xs="6"><code>@rc</code></MudItem>
                             }
                         </MudGrid>
-                        <MudButton Variant="Variant.Text" Class="mt-2" OnClick="@(() => _displayedRecoveryCodes = null)">I have saved them</MudButton>
+                        <MudButton Variant="Variant.Text" Class="mt-2" OnClick="@(() => _displayedRecoveryCodes = null)">@L["I have saved them"]</MudButton>
                     </MudAlert>
                 }
             </MudItem>
@@ -560,7 +560,7 @@
     </MudTabPanel>
 
     @* ── My Collection Tab ── *@
-    <MudTabPanel Text="My Collection" Icon="@Icons.Material.Filled.Collections">
+    <MudTabPanel Text="@L["My Collection"]" Icon="@Icons.Material.Filled.Collections">
         <MudGrid Justify="Justify.Center" Class="pa-4">
             <MudItem xs="12" sm="10" md="8">
                 @if(_isLoadingCollection)
@@ -574,15 +574,15 @@
                     @* ── Books ── *@
                     <MudText Typo="Typo.h6" Class="mb-2">
                         <MudIcon Icon="@Icons.Material.Filled.MenuBook" Class="mr-1"/>
-                        Books (@(_myBooks?.Count ?? 0))
+                        @L["Books ({0})", _myBooks?.Count ?? 0]
                     </MudText>
                     @if(_myBooks?.Count > 0)
                     {
                         <MudSimpleTable Elevation="1" Dense="true" Class="mb-4">
                             <thead>
                             <tr>
-                                <th>Title</th>
-                                <th style="width: 120px;">Added</th>
+                                <th>@L["Title"]</th>
+                                <th style="width: 120px;">@L["Added"]</th>
                                 <th style="width: 80px;"></th>
                             </tr>
                             </thead>
@@ -606,21 +606,21 @@
                     }
                     else
                     {
-                        <MudAlert Severity="Severity.Info" Class="mb-4">No books in your collection yet.</MudAlert>
+                        <MudAlert Severity="Severity.Info" Class="mb-4">@L["No books in your collection yet."]</MudAlert>
                     }
 
                     @* ── Documents ── *@
                     <MudText Typo="Typo.h6" Class="mb-2">
                         <MudIcon Icon="@Icons.Material.Filled.Article" Class="mr-1"/>
-                        Documents (@(_myDocuments?.Count ?? 0))
+                        @L["Documents ({0})", _myDocuments?.Count ?? 0]
                     </MudText>
                     @if(_myDocuments?.Count > 0)
                     {
                         <MudSimpleTable Elevation="1" Dense="true" Class="mb-4">
                             <thead>
                             <tr>
-                                <th>Title</th>
-                                <th style="width: 120px;">Added</th>
+                                <th>@L["Title"]</th>
+                                <th style="width: 120px;">@L["Added"]</th>
                                 <th style="width: 80px;"></th>
                             </tr>
                             </thead>
@@ -644,21 +644,21 @@
                     }
                     else
                     {
-                        <MudAlert Severity="Severity.Info" Class="mb-4">No documents in your collection yet.</MudAlert>
+                        <MudAlert Severity="Severity.Info" Class="mb-4">@L["No documents in your collection yet."]</MudAlert>
                     }
 
                     @* ── Magazine Issues ── *@
                     <MudText Typo="Typo.h6" Class="mb-2">
                         <MudIcon Icon="@Icons.Material.Filled.Bookmarks" Class="mr-1"/>
-                        Magazine Issues (@(_myMagazineIssues?.Count ?? 0))
+                        @L["Magazine Issues ({0})", _myMagazineIssues?.Count ?? 0]
                     </MudText>
                     @if(_myMagazineIssues?.Count > 0)
                     {
                         <MudSimpleTable Elevation="1" Dense="true" Class="mb-4">
                             <thead>
                             <tr>
-                                <th>Issue</th>
-                                <th style="width: 120px;">Added</th>
+                                <th>@L["Issue"]</th>
+                                <th style="width: 120px;">@L["Added"]</th>
                                 <th style="width: 80px;"></th>
                             </tr>
                             </thead>
@@ -692,21 +692,21 @@
                     }
                     else
                     {
-                        <MudAlert Severity="Severity.Info" Class="mb-4">No magazine issues in your collection yet.</MudAlert>
+                        <MudAlert Severity="Severity.Info" Class="mb-4">@L["No magazine issues in your collection yet."]</MudAlert>
                     }
 
                     @* ── Machines ── *@
                     <MudText Typo="Typo.h6" Class="mb-2">
                         <MudIcon Icon="@Icons.Material.Filled.Computer" Class="mr-1"/>
-                        Machines (@(_myMachines?.Count ?? 0))
+                        @L["Machines ({0})", _myMachines?.Count ?? 0]
                     </MudText>
                     @if(_myMachines?.Count > 0)
                     {
                         <MudSimpleTable Elevation="1" Dense="true" Class="mb-4">
                             <thead>
                             <tr>
-                                <th>Machine</th>
-                                <th style="width: 120px;">Added</th>
+                                <th>@L["Machine"]</th>
+                                <th style="width: 120px;">@L["Added"]</th>
                                 <th style="width: 80px;"></th>
                             </tr>
                             </thead>
@@ -732,21 +732,21 @@
                     }
                     else
                     {
-                        <MudAlert Severity="Severity.Info" Class="mb-4">No machines in your collection yet.</MudAlert>
+                        <MudAlert Severity="Severity.Info" Class="mb-4">@L["No machines in your collection yet."]</MudAlert>
                     }
 
                     @* ── Software Releases ── *@
                     <MudText Typo="Typo.h6" Class="mb-2">
                         <MudIcon Icon="@Icons.Material.Filled.Apps" Class="mr-1"/>
-                        Software (@(_myReleases?.Count ?? 0))
+                        @L["Software ({0})", _myReleases?.Count ?? 0]
                     </MudText>
                     @if(_myReleases?.Count > 0)
                     {
                         <MudSimpleTable Elevation="1" Dense="true" Class="mb-4">
                             <thead>
                             <tr>
-                                <th>Software</th>
-                                <th style="width: 120px;">Added</th>
+                                <th>@L["Software"]</th>
+                                <th style="width: 120px;">@L["Added"]</th>
                                 <th style="width: 80px;"></th>
                             </tr>
                             </thead>
@@ -780,7 +780,7 @@
                     }
                     else
                     {
-                        <MudAlert Severity="Severity.Info" Class="mb-4">No software in your collection yet.</MudAlert>
+                        <MudAlert Severity="Severity.Info" Class="mb-4">@L["No software in your collection yet."]</MudAlert>
                     }
                 }
             </MudItem>
@@ -788,7 +788,7 @@
     </MudTabPanel>
 
     @* ── My Suggestions Tab ── *@
-    <MudTabPanel Text="My Suggestions" Icon="@Icons.Material.Filled.RateReview">
+    <MudTabPanel Text="@L["My Suggestions"]" Icon="@Icons.Material.Filled.RateReview">
         <MudText Typo="Typo.h5" GutterBottom="true">@L["My Suggestions"]</MudText>
         <MudText Typo="Typo.body2" Class="mb-4">@L["Suggestions you submitted, including their current review status."]</MudText>
 
