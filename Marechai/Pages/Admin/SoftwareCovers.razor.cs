@@ -122,7 +122,8 @@ public partial class SoftwareCovers
             Id                = cover.Id,
             SoftwareReleaseId = newReleaseId,
             Type              = cover.Type,
-            Caption           = cover.Caption,
+            CanonicalCaption  = cover.CanonicalCaption,
+            Caption           = cover.CanonicalCaption,
             OriginalExtension = cover.OriginalExtension
         };
 
@@ -149,7 +150,8 @@ public partial class SoftwareCovers
             Id                = cover.Id,
             SoftwareReleaseId = cover.SoftwareReleaseId,
             Type              = newType,
-            Caption           = cover.Caption,
+            CanonicalCaption  = cover.CanonicalCaption,
+            Caption           = cover.CanonicalCaption,
             OriginalExtension = cover.OriginalExtension
         };
 
@@ -168,13 +170,16 @@ public partial class SoftwareCovers
 
     async Task OnCaptionChanged(SoftwareCoverDto cover, string newCaption)
     {
-        if(cover.Caption == newCaption) return;
+        // The text field is bound to CanonicalCaption (English source-of-truth). The server
+        // PUT handler reads dto.CanonicalCaption first, then falls back to dto.Caption.
+        if(cover.CanonicalCaption == newCaption) return;
 
         var dto = new SoftwareCoverDto
         {
             Id                = cover.Id,
             SoftwareReleaseId = cover.SoftwareReleaseId,
             Type              = cover.Type,
+            CanonicalCaption  = newCaption,
             Caption           = newCaption,
             OriginalExtension = cover.OriginalExtension
         };
@@ -182,7 +187,12 @@ public partial class SoftwareCovers
         (bool succeeded, string error) = await SoftwareService.UpdateCoverAsync(cover.Id!.Value, dto);
 
         if(succeeded)
+        {
+            cover.CanonicalCaption = newCaption;
+            // Reflect the new canonical value in the localized field too until the worker
+            // produces a translated row on its next sweep.
             cover.Caption = newCaption;
+        }
         else
             _errorMessage = error;
     }

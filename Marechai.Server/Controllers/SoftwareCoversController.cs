@@ -69,53 +69,96 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
     [HttpGet("/software/{softwareId}/covers")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public Task<List<SoftwareCoverDto>> GetBySoftwareAsync(ulong softwareId) =>
-        context.SoftwareCovers
-               .Where(c => c.Release.SoftwareId == softwareId)
-               .OrderBy(c => c.Type)
-               .ThenBy(c => c.Release.PlatformId)
-               .Select(c => new SoftwareCoverDto
-                {
-                    Id                = c.Id,
-                    SoftwareReleaseId = c.SoftwareReleaseId,
-                    ReleaseTitle      = c.Release.Title,
-                    Type              = (int)c.Type,
-                    TypeName          = c.Type.ToString(),
-                    Caption           = c.Caption,
-                    OriginalExtension = c.OriginalExtension,
-                    PlatformName      = c.Release.Platform != null ? c.Release.Platform.Name : null,
-                    RegionNames = c.Release.Regions != null
-                                      ? string.Join(", ", c.Release.Regions.Select(r => r.UnM49.Name))
-                                      : null
-                })
-               .ToListAsync();
+    public Task<List<SoftwareCoverDto>> GetBySoftwareAsync(ulong softwareId, [FromQuery] string lang = null)
+    {
+        string langCode  = LanguageResolver.Resolve(HttpContext, lang);
+        bool   isEnglish = string.Equals(langCode, "eng", StringComparison.Ordinal);
+
+        IQueryable<SoftwareCover> source = context.SoftwareCovers
+                                                  .Where(c => c.Release.SoftwareId == softwareId)
+                                                  .OrderBy(c => c.Type)
+                                                  .ThenBy(c => c.Release.PlatformId);
+
+        // English fast-path: skip the correlated translation sub-query entirely. Caption and
+        // CanonicalCaption are identical in this case.
+        if(isEnglish)
+            return source.Select(c => new SoftwareCoverDto
+                          {
+                              Id                = c.Id,
+                              SoftwareReleaseId = c.SoftwareReleaseId,
+                              ReleaseTitle      = c.Release.Title,
+                              Type              = (int)c.Type,
+                              TypeName          = c.Type.ToString(),
+                              Caption           = c.Caption,
+                              CanonicalCaption  = c.Caption,
+                              OriginalExtension = c.OriginalExtension,
+                              PlatformName      = c.Release.Platform != null ? c.Release.Platform.Name : null,
+                              RegionNames = c.Release.Regions != null
+                                                ? string.Join(", ", c.Release.Regions.Select(r => r.UnM49.Name))
+                                                : null
+                          })
+                         .ToListAsync();
+
+        return source.Select(c => new SoftwareCoverDto
+                      {
+                          Id                = c.Id,
+                          SoftwareReleaseId = c.SoftwareReleaseId,
+                          ReleaseTitle      = c.Release.Title,
+                          Type              = (int)c.Type,
+                          TypeName          = c.Type.ToString(),
+                          Caption = c.Caption == null
+                                        ? null
+                                        : (context.SoftwareCoverCaptionTranslations
+                                                  .Where(t => t.CaptionText  == c.Caption &&
+                                                              t.LanguageCode == langCode)
+                                                  .Select(t => t.Translation)
+                                                  .FirstOrDefault() ?? c.Caption),
+                          CanonicalCaption  = c.Caption,
+                          OriginalExtension = c.OriginalExtension,
+                          PlatformName      = c.Release.Platform != null ? c.Release.Platform.Name : null,
+                          RegionNames = c.Release.Regions != null
+                                            ? string.Join(", ", c.Release.Regions.Select(r => r.UnM49.Name))
+                                            : null
+                      })
+                     .ToListAsync();
+    }
 
     [HttpGet("{id:Guid}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<SoftwareCoverDto>> GetAsync(Guid id)
+    public async Task<ActionResult<SoftwareCoverDto>> GetAsync(Guid id, [FromQuery] string lang = null)
     {
+        string langCode  = LanguageResolver.Resolve(HttpContext, lang);
+        bool   isEnglish = string.Equals(langCode, "eng", StringComparison.Ordinal);
+
         SoftwareCoverDto dto = await context.SoftwareCovers
-                                             .Where(c => c.Id == id)
-                                             .Select(c => new SoftwareCoverDto
-                                              {
-                                                  Id                = c.Id,
-                                                  SoftwareReleaseId = c.SoftwareReleaseId,
-                                                  ReleaseTitle      = c.Release.Title,
-                                                  Type              = (int)c.Type,
-                                                  TypeName          = c.Type.ToString(),
-                                                  Caption           = c.Caption,
-                                                  OriginalExtension = c.OriginalExtension,
-                                                  PlatformName = c.Release.Platform != null
-                                                                     ? c.Release.Platform.Name
-                                                                     : null,
-                                                  RegionNames = c.Release.Regions != null
-                                                                    ? string.Join(", ",
-                                                                        c.Release.Regions.Select(r => r.UnM49.Name))
-                                                                    : null
-                                              })
-                                             .FirstOrDefaultAsync();
+                                            .Where(c => c.Id == id)
+                                            .Select(c => new SoftwareCoverDto
+                                             {
+                                                 Id                = c.Id,
+                                                 SoftwareReleaseId = c.SoftwareReleaseId,
+                                                 ReleaseTitle      = c.Release.Title,
+                                                 Type              = (int)c.Type,
+                                                 TypeName          = c.Type.ToString(),
+                                                 Caption = isEnglish || c.Caption == null
+                                                               ? c.Caption
+                                                               : (context.SoftwareCoverCaptionTranslations
+                                                                         .Where(t => t.CaptionText  == c.Caption &&
+                                                                                     t.LanguageCode == langCode)
+                                                                         .Select(t => t.Translation)
+                                                                         .FirstOrDefault() ?? c.Caption),
+                                                 CanonicalCaption  = c.Caption,
+                                                 OriginalExtension = c.OriginalExtension,
+                                                 PlatformName = c.Release.Platform != null
+                                                                    ? c.Release.Platform.Name
+                                                                    : null,
+                                                 RegionNames = c.Release.Regions != null
+                                                                   ? string.Join(", ",
+                                                                       c.Release.Regions.Select(r => r.UnM49.Name))
+                                                                   : null
+                                             })
+                                            .FirstOrDefaultAsync();
 
         if(dto is null) return NotFound();
 
@@ -201,6 +244,7 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
             Type              = (int)model.Type,
             TypeName          = model.Type.ToString(),
             Caption           = model.Caption,
+            CanonicalCaption  = model.Caption,
             OriginalExtension = model.OriginalExtension
         });
     }
@@ -243,7 +287,10 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
             model.SoftwareReleaseId = (ulong)dto.SoftwareReleaseId;
         }
 
-        model.Caption = dto.Caption;
+        // Admin / suggestion edit submits the canonical English caption (DTO.CanonicalCaption
+        // when populated; falls back to DTO.Caption for older clients that haven't migrated).
+        // The translation worker fills in localized rows on its next sweep.
+        model.Caption = !string.IsNullOrEmpty(dto.CanonicalCaption) ? dto.CanonicalCaption : dto.Caption;
         model.Type    = (SoftwareCoverType)dto.Type;
 
         await context.SaveChangesWithUserAsync(userId);

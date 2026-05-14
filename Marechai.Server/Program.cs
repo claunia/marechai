@@ -384,6 +384,13 @@ file class Program
         builder.Services.AddSingleton<Marechai.Translation.ITranslationProvider,
                                       SoftwarePromoArtGroupTranslationProvider>();
 
+        // Software cover caption translation provider — flat string-pool translation table keyed
+        // by the canonical English caption text. NO in-memory cache; read endpoints project the
+        // localized caption via a correlated sub-query against
+        // SoftwareCoverCaptionTranslations with English fallback.
+        builder.Services.AddSingleton<Marechai.Translation.ITranslationProvider,
+                                      SoftwareCoverCaptionTranslationProvider>();
+
         // Background worker that fills SoftwareGenreTranslations using OpenAI (preferred) /
         // NLLB (fallback). Exits permanently if neither provider is configured. MUST be
         // registered after AddMarechaiTranslation + AddSingleton<SoftwareGenreTranslationCache>.

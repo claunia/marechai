@@ -190,8 +190,10 @@
                                 <MudSelectItem T="int?" Value="7">@L["Other"]</MudSelectItem>
                             </MudSelect>
 
+                            @* Admins always edit the canonical English caption regardless of UI locale; localized
+                               captions surface on public pages via SoftwareCoverCaptionTranslations. *@
                             <MudTextField T="string"
-                                          Value="@cover.Caption"
+                                          Value="@cover.CanonicalCaption"
                                           ValueChanged="@(c => OnCaptionChanged(cover, c))"
                                           Label="@L["Caption"]" Variant="Variant.Outlined"
                                           DebounceInterval="500"

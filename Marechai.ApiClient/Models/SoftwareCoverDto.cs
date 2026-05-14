@@ -14,6 +14,14 @@ namespace Marechai.ApiClient.Models
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
+        /// <summary>The canonical_caption property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? CanonicalCaption { get; set; }
+#nullable restore
+#else
+        public string CanonicalCaption { get; set; }
+#endif
         /// <summary>The caption property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -93,6 +101,7 @@ namespace Marechai.ApiClient.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
+                { "canonical_caption", n => { CanonicalCaption = n.GetStringValue(); } },
                 { "caption", n => { Caption = n.GetStringValue(); } },
                 { "id", n => { Id = n.GetGuidValue(); } },
                 { "original_extension", n => { OriginalExtension = n.GetStringValue(); } },
@@ -111,6 +120,7 @@ namespace Marechai.ApiClient.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
+            writer.WriteStringValue("canonical_caption", CanonicalCaption);
             writer.WriteStringValue("caption", Caption);
             writer.WriteGuidValue("id", Id);
             writer.WriteStringValue("original_extension", OriginalExtension);

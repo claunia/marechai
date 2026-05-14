@@ -1260,7 +1260,12 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareCoverDto> covers = await client.Software[softwareId].Covers.GetAsync();
+            string lang = UiLanguage.GetIso639_3();
+
+            List<SoftwareCoverDto> covers = await client.Software[softwareId].Covers.GetAsync(config =>
+            {
+                config.QueryParameters.Lang = lang;
+            });
 
             return covers ?? [];
         }
@@ -1288,7 +1293,12 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            return await client.Software.Covers[id].GetAsync();
+            string lang = UiLanguage.GetIso639_3();
+
+            return await client.Software.Covers[id].GetAsync(config =>
+            {
+                config.QueryParameters.Lang = lang;
+            });
         }
         catch
         {

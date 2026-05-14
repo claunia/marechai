@@ -45,8 +45,22 @@ public class SoftwareCoverDto : BaseDto<Guid>
     [JsonPropertyName("type_name")]
     public string? TypeName { get; set; }
 
+    /// <summary>
+    ///     Caption shown to the end user. Localized to the requested language when the read
+    ///     endpoint receives <c>?lang=</c> (or via the <c>Accept-Language</c> header) and a
+    ///     translation row exists in <c>SoftwareCoverCaptionTranslations</c>; falls back to the
+    ///     canonical English caption (= <see cref="CanonicalCaption" />) otherwise.
+    /// </summary>
     [JsonPropertyName("caption")]
     public string? Caption { get; set; }
+
+    /// <summary>
+    ///     The canonical English caption from <c>SoftwareCovers.Caption</c>. Always populated
+    ///     identically to the underlying column regardless of the requested language so admin
+    ///     edit-path UIs can rewrite the source-of-truth value rather than a localized copy.
+    /// </summary>
+    [JsonPropertyName("canonical_caption")]
+    public string? CanonicalCaption { get; set; }
 
     [JsonPropertyName("original_extension")]
     [Required]
