@@ -31,6 +31,9 @@ using System.Threading.Tasks;
 using Marechai.Data;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
+using Marechai.Server.Helpers;
+using Marechai.Server.Services;
+using Marechai.Server.Suggestions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -40,7 +43,8 @@ namespace Marechai.Server.Controllers;
 
 [Route("/software/releases")]
 [ApiController]
-public class SoftwareReleasesController(MarechaiContext context) : ControllerBase
+public class SoftwareReleasesController(MarechaiContext                   context,
+                                        SoftwareAttributeTranslationCache attrCache) : ControllerBase
 {
     [HttpGet("count")]
     [AllowAnonymous]
@@ -297,7 +301,8 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<SoftwareAttributeDto>> GetAttributesAsync(ulong releaseId)
+    public async Task<List<SoftwareAttributeDto>> GetAttributesAsync(ulong releaseId,
+                                                                     [FromQuery] string lang = null)
     {
         List<SoftwareAttributeDto> attributes = await context.SoftwareAttributes
            .Where(a => a.SoftwareReleaseId == releaseId)
@@ -315,13 +320,26 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
            .ThenBy(a => a.Key)
            .ToListAsync();
 
-        // Importer stores attribute keys/values with U+00A0 (non-breaking
-        // space); the resx localization keys use a regular ASCII space, so
-        // normalize here before returning so `L[key]` / `L[value]` resolve.
+        // Importer stores attribute keys/values with U+00A0 (non-breaking space) — normalise here
+        // before lookup. Rating-category attributes are returned verbatim (only normalised); every
+        // other category routes through the SoftwareAttributeTranslationCache which falls back to
+        // the original normalised text when no translation row exists for the requested language.
+        string resolvedLang = LanguageResolver.Resolve(HttpContext, lang);
+
+        const string ratingCategory = SoftwareReleaseSuggestionApplier.AttributeCategoryRating;
+
         foreach(SoftwareAttributeDto a in attributes)
         {
-            a.Key   = a.Key?.Replace('\u00A0', ' ');
-            a.Value = a.Value?.Replace('\u00A0', ' ');
+            if(string.Equals(a.Category, ratingCategory, StringComparison.Ordinal))
+            {
+                a.Key   = SoftwareAttributeTranslationCache.NormalizeText(a.Key);
+                a.Value = SoftwareAttributeTranslationCache.NormalizeText(a.Value);
+
+                continue;
+            }
+
+            a.Key   = attrCache.GetTranslated(a.Key,   resolvedLang);
+            a.Value = attrCache.GetTranslated(a.Value, resolvedLang);
         }
 
         return attributes;

@@ -157,18 +157,21 @@ public partial class SoftwareViewModel : ObservableObject
 
                     foreach(string val in spec.Values ?? [])
                     {
+                        // Server pre-translates non-Rating spec keys/values via the
+                        // SoftwareAttributeTranslationCache (see /software/specifications?lang=...).
+                        // Use the value verbatim — DO NOT re-localize.
                         values.Add(new SoftwareSpecValueItem
                         {
                             Key          = spec.Key ?? string.Empty,
                             Value        = val,
-                            DisplayValue = _localizer[val]
+                            DisplayValue = val
                         });
                     }
 
                     SpecificationGroups.Add(new SoftwareSpecGroup
                     {
                         Key        = spec.Key ?? string.Empty,
-                        DisplayKey = _localizer[spec.Key ?? string.Empty],
+                        DisplayKey = spec.Key ?? string.Empty,
                         Values     = values
                     });
                 }

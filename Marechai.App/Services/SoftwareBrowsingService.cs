@@ -185,7 +185,12 @@ public class SoftwareBrowsingService
         {
             _logger.LogInformation("Fetching software specifications from API");
 
-            List<SoftwareSpecKeyDto> specs = await _apiClient.Software.Specifications.GetAsync();
+            string lang = GetIso639CodeFromCulture();
+
+            List<SoftwareSpecKeyDto> specs = await _apiClient.Software.Specifications.GetAsync(config =>
+            {
+                config.QueryParameters.Lang = lang;
+            });
 
             if(specs == null) return [];
 
@@ -654,7 +659,12 @@ public class SoftwareBrowsingService
         {
             _logger.LogInformation("Fetching attributes for software {SoftwareId} from API", softwareId);
 
-            List<SoftwareAttributeDto> attributes = await _apiClient.Software[softwareId].Attributes.GetAsync();
+            string lang = GetIso639CodeFromCulture();
+
+            List<SoftwareAttributeDto> attributes = await _apiClient.Software[softwareId].Attributes.GetAsync(config =>
+            {
+                config.QueryParameters.Lang = lang;
+            });
 
             if(attributes == null) return [];
 
@@ -670,5 +680,23 @@ public class SoftwareBrowsingService
 
             return [];
         }
+    }
+
+    private static string GetIso639CodeFromCulture()
+    {
+        string twoLetter = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+
+        return twoLetter switch
+        {
+            "en" => "eng",
+            "es" => "spa",
+            "de" => "deu",
+            "fr" => "fra",
+            "it" => "ita",
+            "nl" => "nld",
+            "la" => "lat",
+            "pt" => "por",
+            _    => "eng"
+        };
     }
 }

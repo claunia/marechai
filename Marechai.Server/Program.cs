@@ -362,6 +362,22 @@ file class Program
         // TranslationWorker. Controllers READ-only via SoftwareGenreTranslationCache.GetName(...).
         builder.Services.AddSingleton<SoftwareGenreTranslationCache>();
 
+        // Process-lifetime cache holding the SoftwareAttributeStrings pool + every
+        // SoftwareAttributeStringTranslation. Same lifecycle as the genre cache. Read-only from
+        // controllers via SoftwareAttributeTranslationCache.GetTranslated(text, lang).
+        builder.Services.AddSingleton<SoftwareAttributeTranslationCache>();
+
+        // Genre translation provider (one of N — future entities register their own provider).
+        // The TranslationWorker iterates ITranslationProvider implementations in registration
+        // order; keep registrations grouped by entity for readability.
+        builder.Services.AddSingleton<Marechai.Translation.ITranslationProvider,
+                                      SoftwareGenreTranslationProvider>();
+
+        // Software attribute translation provider — pools every non-Rating Key/Value into
+        // SoftwareAttributeStrings and translates each text once per language.
+        builder.Services.AddSingleton<Marechai.Translation.ITranslationProvider,
+                                      SoftwareAttributeTranslationProvider>();
+
         // Background worker that fills SoftwareGenreTranslations using OpenAI (preferred) /
         // NLLB (fallback). Exits permanently if neither provider is configured. MUST be
         // registered after AddMarechaiTranslation + AddSingleton<SoftwareGenreTranslationCache>.
@@ -459,6 +475,23 @@ file class Program
                 catch(Exception ex)
                 {
                     Console.WriteLine("\e[31;1mGenre cache warm-up failed: {0}\e[0m", ex.Message);
+                }
+
+                end = DateTime.Now;
+                Console.WriteLine("\e[31;1mTook \e[32;1m{0} seconds\e[31;1m...\e[0m", (end - start).TotalSeconds);
+
+                start = DateTime.Now;
+                Console.WriteLine("\e[31;1mWarming software attribute translation cache...\e[0m");
+
+                try
+                {
+                    SoftwareAttributeTranslationCache attrCache =
+                        app.Services.GetRequiredService<SoftwareAttributeTranslationCache>();
+                    attrCache.EnsureLoadedAsync().GetAwaiter().GetResult();
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine("\e[31;1mAttribute cache warm-up failed: {0}\e[0m", ex.Message);
                 }
 
                 end = DateTime.Now;

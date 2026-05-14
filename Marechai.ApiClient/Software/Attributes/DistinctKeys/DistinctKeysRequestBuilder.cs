@@ -21,7 +21,7 @@ namespace Marechai.ApiClient.Software.Attributes.DistinctKeys
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public DistinctKeysRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/attributes/distinct-keys{?category*}", pathParameters)
+        public DistinctKeysRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/attributes/distinct-keys{?category*,lang*}", pathParameters)
         {
         }
         /// <summary>
@@ -29,7 +29,7 @@ namespace Marechai.ApiClient.Software.Attributes.DistinctKeys
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public DistinctKeysRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/attributes/distinct-keys{?category*}", rawUrl)
+        public DistinctKeysRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/attributes/distinct-keys{?category*,lang*}", rawUrl)
         {
         }
         /// <returns>A List&lt;string&gt;</returns>
@@ -86,6 +86,15 @@ namespace Marechai.ApiClient.Software.Attributes.DistinctKeys
 #else
             [QueryParameter("category")]
             public string Category { get; set; }
+#endif
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("lang")]
+            public string? Lang { get; set; }
+#nullable restore
+#else
+            [QueryParameter("lang")]
+            public string Lang { get; set; }
 #endif
         }
         /// <summary>

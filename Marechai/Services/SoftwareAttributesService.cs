@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Marechai.Helpers;
 using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.Services;
@@ -81,9 +82,12 @@ public class SoftwareAttributesService(Marechai.ApiClient.Client client)
     {
         try
         {
+            string lang = UiLanguage.GetIso639_3();
+
             return await client.Software.Attributes.DistinctKeys.GetAsync(rc =>
             {
                 rc.QueryParameters.Category = string.IsNullOrWhiteSpace(category) ? null : category;
+                rc.QueryParameters.Lang     = lang;
             }) ?? new List<string>();
         }
         catch
@@ -104,10 +108,13 @@ public class SoftwareAttributesService(Marechai.ApiClient.Client client)
     {
         try
         {
+            string lang = UiLanguage.GetIso639_3();
+
             return await client.Software.Attributes.DistinctValues.GetAsync(rc =>
             {
                 rc.QueryParameters.Category = string.IsNullOrWhiteSpace(category) ? null : category;
                 rc.QueryParameters.Key      = string.IsNullOrWhiteSpace(key)      ? null : key;
+                rc.QueryParameters.Lang     = lang;
             }) ?? new List<string>();
         }
         catch

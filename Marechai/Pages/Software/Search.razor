@@ -68,7 +68,10 @@
             }
             else if(!string.IsNullOrEmpty(SpecKey) && !string.IsNullOrEmpty(SpecValue))
             {
-                <MudText Typo="Typo.h6" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Software with {0}: {1}"], L[SpecKey], L[SpecValue])</MudText>
+                @* Server canonical (English) values for filter round-trip; UI heading echoes them
+                   verbatim. A per-string translation endpoint could replace this if a localized
+                   heading is desired (low-impact today: heading is small, page body is fully localized). *@
+                <MudText Typo="Typo.h6" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Software with {0}: {1}"], SpecKey, SpecValue)</MudText>
             }
             @if(_kind.HasValue)
             {

@@ -174,6 +174,8 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<GenreBySoftware>                    GenresBySoftware                    { get; set; }
     public virtual DbSet<PeopleBySoftware>                   PeopleBySoftware                    { get; set; }
     public virtual DbSet<SoftwareAttribute>                  SoftwareAttributes                  { get; set; }
+    public virtual DbSet<SoftwareAttributeString>            SoftwareAttributeStrings            { get; set; }
+    public virtual DbSet<SoftwareAttributeStringTranslation> SoftwareAttributeStringTranslations { get; set; }
     public virtual DbSet<MobyGamesImportState>               MobyGamesImportStates               { get; set; }
     public virtual DbSet<MobyGamesRejection>                 MobyGamesRejections                 { get; set; }
     public virtual DbSet<MobyGamesCoverDownloadState>        MobyGamesCoverDownloadStates        { get; set; }
@@ -593,6 +595,31 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .WithMany()
                   .HasForeignKey(e => e.LanguageCode)
                   .HasConstraintName("fk_software_genre_translations_language");
+        });
+
+        modelBuilder.Entity<SoftwareAttributeString>(entity =>
+        {
+            entity.HasIndex(e => e.Text)
+                  .IsUnique()
+                  .HasDatabaseName("idx_software_attribute_strings_text");
+        });
+
+        modelBuilder.Entity<SoftwareAttributeStringTranslation>(entity =>
+        {
+            entity.HasIndex(e => new { e.StringId, e.LanguageCode })
+                  .IsUnique()
+                  .HasDatabaseName("idx_software_attribute_string_translations_string_language");
+
+            entity.HasOne(e => e.String)
+                  .WithMany()
+                  .HasForeignKey(e => e.StringId)
+                  .HasConstraintName("fk_software_attribute_string_translations_string")
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Language)
+                  .WithMany()
+                  .HasForeignKey(e => e.LanguageCode)
+                  .HasConstraintName("fk_software_attribute_string_translations_language");
         });
 
         modelBuilder.Entity<CompanyLogo>(entity =>

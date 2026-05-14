@@ -667,7 +667,12 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareSpecKeyDto> specs = await client.Software.Specifications.GetAsync();
+            string lang = UiLanguage.GetIso639_3();
+
+            List<SoftwareSpecKeyDto> specs = await client.Software.Specifications.GetAsync(config =>
+            {
+                config.QueryParameters.Lang = lang;
+            });
 
             return specs ?? [];
         }
@@ -840,7 +845,12 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareAttributeDto> attributes = await client.Software[softwareId].Attributes.GetAsync();
+            string lang = UiLanguage.GetIso639_3();
+
+            List<SoftwareAttributeDto> attributes = await client.Software[softwareId].Attributes.GetAsync(config =>
+            {
+                config.QueryParameters.Lang = lang;
+            });
 
             return attributes ?? [];
         }
@@ -854,8 +864,13 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
+            string lang = UiLanguage.GetIso639_3();
+
             List<SoftwareAttributeDto> attributes =
-                await client.Software.Releases[releaseId].Attributes.GetAsync();
+                await client.Software.Releases[releaseId].Attributes.GetAsync(config =>
+                {
+                    config.QueryParameters.Lang = lang;
+                });
 
             return attributes ?? [];
         }

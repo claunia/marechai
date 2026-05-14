@@ -50,7 +50,8 @@ namespace Marechai.Server.Controllers;
 [Route("/software")]
 [ApiController]
 public class SoftwareController(MarechaiContext context, IMemoryCache cache, UserManager<ApplicationUser> userManager,
-                                SoftwareGenreTranslationCache genreCache) : ControllerBase
+                                SoftwareGenreTranslationCache     genreCache,
+                                SoftwareAttributeTranslationCache attrCache) : ControllerBase
 {
     // Cache key + duration for the global Marechai score ranking.
     // The full catalog ranking changes only when reviews/ratings are
@@ -1446,42 +1447,45 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<SoftwareSpecKeyDto>> GetSpecificationsAsync()
+    public async Task<List<SoftwareSpecKeyDto>> GetSpecificationsAsync([FromQuery] string lang = null)
     {
-        if(cache.TryGetValue(SOFTWARE_SPECS_CACHE_KEY, out List<SoftwareSpecKeyDto> cached) && cached is not null)
-            return cached;
-
-        var raw = await context.SoftwareAttributes
-                               .Where(a => a.Category == "Spec" && a.Key != "Notes")
-                               .Select(a => new { a.Key, a.Value })
-                               .Distinct()
-                               .ToListAsync();
-
-        List<SoftwareSpecKeyDto> result = raw.GroupBy(a => a.Key)
-                                             .OrderBy(g => g.Key)
-                                             .Select(g => new SoftwareSpecKeyDto
-                                              {
-                                                  Key    = g.Key,
-                                                  Values = g.Select(a => a.Value).OrderBy(v => v).ToList()
-                                              })
-                                             .ToList();
-
-        // Importer stores spec keys/values with U+00A0 (non-breaking space);
-        // the resx localization keys use a regular ASCII space, so normalize
-        // here before caching/returning so `L[key]` / `L[value]` resolve.
-        foreach(SoftwareSpecKeyDto s in result)
+        // The DB-derived list (keys + grouped values) is cached normalised in English under a
+        // single key. Translation runs per-request against the in-memory cache, which is cheap
+        // (dict lookup per string × ~hundreds of values). Keying the IMemoryCache entry on lang
+        // would multiply the cached payload by N supported languages for no real win.
+        if(!cache.TryGetValue(SOFTWARE_SPECS_CACHE_KEY,
+                              out List<(string Key, List<string> Values)> cached) || cached is null)
         {
-            s.Key = s.Key?.Replace('\u00A0', ' ');
+            var raw = await context.SoftwareAttributes
+                                   .Where(a => a.Category == "Spec" && a.Key != "Notes")
+                                   .Select(a => new { a.Key, a.Value })
+                                   .Distinct()
+                                   .ToListAsync();
 
-            if(s.Values is null) continue;
+            cached = raw.GroupBy(a => SoftwareAttributeTranslationCache.NormalizeText(a.Key))
+                        .OrderBy(g => g.Key)
+                        .Select(g => (Key: g.Key,
+                                      Values: g.Select(a => SoftwareAttributeTranslationCache.NormalizeText(a.Value))
+                                               .Distinct()
+                                               .OrderBy(v => v)
+                                               .ToList()))
+                        .ToList();
 
-            for(int i = 0; i < s.Values.Count; i++)
-                s.Values[i] = s.Values[i]?.Replace('\u00A0', ' ');
+            cache.Set(SOFTWARE_SPECS_CACHE_KEY, cached, _catalogCacheTtl);
         }
 
-        cache.Set(SOFTWARE_SPECS_CACHE_KEY, result, _catalogCacheTtl);
+        string resolvedLang = ResolveGenreLanguage(lang);
 
-        return result;
+        // Always populate Display* — when resolvedLang == "eng" the cache returns the canonical
+        // text verbatim, so DisplayKey == Key (free, no allocation in the cache path).
+        return cached.Select(s => new SoftwareSpecKeyDto
+                      {
+                          Key           = s.Key,
+                          Values        = s.Values,
+                          DisplayKey    = attrCache.GetTranslated(s.Key, resolvedLang),
+                          DisplayValues = s.Values.Select(v => attrCache.GetTranslated(v, resolvedLang)).ToList()
+                      })
+                     .ToList();
     }
 
     [HttpGet("by-spec")]
@@ -1613,7 +1617,8 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<SoftwareAttributeDto>> GetAttributesAsync(ulong softwareId)
+    public async Task<List<SoftwareAttributeDto>> GetAttributesAsync(ulong softwareId,
+                                                                     [FromQuery] string lang = null)
     {
         List<SoftwareAttributeDto> attributes = await context.SoftwareAttributes
            .Where(a => a.SoftwareRelease.SoftwareId == softwareId)
@@ -1632,13 +1637,27 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
            .ThenBy(a => a.Key)
            .ToListAsync();
 
-        // Importer stores attribute keys/values with U+00A0 (non-breaking
-        // space); the resx localization keys use a regular ASCII space, so
-        // normalize here before returning so `L[key]` / `L[value]` resolve.
+        // Importer stores attribute keys/values with U+00A0 (non-breaking space) — normalise here
+        // before lookup. Rating-category attributes are returned verbatim (only normalised); every
+        // other category is translated via the SoftwareAttributeTranslationCache. The cache falls
+        // back to the (normalised) original text when no translation row exists for the requested
+        // language, so callers always receive a populated string.
+        string resolvedLang = ResolveGenreLanguage(lang);
+
+        const string ratingCategory = Suggestions.SoftwareReleaseSuggestionApplier.AttributeCategoryRating;
+
         foreach(SoftwareAttributeDto a in attributes)
         {
-            a.Key   = a.Key?.Replace('\u00A0', ' ');
-            a.Value = a.Value?.Replace('\u00A0', ' ');
+            if(string.Equals(a.Category, ratingCategory, StringComparison.Ordinal))
+            {
+                a.Key   = SoftwareAttributeTranslationCache.NormalizeText(a.Key);
+                a.Value = SoftwareAttributeTranslationCache.NormalizeText(a.Value);
+
+                continue;
+            }
+
+            a.Key   = attrCache.GetTranslated(a.Key,   resolvedLang);
+            a.Value = attrCache.GetTranslated(a.Value, resolvedLang);
         }
 
         return attributes;
@@ -2460,61 +2479,10 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     }
 
     /// <summary>
-    ///     Resolves the requested ISO 639-3 language code for the genre endpoints. Honours an explicit
-    ///     <c>?lang=</c> query parameter first (validated against the supported set), then falls back
-    ///     to the request's <c>Accept-Language</c> header (mapped two-letter → three-letter), then
-    ///     defaults to <c>"eng"</c>. Returns <c>"eng"</c> for any unknown / unsupported value so the
-    ///     cache fallback path always succeeds.
+    ///     Resolves the requested ISO 639-3 language code for the genre endpoints. Delegates to
+    ///     <see cref="Marechai.Server.Helpers.LanguageResolver.Resolve" /> — kept as a thin wrapper
+    ///     so the existing call sites in this controller need no edits.
     /// </summary>
-    string ResolveGenreLanguage(string explicitLang)
-    {
-        if(!string.IsNullOrWhiteSpace(explicitLang))
-        {
-            string normalized = explicitLang.Trim().ToLowerInvariant();
-            if(Marechai.Translation.TranslationService.IsLanguageSupported(normalized))
-                return normalized;
-        }
-
-        string header = HttpContext?.Request?.Headers.AcceptLanguage.ToString();
-        if(string.IsNullOrWhiteSpace(header)) return "eng";
-
-        IList<StringWithQualityHeaderValue> parsed;
-
-        try
-        {
-            parsed = StringWithQualityHeaderValue.ParseList(new[] { header });
-        }
-        catch
-        {
-            return "eng";
-        }
-
-        foreach(StringWithQualityHeaderValue entry in parsed.OrderByDescending(e => e.Quality ?? 1.0))
-        {
-            string tag = entry.Value.Value;
-            if(string.IsNullOrWhiteSpace(tag) || tag == "*") continue;
-
-            // Use only the two-letter language part; ignore region (e.g. fr-CA → fr).
-            int    dash      = tag.IndexOf('-');
-            string twoLetter = (dash > 0 ? tag[..dash] : tag).ToLowerInvariant();
-
-            string mapped = twoLetter switch
-            {
-                "en" => "eng",
-                "es" => "spa",
-                "de" => "deu",
-                "fr" => "fra",
-                "it" => "ita",
-                "nl" => "nld",
-                "la" => "lat",
-                "pt" => "por",
-                _    => null
-            };
-
-            if(mapped is not null && Marechai.Translation.TranslationService.IsLanguageSupported(mapped))
-                return mapped;
-        }
-
-        return "eng";
-    }
+    string ResolveGenreLanguage(string explicitLang) =>
+        Marechai.Server.Helpers.LanguageResolver.Resolve(HttpContext, explicitLang);
 }

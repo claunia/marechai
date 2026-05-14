@@ -29,6 +29,9 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
+using Marechai.Server.Helpers;
+using Marechai.Server.Services;
+using Marechai.Server.Suggestions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -39,7 +42,9 @@ namespace Marechai.Server.Controllers;
 
 [Route("/software/attributes")]
 [ApiController]
-public class SoftwareAttributesController(MarechaiContext context, IMemoryCache cache) : ControllerBase
+public class SoftwareAttributesController(MarechaiContext                   context,
+                                          IMemoryCache                      cache,
+                                          SoftwareAttributeTranslationCache attrCache) : ControllerBase
 {
     const string DEFAULT_SEPARATOR = ", ";
 
@@ -134,13 +139,27 @@ public class SoftwareAttributesController(MarechaiContext context, IMemoryCache 
     [HttpGet("distinct-keys")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public Task<List<string>> GetDistinctKeysAsync([FromQuery] string category = null)
+    public async Task<List<string>> GetDistinctKeysAsync([FromQuery] string category = null,
+                                                         [FromQuery] string lang     = null)
     {
         IQueryable<SoftwareAttribute> query = context.SoftwareAttributes;
 
         if(!string.IsNullOrWhiteSpace(category)) query = query.Where(a => a.Category == category);
 
-        return query.Select(a => a.Key).Distinct().OrderBy(k => k).ToListAsync();
+        List<string> raw = await query.Select(a => a.Key).Distinct().ToListAsync();
+
+        // Rating-category keys are language-independent rating system codes — return verbatim
+        // (only NBSP-normalised). Every other category routes through the translation cache.
+        bool isRating = string.Equals(category, SoftwareReleaseSuggestionApplier.AttributeCategoryRating,
+                                      System.StringComparison.Ordinal);
+
+        string resolvedLang = LanguageResolver.Resolve(HttpContext, lang);
+
+        var translated = isRating
+                             ? raw.Select(SoftwareAttributeTranslationCache.NormalizeText)
+                             : raw.Select(k => attrCache.GetTranslated(k, resolvedLang));
+
+        return translated.Distinct().OrderBy(k => k).ToList();
     }
 
     /// <summary>
@@ -155,8 +174,9 @@ public class SoftwareAttributesController(MarechaiContext context, IMemoryCache 
     [HttpGet("distinct-values")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public Task<List<string>> GetDistinctValuesAsync([FromQuery] string category = null,
-                                                     [FromQuery] string key      = null)
+    public async Task<List<string>> GetDistinctValuesAsync([FromQuery] string category = null,
+                                                           [FromQuery] string key      = null,
+                                                           [FromQuery] string lang     = null)
     {
         IQueryable<SoftwareAttribute> query = context.SoftwareAttributes
                                                      .Where(a => !string.IsNullOrEmpty(a.Value));
@@ -164,7 +184,18 @@ public class SoftwareAttributesController(MarechaiContext context, IMemoryCache 
         if(!string.IsNullOrWhiteSpace(category)) query = query.Where(a => a.Category == category);
         if(!string.IsNullOrWhiteSpace(key))      query = query.Where(a => a.Key      == key);
 
-        return query.Select(a => a.Value).Distinct().OrderBy(v => v).ToListAsync();
+        List<string> raw = await query.Select(a => a.Value).Distinct().ToListAsync();
+
+        bool isRating = string.Equals(category, SoftwareReleaseSuggestionApplier.AttributeCategoryRating,
+                                      System.StringComparison.Ordinal);
+
+        string resolvedLang = LanguageResolver.Resolve(HttpContext, lang);
+
+        var translated = isRating
+                             ? raw.Select(SoftwareAttributeTranslationCache.NormalizeText)
+                             : raw.Select(v => attrCache.GetTranslated(v, resolvedLang));
+
+        return translated.Distinct().OrderBy(v => v).ToList();
     }
 
     [HttpGet("lookup-releases")]

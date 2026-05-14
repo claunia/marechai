@@ -74,7 +74,7 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
 
     public async Task<(string translatedText, string error)> TranslateAsync(string text,
         string targetLanguageIso639_3, IProgress<(int current, int total)> progress = null,
-        bool plainText = false)
+        bool plainText = false, string domainContext = null)
     {
         if(!IsAvailable)
             return (null, "Translation server is not configured.");
@@ -82,11 +82,19 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
         if(!_languages.TryGetValue(targetLanguageIso639_3, out LanguageInfo target))
             return (null, $"Language '{targetLanguageIso639_3}' is not supported for translation.");
 
+        // Normalise non-breaking space (U+00A0) to regular ASCII space BEFORE sending to either
+        // backend. MobyGames-imported attribute strings carry NBSPs that confuse OpenAI on short
+        // labels (e.g. "Minimum\u00A0RAM\u00A0Required" gets back-translated literally with the
+        // NBSPs preserved, defeating cache lookups downstream). Other Unicode line/paragraph
+        // separators flow through unchanged — only NBSP is normalised here.
+        if(!string.IsNullOrEmpty(text) && text.IndexOf('\u00A0') >= 0)
+            text = text.Replace('\u00A0', ' ');
+
         // OpenAI takes precedence; on any failure we fall through to NLLB if configured.
         if(IsOpenAIConfigured)
         {
             (string openAiText, string openAiError) =
-                await TranslateViaOpenAIAsync(text, target.EnglishName, progress, plainText);
+                await TranslateViaOpenAIAsync(text, target.EnglishName, progress, plainText, domainContext);
 
             if(openAiText is not null)
                 return (openAiText, null);
@@ -107,7 +115,7 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
 #region OpenAI backend
 
     async Task<(string translated, string error)> TranslateViaOpenAIAsync(string text, string targetEnglishName,
-        IProgress<(int current, int total)> progress, bool plainText)
+        IProgress<(int current, int total)> progress, bool plainText, string domainContext = null)
     {
         progress?.Report((0, 1));
 
@@ -128,6 +136,14 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
                 + "preserving all markdown formatting exactly (headings, lists, links, code spans, fenced "
                 + "code blocks, tables, emphasis). Output ONLY the translated markdown — no preamble, no "
                 + "explanation, no surrounding code fence.";
+
+            // Optional caller-supplied domain hint (e.g. "The text is a software genre name." or
+            // "The text is a video-game technical specification key or value (computer/console
+            // hardware terminology)."). Steers the model away from over-generic translations on
+            // short labels — without this, e.g. "Mouse" gets translated as the animal in some
+            // languages instead of the input device.
+            if(!string.IsNullOrWhiteSpace(domainContext))
+                systemPrompt += " Context: " + domainContext.Trim();
 
             // Build the body as a Dictionary so optional fields (model, max_tokens, response_format)
             // can be omitted entirely when not needed, which matches what local OpenAI-compatible

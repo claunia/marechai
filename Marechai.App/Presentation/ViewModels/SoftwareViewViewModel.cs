@@ -375,10 +375,13 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
 
                 foreach(SoftwareAttributeDto spec in platformGroup)
                 {
+                    // Server already pre-translates non-Rating attribute keys/values via the
+                    // SoftwareAttributeTranslationCache (see /software/{id}/attributes?lang=...).
+                    // Use the values verbatim — DO NOT re-localize.
                     specGroup.Specs.Add(new SpecItem
                     {
-                        Key   = _localizer[spec.Key ?? string.Empty],
-                        Value = _localizer[spec.Value ?? string.Empty]
+                        Key   = spec.Key   ?? string.Empty,
+                        Value = spec.Value ?? string.Empty
                     });
                 }
 

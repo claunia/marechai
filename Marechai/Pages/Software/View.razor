@@ -530,8 +530,8 @@ else
                     @foreach(SoftwareAttributeDto spec in platformGroup.Value)
                     {
                         <tr>
-                            <td style="width: 33%; text-align: right;"><strong>@L[spec.Key]</strong></td>
-                            <td>@L[spec.Value]</td>
+                            <td style="width: 33%; text-align: right;"><strong>@spec.Key</strong></td>
+                            <td>@spec.Value</td>
                         </tr>
                     }
                     </tbody>
@@ -550,7 +550,7 @@ else
                 <div class="d-flex flex-wrap gap-2 mb-2">
                     @foreach(SoftwareAttributeDto rating in platformGroup.Value)
                     {
-                        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Warning">@L[rating.Key]: @L[rating.Value]</MudChip>
+                        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Warning">@rating.Key: @rating.Value</MudChip>
                     }
                 </div>
             }
