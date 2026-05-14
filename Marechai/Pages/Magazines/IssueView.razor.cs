@@ -46,6 +46,7 @@ public partial class IssueView
     List<MagazineByMachineFamilyDto> _machineFamilies = [];
     List<MagazineByMachineDto>       _machines        = [];
     string                           _magazineTitle;
+    List<PersonByMagazineDto>        _people          = [];
     List<MagazineBySoftwareDto>      _software        = [];
     bool                             _togglingCollection;
 
@@ -95,6 +96,7 @@ public partial class IssueView
         _machines        = full.Machines        ?? [];
         _machineFamilies = full.MachineFamilies ?? [];
         _software        = full.Software        ?? [];
+        _people          = full.People          ?? [];
 
         // Skip the 401-bound collection check for anonymous viewers.
         AuthenticationState authState = await AuthState;
@@ -137,6 +139,19 @@ public partial class IssueView
         1 => published.ToString("MMMM yyyy"),
         _ => published.DateTime.ToShortDateString()
     };
+
+    /// <summary>
+    /// Format a person's display name with the same precedence as
+    /// <c>Marechai.Data.Dtos.PersonByMagazineDto.FullName</c>: DisplayName ?? Alias ??
+    /// "{Name} {Surname}". The Kiota-generated wire DTO has no computed properties, so
+    /// every consumer must reproduce the precedence rule locally (per repo convention).
+    /// </summary>
+    static string FormatPersonName(PersonByMagazineDto p)
+    {
+        if(!string.IsNullOrWhiteSpace(p?.DisplayName)) return p.DisplayName;
+        if(!string.IsNullOrWhiteSpace(p?.Alias))       return p.Alias;
+        return $"{p?.Name} {p?.Surname}".Trim();
+    }
 
     /// <summary>
     /// Open the collaborative suggestion dialog scoped to this magazine issue. Captures

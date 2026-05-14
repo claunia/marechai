@@ -46,6 +46,14 @@ namespace Marechai.ApiClient.Models
 #else
         public string MagazineTitle { get; set; }
 #endif
+        /// <summary>The people property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public List<global::Marechai.ApiClient.Models.PersonByMagazineDto>? People { get; set; }
+#nullable restore
+#else
+        public List<global::Marechai.ApiClient.Models.PersonByMagazineDto> People { get; set; }
+#endif
         /// <summary>The software property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -83,6 +91,7 @@ namespace Marechai.ApiClient.Models
                 { "machine_families", n => { MachineFamilies = n.GetCollectionOfObjectValues<global::Marechai.ApiClient.Models.MagazineByMachineFamilyDto>(global::Marechai.ApiClient.Models.MagazineByMachineFamilyDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "machines", n => { Machines = n.GetCollectionOfObjectValues<global::Marechai.ApiClient.Models.MagazineByMachineDto>(global::Marechai.ApiClient.Models.MagazineByMachineDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "magazine_title", n => { MagazineTitle = n.GetStringValue(); } },
+                { "people", n => { People = n.GetCollectionOfObjectValues<global::Marechai.ApiClient.Models.PersonByMagazineDto>(global::Marechai.ApiClient.Models.PersonByMagazineDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "software", n => { Software = n.GetCollectionOfObjectValues<global::Marechai.ApiClient.Models.MagazineBySoftwareDto>(global::Marechai.ApiClient.Models.MagazineBySoftwareDto.CreateFromDiscriminatorValue)?.AsList(); } },
             };
         }
@@ -97,6 +106,7 @@ namespace Marechai.ApiClient.Models
             writer.WriteCollectionOfObjectValues<global::Marechai.ApiClient.Models.MagazineByMachineFamilyDto>("machine_families", MachineFamilies);
             writer.WriteCollectionOfObjectValues<global::Marechai.ApiClient.Models.MagazineByMachineDto>("machines", Machines);
             writer.WriteStringValue("magazine_title", MagazineTitle);
+            writer.WriteCollectionOfObjectValues<global::Marechai.ApiClient.Models.PersonByMagazineDto>("people", People);
             writer.WriteCollectionOfObjectValues<global::Marechai.ApiClient.Models.MagazineBySoftwareDto>("software", Software);
             writer.WriteAdditionalData(AdditionalData);
         }

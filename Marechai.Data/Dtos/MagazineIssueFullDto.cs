@@ -32,8 +32,8 @@ namespace Marechai.Data.Dtos;
 /// <summary>
 /// Consolidated payload for the public /magazine/issue/{Id} view page. Returns the issue head
 /// plus the parent magazine title (so the page header can link back without an extra round-trip)
-/// and all three issue-level junction collections (machines, machine families, software) in one
-/// HTTP response.
+/// and all four issue-level junction collections (machines, machine families, software, people)
+/// in one HTTP response.
 /// </summary>
 public class MagazineIssueFullDto
 {
@@ -57,4 +57,7 @@ public class MagazineIssueFullDto
 
     [JsonPropertyName("software")]
     public List<MagazineBySoftwareDto> Software { get; set; } = new();
+
+    [JsonPropertyName("people")]
+    public List<PersonByMagazineDto> People { get; set; } = new();
 }

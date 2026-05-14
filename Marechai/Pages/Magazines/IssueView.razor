@@ -267,7 +267,73 @@
         }
     </MudTabPanel>
 
-    @* ── Tab 3: Software ── *@
+    @* ── Tab 3: People ── *@
+    <MudTabPanel Icon="@Icons.Material.Filled.People">
+        <TabContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.People"/>
+                <MudText>@L["People"]</MudText>
+                @if(_people.Count > 0)
+                {
+                    <MudChip T="string" Size="Size.Small" Color="Color.Success">@_people.Count</MudChip>
+                }
+                <AuthorizeView>
+                    <Authorized>
+                        <MudTooltip Text="@L["Suggest changes"]">
+                            <span @onclick:stopPropagation="true">
+                                <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                               Size="Size.Small"
+                                               Color="Color.Secondary"
+                                               OnClick="OpenIssueSuggestionDialogAsync"
+                                               aria-label="@L["Suggest changes"]"/>
+                            </span>
+                        </MudTooltip>
+                    </Authorized>
+                </AuthorizeView>
+            </MudStack>
+        </TabContent>
+        <ChildContent>
+            @if(_people.Count == 0)
+            {
+                <MudAlert Severity="Severity.Info">@L["No people associated with this issue."]</MudAlert>
+            }
+            else
+            {
+                bool firstGroup = true;
+                @foreach(IGrouping<string, PersonByMagazineDto> roleGroup in _people
+                             .GroupBy(p => p.Role ?? string.Empty)
+                             .OrderBy(g => g.Key))
+                {
+                    @if(!firstGroup)
+                    {
+                        <MudDivider Class="my-3"/>
+                    }
+                    firstGroup = false;
+                    <MudText Typo="Typo.subtitle1" Class="mb-2">
+                        @(string.IsNullOrEmpty(roleGroup.Key) ? L["Unknown role"] : roleGroup.Key)
+                    </MudText>
+                    <MudGrid Spacing="2">
+                        @foreach(PersonByMagazineDto person in roleGroup.OrderBy(FormatPersonName))
+                        {
+                            <MudItem xs="12" sm="6" md="4">
+                                <MudCard Elevation="2" Class="rounded-lg" Style="cursor: pointer; height: 100%;"
+                                         @onclick="@(() => Nav.NavigateTo($"/person/{person.PersonId}"))">
+                                    <MudCardContent Class="pa-3">
+                                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                            <MudIcon Icon="@Icons.Material.Filled.Person" Color="Color.Primary"/>
+                                            <MudText Typo="Typo.body1">@FormatPersonName(person)</MudText>
+                                        </MudStack>
+                                    </MudCardContent>
+                                </MudCard>
+                            </MudItem>
+                        }
+                    </MudGrid>
+                }
+            }
+        </ChildContent>
+    </MudTabPanel>
+
+    @* ── Tab 4: Software ── *@
     <MudTabPanel Text="@L["Software"]" Icon="@Icons.Material.Filled.Apps">
         @if(_software.Count == 0)
         {

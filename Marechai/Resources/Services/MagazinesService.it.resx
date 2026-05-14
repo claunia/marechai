@@ -667,4 +667,7 @@
   <data name="Fill in the fields below to suggest a new magazine issue. Caption is required; you can attach a cover image and queue people, machines, machine families and software that will all be added together once an administrator accepts the suggestion." xml:space="preserve">
     <value>Compila i campi sottostanti per suggerire un nuovo numero di rivista. La didascalia è obbligatoria; puoi allegare un'immagine di copertina e mettere in coda persone, macchine, famiglie di macchine e software che verranno tutti aggiunti insieme una volta che un amministratore accetterà il suggerimento.</value>
   </data>
+  <data name="Unknown role" xml:space="preserve">
+    <value>Ruolo sconosciuto</value>
+  </data>
 </root>

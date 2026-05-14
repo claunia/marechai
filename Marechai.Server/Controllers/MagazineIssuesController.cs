@@ -107,9 +107,9 @@ public class MagazineIssuesController(
 
     /// <summary>
     /// Consolidated payload for the public /magazine/issue/{Id} view page. Returns the issue
-    /// head plus the parent magazine title and the three issue-level junction collections
-    /// (machines, machine families, software) in a single response. Each query runs on an
-    /// independent <see cref="MarechaiContext"/> from the factory because <c>DbContext</c>
+    /// head plus the parent magazine title and the four issue-level junction collections
+    /// (machines, machine families, software, people) in a single response. Each query runs on
+    /// an independent <see cref="MarechaiContext"/> from the factory because <c>DbContext</c>
     /// is not thread-safe; sharing the request-scoped context across parallel branches
     /// throws <see cref="InvalidOperationException"/>.
     /// </summary>
@@ -124,6 +124,7 @@ public class MagazineIssuesController(
         await using var machinesCtx = await dbFactory.CreateDbContextAsync();
         await using var familiesCtx = await dbFactory.CreateDbContextAsync();
         await using var softwareCtx = await dbFactory.CreateDbContextAsync();
+        await using var peopleCtx   = await dbFactory.CreateDbContextAsync();
 
         var headTask = headCtx.MagazineIssues.AsNoTracking()
                               .Where(b => b.Id == id)
@@ -184,7 +185,25 @@ public class MagazineIssuesController(
             .OrderBy(p => p.Software)
             .ToListAsync();
 
-        await Task.WhenAll(headTask, machinesTask, familiesTask, softwareTask);
+        // Mirrors PeopleByMagazineController.GetByMagazine. Sort happens client-side
+        // (after WhenAll) because the projected FullName is a computed property on the DTO.
+        Task<List<PersonByMagazineDto>> peopleTask = peopleCtx.PeopleByMagazines.AsNoTracking()
+            .Where(p => p.MagazineId == id)
+            .Select(p => new PersonByMagazineDto
+             {
+                 Id          = p.Id,
+                 PersonId    = p.PersonId,
+                 MagazineId  = p.MagazineId,
+                 RoleId      = p.RoleId,
+                 Role        = p.Role.Name,
+                 Name        = p.Person.Name,
+                 Surname     = p.Person.Surname,
+                 Alias       = p.Person.Alias,
+                 DisplayName = p.Person.DisplayName
+             })
+            .ToListAsync();
+
+        await Task.WhenAll(headTask, machinesTask, familiesTask, softwareTask, peopleTask);
 
         var head = headTask.Result;
 
@@ -213,7 +232,8 @@ public class MagazineIssuesController(
             MagazineTitle   = head.MagazineTitle,
             Machines        = machinesTask.Result,
             MachineFamilies = familiesTask.Result,
-            Software        = softwareTask.Result
+            Software        = softwareTask.Result,
+            People          = peopleTask.Result.OrderBy(p => p.FullName).ThenBy(p => p.Role).ToList()
         };
     }
 
