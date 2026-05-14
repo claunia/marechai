@@ -402,6 +402,31 @@
 </MudExpansionPanels>
 }
 
+@if(_pdas.Count > 0)
+{
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel>
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.Devices" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["PDAs"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="Color.Success">@_pdas.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="MachineDto" Dense="true">
+                @foreach(MachineDto pda in _pdas)
+                {
+                    <MudListItem T="MachineDto" Href="@($"/machine/{pda.Id}")" Icon="@Icons.Material.Filled.Devices">
+                        @pda.Name
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+}
+
 @* ── Machine Families Card ── *@
 @if(_machineFamilies.Count > 0)
 {

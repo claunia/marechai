@@ -38,6 +38,7 @@ public partial class View
     List<MachineDto>    _consoles  = [];
     List<MachineDto>    _smartphones = [];
     List<MachineDto>    _tablets = [];
+    List<MachineDto>    _pdas = [];
     MachineFamilyDto    _family;
     int                 _lastId;
     bool                _loaded;
@@ -80,6 +81,7 @@ public partial class View
         _consoles  = machines.Where(m => m.Type == (int)MachineType.Console).ToList();
         _smartphones = machines.Where(m => m.Type == (int)MachineType.Smartphone).ToList();
         _tablets = machines.Where(m => m.Type == (int)MachineType.Tablet).ToList();
+        _pdas = machines.Where(m => m.Type == (int)MachineType.Pda).ToList();
 
         _loaded = true;
         StateHasChanged();
