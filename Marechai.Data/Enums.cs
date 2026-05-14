@@ -922,7 +922,9 @@ public enum SoftwareGenreType : byte
     [Display(Name = "Gameplay")]
     Gameplay    = 2,
     [Display(Name = "Setting")]
-    Setting     = 3
+    Setting     = 3,
+    [Display(Name = "Category")]
+    Category    = 4
 }
 
 public enum MobyGamesImportStatus : byte
