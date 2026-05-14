@@ -125,12 +125,12 @@
                     @if(sw.FrontCoverId.HasValue)
                     {
                         <picture>
-                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/hd/@(sw.FrontCoverId).jxl, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/1440p/@(sw.FrontCoverId).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(sw.FrontCoverId).jxl 3x" type="image/jxl">
-                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/hd/@(sw.FrontCoverId).avif, @(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/1440p/@(sw.FrontCoverId).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(sw.FrontCoverId).avif 3x" type="image/avif">
-                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/hd/@(sw.FrontCoverId).webp, @(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/1440p/@(sw.FrontCoverId).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(sw.FrontCoverId).webp 3x" type="image/webp">
+                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(sw.FrontCoverId).jxl" type="image/jxl">
+                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(sw.FrontCoverId).avif" type="image/avif">
+                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(sw.FrontCoverId).webp" type="image/webp">
                             <img alt="@sw.Name" height="48"
-                                 src="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(sw.FrontCoverId).jpg"
-                                 srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(sw.FrontCoverId).jpg, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/1440p/@(sw.FrontCoverId).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(sw.FrontCoverId).jpg 3x"
+                                 src="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(sw.FrontCoverId).jpg"
+                                 srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(sw.FrontCoverId).jpg"
                                  style="object-fit: contain; border-radius: 4px;"/>
                         </picture>
                     }

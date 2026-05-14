@@ -61,12 +61,12 @@
         @if(_heroCover is not null)
         {
             <picture>
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/hd/@(_heroCover.Id).jxl, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/1440p/@(_heroCover.Id).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(_heroCover.Id).jxl 3x" type="image/jxl">
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/hd/@(_heroCover.Id).avif, @(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/1440p/@(_heroCover.Id).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(_heroCover.Id).avif 3x" type="image/avif">
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/hd/@(_heroCover.Id).webp, @(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/1440p/@(_heroCover.Id).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(_heroCover.Id).webp 3x" type="image/webp">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(_heroCover.Id).jxl" type="image/jxl">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(_heroCover.Id).avif" type="image/avif">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(_heroCover.Id).webp" type="image/webp">
                 <img alt="@_software.Name"
-                     src="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(_heroCover.Id).jpg"
-                     srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(_heroCover.Id).jpg, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/1440p/@(_heroCover.Id).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(_heroCover.Id).jpg 3x"
+                     src="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(_heroCover.Id).jpg"
+                     srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(_heroCover.Id).jpg"
                      style="max-height: 256px; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);"/>
             </picture>
         }
@@ -855,12 +855,12 @@ else
                             <MudCard Elevation="1" Class="rounded-lg" Style="width: 200px; cursor: pointer;" @onclick="() => _fullscreenCover = cover">
                                 <MudCardContent Class="pa-2">
                                     <picture>
-                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/hd/@(cover.Id).jxl, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/1440p/@(cover.Id).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(cover.Id).jxl 3x" type="image/jxl">
-                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/hd/@(cover.Id).avif, @(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/1440p/@(cover.Id).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(cover.Id).avif 3x" type="image/avif">
-                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/hd/@(cover.Id).webp, @(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/1440p/@(cover.Id).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(cover.Id).webp 3x" type="image/webp">
+                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(cover.Id).jxl" type="image/jxl">
+                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(cover.Id).avif" type="image/avif">
+                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(cover.Id).webp" type="image/webp">
                                         <img alt="@(cover.TypeName ?? cover.Caption)"
-                                             src="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(cover.Id).jpg"
-                                             srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(cover.Id).jpg, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/1440p/@(cover.Id).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(cover.Id).jpg 3x"
+                                             src="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(cover.Id).jpg"
+                                             srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(cover.Id).jpg"
                                              style="width: 100%; max-height: 250px; object-fit: contain; border-radius: 4px;"/>
                                     </picture>
                                     <MudText Typo="Typo.caption" Align="Align.Center" Class="mt-1"><strong>@cover.TypeName</strong></MudText>
@@ -939,12 +939,12 @@ else
                             <MudCard Elevation="1" Class="rounded-lg" Style="width: 200px; cursor: pointer;" @onclick="() => _fullscreenScreenshot = screenshot">
                                 <MudCardContent Class="pa-2">
                                     <picture>
-                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jxl/hd/@(screenshot.Id).jxl, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jxl/1440p/@(screenshot.Id).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jxl/4k/@(screenshot.Id).jxl 3x" type="image/jxl">
-                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/avif/hd/@(screenshot.Id).avif, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/avif/1440p/@(screenshot.Id).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/avif/4k/@(screenshot.Id).avif 3x" type="image/avif">
-                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/webp/hd/@(screenshot.Id).webp, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/webp/1440p/@(screenshot.Id).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/webp/4k/@(screenshot.Id).webp 3x" type="image/webp">
+                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jxl/4k/@(screenshot.Id).jxl" type="image/jxl">
+                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/avif/4k/@(screenshot.Id).avif" type="image/avif">
+                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/webp/4k/@(screenshot.Id).webp" type="image/webp">
                                         <img alt="@screenshot.Caption"
-                                             src="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/hd/@(screenshot.Id).jpg"
-                                             srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/hd/@(screenshot.Id).jpg, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/1440p/@(screenshot.Id).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/4k/@(screenshot.Id).jpg 3x"
+                                             src="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/4k/@(screenshot.Id).jpg"
+                                             srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/4k/@(screenshot.Id).jpg"
                                              style="width: 100%; max-height: 150px; object-fit: contain; border-radius: 4px;"/>
                                     </picture>
                                     @if(!string.IsNullOrEmpty(screenshot.Caption))
@@ -1076,12 +1076,12 @@ else
                                      @onclick="() => _fullscreenPromo = promo">
                                 <MudCardContent Class="pa-2">
                                     <picture>
-                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/jxl/hd/@(promo.Id).jxl, @(AssetUrls.BaseUrl)/assets/photos/software-promo-art/jxl/1440p/@(promo.Id).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/software-promo-art/jxl/4k/@(promo.Id).jxl 3x" type="image/jxl">
-                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/avif/hd/@(promo.Id).avif, @(AssetUrls.BaseUrl)/assets/photos/software-promo-art/avif/1440p/@(promo.Id).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/software-promo-art/avif/4k/@(promo.Id).avif 3x" type="image/avif">
-                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/webp/hd/@(promo.Id).webp, @(AssetUrls.BaseUrl)/assets/photos/software-promo-art/webp/1440p/@(promo.Id).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/software-promo-art/webp/4k/@(promo.Id).webp 3x" type="image/webp">
+                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/jxl/4k/@(promo.Id).jxl" type="image/jxl">
+                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/avif/4k/@(promo.Id).avif" type="image/avif">
+                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/webp/4k/@(promo.Id).webp" type="image/webp">
                                         <img alt="@(promo.Caption ?? promo.GroupName)"
-                                             src="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/jpeg/hd/@(promo.Id).jpg"
-                                             srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/jpeg/hd/@(promo.Id).jpg, @(AssetUrls.BaseUrl)/assets/photos/software-promo-art/jpeg/1440p/@(promo.Id).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/software-promo-art/jpeg/4k/@(promo.Id).jpg 3x"
+                                             src="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/jpeg/4k/@(promo.Id).jpg"
+                                             srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/jpeg/4k/@(promo.Id).jpg"
                                              style="width: 100%; height: auto; border-radius: 4px;"/>
                                     </picture>
                                     @if(!string.IsNullOrEmpty(promo.Caption))

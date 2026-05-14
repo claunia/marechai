@@ -50,32 +50,16 @@ public class Photos
         paths.Add(itemThumbsRoot);
         paths.Add(itemOriginalPhotosRoot);
 
-        paths.Add(Path.Combine(itemThumbsRoot, "jpeg", "hd"));
-        paths.Add(Path.Combine(itemThumbsRoot, "jpeg", "1440p"));
         paths.Add(Path.Combine(itemThumbsRoot, "jpeg", "4k"));
-        paths.Add(Path.Combine(itemPhotosRoot, "jpeg", "hd"));
-        paths.Add(Path.Combine(itemPhotosRoot, "jpeg", "1440p"));
         paths.Add(Path.Combine(itemPhotosRoot, "jpeg", "4k"));
 
-        paths.Add(Path.Combine(itemThumbsRoot, "webp", "hd"));
-        paths.Add(Path.Combine(itemThumbsRoot, "webp", "1440p"));
         paths.Add(Path.Combine(itemThumbsRoot, "webp", "4k"));
-        paths.Add(Path.Combine(itemPhotosRoot, "webp", "hd"));
-        paths.Add(Path.Combine(itemPhotosRoot, "webp", "1440p"));
         paths.Add(Path.Combine(itemPhotosRoot, "webp", "4k"));
 
-        paths.Add(Path.Combine(itemThumbsRoot, "avif", "hd"));
-        paths.Add(Path.Combine(itemThumbsRoot, "avif", "1440p"));
         paths.Add(Path.Combine(itemThumbsRoot, "avif", "4k"));
-        paths.Add(Path.Combine(itemPhotosRoot, "avif", "hd"));
-        paths.Add(Path.Combine(itemPhotosRoot, "avif", "1440p"));
         paths.Add(Path.Combine(itemPhotosRoot, "avif", "4k"));
 
-        paths.Add(Path.Combine(itemThumbsRoot, "jxl", "hd"));
-        paths.Add(Path.Combine(itemThumbsRoot, "jxl", "1440p"));
         paths.Add(Path.Combine(itemThumbsRoot, "jxl", "4k"));
-        paths.Add(Path.Combine(itemPhotosRoot, "jxl", "hd"));
-        paths.Add(Path.Combine(itemPhotosRoot, "jxl", "1440p"));
         paths.Add(Path.Combine(itemPhotosRoot, "jxl", "4k"));
 
         foreach(string path in paths.Where(path => !Directory.Exists(path))) Directory.CreateDirectory(path);
@@ -97,18 +81,15 @@ public class Photos
 
             string sourceFormat = Path.GetExtension(originalFile).TrimStart('.');
 
-            // Check if JXL hd thumbnail already exists — if so, assume all variants exist
-            string checkPath = Path.Combine(itemPhotosRoot, "thumbs", "jxl", "hd", $"{id}.jxl");
+            // Check if JXL 4k thumbnail already exists — if so, assume all variants exist
+            string checkPath = Path.Combine(itemPhotosRoot, "thumbs", "jxl", "4k", $"{id}.jxl");
 
             if(File.Exists(checkPath)) continue;
 
             Console.WriteLine("Backfilling JXL for {0}...", id);
 
-            foreach(string resolution in new[] { "hd", "1440p", "4k" })
-            {
-                Convert(assetRootPath, id, originalFile, sourceFormat, "JXL", resolution, true,  scan, item);
-                Convert(assetRootPath, id, originalFile, sourceFormat, "JXL", resolution, false, scan, item);
-            }
+            Convert(assetRootPath, id, originalFile, sourceFormat, "JXL", "4k", true,  scan, item);
+            Convert(assetRootPath, id, originalFile, sourceFormat, "JXL", "4k", false, scan, item);
         }
     }
 
@@ -129,32 +110,6 @@ public class Photos
 
         switch(resolution)
         {
-            case "hd":
-                if(thumbnail)
-                {
-                    width  = 256;
-                    height = 256;
-                }
-                else
-                {
-                    width  = 1920;
-                    height = 1080;
-                }
-
-                break;
-            case "1440p":
-                if(thumbnail)
-                {
-                    width  = 384;
-                    height = 384;
-                }
-                else
-                {
-                    width  = 2560;
-                    height = 1440;
-                }
-
-                break;
             case "4k":
                 if(thumbnail)
                 {
@@ -239,30 +194,14 @@ public class Photos
     {
         List<Task> pool =
         [
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JPEG", "4k",    true,  scan, item); FinishedRenderingJpeg4kThumbnail?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JPEG", "1440p", true,  scan, item); FinishedRenderingJpeg1440Thumbnail?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JPEG", "hd",    true,  scan, item); FinishedRenderingJpegHdThumbnail?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JPEG", "4k",    false, scan, item); FinishedRenderingJpeg4K?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JPEG", "1440p", false, scan, item); FinishedRenderingJpeg1440?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JPEG", "hd",    false, scan, item); FinishedRenderingJpegHd?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "WEBP", "4k",    true,  scan, item); FinishedRenderingWebp4kThumbnail?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "WEBP", "1440p", true,  scan, item); FinishedRenderingWebp1440Thumbnail?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "WEBP", "hd",    true,  scan, item); FinishedRenderingWebpHdThumbnail?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "WEBP", "4k",    false, scan, item); FinishedRenderingWebp4k?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "WEBP", "1440p", false, scan, item); FinishedRenderingWebp1440?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "WEBP", "hd",    false, scan, item); FinishedRenderingWebpHd?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "AVIF", "4k",    true,  scan, item); FinishedRenderingAvif4kThumbnail?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "AVIF", "1440p", true,  scan, item); FinishedRenderingAvif1440Thumbnail?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "AVIF", "hd",    true,  scan, item); FinishedRenderingAvifHdThumbnail?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "AVIF", "4k",    false, scan, item); FinishedRenderingAvif4K?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "AVIF", "1440p", false, scan, item); FinishedRenderingAvif1440?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "AVIF", "hd",    false, scan, item); FinishedRenderingAvifHd?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JXL",  "4k",    true,  scan, item); FinishedRenderingJxl4kThumbnail?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JXL",  "1440p", true,  scan, item); FinishedRenderingJxl1440Thumbnail?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JXL",  "hd",    true,  scan, item); FinishedRenderingJxlHdThumbnail?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JXL",  "4k",    false, scan, item); FinishedRenderingJxl4K?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JXL",  "1440p", false, scan, item); FinishedRenderingJxl1440?.Invoke(r); }),
-            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JXL",  "hd",    false, scan, item); FinishedRenderingJxlHd?.Invoke(r); })
+            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JPEG", "4k", true,  scan, item); FinishedRenderingJpeg4kThumbnail?.Invoke(r); }),
+            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JPEG", "4k", false, scan, item); FinishedRenderingJpeg4K?.Invoke(r); }),
+            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "WEBP", "4k", true,  scan, item); FinishedRenderingWebp4kThumbnail?.Invoke(r); }),
+            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "WEBP", "4k", false, scan, item); FinishedRenderingWebp4k?.Invoke(r); }),
+            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "AVIF", "4k", true,  scan, item); FinishedRenderingAvif4kThumbnail?.Invoke(r); }),
+            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "AVIF", "4k", false, scan, item); FinishedRenderingAvif4K?.Invoke(r); }),
+            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JXL",  "4k", true,  scan, item); FinishedRenderingJxl4kThumbnail?.Invoke(r); }),
+            new(() => { bool r = Convert(assetRootPath, id, originalFilePath, sourceFormat, "JXL",  "4k", false, scan, item); FinishedRenderingJxl4K?.Invoke(r); })
         ];
 
         foreach(Task thread in pool) thread.Start();
@@ -274,28 +213,12 @@ public class Photos
 
     public event ConversionFinished FinishedAll;
 
-    public event ConversionFinished FinishedRenderingJpegHdThumbnail;
-    public event ConversionFinished FinishedRenderingJpeg1440Thumbnail;
     public event ConversionFinished FinishedRenderingJpeg4kThumbnail;
-    public event ConversionFinished FinishedRenderingJpegHd;
-    public event ConversionFinished FinishedRenderingJpeg1440;
     public event ConversionFinished FinishedRenderingJpeg4K;
-    public event ConversionFinished FinishedRenderingWebpHdThumbnail;
-    public event ConversionFinished FinishedRenderingWebp1440Thumbnail;
     public event ConversionFinished FinishedRenderingWebp4kThumbnail;
-    public event ConversionFinished FinishedRenderingWebpHd;
-    public event ConversionFinished FinishedRenderingWebp1440;
     public event ConversionFinished FinishedRenderingWebp4k;
-    public event ConversionFinished FinishedRenderingAvifHdThumbnail;
-    public event ConversionFinished FinishedRenderingAvif1440Thumbnail;
     public event ConversionFinished FinishedRenderingAvif4kThumbnail;
-    public event ConversionFinished FinishedRenderingAvifHd;
-    public event ConversionFinished FinishedRenderingAvif1440;
     public event ConversionFinished FinishedRenderingAvif4K;
-    public event ConversionFinished FinishedRenderingJxlHdThumbnail;
-    public event ConversionFinished FinishedRenderingJxl1440Thumbnail;
     public event ConversionFinished FinishedRenderingJxl4kThumbnail;
-    public event ConversionFinished FinishedRenderingJxlHd;
-    public event ConversionFinished FinishedRenderingJxl1440;
     public event ConversionFinished FinishedRenderingJxl4K;
 }

@@ -314,7 +314,7 @@ public class SoftwareScreenshotsController(MarechaiContext context, IConfigurati
 
         // Delete all format/resolution variants (full + thumbnails)
         string[] formats     = ["jpeg", "webp", "avif"];
-        string[] resolutions = ["hd", "1440p", "4k"];
+        string[] resolutions = ["4k"];
 
         foreach(string format in formats)
         {

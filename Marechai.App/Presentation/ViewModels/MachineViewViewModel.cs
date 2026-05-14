@@ -489,7 +489,7 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
                     Kind              = (SoftwareKind)(sw.Kind ?? 0),
                     FrontCoverId      = sw.FrontCoverId,
                     CoverImageUrl     = sw.FrontCoverId.HasValue
-                                            ? $"{baseUrl}/assets/photos/software-covers/webp/hd/{sw.FrontCoverId}.webp"
+                                            ? $"{baseUrl}/assets/photos/software-covers/webp/4k/{sw.FrontCoverId}.webp"
                                             : null
                 });
             }

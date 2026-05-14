@@ -57,11 +57,11 @@
         @if(_issue.CoverGuid.HasValue)
         {
             <picture>
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/jxl/hd/@(_issue.CoverGuid).jxl" type="image/jxl">
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/avif/hd/@(_issue.CoverGuid).avif" type="image/avif">
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/webp/hd/@(_issue.CoverGuid).webp" type="image/webp">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/jxl/4k/@(_issue.CoverGuid).jxl" type="image/jxl">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/avif/4k/@(_issue.CoverGuid).avif" type="image/avif">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/webp/4k/@(_issue.CoverGuid).webp" type="image/webp">
                 <img alt="@_issue.Caption" height="200"
-                     src="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/jpeg/hd/@(_issue.CoverGuid).jpg"
+                     src="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/jpeg/4k/@(_issue.CoverGuid).jpg"
                      style="object-fit: contain; border-radius: 4px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));"/>
             </picture>
         }

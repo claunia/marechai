@@ -65,12 +65,12 @@
                         @if(book.CoverGuid.HasValue)
                         {
                             <picture>
-                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/jxl/hd/@(book.CoverGuid).jxl, @(AssetUrls.BaseUrl)/assets/photos/book-covers/jxl/1440p/@(book.CoverGuid).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/book-covers/jxl/4k/@(book.CoverGuid).jxl 3x" type="image/jxl">
-                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/avif/hd/@(book.CoverGuid).avif, @(AssetUrls.BaseUrl)/assets/photos/book-covers/avif/1440p/@(book.CoverGuid).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/book-covers/avif/4k/@(book.CoverGuid).avif 3x" type="image/avif">
-                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/webp/hd/@(book.CoverGuid).webp, @(AssetUrls.BaseUrl)/assets/photos/book-covers/webp/1440p/@(book.CoverGuid).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/book-covers/webp/4k/@(book.CoverGuid).webp 3x" type="image/webp">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/jxl/4k/@(book.CoverGuid).jxl" type="image/jxl">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/avif/4k/@(book.CoverGuid).avif" type="image/avif">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/webp/4k/@(book.CoverGuid).webp" type="image/webp">
                                 <img alt="@book.Title" height="48"
-                                     src="@(AssetUrls.BaseUrl)/assets/photos/book-covers/jpeg/hd/@(book.CoverGuid).jpg"
-                                     srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/jpeg/hd/@(book.CoverGuid).jpg, @(AssetUrls.BaseUrl)/assets/photos/book-covers/jpeg/1440p/@(book.CoverGuid).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/book-covers/jpeg/4k/@(book.CoverGuid).jpg 3x"
+                                     src="@(AssetUrls.BaseUrl)/assets/photos/book-covers/jpeg/4k/@(book.CoverGuid).jpg"
+                                     srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/jpeg/4k/@(book.CoverGuid).jpg"
                                      style="object-fit: contain; border-radius: 4px;"/>
                             </picture>
                         }

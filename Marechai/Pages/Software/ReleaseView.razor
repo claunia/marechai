@@ -58,12 +58,12 @@
         @if(_heroCover is not null)
         {
             <picture>
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/hd/@(_heroCover.Id).jxl, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/1440p/@(_heroCover.Id).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(_heroCover.Id).jxl 3x" type="image/jxl">
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/hd/@(_heroCover.Id).avif, @(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/1440p/@(_heroCover.Id).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(_heroCover.Id).avif 3x" type="image/avif">
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/hd/@(_heroCover.Id).webp, @(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/1440p/@(_heroCover.Id).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(_heroCover.Id).webp 3x" type="image/webp">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(_heroCover.Id).jxl" type="image/jxl">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(_heroCover.Id).avif" type="image/avif">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(_heroCover.Id).webp" type="image/webp">
                 <img alt="@(!string.IsNullOrEmpty(_softwareName) ? _softwareName : _release.Title)"
-                     src="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(_heroCover.Id).jpg"
-                     srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(_heroCover.Id).jpg, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/1440p/@(_heroCover.Id).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(_heroCover.Id).jpg 3x"
+                     src="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(_heroCover.Id).jpg"
+                     srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(_heroCover.Id).jpg"
                      style="max-height: 256px; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);"/>
             </picture>
         }
@@ -524,12 +524,12 @@
                             <MudCard Elevation="1" Class="rounded-lg" Style="width: 200px; cursor: pointer;" @onclick="() => _fullscreenCover = cover">
                                 <MudCardContent Class="pa-2">
                                     <picture>
-                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/hd/@(cover.Id).jxl, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/1440p/@(cover.Id).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(cover.Id).jxl 3x" type="image/jxl">
-                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/hd/@(cover.Id).avif, @(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/1440p/@(cover.Id).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(cover.Id).avif 3x" type="image/avif">
-                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/hd/@(cover.Id).webp, @(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/1440p/@(cover.Id).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(cover.Id).webp 3x" type="image/webp">
+                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(cover.Id).jxl" type="image/jxl">
+                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(cover.Id).avif" type="image/avif">
+                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(cover.Id).webp" type="image/webp">
                                         <img alt="@(cover.TypeName ?? cover.Caption)"
-                                             src="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(cover.Id).jpg"
-                                             srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/hd/@(cover.Id).jpg, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/1440p/@(cover.Id).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(cover.Id).jpg 3x"
+                                             src="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(cover.Id).jpg"
+                                             srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(cover.Id).jpg"
                                              style="width: 100%; max-height: 250px; object-fit: contain; border-radius: 4px;"/>
                                     </picture>
                                     @if(!string.IsNullOrEmpty(cover.Caption))

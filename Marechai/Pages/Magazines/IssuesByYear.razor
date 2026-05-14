@@ -113,11 +113,11 @@
                         @if(issue.CoverGuid.HasValue)
                         {
                             <picture>
-                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/jxl/hd/@(issue.CoverGuid).jxl" type="image/jxl">
-                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/avif/hd/@(issue.CoverGuid).avif" type="image/avif">
-                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/webp/hd/@(issue.CoverGuid).webp" type="image/webp">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/jxl/4k/@(issue.CoverGuid).jxl" type="image/jxl">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/avif/4k/@(issue.CoverGuid).avif" type="image/avif">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/webp/4k/@(issue.CoverGuid).webp" type="image/webp">
                                 <img alt="@issue.Caption"
-                                     src="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/jpeg/hd/@(issue.CoverGuid).jpg"
+                                     src="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/jpeg/4k/@(issue.CoverGuid).jpg"
                                      loading="lazy"
                                      style="width: 100%; height: 100%; object-fit: cover; display: block;"/>
                             </picture>

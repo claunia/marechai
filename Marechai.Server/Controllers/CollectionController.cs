@@ -104,7 +104,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
                                                         BookId      = c.BookId,
                                                         Title       = c.Book.Title,
                                                         CoverUrl    = c.Book.CoverGuid != null
-                                                            ? $"photos/books/thumbs/jpeg/hd/{c.Book.CoverGuid}.jpg"
+                                                            ? $"photos/books/thumbs/jpeg/4k/{c.Book.CoverGuid}.jpg"
                                                             : null,
                                                         Published   = c.Book.Published,
                                                         CollectedOn = c.CreatedOn

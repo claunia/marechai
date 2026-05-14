@@ -307,7 +307,7 @@ internal static class PersonSuggestionApplier
         DeleteFilesByPattern(System.IO.Path.Combine(photosRoot, "originals"), guidStr + ".*");
 
         string[] formats     = ["jpeg", "webp", "avif", "jxl"];
-        string[] resolutions = ["hd", "1440p", "4k"];
+        string[] resolutions = ["4k"];
 
         foreach(string format in formats)
         {

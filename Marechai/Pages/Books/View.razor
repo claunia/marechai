@@ -59,12 +59,12 @@
         @if(_book.CoverGuid.HasValue)
         {
             <picture>
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/jxl/hd/@(_book.CoverGuid).jxl, @(AssetUrls.BaseUrl)/assets/photos/book-covers/jxl/1440p/@(_book.CoverGuid).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/book-covers/jxl/4k/@(_book.CoverGuid).jxl 3x" type="image/jxl">
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/avif/hd/@(_book.CoverGuid).avif, @(AssetUrls.BaseUrl)/assets/photos/book-covers/avif/1440p/@(_book.CoverGuid).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/book-covers/avif/4k/@(_book.CoverGuid).avif 3x" type="image/avif">
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/webp/hd/@(_book.CoverGuid).webp, @(AssetUrls.BaseUrl)/assets/photos/book-covers/webp/1440p/@(_book.CoverGuid).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/book-covers/webp/4k/@(_book.CoverGuid).webp 3x" type="image/webp">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/jxl/4k/@(_book.CoverGuid).jxl" type="image/jxl">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/avif/4k/@(_book.CoverGuid).avif" type="image/avif">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/webp/4k/@(_book.CoverGuid).webp" type="image/webp">
                 <img alt="@_book.Title" height="200"
-                     src="@(AssetUrls.BaseUrl)/assets/photos/book-covers/jpeg/hd/@(_book.CoverGuid).jpg"
-                     srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/jpeg/hd/@(_book.CoverGuid).jpg, @(AssetUrls.BaseUrl)/assets/photos/book-covers/jpeg/1440p/@(_book.CoverGuid).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/book-covers/jpeg/4k/@(_book.CoverGuid).jpg 3x"
+                     src="@(AssetUrls.BaseUrl)/assets/photos/book-covers/jpeg/4k/@(_book.CoverGuid).jpg"
+                     srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/jpeg/4k/@(_book.CoverGuid).jpg"
                      style="object-fit: contain; border-radius: 4px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));" />
             </picture>
         }

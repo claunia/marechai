@@ -49,7 +49,7 @@ internal static class UserAvatar
             return $"https://www.gravatar.com/avatar/{sb}?s=256&d=identicon";
         }
 
-        if(user.AvatarGuid.HasValue) return $"photos/avatars/thumbs/jpeg/hd/{user.AvatarGuid}.jpg";
+        if(user.AvatarGuid.HasValue) return $"photos/avatars/thumbs/jpeg/4k/{user.AvatarGuid}.jpg";
 
         return null;
     }

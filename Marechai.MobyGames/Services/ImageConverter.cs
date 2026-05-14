@@ -30,7 +30,7 @@ public static class ImageConverter
 
         foreach(string format in new[] { "jpeg", "webp", "avif", "jxl" })
         {
-            foreach(string resolution in new[] { "hd", "1440p", "4k" })
+            foreach(string resolution in new[] { "4k" })
             {
                 paths.Add(Path.Combine(itemThumbsRoot, format, resolution));
                 paths.Add(Path.Combine(itemPhotosRoot, format, resolution));
@@ -47,7 +47,7 @@ public static class ImageConverter
                                   string itemName)
     {
         string[] formats     = ["JPEG", "WEBP", "AVIF", "JXL"];
-        string[] resolutions = ["hd", "1440p", "4k"];
+        string[] resolutions = ["4k"];
 
         List<Task> pool = [];
 
@@ -95,16 +95,6 @@ public static class ImageConverter
 
         switch(resolution)
         {
-            case "hd":
-                if(thumbnail) { width = 256;  height = 256; }
-                else          { width = 1920; height = 1080; }
-
-                break;
-            case "1440p":
-                if(thumbnail) { width = 384;  height = 384; }
-                else          { width = 2560; height = 1440; }
-
-                break;
             case "4k":
                 if(thumbnail) { width = 512;  height = 512; }
                 else          { width = 3840; height = 2160; }

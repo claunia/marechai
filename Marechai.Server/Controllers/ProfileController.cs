@@ -110,7 +110,7 @@ public class ProfileController(UserManager<ApplicationUser> userManager, Marecha
         }
 
         if(user.AvatarGuid.HasValue)
-            return $"photos/avatars/thumbs/jpeg/hd/{user.AvatarGuid}.jpg";
+            return $"photos/avatars/thumbs/jpeg/4k/{user.AvatarGuid}.jpg";
 
         return null;
     }

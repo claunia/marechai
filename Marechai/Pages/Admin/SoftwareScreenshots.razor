@@ -78,12 +78,12 @@
                         <MudCard>
                             <MudCardContent Class="pa-2 d-flex flex-column align-center">
                                 <picture>
-                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jxl/hd/@(screenshot.Id.Value).jxl, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jxl/1440p/@(screenshot.Id.Value).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jxl/4k/@(screenshot.Id.Value).jxl 3x" type="image/jxl">
-                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/avif/hd/@(screenshot.Id.Value).avif, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/avif/1440p/@(screenshot.Id.Value).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/avif/4k/@(screenshot.Id.Value).avif 3x" type="image/avif">
-                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/webp/hd/@(screenshot.Id.Value).webp, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/webp/1440p/@(screenshot.Id.Value).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/webp/4k/@(screenshot.Id.Value).webp 3x" type="image/webp">
+                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jxl/4k/@(screenshot.Id.Value).jxl" type="image/jxl">
+                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/avif/4k/@(screenshot.Id.Value).avif" type="image/avif">
+                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/webp/4k/@(screenshot.Id.Value).webp" type="image/webp">
                                     <img alt="@(screenshot.Caption ?? screenshot.Id.Value.ToString())"
-                                         src="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/hd/@(screenshot.Id.Value).jpg"
-                                         srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/hd/@(screenshot.Id.Value).jpg, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/1440p/@(screenshot.Id.Value).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/4k/@(screenshot.Id.Value).jpg 3x"
+                                         src="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/4k/@(screenshot.Id.Value).jpg"
+                                         srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/4k/@(screenshot.Id.Value).jpg"
                                          style="width: 100%; max-height: 150px; object-fit: contain; border-radius: 4px;"/>
                                 </picture>
                                 <MudSelect T="SoftwarePlatformDto"

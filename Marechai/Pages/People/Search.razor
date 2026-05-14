@@ -65,12 +65,12 @@
                         @if(person.Photo.HasValue && person.Photo.Value != Guid.Empty)
                         {
                             <picture>
-                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/people/jxl/hd/@(person.Photo).jxl, @(AssetUrls.BaseUrl)/assets/photos/people/jxl/1440p/@(person.Photo).jxl 2x, @(AssetUrls.BaseUrl)/assets/photos/people/jxl/4k/@(person.Photo).jxl 3x" type="image/jxl">
-                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/people/avif/hd/@(person.Photo).avif, @(AssetUrls.BaseUrl)/assets/photos/people/avif/1440p/@(person.Photo).avif 2x, @(AssetUrls.BaseUrl)/assets/photos/people/avif/4k/@(person.Photo).avif 3x" type="image/avif">
-                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/people/webp/hd/@(person.Photo).webp, @(AssetUrls.BaseUrl)/assets/photos/people/webp/1440p/@(person.Photo).webp 2x, @(AssetUrls.BaseUrl)/assets/photos/people/webp/4k/@(person.Photo).webp 3x" type="image/webp">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/people/jxl/4k/@(person.Photo).jxl" type="image/jxl">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/people/avif/4k/@(person.Photo).avif" type="image/avif">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/people/webp/4k/@(person.Photo).webp" type="image/webp">
                                 <img alt="@(person.DisplayName ?? person.Alias ?? $"{person.Name} {person.Surname}".Trim())" height="48"
-                                     src="@(AssetUrls.BaseUrl)/assets/photos/people/jpeg/hd/@(person.Photo).jpg"
-                                     srcset="@(AssetUrls.BaseUrl)/assets/photos/people/jpeg/hd/@(person.Photo).jpg, @(AssetUrls.BaseUrl)/assets/photos/people/jpeg/1440p/@(person.Photo).jpg 2x, @(AssetUrls.BaseUrl)/assets/photos/people/jpeg/4k/@(person.Photo).jpg 3x"
+                                     src="@(AssetUrls.BaseUrl)/assets/photos/people/jpeg/4k/@(person.Photo).jpg"
+                                     srcset="@(AssetUrls.BaseUrl)/assets/photos/people/jpeg/4k/@(person.Photo).jpg"
                                      style="object-fit: contain; border-radius: 4px;"/>
                             </picture>
                         }
