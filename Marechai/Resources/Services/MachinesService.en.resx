@@ -652,4 +652,55 @@
   <data name="No photos for this device yet — help us by uploading some." xml:space="preserve">
     <value>No photos for this device yet — help us by uploading some.</value>
   </data>
+  <data name="Suggest a YouTube video" xml:space="preserve">
+    <value>Suggest a YouTube video</value>
+  </data>
+  <data name="Suggest a YouTube video for {0}. The video title will be fetched automatically from YouTube when you submit." xml:space="preserve">
+    <value>Suggest a YouTube video for {0}. The video title will be fetched automatically from YouTube when you submit.</value>
+  </data>
+  <data name="YouTube URL or video ID" xml:space="preserve">
+    <value>YouTube URL or video ID</value>
+  </data>
+  <data name="Paste a YouTube URL or 11-character video ID. The title will be fetched automatically from YouTube." xml:space="preserve">
+    <value>Paste a YouTube URL or 11-character video ID. The title will be fetched automatically from YouTube.</value>
+  </data>
+  <data name="This is not a valid YouTube URL or video ID." xml:space="preserve">
+    <value>This is not a valid YouTube URL or video ID.</value>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="Title will be fetched from YouTube when you submit." xml:space="preserve">
+    <value>Title will be fetched from YouTube when you submit.</value>
+  </data>
+  <data name="Note to reviewer (optional)" xml:space="preserve">
+    <value>Note to reviewer (optional)</value>
+  </data>
+  <data name="Add any context that helps the admin decide." xml:space="preserve">
+    <value>Add any context that helps the admin decide.</value>
+  </data>
+  <data name="Submitting…" xml:space="preserve">
+    <value>Submitting…</value>
+  </data>
+  <data name="Suggest more videos" xml:space="preserve">
+    <value>Suggest more videos</value>
+  </data>
+  <data name="Video link submitted for review. An administrator will accept or reject it." xml:space="preserve">
+    <value>Video link submitted for review. An administrator will accept or reject it.</value>
+  </data>
+  <data name="Suggested video" xml:space="preserve">
+    <value>Suggested video</value>
+  </data>
+  <data name="We have no videos available about this computer." xml:space="preserve">
+    <value>We have no videos available about this computer.</value>
+  </data>
+  <data name="We have no videos available about this console." xml:space="preserve">
+    <value>We have no videos available about this console.</value>
+  </data>
+  <data name="We have no videos available about this smartphone." xml:space="preserve">
+    <value>We have no videos available about this smartphone.</value>
+  </data>
+  <data name="We have no videos available about this machine." xml:space="preserve">
+    <value>We have no videos available about this machine.</value>
+  </data>
 </root>

@@ -523,6 +523,21 @@ public class SuggestionsController(MarechaiContext context,
             subkey                                                        = vid;
         }
 
+        // ---- Machine video link payload validation (calls YouTube oEmbed for canonical title) ----
+        if(dto.EntityType == SuggestionEntityType.MachineVideo)
+        {
+            var (ok, err, vid, fetchedTitle) = await Suggestions.MachineVideoSuggestionApplier.ValidateAsync(
+                                                   context, dto.EntityId, values, httpClientFactory);
+
+            if(!ok)
+                return Problem(title: "Invalid machine video suggestion",
+                               detail: err,
+                               statusCode: StatusCodes.Status400BadRequest);
+
+            values[Suggestions.MachineVideoSuggestionApplier.FieldTitle] = fetchedTitle;
+            subkey                                                       = vid;
+        }
+
         // ---- Existence check on target entity (edits only) --------------------------
         // For additions, the entity does not exist yet; the display name is derived from the
         // suggested 'name' payload field at projection time.
@@ -1186,6 +1201,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.ProcessorVideo     => true,
         SuggestionEntityType.SoundSynthVideo    => true,
         SuggestionEntityType.SoftwareVideo      => true,
+        SuggestionEntityType.MachineVideo       => true,
         _                                  => GetKnownFieldNames(type) is not null
     };
 
@@ -1264,6 +1280,9 @@ public class SuggestionsController(MarechaiContext context,
 
         if(type == SuggestionEntityType.SoftwareVideo)
             return Suggestions.SoftwareVideoSuggestionApplier.IsKnownFieldName(fieldName);
+
+        if(type == SuggestionEntityType.MachineVideo)
+            return Suggestions.MachineVideoSuggestionApplier.IsKnownFieldName(fieldName);
 
         IReadOnlyCollection<string> set = GetKnownFieldNames(type);
         return set is not null && set.Contains(fieldName);
@@ -1470,6 +1489,12 @@ public class SuggestionsController(MarechaiContext context,
                     context, entityId, suggested, accepted, creditedUserId);
                 return new ApplyResult(applied, missing);
             }
+            case SuggestionEntityType.MachineVideo:
+            {
+                var (applied, missing) = await Suggestions.MachineVideoSuggestionApplier.ApplyAsync(
+                    context, entityId, suggested, accepted, creditedUserId);
+                return new ApplyResult(applied, missing);
+            }
             case SuggestionEntityType.SoftwareVideo:
             {
                 var (applied, missing) = await Suggestions.SoftwareVideoSuggestionApplier.ApplyAsync(
@@ -1553,6 +1578,8 @@ public class SuggestionsController(MarechaiContext context,
                 await Suggestions.SoundSynthVideoSuggestionApplier.GetCurrentValuesAsync(context, entityId),
             SuggestionEntityType.SoftwareVideo =>
                 await Suggestions.SoftwareVideoSuggestionApplier.GetCurrentValuesAsync(context, entityId),
+            SuggestionEntityType.MachineVideo =>
+                await Suggestions.MachineVideoSuggestionApplier.GetCurrentValuesAsync(context, entityId),
             _ => null
         };
     }
@@ -1570,6 +1597,7 @@ public class SuggestionsController(MarechaiContext context,
             case SuggestionEntityType.Machine:
             case SuggestionEntityType.MachineDescription:
             case SuggestionEntityType.MachinePhoto:
+            case SuggestionEntityType.MachineVideo:
                 return await context.Machines.AsNoTracking()
                                     .Where(m => m.Id == (int)entityId)
                                     .Select(m => m.Name)
@@ -5188,6 +5216,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.ProcessorVideo        => $"/processor/{entityId}",
         SuggestionEntityType.SoundSynthVideo       => $"/soundsynth/{entityId}",
         SuggestionEntityType.SoftwareVideo         => $"/software/{entityId}",
+        SuggestionEntityType.MachineVideo          => $"/machine/{entityId}",
         _                                       => null
     };
 
@@ -5224,6 +5253,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.ProcessorVideo      => "processor video link",
         SuggestionEntityType.SoundSynthVideo     => "sound synth video link",
         SuggestionEntityType.SoftwareVideo       => "software video link",
+        SuggestionEntityType.MachineVideo        => "machine video link",
         SuggestionEntityType.ProcessorDescription => "processor description",
         SuggestionEntityType.SoundSynthDescription => "sound synth description",
         SuggestionEntityType.PersonDescription   => "person biography",

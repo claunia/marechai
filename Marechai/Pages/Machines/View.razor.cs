@@ -403,4 +403,50 @@ public partial class View
             // Method left as a hook in case future revisions want to surface a hint.
         }
     }
+
+    /// <summary>"We have no videos available about this computer/console/smartphone." —
+    /// device-specific empty-state hint shown above the Suggest-video button.</summary>
+    string NoVideosHint => DeviceKind switch
+    {
+        MachineType.Computer   => L["We have no videos available about this computer."],
+        MachineType.Console    => L["We have no videos available about this console."],
+        MachineType.Smartphone => L["We have no videos available about this smartphone."],
+        _                      => L["We have no videos available about this machine."]
+    };
+
+    /// <summary>
+    ///     Open the collaborative machine-video suggestion dialog. The signed-in user pastes
+    ///     a YouTube URL or 11-character video ID; the canonical title is fetched server-side
+    ///     from oEmbed at submission time. Whole suggestion accepted/rejected as a unit (no
+    ///     per-item dynamic accept-keys). Add-only — collaborators cannot edit/remove
+    ///     existing videos. ONE enum value (<see cref="SuggestionEntityType.MachineVideo"/>)
+    ///     covers Computer/Console/Smartphone via the shared Machine table.
+    /// </summary>
+    async Task OpenSuggestVideoDialog()
+    {
+        int machineId = Id;
+        if(machineId <= 0) return;
+
+        var dialogParams = new DialogParameters
+        {
+            ["EntityId"]    = (long)machineId,
+            ["MachineName"] = _machine?.Name ?? string.Empty
+        };
+        var dialogOptions = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Medium
+        };
+
+        var dialogRef = await DialogService.ShowAsync<MachineVideoSuggestionDialog>(
+            L["Suggest a YouTube video"], dialogParams, dialogOptions);
+
+        DialogResult result = await dialogRef.Result;
+
+        if(result is { Canceled: false })
+        {
+            // Video won't appear until an admin accepts it; nothing to refresh now.
+        }
+    }
 }
