@@ -67,6 +67,7 @@ public static class Register
         services.AddScoped<SoftwareVersionsService>();
         services.AddScoped<SoftwareReleasesService>();
         services.AddScoped<SmartphonesService>();
+        services.AddScoped<PdasService>();
         services.AddScoped<AuthService>();
         services.AddScoped<UsersService>();
         services.AddScoped<InvitationCodesService>();

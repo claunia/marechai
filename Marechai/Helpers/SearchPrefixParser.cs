@@ -35,7 +35,7 @@ namespace Marechai.Helpers;
 ///
 ///     Prefix table (must match the help footer rendered by SearchBar.razor):
 ///       <c>c/</c> Company, <c>m/</c> Computer, <c>cn/</c> Console, <c>sm/</c> Smartphone,
-///       <c>b/</c> Book, <c>d/</c> Document, <c>mg/</c> Magazine, <c>g/</c> Gpu,
+///       <c>pda/</c> Pda, <c>b/</c> Book, <c>d/</c> Document, <c>mg/</c> Magazine, <c>g/</c> Gpu,
 ///       <c>p/</c> Processor, <c>s/</c> SoundSynth, <c>pe/</c> Person, <c>sw/</c> Software,
 ///       <c>cl/</c> SoftwareCompilation.
 /// </summary>
@@ -48,6 +48,7 @@ public static class SearchPrefixParser
             ["m"]  = SearchEntityType.Computer,
             ["cn"] = SearchEntityType.Console,
             ["sm"] = SearchEntityType.Smartphone,
+            ["pda"] = SearchEntityType.Pda,
             ["b"]  = SearchEntityType.Book,
             ["d"]  = SearchEntityType.Document,
             ["mg"] = SearchEntityType.Magazine,

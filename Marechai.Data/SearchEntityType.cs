@@ -43,5 +43,6 @@ public enum SearchEntityType : byte
     SoundSynth          = 10,
     Person              = 11,
     Software            = 12,
-    SoftwareCompilation = 13
+    SoftwareCompilation = 13,
+    Pda                 = 14
 }

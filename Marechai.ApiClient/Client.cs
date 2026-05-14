@@ -30,6 +30,7 @@ using Marechai.ApiClient.Medias;
 using Marechai.ApiClient.MemoriesByMachine;
 using Marechai.ApiClient.Messages;
 using Marechai.ApiClient.News;
+using Marechai.ApiClient.Pdas;
 using Marechai.ApiClient.People;
 using Marechai.ApiClient.PeopleByBook;
 using Marechai.ApiClient.PeopleByCompany;
@@ -221,6 +222,11 @@ namespace Marechai.ApiClient
         public global::Marechai.ApiClient.News.NewsRequestBuilder News
         {
             get => new global::Marechai.ApiClient.News.NewsRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The pdas property</summary>
+        public global::Marechai.ApiClient.Pdas.PdasRequestBuilder Pdas
+        {
+            get => new global::Marechai.ApiClient.Pdas.PdasRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The people property</summary>
         public global::Marechai.ApiClient.People.PeopleRequestBuilder People

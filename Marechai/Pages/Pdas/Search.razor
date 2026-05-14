@@ -1,0 +1,89 @@
+@{
+    /******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2026 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/pdas/all"
+@page "/pdas/year/{Year:int}"
+@page "/pdas/{StartingCharacter}"
+@using Marechai.ApiClient.Models
+@inherits OwningComponentBase<PdasService>
+@inject IStringLocalizer<PdasService> L
+
+@if(!_initialized)
+{
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true"/>
+    </div>
+
+    return;
+}
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
+    <MudText Typo="Typo.h5" Style="color: white;">@L["Search results:"]</MudText>
+    @if(_character.HasValue)
+    {
+        <MudText Typo="Typo.h6" Style="color: rgba(255,255,255,0.85);">@string.Format(L["PDAs starting with {0}"], _character)</MudText>
+    }
+    else if(_showPrototypes)
+    {
+        <MudText Typo="Typo.h6" Style="color: rgba(255,255,255,0.85);">@L["Prototype PDAs"]</MudText>
+    }
+    else if(Year.HasValue)
+    {
+        <MudText Typo="Typo.h6" Style="color: rgba(255,255,255,0.85);">@string.Format(L["PDAs introduced in {0}"], Year)</MudText>
+    }
+</MudPaper>
+
+@if(_total > 0)
+{
+    <MudText Typo="Typo.body2" Class="mb-2">@string.Format(L["{0} PDAs found in the database."], _total)</MudText>
+    <div id="@_scrollerId" style="height: calc(100dvh - 220px); min-height: 360px; overflow-y: auto;">
+        <MudList T="MachineDto" Dense="true">
+            <Virtualize Items="_pdas" Context="PDA" ItemSize="64">
+                <MudListItem T="MachineDto" Href="@($"/machine/{PDA.Id}")" Icon="@Icons.Material.Filled.Devices">
+                    @PDA.Company @PDA.Name
+                </MudListItem>
+            </Virtualize>
+        </MudList>
+        <div id="@_sentinelId" style="height: 1px;"></div>
+        @if(_loadingMore)
+        {
+            <div class="d-flex justify-center pa-3">
+                <MudProgressCircular Color="Color.Primary" Size="Size.Small" Indeterminate="true"/>
+            </div>
+        }
+    </div>
+}
+else
+{
+    @if(_character.HasValue)
+    {
+        <MudAlert Severity="Severity.Info">@L["There are no PDAs found in the database that start with this letter."]</MudAlert>
+    }
+    else if(Year.HasValue)
+    {
+        <MudAlert Severity="Severity.Info">@L["There are no PDAs found introduced this year."]</MudAlert>
+    }
+}
