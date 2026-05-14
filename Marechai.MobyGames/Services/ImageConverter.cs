@@ -114,9 +114,6 @@ public static class ImageConverter
                 return false;
         }
 
-        string tmpPath;
-        bool   ret;
-
         switch(outputFormat)
         {
             case "jpeg":
@@ -132,73 +129,15 @@ public static class ImageConverter
             case "avif":
                 outputPath = Path.Combine(outputPath, $"{id}.avif");
 
-                tmpPath = Path.GetTempFileName();
-                File.Delete(tmpPath);
-                tmpPath += ".png";
-
-                ret = ConvertUsingImageMagick(originalPath, tmpPath, width, height);
-
-                if(!ret)
-                {
-                    File.Delete(tmpPath);
-
-                    return ret;
-                }
-
-                ret = ConvertToAvif(tmpPath, outputPath);
-
-                File.Delete(tmpPath);
-
-                return ret;
+                return ConvertUsingImageMagick(originalPath, outputPath, width, height);
 
             case "jxl":
                 outputPath = Path.Combine(outputPath, $"{id}.jxl");
 
-                return ConvertToJxl(originalPath, outputPath, width, height);
+                return ConvertUsingImageMagick(originalPath, outputPath, width, height);
 
             default:
                 return false;
-        }
-    }
-
-    static bool ConvertToJxl(string originalPath, string outputPath, int width, int height)
-    {
-        var convert = new Process
-        {
-            StartInfo =
-            {
-                FileName               = "convert",
-                CreateNoWindow         = true,
-                RedirectStandardError  = true,
-                RedirectStandardOutput = true,
-                ArgumentList =
-                {
-                    "-resize",
-                    $"{width}x{height}>",
-                    "-strip",
-                    "-define",
-                    "jxl:encoder=vardct",
-                    "-define",
-                    "jxl:distance=4",
-                    "-define",
-                    "jxl:effort=9",
-                    originalPath,
-                    outputPath
-                }
-            }
-        };
-
-        try
-        {
-            convert.Start();
-            convert.StandardOutput.ReadToEnd();
-            convert.WaitForExit();
-
-            return convert.ExitCode == 0;
-        }
-        catch(Exception)
-        {
-            return false;
         }
     }
 
@@ -217,6 +156,8 @@ public static class ImageConverter
                     "-resize",
                     $"{width}x{height}>",
                     "-strip",
+                    "-quality",
+                    "80",
                     originalPath,
                     outputPath
                 }
@@ -230,40 +171,6 @@ public static class ImageConverter
             convert.WaitForExit();
 
             return convert.ExitCode == 0;
-        }
-        catch(Exception)
-        {
-            return false;
-        }
-    }
-
-    static bool ConvertToAvif(string originalPath, string outputPath)
-    {
-        var avif = new Process
-        {
-            StartInfo =
-            {
-                FileName               = "avifenc",
-                CreateNoWindow         = true,
-                RedirectStandardError  = true,
-                RedirectStandardOutput = true,
-                ArgumentList =
-                {
-                    "-j",
-                    "4",
-                    originalPath,
-                    outputPath
-                }
-            }
-        };
-
-        try
-        {
-            avif.Start();
-            avif.StandardOutput.ReadToEnd();
-            avif.WaitForExit();
-
-            return avif.ExitCode == 0;
         }
         catch(Exception)
         {

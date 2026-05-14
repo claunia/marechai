@@ -48,8 +48,7 @@ Marechai.slnx
 - .NET 10.0 SDK (with prerelease allowed per `global.json`)
 - Uno Platform SDK 6.4.24
 - MariaDB or MySQL database
-- ImageMagick with HEIF and WebP support (in PATH)
-- AV1F encoder (`avifenc`) in PATH
+- ImageMagick with HEIF, WebP and AVIF support (in PATH)
 
 ### Configuration
 

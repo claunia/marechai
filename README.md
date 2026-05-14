@@ -11,7 +11,6 @@ For development you need:
 * A .NET Core 3.1 compatible development environment.
 * .NET Core 3.1 SDK
 * ASP.NET Core 3.1 runtime
-* ImageMagick, including HEIF and WebP support in the path.
-* AV1F, specially, avifenc, in the path.
+* ImageMagick, including HEIF, WebP and AVIF support in the path.
 * MariaDB or compatible, with a user and a database.
 * Prepare appsettings.json with a connection string for said database.
