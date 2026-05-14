@@ -2158,4 +2158,49 @@
     <data name="{0} software titles found in the database." xml:space="preserve">
         <value>{0} softwaretitels gevonden in de database.</value>
     </data>
+  <data name="Top 250 Software" xml:space="preserve">
+    <value>Top 250 software</value>
+  </data>
+  <data name="Ranked by Marechai score" xml:space="preserve">
+    <value>Gerangschikt op Marechai-score</value>
+  </data>
+  <data name="Rankings" xml:space="preserve">
+    <value>Ranglijsten</value>
+  </data>
+  <data name="Filters" xml:space="preserve">
+    <value>Filters</value>
+  </data>
+  <data name="{0} active" xml:space="preserve">
+    <value>{0} actief</value>
+  </data>
+  <data name="Filter by genre" xml:space="preserve">
+    <value>Filteren op genre</value>
+  </data>
+  <data name="Filter by platform" xml:space="preserve">
+    <value>Filteren op platform</value>
+  </data>
+  <data name="All kinds" xml:space="preserve">
+    <value>Alle soorten</value>
+  </data>
+  <data name="Clear filters" xml:space="preserve">
+    <value>Filters wissen</value>
+  </data>
+  <data name="Showing top {0} software" xml:space="preserve">
+    <value>Top {0} software wordt weergegeven</value>
+  </data>
+  <data name="No ranked software matches the current filter." xml:space="preserve">
+    <value>Geen gerangschikte software komt overeen met het huidige filter.</value>
+  </data>
+  <data name="Browse all software" xml:space="preserve">
+    <value>Alle software bekijken</value>
+  </data>
+  <data name="{0} reviews" xml:space="preserve">
+    <value>{0} recensies</value>
+  </data>
+  <data name="{0} ratings" xml:space="preserve">
+    <value>{0} beoordelingen</value>
+  </data>
+  <data name="{0} reviews / {1} ratings" xml:space="preserve">
+    <value>{0} recensies / {1} beoordelingen</value>
+  </data>
 </root>

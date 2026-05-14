@@ -494,4 +494,10 @@
         <value>Tabletas</value>
     </data>
 
+  <data name="Browse software" xml:space="preserve">
+    <value>Explorar software</value>
+  </data>
+  <data name="Rankings" xml:space="preserve">
+    <value>Clasificaciones</value>
+  </data>
 </root>

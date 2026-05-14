@@ -433,4 +433,10 @@
         <value>Tablet</value>
     </data>
 
+  <data name="Browse software" xml:space="preserve">
+    <value>Sfoglia software</value>
+  </data>
+  <data name="Rankings" xml:space="preserve">
+    <value>Classifiche</value>
+  </data>
 </root>

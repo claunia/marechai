@@ -2025,4 +2025,49 @@
   <data name="We have no videos available about this software." xml:space="preserve">
     <value>Non abbiamo video disponibili su questo software.</value>
   </data>
+  <data name="Top 250 Software" xml:space="preserve">
+    <value>Top 250 software</value>
+  </data>
+  <data name="Ranked by Marechai score" xml:space="preserve">
+    <value>Classificato per punteggio Marechai</value>
+  </data>
+  <data name="Rankings" xml:space="preserve">
+    <value>Classifiche</value>
+  </data>
+  <data name="Filters" xml:space="preserve">
+    <value>Filtri</value>
+  </data>
+  <data name="{0} active" xml:space="preserve">
+    <value>{0} attivo/i</value>
+  </data>
+  <data name="Filter by genre" xml:space="preserve">
+    <value>Filtra per genere</value>
+  </data>
+  <data name="Filter by platform" xml:space="preserve">
+    <value>Filtra per piattaforma</value>
+  </data>
+  <data name="All kinds" xml:space="preserve">
+    <value>Tutti i tipi</value>
+  </data>
+  <data name="Clear filters" xml:space="preserve">
+    <value>Cancella filtri</value>
+  </data>
+  <data name="Showing top {0} software" xml:space="preserve">
+    <value>Visualizzazione dei migliori {0} software</value>
+  </data>
+  <data name="No ranked software matches the current filter." xml:space="preserve">
+    <value>Nessun software classificato corrisponde al filtro corrente.</value>
+  </data>
+  <data name="Browse all software" xml:space="preserve">
+    <value>Sfoglia tutti i software</value>
+  </data>
+  <data name="{0} reviews" xml:space="preserve">
+    <value>{0} recensioni</value>
+  </data>
+  <data name="{0} ratings" xml:space="preserve">
+    <value>{0} valutazioni</value>
+  </data>
+  <data name="{0} reviews / {1} ratings" xml:space="preserve">
+    <value>{0} recensioni / {1} valutazioni</value>
+  </data>
 </root>

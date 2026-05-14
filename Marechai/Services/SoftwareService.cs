@@ -511,6 +511,30 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
+    public async Task<List<SoftwareRankingDto>> GetRankingsAsync(SoftwareKind? kind = null,
+                                                                 int? genreId = null,
+                                                                 int? platformId = null,
+                                                                 int? take = null,
+                                                                 CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            List<SoftwareRankingDto> ranked = await client.Software.Rankings.GetAsync(config =>
+            {
+                if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
+                if(genreId.HasValue) config.QueryParameters.GenreId = genreId.Value;
+                if(platformId.HasValue) config.QueryParameters.PlatformId = platformId.Value;
+                if(take.HasValue) config.QueryParameters.Take = take.Value;
+            }, cancellationToken);
+
+            return ranked ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
     public async Task<List<SoftwareDto>> GetSoftwareByGenreAsync(int genreId, SoftwareKind? kind = null,
                                                                  int? skip = null, int? take = null,
                                                                  CancellationToken cancellationToken = default)

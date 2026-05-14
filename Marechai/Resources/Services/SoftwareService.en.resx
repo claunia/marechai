@@ -1933,4 +1933,49 @@
   <data name="We have no videos available about this software." xml:space="preserve">
     <value>We have no videos available about this software.</value>
   </data>
+  <data name="Top 250 Software" xml:space="preserve">
+    <value>Top 250 Software</value>
+  </data>
+  <data name="Ranked by Marechai score" xml:space="preserve">
+    <value>Ranked by Marechai score</value>
+  </data>
+  <data name="Rankings" xml:space="preserve">
+    <value>Rankings</value>
+  </data>
+  <data name="Filters" xml:space="preserve">
+    <value>Filters</value>
+  </data>
+  <data name="{0} active" xml:space="preserve">
+    <value>{0} active</value>
+  </data>
+  <data name="Filter by genre" xml:space="preserve">
+    <value>Filter by genre</value>
+  </data>
+  <data name="Filter by platform" xml:space="preserve">
+    <value>Filter by platform</value>
+  </data>
+  <data name="All kinds" xml:space="preserve">
+    <value>All kinds</value>
+  </data>
+  <data name="Clear filters" xml:space="preserve">
+    <value>Clear filters</value>
+  </data>
+  <data name="Showing top {0} software" xml:space="preserve">
+    <value>Showing top {0} software</value>
+  </data>
+  <data name="No ranked software matches the current filter." xml:space="preserve">
+    <value>No ranked software matches the current filter.</value>
+  </data>
+  <data name="Browse all software" xml:space="preserve">
+    <value>Browse all software</value>
+  </data>
+  <data name="{0} reviews" xml:space="preserve">
+    <value>{0} reviews</value>
+  </data>
+  <data name="{0} ratings" xml:space="preserve">
+    <value>{0} ratings</value>
+  </data>
+  <data name="{0} reviews / {1} ratings" xml:space="preserve">
+    <value>{0} reviews / {1} ratings</value>
+  </data>
 </root>

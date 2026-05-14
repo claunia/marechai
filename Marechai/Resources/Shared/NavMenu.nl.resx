@@ -388,4 +388,10 @@
     <data name="{0} results across {1} categories." xml:space="preserve">
         <value>{0} resultaten over {1} categorieën.</value>
     </data>
+  <data name="Browse software" xml:space="preserve">
+    <value>Software bekijken</value>
+  </data>
+  <data name="Rankings" xml:space="preserve">
+    <value>Ranglijsten</value>
+  </data>
 </root>

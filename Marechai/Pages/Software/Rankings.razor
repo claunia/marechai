@@ -1,0 +1,229 @@
+@{
+    /******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2026 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/software/rankings"
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@inherits OwningComponentBase<SoftwareService>
+@inject IStringLocalizer<SoftwareService> L
+@inject ApiAssetUrlProvider               AssetUrls
+@inject NavigationManager                 Navigation
+
+<MudPaper Class="pa-6 mb-4" Elevation="0"
+          Style="background: linear-gradient(135deg, #ff8a65 0%, #ffb74d 100%); border-radius: 16px;">
+    <div class="d-flex justify-space-between align-center gap-4 flex-wrap">
+        <div class="d-flex align-center gap-3">
+            <MudIcon Icon="@Icons.Material.Filled.EmojiEvents" Size="Size.Large" Style="color: white;"/>
+            <div>
+                <MudText Typo="Typo.h5" Style="color: white;">@L["Top 250 Software"]</MudText>
+                <MudText Typo="Typo.body2" Style="color: rgba(255,255,255,0.85);">@L["Ranked by Marechai score"]</MudText>
+            </div>
+        </div>
+    </div>
+</MudPaper>
+
+<MudExpansionPanels Elevation="1" Class="mb-4">
+    <MudExpansionPanel @bind-IsExpanded="_filtersExpanded">
+        <TitleContent>
+            <div class="d-flex align-center gap-2">
+                <MudIcon Icon="@Icons.Material.Filled.FilterList" Size="Size.Small"/>
+                <MudText>@L["Filters"]</MudText>
+                @if(_activeFilterCount > 0)
+                {
+                    <MudChip T="string" Size="Size.Small" Color="Color.Primary" Variant="Variant.Filled" Class="ml-2">
+                        @string.Format(L["{0} active"], _activeFilterCount)
+                    </MudChip>
+                }
+            </div>
+        </TitleContent>
+        <ChildContent>
+            <MudGrid Spacing="3">
+                <MudItem xs="12" md="4">
+                    <MudSelect T="SoftwareKind?"
+                               Value="_selectedKind"
+                               ValueChanged="OnKindChanged"
+                               Label="@L["Filter by kind"]"
+                               Variant="Variant.Outlined"
+                               Margin="Margin.Dense"
+                               Clearable="true">
+                        <MudSelectItem T="SoftwareKind?" Value="@((SoftwareKind?)null)">@L["All kinds"]</MudSelectItem>
+                        <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.OperatingSystem">@L["OS"]</MudSelectItem>
+                        <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.Game">@L["Game"]</MudSelectItem>
+                        <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.Dlc">@L["DLC / Addon"]</MudSelectItem>
+                        <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.SystemSoftware">@L["System software"]</MudSelectItem>
+                        <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.Application">@L["Application"]</MudSelectItem>
+                        <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.DevelopmentSoftware">@L["Development software"]</MudSelectItem>
+                        <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.ServerSoftware">@L["Server software"]</MudSelectItem>
+                        <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.Middleware">@L["Middleware"]</MudSelectItem>
+                        <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.Firmware">@L["Firmware"]</MudSelectItem>
+                        <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.EmbeddedSoftware">@L["Embedded software"]</MudSelectItem>
+                        <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.Software">@L["Software"]</MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" md="4">
+                    <MudAutocomplete T="SoftwareGenreDto"
+                                     Value="_selectedGenre"
+                                     ValueChanged="OnGenreChanged"
+                                     Label="@L["Filter by genre"]"
+                                     Variant="Variant.Outlined"
+                                     Margin="Margin.Dense"
+                                     Clearable="true"
+                                     SearchFunc="SearchGenres"
+                                     ToStringFunc="@(g => g is null ? string.Empty : (string.IsNullOrEmpty(g.TypeName) ? g.Name : $"{L[g.Name]} ({L[g.TypeName]})"))"
+                                     ShowProgressIndicator="false"
+                                     CoerceText="true"
+                                     ResetValueOnEmptyText="true"/>
+                </MudItem>
+                <MudItem xs="12" md="4">
+                    <MudAutocomplete T="SoftwarePlatformDto"
+                                     Value="_selectedPlatform"
+                                     ValueChanged="OnPlatformChanged"
+                                     Label="@L["Filter by platform"]"
+                                     Variant="Variant.Outlined"
+                                     Margin="Margin.Dense"
+                                     Clearable="true"
+                                     SearchFunc="SearchPlatforms"
+                                     ToStringFunc="@(p => p?.Name ?? string.Empty)"
+                                     ShowProgressIndicator="false"
+                                     CoerceText="true"
+                                     ResetValueOnEmptyText="true"/>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudButton OnClick="ClearFilters"
+                               Disabled="@(_activeFilterCount == 0)"
+                               Color="Color.Secondary"
+                               Variant="Variant.Text"
+                               StartIcon="@Icons.Material.Filled.Clear">
+                        @L["Clear filters"]
+                    </MudButton>
+                </MudItem>
+            </MudGrid>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@if(_loading)
+{
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-4"/>
+}
+else if(_results.Count == 0)
+{
+    <MudAlert Severity="Severity.Info" Class="mt-4">
+        <div class="d-flex align-center gap-2 flex-wrap">
+            <span>@L["No ranked software matches the current filter."]</span>
+            <MudLink Href="/software/all">@L["Browse all software"]</MudLink>
+        </div>
+    </MudAlert>
+}
+else
+{
+    <MudText Typo="Typo.body2" Class="mb-2">
+        @string.Format(L["Showing top {0} software"], _results.Count)
+    </MudText>
+    <MudList T="SoftwareRankingDto" Dense="false">
+        @foreach(SoftwareRankingDto item in _results)
+        {
+            int rank = item.Rank ?? 0;
+            <MudListItem T="SoftwareRankingDto" Href="@($"/software/{item.SoftwareId}")">
+                <div class="d-flex align-center gap-3" style="width: 100%;">
+                    <div style="min-width: 64px; text-align: center;">
+                        @switch(rank)
+                        {
+                            case 1:
+                                <MudIcon Icon="@Icons.Material.Filled.EmojiEvents" Color="Color.Warning" Size="Size.Large"/>
+                                <MudText Typo="Typo.caption" Style="color: #FFC107; font-weight: bold;">#1</MudText>
+                                break;
+                            case 2:
+                                <MudIcon Icon="@Icons.Material.Filled.EmojiEvents" Style="color: #BDBDBD;" Size="Size.Large"/>
+                                <MudText Typo="Typo.caption" Style="color: #757575; font-weight: bold;">#2</MudText>
+                                break;
+                            case 3:
+                                <MudIcon Icon="@Icons.Material.Filled.EmojiEvents" Style="color: #cd7f32;" Size="Size.Large"/>
+                                <MudText Typo="Typo.caption" Style="color: #cd7f32; font-weight: bold;">#3</MudText>
+                                break;
+                            default:
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined">#@rank</MudChip>
+                                break;
+                        }
+                    </div>
+                    @if(item.FrontCoverId.HasValue)
+                    {
+                        <picture>
+                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(item.FrontCoverId).jxl" type="image/jxl">
+                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(item.FrontCoverId).avif" type="image/avif">
+                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(item.FrontCoverId).webp" type="image/webp">
+                            <img alt="@item.Name" height="48"
+                                 src="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(item.FrontCoverId).jpg"
+                                 srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(item.FrontCoverId).jpg"
+                                 style="object-fit: contain; border-radius: 4px;"/>
+                        </picture>
+                    }
+                    else
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.Apps" Size="Size.Large" Color="Color.Default"/>
+                    }
+                    <div style="flex: 1; min-width: 0;">
+                        <MudText Typo="Typo.body1">@item.Name</MudText>
+                        <div class="d-flex align-center gap-2 flex-wrap">
+                            @if(!string.IsNullOrEmpty(item.Family))
+                            {
+                                <MudText Typo="Typo.caption" Color="Color.Secondary">@item.Family</MudText>
+                            }
+                            @{
+                                (string label, Color color) = KindChip((SoftwareKind)(item.Kind ?? 0));
+                            }
+                            <MudChip T="string" Size="Size.Small" Color="@color" Variant="Variant.Outlined">@L[label]</MudChip>
+                        </div>
+                    </div>
+                    <div style="min-width: 180px; text-align: right;">
+                        @{
+                            double score = item.MarechaiScore ?? 0;
+                            Color scoreColor = score >= 8 ? Color.Success
+                                : score >= 6 ? Color.Info
+                                : score >= 4 ? Color.Warning
+                                : Color.Default;
+                        }
+                        <MudChip T="string" Color="@scoreColor" Variant="Variant.Filled" Size="Size.Medium">
+                            @($"{score:0.0}") / 10
+                        </MudChip>
+                        @if(item.UserStarAverage.HasValue)
+                        {
+                            int starInt = (int)Math.Round(item.UserStarAverage.Value, MidpointRounding.AwayFromZero);
+                            <div class="d-flex align-center justify-end gap-1 mt-1">
+                                <MudRating ReadOnly="true" SelectedValue="@starInt" Size="Size.Small"/>
+                                <MudText Typo="Typo.caption">@($"({item.UserStarAverage.Value:0.0})")</MudText>
+                            </div>
+                        }
+                        <MudText Typo="Typo.caption" Color="Color.Secondary">
+                            @ReviewCountSummary(item)
+                        </MudText>
+                    </div>
+                </div>
+            </MudListItem>
+        }
+    </MudList>
+}

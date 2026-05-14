@@ -2301,6 +2301,130 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
         return ranking;
     }
 
+    /// <summary>
+    /// Returns the top-N software ranked by Marechai score (0-10), optionally filtered by
+    /// kind, genre, and/or platform. Results include the local rank within the filtered set
+    /// (1..N), Marechai score, critic average (0-100 scale), user star average (0-5 scale),
+    /// and the underlying review/rating counts. Hard-capped at 250 server-side. Cached per
+    /// (kind, genreId, platformId, take) tuple for 5 minutes.
+    /// </summary>
+    [HttpGet("rankings")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<List<SoftwareRankingDto>> GetRankingsAsync([FromQuery] SoftwareKind? kind = null,
+                                                                 [FromQuery] int? genreId = null,
+                                                                 [FromQuery] ulong? platformId = null,
+                                                                 [FromQuery] int take = 250,
+                                                                 CancellationToken cancellationToken = default)
+    {
+        if(take <= 0) take = 250;
+        if(take > 250) take = 250;
+
+        string cacheKey = $"marechai:ranking:list:{(kind.HasValue ? ((int)kind.Value).ToString() : "_")}:" +
+                          $"{(genreId.HasValue ? genreId.Value.ToString() : "_")}:" +
+                          $"{(platformId.HasValue ? platformId.Value.ToString() : "_")}:{take}";
+
+        if(cache.TryGetValue(cacheKey, out List<SoftwareRankingDto> cached) && cached is not null) return cached;
+
+        // Predicate mirrors GetMarechaiRankingAsync(): a software qualifies if it has at
+        // least one critic review or one user rating. Compilations are excluded — they
+        // have their own Id space (SoftwareReleases) and no aggregated rating signal.
+        IQueryable<Database.Models.Software> baseQuery =
+            context.Softwares.Where(s => s.UserRatings.Any() || s.CriticReviews.Any());
+
+        if(kind.HasValue) baseQuery = baseQuery.Where(s => s.Kind == kind.Value);
+
+        if(genreId.HasValue)
+        {
+            int genre = genreId.Value;
+            baseQuery = baseQuery.Where(s => s.Genres.Any(g => g.GenreId == genre));
+        }
+
+        if(platformId.HasValue)
+        {
+            ulong platform = platformId.Value;
+            baseQuery = baseQuery.Where(s => s.Versions.Any(v => v.Releases.Any(r => r.PlatformId == platform)) ||
+                                             s.DirectReleases.Any(r => r.PlatformId == platform));
+        }
+
+        // Pull all candidates with their averages + counts in a single round-trip,
+        // then compute the score in memory (mirrors GetMarechaiRankingAsync arithmetic).
+        var raw = await baseQuery.Select(s => new
+                                  {
+                                      s.Id,
+                                      s.Name,
+                                      s.Kind,
+                                      s.Family,
+                                      CriticAvg = s.CriticReviews
+                                                   .Where(r => r.NormalizedScore != null)
+                                                   .Select(r => (double?)r.NormalizedScore)
+                                                   .Average(),
+                                      UserAvg = s.UserRatings.Select(r => (double?)r.Rating).Average(),
+                                      CriticCount = s.CriticReviews.Count(r => r.NormalizedScore != null),
+                                      UserCount   = s.UserRatings.Count,
+                                      FrontCoverId = context.SoftwareCovers
+                                                            .Where(c => (c.Release.SoftwareId == s.Id ||
+                                                                         c.Release.SoftwareVersion.SoftwareId == s.Id) &&
+                                                                        c.Type == SoftwareCoverType.Front)
+                                                            .OrderBy(c => c.Id)
+                                                            .Select(c => (Guid?)c.Id)
+                                                            .FirstOrDefault()
+                                  })
+                                 .ToListAsync(cancellationToken);
+
+        var ranked = raw.Where(s => s.CriticAvg.HasValue || s.UserAvg.HasValue)
+                        .Select(s =>
+                         {
+                             double? c = s.CriticAvg.HasValue ? s.CriticAvg.Value / 10.0 : null;
+                             double? u = s.UserAvg.HasValue ? s.UserAvg.Value * 2.0 : null;
+
+                             double score;
+
+                             if(c.HasValue && u.HasValue)
+                                 score = (c.Value + u.Value) / 2.0;
+                             else if(c.HasValue)
+                                 score = c.Value;
+                             else
+                                 score = u!.Value;
+
+                             return new
+                             {
+                                 s.Id,
+                                 s.Name,
+                                 s.Kind,
+                                 Family = s.Family?.Name,
+                                 s.FrontCoverId,
+                                 Score   = Math.Round(score, 1),
+                                 Critic  = s.CriticAvg,
+                                 User    = s.UserAvg,
+                                 s.CriticCount,
+                                 s.UserCount
+                             };
+                         })
+                        .OrderByDescending(s => s.Score)
+                        .ThenBy(s => s.Id)
+                        .Take(take)
+                        .Select((s, i) => new SoftwareRankingDto
+                         {
+                             Rank              = i + 1,
+                             SoftwareId        = s.Id,
+                             Name              = s.Name,
+                             Kind              = s.Kind,
+                             Family            = s.Family,
+                             FrontCoverId      = s.FrontCoverId,
+                             MarechaiScore     = s.Score,
+                             CriticAverage     = s.Critic,
+                             UserStarAverage   = s.User,
+                             CriticReviewCount = s.CriticCount,
+                             UserRatingCount   = s.UserCount
+                         })
+                        .ToList();
+
+        cache.Set(cacheKey, ranked, _marechaiRankingTtl);
+
+        return ranked;
+    }
+
     static string GetAvatarUrl(ApplicationUser user)
     {
         if(user is null) return null;

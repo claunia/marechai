@@ -2110,4 +2110,49 @@
   <data name="We have no videos available about this software." xml:space="preserve">
     <value>Nous n’avons pas de vidéos disponibles à propos de ce logiciel.</value>
   </data>
+  <data name="Top 250 Software" xml:space="preserve">
+    <value>Top 250 logiciels</value>
+  </data>
+  <data name="Ranked by Marechai score" xml:space="preserve">
+    <value>Classé par score Marechai</value>
+  </data>
+  <data name="Rankings" xml:space="preserve">
+    <value>Classements</value>
+  </data>
+  <data name="Filters" xml:space="preserve">
+    <value>Filtres</value>
+  </data>
+  <data name="{0} active" xml:space="preserve">
+    <value>{0} actif(s)</value>
+  </data>
+  <data name="Filter by genre" xml:space="preserve">
+    <value>Filtrer par genre</value>
+  </data>
+  <data name="Filter by platform" xml:space="preserve">
+    <value>Filtrer par plateforme</value>
+  </data>
+  <data name="All kinds" xml:space="preserve">
+    <value>Tous les types</value>
+  </data>
+  <data name="Clear filters" xml:space="preserve">
+    <value>Effacer les filtres</value>
+  </data>
+  <data name="Showing top {0} software" xml:space="preserve">
+    <value>Affichage des {0} meilleurs logiciels</value>
+  </data>
+  <data name="No ranked software matches the current filter." xml:space="preserve">
+    <value>Aucun logiciel classé ne correspond au filtre actuel.</value>
+  </data>
+  <data name="Browse all software" xml:space="preserve">
+    <value>Parcourir tous les logiciels</value>
+  </data>
+  <data name="{0} reviews" xml:space="preserve">
+    <value>{0} avis</value>
+  </data>
+  <data name="{0} ratings" xml:space="preserve">
+    <value>{0} notes</value>
+  </data>
+  <data name="{0} reviews / {1} ratings" xml:space="preserve">
+    <value>{0} avis / {1} notes</value>
+  </data>
 </root>
