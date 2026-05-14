@@ -740,6 +740,18 @@
         <value>Consola</value>
         <comment>Console machine type</comment>
     </data>
+    <data name="Smartphone" xml:space="preserve">
+        <value>Smartphone</value>
+        <comment>Smartphone machine type</comment>
+    </data>
+    <data name="PDA" xml:space="preserve">
+        <value>PDA</value>
+        <comment>PDA machine type</comment>
+    </data>
+    <data name="Tablet" xml:space="preserve">
+        <value>Tableta</value>
+        <comment>Tablet machine type</comment>
+    </data>
     <data name="Actions" xml:space="preserve">
         <value>Acciones</value>
         <comment>Actions column header</comment>

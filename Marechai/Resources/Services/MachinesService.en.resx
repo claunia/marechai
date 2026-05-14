@@ -243,6 +243,18 @@
         <value>Console</value>
         <comment>Console machine type</comment>
     </data>
+    <data name="Smartphone" xml:space="preserve">
+        <value>Smartphone</value>
+        <comment>Smartphone machine type</comment>
+    </data>
+    <data name="PDA" xml:space="preserve">
+        <value>PDA</value>
+        <comment>PDA machine type</comment>
+    </data>
+    <data name="Tablet" xml:space="preserve">
+        <value>Tablet</value>
+        <comment>Tablet machine type</comment>
+    </data>
     <data name="Cancel" xml:space="preserve">
         <value>Cancel</value>
         <comment>Cancel button</comment>

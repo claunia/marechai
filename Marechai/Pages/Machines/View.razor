@@ -197,6 +197,10 @@
                         {
                             <MudLink Href="@($"/pdas/year/{_machine.Introduced.Value.Year}")">@(((_machine.IntroducedPrecision ?? 0) == 2 ? _machine.Introduced.Value.Year.ToString() : (_machine.IntroducedPrecision ?? 0) == 1 ? _machine.Introduced.Value.ToString("MMMM yyyy") : _machine.Introduced.Value.DateTime.ToLongDateString()))</MudLink>
                         }
+                        else if(_machine.Type == (int)MachineType.Tablet)
+                        {
+                            <MudLink Href="@($"/tablets/year/{_machine.Introduced.Value.Year}")">@(((_machine.IntroducedPrecision ?? 0) == 2 ? _machine.Introduced.Value.Year.ToString() : (_machine.IntroducedPrecision ?? 0) == 1 ? _machine.Introduced.Value.ToString("MMMM yyyy") : _machine.Introduced.Value.DateTime.ToLongDateString()))</MudLink>
+                        }
                         else
                         {
                             @(((_machine.IntroducedPrecision ?? 0) == 2 ? _machine.Introduced.Value.Year.ToString() : (_machine.IntroducedPrecision ?? 0) == 1 ? _machine.Introduced.Value.ToString("MMMM yyyy") : _machine.Introduced.Value.DateTime.ToLongDateString()))
@@ -230,6 +234,7 @@
         MachineType.Console    => "We do not have a description for this console, you could collaborate by suggesting one",
         MachineType.Smartphone => "We do not have a description for this smartphone, you could collaborate by suggesting one",
         MachineType.Pda        => "We do not have a description for this PDA, you could collaborate by suggesting one",
+        MachineType.Tablet     => "We do not have a description for this tablet, you could collaborate by suggesting one",
         _                      => "We do not have a description for this computer, you could collaborate by suggesting one"
     };
 }

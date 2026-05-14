@@ -49,6 +49,7 @@ public static class SearchPrefixParser
             ["cn"] = SearchEntityType.Console,
             ["sm"] = SearchEntityType.Smartphone,
             ["pda"] = SearchEntityType.Pda,
+            ["tablet"] = SearchEntityType.Tablet,
             ["b"]  = SearchEntityType.Book,
             ["d"]  = SearchEntityType.Document,
             ["mg"] = SearchEntityType.Magazine,

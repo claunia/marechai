@@ -110,8 +110,10 @@ public enum MachineType
     Console = 2,
     /// <summary>Smartphone</summary>
     Smartphone = 3,
-    /// <summary>Personal digital assistant. Also modern tablets fall in this category.</summary>
-    Pda = 4
+    /// <summary>Personal digital assistant.</summary>
+    Pda = 4,
+    /// <summary>Tablet computer</summary>
+    Tablet = 5
 }
 
 public enum SoftwareKind

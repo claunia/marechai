@@ -44,5 +44,6 @@ public enum SearchEntityType : byte
     Person              = 11,
     Software            = 12,
     SoftwareCompilation = 13,
-    Pda                 = 14
+    Pda                 = 14,
+    Tablet              = 15
 }

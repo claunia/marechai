@@ -347,6 +347,7 @@ public partial class View
         MachineType.Console    => L["Suggest console photos"],
         MachineType.Smartphone => L["Suggest smartphone photos"],
         MachineType.Pda        => L["Suggest PDA photos"],
+        MachineType.Tablet     => L["Suggest tablet photos"],
         _                      => L["Suggest photos"]
     };
 
@@ -357,6 +358,7 @@ public partial class View
         MachineType.Console    => L["Suggest more console photos"],
         MachineType.Smartphone => L["Suggest more smartphone photos"],
         MachineType.Pda        => L["Suggest more PDA photos"],
+        MachineType.Tablet     => L["Suggest more tablet photos"],
         _                      => L["Suggest more photos"]
     };
 
@@ -367,6 +369,7 @@ public partial class View
         MachineType.Console    => L["No photos for this console yet — help us by uploading some."],
         MachineType.Smartphone => L["No photos for this smartphone yet — help us by uploading some."],
         MachineType.Pda        => L["No photos for this PDA yet — help us by uploading some."],
+        MachineType.Tablet     => L["No photos for this tablet yet — help us by uploading some."],
         _                      => L["No photos for this device yet — help us by uploading some."]
     };
 
@@ -415,6 +418,7 @@ public partial class View
         MachineType.Console    => L["We have no videos available about this console."],
         MachineType.Smartphone => L["We have no videos available about this smartphone."],
         MachineType.Pda        => L["We have no videos available about this PDA."],
+        MachineType.Tablet     => L["We have no videos available about this tablet."],
         _                      => L["We have no videos available about this machine."]
     };
 

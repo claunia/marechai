@@ -307,6 +307,7 @@ public sealed class SearchIndexInterceptor : SaveChangesInterceptor
         MachineType.Console    => SearchEntityType.Console,
         MachineType.Smartphone => SearchEntityType.Smartphone,
         MachineType.Pda        => SearchEntityType.Pda,
+        MachineType.Tablet     => SearchEntityType.Tablet,
         _                      => SearchEntityType.Computer
     };
 

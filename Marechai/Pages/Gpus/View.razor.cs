@@ -43,6 +43,7 @@ public partial class View
     List<MachineDto>    _computers = [];
     List<MachineDto>    _consoles  = [];
     List<MachineDto>    _smartphones = [];
+    List<MachineDto>    _tablets = [];
     string              _description;
     string              _descriptionLanguageServed;
     bool                _descriptionFellBack;
@@ -149,6 +150,7 @@ public partial class View
         _computers   = machines.Where(m => m.Type == (int)MachineType.Computer).ToList();
         _consoles    = machines.Where(m => m.Type == (int)MachineType.Console).ToList();
         _smartphones = machines.Where(m => m.Type == (int)MachineType.Smartphone).ToList();
+        _tablets     = machines.Where(m => m.Type == (int)MachineType.Tablet).ToList();
 
         _description = full.DescriptionHtml ?? full.DescriptionText;
         _descriptionLanguageServed = full.DescriptionLanguageCode;
@@ -181,7 +183,7 @@ public partial class View
         // level, so leave _tabNames at its default for them.
         if(!_isSentinel)
         {
-            bool hasMachines = _computers.Count > 0 || _consoles.Count > 0 || _smartphones.Count > 0;
+            bool hasMachines = _computers.Count > 0 || _consoles.Count > 0 || _smartphones.Count > 0 || _tablets.Count > 0;
             _tabNames = hasMachines
                             ? ["specifications", "machines", "media"]
                             : ["specifications", "media"];

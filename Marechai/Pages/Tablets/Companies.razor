@@ -1,0 +1,95 @@
+@{
+    /******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2026 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/tablets/companies"
+@page "/tablets/companies/{StartingCharacter}"
+@using Marechai.ApiClient.Models
+@inherits OwningComponentBase<TabletsService>
+@inject IStringLocalizer<TabletsService> L
+@inject ApiAssetUrlProvider               AssetUrls
+
+@if(_companies is null)
+{
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+    </div>
+
+    return;
+}
+
+@* ── Hero Header ── *@
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3" Class="mb-3">
+        <MudIcon Icon="@Icons.Material.Filled.Tablet" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Style="color: white;">@L["Tablet manufacturers"]</MudText>
+    </MudStack>
+    @if(_character.HasValue)
+    {
+        <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Companies which name starts with {0}."], _character)</MudText>
+    }
+    <MudChip T="string" Color="Color.Dark" Variant="Variant.Filled" Class="mt-2" Style="color: white; white-space: normal; height: auto; overflow: visible; text-overflow: unset; padding: 8px 16px;">@string.Format(L["{0} companies found in the database."], _companies.Count())</MudChip>
+</MudPaper>
+
+@if(_companies.Any())
+{
+    <MudTextField T="string" @bind-Value="_searchText" @bind-Value:after="OnSearchChanged"
+                  Placeholder="@L["Filter companies..."]"
+                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
+                  Variant="Variant.Outlined" Class="mb-4" Immediate="true"/>
+
+    <div style="height: 70vh; overflow-y: auto;">
+        <Virtualize Items="_filteredCompanies" Context="company" ItemSize="88">
+            <a href="/company/@company.Id" style="text-decoration: none; color: inherit;">
+                <MudCard Elevation="1" Class="mb-2 rounded-lg" Style="cursor: pointer;">
+                    <MudCardContent>
+                        <div class="d-flex align-center justify-space-between">
+                            <MudText Typo="Typo.body1" Style="font-weight: 500;">@company.Name</MudText>
+                            @if(company.LastLogo != null)
+                            {
+                                <picture>
+                                    <source srcset="@(AssetUrls.BaseUrl)/assets/logos/@(company.LastLogo).svg" type="image/svg+xml">
+                                    <source srcset="@(AssetUrls.BaseUrl)/assets/logos/thumbs/webp/1x/@(company.LastLogo).webp,
+@(AssetUrls.BaseUrl)/assets/logos/thumbs/webp/2x/@(company.LastLogo).webp 2x,
+@(AssetUrls.BaseUrl)/assets/logos/thumbs/webp/3x/@(company.LastLogo).webp 3x" type="image/webp">
+                                    <img alt="" height="auto" src="@(AssetUrls.BaseUrl)/assets/logos/thumbs/png/1x/@(company.LastLogo).png"
+                                         srcset="@(AssetUrls.BaseUrl)/assets/logos/thumbs/png/1x/@(company.LastLogo).png,
+                     @(AssetUrls.BaseUrl)/assets/logos/thumbs/png/2x/@(company.LastLogo).png 2x,
+                     @(AssetUrls.BaseUrl)/assets/logos/thumbs/png/3x/@(company.LastLogo).png 3x" style="max-height: 48px; max-width: 200px"
+                                         width="auto"/>
+                                </picture>
+                            }
+                        </div>
+                    </MudCardContent>
+                </MudCard>
+            </a>
+        </Virtualize>
+    </div>
+}
+else
+{
+    <MudAlert Severity="Severity.Info">@L["There are no companies in the database."]</MudAlert>
+}

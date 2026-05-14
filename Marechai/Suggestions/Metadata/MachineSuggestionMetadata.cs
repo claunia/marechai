@@ -77,7 +77,8 @@ public sealed class MachineSuggestionMetadata : SuggestionMetadata
         new SuggestionEnumOption(1, "Computer"),
         new SuggestionEnumOption(2, "Console"),
         new SuggestionEnumOption(3, "Smartphone"),
-        new SuggestionEnumOption(4, "PDA")
+        new SuggestionEnumOption(4, "PDA"),
+        new SuggestionEnumOption(5, "Tablet")
     };
 
     static readonly IReadOnlyList<SuggestionEnumOption> PrecisionOptions = new[]
@@ -219,6 +220,7 @@ public sealed class MachineSuggestionMetadata : SuggestionMetadata
                 2 => "Console",
                 3 => "Smartphone",
                 4 => "PDA",
+                5 => "Tablet",
                 _ => string.Empty
             };
         }

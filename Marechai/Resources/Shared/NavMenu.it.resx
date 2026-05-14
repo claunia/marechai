@@ -429,5 +429,8 @@
     <data name="Suggestions Queue" xml:space="preserve"><value>Coda dei suggerimenti</value></data>    <data name="PDAs" xml:space="preserve">
         <value>PDAs</value>
     </data>
+    <data name="Tablets" xml:space="preserve">
+        <value>Tablet</value>
+    </data>
 
 </root>
