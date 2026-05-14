@@ -695,4 +695,7 @@
     <data name="Suggest new company" xml:space="preserve"><value>Sugerir nueva empresa</value></data>
     <data name="Suggest a new company to be added to the catalogue." xml:space="preserve"><value>Sugiere una nueva empresa para añadir al catálogo.</value></data>
     <data name="Sold to / Merged with" xml:space="preserve"><value>Vendida a / Fusionada con</value></data>
+    <data name="Seo description" xml:space="preserve">
+        <value>Descubre {0} en Marechai — el repositorio maestro de la historia de la computación. Explora fotos, especificaciones, historia y las personas y empresas que lo construyeron.</value>
+    </data>
 </root>

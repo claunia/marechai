@@ -591,4 +591,7 @@
   <data name="We have no videos available about this sound synth." xml:space="preserve">
     <value>Es sind keine Videos zu diesem Soundsynthesizer verfügbar.</value>
   </data>
+    <data name="Seo description" xml:space="preserve">
+        <value>Entdecken Sie {0} auf Marechai — dem Hauptverzeichnis der Computergeschichte. Durchsuchen Sie Fotos, Spezifikationen, Geschichte sowie die Menschen und Unternehmen, die es geschaffen haben.</value>
+    </data>
 </root>

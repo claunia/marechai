@@ -577,4 +577,7 @@
   <data name="We have no videos available about this sound synth." xml:space="preserve">
     <value>No tenemos vídeos disponibles sobre este sintetizador de sonido.</value>
   </data>
+    <data name="Seo description" xml:space="preserve">
+        <value>Descubre {0} en Marechai — el repositorio maestro de la historia de la computación. Explora fotos, especificaciones, historia y las personas y empresas que lo construyeron.</value>
+    </data>
 </root>

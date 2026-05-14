@@ -127,4 +127,7 @@
     <data name="{0} machines found in this family." xml:space="preserve">
         <value>{0} machines gevonden in deze familie.</value>
     </data>
+    <data name="Seo description" xml:space="preserve">
+        <value>Ontdek {0} op Marechai — de hoofdrepository van de computergeschiedenis. Blader door foto’s, specificaties, geschiedenis en de mensen en bedrijven die het hebben gemaakt.</value>
+    </data>
 </root>

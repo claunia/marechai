@@ -2203,4 +2203,7 @@
   <data name="{0} reviews / {1} ratings" xml:space="preserve">
     <value>{0} recensies / {1} beoordelingen</value>
   </data>
+    <data name="Seo description" xml:space="preserve">
+        <value>Ontdek {0} op Marechai — de hoofdrepository van de computergeschiedenis. Blader door foto’s, specificaties, geschiedenis en de mensen en bedrijven die het hebben gemaakt.</value>
+    </data>
 </root>

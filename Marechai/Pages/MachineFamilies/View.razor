@@ -47,6 +47,11 @@
     return;
 }
 
+<EntityMetaTags Title="@_family.Name"
+                Description="@string.Format(L["Seo description"], _family.Name)"
+                CanonicalPath="@($"/machine-family/{Id}")"
+                Breadcrumbs="@(new (string, string?)[] { ("Companies", "/companies"), (_family.Name, null) })" />
+
 @* ── Hero Header ── *@
 <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #283593 0%, #5c6bc0 100%); border-radius: 16px;">
     <MudStack AlignItems="AlignItems.Center" Spacing="3">

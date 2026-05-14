@@ -442,4 +442,7 @@
     <data name="{0} rows parsed. {1} auto-rejected (no country match or validation error). Selected rows will be REJECTED — unselected rows will be imported." xml:space="preserve">
         <value>{0} rijen verwerkt. {1} automatisch afgewezen (geen landovereenkomst of validatiefout). Geselecteerde rijen worden AFGEWIJST – niet-geselecteerde rijen worden geïmporteerd.</value>
     </data>
+    <data name="Seo description" xml:space="preserve">
+        <value>Ontdek {0} op Marechai — de hoofdrepository van de computergeschiedenis. Blader door foto’s, specificaties, geschiedenis en de mensen en bedrijven die het hebben gemaakt.</value>
+    </data>
 </root>

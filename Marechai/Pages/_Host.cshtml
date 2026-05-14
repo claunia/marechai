@@ -27,17 +27,32 @@
 }
 @namespace Marechai.Pages
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using Marechai.Helpers
 @{
     Layout = null;
+    var requestPath = HttpContext.Request.Path.HasValue ? HttpContext.Request.Path.Value : "/";
+    var canonicalUrl = SeoMeta.BuildCanonicalUrl(requestPath);
 }
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="@System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Marechai</title>
     <base href="~/"/>
+    <meta name="theme-color" content="#3F8CFF"/>
+    <link rel="canonical" href="@canonicalUrl"/>
+    <meta property="og:site_name" content="@SeoMeta.SiteName"/>
+    <meta property="og:url" content="@canonicalUrl"/>
+    <meta property="og:locale" content="@SeoMeta.OgLocale()"/>
+    <meta property="og:image" content="@SeoMeta.OgImageUrl"/>
+    <meta property="og:image:width" content="@SeoMeta.OgImageWidth"/>
+    <meta property="og:image:height" content="@SeoMeta.OgImageHeight"/>
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:image" content="@SeoMeta.OgImageUrl"/>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico"/>
+    <link rel="icon" type="image/svg+xml" href="/img/marechai-logo-square.svg"/>
+    <link rel="apple-touch-icon" sizes="192x192" href="/img/marechai-icon-192.png"/>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet"/>
     <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet"/>
     <link href="_content/PSC.Blazor.Components.MarkdownEditor/css/easymde.min.css" rel="stylesheet"/>
@@ -50,6 +65,42 @@
       window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
       plausible.init({endpoint: "/api/event"})
     </script>
+    @* Emit the JSON-LD <script> tag via Html.Raw so Razor's attribute encoder
+       doesn't turn the `+` in `application/ld+json` into `&#x2B;`, which would
+       break Google's structured-data parser. *@
+    @Html.Raw("<script type=\"application/ld+json\">")
+    {
+        "@@context": "https://schema.org",
+        "@@graph": [
+            {
+                "@@type": "WebSite",
+                "@@id": "@SeoMeta.CanonicalHost/#website",
+                "name": "@SeoMeta.SiteName",
+                "alternateName": "Master repository of computing history artifacts information",
+                "url": "@SeoMeta.CanonicalHost/",
+                "inLanguage": "@System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName",
+                "publisher": { "@@id": "@SeoMeta.CanonicalHost/#organization" },
+                "potentialAction": {
+                    "@@type": "SearchAction",
+                    "target": {
+                        "@@type": "EntryPoint",
+                        "urlTemplate": "@SeoMeta.CanonicalHost/search?q={search_term_string}"
+                    },
+                    "query-input": "required name=search_term_string"
+                }
+            },
+            {
+                "@@type": "Organization",
+                "@@id": "@SeoMeta.CanonicalHost/#organization",
+                "name": "@SeoMeta.SiteName",
+                "url": "@SeoMeta.CanonicalHost/",
+                "logo": "@SeoMeta.LogoUrl",
+                "sameAs": [ "@SeoMeta.GitHubUrl" ]
+            }
+        ]
+    }
+    </script>
+    <component type="typeof(Microsoft.AspNetCore.Components.Web.HeadOutlet)" render-mode="ServerPrerendered"/>
 </head>
 <body>
 <app>

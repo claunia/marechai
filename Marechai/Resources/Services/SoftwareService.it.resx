@@ -2070,4 +2070,7 @@
   <data name="{0} reviews / {1} ratings" xml:space="preserve">
     <value>{0} recensioni / {1} valutazioni</value>
   </data>
+    <data name="Seo description" xml:space="preserve">
+        <value>Scopri {0} su Marechai — il repository principale della storia dell’informatica. Sfoglia foto, specifiche, storia e le persone e aziende che l’hanno creato.</value>
+    </data>
 </root>

@@ -1,0 +1,104 @@
+@using Marechai.Helpers
+@using System.Text
+@using System.Text.Json
+@inject IStringLocalizer<NavMenu> NavL
+
+<PageTitle>@Title – @SeoMeta.SiteName</PageTitle>
+<HeadContent>
+    <meta name="description" content="@TruncatedDescription"/>
+    <link rel="canonical" href="@CanonicalUrl"/>
+    @if(NoIndex)
+    {
+        <meta name="robots" content="noindex, nofollow"/>
+    }
+
+    <meta property="og:type" content="@OgType"/>
+    <meta property="og:title" content="@Title"/>
+    <meta property="og:description" content="@TruncatedDescription"/>
+    <meta property="og:url" content="@CanonicalUrl"/>
+    @if(!string.IsNullOrEmpty(ImageUrl))
+    {
+        <meta property="og:image" content="@ImageUrl"/>
+    }
+
+    <meta name="twitter:title" content="@Title"/>
+    <meta name="twitter:description" content="@TruncatedDescription"/>
+    @if(!string.IsNullOrEmpty(ImageUrl))
+    {
+        <meta name="twitter:image" content="@ImageUrl"/>
+    }
+
+    @if(Breadcrumbs is { Count: > 0 })
+    {
+        <script type="application/ld+json">@((MarkupString)BuildBreadcrumbJsonLd())</script>
+    }
+</HeadContent>
+
+@code {
+    /// <summary>Page title; concatenated with " – Marechai" for the &lt;title&gt; tag.</summary>
+    [Parameter, EditorRequired] public string Title { get; set; } = string.Empty;
+
+    /// <summary>Meta description; truncated at 300 chars to keep within Google's snippet budget.</summary>
+    [Parameter, EditorRequired] public string Description { get; set; } = string.Empty;
+
+    /// <summary>Site-relative canonical path (e.g. <c>/computer/123</c>). Leading slash optional.</summary>
+    [Parameter, EditorRequired] public string CanonicalPath { get; set; } = "/";
+
+    /// <summary>OpenGraph type. Defaults to <c>"article"</c>; set to <c>"website"</c> for hub/listing pages.</summary>
+    [Parameter] public string OgType { get; set; } = "article";
+
+    /// <summary>
+    ///     Optional override for og:image / twitter:image. When null/empty, NO image tag is emitted by this
+    ///     component — the sitewide brand card already in <c>_Host.cshtml</c> stays in effect. Set this only
+    ///     when the page has a more specific image (e.g. an entity photo) that should win over the default.
+    /// </summary>
+    [Parameter] public string? ImageUrl { get; set; }
+
+    /// <summary>
+    ///     When supplied, emits a JSON-LD <c>BreadcrumbList</c> schema. Each tuple is (label, sitePath). Pass
+    ///     <c>null</c> for the path on the LAST entry to indicate "current page" (its url is omitted from the
+    ///     ListItem). The "Home" crumb pointing at <c>/</c> is prepended automatically using the localized
+    ///     <c>NavMenu.Home</c> resource string.
+    /// </summary>
+    [Parameter] public IReadOnlyList<(string Label, string? Path)>? Breadcrumbs { get; set; }
+
+    /// <summary>Emit <c>&lt;meta name="robots" content="noindex, nofollow"&gt;</c> for private/auth-only pages.</summary>
+    [Parameter] public bool NoIndex { get; set; }
+
+    string CanonicalUrl => SeoMeta.BuildCanonicalUrl(CanonicalPath);
+
+    string TruncatedDescription => Description.Length <= 300 ? Description : Description[..297] + "...";
+
+    string BuildBreadcrumbJsonLd()
+    {
+        // Prepend the localized Home crumb so callers don't have to repeat it on every page.
+        var items = new List<(string Label, string? Path)> { (NavL["Home"], "/") };
+        items.AddRange(Breadcrumbs!);
+
+        var sb = new StringBuilder();
+        sb.Append("{\"@context\":\"https://schema.org\",\"@type\":\"BreadcrumbList\",\"itemListElement\":[");
+
+        for(var i = 0; i < items.Count; i++)
+        {
+            (string label, string? path) = items[i];
+            if(i > 0) sb.Append(',');
+
+            sb.Append("{\"@type\":\"ListItem\",\"position\":");
+            sb.Append(i + 1);
+            sb.Append(",\"name\":");
+            sb.Append(JsonSerializer.Serialize(label));
+
+            if(!string.IsNullOrEmpty(path))
+            {
+                sb.Append(",\"item\":");
+                sb.Append(JsonSerializer.Serialize(SeoMeta.BuildCanonicalUrl(path)));
+            }
+
+            sb.Append('}');
+        }
+
+        sb.Append("]}");
+
+        return sb.ToString();
+    }
+}

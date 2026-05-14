@@ -2155,4 +2155,7 @@
   <data name="{0} reviews / {1} ratings" xml:space="preserve">
     <value>{0} avis / {1} notes</value>
   </data>
+    <data name="Seo description" xml:space="preserve">
+        <value>Découvrez {0} sur Marechai — le référentiel principal de l’histoire de l’informatique. Parcourez photos, spécifications, histoire et les personnes et entreprises qui l’ont créé.</value>
+    </data>
 </root>

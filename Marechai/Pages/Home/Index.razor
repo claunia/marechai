@@ -29,7 +29,46 @@
 @using Marechai.Data
 @inherits OwningComponentBase<NewsService>
 @inject IStringLocalizer<NewsService> L
-<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
+@inject IStringLocalizer<Index> HomeL
+
+<PageTitle>@HomeL["Page title"]</PageTitle>
+<HeadContent>
+    <meta name="description" content="@HomeL["Meta description"]"/>
+
+    <meta property="og:type" content="website"/>
+    <meta property="og:title" content="@HomeL["Page title"]"/>
+    <meta property="og:description" content="@HomeL["Meta description"]"/>
+
+    <meta name="twitter:title" content="@HomeL["Page title"]"/>
+    <meta name="twitter:description" content="@HomeL["Meta description"]"/>
+</HeadContent>
+
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #3F8CFF 0%, #7C3BFF 100%); border-radius: 16px;">
+    <MudStack Spacing="3">
+        <img src="/img/marechai-logo.svg" alt="@SeoMeta.SiteName" style="height: 60px; width: auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));"/>
+        <MudText Typo="Typo.h4" Style="color: white;">@HomeL["Welcome to Marechai"]</MudText>
+        <MudText Typo="Typo.body1" Style="color: white;">@((MarkupString)HomeL["Welcome lead"].Value)</MudText>
+        <MudStack Row="true" Spacing="2" Wrap="Wrap.Wrap">
+            <MudChip T="string" Variant="Variant.Filled" Color="Color.Default" Href="/computers" Icon="@Icons.Material.Filled.Computer">@HomeL["Browse computers"]</MudChip>
+            <MudChip T="string" Variant="Variant.Filled" Color="Color.Default" Href="/consoles" Icon="@Icons.Material.Filled.SportsEsports">@HomeL["Browse consoles"]</MudChip>
+            <MudChip T="string" Variant="Variant.Filled" Color="Color.Default" Href="/software" Icon="@Icons.Material.Filled.Apps">@HomeL["Browse software"]</MudChip>
+            <MudChip T="string" Variant="Variant.Filled" Color="Color.Default" Href="/about" Icon="@Icons.Material.Filled.Info">@HomeL["About this site"]</MudChip>
+        </MudStack>
+        <MudStack Row="true" Spacing="2" Wrap="Wrap.Wrap">
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" Href="/about">
+                <img src="/img/marechai-logo-square.svg" alt="" style="height: 20px; width: 20px; margin-right: 8px;"/>
+                @HomeL["Learn more"]
+            </MudButton>
+            <AuthorizeView>
+                <NotAuthorized>
+                    <MudButton Variant="Variant.Outlined" Style="color: white; border-color: white;" Href="/Identity/Account/Register" StartIcon="@Icons.Material.Filled.PersonAdd">@HomeL["Sign up to contribute"]</MudButton>
+                </NotAuthorized>
+            </AuthorizeView>
+        </MudStack>
+    </MudStack>
+</MudPaper>
+
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #3F8CFF 0%, #7C3BFF 100%); border-radius: 16px;">
     <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
         <MudIcon Icon="@Icons.Material.Filled.Newspaper" Size="Size.Large" Style="color: white;"/>
         <MudText Typo="Typo.h4" Style="color: white;">@L["News"]</MudText>

@@ -439,4 +439,7 @@
   <data name="Rankings" xml:space="preserve">
     <value>Ranglisten</value>
   </data>
+    <data name="Home" xml:space="preserve">
+        <value>Startseite</value>
+    </data>
 </root>

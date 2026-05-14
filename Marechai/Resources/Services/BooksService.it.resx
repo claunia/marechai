@@ -538,4 +538,7 @@
   <data name="Fill in the fields below to suggest a new book. Title is required; you can attach a cover image and queue people, companies, machines and machine families that will all be added together once an administrator accepts the suggestion." xml:space="preserve">
     <value>Compila i campi qui sotto per suggerire un nuovo libro. Il titolo è obbligatorio; puoi allegare un'immagine di copertina e accodare persone, aziende, macchine e famiglie di macchine che saranno tutte aggiunte insieme una volta che un amministratore accetterà il suggerimento.</value>
   </data>
+    <data name="Seo description" xml:space="preserve">
+        <value>Scopri {0} su Marechai — il repository principale della storia dell’informatica. Sfoglia foto, specifiche, storia e le persone e aziende che l’hanno creato.</value>
+    </data>
 </root>

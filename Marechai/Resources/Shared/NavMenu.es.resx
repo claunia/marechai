@@ -500,4 +500,7 @@
   <data name="Rankings" xml:space="preserve">
     <value>Clasificaciones</value>
   </data>
+    <data name="Home" xml:space="preserve">
+        <value>Inicio</value>
+    </data>
 </root>

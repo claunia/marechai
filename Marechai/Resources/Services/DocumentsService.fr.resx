@@ -426,4 +426,7 @@
   <data name="Fill in the fields below to suggest a new document. Title is required; you can queue people, companies, machines and machine families that will all be added together once an administrator accepts the suggestion." xml:space="preserve">
     <value>Remplissez les champs ci-dessous pour suggérer un nouveau document. Le titre est obligatoire ; vous pouvez ajouter à la file d’attente des personnes, des entreprises, des machines et des familles de machines qui seront toutes ajoutées ensemble une fois qu’un administrateur acceptera la suggestion.</value>
   </data>
+    <data name="Seo description" xml:space="preserve">
+        <value>Découvrez {0} sur Marechai — le référentiel principal de l’histoire de l’informatique. Parcourez photos, spécifications, histoire et les personnes et entreprises qui l’ont créé.</value>
+    </data>
 </root>

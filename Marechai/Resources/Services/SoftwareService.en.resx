@@ -1978,4 +1978,7 @@
   <data name="{0} reviews / {1} ratings" xml:space="preserve">
     <value>{0} reviews / {1} ratings</value>
   </data>
+    <data name="Seo description" xml:space="preserve">
+        <value>Discover {0} on Marechai — the master repository of computing history. Browse photos, specifications, history, and the people and companies who built it.</value>
+    </data>
 </root>

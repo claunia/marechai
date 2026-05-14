@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ReSharper disable MarkupTextTypo -->
+<root>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root"
+                xmlns="">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Page title" xml:space="preserve">
+        <value>Marechai – Référentiel principal d’informations sur les artefacts de l’histoire de l’informatique</value>
+    </data>
+    <data name="Meta description" xml:space="preserve">
+        <value>Marechai est le référentiel principal de l’histoire de l’informatique : ordinateurs, consoles, smartphones, tablettes, PDA, livres, magazines, documents, logiciels, GPU, processeurs et synthétiseurs sonores, tous préservés avec photos, spécifications et les personnes et entreprises à l’origine de chaque artefact.</value>
+    </data>
+    <data name="Welcome to Marechai" xml:space="preserve">
+        <value>Bienvenue sur Marechai</value>
+    </data>
+    <data name="Welcome lead" xml:space="preserve">
+        <value>Marechai est une archive en constante évolution du patrimoine informatique. Parcourez et enrichissez un catalogue soigné d’&lt;b&gt;ordinateurs, consoles, smartphones, tablettes, PDA, livres, magazines, documents, logiciels, GPU, processeurs et synthétiseurs sonores&lt;/b&gt;, ainsi que les personnes et entreprises qui les ont créés.</value>
+    </data>
+    <data name="Browse computers" xml:space="preserve">
+        <value>Parcourir les ordinateurs</value>
+    </data>
+    <data name="Browse consoles" xml:space="preserve">
+        <value>Parcourir les consoles</value>
+    </data>
+    <data name="Browse software" xml:space="preserve">
+        <value>Parcourir les logiciels</value>
+    </data>
+    <data name="About this site" xml:space="preserve">
+        <value>À propos</value>
+    </data>
+    <data name="Learn more" xml:space="preserve">
+        <value>En savoir plus</value>
+    </data>
+    <data name="Sign up to contribute" xml:space="preserve">
+        <value>S’inscrire pour contribuer</value>
+    </data>
+</root>

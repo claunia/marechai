@@ -547,4 +547,7 @@
     <data name="Suggest new company" xml:space="preserve"><value>Suggerisci nuova azienda</value></data>
     <data name="Suggest a new company to be added to the catalogue." xml:space="preserve"><value>Suggerisci una nuova azienda da aggiungere al catalogo.</value></data>
     <data name="Sold to / Merged with" xml:space="preserve"><value>Venduta a / Fusa con</value></data>
+    <data name="Seo description" xml:space="preserve">
+        <value>Scopri {0} su Marechai — il repository principale della storia dell’informatica. Sfoglia foto, specifiche, storia e le persone e aziende che l’hanno creato.</value>
+    </data>
 </root>

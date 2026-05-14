@@ -440,4 +440,7 @@
   <data name="Fill in the fields below to suggest a new book. Title is required; you can attach a cover image and queue people, companies, machines and machine families that will all be added together once an administrator accepts the suggestion." xml:space="preserve">
     <value>Fill in the fields below to suggest a new book. Title is required; you can attach a cover image and queue people, companies, machines and machine families that will all be added together once an administrator accepts the suggestion.</value>
   </data>
+    <data name="Seo description" xml:space="preserve">
+        <value>Discover {0} on Marechai — the master repository of computing history. Browse photos, specifications, history, and the people and companies who built it.</value>
+    </data>
 </root>

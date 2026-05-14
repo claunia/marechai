@@ -845,4 +845,7 @@
   <data name="We have no videos available about this machine." xml:space="preserve">
     <value>Non abbiamo video disponibili su questa macchina.</value>
   </data>
+    <data name="Seo description" xml:space="preserve">
+        <value>Scopri {0} su Marechai — il repository principale della storia dell’informatica. Sfoglia foto, specifiche, storia e le persone e aziende che l’hanno creato.</value>
+    </data>
 </root>

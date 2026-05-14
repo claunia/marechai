@@ -731,4 +731,7 @@
   <data name="Suggested video" xml:space="preserve">
     <value>Suggested video</value>
   </data>
+    <data name="Seo description" xml:space="preserve">
+        <value>Discover {0} on Marechai — the master repository of computing history. Browse photos, specifications, history, and the people and companies who built it.</value>
+    </data>
 </root>

@@ -55,6 +55,22 @@
     return;
 }
 
+@{
+    var _seoParent = _machine.Type switch
+    {
+        (int)Marechai.Data.MachineType.Console    => ("Consoles",    "/consoles"),
+        (int)Marechai.Data.MachineType.Smartphone => ("Smartphones", "/smartphones"),
+        (int)Marechai.Data.MachineType.Pda        => ("PDAs",        "/pdas"),
+        (int)Marechai.Data.MachineType.Tablet     => ("Tablets",     "/tablets"),
+        _                                          => ("Computers",   "/computers")
+    };
+}
+
+<EntityMetaTags Title="@_machine.Name"
+                Description="@string.Format(L["Seo description"], _machine.Name)"
+                CanonicalPath="@($"/machine/{Id}")"
+                Breadcrumbs="@(new (string, string?)[] { (_seoParent.Item1, _seoParent.Item2), (_machine.Name, null) })" />
+
 @* ── Hero Header ── *@
 <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
     <MudStack AlignItems="AlignItems.Center" Spacing="3">

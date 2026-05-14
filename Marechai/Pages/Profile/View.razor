@@ -48,6 +48,11 @@
     return;
 }
 
+<EntityMetaTags Title="@(_profile.DisplayName ?? Username)"
+                Description=""
+                CanonicalPath="@($"/profile/{Username}")"
+                NoIndex="true" />
+
 @* ── Hero Header ── *@
 <MudPaper Class="pa-6 mb-6" Elevation="0"
           Style="background: linear-gradient(135deg, #1a237e 0%, #42a5f5 100%); border-radius: 16px;">

@@ -439,4 +439,7 @@
   <data name="Rankings" xml:space="preserve">
     <value>Classements</value>
   </data>
+    <data name="Home" xml:space="preserve">
+        <value>Accueil</value>
+    </data>
 </root>

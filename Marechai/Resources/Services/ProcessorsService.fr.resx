@@ -794,4 +794,7 @@
   <data name="We have no videos available about this processor." xml:space="preserve">
     <value>Nous n'avons pas de vidéos disponibles sur ce processeur.</value>
   </data>
+    <data name="Seo description" xml:space="preserve">
+        <value>Découvrez {0} sur Marechai — le référentiel principal de l’histoire de l’informatique. Parcourez photos, spécifications, histoire et les personnes et entreprises qui l’ont créé.</value>
+    </data>
 </root>
