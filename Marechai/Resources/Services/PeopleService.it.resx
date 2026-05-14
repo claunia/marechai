@@ -369,4 +369,14 @@
   <data name="Name and surname are required." xml:space="preserve">
     <value>Nome e cognome sono obbligatori.</value>
   </data>
+  <data name="Suggest a new photo" xml:space="preserve">
+    <value>Suggerisci una nuova foto</value>
+  </data>
+  <data name="Suggest a photo" xml:space="preserve">
+    <value>Suggerisci una foto</value>
+  </data>
+  <data name="We do not have a photo of this person, you could collaborate by suggesting one" xml:space="preserve">
+    <value>Non abbiamo una foto di questa persona, puoi collaborare suggerendone una</value>
+  </data>
+
 </root>

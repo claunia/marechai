@@ -185,9 +185,22 @@
 {
     <MudCard Elevation="2" Class="mb-4 rounded-lg">
         <MudCardContent>
-            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
-                <MudIcon Icon="@Icons.Material.Filled.Image" Color="Color.Primary"/>
-                <MudText Typo="Typo.h6">@L["Photo"]</MudText>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-3">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIcon Icon="@Icons.Material.Filled.Image" Color="Color.Primary"/>
+                    <MudText Typo="Typo.h6">@L["Photo"]</MudText>
+                </MudStack>
+                <AuthorizeView>
+                    <Authorized>
+                        <MudTooltip Text="@L["Suggest a new photo"]">
+                            <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                           Size="Size.Small"
+                                           Color="Color.Secondary"
+                                           OnClick="OpenPersonSuggestionDialogAsync"
+                                           aria-label="@L["Suggest a new photo"]"/>
+                        </MudTooltip>
+                    </Authorized>
+                </AuthorizeView>
             </MudStack>
             <div class="d-flex justify-center" style="cursor: pointer;" @onclick="() => _lightbox.Show(new List<Guid> { _person.Photo.Value }, _person.Photo.Value)">
                 <picture>
@@ -200,6 +213,30 @@
             </div>
         </MudCardContent>
     </MudCard>
+}
+else
+{
+    <AuthorizeView>
+        <Authorized>
+            <MudCard Elevation="2" Class="mb-4 rounded-lg">
+                <MudCardContent>
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+                        <MudIcon Icon="@Icons.Material.Filled.Image" Color="Color.Primary"/>
+                        <MudText Typo="Typo.h6">@L["Photo"]</MudText>
+                    </MudStack>
+                    <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Class="mb-2">
+                        @L["We do not have a photo of this person, you could collaborate by suggesting one"]
+                    </MudAlert>
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.AddPhotoAlternate"
+                               OnClick="OpenPersonSuggestionDialogAsync">
+                        @L["Suggest a photo"]
+                    </MudButton>
+                </MudCardContent>
+            </MudCard>
+        </Authorized>
+    </AuthorizeView>
 }
 
 @* ── Biography Card (3-state: no biography / fallback / native) ── *@
