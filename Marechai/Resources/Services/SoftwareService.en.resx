@@ -567,6 +567,9 @@
     <data name="Media tab" xml:space="preserve">
         <value>Media</value>
     </data>
+    <data name="Other (promo art)" xml:space="preserve">
+        <value>Other</value>
+    </data>
     <data name="Promo Art" xml:space="preserve">
         <value>Promo Art</value>
     </data>

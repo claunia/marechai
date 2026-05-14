@@ -58,6 +58,11 @@ public partial class SoftwarePromoArtSuggestionDialog : ComponentBase, IAsyncDis
     string       _groupName;
     List<string> _existingGroups = new();
 
+    // Map of localized display name -> canonical English name. Populated alongside
+    // _existingGroups so submit can resolve the displayed value back to canonical and
+    // avoid creating duplicate groups when the UI is in a non-English locale.
+    Dictionary<string, string> _groupCanonicalByDisplayName = new(StringComparer.OrdinalIgnoreCase);
+
     // Staged images. Keyed by ClientGuid (a UUID generated in JS at upload-start time)
     // so the JS-side XHR progress callbacks can target the correct entry.
     readonly List<StagedPromo> _staged = new();
@@ -80,10 +85,18 @@ public partial class SoftwarePromoArtSuggestionDialog : ComponentBase, IAsyncDis
                               .Distinct(StringComparer.OrdinalIgnoreCase)
                               .OrderBy(n => n, StringComparer.OrdinalIgnoreCase)
                               .ToList();
+
+            _groupCanonicalByDisplayName = groups
+                                          .Where(g => !string.IsNullOrWhiteSpace(g.Name) &&
+                                                      !string.IsNullOrWhiteSpace(g.CanonicalName))
+                                          .GroupBy(g => g.Name, StringComparer.OrdinalIgnoreCase)
+                                          .ToDictionary(g => g.Key, g => g.First().CanonicalName,
+                                                        StringComparer.OrdinalIgnoreCase);
         }
         catch
         {
-            _existingGroups = new List<string>();
+            _existingGroups              = new List<string>();
+            _groupCanonicalByDisplayName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         }
         finally
         {
@@ -292,9 +305,19 @@ public partial class SoftwarePromoArtSuggestionDialog : ComponentBase, IAsyncDis
                      })
                      .ToArray();
 
+        // Resolve the displayed (potentially localized) group name back to its canonical English
+        // form so the server-side get-or-create matches an existing group regardless of locale.
+        // Free-text new entries fall through and get accepted as-is — the worker will translate
+        // them on the next tick.
+        string trimmedGroup = _groupName.Trim();
+        string canonicalGroupName =
+            _groupCanonicalByDisplayName.TryGetValue(trimmedGroup, out string canonical)
+                ? canonical
+                : trimmedGroup;
+
         var values = new Dictionary<string, object>(StringComparer.Ordinal)
         {
-            ["group_name"] = _groupName.Trim(),
+            ["group_name"] = canonicalGroupName,
             ["photos"]     = photos
         };
 

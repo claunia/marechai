@@ -378,6 +378,12 @@ file class Program
         builder.Services.AddSingleton<Marechai.Translation.ITranslationProvider,
                                       SoftwareAttributeTranslationProvider>();
 
+        // Software promo-art group translation provider — NO in-memory cache singleton; the read
+        // endpoints project the localized name directly from the DB via a LEFT JOIN sub-query.
+        // The worker still fills SoftwarePromoArtGroupTranslations in the background.
+        builder.Services.AddSingleton<Marechai.Translation.ITranslationProvider,
+                                      SoftwarePromoArtGroupTranslationProvider>();
+
         // Background worker that fills SoftwareGenreTranslations using OpenAI (preferred) /
         // NLLB (fallback). Exits permanently if neither provider is configured. MUST be
         // registered after AddMarechaiTranslation + AddSingleton<SoftwareGenreTranslationCache>.

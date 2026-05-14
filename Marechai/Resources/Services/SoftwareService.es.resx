@@ -662,6 +662,9 @@
     <data name="Reviews" xml:space="preserve">
         <value>Reseñas</value>
     </data>
+    <data name="Other (promo art)" xml:space="preserve">
+        <value>Otros</value>
+    </data>
     <data name="Promo Art" xml:space="preserve">
         <value>Arte promocional</value>
         <comment>Promo Art</comment>

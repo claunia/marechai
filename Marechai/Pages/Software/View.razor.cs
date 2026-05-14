@@ -283,7 +283,7 @@ public partial class View
                               .ToDictionary(g => g.Key, g => g.OrderBy(c => c.Type).ToList());
 
             _promoArtByGroup = _promoArt
-                              .GroupBy(p => p.GroupName ?? "Other")
+                              .GroupBy(p => p.GroupName ?? L["Other (promo art)"])
                               .OrderBy(g => g.Key)
                               .ToDictionary(g => g.Key, g => g.ToList());
 

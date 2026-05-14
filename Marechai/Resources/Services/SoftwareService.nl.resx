@@ -958,7 +958,10 @@
     <data name="Programmer" xml:space="preserve">
         <value>Programmer</value>
     </data>
-      <data name="Promo Art" xml:space="preserve">
+      <data name="Other (promo art)" xml:space="preserve">
+        <value>Overige</value>
+    </data>
+    <data name="Promo Art" xml:space="preserve">
         <value>Promotiekunst</value>
     </data>
     <data name="Promo Art Management" xml:space="preserve">

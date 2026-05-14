@@ -59,37 +59,72 @@ public class SoftwarePromoArtController(MarechaiContext context, IConfiguration 
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<SoftwarePromoArtDto>> GetBySoftwareAsync(ulong softwareId) =>
-        context.SoftwarePromoArt
-               .Where(p => p.SoftwareId == softwareId)
-               .OrderBy(p => p.Group.Name)
-               .ThenBy(p => p.CreatedOn)
-               .ThenBy(p => p.Id)
-               .Select(p => new SoftwarePromoArtDto
-                {
-                    Id                = p.Id,
-                    SoftwareId        = p.SoftwareId,
-                    GroupId           = p.GroupId,
-                    GroupName         = p.Group.Name,
-                    Caption           = p.Caption,
-                    OriginalExtension = p.OriginalExtension
-                })
-               .ToListAsync();
+    public Task<List<SoftwarePromoArtDto>> GetBySoftwareAsync(ulong softwareId, [FromQuery] string lang = null)
+    {
+        string langCode = LanguageResolver.Resolve(HttpContext, lang);
+
+        // English fast-path: no need for the translation sub-query — return the canonical column.
+        if(string.Equals(langCode, "eng", StringComparison.Ordinal))
+            return context.SoftwarePromoArt
+                          .Where(p => p.SoftwareId == softwareId)
+                          .OrderBy(p => p.Group.Name)
+                          .ThenBy(p => p.CreatedOn)
+                          .ThenBy(p => p.Id)
+                          .Select(p => new SoftwarePromoArtDto
+                           {
+                               Id                = p.Id,
+                               SoftwareId        = p.SoftwareId,
+                               GroupId           = p.GroupId,
+                               GroupName         = p.Group.Name,
+                               Caption           = p.Caption,
+                               OriginalExtension = p.OriginalExtension
+                           })
+                          .ToListAsync();
+
+        return context.SoftwarePromoArt
+                      .Where(p => p.SoftwareId == softwareId)
+                      .OrderBy(p => p.Group.Name)
+                      .ThenBy(p => p.CreatedOn)
+                      .ThenBy(p => p.Id)
+                      .Select(p => new SoftwarePromoArtDto
+                       {
+                           Id         = p.Id,
+                           SoftwareId = p.SoftwareId,
+                           GroupId    = p.GroupId,
+                           GroupName = context.SoftwarePromoArtGroupTranslations
+                                              .Where(t => t.GroupId      == p.GroupId &&
+                                                          t.LanguageCode == langCode)
+                                              .Select(t => t.Name)
+                                              .FirstOrDefault() ?? p.Group.Name,
+                           Caption           = p.Caption,
+                           OriginalExtension = p.OriginalExtension
+                       })
+                      .ToListAsync();
+    }
 
     [HttpGet("{id:Guid}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<SoftwarePromoArtDto>> GetAsync(Guid id)
+    public async Task<ActionResult<SoftwarePromoArtDto>> GetAsync(Guid id, [FromQuery] string lang = null)
     {
+        string langCode = LanguageResolver.Resolve(HttpContext, lang);
+        bool   isEnglish = string.Equals(langCode, "eng", StringComparison.Ordinal);
+
         var promo = await context.SoftwarePromoArt
                                  .Where(p => p.Id == id)
                                  .Select(p => new SoftwarePromoArtDto
                                   {
-                                      Id                = p.Id,
-                                      SoftwareId        = p.SoftwareId,
-                                      GroupId           = p.GroupId,
-                                      GroupName         = p.Group.Name,
+                                      Id         = p.Id,
+                                      SoftwareId = p.SoftwareId,
+                                      GroupId    = p.GroupId,
+                                      GroupName = isEnglish
+                                                      ? p.Group.Name
+                                                      : context.SoftwarePromoArtGroupTranslations
+                                                               .Where(t => t.GroupId      == p.GroupId &&
+                                                                           t.LanguageCode == langCode)
+                                                               .Select(t => t.Name)
+                                                               .FirstOrDefault() ?? p.Group.Name,
                                       Caption           = p.Caption,
                                       OriginalExtension = p.OriginalExtension
                                   })
@@ -103,15 +138,43 @@ public class SoftwarePromoArtController(MarechaiContext context, IConfiguration 
     [HttpGet("groups")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public Task<List<SoftwarePromoArtGroupDto>> GetGroupsAsync() =>
-        context.SoftwarePromoArtGroups
-               .OrderBy(g => g.Name)
-               .Select(g => new SoftwarePromoArtGroupDto
-                {
-                    Id   = g.Id,
-                    Name = g.Name
-                })
-               .ToListAsync();
+    public async Task<List<SoftwarePromoArtGroupDto>> GetGroupsAsync([FromQuery] string lang = null)
+    {
+        string langCode = LanguageResolver.Resolve(HttpContext, lang);
+        bool   isEnglish = string.Equals(langCode, "eng", StringComparison.Ordinal);
+
+        // Project both the localized Name (with English fallback) and the canonical English
+        // CanonicalName so edit-path autocompletes can display the localized text but submit
+        // the canonical English name back to the get-or-create upload/update endpoints.
+        List<SoftwarePromoArtGroupDto> groups = isEnglish
+                                                    ? await context.SoftwarePromoArtGroups
+                                                                   .Select(g => new SoftwarePromoArtGroupDto
+                                                                    {
+                                                                        Id            = g.Id,
+                                                                        Name          = g.Name,
+                                                                        CanonicalName = g.Name
+                                                                    })
+                                                                   .ToListAsync()
+                                                    : await context.SoftwarePromoArtGroups
+                                                                   .Select(g => new SoftwarePromoArtGroupDto
+                                                                    {
+                                                                        Id = g.Id,
+                                                                        Name = context.SoftwarePromoArtGroupTranslations
+                                                                                      .Where(t => t.GroupId      == g.Id &&
+                                                                                                  t.LanguageCode == langCode)
+                                                                                      .Select(t => t.Name)
+                                                                                      .FirstOrDefault() ?? g.Name,
+                                                                        CanonicalName = g.Name
+                                                                    })
+                                                                   .ToListAsync();
+
+        // Sort in-memory by the localized Name so the displayed list is alphabetical in the
+        // requested language (sorting in EF would force the join into ORDER BY and complicate
+        // SQL — the groups list is small).
+        groups.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.CurrentCultureIgnoreCase));
+
+        return groups;
+    }
 
     [HttpPost("upload")]
     [Authorize(Roles = "Admin,UberAdmin")]

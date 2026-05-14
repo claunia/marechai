@@ -22,7 +22,7 @@ namespace Marechai.ApiClient.Software.Item.PromoArt
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public PromoArtRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/{%2Did}/promo-art", pathParameters)
+        public PromoArtRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/{%2Did}/promo-art{?lang*}", pathParameters)
         {
         }
         /// <summary>
@@ -30,7 +30,7 @@ namespace Marechai.ApiClient.Software.Item.PromoArt
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public PromoArtRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/{%2Did}/promo-art", rawUrl)
+        public PromoArtRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/{%2Did}/promo-art{?lang*}", rawUrl)
         {
         }
         /// <returns>A List&lt;global::Marechai.ApiClient.Models.SoftwarePromoArtDto&gt;</returns>
@@ -39,11 +39,11 @@ namespace Marechai.ApiClient.Software.Item.PromoArt
         /// <exception cref="global::Marechai.ApiClient.Models.ProblemDetails">When receiving a 400 status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<List<global::Marechai.ApiClient.Models.SoftwarePromoArtDto>?> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<List<global::Marechai.ApiClient.Models.SoftwarePromoArtDto>?> GetAsync(Action<RequestConfiguration<global::Marechai.ApiClient.Software.Item.PromoArt.PromoArtRequestBuilder.PromoArtRequestBuilderGetQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<List<global::Marechai.ApiClient.Models.SoftwarePromoArtDto>> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<List<global::Marechai.ApiClient.Models.SoftwarePromoArtDto>> GetAsync(Action<RequestConfiguration<global::Marechai.ApiClient.Software.Item.PromoArt.PromoArtRequestBuilder.PromoArtRequestBuilderGetQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             var requestInfo = ToGetRequestInformation(requestConfiguration);
@@ -58,11 +58,11 @@ namespace Marechai.ApiClient.Software.Item.PromoArt
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default)
+        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<global::Marechai.ApiClient.Software.Item.PromoArt.PromoArtRequestBuilder.PromoArtRequestBuilderGetQueryParameters>>? requestConfiguration = default)
         {
 #nullable restore
 #else
-        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default)
+        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<global::Marechai.ApiClient.Software.Item.PromoArt.PromoArtRequestBuilder.PromoArtRequestBuilderGetQueryParameters>> requestConfiguration = default)
         {
 #endif
             var requestInfo = new RequestInformation(Method.GET, UrlTemplate, PathParameters);
@@ -79,12 +79,27 @@ namespace Marechai.ApiClient.Software.Item.PromoArt
         {
             return new global::Marechai.ApiClient.Software.Item.PromoArt.PromoArtRequestBuilder(rawUrl, RequestAdapter);
         }
+        [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
+        #pragma warning disable CS1591
+        public partial class PromoArtRequestBuilderGetQueryParameters 
+        #pragma warning restore CS1591
+        {
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("lang")]
+            public string? Lang { get; set; }
+#nullable restore
+#else
+            [QueryParameter("lang")]
+            public string Lang { get; set; }
+#endif
+        }
         /// <summary>
         /// Configuration for the request such as headers, query parameters, and middleware options.
         /// </summary>
         [Obsolete("This class is deprecated. Please use the generic RequestConfiguration class generated by the generator.")]
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class PromoArtRequestBuilderGetRequestConfiguration : RequestConfiguration<DefaultQueryParameters>
+        public partial class PromoArtRequestBuilderGetRequestConfiguration : RequestConfiguration<global::Marechai.ApiClient.Software.Item.PromoArt.PromoArtRequestBuilder.PromoArtRequestBuilderGetQueryParameters>
         {
         }
     }

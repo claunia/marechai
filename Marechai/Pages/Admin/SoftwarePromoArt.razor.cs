@@ -99,7 +99,17 @@ public partial class SoftwarePromoArt
             await stream.CopyToAsync(ms);
             byte[] fileBytes = ms.ToArray();
 
-            SoftwarePromoArtDto result = await SoftwareService.UploadPromoArtAsync((ulong)SoftwareId, _groupName,
+            // Map the displayed (localized) group name back to the canonical English name so the
+            // server-side get-or-create keys on the same row regardless of the user's locale.
+            // Free-text new entries fall through and are uploaded as-is — the worker will
+            // translate them on the next tick.
+            string canonicalGroupName =
+                _groups?.FirstOrDefault(g =>
+                                            string.Equals(g.Name, _groupName, StringComparison.OrdinalIgnoreCase))
+                       ?.CanonicalName
+             ?? _groupName;
+
+            SoftwarePromoArtDto result = await SoftwareService.UploadPromoArtAsync((ulong)SoftwareId, canonicalGroupName,
                                                                                     _caption, fileBytes,
                                                                                     _selectedFile.Name);
 
@@ -130,9 +140,15 @@ public partial class SoftwarePromoArt
     {
         if(string.IsNullOrWhiteSpace(newGroup) || promo.GroupName == newGroup) return;
 
+        // Map the picked (localized) name back to canonical English (see UploadPromoArt).
+        string canonicalGroupName =
+            _groups?.FirstOrDefault(g => string.Equals(g.Name, newGroup, StringComparison.OrdinalIgnoreCase))
+                   ?.CanonicalName
+         ?? newGroup;
+
         var dto = new UpdateSoftwarePromoArtRequest
         {
-            GroupName = newGroup,
+            GroupName = canonicalGroupName,
             Caption   = promo.Caption
         };
 
@@ -154,9 +170,16 @@ public partial class SoftwarePromoArt
     {
         if(promo.Caption == newCaption) return;
 
+        // promo.GroupName is the LOCALIZED display name returned by the server. Map it back to
+        // canonical English before submitting so the get-or-create path keys on the existing row.
+        string canonicalGroupName =
+            _groups?.FirstOrDefault(g => string.Equals(g.Name, promo.GroupName, StringComparison.OrdinalIgnoreCase))
+                   ?.CanonicalName
+         ?? promo.GroupName;
+
         var dto = new UpdateSoftwarePromoArtRequest
         {
-            GroupName = promo.GroupName,
+            GroupName = canonicalGroupName,
             Caption   = newCaption
         };
 

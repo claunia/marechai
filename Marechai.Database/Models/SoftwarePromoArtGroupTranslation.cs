@@ -24,28 +24,29 @@
 *******************************************************************************/
 
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 
-namespace Marechai.Data.Dtos;
+namespace Marechai.Database.Models;
 
-public class SoftwarePromoArtGroupDto : BaseDto<int>
+/// <summary>
+///     One translated <see cref="SoftwarePromoArtGroup.Name" /> per (<see cref="GroupId" />,
+///     <see cref="LanguageCode" />) pair. English (<c>eng</c>) is treated as the identity copy of
+///     <see cref="SoftwarePromoArtGroup.Name" /> and is NEVER stored here — read endpoints fall back
+///     to the parent <c>Name</c> column when no translation row exists for the requested language.
+///     The background <c>TranslationWorker</c> populates this table by calling OpenAI / NLLB; rows
+///     are append-only.
+/// </summary>
+public class SoftwarePromoArtGroupTranslation : BaseModel<int>
 {
-    /// <summary>
-    ///     Display name in the language requested by the caller (server resolves the language via
-    ///     <c>?lang=</c> → <c>Accept-Language</c> → <c>"eng"</c>). Falls back to the canonical English
-    ///     <see cref="CanonicalName" /> when no translation row exists for the requested language.
-    /// </summary>
-    [JsonPropertyName("name")]
-    [Required]
-    public string Name { get; set; } = string.Empty;
+    public int GroupId { get; set; }
 
-    /// <summary>
-    ///     Canonical English name as stored in <c>SoftwarePromoArtGroups.Name</c>. Edit-path
-    ///     autocompletes (admin uploader, suggestion dialog) display <see cref="Name" /> for the
-    ///     user but submit <see cref="CanonicalName" /> back to the server so the get-or-create
-    ///     keys on the same English row regardless of the user's locale.
-    /// </summary>
-    [JsonPropertyName("canonical_name")]
+    [StringLength(3)]
     [Required]
-    public string CanonicalName { get; set; } = string.Empty;
+    public string LanguageCode { get; set; }
+
+    [StringLength(256)]
+    [Required]
+    public string Name { get; set; }
+
+    public virtual SoftwarePromoArtGroup Group    { get; set; }
+    public virtual Iso639                Language { get; set; }
 }

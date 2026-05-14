@@ -1649,7 +1649,12 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            var result = await client.Software[softwareId].PromoArt.GetAsync();
+            string lang = UiLanguage.GetIso639_3();
+
+            var result = await client.Software[softwareId].PromoArt.GetAsync(config =>
+            {
+                config.QueryParameters.Lang = lang;
+            });
 
             return result ?? [];
         }
@@ -1663,7 +1668,12 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwarePromoArtGroupDto> result = await client.Software.PromoArt.Groups.GetAsync();
+            string lang = UiLanguage.GetIso639_3();
+
+            List<SoftwarePromoArtGroupDto> result = await client.Software.PromoArt.Groups.GetAsync(config =>
+            {
+                config.QueryParameters.Lang = lang;
+            });
 
             return result ?? [];
         }

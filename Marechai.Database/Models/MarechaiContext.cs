@@ -159,6 +159,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<SoftwareCover>                      SoftwareCovers                       { get; set; }
     public virtual DbSet<SoftwarePromoArt>                   SoftwarePromoArt                     { get; set; }
     public virtual DbSet<SoftwarePromoArtGroup>              SoftwarePromoArtGroups               { get; set; }
+    public virtual DbSet<SoftwarePromoArtGroupTranslation>   SoftwarePromoArtGroupTranslations    { get; set; }
     public virtual DbSet<SoftwareDescription>                  SoftwareDescriptions                 { get; set; }
     public virtual DbSet<SoundByMachine>                      SoundByMachine                      { get; set; }
     public virtual DbSet<SoundSynth>                          SoundSynths                         { get; set; }
@@ -2896,6 +2897,24 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .WithMany(p => p.PromoArt)
                   .HasForeignKey(e => e.GroupId)
                   .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<SoftwarePromoArtGroupTranslation>(entity =>
+        {
+            entity.HasIndex(e => new { e.GroupId, e.LanguageCode })
+                  .IsUnique()
+                  .HasDatabaseName("idx_software_promo_art_group_translations_group_language");
+
+            entity.HasOne(e => e.Group)
+                  .WithMany()
+                  .HasForeignKey(e => e.GroupId)
+                  .HasConstraintName("fk_software_promo_art_group_translations_group")
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Language)
+                  .WithMany()
+                  .HasForeignKey(e => e.LanguageCode)
+                  .HasConstraintName("fk_software_promo_art_group_translations_language");
         });
 
         modelBuilder.Entity<MobyGamesPromoArtDownloadState>(entity =>

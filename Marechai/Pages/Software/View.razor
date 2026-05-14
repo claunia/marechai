@@ -1073,7 +1073,7 @@ else
             {
                 @foreach(var group in _promoArtByGroup)
                 {
-                    <MudText Typo="Typo.subtitle1" Class="mt-3 mb-2"><strong>@L[group.Key]</strong></MudText>
+                    <MudText Typo="Typo.subtitle1" Class="mt-3 mb-2"><strong>@group.Key</strong></MudText>
                     <div class="d-flex flex-wrap gap-3">
                         @foreach(SoftwarePromoArtDto promo in group.Value)
                         {
@@ -1118,7 +1118,7 @@ else
             </picture>
             @if(!string.IsNullOrEmpty(promo.GroupName))
             {
-                <MudText Typo="Typo.subtitle1" Style="color: white;" Class="mt-2">@L[promo.GroupName]</MudText>
+                <MudText Typo="Typo.subtitle1" Style="color: white;" Class="mt-2">@promo.GroupName</MudText>
             }
             @if(!string.IsNullOrEmpty(promo.Caption))
             {
