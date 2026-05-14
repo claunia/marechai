@@ -99,7 +99,8 @@ public partial class People
             { x => x.DeathDatePrecision, fullPerson.DeathDatePrecision ?? 0 },
             { x => x.Webpage, fullPerson.Webpage },
             { x => x.Twitter, fullPerson.Twitter },
-            { x => x.Facebook, fullPerson.Facebook }
+            { x => x.Facebook, fullPerson.Facebook },
+            { x => x.HasPhoto, fullPerson.Photo.HasValue && fullPerson.Photo.Value != Guid.Empty }
         };
 
         IDialogReference dialog = await DialogService.ShowAsync<PersonDialog>(L["Edit Person"], parameters,

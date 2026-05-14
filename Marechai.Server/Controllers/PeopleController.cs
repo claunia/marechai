@@ -831,6 +831,145 @@ public class PeopleController(
         return Ok();
     }
 
+    // ───────────────────────────── Admin photo (direct upload/delete) ─────────────────────────────
+
+    /// <summary>
+    ///     Allowed file extensions for admin photo uploads. Broader than the collaborator
+    ///     pending allow-set: admins may upload originals in any common image format —
+    ///     the conversion worker transcodes to web-friendly variants. Mirrors
+    ///     <c>BooksController._allowedExtensions</c>.
+    /// </summary>
+    static readonly HashSet<string> _allowedPhotoExtensions =
+        [".jpg", ".jpeg", ".png", ".webp", ".tiff", ".tif", ".bmp"];
+
+    static readonly HashSet<string> _allowedPhotoContentTypes =
+        ["image/jpeg", "image/png", "image/webp", "image/tiff", "image/bmp"];
+
+    /// <summary>
+    ///     Admin direct-upload of a person's photo. Replaces any existing photo: the old
+    ///     variants are swept by <see cref="Marechai.Server.Suggestions.PersonSuggestionApplier.DeletePersonPhotoFiles"/>
+    ///     before the new original is written, then the conversion worker fires in the
+    ///     background. Mirrors <c>BooksController.UploadCoverAsync</c>.
+    /// </summary>
+    [HttpPost("{id:int}/photo/upload")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [RequestSizeLimit(50 * 1024 * 1024)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<PersonDto>> UploadPhotoAsync(int id, IFormFile file)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        if(file is null || file.Length == 0)
+            return BadRequest("No file provided.");
+
+        if(file.Length > 50 * 1024 * 1024)
+            return BadRequest("File exceeds 50 MB limit.");
+
+        string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
+
+        if(!_allowedPhotoExtensions.Contains(extension))
+            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP, TIFF, BMP.");
+
+        if(!string.IsNullOrEmpty(file.ContentType) &&
+           !_allowedPhotoContentTypes.Contains(file.ContentType.ToLowerInvariant()))
+            return BadRequest("Unsupported content type.");
+
+        Person person = await context.People.FindAsync(id);
+
+        if(person is null) return NotFound();
+
+        // If photo already exists, delete the old variants first.
+        if(person.Photo != Guid.Empty)
+            Marechai.Server.Suggestions.PersonSuggestionApplier.DeletePersonPhotoFiles(_assetRootPath, person.Photo);
+
+        Guid photoGuid = Guid.NewGuid();
+
+        // Save original to disk.
+        Marechai.Helpers.Photos.EnsureCreated(_assetRootPath, false, "people");
+
+        string originalsDir = Path.Combine(_assetRootPath, "photos", "people", "originals");
+        string originalPath = Path.Combine(originalsDir, $"{photoGuid}{extension}");
+
+        await using(var fs = new FileStream(originalPath, FileMode.CreateNew, FileAccess.Write))
+        {
+            await file.CopyToAsync(fs);
+        }
+
+        // Fire the conversion worker (generates all format/resolution variants).
+        string sourceFormat = extension.TrimStart('.');
+
+        _ = Task.Run(() =>
+        {
+            try
+            {
+                var photos = new Marechai.Helpers.Photos();
+                photos.ConversionWorker(_assetRootPath, photoGuid, originalPath, sourceFormat, false, "people");
+            }
+            catch
+            {
+                // ignored — conversion can be retried later; original is safe in originals/.
+            }
+        });
+
+        person.Photo                  = photoGuid;
+        person.OriginalPhotoExtension = sourceFormat;
+        await context.SaveChangesWithUserAsync(userId);
+
+        return Ok(new PersonDto
+        {
+            Id                 = person.Id,
+            Name               = person.Name,
+            Surname            = person.Surname,
+            Alias              = person.Alias,
+            DisplayName        = person.DisplayName,
+            CountryOfBirthId   = person.CountryOfBirthId,
+            BirthDate          = person.BirthDate,
+            BirthDatePrecision = person.BirthDatePrecision,
+            DeathDate          = person.DeathDate,
+            DeathDatePrecision = person.DeathDatePrecision,
+            Webpage            = person.Webpage,
+            Twitter            = person.Twitter,
+            Facebook           = person.Facebook,
+            Photo              = person.Photo
+        });
+    }
+
+    /// <summary>
+    ///     Admin direct-delete of a person's photo. Sweeps every variant via
+    ///     <see cref="Marechai.Server.Suggestions.PersonSuggestionApplier.DeletePersonPhotoFiles"/>
+    ///     and clears the <c>Photo</c> + <c>OriginalPhotoExtension</c> fields.
+    /// </summary>
+    [HttpDelete("{id:int}/photo")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult> DeletePhotoAsync(int id)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        Person person = await context.People.FindAsync(id);
+
+        if(person is null) return NotFound();
+
+        if(person.Photo == Guid.Empty) return NoContent();
+
+        Marechai.Server.Suggestions.PersonSuggestionApplier.DeletePersonPhotoFiles(_assetRootPath, person.Photo);
+
+        person.Photo                  = Guid.Empty;
+        person.OriginalPhotoExtension = null;
+        await context.SaveChangesWithUserAsync(userId);
+
+        return NoContent();
+    }
+
     /// <summary>
     ///     Upload a pending photo for a person that the caller is suggesting an edit on.
     ///     Accepts JPG/PNG/WebP up to 50 MB; the file is stored unchanged in

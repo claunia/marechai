@@ -1,6 +1,7 @@
 @using Marechai.ApiClient.Models
 @using Marechai.Services
 @using System.Threading
+@using Microsoft.AspNetCore.Components.Forms
 
 @inject IStringLocalizer<PeopleService> L
 
@@ -82,6 +83,49 @@
                       Variant="Variant.Outlined"
                       Class="mb-4"/>
 
+        @if(!IsNew)
+        {
+            <MudPaper Outlined="true" Class="pa-3 mb-4">
+                <MudText Typo="Typo.subtitle2" Class="mb-2">@L["Photo"]</MudText>
+
+                @if(_hasPhoto)
+                {
+                    <MudText Typo="Typo.body2" Class="mb-2">@L["This person has a photo."]</MudText>
+                    <MudButton Variant="Variant.Outlined" Color="Color.Error" Size="Size.Small"
+                               OnClick="DeletePhoto" Class="mb-3">
+                        @L["Delete Photo"]
+                    </MudButton>
+                }
+                else
+                {
+                    <MudText Typo="Typo.body2" Class="mb-2">@L["No photo."]</MudText>
+                }
+
+                <MudFileUpload T="IBrowserFile" Accept=".jpg,.jpeg,.png,.webp,.tiff,.tif,.bmp"
+                               FilesChanged="OnPhotoFileSelected" MaximumFileCount="1">
+                    <CustomContent>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                                   Disabled="_isUploadingPhoto"
+                                   OnClick="@context.OpenFilePickerAsync">
+                            @L["Upload Photo"]
+                        </MudButton>
+                    </CustomContent>
+                </MudFileUpload>
+
+                @if(_isUploadingPhoto)
+                {
+                    <MudProgressLinear Indeterminate="true" Class="mt-2"/>
+                }
+
+                @if(!string.IsNullOrWhiteSpace(_photoMessage))
+                {
+                    <MudAlert Severity="@_photoMessageSeverity" Class="mt-2" ShowCloseIcon="true"
+                              CloseIconClicked="() => _photoMessage = null">@_photoMessage</MudAlert>
+                }
+            </MudPaper>
+        }
+
         @if(!string.IsNullOrWhiteSpace(_validationError))
         {
             <MudAlert Severity="Severity.Error" Class="mt-2">@_validationError</MudAlert>
@@ -116,11 +160,19 @@
     [Parameter] public string   Webpage     { get; set; }
     [Parameter] public string   Twitter     { get; set; }
     [Parameter] public string   Facebook    { get; set; }
+    [Parameter] public bool     HasPhoto    { get; set; }
+
+    // Photo state
+    bool     _hasPhoto;
+    bool     _isUploadingPhoto;
+    string  _photoMessage;
+    Severity _photoMessageSeverity = Severity.Info;
 
     [Inject] PeopleService PeopleService { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
+        _hasPhoto     = HasPhoto;
         _allCountries = await PeopleService.GetCountriesAsync();
 
         if(CountryId is not null && _allCountries is not null)
@@ -143,6 +195,78 @@
             results = _allCountries?.Where(c => c.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ?? [];
 
         return Task.FromResult(results);
+    }
+
+    async Task OnPhotoFileSelected(IBrowserFile file)
+    {
+        if(file is null) return;
+
+        _isUploadingPhoto = true;
+        _photoMessage     = null;
+        StateHasChanged();
+
+        try
+        {
+            using var stream = file.OpenReadStream(50 * 1024 * 1024); // 50MB limit
+            using var ms     = new System.IO.MemoryStream();
+            await stream.CopyToAsync(ms);
+            ms.Position = 0;
+
+            string contentType = System.IO.Path.GetExtension(file.Name)?.ToLowerInvariant() switch
+            {
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png"            => "image/png",
+                ".webp"           => "image/webp",
+                ".tiff" or ".tif" => "image/tiff",
+                ".bmp"            => "image/bmp",
+                _                 => "application/octet-stream"
+            };
+
+            var multipartBody = new Microsoft.Kiota.Abstractions.MultipartBody();
+            multipartBody.AddOrReplacePart("file", contentType, ms, file.Name);
+
+            PersonDto result = await PeopleService.UploadPhotoAsync(PersonId, multipartBody);
+
+            if(result is not null)
+            {
+                _hasPhoto             = true;
+                _photoMessage         = L["Photo uploaded successfully."];
+                _photoMessageSeverity = Severity.Success;
+            }
+            else
+            {
+                _photoMessage         = L["Failed to upload photo."];
+                _photoMessageSeverity = Severity.Error;
+            }
+        }
+        catch(Exception ex)
+        {
+            _photoMessage         = ex.Message;
+            _photoMessageSeverity = Severity.Error;
+        }
+        finally
+        {
+            _isUploadingPhoto = false;
+            StateHasChanged();
+        }
+    }
+
+    async Task DeletePhoto()
+    {
+        (bool succeeded, string error) = await PeopleService.DeletePhotoAsync(PersonId);
+
+        if(succeeded)
+        {
+            _hasPhoto             = false;
+            _photoMessage         = L["Photo deleted."];
+            _photoMessageSeverity = Severity.Success;
+            StateHasChanged();
+        }
+        else
+        {
+            _photoMessage         = error;
+            _photoMessageSeverity = Severity.Error;
+        }
     }
 
     void Cancel() => MudDialog.Cancel();

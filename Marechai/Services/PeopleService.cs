@@ -318,6 +318,38 @@ public class PeopleService(Marechai.ApiClient.Client client)
         }
     }
 
+    // --- Photo methods ---
+
+    public async Task<PersonDto> UploadPhotoAsync(int personId, MultipartBody body)
+    {
+        try
+        {
+            return await client.People[personId].Photo.Upload.PostAsync(body);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public async Task<(bool succeeded, string error)> DeletePhotoAsync(int personId)
+    {
+        try
+        {
+            await client.People[personId].Photo.DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
     public async Task<List<Iso31661NumericDto>> GetCountriesAsync()
     {
         try

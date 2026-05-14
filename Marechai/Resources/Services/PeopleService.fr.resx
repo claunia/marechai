@@ -470,5 +470,27 @@
   <data name="We do not have a photo of this person, you could collaborate by suggesting one" xml:space="preserve">
     <value>Nous n'avons pas de photo de cette personne, vous pouvez collaborer en en suggérant une</value>
   </data>
+  <data name="This person has a photo." xml:space="preserve">
+    <value>Cette personne a une photo.</value>
+  </data>
+  <data name="No photo." xml:space="preserve">
+    <value>Aucune photo.</value>
+  </data>
+  <data name="Delete Photo" xml:space="preserve">
+    <value>Supprimer la photo</value>
+  </data>
+  <data name="Upload Photo" xml:space="preserve">
+    <value>Téléverser la photo</value>
+  </data>
+  <data name="Photo uploaded successfully." xml:space="preserve">
+    <value>Photo téléversée avec succès.</value>
+  </data>
+  <data name="Failed to upload photo." xml:space="preserve">
+    <value>Échec du téléversement de la photo.</value>
+  </data>
+  <data name="Photo deleted." xml:space="preserve">
+    <value>Photo supprimée.</value>
+  </data>
+
 
 </root>

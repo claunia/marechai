@@ -295,9 +295,11 @@ internal static class PersonSuggestionApplier
     /// <summary>
     ///     Sweep every person-photo artefact for a guid (originals + format/resolution
     ///     variants + thumbnails). Kept here so the applier doesn't take a hard dependency
-    ///     on the controller.
+    ///     on the controller. Exposed as <c>internal</c> so <see cref="Marechai.Server.Controllers.PeopleController"/>
+    ///     can reuse it from the admin upload/delete endpoints (single source of truth for
+    ///     the variant filename list).
     /// </summary>
-    static void DeletePersonPhotoFiles(string assetRootPath, Guid photoGuid)
+    internal static void DeletePersonPhotoFiles(string assetRootPath, Guid photoGuid)
     {
         string photosRoot = System.IO.Path.Combine(assetRootPath, "photos", "people");
         string guidStr    = photoGuid.ToString();
