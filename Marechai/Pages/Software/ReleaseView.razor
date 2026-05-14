@@ -103,6 +103,62 @@
     </MudStack>
 </MudPaper>
 
+@* ── Tabbed content (sticky frosted-glass tab bar; icon+label desktop, icon-only mobile) ── *@
+<style>
+    /* Rounded="true" sets overflow:hidden on .mud-tabs which breaks position:sticky on the tabbar.
+       Force overflow:visible so the tabbar can stick to the page viewport. */
+    .sticky-tabs.mud-tabs,
+    .sticky-tabs .mud-tabs-panels {
+        overflow: visible !important;
+    }
+
+    .sticky-tabs .mud-tabs-tabbar {
+        position: sticky;
+        /* MudAppBar (mt-16 = 64px) is fixed at top:0; offset the tabbar so it docks just below. */
+        top: 64px;
+        z-index: 5;
+        /* Frosted-glass: white tint over a strong backdrop blur. Layered so it reads as
+           "icy translucent" in both light and dark themes. */
+        background-color: color-mix(in srgb, white 35%, var(--mud-palette-surface) 65%) !important;
+        background-image: linear-gradient(rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.06));
+        backdrop-filter: blur(20px) saturate(180%) brightness(110%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%) brightness(110%);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+        /* Visual breathing room between tab bar and content below. */
+        margin-bottom: 20px;
+    }
+
+    /* MudTabPanel renders text directly next to the icon component, with no .mud-typography wrapper.
+       Use font-size:0 to collapse the bare text node on mobile, then null the icon-text margin so
+       the icon stays centered. SVG icons are unaffected by font-size. */
+    @@media (max-width: 599.98px) {
+        .sticky-tabs .mud-tab {
+            font-size: 0 !important;
+            min-width: 56px !important;
+            padding: 6px 10px !important;
+        }
+        .sticky-tabs .mud-tab .mud-tab-icon-text {
+            margin-right: 0 !important;
+            margin-inline-end: 0 !important;
+        }
+    }
+</style>
+
+<MudTabs Rounded="true"
+         ApplyEffectsToContainer="true"
+         KeepPanelsAlive="true"
+         Centered="true"
+         Color="Color.Primary"
+         SliderColor="Color.Primary"
+         Class="sticky-tabs mb-4"
+         ActivePanelIndex="@_activeTabIndex"
+         ActivePanelIndexChanged="OnTabChanged">
+
+@* ── OVERVIEW TAB ── *@
+<MudTabPanel Text="@L["Overview"]" Icon="@Icons.Material.Filled.Info" ToolTip="@L["Overview"]">
+
 @* ── General Information Card ── *@
 <MudCard Elevation="2" Class="mb-4 rounded-lg">
     <MudCardContent>
@@ -316,6 +372,11 @@
 </MudExpansionPanels>
 }
 
+</MudTabPanel>
+
+@* ── SPECIFICATIONS TAB ── *@
+<MudTabPanel Text="@L["Specifications"]" Icon="@Icons.Material.Filled.Tune" ToolTip="@L["Specifications"]">
+
 @* ── Minimum GPUs Card ── *@
 @if(_minimumGpus.Count > 0)
 {
@@ -469,6 +530,11 @@
     </MudCardContent>
 </MudCard>
 
+</MudTabPanel>
+
+@* ── MEDIA TAB ── *@
+<MudTabPanel Text="@L["Media tab"]" Icon="@Icons.Material.Filled.PhotoLibrary" ToolTip="@L["Media tab"]">
+
 @* ── Covers Card ── *@
 <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
     <MudExpansionPanel Expanded="@(_covers.Count > 0)">
@@ -546,6 +612,10 @@
         </ChildContent>
     </MudExpansionPanel>
 </MudExpansionPanels>
+
+</MudTabPanel>
+
+</MudTabs>
 
 @if(_fullscreenCover is not null)
 {
