@@ -844,4 +844,42 @@ public partial class View
 
         // No reload needed — screenshots only appear after admin acceptance.
     }
+
+    /// <summary>
+    ///     Opens the SoftwareVideoSuggestionDialog so a logged-in collaborator can suggest
+    ///     ONE brand-new YouTube video link for this Software. The whole suggestion is
+    ///     accepted or rejected as a unit by the admin reviewer; acceptance creates a new
+    ///     SoftwareVideo row with Provider="YouTube". Add-only — collaborators cannot edit
+    ///     or remove existing videos through this dialog.
+    /// </summary>
+    async Task OpenSuggestVideoDialog()
+    {
+        if(AuthState is null) return;
+
+        AuthenticationState state = await AuthState;
+        if(state?.User?.Identity?.IsAuthenticated != true) return;
+
+        if(Id <= 0 || _software is null) return;
+
+        var parameters = new DialogParameters<SoftwareVideoSuggestionDialog>
+        {
+            { x => x.EntityId,     (long)Id },
+            { x => x.SoftwareName, _software.Name ?? string.Empty }
+        };
+
+        var options = new DialogOptions
+        {
+            MaxWidth         = MaxWidth.Medium,
+            FullWidth        = true,
+            CloseOnEscapeKey = true
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<SoftwareVideoSuggestionDialog>(
+            L["Suggest a YouTube video"], parameters, options);
+
+        DialogResult result = await dialog.Result;
+        if(result is null || result.Canceled) return;
+
+        // No reload needed — videos only appear after admin acceptance.
+    }
 }

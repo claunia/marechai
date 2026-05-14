@@ -1174,7 +1174,22 @@ public enum SuggestionEntityType : byte
     ///     <see cref="Marechai.Database.Models.SoundSynthVideo" /> row with
     ///     Provider=<c>"YouTube"</c>. Only YouTube URLs are supported.
     /// </summary>
-    SoundSynthVideo = 36
+    SoundSynthVideo = 36,
+    /// <summary>
+    ///     A single brand-new YouTube video link suggested by a collaborator for an existing
+    ///     <see cref="Marechai.Database.Models.Software" />. The EntityId on the Suggestion
+    ///     row holds the parent Software Id. The SuggestedValues JSON carries a single
+    ///     <c>video_url</c> (the URL or 11-character YouTube video ID typed by the user) plus
+    ///     a <c>title</c> populated server-side at submission time from YouTube's oEmbed
+    ///     endpoint (the canonical YouTube video title). The whole suggestion is accepted or
+    ///     rejected as a unit — there are no per-item dynamic accept-keys. The Subkey is
+    ///     populated with the extracted YouTube video ID so the per-(user, software, video)
+    ///     Pending dedupe gates resubmission of the same video while a previous suggestion
+    ///     is still pending. Acceptance creates a new
+    ///     <see cref="Marechai.Database.Models.SoftwareVideo" /> row with
+    ///     Provider=<c>"YouTube"</c>. Only YouTube URLs are supported.
+    /// </summary>
+    SoftwareVideo = 37
 }
 
 public enum SuggestionStatus : byte

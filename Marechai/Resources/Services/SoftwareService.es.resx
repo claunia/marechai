@@ -2010,14 +2010,46 @@
   <data name="Accepting {0} of {1} screenshot(s). Rejected images and their pending files will be deleted on submit." xml:space="preserve">
     <value>Aceptando {0} de {1} captura(s). Las imágenes rechazadas y sus archivos pendientes se eliminarán al enviar.</value>
   </data>
-
-
-
-
-
-
-
-
-
-
+  <data name="Suggest a YouTube video for {0}. The video title will be fetched automatically from YouTube when you submit." xml:space="preserve">
+    <value>Sugiere un vídeo de YouTube para {0}. El título del vídeo se obtendrá automáticamente de YouTube cuando lo envíes.</value>
+  </data>
+  <data name="YouTube URL or video ID" xml:space="preserve">
+    <value>URL de YouTube o ID del vídeo</value>
+  </data>
+  <data name="Paste a YouTube URL or 11-character video ID. The title will be fetched automatically from YouTube." xml:space="preserve">
+    <value>Pega una URL de YouTube o un ID de vídeo de 11 caracteres. El título se obtendrá automáticamente de YouTube.</value>
+  </data>
+  <data name="This is not a valid YouTube URL or video ID." xml:space="preserve">
+    <value>Esto no es una URL de YouTube ni un ID de vídeo válido.</value>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>Vista previa</value>
+  </data>
+  <data name="Title will be fetched from YouTube when you submit." xml:space="preserve">
+    <value>El título se obtendrá de YouTube cuando lo envíes.</value>
+  </data>
+  <data name="Note to reviewer (optional)" xml:space="preserve">
+    <value>Nota para el revisor (opcional)</value>
+  </data>
+  <data name="Add any context that helps the admin decide." xml:space="preserve">
+    <value>Añade cualquier contexto que ayude al administrador a decidir.</value>
+  </data>
+  <data name="Submitting…" xml:space="preserve">
+    <value>Enviando…</value>
+  </data>
+  <data name="Suggest a YouTube video" xml:space="preserve">
+    <value>Sugerir un vídeo de YouTube</value>
+  </data>
+  <data name="Suggest more videos" xml:space="preserve">
+    <value>Sugerir más vídeos</value>
+  </data>
+  <data name="Video link submitted for review. An administrator will accept or reject it." xml:space="preserve">
+    <value>Enlace de vídeo enviado para revisión. Un administrador lo aceptará o rechazará.</value>
+  </data>
+  <data name="Suggested video" xml:space="preserve">
+    <value>Vídeo sugerido</value>
+  </data>
+  <data name="We have no videos available about this software." xml:space="preserve">
+    <value>No tenemos vídeos disponibles sobre este software.</value>
+  </data>
 </root>
