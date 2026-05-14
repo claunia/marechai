@@ -46,7 +46,7 @@ namespace Marechai.Server.Services;
 ///         <item>Loop: for each registered provider, (a) refresh the in-memory cache for newly added
 ///         items via <see cref="ITranslationProvider.DiscoverNewItemsAsync" />, (b) for each
 ///         non-<c>eng</c> language call <see cref="ITranslationProvider.TranslateMissingAsync" />.
-///         Sleep 1 hour between full sweeps.</item>
+///         Sleep 6 hours between full sweeps.</item>
 ///     </list>
 ///     <para>Providers are iterated SERIALLY and per-language batches are run SERIALLY inside each
 ///     provider — keeps OpenAI rate-limit handling trivial. Do NOT introduce parallelism here.</para>
@@ -55,7 +55,7 @@ public sealed class TranslationWorker(TranslationService                translat
                                       IEnumerable<ITranslationProvider> providers,
                                       ILogger<TranslationWorker>        logger) : BackgroundService
 {
-    static readonly TimeSpan _interval = TimeSpan.FromHours(1);
+    static readonly TimeSpan _interval = TimeSpan.FromHours(6);
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
