@@ -1724,6 +1724,25 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
+    /// <summary>
+    ///     Cancel a pending Software screenshot upload by its sidecar guid (a
+    ///     collaborator staged via <c>POST /software/screenshots/pending</c>). Used by the
+    ///     suggestion dialog when the user removes an image from the staging list before
+    ///     submission, OR when they cancel the dialog with images still staged.
+    /// </summary>
+    public async Task<bool> DeletePendingScreenshotAsync(Guid guid)
+    {
+        try
+        {
+            await client.Software.Screenshots.Pending[guid].DeleteAsync();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     // ── Videos ──
 
     public async Task<List<SoftwareVideoDto>> GetVideosBySoftwareAsync(int softwareId)

@@ -445,6 +445,18 @@ public class SuggestionsController(MarechaiContext context,
                                statusCode: StatusCodes.Status400BadRequest);
         }
 
+        // ---- Software screenshot batch payload validation ----------------------------
+        if(dto.EntityType == SuggestionEntityType.SoftwareScreenshot)
+        {
+            var (ok, err) = await Suggestions.SoftwareScreenshotSuggestionApplier.ValidateAsync(
+                                context, dto.EntityId, values, _assetRootPath, userId);
+
+            if(!ok)
+                return Problem(title: "Invalid software screenshot suggestion",
+                               detail: err,
+                               statusCode: StatusCodes.Status400BadRequest);
+        }
+
         // ---- Existence check on target entity (edits only) --------------------------
         // For additions, the entity does not exist yet; the display name is derived from the
         // suggested 'name' payload field at projection time.
@@ -512,7 +524,8 @@ public class SuggestionsController(MarechaiContext context,
                dto.EntityType != SuggestionEntityType.SoundSynthPhoto &&
                dto.EntityType != SuggestionEntityType.MachinePhoto &&
                dto.EntityType != SuggestionEntityType.SoftwarePromoArt &&
-               dto.EntityType != SuggestionEntityType.SoftwareCover)
+               dto.EntityType != SuggestionEntityType.SoftwareCover &&
+               dto.EntityType != SuggestionEntityType.SoftwareScreenshot)
             {
                 bool dupe = await context.Suggestions.AnyAsync(s =>
                     s.CreatedById == userId
@@ -933,6 +946,18 @@ public class SuggestionsController(MarechaiContext context,
             else
                 newStatus = SuggestionStatus.PartiallyAccepted;
         }
+        else if(s.EntityType == SuggestionEntityType.SoftwareScreenshot)
+        {
+            int totalScreenshots = CountSuggestedSoftwareScreenshots(s);
+            int acceptedScreenshots = accepted.Count(k => k.StartsWith("screenshot.", StringComparison.Ordinal));
+
+            if(acceptedScreenshots == 0)
+                newStatus = SuggestionStatus.Rejected;
+            else if(totalScreenshots > 0 && acceptedScreenshots >= totalScreenshots)
+                newStatus = SuggestionStatus.Accepted;
+            else
+                newStatus = SuggestionStatus.PartiallyAccepted;
+        }
         else if(accepted.Count == 0)
             newStatus = SuggestionStatus.Rejected;
         else if(accepted.Count == suggested.Count)
@@ -1088,8 +1113,9 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.ProcessorPhoto   => true,
         SuggestionEntityType.SoundSynthPhoto  => true,
         SuggestionEntityType.MachinePhoto     => true,
-        SuggestionEntityType.SoftwarePromoArt => true,
-        SuggestionEntityType.SoftwareCover    => true,
+        SuggestionEntityType.SoftwarePromoArt   => true,
+        SuggestionEntityType.SoftwareCover      => true,
+        SuggestionEntityType.SoftwareScreenshot => true,
         _                                  => GetKnownFieldNames(type) is not null
     };
 
@@ -1153,6 +1179,9 @@ public class SuggestionsController(MarechaiContext context,
 
         if(type == SuggestionEntityType.SoftwareCover)
             return Suggestions.SoftwareCoverSuggestionApplier.IsKnownFieldName(fieldName);
+
+        if(type == SuggestionEntityType.SoftwareScreenshot)
+            return Suggestions.SoftwareScreenshotSuggestionApplier.IsKnownFieldName(fieldName);
 
         IReadOnlyCollection<string> set = GetKnownFieldNames(type);
         return set is not null && set.Contains(fieldName);
@@ -1335,6 +1364,12 @@ public class SuggestionsController(MarechaiContext context,
                     context, entityId, suggested, accepted, creditedUserId, _assetRootPath);
                 return new ApplyResult(applied, missing);
             }
+            case SuggestionEntityType.SoftwareScreenshot:
+            {
+                var (applied, missing) = await Suggestions.SoftwareScreenshotSuggestionApplier.ApplyAsync(
+                    context, entityId, suggested, accepted, creditedUserId, _assetRootPath);
+                return new ApplyResult(applied, missing);
+            }
             default:
                 throw new NotImplementedException($"Suggestions for {type} are not implemented yet.");
         }
@@ -1402,6 +1437,8 @@ public class SuggestionsController(MarechaiContext context,
                 await Suggestions.SoftwarePromoArtSuggestionApplier.GetCurrentValuesAsync(context, entityId),
             SuggestionEntityType.SoftwareCover =>
                 await Suggestions.SoftwareCoverSuggestionApplier.GetCurrentValuesAsync(context, entityId),
+            SuggestionEntityType.SoftwareScreenshot =>
+                await Suggestions.SoftwareScreenshotSuggestionApplier.GetCurrentValuesAsync(context, entityId),
             _ => null
         };
     }
@@ -1476,6 +1513,7 @@ public class SuggestionsController(MarechaiContext context,
             case SuggestionEntityType.Software:
             case SuggestionEntityType.SoftwareDescription:
             case SuggestionEntityType.SoftwarePromoArt:
+            case SuggestionEntityType.SoftwareScreenshot:
                 return await context.Softwares.AsNoTracking()
                                     .Where(s => s.Id == (ulong)entityId)
                                     .Select(s => s.Name)
@@ -2285,6 +2323,31 @@ public class SuggestionsController(MarechaiContext context,
                     string name = gj.GetString();
                     if(!string.IsNullOrEmpty(name))
                         labels[Suggestions.SoftwarePromoArtSuggestionApplier.FieldGroupName] = name;
+                }
+                break;
+            }
+            case SuggestionEntityType.SoftwareScreenshot:
+            {
+                // Resolve the suggestion-level platform_id to its display Name so the diff
+                // panel can render "Platform: Windows" instead of "Platform: #5".
+                if(values.TryGetValue(Suggestions.SoftwareScreenshotSuggestionApplier.FieldPlatformId,
+                                      out JsonElement pj))
+                {
+                    ulong pid = 0;
+                    if(pj.ValueKind == JsonValueKind.Number && pj.TryGetUInt64(out ulong puv)) pid = puv;
+                    else if(pj.ValueKind == JsonValueKind.String &&
+                            ulong.TryParse(pj.GetString(), NumberStyles.Integer, CultureInfo.InvariantCulture,
+                                           out ulong psv)) pid = psv;
+
+                    if(pid > 0)
+                    {
+                        string name = await context.SoftwarePlatforms.AsNoTracking()
+                                                   .Where(p => p.Id == pid)
+                                                   .Select(p => p.Name)
+                                                   .FirstOrDefaultAsync();
+                        if(!string.IsNullOrEmpty(name))
+                            labels[Suggestions.SoftwareScreenshotSuggestionApplier.FieldPlatformId] = name;
+                    }
                 }
                 break;
             }
@@ -4424,6 +4487,33 @@ public class SuggestionsController(MarechaiContext context,
 
                     break;
                 }
+                case SuggestionEntityType.SoftwareScreenshot:
+                {
+                    // Sweep every per-image pending file the suggester referenced that did NOT
+                    // end up accepted. Same shape as the SoftwarePromoArt/SoftwareCover arms
+                    // above with the entity-specific accept-key prefix and item folder.
+                    if(!s.SuggestedValues.TryGetValue(
+                           Suggestions.SoftwareScreenshotSuggestionApplier.FieldPhotos, out object photosRaw))
+                        return;
+
+                    if(photosRaw is not JsonElement arr || arr.ValueKind != JsonValueKind.Array) return;
+
+                    foreach(JsonElement photo in arr.EnumerateArray())
+                    {
+                        if(photo.ValueKind != JsonValueKind.Object) continue;
+                        if(!photo.TryGetProperty("guid", out JsonElement gj) ||
+                           gj.ValueKind != JsonValueKind.String) continue;
+                        if(!Guid.TryParse(gj.GetString(), out Guid pg)) continue;
+
+                        string acceptKey = Suggestions.SoftwareScreenshotSuggestionApplier.ScreenshotAcceptKey(pg);
+
+                        if(accepted.Contains(acceptKey)) continue;
+
+                        Marechai.Server.Helpers.PendingImageStore.Delete(_assetRootPath, "software-screenshots", pg);
+                    }
+
+                    break;
+                }
             }
         }
         catch
@@ -4549,6 +4639,27 @@ public class SuggestionsController(MarechaiContext context,
     {
         if(s?.SuggestedValues is null) return 0;
         if(!s.SuggestedValues.TryGetValue(Suggestions.SoftwareCoverSuggestionApplier.FieldPhotos, out object raw))
+            return 0;
+
+        return raw switch
+        {
+            JsonElement je when je.ValueKind == JsonValueKind.Array => je.GetArrayLength(),
+            System.Collections.ICollection col                      => col.Count,
+            System.Collections.IEnumerable enumerable               => enumerable.Cast<object>().Count(),
+            _                                                       => 0
+        };
+    }
+
+    /// <summary>
+    ///     Count the images referenced by a Software-screenshot batch suggestion's
+    ///     <c>SuggestedValues["photos"]</c> array. Returns 0 when the array is missing or
+    ///     malformed (defensive — the validator at submit time should catch malformed
+    ///     payloads before persistence, but this guards against post-hoc DB hand-edits).
+    /// </summary>
+    static int CountSuggestedSoftwareScreenshots(Suggestion s)
+    {
+        if(s?.SuggestedValues is null) return 0;
+        if(!s.SuggestedValues.TryGetValue(Suggestions.SoftwareScreenshotSuggestionApplier.FieldPhotos, out object raw))
             return 0;
 
         return raw switch
@@ -4801,6 +4912,37 @@ public class SuggestionsController(MarechaiContext context,
                 if(roleGranted) body += "\n\nYou are now a Collaborator!";
             }
         }
+        else if(s.EntityType == SuggestionEntityType.SoftwareScreenshot)
+        {
+            int screenshotTotal    = CountSuggestedSoftwareScreenshots(s);
+            int screenshotAccepted = (s.AppliedFields ?? new Dictionary<string, string>())
+                .Count(kv => kv.Key.StartsWith("screenshot.", StringComparison.Ordinal));
+
+            string plural = screenshotTotal == 1 ? "image" : "images";
+
+            if(screenshotAccepted == 0)
+            {
+                subject = "Your software screenshot upload was not accepted";
+                body =
+                    $"Your suggested upload of {screenshotTotal} screenshot {plural} for {entityRef} was reviewed but no images were accepted. " +
+                    $"Thank you for contributing — feel free to refine and try again.";
+            }
+            else if(screenshotAccepted == screenshotTotal)
+            {
+                subject = "Your software screenshot upload was accepted";
+                body =
+                    $"Your suggested upload of {screenshotTotal} screenshot {plural} for {entityRef} was accepted. Thank you!";
+                if(roleGranted) body += "\n\nYou are now a Collaborator!";
+            }
+            else
+            {
+                subject = "Your software screenshot upload was partially accepted";
+                body =
+                    $"Your suggested upload for {entityRef} was reviewed. " +
+                    $"{screenshotAccepted} of {screenshotTotal} screenshot {plural} were accepted; the rest were declined.";
+                if(roleGranted) body += "\n\nYou are now a Collaborator!";
+            }
+        }
         else if(s.EntityType == SuggestionEntityType.SoftwareCover)
         {
             int coverTotal    = CountSuggestedSoftwareCovers(s);
@@ -4923,6 +5065,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.SoftwareRelease       => $"/software/release/{entityId}",
         SuggestionEntityType.SoftwarePromoArt      => $"/software/{entityId}",
         SuggestionEntityType.SoftwareCover         => $"/software/release/{entityId}",
+        SuggestionEntityType.SoftwareScreenshot    => $"/software/{entityId}",
         _                                       => null
     };
 
@@ -4954,6 +5097,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.MachinePhoto        => "machine photo upload",
         SuggestionEntityType.SoftwarePromoArt    => "software promo art upload",
         SuggestionEntityType.SoftwareCover       => "software cover upload",
+        SuggestionEntityType.SoftwareScreenshot  => "software screenshot upload",
         SuggestionEntityType.ProcessorDescription => "processor description",
         SuggestionEntityType.SoundSynthDescription => "sound synth description",
         SuggestionEntityType.PersonDescription   => "person biography",

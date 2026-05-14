@@ -2,6 +2,7 @@
 #pragma warning disable CS0618
 using Marechai.ApiClient.Models;
 using Marechai.ApiClient.Software.Screenshots.Item;
+using Marechai.ApiClient.Software.Screenshots.Pending;
 using Marechai.ApiClient.Software.Screenshots.Upload;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
@@ -19,6 +20,11 @@ namespace Marechai.ApiClient.Software.Screenshots
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class ScreenshotsRequestBuilder : BaseRequestBuilder
     {
+        /// <summary>The pending property</summary>
+        public global::Marechai.ApiClient.Software.Screenshots.Pending.PendingRequestBuilder Pending
+        {
+            get => new global::Marechai.ApiClient.Software.Screenshots.Pending.PendingRequestBuilder(PathParameters, RequestAdapter);
+        }
         /// <summary>The upload property</summary>
         public global::Marechai.ApiClient.Software.Screenshots.Upload.UploadRequestBuilder Upload
         {

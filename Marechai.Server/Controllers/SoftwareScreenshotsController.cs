@@ -29,9 +29,11 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Marechai.Data;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Marechai.Helpers;
+using Marechai.Server.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -44,12 +46,33 @@ namespace Marechai.Server.Controllers;
 [ApiController]
 public class SoftwareScreenshotsController(MarechaiContext context, IConfiguration configuration) : ControllerBase
 {
+    /// <summary>
+    ///     Per-uploader cap of in-flight pending screenshot images per Software for the
+    ///     collaborative suggestion flow.
+    /// </summary>
+    const int PendingScreenshotsPerUserPerSoftwareCap = 50;
+
     static readonly HashSet<string> _allowedExtensions = [".jpg", ".jpeg", ".png", ".webp", ".tiff", ".tif", ".bmp"];
 
     static readonly HashSet<string> _allowedContentTypes =
     [
         "image/jpeg", "image/png", "image/webp", "image/tiff", "image/bmp"
     ];
+
+    /// <summary>
+    ///     Narrower allow-set for collaborator pending uploads (jpg/png/webp ONLY). The
+    ///     existing admin upload endpoint keeps the broader <see cref="_allowedExtensions" />
+    ///     set including tiff/bmp.
+    /// </summary>
+    static readonly HashSet<string> _pendingAllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ".jpg", ".jpeg", ".png", ".webp"
+    };
+
+    static readonly HashSet<string> _pendingAllowedContentTypes = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "image/jpeg", "image/png", "image/webp"
+    };
 
     readonly string _assetRootPath = configuration["AssetRootPath"]!;
 
@@ -325,5 +348,146 @@ public class SoftwareScreenshotsController(MarechaiContext context, IConfigurati
 
         foreach(string file in System.IO.Directory.GetFiles(directory, pattern))
             System.IO.File.Delete(file);
+    }
+
+    // ─────────────── Collaborative pending-image endpoints ───────────────
+    // These endpoints back the SoftwareScreenshotsSuggestionDialog. Each upload writes a
+    // file + sidecar to disk under photos/software-screenshots/pending/ and the
+    // collaborator references the returned guid when calling POST /suggestions. Promotion
+    // to originals/ happens in SoftwareScreenshotSuggestionApplier.ApplyAsync once an admin
+    // accepts the per-image accept-key (screenshot.<guid>).
+
+    /// <summary>
+    ///     Stage a single pending screenshot image for a brand-new collaborative suggestion.
+    ///     The uploader keeps each pending file on the server (sidecar tracks ownership +
+    ///     parent <c>softwareId</c>) until they call <c>POST /suggestions</c> referencing the
+    ///     returned <c>guid</c>. Per-uploader cap of 50 in-flight pending images per
+    ///     Software.
+    /// </summary>
+    [HttpPost("pending")]
+    [Authorize]
+    [RequestSizeLimit(50 * 1024 * 1024)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<PendingImageUploadDto>> UploadPendingAsync(IFormFile         file,
+                                                                              [FromQuery] ulong softwareId)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        if(file is null || file.Length == 0) return BadRequest("No file provided.");
+
+        if(file.Length > 50 * 1024 * 1024) return BadRequest("File exceeds 50 MB limit.");
+
+        string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
+
+        if(!_pendingAllowedExtensions.Contains(extension))
+            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP.");
+
+        if(!string.IsNullOrEmpty(file.ContentType) &&
+           !_pendingAllowedContentTypes.Contains(file.ContentType.ToLowerInvariant()))
+            return BadRequest("Unsupported content type.");
+
+        bool softwareExists = await context.Softwares.AnyAsync(s => s.Id == softwareId);
+
+        if(!softwareExists) return NotFound("Software not found.");
+
+        long parentEntityId = (long)softwareId;
+
+        int currentCount = PendingImageStore.CountByUploaderForParentEntity(_assetRootPath, "software-screenshots",
+            userId, (byte)SuggestionEntityType.SoftwareScreenshot, parentEntityId);
+
+        if(currentCount >= PendingScreenshotsPerUserPerSoftwareCap)
+            return Conflict($"You already have {currentCount} pending screenshot images for this software. Maximum " +
+                            $"is {PendingScreenshotsPerUserPerSoftwareCap} per software. Submit or remove some first.");
+
+        Guid guid;
+
+        await using(Stream stream = file.OpenReadStream())
+        {
+            // EntityId stays 0 because the suggestion row that will reference these images
+            // doesn't exist yet. ParentEntityId carries the softwareId so the per-uploader
+            // cap and cleanup-by-parent helpers can scope correctly.
+            guid = await PendingImageStore.StoreAsync(_assetRootPath, "software-screenshots", extension,
+                (byte)SuggestionEntityType.SoftwareScreenshot, entityId: 0L, userId, file.ContentType, stream,
+                parentEntityId: parentEntityId);
+        }
+
+        return Ok(new PendingImageUploadDto
+        {
+            Guid      = guid,
+            Extension = extension.TrimStart('.')
+        });
+    }
+
+    /// <summary>
+    ///     Delete a pending screenshot image before it has been submitted as part of a
+    ///     suggestion. Only the original uploader (or an admin) may delete.
+    /// </summary>
+    [HttpDelete("pending/{guid:guid}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> DeletePendingAsync(Guid guid)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        PendingImageStore.PendingMetadata meta =
+            await PendingImageStore.GetMetadataAsync(_assetRootPath, "software-screenshots", guid);
+
+        if(meta is null) return NotFound();
+        if(meta.EntityType != (byte)SuggestionEntityType.SoftwareScreenshot) return NotFound();
+
+        bool isAdmin = User.IsInRole("Admin") || User.IsInRole("UberAdmin");
+
+        if(!PendingImageStore.CanAccess(meta, userId, isAdmin)) return Forbid();
+
+        PendingImageStore.Delete(_assetRootPath, "software-screenshots", guid);
+
+        return NoContent();
+    }
+
+    /// <summary>
+    ///     Stream the binary contents of a pending screenshot image. Used by the dialog
+    ///     thumbnail preview AND by the admin SuggestionDiffPanel preview. Auth-gated: only
+    ///     the uploader and admins can read.
+    /// </summary>
+    [HttpGet("pending/{guid:guid}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> GetPendingAsync(Guid guid)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        PendingImageStore.PendingMetadata meta =
+            await PendingImageStore.GetMetadataAsync(_assetRootPath, "software-screenshots", guid);
+
+        if(meta is null) return NotFound();
+        if(meta.EntityType != (byte)SuggestionEntityType.SoftwareScreenshot) return NotFound();
+
+        bool isAdmin = User.IsInRole("Admin") || User.IsInRole("UberAdmin");
+
+        if(!PendingImageStore.CanAccess(meta, userId, isAdmin)) return Forbid();
+
+        string path = await PendingImageStore.GetImagePathAsync(_assetRootPath, "software-screenshots", guid);
+
+        if(path is null || !System.IO.File.Exists(path)) return NotFound();
+
+        var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+
+        return File(stream, meta.ContentType ?? "application/octet-stream");
     }
 }

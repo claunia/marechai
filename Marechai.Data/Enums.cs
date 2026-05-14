@@ -1113,7 +1113,23 @@ public enum SuggestionEntityType : byte
     ///     directly (matching the admin upload convention where <c>model.Id</c> IS the
     ///     <c>originals/{guid}{ext}</c> basename).
     /// </summary>
-    SoftwareCover = 32
+    SoftwareCover = 32,
+    /// <summary>
+    ///     A batch of one or more pending Software screenshot images uploaded by a
+    ///     collaborator for review by an admin. The EntityId on the Suggestion row holds the
+    ///     parent <see cref="Marechai.Database.Models.Software" /> Id. The SuggestedValues
+    ///     JSON carries one mandatory suggestion-level <c>platform_id</c> (FK to
+    ///     <see cref="Marechai.Database.Models.SoftwarePlatform" />; applied to every accepted
+    ///     screenshot uniformly) and a <c>photos</c> array (max 50 entries) of pending image
+    ///     descriptors (<c>guid</c>, <c>extension</c>, optional per-image <c>caption</c>).
+    ///     Per-image accept/reject is signalled by including/omitting the field-name key
+    ///     <c>screenshot.{guid}</c> in <c>AppliedFields</c>. The pending Guid becomes the new
+    ///     <see cref="Marechai.Database.Models.SoftwareScreenshot" /> row Id directly. Allowed
+    ///     extensions are jpg/jpeg/png/webp ONLY (narrower than the admin upload allow-set).
+    ///     <c>SoftwareVersionId</c> is left null on every accepted row — the collaborative
+    ///     path intentionally simplifies vs the admin upload flow which allows it.
+    /// </summary>
+    SoftwareScreenshot = 33
 }
 
 public enum SuggestionStatus : byte

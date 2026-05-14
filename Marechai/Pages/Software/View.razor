@@ -901,15 +901,32 @@ else
 }
 
 @* ── Screenshots Card ── *@
+@* When the software has at least one screenshot, the card is always visible to all
+   visitors. When empty, the card is wrapped in <AuthorizeView> so anonymous visitors
+   see nothing — only authenticated collaborators get the empty-state hint + pencil
+   button to open the SoftwareScreenshotsSuggestionDialog. *@
 @if(_screenshots.Count > 0)
 {
     <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
-        <MudExpansionPanel>
+        <MudExpansionPanel Expanded="true">
             <TitleContent>
-                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
-                    <MudIcon Icon="@Icons.Material.Filled.Image" Color="Color.Primary"/>
-                    <MudText Typo="Typo.h6">@L["Screenshots"]</MudText>
-                    <MudChip T="string" Size="Size.Small" Color="Color.Success">@_screenshots.Count</MudChip>
+                <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Style="width: 100%;">
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                        <MudIcon Icon="@Icons.Material.Filled.Image" Color="Color.Primary"/>
+                        <MudText Typo="Typo.h6">@L["Screenshots"]</MudText>
+                        <MudChip T="string" Size="Size.Small" Color="Color.Success">@_screenshots.Count</MudChip>
+                    </MudStack>
+                    <AuthorizeView>
+                        <Authorized>
+                            <span @onclick:stopPropagation="true">
+                                <MudTooltip Text="@L["Suggest more screenshots"]">
+                                    <MudIconButton Icon="@Icons.Material.Filled.AddPhotoAlternate"
+                                                   Size="Size.Small" Color="Color.Primary"
+                                                   OnClick="OpenSuggestScreenshotsDialog"/>
+                                </MudTooltip>
+                            </span>
+                        </Authorized>
+                    </AuthorizeView>
                 </MudStack>
             </TitleContent>
             <ChildContent>
@@ -942,6 +959,44 @@ else
             </ChildContent>
         </MudExpansionPanel>
     </MudExpansionPanels>
+}
+else
+{
+    <AuthorizeView>
+        <Authorized>
+            <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+                <MudExpansionPanel Expanded="false">
+                    <TitleContent>
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Style="width: 100%;">
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                <MudIcon Icon="@Icons.Material.Filled.Image" Color="Color.Primary"/>
+                                <MudText Typo="Typo.h6">@L["Screenshots"]</MudText>
+                            </MudStack>
+                            <span @onclick:stopPropagation="true">
+                                <MudTooltip Text="@L["Suggest screenshots"]">
+                                    <MudIconButton Icon="@Icons.Material.Filled.AddPhotoAlternate"
+                                                   Size="Size.Small" Color="Color.Primary"
+                                                   OnClick="OpenSuggestScreenshotsDialog"/>
+                                </MudTooltip>
+                            </span>
+                        </MudStack>
+                    </TitleContent>
+                    <ChildContent>
+                        <MudStack AlignItems="AlignItems.Center" Spacing="2" Class="py-3">
+                            <MudText Typo="Typo.body2" Align="Align.Center">
+                                @L["No screenshots for this software yet — help us by uploading some."]
+                            </MudText>
+                            <MudButton Variant="Variant.Outlined" Color="Color.Primary"
+                                       StartIcon="@Icons.Material.Filled.AddPhotoAlternate"
+                                       OnClick="OpenSuggestScreenshotsDialog">
+                                @L["Suggest screenshots"]
+                            </MudButton>
+                        </MudStack>
+                    </ChildContent>
+                </MudExpansionPanel>
+            </MudExpansionPanels>
+        </Authorized>
+    </AuthorizeView>
 }
 
 @if(_fullscreenScreenshot is not null)

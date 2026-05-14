@@ -805,4 +805,43 @@ public partial class View
 
         // No reload needed — promo art only appears after admin acceptance.
     }
+
+    /// <summary>
+    ///     Opens the SoftwareScreenshotsSuggestionDialog so a logged-in collaborator can
+    ///     stage 1-50 pending screenshot images for this Software, choose a mandatory batch
+    ///     Platform, optionally annotate each with a caption, then submit ONE Suggestion row
+    ///     that an admin reviews per-image. Accepted images are persisted with the pending
+    ///     Guid as the new SoftwareScreenshot row Id and run through the same fire-and-forget
+    ///     conversion worker the admin upload uses.
+    /// </summary>
+    async Task OpenSuggestScreenshotsDialog()
+    {
+        if(AuthState is null) return;
+
+        AuthenticationState state = await AuthState;
+        if(state?.User?.Identity?.IsAuthenticated != true) return;
+
+        if(Id <= 0 || _software is null) return;
+
+        var parameters = new DialogParameters<SoftwareScreenshotsSuggestionDialog>
+        {
+            { x => x.SoftwareId,   (ulong)Id },
+            { x => x.SoftwareName, _software.Name ?? string.Empty }
+        };
+
+        var options = new DialogOptions
+        {
+            MaxWidth         = MaxWidth.Large,
+            FullWidth        = true,
+            CloseOnEscapeKey = true
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<SoftwareScreenshotsSuggestionDialog>(
+            L["Suggest screenshots"], parameters, options);
+
+        DialogResult result = await dialog.Result;
+        if(result is null || result.Canceled) return;
+
+        // No reload needed — screenshots only appear after admin acceptance.
+    }
 }

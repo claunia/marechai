@@ -52,6 +52,10 @@ else if(Suggestion?.EntityType == (int)SuggestionEntityType.SoftwareCover)
 {
     @RenderSoftwareCoverBatch()
 }
+else if(Suggestion?.EntityType == (int)SuggestionEntityType.SoftwareScreenshot)
+{
+    @RenderSoftwareScreenshotBatch()
+}
 else
 {
     <MudSimpleTable Hover="true" Dense="true" Bordered="true" Style="width: 100%;">
@@ -301,6 +305,7 @@ else
                 (int)SuggestionEntityType.MachinePhoto    => "MarechaiMachinePhotoUpload.openPendingPhotoInNewTab",
                 (int)SuggestionEntityType.SoftwarePromoArt => "MarechaiSoftwarePromoArtUpload.openPendingPhotoInNewTab",
                 (int)SuggestionEntityType.SoftwareCover    => "MarechaiSoftwareCoverUpload.openPendingPhotoInNewTab",
+                (int)SuggestionEntityType.SoftwareScreenshot => "MarechaiSoftwareScreenshotUpload.openPendingPhotoInNewTab",
                 _                                       => "MarechaiPendingCover.openPendingCoverInNewTab"
             };
             await JS.InvokeAsync<object>(fnName, ApiAssetUrls.BaseUrl, token, guid);
@@ -339,6 +344,7 @@ else
                     (int)SuggestionEntityType.MachinePhoto    => "MarechaiMachinePhotoUpload.applyPendingPhotoImage",
                     (int)SuggestionEntityType.SoftwarePromoArt => "MarechaiSoftwarePromoArtUpload.applyPendingPhotoImage",
                     (int)SuggestionEntityType.SoftwareCover    => "MarechaiSoftwareCoverUpload.applyPendingPhotoImage",
+                    (int)SuggestionEntityType.SoftwareScreenshot => "MarechaiSoftwareScreenshotUpload.applyPendingPhotoImage",
                     _                                       => "MarechaiPendingCover.applyPendingCoverImage"
                 };
                 foreach(KeyValuePair<string, string> kv in _pendingImageRefs)
@@ -1076,6 +1082,105 @@ else
                                              ValueChanged="@(v => ToggleAccepted(acceptKey, v))"
                                              Disabled="@ReadOnly"
                                              Label="@L["Accept this cover"]"/>
+                            </MudStack>
+                            @if(!string.IsNullOrEmpty(caption))
+                            {
+                                <MudText Typo="Typo.body2" Class="mt-1"><em>@caption</em></MudText>
+                            }
+                        </MudStack>
+                    </MudStack>
+                </MudPaper>
+            }
+        </MudStack>
+    };
+
+    /// <summary>
+    ///     Custom renderer for <see cref="SuggestionEntityType.SoftwareScreenshot" /> batch
+    ///     suggestions. Differs from the SoftwareCover renderer in three ways: (a) ONE
+    ///     suggestion-level top MudPaper showing the batch-level Platform (mandatory FK to
+    ///     <c>SoftwarePlatform</c>) applied uniformly to every accepted screenshot; (b) NO
+    ///     per-image type/discriminator (covers have a per-image Type byte enum, screenshots
+    ///     don't); (c) per-image accept-key prefix is <c>screenshot.</c>; (d) per-img element
+    ///     id prefix is <c>software-screenshot-pending-</c>.
+    /// </summary>
+    RenderFragment RenderSoftwareScreenshotBatch() => __builder =>
+    {
+        List<JsonElement> photos = _suggestedDict.TryGetValue("photos", out JsonElement pje) &&
+                                   pje.ValueKind == JsonValueKind.Array
+                                       ? pje.EnumerateArray().ToList()
+                                       : new List<JsonElement>();
+
+        int totalShots    = photos.Count;
+        int acceptedShots = AcceptedFieldNames?.Count(k => k.StartsWith("screenshot.", StringComparison.Ordinal)) ?? 0;
+
+        // ── Suggestion-level platform (read-only summary) ─────────────────────
+        string platformLabel = null;
+        if(_suggestedDict.TryGetValue("platform_id", out JsonElement plel))
+        {
+            ulong pid = 0;
+            if(plel.ValueKind == JsonValueKind.Number && plel.TryGetUInt64(out ulong puv)) pid = puv;
+            else if(plel.ValueKind == JsonValueKind.String &&
+                    ulong.TryParse(plel.GetString(), out ulong psv)) pid = psv;
+
+            if(pid > 0)
+            {
+                if(SuggestedLabels is not null && SuggestedLabels.TryGetValue("platform_id", out string lbl) &&
+                   !string.IsNullOrEmpty(lbl))
+                    platformLabel = lbl;
+                else
+                    platformLabel = $"#{pid}";
+            }
+        }
+
+        if(!string.IsNullOrEmpty(platformLabel))
+        {
+            <MudPaper Outlined="true" Class="pa-3 mb-2">
+                <MudText Typo="Typo.body2">
+                    <strong>@L["Platform"]:</strong> @platformLabel
+                </MudText>
+            </MudPaper>
+        }
+
+        <MudText Typo="Typo.body2" Class="mb-2">
+            @string.Format(L["Accepting {0} of {1} screenshot(s). Rejected images and their pending files will be deleted on submit."].Value, acceptedShots, totalShots)
+        </MudText>
+
+        <MudStack Spacing="2" Class="mb-2">
+            @for(int i = 0; i < photos.Count; i++)
+            {
+                JsonElement photo = photos[i];
+                string guidStr = photo.TryGetProperty("guid", out JsonElement gj) && gj.ValueKind == JsonValueKind.String
+                                     ? gj.GetString()
+                                     : "";
+                string extension = photo.TryGetProperty("extension", out JsonElement xj) && xj.ValueKind == JsonValueKind.String
+                                       ? xj.GetString()
+                                       : "";
+                string caption = photo.TryGetProperty("caption", out JsonElement cj) && cj.ValueKind == JsonValueKind.String
+                                     ? cj.GetString()
+                                     : "";
+                if(string.IsNullOrEmpty(guidStr) || !Guid.TryParse(guidStr, out _)) continue;
+
+                string acceptKey = "screenshot." + guidStr;
+                bool   accepted  = AcceptedFieldNames is not null && AcceptedFieldNames.Contains(acceptKey);
+                string imgId     = "software-screenshot-pending-" + guidStr.Replace("-", "");
+                int    shotNum   = i + 1;
+
+                _pendingImageRefs[imgId] = guidStr;
+
+                <MudPaper Outlined="true" Class="pa-3" @key="@guidStr">
+                    <MudStack Row="true" Spacing="3" AlignItems="AlignItems.Start">
+                        <div style="width: 120px; height: 120px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--mud-palette-background-grey); border-radius: 4px; cursor: pointer;"
+                             @onclick="@(() => OpenImageInNewTab(guidStr, true))">
+                            <img id="@imgId" alt="@($"Screenshot {shotNum}")"
+                                 style="max-width: 120px; max-height: 120px; object-fit: contain; border-radius: 4px;"/>
+                        </div>
+                        <MudStack Spacing="1" Style="flex: 1; min-width: 0;">
+                            <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                                <MudText Typo="Typo.body2"><strong>@($"Screenshot {shotNum}")</strong> <span class="text-muted">— @extension</span></MudText>
+                                <MudCheckBox T="bool" Value="@accepted"
+                                             ValueChanged="@(v => ToggleAccepted(acceptKey, v))"
+                                             Disabled="@ReadOnly"
+                                             Label="@L["Accept this screenshot"]"/>
                             </MudStack>
                             @if(!string.IsNullOrEmpty(caption))
                             {

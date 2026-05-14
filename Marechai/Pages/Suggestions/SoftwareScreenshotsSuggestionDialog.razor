@@ -1,0 +1,186 @@
+@*
+    SoftwareScreenshotsSuggestionDialog — collaborative Software screenshot batch upload.
+
+    A logged-in user can stage 1-50 pending screenshot images for an existing
+    Software, choose ONE batch-level Platform that applies to every accepted
+    screenshot uniformly, and optionally annotate each image with a caption,
+    then submit ONE Suggestion row that an admin reviews per-image. Accepted
+    images are persisted with the pending Guid as the new SoftwareScreenshot
+    row Id and run through the same fire-and-forget conversion worker the admin
+    upload uses.
+
+    Architecture notes:
+    * Each file upload is direct browser → API via XHR (in software-screenshot-upload.js)
+      with byte-level progress reported back through DotNetObjectReference callbacks.
+    * Platform is batch-level (every accepted screenshot is filed against the same platform).
+    * Per-image caption is the only per-image metadata; SoftwareVersionId is left null on
+      every accepted row.
+    * Cancel button cleans up every staged pending file via DELETE so the
+      pending/ folder doesn't leak orphans.
+*@
+@using System
+@using System.Collections.Generic
+@using System.Globalization
+@using System.Linq
+@using System.Text.Json
+@using System.Threading.Tasks
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@using Marechai.Services
+@using Microsoft.JSInterop
+
+@inject IStringLocalizer<SoftwareService> L
+@inject ISnackbar                         Snackbar
+@inject SoftwareService                   SoftwareService
+@inject SoftwarePlatformsService          PlatformsService
+@inject SuggestionsService                SuggestionsService
+@inject IJSRuntime                        JS
+@inject TokenProvider                     TokenProvider
+@inject ApiAssetUrlProvider               ApiAssetUrls
+
+<MudDialog>
+    <DialogContent>
+        @if(_loading)
+        {
+            <MudProgressLinear Indeterminate="true"/>
+        }
+        else
+        {
+            <MudText Typo="Typo.body2" Class="mb-3">
+                @string.Format(L["Suggest screenshots for {0}. Upload up to {1} JPG, PNG or WebP files (max 50 MB each). All screenshots in this batch share the same platform."].Value, SoftwareName, MaxPhotos)
+            </MudText>
+
+            @* ── Suggestion-level field (mandatory; applies to every screenshot in the batch) ── *@
+            <MudPaper Outlined="true" Class="pa-3 mb-3">
+                <MudText Typo="Typo.subtitle2" Class="mb-2">@L["Platform"]</MudText>
+
+                <MudSelect T="ulong?" Label="@L["Software platform"]"
+                           Value="@_selectedPlatformId"
+                           ValueChanged="@(v => { _selectedPlatformId = v; })"
+                           Required="true"
+                           Variant="Variant.Outlined"
+                           Margin="Margin.Dense"
+                           Dense="true"
+                           HelperText="@L["Pick the software platform these screenshots belong to."]">
+                    @foreach(SoftwarePlatformDto p in _allPlatforms)
+                    {
+                        <MudSelectItem T="ulong?" Value="@((ulong?)p.Id)">@p.Name</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudPaper>
+
+            @* ── File-picker trigger ── *@
+            <MudPaper Outlined="true" Class="pa-3 mb-3">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-2">
+                    <MudText Typo="Typo.subtitle2">@string.Format(L["Images: {0}/{1}"].Value, _staged.Count, MaxPhotos)</MudText>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.AddPhotoAlternate"
+                               Disabled="@(_staged.Count >= MaxPhotos)"
+                               OnClick="TriggerFilePicker">
+                        @L["Add images"]
+                    </MudButton>
+                </MudStack>
+                <MudText Typo="Typo.caption">
+                    @L["Pick one or more files at a time. Each image is uploaded immediately and held on the server until you submit the batch."]
+                </MudText>
+
+                @* Hidden file input — JS owns the file reads (avoids the SignalR double-hop). *@
+                <input type="file" id="@_fileInputId" accept="image/jpeg,image/png,image/webp" multiple style="display:none"
+                       @onchange="OnFilesPicked"/>
+            </MudPaper>
+
+            @* ── Per-staged-image cards (flex-wrap grid; 220px cards) ── *@
+            @if(_staged.Count == 0)
+            {
+                <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Class="mb-3">
+                    @L["No images staged yet. Use the Add images button above to pick files from your device."]
+                </MudAlert>
+            }
+            else
+            {
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                    @foreach(StagedScreenshot s in _staged)
+                    {
+                        <MudPaper Outlined="true" Class="pa-2" Key="@s.ClientGuid"
+                                  Style="width: 220px; flex: 0 0 220px;">
+                            <MudStack Spacing="1">
+                                @* Thumbnail + remove-button overlay *@
+                                <div style="position: relative; width: 100%; height: 140px; display: flex; align-items: center; justify-content: center; background: var(--mud-palette-background-grey); border-radius: 4px;">
+                                    @if(s.Status == StagedScreenshotStatus.Ready)
+                                    {
+                                        <img id="@s.ImgElementId" alt="@s.FileName"
+                                             style="max-width: 100%; max-height: 140px; object-fit: contain; border-radius: 4px;"/>
+                                    }
+                                    else if(s.Status == StagedScreenshotStatus.Uploading)
+                                    {
+                                        <MudIcon Icon="@Icons.Material.Filled.CloudUpload" Color="Color.Default" Size="Size.Large"/>
+                                    }
+                                    else
+                                    {
+                                        <MudIcon Icon="@Icons.Material.Filled.ErrorOutline" Color="Color.Error" Size="Size.Large"/>
+                                    }
+
+                                    <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small"
+                                                   Color="Color.Error"
+                                                   OnClick="@(() => RemoveStagedAsync(s.ClientGuid))"
+                                                   Style="position: absolute; top: 2px; right: 2px; background: rgba(255,255,255,0.85);"/>
+                                </div>
+
+                                @* File label — single line, ellipsised, with size *@
+                                <MudText Typo="Typo.caption" Style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;" title="@s.FileName">
+                                    <strong>@s.FileName</strong>
+                                </MudText>
+                                <MudText Typo="Typo.caption" Style="opacity: 0.7;">@FormatBytes(s.SizeBytes)</MudText>
+
+                                @* Status-dependent body *@
+                                @if(s.Status == StagedScreenshotStatus.Uploading)
+                                {
+                                    <MudProgressLinear Color="Color.Primary"
+                                                       Value="@s.UploadPercent"
+                                                       Min="0" Max="100"/>
+                                    <MudText Typo="Typo.caption" Align="Align.Right">@($"{s.UploadPercent:0}%")</MudText>
+                                }
+                                else if(s.Status == StagedScreenshotStatus.Error)
+                                {
+                                    <MudAlert Severity="Severity.Error" Dense="true" NoIcon="true" Class="py-0 my-0">@s.ErrorText</MudAlert>
+                                }
+                                else if(s.Status == StagedScreenshotStatus.Ready)
+                                {
+                                    @* Optional caption only — type is batch-level (Platform) *@
+                                    <MudTextField T="string" Label="@L["Caption (optional)"]"
+                                                  MaxLength="500"
+                                                  Value="@s.Caption"
+                                                  ValueChanged="@(v => { s.Caption = v; })"
+                                                  Variant="Variant.Outlined"
+                                                  Margin="Margin.Dense"/>
+                                }
+                            </MudStack>
+                        </MudPaper>
+                    }
+                </div>
+            }
+
+            <MudTextField T="string" Label="@L["Note for the reviewer (optional)"]"
+                          Lines="2" MaxLength="2000"
+                          Value="@_userComment"
+                          ValueChanged="@(v => { _userComment = v; })"/>
+
+            @if(!string.IsNullOrEmpty(_validationError))
+            {
+                <MudAlert Severity="Severity.Error" Class="mt-3">@_validationError</MudAlert>
+            }
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="OnCancelAsync" Disabled="@_submitting">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled"
+                   OnClick="SubmitAsync"
+                   Disabled="@(_submitting || !CanSubmit())">
+            @if(_submitting)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
+            }
+            @L["Submit"]
+        </MudButton>
+    </DialogActions>
+</MudDialog>
