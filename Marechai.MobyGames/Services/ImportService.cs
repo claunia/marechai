@@ -1466,6 +1466,8 @@ public class ImportService
         "Voice Production by"      => "vrc",
         "Manual by"                => "doc",
         "Additional Music by"      => "snd",
+        "Original Concept by"      => "ocp",
+        "Funded by"                => "fnd",
         _                          => null
     };
 
