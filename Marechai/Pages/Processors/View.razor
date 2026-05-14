@@ -586,15 +586,32 @@ else
     </MudStack>
 }
 
-@* ── Videos Card ── *@
+@* ── Videos Card ──
+   When videos exist, render the existing iframe grid AND a `+` icon button in the title
+   row for authenticated users to suggest a new YouTube video. When no videos exist, the
+   card is HIDDEN ENTIRELY from anonymous visitors (per user spec — keeps the public page
+   minimal); authenticated visitors see a slim empty-state hint with a Suggest button.
+   Add-only convention: collaborators can ONLY add videos, never edit/remove existing
+   ones — the icon is `+` (AddCircle), NOT pencil. *@
 @if(_videos is { Count: > 0 })
 {
     <MudCard Elevation="2" Class="mb-4 rounded-lg">
         <MudCardContent>
-            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
-                <MudIcon Icon="@Icons.Material.Filled.VideoLibrary" Color="Color.Primary"/>
-                <MudText Typo="Typo.h6">@L["Videos"]</MudText>
-                <MudChip T="string" Size="Size.Small" Color="Color.Secondary">@_videos.Count</MudChip>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-3">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIcon Icon="@Icons.Material.Filled.VideoLibrary" Color="Color.Primary"/>
+                    <MudText Typo="Typo.h6">@L["Videos"]</MudText>
+                    <MudChip T="string" Size="Size.Small" Color="Color.Secondary">@_videos.Count</MudChip>
+                </MudStack>
+                <AuthorizeView>
+                    <Authorized>
+                        <MudTooltip Text="@L["Suggest more videos"]">
+                            <MudIconButton Icon="@Icons.Material.Filled.AddCircle"
+                                           Color="Color.Primary" Size="Size.Small"
+                                           OnClick="OpenSuggestVideoDialog"/>
+                        </MudTooltip>
+                    </Authorized>
+                </AuthorizeView>
             </MudStack>
             <MudGrid Spacing="3">
                 @foreach(ProcessorVideoDto video in _videos)
@@ -625,6 +642,23 @@ else
             </MudGrid>
         </MudCardContent>
     </MudCard>
+}
+else
+{
+    <AuthorizeView>
+        <Authorized>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3" Class="mb-4 pa-3"
+                      Style="background: var(--mud-palette-background-grey); border-radius: 8px;">
+                <MudIcon Icon="@Icons.Material.Filled.VideoLibrary" Color="Color.Default"/>
+                <MudText Typo="Typo.body1" Style="flex: 1;">@L["We have no videos available about this processor."]</MudText>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.AddCircle"
+                           OnClick="OpenSuggestVideoDialog">
+                    @L["Suggest a YouTube video"]
+                </MudButton>
+            </MudStack>
+        </Authorized>
+    </AuthorizeView>
 }
 
 </MudTabPanel>

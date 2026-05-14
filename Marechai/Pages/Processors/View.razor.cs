@@ -345,4 +345,33 @@ public partial class View
             // Method left as a hook in case future revisions want to surface a hint.
         }
     }
+
+    /// <summary>
+    ///     Opens the ProcessorVideoSuggestionDialog so an authenticated user can suggest a
+    ///     single brand-new YouTube video link for this processor. The server fetches the
+    ///     canonical title from YouTube oEmbed at submission time. Acceptance is gated on
+    ///     admin review; the local _videos list is not refreshed because acceptance is async.
+    /// </summary>
+    async Task OpenSuggestVideoDialog()
+    {
+        int processorId = Id;
+        if(processorId <= 0) return;
+
+        var dialogParams = new DialogParameters
+        {
+            ["EntityId"]      = (long)processorId,
+            ["ProcessorName"] = _processor?.Name ?? string.Empty
+        };
+        var dialogOptions = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Medium
+        };
+
+        var dialogRef = await DialogService.ShowAsync<ProcessorVideoSuggestionDialog>(
+            L["Suggest a YouTube video"], dialogParams, dialogOptions);
+
+        await dialogRef.Result;
+    }
 }

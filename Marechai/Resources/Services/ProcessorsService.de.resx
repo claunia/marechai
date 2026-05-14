@@ -752,4 +752,46 @@
   <data name="Suggest processor photos" xml:space="preserve">
     <value>Prozessorfotos vorschlagen</value>
   </data>
+  <data name="Suggest a YouTube video for {0}. The video title will be fetched automatically from YouTube when you submit." xml:space="preserve">
+    <value>Schlage ein YouTube-Video für {0} vor. Der Videotitel wird beim Absenden automatisch von YouTube abgerufen.</value>
+  </data>
+  <data name="YouTube URL or video ID" xml:space="preserve">
+    <value>YouTube-URL oder Video-ID</value>
+  </data>
+  <data name="Paste a YouTube URL or 11-character video ID. The title will be fetched automatically from YouTube." xml:space="preserve">
+    <value>Füge eine YouTube-URL oder eine 11-stellige Video-ID ein. Der Titel wird automatisch von YouTube abgerufen.</value>
+  </data>
+  <data name="This is not a valid YouTube URL or video ID." xml:space="preserve">
+    <value>Dies ist keine gültige YouTube-URL oder Video-ID.</value>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>Vorschau</value>
+  </data>
+  <data name="Title will be fetched from YouTube when you submit." xml:space="preserve">
+    <value>Der Titel wird beim Absenden von YouTube abgerufen.</value>
+  </data>
+  <data name="Note to reviewer (optional)" xml:space="preserve">
+    <value>Notiz an den Prüfer (optional)</value>
+  </data>
+  <data name="Add any context that helps the admin decide." xml:space="preserve">
+    <value>Füge Kontext hinzu, der dem Administrator bei der Entscheidung hilft.</value>
+  </data>
+  <data name="Submitting…" xml:space="preserve">
+    <value>Wird gesendet…</value>
+  </data>
+  <data name="Suggest a YouTube video" xml:space="preserve">
+    <value>YouTube-Video vorschlagen</value>
+  </data>
+  <data name="Suggest more videos" xml:space="preserve">
+    <value>Weitere Videos vorschlagen</value>
+  </data>
+  <data name="Video link submitted for review. An administrator will accept or reject it." xml:space="preserve">
+    <value>Video-Link zur Überprüfung eingereicht. Ein Administrator wird ihn annehmen oder ablehnen.</value>
+  </data>
+  <data name="Suggested video" xml:space="preserve">
+    <value>Vorgeschlagenes Video</value>
+  </data>
+  <data name="We have no videos available about this processor." xml:space="preserve">
+    <value>Wir haben keine Videos zu diesem Prozessor verfügbar.</value>
+  </data>
 </root>

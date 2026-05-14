@@ -752,4 +752,46 @@
   <data name="Suggest processor photos" xml:space="preserve">
     <value>Suggerisci foto del processore</value>
   </data>
+  <data name="Suggest a YouTube video for {0}. The video title will be fetched automatically from YouTube when you submit." xml:space="preserve">
+    <value>Suggerisci un video di YouTube per {0}. Il titolo del video verrà recuperato automaticamente da YouTube al momento dell’invio.</value>
+  </data>
+  <data name="YouTube URL or video ID" xml:space="preserve">
+    <value>URL di YouTube o ID del video</value>
+  </data>
+  <data name="Paste a YouTube URL or 11-character video ID. The title will be fetched automatically from YouTube." xml:space="preserve">
+    <value>Incolla un URL di YouTube o un ID video di 11 caratteri. Il titolo verrà recuperato automaticamente da YouTube.</value>
+  </data>
+  <data name="This is not a valid YouTube URL or video ID." xml:space="preserve">
+    <value>Questo non è un URL di YouTube né un ID video valido.</value>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>Anteprima</value>
+  </data>
+  <data name="Title will be fetched from YouTube when you submit." xml:space="preserve">
+    <value>Il titolo verrà recuperato da YouTube al momento dell’invio.</value>
+  </data>
+  <data name="Note to reviewer (optional)" xml:space="preserve">
+    <value>Nota per il revisore (facoltativo)</value>
+  </data>
+  <data name="Add any context that helps the admin decide." xml:space="preserve">
+    <value>Aggiungi qualsiasi contesto che aiuti l’amministratore a decidere.</value>
+  </data>
+  <data name="Submitting…" xml:space="preserve">
+    <value>Invio in corso…</value>
+  </data>
+  <data name="Suggest a YouTube video" xml:space="preserve">
+    <value>Suggerisci un video di YouTube</value>
+  </data>
+  <data name="Suggest more videos" xml:space="preserve">
+    <value>Suggerisci altri video</value>
+  </data>
+  <data name="Video link submitted for review. An administrator will accept or reject it." xml:space="preserve">
+    <value>Link al video inviato per la revisione. Un amministratore lo accetterà o rifiuterà.</value>
+  </data>
+  <data name="Suggested video" xml:space="preserve">
+    <value>Video suggerito</value>
+  </data>
+  <data name="We have no videos available about this processor." xml:space="preserve">
+    <value>Non abbiamo video disponibili su questo processore.</value>
+  </data>
 </root>

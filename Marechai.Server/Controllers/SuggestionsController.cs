@@ -478,6 +478,21 @@ public class SuggestionsController(MarechaiContext context,
             subkey                                                   = vid;
         }
 
+        // ---- Processor video link payload validation (calls YouTube oEmbed for canonical title) ----
+        if(dto.EntityType == SuggestionEntityType.ProcessorVideo)
+        {
+            var (ok, err, vid, fetchedTitle) = await Suggestions.ProcessorVideoSuggestionApplier.ValidateAsync(
+                                                   context, dto.EntityId, values, httpClientFactory);
+
+            if(!ok)
+                return Problem(title: "Invalid processor video suggestion",
+                               detail: err,
+                               statusCode: StatusCodes.Status400BadRequest);
+
+            values[Suggestions.ProcessorVideoSuggestionApplier.FieldTitle] = fetchedTitle;
+            subkey                                                         = vid;
+        }
+
         // ---- Existence check on target entity (edits only) --------------------------
         // For additions, the entity does not exist yet; the display name is derived from the
         // suggested 'name' payload field at projection time.
@@ -1138,6 +1153,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.SoftwareCover      => true,
         SuggestionEntityType.SoftwareScreenshot => true,
         SuggestionEntityType.GpuVideo           => true,
+        SuggestionEntityType.ProcessorVideo     => true,
         _                                  => GetKnownFieldNames(type) is not null
     };
 
@@ -1207,6 +1223,9 @@ public class SuggestionsController(MarechaiContext context,
 
         if(type == SuggestionEntityType.GpuVideo)
             return Suggestions.GpuVideoSuggestionApplier.IsKnownFieldName(fieldName);
+
+        if(type == SuggestionEntityType.ProcessorVideo)
+            return Suggestions.ProcessorVideoSuggestionApplier.IsKnownFieldName(fieldName);
 
         IReadOnlyCollection<string> set = GetKnownFieldNames(type);
         return set is not null && set.Contains(fieldName);
@@ -1401,6 +1420,12 @@ public class SuggestionsController(MarechaiContext context,
                     context, entityId, suggested, accepted, creditedUserId);
                 return new ApplyResult(applied, missing);
             }
+            case SuggestionEntityType.ProcessorVideo:
+            {
+                var (applied, missing) = await Suggestions.ProcessorVideoSuggestionApplier.ApplyAsync(
+                    context, entityId, suggested, accepted, creditedUserId);
+                return new ApplyResult(applied, missing);
+            }
             default:
                 throw new NotImplementedException($"Suggestions for {type} are not implemented yet.");
         }
@@ -1472,6 +1497,8 @@ public class SuggestionsController(MarechaiContext context,
                 await Suggestions.SoftwareScreenshotSuggestionApplier.GetCurrentValuesAsync(context, entityId),
             SuggestionEntityType.GpuVideo =>
                 await Suggestions.GpuVideoSuggestionApplier.GetCurrentValuesAsync(context, entityId),
+            SuggestionEntityType.ProcessorVideo =>
+                await Suggestions.ProcessorVideoSuggestionApplier.GetCurrentValuesAsync(context, entityId),
             _ => null
         };
     }
@@ -1527,6 +1554,7 @@ public class SuggestionsController(MarechaiContext context,
             case SuggestionEntityType.Processor:
             case SuggestionEntityType.ProcessorDescription:
             case SuggestionEntityType.ProcessorPhoto:
+            case SuggestionEntityType.ProcessorVideo:
                 return await context.Processors.AsNoTracking()
                                     .Where(p => p.Id == (int)entityId)
                                     .Select(p => p.Name)
@@ -5101,6 +5129,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.SoftwareCover         => $"/software/release/{entityId}",
         SuggestionEntityType.SoftwareScreenshot    => $"/software/{entityId}",
         SuggestionEntityType.GpuVideo              => $"/gpu/{entityId}",
+        SuggestionEntityType.ProcessorVideo        => $"/processor/{entityId}",
         _                                       => null
     };
 
@@ -5134,6 +5163,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.SoftwareCover       => "software cover upload",
         SuggestionEntityType.SoftwareScreenshot  => "software screenshot upload",
         SuggestionEntityType.GpuVideo            => "GPU video link",
+        SuggestionEntityType.ProcessorVideo      => "processor video link",
         SuggestionEntityType.ProcessorDescription => "processor description",
         SuggestionEntityType.SoundSynthDescription => "sound synth description",
         SuggestionEntityType.PersonDescription   => "person biography",
