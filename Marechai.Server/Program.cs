@@ -408,10 +408,45 @@ file class Program
         builder.Services.AddSingleton<Marechai.Translation.ITranslationProvider,
                                       SoftwareScreenshotCaptionTranslationProvider>();
 
+        // Coordinator that hands off control between the primary TranslationWorker (running on
+        // a 6-hour sweep cycle) and the companion DescriptionTranslationWorker (running ONLY
+        // during the inter-sweep slumber). The companion fills missing per-language rows in
+        // every description / synopsis table one at a time, yielding gracefully when the
+        // primary worker wakes.
+        builder.Services.AddSingleton<TranslationPhaseCoordinator>();
+
+        // Per-table adapters the DescriptionTranslationWorker iterates over. One implementation
+        // per description / synopsis table; each one owns its anti-join query (find an English
+        // row that has no matching target-language row) and its insert path.
+        builder.Services.AddSingleton<Marechai.Server.Services.DescriptionTranslation.IDescriptionTranslationSource,
+                                      Marechai.Server.Services.DescriptionTranslation.SoftwareDescriptionSource>();
+        builder.Services.AddSingleton<Marechai.Server.Services.DescriptionTranslation.IDescriptionTranslationSource,
+                                      Marechai.Server.Services.DescriptionTranslation.CompanyDescriptionSource>();
+        builder.Services.AddSingleton<Marechai.Server.Services.DescriptionTranslation.IDescriptionTranslationSource,
+                                      Marechai.Server.Services.DescriptionTranslation.PersonDescriptionSource>();
+        builder.Services.AddSingleton<Marechai.Server.Services.DescriptionTranslation.IDescriptionTranslationSource,
+                                      Marechai.Server.Services.DescriptionTranslation.MachineDescriptionSource>();
+        builder.Services.AddSingleton<Marechai.Server.Services.DescriptionTranslation.IDescriptionTranslationSource,
+                                      Marechai.Server.Services.DescriptionTranslation.GpuDescriptionSource>();
+        builder.Services.AddSingleton<Marechai.Server.Services.DescriptionTranslation.IDescriptionTranslationSource,
+                                      Marechai.Server.Services.DescriptionTranslation.ProcessorDescriptionSource>();
+        builder.Services.AddSingleton<Marechai.Server.Services.DescriptionTranslation.IDescriptionTranslationSource,
+                                      Marechai.Server.Services.DescriptionTranslation.SoundSynthDescriptionSource>();
+        builder.Services.AddSingleton<Marechai.Server.Services.DescriptionTranslation.IDescriptionTranslationSource,
+                                      Marechai.Server.Services.DescriptionTranslation.BookSynopsisSource>();
+        builder.Services.AddSingleton<Marechai.Server.Services.DescriptionTranslation.IDescriptionTranslationSource,
+                                      Marechai.Server.Services.DescriptionTranslation.DocumentSynopsisSource>();
+        builder.Services.AddSingleton<Marechai.Server.Services.DescriptionTranslation.IDescriptionTranslationSource,
+                                      Marechai.Server.Services.DescriptionTranslation.MagazineSynopsisSource>();
+
         // Background worker that fills SoftwareGenreTranslations using OpenAI (preferred) /
         // NLLB (fallback). Exits permanently if neither provider is configured. MUST be
         // registered after AddMarechaiTranslation + AddSingleton<SoftwareGenreTranslationCache>.
         builder.Services.AddHostedService<TranslationWorker>();
+
+        // Companion description-translation worker that runs during the primary worker's
+        // 6-hour slumber. Coordinated via TranslationPhaseCoordinator (registered above).
+        builder.Services.AddHostedService<DescriptionTranslationWorker>();
 
         // Named HttpClient for the YouTube oEmbed endpoint
         // (https://www.youtube.com/oembed?url=...&format=json) used by

@@ -53,6 +53,7 @@ namespace Marechai.Server.Services;
 /// </remarks>
 public sealed class TranslationWorker(TranslationService                translationService,
                                       IEnumerable<ITranslationProvider> providers,
+                                      TranslationPhaseCoordinator       coordinator,
                                       ILogger<TranslationWorker>        logger) : BackgroundService
 {
     static readonly TimeSpan _interval = TimeSpan.FromHours(6);
@@ -134,8 +135,32 @@ public sealed class TranslationWorker(TranslationService                translat
                 }
             }
 
-            try { await Task.Delay(_interval, stoppingToken); }
-            catch(OperationCanceledException) { break; }
+            // Hand off to the companion DescriptionTranslationWorker for the slumber period.
+            // EnterSlumber returns a CT cancelled by ExitSlumberAsync; the description worker
+            // checks it between iterations and stops gracefully when it fires. ExitSlumberAsync
+            // then waits (capped) for the description worker's stop ack before this loop iterates
+            // and starts the next provider sweep.
+            CancellationToken slumberCt = coordinator.EnterSlumber();
+
+            try
+            {
+                using var slumberLink =
+                    CancellationTokenSource.CreateLinkedTokenSource(stoppingToken, slumberCt);
+
+                await Task.Delay(_interval, slumberLink.Token);
+            }
+            catch(OperationCanceledException) when(stoppingToken.IsCancellationRequested)
+            {
+                await coordinator.ExitSlumberAsync(stoppingToken);
+
+                break;
+            }
+            catch(OperationCanceledException)
+            {
+                // Slumber CT cancelled by external signal — fall through to ExitSlumberAsync.
+            }
+
+            await coordinator.ExitSlumberAsync(stoppingToken);
         }
     }
 }
