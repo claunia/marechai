@@ -136,8 +136,15 @@
     string _validationError;
     string _userComment;
 
-    // Picker source list (DISTINCT existing role strings).
+    // Picker source list — DISTINCT role display strings in the contributor's UI language
+    // (English fallback when no translation row exists yet). Populated from the new
+    // SoftwareCreditRoleDto pairs so the autocomplete shows the localized text.
     List<string> _allRoles;
+
+    // Display→canonical-English lookup. The autocomplete shows the localized role; the
+    // canonical English equivalent is what we send on the wire so the database keys on the
+    // same English row regardless of UI locale. Free-text new entries fall through unchanged.
+    Dictionary<string, string> _roleCanonicalByDisplayName = new(StringComparer.OrdinalIgnoreCase);
 
     // Existing credit rows (read once on init, displayed verbatim).
     List<PersonBySoftwareDto> _creditRows;
@@ -153,12 +160,29 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Task<List<PersonBySoftwareDto>> creditsT = SoftwareService.GetCreditsBySoftwareAsync((int)EntityId);
-        Task<List<string>>              rolesT   = SoftwareService.GetCreditsRolesAsync();
+        Task<List<PersonBySoftwareDto>>   creditsT = SoftwareService.GetCreditsBySoftwareAsync((int)EntityId);
+        Task<List<SoftwareCreditRoleDto>> rolesT   = SoftwareService.GetCreditsRolesAsync();
         await Task.WhenAll(creditsT, rolesT);
 
         _creditRows = creditsT.Result;
-        _allRoles   = rolesT.Result;
+
+        // Build the localized display list and the display→canonical lookup in one pass.
+        // GroupBy on the localized Role collapses any duplicates (shouldn't occur given the
+        // server-side DISTINCT, but defensive). First() picks an arbitrary canonical mapping.
+        List<SoftwareCreditRoleDto> roles = rolesT.Result ?? [];
+        _allRoles = roles
+                   .Where(r => !string.IsNullOrWhiteSpace(r.Role))
+                   .Select(r => r.Role!)
+                   .Distinct(StringComparer.CurrentCultureIgnoreCase)
+                   .OrderBy(s => s, StringComparer.CurrentCultureIgnoreCase)
+                   .ToList();
+        _roleCanonicalByDisplayName = roles
+                                     .Where(r => !string.IsNullOrWhiteSpace(r.Role) &&
+                                                 !string.IsNullOrWhiteSpace(r.CanonicalRole))
+                                     .GroupBy(r => r.Role!, StringComparer.OrdinalIgnoreCase)
+                                     .ToDictionary(g => g.Key,
+                                                   g => g.First().CanonicalRole!,
+                                                   StringComparer.OrdinalIgnoreCase);
 
         _loading = false;
     }
@@ -203,19 +227,29 @@
         if(_pickPerson is null || !_pickPerson.Id.HasValue) return;
         if(string.IsNullOrWhiteSpace(_pickRole)) return;
 
-        int    pid  = _pickPerson.Id.Value;
-        string role = _pickRole.Trim();
+        int    pid     = _pickPerson.Id.Value;
+        string display = _pickRole.Trim();
+
+        // Variant-B resolve: if the contributor picked an existing localized role, swap to the
+        // canonical English equivalent for the wire payload. Free-text new entries fall through
+        // unchanged — the server creates a new English row, the worker translates next sweep.
+        string role = _roleCanonicalByDisplayName.TryGetValue(display, out string canonical)
+                          ? canonical
+                          : display;
         if(role.Length > 256) return;
 
         // Local dedup against existing rows (skip pairs already removed) + queued adds.
         // The same person CAN appear under DIFFERENT roles, so dedup is on the triple
-        // (PersonId, Role) within this software's scope. Role compare is case-sensitive
-        // to mirror the unique index.
+        // (PersonId, Role) within this software's scope. Compare against CanonicalRole
+        // because `role` is now canonical English and existing rows expose both Role
+        // (localized) and CanonicalRole. Falls back to Role for legacy entries that
+        // lack a populated CanonicalRole.
         if(_creditRows is not null)
         {
             foreach(PersonBySoftwareDto c in _creditRows)
             {
-                if(c.PersonId == pid && string.Equals(c.Role, role, StringComparison.Ordinal))
+                string existingCanonical = !string.IsNullOrEmpty(c.CanonicalRole) ? c.CanonicalRole : c.Role;
+                if(c.PersonId == pid && string.Equals(existingCanonical, role, StringComparison.Ordinal))
                 {
                     string existingToken = c.Id?.ToString(CultureInfo.InvariantCulture);
                     if(!string.IsNullOrEmpty(existingToken) && !_creditRemoveTokens.Contains(existingToken))
@@ -238,7 +272,7 @@
                 ["person_id"] = pid,
                 ["role"]      = role
             },
-            Display = $"{FormatPerson(_pickPerson)} ({role})"
+            Display = $"{FormatPerson(_pickPerson)} ({display})"
         };
         _pickPerson = null;
         _pickRole   = null;

@@ -391,6 +391,14 @@ file class Program
         builder.Services.AddSingleton<Marechai.Translation.ITranslationProvider,
                                       SoftwareCoverCaptionTranslationProvider>();
 
+        // PeopleBySoftware role translation provider — flat string-pool translation table keyed
+        // by the canonical English role text. NO in-memory cache; read endpoints project the
+        // localized role via a correlated sub-query against PeopleBySoftwareRoleTranslations
+        // with English fallback. Multiple credits sharing the same role (e.g. "Programmer")
+        // reuse a single translation row per language.
+        builder.Services.AddSingleton<Marechai.Translation.ITranslationProvider,
+                                      PeopleBySoftwareRoleTranslationProvider>();
+
         // Background worker that fills SoftwareGenreTranslations using OpenAI (preferred) /
         // NLLB (fallback). Exits permanently if neither provider is configured. MUST be
         // registered after AddMarechaiTranslation + AddSingleton<SoftwareGenreTranslationCache>.

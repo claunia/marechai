@@ -1667,41 +1667,118 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<PersonBySoftwareDto>> GetCreditsAsync(ulong softwareId) =>
-        (await context.PeopleBySoftware
-                      .Where(p => p.SoftwareId == softwareId)
-                      .Select(p => new PersonBySoftwareDto
-                       {
-                           Id           = p.Id,
-                           PersonId     = p.PersonId,
-                           SoftwareId   = p.SoftwareId,
-                           Role         = p.DocumentRole != null ? p.DocumentRole.Name : p.Role,
-                           SoftwareName = p.Software.Name,
-                           Name         = p.Person.Name,
-                           Surname      = p.Person.Surname,
-                           Alias        = p.Person.Alias,
-                           DisplayName  = p.Person.DisplayName
-                       })
-                      .ToListAsync()).OrderBy(p => p.Role)
-           .ThenBy(p => p.FullName)
-           .ToList();
+    public async Task<List<PersonBySoftwareDto>> GetCreditsAsync(ulong softwareId,
+                                                                 [FromQuery] string lang = null)
+    {
+        string langCode  = LanguageResolver.Resolve(HttpContext, lang);
+        bool   isEnglish = string.Equals(langCode, "eng", StringComparison.Ordinal);
+
+        IQueryable<PeopleBySoftware> source = context.PeopleBySoftware.Where(p => p.SoftwareId == softwareId);
+
+        // English fast-path: skip the correlated translation sub-query entirely. Role and
+        // CanonicalRole are identical in this case.
+        List<PersonBySoftwareDto> credits = isEnglish
+                                                ? await source.Select(p => new PersonBySoftwareDto
+                                                              {
+                                                                  Id            = p.Id,
+                                                                  PersonId      = p.PersonId,
+                                                                  SoftwareId    = p.SoftwareId,
+                                                                  Role          = p.DocumentRole != null
+                                                                                      ? p.DocumentRole.Name
+                                                                                      : p.Role,
+                                                                  CanonicalRole = p.DocumentRole != null
+                                                                                      ? p.DocumentRole.Name
+                                                                                      : p.Role,
+                                                                  SoftwareName  = p.Software.Name,
+                                                                  Name          = p.Person.Name,
+                                                                  Surname       = p.Person.Surname,
+                                                                  Alias         = p.Person.Alias,
+                                                                  DisplayName   = p.Person.DisplayName
+                                                              })
+                                                              .ToListAsync()
+                                                : await source.Select(p => new PersonBySoftwareDto
+                                                              {
+                                                                  Id           = p.Id,
+                                                                  PersonId     = p.PersonId,
+                                                                  SoftwareId   = p.SoftwareId,
+                                                                  Role = (p.DocumentRole != null
+                                                                              ? p.DocumentRole.Name
+                                                                              : p.Role) == null
+                                                                             ? null
+                                                                             : (context.PeopleBySoftwareRoleTranslations
+                                                                                       .Where(t => t.RoleText ==
+                                                                                                   (p.DocumentRole !=
+                                                                                                    null
+                                                                                                        ? p.DocumentRole
+                                                                                                            .Name
+                                                                                                        : p.Role) &&
+                                                                                                   t.LanguageCode ==
+                                                                                                   langCode)
+                                                                                       .Select(t => t.Translation)
+                                                                                       .FirstOrDefault() ??
+                                                                                (p.DocumentRole != null
+                                                                                     ? p.DocumentRole.Name
+                                                                                     : p.Role)),
+                                                                  CanonicalRole = p.DocumentRole != null
+                                                                                      ? p.DocumentRole.Name
+                                                                                      : p.Role,
+                                                                  SoftwareName = p.Software.Name,
+                                                                  Name         = p.Person.Name,
+                                                                  Surname      = p.Person.Surname,
+                                                                  Alias        = p.Person.Alias,
+                                                                  DisplayName  = p.Person.DisplayName
+                                                              })
+                                                              .ToListAsync();
+
+        return credits.OrderBy(p => p.Role, StringComparer.CurrentCultureIgnoreCase)
+                      .ThenBy(p => p.FullName, StringComparer.CurrentCultureIgnoreCase)
+                      .ToList();
+    }
 
     /// <summary>
-    ///     Returns the DISTINCT free-text role strings currently used in the
-    ///     <c>PeopleBySoftware</c> junction. Used by the collaborative-suggestion dialog as
-    ///     the autocomplete data source for the credits role field, allowing reuse of
-    ///     established role labels while still permitting custom new entries.
+    ///     Returns the DISTINCT role-pair entries currently used in the
+    ///     <c>PeopleBySoftware</c> junction. Each entry carries both the localized
+    ///     <see cref="SoftwareCreditRoleDto.Role" /> (for the autocomplete display in the
+    ///     contributor's UI language, with English fallback when no translation row exists yet)
+    ///     and the canonical English <see cref="SoftwareCreditRoleDto.CanonicalRole" /> (for
+    ///     the credits-suggestion dialog to send canonical English on the wire regardless of UI
+    ///     locale). Used as the autocomplete data source for the credits role field, allowing
+    ///     reuse of established role labels while still permitting custom new entries.
     /// </summary>
     [HttpGet("/software/credits/roles")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public Task<List<string>> GetCreditsRolesAsync() =>
-        context.PeopleBySoftware.AsNoTracking()
-               .Where(r => !string.IsNullOrEmpty(r.Role))
-               .Select(r => r.Role)
-               .Distinct()
-               .OrderBy(r => r)
-               .ToListAsync();
+    public Task<List<SoftwareCreditRoleDto>> GetCreditsRolesAsync([FromQuery] string lang = null)
+    {
+        string langCode  = LanguageResolver.Resolve(HttpContext, lang);
+        bool   isEnglish = string.Equals(langCode, "eng", StringComparison.Ordinal);
+
+        IQueryable<string> distinctRoles = context.PeopleBySoftware.AsNoTracking()
+                                                  .Where(r => !string.IsNullOrEmpty(r.Role))
+                                                  .Select(r => r.Role)
+                                                  .Distinct();
+
+        // English fast-path: skip the correlated translation sub-query.
+        if(isEnglish)
+            return distinctRoles.OrderBy(r => r)
+                                .Select(r => new SoftwareCreditRoleDto
+                                 {
+                                     Role          = r,
+                                     CanonicalRole = r
+                                 })
+                                .ToListAsync();
+
+        return distinctRoles.Select(r => new SoftwareCreditRoleDto
+                             {
+                                 Role = context.PeopleBySoftwareRoleTranslations
+                                               .Where(t => t.RoleText == r && t.LanguageCode == langCode)
+                                               .Select(t => t.Translation)
+                                               .FirstOrDefault() ?? r,
+                                 CanonicalRole = r
+                             })
+                            .OrderBy(r => r.CanonicalRole)
+                            .ToListAsync();
+    }
 
     [HttpGet("{id:ulong}/critic-reviews")]
     [AllowAnonymous]

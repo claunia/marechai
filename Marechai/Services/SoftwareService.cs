@@ -757,7 +757,12 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<PersonBySoftwareDto> credits = await client.Software[softwareId].Credits.GetAsync();
+            string lang = UiLanguage.GetIso639_3();
+
+            List<PersonBySoftwareDto> credits = await client.Software[softwareId].Credits.GetAsync(config =>
+            {
+                config.QueryParameters.Lang = lang;
+            });
 
             return credits ?? [];
         }
@@ -768,16 +773,23 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     }
 
     /// <summary>
-    ///     Returns the DISTINCT free-text role strings already in use across the
-    ///     <c>PeopleBySoftware</c> table. Used by the credits suggestion dialog as the
-    ///     autocomplete corpus for the role field, allowing reuse of established roles
+    ///     Returns the DISTINCT credit-role pairs already in use across the
+    ///     <c>PeopleBySoftware</c> table. Each pair carries both the localized display value
+    ///     (in the active UI language with English fallback) and the canonical English value
+    ///     so the credits-suggestion dialog can show roles in the contributor's language while
+    ///     still submitting canonical English on the wire. Allows reuse of established roles
     ///     while still accepting custom new entries.
     /// </summary>
-    public async Task<List<string>> GetCreditsRolesAsync()
+    public async Task<List<SoftwareCreditRoleDto>> GetCreditsRolesAsync()
     {
         try
         {
-            List<string> roles = await client.Software.Credits.Roles.GetAsync();
+            string lang = UiLanguage.GetIso639_3();
+
+            List<SoftwareCreditRoleDto> roles = await client.Software.Credits.Roles.GetAsync(config =>
+            {
+                config.QueryParameters.Lang = lang;
+            });
             return roles ?? [];
         }
         catch

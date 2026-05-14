@@ -642,7 +642,7 @@ else
             {
                 @foreach(var group in _creditsByRole)
                 {
-                    <MudText Typo="Typo.subtitle1" Class="mt-3 mb-2"><strong>@L[group.Key]</strong></MudText>
+                    <MudText Typo="Typo.subtitle1" Class="mt-3 mb-2"><strong>@group.Key</strong></MudText>
                     <MudList T="PersonBySoftwareDto" Dense="true">
                         @foreach(PersonBySoftwareDto credit in group.Value)
                         {

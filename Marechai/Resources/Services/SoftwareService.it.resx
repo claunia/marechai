@@ -537,7 +537,6 @@
     <data name="There are no companies in the database." xml:space="preserve">
         <value>Non ci sono aziende nel database.</value>
     </data>
-    
     <data name="Genres" xml:space="preserve">
         <value>Generi</value>
     </data>
@@ -559,7 +558,7 @@
     <data name="Ratings" xml:space="preserve">
         <value>Classificazioni</value>
     </data>
-        <data name="Video Modes" xml:space="preserve">
+    <data name="Video Modes" xml:space="preserve">
         <value>Modalità video</value>
     </data>
     <data name="Sound" xml:space="preserve">
@@ -568,43 +567,43 @@
     <data name="Players" xml:space="preserve">
         <value>Giocatori</value>
     </data>
-      <data name="Number of Players" xml:space="preserve">
+    <data name="Number of Players" xml:space="preserve">
         <value>Numero di giocatori</value>
     </data>
     <data name="Controller Support" xml:space="preserve">
         <value>Supporto controller</value>
     </data>
-              <data name="Apple Rating" xml:space="preserve">
+    <data name="Apple Rating" xml:space="preserve">
         <value>Classificazione Apple</value>
     </data>
-      <data name="ESRB Rating" xml:space="preserve">
+    <data name="ESRB Rating" xml:space="preserve">
         <value>Classificazione ESRB</value>
     </data>
-                  <data name="PEGI Rating" xml:space="preserve">
+    <data name="PEGI Rating" xml:space="preserve">
         <value>Classificazione PEGI</value>
     </data>
     <data name="USK Rating" xml:space="preserve">
         <value>Classificazione USK</value>
     </data>
-                    <data name="4-bit (16 greyscales),  8-bit (256 colors)" xml:space="preserve">
+    <data name="4-bit (16 greyscales),  8-bit (256 colors)" xml:space="preserve">
         <value>4 bit (16 scale di grigi), 8 bit (256 colori)</value>
     </data>
-      <data name="Achievements,  Content Download, Matchmaking, Online Multiplayer, Scoreboard/Leaderboard,  Voice Chat" xml:space="preserve">
+    <data name="Achievements,  Content Download, Matchmaking, Online Multiplayer, Scoreboard/Leaderboard,  Voice Chat" xml:space="preserve">
         <value>Obiettivi, Download di contenuti, Matchmaking, Multigiocatore online, Classifica, Chat vocale</value>
     </data>
-              <data name="Co-Op,  Free-for-all / One-on-one (VS),  Team" xml:space="preserve">
+    <data name="Co-Op,  Free-for-all / One-on-one (VS),  Team" xml:space="preserve">
         <value>Cooperativa, Tutti contro tutti / Uno contro uno (VS), Squadra</value>
     </data>
-            <data name="Game Center,  In-app/game/skill Purchase" xml:space="preserve">
+    <data name="Game Center,  In-app/game/skill Purchase" xml:space="preserve">
         <value>Game Center, Acquisto in-app</value>
     </data>
     <data name="Google Play game services,  In-app/game/skill Purchase" xml:space="preserve">
         <value>Google Play game services, Acquisto in-app</value>
     </data>
-                              <data name="Separate black &amp; white and colour versions." xml:space="preserve">
+    <data name="Separate black &amp; white and colour versions." xml:space="preserve">
         <value>Versioni separate in bianco e nero e a colori.</value>
     </data>
-          <data name="Search software by genre" xml:space="preserve">
+    <data name="Search software by genre" xml:space="preserve">
         <value>Cerca software per genere</value>
         <comment>Search software by genre</comment>
     </data>
@@ -616,7 +615,6 @@
         <value>Non è stato trovato software per questo genere.</value>
         <comment>No software found for genre</comment>
     </data>
-    
     <data name="Other" xml:space="preserve">
         <value>Altro</value>
     </data>
@@ -794,261 +792,301 @@
     <data name="Search software by specifications" xml:space="preserve">
         <value>Cerca software per specifiche</value>
     </data>
-                                                                                                                                                                                                                                      <data name="Password" xml:space="preserve">
+    <data name="Password" xml:space="preserve">
         <value>Password</value>
     </data>
-                                                                              <data name="Regions" xml:space="preserve">
+    <data name="Regions" xml:space="preserve">
         <value>Regioni</value>
     </data>
-  <data name="Suggest description" xml:space="preserve">
+    <data name="Suggest description" xml:space="preserve">
     <value>Suggerisci descrizione</value>
   </data>
-  <data name="Suggest translation" xml:space="preserve">
+    <data name="Suggest translation" xml:space="preserve">
     <value>Suggerisci traduzione</value>
   </data>
-  <data name="Suggest changes" xml:space="preserve">
+    <data name="Suggest changes" xml:space="preserve">
     <value>Suggerisci modifiche</value>
   </data>
-  <data name="Choose language for description" xml:space="preserve">
+    <data name="Choose language for description" xml:space="preserve">
     <value>Scegli la lingua della descrizione</value>
   </data>
-  <data name="We do not have a description for this software, you could collaborate by suggesting one" xml:space="preserve">
+    <data name="We do not have a description for this software, you could collaborate by suggesting one" xml:space="preserve">
     <value>Non abbiamo una descrizione per questo software, potresti collaborare suggerendone una</value>
   </data>
-  <data name="We do not have a description in your language, you could collaborate by translating the English description we show below" xml:space="preserve">
+    <data name="We do not have a description in your language, you could collaborate by translating the English description we show below" xml:space="preserve">
     <value>Non abbiamo una descrizione nella tua lingua, potresti collaborare traducendo la descrizione inglese che mostriamo qui sotto</value>
   </data>
-
-<data name="Predecessor" xml:space="preserve"><value>Predecessore</value></data><data name="Base software" xml:space="preserve"><value>Software di base</value></data><data name="Kind" xml:space="preserve"><value>Tipo</value></data><data name="Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently." xml:space="preserve"><value>Modifica qualsiasi campo o relazione qui sotto. Solo le tue modifiche saranno inviate per la revisione; un amministratore può accettarle o rifiutarle una per una.</value></data><data name="Optional comment (References, sources, etc...)" xml:space="preserve"><value>Commento opzionale (riferimenti, fonti, ecc.)</value></data><data name="No changes detected — modify at least one field before submitting." xml:space="preserve"><value>Nessuna modifica rilevata — modifica almeno un campo prima di inviare.</value></data><data name="Submit suggestion" xml:space="preserve"><value>Invia suggerimento</value></data><data name="Failed to submit suggestion." xml:space="preserve"><value>Invio del suggerimento non riuscito.</value></data><data name="Suggestion submitted. An administrator will review it." xml:space="preserve"><value>Suggerimento inviato. Un amministratore lo esaminerà.</value></data><data name="Add Genre" xml:space="preserve"><value>Aggiungi genere</value></data><data name="Undo" xml:space="preserve"><value>Annulla</value></data><data name="Invalid software kind." xml:space="preserve"><value>Tipo di software non valido.</value></data><data name="Add company" xml:space="preserve"><value>Aggiungi azienda</value></data><data name="Suggest companies changes" xml:space="preserve"><value>Suggerisci modifiche alle aziende</value></data><data name="No companies linked yet." xml:space="preserve"><value>Nessuna azienda collegata.</value></data>  <data name="Suggest credits changes" xml:space="preserve">
+    <data name="Predecessor" xml:space="preserve"><value>Predecessore</value></data>
+    <data name="Base software" xml:space="preserve"><value>Software di base</value></data>
+    <data name="Kind" xml:space="preserve"><value>Tipo</value></data>
+    <data name="Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently." xml:space="preserve"><value>Modifica qualsiasi campo o relazione qui sotto. Solo le tue modifiche saranno inviate per la revisione; un amministratore può accettarle o rifiutarle una per una.</value></data>
+    <data name="Optional comment (References, sources, etc...)" xml:space="preserve"><value>Commento opzionale (riferimenti, fonti, ecc.)</value></data>
+    <data name="No changes detected — modify at least one field before submitting." xml:space="preserve"><value>Nessuna modifica rilevata — modifica almeno un campo prima di inviare.</value></data>
+    <data name="Submit suggestion" xml:space="preserve"><value>Invia suggerimento</value></data>
+    <data name="Failed to submit suggestion." xml:space="preserve"><value>Invio del suggerimento non riuscito.</value></data>
+    <data name="Suggestion submitted. An administrator will review it." xml:space="preserve"><value>Suggerimento inviato. Un amministratore lo esaminerà.</value></data>
+    <data name="Add Genre" xml:space="preserve"><value>Aggiungi genere</value></data>
+    <data name="Undo" xml:space="preserve"><value>Annulla</value></data>
+    <data name="Invalid software kind." xml:space="preserve"><value>Tipo di software non valido.</value></data>
+    <data name="Add company" xml:space="preserve"><value>Aggiungi azienda</value></data>
+    <data name="Suggest companies changes" xml:space="preserve"><value>Suggerisci modifiche alle aziende</value></data>
+    <data name="No companies linked yet." xml:space="preserve"><value>Nessuna azienda collegata.</value></data>
+    <data name="Suggest credits changes" xml:space="preserve">
     <value>Suggerisci modifiche ai crediti</value>
   </data>
-  <data name="No credits linked yet." xml:space="preserve">
+    <data name="No credits linked yet." xml:space="preserve">
     <value>Nessun credito ancora collegato.</value>
   </data>
-  <data name="Add credit" xml:space="preserve">
+    <data name="Add credit" xml:space="preserve">
     <value>Aggiungi credito</value>
   </data>
-  <data name="Person" xml:space="preserve">
+    <data name="Person" xml:space="preserve">
     <value>Persona</value>
   </data>
-  <data name="Credits" xml:space="preserve">
+    <data name="Credits" xml:space="preserve">
     <value>Crediti</value>
   </data>
-  <data name="Suggest new release" xml:space="preserve">
+    <data name="Suggest new release" xml:space="preserve">
     <value>Proponi nuovo rilascio</value>
   </data>
-  <data name="Suggest a new release to be added to the catalogue." xml:space="preserve">
+    <data name="Suggest a new release to be added to the catalogue." xml:space="preserve">
     <value>Proponi un nuovo rilascio da aggiungere al catalogo.</value>
   </data>
-  <data name="No releases recorded yet." xml:space="preserve">
+    <data name="No releases recorded yet." xml:space="preserve">
     <value>Nessun rilascio ancora registrato.</value>
   </data>
-  <data name="Suggest new software" xml:space="preserve">
+    <data name="Suggest new software" xml:space="preserve">
     <value>Suggerisci nuovo software</value>
   </data>
-  <data name="Suggest a new software to be added to the catalogue. A first release is required." xml:space="preserve">
+    <data name="Suggest a new software to be added to the catalogue. A first release is required." xml:space="preserve">
     <value>Suggerisci un nuovo software da aggiungere al catalogo. È richiesta una prima versione.</value>
   </data>
-  <data name="Suggest a new software to be added to the catalogue. A software has no user-facing surface without a release, so a first release is required at the same time. Software fields and the first-release fields below are all reviewed together as a single suggestion; an administrator will accept or reject them as a unit." xml:space="preserve">
+    <data name="Suggest a new software to be added to the catalogue. A software has no user-facing surface without a release, so a first release is required at the same time. Software fields and the first-release fields below are all reviewed together as a single suggestion; an administrator will accept or reject them as a unit." xml:space="preserve">
     <value>Suggerisci un nuovo software da aggiungere al catalogo. Un software non ha alcuna presenza visibile senza una versione, quindi al tempo stesso è richiesta una prima versione. I campi del software e quelli della prima versione vengono esaminati insieme come un'unica proposta; un amministratore li accetterà o rifiuterà come blocco unico.</value>
   </data>
-  <data name="First release details" xml:space="preserve">
+    <data name="First release details" xml:space="preserve">
     <value>Dettagli della prima versione</value>
   </data>
-  <data name="Title, publisher and platform are required. Other fields are optional." xml:space="preserve">
+    <data name="Title, publisher and platform are required. Other fields are optional." xml:space="preserve">
     <value>Titolo, editore e piattaforma sono obbligatori. Gli altri campi sono facoltativi.</value>
   </data>
-  <data name="First release title is required." xml:space="preserve">
+    <data name="First release title is required." xml:space="preserve">
     <value>Il titolo della prima versione è obbligatorio.</value>
   </data>
-  <data name="First release publisher is required." xml:space="preserve">
+    <data name="First release publisher is required." xml:space="preserve">
     <value>L'editore della prima versione è obbligatorio.</value>
   </data>
-  <data name="First release platform is required." xml:space="preserve">
+    <data name="First release platform is required." xml:space="preserve">
     <value>La piattaforma della prima versione è obbligatoria.</value>
   </data>
-  <data name="First release: Regions" xml:space="preserve">
+    <data name="First release: Regions" xml:space="preserve">
     <value>Prima versione: Regioni</value>
   </data>
-  <data name="First release: Languages" xml:space="preserve">
+    <data name="First release: Languages" xml:space="preserve">
     <value>Prima versione: Lingue</value>
   </data>
-  <data name="First release: Barcodes" xml:space="preserve">
+    <data name="First release: Barcodes" xml:space="preserve">
     <value>Prima versione: Codici a barre</value>
   </data>
-  <data name="First release: Product codes" xml:space="preserve">
+    <data name="First release: Product codes" xml:space="preserve">
     <value>Prima versione: Codici prodotto</value>
   </data>
-  <data name="First release: Minimum GPUs" xml:space="preserve">
+    <data name="First release: Minimum GPUs" xml:space="preserve">
     <value>Prima versione: GPU minime</value>
   </data>
-  <data name="First release: Recommended GPUs" xml:space="preserve">
+    <data name="First release: Recommended GPUs" xml:space="preserve">
     <value>Prima versione: GPU consigliate</value>
   </data>
-  <data name="First release: Sound synthesizers" xml:space="preserve">
+    <data name="First release: Sound synthesizers" xml:space="preserve">
     <value>Prima versione: Sintetizzatori sonori</value>
   </data>
-  <data name="Barcode" xml:space="preserve">
+    <data name="Barcode" xml:space="preserve">
     <value>Codice a barre</value>
   </data>
-  <data name="Product code" xml:space="preserve">
+    <data name="Product code" xml:space="preserve">
     <value>Codice prodotto</value>
   </data>
-  <data name="Issuer" xml:space="preserve">
+    <data name="Issuer" xml:space="preserve">
     <value>Emittente</value>
   </data>
-  <data name="Type" xml:space="preserve">
+    <data name="Type" xml:space="preserve">
     <value>Tipo</value>
   </data>
-  <data name="Add region" xml:space="preserve">
+    <data name="Add region" xml:space="preserve">
     <value>Aggiungi regione</value>
   </data>
-  <data name="Add language" xml:space="preserve">
+    <data name="Add language" xml:space="preserve">
     <value>Aggiungi lingua</value>
   </data>
-  <data name="Add barcode" xml:space="preserve">
+    <data name="Add barcode" xml:space="preserve">
     <value>Aggiungi codice a barre</value>
   </data>
-  <data name="Add product code" xml:space="preserve">
+    <data name="Add product code" xml:space="preserve">
     <value>Aggiungi codice prodotto</value>
   </data>
-  <data name="Add minimum GPU" xml:space="preserve">
+    <data name="Add minimum GPU" xml:space="preserve">
     <value>Aggiungi GPU minima</value>
   </data>
-  <data name="Add recommended GPU" xml:space="preserve">
+    <data name="Add recommended GPU" xml:space="preserve">
     <value>Aggiungi GPU consigliata</value>
   </data>
-  <data name="Add sound synthesizer" xml:space="preserve">
+    <data name="Add sound synthesizer" xml:space="preserve">
     <value>Aggiungi sintetizzatore sonoro</value>
   </data>
-  <data name="This barcode is already present in the list." xml:space="preserve">
+    <data name="This barcode is already present in the list." xml:space="preserve">
     <value>Questo codice a barre è già presente nell'elenco.</value>
   </data>
-  <data name="This product code is already present in the list." xml:space="preserve">
+    <data name="This product code is already present in the list." xml:space="preserve">
     <value>Questo codice prodotto è già presente nell'elenco.</value>
   </data>
-<data name="Suggest promo art for {0}. Upload up to {1} JPG, PNG or WebP files (max 50 MB each). All images in this batch share the same group." xml:space="preserve"><value>Suggerisci promo art per {0}. Carica fino a {1} file JPG, PNG o WebP (max 50 MB ciascuno). Tutte le immagini di questo lotto condividono lo stesso gruppo.</value></data><data name="Group name" xml:space="preserve"><value>Nome del gruppo</value></data><data name="Pick an existing promo art group, or type a new name to create one." xml:space="preserve"><value>Scegli un gruppo di promo art esistente o digita un nuovo nome per crearne uno.</value></data><data name="Images: {0}/{1}" xml:space="preserve"><value>Immagini: {0}/{1}</value></data><data name="Add images" xml:space="preserve"><value>Aggiungi immagini</value></data><data name="Pick one or more files at a time. Each image is uploaded immediately and held on the server until you submit the batch." xml:space="preserve"><value>Seleziona uno o più file per volta. Ogni immagine viene caricata immediatamente e conservata sul server finché non invii il lotto.</value></data><data name="No images staged yet. Use the Add images button above to pick files from your device." xml:space="preserve"><value>Nessuna immagine ancora preparata. Usa il pulsante “Aggiungi immagini” in alto per scegliere i file dal tuo dispositivo.</value></data><data name="Caption (optional)" xml:space="preserve"><value>Didascalia (opzionale)</value></data><data name="Note for the reviewer (optional)" xml:space="preserve"><value>Nota per il revisore (opzionale)</value></data><data name="Submit" xml:space="preserve"><value>Invia</value></data><data name="You must be logged in to upload images." xml:space="preserve"><value>Devi aver effettuato l’accesso per caricare immagini.</value></data><data name="Type or pick a group name and add at least one successfully-uploaded image before submitting." xml:space="preserve"><value>Digita o scegli un nome di gruppo e aggiungi almeno un’immagine caricata con successo prima di inviare.</value></data><data name="Promo art submitted for review. An administrator will accept or reject each image." xml:space="preserve"><value>Promo art inviata per la revisione. Un amministratore accetterà o rifiuterà ogni immagine.</value></data><data name="You have staged images that have not been submitted yet. Closing this dialog will delete them. Continue?" xml:space="preserve"><value>Hai immagini preparate non ancora inviate. Chiudendo questa finestra di dialogo verranno eliminate. Continuare?</value></data><data name="Suggest more promo art" xml:space="preserve"><value>Suggerisci altra promo art</value></data><data name="No promo art for this software yet — help us by uploading some." xml:space="preserve"><value>Ancora nessuna promo art per questo software — aiutaci caricandone qualcuna.</value></data><data name="Suggest promo art" xml:space="preserve"><value>Suggerisci promo art</value></data><data name="Group (applies to every accepted image)" xml:space="preserve"><value>Gruppo (si applica a ogni immagine accettata)</value></data><data name="(none)" xml:space="preserve"><value>(nessuno)</value></data><data name="Accepting {0} of {1} image(s). Rejected images and their pending files will be deleted on submit." xml:space="preserve"><value>Accettazione di {0} su {1} immagine/immagini. Le immagini rifiutate e i relativi file in attesa verranno eliminati all’invio.</value></data><data name="Accept this image" xml:space="preserve"><value>Accetta questa immagine</value></data><data name="Suggest covers" xml:space="preserve"><value>Suggerisci copertine</value></data><data name="Suggest more covers" xml:space="preserve"><value>Suggerisci altre copertine</value></data><data name="No covers for this release yet — help us by uploading some." xml:space="preserve"><value>Nessuna copertina per questa edizione — aiutaci caricandone alcune.</value></data>
-  <data name="Suggest screenshots" xml:space="preserve">
+    <data name="Suggest promo art for {0}. Upload up to {1} JPG, PNG or WebP files (max 50 MB each). All images in this batch share the same group." xml:space="preserve"><value>Suggerisci promo art per {0}. Carica fino a {1} file JPG, PNG o WebP (max 50 MB ciascuno). Tutte le immagini di questo lotto condividono lo stesso gruppo.</value></data>
+    <data name="Group name" xml:space="preserve"><value>Nome del gruppo</value></data>
+    <data name="Pick an existing promo art group, or type a new name to create one." xml:space="preserve"><value>Scegli un gruppo di promo art esistente o digita un nuovo nome per crearne uno.</value></data>
+    <data name="Images: {0}/{1}" xml:space="preserve"><value>Immagini: {0}/{1}</value></data>
+    <data name="Add images" xml:space="preserve"><value>Aggiungi immagini</value></data>
+    <data name="Pick one or more files at a time. Each image is uploaded immediately and held on the server until you submit the batch." xml:space="preserve"><value>Seleziona uno o più file per volta. Ogni immagine viene caricata immediatamente e conservata sul server finché non invii il lotto.</value></data>
+    <data name="No images staged yet. Use the Add images button above to pick files from your device." xml:space="preserve"><value>Nessuna immagine ancora preparata. Usa il pulsante “Aggiungi immagini” in alto per scegliere i file dal tuo dispositivo.</value></data>
+    <data name="Caption (optional)" xml:space="preserve"><value>Didascalia (opzionale)</value></data>
+    <data name="Note for the reviewer (optional)" xml:space="preserve"><value>Nota per il revisore (opzionale)</value></data>
+    <data name="Submit" xml:space="preserve"><value>Invia</value></data>
+    <data name="You must be logged in to upload images." xml:space="preserve"><value>Devi aver effettuato l’accesso per caricare immagini.</value></data>
+    <data name="Type or pick a group name and add at least one successfully-uploaded image before submitting." xml:space="preserve"><value>Digita o scegli un nome di gruppo e aggiungi almeno un’immagine caricata con successo prima di inviare.</value></data>
+    <data name="Promo art submitted for review. An administrator will accept or reject each image." xml:space="preserve"><value>Promo art inviata per la revisione. Un amministratore accetterà o rifiuterà ogni immagine.</value></data>
+    <data name="You have staged images that have not been submitted yet. Closing this dialog will delete them. Continue?" xml:space="preserve"><value>Hai immagini preparate non ancora inviate. Chiudendo questa finestra di dialogo verranno eliminate. Continuare?</value></data>
+    <data name="Suggest more promo art" xml:space="preserve"><value>Suggerisci altra promo art</value></data>
+    <data name="No promo art for this software yet — help us by uploading some." xml:space="preserve"><value>Ancora nessuna promo art per questo software — aiutaci caricandone qualcuna.</value></data>
+    <data name="Suggest promo art" xml:space="preserve"><value>Suggerisci promo art</value></data>
+    <data name="Group (applies to every accepted image)" xml:space="preserve"><value>Gruppo (si applica a ogni immagine accettata)</value></data>
+    <data name="(none)" xml:space="preserve"><value>(nessuno)</value></data>
+    <data name="Accepting {0} of {1} image(s). Rejected images and their pending files will be deleted on submit." xml:space="preserve"><value>Accettazione di {0} su {1} immagine/immagini. Le immagini rifiutate e i relativi file in attesa verranno eliminati all’invio.</value></data>
+    <data name="Accept this image" xml:space="preserve"><value>Accetta questa immagine</value></data>
+    <data name="Suggest covers" xml:space="preserve"><value>Suggerisci copertine</value></data>
+    <data name="Suggest more covers" xml:space="preserve"><value>Suggerisci altre copertine</value></data>
+    <data name="No covers for this release yet — help us by uploading some." xml:space="preserve"><value>Nessuna copertina per questa edizione — aiutaci caricandone alcune.</value></data>
+    <data name="Suggest screenshots" xml:space="preserve">
     <value>Suggerisci screenshot</value>
   </data>
-  <data name="Suggest more screenshots" xml:space="preserve">
+    <data name="Suggest more screenshots" xml:space="preserve">
     <value>Suggerisci altri screenshot</value>
   </data>
-  <data name="No screenshots for this software yet — help us by uploading some." xml:space="preserve">
+    <data name="No screenshots for this software yet — help us by uploading some." xml:space="preserve">
     <value>Ancora nessuno screenshot per questo software — aiutaci caricandone alcuni.</value>
   </data>
-  <data name="Software platform" xml:space="preserve">
+    <data name="Software platform" xml:space="preserve">
     <value>Piattaforma software</value>
   </data>
-  <data name="Pick the software platform these screenshots belong to." xml:space="preserve">
+    <data name="Pick the software platform these screenshots belong to." xml:space="preserve">
     <value>Scegli la piattaforma software a cui appartengono questi screenshot.</value>
   </data>
-  <data name="Suggest screenshots for {0}. Upload up to {1} JPG, PNG or WebP files (max 50 MB each). All screenshots in this batch share the same platform." xml:space="preserve">
+    <data name="Suggest screenshots for {0}. Upload up to {1} JPG, PNG or WebP files (max 50 MB each). All screenshots in this batch share the same platform." xml:space="preserve">
     <value>Suggerisci screenshot per {0}. Carica fino a {1} file JPG, PNG o WebP (max 50 MB ciascuno). Tutti gli screenshot di questo lotto condividono la stessa piattaforma.</value>
   </data>
-  <data name="Pick a platform first." xml:space="preserve">
+    <data name="Pick a platform first." xml:space="preserve">
     <value>Scegli prima una piattaforma.</value>
   </data>
-  <data name="Add at least one successfully-uploaded image before submitting." xml:space="preserve">
+    <data name="Add at least one successfully-uploaded image before submitting." xml:space="preserve">
     <value>Aggiungi almeno un'immagine caricata con successo prima di inviare.</value>
   </data>
-  <data name="Screenshots submitted for review. An administrator will accept or reject each image." xml:space="preserve">
+    <data name="Screenshots submitted for review. An administrator will accept or reject each image." xml:space="preserve">
     <value>Screenshot inviati per la revisione. Un amministratore accetterà o rifiuterà ogni immagine.</value>
   </data>
-  <data name="Accept this screenshot" xml:space="preserve">
+    <data name="Accept this screenshot" xml:space="preserve">
     <value>Accetta questo screenshot</value>
   </data>
-  <data name="Accepting {0} of {1} screenshot(s). Rejected images and their pending files will be deleted on submit." xml:space="preserve">
+    <data name="Accepting {0} of {1} screenshot(s). Rejected images and their pending files will be deleted on submit." xml:space="preserve">
     <value>Accettazione di {0} su {1} screenshot. Le immagini rifiutate e i loro file in sospeso verranno eliminati all'invio.</value>
   </data>
-  <data name="Suggest a YouTube video for {0}. The video title will be fetched automatically from YouTube when you submit." xml:space="preserve">
+    <data name="Suggest a YouTube video for {0}. The video title will be fetched automatically from YouTube when you submit." xml:space="preserve">
     <value>Suggerisci un video di YouTube per {0}. Il titolo del video verrà recuperato automaticamente da YouTube al momento dell’invio.</value>
   </data>
-  <data name="YouTube URL or video ID" xml:space="preserve">
+    <data name="YouTube URL or video ID" xml:space="preserve">
     <value>URL di YouTube o ID del video</value>
   </data>
-  <data name="Paste a YouTube URL or 11-character video ID. The title will be fetched automatically from YouTube." xml:space="preserve">
+    <data name="Paste a YouTube URL or 11-character video ID. The title will be fetched automatically from YouTube." xml:space="preserve">
     <value>Incolla un URL di YouTube o un ID video di 11 caratteri. Il titolo verrà recuperato automaticamente da YouTube.</value>
   </data>
-  <data name="This is not a valid YouTube URL or video ID." xml:space="preserve">
+    <data name="This is not a valid YouTube URL or video ID." xml:space="preserve">
     <value>Questo non è un URL di YouTube né un ID video valido.</value>
   </data>
-  <data name="Preview" xml:space="preserve">
+    <data name="Preview" xml:space="preserve">
     <value>Anteprima</value>
   </data>
-  <data name="Title will be fetched from YouTube when you submit." xml:space="preserve">
+    <data name="Title will be fetched from YouTube when you submit." xml:space="preserve">
     <value>Il titolo verrà recuperato da YouTube al momento dell’invio.</value>
   </data>
-  <data name="Note to reviewer (optional)" xml:space="preserve">
+    <data name="Note to reviewer (optional)" xml:space="preserve">
     <value>Nota per il revisore (facoltativo)</value>
   </data>
-  <data name="Add any context that helps the admin decide." xml:space="preserve">
+    <data name="Add any context that helps the admin decide." xml:space="preserve">
     <value>Aggiungi qualsiasi contesto che aiuti l’amministratore a decidere.</value>
   </data>
-  <data name="Submitting…" xml:space="preserve">
+    <data name="Submitting…" xml:space="preserve">
     <value>Invio in corso…</value>
   </data>
-  <data name="Suggest a YouTube video" xml:space="preserve">
+    <data name="Suggest a YouTube video" xml:space="preserve">
     <value>Suggerisci un video di YouTube</value>
   </data>
-  <data name="Suggest more videos" xml:space="preserve">
+    <data name="Suggest more videos" xml:space="preserve">
     <value>Suggerisci altri video</value>
   </data>
-  <data name="Video link submitted for review. An administrator will accept or reject it." xml:space="preserve">
+    <data name="Video link submitted for review. An administrator will accept or reject it." xml:space="preserve">
     <value>Link al video inviato per la revisione. Un amministratore lo accetterà o rifiuterà.</value>
   </data>
-  <data name="Suggested video" xml:space="preserve">
+    <data name="Suggested video" xml:space="preserve">
     <value>Video suggerito</value>
   </data>
-  <data name="We have no videos available about this software." xml:space="preserve">
+    <data name="We have no videos available about this software." xml:space="preserve">
     <value>Non abbiamo video disponibili su questo software.</value>
   </data>
-  <data name="Top 250 Software" xml:space="preserve">
+    <data name="Top 250 Software" xml:space="preserve">
     <value>Top 250 software</value>
   </data>
-  <data name="Ranked by Marechai score" xml:space="preserve">
+    <data name="Ranked by Marechai score" xml:space="preserve">
     <value>Classificato per punteggio Marechai</value>
   </data>
-  <data name="Rankings" xml:space="preserve">
+    <data name="Rankings" xml:space="preserve">
     <value>Classifiche</value>
   </data>
-  <data name="Filters" xml:space="preserve">
+    <data name="Filters" xml:space="preserve">
     <value>Filtri</value>
   </data>
-  <data name="{0} active" xml:space="preserve">
+    <data name="{0} active" xml:space="preserve">
     <value>{0} attivo/i</value>
   </data>
-  <data name="Filter by genre" xml:space="preserve">
+    <data name="Filter by genre" xml:space="preserve">
     <value>Filtra per genere</value>
   </data>
-  <data name="Filter by platform" xml:space="preserve">
+    <data name="Filter by platform" xml:space="preserve">
     <value>Filtra per piattaforma</value>
   </data>
-  <data name="All kinds" xml:space="preserve">
+    <data name="All kinds" xml:space="preserve">
     <value>Tutti i tipi</value>
   </data>
-  <data name="Clear filters" xml:space="preserve">
+    <data name="Clear filters" xml:space="preserve">
     <value>Cancella filtri</value>
   </data>
-  <data name="Showing top {0} software" xml:space="preserve">
+    <data name="Showing top {0} software" xml:space="preserve">
     <value>Visualizzazione dei migliori {0} software</value>
   </data>
-  <data name="No ranked software matches the current filter." xml:space="preserve">
+    <data name="No ranked software matches the current filter." xml:space="preserve">
     <value>Nessun software classificato corrisponde al filtro corrente.</value>
   </data>
-  <data name="Browse all software" xml:space="preserve">
+    <data name="Browse all software" xml:space="preserve">
     <value>Sfoglia tutti i software</value>
   </data>
-  <data name="{0} reviews" xml:space="preserve">
+    <data name="{0} reviews" xml:space="preserve">
     <value>{0} recensioni</value>
   </data>
-  <data name="{0} ratings" xml:space="preserve">
+    <data name="{0} ratings" xml:space="preserve">
     <value>{0} valutazioni</value>
   </data>
-  <data name="{0} reviews / {1} ratings" xml:space="preserve">
+    <data name="{0} reviews / {1} ratings" xml:space="preserve">
     <value>{0} recensioni / {1} valutazioni</value>
   </data>
     <data name="Seo description" xml:space="preserve">
         <value>Scopri {0} su Marechai — il repository principale della storia dell’informatica. Sfoglia foto, specifiche, storia e le persone e aziende che l’hanno creato.</value>
+    </data>
+    <data name="Other (credits)" xml:space="preserve">
+        <value>Altri</value>
     </data>
 </root>

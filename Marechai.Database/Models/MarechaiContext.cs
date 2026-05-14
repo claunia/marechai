@@ -158,6 +158,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<SoftwareScreenshot>                  SoftwareScreenshots                  { get; set; }
     public virtual DbSet<SoftwareCover>                      SoftwareCovers                       { get; set; }
     public virtual DbSet<SoftwareCoverCaptionTranslation>    SoftwareCoverCaptionTranslations     { get; set; }
+    public virtual DbSet<PeopleBySoftwareRoleTranslation>    PeopleBySoftwareRoleTranslations     { get; set; }
     public virtual DbSet<SoftwarePromoArt>                   SoftwarePromoArt                     { get; set; }
     public virtual DbSet<SoftwarePromoArtGroup>              SoftwarePromoArtGroups               { get; set; }
     public virtual DbSet<SoftwarePromoArtGroupTranslation>   SoftwarePromoArtGroupTranslations    { get; set; }
@@ -2931,6 +2932,21 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .WithMany()
                   .HasForeignKey(e => e.LanguageCode)
                   .HasConstraintName("fk_software_cover_caption_translations_language");
+        });
+
+        modelBuilder.Entity<PeopleBySoftwareRoleTranslation>(entity =>
+        {
+            entity.HasIndex(e => new { e.RoleText, e.LanguageCode })
+                  .IsUnique()
+                  .HasDatabaseName("idx_people_by_software_role_translations_text_language");
+
+            entity.HasIndex(e => e.RoleText)
+                  .HasDatabaseName("idx_people_by_software_role_translations_text");
+
+            entity.HasOne(e => e.Language)
+                  .WithMany()
+                  .HasForeignKey(e => e.LanguageCode)
+                  .HasConstraintName("fk_people_by_software_role_translations_language");
         });
 
         modelBuilder.Entity<MobyGamesPromoArtDownloadState>(entity =>

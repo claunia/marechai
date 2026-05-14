@@ -22,6 +22,14 @@ namespace Marechai.ApiClient.Models
 #else
         public string Alias { get; set; }
 #endif
+        /// <summary>The canonical_role property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? CanonicalRole { get; set; }
+#nullable restore
+#else
+        public string CanonicalRole { get; set; }
+#endif
         /// <summary>The display_name property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -94,6 +102,7 @@ namespace Marechai.ApiClient.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "alias", n => { Alias = n.GetStringValue(); } },
+                { "canonical_role", n => { CanonicalRole = n.GetStringValue(); } },
                 { "display_name", n => { DisplayName = n.GetStringValue(); } },
                 { "id", n => { Id = n.GetLongValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
@@ -112,6 +121,7 @@ namespace Marechai.ApiClient.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("alias", Alias);
+            writer.WriteStringValue("canonical_role", CanonicalRole);
             writer.WriteStringValue("display_name", DisplayName);
             writer.WriteLongValue("id", Id);
             writer.WriteStringValue("name", Name);

@@ -248,8 +248,8 @@ public partial class View
             _userReviews   = userReviewsTask.Result;
 
             _creditsByRole = _credits
-                            .GroupBy(c => c.Role ?? "Other")
-                            .OrderBy(g => g.Key)
+                            .GroupBy(c => c.Role ?? L["Other (credits)"].Value)
+                            .OrderBy(g => g.Key, StringComparer.CurrentCultureIgnoreCase)
                             .ToDictionary(g => g.Key, g => g.ToList());
 
             _specs   = _attributes.Where(a => a.Category == "Spec").ToList();

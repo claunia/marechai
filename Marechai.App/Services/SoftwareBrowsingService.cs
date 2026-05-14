@@ -601,13 +601,18 @@ public class SoftwareBrowsingService
         }
     }
 
-    public async Task<List<PersonBySoftwareDto>> GetCreditsAsync(int softwareId)
+    public async Task<List<PersonBySoftwareDto>> GetCreditsAsync(int softwareId, string lang = null)
     {
         try
         {
-            _logger.LogInformation("Fetching credits for software {SoftwareId} from API", softwareId);
+            _logger.LogInformation("Fetching credits for software {SoftwareId} (lang={Lang}) from API",
+                                   softwareId,
+                                   lang ?? "default");
 
-            List<PersonBySoftwareDto> credits = await _apiClient.Software[softwareId].Credits.GetAsync();
+            List<PersonBySoftwareDto> credits = await _apiClient.Software[softwareId].Credits.GetAsync(config =>
+            {
+                if(!string.IsNullOrWhiteSpace(lang)) config.QueryParameters.Lang = lang;
+            });
 
             if(credits == null) return [];
 

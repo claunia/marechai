@@ -61,19 +61,19 @@
     <data name="(none)" xml:space="preserve">
         <value>(geen)</value>
     </data>
-                    <data name="1st-person" xml:space="preserve">
+    <data name="1st-person" xml:space="preserve">
         <value>First person</value>
     </data>
-                  <data name="2D scrolling" xml:space="preserve">
+    <data name="2D scrolling" xml:space="preserve">
         <value>2D scrollen</value>
     </data>
-            <data name="3rd-person (Other)" xml:space="preserve">
+    <data name="3rd-person (Other)" xml:space="preserve">
         <value>Derde persoon (anders)</value>
     </data>
-          <data name="4-bit (16 greyscales),  8-bit (256 colors)" xml:space="preserve">
+    <data name="4-bit (16 greyscales),  8-bit (256 colors)" xml:space="preserve">
         <value>4‑bit (16 grijstinten), 8‑bit (256 kleuren)</value>
     </data>
-              <data name="Accept this image" xml:space="preserve">
+    <data name="Accept this image" xml:space="preserve">
         <value>Accepteer deze afbeelding</value>
     </data>
     <data name="Accept this screenshot" xml:space="preserve">
@@ -85,7 +85,7 @@
     <data name="Accepting {0} of {1} screenshot(s). Rejected images and their pending files will be deleted on submit." xml:space="preserve">
         <value>Accepteren van {0} van {1} schermafbeeldingen. Afgewezen afbeeldingen en hun lopende bestanden worden verwijderd bij indienen.</value>
     </data>
-      <data name="Achievements,  Content Download, Matchmaking, Online Multiplayer, Scoreboard/Leaderboard,  Voice Chat" xml:space="preserve">
+    <data name="Achievements,  Content Download, Matchmaking, Online Multiplayer, Scoreboard/Leaderboard,  Voice Chat" xml:space="preserve">
         <value>Achievements,  Content Download, Matchmaking, Online Multiplayer, Scoreboard/Leaderboard,  Voice Chat</value>
     </data>
     <data name="Action" xml:space="preserve">
@@ -97,7 +97,7 @@
     <data name="Actions" xml:space="preserve">
         <value>Acties</value>
     </data>
-      <data name="Add" xml:space="preserve">
+    <data name="Add" xml:space="preserve">
         <value>Toevoegen</value>
     </data>
     <data name="Add Genre" xml:space="preserve">
@@ -145,11 +145,8 @@
     <data name="Add to Collection" xml:space="preserve">
         <value>Toevoegen aan collectie</value>
     </data>
-      <data name="Additional Graphics" xml:space="preserve">
+    <data name="Additional Graphics" xml:space="preserve">
         <value>Extra graphics</value>
-    </data>
-        <data name="Additional Sound" xml:space="preserve">
-        <value>Extra geluid</value>
     </data>
     <data name="Adult" xml:space="preserve">
         <value>Volwassen</value>
@@ -166,7 +163,7 @@
     <data name="All software" xml:space="preserve">
         <value>Alle software</value>
     </data>
-            <data name="Anime / manga" xml:space="preserve">
+    <data name="Anime / manga" xml:space="preserve">
         <value>Anime / manga</value>
     </data>
     <data name="Anonymous" xml:space="preserve">
@@ -199,16 +196,13 @@
     <data name="Are you sure you want to delete this video? This action cannot be undone." xml:space="preserve">
         <value>Weet u zeker dat u deze video wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.</value>
     </data>
-    <data name="Artist" xml:space="preserve">
-        <value>Artiest</value>
-    </data>
     <data name="Audio game" xml:space="preserve">
         <value>Audiogame</value>
     </data>
     <data name="Automobile" xml:space="preserve">
         <value>Auto</value>
     </data>
-        <data name="Back Cover" xml:space="preserve">
+    <data name="Back Cover" xml:space="preserve">
         <value>Achterkant</value>
     </data>
     <data name="Back to Software" xml:space="preserve">
@@ -241,7 +235,7 @@
     <data name="Bird's-eye view" xml:space="preserve">
         <value>Vogelperspectief</value>
     </data>
-      <data name="Board game" xml:space="preserve">
+    <data name="Board game" xml:space="preserve">
         <value>Bordspel</value>
     </data>
     <data name="Bowling" xml:space="preserve">
@@ -250,7 +244,7 @@
     <data name="Boxing" xml:space="preserve">
         <value>Boksen</value>
     </data>
-            <data name="Cancel" xml:space="preserve">
+    <data name="Cancel" xml:space="preserve">
         <value>Annuleren</value>
     </data>
     <data name="Caption (optional)" xml:space="preserve">
@@ -259,11 +253,8 @@
     <data name="Cards / tiles" xml:space="preserve">
         <value>Kaarten / tegels</value>
     </data>
-      <data name="Casino / gambling" xml:space="preserve">
+    <data name="Casino / gambling" xml:space="preserve">
         <value>Casino / gokken</value>
-    </data>
-      <data name="Cast" xml:space="preserve">
-        <value>Cast</value>
     </data>
     <data name="Chess" xml:space="preserve">
         <value>Schaken</value>
@@ -277,11 +268,8 @@
     <data name="Classical antiquity" xml:space="preserve">
         <value>Klassieke oudheid</value>
     </data>
-        <data name="Co-Op,  Free-for-all / One-on-one (VS),  Team" xml:space="preserve">
+    <data name="Co-Op,  Free-for-all / One-on-one (VS),  Team" xml:space="preserve">
         <value>Co‑Op, vrije strijd / één-op-één (VS), team</value>
-    </data>
-    <data name="Code (Kod)" xml:space="preserve">
-        <value>Code (Kod)</value>
     </data>
     <data name="Codename" xml:space="preserve">
         <value>Codenaam</value>
@@ -289,10 +277,10 @@
     <data name="Cold War" xml:space="preserve">
         <value>Koude Oorlog</value>
     </data>
-            <data name="Comedy" xml:space="preserve">
+    <data name="Comedy" xml:space="preserve">
         <value>Komedie</value>
     </data>
-        <data name="Companies" xml:space="preserve">
+    <data name="Companies" xml:space="preserve">
         <value>Bedrijven</value>
     </data>
     <data name="Companies which name starts with {0}." xml:space="preserve">
@@ -304,19 +292,13 @@
     <data name="Compilations" xml:space="preserve">
         <value>Compilaties</value>
     </data>
-    <data name="Composer" xml:space="preserve">
-        <value>Componist</value>
-    </data>
     <data name="Contemporary" xml:space="preserve">
         <value>Tegenwoordig</value>
-    </data>
-      <data name="Contributions" xml:space="preserve">
-        <value>Bijdragen</value>
     </data>
     <data name="Controller Support" xml:space="preserve">
         <value>Controllerondersteuning</value>
     </data>
-      <data name="Copy Protection" xml:space="preserve">
+    <data name="Copy Protection" xml:space="preserve">
         <value>Copy Protection</value>
     </data>
     <data name="Covers" xml:space="preserve">
@@ -328,14 +310,11 @@
     <data name="Critic Reviews" xml:space="preserve">
         <value>Kritische recensies</value>
     </data>
-      <data name="Currency" xml:space="preserve">
+    <data name="Currency" xml:space="preserve">
         <value>Valuta</value>
     </data>
-        <data name="Customization / outfit / skin" xml:space="preserve">
+    <data name="Customization / outfit / skin" xml:space="preserve">
         <value>Aanpassing / kleding / huid</value>
-    </data>
-    <data name="Cutscenes" xml:space="preserve">
-        <value>Cutzones</value>
     </data>
     <data name="Cyberpunk / dark sci-fi" xml:space="preserve">
         <value>Cyberpunk / duistere sciencefiction</value>
@@ -346,10 +325,10 @@
     <data name="DLC / add-on" xml:space="preserve">
         <value>DLC / add-on</value>
     </data>
-        <data name="Date precision" xml:space="preserve">
+    <data name="Date precision" xml:space="preserve">
         <value>Datumprecisie</value>
     </data>
-      <data name="Delete" xml:space="preserve">
+    <data name="Delete" xml:space="preserve">
         <value>Verwijderen</value>
     </data>
     <data name="Delete Promo Art" xml:space="preserve">
@@ -370,20 +349,11 @@
     <data name="Descriptions" xml:space="preserve">
         <value>Beschrijving</value>
     </data>
-    <data name="Design" xml:space="preserve">
-        <value>Ontwerp</value>
-    </data>
-    <data name="Designer" xml:space="preserve">
-        <value>Ontwerper</value>
-    </data>
     <data name="Detected Video ID" xml:space="preserve">
         <value>Detected Video ID</value>
     </data>
     <data name="Detective / mystery" xml:space="preserve">
         <value>Detective / mysterie</value>
-    </data>
-    <data name="Developed by" xml:space="preserve">
-        <value>Ontwikkeld door</value>
     </data>
     <data name="Developer" xml:space="preserve">
         <value>Ontwikkelaar</value>
@@ -397,16 +367,10 @@
     <data name="Direct control" xml:space="preserve">
         <value>Directe controle</value>
     </data>
-    <data name="Directed by" xml:space="preserve">
-        <value>Geleid door</value>
-    </data>
-    <data name="Director" xml:space="preserve">
-        <value>Regisseur</value>
-    </data>
     <data name="Distributor" xml:space="preserve">
         <value>Distributeur</value>
     </data>
-          <data name="ESRB Rating" xml:space="preserve">
+    <data name="ESRB Rating" xml:space="preserve">
         <value>ESRB-beoordeling</value>
     </data>
     <data name="Edit" xml:space="preserve">
@@ -430,7 +394,7 @@
     <data name="Embedded software" xml:space="preserve">
         <value>Ingebedde software</value>
     </data>
-        <data name="Europe" xml:space="preserve">
+    <data name="Europe" xml:space="preserve">
         <value>Europa</value>
     </data>
     <data name="Everyone" xml:space="preserve">
@@ -442,7 +406,7 @@
     <data name="Explanation (optional)" xml:space="preserve">
         <value>Uitleg (optioneel)</value>
     </data>
-        <data name="Extra content / game" xml:space="preserve">
+    <data name="Extra content / game" xml:space="preserve">
         <value>Extra inhoud / spel</value>
     </data>
     <data name="Extras" xml:space="preserve">
@@ -535,22 +499,16 @@
     <data name="Flight / aviation" xml:space="preserve">
         <value>Vlieg/aviatie</value>
     </data>
-      <data name="Fonts" xml:space="preserve">
-        <value>Lettertypen</value>
-    </data>
-    <data name="Fonts (Fonty)" xml:space="preserve">
-        <value>Lettertypen (Fonty)</value>
-    </data>
     <data name="Football (American)" xml:space="preserve">
         <value>Football (Amerikaans)</value>
     </data>
     <data name="Football (European) / Soccer" xml:space="preserve">
         <value>Voetbal (Europees) / Soccer</value>
     </data>
-      <data name="Free-roaming camera" xml:space="preserve">
+    <data name="Free-roaming camera" xml:space="preserve">
         <value>Vrij rondrijgende camera</value>
     </data>
-        <data name="Front Cover" xml:space="preserve">
+    <data name="Front Cover" xml:space="preserve">
         <value>Voorblad</value>
     </data>
     <data name="Full Motion Video (FMV)" xml:space="preserve">
@@ -562,19 +520,16 @@
     <data name="Full date" xml:space="preserve">
         <value>Volledige datum</value>
     </data>
-      <data name="Game" xml:space="preserve">
+    <data name="Game" xml:space="preserve">
         <value>Spel</value>
     </data>
-          <data name="Game Center,  In-app/game/skill Purchase" xml:space="preserve">
+    <data name="Game Center,  In-app/game/skill Purchase" xml:space="preserve">
         <value>Game Center, In-app/spel/vaardigheid aankoop</value>
     </data>
-    <data name="Game Engine" xml:space="preserve">
-        <value>Spelmotor</value>
-    </data>
-      <data name="Game show / trivia / quiz" xml:space="preserve">
+    <data name="Game show / trivia / quiz" xml:space="preserve">
         <value>Spelshow / trivia / quiz</value>
     </data>
-          <data name="Gameplay" xml:space="preserve">
+    <data name="Gameplay" xml:space="preserve">
         <value>Spelervaring</value>
     </data>
     <data name="General" xml:space="preserve">
@@ -595,9 +550,6 @@
     <data name="Graphic adventure" xml:space="preserve">
         <value>Grafische avontuur</value>
     </data>
-    <data name="Graphics Design" xml:space="preserve">
-        <value>Grafisch ontwerp</value>
-    </data>
     <data name="Group" xml:space="preserve">
         <value>Groep</value>
     </data>
@@ -613,7 +565,7 @@
     <data name="Hack and slash" xml:space="preserve">
         <value>Hack en slash</value>
     </data>
-          <data name="Helicopter" xml:space="preserve">
+    <data name="Helicopter" xml:space="preserve">
         <value>Helikopter</value>
     </data>
     <data name="Helpful" xml:space="preserve">
@@ -631,25 +583,25 @@
     <data name="Horse / derby" xml:space="preserve">
         <value>Paard / derby</value>
     </data>
-      <data name="Images: {0}/{1}" xml:space="preserve">
+    <data name="Images: {0}/{1}" xml:space="preserve">
         <value>Afbeeldingen: {0}/{1}</value>
     </data>
     <data name="In Collection" xml:space="preserve">
         <value>In collectie</value>
     </data>
-      <data name="Included Software" xml:space="preserve">
+    <data name="Included Software" xml:space="preserve">
         <value>Inbegrepen software</value>
     </data>
-          <data name="Inside Cover (Back)" xml:space="preserve">
+    <data name="Inside Cover (Back)" xml:space="preserve">
         <value>Binnenkant van de achterzijde</value>
     </data>
     <data name="Inside Cover (Front)" xml:space="preserve">
         <value>Binnenkant van de voorzijde</value>
     </data>
-      <data name="Interactive fiction / text adventure" xml:space="preserve">
+    <data name="Interactive fiction / text adventure" xml:space="preserve">
         <value>Interactief fictie / tekstavontuur</value>
     </data>
-      <data name="Invalid software kind." xml:space="preserve">
+    <data name="Invalid software kind." xml:space="preserve">
         <value>Ongeldig softwaretype.</value>
     </data>
     <data name="Isometric" xml:space="preserve">
@@ -664,11 +616,8 @@
     <data name="Japanese-style RPG (JRPG)" xml:space="preserve">
         <value>Japanse stijl RPG (JRPG)</value>
     </data>
-              <data name="Kind" xml:space="preserve">
+    <data name="Kind" xml:space="preserve">
         <value>Soort</value>
-    </data>
-        <data name="Levels" xml:space="preserve">
-        <value>Niveaus</value>
     </data>
     <data name="License" xml:space="preserve">
         <value>Licentie</value>
@@ -682,16 +631,16 @@
     <data name="Life / social simulation" xml:space="preserve">
         <value>Leven / sociale simulatie</value>
     </data>
-          <data name="Link Video" xml:space="preserve">
+    <data name="Link Video" xml:space="preserve">
         <value>Video koppelen</value>
     </data>
     <data name="Live action" xml:space="preserve">
         <value>Live-action</value>
     </data>
-      <data name="Localizer" xml:space="preserve">
+    <data name="Localizer" xml:space="preserve">
         <value>Lokalisator</value>
     </data>
-          <data name="Manage software entries, versions, and variants." xml:space="preserve">
+    <data name="Manage software entries, versions, and variants." xml:space="preserve">
         <value>Beheer software-invoer, versies en varianten.</value>
     </data>
     <data name="Manage software promo art." xml:space="preserve">
@@ -721,13 +670,13 @@
     <data name="Martial arts" xml:space="preserve">
         <value>vechtsporten</value>
     </data>
-      <data name="Math / logic" xml:space="preserve">
+    <data name="Math / logic" xml:space="preserve">
         <value>Wiskunde / logica</value>
     </data>
     <data name="Media" xml:space="preserve">
         <value>Media</value>
     </data>
-      <data name="Media tab" xml:space="preserve">
+    <data name="Media tab" xml:space="preserve">
         <value>Media</value>
     </data>
     <data name="Medieval" xml:space="preserve">
@@ -736,44 +685,35 @@
     <data name="Meditative / zen" xml:space="preserve">
         <value>Meditatief / zen</value>
     </data>
-      <data name="Mental training" xml:space="preserve">
+    <data name="Mental training" xml:space="preserve">
         <value>Mentale training</value>
     </data>
-      <data name="Metroidvania" xml:space="preserve">
+    <data name="Metroidvania" xml:space="preserve">
         <value>Metroidvania</value>
     </data>
     <data name="Middleware" xml:space="preserve">
         <value>Middleware</value>
     </data>
-      <data name="Mini-games" xml:space="preserve">
+    <data name="Mini-games" xml:space="preserve">
         <value>Mini-spellen</value>
     </data>
-            <data name="Minimum GPUs" xml:space="preserve">
+    <data name="Minimum GPUs" xml:space="preserve">
         <value>Minimale GPU's</value>
     </data>
-              <data name="Misleading" xml:space="preserve">
+    <data name="Misleading" xml:space="preserve">
         <value>Misleidend</value>
     </data>
-        <data name="Month and year only" xml:space="preserve">
+    <data name="Month and year only" xml:space="preserve">
         <value>Maand en jaar alleen</value>
-    </data>
-    <data name="Motion Capture" xml:space="preserve">
-        <value>Beweging vastleggen</value>
     </data>
     <data name="Motion control" xml:space="preserve">
         <value>Beweging controle</value>
     </data>
-      <data name="Motorcycle" xml:space="preserve">
+    <data name="Motorcycle" xml:space="preserve">
         <value>Motocross</value>
     </data>
-                    <data name="Multiple units/characters control" xml:space="preserve">
+    <data name="Multiple units/characters control" xml:space="preserve">
         <value>Meerdere eenheden/personages beheren</value>
-    </data>
-    <data name="Music (Muzyka)" xml:space="preserve">
-        <value>Muziek (Muzyka)</value>
-    </data>
-    <data name="Music and FX" xml:space="preserve">
-        <value>Muziek en effecten</value>
     </data>
     <data name="Name" xml:space="preserve">
         <value>Naam</value>
@@ -784,7 +724,7 @@
     <data name="Naval / watercraft" xml:space="preserve">
         <value>Marine / watervaartuigen</value>
     </data>
-      <data name="No" xml:space="preserve">
+    <data name="No" xml:space="preserve">
         <value>Nee</value>
     </data>
     <data name="No changes detected — modify at least one field before submitting." xml:space="preserve">
@@ -835,10 +775,10 @@
     <data name="Note to reviewer (optional)" xml:space="preserve">
         <value>Opmerking voor beoordelaar (optioneel)</value>
     </data>
-                        <data name="Number of Players" xml:space="preserve">
+    <data name="Number of Players" xml:space="preserve">
         <value>Aantal spelers</value>
     </data>
-        <data name="OS" xml:space="preserve">
+    <data name="OS" xml:space="preserve">
         <value>OS</value>
     </data>
     <data name="Off-roading" xml:space="preserve">
@@ -850,7 +790,7 @@
     <data name="Offensive" xml:space="preserve">
         <value>Aanvallend</value>
     </data>
-      <data name="Operating System" xml:space="preserve">
+    <data name="Operating System" xml:space="preserve">
         <value>Besturingssysteem</value>
     </data>
     <data name="Optional comment (References, sources, etc...)" xml:space="preserve">
@@ -859,22 +799,19 @@
     <data name="Other" xml:space="preserve">
         <value>Anders</value>
     </data>
-      <data name="Overall:" xml:space="preserve">
+    <data name="Overall:" xml:space="preserve">
         <value>Algemeen:</value>
     </data>
     <data name="Overview" xml:space="preserve">
         <value>Overzicht</value>
     </data>
-      <data name="PEGI Rating" xml:space="preserve">
+    <data name="PEGI Rating" xml:space="preserve">
         <value>PEGI Rating</value>
-    </data>
-    <data name="Package Design" xml:space="preserve">
-        <value>Pakketontwerp</value>
     </data>
     <data name="Paddle / Pong" xml:space="preserve">
         <value>Paddle / Pong</value>
     </data>
-      <data name="Party game" xml:space="preserve">
+    <data name="Party game" xml:space="preserve">
         <value>Feestspel</value>
     </data>
     <data name="Password" xml:space="preserve">
@@ -883,7 +820,7 @@
     <data name="Paste a YouTube URL or 11-character video ID. The title will be fetched automatically from YouTube." xml:space="preserve">
         <value>Plak een YouTube-URL of een 11-cijferige videocode. De titel wordt automatisch opgehaald van YouTube.</value>
     </data>
-      <data name="Person" xml:space="preserve">
+    <data name="Person" xml:space="preserve">
         <value>Persoon</value>
     </data>
     <data name="Perspective" xml:space="preserve">
@@ -910,7 +847,7 @@
     <data name="Platform" xml:space="preserve">
         <value>Platform</value>
     </data>
-      <data name="Player unit" xml:space="preserve">
+    <data name="Player unit" xml:space="preserve">
         <value>Speler eenheid</value>
     </data>
     <data name="Players" xml:space="preserve">
@@ -925,7 +862,7 @@
     <data name="Porter" xml:space="preserve">
         <value>Portier</value>
     </data>
-      <data name="Post as anonymous" xml:space="preserve">
+    <data name="Post as anonymous" xml:space="preserve">
         <value>Anoniem plaatsen</value>
     </data>
     <data name="Post-apocalyptic" xml:space="preserve">
@@ -940,11 +877,8 @@
     <data name="Prehistoric" xml:space="preserve">
         <value>Prehistoric</value>
     </data>
-      <data name="Preview" xml:space="preserve">
+    <data name="Preview" xml:space="preserve">
         <value>Voorbeeld</value>
-    </data>
-    <data name="Producer" xml:space="preserve">
-        <value>Producent</value>
     </data>
     <data name="Product code" xml:space="preserve">
         <value>Productcode</value>
@@ -952,13 +886,7 @@
     <data name="Product codes" xml:space="preserve">
         <value>Productcodes</value>
     </data>
-    <data name="Program" xml:space="preserve">
-        <value>Programma</value>
-    </data>
-    <data name="Programmer" xml:space="preserve">
-        <value>Programmer</value>
-    </data>
-      <data name="Other (promo art)" xml:space="preserve">
+    <data name="Other (promo art)" xml:space="preserve">
         <value>Overige</value>
     </data>
     <data name="Promo Art" xml:space="preserve">
@@ -991,19 +919,16 @@
     <data name="Puzzle elements" xml:space="preserve">
         <value>Puzzelonderdelen</value>
     </data>
-    <data name="QA" xml:space="preserve">
-        <value>QA</value>
-    </data>
     <data name="RPG elements" xml:space="preserve">
         <value>RPG-elementen</value>
     </data>
     <data name="Racing / driving" xml:space="preserve">
         <value>Race / rijden</value>
     </data>
-      <data name="Ranked #{0} of {1}" xml:space="preserve">
+    <data name="Ranked #{0} of {1}" xml:space="preserve">
         <value>Gerangschikt #{0} van {1}</value>
     </data>
-      <data name="Ratings" xml:space="preserve">
+    <data name="Ratings" xml:space="preserve">
         <value>Beoordelingen</value>
     </data>
     <data name="Reading / writing" xml:space="preserve">
@@ -1039,7 +964,7 @@
     <data name="Releases" xml:space="preserve">
         <value>Versies</value>
     </data>
-      <data name="Report" xml:space="preserve">
+    <data name="Report" xml:space="preserve">
         <value>Rapport</value>
     </data>
     <data name="Report Review" xml:space="preserve">
@@ -1066,22 +991,22 @@
     <data name="Romance" xml:space="preserve">
         <value>Romantiek</value>
     </data>
-        <data name="Sailing / boating" xml:space="preserve">
+    <data name="Sailing / boating" xml:space="preserve">
         <value>Zeilen / varen</value>
     </data>
-      <data name="Sandbox / open world" xml:space="preserve">
+    <data name="Sandbox / open world" xml:space="preserve">
         <value>Sandbox / open world</value>
     </data>
     <data name="Save" xml:space="preserve">
         <value>Opslaan</value>
     </data>
-        <data name="Saving..." xml:space="preserve">
+    <data name="Saving..." xml:space="preserve">
         <value>Opslaan…</value>
     </data>
     <data name="Sci-fi / futuristic" xml:space="preserve">
         <value>Sciencefiction / futuristisch</value>
     </data>
-        <data name="Screenshot deleted successfully." xml:space="preserve">
+    <data name="Screenshot deleted successfully." xml:space="preserve">
         <value>Schermafbeelding succesvol verwijderd.</value>
     </data>
     <data name="Screenshot uploaded successfully." xml:space="preserve">
@@ -1129,7 +1054,7 @@
     <data name="Setting" xml:space="preserve">
         <value>Instelling</value>
     </data>
-      <data name="Shooter" xml:space="preserve">
+    <data name="Shooter" xml:space="preserve">
         <value>Schietspel</value>
     </data>
     <data name="Side view" xml:space="preserve">
@@ -1138,7 +1063,7 @@
     <data name="Simulation" xml:space="preserve">
         <value>Simulatie</value>
     </data>
-          <data name="Snowboarding / skiing" xml:space="preserve">
+    <data name="Snowboarding / skiing" xml:space="preserve">
         <value>Sneeuwschoen / skiën</value>
     </data>
     <data name="Software" xml:space="preserve">
@@ -1186,7 +1111,7 @@
     <data name="Sound" xml:space="preserve">
         <value>Geluid</value>
     </data>
-        <data name="Sound synthesizers" xml:space="preserve">
+    <data name="Sound synthesizers" xml:space="preserve">
         <value>Geluidssynthesizers</value>
     </data>
     <data name="Space flight" xml:space="preserve">
@@ -1194,9 +1119,6 @@
     </data>
     <data name="Spam" xml:space="preserve">
         <value>Spam</value>
-    </data>
-    <data name="Special Thanks" xml:space="preserve">
-        <value>Speciaal dankwoord</value>
     </data>
     <data name="Special edition" xml:space="preserve">
         <value>Speciale editie</value>
@@ -1213,10 +1135,10 @@
     <data name="Spy / espionage" xml:space="preserve">
         <value>Spionage / spionage</value>
     </data>
-      <data name="Stealth" xml:space="preserve">
+    <data name="Stealth" xml:space="preserve">
         <value>Stealth</value>
     </data>
-      <data name="Story / mission" xml:space="preserve">
+    <data name="Story / mission" xml:space="preserve">
         <value>Verhaal / missie</value>
     </data>
     <data name="Strategy / tactics" xml:space="preserve">
@@ -1309,31 +1231,25 @@
     <data name="Suggestion submitted. An administrator will review it." xml:space="preserve">
         <value>Suggestie ingediend. Een beheerder zal deze beoordelen.</value>
     </data>
-        <data name="Survival horror" xml:space="preserve">
+    <data name="Survival horror" xml:space="preserve">
         <value>Overlevingshorror</value>
     </data>
     <data name="System software" xml:space="preserve">
         <value>Systeemsoftware</value>
     </data>
-        <data name="Tactical RPG" xml:space="preserve">
+    <data name="Tactical RPG" xml:space="preserve">
         <value>Tactische RPG</value>
     </data>
     <data name="Tank" xml:space="preserve">
         <value>Tank</value>
     </data>
-        <data name="Teen" xml:space="preserve">
+    <data name="Teen" xml:space="preserve">
         <value>Tiener</value>
     </data>
-      <data name="Tennis" xml:space="preserve">
+    <data name="Tennis" xml:space="preserve">
         <value>Tennis</value>
     </data>
-    <data name="Tester" xml:space="preserve">
-        <value>Tester</value>
-    </data>
-    <data name="Testing" xml:space="preserve">
-        <value>Testen</value>
-    </data>
-      <data name="Text parser" xml:space="preserve">
+    <data name="Text parser" xml:space="preserve">
         <value>Tekstparser</value>
     </data>
     <data name="Text-based / spreadsheet" xml:space="preserve">
@@ -1402,16 +1318,16 @@
     <data name="Top-down" xml:space="preserve">
         <value>Top-down</value>
     </data>
-      <data name="Track racing" xml:space="preserve">
+    <data name="Track racing" xml:space="preserve">
         <value>Circuitrace</value>
     </data>
-        <data name="Train" xml:space="preserve">
+    <data name="Train" xml:space="preserve">
         <value>Train</value>
     </data>
     <data name="Tricks / stunts" xml:space="preserve">
         <value>Trucs / stuntjes</value>
     </data>
-      <data name="Truck" xml:space="preserve">
+    <data name="Truck" xml:space="preserve">
         <value>Vrachtwagen</value>
     </data>
     <data name="Turn-based" xml:space="preserve">
@@ -1447,7 +1363,7 @@
     <data name="User Reviews" xml:space="preserve">
         <value>Gebruikersrecensies</value>
     </data>
-              <data name="Variant" xml:space="preserve">
+    <data name="Variant" xml:space="preserve">
         <value>Variant</value>
     </data>
     <data name="Variants" xml:space="preserve">
@@ -1462,7 +1378,7 @@
     <data name="Versions" xml:space="preserve">
         <value>Versies</value>
     </data>
-      <data name="Video ID" xml:space="preserve">
+    <data name="Video ID" xml:space="preserve">
         <value>Video ID</value>
     </data>
     <data name="Video Management" xml:space="preserve">
@@ -1471,7 +1387,7 @@
     <data name="Video Modes" xml:space="preserve">
         <value>Videomodi</value>
     </data>
-        <data name="Video Title" xml:space="preserve">
+    <data name="Video Title" xml:space="preserve">
         <value>Videotitel</value>
     </data>
     <data name="Video deleted successfully." xml:space="preserve">
@@ -1492,9 +1408,6 @@
     <data name="Visual novel" xml:space="preserve">
         <value>Visuele roman</value>
     </data>
-      <data name="Voice Recording" xml:space="preserve">
-        <value>Stemopname</value>
-    </data>
     <data name="War" xml:space="preserve">
         <value>Oorlog</value>
     </data>
@@ -1510,7 +1423,7 @@
     <data name="Western" xml:space="preserve">
         <value>Western</value>
     </data>
-            <data name="Word construction" xml:space="preserve">
+    <data name="Word construction" xml:space="preserve">
         <value>Woordenbouw</value>
     </data>
     <data name="World War II" xml:space="preserve">
@@ -1522,13 +1435,7 @@
     <data name="Write Review" xml:space="preserve">
         <value>Recensie schrijven</value>
     </data>
-    <data name="Writer" xml:space="preserve">
-        <value>Schrijver</value>
-    </data>
-    <data name="Written by" xml:space="preserve">
-        <value>Geschreven door</value>
-    </data>
-          <data name="Year only" xml:space="preserve">
+    <data name="Year only" xml:space="preserve">
         <value>Alleen jaar</value>
     </data>
     <data name="Yes" xml:space="preserve">
@@ -1549,7 +1456,7 @@
     <data name="Your Rating" xml:space="preserve">
         <value>Jouw beoordeling</value>
     </data>
-          <data name="ratings" xml:space="preserve">
+    <data name="ratings" xml:space="preserve">
         <value>beoordelingen</value>
     </data>
     <data name="reviews" xml:space="preserve">
@@ -1561,52 +1468,55 @@
     <data name="{0} software titles found in the database." xml:space="preserve">
         <value>{0} softwaretitels gevonden in de database.</value>
     </data>
-  <data name="Top 250 Software" xml:space="preserve">
+    <data name="Top 250 Software" xml:space="preserve">
     <value>Top 250 software</value>
   </data>
-  <data name="Ranked by Marechai score" xml:space="preserve">
+    <data name="Ranked by Marechai score" xml:space="preserve">
     <value>Gerangschikt op Marechai-score</value>
   </data>
-  <data name="Rankings" xml:space="preserve">
+    <data name="Rankings" xml:space="preserve">
     <value>Ranglijsten</value>
   </data>
-  <data name="Filters" xml:space="preserve">
+    <data name="Filters" xml:space="preserve">
     <value>Filters</value>
   </data>
-  <data name="{0} active" xml:space="preserve">
+    <data name="{0} active" xml:space="preserve">
     <value>{0} actief</value>
   </data>
-  <data name="Filter by genre" xml:space="preserve">
+    <data name="Filter by genre" xml:space="preserve">
     <value>Filteren op genre</value>
   </data>
-  <data name="Filter by platform" xml:space="preserve">
+    <data name="Filter by platform" xml:space="preserve">
     <value>Filteren op platform</value>
   </data>
-  <data name="All kinds" xml:space="preserve">
+    <data name="All kinds" xml:space="preserve">
     <value>Alle soorten</value>
   </data>
-  <data name="Clear filters" xml:space="preserve">
+    <data name="Clear filters" xml:space="preserve">
     <value>Filters wissen</value>
   </data>
-  <data name="Showing top {0} software" xml:space="preserve">
+    <data name="Showing top {0} software" xml:space="preserve">
     <value>Top {0} software wordt weergegeven</value>
   </data>
-  <data name="No ranked software matches the current filter." xml:space="preserve">
+    <data name="No ranked software matches the current filter." xml:space="preserve">
     <value>Geen gerangschikte software komt overeen met het huidige filter.</value>
   </data>
-  <data name="Browse all software" xml:space="preserve">
+    <data name="Browse all software" xml:space="preserve">
     <value>Alle software bekijken</value>
   </data>
-  <data name="{0} reviews" xml:space="preserve">
+    <data name="{0} reviews" xml:space="preserve">
     <value>{0} recensies</value>
   </data>
-  <data name="{0} ratings" xml:space="preserve">
+    <data name="{0} ratings" xml:space="preserve">
     <value>{0} beoordelingen</value>
   </data>
-  <data name="{0} reviews / {1} ratings" xml:space="preserve">
+    <data name="{0} reviews / {1} ratings" xml:space="preserve">
     <value>{0} recensies / {1} beoordelingen</value>
   </data>
     <data name="Seo description" xml:space="preserve">
         <value>Ontdek {0} op Marechai — de hoofdrepository van de computergeschiedenis. Blader door foto’s, specificaties, geschiedenis en de mensen en bedrijven die het hebben gemaakt.</value>
+    </data>
+    <data name="Other (credits)" xml:space="preserve">
+        <value>Overige</value>
     </data>
 </root>

@@ -23,39 +23,24 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
-using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Marechai.Data.Dtos;
 
-public class PersonBySoftwareDto : BaseDto<long>
+/// <summary>
+///     Distinct credit-role pair returned by <c>GET /software/credits/roles?lang={iso639_3}</c>.
+///     Used by the credits-suggestion dialog autocomplete: <see cref="Role" /> drives the
+///     display list in the contributor's UI language; <see cref="CanonicalRole" /> is what the
+///     dialog forwards on the wire when the contributor picks an existing role, so the database
+///     keys on canonical English regardless of UI locale.
+/// </summary>
+public class SoftwareCreditRoleDto
 {
-    [JsonPropertyName("person_id")]
-    [Required]
-    public int PersonId { get; set; }
-    [JsonPropertyName("software_id")]
-    [Required]
-    public ulong SoftwareId { get; set; }
+    /// <summary>Localized role text. Falls back to <see cref="CanonicalRole" /> when no translation row exists yet.</summary>
     [JsonPropertyName("role")]
     public string? Role { get; set; }
-    /// <summary>
-    ///     Canonical English value of <see cref="Role" />. Always populated server-side
-    ///     regardless of the requested UI language so that admin tools, filter URLs and the
-    ///     credits-suggestion dialog can resolve the localized display value back to the
-    ///     canonical English wire form before submitting changes.
-    /// </summary>
+
+    /// <summary>Canonical English role text. Always populated.</summary>
     [JsonPropertyName("canonical_role")]
     public string? CanonicalRole { get; set; }
-    [JsonPropertyName("name")]
-    public string? Name { get; set; }
-    [JsonPropertyName("alias")]
-    public string? Alias { get; set; }
-    [JsonPropertyName("surname")]
-    public string? Surname { get; set; }
-    [JsonPropertyName("display_name")]
-    public string? DisplayName { get; set; }
-    [JsonPropertyName("software_name")]
-    public string? SoftwareName { get; set; }
-    [JsonIgnore]
-    public string FullName => DisplayName ?? Alias ?? $"{Name} {Surname}";
 }

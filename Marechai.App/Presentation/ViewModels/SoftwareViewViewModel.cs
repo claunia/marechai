@@ -316,8 +316,11 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
                 Companies.Add(display);
             }
 
-            // Load credits
-            List<PersonBySoftwareDto> credits = await _browsingService.GetCreditsAsync(softwareId);
+            // Load credits — Role is returned localized server-side via the
+            // PeopleBySoftwareRoleTranslations table (worker fills missing rows on its hourly
+            // sweep using OpenAI/NLLB; English fallback before then).
+            List<PersonBySoftwareDto> credits = await _browsingService.GetCreditsAsync(softwareId,
+                                                                                       GetIso639CodeFromCulture());
 
             var creditsByRole = credits
                                .GroupBy(c => c.Role ?? "Other")
@@ -325,7 +328,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
 
             foreach(var group in creditsByRole)
             {
-                var item = new CreditGroupDisplayItem { Role = _localizer[group.Key] };
+                var item = new CreditGroupDisplayItem { Role = group.Key };
 
                 foreach(PersonBySoftwareDto credit in group)
                 {
