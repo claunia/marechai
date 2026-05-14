@@ -32,6 +32,7 @@ using MudBlazor.Services;
 using Marechai.Email;
 using Marechai.Services;
 using Marechai.Shared;
+using Marechai.Translation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.DataProtection;
@@ -128,32 +129,10 @@ public class Startup(IConfiguration configuration)
             client.BaseAddress = new Uri("https://plausible.claunia.com");
         });
 
-        string nllbServeUrl = Configuration["NllbServe:Url"];
-
-        if(!string.IsNullOrWhiteSpace(nllbServeUrl))
-        {
-            services.AddHttpClient("NllbServe", client =>
-            {
-                client.BaseAddress = new Uri(nllbServeUrl);
-                client.Timeout     = TimeSpan.FromSeconds(120);
-            });
-        }
-
-        string openAiUrl = Configuration["OpenAI:Url"];
-
-        if(!string.IsNullOrWhiteSpace(openAiUrl))
-        {
-            int openAiTimeoutSeconds = 600;
-
-            if(int.TryParse(Configuration["OpenAI:TimeoutSeconds"], out int parsedTimeout) && parsedTimeout > 0)
-                openAiTimeoutSeconds = parsedTimeout;
-
-            services.AddHttpClient("OpenAI", client =>
-            {
-                client.BaseAddress = new Uri(openAiUrl);
-                client.Timeout     = TimeSpan.FromSeconds(openAiTimeoutSeconds);
-            });
-        }
+        // OpenAI + NLLB HttpClients (each registered only when its Url is configured) plus the
+        // shared TranslationService singleton. Lives in Marechai.Translation so the API server
+        // (Marechai.Server) can reuse the same provider for the genre translation worker.
+        services.AddMarechaiTranslation(Configuration);
 
         services.AddAuthorizationCore();
         services.AddRazorPages();

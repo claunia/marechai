@@ -46,6 +46,7 @@
     <ProjectReference Include="..\Marechai.ApiClient\Marechai.ApiClient.csproj"/>
     <ProjectReference Include="..\Marechai.Data\Marechai.Data.csproj"/>
     <ProjectReference Include="..\Marechai.Email\Marechai.Email.csproj"/>
+    <ProjectReference Include="..\Marechai.Translation\Marechai.Translation.csproj"/>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Resources\**\*.es.resx"/>

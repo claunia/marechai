@@ -31,6 +31,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Marechai.Data;
+using Marechai.Helpers;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Serialization;
 
@@ -501,7 +502,12 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareGenreDto> genres = await client.Software.Genres.GetAsync();
+            string lang = UiLanguage.GetIso639_3();
+
+            List<SoftwareGenreDto> genres = await client.Software.Genres.GetAsync(config =>
+            {
+                config.QueryParameters.Lang = lang;
+            });
 
             return genres ?? [];
         }
@@ -801,7 +807,12 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            List<SoftwareGenreDto> genres = await client.Software[softwareId].Genres.GetAsync();
+            string lang = UiLanguage.GetIso639_3();
+
+            List<SoftwareGenreDto> genres = await client.Software[softwareId].Genres.GetAsync(config =>
+            {
+                config.QueryParameters.Lang = lang;
+            });
 
             return genres ?? [];
         }

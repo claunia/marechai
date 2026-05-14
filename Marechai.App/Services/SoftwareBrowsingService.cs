@@ -620,13 +620,17 @@ public class SoftwareBrowsingService
         }
     }
 
-    public async Task<List<SoftwareGenreDto>> GetGenresAsync(int softwareId)
+    public async Task<List<SoftwareGenreDto>> GetGenresAsync(int softwareId, string lang = null)
     {
         try
         {
-            _logger.LogInformation("Fetching genres for software {SoftwareId} from API", softwareId);
+            _logger.LogInformation("Fetching genres for software {SoftwareId} (lang={Lang}) from API",
+                                   softwareId, lang ?? "default");
 
-            List<SoftwareGenreDto> genres = await _apiClient.Software[softwareId].Genres.GetAsync();
+            List<SoftwareGenreDto> genres = await _apiClient.Software[softwareId].Genres.GetAsync(config =>
+            {
+                if(!string.IsNullOrWhiteSpace(lang)) config.QueryParameters.Lang = lang;
+            });
 
             if(genres == null) return [];
 

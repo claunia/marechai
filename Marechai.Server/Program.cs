@@ -12,6 +12,7 @@ using Marechai.Helpers;
 using Marechai.Server.Helpers;
 using Marechai.Server.Services;
 using Marechai.Server.Filters;
+using Marechai.Translation;
 using Markdig;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -351,6 +352,21 @@ file class Program
         builder.Services.AddScoped<DeletionPendingFilter>();
         builder.Services.AddHostedService<AccountDeletionPurgeService>();
 
+        // OpenAI + NLLB HttpClients (each registered only when its Url is configured) plus the
+        // shared TranslationService singleton. Reused by both the SoftwareController genre
+        // endpoints (via SoftwareGenreTranslationCache) and the TranslationWorker.
+        builder.Services.AddMarechaiTranslation(builder.Configuration);
+
+        // Process-lifetime cache holding every SoftwareGenre + every SoftwareGenreTranslation row.
+        // Populated once on startup (eager-warm below) and mutated thereafter ONLY by
+        // TranslationWorker. Controllers READ-only via SoftwareGenreTranslationCache.GetName(...).
+        builder.Services.AddSingleton<SoftwareGenreTranslationCache>();
+
+        // Background worker that fills SoftwareGenreTranslations using OpenAI (preferred) /
+        // NLLB (fallback). Exits permanently if neither provider is configured. MUST be
+        // registered after AddMarechaiTranslation + AddSingleton<SoftwareGenreTranslationCache>.
+        builder.Services.AddHostedService<TranslationWorker>();
+
         // Named HttpClient for the YouTube oEmbed endpoint
         // (https://www.youtube.com/oembed?url=...&format=json) used by
         // GpuVideoSuggestionApplier to auto-fetch the canonical video title at submission
@@ -425,6 +441,27 @@ file class Program
                 context.Database.Migrate();
                 end = DateTime.Now;
 
+                Console.WriteLine("\e[31;1mTook \e[32;1m{0} seconds\e[31;1m...\e[0m", (end - start).TotalSeconds);
+
+                // Eager-warm the genre-translation cache so the first /software/genres request
+                // doesn't pay the load cost. Singleton — resolved from the root provider, not the
+                // per-request scope. Failure is logged but non-fatal: GetName() falls back to the
+                // English name if the cache hasn't loaded yet.
+                start = DateTime.Now;
+                Console.WriteLine("\e[31;1mWarming software genre translation cache...\e[0m");
+
+                try
+                {
+                    SoftwareGenreTranslationCache genreCache =
+                        app.Services.GetRequiredService<SoftwareGenreTranslationCache>();
+                    genreCache.EnsureLoadedAsync().GetAwaiter().GetResult();
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine("\e[31;1mGenre cache warm-up failed: {0}\e[0m", ex.Message);
+                }
+
+                end = DateTime.Now;
                 Console.WriteLine("\e[31;1mTook \e[32;1m{0} seconds\e[31;1m...\e[0m", (end - start).TotalSeconds);
 
                 start = DateTime.Now;

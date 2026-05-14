@@ -37,7 +37,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Marechai.Services;
+namespace Marechai.Translation;
 
 public class TranslationService(IHttpClientFactory httpClientFactory, IConfiguration configuration,
                                 ILogger<TranslationService> logger)
@@ -65,8 +65,16 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
     public static bool IsLanguageSupported(string iso639_3) =>
         iso639_3 is not null && _languages.ContainsKey(iso639_3);
 
+    /// <summary>
+    ///     The set of ISO 639-3 codes the translator can target. <c>eng</c> is included as the source
+    ///     identity. Worker code that needs to enumerate target languages should use this property and
+    ///     filter out <c>eng</c> itself.
+    /// </summary>
+    public static IReadOnlyCollection<string> SupportedLanguageCodes => _languages.Keys;
+
     public async Task<(string translatedText, string error)> TranslateAsync(string text,
-        string targetLanguageIso639_3, IProgress<(int current, int total)> progress = null)
+        string targetLanguageIso639_3, IProgress<(int current, int total)> progress = null,
+        bool plainText = false)
     {
         if(!IsAvailable)
             return (null, "Translation server is not configured.");
@@ -78,7 +86,7 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
         if(IsOpenAIConfigured)
         {
             (string openAiText, string openAiError) =
-                await TranslateViaOpenAIAsync(text, target.EnglishName, progress);
+                await TranslateViaOpenAIAsync(text, target.EnglishName, progress, plainText);
 
             if(openAiText is not null)
                 return (openAiText, null);
@@ -99,7 +107,7 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
 #region OpenAI backend
 
     async Task<(string translated, string error)> TranslateViaOpenAIAsync(string text, string targetEnglishName,
-        IProgress<(int current, int total)> progress)
+        IProgress<(int current, int total)> progress, bool plainText)
     {
         progress?.Report((0, 1));
 
@@ -107,14 +115,23 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
         {
             HttpClient client = httpClientFactory.CreateClient("OpenAI");
 
-            string systemPrompt =
-                $"You are a translator. Translate the user's text from English to {targetEnglishName}, "
-              + "preserving all markdown formatting exactly (headings, lists, links, code spans, fenced code "
-              + "blocks, tables, emphasis). Output ONLY the translated markdown — no preamble, no explanation, "
-              + "no surrounding code fence.";
+            // For plain-text inputs (e.g. genre names like "Action", "Puzzle") the markdown-preserving
+            // prompt sometimes provoked the model to add markdown decoration (heading hashes, list
+            // bullets) to the output. Switching to JSON mode + a strict envelope contract eliminates
+            // that whole class of bug: the model can ONLY return {"translation":"..."}.
+            string systemPrompt = plainText
+                ? $"You are a translator. Translate the user's text from English to {targetEnglishName}. "
+                + "The input is plain text (typically a short label, never markdown). DO NOT add any "
+                + "formatting characters (#, *, _, `, -, >). Output ONLY a JSON object of the form "
+                + "{\"translation\":\"...\"} containing the translated text, nothing else."
+                : $"You are a translator. Translate the user's text from English to {targetEnglishName}, "
+                + "preserving all markdown formatting exactly (headings, lists, links, code spans, fenced "
+                + "code blocks, tables, emphasis). Output ONLY the translated markdown — no preamble, no "
+                + "explanation, no surrounding code fence.";
 
-            // Build the body as a Dictionary so optional fields (model, max_tokens) can be omitted entirely
-            // when not configured, which matches what local OpenAI-compatible servers expect.
+            // Build the body as a Dictionary so optional fields (model, max_tokens, response_format)
+            // can be omitted entirely when not needed, which matches what local OpenAI-compatible
+            // servers expect.
             var body = new Dictionary<string, object>
             {
                 ["messages"] = new object[]
@@ -124,6 +141,34 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
                 },
                 ["temperature"] = 0
             };
+
+            if(plainText)
+            {
+                // Force the model to emit a strictly-typed JSON object with a single `translation`
+                // string. OpenAI structured-outputs / LM Studio / vLLM all accept this `json_schema`
+                // shape; the older `json_object` is rejected by some servers (LM Studio in
+                // particular requires `json_schema` or `text`). Combined with the system prompt
+                // forbidding markdown, this guarantees a clean string we can extract.
+                body["response_format"] = new
+                {
+                    type        = "json_schema",
+                    json_schema = new
+                    {
+                        name   = "translation",
+                        strict = true,
+                        schema = new
+                        {
+                            type                 = "object",
+                            additionalProperties = false,
+                            required             = new[] { "translation" },
+                            properties = new
+                            {
+                                translation = new { type = "string" }
+                            }
+                        }
+                    }
+                };
+            }
 
             string model = configuration["OpenAI:Model"];
 
@@ -174,12 +219,35 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
 
             content = content.Trim();
 
-            // Defensive: if a noncompliant model wrapped the whole reply in a single outer fence,
-            // peel it off. Skip when the payload contains inner fenced blocks.
-            string peeled = TryStripOuterFence(content);
+            if(plainText)
+            {
+                // Parse the {"translation": "..."} envelope; reject anything else.
+                string parsed = TryExtractTranslationField(content);
 
-            if(peeled is not null)
-                content = peeled;
+                if(parsed is null)
+                {
+                    logger.LogWarning(
+                        "OpenAI plain-text translation returned a non-conforming response (first 80 chars): {Head}",
+                        content.Length > 80 ? content[..80] : content);
+
+                    return (null, "OpenAI returned a non-JSON response in plain-text mode.");
+                }
+
+                content = parsed.Trim();
+
+                // Defensive scrub for any leftover markdown leader/trailer that slipped past JSON
+                // parsing (e.g. the model returning {"translation":"# Acción"}).
+                content = StripMarkdownDecoration(content);
+            }
+            else
+            {
+                // Defensive: if a noncompliant model wrapped the whole reply in a single outer fence,
+                // peel it off. Skip when the payload contains inner fenced blocks.
+                string peeled = TryStripOuterFence(content);
+
+                if(peeled is not null)
+                    content = peeled;
+            }
 
             // Cheap refusal detection: very short replies starting with refusal phrases when the
             // input was substantially longer should be treated as a failure so we can fall back.
@@ -210,6 +278,57 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
 
             return (null, "An unexpected error occurred during OpenAI translation.");
         }
+    }
+
+    /// <summary>
+    ///     Extracts the <c>translation</c> string field from a JSON object reply. Returns null when the
+    ///     payload isn't a JSON object or doesn't contain a string field by that name. Tolerates a wider
+    ///     set of common envelope keys that some models default to (translated, output, result, text)
+    ///     so a small variation in model behaviour doesn't break the whole pipeline.
+    /// </summary>
+    static string TryExtractTranslationField(string content)
+    {
+        if(string.IsNullOrWhiteSpace(content)) return null;
+
+        try
+        {
+            using JsonDocument doc = JsonDocument.Parse(content);
+            if(doc.RootElement.ValueKind != JsonValueKind.Object) return null;
+
+            foreach(string key in (string[])["translation", "translated", "output", "result", "text"])
+            {
+                if(doc.RootElement.TryGetProperty(key, out JsonElement val) &&
+                   val.ValueKind == JsonValueKind.String)
+                    return val.GetString();
+            }
+
+            return null;
+        }
+        catch(JsonException)
+        {
+            return null;
+        }
+    }
+
+    /// <summary>
+    ///     Strips leading / trailing markdown leader characters (#, *, _, `, &gt;, -) and surrounding
+    ///     whitespace. Used as a safety net for plain-text translations after JSON envelope extraction.
+    ///     Only strips characters at the very start / end of the string; internal characters (e.g. the
+    ///     hyphen in "Beat 'em up / brawler") are left untouched.
+    /// </summary>
+    static string StripMarkdownDecoration(string content)
+    {
+        if(string.IsNullOrEmpty(content)) return content;
+
+        ReadOnlySpan<char> span = content.AsSpan().Trim();
+
+        int start = 0;
+        while(start < span.Length && span[start] is '#' or '*' or '_' or '`' or '>') start++;
+
+        int end = span.Length;
+        while(end > start && span[end - 1] is '#' or '*' or '_' or '`') end--;
+
+        return span[start..end].Trim().ToString();
     }
 
     /// <summary>

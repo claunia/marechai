@@ -35,6 +35,7 @@ using Marechai.Data;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Marechai.Server.Helpers;
+using Marechai.Server.Services;
 using Markdig;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -42,12 +43,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Net.Http.Headers;
 
 namespace Marechai.Server.Controllers;
 
 [Route("/software")]
 [ApiController]
-public class SoftwareController(MarechaiContext context, IMemoryCache cache, UserManager<ApplicationUser> userManager) : ControllerBase
+public class SoftwareController(MarechaiContext context, IMemoryCache cache, UserManager<ApplicationUser> userManager,
+                                SoftwareGenreTranslationCache genreCache) : ControllerBase
 {
     // Cache key + duration for the global Marechai score ranking.
     // The full catalog ranking changes only when reviews/ratings are
@@ -1330,10 +1333,14 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<SoftwareGenreDto>> GetAllGenresAsync()
+    public async Task<List<SoftwareGenreDto>> GetAllGenresAsync([FromQuery] string lang = null)
     {
-        if(cache.TryGetValue(SOFTWARE_GENRES_CACHE_KEY, out List<SoftwareGenreDto> cached) && cached is not null)
-            return cached;
+        // The translated-name lookup uses the in-memory SoftwareGenreTranslationCache, so there is no
+        // per-language IMemoryCache layer here — the cache is already in memory and lookups are O(1).
+        // Only the gating subset (`Where(g => g.Softwares.Any())` + ordering) hits the DB.
+        string resolvedLang = ResolveGenreLanguage(lang);
+
+        await genreCache.EnsureLoadedAsync(HttpContext.RequestAborted);
 
         List<SoftwareGenreDto> genres = await context.SoftwareGenres
                                                      .Where(g => g.Softwares.Any())
@@ -1348,13 +1355,11 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                                                       })
                                                      .ToListAsync();
 
-        // Importer stores genre names with U+00A0 (non-breaking space); the
-        // resx localization keys use a regular ASCII space, so normalize here
-        // before caching/returning so `L[genre.Name]` resolves correctly.
+        // Importer stores genre names with U+00A0 (non-breaking space); normalise before applying the
+        // translation lookup so the cache (which holds the canonical English name from the DB) returns
+        // a consistent value when no translation exists for the requested language.
         foreach(SoftwareGenreDto g in genres)
-            g.Name = g.Name?.Replace('\u00A0', ' ');
-
-        cache.Set(SOFTWARE_GENRES_CACHE_KEY, genres, _catalogCacheTtl);
+            g.Name = genreCache.GetName(g.Id, resolvedLang)?.Replace('\u00A0', ' ') ?? g.Name?.Replace('\u00A0', ' ');
 
         return genres;
     }
@@ -1576,8 +1581,12 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<SoftwareGenreDto>> GetGenresAsync(ulong softwareId)
+    public async Task<List<SoftwareGenreDto>> GetGenresAsync(ulong softwareId, [FromQuery] string lang = null)
     {
+        string resolvedLang = ResolveGenreLanguage(lang);
+
+        await genreCache.EnsureLoadedAsync(HttpContext.RequestAborted);
+
         List<SoftwareGenreDto> genres = await context.GenresBySoftware
                                                      .Where(gs => gs.SoftwareId == softwareId)
                                                      .Select(gs => new SoftwareGenreDto
@@ -1591,11 +1600,11 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                                                      .ThenBy(g => g.Name)
                                                      .ToListAsync();
 
-        // Importer stores genre names with U+00A0 (non-breaking space); the
-        // resx localization keys use a regular ASCII space, so normalize here
-        // before returning so `L[genre.Name]` resolves correctly.
+        // Importer stores genre names with U+00A0 (non-breaking space); normalise before applying the
+        // translation lookup so the cache (which holds the canonical English name from the DB) returns
+        // a consistent value when no translation exists for the requested language.
         foreach(SoftwareGenreDto g in genres)
-            g.Name = g.Name?.Replace('\u00A0', ' ');
+            g.Name = genreCache.GetName(g.Id, resolvedLang)?.Replace('\u00A0', ' ') ?? g.Name?.Replace('\u00A0', ' ');
 
         return genres;
     }
@@ -2448,5 +2457,64 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
             return $"photos/avatars/thumbs/jpeg/4k/{user.AvatarGuid}.jpg";
 
         return null;
+    }
+
+    /// <summary>
+    ///     Resolves the requested ISO 639-3 language code for the genre endpoints. Honours an explicit
+    ///     <c>?lang=</c> query parameter first (validated against the supported set), then falls back
+    ///     to the request's <c>Accept-Language</c> header (mapped two-letter → three-letter), then
+    ///     defaults to <c>"eng"</c>. Returns <c>"eng"</c> for any unknown / unsupported value so the
+    ///     cache fallback path always succeeds.
+    /// </summary>
+    string ResolveGenreLanguage(string explicitLang)
+    {
+        if(!string.IsNullOrWhiteSpace(explicitLang))
+        {
+            string normalized = explicitLang.Trim().ToLowerInvariant();
+            if(Marechai.Translation.TranslationService.IsLanguageSupported(normalized))
+                return normalized;
+        }
+
+        string header = HttpContext?.Request?.Headers.AcceptLanguage.ToString();
+        if(string.IsNullOrWhiteSpace(header)) return "eng";
+
+        IList<StringWithQualityHeaderValue> parsed;
+
+        try
+        {
+            parsed = StringWithQualityHeaderValue.ParseList(new[] { header });
+        }
+        catch
+        {
+            return "eng";
+        }
+
+        foreach(StringWithQualityHeaderValue entry in parsed.OrderByDescending(e => e.Quality ?? 1.0))
+        {
+            string tag = entry.Value.Value;
+            if(string.IsNullOrWhiteSpace(tag) || tag == "*") continue;
+
+            // Use only the two-letter language part; ignore region (e.g. fr-CA → fr).
+            int    dash      = tag.IndexOf('-');
+            string twoLetter = (dash > 0 ? tag[..dash] : tag).ToLowerInvariant();
+
+            string mapped = twoLetter switch
+            {
+                "en" => "eng",
+                "es" => "spa",
+                "de" => "deu",
+                "fr" => "fra",
+                "it" => "ita",
+                "nl" => "nld",
+                "la" => "lat",
+                "pt" => "por",
+                _    => null
+            };
+
+            if(mapped is not null && Marechai.Translation.TranslationService.IsLanguageSupported(mapped))
+                return mapped;
+        }
+
+        return "eng";
     }
 }

@@ -336,9 +336,11 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
                 CreditGroups.Add(item);
             }
 
-            // Load genres
+            // Load genres (translated server-side via the SoftwareGenreTranslations table; the
+            // worker fills in missing rows on its hourly sweep using OpenAI/NLLB).
             GenreGroups.Clear();
-            List<SoftwareGenreDto> genres = await _browsingService.GetGenresAsync(softwareId);
+            List<SoftwareGenreDto> genres = await _browsingService.GetGenresAsync(softwareId,
+                                                                                  GetIso639CodeFromCulture());
 
             var genresByType = genres
                               .GroupBy(g => g.TypeName ?? "Genre")

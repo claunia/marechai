@@ -64,7 +64,7 @@
             }
             else if(GenreId.HasValue && !string.IsNullOrEmpty(_genreName))
             {
-                <MudText Typo="Typo.h6" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Software in genre {0}"], L[_genreName])</MudText>
+                <MudText Typo="Typo.h6" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Software in genre {0}"], _genreName)</MudText>
             }
             else if(!string.IsNullOrEmpty(SpecKey) && !string.IsNullOrEmpty(SpecValue))
             {

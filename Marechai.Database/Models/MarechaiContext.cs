@@ -170,6 +170,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<CollectedMagazineIssue>              CollectedMagazineIssues             { get; set; }
     public virtual DbSet<CollectedSoftwareRelease>            CollectedSoftwareReleases           { get; set; }
     public virtual DbSet<SoftwareGenre>                      SoftwareGenres                      { get; set; }
+    public virtual DbSet<SoftwareGenreTranslation>           SoftwareGenreTranslations           { get; set; }
     public virtual DbSet<GenreBySoftware>                    GenresBySoftware                    { get; set; }
     public virtual DbSet<PeopleBySoftware>                   PeopleBySoftware                    { get; set; }
     public virtual DbSet<SoftwareAttribute>                  SoftwareAttributes                  { get; set; }
@@ -574,6 +575,24 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .WithMany()
                   .HasForeignKey(e => e.LanguageCode)
                   .HasConstraintName("fk_company_descriptions_language");
+        });
+
+        modelBuilder.Entity<SoftwareGenreTranslation>(entity =>
+        {
+            entity.HasIndex(e => new { e.GenreId, e.LanguageCode })
+                  .IsUnique()
+                  .HasDatabaseName("idx_software_genre_translations_genre_language");
+
+            entity.HasOne(e => e.Genre)
+                  .WithMany()
+                  .HasForeignKey(e => e.GenreId)
+                  .HasConstraintName("fk_software_genre_translations_genre")
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Language)
+                  .WithMany()
+                  .HasForeignKey(e => e.LanguageCode)
+                  .HasConstraintName("fk_software_genre_translations_language");
         });
 
         modelBuilder.Entity<CompanyLogo>(entity =>

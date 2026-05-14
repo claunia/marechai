@@ -130,9 +130,9 @@
         {
             <MudText Typo="Typo.subtitle2" Class="mt-2 mb-1"><strong>@L[genreType.Key]</strong></MudText>
             <div class="d-flex flex-wrap gap-1">
-                @foreach(SoftwareGenreDto genre in genreType.Value.OrderBy(g => (string)L[g.Name], NaturalUnitComparer.Instance))
+                @foreach(SoftwareGenreDto genre in genreType.Value.OrderBy(g => g.Name, NaturalUnitComparer.Instance))
                 {
-                    <MudChip T="string" Href="@($"/software/genre/{genre.Id}")">@L[genre.Name]</MudChip>
+                    <MudChip T="string" Href="@($"/software/genre/{genre.Id}")">@genre.Name</MudChip>
                 }
             </div>
         }

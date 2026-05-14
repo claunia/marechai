@@ -108,10 +108,8 @@ public partial class Rankings
         if(string.IsNullOrWhiteSpace(value)) return Task.FromResult<IEnumerable<SoftwareGenreDto>>(_genres);
 
         IEnumerable<SoftwareGenreDto> filtered = _genres.Where(g =>
-            (!string.IsNullOrEmpty(g.Name) &&
-             g.Name.Contains(value, StringComparison.OrdinalIgnoreCase)) ||
-            (!string.IsNullOrEmpty(L[g.Name]) &&
-             L[g.Name].Value.Contains(value, StringComparison.OrdinalIgnoreCase)));
+            !string.IsNullOrEmpty(g.Name) &&
+             g.Name.Contains(value, StringComparison.OrdinalIgnoreCase));
 
         return Task.FromResult(filtered);
     }

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <RootNamespace>Marechai.Translation</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Brings IHttpClientFactory, IServiceCollection, IConfiguration, ILogger&lt;T&gt; without
+         pulling in additional NuGet versioning. The shared library has no Razor / MVC concerns;
+         the FrameworkReference is the lightest way to access the DI/HttpClient/Logging types. -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+</Project>

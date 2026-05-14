@@ -93,7 +93,7 @@
                                      Margin="Margin.Dense"
                                      Clearable="true"
                                      SearchFunc="SearchGenres"
-                                     ToStringFunc="@(g => g is null ? string.Empty : (string.IsNullOrEmpty(g.TypeName) ? g.Name : $"{L[g.Name]} ({L[g.TypeName]})"))"
+                                     ToStringFunc="@(g => g is null ? string.Empty : (string.IsNullOrEmpty(g.TypeName) ? g.Name : $"{g.Name} ({L[g.TypeName]})"))"
                                      ShowProgressIndicator="false"
                                      CoerceText="true"
                                      ResetValueOnEmptyText="true"/>

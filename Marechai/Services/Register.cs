@@ -74,7 +74,7 @@ public static class Register
         services.AddScoped<InvitationCodesService>();
         services.AddScoped<ProfileService>();
         services.AddScoped<CollectionService>();
-        services.AddScoped<TranslationService>();
+
         services.AddScoped<MessagingService>();
         services.AddScoped<ReviewReportService>();
         services.AddScoped<SearchService>();
