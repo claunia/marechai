@@ -357,4 +357,33 @@ public partial class View
             // Method left as a hook in case future revisions want to surface a hint.
         }
     }
+
+    /// <summary>
+    ///     Opens the SoundSynthVideoSuggestionDialog so an authenticated user can suggest a
+    ///     single brand-new YouTube video link for this sound synth. The server fetches the
+    ///     canonical title from YouTube oEmbed at submission time. Acceptance is gated on
+    ///     admin review; the local _videos list is not refreshed because acceptance is async.
+    /// </summary>
+    async Task OpenSuggestVideoDialog()
+    {
+        int synthId = Id;
+        if(synthId <= 0) return;
+
+        var dialogParams = new DialogParameters
+        {
+            ["EntityId"]       = (long)synthId,
+            ["SoundSynthName"] = _synth?.Name ?? string.Empty
+        };
+        var dialogOptions = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Medium
+        };
+
+        var dialogRef = await DialogService.ShowAsync<SoundSynthVideoSuggestionDialog>(
+            L["Suggest a YouTube video"], dialogParams, dialogOptions);
+
+        await dialogRef.Result;
+    }
 }

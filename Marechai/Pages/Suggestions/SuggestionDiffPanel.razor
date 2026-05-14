@@ -58,13 +58,14 @@ else if(Suggestion?.EntityType == (int)SuggestionEntityType.SoftwareScreenshot)
 }
 else
 {
-    @* For GpuVideo / ProcessorVideo we keep the generic field-by-field table below but
-       inject an inline YouTube iframe preview ABOVE it so the admin sees the canonical
-       video before deciding to accept/reject. The preview reads the persisted
-       SuggestedValues, so it works the same way for the diff view and the post-accept
-       history view. *@
+    @* For GpuVideo / ProcessorVideo / SoundSynthVideo we keep the generic field-by-field
+       table below but inject an inline YouTube iframe preview ABOVE it so the admin sees
+       the canonical video before deciding to accept/reject. The preview reads the
+       persisted SuggestedValues, so it works the same way for the diff view and the
+       post-accept history view. *@
     @if(Suggestion?.EntityType == (int)SuggestionEntityType.GpuVideo ||
-        Suggestion?.EntityType == (int)SuggestionEntityType.ProcessorVideo)
+        Suggestion?.EntityType == (int)SuggestionEntityType.ProcessorVideo ||
+        Suggestion?.EntityType == (int)SuggestionEntityType.SoundSynthVideo)
     {
         @RenderGpuVideoPreview()
     }
