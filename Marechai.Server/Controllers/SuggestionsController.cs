@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -60,7 +61,8 @@ namespace Marechai.Server.Controllers;
 [Authorize]
 public class SuggestionsController(MarechaiContext context,
                                    UserManager<ApplicationUser> userManager,
-                                   IConfiguration configuration) : ControllerBase
+                                   IConfiguration configuration,
+                                   IHttpClientFactory httpClientFactory) : ControllerBase
 {
     public const string CollaboratorRole = "Collaborator";
     public const string CuratorRole      = "Curator";
@@ -455,6 +457,25 @@ public class SuggestionsController(MarechaiContext context,
                 return Problem(title: "Invalid software screenshot suggestion",
                                detail: err,
                                statusCode: StatusCodes.Status400BadRequest);
+        }
+
+        // ---- GPU video link payload validation (calls YouTube oEmbed for canonical title) ----
+        if(dto.EntityType == SuggestionEntityType.GpuVideo)
+        {
+            var (ok, err, vid, fetchedTitle) = await Suggestions.GpuVideoSuggestionApplier.ValidateAsync(
+                                                   context, dto.EntityId, values, httpClientFactory);
+
+            if(!ok)
+                return Problem(title: "Invalid GPU video suggestion",
+                               detail: err,
+                               statusCode: StatusCodes.Status400BadRequest);
+
+            // Patch the canonical title into the persisted SuggestedValues so admins see it
+            // in the diff panel from the start, AND override the subkey to be the extracted
+            // video ID so the per-(user, entity, subkey) Pending dedupe gates resubmission
+            // of the same video while a previous suggestion is still pending.
+            values[Suggestions.GpuVideoSuggestionApplier.FieldTitle] = fetchedTitle;
+            subkey                                                   = vid;
         }
 
         // ---- Existence check on target entity (edits only) --------------------------
@@ -1116,6 +1137,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.SoftwarePromoArt   => true,
         SuggestionEntityType.SoftwareCover      => true,
         SuggestionEntityType.SoftwareScreenshot => true,
+        SuggestionEntityType.GpuVideo           => true,
         _                                  => GetKnownFieldNames(type) is not null
     };
 
@@ -1182,6 +1204,9 @@ public class SuggestionsController(MarechaiContext context,
 
         if(type == SuggestionEntityType.SoftwareScreenshot)
             return Suggestions.SoftwareScreenshotSuggestionApplier.IsKnownFieldName(fieldName);
+
+        if(type == SuggestionEntityType.GpuVideo)
+            return Suggestions.GpuVideoSuggestionApplier.IsKnownFieldName(fieldName);
 
         IReadOnlyCollection<string> set = GetKnownFieldNames(type);
         return set is not null && set.Contains(fieldName);
@@ -1370,6 +1395,12 @@ public class SuggestionsController(MarechaiContext context,
                     context, entityId, suggested, accepted, creditedUserId, _assetRootPath);
                 return new ApplyResult(applied, missing);
             }
+            case SuggestionEntityType.GpuVideo:
+            {
+                var (applied, missing) = await Suggestions.GpuVideoSuggestionApplier.ApplyAsync(
+                    context, entityId, suggested, accepted, creditedUserId);
+                return new ApplyResult(applied, missing);
+            }
             default:
                 throw new NotImplementedException($"Suggestions for {type} are not implemented yet.");
         }
@@ -1439,6 +1470,8 @@ public class SuggestionsController(MarechaiContext context,
                 await Suggestions.SoftwareCoverSuggestionApplier.GetCurrentValuesAsync(context, entityId),
             SuggestionEntityType.SoftwareScreenshot =>
                 await Suggestions.SoftwareScreenshotSuggestionApplier.GetCurrentValuesAsync(context, entityId),
+            SuggestionEntityType.GpuVideo =>
+                await Suggestions.GpuVideoSuggestionApplier.GetCurrentValuesAsync(context, entityId),
             _ => null
         };
     }
@@ -1486,6 +1519,7 @@ public class SuggestionsController(MarechaiContext context,
             case SuggestionEntityType.Gpu:
             case SuggestionEntityType.GpuDescription:
             case SuggestionEntityType.GpuPhoto:
+            case SuggestionEntityType.GpuVideo:
                 return await context.Gpus.AsNoTracking()
                                     .Where(g => g.Id == (int)entityId)
                                     .Select(g => g.Name)
@@ -5066,6 +5100,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.SoftwarePromoArt      => $"/software/{entityId}",
         SuggestionEntityType.SoftwareCover         => $"/software/release/{entityId}",
         SuggestionEntityType.SoftwareScreenshot    => $"/software/{entityId}",
+        SuggestionEntityType.GpuVideo              => $"/gpu/{entityId}",
         _                                       => null
     };
 
@@ -5098,6 +5133,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.SoftwarePromoArt    => "software promo art upload",
         SuggestionEntityType.SoftwareCover       => "software cover upload",
         SuggestionEntityType.SoftwareScreenshot  => "software screenshot upload",
+        SuggestionEntityType.GpuVideo            => "GPU video link",
         SuggestionEntityType.ProcessorDescription => "processor description",
         SuggestionEntityType.SoundSynthDescription => "sound synth description",
         SuggestionEntityType.PersonDescription   => "person biography",

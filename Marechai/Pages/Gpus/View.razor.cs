@@ -371,4 +371,33 @@ public partial class View
             // Method left as a hook in case future revisions want to surface a hint.
         }
     }
+
+    /// <summary>
+    ///     Opens the GpuVideoSuggestionDialog so an authenticated user can suggest a single
+    ///     brand-new YouTube video link for this GPU. The server fetches the canonical title
+    ///     from YouTube oEmbed at submission time. Acceptance is gated on admin review; the
+    ///     local _videos list is not refreshed because acceptance is async.
+    /// </summary>
+    async Task OpenSuggestVideoDialog()
+    {
+        int gpuId = Id;
+        if(gpuId <= 0) return;
+
+        var dialogParams = new DialogParameters
+        {
+            ["EntityId"] = (long)gpuId,
+            ["GpuName"]  = _gpu?.Name ?? string.Empty
+        };
+        var dialogOptions = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Medium
+        };
+
+        var dialogRef = await DialogService.ShowAsync<GpuVideoSuggestionDialog>(
+            L["Suggest a YouTube video"], dialogParams, dialogOptions);
+
+        await dialogRef.Result;
+    }
 }

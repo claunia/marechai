@@ -351,6 +351,18 @@ file class Program
         builder.Services.AddScoped<DeletionPendingFilter>();
         builder.Services.AddHostedService<AccountDeletionPurgeService>();
 
+        // Named HttpClient for the YouTube oEmbed endpoint
+        // (https://www.youtube.com/oembed?url=...&format=json) used by
+        // GpuVideoSuggestionApplier to auto-fetch the canonical video title at submission
+        // time. Short timeout + UA so transient YouTube hiccups don't block the suggestion
+        // submission for too long.
+        builder.Services.AddHttpClient(Marechai.Server.Helpers.YouTubeOEmbedClient.HttpClientName, c =>
+        {
+            c.Timeout = TimeSpan.FromSeconds(8);
+            c.DefaultRequestHeaders.UserAgent.ParseAdd("Marechai/1.0 (+https://marechai.net)");
+            c.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+        });
+
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowFrontend",

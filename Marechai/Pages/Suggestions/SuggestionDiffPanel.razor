@@ -58,6 +58,14 @@ else if(Suggestion?.EntityType == (int)SuggestionEntityType.SoftwareScreenshot)
 }
 else
 {
+    @* For GpuVideo we keep the generic field-by-field table below but inject an inline
+       YouTube iframe preview ABOVE it so the admin sees the canonical video before
+       deciding to accept/reject. The preview reads the persisted SuggestedValues, so it
+       works the same way for the diff view and the post-accept history view. *@
+    @if(Suggestion?.EntityType == (int)SuggestionEntityType.GpuVideo)
+    {
+        @RenderGpuVideoPreview()
+    }
     <MudSimpleTable Hover="true" Dense="true" Bordered="true" Style="width: 100%;">
         <thead>
             <tr>
@@ -73,6 +81,7 @@ else
                 string fieldName = entry.Key;
                 _currentDict.TryGetValue(fieldName, out JsonElement currentValue);
                 bool isChecked = AcceptedFieldNames.Contains(fieldName);
+
                 SuggestionFieldKind kind = ResolveFieldKind(fieldName);
                 bool isMarkdown = kind == SuggestionFieldKind.Markdown;
                 bool isJunctionAdd    = kind == SuggestionFieldKind.JunctionAdd;
@@ -1191,5 +1200,53 @@ else
                 </MudPaper>
             }
         </MudStack>
+    };
+
+    /// <summary>
+    ///     Inline preview RenderFragment for <see cref="SuggestionEntityType.GpuVideo" />
+    ///     suggestions: renders a 16:9 youtube-nocookie iframe of the suggested video so the
+    ///     reviewing admin can see the actual content before deciding to accept/reject. The
+    ///     generic field-by-field accept table is still rendered below this preview by the
+    ///     normal diff-panel flow (showing the user-typed URL and the oEmbed-fetched title
+    ///     as separate accept rows).
+    /// </summary>
+    RenderFragment RenderGpuVideoPreview() => __builder =>
+    {
+        if(_suggestedDict is null) return;
+        if(!_suggestedDict.TryGetValue("video_url", out JsonElement urlEl)) return;
+        if(urlEl.ValueKind != JsonValueKind.String) return;
+
+        string url = urlEl.GetString();
+        if(string.IsNullOrWhiteSpace(url)) return;
+
+        // Mirror the server-side YouTube ID extraction via the shared helper in
+        // Marechai.Helpers (already in scope via _Imports.razor).
+        if(!YouTubeUrlParser.TryExtract(url.Trim(), out string videoId) || string.IsNullOrEmpty(videoId)) return;
+
+        string title = null;
+        if(_suggestedDict.TryGetValue("title", out JsonElement titleEl) &&
+           titleEl.ValueKind == JsonValueKind.String)
+            title = titleEl.GetString();
+
+        <MudPaper Outlined="true" Class="pa-3 mb-3">
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-2">
+                <MudIcon Icon="@Icons.Material.Filled.PlayCircle" Color="Color.Primary"/>
+                <MudText Typo="Typo.subtitle2">@L["Suggested video"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="Color.Default">@videoId</MudChip>
+            </MudStack>
+            @if(!string.IsNullOrWhiteSpace(title))
+            {
+                <MudText Typo="Typo.body1" Class="mb-2"><strong>@title</strong></MudText>
+            }
+            <div style="position: relative; width: 100%; max-width: 720px; padding-bottom: 56.25%; border-radius: 8px; overflow: hidden;">
+                <iframe src="@($"https://www.youtube-nocookie.com/embed/{videoId}")"
+                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"
+                        title="@(title ?? "Video preview")"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+        </MudPaper>
     };
 }
