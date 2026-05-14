@@ -33,7 +33,7 @@
 <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
     <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
         <MudIcon Icon="@Icons.Material.Filled.Lock" Size="Size.Large" Style="color: white;"/>
-        <MudText Typo="Typo.h4" Style="color: white;">Sign In</MudText>
+        <MudText Typo="Typo.h4" Style="color: white;">@L["Sign in"]</MudText>
     </MudStack>
 </MudPaper>
 
@@ -52,7 +52,7 @@
             @if(!_requiresTwoFactor)
             {
                 <MudTextField @bind-Value="_email"
-                              Label="Email"
+                              Label="@L["Email"]"
                               Variant="Variant.Outlined"
                               InputType="InputType.Email"
                               Adornment="Adornment.Start"
@@ -62,7 +62,7 @@
                               OnKeyDown="OnEmailKeyDown"/>
 
                 <MudTextField @bind-Value="_password"
-                              Label="Password"
+                              Label="@L["Password"]"
                               Variant="Variant.Outlined"
                               InputType="InputType.Password"
                               Adornment="Adornment.Start"
@@ -81,11 +81,11 @@
                     @if(_isLoading)
                     {
                         <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
-                        <span>Signing in...</span>
+                        <span>@L["Signing in..."]</span>
                     }
                     else
                     {
-                        <span>Sign In</span>
+                        <span>@L["Sign in"]</span>
                     }
                 </MudButton>
 
@@ -105,16 +105,16 @@
             }
             else
             {
-                <MudText Typo="Typo.h6" Class="mb-4">Two-factor authentication</MudText>
+                <MudText Typo="Typo.h6" Class="mb-4">@L["Two-factor authentication"]</MudText>
 
                 @if(!_recoveryMode)
                 {
                     @if(_availableMethods.Count > 1)
                     {
-                        <MudSelect T="string" @bind-Value="_selectedProvider" Label="Method" Variant="Variant.Outlined" Class="mb-4" Disabled="_isLoading">
+                        <MudSelect T="string" @bind-Value="_selectedProvider" Label="@L["Method"]" Variant="Variant.Outlined" Class="mb-4" Disabled="_isLoading">
                             @foreach(string m in _availableMethods)
                             {
-                                <MudSelectItem Value="@m">@(m == "authenticator" ? "Authenticator app" : "Email code")</MudSelectItem>
+                                <MudSelectItem Value="@m">@(m == "authenticator" ? L["Authenticator app"] : L["Email code"])</MudSelectItem>
                             }
                         </MudSelect>
                     }
@@ -122,12 +122,12 @@
                     @if(_selectedProvider == "email")
                     {
                         <MudButton Variant="Variant.Outlined" Color="Color.Secondary" FullWidth="true" Class="mb-4" OnClick="SendEmailCodeAsync" Disabled="_isLoading">
-                            Send code to my email
+                            @L["Send code to my email"]
                         </MudButton>
                     }
 
                     <MudTextField @bind-Value="_code"
-                                  Label="@(_selectedProvider == "email" ? "Email code" : "Authenticator code")"
+                                  Label="@(_selectedProvider == "email" ? L["Email code"] : L["Authenticator code"])"
                                   Variant="Variant.Outlined"
                                   Adornment="Adornment.Start"
                                   AdornmentIcon="@Icons.Material.Filled.Pin"
@@ -145,22 +145,22 @@
                         @if(_isLoading)
                         {
                             <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
-                            <span>Verifying...</span>
+                            <span>@L["Verifying..."]</span>
                         }
                         else
                         {
-                            <span>Verify</span>
+                            <span>@L["Verify"]</span>
                         }
                     </MudButton>
 
                     <MudButton Variant="Variant.Text" Color="Color.Default" FullWidth="true" OnClick="@(() => { _recoveryMode = true; _errorMessage = null; })" Disabled="_isLoading">
-                        Use a recovery code
+                        @L["Use a recovery code"]
                     </MudButton>
                 }
                 else
                 {
                     <MudTextField @bind-Value="_recoveryCode"
-                                  Label="Recovery code"
+                                  Label="@L["Recovery code"]"
                                   Variant="Variant.Outlined"
                                   Adornment="Adornment.Start"
                                   AdornmentIcon="@Icons.Material.Filled.Key"
@@ -178,16 +178,16 @@
                         @if(_isLoading)
                         {
                             <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
-                            <span>Verifying...</span>
+                            <span>@L["Verifying..."]</span>
                         }
                         else
                         {
-                            <span>Verify recovery code</span>
+                            <span>@L["Verify recovery code"]</span>
                         }
                     </MudButton>
 
                     <MudButton Variant="Variant.Text" Color="Color.Default" FullWidth="true" OnClick="@(() => { _recoveryMode = false; _errorMessage = null; })" Disabled="_isLoading">
-                        Back to authenticator
+                        @L["Back to authenticator"]
                     </MudButton>
                 }
             }

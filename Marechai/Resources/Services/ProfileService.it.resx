@@ -457,4 +457,61 @@
     <data name="Submitted" xml:space="preserve"><value>Inviato</value></data>
     <data name="Reviewed" xml:space="preserve"><value>Esaminato</value></data>
     <data name="Collaborator" xml:space="preserve"><value>Collaboratore</value></data>
+    <data name="Signing in..." xml:space="preserve">
+        <value>Accesso in corso...</value>
+    </data>
+    <data name="Two-factor authentication" xml:space="preserve">
+        <value>Autenticazione a due fattori</value>
+    </data>
+    <data name="Method" xml:space="preserve">
+        <value>Metodo</value>
+    </data>
+    <data name="Send code to my email" xml:space="preserve">
+        <value>Invia il codice via e-mail</value>
+    </data>
+    <data name="Authenticator code" xml:space="preserve">
+        <value>Codice dell'autenticatore</value>
+    </data>
+    <data name="Verifying..." xml:space="preserve">
+        <value>Verifica in corso...</value>
+    </data>
+    <data name="Verify" xml:space="preserve">
+        <value>Verifica</value>
+    </data>
+    <data name="Use a recovery code" xml:space="preserve">
+        <value>Usa un codice di recupero</value>
+    </data>
+    <data name="Verify recovery code" xml:space="preserve">
+        <value>Verifica codice di recupero</value>
+    </data>
+    <data name="Back to authenticator" xml:space="preserve">
+        <value>Torna all'autenticatore</value>
+    </data>
+    <data name="Please confirm your email address before signing in." xml:space="preserve">
+        <value>Conferma il tuo indirizzo e-mail prima di accedere.</value>
+    </data>
+    <data name="Login failed." xml:space="preserve">
+        <value>Accesso non riuscito.</value>
+    </data>
+    <data name="Code sent to your email." xml:space="preserve">
+        <value>Codice inviato alla tua e-mail.</value>
+    </data>
+    <data name="Code sent to {0}." xml:space="preserve">
+        <value>Codice inviato a {0}.</value>
+    </data>
+    <data name="Could not send code." xml:space="preserve">
+        <value>Impossibile inviare il codice.</value>
+    </data>
+    <data name="Verification code is required." xml:space="preserve">
+        <value>Il codice di verifica è obbligatorio.</value>
+    </data>
+    <data name="Invalid verification code." xml:space="preserve">
+        <value>Codice di verifica non valido.</value>
+    </data>
+    <data name="Recovery code is required." xml:space="preserve">
+        <value>Il codice di recupero è obbligatorio.</value>
+    </data>
+    <data name="Invalid recovery code." xml:space="preserve">
+        <value>Codice di recupero non valido.</value>
+    </data>
 </root>

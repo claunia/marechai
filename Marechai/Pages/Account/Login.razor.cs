@@ -52,14 +52,14 @@ public partial class Login
     {
         if(string.IsNullOrWhiteSpace(_email))
         {
-            _errorMessage = "Email is required.";
+            _errorMessage = L["Email is required."];
 
             return;
         }
 
         if(string.IsNullOrWhiteSpace(_password))
         {
-            _errorMessage = "Password is required.";
+            _errorMessage = L["Password is required."];
 
             return;
         }
@@ -93,12 +93,12 @@ public partial class Login
         if(result.EmailNotConfirmed)
         {
             _emailNotConfirmed = true;
-            _errorMessage      = result.ErrorMessage ?? "Please confirm your email address before signing in.";
+            _errorMessage      = result.ErrorMessage ?? L["Please confirm your email address before signing in."];
 
             return;
         }
 
-        _errorMessage = result.ErrorMessage ?? "Login failed.";
+        _errorMessage = result.ErrorMessage ?? L["Login failed."];
     }
 
     async Task SendEmailCodeAsync()
@@ -112,16 +112,16 @@ public partial class Login
         _isLoading = false;
 
         if(ok)
-            _infoMessage = string.IsNullOrEmpty(masked) ? "Code sent to your email." : $"Code sent to {masked}.";
+            _infoMessage = string.IsNullOrEmpty(masked) ? L["Code sent to your email."] : L["Code sent to {0}.", masked];
         else
-            _errorMessage = err ?? "Could not send code.";
+            _errorMessage = err ?? L["Could not send code."];
     }
 
     async Task VerifyCodeAsync()
     {
         if(string.IsNullOrWhiteSpace(_code))
         {
-            _errorMessage = "Verification code is required.";
+            _errorMessage = L["Verification code is required."];
 
             return;
         }
@@ -136,14 +136,14 @@ public partial class Login
         if(ok)
             Navigation.NavigateTo("/");
         else
-            _errorMessage = err ?? "Invalid verification code.";
+            _errorMessage = err ?? L["Invalid verification code."];
     }
 
     async Task VerifyRecoveryAsync()
     {
         if(string.IsNullOrWhiteSpace(_recoveryCode))
         {
-            _errorMessage = "Recovery code is required.";
+            _errorMessage = L["Recovery code is required."];
 
             return;
         }
@@ -158,7 +158,7 @@ public partial class Login
         if(ok)
             Navigation.NavigateTo("/");
         else
-            _errorMessage = err ?? "Invalid recovery code.";
+            _errorMessage = err ?? L["Invalid recovery code."];
     }
 
     void OnEmailKeyDown(KeyboardEventArgs e)
