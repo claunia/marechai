@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e108</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e108</value>
+    </resheader>
+    <data name="Date" xml:space="preserve">
+        <value>Datum</value>
+    </data>
+    <data name="Delete Report" xml:space="preserve">
+        <value>Melding verwijderen</value>
+    </data>
+    <data name="Misleading" xml:space="preserve">
+        <value>Misleidend</value>
+    </data>
+    <data name="No reports found." xml:space="preserve">
+        <value>Geen meldingen gevonden.</value>
+    </data>
+    <data name="Off-topic" xml:space="preserve">
+        <value>Niet relevant</value>
+    </data>
+    <data name="Offensive" xml:space="preserve">
+        <value>Aanstootgevend</value>
+    </data>
+    <data name="Other" xml:space="preserve">
+        <value>Andere</value>
+    </data>
+    <data name="Pending" xml:space="preserve">
+        <value>In afwachting</value>
+    </data>
+    <data name="Reason" xml:space="preserve">
+        <value>Reden</value>
+    </data>
+    <data name="Report deleted." xml:space="preserve">
+        <value>Melding verwijderd.</value>
+    </data>
+    <data name="Report resolved." xml:space="preserve">
+        <value>Melding opgelost.</value>
+    </data>
+    <data name="Reporter" xml:space="preserve">
+        <value>Reporter</value>
+    </data>
+    <data name="Resolve" xml:space="preserve">
+        <value>Oplossen</value>
+    </data>
+    <data name="Resolved" xml:space="preserve">
+        <value>Opgelost</value>
+    </data>
+    <data name="Review Reports" xml:space="preserve">
+        <value>Meldingen beoordelen</value>
+    </data>
+    <data name="Reviewer" xml:space="preserve">
+        <value>Reviewer</value>
+    </data>
+    <data name="Show resolved" xml:space="preserve">
+        <value>Toon opgelost</value>
+    </data>
+    <data name="Software" xml:space="preserve">
+        <value>Software</value>
+    </data>
+    <data name="Spam" xml:space="preserve">
+        <value>Spam</value>
+    </data>
+    <data name="Status" xml:space="preserve">
+        <value>Status</value>
+    </data>
+    <data name="Unknown" xml:space="preserve">
+        <value>Onbekend</value>
+    </data>
+</root>

@@ -43,7 +43,7 @@ public static class EmailCulture
     ///     Cultures we ship localized email templates for. Order doesn't matter; lookup is by case-insensitive
     ///     match on either the full name or the two-letter language code.
     /// </summary>
-    public static readonly string[] Supported = ["en", "es", "de", "fr", "it", "pt-BR"];
+    public static readonly string[] Supported = ["en", "es", "de", "fr", "it", "nl", "pt-BR"];
 
     static readonly HashSet<string> _supportedSet =
         new(Supported, StringComparer.OrdinalIgnoreCase);

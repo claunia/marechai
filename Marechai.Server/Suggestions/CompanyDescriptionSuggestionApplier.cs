@@ -54,12 +54,12 @@ internal static class CompanyDescriptionSuggestionApplier
     /// <summary>
     ///     Languages allowed as a Subkey for description suggestions. Mirrors the seeded set in
     ///     the application UI; <c>lat</c> / <c>por</c> are accepted because they are present in
-    ///     the database table even though the UI is only translated to en/es/de/fr/it.
+    ///     the database table even though the UI is only translated to en/es/de/fr/it/nl.
     /// </summary>
     public static readonly IReadOnlyCollection<string> AllowedLanguageCodes =
         new HashSet<string>(StringComparer.Ordinal)
         {
-            "eng", "spa", "deu", "fra", "ita", "lat", "por"
+            "eng", "spa", "deu", "fra", "ita", "nld", "lat", "por"
         };
 
     public static bool IsAllowedLanguage(string code) =>

@@ -1,0 +1,2161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e108</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e108</value>
+    </resheader>
+    <data name="(none)" xml:space="preserve">
+        <value>(geen)</value>
+    </data>
+    <data name="1 Player" xml:space="preserve">
+        <value>1 Speler</value>
+    </data>
+    <data name="1 button" xml:space="preserve">
+        <value>1 knop</value>
+    </data>
+    <data name="1-2 Players" xml:space="preserve">
+        <value>1–2 spelers</value>
+    </data>
+    <data name="1-4 Players" xml:space="preserve">
+        <value>1-4 Players</value>
+    </data>
+    <data name="1-8 Players" xml:space="preserve">
+        <value>1‑8 spelers</value>
+    </data>
+    <data name="1-bit (monochrome)" xml:space="preserve">
+        <value>1‑bit (monochroom)</value>
+    </data>
+    <data name="16 Players" xml:space="preserve">
+        <value>16 spelers</value>
+    </data>
+    <data name="16-bit (High Color)" xml:space="preserve">
+        <value>16‑bit (Hoge kleur)</value>
+    </data>
+    <data name="1st-person" xml:space="preserve">
+        <value>First person</value>
+    </data>
+    <data name="2 Players" xml:space="preserve">
+        <value>2 spelers</value>
+    </data>
+    <data name="2-12 Players" xml:space="preserve">
+        <value>2-12 Spelers</value>
+    </data>
+    <data name="2-4 Players" xml:space="preserve">
+        <value>2–4 spelers</value>
+    </data>
+    <data name="2-8 Players" xml:space="preserve">
+        <value>2‑8 spelers</value>
+    </data>
+    <data name="2-bit (4 colors)" xml:space="preserve">
+        <value>2-bit (4 colors)</value>
+    </data>
+    <data name="256 Colors Required" xml:space="preserve">
+        <value>256 kleuren vereist</value>
+    </data>
+    <data name="256 MB" xml:space="preserve">
+        <value>256 MB</value>
+    </data>
+    <data name="2D scrolling" xml:space="preserve">
+        <value>2D scrollen</value>
+    </data>
+    <data name="3&quot; Floppy Disk" xml:space="preserve">
+        <value>3" Floppydisk</value>
+    </data>
+    <data name="3.5&quot; Floppy Disk" xml:space="preserve">
+        <value>3,5" Floppyschijf</value>
+    </data>
+    <data name="32 Players" xml:space="preserve">
+        <value>32 spelers</value>
+    </data>
+    <data name="3D Accelerator" xml:space="preserve">
+        <value>3D-accelerator</value>
+    </data>
+    <data name="3rd-person (Other)" xml:space="preserve">
+        <value>Derde persoon (anders)</value>
+    </data>
+    <data name="4 Players" xml:space="preserve">
+        <value>4 spelers</value>
+    </data>
+    <data name="4-bit (16 colors)" xml:space="preserve">
+        <value>4-bit (16 kleuren)</value>
+    </data>
+    <data name="4-bit (16 greyscales)" xml:space="preserve">
+        <value>4-bit (16 grijstinten)</value>
+    </data>
+    <data name="4-bit (16 greyscales),  8-bit (256 colors)" xml:space="preserve">
+        <value>4‑bit (16 grijstinten), 8‑bit (256 kleuren)</value>
+    </data>
+    <data name="5.25&quot; Floppy Disk" xml:space="preserve">
+        <value>5,25" Floppyschijf</value>
+    </data>
+    <data name="6 Players" xml:space="preserve">
+        <value>6 spelers</value>
+    </data>
+    <data name="64 MB" xml:space="preserve">
+        <value>64 MB</value>
+    </data>
+    <data name="8+ Players" xml:space="preserve">
+        <value>8+ spelers</value>
+    </data>
+    <data name="8-bit (256 colors)" xml:space="preserve">
+        <value>8‑bit (256 kleuren)</value>
+    </data>
+    <data name="Accept this image" xml:space="preserve">
+        <value>Accepteer deze afbeelding</value>
+    </data>
+    <data name="Accept this screenshot" xml:space="preserve">
+        <value>Accepteer deze schermafbeelding</value>
+    </data>
+    <data name="Accepting {0} of {1} image(s). Rejected images and their pending files will be deleted on submit." xml:space="preserve">
+        <value>Accepteer {0} van {1} afbeelding(en). Afgewezen afbeeldingen en hun lopende bestanden worden verwijderd bij indienen.</value>
+    </data>
+    <data name="Accepting {0} of {1} screenshot(s). Rejected images and their pending files will be deleted on submit." xml:space="preserve">
+        <value>Accepteren van {0} van {1} schermafbeeldingen. Afgewezen afbeeldingen en hun lopende bestanden worden verwijderd bij indienen.</value>
+    </data>
+    <data name="Achievements" xml:space="preserve">
+        <value>Prestaties</value>
+    </data>
+    <data name="Achievements,  Content Download, Matchmaking, Online Multiplayer, Scoreboard/Leaderboard,  Voice Chat" xml:space="preserve">
+        <value>Achievements,  Content Download, Matchmaking, Online Multiplayer, Scoreboard/Leaderboard,  Voice Chat</value>
+    </data>
+    <data name="Action" xml:space="preserve">
+        <value>Actie</value>
+    </data>
+    <data name="Action RPG" xml:space="preserve">
+        <value>Actie-RPG</value>
+    </data>
+    <data name="Actions" xml:space="preserve">
+        <value>Acties</value>
+    </data>
+    <data name="Ad Hoc" xml:space="preserve">
+        <value>Ad Hoc</value>
+    </data>
+    <data name="Add" xml:space="preserve">
+        <value>Toevoegen</value>
+    </data>
+    <data name="Add Genre" xml:space="preserve">
+        <value>Genre toevoegen</value>
+    </data>
+    <data name="Add Software" xml:space="preserve">
+        <value>Software toevoegen</value>
+    </data>
+    <data name="Add any context that helps the admin decide." xml:space="preserve">
+        <value>Voeg alle context toe die de beheerder helpt beslissen.</value>
+    </data>
+    <data name="Add at least one successfully-uploaded image before submitting." xml:space="preserve">
+        <value>Voeg minimaal één succesvol geüploade afbeelding toe voordat je verzendt.</value>
+    </data>
+    <data name="Add barcode" xml:space="preserve">
+        <value>Barcode toevoegen</value>
+    </data>
+    <data name="Add company" xml:space="preserve">
+        <value>Bedrijf toevoegen</value>
+    </data>
+    <data name="Add credit" xml:space="preserve">
+        <value>Credit toevoegen</value>
+    </data>
+    <data name="Add images" xml:space="preserve">
+        <value>Afbeeldingen toevoegen</value>
+    </data>
+    <data name="Add language" xml:space="preserve">
+        <value>Taal toevoegen</value>
+    </data>
+    <data name="Add minimum GPU" xml:space="preserve">
+        <value>Minimale GPU toevoegen</value>
+    </data>
+    <data name="Add product code" xml:space="preserve">
+        <value>Productcode toevoegen</value>
+    </data>
+    <data name="Add recommended GPU" xml:space="preserve">
+        <value>Voeg aanbevolen GPU toe</value>
+    </data>
+    <data name="Add region" xml:space="preserve">
+        <value>Regio toevoegen</value>
+    </data>
+    <data name="Add sound synthesizer" xml:space="preserve">
+        <value>Geluidssynthesizer toevoegen</value>
+    </data>
+    <data name="Add to Collection" xml:space="preserve">
+        <value>Toevoegen aan collectie</value>
+    </data>
+    <data name="Add-on Content (DLC)" xml:space="preserve">
+        <value>Add‑oninhoud (DLC)</value>
+    </data>
+    <data name="Additional Graphics" xml:space="preserve">
+        <value>Extra graphics</value>
+    </data>
+    <data name="Additional Hardware Required" xml:space="preserve">
+        <value>Extra hardware vereist</value>
+    </data>
+    <data name="Additional Hardware Supported" xml:space="preserve">
+        <value>Ondersteunde extra hardware</value>
+    </data>
+    <data name="Additional Sound" xml:space="preserve">
+        <value>Extra geluid</value>
+    </data>
+    <data name="Adult" xml:space="preserve">
+        <value>Volwassen</value>
+    </data>
+    <data name="Advanced" xml:space="preserve">
+        <value>Geavanceerd</value>
+    </data>
+    <data name="Adventure" xml:space="preserve">
+        <value>Avontuur</value>
+    </data>
+    <data name="All companies" xml:space="preserve">
+        <value>Alle bedrijven</value>
+    </data>
+    <data name="All software" xml:space="preserve">
+        <value>Alle software</value>
+    </data>
+    <data name="Amiga 500/2000" xml:space="preserve">
+        <value>Amiga 500/2000</value>
+    </data>
+    <data name="Analog Controller" xml:space="preserve">
+        <value>Analoge controller</value>
+    </data>
+    <data name="Android 2.1 (Eclair)" xml:space="preserve">
+        <value>Android 2.1 (Eclair)</value>
+    </data>
+    <data name="Android 4.0.3" xml:space="preserve">
+        <value>Android 4.0.3</value>
+    </data>
+    <data name="Anime / manga" xml:space="preserve">
+        <value>Anime / manga</value>
+    </data>
+    <data name="Anonymous" xml:space="preserve">
+        <value>Anoniem</value>
+    </data>
+    <data name="Any kind" xml:space="preserve">
+        <value>Elke soort</value>
+    </data>
+    <data name="Apple Rating" xml:space="preserve">
+        <value>Apple-beoordeling</value>
+    </data>
+    <data name="Application" xml:space="preserve">
+        <value>Toepassing</value>
+    </data>
+    <data name="Arcade" xml:space="preserve">
+        <value>Arcade</value>
+    </data>
+    <data name="Are you sure you want to delete software '{0}'? This action cannot be undone." xml:space="preserve">
+        <value>Weet u zeker dat u de software '{0}' wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.</value>
+    </data>
+    <data name="Are you sure you want to delete this promo art? This action cannot be undone." xml:space="preserve">
+        <value>Weet u zeker dat u deze promotieafbeelding wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.</value>
+    </data>
+    <data name="Are you sure you want to delete this review?" xml:space="preserve">
+        <value>Weet je zeker dat je deze recensie wilt verwijderen?</value>
+    </data>
+    <data name="Are you sure you want to delete this screenshot? This action cannot be undone." xml:space="preserve">
+        <value>Weet u zeker dat u deze screenshot wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.</value>
+    </data>
+    <data name="Are you sure you want to delete this video? This action cannot be undone." xml:space="preserve">
+        <value>Weet u zeker dat u deze video wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.</value>
+    </data>
+    <data name="Artist" xml:space="preserve">
+        <value>Artiest</value>
+    </data>
+    <data name="Audio game" xml:space="preserve">
+        <value>Audiogame</value>
+    </data>
+    <data name="Automobile" xml:space="preserve">
+        <value>Auto</value>
+    </data>
+    <data name="Avatars" xml:space="preserve">
+        <value>Avatar's</value>
+    </data>
+    <data name="BASIC Cartridge" xml:space="preserve">
+        <value>BASIC Cartridge</value>
+    </data>
+    <data name="Back Cover" xml:space="preserve">
+        <value>Achterkant</value>
+    </data>
+    <data name="Back to Software" xml:space="preserve">
+        <value>Back to Software</value>
+    </data>
+    <data name="Barcode" xml:space="preserve">
+        <value>Barcode</value>
+    </data>
+    <data name="Barcodes" xml:space="preserve">
+        <value>Barcode's</value>
+    </data>
+    <data name="Base software" xml:space="preserve">
+        <value>Basissoftware</value>
+    </data>
+    <data name="Basic Info" xml:space="preserve">
+        <value>Basisinformatie</value>
+    </data>
+    <data name="Basketball" xml:space="preserve">
+        <value>Basketbal</value>
+    </data>
+    <data name="Beat 'em up / brawler" xml:space="preserve">
+        <value>Beat 'em up / brawler</value>
+    </data>
+    <data name="Behind view" xml:space="preserve">
+        <value>Achterzicht</value>
+    </data>
+    <data name="Bike / Bicycling" xml:space="preserve">
+        <value>Fiets / Fietsen</value>
+    </data>
+    <data name="Bird's-eye view" xml:space="preserve">
+        <value>Vogelperspectief</value>
+    </data>
+    <data name="Blu-Ray Disc" xml:space="preserve">
+        <value>Blu‑Ray Disc</value>
+    </data>
+    <data name="Board game" xml:space="preserve">
+        <value>Bordspel</value>
+    </data>
+    <data name="Bowling" xml:space="preserve">
+        <value>Bowlen</value>
+    </data>
+    <data name="Boxing" xml:space="preserve">
+        <value>Boksen</value>
+    </data>
+    <data name="Built in Rumble Feature" xml:space="preserve">
+        <value>Ingebouwde rammelfunctie</value>
+    </data>
+    <data name="Business Model" xml:space="preserve">
+        <value>Zakelijk model</value>
+    </data>
+    <data name="CD-ROM" xml:space="preserve">
+        <value>CD-ROM</value>
+    </data>
+    <data name="CGA Composite (16 colors)" xml:space="preserve">
+        <value>CGA Composite (16 kleuren)</value>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Annuleren</value>
+    </data>
+    <data name="Caption (optional)" xml:space="preserve">
+        <value>Onderschrift (optioneel)</value>
+    </data>
+    <data name="Cards / tiles" xml:space="preserve">
+        <value>Kaarten / tegels</value>
+    </data>
+    <data name="Cartridge" xml:space="preserve">
+        <value>Cartridge</value>
+    </data>
+    <data name="Casino / gambling" xml:space="preserve">
+        <value>Casino / gokken</value>
+    </data>
+    <data name="Cassette Tape" xml:space="preserve">
+        <value>Kassettband</value>
+    </data>
+    <data name="Cast" xml:space="preserve">
+        <value>Cast</value>
+    </data>
+    <data name="Chess" xml:space="preserve">
+        <value>Schaken</value>
+    </data>
+    <data name="Choose language for description" xml:space="preserve">
+        <value>Choose language for description</value>
+    </data>
+    <data name="City building / construction simulation" xml:space="preserve">
+        <value>Stadsbouw / constructiesimulatie</value>
+    </data>
+    <data name="Classical antiquity" xml:space="preserve">
+        <value>Klassieke oudheid</value>
+    </data>
+    <data name="Cloud" xml:space="preserve">
+        <value>Cloud</value>
+    </data>
+    <data name="Co-Op" xml:space="preserve">
+        <value>Co‑Op</value>
+    </data>
+    <data name="Co-Op,  Free-for-all / One-on-one (VS),  Team" xml:space="preserve">
+        <value>Co‑Op, vrije strijd / één-op-één (VS), team</value>
+    </data>
+    <data name="Code (Kod)" xml:space="preserve">
+        <value>Code (Kod)</value>
+    </data>
+    <data name="Codename" xml:space="preserve">
+        <value>Codenaam</value>
+    </data>
+    <data name="Cold War" xml:space="preserve">
+        <value>Koude Oorlog</value>
+    </data>
+    <data name="Color" xml:space="preserve">
+        <value>Kleur</value>
+    </data>
+    <data name="Color Depth" xml:space="preserve">
+        <value>Kleurdiepte</value>
+    </data>
+    <data name="Color Monitor Required" xml:space="preserve">
+        <value>Kleurmonitor vereist</value>
+    </data>
+    <data name="Color Monitor Support" xml:space="preserve">
+        <value>Ondersteuning kleurmonitor</value>
+    </data>
+    <data name="Comedy" xml:space="preserve">
+        <value>Komedie</value>
+    </data>
+    <data name="Comlynx Cable" xml:space="preserve">
+        <value>Comlynx-kabel</value>
+    </data>
+    <data name="Commercial" xml:space="preserve">
+        <value>Commercial</value>
+    </data>
+    <data name="Companies" xml:space="preserve">
+        <value>Bedrijven</value>
+    </data>
+    <data name="Companies which name starts with {0}." xml:space="preserve">
+        <value>Bedrijven waarvan de naam begint met {0}.</value>
+    </data>
+    <data name="Compilation" xml:space="preserve">
+        <value>Compilatie</value>
+    </data>
+    <data name="Compilations" xml:space="preserve">
+        <value>Compilaties</value>
+    </data>
+    <data name="Composer" xml:space="preserve">
+        <value>Componist</value>
+    </data>
+    <data name="Contemporary" xml:space="preserve">
+        <value>Tegenwoordig</value>
+    </data>
+    <data name="Content Download" xml:space="preserve">
+        <value>Inhoud downloaden</value>
+    </data>
+    <data name="Contributions" xml:space="preserve">
+        <value>Bijdragen</value>
+    </data>
+    <data name="Controller Support" xml:space="preserve">
+        <value>Controllerondersteuning</value>
+    </data>
+    <data name="Controller Types Supported" xml:space="preserve">
+        <value>Ondersteunde controller types</value>
+    </data>
+    <data name="Copy Protection" xml:space="preserve">
+        <value>Copy Protection</value>
+    </data>
+    <data name="Covers" xml:space="preserve">
+        <value>Omslagen</value>
+    </data>
+    <data name="Credits" xml:space="preserve">
+        <value>Kredieten</value>
+    </data>
+    <data name="Critic Reviews" xml:space="preserve">
+        <value>Kritische recensies</value>
+    </data>
+    <data name="Cross-Buy" xml:space="preserve">
+        <value>Cross-buy</value>
+    </data>
+    <data name="Currency" xml:space="preserve">
+        <value>Valuta</value>
+    </data>
+    <data name="Cursor Joystick" xml:space="preserve">
+        <value>Cursorjoystick</value>
+    </data>
+    <data name="Custom Soundtracks" xml:space="preserve">
+        <value>Aangepaste soundtrack</value>
+    </data>
+    <data name="Customization / outfit / skin" xml:space="preserve">
+        <value>Aanpassing / kleding / huid</value>
+    </data>
+    <data name="Cutscenes" xml:space="preserve">
+        <value>Cutzones</value>
+    </data>
+    <data name="Cyberpunk / dark sci-fi" xml:space="preserve">
+        <value>Cyberpunk / duistere sciencefiction</value>
+    </data>
+    <data name="DLC / Addon" xml:space="preserve">
+        <value>DLC / Add-on</value>
+    </data>
+    <data name="DLC / add-on" xml:space="preserve">
+        <value>DLC / add-on</value>
+    </data>
+    <data name="DLC available" xml:space="preserve">
+        <value>DLC beschikbaar</value>
+    </data>
+    <data name="DOS 4.0 to 6.22" xml:space="preserve">
+        <value>DOS 4.0 tot 6.22</value>
+    </data>
+    <data name="Date precision" xml:space="preserve">
+        <value>Datumprecisie</value>
+    </data>
+    <data name="Definable Keys" xml:space="preserve">
+        <value>Definieerbare toetsen</value>
+    </data>
+    <data name="Delete" xml:space="preserve">
+        <value>Verwijderen</value>
+    </data>
+    <data name="Delete Promo Art" xml:space="preserve">
+        <value>Promotieafbeelding verwijderen</value>
+    </data>
+    <data name="Delete Screenshot" xml:space="preserve">
+        <value>Verwijder screenshot</value>
+    </data>
+    <data name="Delete Software" xml:space="preserve">
+        <value>Software verwijderen</value>
+    </data>
+    <data name="Delete Video" xml:space="preserve">
+        <value>Video verwijderen</value>
+    </data>
+    <data name="Description" xml:space="preserve">
+        <value>Beschrijving</value>
+    </data>
+    <data name="Descriptions" xml:space="preserve">
+        <value>Beschrijving</value>
+    </data>
+    <data name="Design" xml:space="preserve">
+        <value>Ontwerp</value>
+    </data>
+    <data name="Designer" xml:space="preserve">
+        <value>Ontwerper</value>
+    </data>
+    <data name="Detected Video ID" xml:space="preserve">
+        <value>Detected Video ID</value>
+    </data>
+    <data name="Detective / mystery" xml:space="preserve">
+        <value>Detective / mysterie</value>
+    </data>
+    <data name="Developed by" xml:space="preserve">
+        <value>Ontwikkeld door</value>
+    </data>
+    <data name="Developer" xml:space="preserve">
+        <value>Ontwikkelaar</value>
+    </data>
+    <data name="Development software" xml:space="preserve">
+        <value>Ontwikkelingssoftware</value>
+    </data>
+    <data name="Digital extras" xml:space="preserve">
+        <value>Digitale extra's</value>
+    </data>
+    <data name="Direct control" xml:space="preserve">
+        <value>Directe controle</value>
+    </data>
+    <data name="Directed by" xml:space="preserve">
+        <value>Geleid door</value>
+    </data>
+    <data name="Director" xml:space="preserve">
+        <value>Regisseur</value>
+    </data>
+    <data name="Distributor" xml:space="preserve">
+        <value>Distributeur</value>
+    </data>
+    <data name="Double-sided Disk" xml:space="preserve">
+        <value>Dubbelzijdige schijf</value>
+    </data>
+    <data name="Download" xml:space="preserve">
+        <value>Downloaden</value>
+    </data>
+    <data name="Drivers/APIs Supported" xml:space="preserve">
+        <value>Ondersteunde drivers/API's</value>
+    </data>
+    <data name="ESRB Rating" xml:space="preserve">
+        <value>ESRB-beoordeling</value>
+    </data>
+    <data name="Edit" xml:space="preserve">
+        <value>Bewerken</value>
+    </data>
+    <data name="Edit Review" xml:space="preserve">
+        <value>Edit Review</value>
+    </data>
+    <data name="Edit Software" xml:space="preserve">
+        <value>Software bewerken</value>
+    </data>
+    <data name="Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently." xml:space="preserve">
+        <value>Bewerk hieronder elk veld of elke verbinding. Alleen uw wijzigingen worden voor beoordeling verzonden; een beheerder kan elke wijziging onafhankelijk accepteren of weigeren.</value>
+    </data>
+    <data name="Educational" xml:space="preserve">
+        <value>Educatief</value>
+    </data>
+    <data name="Egypt (Ancient)" xml:space="preserve">
+        <value>Egypte (Oudheid)</value>
+    </data>
+    <data name="Embedded software" xml:space="preserve">
+        <value>Ingebedde software</value>
+    </data>
+    <data name="Ethernet Broadband Required" xml:space="preserve">
+        <value>Ethernet breedband vereist</value>
+    </data>
+    <data name="Ethernet Compatible" xml:space="preserve">
+        <value>Ethernet compatibel</value>
+    </data>
+    <data name="Europe" xml:space="preserve">
+        <value>Europa</value>
+    </data>
+    <data name="Everyone" xml:space="preserve">
+        <value>Iedereen</value>
+    </data>
+    <data name="Everyone 10+" xml:space="preserve">
+        <value>Iedereen 10+</value>
+    </data>
+    <data name="Explanation (optional)" xml:space="preserve">
+        <value>Uitleg (optioneel)</value>
+    </data>
+    <data name="Extended Basic Cartridge" xml:space="preserve">
+        <value>Uitgebreide BASIC-cartridge</value>
+    </data>
+    <data name="External Storage" xml:space="preserve">
+        <value>Externe opslag</value>
+    </data>
+    <data name="Extra content / game" xml:space="preserve">
+        <value>Extra inhoud / spel</value>
+    </data>
+    <data name="Extras" xml:space="preserve">
+        <value>Extra's</value>
+    </data>
+    <data name="Failed to delete video." xml:space="preserve">
+        <value>Video verwijderen mislukt.</value>
+    </data>
+    <data name="Failed to link video." xml:space="preserve">
+        <value>Mislukt om video te koppelen.</value>
+    </data>
+    <data name="Failed to load software details." xml:space="preserve">
+        <value>Fout bij het laden van de softwaregegevens.</value>
+    </data>
+    <data name="Failed to submit suggestion." xml:space="preserve">
+        <value>Suggestie indienen mislukt.</value>
+    </data>
+    <data name="Failed to update video." xml:space="preserve">
+        <value>Mislukt om video bij te werken.</value>
+    </data>
+    <data name="Failed to upload promo art." xml:space="preserve">
+        <value>Promotieafbeelding uploaden mislukt.</value>
+    </data>
+    <data name="Failed to upload screenshot." xml:space="preserve">
+        <value>Mislukt om schermafbeelding te uploaden.</value>
+    </data>
+    <data name="Falling block puzzle" xml:space="preserve">
+        <value>Vallen blok puzzel</value>
+    </data>
+    <data name="Family" xml:space="preserve">
+        <value>Familie</value>
+    </data>
+    <data name="Fantasy" xml:space="preserve">
+        <value>Fantasy</value>
+    </data>
+    <data name="Fighting" xml:space="preserve">
+        <value>Gevecht</value>
+    </data>
+    <data name="Filter by kind" xml:space="preserve">
+        <value>Filter op soort</value>
+    </data>
+    <data name="Filter companies..." xml:space="preserve">
+        <value>Bedrijven filteren…</value>
+    </data>
+    <data name="Filtered by kind: {0}" xml:space="preserve">
+        <value>Gefilterd op soort: {0}</value>
+    </data>
+    <data name="Firmware" xml:space="preserve">
+        <value>Firmware</value>
+    </data>
+    <data name="First release details" xml:space="preserve">
+        <value>Details eerste uitgave</value>
+    </data>
+    <data name="First release platform is required." xml:space="preserve">
+        <value>Het eerste uitgaveplatform is vereist.</value>
+    </data>
+    <data name="First release publisher is required." xml:space="preserve">
+        <value>De eerste uitgave-uitgever is vereist.</value>
+    </data>
+    <data name="First release title is required." xml:space="preserve">
+        <value>De titel van de eerste uitgave is vereist.</value>
+    </data>
+    <data name="First release: Barcodes" xml:space="preserve">
+        <value>Eerste uitgave: Barcodes</value>
+    </data>
+    <data name="First release: Languages" xml:space="preserve">
+        <value>Eerste uitgave: talen</value>
+    </data>
+    <data name="First release: Minimum GPUs" xml:space="preserve">
+        <value>Eerste uitgave: Minimale GPU's</value>
+    </data>
+    <data name="First release: Product codes" xml:space="preserve">
+        <value>Eerste uitgave: productcodes</value>
+    </data>
+    <data name="First release: Recommended GPUs" xml:space="preserve">
+        <value>Eerste uitgave: Aanbevolen GPU's</value>
+    </data>
+    <data name="First release: Regions" xml:space="preserve">
+        <value>First release: Regions</value>
+    </data>
+    <data name="First release: Sound synthesizers" xml:space="preserve">
+        <value>Eerste uitgave: Geluidsynthesizers</value>
+    </data>
+    <data name="Fishing" xml:space="preserve">
+        <value>Vissen</value>
+    </data>
+    <data name="Fixed / flip-screen" xml:space="preserve">
+        <value>Vast/flip-scherm</value>
+    </data>
+    <data name="Flight / aviation" xml:space="preserve">
+        <value>Vlieg/aviatie</value>
+    </data>
+    <data name="Floppy Disk" xml:space="preserve">
+        <value>Diskette</value>
+    </data>
+    <data name="Fonts" xml:space="preserve">
+        <value>Lettertypen</value>
+    </data>
+    <data name="Fonts (Fonty)" xml:space="preserve">
+        <value>Lettertypen (Fonty)</value>
+    </data>
+    <data name="Football (American)" xml:space="preserve">
+        <value>Football (Amerikaans)</value>
+    </data>
+    <data name="Football (European) / Soccer" xml:space="preserve">
+        <value>Voetbal (Europees) / Soccer</value>
+    </data>
+    <data name="Free-for-all / One-on-one (VS)" xml:space="preserve">
+        <value>Vrij voor iedereen / Eén-op-één (VS)</value>
+    </data>
+    <data name="Free-roaming camera" xml:space="preserve">
+        <value>Vrij rondrijgende camera</value>
+    </data>
+    <data name="Freeware / Free-to-play / Public Domain" xml:space="preserve">
+        <value>Gratis software / Free-to-play / Publiek domein</value>
+    </data>
+    <data name="Friends" xml:space="preserve">
+        <value>Friends</value>
+    </data>
+    <data name="Front Cover" xml:space="preserve">
+        <value>Voorblad</value>
+    </data>
+    <data name="Full Motion Video (FMV)" xml:space="preserve">
+        <value>Volledige bewegingsvideo (FMV)</value>
+    </data>
+    <data name="Full Review" xml:space="preserve">
+        <value>Volledige beoordeling</value>
+    </data>
+    <data name="Full date" xml:space="preserve">
+        <value>Volledige datum</value>
+    </data>
+    <data name="Full screen" xml:space="preserve">
+        <value>Volledig scherm</value>
+    </data>
+    <data name="Game" xml:space="preserve">
+        <value>Spel</value>
+    </data>
+    <data name="Game Boy Advance Compatible" xml:space="preserve">
+        <value>Game Boy Advance compatibel</value>
+    </data>
+    <data name="Game Card" xml:space="preserve">
+        <value>Game Card</value>
+    </data>
+    <data name="Game Center" xml:space="preserve">
+        <value>Game Center</value>
+    </data>
+    <data name="Game Center,  In-app/game/skill Purchase" xml:space="preserve">
+        <value>Game Center, In-app/spel/vaardigheid aankoop</value>
+    </data>
+    <data name="Game Engine" xml:space="preserve">
+        <value>Spelmotor</value>
+    </data>
+    <data name="Game Sharing" xml:space="preserve">
+        <value>Spel delen</value>
+    </data>
+    <data name="Game show / trivia / quiz" xml:space="preserve">
+        <value>Spelshow / trivia / quiz</value>
+    </data>
+    <data name="GameCube Compatible, Multi-Link Cable" xml:space="preserve">
+        <value>GameCube Compatibel, Multi-Link Kabel</value>
+    </data>
+    <data name="Gamepad" xml:space="preserve">
+        <value>Gamepad</value>
+    </data>
+    <data name="Gamepads Supported" xml:space="preserve">
+        <value>Ondersteunde gamepads</value>
+    </data>
+    <data name="Gameplay" xml:space="preserve">
+        <value>Spelervaring</value>
+    </data>
+    <data name="General" xml:space="preserve">
+        <value>Algemeen</value>
+    </data>
+    <data name="Genre" xml:space="preserve">
+        <value>Genre</value>
+    </data>
+    <data name="Genres" xml:space="preserve">
+        <value>Genres</value>
+    </data>
+    <data name="Golf" xml:space="preserve">
+        <value>Golf</value>
+    </data>
+    <data name="Google Play game services,  In-app/game/skill Purchase" xml:space="preserve">
+        <value>Google Play Game Services, in‑app-/game-/vaardigheidskopen</value>
+    </data>
+    <data name="Graphic adventure" xml:space="preserve">
+        <value>Grafische avontuur</value>
+    </data>
+    <data name="Graphics Design" xml:space="preserve">
+        <value>Grafisch ontwerp</value>
+    </data>
+    <data name="Group" xml:space="preserve">
+        <value>Groep</value>
+    </data>
+    <data name="Group (applies to every accepted image)" xml:space="preserve">
+        <value>Groep (geldt voor elke geaccepteerde afbeelding)</value>
+    </data>
+    <data name="Group is required." xml:space="preserve">
+        <value>Groep is vereist.</value>
+    </data>
+    <data name="Group name" xml:space="preserve">
+        <value>Groepsnaam</value>
+    </data>
+    <data name="Hack and slash" xml:space="preserve">
+        <value>Hack en slash</value>
+    </data>
+    <data name="Handheld mode compatible" xml:space="preserve">
+        <value>Compatibel met handheld-modus</value>
+    </data>
+    <data name="Hard Drive Installable" xml:space="preserve">
+        <value>Harddisk installeerbaar</value>
+    </data>
+    <data name="Headset Compatible" xml:space="preserve">
+        <value>Hoofdtelefoon compatibel</value>
+    </data>
+    <data name="Helicopter" xml:space="preserve">
+        <value>Helikopter</value>
+    </data>
+    <data name="Helpful" xml:space="preserve">
+        <value>Handig</value>
+    </data>
+    <data name="Here you can consult our database." xml:space="preserve">
+        <value>Hier kunt u onze database raadplegen.</value>
+    </data>
+    <data name="Hidden object" xml:space="preserve">
+        <value>Verborgen object</value>
+    </data>
+    <data name="Horror" xml:space="preserve">
+        <value>Horror</value>
+    </data>
+    <data name="Horse / derby" xml:space="preserve">
+        <value>Paard / derby</value>
+    </data>
+    <data name="Hot Seat" xml:space="preserve">
+        <value>Hot Seat</value>
+    </data>
+    <data name="Images: {0}/{1}" xml:space="preserve">
+        <value>Afbeeldingen: {0}/{1}</value>
+    </data>
+    <data name="In Collection" xml:space="preserve">
+        <value>In collectie</value>
+    </data>
+    <data name="In-app/game/skill Purchase" xml:space="preserve">
+        <value>In-app/spel/vaardigheid aankopen</value>
+    </data>
+    <data name="Included Software" xml:space="preserve">
+        <value>Inbegrepen software</value>
+    </data>
+    <data name="Input Device Features Supported" xml:space="preserve">
+        <value>Ondersteunde invoerapparaatfuncties</value>
+    </data>
+    <data name="Input Devices Required" xml:space="preserve">
+        <value>Benodigde invoerapparaten</value>
+    </data>
+    <data name="Input Devices Supported" xml:space="preserve">
+        <value>Ondersteunde invoerapparaten</value>
+    </data>
+    <data name="Inside Cover (Back)" xml:space="preserve">
+        <value>Binnenkant van de achterzijde</value>
+    </data>
+    <data name="Inside Cover (Front)" xml:space="preserve">
+        <value>Binnenkant van de voorzijde</value>
+    </data>
+    <data name="Intel Pentium III" xml:space="preserve">
+        <value>Intel Pentium III</value>
+    </data>
+    <data name="Interactive fiction / text adventure" xml:space="preserve">
+        <value>Interactief fictie / tekstavontuur</value>
+    </data>
+    <data name="Internet" xml:space="preserve">
+        <value>Internet</value>
+    </data>
+    <data name="Invalid software kind." xml:space="preserve">
+        <value>Ongeldig softwaretype.</value>
+    </data>
+    <data name="Isometric" xml:space="preserve">
+        <value>Isometrisch</value>
+    </data>
+    <data name="Issuer" xml:space="preserve">
+        <value>Uitgever</value>
+    </data>
+    <data name="Item" xml:space="preserve">
+        <value>Item</value>
+    </data>
+    <data name="Japanese-style RPG (JRPG)" xml:space="preserve">
+        <value>Japanse stijl RPG (JRPG)</value>
+    </data>
+    <data name="Joystick (Analog)" xml:space="preserve">
+        <value>Joystick (Analoge)</value>
+    </data>
+    <data name="Joystick (Digital)" xml:space="preserve">
+        <value>Joystick (Digitaal)</value>
+    </data>
+    <data name="Kempston Joystick" xml:space="preserve">
+        <value>Kempston joystick</value>
+    </data>
+    <data name="Kempston Mouse" xml:space="preserve">
+        <value>Kempston Mouse</value>
+    </data>
+    <data name="Keyboard" xml:space="preserve">
+        <value>Toetsenbord</value>
+    </data>
+    <data name="Kind" xml:space="preserve">
+        <value>Soort</value>
+    </data>
+    <data name="Landscape" xml:space="preserve">
+        <value>Liggend</value>
+    </data>
+    <data name="Leaderboards" xml:space="preserve">
+        <value>Topschermen</value>
+    </data>
+    <data name="Levels" xml:space="preserve">
+        <value>Niveaus</value>
+    </data>
+    <data name="License" xml:space="preserve">
+        <value>Licentie</value>
+    </data>
+    <data name="Licensed" xml:space="preserve">
+        <value>Gelicentieerd</value>
+    </data>
+    <data name="Licensor" xml:space="preserve">
+        <value>Licentieverstrekkers</value>
+    </data>
+    <data name="Life / social simulation" xml:space="preserve">
+        <value>Leven / sociale simulatie</value>
+    </data>
+    <data name="Light Gun / Attachment" xml:space="preserve">
+        <value>Lichtpistool / Accessoire</value>
+    </data>
+    <data name="Light Guns / Attachments Supported" xml:space="preserve">
+        <value>Lichtwapens / accessoires ondersteund</value>
+    </data>
+    <data name="Link Cable" xml:space="preserve">
+        <value>Linkkabel</value>
+    </data>
+    <data name="Link Video" xml:space="preserve">
+        <value>Video koppelen</value>
+    </data>
+    <data name="Live action" xml:space="preserve">
+        <value>Live-action</value>
+    </data>
+    <data name="Lobbies/Matchmaking" xml:space="preserve">
+        <value>Lobby's/Matchmaking</value>
+    </data>
+    <data name="Localizer" xml:space="preserve">
+        <value>Lokalisator</value>
+    </data>
+    <data name="MCGA 4-color" xml:space="preserve">
+        <value>MCGA 4‑kleur</value>
+    </data>
+    <data name="Mac OS X 10.6 (Snow Leopard)" xml:space="preserve">
+        <value>Mac OS X 10.6 (Snow Leopard)</value>
+    </data>
+    <data name="Magnetic Card" xml:space="preserve">
+        <value>Magnetische kaart</value>
+    </data>
+    <data name="Manage software entries, versions, and variants." xml:space="preserve">
+        <value>Beheer software-invoer, versies en varianten.</value>
+    </data>
+    <data name="Manage software promo art." xml:space="preserve">
+        <value>Beheer promotieafbeelding van software.</value>
+    </data>
+    <data name="Manage software screenshots." xml:space="preserve">
+        <value>Beheer software-schermafbeeldingen.</value>
+    </data>
+    <data name="Manage software videos." xml:space="preserve">
+        <value>Softwarevideo's beheren.</value>
+    </data>
+    <data name="Managerial / business simulation" xml:space="preserve">
+        <value>Beheer-/zakelijk simulatie</value>
+    </data>
+    <data name="Manual" xml:space="preserve">
+        <value>Handleiding</value>
+    </data>
+    <data name="Manufacturer" xml:space="preserve">
+        <value>Fabrikant</value>
+    </data>
+    <data name="Map / level" xml:space="preserve">
+        <value>Kaart / niveau</value>
+    </data>
+    <data name="Marechai Score" xml:space="preserve">
+        <value>Marechai Score</value>
+    </data>
+    <data name="Martial arts" xml:space="preserve">
+        <value>vechtsporten</value>
+    </data>
+    <data name="Matchmaking" xml:space="preserve">
+        <value>Matchmaking</value>
+    </data>
+    <data name="Math / logic" xml:space="preserve">
+        <value>Wiskunde / logica</value>
+    </data>
+    <data name="Media" xml:space="preserve">
+        <value>Media</value>
+    </data>
+    <data name="Media Type" xml:space="preserve">
+        <value>Mediumtype</value>
+    </data>
+    <data name="Media tab" xml:space="preserve">
+        <value>Media</value>
+    </data>
+    <data name="Medieval" xml:space="preserve">
+        <value>Middeleeuws</value>
+    </data>
+    <data name="Meditative / zen" xml:space="preserve">
+        <value>Meditatief / zen</value>
+    </data>
+    <data name="Mega Cartridge" xml:space="preserve">
+        <value>Mega Cartridge</value>
+    </data>
+    <data name="Mental training" xml:space="preserve">
+        <value>Mentale training</value>
+    </data>
+    <data name="Messaging/Friend invite in game" xml:space="preserve">
+        <value>Berichten/ vriend uitnodigen in spel</value>
+    </data>
+    <data name="Metroidvania" xml:space="preserve">
+        <value>Metroidvania</value>
+    </data>
+    <data name="Middleware" xml:space="preserve">
+        <value>Middleware</value>
+    </data>
+    <data name="Mii Support" xml:space="preserve">
+        <value>Mii Support</value>
+    </data>
+    <data name="Mini-games" xml:space="preserve">
+        <value>Mini-spellen</value>
+    </data>
+    <data name="Minimum CD-ROM Drive Speed Required" xml:space="preserve">
+        <value>Minimale CD-ROM-snelheid vereist</value>
+    </data>
+    <data name="Minimum CPU Class Required" xml:space="preserve">
+        <value>Minimale CPU-klasse vereist</value>
+    </data>
+    <data name="Minimum DVD-ROM Drive Speed Required" xml:space="preserve">
+        <value>Minimale DVD-ROM schijf snelheid vereist</value>
+    </data>
+    <data name="Minimum DirectX Version Required" xml:space="preserve">
+        <value>Minimale vereiste DirectX-versie</value>
+    </data>
+    <data name="Minimum GPUs" xml:space="preserve">
+        <value>Minimale GPU's</value>
+    </data>
+    <data name="Minimum OS Class Required" xml:space="preserve">
+        <value>Minimale OS‑klasse vereist</value>
+    </data>
+    <data name="Minimum RAM Required" xml:space="preserve">
+        <value>Minimaal vereiste RAM</value>
+    </data>
+    <data name="Minimum Supported System" xml:space="preserve">
+        <value>Minimaal ondersteund systeem</value>
+    </data>
+    <data name="Minimum Video Memory Required" xml:space="preserve">
+        <value>Minimaal vereiste videogeheugen</value>
+    </data>
+    <data name="Miscellaneous Attributes" xml:space="preserve">
+        <value>Diversen attributen</value>
+    </data>
+    <data name="Misleading" xml:space="preserve">
+        <value>Misleidend</value>
+    </data>
+    <data name="Modem" xml:space="preserve">
+        <value>Modem</value>
+    </data>
+    <data name="Monochrome Monitor Support" xml:space="preserve">
+        <value>Monochroom monitorondersteuning</value>
+    </data>
+    <data name="Month and year only" xml:space="preserve">
+        <value>Maand en jaar alleen</value>
+    </data>
+    <data name="Motion Capture" xml:space="preserve">
+        <value>Beweging vastleggen</value>
+    </data>
+    <data name="Motion control" xml:space="preserve">
+        <value>Beweging controle</value>
+    </data>
+    <data name="Motion sensor" xml:space="preserve">
+        <value>Bewegingssensor</value>
+    </data>
+    <data name="Motorcycle" xml:space="preserve">
+        <value>Motocross</value>
+    </data>
+    <data name="Mouse" xml:space="preserve">
+        <value>Muis</value>
+    </data>
+    <data name="Mouses Supported" xml:space="preserve">
+        <value>Ondersteunde muizen</value>
+    </data>
+    <data name="Multi-Link Cable" xml:space="preserve">
+        <value>Multi-Link-kabel</value>
+    </data>
+    <data name="Multi-player" xml:space="preserve">
+        <value>Multi-player</value>
+    </data>
+    <data name="Multiplayer" xml:space="preserve">
+        <value>Meerdere spelers</value>
+    </data>
+    <data name="Multiplayer Game Modes" xml:space="preserve">
+        <value>Meerdere spelers spelmodi</value>
+    </data>
+    <data name="Multiplayer Options" xml:space="preserve">
+        <value>Meergamermogelijkheden</value>
+    </data>
+    <data name="Multiple players required" xml:space="preserve">
+        <value>Meerdere spelers vereist</value>
+    </data>
+    <data name="Multiple units/characters control" xml:space="preserve">
+        <value>Meerdere eenheden/personages beheren</value>
+    </data>
+    <data name="Music (Muzyka)" xml:space="preserve">
+        <value>Muziek (Muzyka)</value>
+    </data>
+    <data name="Music and FX" xml:space="preserve">
+        <value>Muziek en effecten</value>
+    </data>
+    <data name="Name" xml:space="preserve">
+        <value>Naam</value>
+    </data>
+    <data name="Name is required." xml:space="preserve">
+        <value>Naam is vereist.</value>
+    </data>
+    <data name="Naval / watercraft" xml:space="preserve">
+        <value>Marine / watervaartuigen</value>
+    </data>
+    <data name="Network Adaptor" xml:space="preserve">
+        <value>Netwerkadapter</value>
+    </data>
+    <data name="No" xml:space="preserve">
+        <value>Nee</value>
+    </data>
+    <data name="No changes detected — modify at least one field before submitting." xml:space="preserve">
+        <value>Geen wijzigingen gedetecteerd – wijzig ten minste één veld voordat u indient.</value>
+    </data>
+    <data name="No companies linked yet." xml:space="preserve">
+        <value>Nog geen bedrijven gekoppeld.</value>
+    </data>
+    <data name="No covers for this release yet — help us by uploading some." xml:space="preserve">
+        <value>Nog geen omslagen voor deze uitgave — help ons door er een te uploaden.</value>
+    </data>
+    <data name="No credits linked yet." xml:space="preserve">
+        <value>Er zijn nog geen credits gekoppeld.</value>
+    </data>
+    <data name="No images staged yet. Use the Add images button above to pick files from your device." xml:space="preserve">
+        <value>Er zijn nog geen afbeeldingen toegevoegd. Gebruik de knop 'Afbeeldingen toevoegen' hierboven om bestanden van uw apparaat te selecteren.</value>
+    </data>
+    <data name="No promo art for this software yet — help us by uploading some." xml:space="preserve">
+        <value>Nog geen promotieafbeelding voor deze software — help ons door er een te uploaden.</value>
+    </data>
+    <data name="No promo art found for this software." xml:space="preserve">
+        <value>Geen promotieafbeeldingen gevonden voor deze software.</value>
+    </data>
+    <data name="No releases recorded yet." xml:space="preserve">
+        <value>Er zijn nog geen releases geregistreerd.</value>
+    </data>
+    <data name="No reviews yet." xml:space="preserve">
+        <value>Nog geen recensies.</value>
+    </data>
+    <data name="No screenshots for this software yet — help us by uploading some." xml:space="preserve">
+        <value>Nog geen schermafbeeldingen voor deze software — help ons door er een te uploaden.</value>
+    </data>
+    <data name="No screenshots yet." xml:space="preserve">
+        <value>Nog geen schermafbeeldingen.</value>
+    </data>
+    <data name="No videos found for this software." xml:space="preserve">
+        <value>Geen video's gevonden voor deze software.</value>
+    </data>
+    <data name="North America" xml:space="preserve">
+        <value>Noord-Amerika</value>
+    </data>
+    <data name="Not helpful" xml:space="preserve">
+        <value>Niet behulpzaam</value>
+    </data>
+    <data name="Note for the reviewer (optional)" xml:space="preserve">
+        <value>Opmerking voor de beoordelaar (optioneel)</value>
+    </data>
+    <data name="Note to reviewer (optional)" xml:space="preserve">
+        <value>Opmerking voor beoordelaar (optioneel)</value>
+    </data>
+    <data name="Notes" xml:space="preserve">
+        <value>Notities</value>
+    </data>
+    <data name="Null-modem cable" xml:space="preserve">
+        <value>Null‑modemkabel</value>
+    </data>
+    <data name="Number of Local Players via System Link / LAN Cable" xml:space="preserve">
+        <value>Aantal lokale spelers via System Link / LAN-kabel</value>
+    </data>
+    <data name="Number of Local Players via Wi-Fi" xml:space="preserve">
+        <value>Aantal lokale spelers via Wi‑Fi</value>
+    </data>
+    <data name="Number of Offline Players" xml:space="preserve">
+        <value>Aantal offline spelers</value>
+    </data>
+    <data name="Number of Offline Players via Handheld Mode" xml:space="preserve">
+        <value>Aantal offline spelers via handheldmodus</value>
+    </data>
+    <data name="Number of Offline Players via Multitap" xml:space="preserve">
+        <value>Aantal offline spelers via multitap</value>
+    </data>
+    <data name="Number of Offline Players via TV Mode" xml:space="preserve">
+        <value>Aantal offline spelers via tv-modus</value>
+    </data>
+    <data name="Number of Offline Players via Tabletop Mode" xml:space="preserve">
+        <value>Aantal offline spelers via tabletop-modus</value>
+    </data>
+    <data name="Number of Online Players" xml:space="preserve">
+        <value>Aantal online spelers</value>
+    </data>
+    <data name="Number of Players" xml:space="preserve">
+        <value>Aantal spelers</value>
+    </data>
+    <data name="Number of Players Supported" xml:space="preserve">
+        <value>Aantal ondersteunde spelers</value>
+    </data>
+    <data name="OCS/ECS" xml:space="preserve">
+        <value>OCS/ECS</value>
+    </data>
+    <data name="OS" xml:space="preserve">
+        <value>OS</value>
+    </data>
+    <data name="Off-roading" xml:space="preserve">
+        <value>Off-road</value>
+    </data>
+    <data name="Off-topic" xml:space="preserve">
+        <value>Off-topic</value>
+    </data>
+    <data name="Offensive" xml:space="preserve">
+        <value>Aanvallend</value>
+    </data>
+    <data name="Online Multiplayer" xml:space="preserve">
+        <value>Online multiplayer</value>
+    </data>
+    <data name="Operating System" xml:space="preserve">
+        <value>Besturingssysteem</value>
+    </data>
+    <data name="Optional comment (References, sources, etc...)" xml:space="preserve">
+        <value>Optioneel commentaar (referenties, bronnen, enz.)</value>
+    </data>
+    <data name="Other" xml:space="preserve">
+        <value>Anders</value>
+    </data>
+    <data name="Other Input Devices" xml:space="preserve">
+        <value>Andere invoerapparaten</value>
+    </data>
+    <data name="Overall:" xml:space="preserve">
+        <value>Algemeen:</value>
+    </data>
+    <data name="Overview" xml:space="preserve">
+        <value>Overzicht</value>
+    </data>
+    <data name="PC Speaker (Tweaked)" xml:space="preserve">
+        <value>PC-speaker (aanpassingen)</value>
+    </data>
+    <data name="PEGI Rating" xml:space="preserve">
+        <value>PEGI Rating</value>
+    </data>
+    <data name="Package Design" xml:space="preserve">
+        <value>Pakketontwerp</value>
+    </data>
+    <data name="Paddle / Pong" xml:space="preserve">
+        <value>Paddle / Pong</value>
+    </data>
+    <data name="Palm OS 3.5" xml:space="preserve">
+        <value>Palm OS 3.5</value>
+    </data>
+    <data name="Party game" xml:space="preserve">
+        <value>Feestspel</value>
+    </data>
+    <data name="Password" xml:space="preserve">
+        <value>Wachtwoord</value>
+    </data>
+    <data name="Paste a YouTube URL or 11-character video ID. The title will be fetched automatically from YouTube." xml:space="preserve">
+        <value>Plak een YouTube-URL of een 11-cijferige videocode. De titel wordt automatisch opgehaald van YouTube.</value>
+    </data>
+    <data name="Pedals" xml:space="preserve">
+        <value>Pedaal</value>
+    </data>
+    <data name="Person" xml:space="preserve">
+        <value>Persoon</value>
+    </data>
+    <data name="Perspective" xml:space="preserve">
+        <value>Perspectief</value>
+    </data>
+    <data name="Physical extras" xml:space="preserve">
+        <value>Fysieke extra's</value>
+    </data>
+    <data name="Pick a platform first." xml:space="preserve">
+        <value>Kies eerst een platform.</value>
+    </data>
+    <data name="Pick an existing promo art group, or type a new name to create one." xml:space="preserve">
+        <value>Kies een bestaand promotie kunstgroep, of typ een nieuwe naam om er één te maken.</value>
+    </data>
+    <data name="Pick one or more files at a time. Each image is uploaded immediately and held on the server until you submit the batch." xml:space="preserve">
+        <value>Selecteer één of meerdere bestanden tegelijk. Elke afbeelding wordt meteen geüpload en op de server bewaard tot u het batch verzendt.</value>
+    </data>
+    <data name="Pick the software platform these screenshots belong to." xml:space="preserve">
+        <value>Selecteer het softwareplatform waartoe deze schermafdrukken behoren.</value>
+    </data>
+    <data name="Pinball" xml:space="preserve">
+        <value>Pinball</value>
+    </data>
+    <data name="Platform" xml:space="preserve">
+        <value>Platform</value>
+    </data>
+    <data name="PlayStation Network compatible" xml:space="preserve">
+        <value>PlayStation Network compatible</value>
+    </data>
+    <data name="Player unit" xml:space="preserve">
+        <value>Speler eenheid</value>
+    </data>
+    <data name="Players" xml:space="preserve">
+        <value>Spelers</value>
+    </data>
+    <data name="Point and select" xml:space="preserve">
+        <value>Punt en selecteer</value>
+    </data>
+    <data name="Pool / snooker" xml:space="preserve">
+        <value>Billard / snooker</value>
+    </data>
+    <data name="Porter" xml:space="preserve">
+        <value>Portier</value>
+    </data>
+    <data name="Portrait" xml:space="preserve">
+        <value>Portret</value>
+    </data>
+    <data name="Post as anonymous" xml:space="preserve">
+        <value>Anoniem plaatsen</value>
+    </data>
+    <data name="Post-apocalyptic" xml:space="preserve">
+        <value>Post-apocalyptisch</value>
+    </data>
+    <data name="Pre-school / toddler" xml:space="preserve">
+        <value>Peuterschool / kleuter</value>
+    </data>
+    <data name="Predecessor" xml:space="preserve">
+        <value>Voorganger</value>
+    </data>
+    <data name="Prehistoric" xml:space="preserve">
+        <value>Prehistoric</value>
+    </data>
+    <data name="Pressure/Touch Sensitive" xml:space="preserve">
+        <value>Druk/touch-sensitief</value>
+    </data>
+    <data name="Preview" xml:space="preserve">
+        <value>Voorbeeld</value>
+    </data>
+    <data name="Producer" xml:space="preserve">
+        <value>Producent</value>
+    </data>
+    <data name="Product code" xml:space="preserve">
+        <value>Productcode</value>
+    </data>
+    <data name="Product codes" xml:space="preserve">
+        <value>Productcodes</value>
+    </data>
+    <data name="Program" xml:space="preserve">
+        <value>Programma</value>
+    </data>
+    <data name="Programmer" xml:space="preserve">
+        <value>Programmer</value>
+    </data>
+    <data name="Progressive Scan (480p)" xml:space="preserve">
+        <value>Progressive Scan (480p)</value>
+    </data>
+    <data name="Promo Art" xml:space="preserve">
+        <value>Promotiekunst</value>
+    </data>
+    <data name="Promo Art Management" xml:space="preserve">
+        <value>Promotieafbeeldingenbeheer</value>
+    </data>
+    <data name="Promo art deleted successfully." xml:space="preserve">
+        <value>Promotieafbeelding succesvol verwijderd.</value>
+    </data>
+    <data name="Promo art submitted for review. An administrator will accept or reject each image." xml:space="preserve">
+        <value>Promotieafbeelding ingediend voor beoordeling. Een beheerder zal elke afbeelding accepteren of afwijzen.</value>
+    </data>
+    <data name="Promo art uploaded successfully." xml:space="preserve">
+        <value>Promotieafbeelding succesvol geüpload.</value>
+    </data>
+    <data name="Provider" xml:space="preserve">
+        <value>Provider</value>
+    </data>
+    <data name="Provider name (e.g. YouTube)." xml:space="preserve">
+        <value>Providernaam (bijv. YouTube).</value>
+    </data>
+    <data name="Publisher" xml:space="preserve">
+        <value>Uitgever</value>
+    </data>
+    <data name="Puzzle" xml:space="preserve">
+        <value>Puzzel</value>
+    </data>
+    <data name="Puzzle elements" xml:space="preserve">
+        <value>Puzzelonderdelen</value>
+    </data>
+    <data name="QA" xml:space="preserve">
+        <value>QA</value>
+    </data>
+    <data name="RPG elements" xml:space="preserve">
+        <value>RPG-elementen</value>
+    </data>
+    <data name="Racing / driving" xml:space="preserve">
+        <value>Race / rijden</value>
+    </data>
+    <data name="Racing/Steering Wheel" xml:space="preserve">
+        <value>Racen / stuurwiel</value>
+    </data>
+    <data name="Ranked #{0} of {1}" xml:space="preserve">
+        <value>Gerangschikt #{0} van {1}</value>
+    </data>
+    <data name="Raster" xml:space="preserve">
+        <value>Raster</value>
+    </data>
+    <data name="Ratings" xml:space="preserve">
+        <value>Beoordelingen</value>
+    </data>
+    <data name="Reading / writing" xml:space="preserve">
+        <value>Lezen / schrijven</value>
+    </data>
+    <data name="Real-time" xml:space="preserve">
+        <value>Realtime</value>
+    </data>
+    <data name="Real-time strategy" xml:space="preserve">
+        <value>Realtime strategie</value>
+    </data>
+    <data name="Reason" xml:space="preserve">
+        <value>Reden</value>
+    </data>
+    <data name="Recommended GPUs" xml:space="preserve">
+        <value>Recommended GPUs</value>
+    </data>
+    <data name="Region" xml:space="preserve">
+        <value>Region</value>
+    </data>
+    <data name="Regional differences" xml:space="preserve">
+        <value>Regionale verschillen</value>
+    </data>
+    <data name="Regions" xml:space="preserve">
+        <value>Regio's</value>
+    </data>
+    <data name="Release date" xml:space="preserve">
+        <value>Releasedatum</value>
+    </data>
+    <data name="Release not found." xml:space="preserve">
+        <value>Uitgave niet gevonden.</value>
+    </data>
+    <data name="Releases" xml:space="preserve">
+        <value>Versies</value>
+    </data>
+    <data name="Remote Play" xml:space="preserve">
+        <value>Afstandsbediening</value>
+    </data>
+    <data name="Report" xml:space="preserve">
+        <value>Rapport</value>
+    </data>
+    <data name="Report Review" xml:space="preserve">
+        <value>Review melden</value>
+    </data>
+    <data name="Report submitted. Thank you." xml:space="preserve">
+        <value>Melding verzonden. Dank u.</value>
+    </data>
+    <data name="Review deleted." xml:space="preserve">
+        <value>Recensie verwijderd.</value>
+    </data>
+    <data name="Reviews" xml:space="preserve">
+        <value>Recensies</value>
+    </data>
+    <data name="Roguelike" xml:space="preserve">
+        <value>Roguelike</value>
+    </data>
+    <data name="Role" xml:space="preserve">
+        <value>Rol</value>
+    </data>
+    <data name="Role-Playing (RPG)" xml:space="preserve">
+        <value>Rollenspel (RPG)</value>
+    </data>
+    <data name="Romance" xml:space="preserve">
+        <value>Romantiek</value>
+    </data>
+    <data name="Room-Scale" xml:space="preserve">
+        <value>Ruimte-schaal</value>
+    </data>
+    <data name="SNES Mouse" xml:space="preserve">
+        <value>SNES Mouse</value>
+    </data>
+    <data name="Sailing / boating" xml:space="preserve">
+        <value>Zeilen / varen</value>
+    </data>
+    <data name="Same/Split-Screen" xml:space="preserve">
+        <value>Zelfde/Gedeeld scherm</value>
+    </data>
+    <data name="Sandbox / open world" xml:space="preserve">
+        <value>Sandbox / open world</value>
+    </data>
+    <data name="Save" xml:space="preserve">
+        <value>Opslaan</value>
+    </data>
+    <data name="Save Data Cloud" xml:space="preserve">
+        <value>Gegevens opslaan in de cloud</value>
+    </data>
+    <data name="Save Game Methods" xml:space="preserve">
+        <value>Opslagmethoden</value>
+    </data>
+    <data name="Saving..." xml:space="preserve">
+        <value>Opslaan…</value>
+    </data>
+    <data name="Sci-fi / futuristic" xml:space="preserve">
+        <value>Sciencefiction / futuristisch</value>
+    </data>
+    <data name="Scoreboard/Leaderboard" xml:space="preserve">
+        <value>Scorebord/leaderboard</value>
+    </data>
+    <data name="Screen Orientation" xml:space="preserve">
+        <value>Schermoriëntatie</value>
+    </data>
+    <data name="Screenshot deleted successfully." xml:space="preserve">
+        <value>Schermafbeelding succesvol verwijderd.</value>
+    </data>
+    <data name="Screenshot uploaded successfully." xml:space="preserve">
+        <value>Schermafdruk succesvol geüpload.</value>
+    </data>
+    <data name="Screenshots" xml:space="preserve">
+        <value>Schermafbeeldingen</value>
+    </data>
+    <data name="Screenshots submitted for review. An administrator will accept or reject each image." xml:space="preserve">
+        <value>Screenshot's ingediend voor beoordeling. Een beheerder zal elk beeld accepteren of afwijzen.</value>
+    </data>
+    <data name="Search Company" xml:space="preserve">
+        <value>Bedrijf zoeken</value>
+    </data>
+    <data name="Search by companies" xml:space="preserve">
+        <value>Zoek op bedrijven</value>
+    </data>
+    <data name="Search results:" xml:space="preserve">
+        <value>Zoekresultaten:</value>
+    </data>
+    <data name="Search software alphabetically" xml:space="preserve">
+        <value>Zoek software alfabetisch</value>
+    </data>
+    <data name="Search software by genre" xml:space="preserve">
+        <value>Zoek software op genre</value>
+    </data>
+    <data name="Search software by platform" xml:space="preserve">
+        <value>Software zoeken op platform</value>
+    </data>
+    <data name="Search software by specifications" xml:space="preserve">
+        <value>Software zoeken op specificaties</value>
+    </data>
+    <data name="Search software by year" xml:space="preserve">
+        <value>Software zoeken op jaar</value>
+    </data>
+    <data name="Select an existing group or type a new name." xml:space="preserve">
+        <value>Selecteer een bestaande groep of typ een nieuwe naam.</value>
+    </data>
+    <data name="Separate black &amp; white and colour versions." xml:space="preserve">
+        <value>Scheid zwart-wit en gekleurde versies.</value>
+    </data>
+    <data name="Server software" xml:space="preserve">
+        <value>Serversoftware</value>
+    </data>
+    <data name="Setting" xml:space="preserve">
+        <value>Instelling</value>
+    </data>
+    <data name="Shareware" xml:space="preserve">
+        <value>Shareware</value>
+    </data>
+    <data name="Shooter" xml:space="preserve">
+        <value>Schietspel</value>
+    </data>
+    <data name="Side view" xml:space="preserve">
+        <value>Zijaanzicht</value>
+    </data>
+    <data name="Simulation" xml:space="preserve">
+        <value>Simulatie</value>
+    </data>
+    <data name="Sinclair Joystick" xml:space="preserve">
+        <value>Sinclair Joystick</value>
+    </data>
+    <data name="Single-player" xml:space="preserve">
+        <value>Enkelspel</value>
+    </data>
+    <data name="Single-sided Disk" xml:space="preserve">
+        <value>Enkelzijdig schijf</value>
+    </data>
+    <data name="Snowboarding / skiing" xml:space="preserve">
+        <value>Sneeuwschoen / skiën</value>
+    </data>
+    <data name="Software" xml:space="preserve">
+        <value>Software</value>
+    </data>
+    <data name="Software Management" xml:space="preserve">
+        <value>Softwarebeheer</value>
+    </data>
+    <data name="Software Release" xml:space="preserve">
+        <value>Softwareversie</value>
+    </data>
+    <data name="Software Screenshot Management" xml:space="preserve">
+        <value>Beheer van software-schermafbeeldingen</value>
+    </data>
+    <data name="Software companies" xml:space="preserve">
+        <value>Softwarebedrijven</value>
+    </data>
+    <data name="Software created successfully." xml:space="preserve">
+        <value>Software succesvol aangemaakt.</value>
+    </data>
+    <data name="Software deleted successfully." xml:space="preserve">
+        <value>Software succesvol verwijderd.</value>
+    </data>
+    <data name="Software for {0}" xml:space="preserve">
+        <value>Software voor {0}</value>
+    </data>
+    <data name="Software from {0}" xml:space="preserve">
+        <value>Software van {0}</value>
+    </data>
+    <data name="Software in genre {0}" xml:space="preserve">
+        <value>Software in genre {0}</value>
+    </data>
+    <data name="Software not found." xml:space="preserve">
+        <value>Software niet gevonden.</value>
+    </data>
+    <data name="Software platform" xml:space="preserve">
+        <value>Softwareplatform</value>
+    </data>
+    <data name="Software starting with {0}" xml:space="preserve">
+        <value>Software beginnend met {0}</value>
+    </data>
+    <data name="Software updated successfully." xml:space="preserve">
+        <value>Software succesvol bijgewerkt.</value>
+    </data>
+    <data name="Sound" xml:space="preserve">
+        <value>Geluid</value>
+    </data>
+    <data name="Sound Capabilities" xml:space="preserve">
+        <value>Geluid mogelijkheden</value>
+    </data>
+    <data name="Sound Devices Supported" xml:space="preserve">
+        <value>Ondersteunde geluidsapparaten</value>
+    </data>
+    <data name="Sound synthesizers" xml:space="preserve">
+        <value>Geluidssynthesizers</value>
+    </data>
+    <data name="Space flight" xml:space="preserve">
+        <value>Ruimtereizen</value>
+    </data>
+    <data name="Spam" xml:space="preserve">
+        <value>Spam</value>
+    </data>
+    <data name="Special Thanks" xml:space="preserve">
+        <value>Speciaal dankwoord</value>
+    </data>
+    <data name="Special edition" xml:space="preserve">
+        <value>Speciale editie</value>
+    </data>
+    <data name="Specifications" xml:space="preserve">
+        <value>Specificaties</value>
+    </data>
+    <data name="Spine" xml:space="preserve">
+        <value>Ruggenboog</value>
+    </data>
+    <data name="Sports" xml:space="preserve">
+        <value>Sporten</value>
+    </data>
+    <data name="Spy / espionage" xml:space="preserve">
+        <value>Spionage / spionage</value>
+    </data>
+    <data name="Standing" xml:space="preserve">
+        <value>Positie</value>
+    </data>
+    <data name="Stealth" xml:space="preserve">
+        <value>Stealth</value>
+    </data>
+    <data name="Steam account required" xml:space="preserve">
+        <value>Steam-account vereist</value>
+    </data>
+    <data name="Story / mission" xml:space="preserve">
+        <value>Verhaal / missie</value>
+    </data>
+    <data name="Strategy / tactics" xml:space="preserve">
+        <value>Strategie / tactiek</value>
+    </data>
+    <data name="Street racing" xml:space="preserve">
+        <value>Straatrijden</value>
+    </data>
+    <data name="Submit" xml:space="preserve">
+        <value>Verzenden</value>
+    </data>
+    <data name="Submit Report" xml:space="preserve">
+        <value>Rapport indienen</value>
+    </data>
+    <data name="Submit suggestion" xml:space="preserve">
+        <value>Suggestie indienen</value>
+    </data>
+    <data name="Submitting…" xml:space="preserve">
+        <value>Submitting…</value>
+    </data>
+    <data name="Subvariant" xml:space="preserve">
+        <value>Subvariant</value>
+    </data>
+    <data name="Suggest a YouTube video" xml:space="preserve">
+        <value>Een YouTube‑video voorstellen</value>
+    </data>
+    <data name="Suggest a YouTube video for {0}. The video title will be fetched automatically from YouTube when you submit." xml:space="preserve">
+        <value>Stel een YouTube-video voor voor {0}. De videotitel wordt automatisch opgehaald van YouTube bij het indienen.</value>
+    </data>
+    <data name="Suggest a new release to be added to the catalogue." xml:space="preserve">
+        <value>Stel een nieuwe uitgave voor om aan de catalogus toe te voegen.</value>
+    </data>
+    <data name="Suggest a new software to be added to the catalogue. A first release is required." xml:space="preserve">
+        <value>Stel een nieuwe software voor die aan de catalogus moet worden toegevoegd. Een eerste versie is vereist.</value>
+    </data>
+    <data name="Suggest a new software to be added to the catalogue. A software has no user-facing surface without a release, so a first release is required at the same time. Software fields and the first-release fields below are all reviewed together as a single suggestion; an administrator will accept or reject them as a unit." xml:space="preserve">
+        <value>Een nieuwe software toevoegen aan de catalogus voorstellen. Een software heeft geen gebruikersinterface zonder een uitgave, dus een eerste uitgave is noodzakelijk. De softwarevelden en de velden voor de eerste uitgave hieronder worden samen beoordeeld als één suggestie; een beheerder accepteert of weigert ze als geheel.</value>
+    </data>
+    <data name="Suggest changes" xml:space="preserve">
+        <value>Wijzigingen voorstellen</value>
+    </data>
+    <data name="Suggest companies changes" xml:space="preserve">
+        <value>Bedrijfwijzigingen voorstellen</value>
+    </data>
+    <data name="Suggest covers" xml:space="preserve">
+        <value>Omslagen voorstellen</value>
+    </data>
+    <data name="Suggest credits changes" xml:space="preserve">
+        <value>Voorgestelde wijzigingen in de credits</value>
+    </data>
+    <data name="Suggest description" xml:space="preserve">
+        <value>Stel beschrijving voor</value>
+    </data>
+    <data name="Suggest more covers" xml:space="preserve">
+        <value>Stel meer omslagen voor</value>
+    </data>
+    <data name="Suggest more promo art" xml:space="preserve">
+        <value>Meer promotieafbeeldingen voorstellen</value>
+    </data>
+    <data name="Suggest more screenshots" xml:space="preserve">
+        <value>Suggest more screenshots</value>
+    </data>
+    <data name="Suggest more videos" xml:space="preserve">
+        <value>Meer video's voorstellen</value>
+    </data>
+    <data name="Suggest new release" xml:space="preserve">
+        <value>Stel nieuwe uitgave voor</value>
+    </data>
+    <data name="Suggest new software" xml:space="preserve">
+        <value>Stel nieuwe software voor</value>
+    </data>
+    <data name="Suggest promo art" xml:space="preserve">
+        <value>Promotieafbeelding voorstellen</value>
+    </data>
+    <data name="Suggest promo art for {0}. Upload up to {1} JPG, PNG or WebP files (max 50 MB each). All images in this batch share the same group." xml:space="preserve">
+        <value>Stel promotieafbeelding voor {0} voor. Upload tot {1} JPG, PNG of WebP-bestanden (maximaal 50 MB elk). Alle afbeeldingen in deze batch delen dezelfde groep.</value>
+    </data>
+    <data name="Suggest screenshots" xml:space="preserve">
+        <value>Stel schermafbeeldingen voor</value>
+    </data>
+    <data name="Suggest screenshots for {0}. Upload up to {1} JPG, PNG or WebP files (max 50 MB each). All screenshots in this batch share the same platform." xml:space="preserve">
+        <value>Schermafbeeldingen voor {0} voorstellen. Upload tot {1} JPG, PNG of WebP-bestanden (maximaal 50 MB elk). Alle schermafbeeldingen in deze batch delen hetzelfde platform.</value>
+    </data>
+    <data name="Suggest translation" xml:space="preserve">
+        <value>Vertaling voorstellen</value>
+    </data>
+    <data name="Suggested video" xml:space="preserve">
+        <value>Voorgestelde video</value>
+    </data>
+    <data name="Suggestion submitted. An administrator will review it." xml:space="preserve">
+        <value>Suggestie ingediend. Een beheerder zal deze beoordelen.</value>
+    </data>
+    <data name="Supported Languages and Operating Systems" xml:space="preserve">
+        <value>Ondersteunde talen en besturingssystemen</value>
+    </data>
+    <data name="Supported Systems/Models" xml:space="preserve">
+        <value>Ondersteunde systemen/modellen</value>
+    </data>
+    <data name="Survival horror" xml:space="preserve">
+        <value>Overlevingshorror</value>
+    </data>
+    <data name="System software" xml:space="preserve">
+        <value>Systeemsoftware</value>
+    </data>
+    <data name="TV mode compatible" xml:space="preserve">
+        <value>Compatibel met TV-modus</value>
+    </data>
+    <data name="Tabletop mode compatible" xml:space="preserve">
+        <value>Compatibel met tafelmodus</value>
+    </data>
+    <data name="Tactical RPG" xml:space="preserve">
+        <value>Tactische RPG</value>
+    </data>
+    <data name="Tank" xml:space="preserve">
+        <value>Tank</value>
+    </data>
+    <data name="Team" xml:space="preserve">
+        <value>Team</value>
+    </data>
+    <data name="Technology" xml:space="preserve">
+        <value>Technologie</value>
+    </data>
+    <data name="Teen" xml:space="preserve">
+        <value>Tiener</value>
+    </data>
+    <data name="Teletype/Teleprinter" xml:space="preserve">
+        <value>Teletype/teleprinter</value>
+    </data>
+    <data name="Tennis" xml:space="preserve">
+        <value>Tennis</value>
+    </data>
+    <data name="Tester" xml:space="preserve">
+        <value>Tester</value>
+    </data>
+    <data name="Testing" xml:space="preserve">
+        <value>Testen</value>
+    </data>
+    <data name="Text Modes Supported" xml:space="preserve">
+        <value>Ondersteunde tekstmodi</value>
+    </data>
+    <data name="Text parser" xml:space="preserve">
+        <value>Tekstparser</value>
+    </data>
+    <data name="Text-based / spreadsheet" xml:space="preserve">
+        <value>Tekstgebaseerd / spreadsheet</value>
+    </data>
+    <data name="The Bad" xml:space="preserve">
+        <value>De Slechte</value>
+    </data>
+    <data name="The Good" xml:space="preserve">
+        <value>The Good</value>
+    </data>
+    <data name="The Ugly" xml:space="preserve">
+        <value>Het Lelijke</value>
+    </data>
+    <data name="The database contains information about software related to computing history." xml:space="preserve">
+        <value>De database bevat informatie over software gerelateerd aan de geschiedenis van computers.</value>
+    </data>
+    <data name="There are no companies in the database." xml:space="preserve">
+        <value>Er zijn geen bedrijven in de database.</value>
+    </data>
+    <data name="There are {0} software titles in the database at this moment." xml:space="preserve">
+        <value>Er zijn op dit moment {0} softwaretitels in de database.</value>
+    </data>
+    <data name="There is no software found for this genre." xml:space="preserve">
+        <value>Er is geen software gevonden voor dit genre.</value>
+    </data>
+    <data name="There is no software found for this platform." xml:space="preserve">
+        <value>Er is geen software gevonden voor dit platform.</value>
+    </data>
+    <data name="There is no software found from this year." xml:space="preserve">
+        <value>Er is geen software gevonden uit dit jaar.</value>
+    </data>
+    <data name="There is no software found in the database that starts with this letter." xml:space="preserve">
+        <value>Er is geen software gevonden in de database die begint met deze letter.</value>
+    </data>
+    <data name="This barcode is already present in the list." xml:space="preserve">
+        <value>Deze barcode staat al in de lijst.</value>
+    </data>
+    <data name="This is not a valid YouTube URL or video ID." xml:space="preserve">
+        <value>Dit is geen geldige YouTube-URL of videocode.</value>
+    </data>
+    <data name="This product code is already present in the list." xml:space="preserve">
+        <value>Deze productcode staat al in de lijst.</value>
+    </data>
+    <data name="Thriller" xml:space="preserve">
+        <value>Thriller</value>
+    </data>
+    <data name="Tile matching puzzle" xml:space="preserve">
+        <value>Tile matching puzzle</value>
+    </data>
+    <data name="Time management" xml:space="preserve">
+        <value>Tijdbeheer</value>
+    </data>
+    <data name="Timed input" xml:space="preserve">
+        <value>Tijdgebonden invoer</value>
+    </data>
+    <data name="Title" xml:space="preserve">
+        <value>Titel</value>
+    </data>
+    <data name="Title will be fetched from YouTube when you submit." xml:space="preserve">
+        <value>Titel wordt opgehaald van YouTube bij indienen.</value>
+    </data>
+    <data name="Title, publisher and platform are required. Other fields are optional." xml:space="preserve">
+        <value>Titel, uitgever en platform zijn vereist. Andere velden zijn optioneel.</value>
+    </data>
+    <data name="Top-down" xml:space="preserve">
+        <value>Top-down</value>
+    </data>
+    <data name="Touch Screen" xml:space="preserve">
+        <value>Aanraakscherm</value>
+    </data>
+    <data name="Track racing" xml:space="preserve">
+        <value>Circuitrace</value>
+    </data>
+    <data name="Tracked motion controllers" xml:space="preserve">
+        <value>Getrackte bewegingscontrollers</value>
+    </data>
+    <data name="Trading cards" xml:space="preserve">
+        <value>Verkoopkaarten</value>
+    </data>
+    <data name="Train" xml:space="preserve">
+        <value>Train</value>
+    </data>
+    <data name="Tricks / stunts" xml:space="preserve">
+        <value>Trucs / stuntjes</value>
+    </data>
+    <data name="Trophies" xml:space="preserve">
+        <value>Trofeeën</value>
+    </data>
+    <data name="Truck" xml:space="preserve">
+        <value>Vrachtwagen</value>
+    </data>
+    <data name="Turn-based" xml:space="preserve">
+        <value>Rondgebaseerd</value>
+    </data>
+    <data name="Type" xml:space="preserve">
+        <value>Type</value>
+    </data>
+    <data name="Type or pick a group name and add at least one successfully-uploaded image before submitting." xml:space="preserve">
+        <value>Typ of kies een groepsnaam en voeg ten minste één succesvol geüploade afbeelding toe voordat je verzendt.</value>
+    </data>
+    <data name="Typing" xml:space="preserve">
+        <value>Typen</value>
+    </data>
+    <data name="USK Rating" xml:space="preserve">
+        <value>USK-beoordeling</value>
+    </data>
+    <data name="Undo" xml:space="preserve">
+        <value>Ongedaan maken</value>
+    </data>
+    <data name="Unscored" xml:space="preserve">
+        <value>Onbeoordeeld</value>
+    </data>
+    <data name="Upload Promo Art" xml:space="preserve">
+        <value>Promotieafbeelding uploaden</value>
+    </data>
+    <data name="Upload Screenshot" xml:space="preserve">
+        <value>Screenshot uploaden</value>
+    </data>
+    <data name="Use this when the URL above cannot be parsed (non-YouTube providers)." xml:space="preserve">
+        <value>Gebruik dit wanneer de bovenstaande URL niet kan worden geanalyseerd (niet‑YouTube-aanbieders).</value>
+    </data>
+    <data name="User Reviews" xml:space="preserve">
+        <value>Gebruikersrecensies</value>
+    </data>
+    <data name="VGA (Tweaked)" xml:space="preserve">
+        <value>VGA (Aangepast)</value>
+    </data>
+    <data name="VR Helmet/Headset" xml:space="preserve">
+        <value>VR Helmet/Headset</value>
+    </data>
+    <data name="VR Helmets/Headsets Supported" xml:space="preserve">
+        <value>VR Helmets/Headsets Ondersteund</value>
+    </data>
+    <data name="VR Play Area" xml:space="preserve">
+        <value>VR-speelruimte</value>
+    </data>
+    <data name="Valve Anti-Cheat System (VAC)" xml:space="preserve">
+        <value>Valve Anti-Cheat System (VAC)</value>
+    </data>
+    <data name="Variant" xml:space="preserve">
+        <value>Variant</value>
+    </data>
+    <data name="Variants" xml:space="preserve">
+        <value>Varianten</value>
+    </data>
+    <data name="Vehicle simulator" xml:space="preserve">
+        <value>Voertuigsimulator</value>
+    </data>
+    <data name="Version" xml:space="preserve">
+        <value>Versie</value>
+    </data>
+    <data name="Versions" xml:space="preserve">
+        <value>Versies</value>
+    </data>
+    <data name="Vibration" xml:space="preserve">
+        <value>Trilling</value>
+    </data>
+    <data name="Video ID" xml:space="preserve">
+        <value>Video ID</value>
+    </data>
+    <data name="Video Management" xml:space="preserve">
+        <value>Videobeheer</value>
+    </data>
+    <data name="Video Modes" xml:space="preserve">
+        <value>Videomodi</value>
+    </data>
+    <data name="Video Modes Supported" xml:space="preserve">
+        <value>Ondersteunde videomodi</value>
+    </data>
+    <data name="Video Resolutions Supported" xml:space="preserve">
+        <value>Ondersteunde videorealaties</value>
+    </data>
+    <data name="Video Title" xml:space="preserve">
+        <value>Videotitel</value>
+    </data>
+    <data name="Video deleted successfully." xml:space="preserve">
+        <value>Video succesvol verwijderd.</value>
+    </data>
+    <data name="Video link submitted for review. An administrator will accept or reject it." xml:space="preserve">
+        <value>Videolink ingediend voor beoordeling. Een beheerder zal het accepteren of afwijzen.</value>
+    </data>
+    <data name="Video linked successfully." xml:space="preserve">
+        <value>Video succesvol gekoppeld.</value>
+    </data>
+    <data name="Video updated successfully." xml:space="preserve">
+        <value>Video succesvol bijgewerkt.</value>
+    </data>
+    <data name="Videos" xml:space="preserve">
+        <value>Videos</value>
+    </data>
+    <data name="Visual novel" xml:space="preserve">
+        <value>Visuele roman</value>
+    </data>
+    <data name="Voice Chat" xml:space="preserve">
+        <value>Spraakchat</value>
+    </data>
+    <data name="Voice Recording" xml:space="preserve">
+        <value>Stemopname</value>
+    </data>
+    <data name="War" xml:space="preserve">
+        <value>Oorlog</value>
+    </data>
+    <data name="We do not have a description for this software, you could collaborate by suggesting one" xml:space="preserve">
+        <value>Er is geen beschrijving voor deze software; u kunt een suggestie doen</value>
+    </data>
+    <data name="We do not have a description in your language, you could collaborate by translating the English description we show below" xml:space="preserve">
+        <value>Er is geen beschrijving in uw taal; u kunt helpen door de onderstaande Engelse beschrijving te vertalen</value>
+    </data>
+    <data name="We have no videos available about this software." xml:space="preserve">
+        <value>Er zijn geen video's beschikbaar over deze software.</value>
+    </data>
+    <data name="Western" xml:space="preserve">
+        <value>Western</value>
+    </data>
+    <data name="Wi-Fi Connection" xml:space="preserve">
+        <value>Wi‑Fi‑verbinding</value>
+    </data>
+    <data name="Widescreen (16 x 9)" xml:space="preserve">
+        <value>Breedbeeld (16 × 9)</value>
+    </data>
+    <data name="Window" xml:space="preserve">
+        <value>Venster</value>
+    </data>
+    <data name="Windows XP" xml:space="preserve">
+        <value>Windows XP</value>
+    </data>
+    <data name="Word construction" xml:space="preserve">
+        <value>Woordenbouw</value>
+    </data>
+    <data name="World War II" xml:space="preserve">
+        <value>Tweede Wereldoorlog</value>
+    </data>
+    <data name="Wrestling" xml:space="preserve">
+        <value>Worstelen</value>
+    </data>
+    <data name="Write Review" xml:space="preserve">
+        <value>Recensie schrijven</value>
+    </data>
+    <data name="Writer" xml:space="preserve">
+        <value>Schrijver</value>
+    </data>
+    <data name="Written by" xml:space="preserve">
+        <value>Geschreven door</value>
+    </data>
+    <data name="XNA Indie Games" xml:space="preserve">
+        <value>XNA Indie Spellen</value>
+    </data>
+    <data name="Xbox 360 Compatible" xml:space="preserve">
+        <value>Xbox 360 Compatible</value>
+    </data>
+    <data name="Xbox/Windows Live" xml:space="preserve">
+        <value>Xbox/Windows Live</value>
+    </data>
+    <data name="Year only" xml:space="preserve">
+        <value>Alleen jaar</value>
+    </data>
+    <data name="Yes" xml:space="preserve">
+        <value>Ja</value>
+    </data>
+    <data name="You have staged images that have not been submitted yet. Closing this dialog will delete them. Continue?" xml:space="preserve">
+        <value>U heeft afbeeldingen voorbereid die nog niet zijn ingediend. Het sluiten van dit dialoogvenster zal ze verwijderen. Doorgaan?</value>
+    </data>
+    <data name="You must be logged in to upload images." xml:space="preserve">
+        <value>Je moet ingelogd zijn om afbeeldingen te uploaden.</value>
+    </data>
+    <data name="YouTube URL or Video ID" xml:space="preserve">
+        <value>YouTube‑URL of video‑ID</value>
+    </data>
+    <data name="YouTube URL or video ID" xml:space="preserve">
+        <value>YouTube-URL of videocode</value>
+    </data>
+    <data name="Your Rating" xml:space="preserve">
+        <value>Jouw beoordeling</value>
+    </data>
+    <data name="iOS 7.0" xml:space="preserve">
+        <value>iOS 7.0</value>
+    </data>
+    <data name="iPhone OS 3.1.2" xml:space="preserve">
+        <value>iPhone OS 3.1.2</value>
+    </data>
+    <data name="iPhone OS 3.2" xml:space="preserve">
+        <value>iPhone OS 3.2</value>
+    </data>
+    <data name="ratings" xml:space="preserve">
+        <value>beoordelingen</value>
+    </data>
+    <data name="reviews" xml:space="preserve">
+        <value>recensies</value>
+    </data>
+    <data name="{0} companies found in the database." xml:space="preserve">
+        <value>{0} bedrijven gevonden in de database.</value>
+    </data>
+    <data name="{0} software titles found in the database." xml:space="preserve">
+        <value>{0} softwaretitels gevonden in de database.</value>
+    </data>
+</root>

@@ -82,7 +82,7 @@
     /// </summary>
     [Parameter] public string DefaultLanguage { get; set; } = "eng";
 
-    // The 5 fully-supported UI languages, plus lat/por which exist server-side. Latin and
+    // The 6 fully-supported UI languages, plus lat/por which exist server-side. Latin and
     // Portuguese are only shown when the entity already has a description in them OR the
     // user's UI language happens to be one of them (rare). Keep them out of the default list.
     static readonly (string Code, string NameKey)[] _baseLanguages =
@@ -91,7 +91,8 @@
         ("spa", "Spanish"),
         ("deu", "German"),
         ("fra", "French"),
-        ("ita", "Italian")
+        ("ita", "Italian"),
+        ("nld", "Dutch")
     ];
 
     List<(string Code, string NameKey)> _languageOptions;

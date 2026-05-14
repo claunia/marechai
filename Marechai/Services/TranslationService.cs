@@ -51,6 +51,7 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
         { "deu", new LanguageInfo("deu_Latn", "German") },
         { "fra", new LanguageInfo("fra_Latn", "French") },
         { "ita", new LanguageInfo("ita_Latn", "Italian") },
+        { "nld", new LanguageInfo("nld_Latn", "Dutch") },
         { "lat", new LanguageInfo("lat_Latn", "Latin") },
         { "por", new LanguageInfo("por_Latn", "Portuguese") }
     };

@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e108</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e108</value>
+    </resheader>
+    <data name="2FA disabled for user." xml:space="preserve">
+        <value>2FA uitgeschakeld voor gebruiker.</value>
+    </data>
+    <data name="Actions" xml:space="preserve">
+        <value>Acties</value>
+    </data>
+    <data name="Add" xml:space="preserve">
+        <value>Toevoegen</value>
+    </data>
+    <data name="Add Role" xml:space="preserve">
+        <value>Rol toevoegen</value>
+    </data>
+    <data name="Add User" xml:space="preserve">
+        <value>Gebruiker toevoegen</value>
+    </data>
+    <data name="Apply" xml:space="preserve">
+        <value>Toepassen</value>
+    </data>
+    <data name="Apply role operation to {0} user(s)" xml:space="preserve">
+        <value>Roloperatie toepassen op {0} gebruiker(en)</value>
+    </data>
+    <data name="Are you sure you want to delete user '{0}'? This action cannot be undone." xml:space="preserve">
+        <value>Weet je zeker dat je gebruiker '{0}' wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.</value>
+    </data>
+    <data name="Are you sure you want to delete {0} user(s)? This action cannot be undone." xml:space="preserve">
+        <value>Weet je zeker dat je {0} gebruiker(en) wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.</value>
+    </data>
+    <data name="Are you sure you want to disable two-factor authentication for user '{0}'? Their authenticator key and recovery codes will be cleared." xml:space="preserve">
+        <value>Weet je zeker dat je tweefactorauthenticatie voor gebruiker '{0}' wilt uitschakelen? Hun authenticatietoken en herstelcodes worden gewist.</value>
+    </data>
+    <data name="Bulk Lockout" xml:space="preserve">
+        <value>Groepsvergrendeling</value>
+    </data>
+    <data name="Bulk Role Operation" xml:space="preserve">
+        <value>Groepsroloperatie</value>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Annuleren</value>
+    </data>
+    <data name="Change Password" xml:space="preserve">
+        <value>Wachtwoord wijzigen</value>
+    </data>
+    <data name="Changing password for {0}" xml:space="preserve">
+        <value>Wachtwoord wijzigen voor {0}</value>
+    </data>
+    <data name="Close" xml:space="preserve">
+        <value>Sluiten</value>
+    </data>
+    <data name="Confirm Password" xml:space="preserve">
+        <value>Wachtwoord bevestigen</value>
+    </data>
+    <data name="Current Roles" xml:space="preserve">
+        <value>Huidige Rollen</value>
+    </data>
+    <data name="Date precision" xml:space="preserve">
+        <value>Datumprecisie</value>
+    </data>
+    <data name="Delete" xml:space="preserve">
+        <value>Verwijderen</value>
+    </data>
+    <data name="Delete User" xml:space="preserve">
+        <value>Gebruiker verwijderen</value>
+    </data>
+    <data name="Delete Users" xml:space="preserve">
+        <value>Gebruikers verwijderen</value>
+    </data>
+    <data name="Delete confirm" xml:space="preserve">
+        <value>Verwijderen bevestigen</value>
+    </data>
+    <data name="Deleted {0} user(s)." xml:space="preserve">
+        <value>{0} gebruiker(en) verwijderd.</value>
+    </data>
+    <data name="Disable 2FA" xml:space="preserve">
+        <value>2FA uitschakelen</value>
+    </data>
+    <data name="Disable lockout" xml:space="preserve">
+        <value>Vergrendeling uitschakelen</value>
+    </data>
+    <data name="Edit" xml:space="preserve">
+        <value>Bewerken</value>
+    </data>
+    <data name="Edit User" xml:space="preserve">
+        <value>Gebruiker bewerken</value>
+    </data>
+    <data name="Email" xml:space="preserve">
+        <value>E‑mail</value>
+    </data>
+    <data name="Email and username are required." xml:space="preserve">
+        <value>E‑mail en gebruikersnaam zijn vereist.</value>
+    </data>
+    <data name="Email is required." xml:space="preserve">
+        <value>E‑mail is vereist.</value>
+    </data>
+    <data name="Enable lockout" xml:space="preserve">
+        <value>Vergrendeling inschakelen</value>
+    </data>
+    <data name="Full date" xml:space="preserve">
+        <value>Volledige datum</value>
+    </data>
+    <data name="Lockout" xml:space="preserve">
+        <value>Vergrendeling</value>
+    </data>
+    <data name="Lockout disabled for {0} user(s)." xml:space="preserve">
+        <value>Vergrendeling uitgeschakeld voor {0} gebruiker(en).</value>
+    </data>
+    <data name="Lockout enabled for {0} user(s)." xml:space="preserve">
+        <value>Vergrendeling ingeschakeld voor {0} gebruiker(en).</value>
+    </data>
+    <data name="Manage Roles" xml:space="preserve">
+        <value>Rollen beheren</value>
+    </data>
+    <data name="Manage users, passwords, and role assignments." xml:space="preserve">
+        <value>Gebruikers, wachtwoorden en roltoewijzingen beheren.</value>
+    </data>
+    <data name="Managing roles for {0}" xml:space="preserve">
+        <value>Rollen beheren voor {0}</value>
+    </data>
+    <data name="Minimum 6 characters" xml:space="preserve">
+        <value>Minimaal 6 tekens</value>
+    </data>
+    <data name="Month and year only" xml:space="preserve">
+        <value>Alleen maand en jaar</value>
+    </data>
+    <data name="New Password" xml:space="preserve">
+        <value>Nieuw wachtwoord</value>
+    </data>
+    <data name="No roles assigned." xml:space="preserve">
+        <value>Geen rollen toegewezen.</value>
+    </data>
+    <data name="Password" xml:space="preserve">
+        <value>Wachtwoord</value>
+    </data>
+    <data name="Password changed successfully." xml:space="preserve">
+        <value>Wachtwoord succesvol gewijzigd.</value>
+    </data>
+    <data name="Password confirmation is required." xml:space="preserve">
+        <value>Wachtwoordbevestiging is vereist.</value>
+    </data>
+    <data name="Password is required for new users." xml:space="preserve">
+        <value>Wachtwoord vereist voor nieuwe gebruikers.</value>
+    </data>
+    <data name="Password is required." xml:space="preserve">
+        <value>Wachtwoord vereist.</value>
+    </data>
+    <data name="Password must be at least 6 characters." xml:space="preserve">
+        <value>Wachtwoord moet minimaal 6 tekens bevatten.</value>
+    </data>
+    <data name="Passwords do not match." xml:space="preserve">
+        <value>Wachtwoorden komen niet overeen.</value>
+    </data>
+    <data name="Phone" xml:space="preserve">
+        <value>Telefoon</value>
+    </data>
+    <data name="Phone Number" xml:space="preserve">
+        <value>Telefoonnummer</value>
+    </data>
+    <data name="Remove role" xml:space="preserve">
+        <value>Rol verwijderen</value>
+    </data>
+    <data name="Role '{0}' added to {1} user(s)." xml:space="preserve">
+        <value>Rol '{0}' toegevoegd aan {1} gebruiker(en).</value>
+    </data>
+    <data name="Role '{0}' removed from {1} user(s)." xml:space="preserve">
+        <value>Rol '{0}' verwijderd van {1} gebruiker(en).</value>
+    </data>
+    <data name="Roles" xml:space="preserve">
+        <value>Rollen</value>
+    </data>
+    <data name="Save" xml:space="preserve">
+        <value>Opslaan</value>
+    </data>
+    <data name="Select role" xml:space="preserve">
+        <value>Rol selecteren</value>
+    </data>
+    <data name="Update lockout setting for {0} user(s)" xml:space="preserve">
+        <value>Vergrendelingsinstelling bijwerken voor {0} gebruiker(en)</value>
+    </data>
+    <data name="User Management" xml:space="preserve">
+        <value>Gebruikersbeheer</value>
+    </data>
+    <data name="User created successfully." xml:space="preserve">
+        <value>Gebruiker succesvol aangemaakt.</value>
+    </data>
+    <data name="User deleted successfully." xml:space="preserve">
+        <value>Gebruiker succesvol verwijderd.</value>
+    </data>
+    <data name="User updated successfully." xml:space="preserve">
+        <value>Gebruiker succesvol bijgewerkt.</value>
+    </data>
+    <data name="Username" xml:space="preserve">
+        <value>Gebruikersnaam</value>
+    </data>
+    <data name="Username is required." xml:space="preserve">
+        <value>Gebruikersnaam is vereist.</value>
+    </data>
+    <data name="Year only" xml:space="preserve">
+        <value>Alleen jaar</value>
+    </data>
+    <data name="{0} failed." xml:space="preserve">
+        <value>{0} mislukt.</value>
+    </data>
+    <data name="{0} selected" xml:space="preserve">
+        <value>{0} geselecteerd</value>
+    </data>
+</root>

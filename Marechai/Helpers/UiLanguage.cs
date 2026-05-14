@@ -33,7 +33,7 @@ namespace Marechai.Helpers;
 ///     codes used by Marechai's per-language description tables and the related <c>/{entity}/{id}/full</c> +
 ///     <c>/{entity}/{id}/description{,/text}</c> endpoints.
 ///
-///     The Blazor side currently exposes 5 cultures (en-US, es, de, fr, it — see
+///     The Blazor side currently exposes 6 cultures (en-US, es, de, fr, it, nl — see
 ///     <c>Startup._supportedCultures</c>); the description tables additionally support <c>lat</c> and
 ///     <c>por</c>, which never come out of this helper because the UI doesn't expose those locales.
 ///
@@ -58,6 +58,7 @@ public static class UiLanguage
         "de" => "deu",
         "fr" => "fra",
         "it" => "ita",
+        "nl" => "nld",
         "la" => "lat",
         "pt" => "por",
         _    => "eng"

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e108</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e108</value>
+    </resheader>
+    <data name="AccountDeletion_ButtonText" xml:space="preserve">
+        <value>Verwijdering bevestigen</value>
+    </data>
+    <data name="AccountDeletion_Footer" xml:space="preserve">
+        <value>Als u niet heeft verzocht uw account te verwijderen, kunt u dit e‑mail veilig negeren — er gebeurt niets.</value>
+    </data>
+    <data name="AccountDeletion_Intro" xml:space="preserve">
+        <value>We hebben een verzoek ontvangen om uw Marechai-account te verwijderen. Als dit u was, klik dan op de onderstaande knop om te bevestigen. Uw account gaat vervolgens in een 30‑daagse gratieperiode waarin u nog kunt annuleren door in te loggen en 'Annuleer verwijdering' te kiezen. Na 30 dagen wordt het account permanent verwijderd.</value>
+    </data>
+    <data name="AccountDeletion_LinkFallback" xml:space="preserve">
+        <value>Als de knop niet werkt, kopieer en plak deze link in uw browser:</value>
+    </data>
+    <data name="AccountDeletion_Subject" xml:space="preserve">
+        <value>Bevestig de verwijdering van uw Marechai-account</value>
+    </data>
+    <data name="AccountDeletion_Title" xml:space="preserve">
+        <value>Bevestig accountverwijdering</value>
+    </data>
+    <data name="EmailConfirmation_ButtonText" xml:space="preserve">
+        <value>E‑mail bevestigen</value>
+    </data>
+    <data name="EmailConfirmation_Footer" xml:space="preserve">
+        <value>Als u geen Marechai-account heeft aangemaakt, kunt u dit e‑mail veilig negeren.</value>
+    </data>
+    <data name="EmailConfirmation_Intro" xml:space="preserve">
+        <value>Welkom bij Marechai! Bevestig alstublieft dit e‑mailadres om uw account te activeren.</value>
+    </data>
+    <data name="EmailConfirmation_LinkFallback" xml:space="preserve">
+        <value>Als de knop niet werkt, kopieer en plak deze link in uw browser:</value>
+    </data>
+    <data name="EmailConfirmation_Subject" xml:space="preserve">
+        <value>Bevestig uw Marechai e‑mailadres</value>
+    </data>
+    <data name="EmailConfirmation_Title" xml:space="preserve">
+        <value>Bevestig uw e‑mailadres</value>
+    </data>
+    <data name="PasswordReset_ButtonText" xml:space="preserve">
+        <value>Wachtwoord resetten</value>
+    </data>
+    <data name="PasswordReset_Expiry" xml:space="preserve">
+        <value>Deze link verloopt over {0} minuten.</value>
+    </data>
+    <data name="PasswordReset_Footer" xml:space="preserve">
+        <value>Als u geen wachtwoordreset hebt aangevraagd, kunt u dit e‑mail veilig negeren.</value>
+    </data>
+    <data name="PasswordReset_Intro" xml:space="preserve">
+        <value>We hebben een verzoek ontvangen om het wachtwoord voor uw Marechai-account te resetten. Klik op de onderstaande knop om een nieuw wachtwoord te kiezen.</value>
+    </data>
+    <data name="PasswordReset_LinkFallback" xml:space="preserve">
+        <value>Als de knop niet werkt, kopieer en plak deze link in uw browser:</value>
+    </data>
+    <data name="PasswordReset_Subject" xml:space="preserve">
+        <value>Herstel uw Marechai-wachtwoord</value>
+    </data>
+    <data name="PasswordReset_Title" xml:space="preserve">
+        <value>Marechai wachtwoord reset</value>
+    </data>
+    <data name="TwoFactor_Expiry" xml:space="preserve">
+        <value>Deze code verloopt over {0} minuten.</value>
+    </data>
+    <data name="TwoFactor_Footer" xml:space="preserve">
+        <value>Als u niet hebt geprobeerd in te loggen, kunt u dit e‑mail veilig negeren.</value>
+    </data>
+    <data name="TwoFactor_Intro" xml:space="preserve">
+        <value>Gebruik deze code om het inloggen op uw Marechai-account te voltooien.</value>
+    </data>
+    <data name="TwoFactor_Subject" xml:space="preserve">
+        <value>Uw Marechai inlogcode</value>
+    </data>
+    <data name="TwoFactor_Title" xml:space="preserve">
+        <value>Marechai inlogcode</value>
+    </data>
+    <data name="Welcome_BooksBullet" xml:space="preserve">
+        <value>Vergeet het papier niet. Boeken en tijdschriften die een generatie leerden coderen zijn hier ook. Zoek de boeken die u heeft gelezen; als ze ontbreken, kunt u ons helpen ze toe te voegen.</value>
+    </data>
+    <data name="Welcome_Closing" xml:space="preserve">
+        <value>Marechai is een liefdadigheidsproject gebouwd door mensen zoals u. Wat u hier heeft gebracht — nostalgie, onderzoek, behoud — we zijn blij dat u gekomen bent, en we hopen dat u zich thuis zult voelen.</value>
+    </data>
+    <data name="Welcome_CollectionBullet" xml:space="preserve">
+        <value>Bouw uw collectie. Blader door de computers, consoles en smartphones die u bezit (of nog steeds koestert) en voeg ze toe aan uw planken voor iedereen om te zien.</value>
+    </data>
+    <data name="Welcome_Footer" xml:space="preserve">
+        <value>— Het Marechai‑team</value>
+    </data>
+    <data name="Welcome_Intro" xml:space="preserve">
+        <value>Marechai is een door de gemeenschap gecureerde archief van de machines, software, boeken en tijdschriften die hebben gevormd hoe we vandaag de dag computeren — en u maakt nu deel uit van het team dat die herinnering levend houdt.</value>
+    </data>
+    <data name="Welcome_Lead" xml:space="preserve">
+        <value>We zijn verheugd dat u zich bij ons heeft aangesloten, {0}.</value>
+    </data>
+    <data name="Welcome_ProfileBullet" xml:space="preserve">
+        <value>Maak het jouw plek. Ga naar je profiel, voeg een bio toe, kies een avatar — laat andere verzamelaars en historici weten wie jij bent.</value>
+    </data>
+    <data name="Welcome_Signoff" xml:space="preserve">
+        <value>Welkom aan boord,</value>
+    </data>
+    <data name="Welcome_SoftwareBullet" xml:space="preserve">
+        <value>Herontdek oude vrienden. Onze softwarecatalogus bevat duizenden titels — er is een goede kans dat de games, applicaties en besturingssystemen die u zich herinnert daar wachten.</value>
+    </data>
+    <data name="Welcome_Subject" xml:space="preserve">
+        <value>Welkom bij Marechai — uw zetel aan tafel van computing history</value>
+    </data>
+    <data name="Welcome_Title" xml:space="preserve">
+        <value>Welkom bij Marechai!</value>
+    </data>
+</root>

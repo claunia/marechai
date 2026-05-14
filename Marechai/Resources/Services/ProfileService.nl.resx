@@ -1,0 +1,796 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e108</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e108</value>
+    </resheader>
+    <data name="Aa Bb 123" xml:space="preserve">
+        <value>Aa Bb 123</value>
+    </data>
+    <data name="About" xml:space="preserve">
+        <value>Over</value>
+    </data>
+    <data name="Accent" xml:space="preserve">
+        <value>Accent</value>
+    </data>
+    <data name="Accepted" xml:space="preserve">
+        <value>Aceptado</value>
+    </data>
+    <data name="Account Settings" xml:space="preserve">
+        <value>Accountinstellingen</value>
+    </data>
+    <data name="Account created. We have sent you a confirmation email — click the link inside to activate your account, then come back here to sign in." xml:space="preserve">
+        <value>Account created. We have sent you a confirmation email — click the link inside to activate your account, then come back here to sign in.</value>
+    </data>
+    <data name="Account scheduled for deletion" xml:space="preserve">
+        <value>Account gepland voor verwijdering</value>
+    </data>
+    <data name="Added" xml:space="preserve">
+        <value>Added</value>
+    </data>
+    <data name="Already have an account? Sign in" xml:space="preserve">
+        <value>Already have an account? Sign in</value>
+    </data>
+    <data name="Anonymous" xml:space="preserve">
+        <value>Anoniem</value>
+    </data>
+    <data name="Appearance" xml:space="preserve">
+        <value>Weergave</value>
+    </data>
+    <data name="Authenticator app" xml:space="preserve">
+        <value>Authenticatorapp</value>
+    </data>
+    <data name="Authenticator app: {0}" xml:space="preserve">
+        <value>Authenticatorapp: {0}</value>
+    </data>
+    <data name="Authenticator code" xml:space="preserve">
+        <value>Authenticatorcode</value>
+    </data>
+    <data name="Authenticator disabled." xml:space="preserve">
+        <value>Authenticator uitgeschakeld.</value>
+    </data>
+    <data name="Authenticator enabled." xml:space="preserve">
+        <value>Authenticator ingeschakeld.</value>
+    </data>
+    <data name="Avatar" xml:space="preserve">
+        <value>Avatar</value>
+    </data>
+    <data name="Avatar deleted." xml:space="preserve">
+        <value>Avatar verwijderd.</value>
+    </data>
+    <data name="Avatar uploaded successfully." xml:space="preserve">
+        <value>Avatar succesvol geüpload.</value>
+    </data>
+    <data name="Back to authenticator" xml:space="preserve">
+        <value>Terug naar authenticator</value>
+    </data>
+    <data name="Back to profile" xml:space="preserve">
+        <value>Back to profile</value>
+    </data>
+    <data name="Back to sign in" xml:space="preserve">
+        <value>Back to sign in</value>
+    </data>
+    <data name="Bio" xml:space="preserve">
+        <value>Bio</value>
+    </data>
+    <data name="Books" xml:space="preserve">
+        <value>Boeken</value>
+    </data>
+    <data name="Books ({0})" xml:space="preserve">
+        <value>Boeken ({0})</value>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Cancel</value>
+    </data>
+    <data name="Cancel deletion" xml:space="preserve">
+        <value>Cancel deletion</value>
+    </data>
+    <data name="Cancelling..." xml:space="preserve">
+        <value>Annuleren…</value>
+    </data>
+    <data name="Change password" xml:space="preserve">
+        <value>Wachtwoord wijzigen</value>
+    </data>
+    <data name="Changing..." xml:space="preserve">
+        <value>Wijzigen…</value>
+    </data>
+    <data name="Choose a new password for {0}." xml:space="preserve">
+        <value>Kies een nieuw wachtwoord voor {0}.</value>
+    </data>
+    <data name="City, country, etc." xml:space="preserve">
+        <value>Stad, land, enz.</value>
+    </data>
+    <data name="Code sent to your email." xml:space="preserve">
+        <value>Code verzonden naar uw e‑mail.</value>
+    </data>
+    <data name="Code sent to {0}." xml:space="preserve">
+        <value>Code verzonden naar {0}.</value>
+    </data>
+    <data name="Code source" xml:space="preserve">
+        <value>Code source</value>
+    </data>
+    <data name="Collaborator" xml:space="preserve">
+        <value>Colaborador</value>
+    </data>
+    <data name="Computers" xml:space="preserve">
+        <value>Computers</value>
+    </data>
+    <data name="Confirm" xml:space="preserve">
+        <value>Bevestigen</value>
+    </data>
+    <data name="Confirm account deletion" xml:space="preserve">
+        <value>Accountverwijdering bevestigen</value>
+    </data>
+    <data name="Confirm new password" xml:space="preserve">
+        <value>Nieuw wachtwoord bevestigen</value>
+    </data>
+    <data name="Confirm password" xml:space="preserve">
+        <value>Wachtwoord bevestigen</value>
+    </data>
+    <data name="Confirm your email" xml:space="preserve">
+        <value>Bevestig uw e‑mail</value>
+    </data>
+    <data name="Confirming your email..." xml:space="preserve">
+        <value>E‑mail bevestigen...</value>
+    </data>
+    <data name="Consoles" xml:space="preserve">
+        <value>Consoles</value>
+    </data>
+    <data name="Could not cancel the deletion. Please try again or contact support." xml:space="preserve">
+        <value>Verwijdering annuleren mislukt. Probeer het opnieuw of neem contact op met ondersteuning.</value>
+    </data>
+    <data name="Could not generate your data export." xml:space="preserve">
+        <value>Uw gegevensexport genereren mislukt.</value>
+    </data>
+    <data name="Could not reset password." xml:space="preserve">
+        <value>Wachtwoord opnieuw instellen mislukt.</value>
+    </data>
+    <data name="Could not send code." xml:space="preserve">
+        <value>Code verzenden mislukt.</value>
+    </data>
+    <data name="Could not start account deletion." xml:space="preserve">
+        <value>Verwijdering van account starten mislukt.</value>
+    </data>
+    <data name="Could not start the download. Please try a different browser." xml:space="preserve">
+        <value>De download starten mislukt. Probeer een andere browser.</value>
+    </data>
+    <data name="Create account" xml:space="preserve">
+        <value>Account aanmaken</value>
+    </data>
+    <data name="Create an account" xml:space="preserve">
+        <value>Account aanmaken</value>
+    </data>
+    <data name="Creating account..." xml:space="preserve">
+        <value>Account aanmaken…</value>
+    </data>
+    <data name="Current password" xml:space="preserve">
+        <value>Huidig wachtwoord</value>
+    </data>
+    <data name="Current password is required." xml:space="preserve">
+        <value>Huidig wachtwoord vereist.</value>
+    </data>
+    <data name="Danger zone" xml:space="preserve">
+        <value>Gevarenzone</value>
+    </data>
+    <data name="Dark" xml:space="preserve">
+        <value>Donker</value>
+    </data>
+    <data name="Delete" xml:space="preserve">
+        <value>Verwijderen</value>
+    </data>
+    <data name="Delete my account" xml:space="preserve">
+        <value>Delete my account</value>
+    </data>
+    <data name="Deletion cancelled. You can continue using your account normally." xml:space="preserve">
+        <value>Verwijdering geannuleerd. U kunt uw account normaal blijven gebruiken.</value>
+    </data>
+    <data name="Didn't get the email?" xml:space="preserve">
+        <value>Geen e‑mail ontvangen?</value>
+    </data>
+    <data name="Disable" xml:space="preserve">
+        <value>Uitschakelen</value>
+    </data>
+    <data name="Disable authenticator app" xml:space="preserve">
+        <value>Authenticatorapp uitschakelen</value>
+    </data>
+    <data name="Disable email two-factor" xml:space="preserve">
+        <value>E‑mail tweefactor uitschakelen</value>
+    </data>
+    <data name="Display Name" xml:space="preserve">
+        <value>Weergavenaam</value>
+    </data>
+    <data name="Display name" xml:space="preserve">
+        <value>Weergavenaam</value>
+    </data>
+    <data name="Display name is required." xml:space="preserve">
+        <value>Weergavenaam vereist.</value>
+    </data>
+    <data name="Documents" xml:space="preserve">
+        <value>Documenten</value>
+    </data>
+    <data name="Documents ({0})" xml:space="preserve">
+        <value>Documenten ({0})</value>
+    </data>
+    <data name="Don't have an account?" xml:space="preserve">
+        <value>Heeft u geen account?</value>
+    </data>
+    <data name="Download a copy of your data, or permanently delete your Marechai account." xml:space="preserve">
+        <value>Een kopie van uw gegevens downloaden of uw Marechai‑account permanent verwijderen.</value>
+    </data>
+    <data name="Download my data" xml:space="preserve">
+        <value>Mijn gegevens downloaden</value>
+    </data>
+    <data name="Edit Account" xml:space="preserve">
+        <value>Account bewerken</value>
+    </data>
+    <data name="Email" xml:space="preserve">
+        <value>E‑mail</value>
+    </data>
+    <data name="Email code" xml:space="preserve">
+        <value>E‑mailcode</value>
+    </data>
+    <data name="Email is required." xml:space="preserve">
+        <value>E‑mail vereist.</value>
+    </data>
+    <data name="Email two-factor" xml:space="preserve">
+        <value>E‑mail tweefactor</value>
+    </data>
+    <data name="Email two-factor disabled." xml:space="preserve">
+        <value>E-mail tweefactorauthenticatie uitgeschakeld.</value>
+    </data>
+    <data name="Email two-factor enabled." xml:space="preserve">
+        <value>E‑mail tweefactor ingeschakeld.</value>
+    </data>
+    <data name="Email: {0}" xml:space="preserve">
+        <value>E‑mail: {0}</value>
+    </data>
+    <data name="Enable" xml:space="preserve">
+        <value>Inschakelen</value>
+    </data>
+    <data name="Enter the email address for your account and we will send you a link to reset your password." xml:space="preserve">
+        <value>Voer het e‑mailadres voor uw account in en wij sturen u een link om uw wachtwoord te resetten.</value>
+    </data>
+    <data name="Enter the email address you registered with and we will send you a fresh confirmation link." xml:space="preserve">
+        <value>Voer het e‑mailadres in waarmee u zich heeft geregistreerd en wij sturen u een nieuwe bevestigingslink.</value>
+    </data>
+    <data name="Entity" xml:space="preserve">
+        <value>Entidad</value>
+    </data>
+    <data name="Facebook" xml:space="preserve">
+        <value>Facebook</value>
+    </data>
+    <data name="Failed to change password." xml:space="preserve">
+        <value>Wachtwoord wijzigen mislukt.</value>
+    </data>
+    <data name="Failed to delete avatar." xml:space="preserve">
+        <value>Avatar verwijderen mislukt.</value>
+    </data>
+    <data name="Failed to disable authenticator." xml:space="preserve">
+        <value>Authenticator uitschakelen mislukt.</value>
+    </data>
+    <data name="Failed to disable email two-factor." xml:space="preserve">
+        <value>E‑mail tweefactor uitschakelen mislukt.</value>
+    </data>
+    <data name="Failed to generate authenticator setup." xml:space="preserve">
+        <value>Authenticator-instelling genereren mislukt.</value>
+    </data>
+    <data name="Failed to load profile." xml:space="preserve">
+        <value>Profiel laden mislukt.</value>
+    </data>
+    <data name="Failed to regenerate recovery codes." xml:space="preserve">
+        <value>Failed to regenerate recovery codes.</value>
+    </data>
+    <data name="Failed to reset theme." xml:space="preserve">
+        <value>Thema opnieuw instellen mislukt.</value>
+    </data>
+    <data name="Failed to save theme." xml:space="preserve">
+        <value>Thema opslaan mislukt.</value>
+    </data>
+    <data name="Failed to update profile." xml:space="preserve">
+        <value>Profiel bijwerken mislukt.</value>
+    </data>
+    <data name="Failed to update public profile." xml:space="preserve">
+        <value>Openbaar profiel bijwerken mislukt.</value>
+    </data>
+    <data name="Failed to upload avatar." xml:space="preserve">
+        <value>Avatar uploaden mislukt.</value>
+    </data>
+    <data name="For your security, please confirm by entering your current password and a valid two-factor code." xml:space="preserve">
+        <value>Voor uw veiligheid bevestigt u door uw huidige wachtwoord en een geldige tweefactorkode in te voeren.</value>
+    </data>
+    <data name="Forgot Password" xml:space="preserve">
+        <value>Wachtwoord vergeten</value>
+    </data>
+    <data name="Forgot your password?" xml:space="preserve">
+        <value>Wachtwoord vergeten?</value>
+    </data>
+    <data name="Format: XXXX-YYYY" xml:space="preserve">
+        <value>Format: XXXX-YYYY</value>
+    </data>
+    <data name="GitHub" xml:space="preserve">
+        <value>GitHub</value>
+    </data>
+    <data name="Go to sign in" xml:space="preserve">
+        <value>Ga naar inloggen</value>
+    </data>
+    <data name="I have saved them" xml:space="preserve">
+        <value>I have saved them</value>
+    </data>
+    <data name="I have two-factor authentication enabled" xml:space="preserve">
+        <value>I have two-factor authentication enabled</value>
+    </data>
+    <data name="If an account with that email exists and hasn't been confirmed yet, we have sent a fresh confirmation link to it. Please check your inbox (and spam folder)." xml:space="preserve">
+        <value>If an account with that email exists and hasn't been confirmed yet, we have sent a fresh confirmation link to it. Please check your inbox (and spam folder).</value>
+    </data>
+    <data name="If an account with that email exists, we have sent a password reset link to it. Please check your inbox (and spam folder) and follow the link to choose a new password." xml:space="preserve">
+        <value>Als er een account met dat e‑mailadres bestaat, hebben wij een wachtwoordresetlink naar het adres gestuurd. Controleer uw inbox (en spammap) en volg de link om een nieuw wachtwoord te kiezen.</value>
+    </data>
+    <data name="Invalid or expired confirmation link." xml:space="preserve">
+        <value>Ongeldige of verlopen bevestigingslink.</value>
+    </data>
+    <data name="Invalid recovery code." xml:space="preserve">
+        <value>Ongeldige herstelcode.</value>
+    </data>
+    <data name="Invalid verification code." xml:space="preserve">
+        <value>Ongeldige verificatiecode.</value>
+    </data>
+    <data name="Invitation code" xml:space="preserve">
+        <value>Invitation code</value>
+    </data>
+    <data name="Invitation code is required." xml:space="preserve">
+        <value>Inlogcode vereist.</value>
+    </data>
+    <data name="Issue" xml:space="preserve">
+        <value>Issue</value>
+    </data>
+    <data name="Item" xml:space="preserve">
+        <value>Elemento</value>
+    </data>
+    <data name="Light" xml:space="preserve">
+        <value>Licht</value>
+    </data>
+    <data name="LinkedIn" xml:space="preserve">
+        <value>LinkedIn</value>
+    </data>
+    <data name="Links" xml:space="preserve">
+        <value>Links</value>
+    </data>
+    <data name="Location" xml:space="preserve">
+        <value>Locatie</value>
+    </data>
+    <data name="Login" xml:space="preserve">
+        <value>Inloggen</value>
+    </data>
+    <data name="Login failed." xml:space="preserve">
+        <value>Login failed.</value>
+    </data>
+    <data name="Logout" xml:space="preserve">
+        <value>Uitloggen</value>
+    </data>
+    <data name="Machine" xml:space="preserve">
+        <value>Machine</value>
+    </data>
+    <data name="Machines" xml:space="preserve">
+        <value>Máquinas</value>
+    </data>
+    <data name="Machines ({0})" xml:space="preserve">
+        <value>Machines ({0})</value>
+    </data>
+    <data name="Magazine Issues" xml:space="preserve">
+        <value>Tijdschriften</value>
+    </data>
+    <data name="Magazine Issues ({0})" xml:space="preserve">
+        <value>Tijdschriften ({0})</value>
+    </data>
+    <data name="Manual entry key:" xml:space="preserve">
+        <value>Handmatige invoer­sleutel:</value>
+    </data>
+    <data name="Marechai is an invitation-only community. Paste the code an admin shared with you, fill in the fields below, and we will email you a link to confirm your account." xml:space="preserve">
+        <value>Marechai is een alleen‑op‑uitnodiging gemeenschap. Plak de code die een beheerder met u heeft gedeeld, vul onderstaande velden in en wij sturen u een e‑mail met een link om uw account te bevestigen.</value>
+    </data>
+    <data name="Mastodon" xml:space="preserve">
+        <value>Mastodon</value>
+    </data>
+    <data name="Method" xml:space="preserve">
+        <value>Methode</value>
+    </data>
+    <data name="Minimum 6 characters" xml:space="preserve">
+        <value>Minimum 6 tekens</value>
+    </data>
+    <data name="My Collection" xml:space="preserve">
+        <value>Mijn collectie</value>
+    </data>
+    <data name="My Profile" xml:space="preserve">
+        <value>Mijn profiel</value>
+    </data>
+    <data name="My Suggestions" xml:space="preserve">
+        <value>Mis sugerencias</value>
+    </data>
+    <data name="New password" xml:space="preserve">
+        <value>Nieuw wachtwoord</value>
+    </data>
+    <data name="New password is required." xml:space="preserve">
+        <value>Nieuw wachtwoord vereist.</value>
+    </data>
+    <data name="New password must be at least 6 characters." xml:space="preserve">
+        <value>Nieuw wachtwoord moet minimaal 6 tekens bevatten.</value>
+    </data>
+    <data name="No books in your collection yet." xml:space="preserve">
+        <value>Nog geen boeken in uw collectie.</value>
+    </data>
+    <data name="No deletion request is pending on your account." xml:space="preserve">
+        <value>Geen verwijderingsverzoek in behandeling op uw account.</value>
+    </data>
+    <data name="No documents in your collection yet." xml:space="preserve">
+        <value>Nog geen documenten in uw collectie.</value>
+    </data>
+    <data name="No machines in your collection yet." xml:space="preserve">
+        <value>Nog geen machines in uw collectie.</value>
+    </data>
+    <data name="No magazine issues in your collection yet." xml:space="preserve">
+        <value>Nog geen tijdschriften in uw collectie.</value>
+    </data>
+    <data name="No roles assigned" xml:space="preserve">
+        <value>No roles assigned</value>
+    </data>
+    <data name="No software in your collection yet." xml:space="preserve">
+        <value>Nog geen software in uw collectie.</value>
+    </data>
+    <data name="Partially accepted" xml:space="preserve">
+        <value>Parcialmente aceptado</value>
+    </data>
+    <data name="Password" xml:space="preserve">
+        <value>Wachtwoord</value>
+    </data>
+    <data name="Password and code are required." xml:space="preserve">
+        <value>Wachtwoord en code vereist.</value>
+    </data>
+    <data name="Password changed successfully." xml:space="preserve">
+        <value>Wachtwoord succesvol gewijzigd.</value>
+    </data>
+    <data name="Password is required." xml:space="preserve">
+        <value>Wachtwoord vereist.</value>
+    </data>
+    <data name="Passwords do not match." xml:space="preserve">
+        <value>Wachtwoorden komen niet overeen.</value>
+    </data>
+    <data name="Pending" xml:space="preserve">
+        <value>Pendiente</value>
+    </data>
+    <data name="Phone Number" xml:space="preserve">
+        <value>Telefoonnummer</value>
+    </data>
+    <data name="Pick a theme to personalise the look of Marechai. Changes apply instantly and are saved to your profile." xml:space="preserve">
+        <value>Kies een thema om het uiterlijk van Marechai aan te passen. Wijzigingen worden meteen toegepast en opgeslagen in uw profiel.</value>
+    </data>
+    <data name="Please confirm your email address before signing in." xml:space="preserve">
+        <value>Bevestig uw e‑mailadres voordat u zich aanmeldt.</value>
+    </data>
+    <data name="Profile" xml:space="preserve">
+        <value>Profiel</value>
+    </data>
+    <data name="Profile name or URL" xml:space="preserve">
+        <value>Profielnaam of URL</value>
+    </data>
+    <data name="Profile slug (e.g. john-doe)" xml:space="preserve">
+        <value>Profiel‑slug (bijv. jan-piet)</value>
+    </data>
+    <data name="Profile updated successfully." xml:space="preserve">
+        <value>Profiel succesvol bijgewerkt.</value>
+    </data>
+    <data name="Public Profile" xml:space="preserve">
+        <value>Openbaar profiel</value>
+    </data>
+    <data name="Public profile updated successfully." xml:space="preserve">
+        <value>Openbaar profiel succesvol bijgewerkt.</value>
+    </data>
+    <data name="Recovery code" xml:space="preserve">
+        <value>Herstelcode</value>
+    </data>
+    <data name="Recovery code is required." xml:space="preserve">
+        <value>Herstelcode vereist.</value>
+    </data>
+    <data name="Recovery codes" xml:space="preserve">
+        <value>Herstelcodes</value>
+    </data>
+    <data name="Recovery codes regenerated." xml:space="preserve">
+        <value>Herstelcodes opnieuw gegenereerd.</value>
+    </data>
+    <data name="Recovery codes remaining: {0}" xml:space="preserve">
+        <value>Recovery codes remaining: {0}</value>
+    </data>
+    <data name="Regenerate" xml:space="preserve">
+        <value>Herstellen</value>
+    </data>
+    <data name="Regenerate recovery codes" xml:space="preserve">
+        <value>Herstelcodes regenereren</value>
+    </data>
+    <data name="Registration failed." xml:space="preserve">
+        <value>Registratie mislukt.</value>
+    </data>
+    <data name="Rejected" xml:space="preserve">
+        <value>Rechazado</value>
+    </data>
+    <data name="Request a new link" xml:space="preserve">
+        <value>Een nieuwe link aanvragen</value>
+    </data>
+    <data name="Resend confirmation email" xml:space="preserve">
+        <value>Bevestigingsmail opnieuw verzenden</value>
+    </data>
+    <data name="Reset Password" xml:space="preserve">
+        <value>Wachtwoord opnieuw instellen</value>
+    </data>
+    <data name="Reset to default" xml:space="preserve">
+        <value>Opnieuw instellen op standaard</value>
+    </data>
+    <data name="Resetting..." xml:space="preserve">
+        <value>Resetten…</value>
+    </data>
+    <data name="Restart deletion request" xml:space="preserve">
+        <value>Verwijderingsverzoek opnieuw starten</value>
+    </data>
+    <data name="Reviewed" xml:space="preserve">
+        <value>Revisado</value>
+    </data>
+    <data name="Reviews" xml:space="preserve">
+        <value>Beoordelingen</value>
+    </data>
+    <data name="Roles" xml:space="preserve">
+        <value>Rollen</value>
+    </data>
+    <data name="Save" xml:space="preserve">
+        <value>Opslaan</value>
+    </data>
+    <data name="Save Public Profile" xml:space="preserve">
+        <value>Openbaar profiel opslaan</value>
+    </data>
+    <data name="Save these recovery codes in a safe place. They will not be shown again." xml:space="preserve">
+        <value>Bewaar deze herstelcodes op een veilige plek. Ze worden niet opnieuw weergegeven.</value>
+    </data>
+    <data name="Saving..." xml:space="preserve">
+        <value>Opslaan…</value>
+    </data>
+    <data name="Scan this QR code with your authenticator app, or enter the key manually:" xml:space="preserve">
+        <value>Scan deze QR‑code met uw authenticatorapp of voer de sleutel handmatig in:</value>
+    </data>
+    <data name="Scheduled for" xml:space="preserve">
+        <value>Scheduled for</value>
+    </data>
+    <data name="Security" xml:space="preserve">
+        <value>Beveiliging</value>
+    </data>
+    <data name="Send a new confirmation email" xml:space="preserve">
+        <value>Nieuwe bevestigingsmail verzenden</value>
+    </data>
+    <data name="Send code to my email" xml:space="preserve">
+        <value>Code naar mijn e‑mail verzenden</value>
+    </data>
+    <data name="Send confirmation email" xml:space="preserve">
+        <value>Bevestigingsmail verzenden</value>
+    </data>
+    <data name="Send reset link" xml:space="preserve">
+        <value>Resetlink verzenden</value>
+    </data>
+    <data name="Sending..." xml:space="preserve">
+        <value>Verzenden…</value>
+    </data>
+    <data name="Setup authenticator" xml:space="preserve">
+        <value>Authenticator instellen</value>
+    </data>
+    <data name="Shown instead of your username on your public profile." xml:space="preserve">
+        <value>In plaats van uw gebruikersnaam op uw openbare profiel weergegeven.</value>
+    </data>
+    <data name="Shown publicly on your profile and contributions." xml:space="preserve">
+        <value>Openbaar weergegeven op uw profiel en bijdragen.</value>
+    </data>
+    <data name="Sign in" xml:space="preserve">
+        <value>Inloggen</value>
+    </data>
+    <data name="Sign up" xml:space="preserve">
+        <value>Registreren</value>
+    </data>
+    <data name="Signing in..." xml:space="preserve">
+        <value>Aan het inloggen…</value>
+    </data>
+    <data name="Smartphones" xml:space="preserve">
+        <value>Smartphones</value>
+    </data>
+    <data name="Social Links" xml:space="preserve">
+        <value>Social Links</value>
+    </data>
+    <data name="Software" xml:space="preserve">
+        <value>Software</value>
+    </data>
+    <data name="Software ({0})" xml:space="preserve">
+        <value>Software ({0})</value>
+    </data>
+    <data name="Stale" xml:space="preserve">
+        <value>Obsoleto</value>
+    </data>
+    <data name="Status" xml:space="preserve">
+        <value>Estado</value>
+    </data>
+    <data name="Submitted" xml:space="preserve">
+        <value>Enviado</value>
+    </data>
+    <data name="Suggestions you submitted, including their current review status." xml:space="preserve">
+        <value>Suggesties die u heeft ingediend, inclusief hun huidige beoordelingsstatus.</value>
+    </data>
+    <data name="Tell people about yourself." xml:space="preserve">
+        <value>Vertel mensen over uzelf.</value>
+    </data>
+    <data name="The confirmation link is missing required fields." xml:space="preserve">
+        <value>The confirmation link is missing required fields.</value>
+    </data>
+    <data name="The deletion link is missing required fields." xml:space="preserve">
+        <value>De verwijderingslink mist vereiste velden.</value>
+    </data>
+    <data name="The reset link is invalid or incomplete. Please request a new one." xml:space="preserve">
+        <value>De resetlink is ongeldig of incompleet. Vraag een nieuwe aan.</value>
+    </data>
+    <data name="Theme reset to default." xml:space="preserve">
+        <value>Thema teruggezet naar standaard.</value>
+    </data>
+    <data name="Theme set to &quot;{0}&quot;." xml:space="preserve">
+        <value>Thema ingesteld op "{0}".</value>
+    </data>
+    <data name="This will permanently remove your account and personal data. Your public contributions (photos, scans, reviews, messages) will be retained but anonymised. After confirming, you have 30 days to change your mind by signing in and choosing 'Cancel deletion'." xml:space="preserve">
+        <value>Dit zal uw account en persoonlijke gegevens permanent verwijderen. Uw openbare bijdragen (foto’s, scans, beoordelingen, berichten) blijven behouden maar worden geanonimiseerd. Na bevestiging heeft u 30 dagen om van gedachten te veranderen door in te loggen en 'Verwijdering annuleren' te kiezen.</value>
+    </data>
+    <data name="Title" xml:space="preserve">
+        <value>Titel</value>
+    </data>
+    <data name="Twitter / X" xml:space="preserve">
+        <value>Twitter / X</value>
+    </data>
+    <data name="Two-factor authentication" xml:space="preserve">
+        <value>Tweefactorauthenticatie</value>
+    </data>
+    <data name="Two-factor authentication is disabled." xml:space="preserve">
+        <value>Tweefactorauthenticatie is &lt;strong&gt;uitgeschakeld&lt;/strong&gt;.</value>
+    </data>
+    <data name="Two-factor authentication is enabled." xml:space="preserve">
+        <value>Tweefactorauthenticatie is &lt;strong&gt;ingeschakeld&lt;/strong&gt;.</value>
+    </data>
+    <data name="Two-factor code" xml:space="preserve">
+        <value>Tweefactorkode</value>
+    </data>
+    <data name="Two-factor code is required." xml:space="preserve">
+        <value>Tweefactorkode vereist.</value>
+    </data>
+    <data name="Two-factor method" xml:space="preserve">
+        <value>Tweefactormethode</value>
+    </data>
+    <data name="Upload Avatar" xml:space="preserve">
+        <value>Avatar uploaden</value>
+    </data>
+    <data name="Use Gravatar" xml:space="preserve">
+        <value>Gravatar gebruiken</value>
+    </data>
+    <data name="Use a recovery code" xml:space="preserve">
+        <value>Herstelcode gebruiken</value>
+    </data>
+    <data name="User not found." xml:space="preserve">
+        <value>Gebruiker niet gevonden.</value>
+    </data>
+    <data name="Username" xml:space="preserve">
+        <value>Gebruikersnaam</value>
+    </data>
+    <data name="Username (without @)" xml:space="preserve">
+        <value>Gebruikersnaam (zonder @)</value>
+    </data>
+    <data name="Username is required." xml:space="preserve">
+        <value>Gebruikersnaam vereist.</value>
+    </data>
+    <data name="Verification code" xml:space="preserve">
+        <value>Verificatiecode</value>
+    </data>
+    <data name="Verification code is required." xml:space="preserve">
+        <value>Verificatiecode vereist.</value>
+    </data>
+    <data name="Verify" xml:space="preserve">
+        <value>Verifiëren</value>
+    </data>
+    <data name="Verify recovery code" xml:space="preserve">
+        <value>Herstelcode verifiëren</value>
+    </data>
+    <data name="Verifying..." xml:space="preserve">
+        <value>Bezig met verifiëren...</value>
+    </data>
+    <data name="View Public Profile" xml:space="preserve">
+        <value>Openbaar profiel bekijken</value>
+    </data>
+    <data name="View deletion status" xml:space="preserve">
+        <value>View deletion status</value>
+    </data>
+    <data name="We sent you an email with a confirmation link. Click it to start the 30-day deletion grace window. Until then your account is unchanged." xml:space="preserve">
+        <value>Wij hebben u een e‑mail gestuurd met een bevestigingslink. Klik erop om de 30‑daagse gratieperiode te starten. Tot die tijd blijft uw account ongewijzigd.</value>
+    </data>
+    <data name="Website" xml:space="preserve">
+        <value>Website</value>
+    </data>
+    <data name="Withdraw" xml:space="preserve">
+        <value>Retirar</value>
+    </data>
+    <data name="Withdrawn" xml:space="preserve">
+        <value>Retirado</value>
+    </data>
+    <data name="You haven't submitted any suggestions yet." xml:space="preserve">
+        <value>Aún no has enviado ninguna sugerencia.</value>
+    </data>
+    <data name="Your account is now scheduled for deletion. We will permanently remove it after the 30-day grace window. To cancel, sign in any time before then and choose 'Cancel deletion'." xml:space="preserve">
+        <value>Uw account staat nu gepland voor verwijdering. Wij verwijderen het permanent na de 30‑daagse gratieperiode. Om te annuleren, log vóór die tijd in en kies 'Verwijdering annuleren'.</value>
+    </data>
+    <data name="Your account is scheduled for permanent deletion. Until then, most of the site is unavailable to you." xml:space="preserve">
+        <value>Uw account staat gepland voor permanente verwijdering. Tot die tijd is het merendeel van de site niet beschikbaar.</value>
+    </data>
+    <data name="Your email is confirmed. You can now sign in to Marechai." xml:space="preserve">
+        <value>Uw e‑mail is bevestigd. U kunt nu inloggen op Marechai.</value>
+    </data>
+    <data name="Your password has been reset. You can now sign in with your new password." xml:space="preserve">
+        <value>Uw wachtwoord is gereset. U kunt nu inloggen met uw nieuwe wachtwoord.</value>
+    </data>
+    <data name="disabled" xml:space="preserve">
+        <value>disabled</value>
+    </data>
+    <data name="enabled" xml:space="preserve">
+        <value>enabled</value>
+    </data>
+    <data name="user@instance.social" xml:space="preserve">
+        <value>user@instance.social</value>
+    </data>
+</root>

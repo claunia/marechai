@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e108</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e108</value>
+    </resheader>
+    <data name="About" xml:space="preserve">
+        <value>Over</value>
+    </data>
+    <data name="Admin area" xml:space="preserve">
+        <value>Administratiegebied</value>
+    </data>
+    <data name="Administration" xml:space="preserve">
+        <value>Administratie</value>
+    </data>
+    <data name="Advanced Search" xml:space="preserve">
+        <value>Geavanceerd zoeken</value>
+    </data>
+    <data name="All categories" xml:space="preserve">
+        <value>Alle categorieën</value>
+    </data>
+    <data name="Any" xml:space="preserve">
+        <value>Alleen</value>
+    </data>
+    <data name="Application" xml:space="preserve">
+        <value>Toepassing</value>
+    </data>
+    <data name="Back to Navigation" xml:space="preserve">
+        <value>Terug naar navigatie</value>
+    </data>
+    <data name="Book" xml:space="preserve">
+        <value>Boek</value>
+    </data>
+    <data name="Book Management" xml:space="preserve">
+        <value>Boekenbeheer</value>
+    </data>
+    <data name="Books" xml:space="preserve">
+        <value>Boeken</value>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Annuleren</value>
+    </data>
+    <data name="Close" xml:space="preserve">
+        <value>Sluiten</value>
+    </data>
+    <data name="Companies" xml:space="preserve">
+        <value>Bedrijven</value>
+    </data>
+    <data name="Company" xml:space="preserve">
+        <value>Bedrijf</value>
+    </data>
+    <data name="Compilation" xml:space="preserve">
+        <value>Compilatie</value>
+    </data>
+    <data name="Compilation includes software" xml:space="preserve">
+        <value>De compilatie bevat software</value>
+    </data>
+    <data name="Computer" xml:space="preserve">
+        <value>Computer</value>
+    </data>
+    <data name="Computers" xml:space="preserve">
+        <value>Computers</value>
+    </data>
+    <data name="Console" xml:space="preserve">
+        <value>Console</value>
+    </data>
+    <data name="Consoles" xml:space="preserve">
+        <value>Consoles</value>
+    </data>
+    <data name="Contact" xml:space="preserve">
+        <value>Contact</value>
+    </data>
+    <data name="Contains" xml:space="preserve">
+        <value>Bevat</value>
+    </data>
+    <data name="Country" xml:space="preserve">
+        <value>Land</value>
+    </data>
+    <data name="Country known" xml:space="preserve">
+        <value>Bekend land</value>
+    </data>
+    <data name="DLC / Addon" xml:space="preserve">
+        <value>DLC / Add-on</value>
+    </data>
+    <data name="Development software" xml:space="preserve">
+        <value>Ontwikkelingssoftware</value>
+    </data>
+    <data name="Document" xml:space="preserve">
+        <value>Document</value>
+    </data>
+    <data name="Document Management" xml:space="preserve">
+        <value>Beheer van documenten</value>
+    </data>
+    <data name="Documents" xml:space="preserve">
+        <value>Documenten</value>
+    </data>
+    <data name="Does not contain" xml:space="preserve">
+        <value>Bevat niet</value>
+    </data>
+    <data name="Embedded software" xml:space="preserve">
+        <value>Ingebedde software</value>
+    </data>
+    <data name="Entity types" xml:space="preserve">
+        <value>Entiteitstypes</value>
+    </data>
+    <data name="Exact match" xml:space="preserve">
+        <value>Exacte overeenkomst</value>
+    </data>
+    <data name="Firmware" xml:space="preserve">
+        <value>Firmware</value>
+    </data>
+    <data name="GPU" xml:space="preserve">
+        <value>GPU</value>
+    </data>
+    <data name="GPU Management" xml:space="preserve">
+        <value>Beheer van GPU's</value>
+    </data>
+    <data name="GPUs" xml:space="preserve">
+        <value>GPU's</value>
+    </data>
+    <data name="Generic software" xml:space="preserve">
+        <value>Algemene software</value>
+    </data>
+    <data name="Has image" xml:space="preserve">
+        <value>Heeft afbeelding</value>
+    </data>
+    <data name="Hello {0}!" xml:space="preserve">
+        <value>Hallo {0}!</value>
+    </data>
+    <data name="In my collection" xml:space="preserve">
+        <value>In mijn collectie</value>
+    </data>
+    <data name="Instruction Set Extension Management" xml:space="preserve">
+        <value>Beheer van instructie-setextensies</value>
+    </data>
+    <data name="Instruction Set Management" xml:space="preserve">
+        <value>Beheer van instructie-sets</value>
+    </data>
+    <data name="Invitation Codes" xml:space="preserve">
+        <value>Uitnodigingscodes</value>
+    </data>
+    <data name="Log in" xml:space="preserve">
+        <value>Inloggen</value>
+    </data>
+    <data name="Log out" xml:space="preserve">
+        <value>Uitloggen</value>
+    </data>
+    <data name="Machine Family Management" xml:space="preserve">
+        <value>Beheer van machinefamilies</value>
+    </data>
+    <data name="Machine Management" xml:space="preserve">
+        <value>Beheer van machines</value>
+    </data>
+    <data name="Made by company" xml:space="preserve">
+        <value>Gemaakt door bedrijf</value>
+    </data>
+    <data name="Magazine" xml:space="preserve">
+        <value>Tijdschrift</value>
+    </data>
+    <data name="Magazine Management" xml:space="preserve">
+        <value>Tijdschriftbeheer</value>
+    </data>
+    <data name="Magazines" xml:space="preserve">
+        <value>Tijdschriften</value>
+    </data>
+    <data name="Message Reports" xml:space="preserve">
+        <value>Berichtrapporten</value>
+    </data>
+    <data name="Middleware" xml:space="preserve">
+        <value>Middleware</value>
+    </data>
+    <data name="Name (A→Z)" xml:space="preserve">
+        <value>Naam (A→Z)</value>
+    </data>
+    <data name="Name (Z→A)" xml:space="preserve">
+        <value>Naam (Z→A)</value>
+    </data>
+    <data name="News" xml:space="preserve">
+        <value>Nieuws</value>
+    </data>
+    <data name="No" xml:space="preserve">
+        <value>Nee</value>
+    </data>
+    <data name="No results found." xml:space="preserve">
+        <value>Geen resultaten gevonden.</value>
+    </data>
+    <data name="Not in mine" xml:space="preserve">
+        <value>Niet in de mijne</value>
+    </data>
+    <data name="Only mine" xml:space="preserve">
+        <value>Alleen de mijne</value>
+    </data>
+    <data name="Operating system" xml:space="preserve">
+        <value>Besturingssysteem</value>
+    </data>
+    <data name="PDAs" xml:space="preserve">
+        <value>PDA's</value>
+    </data>
+    <data name="People" xml:space="preserve">
+        <value>Personen</value>
+    </data>
+    <data name="People Management" xml:space="preserve">
+        <value>Beheer van personen</value>
+    </data>
+    <data name="Person" xml:space="preserve">
+        <value>Persoon</value>
+    </data>
+    <data name="Processor" xml:space="preserve">
+        <value>Processor</value>
+    </data>
+    <data name="Processor Management" xml:space="preserve">
+        <value>Processorbeheer</value>
+    </data>
+    <data name="Processors" xml:space="preserve">
+        <value>Processoren</value>
+    </data>
+    <data name="Query" xml:space="preserve">
+        <value>Query</value>
+    </data>
+    <data name="Refine search" xml:space="preserve">
+        <value>Zoek verfijnen</value>
+    </data>
+    <data name="Register" xml:space="preserve">
+        <value>Registreren</value>
+    </data>
+    <data name="Relevance" xml:space="preserve">
+        <value>Relevantie</value>
+    </data>
+    <data name="Resolution Management" xml:space="preserve">
+        <value>Resolutiebeheer</value>
+    </data>
+    <data name="Screen Management" xml:space="preserve">
+        <value>Beheer van schermen</value>
+    </data>
+    <data name="Search" xml:space="preserve">
+        <value>Zoeken</value>
+    </data>
+    <data name="Search Results" xml:space="preserve">
+        <value>Zoekresultaten</value>
+    </data>
+    <data name="Search…" xml:space="preserve">
+        <value>Zoeken…</value>
+    </data>
+    <data name="Server software" xml:space="preserve">
+        <value>Serversoftware</value>
+    </data>
+    <data name="Smartphone" xml:space="preserve">
+        <value>Slimme telefoon</value>
+    </data>
+    <data name="Smartphones" xml:space="preserve">
+        <value>Slimme telefoons</value>
+    </data>
+    <data name="Software" xml:space="preserve">
+        <value>Software</value>
+    </data>
+    <data name="Software Attributes Management" xml:space="preserve">
+        <value>Beheer van softwareattributen</value>
+    </data>
+    <data name="Software Compilations" xml:space="preserve">
+        <value>Softwarecompilaties</value>
+    </data>
+    <data name="Software Family Management" xml:space="preserve">
+        <value>Beheer van softwarefamilies</value>
+    </data>
+    <data name="Software Management" xml:space="preserve">
+        <value>Softwarebeheer</value>
+    </data>
+    <data name="Software Platform Management" xml:space="preserve">
+        <value>Beheer van softwareplatforms</value>
+    </data>
+    <data name="Software Release Management" xml:space="preserve">
+        <value>Beheer van softwareuitgaven</value>
+    </data>
+    <data name="Software kind" xml:space="preserve">
+        <value>Soort software</value>
+    </data>
+    <data name="Sort by" xml:space="preserve">
+        <value>Sorteer op</value>
+    </data>
+    <data name="Sound Synth Management" xml:space="preserve">
+        <value>Beheer van geluidssynthesizers</value>
+    </data>
+    <data name="Sound Synthesizer" xml:space="preserve">
+        <value>Geluidssynthesizer</value>
+    </data>
+    <data name="Sound synthesizers" xml:space="preserve">
+        <value>Geluidssynthesizers</value>
+    </data>
+    <data name="Starting letter" xml:space="preserve">
+        <value>Beginletter</value>
+    </data>
+    <data name="Suggestions Queue" xml:space="preserve">
+        <value>Wachtrij voor suggesties</value>
+    </data>
+    <data name="System software" xml:space="preserve">
+        <value>Systeemsoftware</value>
+    </data>
+    <data name="Tablets" xml:space="preserve">
+        <value>Tabletten</value>
+    </data>
+    <data name="Tip: prefix to filter by category" xml:space="preserve">
+        <value>Tip: voorvoegsel om te filteren op categorie</value>
+    </data>
+    <data name="Type at least 3 characters to search." xml:space="preserve">
+        <value>Typ minimaal 3 tekens om te zoeken.</value>
+    </data>
+    <data name="Unknown" xml:space="preserve">
+        <value>Onbekend</value>
+    </data>
+    <data name="User Management" xml:space="preserve">
+        <value>Gebruikersbeheer</value>
+    </data>
+    <data name="Videogame" xml:space="preserve">
+        <value>Videospel</value>
+    </data>
+    <data name="Year (newest first)" xml:space="preserve">
+        <value>Jaar (nieuwste eerst)</value>
+    </data>
+    <data name="Year (oldest first)" xml:space="preserve">
+        <value>Jaar (oudste eerst)</value>
+    </data>
+    <data name="Year from" xml:space="preserve">
+        <value>Jaar vanaf</value>
+    </data>
+    <data name="Year known" xml:space="preserve">
+        <value>Bekend jaar</value>
+    </data>
+    <data name="Year to" xml:space="preserve">
+        <value>Jaar tot</value>
+    </data>
+    <data name="Yes" xml:space="preserve">
+        <value>Ja</value>
+    </data>
+    <data name="{0} results across {1} categories." xml:space="preserve">
+        <value>{0} resultaten over {1} categorieën.</value>
+    </data>
+</root>

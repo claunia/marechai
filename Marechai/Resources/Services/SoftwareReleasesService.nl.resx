@@ -1,0 +1,526 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e108</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e108</value>
+    </resheader>
+    <data name="* A new software or platform entry will be created with this name during import." xml:space="preserve">
+        <value>* Een nieuwe software- of platformvermelding wordt tijdens de import met deze naam aangemaakt.</value>
+    </data>
+    <data name="Accept this cover" xml:space="preserve">
+        <value>Accepteer deze omslag</value>
+    </data>
+    <data name="Accepting {0} of {1} cover(s). Rejected images and their pending files will be deleted on submit." xml:space="preserve">
+        <value>Accepteren van {0} van {1} omslag(en). Afgewezen afbeeldingen en hun lopende bestanden worden verwijderd bij verzending.</value>
+    </data>
+    <data name="Actions" xml:space="preserve">
+        <value>Acties</value>
+    </data>
+    <data name="Add" xml:space="preserve">
+        <value>Toevoegen</value>
+    </data>
+    <data name="Add Release" xml:space="preserve">
+        <value>Versie toevoegen</value>
+    </data>
+    <data name="Add at least one successfully-uploaded image and pick a type for each before submitting." xml:space="preserve">
+        <value>Voeg ten minste één succesvol geüploade afbeelding toe en kies een type voor elke afbeelding voordat je verzendt.</value>
+    </data>
+    <data name="Add barcode" xml:space="preserve">
+        <value>Balkcode toevoegen</value>
+    </data>
+    <data name="Add images" xml:space="preserve">
+        <value>Afbeeldingen toevoegen</value>
+    </data>
+    <data name="Add language" xml:space="preserve">
+        <value>Taal toevoegen</value>
+    </data>
+    <data name="Add minimum GPU" xml:space="preserve">
+        <value>Minimale GPU toevoegen</value>
+    </data>
+    <data name="Add product code" xml:space="preserve">
+        <value>Productcode toevoegen</value>
+    </data>
+    <data name="Add rating" xml:space="preserve">
+        <value>Beoordeling toevoegen</value>
+    </data>
+    <data name="Add recommended GPU" xml:space="preserve">
+        <value>Aanbevolen GPU toevoegen</value>
+    </data>
+    <data name="Add region" xml:space="preserve">
+        <value>Regio toevoegen</value>
+    </data>
+    <data name="Add sound synthesizer" xml:space="preserve">
+        <value>Geluidssynthesizer toevoegen</value>
+    </data>
+    <data name="Add specification" xml:space="preserve">
+        <value>Specificatie toevoegen</value>
+    </data>
+    <data name="Additional Graphics" xml:space="preserve">
+        <value>Extra graphics</value>
+    </data>
+    <data name="Additional Sound" xml:space="preserve">
+        <value>Extra geluid</value>
+    </data>
+    <data name="Are you sure you want to delete release '{0}'? This action cannot be undone." xml:space="preserve">
+        <value>Weet je zeker dat je versie '{0}' wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.</value>
+    </data>
+    <data name="Back to Versions" xml:space="preserve">
+        <value>Terug naar versies</value>
+    </data>
+    <data name="Barcode" xml:space="preserve">
+        <value>Balkcode</value>
+    </data>
+    <data name="Barcode type" xml:space="preserve">
+        <value>Balkencode-type</value>
+    </data>
+    <data name="Barcodes" xml:space="preserve">
+        <value>Balkcodes</value>
+    </data>
+    <data name="Basic Info" xml:space="preserve">
+        <value>Basisinformatie</value>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Annuleren</value>
+    </data>
+    <data name="Cannot submit: parent software is missing." xml:space="preserve">
+        <value>Kan niet verzenden: hoofdsoftware ontbreekt.</value>
+    </data>
+    <data name="Caption (optional)" xml:space="preserve">
+        <value>Bijschrift (optioneel)</value>
+    </data>
+    <data name="Close" xml:space="preserve">
+        <value>Sluiten</value>
+    </data>
+    <data name="Compilation" xml:space="preserve">
+        <value>Compilatie</value>
+    </data>
+    <data name="Contributions" xml:space="preserve">
+        <value>Bijdragen</value>
+    </data>
+    <data name="Copy Protection" xml:space="preserve">
+        <value>Kopiebescherming</value>
+    </data>
+    <data name="Cover type" xml:space="preserve">
+        <value>Omslagtype</value>
+    </data>
+    <data name="Covers submitted for review. An administrator will accept or reject each image." xml:space="preserve">
+        <value>Omslagen ingediend voor beoordeling. Een beheerder accepteert of weigert elke afbeelding.</value>
+    </data>
+    <data name="Cutscenes" xml:space="preserve">
+        <value>Cinematische scènes</value>
+    </data>
+    <data name="Date precision" xml:space="preserve">
+        <value>Datumprecisie</value>
+    </data>
+    <data name="Delete" xml:space="preserve">
+        <value>Verwijderen</value>
+    </data>
+    <data name="Delete Release" xml:space="preserve">
+        <value>Versie verwijderen</value>
+    </data>
+    <data name="Developer" xml:space="preserve">
+        <value>Ontwikkelaar</value>
+    </data>
+    <data name="Distributor" xml:space="preserve">
+        <value>Distributeur</value>
+    </data>
+    <data name="Download Rejected" xml:space="preserve">
+        <value>Afgewezen downloaden</value>
+    </data>
+    <data name="Download Template" xml:space="preserve">
+        <value>Sjabloon downloaden</value>
+    </data>
+    <data name="Duplicate release" xml:space="preserve">
+        <value>Duplicaatversie</value>
+    </data>
+    <data name="Edit" xml:space="preserve">
+        <value>Bewerken</value>
+    </data>
+    <data name="Edit Release" xml:space="preserve">
+        <value>Versie bewerken</value>
+    </data>
+    <data name="Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently." xml:space="preserve">
+        <value>Bewerk elk veld of elke koppeling hieronder. Alleen je wijzigingen worden verzonden ter beoordeling; een beheerder kan elke wijziging afzonderlijk accepteren of afwijzen.</value>
+    </data>
+    <data name="Error reading CSV: {0}" xml:space="preserve">
+        <value>Fout bij lezen van CSV: {0}</value>
+    </data>
+    <data name="Failed to create platform '{0}': {1}" xml:space="preserve">
+        <value>Platform '{0}' niet aangemaakt: {1}</value>
+    </data>
+    <data name="Failed to create software '{0}': {1}" xml:space="preserve">
+        <value>Software '{0}' niet aangemaakt: {1}</value>
+    </data>
+    <data name="Failed to load release details." xml:space="preserve">
+        <value>Versiedetails niet geladen.</value>
+    </data>
+    <data name="Failed to submit suggestion." xml:space="preserve">
+        <value>Suggestie niet verzonden.</value>
+    </data>
+    <data name="Fonts" xml:space="preserve">
+        <value>Lettertypen</value>
+    </data>
+    <data name="Full date" xml:space="preserve">
+        <value>Volledige datum</value>
+    </data>
+    <data name="Game Engine" xml:space="preserve">
+        <value>Spelengine</value>
+    </data>
+    <data name="General" xml:space="preserve">
+        <value>Algemeen</value>
+    </data>
+    <data name="Images: {0}/{1}" xml:space="preserve">
+        <value>Afbeeldingen: {0}/{1}</value>
+    </data>
+    <data name="Import" xml:space="preserve">
+        <value>Importeren</value>
+    </data>
+    <data name="Import CSV" xml:space="preserve">
+        <value>CSV importeren</value>
+    </data>
+    <data name="Import complete. {0} imported, {1} rejected, {2} failed." xml:space="preserve">
+        <value>Import voltooid. {0} geïmporteerd, {1} afgewezen, {2} mislukt.</value>
+    </data>
+    <data name="Importing {0} of {1}..." xml:space="preserve">
+        <value>{0} van {1} importeren...</value>
+    </data>
+    <data name="Included Software" xml:space="preserve">
+        <value>Inbegrepen software</value>
+    </data>
+    <data name="Included Software (versionless)" xml:space="preserve">
+        <value>Inbegrepen software (zonder versie)</value>
+    </data>
+    <data name="Included Software Versions" xml:space="preserve">
+        <value>Inbegrepen softwareversies</value>
+    </data>
+    <data name="Invalid boolean value" xml:space="preserve">
+        <value>Ongeldige booleaanse waarde</value>
+    </data>
+    <data name="Invalid value for IsCompilation. Use y/n, yes/no, true/false, or 0/1." xml:space="preserve">
+        <value>Ongeldige waarde voor IsCompilation. Gebruik j/n, ja/nee, true/false of 0/1.</value>
+    </data>
+    <data name="Is Compilation" xml:space="preserve">
+        <value>Is compilatie</value>
+    </data>
+    <data name="Issuer" xml:space="preserve">
+        <value>Uitgever</value>
+    </data>
+    <data name="Key" xml:space="preserve">
+        <value>Sleutel</value>
+    </data>
+    <data name="Languages" xml:space="preserve">
+        <value>Talen</value>
+    </data>
+    <data name="Licensor" xml:space="preserve">
+        <value>Licentieverstrekkers</value>
+    </data>
+    <data name="Localizer" xml:space="preserve">
+        <value>Lokalisator</value>
+    </data>
+    <data name="Manage software releases." xml:space="preserve">
+        <value>Beheer softwareversies.</value>
+    </data>
+    <data name="Manufacturer" xml:space="preserve">
+        <value>Fabrikant</value>
+    </data>
+    <data name="Middleware" xml:space="preserve">
+        <value>Middleware</value>
+    </data>
+    <data name="Minimum GPUs" xml:space="preserve">
+        <value>Minimale GPU's</value>
+    </data>
+    <data name="Month and year only" xml:space="preserve">
+        <value>Alleen maand en jaar</value>
+    </data>
+    <data name="Motion Capture" xml:space="preserve">
+        <value>Beweging vastleggen</value>
+    </data>
+    <data name="N/A (compilation)" xml:space="preserve">
+        <value>N/B (compilatie)</value>
+    </data>
+    <data name="No changes detected — modify at least one field before submitting." xml:space="preserve">
+        <value>Geen wijzigingen gedetecteerd – wijzig ten minste één veld voordat je verzendt.</value>
+    </data>
+    <data name="No images staged yet. Use the Add images button above to pick files from your device." xml:space="preserve">
+        <value>Nog geen afbeeldingen in de wachtrij. Gebruik de knop Afbeeldingen toevoegen hierboven om bestanden van je apparaat te selecteren.</value>
+    </data>
+    <data name="No ratings recorded yet." xml:space="preserve">
+        <value>Nog geen beoordelingen geregistreerd.</value>
+    </data>
+    <data name="No specifications recorded yet." xml:space="preserve">
+        <value>Nog geen specificaties geregistreerd.</value>
+    </data>
+    <data name="Note for the reviewer (optional)" xml:space="preserve">
+        <value>Opmerking voor de beoordelaar (optioneel)</value>
+    </data>
+    <data name="Optional comment (References, sources, etc...)" xml:space="preserve">
+        <value>Optionele opmerking (referenties, bronnen, enz.)</value>
+    </data>
+    <data name="Optional. Used as the display name for compilation releases." xml:space="preserve">
+        <value>Optioneel. Wordt gebruikt als weergavenaam voor compilatieversies.</value>
+    </data>
+    <data name="Package Design" xml:space="preserve">
+        <value>Pakketontwerp</value>
+    </data>
+    <data name="Pick one or more files at a time. Each image is uploaded immediately and held on the server until you submit the batch." xml:space="preserve">
+        <value>Selecteer één of meerdere bestanden tegelijk. Elke afbeelding wordt onmiddellijk geüpload en op de server bewaard tot je het batch verzendt.</value>
+    </data>
+    <data name="Platform" xml:space="preserve">
+        <value>Platform</value>
+    </data>
+    <data name="Platform is required." xml:space="preserve">
+        <value>Platform is verplicht.</value>
+    </data>
+    <data name="Porter" xml:space="preserve">
+        <value>Porteur</value>
+    </data>
+    <data name="Processing..." xml:space="preserve">
+        <value>Verwerken...</value>
+    </data>
+    <data name="Producer" xml:space="preserve">
+        <value>Producent</value>
+    </data>
+    <data name="Product Codes" xml:space="preserve">
+        <value>Productcodes</value>
+    </data>
+    <data name="Product code" xml:space="preserve">
+        <value>Productcode</value>
+    </data>
+    <data name="Product codes" xml:space="preserve">
+        <value>Productcodes</value>
+    </data>
+    <data name="Publisher" xml:space="preserve">
+        <value>Uitgever</value>
+    </data>
+    <data name="Publisher is required." xml:space="preserve">
+        <value>Uitgever is verplicht.</value>
+    </data>
+    <data name="Ratings" xml:space="preserve">
+        <value>Beoordelingen</value>
+    </data>
+    <data name="Recommended GPUs" xml:space="preserve">
+        <value>Aanbevolen GPU's</value>
+    </data>
+    <data name="Region" xml:space="preserve">
+        <value>Regio</value>
+    </data>
+    <data name="Regions" xml:space="preserve">
+        <value>Regio's</value>
+    </data>
+    <data name="Rejected" xml:space="preserve">
+        <value>Afgewezen</value>
+    </data>
+    <data name="Release created successfully." xml:space="preserve">
+        <value>Versie succesvol aangemaakt.</value>
+    </data>
+    <data name="Release date" xml:space="preserve">
+        <value>Datum van uitgave</value>
+    </data>
+    <data name="Release deleted successfully." xml:space="preserve">
+        <value>Versie succesvol verwijderd.</value>
+    </data>
+    <data name="Release of: {0}" xml:space="preserve">
+        <value>Versie van: {0}</value>
+    </data>
+    <data name="Release updated successfully." xml:space="preserve">
+        <value>Versie succesvol bijgewerkt.</value>
+    </data>
+    <data name="Releases" xml:space="preserve">
+        <value>Versies</value>
+    </data>
+    <data name="Save" xml:space="preserve">
+        <value>Opslaan</value>
+    </data>
+    <data name="Search GPU" xml:space="preserve">
+        <value>Zoek GPU</value>
+    </data>
+    <data name="Search Software" xml:space="preserve">
+        <value>Zoek software</value>
+    </data>
+    <data name="Search Software Version" xml:space="preserve">
+        <value>Zoek softwareversie</value>
+    </data>
+    <data name="Search Sound Synth" xml:space="preserve">
+        <value>Zoek geluidssynthesizer</value>
+    </data>
+    <data name="Software" xml:space="preserve">
+        <value>Software</value>
+    </data>
+    <data name="Software Release Management" xml:space="preserve">
+        <value>Beheer van softwareversies</value>
+    </data>
+    <data name="Software is required for non-compilation releases." xml:space="preserve">
+        <value>Software is vereist voor niet-compilatieversies.</value>
+    </data>
+    <data name="SoftwareCoverType_Back" xml:space="preserve">
+        <value>Back cover</value>
+    </data>
+    <data name="SoftwareCoverType_Front" xml:space="preserve">
+        <value>Front cover</value>
+    </data>
+    <data name="SoftwareCoverType_InsideBack" xml:space="preserve">
+        <value>Inside back cover</value>
+    </data>
+    <data name="SoftwareCoverType_InsideFront" xml:space="preserve">
+        <value>Inside front cover</value>
+    </data>
+    <data name="SoftwareCoverType_Manual" xml:space="preserve">
+        <value>Manual</value>
+    </data>
+    <data name="SoftwareCoverType_Media" xml:space="preserve">
+        <value>Media</value>
+    </data>
+    <data name="SoftwareCoverType_Other" xml:space="preserve">
+        <value>Other</value>
+    </data>
+    <data name="SoftwareCoverType_Spine" xml:space="preserve">
+        <value>Spine</value>
+    </data>
+    <data name="Sound Synths" xml:space="preserve">
+        <value>Geluidssynthesizers</value>
+    </data>
+    <data name="Sound synthesizers" xml:space="preserve">
+        <value>Geluidssynthesizers</value>
+    </data>
+    <data name="Specifications" xml:space="preserve">
+        <value>Specificaties</value>
+    </data>
+    <data name="Status" xml:space="preserve">
+        <value>Status</value>
+    </data>
+    <data name="Submit" xml:space="preserve">
+        <value>Verzenden</value>
+    </data>
+    <data name="Submit suggestion" xml:space="preserve">
+        <value>Suggestie verzenden</value>
+    </data>
+    <data name="Suggest a new release to be added to the catalogue. Title, publisher and platform are required; everything else is optional. An administrator will review your submission before it is published." xml:space="preserve">
+        <value>Stel een nieuwe versie voor die aan de catalogus moet worden toegevoegd. Titel, uitgever en platform zijn verplicht; alles anders is optioneel. Een beheerder beoordeelt je inzending voordat deze wordt gepubliceerd.</value>
+    </data>
+    <data name="Suggest changes" xml:space="preserve">
+        <value>Wijzigingen voorstellen</value>
+    </data>
+    <data name="Suggest covers for {0}. Upload up to {1} JPG, PNG or WebP files (max 50 MB each). Each cover requires a type." xml:space="preserve">
+        <value>Voorstel voor omslagen voor {0}. Upload tot {1} JPG-, PNG- of WebP-bestanden (maximaal 50 MB elk). Elke omslag vereist een type.</value>
+    </data>
+    <data name="Suggest ratings changes" xml:space="preserve">
+        <value>Beoordelingswijzigingen voorstellen</value>
+    </data>
+    <data name="Suggest specifications changes" xml:space="preserve">
+        <value>Specificatiewijzigingen voorstellen</value>
+    </data>
+    <data name="Suggestion submitted. An administrator will review it." xml:space="preserve">
+        <value>Suggestie verzonden. Een beheerder zal deze beoordelen.</value>
+    </data>
+    <data name="Testing" xml:space="preserve">
+        <value>Testen</value>
+    </data>
+    <data name="The CSV file is empty or has no data rows." xml:space="preserve">
+        <value>Het CSV-bestand is leeg of bevat geen datarijen.</value>
+    </data>
+    <data name="The following items were not imported:" xml:space="preserve">
+        <value>De volgende items zijn niet geïmporteerd:</value>
+    </data>
+    <data name="This barcode is already present in the list." xml:space="preserve">
+        <value>Deze balkcode staat al op de lijst.</value>
+    </data>
+    <data name="This product code is already present in the list." xml:space="preserve">
+        <value>Deze productcode staat al op de lijst.</value>
+    </data>
+    <data name="Title" xml:space="preserve">
+        <value>Titel</value>
+    </data>
+    <data name="Title is required." xml:space="preserve">
+        <value>Titel is verplicht.</value>
+    </data>
+    <data name="Type" xml:space="preserve">
+        <value>Type</value>
+    </data>
+    <data name="Undo" xml:space="preserve">
+        <value>Ongedaan maken</value>
+    </data>
+    <data name="Unknown error" xml:space="preserve">
+        <value>Onbekende fout</value>
+    </data>
+    <data name="Upload CSV" xml:space="preserve">
+        <value>CSV uploaden</value>
+    </data>
+    <data name="Upload a CSV file to import software releases in bulk. Download the template first to see the expected format." xml:space="preserve">
+        <value>Een CSV-bestand uploaden om softwareversies in bulk te importeren. Download eerst het sjabloon om het verwachte formaat te zien.</value>
+    </data>
+    <data name="Value" xml:space="preserve">
+        <value>Waarde</value>
+    </data>
+    <data name="Version (optional)" xml:space="preserve">
+        <value>Versie (optioneel)</value>
+    </data>
+    <data name="Voice Recording" xml:space="preserve">
+        <value>Stemopname</value>
+    </data>
+    <data name="Year only" xml:space="preserve">
+        <value>Alleen jaar</value>
+    </data>
+    <data name="You have staged images that have not been submitted yet. Closing this dialog will delete them. Continue?" xml:space="preserve">
+        <value>Je hebt afbeeldingen in de wachtrij die nog niet zijn verzonden. Sluiten van dit dialoogvenster zal ze verwijderen. Doorgaan?</value>
+    </data>
+    <data name="You must be logged in to upload images." xml:space="preserve">
+        <value>Je moet ingelogd zijn om afbeeldingen te uploaden.</value>
+    </data>
+    <data name="{0} rows parsed. {1} auto-rejected (no publisher match, missing software, or validation error). Selected rows will be REJECTED — unselected rows will be imported." xml:space="preserve">
+        <value>{0} rijen verwerkt. {1} automatisch afgewezen (geen overeenkomst met uitgever, ontbrekende software of validatiefout). Geselecteerde rijen worden AFGEWIJZEN – niet-geselecteerde rijen worden geïmporteerd.</value>
+    </data>
+</root>

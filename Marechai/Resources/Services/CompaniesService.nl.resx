@@ -1,0 +1,616 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e108</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e108</value>
+    </resheader>
+    <data name="&lt;ok&gt;{0}&lt;/ok&gt; computers known." xml:space="preserve">
+        <value>&lt;ok&gt;{0}&lt;/ok&gt; computers bekend.</value>
+    </data>
+    <data name="&lt;ok&gt;{0}&lt;/ok&gt; videogame consoles known." xml:space="preserve">
+        <value>&lt;ok&gt;{0}&lt;/ok&gt; videospelconsoles bekend.</value>
+    </data>
+    <data name="&lt;red&gt;No&lt;/red&gt; computers known." xml:space="preserve">
+        <value>&lt;red&gt;Geen&lt;/red&gt; computers bekend.</value>
+    </data>
+    <data name="&lt;red&gt;No&lt;/red&gt; videogame consoles known." xml:space="preserve">
+        <value>&lt;red&gt;Geen&lt;/red&gt; videospelconsoles bekend.</value>
+    </data>
+    <data name="Actions" xml:space="preserve">
+        <value>Acties</value>
+    </data>
+    <data name="Active" xml:space="preserve">
+        <value>Actief</value>
+    </data>
+    <data name="Add" xml:space="preserve">
+        <value>Toevoegen</value>
+    </data>
+    <data name="Add Company" xml:space="preserve">
+        <value>Bedrijf toevoegen</value>
+    </data>
+    <data name="Add Person" xml:space="preserve">
+        <value>Persoon toevoegen</value>
+    </data>
+    <data name="Add new description" xml:space="preserve">
+        <value>Nieuwe beschrijving toevoegen</value>
+    </data>
+    <data name="Address" xml:space="preserve">
+        <value>Adres</value>
+    </data>
+    <data name="An error occuring rendering the uploaded file. Is it a correct SVG file?" xml:space="preserve">
+        <value>Er is een fout opgetreden bij het renderen van het geüploade bestand. Is het een correct SVG-bestand?</value>
+    </data>
+    <data name="Are you sure you want to delete company '{0}'? This action cannot be undone." xml:space="preserve">
+        <value>Weet u zeker dat u het bedrijf '{0}' wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.</value>
+    </data>
+    <data name="Are you sure you want to delete the company logo introduced in {0}?" xml:space="preserve">
+        <value>Weet u zeker dat u het bedrijfslogo dat in {0} is geïntroduceerd wilt verwijderen?</value>
+    </data>
+    <data name="Are you sure you want to delete the company logo you selected?" xml:space="preserve">
+        <value>Weet u zeker dat u het geselecteerde bedrijfslogo wilt verwijderen?</value>
+    </data>
+    <data name="Are you sure you want to delete the company {0}?" xml:space="preserve">
+        <value>Weet u zeker dat u het bedrijf {0} wilt verwijderen?</value>
+    </data>
+    <data name="Back to list" xml:space="preserve">
+        <value>Terug naar lijst</value>
+    </data>
+    <data name="Bankrupt" xml:space="preserve">
+        <value>Failliet</value>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Annuleren</value>
+    </data>
+    <data name="Cannot find logo file" xml:space="preserve">
+        <value>Logo bestand niet gevonden</value>
+    </data>
+    <data name="Change logo year" xml:space="preserve">
+        <value>Logojaar wijzigen</value>
+    </data>
+    <data name="Change year" xml:space="preserve">
+        <value>Jaar wijzigen</value>
+    </data>
+    <data name="Character count: {0} / {1}" xml:space="preserve">
+        <value>Aantal tekens: {0} / {1}</value>
+    </data>
+    <data name="Choose SVG (version 1.1 or lower) logo file" xml:space="preserve">
+        <value>SVG (versie 1.1 of lager) logo bestand kiezen</value>
+    </data>
+    <data name="Choose language for description" xml:space="preserve">
+        <value>Kies taal voor beschrijving</value>
+    </data>
+    <data name="Choose the language for the description you want to suggest." xml:space="preserve">
+        <value>Kies de taal voor de beschrijving die u wilt suggereren.</value>
+    </data>
+    <data name="City" xml:space="preserve">
+        <value>Stad</value>
+    </data>
+    <data name="Common name (as usually displayed publicly)" xml:space="preserve">
+        <value>Algemene naam (zoals meestal openbaar weergegeven)</value>
+    </data>
+    <data name="Companies" xml:space="preserve">
+        <value>Bedrijven</value>
+    </data>
+    <data name="Companies founded in {0}." xml:space="preserve">
+        <value>Bedrijven opgericht in {0}.</value>
+    </data>
+    <data name="Companies which name starts with {0}." xml:space="preserve">
+        <value>Bedrijven waarvan de naam begint met {0}.</value>
+    </data>
+    <data name="Company Descriptions" xml:space="preserve">
+        <value>Bedrijfsbeschrijvingen</value>
+    </data>
+    <data name="Company Management" xml:space="preserve">
+        <value>Bedrijfsbeheer</value>
+    </data>
+    <data name="Company ceased operations on an unknown date." xml:space="preserve">
+        <value>Bedrijf stopte met opereren op een onbekende datum.</value>
+    </data>
+    <data name="Company ceased operations on {0}." xml:space="preserve">
+        <value>Bedrijf stopte met opereren op {0}.</value>
+    </data>
+    <data name="Company created successfully." xml:space="preserve">
+        <value>Bedrijf succesvol aangemaakt.</value>
+    </data>
+    <data name="Company declared bankruptcy on an unknown date." xml:space="preserve">
+        <value>Bedrijf ging failliet op een onbekende datum.</value>
+    </data>
+    <data name="Company declared bankruptcy on {0}." xml:space="preserve">
+        <value>Bedrijf ging failliet op {0}.</value>
+    </data>
+    <data name="Company deleted successfully." xml:space="preserve">
+        <value>Bedrijf succesvol verwijderd.</value>
+    </data>
+    <data name="Company description" xml:space="preserve">
+        <value>Bedrijfsbeschrijving</value>
+    </data>
+    <data name="Company details" xml:space="preserve">
+        <value>Bedrijfsgegevens</value>
+    </data>
+    <data name="Company is active." xml:space="preserve">
+        <value>Bedrijf is actief.</value>
+    </data>
+    <data name="Company merged on an unknown date to form {0}." xml:space="preserve">
+        <value>Bedrijf samengevoegd op onbekende datum om {0} te vormen.</value>
+    </data>
+    <data name="Company merged on {0} to form an unknown company." xml:space="preserve">
+        <value>Bedrijf samengevoegd op {0} tot een onbekend bedrijf.</value>
+    </data>
+    <data name="Company merged on {0} to form {1}." xml:space="preserve">
+        <value>Bedrijf samengevoegd op {0} tot {1}.</value>
+    </data>
+    <data name="Company merged to form an unknown company on an unknown date." xml:space="preserve">
+        <value>Bedrijf samengevoegd tot een onbekend bedrijf op een onbekende datum.</value>
+    </data>
+    <data name="Company not found." xml:space="preserve">
+        <value>Bedrijf niet gevonden</value>
+    </data>
+    <data name="Company renamed to an unknown name on an unknown date." xml:space="preserve">
+        <value>Bedrijf hernoemd naar een onbekende naam op een onbekende datum.</value>
+    </data>
+    <data name="Company renamed to {0} on an unknown date." xml:space="preserve">
+        <value>Bedrijf hernoemd naar {0} op een onbekende datum.</value>
+    </data>
+    <data name="Company renamed to {0} on {1}." xml:space="preserve">
+        <value>Bedrijf hernoemd naar {0} op {1}.</value>
+    </data>
+    <data name="Company sold on {0} to an unknown company." xml:space="preserve">
+        <value>Bedrijf verkocht op {0} aan een onbekend bedrijf.</value>
+    </data>
+    <data name="Company sold to {0} on an unknown date." xml:space="preserve">
+        <value>Bedrijf verkocht aan {0} op een onbekende datum.</value>
+    </data>
+    <data name="Company sold to {0} on {1}." xml:space="preserve">
+        <value>Bedrijf verkocht aan {0} op {1}.</value>
+    </data>
+    <data name="Company updated successfully." xml:space="preserve">
+        <value>Bedrijf succesvol bijgewerkt.</value>
+    </data>
+    <data name="Company was renamed on {0} to an unknown name." xml:space="preserve">
+        <value>Bedrijf hernoemd op {0} naar een onbekende naam.</value>
+    </data>
+    <data name="Company was sold to an unknown company on an unknown date." xml:space="preserve">
+        <value>Bedrijf verkocht aan een onbekend bedrijf op een onbekende datum.</value>
+    </data>
+    <data name="Computers" xml:space="preserve">
+        <value>Computers</value>
+    </data>
+    <data name="Consoles" xml:space="preserve">
+        <value>Consoles</value>
+    </data>
+    <data name="Country" xml:space="preserve">
+        <value>Land</value>
+    </data>
+    <data name="Current company status is unknown." xml:space="preserve">
+        <value>Huidige bedrijfsstatus onbekend.</value>
+    </data>
+    <data name="Date precision" xml:space="preserve">
+        <value>Datumprecisie</value>
+    </data>
+    <data name="Day unknown" xml:space="preserve">
+        <value>Dag onbekend</value>
+    </data>
+    <data name="Defunct" xml:space="preserve">
+        <value>Inactief</value>
+    </data>
+    <data name="Delete" xml:space="preserve">
+        <value>Verwijderen</value>
+    </data>
+    <data name="Delete company" xml:space="preserve">
+        <value>Bedrijf verwijderen</value>
+    </data>
+    <data name="Delete logo" xml:space="preserve">
+        <value>Logo verwijderen</value>
+    </data>
+    <data name="Description" xml:space="preserve">
+        <value>Beschrijving</value>
+    </data>
+    <data name="Description (Markdown)" xml:space="preserve">
+        <value>Beschrijving (Markdown)</value>
+    </data>
+    <data name="Description cannot be empty." xml:space="preserve">
+        <value>Beschrijving mag niet leeg zijn.</value>
+    </data>
+    <data name="Description is too long ({0} / {1} characters)." xml:space="preserve">
+        <value>Beschrijving te lang ({0} / {1} tekens).</value>
+    </data>
+    <data name="Description suggestion submitted. Thank you for contributing!" xml:space="preserve">
+        <value>Beschrijving suggestie ingediend. Dank voor uw bijdrage!</value>
+    </data>
+    <data name="Descriptions" xml:space="preserve">
+        <value>Beschrijvingen</value>
+    </data>
+    <data name="Details" xml:space="preserve">
+        <value>Details</value>
+    </data>
+    <data name="Edit" xml:space="preserve">
+        <value>Bewerken</value>
+    </data>
+    <data name="Edit Company" xml:space="preserve">
+        <value>Bedrijf bewerken</value>
+    </data>
+    <data name="Edit the existing description below. Your suggestion will be reviewed by an administrator." xml:space="preserve">
+        <value>Bewerk de bestaande beschrijving hieronder. Uw suggestie wordt beoordeeld door een beheerder.</value>
+    </data>
+    <data name="Empty" xml:space="preserve">
+        <value>Leeg</value>
+    </data>
+    <data name="End Date" xml:space="preserve">
+        <value>Einddatum</value>
+    </data>
+    <data name="Enter description in Markdown..." xml:space="preserve">
+        <value>Beschrijving invoeren in Markdown…</value>
+    </data>
+    <data name="Event Date (Sold/Merged/etc.)" xml:space="preserve">
+        <value>Evenementdatum (Verkocht/Samengevoegd/…)</value>
+    </data>
+    <data name="Facebook" xml:space="preserve">
+        <value>Facebook</value>
+    </data>
+    <data name="Failed to add person." xml:space="preserve">
+        <value>Persoon toevoegen mislukt.</value>
+    </data>
+    <data name="Failed to remove person." xml:space="preserve">
+        <value>Persoon verwijderen mislukt.</value>
+    </data>
+    <data name="Failed to submit suggestion." xml:space="preserve">
+        <value>Suggestie indienen mislukt.</value>
+    </data>
+    <data name="Filter companies..." xml:space="preserve">
+        <value>Bedrijven filteren…</value>
+    </data>
+    <data name="Founded" xml:space="preserve">
+        <value>Oprichtingsjaar</value>
+    </data>
+    <data name="Full date" xml:space="preserve">
+        <value>Volledige datum</value>
+    </data>
+    <data name="General" xml:space="preserve">
+        <value>Algemeen</value>
+    </data>
+    <data name="Has description" xml:space="preserve">
+        <value>Heeft beschrijving</value>
+    </data>
+    <data name="If the foundation day or month are selected as unknown, pick anyone in the field below, it will be ignored." xml:space="preserve">
+        <value>Als de oprichtingsdag of maand onbekend is, kies dan iemand in het onderstaande veld; dit wordt genegeerd.</value>
+    </data>
+    <data name="If the sold, merge or bankruptcy day or month are selected as unknown, pick anyone in the field below, it will be ignored." xml:space="preserve">
+        <value>Als de verkoop-, fusie- of faillietdag of maand onbekend is, kies dan iemand in het onderstaande veld; dit wordt genegeerd.</value>
+    </data>
+    <data name="Legal name" xml:space="preserve">
+        <value>Juridische naam</value>
+    </data>
+    <data name="Legal name (as shown in governmental registries including &quot;Inc.&quot;, &quot;Corp.&quot;, &quot;gmbH&quot;, etc...)" xml:space="preserve">
+        <value>Juridische naam (zoals weergegeven in overheidsregisters inclusief "Inc.", "Corp.", "gmbH", enz.)</value>
+    </data>
+    <data name="Legal name must be smaller than 256 characters." xml:space="preserve">
+        <value>Juridische naam moet minder dan 256 tekens bevatten.</value>
+    </data>
+    <data name="Links" xml:space="preserve">
+        <value>Links</value>
+    </data>
+    <data name="Loading..." xml:space="preserve">
+        <value>Laden…</value>
+    </data>
+    <data name="Logo" xml:space="preserve">
+        <value>Logo</value>
+    </data>
+    <data name="Logo history" xml:space="preserve">
+        <value>Logohistorie</value>
+    </data>
+    <data name="Logos" xml:space="preserve">
+        <value>Logo's</value>
+    </data>
+    <data name="Manage companies, descriptions, logos, and associated people." xml:space="preserve">
+        <value>Beheer bedrijven, beschrijvingen, logo's en bijbehorende personen.</value>
+    </data>
+    <data name="May not show properly" xml:space="preserve">
+        <value>Mogelijk niet correct weergegeven</value>
+    </data>
+    <data name="Merged" xml:space="preserve">
+        <value>Samengevoegd</value>
+    </data>
+    <data name="Month and year only" xml:space="preserve">
+        <value>Alleen maand en jaar</value>
+    </data>
+    <data name="Month unknown" xml:space="preserve">
+        <value>Maand onbekend</value>
+    </data>
+    <data name="N/A" xml:space="preserve">
+        <value>N/A</value>
+    </data>
+    <data name="Name" xml:space="preserve">
+        <value>Naam</value>
+    </data>
+    <data name="Name is required." xml:space="preserve">
+        <value>Naam vereist.</value>
+    </data>
+    <data name="No changes detected — modify the description before submitting." xml:space="preserve">
+        <value>Geen wijzigingen gedetecteerd – wijzig de beschrijving voordat u indient.</value>
+    </data>
+    <data name="Ongoing" xml:space="preserve">
+        <value>Bezig</value>
+    </data>
+    <data name="Optional comment (References, sources, etc...)" xml:space="preserve">
+        <value>Optioneel commentaar (referenties, bronnen, enz.)</value>
+    </data>
+    <data name="PNG" xml:space="preserve">
+        <value>PNG</value>
+    </data>
+    <data name="People" xml:space="preserve">
+        <value>Mensen</value>
+    </data>
+    <data name="Please enter a valid Facebook user name." xml:space="preserve">
+        <value>Voer een geldige Facebook-gebruikersnaam in.</value>
+    </data>
+    <data name="Please enter a valid Twitter handle." xml:space="preserve">
+        <value>Voer een geldig Twitter-handvat in.</value>
+    </data>
+    <data name="Please enter a valid address." xml:space="preserve">
+        <value>Voer een geldig adres in.</value>
+    </data>
+    <data name="Please enter a valid city." xml:space="preserve">
+        <value>Voer een geldige stad in.</value>
+    </data>
+    <data name="Please enter a valid foundation date." xml:space="preserve">
+        <value>Voer een geldige oprichtingsdatum in.</value>
+    </data>
+    <data name="Please enter a valid legal name." xml:space="preserve">
+        <value>Voer een geldige juridische naam in.</value>
+    </data>
+    <data name="Please enter a valid name." xml:space="preserve">
+        <value>Voer een geldige naam in.</value>
+    </data>
+    <data name="Please enter a valid postal code." xml:space="preserve">
+        <value>Voer een geldig postnummer in.</value>
+    </data>
+    <data name="Please enter a valid province." xml:space="preserve">
+        <value>Voer een geldige provincie in.</value>
+    </data>
+    <data name="Please enter a valid sold/merge/bankruptcy date." xml:space="preserve">
+        <value>Voer een geldige verkoop-/fusie-/faillietdatum in.</value>
+    </data>
+    <data name="Please enter a valid website." xml:space="preserve">
+        <value>Voer een geldige website in.</value>
+    </data>
+    <data name="Please enter a valid year." xml:space="preserve">
+        <value>Voer een geldig jaar in.</value>
+    </data>
+    <data name="Position" xml:space="preserve">
+        <value>Positie</value>
+    </data>
+    <data name="Postal code" xml:space="preserve">
+        <value>Postcode</value>
+    </data>
+    <data name="Province" xml:space="preserve">
+        <value>Provincie</value>
+    </data>
+    <data name="Province / State" xml:space="preserve">
+        <value>Provincie / Staat</value>
+    </data>
+    <data name="Remove '{0}' from this company?" xml:space="preserve">
+        <value>'{0}' uit dit bedrijf verwijderen?</value>
+    </data>
+    <data name="Remove Person" xml:space="preserve">
+        <value>Persoon verwijderen</value>
+    </data>
+    <data name="Renamed" xml:space="preserve">
+        <value>Hernoemd</value>
+    </data>
+    <data name="SVG" xml:space="preserve">
+        <value>SVG</value>
+    </data>
+    <data name="Save" xml:space="preserve">
+        <value>Opslaan</value>
+    </data>
+    <data name="Search Person" xml:space="preserve">
+        <value>Persoon zoeken</value>
+    </data>
+    <data name="Sold" xml:space="preserve">
+        <value>Verkocht</value>
+    </data>
+    <data name="Sold To / Merged With" xml:space="preserve">
+        <value>Verkocht aan / samengevoegd met</value>
+    </data>
+    <data name="Sold to" xml:space="preserve">
+        <value>Verkocht aan</value>
+    </data>
+    <data name="Sold to / Merged with" xml:space="preserve">
+        <value>Verkocht aan / samengevoegd met</value>
+    </data>
+    <data name="Start Date" xml:space="preserve">
+        <value>Begindatum</value>
+    </data>
+    <data name="Status" xml:space="preserve">
+        <value>Status</value>
+    </data>
+    <data name="Submit suggestion" xml:space="preserve">
+        <value>Suggestie indienen</value>
+    </data>
+    <data name="Suggest a new company to be added to the catalogue." xml:space="preserve">
+        <value>Een nieuw bedrijf voorstellen voor toevoeging aan de catalogus.</value>
+    </data>
+    <data name="Suggest changes" xml:space="preserve">
+        <value>Veranderingen voorstellen</value>
+    </data>
+    <data name="Suggest description" xml:space="preserve">
+        <value>Beschrijving suggereren</value>
+    </data>
+    <data name="Suggest new company" xml:space="preserve">
+        <value>Nieuw bedrijf voorstellen</value>
+    </data>
+    <data name="Suggest translation" xml:space="preserve">
+        <value>Vertaling suggereren</value>
+    </data>
+    <data name="The selected file is too big." xml:space="preserve">
+        <value>Het geselecteerde bestand is te groot.</value>
+    </data>
+    <data name="The uploaded file could not be loaded. Is it a correct SVG file?" xml:space="preserve">
+        <value>Het geüploade bestand kon niet worden geladen. Is het een correct SVG-bestand?</value>
+    </data>
+    <data name="The uploaded file is not a SVG file." xml:space="preserve">
+        <value>Het geüploade bestand is geen SVG-bestand.</value>
+    </data>
+    <data name="There are no companies in the database." xml:space="preserve">
+        <value>Er zijn geen bedrijven in de database.</value>
+    </data>
+    <data name="There was an error uploading the file." xml:space="preserve">
+        <value>Er is een fout opgetreden bij het uploaden van het bestand.</value>
+    </data>
+    <data name="Twitter" xml:space="preserve">
+        <value>Twitter</value>
+    </data>
+    <data name="Unknown" xml:space="preserve">
+        <value>Onbekend</value>
+    </data>
+    <data name="Unknown (address)" xml:space="preserve">
+        <value>Onbekend (adres)</value>
+    </data>
+    <data name="Unknown (city)" xml:space="preserve">
+        <value>Onbekend (stad)</value>
+    </data>
+    <data name="Unknown (country)" xml:space="preserve">
+        <value>Onbekend (land)</value>
+    </data>
+    <data name="Unknown (facebook)" xml:space="preserve">
+        <value>Onbekend (Facebook)</value>
+    </data>
+    <data name="Unknown (foundation date)" xml:space="preserve">
+        <value>Onbekend (oprichtingsdatum)</value>
+    </data>
+    <data name="Unknown (legal name)" xml:space="preserve">
+        <value>Onbekend (juridische naam)</value>
+    </data>
+    <data name="Unknown (logo year)" xml:space="preserve">
+        <value>Onbekend (logojaar)</value>
+    </data>
+    <data name="Unknown (postal code)" xml:space="preserve">
+        <value>Onbekend (postnummer)</value>
+    </data>
+    <data name="Unknown (province)" xml:space="preserve">
+        <value>Onbekend (provincie)</value>
+    </data>
+    <data name="Unknown (sold to)" xml:space="preserve">
+        <value>Onbekend (verkocht aan)</value>
+    </data>
+    <data name="Unknown (sold/merged/bankrupt date)" xml:space="preserve">
+        <value>Onbekende verkoop-/fusie-/faillietdatum</value>
+    </data>
+    <data name="Unknown (twitter)" xml:space="preserve">
+        <value>Onbekend (Twitter)</value>
+    </data>
+    <data name="Unknown (website)" xml:space="preserve">
+        <value>Onbekend (website)</value>
+    </data>
+    <data name="Unknown foundation day" xml:space="preserve">
+        <value>Onbekende oprichtingsdag</value>
+    </data>
+    <data name="Unknown foundation month" xml:space="preserve">
+        <value>Onbekende oprichtingsmaand</value>
+    </data>
+    <data name="Unknown sold/merge/bankruptcy day" xml:space="preserve">
+        <value>Onbekende verkoop-/fusie-/faillietdag</value>
+    </data>
+    <data name="Unknown sold/merge/bankruptcy month" xml:space="preserve">
+        <value>Onbekende verkoop-/fusie-/faillietmaand</value>
+    </data>
+    <data name="Upload" xml:space="preserve">
+        <value>Uploaden</value>
+    </data>
+    <data name="Upload new logo" xml:space="preserve">
+        <value>Nieuw logo uploaden</value>
+    </data>
+    <data name="Uploading..." xml:space="preserve">
+        <value>Uploaden…</value>
+    </data>
+    <data name="We do not have a description for this company, you could collaborate by suggesting one" xml:space="preserve">
+        <value>Er is geen beschrijving voor dit bedrijf; u kunt bijdragen door er een te suggereren</value>
+    </data>
+    <data name="We do not have a description in your language, you could collaborate by translating the English description we show below" xml:space="preserve">
+        <value>Er is geen beschrijving in uw taal; u kunt bijdragen door de onderstaande Engelse beschrijving te vertalen</value>
+    </data>
+    <data name="WebP" xml:space="preserve">
+        <value>WebP</value>
+    </data>
+    <data name="Website" xml:space="preserve">
+        <value>Website</value>
+    </data>
+    <data name="Write the new description below. Your suggestion will be reviewed by an administrator." xml:space="preserve">
+        <value>Schrijf hieronder de nieuwe beschrijving. Uw suggestie wordt beoordeeld door een beheerder.</value>
+    </data>
+    <data name="Year logo came in use" xml:space="preserve">
+        <value>Jaar logo in gebruik</value>
+    </data>
+    <data name="Year only" xml:space="preserve">
+        <value>Alleen jaar</value>
+    </data>
+    <data name="You have a pending suggestion" xml:space="preserve">
+        <value>U heeft een lopende suggestie</value>
+    </data>
+    <data name="in use since {0}" xml:space="preserve">
+        <value>in gebruik sinds {0}</value>
+    </data>
+    <data name="present" xml:space="preserve">
+        <value>huidig</value>
+    </data>
+    <data name="{0} companies found in the database." xml:space="preserve">
+        <value>{0} bedrijven gevonden in de database.</value>
+    </data>
+    <data name="{0} description for {1}" xml:space="preserve">
+        <value>{0} beschrijving voor {1}</value>
+    </data>
+</root>

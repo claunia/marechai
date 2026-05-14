@@ -1,0 +1,1015 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e108</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e108</value>
+    </resheader>
+    <data name="+info" xml:space="preserve">
+        <value>+info</value>
+    </data>
+    <data name="Actions" xml:space="preserve">
+        <value>Acties</value>
+    </data>
+    <data name="Add" xml:space="preserve">
+        <value>Toevoegen</value>
+    </data>
+    <data name="Add GPU" xml:space="preserve">
+        <value>GPU toevoegen</value>
+    </data>
+    <data name="Add Machine" xml:space="preserve">
+        <value>Machine toevoegen</value>
+    </data>
+    <data name="Add Memory" xml:space="preserve">
+        <value>Geheugen toevoegen</value>
+    </data>
+    <data name="Add Processor" xml:space="preserve">
+        <value>Processor toevoegen</value>
+    </data>
+    <data name="Add Screen" xml:space="preserve">
+        <value>Scherm toevoegen</value>
+    </data>
+    <data name="Add Software Platform" xml:space="preserve">
+        <value>Softwareplatform toevoegen</value>
+    </data>
+    <data name="Add Sound Synth" xml:space="preserve">
+        <value>Voeg Geluidssynthesizer toe</value>
+    </data>
+    <data name="Add Storage" xml:space="preserve">
+        <value>Opslag toevoegen</value>
+    </data>
+    <data name="Add any context that helps the admin decide." xml:space="preserve">
+        <value>Voeg eventuele context toe die de beheerder helpt beslissen.</value>
+    </data>
+    <data name="Add new (gpu by machine)" xml:space="preserve">
+        <value>Nieuw toevoegen (GPU per machine)</value>
+    </data>
+    <data name="Add new (memory by machine)" xml:space="preserve">
+        <value>Nieuwe toevoegen (geheugen per machine)</value>
+    </data>
+    <data name="Add new (pocessor by machine)" xml:space="preserve">
+        <value>Nieuwe toevoegen (processor per machine)</value>
+    </data>
+    <data name="Add new (screen by machine)" xml:space="preserve">
+        <value>Nieuwe toevoegen (scherm per machine)</value>
+    </data>
+    <data name="Add new (sound by machine)" xml:space="preserve">
+        <value>Nieuw toevoegen (geluid per machine)</value>
+    </data>
+    <data name="Add new (storage by machine)" xml:space="preserve">
+        <value>Nieuwe toevoegen (opslag per machine)</value>
+    </data>
+    <data name="Add photos" xml:space="preserve">
+        <value>Foto's toevoegen</value>
+    </data>
+    <data name="Add to Collection" xml:space="preserve">
+        <value>Toevoegen aan collectie</value>
+    </data>
+    <data name="Advanced" xml:space="preserve">
+        <value>Geavanceerd</value>
+    </data>
+    <data name="Are you sure you want to delete machine '{0}'? This action cannot be undone." xml:space="preserve">
+        <value>Weet u zeker dat u machine ‘{0}’ wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.</value>
+    </data>
+    <data name="Are you sure you want to delete the graphical processing unit {0} manufactured by {1} from this machine?" xml:space="preserve">
+        <value>Weet je zeker dat je de grafische verwerkingseenheid {0} vervaardigd door {1} uit deze machine wilt verwijderen?</value>
+    </data>
+    <data name="Are you sure you want to delete the memory type {0} with usage {1} from this machine?" xml:space="preserve">
+        <value>Weet u zeker dat u het geheugentype {0} met gebruik {1} uit deze machine wilt verwijderen?</value>
+    </data>
+    <data name="Are you sure you want to delete the processor {0} with speed {2} manufactured by {1} from this machine?" xml:space="preserve">
+        <value>Weet u zeker dat u de processor {0} met snelheid {2} vervaardigd door {1} uit deze machine wilt verwijderen?</value>
+    </data>
+    <data name="Are you sure you want to delete the selected screen from this machine?" xml:space="preserve">
+        <value>Weet je zeker dat je het geselecteerde scherm van deze machine wilt verwijderen?</value>
+    </data>
+    <data name="Are you sure you want to delete the sound synthesizer {0} manufactured by {1} from this machine?" xml:space="preserve">
+        <value>Weet je zeker dat je de geluidssynthesizer {0} vervaardigd door {1} van deze machine wilt verwijderen?</value>
+    </data>
+    <data name="Are you sure you want to delete the storage type {0} with interface {1} from this machine?" xml:space="preserve">
+        <value>Weet u zeker dat u het opslagtype {0} met interface {1} van deze machine wilt verwijderen?</value>
+    </data>
+    <data name="Are you sure you want to delete this video? This action cannot be undone." xml:space="preserve">
+        <value>Weet je zeker dat je deze video wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.</value>
+    </data>
+    <data name="Are you sure you want to delete {0} {1}?" xml:space="preserve">
+        <value>Weet u zeker dat u {0} {1} wilt verwijderen?</value>
+    </data>
+    <data name="Are you sure you want to remove this GPU from the machine?" xml:space="preserve">
+        <value>Weet je zeker dat je deze GPU uit de machine wilt verwijderen?</value>
+    </data>
+    <data name="Are you sure you want to remove this memory from the machine?" xml:space="preserve">
+        <value>Weet je zeker dat je dit geheugen van de machine wilt verwijderen?</value>
+    </data>
+    <data name="Are you sure you want to remove this processor from the machine?" xml:space="preserve">
+        <value>Weet je zeker dat je deze processor uit de machine wilt verwijderen?</value>
+    </data>
+    <data name="Are you sure you want to remove this screen from the machine?" xml:space="preserve">
+        <value>Weet je zeker dat je dit scherm uit de machine wilt verwijderen?</value>
+    </data>
+    <data name="Are you sure you want to remove this software platform from the machine?" xml:space="preserve">
+        <value>Weet u zeker dat u dit softwareplatform van de machine wilt verwijderen?</value>
+    </data>
+    <data name="Are you sure you want to remove this sound synth from the machine?" xml:space="preserve">
+        <value>Weet je zeker dat je deze geluidssynthesizer van de machine wilt verwijderen?</value>
+    </data>
+    <data name="Are you sure you want to remove this storage from the machine?" xml:space="preserve">
+        <value>Weet je zeker dat je deze opslag uit de machine wilt verwijderen?</value>
+    </data>
+    <data name="Available {0} interface." xml:space="preserve">
+        <value>Beschikbare {0}-interface.</value>
+    </data>
+    <data name="Back to Machines" xml:space="preserve">
+        <value>Terug naar machines</value>
+    </data>
+    <data name="Back to list" xml:space="preserve">
+        <value>Terug naar lijst</value>
+    </data>
+    <data name="Batch metadata" xml:space="preserve">
+        <value>Batchmetadata</value>
+    </data>
+    <data name="Bus" xml:space="preserve">
+        <value>Bus</value>
+    </data>
+    <data name="Cache" xml:space="preserve">
+        <value>Cache</value>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Annuleren</value>
+    </data>
+    <data name="Capacity (bytes)" xml:space="preserve">
+        <value>Capaciteit (bytes)</value>
+    </data>
+    <data name="Choose language for description" xml:space="preserve">
+        <value>Kies taal voor beschrijving</value>
+    </data>
+    <data name="Choose the language for the description you want to suggest." xml:space="preserve">
+        <value>Kies de taal voor de beschrijving die je wilt voorstellen.</value>
+    </data>
+    <data name="Comment (optional)" xml:space="preserve">
+        <value>Opmerking (optioneel)</value>
+    </data>
+    <data name="Company" xml:space="preserve">
+        <value>Bedrijf</value>
+    </data>
+    <data name="Computer" xml:space="preserve">
+        <value>Computer</value>
+    </data>
+    <data name="Console" xml:space="preserve">
+        <value>Console</value>
+    </data>
+    <data name="Date precision" xml:space="preserve">
+        <value>Datumprecisie</value>
+    </data>
+    <data name="Delete" xml:space="preserve">
+        <value>Verwijderen</value>
+    </data>
+    <data name="Delete Machine" xml:space="preserve">
+        <value>Machine verwijderen</value>
+    </data>
+    <data name="Delete Video" xml:space="preserve">
+        <value>Video verwijderen</value>
+    </data>
+    <data name="Delete graphical processing unit from this machine" xml:space="preserve">
+        <value>Grafische verwerkingseenheid uit deze machine verwijderen</value>
+    </data>
+    <data name="Delete machine" xml:space="preserve">
+        <value>Machine verwijderen</value>
+    </data>
+    <data name="Delete memory from this machine" xml:space="preserve">
+        <value>Geheugen van deze machine verwijderen</value>
+    </data>
+    <data name="Delete processor from this machine" xml:space="preserve">
+        <value>Processor van deze machine verwijderen</value>
+    </data>
+    <data name="Delete screen from this machine" xml:space="preserve">
+        <value>Scherm van deze machine verwijderen</value>
+    </data>
+    <data name="Delete sound synthesizer from this machine" xml:space="preserve">
+        <value>Geluidssynthesizer uit deze machine verwijderen</value>
+    </data>
+    <data name="Delete storage from this machine" xml:space="preserve">
+        <value>Opslag uit deze machine verwijderen</value>
+    </data>
+    <data name="Description suggestion submitted. Thank you for contributing!" xml:space="preserve">
+        <value>Beschrijving suggestie ingediend. Bedankt voor je bijdrage!</value>
+    </data>
+    <data name="Details" xml:space="preserve">
+        <value>Details</value>
+    </data>
+    <data name="Detected Video ID" xml:space="preserve">
+        <value>Gedetecteerde video‑ID</value>
+    </data>
+    <data name="Diagonal" xml:space="preserve">
+        <value>Diagonaal</value>
+    </data>
+    <data name="Die size" xml:space="preserve">
+        <value>Die-grootte</value>
+    </data>
+    <data name="Edit" xml:space="preserve">
+        <value>Bewerken</value>
+    </data>
+    <data name="Edit Machine" xml:space="preserve">
+        <value>Machine bewerken</value>
+    </data>
+    <data name="Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently." xml:space="preserve">
+        <value>Bewerk hieronder elk veld of elke verbinding. Alleen je wijzigingen worden voor beoordeling verzonden; een beheerder kan elke wijziging afzonderlijk accepteren of afwijzen.</value>
+    </data>
+    <data name="Edit the existing description below. Your suggestion will be reviewed by an administrator." xml:space="preserve">
+        <value>Bewerk de bestaande beschrijving hieronder. Je suggestie wordt beoordeeld door een beheerder.</value>
+    </data>
+    <data name="Effective colors" xml:space="preserve">
+        <value>Effectieve kleuren</value>
+    </data>
+    <data name="Empty" xml:space="preserve">
+        <value>Leeg</value>
+    </data>
+    <data name="Failed to delete video." xml:space="preserve">
+        <value>Video verwijderen mislukt.</value>
+    </data>
+    <data name="Failed to link video." xml:space="preserve">
+        <value>Video koppelen mislukt.</value>
+    </data>
+    <data name="Failed to submit suggestion." xml:space="preserve">
+        <value>Mislukt om suggestie in te dienen.</value>
+    </data>
+    <data name="Failed to update video." xml:space="preserve">
+        <value>Video bijwerken mislukt.</value>
+    </data>
+    <data name="Family" xml:space="preserve">
+        <value>Familie</value>
+    </data>
+    <data name="Fill in the fields below to suggest a new machine. Name, company and type are required; any junctions you add will be queued for admin review along with the scalar fields." xml:space="preserve">
+        <value>Vul hieronder de velden in om een nieuwe machine voor te stellen. Naam, bedrijf en type zijn vereist; eventuele koppelingen die je toevoegt worden in wachtrij geplaatst voor beoordeling door de beheerder samen met de scalairen.</value>
+    </data>
+    <data name="Framebuffer" xml:space="preserve">
+        <value>Framebuffer</value>
+    </data>
+    <data name="Full date" xml:space="preserve">
+        <value>Volledige datum</value>
+    </data>
+    <data name="GPUs" xml:space="preserve">
+        <value>GPU's</value>
+    </data>
+    <data name="General" xml:space="preserve">
+        <value>Algemeen</value>
+    </data>
+    <data name="Generators" xml:space="preserve">
+        <value>Generatoren</value>
+    </data>
+    <data name="Graphical processing units" xml:space="preserve">
+        <value>Grafische verwerkingseenheden</value>
+    </data>
+    <data name="Graphical processing units belonging to this machine" xml:space="preserve">
+        <value>Grafische verwerkingseenheden die tot deze machine behoren</value>
+    </data>
+    <data name="Graphics processing units" xml:space="preserve">
+        <value>Grafische verwerkingseenheden</value>
+    </data>
+    <data name="Has description" xml:space="preserve">
+        <value>Heeft beschrijving</value>
+    </data>
+    <data name="Height" xml:space="preserve">
+        <value>Hoogte</value>
+    </data>
+    <data name="In Collection" xml:space="preserve">
+        <value>In collectie</value>
+    </data>
+    <data name="Instruction set" xml:space="preserve">
+        <value>Instructieset</value>
+    </data>
+    <data name="Introduced" xml:space="preserve">
+        <value>Introductie</value>
+    </data>
+    <data name="Introduced (public release)" xml:space="preserve">
+        <value>Introductie (publieke uitgave)</value>
+    </data>
+    <data name="Introduction date" xml:space="preserve">
+        <value>Introductiedatum</value>
+    </data>
+    <data name="License (Creative Commons or Public Domain)" xml:space="preserve">
+        <value>Licentie (Creative Commons of Public Domain)</value>
+    </data>
+    <data name="Link Video" xml:space="preserve">
+        <value>Video koppelen</value>
+    </data>
+    <data name="Loading..." xml:space="preserve">
+        <value>Laden...</value>
+    </data>
+    <data name="Machine Management" xml:space="preserve">
+        <value>Machinebeheer</value>
+    </data>
+    <data name="Machine created successfully." xml:space="preserve">
+        <value>Machine succesvol aangemaakt.</value>
+    </data>
+    <data name="Machine deleted successfully." xml:space="preserve">
+        <value>Machine succesvol verwijderd.</value>
+    </data>
+    <data name="Machine details" xml:space="preserve">
+        <value>Machinedetails</value>
+    </data>
+    <data name="Machine not found in database" xml:space="preserve">
+        <value>Machine niet gevonden in de database</value>
+    </data>
+    <data name="Machine updated successfully." xml:space="preserve">
+        <value>Machine succesvol bijgewerkt.</value>
+    </data>
+    <data name="Machines" xml:space="preserve">
+        <value>Machines</value>
+    </data>
+    <data name="Manage Photos" xml:space="preserve">
+        <value>Foto's beheren</value>
+    </data>
+    <data name="Manage machine videos." xml:space="preserve">
+        <value>Machinevideo's beheren.</value>
+    </data>
+    <data name="Manage machines, their specifications, and associated components." xml:space="preserve">
+        <value>Machines, hun specificaties en bijbehorende componenten beheren.</value>
+    </data>
+    <data name="Manufacturer" xml:space="preserve">
+        <value>Fabrikant</value>
+    </data>
+    <data name="Manufacturing process" xml:space="preserve">
+        <value>Productieproces</value>
+    </data>
+    <data name="Media tab" xml:space="preserve">
+        <value>Media</value>
+    </data>
+    <data name="Memory" xml:space="preserve">
+        <value>Geheugen</value>
+    </data>
+    <data name="Memory Type" xml:space="preserve">
+        <value>Geheugentype</value>
+    </data>
+    <data name="Memory Usage" xml:space="preserve">
+        <value>Geheugengebruik</value>
+    </data>
+    <data name="Memory belonging to this machine" xml:space="preserve">
+        <value>Geheugen dat tot deze machine behoort</value>
+    </data>
+    <data name="Memory size (bytes)" xml:space="preserve">
+        <value>Geheugengrootte (bytes)</value>
+    </data>
+    <data name="Memory type" xml:space="preserve">
+        <value>Geheugentype</value>
+    </data>
+    <data name="Memory usage" xml:space="preserve">
+        <value>Geheugengebruik</value>
+    </data>
+    <data name="Model" xml:space="preserve">
+        <value>Model</value>
+    </data>
+    <data name="Model must contain less than 50 characters." xml:space="preserve">
+        <value>Het model moet minder dan 50 tekens bevatten.</value>
+    </data>
+    <data name="Month and year only" xml:space="preserve">
+        <value>Alleen maand en jaar</value>
+    </data>
+    <data name="Multi-core" xml:space="preserve">
+        <value>Meerdere cores</value>
+    </data>
+    <data name="Name" xml:space="preserve">
+        <value>Naam</value>
+    </data>
+    <data name="Name is required." xml:space="preserve">
+        <value>Naam is vereist.</value>
+    </data>
+    <data name="Name must contain less than 255 characters." xml:space="preserve">
+        <value>De naam mag minder dan 255 tekens bevatten.</value>
+    </data>
+    <data name="Name, company and type are required to suggest a new machine." xml:space="preserve">
+        <value>Naam, bedrijf en type zijn vereist om een nieuwe machine voor te stellen.</value>
+    </data>
+    <data name="Native resolution" xml:space="preserve">
+        <value>Natuurlijke resolutie</value>
+    </data>
+    <data name="No changes detected — modify at least one field before submitting." xml:space="preserve">
+        <value>Geen wijzigingen gedetecteerd – wijzig ten minste één veld voordat je verzendt.</value>
+    </data>
+    <data name="No machines found." xml:space="preserve">
+        <value>Geen machines gevonden.</value>
+    </data>
+    <data name="No photos for this computer yet — help us by uploading some." xml:space="preserve">
+        <value>Nog geen foto's voor deze computer – help ons door er enkele te uploaden.</value>
+    </data>
+    <data name="No photos for this console yet — help us by uploading some." xml:space="preserve">
+        <value>Nog geen foto's voor deze console — help ons door er enkele te uploaden.</value>
+    </data>
+    <data name="No photos for this device yet — help us by uploading some." xml:space="preserve">
+        <value>Nog geen foto's voor dit apparaat — help ons door er een te uploaden.</value>
+    </data>
+    <data name="No photos for this smartphone yet — help us by uploading some." xml:space="preserve">
+        <value>Nog geen foto's voor dit smartphone — help ons door er een te uploaden.</value>
+    </data>
+    <data name="No photos staged yet. Use the Add photos button above to pick files from your device." xml:space="preserve">
+        <value>Nog geen foto's klaar. Gebruik de knop Foto's toevoegen hierboven om bestanden vanaf uw apparaat te selecteren.</value>
+    </data>
+    <data name="No videos found for this machine." xml:space="preserve">
+        <value>Geen video's gevonden voor deze machine.</value>
+    </data>
+    <data name="Nominal capacity" xml:space="preserve">
+        <value>Nominale capaciteit</value>
+    </data>
+    <data name="Nominal capacity (bytes)" xml:space="preserve">
+        <value>Nominale capaciteit (bytes)</value>
+    </data>
+    <data name="Nominal speed" xml:space="preserve">
+        <value>Nominale snelheid</value>
+    </data>
+    <data name="Nominal speed (Hz)" xml:space="preserve">
+        <value>Nominale snelheid (Hz)</value>
+    </data>
+    <data name="Nominal speed (MHz)" xml:space="preserve">
+        <value>Nominale snelheid (MHz)</value>
+    </data>
+    <data name="None (family)" xml:space="preserve">
+        <value>Geen (familie)</value>
+    </data>
+    <data name="Note for the reviewer (optional)" xml:space="preserve">
+        <value>Notitie voor de beoordelaar (optioneel)</value>
+    </data>
+    <data name="Note to reviewer (optional)" xml:space="preserve">
+        <value>Opmerking voor beoordelaar (optioneel)</value>
+    </data>
+    <data name="Optional comment (References, sources, etc...)" xml:space="preserve">
+        <value>Optioneel commentaar (referenties, bronnen, enz…)</value>
+    </data>
+    <data name="PDA" xml:space="preserve">
+        <value>PDA</value>
+    </data>
+    <data name="PROTOTYPE" xml:space="preserve">
+        <value>PROTOTYP</value>
+    </data>
+    <data name="Package" xml:space="preserve">
+        <value>Pakket</value>
+    </data>
+    <data name="Paste a YouTube URL or 11-character video ID. The title will be fetched automatically from YouTube." xml:space="preserve">
+        <value>Plak een YouTube-URL of 11-cijferige videocode. De titel wordt automatisch opgehaald van YouTube.</value>
+    </data>
+    <data name="Photos" xml:space="preserve">
+        <value>Foto's</value>
+    </data>
+    <data name="Photos submitted for review. An administrator will accept or reject each one." xml:space="preserve">
+        <value>Foto's ingediend voor beoordeling. Een beheerder zal elk accepteren of afwijzen.</value>
+    </data>
+    <data name="Photos: {0}/{1}" xml:space="preserve">
+        <value>Foto's: {0}/{1}</value>
+    </data>
+    <data name="Pick a license and at least one successfully-uploaded photo before submitting." xml:space="preserve">
+        <value>Selecteer een licentie en minimaal één succesvol geüploade foto voordat je verzendt.</value>
+    </data>
+    <data name="Pick one or more files at a time. Each photo is uploaded immediately and held on the server until you submit the batch." xml:space="preserve">
+        <value>Selecteer één of meer bestanden tegelijk. Elke foto wordt onmiddellijk geüpload en op de server bewaard tot je het batch indient.</value>
+    </data>
+    <data name="Please enter a valid model." xml:space="preserve">
+        <value>Voer een geldig model in.</value>
+    </data>
+    <data name="Please enter a valid name." xml:space="preserve">
+        <value>Voer een geldige naam in.</value>
+    </data>
+    <data name="Please enter a valid size for this memory." xml:space="preserve">
+        <value>Voer een geldige grootte voor dit geheugen in.</value>
+    </data>
+    <data name="Please enter a valid size for this storage." xml:space="preserve">
+        <value>Voer een geldige grootte in voor deze opslag.</value>
+    </data>
+    <data name="Please enter a valid speed for this memory." xml:space="preserve">
+        <value>Voer een geldige snelheid in voor dit geheugen.</value>
+    </data>
+    <data name="Please enter a valid speed for this processor." xml:space="preserve">
+        <value>Voer een geldige snelheid in voor deze processor.</value>
+    </data>
+    <data name="Please enter an introduction date." xml:space="preserve">
+        <value>Voer een introductiedatum in.</value>
+    </data>
+    <data name="Preview" xml:space="preserve">
+        <value>Voorbeeld</value>
+    </data>
+    <data name="Processors" xml:space="preserve">
+        <value>Processoren</value>
+    </data>
+    <data name="Processors belonging to this machine" xml:space="preserve">
+        <value>Processoren die tot deze machine behoren</value>
+    </data>
+    <data name="Prototype" xml:space="preserve">
+        <value>Prototypen</value>
+    </data>
+    <data name="Provider" xml:space="preserve">
+        <value>Provider</value>
+    </data>
+    <data name="Provider name (e.g. YouTube)." xml:space="preserve">
+        <value>Providernaam (bijv. YouTube).</value>
+    </data>
+    <data name="Registers" xml:space="preserve">
+        <value>Register</value>
+    </data>
+    <data name="Remove GPU" xml:space="preserve">
+        <value>GPU verwijderen</value>
+    </data>
+    <data name="Remove Memory" xml:space="preserve">
+        <value>Geheugen verwijderen</value>
+    </data>
+    <data name="Remove Processor" xml:space="preserve">
+        <value>Processor verwijderen</value>
+    </data>
+    <data name="Remove Screen" xml:space="preserve">
+        <value>Scherm verwijderen</value>
+    </data>
+    <data name="Remove Software Platform" xml:space="preserve">
+        <value>Softwareplatform verwijderen</value>
+    </data>
+    <data name="Remove Sound Synth" xml:space="preserve">
+        <value>Geluidssynthesizer verwijderen</value>
+    </data>
+    <data name="Remove Storage" xml:space="preserve">
+        <value>Opslag verwijderen</value>
+    </data>
+    <data name="Sample rate" xml:space="preserve">
+        <value>Monstersnelheid</value>
+    </data>
+    <data name="Save" xml:space="preserve">
+        <value>Opslaan</value>
+    </data>
+    <data name="Saving..." xml:space="preserve">
+        <value>Opslaan...</value>
+    </data>
+    <data name="Screens" xml:space="preserve">
+        <value>Schermen</value>
+    </data>
+    <data name="Screens attached to this machine" xml:space="preserve">
+        <value>Schermen aangesloten op deze machine</value>
+    </data>
+    <data name="Search Company" xml:space="preserve">
+        <value>Bedrijf zoeken</value>
+    </data>
+    <data name="Search Family" xml:space="preserve">
+        <value>Zoek familie</value>
+    </data>
+    <data name="Search GPU" xml:space="preserve">
+        <value>Zoek GPU</value>
+    </data>
+    <data name="Search Processor" xml:space="preserve">
+        <value>Zoek processor</value>
+    </data>
+    <data name="Search Screen" xml:space="preserve">
+        <value>Zoek scherm</value>
+    </data>
+    <data name="Search Software Platform" xml:space="preserve">
+        <value>Zoek Softwareplatform</value>
+    </data>
+    <data name="Search Sound Synth" xml:space="preserve">
+        <value>Geluidssynthesizer zoeken</value>
+    </data>
+    <data name="Selected license is not allowed for collaborator uploads." xml:space="preserve">
+        <value>Geselecteerde licentie staat niet toe voor uploads van medewerkers.</value>
+    </data>
+    <data name="Simultaneous multithreading" xml:space="preserve">
+        <value>Gelijktijdig multithreading</value>
+    </data>
+    <data name="Single instruction, multiple data" xml:space="preserve">
+        <value>Enkele instructie, meerdere gegevens</value>
+    </data>
+    <data name="Size" xml:space="preserve">
+        <value>Grootte</value>
+    </data>
+    <data name="Size (bytes)" xml:space="preserve">
+        <value>Grootte (bytes)</value>
+    </data>
+    <data name="Smartphone" xml:space="preserve">
+        <value>Smartphone</value>
+    </data>
+    <data name="Software" xml:space="preserve">
+        <value>Software</value>
+    </data>
+    <data name="Software Platforms" xml:space="preserve">
+        <value>Softwareplatforms</value>
+    </data>
+    <data name="Sound Synthesizers" xml:space="preserve">
+        <value>Geluidssynthesizers</value>
+    </data>
+    <data name="Sound synthesizers" xml:space="preserve">
+        <value>Geluidssynthesizers</value>
+    </data>
+    <data name="Sound synthesizers belonging to this machine" xml:space="preserve">
+        <value>Geluidssynthesizers die tot deze machine behoren</value>
+    </data>
+    <data name="Source URL (optional, applies to all photos)" xml:space="preserve">
+        <value>Bron-URL (optioneel, geldt voor alle foto's)</value>
+    </data>
+    <data name="Specifications" xml:space="preserve">
+        <value>Specificaties</value>
+    </data>
+    <data name="Speed" xml:space="preserve">
+        <value>Snelheid</value>
+    </data>
+    <data name="Speed (MHz)" xml:space="preserve">
+        <value>Snelheid (MHz)</value>
+    </data>
+    <data name="Speed (MHz) memory" xml:space="preserve">
+        <value>Snelheid (MHz) geheugen</value>
+    </data>
+    <data name="Storage" xml:space="preserve">
+        <value>Opslag</value>
+    </data>
+    <data name="Storage Interface" xml:space="preserve">
+        <value>Opslaginterface</value>
+    </data>
+    <data name="Storage Type" xml:space="preserve">
+        <value>Opslagtype</value>
+    </data>
+    <data name="Storage belonging to this machine" xml:space="preserve">
+        <value>Opslag die tot deze machine behoort</value>
+    </data>
+    <data name="Storage interface" xml:space="preserve">
+        <value>Opslaginterface</value>
+    </data>
+    <data name="Storage type" xml:space="preserve">
+        <value>Opslagtype</value>
+    </data>
+    <data name="Submit" xml:space="preserve">
+        <value>Verzenden</value>
+    </data>
+    <data name="Submit suggestion" xml:space="preserve">
+        <value>Suggestie indienen</value>
+    </data>
+    <data name="Submitting…" xml:space="preserve">
+        <value>Indienen…</value>
+    </data>
+    <data name="Suggest a YouTube video" xml:space="preserve">
+        <value>Een YouTube‑video voorstellen</value>
+    </data>
+    <data name="Suggest a YouTube video for {0}. The video title will be fetched automatically from YouTube when you submit." xml:space="preserve">
+        <value>Stel een YouTube-video voor {0} voor. De videotitel wordt automatisch opgehaald van YouTube bij het indienen.</value>
+    </data>
+    <data name="Suggest changes" xml:space="preserve">
+        <value>Veranderingen voorstellen</value>
+    </data>
+    <data name="Suggest computer photos" xml:space="preserve">
+        <value>Computerfoto's voorstellen</value>
+    </data>
+    <data name="Suggest console photos" xml:space="preserve">
+        <value>Consolefoto's voorstellen</value>
+    </data>
+    <data name="Suggest description" xml:space="preserve">
+        <value>Beschrijving voorstellen</value>
+    </data>
+    <data name="Suggest more computer photos" xml:space="preserve">
+        <value>Meer computervideo's voorstellen</value>
+    </data>
+    <data name="Suggest more console photos" xml:space="preserve">
+        <value>Meer consolefoto's voorstellen</value>
+    </data>
+    <data name="Suggest more photos" xml:space="preserve">
+        <value>Stel meer foto's voor</value>
+    </data>
+    <data name="Suggest more smartphone photos" xml:space="preserve">
+        <value>Meer smartphonefoto's voorstellen</value>
+    </data>
+    <data name="Suggest more videos" xml:space="preserve">
+        <value>Meer video's voorstellen</value>
+    </data>
+    <data name="Suggest photos" xml:space="preserve">
+        <value>Foto's voorstellen</value>
+    </data>
+    <data name="Suggest photos for {0}. Upload up to {1} JPG, PNG or WebP files (max 50 MB each). All photos in this batch share the same license and source URL." xml:space="preserve">
+        <value>Foto's voor {0} voorstellen. Upload tot {1} JPG, PNG of WebP-bestanden (maximaal 50 MB elk). Alle foto's in deze batch delen dezelfde licentie en bron-URL.</value>
+    </data>
+    <data name="Suggest smartphone photos" xml:space="preserve">
+        <value>Stel smartphonefoto's voor</value>
+    </data>
+    <data name="Suggest translation" xml:space="preserve">
+        <value>Vertaling voorstellen</value>
+    </data>
+    <data name="Suggested video" xml:space="preserve">
+        <value>Voorgestelde video</value>
+    </data>
+    <data name="Suggestion submitted. An administrator will review it." xml:space="preserve">
+        <value>Suggestie ingediend. Een beheerder zal het beoordelen.</value>
+    </data>
+    <data name="Synthesizer type" xml:space="preserve">
+        <value>Synthesizer type</value>
+    </data>
+    <data name="Tablet" xml:space="preserve">
+        <value>Tablet</value>
+    </data>
+    <data name="This is not a valid YouTube URL or video ID." xml:space="preserve">
+        <value>Dit is geen geldige YouTube‑URL of video‑ID.</value>
+    </data>
+    <data name="This machine directly draws pixels from software to a memory region that's converted to video output by a DAC or similar without using any specific graphics processing unit." xml:space="preserve">
+        <value>Deze machine tekent pixels rechtstreeks vanuit de software naar een geheugenregio die wordt omgezet in videouitvoer door een DAC of soortgelijke zonder gebruik te maken van een specifieke grafische verwerkingseenheid.</value>
+    </data>
+    <data name="This machine directly sends data to a DAC or similar connected to the audio output." xml:space="preserve">
+        <value>Deze machine stuurt gegevens rechtstreeks naar een DAC of vergelijkbaar aangesloten op de audio-uitvoer.</value>
+    </data>
+    <data name="Title" xml:space="preserve">
+        <value>Titel</value>
+    </data>
+    <data name="Title will be fetched from YouTube when you submit." xml:space="preserve">
+        <value>Titel wordt opgehaald van YouTube wanneer je verzendt.</value>
+    </data>
+    <data name="Transistors" xml:space="preserve">
+        <value>Transistoren</value>
+    </data>
+    <data name="Type" xml:space="preserve">
+        <value>Type</value>
+    </data>
+    <data name="Undo" xml:space="preserve">
+        <value>Ongedaan maken</value>
+    </data>
+    <data name="Unknown" xml:space="preserve">
+        <value>Onbekend</value>
+    </data>
+    <data name="Unknown (introduction date)" xml:space="preserve">
+        <value>Onbekend (introductiedatum)</value>
+    </data>
+    <data name="Unknown (memory by machine size)" xml:space="preserve">
+        <value>Onbekend (geheugen per machinelengte)</value>
+    </data>
+    <data name="Unknown (memory by machine speed)" xml:space="preserve">
+        <value>Onbekend (geheugen per machinsnelheid)</value>
+    </data>
+    <data name="Unknown (model)" xml:space="preserve">
+        <value>Onbekend (model)</value>
+    </data>
+    <data name="Unknown (processor by machine speed)" xml:space="preserve">
+        <value>Onbekend (processor per maquin snelheid)</value>
+    </data>
+    <data name="Unknown or empty (storage by machine nominal capacity)" xml:space="preserve">
+        <value>Onbekend of leeg</value>
+    </data>
+    <data name="Unknown size" xml:space="preserve">
+        <value>Onbekende grootte</value>
+    </data>
+    <data name="Usage" xml:space="preserve">
+        <value>Gebruik</value>
+    </data>
+    <data name="Use this when the URL above cannot be parsed (non-YouTube providers)." xml:space="preserve">
+        <value>Gebruik dit wanneer de bovenstaande URL niet kan worden geanalyseerd (niet-YouTube-aanbieders).</value>
+    </data>
+    <data name="Video ID" xml:space="preserve">
+        <value>Video‑ID</value>
+    </data>
+    <data name="Video Management" xml:space="preserve">
+        <value>Videobeheer</value>
+    </data>
+    <data name="Video Title" xml:space="preserve">
+        <value>Videotitel</value>
+    </data>
+    <data name="Video deleted successfully." xml:space="preserve">
+        <value>Video succesvol verwijderd.</value>
+    </data>
+    <data name="Video link submitted for review. An administrator will accept or reject it." xml:space="preserve">
+        <value>Videolink ingediend voor beoordeling. Een beheerder zal het accepteren of afwijzen.</value>
+    </data>
+    <data name="Video linked successfully." xml:space="preserve">
+        <value>Video succesvol gekoppeld.</value>
+    </data>
+    <data name="Video updated successfully." xml:space="preserve">
+        <value>Video succesvol bijgewerkt.</value>
+    </data>
+    <data name="Videos" xml:space="preserve">
+        <value>Video's</value>
+    </data>
+    <data name="We do not have a description for this computer, you could collaborate by suggesting one" xml:space="preserve">
+        <value>Er is geen beschrijving voor deze computer; je kunt bijdragen door er een voor te stellen.</value>
+    </data>
+    <data name="We do not have a description for this console, you could collaborate by suggesting one" xml:space="preserve">
+        <value>Er is geen beschrijving voor deze console; je kunt bijdragen door er een te suggereren</value>
+    </data>
+    <data name="We do not have a description for this smartphone, you could collaborate by suggesting one" xml:space="preserve">
+        <value>Er is geen beschrijving voor deze smartphone; u kunt bijdragen door er een te suggereren</value>
+    </data>
+    <data name="We do not have a description in your language, you could collaborate by translating the English description we show below" xml:space="preserve">
+        <value>Er is geen beschrijving in jouw taal; je kunt helpen door de onderstaande Engelse beschrijving te vertalen</value>
+    </data>
+    <data name="We have no videos available about this computer." xml:space="preserve">
+        <value>Er zijn geen video's beschikbaar over deze computer.</value>
+    </data>
+    <data name="We have no videos available about this console." xml:space="preserve">
+        <value>Er zijn geen video's beschikbaar over deze console.</value>
+    </data>
+    <data name="We have no videos available about this machine." xml:space="preserve">
+        <value>Er zijn geen video's beschikbaar over deze machine.</value>
+    </data>
+    <data name="We have no videos available about this smartphone." xml:space="preserve">
+        <value>Er zijn geen video's beschikbaar over dit smartphone.</value>
+    </data>
+    <data name="Width" xml:space="preserve">
+        <value>Breedte</value>
+    </data>
+    <data name="Write the new description below. Your suggestion will be reviewed by an administrator." xml:space="preserve">
+        <value>Schrijf hieronder de nieuwe beschrijving. Je suggestie wordt beoordeeld door een beheerder.</value>
+    </data>
+    <data name="Year only" xml:space="preserve">
+        <value>Alleen jaar</value>
+    </data>
+    <data name="You have a pending suggestion" xml:space="preserve">
+        <value>Je hebt een lopende suggestie</value>
+    </data>
+    <data name="You have staged photos that have not been submitted yet. Closing this dialog will delete them. Continue?" xml:space="preserve">
+        <value>Je hebt foto's voorbereid die nog niet zijn ingediend. Sluiten van dit dialoogvenster zal ze verwijderen. Doorgaan?</value>
+    </data>
+    <data name="You must be logged in to upload photos." xml:space="preserve">
+        <value>Je moet ingelogd zijn om foto's te uploaden.</value>
+    </data>
+    <data name="YouTube URL or Video ID" xml:space="preserve">
+        <value>YouTube‑URL of video‑ID</value>
+    </data>
+    <data name="YouTube URL or video ID" xml:space="preserve">
+        <value>YouTube-URL of videocode</value>
+    </data>
+    <data name="unknown speed" xml:space="preserve">
+        <value>onbekende snelheid</value>
+    </data>
+    <data name="{0:F3} Hz" xml:space="preserve">
+        <value>{0:F3} Hz</value>
+    </data>
+    <data name="{0:F3} MHz" xml:space="preserve">
+        <value>{0:F3} MHz</value>
+    </data>
+    <data name="{0} @{1}MHz" xml:space="preserve">
+        <value>{0} @ {1}MHz</value>
+    </data>
+    <data name="{0} @{1}MHz ({2} bits)" xml:space="preserve">
+        <value>{0} @ {1}MHz ({2} bits)</value>
+    </data>
+    <data name="{0} @{1}nm" xml:space="preserve">
+        <value>{0} @ {1}nm</value>
+    </data>
+    <data name="{0} @{1}µm" xml:space="preserve">
+        <value>{0} @ {1}µm</value>
+    </data>
+    <data name="{0} GHz" xml:space="preserve">
+        <value>{0} GHz</value>
+    </data>
+    <data name="{0} GiB" xml:space="preserve">
+        <value>{0} GiB</value>
+    </data>
+    <data name="{0} Hz" xml:space="preserve">
+        <value>{0} Hz</value>
+    </data>
+    <data name="{0} KHz" xml:space="preserve">
+        <value>{0} KHz</value>
+    </data>
+    <data name="{0} KiB" xml:space="preserve">
+        <value>{0} KiB</value>
+    </data>
+    <data name="{0} MHz" xml:space="preserve">
+        <value>{0} MHz</value>
+    </data>
+    <data name="{0} MiB" xml:space="preserve">
+        <value>{0} MiB</value>
+    </data>
+    <data name="{0} SIMD registers of {1} bits." xml:space="preserve">
+        <value>{0} SIMD-registers van {1} bits.</value>
+    </data>
+    <data name="{0} bits" xml:space="preserve">
+        <value>{0} bits</value>
+    </data>
+    <data name="{0} bits at {1} Hz" xml:space="preserve">
+        <value>{0} bits bij {1} Hz</value>
+    </data>
+    <data name="{0} bits at {1} KHz" xml:space="preserve">
+        <value>{0} bits bij {1} KHz</value>
+    </data>
+    <data name="{0} bps" xml:space="preserve">
+        <value>{0} bps</value>
+    </data>
+    <data name="{0} bytes" xml:space="preserve">
+        <value>{0} bytes</value>
+    </data>
+    <data name="{0} connected thru a {1} interface" xml:space="preserve">
+        <value>{0} verbonden via een {1}-interface</value>
+    </data>
+    <data name="{0} connected thru a {1} interface with a nominal capacity of {2}" xml:space="preserve">
+        <value>{0} verbonden via een {1}-interface met een nominale capaciteit van {2}</value>
+    </data>
+    <data name="{0} cores." xml:space="preserve">
+        <value>{0} cores.</value>
+    </data>
+    <data name="{0} floating point registers of {1} bits that can be used as SIMD registers of {2} bits." xml:space="preserve">
+        <value>{0} zwevende-kommaregisters van {1} bits die als SIMD-registers van {2} bits kunnen worden gebruikt.</value>
+    </data>
+    <data name="{0} floating point registers of {1} bits." xml:space="preserve">
+        <value>{0} drijvende-kommaregisters van {1} bits.</value>
+    </data>
+    <data name="{0} general purpose registers of {1} bits that can be used as SIMD registers of {2} bits." xml:space="preserve">
+        <value>{0} algemene registers van {1} bits die gebruikt kunnen worden als SIMD-registers van {2} bits.</value>
+    </data>
+    <data name="{0} general purpose registers of {1} bits that can be used as floating point registers of {2} bits and SIMD registers of {3} bits." xml:space="preserve">
+        <value>{0} algemene register van {1} bits die kunnen worden gebruikt als drijvende-kommagetallenregisters van {2} bits en SIMD-registers van {3} bits.</value>
+    </data>
+    <data name="{0} general purpose registers of {1} bits that can be used as floating point registers of {2} bits." xml:space="preserve">
+        <value>{0} algemene registers van {1} bits die gebruikt kunnen worden als drijvende-komma-registers van {2} bits.</value>
+    </data>
+    <data name="{0} general purpose registers of {1} bits." xml:space="preserve">
+        <value>{0} algemene registers van {1} bits.</value>
+    </data>
+    <data name="{0} mm²" xml:space="preserve">
+        <value>{0} mm²</value>
+    </data>
+    <data name="{0} of {1} memory ({2} at {3})" xml:space="preserve">
+        <value>{0} van {1} geheugen ({2} op {3})</value>
+    </data>
+    <data name="{0} square wave" xml:space="preserve">
+        <value>{0} vierkante golf</value>
+    </data>
+    <data name="{0} threads per core." xml:space="preserve">
+        <value>{0} threads per kern.</value>
+    </data>
+    <data name="{0} threads." xml:space="preserve">
+        <value>{0} threads.</value>
+    </data>
+    <data name="{0} voices" xml:space="preserve">
+        <value>{0} stemmen</value>
+    </data>
+    <data name="{0} white noise" xml:space="preserve">
+        <value>{0} wit ruis</value>
+    </data>
+    <data name="{0} with a nominal capacity of {1}" xml:space="preserve">
+        <value>{0} met een nominale capaciteit van {1}</value>
+    </data>
+    <data name="{0}&quot; with a native resolution of {1}" xml:space="preserve">
+        <value>{0}" met een native resolutie van {1}</value>
+    </data>
+    <data name="{0}-bit address." xml:space="preserve">
+        <value>{0} bits adres.</value>
+    </data>
+    <data name="{0}-bit data." xml:space="preserve">
+        <value>{0}‑bits gegevens.</value>
+    </data>
+    <data name="{0}KiB L2" xml:space="preserve">
+        <value>{0} KiB L2</value>
+    </data>
+    <data name="{0}KiB L3" xml:space="preserve">
+        <value>{0} KiB L3</value>
+    </data>
+    <data name="{0}KiB combined instruction-data L1" xml:space="preserve">
+        <value>{0} KiB gecombineerde instructie- en data L1</value>
+    </data>
+    <data name="{0}KiB data L1" xml:space="preserve">
+        <value>{0} KiB gegevens L1</value>
+    </data>
+    <data name="{0}KiB instruction L1" xml:space="preserve">
+        <value>{0} KiB instructie L1</value>
+    </data>
+    <data name="{0}nm" xml:space="preserve">
+        <value>{0} nm</value>
+    </data>
+    <data name="{0}µm" xml:space="preserve">
+        <value>{0}µm</value>
+    </data>
+</root>

@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e108</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e108</value>
+    </resheader>
+    <data name="Affected ID" xml:space="preserve">
+        <value>Geïnvloed ID</value>
+    </data>
+    <data name="Are you sure you want to delete the news type {0} from {1} that affect artifact ID {2}?" xml:space="preserve">
+        <value>Weet u zeker dat u het nieuws van type {0} uit {1} wilt verwijderen dat artefact-ID {2} beïnvloedt?</value>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Annuleren</value>
+    </data>
+    <data name="Date" xml:space="preserve">
+        <value>Datum</value>
+    </data>
+    <data name="Date precision" xml:space="preserve">
+        <value>Datumprecisie</value>
+    </data>
+    <data name="Delete news" xml:space="preserve">
+        <value>Nieuws verwijderen</value>
+    </data>
+    <data name="Full date" xml:space="preserve">
+        <value>Volledige datum</value>
+    </data>
+    <data name="Loading..." xml:space="preserve">
+        <value>Laden…</value>
+    </data>
+    <data name="Month and year only" xml:space="preserve">
+        <value>Alleen maand en jaar</value>
+    </data>
+    <data name="New GPU in database" xml:space="preserve">
+        <value>Nieuwe GPU in de database</value>
+    </data>
+    <data name="New book in database" xml:space="preserve">
+        <value>Nieuw boek in de database</value>
+    </data>
+    <data name="New computer in collection" xml:space="preserve">
+        <value>Nieuwe computer in collectie</value>
+    </data>
+    <data name="New computer in database" xml:space="preserve">
+        <value>Nieuwe computer in de database</value>
+    </data>
+    <data name="New console in collection" xml:space="preserve">
+        <value>Nieuwe console in collectie</value>
+    </data>
+    <data name="New console in database" xml:space="preserve">
+        <value>Nieuwe console in de database</value>
+    </data>
+    <data name="New document in database" xml:space="preserve">
+        <value>Nieuw document in de database</value>
+    </data>
+    <data name="New magazine in database" xml:space="preserve">
+        <value>Nieuw tijdschrift in de database</value>
+    </data>
+    <data name="New magazine issue in database" xml:space="preserve">
+        <value>Nieuw tijdschriftnummer in de database</value>
+    </data>
+    <data name="New person in database" xml:space="preserve">
+        <value>Nieuwe persoon in de database</value>
+    </data>
+    <data name="New processor in database" xml:space="preserve">
+        <value>Nieuwe processor in de database</value>
+    </data>
+    <data name="New software in database" xml:space="preserve">
+        <value>Nieuwe software in de database</value>
+    </data>
+    <data name="New software release in database" xml:space="preserve">
+        <value>Nieuwe softwareversie in de database</value>
+    </data>
+    <data name="New software version in database" xml:space="preserve">
+        <value>Nieuwe softwareversie in de database</value>
+    </data>
+    <data name="New sound synthesizer in database" xml:space="preserve">
+        <value>Nieuwe geluidssynthesizer in de database</value>
+    </data>
+    <data name="News" xml:space="preserve">
+        <value>Nieuws</value>
+    </data>
+    <data name="Type" xml:space="preserve">
+        <value>Type</value>
+    </data>
+    <data name="Updated GPU in database" xml:space="preserve">
+        <value>GPU geüpdate in de database</value>
+    </data>
+    <data name="Updated book in database" xml:space="preserve">
+        <value>Boek geüpdate in de database</value>
+    </data>
+    <data name="Updated computer in collection" xml:space="preserve">
+        <value>Computer geüpdate in collectie</value>
+    </data>
+    <data name="Updated computer in database" xml:space="preserve">
+        <value>Computer geüpdate in de database</value>
+    </data>
+    <data name="Updated console in collection" xml:space="preserve">
+        <value>Console geüpdate in collectie</value>
+    </data>
+    <data name="Updated console in database" xml:space="preserve">
+        <value>Console geüpdate in de database</value>
+    </data>
+    <data name="Updated document in database" xml:space="preserve">
+        <value>Document geüpdate in de database</value>
+    </data>
+    <data name="Updated magazine in database" xml:space="preserve">
+        <value>Tijdschrift geüpdate in de database</value>
+    </data>
+    <data name="Updated magazine issue in database" xml:space="preserve">
+        <value>Geüpdatet tijdschriftnummer in de database</value>
+    </data>
+    <data name="Updated person in database" xml:space="preserve">
+        <value>Geüpdatete persoon in de database</value>
+    </data>
+    <data name="Updated processor in database" xml:space="preserve">
+        <value>Processor geüpdate in de database</value>
+    </data>
+    <data name="Updated software in database" xml:space="preserve">
+        <value>Software geüpdate in de database</value>
+    </data>
+    <data name="Updated software release in database" xml:space="preserve">
+        <value>Softwareversie geüpdate in de database</value>
+    </data>
+    <data name="Updated software version in database" xml:space="preserve">
+        <value>Softwareversie geüpdate in de database</value>
+    </data>
+    <data name="Updated sound synthesizer in database" xml:space="preserve">
+        <value>Geluidssynthesizer geüpdate in de database</value>
+    </data>
+    <data name="Year only" xml:space="preserve">
+        <value>Alleen jaar</value>
+    </data>
+</root>

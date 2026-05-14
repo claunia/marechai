@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e108</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e108</value>
+    </resheader>
+    <data name="All PDAs" xml:space="preserve">
+        <value>Alle PDAs</value>
+    </data>
+    <data name="All companies" xml:space="preserve">
+        <value>Alle bedrijven</value>
+    </data>
+    <data name="Alphabetically search" xml:space="preserve">
+        <value>Alfabetisch zoeken</value>
+    </data>
+    <data name="Date precision" xml:space="preserve">
+        <value>Datumprecisie</value>
+    </data>
+    <data name="Full date" xml:space="preserve">
+        <value>Volledige datum</value>
+    </data>
+    <data name="Here you can consult our database." xml:space="preserve">
+        <value>Hier kunt u onze database raadplegen.</value>
+    </data>
+    <data name="In this database you can find technical information as well as PDAs history, catalogued by companies, alphabetically and by release date." xml:space="preserve">
+        <value>In deze database vindt u technische informatie en de geschiedenis van PDAs, gecatalogiseerd per bedrijf, alfabetisch en op releasedatum.</value>
+    </data>
+    <data name="Loading..." xml:space="preserve">
+        <value>Laden…</value>
+    </data>
+    <data name="Month and year only" xml:space="preserve">
+        <value>Maand en jaar alleen</value>
+    </data>
+    <data name="PDAs introduced in {0}" xml:space="preserve">
+        <value>PDAs geïntroduceerd in {0}</value>
+    </data>
+    <data name="PDAs starting with {0}" xml:space="preserve">
+        <value>PDAs beginnend met {0}</value>
+    </data>
+    <data name="Search by companies" xml:space="preserve">
+        <value>Zoek op bedrijven</value>
+    </data>
+    <data name="Search by year" xml:space="preserve">
+        <value>Zoek op jaar</value>
+    </data>
+    <data name="Search results:" xml:space="preserve">
+        <value>Zoekresultaten:</value>
+    </data>
+    <data name="Suggest a new PDA to be added to the catalogue." xml:space="preserve">
+        <value>Stel een nieuwe PDA voor om aan het catalogus toe te voegen.</value>
+    </data>
+    <data name="Suggest new PDA" xml:space="preserve">
+        <value>Nieuwe PDA voorstellen</value>
+    </data>
+    <data name="There are no PDAs found in the database that start with this letter." xml:space="preserve">
+        <value>Er zijn geen PDAs gevonden in de database die beginnen met deze letter.</value>
+    </data>
+    <data name="There are no PDAs found introduced this year." xml:space="preserve">
+        <value>Er zijn geen PDAs gevonden die dit jaar zijn geïntroduceerd.</value>
+    </data>
+    <data name="Year only" xml:space="preserve">
+        <value>Jaar alleen</value>
+    </data>
+    <data name="{0} PDAs actually catalogued in the database." xml:space="preserve">
+        <value>{0} PDAs daadwerkelijk gecatalogiseerd in de database.</value>
+    </data>
+    <data name="{0} PDAs found in the database." xml:space="preserve">
+        <value>{0} PDAs gevonden in de database.</value>
+    </data>
+</root>
