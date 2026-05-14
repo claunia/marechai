@@ -113,8 +113,11 @@ public class SoftwareScreenshotsController(MarechaiContext context, IConfigurati
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<SoftwareScreenshotDto>> GetAsync(Guid id)
+    public async Task<ActionResult<SoftwareScreenshotDto>> GetAsync(Guid id, [FromQuery] string lang = null)
     {
+        string langCode  = LanguageResolver.Resolve(HttpContext, lang);
+        bool   isEnglish = string.Equals(langCode, "eng", StringComparison.Ordinal);
+
         SoftwareScreenshotDto dto = await context.SoftwareScreenshots
                                                   .Where(s => s.Id == id)
                                                   .Select(s => new SoftwareScreenshotDto
@@ -126,7 +129,14 @@ public class SoftwareScreenshotsController(MarechaiContext context, IConfigurati
                                                        PlatformName       = s.Platform != null ? s.Platform.Name : null,
                                                        SoftwareVersionId  = s.SoftwareVersionId,
                                                        VersionString = s.Version != null ? s.Version.VersionString : null,
-                                                       Caption            = s.Caption,
+                                                       Caption = isEnglish || s.Caption == null
+                                                                     ? s.Caption
+                                                                     : (context.SoftwareScreenshotCaptionTranslations
+                                                                               .Where(t => t.ScreenshotId == s.Id &&
+                                                                                           t.LanguageCode == langCode)
+                                                                               .Select(t => t.Caption)
+                                                                               .FirstOrDefault() ?? s.Caption),
+                                                       CanonicalCaption   = s.Caption,
                                                        OriginalExtension  = s.OriginalExtension
                                                    })
                                                   .FirstOrDefaultAsync();
@@ -139,21 +149,32 @@ public class SoftwareScreenshotsController(MarechaiContext context, IConfigurati
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public Task<List<SoftwareScreenshotDto>> GetAllAsync() =>
-        context.SoftwareScreenshots
-               .Select(s => new SoftwareScreenshotDto
-                {
-                    Id                 = s.Id,
-                    SoftwareId         = s.SoftwareId,
-                    SoftwareName       = s.Software.Name,
-                    SoftwarePlatformId = s.SoftwarePlatformId,
-                    PlatformName       = s.Platform != null ? s.Platform.Name : null,
-                    SoftwareVersionId  = s.SoftwareVersionId,
-                    VersionString      = s.Version != null ? s.Version.VersionString : null,
-                    Caption            = s.Caption,
-                    OriginalExtension  = s.OriginalExtension
-                })
-               .ToListAsync();
+    public Task<List<SoftwareScreenshotDto>> GetAllAsync([FromQuery] string lang = null)
+    {
+        string langCode  = LanguageResolver.Resolve(HttpContext, lang);
+        bool   isEnglish = string.Equals(langCode, "eng", StringComparison.Ordinal);
+
+        return context.SoftwareScreenshots
+                      .Select(s => new SoftwareScreenshotDto
+                       {
+                           Id                 = s.Id,
+                           SoftwareId         = s.SoftwareId,
+                           SoftwareName       = s.Software.Name,
+                           SoftwarePlatformId = s.SoftwarePlatformId,
+                           PlatformName       = s.Platform != null ? s.Platform.Name : null,
+                           SoftwareVersionId  = s.SoftwareVersionId,
+                           VersionString      = s.Version != null ? s.Version.VersionString : null,
+                           Caption = isEnglish || s.Caption == null
+                                         ? s.Caption
+                                         : (context.SoftwareScreenshotCaptionTranslations
+                                                   .Where(t => t.ScreenshotId == s.Id && t.LanguageCode == langCode)
+                                                   .Select(t => t.Caption)
+                                                   .FirstOrDefault() ?? s.Caption),
+                           CanonicalCaption   = s.Caption,
+                           OriginalExtension  = s.OriginalExtension
+                       })
+                      .ToListAsync();
+    }
 
     [HttpPost("upload")]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -258,6 +279,7 @@ public class SoftwareScreenshotsController(MarechaiContext context, IConfigurati
             SoftwarePlatformId = model.SoftwarePlatformId,
             SoftwareVersionId  = model.SoftwareVersionId,
             Caption            = model.Caption,
+            CanonicalCaption   = model.Caption,
             OriginalExtension  = model.OriginalExtension
         });
     }
@@ -278,7 +300,24 @@ public class SoftwareScreenshotsController(MarechaiContext context, IConfigurati
 
         if(model is null) return NotFound();
 
-        model.Caption            = dto.Caption;
+        // Admin / suggestion edit may submit the canonical English caption via
+        // DTO.CanonicalCaption (preferred) or fall back to DTO.Caption when the dialog
+        // doesn't carry a separate canonical field.
+        string newCaption = !string.IsNullOrEmpty(dto.CanonicalCaption) ? dto.CanonicalCaption : dto.Caption;
+        string oldCaption = model.Caption;
+
+        // Invalidate cached translations whenever the canonical caption text changes,
+        // so the background TranslationWorker re-translates on its next sweep. Comparison
+        // is char-exact (Ordinal) — translation output is char-exact too, so any
+        // case/whitespace edit warrants re-translation.
+        if(!string.Equals(oldCaption ?? string.Empty, newCaption ?? string.Empty, StringComparison.Ordinal))
+        {
+            await context.SoftwareScreenshotCaptionTranslations
+                         .Where(t => t.ScreenshotId == id)
+                         .ExecuteDeleteAsync();
+        }
+
+        model.Caption            = newCaption;
         model.SoftwarePlatformId = dto.SoftwarePlatformId;
         model.SoftwareVersionId  = dto.SoftwareVersionId;
 

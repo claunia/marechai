@@ -502,7 +502,12 @@ public class SoftwareBrowsingService
     {
         try
         {
-            return await _apiClient.Software.Screenshots[screenshotId.ToString()].GetAsync();
+            string lang = GetIso639CodeFromCulture();
+
+            return await _apiClient.Software.Screenshots[screenshotId.ToString()].GetAsync(config =>
+            {
+                config.QueryParameters.Lang = lang;
+            });
         }
         catch(Exception ex)
         {

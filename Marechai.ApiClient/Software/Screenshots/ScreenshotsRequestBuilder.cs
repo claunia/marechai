@@ -60,7 +60,7 @@ namespace Marechai.ApiClient.Software.Screenshots
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public ScreenshotsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/screenshots", pathParameters)
+        public ScreenshotsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/screenshots{?lang*}", pathParameters)
         {
         }
         /// <summary>
@@ -68,7 +68,7 @@ namespace Marechai.ApiClient.Software.Screenshots
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public ScreenshotsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/screenshots", rawUrl)
+        public ScreenshotsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/software/screenshots{?lang*}", rawUrl)
         {
         }
         /// <returns>A List&lt;global::Marechai.ApiClient.Models.SoftwareScreenshotDto&gt;</returns>
@@ -76,11 +76,11 @@ namespace Marechai.ApiClient.Software.Screenshots
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<List<global::Marechai.ApiClient.Models.SoftwareScreenshotDto>?> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<List<global::Marechai.ApiClient.Models.SoftwareScreenshotDto>?> GetAsync(Action<RequestConfiguration<global::Marechai.ApiClient.Software.Screenshots.ScreenshotsRequestBuilder.ScreenshotsRequestBuilderGetQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<List<global::Marechai.ApiClient.Models.SoftwareScreenshotDto>> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<List<global::Marechai.ApiClient.Models.SoftwareScreenshotDto>> GetAsync(Action<RequestConfiguration<global::Marechai.ApiClient.Software.Screenshots.ScreenshotsRequestBuilder.ScreenshotsRequestBuilderGetQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             var requestInfo = ToGetRequestInformation(requestConfiguration);
@@ -91,11 +91,11 @@ namespace Marechai.ApiClient.Software.Screenshots
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default)
+        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<global::Marechai.ApiClient.Software.Screenshots.ScreenshotsRequestBuilder.ScreenshotsRequestBuilderGetQueryParameters>>? requestConfiguration = default)
         {
 #nullable restore
 #else
-        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default)
+        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<global::Marechai.ApiClient.Software.Screenshots.ScreenshotsRequestBuilder.ScreenshotsRequestBuilderGetQueryParameters>> requestConfiguration = default)
         {
 #endif
             var requestInfo = new RequestInformation(Method.GET, UrlTemplate, PathParameters);
@@ -112,12 +112,27 @@ namespace Marechai.ApiClient.Software.Screenshots
         {
             return new global::Marechai.ApiClient.Software.Screenshots.ScreenshotsRequestBuilder(rawUrl, RequestAdapter);
         }
+        [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
+        #pragma warning disable CS1591
+        public partial class ScreenshotsRequestBuilderGetQueryParameters 
+        #pragma warning restore CS1591
+        {
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("lang")]
+            public string? Lang { get; set; }
+#nullable restore
+#else
+            [QueryParameter("lang")]
+            public string Lang { get; set; }
+#endif
+        }
         /// <summary>
         /// Configuration for the request such as headers, query parameters, and middleware options.
         /// </summary>
         [Obsolete("This class is deprecated. Please use the generic RequestConfiguration class generated by the generator.")]
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class ScreenshotsRequestBuilderGetRequestConfiguration : RequestConfiguration<DefaultQueryParameters>
+        public partial class ScreenshotsRequestBuilderGetRequestConfiguration : RequestConfiguration<global::Marechai.ApiClient.Software.Screenshots.ScreenshotsRequestBuilder.ScreenshotsRequestBuilderGetQueryParameters>
         {
         }
     }

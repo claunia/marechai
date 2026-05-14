@@ -399,6 +399,15 @@ file class Program
         builder.Services.AddSingleton<Marechai.Translation.ITranslationProvider,
                                       PeopleBySoftwareRoleTranslationProvider>();
 
+        // Software screenshot caption translation provider — FK-link translation table keyed by
+        // SoftwareScreenshot.Id (Guid). NO in-memory cache; read endpoints project the localized
+        // caption via a correlated sub-query against SoftwareScreenshotCaptionTranslations with
+        // English fallback. Each screenshot's caption is translated independently (no cross-
+        // screenshot dedup); UpdateAsync invalidates the rows when the canonical caption text
+        // changes so the worker re-translates on its next sweep.
+        builder.Services.AddSingleton<Marechai.Translation.ITranslationProvider,
+                                      SoftwareScreenshotCaptionTranslationProvider>();
+
         // Background worker that fills SoftwareGenreTranslations using OpenAI (preferred) /
         // NLLB (fallback). Exits permanently if neither provider is configured. MUST be
         // registered after AddMarechaiTranslation + AddSingleton<SoftwareGenreTranslationCache>.

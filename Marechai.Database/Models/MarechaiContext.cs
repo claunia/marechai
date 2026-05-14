@@ -156,6 +156,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<UnM49BySoftwareRelease>             UnM49BySoftwareRelease              { get; set; }
     public virtual DbSet<LanguageBySoftwareRelease>          LanguageBySoftwareRelease            { get; set; }
     public virtual DbSet<SoftwareScreenshot>                  SoftwareScreenshots                  { get; set; }
+    public virtual DbSet<SoftwareScreenshotCaptionTranslation> SoftwareScreenshotCaptionTranslations { get; set; }
     public virtual DbSet<SoftwareCover>                      SoftwareCovers                       { get; set; }
     public virtual DbSet<SoftwareCoverCaptionTranslation>    SoftwareCoverCaptionTranslations     { get; set; }
     public virtual DbSet<PeopleBySoftwareRoleTranslation>    PeopleBySoftwareRoleTranslations     { get; set; }
@@ -2947,6 +2948,24 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .WithMany()
                   .HasForeignKey(e => e.LanguageCode)
                   .HasConstraintName("fk_people_by_software_role_translations_language");
+        });
+
+        modelBuilder.Entity<SoftwareScreenshotCaptionTranslation>(entity =>
+        {
+            entity.HasIndex(e => new { e.ScreenshotId, e.LanguageCode })
+                  .IsUnique()
+                  .HasDatabaseName("idx_software_screenshot_caption_translations_screenshot_language");
+
+            entity.HasOne(e => e.Screenshot)
+                  .WithMany()
+                  .HasForeignKey(e => e.ScreenshotId)
+                  .HasConstraintName("fk_software_screenshot_caption_translations_screenshot")
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Language)
+                  .WithMany()
+                  .HasForeignKey(e => e.LanguageCode)
+                  .HasConstraintName("fk_software_screenshot_caption_translations_language");
         });
 
         modelBuilder.Entity<MobyGamesPromoArtDownloadState>(entity =>

@@ -938,7 +938,12 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
     {
         try
         {
-            return await client.Software.Screenshots[id].GetAsync();
+            string lang = UiLanguage.GetIso639_3();
+
+            return await client.Software.Screenshots[id].GetAsync(config =>
+            {
+                config.QueryParameters.Lang = lang;
+            });
         }
         catch
         {
