@@ -31,6 +31,7 @@ using Marechai.ApiClient.Models;
 using Marechai.Data;
 using Marechai.Helpers;
 using Marechai.Pages.Suggestions;
+using Marechai.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
@@ -52,6 +53,7 @@ public partial class View
     bool                      _loaded;
     List<PersonByMagazineDto> _magazines;
     PersonDto                 _person;
+    PhotoLightbox             _lightbox;
     List<PersonBySoftwareDto> _softwareCredits;
 
     [CascadingParameter]
