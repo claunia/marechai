@@ -49,6 +49,14 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     [DbFunction("NaturalSortKey", Schema = null)]
     public static string NaturalSortKey(string value) => throw new NotSupportedException("This method is for EF Core LINQ-to-SQL translation only.");
 
+    /// <summary>
+    ///     Maps to the MariaDB NormalizeForDuplicate() function used by the /admin/software/duplicates page to group
+    ///     pseudoduplicate Software rows. Strips every parenthesised and bracketed group, collapses whitespace, and
+    ///     lowercases. This method is for EF Core LINQ-to-SQL translation only and must not be called directly.
+    /// </summary>
+    [DbFunction("NormalizeForDuplicate", Schema = null)]
+    public static string NormalizeForDuplicate(string value) => throw new NotSupportedException("This method is for EF Core LINQ-to-SQL translation only.");
+
     public MarechaiContext() {}
 
     public MarechaiContext(DbContextOptions<MarechaiContext> options) : base(options) {}
@@ -303,6 +311,12 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
             [typeof(string)])!;
 
         modelBuilder.HasDbFunction(naturalSortKeyMethod).HasName("NaturalSortKey");
+
+        MethodInfo normalizeForDuplicateMethod = typeof(MarechaiContext).GetMethod(nameof(NormalizeForDuplicate),
+            BindingFlags.Public | BindingFlags.Static,
+            [typeof(string)])!;
+
+        modelBuilder.HasDbFunction(normalizeForDuplicateMethod).HasName("NormalizeForDuplicate");
 
         modelBuilder.Entity<Book>(entity =>
         {

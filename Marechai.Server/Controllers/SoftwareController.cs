@@ -750,6 +750,188 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
         return await query.CountAsync(cancellationToken);
     }
 
+    /// <summary>
+    /// Builds the base Software query used by both <see cref="GetAdminDuplicateGroupsAsync"/>
+    /// and <see cref="GetAdminDuplicateGroupsCountAsync"/>. Filters by <paramref name="kind"/>
+    /// (when set) and excludes <see cref="SoftwareKind.Dlc"/> when <paramref name="excludeDlc"/>
+    /// is true. The kind filter and the excludeDlc flag are independent — when a specific Kind
+    /// is selected, excludeDlc has no effect (the Kind filter already isolates the chosen kind).
+    /// </summary>
+    IQueryable<Database.Models.Software> BuildDuplicateBaseQuery(SoftwareKind? kind, bool excludeDlc)
+    {
+        IQueryable<Database.Models.Software> baseQuery = context.Softwares;
+
+        if(kind.HasValue)
+            baseQuery = baseQuery.Where(s => s.Kind == kind.Value);
+        else if(excludeDlc)
+            baseQuery = baseQuery.Where(s => s.Kind != SoftwareKind.Dlc);
+
+        return baseQuery;
+    }
+
+    /// <summary>
+    /// Admin-only paged list of pseudoduplicate Software groups, used by
+    /// /admin/software/duplicates. Two Software rows are pseudoduplicates when
+    /// <see cref="MarechaiContext.NormalizeForDuplicate"/> returns the same key —
+    /// the SQL function strips every parenthesised and bracketed group, collapses
+    /// whitespace and lower-cases, so "Game", "Game", "Game (Limited Edition)"
+    /// and "Game (Collector's Edition)" all share the key "game".
+    /// </summary>
+    /// <remarks>
+    /// Pagination applies to the *groups*, not the items. The grid in
+    /// /admin/software/duplicates pages over groups directly.
+    /// </remarks>
+    [HttpGet("admin/duplicates")]
+    [Authorize(Roles = "Admin, UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<List<SoftwareDuplicateGroupDto>> GetAdminDuplicateGroupsAsync(
+        [FromQuery] int? skip = null,
+        [FromQuery] int? take = null,
+        [FromQuery] SoftwareKind? kind = null,
+        [FromQuery] bool excludeDlc = false,
+        CancellationToken cancellationToken = default)
+    {
+        IQueryable<Database.Models.Software> baseQuery = BuildDuplicateBaseQuery(kind, excludeDlc);
+
+        // Step 1: materialise the list of duplicate normalisation keys we want to
+        // show on this page. GROUP BY NormalizeForDuplicate(Name) HAVING COUNT > 1.
+        IQueryable<string> groupKeysQuery = baseQuery
+            .GroupBy(s => MarechaiContext.NormalizeForDuplicate(s.Name))
+            .Where(g => g.Count() > 1)
+            .Select(g => g.Key)
+            .OrderBy(k => k);
+
+        if(skip.HasValue) groupKeysQuery = (IOrderedQueryable<string>)groupKeysQuery.Skip(skip.Value);
+
+        if(take.HasValue) groupKeysQuery = (IOrderedQueryable<string>)groupKeysQuery.Take(take.Value);
+
+        List<string> pageKeys = await groupKeysQuery.ToListAsync(cancellationToken);
+
+        if(pageKeys.Count == 0) return [];
+
+        HashSet<string> pageKeySet = pageKeys.ToHashSet();
+
+        // Step 2: pull every Software whose normalised key falls on this page, in one query.
+        var rows = await baseQuery
+                        .Where(s => pageKeySet.Contains(MarechaiContext.NormalizeForDuplicate(s.Name)))
+                        .Select(s => new
+                         {
+                             NormalizedName = MarechaiContext.NormalizeForDuplicate(s.Name),
+                             s.Id,
+                             s.Name,
+                             s.Kind
+                         })
+                        .ToListAsync(cancellationToken);
+
+        ulong[] softwareIds = rows.Select(r => r.Id).Distinct().ToArray();
+
+        // Step 3: per-software release aggregates — count, earliest date, platforms.
+        var releaseAggs = await context.SoftwareReleases
+                                       .Where(r => r.SoftwareId.HasValue && softwareIds.Contains(r.SoftwareId.Value))
+                                       .GroupBy(r => r.SoftwareId!.Value)
+                                       .Select(g => new
+                                        {
+                                            SoftwareId   = g.Key,
+                                            Count        = g.Count(),
+                                            EarliestDate = g.Min(r => r.ReleaseDate)
+                                        })
+                                       .ToDictionaryAsync(g => g.SoftwareId, cancellationToken);
+
+        // Step 4: distinct platform names per software (separate query to avoid a
+        // GROUP_CONCAT-shaped projection that EF Core/Pomelo translates inconsistently).
+        var platformsBySoftware = (await context.SoftwareReleases
+                                                .Where(r => r.SoftwareId.HasValue          &&
+                                                            softwareIds.Contains(r.SoftwareId.Value) &&
+                                                            r.PlatformId != null)
+                                                .Select(r => new
+                                                 {
+                                                     SoftwareId   = r.SoftwareId!.Value,
+                                                     PlatformName = r.Platform.Name
+                                                 })
+                                                .Distinct()
+                                                .ToListAsync(cancellationToken))
+           .GroupBy(p => p.SoftwareId)
+           .ToDictionary(g => g.Key,
+                         g => g.Select(p => p.PlatformName)
+                               .Where(n => !string.IsNullOrWhiteSpace(n))
+                               .OrderBy(n => n, StringComparer.OrdinalIgnoreCase)
+                               .ToList());
+
+        // Step 5: assemble groups in the same order as Step 1.
+        const int maxPlatformNamesShown = 5;
+        Dictionary<string, List<SoftwareDuplicateItemDto>> itemsByKey = new(StringComparer.Ordinal);
+
+        foreach(var row in rows)
+        {
+            string platforms = string.Empty;
+            if(platformsBySoftware.TryGetValue(row.Id, out List<string> platformList) && platformList.Count > 0)
+            {
+                if(platformList.Count <= maxPlatformNamesShown)
+                    platforms = string.Join(", ", platformList);
+                else
+                    platforms = string.Join(", ", platformList.Take(maxPlatformNamesShown)) +
+                                $" +{platformList.Count - maxPlatformNamesShown} more";
+            }
+
+            int? earliestYear = null;
+            int  count        = 0;
+            if(releaseAggs.TryGetValue(row.Id, out var agg))
+            {
+                count        = agg.Count;
+                earliestYear = agg.EarliestDate?.Year;
+            }
+
+            var item = new SoftwareDuplicateItemDto
+            {
+                Id                  = row.Id,
+                Name                = row.Name,
+                Kind                = row.Kind,
+                EarliestReleaseYear = earliestYear,
+                ReleasesCount       = count,
+                Platforms           = platforms
+            };
+
+            if(!itemsByKey.TryGetValue(row.NormalizedName, out List<SoftwareDuplicateItemDto> bucket))
+            {
+                bucket                          = [];
+                itemsByKey[row.NormalizedName] = bucket;
+            }
+
+            bucket.Add(item);
+        }
+
+        return pageKeys.Select(k => new SoftwareDuplicateGroupDto
+                        {
+                            NormalizedName = k,
+                            Items = itemsByKey.TryGetValue(k, out List<SoftwareDuplicateItemDto> items)
+                                        ? items.OrderBy(i => i.Name, StringComparer.OrdinalIgnoreCase).ToList()
+                                        : []
+                        })
+                       .ToList();
+    }
+
+    /// <summary>
+    /// Count of pseudoduplicate Software groups under the same filters as
+    /// <see cref="GetAdminDuplicateGroupsAsync"/>. Not cached — admins expect the
+    /// number to drop as soon as they complete a merge.
+    /// </summary>
+    [HttpGet("admin/duplicates/count")]
+    [Authorize(Roles = "Admin, UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetAdminDuplicateGroupsCountAsync(
+        [FromQuery] SoftwareKind? kind = null,
+        [FromQuery] bool excludeDlc = false,
+        CancellationToken cancellationToken = default)
+    {
+        IQueryable<Database.Models.Software> baseQuery = BuildDuplicateBaseQuery(kind, excludeDlc);
+
+        return baseQuery.GroupBy(s => MarechaiContext.NormalizeForDuplicate(s.Name))
+                        .Where(g => g.Count() > 1)
+                        .CountAsync(cancellationToken);
+    }
+
     [HttpGet("{id:ulong}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]

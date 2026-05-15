@@ -1579,4 +1579,37 @@
     <data name="Writing" xml:space="preserve">
         <value>Tekst</value>
     </data>
+    <data name="Software Duplicates" xml:space="preserve">
+        <value>Software-duplicaten</value>
+    </data>
+    <data name="Find and merge potential duplicate software entries." xml:space="preserve">
+        <value>Mogelijke dubbele software-items zoeken en samenvoegen.</value>
+    </data>
+    <data name="Hide DLC / Addon" xml:space="preserve">
+        <value>DLC / Add-on verbergen</value>
+    </data>
+    <data name="Kind filter" xml:space="preserve">
+        <value>Soortfilter</value>
+    </data>
+    <data name="All" xml:space="preserve">
+        <value>Alle</value>
+    </data>
+    <data name="Normalized name" xml:space="preserve">
+        <value>Genormaliseerde naam</value>
+    </data>
+    <data name="Entries" xml:space="preserve">
+        <value>Vermeldingen</value>
+    </data>
+    <data name="Earliest release" xml:space="preserve">
+        <value>Vroegste uitgave</value>
+    </data>
+    <data name="Platforms" xml:space="preserve">
+        <value>Platforms</value>
+    </data>
+    <data name="Open in new window" xml:space="preserve">
+        <value>Openen in nieuw venster</value>
+    </data>
+    <data name="No duplicate software groups found." xml:space="preserve">
+        <value>Geen dubbele softwaregroepen gevonden.</value>
+    </data>
 </root>

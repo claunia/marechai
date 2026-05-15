@@ -758,6 +758,57 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
+    /// <summary>
+    /// Admin-only paged list of pseudoduplicate Software groups for
+    /// /admin/software/duplicates. Backed by GET /software/admin/duplicates.
+    /// Pagination is applied to <em>groups</em> on the server side.
+    /// </summary>
+    public async Task<List<SoftwareDuplicateGroupDto>> GetAdminDuplicateGroupsAsync(int skip, int take,
+        SoftwareKind? kind = null, bool excludeDlc = false,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            List<SoftwareDuplicateGroupDto> groups = await client.Software.Admin.Duplicates.GetAsync(config =>
+            {
+                config.QueryParameters.Skip       = skip;
+                config.QueryParameters.Take       = take;
+                config.QueryParameters.ExcludeDlc = excludeDlc;
+                if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
+            }, cancellationToken);
+
+            return groups ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    /// <summary>
+    /// Count of pseudoduplicate Software groups under the same filter set as
+    /// <see cref="GetAdminDuplicateGroupsAsync"/>. Backed by
+    /// GET /software/admin/duplicates/count.
+    /// </summary>
+    public async Task<int> GetAdminDuplicateGroupsCountAsync(SoftwareKind? kind = null, bool excludeDlc = false,
+                                                             CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            int? count = await client.Software.Admin.Duplicates.Count.GetAsync(config =>
+            {
+                config.QueryParameters.ExcludeDlc = excludeDlc;
+                if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
+            }, cancellationToken);
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
+
     public async Task<List<SoftwareSpecKeyDto>> GetSpecificationsAsync()
     {
         try

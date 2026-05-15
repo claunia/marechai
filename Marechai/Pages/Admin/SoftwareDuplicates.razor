@@ -1,0 +1,118 @@
+@page "/admin/software/duplicates"
+@attribute [Authorize(Roles = "Admin, UberAdmin")]
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@using Marechai.Services
+@inject SoftwareService SoftwareService
+@inject IStringLocalizer<SoftwareService> L
+@inject IDialogService DialogService
+
+@*
+    /admin/software/duplicates — paged list of pseudoduplicate Software groups.
+    Two Software rows are pseudoduplicates when their name normalises to the
+    same key via the server-side NormalizeForDuplicate(name) SQL function
+    (strips parenthesised and bracketed runs, collapses whitespace, lowercases).
+*@
+
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #bf360c 0%, #ff7043 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Filled.JoinFull" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Style="color: white;">@L["Software Duplicates"]</MudText>
+    </MudStack>
+    <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);" Class="mt-2">@L["Find and merge potential duplicate software entries."]</MudText>
+</MudPaper>
+
+@if(!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+}
+
+@if(!string.IsNullOrWhiteSpace(_successMessage))
+{
+    <MudAlert Severity="Severity.Success" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _successMessage = null">@_successMessage</MudAlert>
+}
+
+<MudPaper Elevation="2" Class="rounded-lg">
+    <MudToolBar Dense="true">
+        <MudSelect T="SoftwareKind?" Value="_kindFilter" ValueChanged="OnKindChanged"
+                   Label="@L["Kind filter"]" Variant="Variant.Outlined" Margin="Margin.Dense"
+                   Clearable="true" Style="max-width: 240px;">
+            <MudSelectItem T="SoftwareKind?" Value="null">@L["All"]</MudSelectItem>
+            <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.Software">@L["Software"]</MudSelectItem>
+            <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.OperatingSystem">@L["Operating System"]</MudSelectItem>
+            <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.Game">@L["Game"]</MudSelectItem>
+            <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.Dlc">@L["DLC / Addon"]</MudSelectItem>
+            <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.SystemSoftware">@L["System software"]</MudSelectItem>
+            <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.Application">@L["Application"]</MudSelectItem>
+            <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.DevelopmentSoftware">@L["Development software"]</MudSelectItem>
+            <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.ServerSoftware">@L["Server software"]</MudSelectItem>
+            <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.Middleware">@L["Middleware"]</MudSelectItem>
+            <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.Firmware">@L["Firmware"]</MudSelectItem>
+            <MudSelectItem T="SoftwareKind?" Value="SoftwareKind.EmbeddedSoftware">@L["Embedded software"]</MudSelectItem>
+        </MudSelect>
+        <MudCheckBox T="bool" Value="_excludeDlc" ValueChanged="OnExcludeDlcChanged"
+                     Color="Color.Primary" Class="ml-4" Disabled="_kindFilter.HasValue">
+            @L["Hide DLC / Addon"]
+        </MudCheckBox>
+        <MudSpacer/>
+        <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="ReloadAsync"/>
+    </MudToolBar>
+
+    <MudDataGrid @ref="_dataGrid" T="SoftwareDuplicateGroupDto" ServerData="ServerReload"
+                 Dense="true" Hover="true" Striped="true" RowsPerPage="25">
+        <Columns>
+            <HierarchyColumn T="SoftwareDuplicateGroupDto" InitiallyExpandedFunc="@(_ => true)"/>
+            <PropertyColumn Property="x => x.NormalizedName" Title="@L["Normalized name"]"/>
+            <TemplateColumn Title="@L["Entries"]" Sortable="false" Filterable="false">
+                <CellTemplate>
+                    <MudChip T="string" Color="Color.Warning" Size="Size.Small">@(context.Item.Items?.Count ?? 0)</MudChip>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+        <ChildRowContent>
+            <MudCard Elevation="0" Class="pa-2">
+                <MudSimpleTable Dense="true" Hover="true" Striped="true" Bordered="false">
+                    <thead>
+                        <tr>
+                            <th>@L["Name"]</th>
+                            <th>@L["Kind"]</th>
+                            <th>@L["Earliest release"]</th>
+                            <th>@L["Releases"]</th>
+                            <th>@L["Platforms"]</th>
+                            <th style="text-align: right;">@L["Actions"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(SoftwareDuplicateItemDto item in context.Item.Items ?? new List<SoftwareDuplicateItemDto>())
+                        {
+                            <tr>
+                                <td>@item.Name</td>
+                                <td>@KindLabel((SoftwareKind?)item.Kind)</td>
+                                <td>@(item.EarliestReleaseYear?.ToString() ?? "—")</td>
+                                <td>@item.ReleasesCount</td>
+                                <td>@(string.IsNullOrWhiteSpace(item.Platforms) ? "—" : item.Platforms)</td>
+                                <td style="text-align: right; white-space: nowrap;">
+                                    <MudTooltip Text="@L["Open in new window"]">
+                                        <MudIconButton Icon="@Icons.Material.Filled.OpenInNew" Size="Size.Small"
+                                                       Href="@($"/software/{item.Id}")" Target="_blank"/>
+                                    </MudTooltip>
+                                    <MudTooltip Text="@L["Merge"]">
+                                        <MudIconButton Icon="@Icons.Material.Filled.MergeType" Size="Size.Small"
+                                                       Color="Color.Warning"
+                                                       OnClick="() => OpenMergeDialog(item)"/>
+                                    </MudTooltip>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </MudSimpleTable>
+            </MudCard>
+        </ChildRowContent>
+        <NoRecordsContent>
+            <MudText>@L["No duplicate software groups found."]</MudText>
+        </NoRecordsContent>
+        <PagerContent>
+            <MudDataGridPager T="SoftwareDuplicateGroupDto"/>
+        </PagerContent>
+    </MudDataGrid>
+</MudPaper>

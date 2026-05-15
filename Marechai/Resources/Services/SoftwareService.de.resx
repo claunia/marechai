@@ -1207,4 +1207,37 @@
     <data name="Failed to remove genre." xml:space="preserve">
         <value>Genre konnte nicht entfernt werden.</value>
     </data>
+    <data name="Software Duplicates" xml:space="preserve">
+        <value>Software-Duplikate</value>
+    </data>
+    <data name="Find and merge potential duplicate software entries." xml:space="preserve">
+        <value>Mögliche doppelte Software-Einträge finden und zusammenführen.</value>
+    </data>
+    <data name="Hide DLC / Addon" xml:space="preserve">
+        <value>DLC / Addon ausblenden</value>
+    </data>
+    <data name="Kind filter" xml:space="preserve">
+        <value>Typfilter</value>
+    </data>
+    <data name="All" xml:space="preserve">
+        <value>Alle</value>
+    </data>
+    <data name="Normalized name" xml:space="preserve">
+        <value>Normalisierter Name</value>
+    </data>
+    <data name="Entries" xml:space="preserve">
+        <value>Einträge</value>
+    </data>
+    <data name="Earliest release" xml:space="preserve">
+        <value>Frühste Veröffentlichung</value>
+    </data>
+    <data name="Platforms" xml:space="preserve">
+        <value>Plattformen</value>
+    </data>
+    <data name="Open in new window" xml:space="preserve">
+        <value>In neuem Fenster öffnen</value>
+    </data>
+    <data name="No duplicate software groups found." xml:space="preserve">
+        <value>Keine doppelten Software-Gruppen gefunden.</value>
+    </data>
 </root>
