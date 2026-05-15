@@ -191,6 +191,79 @@ class Program
                 break;
             }
 
+            case "discover-games":
+            {
+                int  fromYear = 2019;
+                int  toYear   = DateTime.UtcNow.Year;
+                int  delayMs  = config.GetValue("MobyGames:DelayMs", 2000);
+                bool dryRun   = false;
+
+                for(int i = 0; i < args.Length; i++)
+                {
+                    if(args[i] == "--from-year" && i + 1 < args.Length && int.TryParse(args[i + 1], out int fy))
+                        fromYear = fy;
+                    if(args[i] == "--to-year" && i + 1 < args.Length && int.TryParse(args[i + 1], out int ty))
+                        toYear = ty;
+                    if(args[i] == "--delay-ms" && i + 1 < args.Length && int.TryParse(args[i + 1], out int dms))
+                        delayMs = dms;
+                    if(args[i] == "--dry-run")
+                        dryRun = true;
+                }
+
+                if(fromYear > toYear)
+                {
+                    Console.WriteLine($"\e[31;1m--from-year ({fromYear}) must be <= --to-year ({toYear})\e[0m");
+
+                    return 1;
+                }
+
+                // For the sitemap scraper we share the same HTTP client. The DigitalOcean Spaces
+                // endpoint has no rate limit so FetchBytesAsync zeroes the delay automatically when
+                // the host isn't mobygames.com.
+                using var discoveryHttp = new MobyGamesHttpClient(delayMs);
+
+                var discoveryState   = new DiscoveryStateService(factory);
+                var discoveryScraper = new SitemapDiscoveryScraper(discoveryHttp, discoveryState);
+
+                await discoveryScraper.RunAsync(fromYear, toYear, dryRun);
+
+                break;
+            }
+
+            case "scrape-new-games":
+            {
+                int  newBatchSize = config.GetValue("Import:BatchSize", 500);
+                int  delayMs      = config.GetValue("MobyGames:DelayMs", 2000);
+                bool dryRun       = false;
+
+                for(int i = 0; i < args.Length; i++)
+                {
+                    if(args[i] == "--batch-size" && i + 1 < args.Length && int.TryParse(args[i + 1], out int bs))
+                        newBatchSize = bs;
+                    if(args[i] == "--delay-ms" && i + 1 < args.Length && int.TryParse(args[i + 1], out int dms))
+                        delayMs = dms;
+                    if(args[i] == "--dry-run")
+                        dryRun = true;
+                }
+
+                using var newGameHttp = new MobyGamesHttpClient(delayMs);
+
+                var newGameDiscovery = new DiscoveryStateService(factory);
+                var newGameFetcher   = new NewGameRawFetcher(newGameHttp, sourceDb, newGameDiscovery);
+
+                await newGameFetcher.RunAsync(newBatchSize, dryRun);
+
+                break;
+            }
+
+            case "discovery-status":
+            {
+                var discoveryStateOnly = new DiscoveryStateService(factory);
+                await discoveryStateOnly.PrintStatusAsync();
+
+                break;
+            }
+
             case "scrape-promo-pages":
             {
                 int promoBatchSize = config.GetValue("Import:BatchSize", 500);
@@ -573,6 +646,12 @@ class Program
                 Console.WriteLine("    status                                        Show import status counts");
                 Console.WriteLine("    cover-status                                  Show cover download status counts");
                 Console.WriteLine("    review-status                                 Show review import status counts");
+                Console.WriteLine("    discover-games [--from-year N] [--to-year N] [--delay-ms N] [--dry-run]");
+                Console.WriteLine("                                                  Discover new MobyGames games via the DigitalOcean Spaces sitemaps");
+                Console.WriteLine("                                                  (default: --from-year 2019 --to-year <current>). Filters by <lastmod> year.");
+                Console.WriteLine("    scrape-new-games [--batch-size N] [--delay-ms N] [--dry-run]");
+                Console.WriteLine("                                                  Fetch main/credits/releases/specs HTML for discovered games into mobygames_raw");
+                Console.WriteLine("    discovery-status                              Show MobyGamesDiscoveredGames status counts");
                 Console.WriteLine("    scrape-promo-pages [--batch-size N] [--delay-ms N] [--dry-run]");
                 Console.WriteLine("                                                  Scrape promo art pages from new MobyGames");
                 Console.WriteLine("    download-promo-art [--batch-size N] [--delay-ms N] [--dry-run]");

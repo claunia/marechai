@@ -7,6 +7,7 @@ using Marechai.Data;
 using Marechai.Database.Models;
 using Marechai.MobyGames.Parsers;
 using Microsoft.EntityFrameworkCore;
+using NewSite = Marechai.MobyGames.Parsers.NewSite;
 
 namespace Marechai.MobyGames.Services;
 
@@ -94,13 +95,17 @@ public class ReviewImportService
                 }
 
                 // Find the Reviews tab chunk
-                string reviewsHtml = null;
+                string  reviewsHtml = null;
+                bool    isNewLayout = false;
 
                 foreach(var row in rows)
                 {
-                    if(TabDetector.Detect(row.Body) == MobyTab.Reviews)
+                    var (tab, layout) = TabDetector.DetectWithLayout(row.Body);
+
+                    if(tab == MobyTab.Reviews)
                     {
                         reviewsHtml = row.Body;
+                        isNewLayout = layout == MobyLayout.New;
 
                         break;
                     }
@@ -117,8 +122,11 @@ public class ReviewImportService
                     continue;
                 }
 
-                // Parse critic reviews from the old-format HTML
-                var reviews = ReviewsPageParser.Parse(reviewsHtml);
+                // Parse critic reviews — new layout embeds them as JSON in a Vue
+                // <critic-reviews :reviews='[...]'> attribute; old layout uses HTML divs.
+                var reviews = isNewLayout
+                                  ? NewSite.ReviewsPageParser.Parse(reviewsHtml)
+                                  : ReviewsPageParser.Parse(reviewsHtml);
 
                 if(reviews.Count == 0)
                 {

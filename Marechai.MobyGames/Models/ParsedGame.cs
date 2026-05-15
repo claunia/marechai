@@ -51,6 +51,39 @@ public class ParsedGame
     public bool HasReleasesTab { get; set; }
     public bool HasSpecsTab    { get; set; }
     public bool HasRatingsTab  { get; set; }
+
+    /// <summary>
+    ///     Media availability flags, derived from sub-page anchors on the Main page.
+    ///     Used by the downstream scrapers (cover, screenshot, promo, media, review)
+    ///     to decide whether to fetch the respective sub-page for new-site games.
+    /// </summary>
+    public bool HasScreenshots { get; set; }
+    public bool HasPromoArt    { get; set; }
+    public bool HasCoverArt    { get; set; }
+    public bool HasMedia       { get; set; }
+    public bool HasReviews     { get; set; }
+
+    /// <summary>
+    ///     True when the Main row was parsed from the new MobyGames layout
+    ///     (Vue-based, post-2023). False for the legacy layout the original
+    ///     importer was written for. Used by media scrapers to choose the
+    ///     correct sub-page URL form (slug-based vs numeric-id-based).
+    /// </summary>
+    public bool IsNewLayout { get; set; }
+
+    /// <summary>
+    ///     Numeric MobyGames id parsed from new-site main page sub-page anchors
+    ///     (e.g. <c>/game/200023/wo-long-fallen-dynasty/</c>). Required by media
+    ///     scrapers to build the numeric-id-based sub-page URLs used by the new
+    ///     site. Null when the row came from the legacy layout.
+    /// </summary>
+    public int? NumericId { get; set; }
+
+    /// <summary>
+    ///     Slug parsed from new-site main page sub-page anchors. Used together
+    ///     with <see cref="NumericId" /> to build new-site sub-page URLs.
+    /// </summary>
+    public string Slug { get; set; }
 }
 
 public class ParsedGenre

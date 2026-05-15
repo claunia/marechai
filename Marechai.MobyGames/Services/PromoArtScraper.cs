@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Marechai.Data;
 using Marechai.Database.Models;
 using Marechai.MobyGames.Parsers;
+using NewSite = Marechai.MobyGames.Parsers.NewSite;
 using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.MobyGames.Services;
@@ -56,37 +57,43 @@ public class PromoArtScraper
         {
             gamesChecked++;
 
-            // Check if this game has promo art from old Main tab
+            // Check if this game has promo art from the Main tab.
+            // Supports both legacy nav-tabs and the new Vue layout (anchor to /game/{id}/{slug}/promo/).
             var rows = await _sourceDb.GetRowsForGameAsync(game.MobyGameId);
 
             bool hasPromoArt = false;
 
             foreach(var row in rows)
             {
-                MobyTab tab = TabDetector.Detect(row.Body);
+                var (tab, layout) = TabDetector.DetectWithLayout(row.Body);
 
                 if(tab != MobyTab.Main) continue;
 
-                // Check if promo art tab is active (has real href, not disabled)
-                // Active: <li><a href=".../.../promo">Promo Art</a></li>
-                // Disabled: <li class="disabled"><a href="#">Promo Art</a></li>
-                // We look for a link to /promo that is NOT href="#"
-                var doc = new HtmlAgilityPack.HtmlDocument();
-                doc.LoadHtml(row.Body);
-
-                var promoLinks = doc.DocumentNode.SelectNodes("//ul[contains(@class,'nav-tabs')]//li/a");
-
-                if(promoLinks is not null)
+                if(layout == MobyLayout.New)
                 {
-                    foreach(var link in promoLinks)
-                    {
-                        string text = link.InnerText.Trim();
-                        string href = link.GetAttributeValue("href", "#");
+                    hasPromoArt = NewSite.MediaPresenceDetector.HasPromoArt(row.Body);
+                }
+                else
+                {
+                    // Active: <li><a href=".../.../promo">Promo Art</a></li>
+                    // Disabled: <li class="disabled"><a href="#">Promo Art</a></li>
+                    var doc = new HtmlAgilityPack.HtmlDocument();
+                    doc.LoadHtml(row.Body);
 
-                        if(text == "Promo Art" && href != "#" && href.Contains("/promo"))
+                    var promoLinks = doc.DocumentNode.SelectNodes("//ul[contains(@class,'nav-tabs')]//li/a");
+
+                    if(promoLinks is not null)
+                    {
+                        foreach(var link in promoLinks)
                         {
-                            hasPromoArt = true;
-                            break;
+                            string text = link.InnerText.Trim();
+                            string href = link.GetAttributeValue("href", "#");
+
+                            if(text == "Promo Art" && href != "#" && href.Contains("/promo"))
+                            {
+                                hasPromoArt = true;
+                                break;
+                            }
                         }
                     }
                 }

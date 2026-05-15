@@ -8,6 +8,7 @@ using Marechai.Database.Models;
 using Marechai.MobyGames.Models;
 using Marechai.MobyGames.Parsers;
 using Microsoft.EntityFrameworkCore;
+using NewSite = Marechai.MobyGames.Parsers.NewSite;
 
 namespace Marechai.MobyGames.Services;
 
@@ -85,15 +86,17 @@ public class CoverDownloadService
             var rows = await _sourceDb.GetRowsForGameAsync(game.MobyGameId);
 
             // Find the cover art tab chunk
-            string coverHtml = null;
+            string  coverHtml   = null;
+            bool    isNewLayout = false;
 
             foreach(var row in rows)
             {
-                MobyTab tab = TabDetector.Detect(row.Body);
+                var (tab, layout) = TabDetector.DetectWithLayout(row.Body);
 
                 if(tab == MobyTab.CoverArt)
                 {
-                    coverHtml = row.Body;
+                    coverHtml   = row.Body;
+                    isNewLayout = layout == MobyLayout.New;
 
                     break;
                 }
@@ -107,8 +110,10 @@ public class CoverDownloadService
                 continue;
             }
 
-            // Parse cover groups from HTML
-            var coverGroups = CoverArtTabParser.Parse(coverHtml);
+            // Parse cover groups from HTML — new layout uses the post-2023 redesign.
+            var coverGroups = isNewLayout
+                                  ? NewSite.CoverArtTabParser.Parse(coverHtml)
+                                  : CoverArtTabParser.Parse(coverHtml);
 
             if(coverGroups.Count == 0)
             {
@@ -123,17 +128,29 @@ public class CoverDownloadService
 
             foreach(var row in rows)
             {
-                MobyTab tab = TabDetector.Detect(row.Body);
+                var (tab, layout) = TabDetector.DetectWithLayout(row.Body);
 
                 if(tab != MobyTab.Main) continue;
 
                 var doc = new HtmlAgilityPack.HtmlDocument();
                 doc.LoadHtml(row.Body);
 
-                var h1 = doc.DocumentNode.SelectSingleNode("//h1[contains(@class,'niceHeaderTitle')]//a");
+                // New layout uses <h1 class="mb-0"> with text content; old layout
+                // uses <h1 class="niceHeaderTitle"><a>...</a>.
+                if(layout == MobyLayout.New)
+                {
+                    var h1 = doc.DocumentNode.SelectSingleNode("//h1[contains(@class,'mb-0')]");
 
-                if(h1 is not null)
-                    gameName = System.Net.WebUtility.HtmlDecode(h1.InnerText).Trim();
+                    if(h1 is not null)
+                        gameName = System.Net.WebUtility.HtmlDecode(h1.InnerText).Trim();
+                }
+                else
+                {
+                    var h1 = doc.DocumentNode.SelectSingleNode("//h1[contains(@class,'niceHeaderTitle')]//a");
+
+                    if(h1 is not null)
+                        gameName = System.Net.WebUtility.HtmlDecode(h1.InnerText).Trim();
+                }
 
                 break;
             }

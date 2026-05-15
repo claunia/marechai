@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Marechai.Data;
 using Marechai.Database.Models;
 using Marechai.MobyGames.Parsers;
+using NewSite = Marechai.MobyGames.Parsers.NewSite;
 using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.MobyGames.Services;
@@ -56,35 +57,48 @@ public class ScreenshotScraper
         {
             gamesChecked++;
 
-            // Check if this game has screenshots from old Main tab
+            // Check if this game has screenshots from the Main tab.
+            // Supports both the legacy nav-tabs layout (active "Screenshots" tab)
+            // and the new Vue-based layout (anchor to /game/{id}/{slug}/screenshots/).
             var rows = await _sourceDb.GetRowsForGameAsync(game.MobyGameId);
 
             bool hasScreenshots = false;
+            string mainHtml      = null;
+            MobyLayout mainLayout = MobyLayout.Unknown;
 
             foreach(var row in rows)
             {
-                MobyTab tab = TabDetector.Detect(row.Body);
+                var (tab, layout) = TabDetector.DetectWithLayout(row.Body);
 
                 if(tab != MobyTab.Main) continue;
 
-                // Check if screenshots tab is active (has real href, not disabled)
-                var doc = new HtmlAgilityPack.HtmlDocument();
-                doc.LoadHtml(row.Body);
+                mainHtml  = row.Body;
+                mainLayout = layout;
 
-                var tabLinks = doc.DocumentNode.SelectNodes("//ul[contains(@class,'nav-tabs')]//li/a");
-
-                if(tabLinks is not null)
+                if(layout == MobyLayout.New)
                 {
-                    foreach(var link in tabLinks)
+                    hasScreenshots = NewSite.MediaPresenceDetector.HasScreenshots(row.Body);
+                }
+                else
+                {
+                    var doc = new HtmlAgilityPack.HtmlDocument();
+                    doc.LoadHtml(row.Body);
+
+                    var tabLinks = doc.DocumentNode.SelectNodes("//ul[contains(@class,'nav-tabs')]//li/a");
+
+                    if(tabLinks is not null)
                     {
-                        string text = link.InnerText.Trim();
-                        string href = link.GetAttributeValue("href", "#");
-
-                        if(text == "Screenshots" && href != "#" && href.Contains("/screenshots"))
+                        foreach(var link in tabLinks)
                         {
-                            hasScreenshots = true;
+                            string text = link.InnerText.Trim();
+                            string href = link.GetAttributeValue("href", "#");
 
-                            break;
+                            if(text == "Screenshots" && href != "#" && href.Contains("/screenshots"))
+                            {
+                                hasScreenshots = true;
+
+                                break;
+                            }
                         }
                     }
                 }

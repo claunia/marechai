@@ -109,4 +109,24 @@ public class SourceDatabaseService
 
         await cmd.ExecuteNonQueryAsync();
     }
+
+    /// <summary>
+    ///     Returns <c>true</c> if at least one <c>mobygames_raw</c> row exists for the supplied slug.
+    ///     Short-circuited via <c>EXISTS</c> + <c>LIMIT 1</c> so the cost is independent of the number
+    ///     of chunks already stored for that game.
+    /// </summary>
+    public async Task<bool> GameExistsAsync(string gameId)
+    {
+        await using var connection = new MySqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        await using var cmd = new MySqlCommand(
+            "SELECT EXISTS (SELECT 1 FROM mobygames_raw WHERE id = @id LIMIT 1)", connection);
+
+        cmd.Parameters.AddWithValue("@id", gameId);
+
+        var result = await cmd.ExecuteScalarAsync();
+
+        return System.Convert.ToInt32(result) == 1;
+    }
 }

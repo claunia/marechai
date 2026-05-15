@@ -9,6 +9,11 @@ namespace Marechai.MobyGames.Services;
 /// <summary>
 ///     HTTP client for downloading cover images and fetching pages from MobyGames.
 ///     No login required — old /images/covers/l/ URLs redirect to CDN which is publicly accessible.
+///     <para>
+///         Discovery of new games uses the sitemap XMLs hosted on DigitalOcean Spaces
+///         (<c>sfo3.digitaloceanspaces.com/moby-images/...</c>), which bypass the Cloudflare edge
+///         entirely and have no pagination cap. See <c>FetchBytesAsync</c>.
+///     </para>
 /// </summary>
 public sealed partial class MobyGamesHttpClient : IDisposable
 {
@@ -24,7 +29,14 @@ public sealed partial class MobyGamesHttpClient : IDisposable
         var handler = new HttpClientHandler
         {
             AllowAutoRedirect        = true,
-            MaxAutomaticRedirections = 5
+            MaxAutomaticRedirections = 5,
+            // Enable transparent gzip / deflate / brotli decoding so the server serves us the same
+            // compressed payload a real Firefox would get. Without this MobyGames sometimes returns
+            // a different (shorter) page than the one a browser sees.
+            AutomaticDecompression = DecompressionMethods.GZip
+                                   | DecompressionMethods.Deflate
+                                   | DecompressionMethods.Brotli,
+            UseCookies = false
         };
 
         _client = new HttpClient(handler)
@@ -32,9 +44,18 @@ public sealed partial class MobyGamesHttpClient : IDisposable
             Timeout = TimeSpan.FromSeconds(120)
         };
 
+        // Browser-like headers so per-game pages don't trip Cloudflare's bot heuristics.
         _client.DefaultRequestHeaders.Add("User-Agent", UserAgent);
-        _client.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-        _client.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.5");
+        _client.DefaultRequestHeaders.Add(
+            "Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8");
+        _client.DefaultRequestHeaders.Add("Accept-Language",           "en-US,en;q=0.5");
+        _client.DefaultRequestHeaders.Add("Accept-Encoding",           "gzip, deflate, br");
+        _client.DefaultRequestHeaders.Add("DNT",                       "1");
+        _client.DefaultRequestHeaders.Add("Sec-Fetch-Dest",            "document");
+        _client.DefaultRequestHeaders.Add("Sec-Fetch-Mode",            "navigate");
+        _client.DefaultRequestHeaders.Add("Sec-Fetch-Site",            "none");
+        _client.DefaultRequestHeaders.Add("Sec-Fetch-User",            "?1");
+        _client.DefaultRequestHeaders.Add("Upgrade-Insecure-Requests", "1");
     }
 
     /// <summary>
@@ -61,6 +82,46 @@ public sealed partial class MobyGamesHttpClient : IDisposable
             }
 
             return await response.Content.ReadAsStringAsync();
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"\e[33m  Warning: Error fetching {url}: {ex.Message}\e[0m");
+
+            return null;
+        }
+    }
+
+    /// <summary>
+    ///     Fetch a URL and return the raw response bytes. Skips the configured per-mobygames.com
+    ///     rate-limit when the URL is on a different host (e.g. the DigitalOcean Spaces CDN that
+    ///     serves the sitemaps), since those endpoints have no Cloudflare layer and no rate limit.
+    ///     Returns null on failure.
+    /// </summary>
+    public async Task<byte[]> FetchBytesAsync(string url, int? overrideDelayMs = null)
+    {
+        if(!url.StartsWith("http"))
+            url = BaseUrl + url;
+
+        int delay = overrideDelayMs ??
+                    (new Uri(url).Host.EndsWith("mobygames.com", StringComparison.OrdinalIgnoreCase)
+                         ? _delayMs
+                         : 0);
+
+        if(delay > 0)
+            await Task.Delay(delay);
+
+        try
+        {
+            using var response = await _client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+
+            if(!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"\e[33m  Warning: HTTP {(int)response.StatusCode} fetching {url}\e[0m");
+
+                return null;
+            }
+
+            return await response.Content.ReadAsByteArrayAsync();
         }
         catch(Exception ex)
         {
