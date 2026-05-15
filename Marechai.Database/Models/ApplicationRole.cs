@@ -40,7 +40,7 @@ public class ApplicationRole : IdentityRole
     public const string RolePhysicalCurator = "PhysicalCurator";
     public const string RoleTechnician      = "Technician";
     public const string RoleSuperTechnician = "SuperTechnician";
-    public const string RoleAdmin           = "Administrator";
+    public const string RoleAdmin           = "Admin";
     public const string RoleNone            = "NormalUser";
 
     public ApplicationRole() => Created = DateTime.UtcNow;

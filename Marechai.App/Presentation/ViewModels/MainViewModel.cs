@@ -199,8 +199,8 @@ public partial class MainViewModel : ObservableObject
             {
                 IEnumerable<string> roles = _jwtService.GetRoles(token);
 
-                IsAdminUser = roles.Contains("Uberadmin",      StringComparer.OrdinalIgnoreCase) ||
-                              roles.Contains("Administrator", StringComparer.OrdinalIgnoreCase);
+                IsAdminUser = roles.Contains("Uberadmin", StringComparer.OrdinalIgnoreCase) ||
+                              roles.Contains("Admin",     StringComparer.OrdinalIgnoreCase);
             }
             else
             {

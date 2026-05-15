@@ -211,7 +211,7 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
             if(string.IsNullOrWhiteSpace(token)) { IsAdmin = false; return; }
             IEnumerable<string> roles = _jwtService.GetRoles(token);
             IsAdmin = roles.Contains("Uberadmin", StringComparer.OrdinalIgnoreCase) ||
-                      roles.Contains("Administrator", StringComparer.OrdinalIgnoreCase);
+                      roles.Contains("Admin",     StringComparer.OrdinalIgnoreCase);
         }
         catch { IsAdmin = false; }
     }

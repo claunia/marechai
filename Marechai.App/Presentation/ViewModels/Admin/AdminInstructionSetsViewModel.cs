@@ -125,8 +125,8 @@ public partial class AdminInstructionSetsViewModel : ObservableObject, IRegionAw
 
             IEnumerable<string> roles = _jwtService.GetRoles(token);
 
-            IsAdmin = roles.Contains("Uberadmin",      StringComparer.OrdinalIgnoreCase) ||
-                      roles.Contains("Administrator", StringComparer.OrdinalIgnoreCase);
+            IsAdmin = roles.Contains("Uberadmin", StringComparer.OrdinalIgnoreCase) ||
+                      roles.Contains("Admin",     StringComparer.OrdinalIgnoreCase);
         }
         catch
         {
