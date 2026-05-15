@@ -31,8 +31,8 @@ public partial class Software
             sortDescending = sort.Descending;
         }
 
-        Task<int>               countTask = SoftwareService.GetCountAsync(_searchText);
-        Task<List<SoftwareDto>> dataTask  = SoftwareService.GetPagedAsync(skip, take, _searchText, sortBy, sortDescending);
+        Task<int>               countTask = SoftwareService.GetAdminCountAsync(_searchText);
+        Task<List<SoftwareDto>> dataTask  = SoftwareService.GetAdminPagedAsync(skip, take, _searchText, sortBy, sortDescending);
 
         await Task.WhenAll(countTask, dataTask);
 

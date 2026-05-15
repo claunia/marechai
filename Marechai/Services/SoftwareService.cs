@@ -678,6 +678,37 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
+    /// <summary>
+    /// Admin-only paged software list (lean projection — no covers, no
+    /// compilations). Backed by GET /software/admin. Use this from the
+    /// /admin/software grid; it's significantly faster than
+    /// <see cref="GetPagedAsync"/> because the server skips the cover
+    /// sub-query and the compilations UNION the public endpoint pays for.
+    /// </summary>
+    public async Task<List<SoftwareDto>> GetAdminPagedAsync(int skip, int take, string search = null,
+                                                            string sortBy = null, bool sortDescending = false,
+                                                            SoftwareKind? kind = null)
+    {
+        try
+        {
+            List<SoftwareDto> software = await client.Software.Admin.GetAsync(config =>
+            {
+                config.QueryParameters.Skip           = skip;
+                config.QueryParameters.Take           = take;
+                config.QueryParameters.Search         = search;
+                config.QueryParameters.SortBy         = sortBy;
+                config.QueryParameters.SortDescending = sortDescending;
+                if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
+            });
+
+            return software ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
     public async Task<List<SoftwareDto>> SearchSoftwareAsync(string search, SoftwareKind? kind = null)
     {
         try
@@ -703,6 +734,29 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         try
         {
             int? count = await client.Software.Count.GetAsync(config =>
+            {
+                config.QueryParameters.Search = search;
+                if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
+            }, cancellationToken);
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
+
+    /// <summary>
+    /// Admin-only software count companion to <see cref="GetAdminPagedAsync"/>.
+    /// Software-only (no compilations); backed by GET /software/admin/count.
+    /// </summary>
+    public async Task<int> GetAdminCountAsync(string search = null, SoftwareKind? kind = null,
+                                              CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            int? count = await client.Software.Admin.Count.GetAsync(config =>
             {
                 config.QueryParameters.Search = search;
                 if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;

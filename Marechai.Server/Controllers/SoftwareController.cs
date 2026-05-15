@@ -69,6 +69,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     const           string   SOFTWARE_PLATFORMS_CACHE_KEY = "software:platforms";
     const           string   SOFTWARE_YEARS_CACHE_KEY     = "software:years";
     const           string   SOFTWARE_COUNT_CACHE_KEY     = "software:count";
+    const           string   SOFTWARE_ADMIN_COUNT_CACHE_KEY = "admin:software:count";
     const           string   SOFTWARE_COMPANIES_CACHE_KEY = "software:companies";
     static readonly TimeSpan _catalogCacheTtl             = TimeSpan.FromMinutes(5);
 
@@ -81,6 +82,11 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
     static string CountCacheKey(SoftwareKind? kind) =>
         kind is null ? SOFTWARE_COUNT_CACHE_KEY : $"{SOFTWARE_COUNT_CACHE_KEY}:{(int)kind.Value}";
+
+    static string AdminCountCacheKey(SoftwareKind? kind) =>
+        kind is null
+            ? SOFTWARE_ADMIN_COUNT_CACHE_KEY
+            : $"{SOFTWARE_ADMIN_COUNT_CACHE_KEY}:{(int)kind.Value}";
 
     [HttpGet("count")]
     [AllowAnonymous]
@@ -574,6 +580,97 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
         // Single SQL round-trip via Concat (UNION ALL).
         return softwareQuery.Concat(compilationsQuery);
+    }
+
+    /// <summary>
+    /// Admin-only paged list used by /admin/software. Lean projection
+    /// (Id/Name/FamilyId/Family/Kind only) — no FrontCoverId sub-query, no
+    /// compilations UNION. Significantly faster than <see cref="GetAsync"/>
+    /// because the public endpoint pays for cover lookups + compilations
+    /// merging that the admin grid never displays.
+    /// </summary>
+    [HttpGet("admin")]
+    [Authorize(Roles = "Admin, UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<SoftwareDto>> GetAdminPagedAsync([FromQuery] int? skip   = null,
+                                                      [FromQuery] int? take = null,
+                                                      [FromQuery] string search = null,
+                                                      [FromQuery] string sortBy = null,
+                                                      [FromQuery] bool sortDescending = false,
+                                                      [FromQuery] SoftwareKind? kind = null,
+                                                      CancellationToken cancellationToken = default)
+    {
+        IQueryable<Database.Models.Software> baseQuery = context.Softwares;
+
+        if(!string.IsNullOrWhiteSpace(search)) baseQuery = baseQuery.Where(s => s.Name.Contains(search));
+
+        if(kind.HasValue) baseQuery = baseQuery.Where(s => s.Kind == kind.Value);
+
+        IQueryable<SoftwareDto> projected = baseQuery.Select(s => new SoftwareDto
+        {
+            Id            = s.Id,
+            Name          = s.Name,
+            FamilyId      = s.FamilyId,
+            Family        = s.Family.Name,
+            Kind          = s.Kind,
+            IsCompilation = false,
+            FrontCoverId  = null
+        });
+
+        IQueryable<SoftwareDto> ordered = sortBy switch
+        {
+            "Name"   => sortDescending ? projected.OrderByDescending(s => MarechaiContext.NaturalSortKey(s.Name))
+                                       : projected.OrderBy(s => MarechaiContext.NaturalSortKey(s.Name)),
+            "Family" => sortDescending ? projected.OrderByDescending(s => MarechaiContext.NaturalSortKey(s.Family))
+                                       : projected.OrderBy(s => MarechaiContext.NaturalSortKey(s.Family)),
+            "Kind"   => sortDescending ? projected.OrderByDescending(s => s.Kind)
+                                       : projected.OrderBy(s => s.Kind),
+            _        => projected.OrderBy(s => MarechaiContext.NaturalSortKey(s.Name))
+        };
+
+        if(skip.HasValue) ordered = ordered.Skip(skip.Value);
+
+        if(take.HasValue) ordered = ordered.Take(take.Value);
+
+        return ordered.ToListAsync(cancellationToken);
+    }
+
+    /// <summary>
+    /// Admin-only count companion to <see cref="GetAdminPagedAsync"/>.
+    /// Software-only (no compilations); cached separately from the public
+    /// <see cref="GetSoftwareCountAsync"/> because the totals differ.
+    /// </summary>
+    [HttpGet("admin/count")]
+    [Authorize(Roles = "Admin, UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<int> GetAdminSoftwareCountAsync([FromQuery] string search = null,
+                                                      [FromQuery] SoftwareKind? kind = null,
+                                                      CancellationToken cancellationToken = default)
+    {
+        string cacheKey = AdminCountCacheKey(kind);
+
+        // Fast path: no search filter — use the cached total.
+        if(string.IsNullOrWhiteSpace(search))
+        {
+            if(cache.TryGetValue(cacheKey, out int cachedCount)) return cachedCount;
+
+            IQueryable<Database.Models.Software> baseQuery = context.Softwares;
+
+            if(kind.HasValue) baseQuery = baseQuery.Where(s => s.Kind == kind.Value);
+
+            int total = await baseQuery.CountAsync(cancellationToken);
+            cache.Set(cacheKey, total, _catalogCacheTtl);
+
+            return total;
+        }
+
+        IQueryable<Database.Models.Software> query = context.Softwares.Where(s => s.Name.Contains(search));
+
+        if(kind.HasValue) query = query.Where(s => s.Kind == kind.Value);
+
+        return await query.CountAsync(cancellationToken);
     }
 
     [HttpGet("{id:ulong}")]
