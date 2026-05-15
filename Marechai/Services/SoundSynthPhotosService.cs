@@ -34,7 +34,7 @@ using Microsoft.Kiota.Abstractions.Serialization;
 
 namespace Marechai.Services;
 
-public class SoundSynthPhotosService(Marechai.ApiClient.Client client, IRequestAdapter requestAdapter)
+public class SoundSynthPhotosService(Marechai.ApiClient.Client client, IRequestAdapter requestAdapter, ReferenceDataCache referenceData)
 {
     public async Task<List<Guid>> GetGuidsBySoundSynthAsync(int soundSynthId)
     {
@@ -125,19 +125,7 @@ public class SoundSynthPhotosService(Marechai.ApiClient.Client client, IRequestA
         }
     }
 
-    public async Task<List<LicenseDto>> GetAllLicensesAsync()
-    {
-        try
-        {
-            List<LicenseDto> licenses = await client.Licenses.GetAsync();
-
-            return licenses?.OrderBy(l => l.Name).ToList() ?? [];
-        }
-        catch
-        {
-            return [];
-        }
-    }
+    public Task<List<LicenseDto>> GetAllLicensesAsync() => referenceData.GetLicensesAsync();
 
     /// <summary>
     ///     Delete a pending sound synth photo (a not-yet-submitted file the collaborator

@@ -129,13 +129,7 @@ public class SoftwareScreenshotsController(MarechaiContext context, IConfigurati
                                                        PlatformName       = s.Platform != null ? s.Platform.Name : null,
                                                        SoftwareVersionId  = s.SoftwareVersionId,
                                                        VersionString = s.Version != null ? s.Version.VersionString : null,
-                                                       Caption = isEnglish || s.Caption == null
-                                                                     ? s.Caption
-                                                                     : (context.SoftwareScreenshotCaptionTranslations
-                                                                               .Where(t => t.ScreenshotId == s.Id &&
-                                                                                           t.LanguageCode == langCode)
-                                                                               .Select(t => t.Caption)
-                                                                               .FirstOrDefault() ?? s.Caption),
+                                                       Caption            = s.Caption,
                                                        CanonicalCaption   = s.Caption,
                                                        OriginalExtension  = s.OriginalExtension
                                                    })
@@ -143,37 +137,78 @@ public class SoftwareScreenshotsController(MarechaiContext context, IConfigurati
 
         if(dto is null) return NotFound();
 
+        // Caption translation lookup is a separate query so EF doesn't emit a correlated
+        // subquery against the translations table inside the projection above. Only runs
+        // when a non-English language was resolved AND the canonical caption is non-null.
+        if(!isEnglish && dto.Caption != null)
+        {
+            string translated = await context.SoftwareScreenshotCaptionTranslations
+                                              .Where(t => t.ScreenshotId == id && t.LanguageCode == langCode)
+                                              .Select(t => t.Caption)
+                                              .FirstOrDefaultAsync();
+
+            if(translated != null) dto.Caption = translated;
+        }
+
         return Ok(dto);
     }
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public Task<List<SoftwareScreenshotDto>> GetAllAsync([FromQuery] string lang = null)
+    public async Task<List<SoftwareScreenshotDto>> GetAllAsync([FromQuery] string lang = null)
     {
         string langCode  = LanguageResolver.Resolve(HttpContext, lang);
         bool   isEnglish = string.Equals(langCode, "eng", StringComparison.Ordinal);
 
-        return context.SoftwareScreenshots
-                      .Select(s => new SoftwareScreenshotDto
-                       {
-                           Id                 = s.Id,
-                           SoftwareId         = s.SoftwareId,
-                           SoftwareName       = s.Software.Name,
-                           SoftwarePlatformId = s.SoftwarePlatformId,
-                           PlatformName       = s.Platform != null ? s.Platform.Name : null,
-                           SoftwareVersionId  = s.SoftwareVersionId,
-                           VersionString      = s.Version != null ? s.Version.VersionString : null,
-                           Caption = isEnglish || s.Caption == null
-                                         ? s.Caption
-                                         : (context.SoftwareScreenshotCaptionTranslations
-                                                   .Where(t => t.ScreenshotId == s.Id && t.LanguageCode == langCode)
-                                                   .Select(t => t.Caption)
-                                                   .FirstOrDefault() ?? s.Caption),
-                           CanonicalCaption   = s.Caption,
-                           OriginalExtension  = s.OriginalExtension
-                       })
-                      .ToListAsync();
+        List<SoftwareScreenshotDto> list = await context.SoftwareScreenshots
+                                                         .Select(s => new SoftwareScreenshotDto
+                                                          {
+                                                              Id                 = s.Id,
+                                                              SoftwareId         = s.SoftwareId,
+                                                              SoftwareName       = s.Software.Name,
+                                                              SoftwarePlatformId = s.SoftwarePlatformId,
+                                                              PlatformName = s.Platform != null
+                                                                                 ? s.Platform.Name
+                                                                                 : null,
+                                                              SoftwareVersionId = s.SoftwareVersionId,
+                                                              VersionString = s.Version != null
+                                                                                  ? s.Version.VersionString
+                                                                                  : null,
+                                                              Caption           = s.Caption,
+                                                              CanonicalCaption  = s.Caption,
+                                                              OriginalExtension = s.OriginalExtension
+                                                          })
+                                                         .ToListAsync();
+
+        if(isEnglish || list.Count == 0) return list;
+
+        // Backfill non-English captions in a single IN-list query (was: per-row correlated
+        // subquery inside the projection above, executed once per screenshot row).
+        Guid[] ids = list.Where(d => d.Caption != null).Select(d => d.Id).ToArray();
+
+        if(ids.Length == 0) return list;
+
+        Dictionary<Guid, string> translations =
+            await context.SoftwareScreenshotCaptionTranslations
+                         .Where(t => ids.Contains(t.ScreenshotId) && t.LanguageCode == langCode)
+                         .Select(t => new
+                          {
+                              t.ScreenshotId,
+                              t.Caption
+                          })
+                         .ToDictionaryAsync(x => x.ScreenshotId, x => x.Caption);
+
+        if(translations.Count == 0) return list;
+
+        foreach(SoftwareScreenshotDto dto in list)
+        {
+            if(dto.Caption == null) continue;
+
+            if(translations.TryGetValue(dto.Id, out string translated) && translated != null) dto.Caption = translated;
+        }
+
+        return list;
     }
 
     [HttpPost("upload")]

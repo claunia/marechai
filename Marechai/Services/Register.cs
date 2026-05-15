@@ -36,6 +36,11 @@ public static class Register
     {
         services.AddSingleton<StringLocalizer<NavMenu>>();
 
+        // Shared lookup-table memo (countries, languages, licenses, families,
+        // ISO standards). Scoped service over the singleton IMemoryCache, so
+        // every circuit reuses the same in-process cache.
+        services.AddScoped<ReferenceDataCache>();
+
         services.AddScoped<NewsService>();
         services.AddScoped<CompaniesService>();
         services.AddScoped<CompanyLogosService>();

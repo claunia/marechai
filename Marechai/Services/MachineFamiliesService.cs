@@ -31,21 +31,9 @@ using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.Services;
 
-public class MachineFamiliesService(Marechai.ApiClient.Client client)
+public class MachineFamiliesService(Marechai.ApiClient.Client client, ReferenceDataCache referenceData)
 {
-    public async Task<List<MachineFamilyDto>> GetAllAsync()
-    {
-        try
-        {
-            List<MachineFamilyDto> families = await client.MachineFamilies.GetAsync();
-
-            return families ?? [];
-        }
-        catch
-        {
-            return [];
-        }
-    }
+    public Task<List<MachineFamilyDto>> GetAllAsync() => referenceData.GetMachineFamiliesAsync();
 
     public async Task<MachineFamilyDto> GetByIdAsync(int id)
     {
@@ -65,6 +53,8 @@ public class MachineFamiliesService(Marechai.ApiClient.Client client)
         {
             long? id = await client.MachineFamilies.PostAsync(dto);
 
+            referenceData.InvalidateMachineFamilies();
+
             return (id, null);
         }
         catch(ApiException ex)
@@ -83,6 +73,8 @@ public class MachineFamiliesService(Marechai.ApiClient.Client client)
         {
             await client.MachineFamilies[id].PutAsync(dto);
 
+            referenceData.InvalidateMachineFamilies();
+
             return (true, null);
         }
         catch(ApiException ex)
@@ -100,6 +92,8 @@ public class MachineFamiliesService(Marechai.ApiClient.Client client)
         try
         {
             await client.MachineFamilies[id].DeleteAsync();
+
+            referenceData.InvalidateMachineFamilies();
 
             return (true, null);
         }

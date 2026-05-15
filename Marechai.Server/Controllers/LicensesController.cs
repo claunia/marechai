@@ -23,6 +23,7 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -33,30 +34,41 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Marechai.Server.Controllers;
 
 [Route("/licenses")]
 [ApiController]
-public class LicensesController(MarechaiContext context) : ControllerBase
+public class LicensesController(MarechaiContext context, IMemoryCache cache) : ControllerBase
 {
+    // License catalog — slow-changing reference data, admin-editable. 30-min TTL.
+    const           string   LICENSES_ALL_KEY = "licenses:all";
+    static readonly TimeSpan _referenceTtl    = TimeSpan.FromMinutes(30);
+
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<LicenseDto>> GetAsync()
+    public async Task<List<LicenseDto>> GetAsync()
     {
-        return context.Licenses.OrderBy(l => l.Name)
-        .Select(l => new LicenseDto
-        {
-            FsfApproved = l.FsfApproved,
-            Id = l.Id,
-            Link = l.Link,
-            Name = l.Name,
-            OsiApproved = l.OsiApproved,
-            SPDX = l.SPDX
-        })
-        .ToListAsync();
+        if(cache.TryGetValue(LICENSES_ALL_KEY, out List<LicenseDto> cached) && cached is not null) return cached;
+
+        List<LicenseDto> list = await context.Licenses.OrderBy(l => l.Name)
+                                             .Select(l => new LicenseDto
+                                              {
+                                                  FsfApproved = l.FsfApproved,
+                                                  Id          = l.Id,
+                                                  Link        = l.Link,
+                                                  Name        = l.Name,
+                                                  OsiApproved = l.OsiApproved,
+                                                  SPDX        = l.SPDX
+                                              })
+                                             .ToListAsync();
+
+        cache.Set(LICENSES_ALL_KEY, list, _referenceTtl);
+
+        return list;
     }
 
     [HttpGet("{id:int}")]
@@ -103,6 +115,8 @@ public class LicensesController(MarechaiContext context) : ControllerBase
 
         await context.SaveChangesWithUserAsync(userId);
 
+        cache.Remove(LICENSES_ALL_KEY);
+
         return Ok();
     }
 
@@ -130,6 +144,8 @@ public class LicensesController(MarechaiContext context) : ControllerBase
         await context.Licenses.AddAsync(model);
         await context.SaveChangesWithUserAsync(userId);
 
+        cache.Remove(LICENSES_ALL_KEY);
+
         return model.Id;
     }
 
@@ -151,6 +167,8 @@ public class LicensesController(MarechaiContext context) : ControllerBase
         context.Licenses.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        cache.Remove(LICENSES_ALL_KEY);
 
         return Ok();
     }

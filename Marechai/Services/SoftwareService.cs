@@ -37,7 +37,7 @@ using Microsoft.Kiota.Abstractions.Serialization;
 
 namespace Marechai.Services;
 
-public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter requestAdapter)
+public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter requestAdapter, ReferenceDataCache referenceData)
 {
     static string ExtractErrorMessage(ApiException ex)
     {
@@ -253,19 +253,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
-    public async Task<List<Iso31661NumericDto>> GetCountriesAsync()
-    {
-        try
-        {
-            List<Iso31661NumericDto> countries = await client.Iso31661Numeric.GetAsync();
-
-            return countries ?? [];
-        }
-        catch
-        {
-            return [];
-        }
-    }
+    public Task<List<Iso31661NumericDto>> GetCountriesAsync() => referenceData.GetCountriesAsync();
 
     // ── Screenshot methods ──
 

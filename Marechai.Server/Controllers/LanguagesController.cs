@@ -23,6 +23,7 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -32,25 +33,39 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Marechai.Server.Controllers;
 
 [Route("/languages")]
 [ApiController]
-public class LanguagesController(MarechaiContext context) : ControllerBase
+public class LanguagesController(MarechaiContext context, IMemoryCache cache) : ControllerBase
 {
+    // ISO 639 language list — reference standard, essentially static. 24-hour TTL.
+    const           string   LANGUAGES_ALL_KEY = "languages:all";
+    static readonly TimeSpan _referenceTtl     = TimeSpan.FromHours(24);
+
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public Task<List<Iso639Dto>> GetAsync() => context.Iso639
-       .OrderBy(l => l.ReferenceName)
-       .Select(l => new Iso639Dto
-        {
-            Id            = l.Id,
-            ReferenceName = l.ReferenceName,
-            Part1         = l.Part1
-        })
-       .ToListAsync();
+    public async Task<List<Iso639Dto>> GetAsync()
+    {
+        if(cache.TryGetValue(LANGUAGES_ALL_KEY, out List<Iso639Dto> cached) && cached is not null) return cached;
+
+        List<Iso639Dto> list = await context.Iso639
+                                            .OrderBy(l => l.ReferenceName)
+                                            .Select(l => new Iso639Dto
+                                             {
+                                                 Id            = l.Id,
+                                                 ReferenceName = l.ReferenceName,
+                                                 Part1         = l.Part1
+                                             })
+                                            .ToListAsync();
+
+        cache.Set(LANGUAGES_ALL_KEY, list, _referenceTtl);
+
+        return list;
+    }
 
     [HttpGet("{id}")]
     [AllowAnonymous]

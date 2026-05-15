@@ -44,8 +44,10 @@ public class PeopleByDocumentController(MarechaiContext context) : ControllerBas
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<PersonByDocumentDto>> GetByDocument(long documentId) => (await context.PeopleByDocuments
+    public Task<List<PersonByDocumentDto>> GetByDocument(long documentId) => context.PeopleByDocuments.AsNoTracking()
                    .Where(p => p.DocumentId == documentId)
+                   .OrderBy(p => p.Person.DisplayName ?? p.Person.Alias ?? (p.Person.Name + " " + p.Person.Surname))
+                   .ThenBy(p => p.Role.Name)
                    .Select(p => new PersonByDocumentDto
                     {
                         Id          = p.Id,
@@ -58,9 +60,7 @@ public class PeopleByDocumentController(MarechaiContext context) : ControllerBas
                         Role        = p.Role.Name,
                         DocumentId  = p.DocumentId
                     })
-                   .ToListAsync()).OrderBy(p => p.FullName)
-                                  .ThenBy(p => p.Role)
-                                  .ToList();
+                   .ToListAsync();
 
     [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]

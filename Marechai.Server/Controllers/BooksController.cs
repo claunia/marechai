@@ -352,11 +352,15 @@ public class BooksController(
              })
             .FirstOrDefaultAsync();
 
-        // Mirrors PeopleByBookController.GetByBook — projection identical, sort
-        // happens client-side because PersonByBookDto.FullName is a computed
-        // string property and EF cannot translate it to SQL.
+        // Mirrors PeopleByBookController.GetByBook. Sort happens in SQL using the
+        // same precedence as the DTO's FullName computed property
+        // (DisplayName → Alias → "Name Surname"), referencing the underlying entity
+        // columns so EF Core can translate the COALESCE/CONCAT to a server-side
+        // ORDER BY.
         Task<List<PersonByBookDto>> peopleTask = peopleCtx.PeopleByBooks.AsNoTracking()
             .Where(p => p.BookId == id)
+            .OrderBy(p => p.Person.DisplayName ?? p.Person.Alias ?? (p.Person.Name + " " + p.Person.Surname))
+            .ThenBy(p => p.Role.Name)
             .Select(p => new PersonByBookDto
              {
                  Id          = p.Id,
@@ -439,7 +443,7 @@ public class BooksController(
             InternetArchiveUrl     = head.InternetArchiveUrl
         };
 
-        List<PersonByBookDto> people = peopleTask.Result.OrderBy(p => p.FullName).ThenBy(p => p.Role).ToList();
+        List<PersonByBookDto> people = peopleTask.Result;
 
         return new BookFullDto
         {

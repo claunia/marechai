@@ -185,10 +185,15 @@ public class MagazineIssuesController(
             .OrderBy(p => p.Software)
             .ToListAsync();
 
-        // Mirrors PeopleByMagazineController.GetByMagazine. Sort happens client-side
-        // (after WhenAll) because the projected FullName is a computed property on the DTO.
+        // Mirrors PeopleByMagazineController.GetByMagazine. Sort happens in SQL using
+        // the same precedence as the DTO's FullName computed property
+        // (DisplayName → Alias → "Name Surname"), referencing the underlying entity
+        // columns so EF Core can translate the COALESCE/CONCAT to a server-side
+        // ORDER BY.
         Task<List<PersonByMagazineDto>> peopleTask = peopleCtx.PeopleByMagazines.AsNoTracking()
             .Where(p => p.MagazineId == id)
+            .OrderBy(p => p.Person.DisplayName ?? p.Person.Alias ?? (p.Person.Name + " " + p.Person.Surname))
+            .ThenBy(p => p.Role.Name)
             .Select(p => new PersonByMagazineDto
              {
                  Id          = p.Id,
@@ -233,7 +238,7 @@ public class MagazineIssuesController(
             Machines        = machinesTask.Result,
             MachineFamilies = familiesTask.Result,
             Software        = softwareTask.Result,
-            People          = peopleTask.Result.OrderBy(p => p.FullName).ThenBy(p => p.Role).ToList()
+            People          = peopleTask.Result
         };
     }
 

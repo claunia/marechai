@@ -44,8 +44,10 @@ public class PeopleByMagazineController(MarechaiContext context) : ControllerBas
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<PersonByMagazineDto>> GetByMagazine(long magazineId) => (await context.PeopleByMagazines
+    public Task<List<PersonByMagazineDto>> GetByMagazine(long magazineId) => context.PeopleByMagazines.AsNoTracking()
                    .Where(p => p.MagazineId == magazineId)
+                   .OrderBy(p => p.Person.DisplayName ?? p.Person.Alias ?? (p.Person.Name + " " + p.Person.Surname))
+                   .ThenBy(p => p.Role.Name)
                    .Select(p => new PersonByMagazineDto
                     {
                         Id          = p.Id,
@@ -58,9 +60,7 @@ public class PeopleByMagazineController(MarechaiContext context) : ControllerBas
                         Role        = p.Role.Name,
                         MagazineId  = p.MagazineId
                     })
-                   .ToListAsync()).OrderBy(p => p.FullName)
-                                  .ThenBy(p => p.Role)
-                                  .ToList();
+                   .ToListAsync();
 
     [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]

@@ -23,6 +23,7 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -33,33 +34,50 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Marechai.Server.Controllers;
 
 [Route("/machine-families")]
 [ApiController]
-public class MachineFamiliesController(MarechaiContext context) : ControllerBase
+public class MachineFamiliesController(MarechaiContext context, IMemoryCache cache) : ControllerBase
 {
+    // Cache key + TTL for the all-families list. Used by every machine-family
+    // dropdown across admin + public pages. Slow-changing reference data, so a
+    // 5-minute TTL is safe; we invalidate on Create/Update/Delete below.
+    const           string   MACHINE_FAMILIES_ALL_KEY = "machine-families:all";
+    static readonly TimeSpan _catalogCacheTtl         = TimeSpan.FromMinutes(5);
+
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<MachineFamilyDto>> GetAsync() => context.MachineFamilies.OrderBy(m => m.Company.Name)
-                                                             .ThenBy(m => m.Name)
-                                                             .Select(m => new MachineFamilyDto
-                                                              {
-                                                                  Id      = m.Id,
-                                                                  Company = m.Company.Name,
-                                                                  Name    = m.Name
-                                                              })
-                                                             .OrderBy(m => m.Name)
-                                                             .ToListAsync();
+    public async Task<List<MachineFamilyDto>> GetAsync()
+    {
+        if(cache.TryGetValue(MACHINE_FAMILIES_ALL_KEY, out List<MachineFamilyDto> cached) && cached is not null)
+            return cached;
+
+        List<MachineFamilyDto> families = await context.MachineFamilies.AsNoTracking()
+                                                       .Select(m => new MachineFamilyDto
+                                                        {
+                                                            Id      = m.Id,
+                                                            Company = m.Company.Name,
+                                                            Name    = m.Name
+                                                        })
+                                                       .OrderBy(m => m.Name)
+                                                       .ToListAsync();
+
+        cache.Set(MACHINE_FAMILIES_ALL_KEY, families, _catalogCacheTtl);
+
+        return families;
+    }
 
     [HttpGet("{id:int}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<MachineFamilyDto> GetAsync(int id) => context.MachineFamilies.Where(f => f.Id == id)
+    public Task<MachineFamilyDto> GetAsync(int id) => context.MachineFamilies.AsNoTracking()
+                                                             .Where(f => f.Id == id)
                                                              .Select(m => new MachineFamilyDto
                                                               {
                                                                   Id        = m.Id,
@@ -73,7 +91,7 @@ public class MachineFamiliesController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<MachineDto>> GetMachinesAsync(int id) => context.Machines
+    public Task<List<MachineDto>> GetMachinesAsync(int id) => context.Machines.AsNoTracking()
        .Where(m => m.FamilyId == id)
        .OrderBy(m => m.Name)
        .Select(m => new MachineDto
@@ -104,6 +122,8 @@ public class MachineFamiliesController(MarechaiContext context) : ControllerBase
 
         await context.SaveChangesWithUserAsync(userId);
 
+        cache.Remove(MACHINE_FAMILIES_ALL_KEY);
+
         return Ok();
     }
 
@@ -127,6 +147,8 @@ public class MachineFamiliesController(MarechaiContext context) : ControllerBase
         await context.MachineFamilies.AddAsync(model);
         await context.SaveChangesWithUserAsync(userId);
 
+        cache.Remove(MACHINE_FAMILIES_ALL_KEY);
+
         return model.Id;
     }
 
@@ -148,6 +170,8 @@ public class MachineFamiliesController(MarechaiContext context) : ControllerBase
         context.MachineFamilies.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        cache.Remove(MACHINE_FAMILIES_ALL_KEY);
 
         return Ok();
     }

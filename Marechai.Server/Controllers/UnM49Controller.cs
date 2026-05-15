@@ -23,6 +23,7 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -33,28 +34,44 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Marechai.Server.Controllers;
 
 [Route("/un-m49")]
 [ApiController]
-public class UnM49Controller(MarechaiContext context) : ControllerBase
+public class UnM49Controller(MarechaiContext context, IMemoryCache cache) : ControllerBase
 {
+    // UN M.49 geographic region list — reference standard, updated ~yearly. 24-hour TTL.
+    const           string   UN_M49_ALL_KEY       = "un-m49:all";
+    const           string   UN_M49_REGIONS_KEY   = "un-m49:regions";
+    const           string   UN_M49_COUNTRIES_KEY = "un-m49:countries";
+    static readonly TimeSpan _referenceTtl        = TimeSpan.FromHours(24);
+
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public Task<List<UnM49Dto>> GetAsync() => context.UnM49
-       .OrderBy(r => r.Type)
-       .ThenBy(r => r.Name)
-       .Select(r => new UnM49Dto
-        {
-            Id         = r.Id,
-            Name       = r.Name,
-            ParentId   = r.ParentId,
-            ParentName = r.Parent.Name,
-            Type       = r.Type
-        })
-       .ToListAsync();
+    public async Task<List<UnM49Dto>> GetAsync()
+    {
+        if(cache.TryGetValue(UN_M49_ALL_KEY, out List<UnM49Dto> cached) && cached is not null) return cached;
+
+        List<UnM49Dto> list = await context.UnM49
+                                           .OrderBy(r => r.Type)
+                                           .ThenBy(r => r.Name)
+                                           .Select(r => new UnM49Dto
+                                            {
+                                                Id         = r.Id,
+                                                Name       = r.Name,
+                                                ParentId   = r.ParentId,
+                                                ParentName = r.Parent.Name,
+                                                Type       = r.Type
+                                            })
+                                           .ToListAsync();
+
+        cache.Set(UN_M49_ALL_KEY, list, _referenceTtl);
+
+        return list;
+    }
 
     [HttpGet("{id:int}")]
     [AllowAnonymous]
@@ -81,33 +98,51 @@ public class UnM49Controller(MarechaiContext context) : ControllerBase
     [HttpGet("regions")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public Task<List<UnM49Dto>> GetRegionsAsync() => context.UnM49
-       .Where(r => r.Type != UnM49Type.Country)
-       .OrderBy(r => r.Type)
-       .ThenBy(r => r.Name)
-       .Select(r => new UnM49Dto
-        {
-            Id         = r.Id,
-            Name       = r.Name,
-            ParentId   = r.ParentId,
-            ParentName = r.Parent.Name,
-            Type       = r.Type
-        })
-       .ToListAsync();
+    public async Task<List<UnM49Dto>> GetRegionsAsync()
+    {
+        if(cache.TryGetValue(UN_M49_REGIONS_KEY, out List<UnM49Dto> cached) && cached is not null) return cached;
+
+        List<UnM49Dto> list = await context.UnM49
+                                           .Where(r => r.Type != UnM49Type.Country)
+                                           .OrderBy(r => r.Type)
+                                           .ThenBy(r => r.Name)
+                                           .Select(r => new UnM49Dto
+                                            {
+                                                Id         = r.Id,
+                                                Name       = r.Name,
+                                                ParentId   = r.ParentId,
+                                                ParentName = r.Parent.Name,
+                                                Type       = r.Type
+                                            })
+                                           .ToListAsync();
+
+        cache.Set(UN_M49_REGIONS_KEY, list, _referenceTtl);
+
+        return list;
+    }
 
     [HttpGet("countries")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public Task<List<UnM49Dto>> GetCountriesAsync() => context.UnM49
-       .Where(r => r.Type == UnM49Type.Country)
-       .OrderBy(r => r.Name)
-       .Select(r => new UnM49Dto
-        {
-            Id         = r.Id,
-            Name       = r.Name,
-            ParentId   = r.ParentId,
-            ParentName = r.Parent.Name,
-            Type       = r.Type
-        })
-       .ToListAsync();
+    public async Task<List<UnM49Dto>> GetCountriesAsync()
+    {
+        if(cache.TryGetValue(UN_M49_COUNTRIES_KEY, out List<UnM49Dto> cached) && cached is not null) return cached;
+
+        List<UnM49Dto> list = await context.UnM49
+                                           .Where(r => r.Type == UnM49Type.Country)
+                                           .OrderBy(r => r.Name)
+                                           .Select(r => new UnM49Dto
+                                            {
+                                                Id         = r.Id,
+                                                Name       = r.Name,
+                                                ParentId   = r.ParentId,
+                                                ParentName = r.Parent.Name,
+                                                Type       = r.Type
+                                            })
+                                           .ToListAsync();
+
+        cache.Set(UN_M49_COUNTRIES_KEY, list, _referenceTtl);
+
+        return list;
+    }
 }

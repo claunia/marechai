@@ -44,8 +44,14 @@ public class ResolutionsByScreenController(MarechaiContext context) : Controller
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<ResolutionByScreenDto>> GetByScreen(int screenId) => (await context.ResolutionsByScreen
+    public Task<List<ResolutionByScreenDto>> GetByScreen(int screenId) => context.ResolutionsByScreen.AsNoTracking()
                    .Where(r => r.ScreenId == screenId)
+                   .OrderBy(r => r.Resolution.Width)
+                   .ThenBy(r => r.Resolution.Height)
+                   .ThenBy(r => r.Resolution.Chars)
+                   .ThenBy(r => r.Resolution.Grayscale)
+                   .ThenBy(r => r.Resolution.Colors)
+                   .ThenBy(r => r.Resolution.Palette)
                    .Select(r => new ResolutionByScreenDto
                     {
                         Id       = r.Id,
@@ -62,13 +68,7 @@ public class ResolutionsByScreenController(MarechaiContext context) : Controller
                         },
                         ResolutionId = r.ResolutionId
                     })
-                   .ToListAsync()).OrderBy(r => r.Resolution.Width)
-                                  .ThenBy(r => r.Resolution.Height)
-                                  .ThenBy(r => r.Resolution.Chars)
-                                  .ThenBy(r => r.Resolution.Grayscale)
-                                  .ThenBy(r => r.Resolution.Colors)
-                                  .ThenBy(r => r.Resolution.Palette)
-                                  .ToList();
+                   .ToListAsync();
 
     [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]

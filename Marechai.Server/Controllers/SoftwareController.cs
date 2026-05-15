@@ -80,6 +80,115 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     static bool ShouldIncludeCompilations(SoftwareKind? kind) =>
         kind is null or SoftwareKind.Game;
 
+    /// <summary>
+    /// Backfills <see cref="SoftwareDto.FrontCoverId"/> on a materialized page of
+    /// software/compilation rows in two bounded SQL round-trips, replacing the
+    /// per-row correlated subquery that EF Core used to emit. With take=24 the
+    /// old shape fired 24 correlated lookups across SoftwareCovers ⋈ SoftwareReleases
+    /// ⋈ SoftwareVersions and could not use a single index because of the
+    /// (Release.SoftwareId OR Release.SoftwareVersion.SoftwareId) OR clause.
+    /// The replacement uses two index-friendly IN/GROUP BY queries (direct
+    /// release link + indirect via version) plus a third for compilations, all
+    /// bounded by the paginated id set.
+    /// </summary>
+    async Task PopulateFrontCoverIdsAsync(List<SoftwareDto> list, CancellationToken ct)
+    {
+        if(list.Count == 0) return;
+
+        List<ulong> softwareIds = list.Where(d => !d.IsCompilation)
+                                      .Select(d => d.Id)
+                                      .Distinct()
+                                      .ToList();
+
+        List<ulong> compilationReleaseIds = list.Where(d => d.IsCompilation)
+                                                .Select(d => d.Id)
+                                                .Distinct()
+                                                .ToList();
+
+        var softwareCovers = new Dictionary<ulong, Guid>();
+
+        if(softwareIds.Count > 0)
+        {
+            // Path 1: cover.Release.SoftwareId — release attached to software directly.
+            // Index used: SoftwareReleases.SoftwareId + SoftwareCovers.SoftwareReleaseId.
+            var direct = await context.SoftwareCovers
+                                      .Where(sc => sc.Type == SoftwareCoverType.Front &&
+                                                   sc.Release.SoftwareId.HasValue    &&
+                                                   softwareIds.Contains(sc.Release.SoftwareId.Value))
+                                      .Select(sc => new
+                                       {
+                                           SoftwareId = sc.Release.SoftwareId.Value,
+                                           CoverId    = sc.Id
+                                       })
+                                      .ToListAsync(ct);
+
+            foreach(IGrouping<ulong, Guid> g in direct.GroupBy(x => x.SoftwareId, x => x.CoverId))
+                softwareCovers[g.Key] = g.Min();
+
+            // Path 2: cover.Release.SoftwareVersion.SoftwareId — release attached to a
+            // version of the software. SoftwareVersion.SoftwareId is non-nullable ulong.
+            var indirect = await context.SoftwareCovers
+                                        .Where(sc => sc.Type == SoftwareCoverType.Front &&
+                                                     sc.Release.SoftwareVersionId.HasValue &&
+                                                     softwareIds.Contains(sc.Release.SoftwareVersion.SoftwareId))
+                                        .Select(sc => new
+                                         {
+                                             SoftwareId = sc.Release.SoftwareVersion.SoftwareId,
+                                             CoverId    = sc.Id
+                                         })
+                                        .ToListAsync(ct);
+
+            foreach(IGrouping<ulong, Guid> g in indirect.GroupBy(x => x.SoftwareId, x => x.CoverId))
+            {
+                Guid candidate = g.Min();
+
+                if(softwareCovers.TryGetValue(g.Key, out Guid existing))
+                {
+                    // Both paths matched: pick the lower Guid to mirror the original
+                    // FirstOrDefault(OrderBy(Id)) semantics across the union of covers.
+                    if(candidate.CompareTo(existing) < 0)
+                        softwareCovers[g.Key] = candidate;
+                }
+                else
+                    softwareCovers[g.Key] = candidate;
+            }
+        }
+
+        var compilationCovers = new Dictionary<ulong, Guid>();
+
+        if(compilationReleaseIds.Count > 0)
+        {
+            // Compilation rows carry the SoftwareRelease.Id as their dto Id, so look up
+            // covers directly via SoftwareCovers.SoftwareReleaseId (single indexed column).
+            var rows = await context.SoftwareCovers
+                                    .Where(sc => sc.Type == SoftwareCoverType.Front &&
+                                                 compilationReleaseIds.Contains(sc.SoftwareReleaseId))
+                                    .Select(sc => new
+                                     {
+                                         ReleaseId = sc.SoftwareReleaseId,
+                                         CoverId   = sc.Id
+                                     })
+                                    .ToListAsync(ct);
+
+            foreach(IGrouping<ulong, Guid> g in rows.GroupBy(x => x.ReleaseId, x => x.CoverId))
+                compilationCovers[g.Key] = g.Min();
+        }
+
+        foreach(SoftwareDto dto in list)
+        {
+            if(dto.IsCompilation)
+            {
+                if(compilationCovers.TryGetValue(dto.Id, out Guid coverId))
+                    dto.FrontCoverId = coverId;
+            }
+            else
+            {
+                if(softwareCovers.TryGetValue(dto.Id, out Guid coverId))
+                    dto.FrontCoverId = coverId;
+            }
+        }
+    }
+
     static string CountCacheKey(SoftwareKind? kind) =>
         kind is null ? SOFTWARE_COUNT_CACHE_KEY : $"{SOFTWARE_COUNT_CACHE_KEY}:{(int)kind.Value}";
 
@@ -186,11 +295,11 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<SoftwareDto>> GetSoftwareByLetterAsync(char c,
-                                                            [FromQuery] SoftwareKind? kind = null,
-                                                            [FromQuery] int? skip = null,
-                                                            [FromQuery] int? take = null,
-                                                            CancellationToken cancellationToken = default)
+    public async Task<List<SoftwareDto>> GetSoftwareByLetterAsync(char c,
+                                                                  [FromQuery] SoftwareKind? kind = null,
+                                                                  [FromQuery] int? skip = null,
+                                                                  [FromQuery] int? take = null,
+                                                                  CancellationToken cancellationToken = default)
     {
         IQueryable<SoftwareDto> combined = BuildByLetterQuery(c, kind);
 
@@ -200,7 +309,11 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
         if(take.HasValue) ordered = ordered.Take(take.Value);
 
-        return ordered.ToListAsync(cancellationToken);
+        List<SoftwareDto> list = await ordered.ToListAsync(cancellationToken);
+
+        await PopulateFrontCoverIdsAsync(list, cancellationToken);
+
+        return list;
     }
 
     [HttpGet("by-letter/{c}/count")]
@@ -227,14 +340,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
             FamilyId      = s.FamilyId,
             Family        = s.Family.Name,
             Kind          = s.Kind,
-            IsCompilation = false,
-            FrontCoverId = context.SoftwareCovers
-                                  .Where(c2 => (c2.Release.SoftwareId == s.Id ||
-                                                 c2.Release.SoftwareVersion.SoftwareId == s.Id) &&
-                                                c2.Type == SoftwareCoverType.Front)
-                                  .OrderBy(c2 => c2.Id)
-                                  .Select(c2 => (Guid?)c2.Id)
-                                  .FirstOrDefault()
+            IsCompilation = false
         });
 
         if(!ShouldIncludeCompilations(kind)) return softwareQuery;
@@ -248,12 +354,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                 FamilyId      = null,
                 Family        = null,
                 Kind          = default,
-                IsCompilation = true,
-                FrontCoverId  = r.Covers
-                                 .Where(cv => cv.Type == SoftwareCoverType.Front)
-                                 .OrderBy(cv => cv.Id)
-                                 .Select(cv => (Guid?)cv.Id)
-                                 .FirstOrDefault()
+                IsCompilation = true
             });
 
         return softwareQuery.Concat(compilationsQuery);
@@ -263,11 +364,11 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<SoftwareDto>> GetSoftwareByYearAsync(int year,
-                                                          [FromQuery] SoftwareKind? kind = null,
-                                                          [FromQuery] int? skip = null,
-                                                          [FromQuery] int? take = null,
-                                                          CancellationToken cancellationToken = default)
+    public async Task<List<SoftwareDto>> GetSoftwareByYearAsync(int year,
+                                                                [FromQuery] SoftwareKind? kind = null,
+                                                                [FromQuery] int? skip = null,
+                                                                [FromQuery] int? take = null,
+                                                                CancellationToken cancellationToken = default)
     {
         IQueryable<SoftwareDto> combined = BuildByYearQuery(year, kind);
 
@@ -277,7 +378,11 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
         if(take.HasValue) ordered = ordered.Take(take.Value);
 
-        return ordered.ToListAsync(cancellationToken);
+        List<SoftwareDto> list = await ordered.ToListAsync(cancellationToken);
+
+        await PopulateFrontCoverIdsAsync(list, cancellationToken);
+
+        return list;
     }
 
     [HttpGet("by-year/{year:int}/count")]
@@ -306,14 +411,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
             FamilyId      = s.FamilyId,
             Family        = s.Family.Name,
             Kind          = s.Kind,
-            IsCompilation = false,
-            FrontCoverId = context.SoftwareCovers
-                                  .Where(c => (c.Release.SoftwareId == s.Id ||
-                                                c.Release.SoftwareVersion.SoftwareId == s.Id) &&
-                                               c.Type == SoftwareCoverType.Front)
-                                  .OrderBy(c => c.Id)
-                                  .Select(c => (Guid?)c.Id)
-                                  .FirstOrDefault()
+            IsCompilation = false
         });
 
         if(!ShouldIncludeCompilations(kind)) return softwareQuery;
@@ -329,12 +427,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                 FamilyId      = null,
                 Family        = null,
                 Kind          = default,
-                IsCompilation = true,
-                FrontCoverId  = r.Covers
-                                 .Where(cv => cv.Type == SoftwareCoverType.Front)
-                                 .OrderBy(cv => cv.Id)
-                                 .Select(cv => (Guid?)cv.Id)
-                                 .FirstOrDefault()
+                IsCompilation = true
             });
 
         return softwareQuery.Concat(compilationsQuery);
@@ -344,11 +437,11 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<SoftwareDto>> GetSoftwareByPlatformAsync(ulong platformId,
-                                                              [FromQuery] SoftwareKind? kind = null,
-                                                              [FromQuery] int? skip = null,
-                                                              [FromQuery] int? take = null,
-                                                              CancellationToken cancellationToken = default)
+    public async Task<List<SoftwareDto>> GetSoftwareByPlatformAsync(ulong platformId,
+                                                                    [FromQuery] SoftwareKind? kind = null,
+                                                                    [FromQuery] int? skip = null,
+                                                                    [FromQuery] int? take = null,
+                                                                    CancellationToken cancellationToken = default)
     {
         IQueryable<SoftwareDto> combined = BuildByPlatformQuery(platformId, kind);
 
@@ -358,7 +451,11 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
         if(take.HasValue) ordered = ordered.Take(take.Value);
 
-        return ordered.ToListAsync(cancellationToken);
+        List<SoftwareDto> list = await ordered.ToListAsync(cancellationToken);
+
+        await PopulateFrontCoverIdsAsync(list, cancellationToken);
+
+        return list;
     }
 
     [HttpGet("by-platform/{platformId:ulong}/count")]
@@ -385,14 +482,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
             FamilyId      = s.FamilyId,
             Family        = s.Family.Name,
             Kind          = s.Kind,
-            IsCompilation = false,
-            FrontCoverId = context.SoftwareCovers
-                                  .Where(c => (c.Release.SoftwareId == s.Id ||
-                                                c.Release.SoftwareVersion.SoftwareId == s.Id) &&
-                                               c.Type == SoftwareCoverType.Front)
-                                  .OrderBy(c => c.Id)
-                                  .Select(c => (Guid?)c.Id)
-                                  .FirstOrDefault()
+            IsCompilation = false
         });
 
         if(!ShouldIncludeCompilations(kind)) return softwareQuery;
@@ -406,12 +496,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                 FamilyId      = null,
                 Family        = null,
                 Kind          = default,
-                IsCompilation = true,
-                FrontCoverId  = r.Covers
-                                 .Where(cv => cv.Type == SoftwareCoverType.Front)
-                                 .OrderBy(cv => cv.Id)
-                                 .Select(cv => (Guid?)cv.Id)
-                                 .FirstOrDefault()
+                IsCompilation = true
             });
 
         return softwareQuery.Concat(compilationsQuery);
@@ -496,12 +581,12 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<SoftwareDto>> GetAsync([FromQuery] int? skip   = null, [FromQuery] int? take = null,
-                                            [FromQuery] string search = null,
-                                            [FromQuery] string sortBy = null,
-                                            [FromQuery] bool sortDescending = false,
-                                            [FromQuery] SoftwareKind? kind = null,
-                                            CancellationToken cancellationToken = default)
+    public async Task<List<SoftwareDto>> GetAsync([FromQuery] int? skip   = null, [FromQuery] int? take = null,
+                                                  [FromQuery] string search = null,
+                                                  [FromQuery] string sortBy = null,
+                                                  [FromQuery] bool sortDescending = false,
+                                                  [FromQuery] SoftwareKind? kind = null,
+                                                  CancellationToken cancellationToken = default)
     {
         IQueryable<SoftwareDto> combined = BuildAllSoftwareQuery(search, kind);
 
@@ -526,7 +611,11 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
         if(take.HasValue) ordered = ordered.Take(take.Value);
 
-        return ordered.ToListAsync(cancellationToken);
+        List<SoftwareDto> list = await ordered.ToListAsync(cancellationToken);
+
+        await PopulateFrontCoverIdsAsync(list, cancellationToken);
+
+        return list;
     }
 
     IQueryable<SoftwareDto> BuildAllSoftwareQuery(string search, SoftwareKind? kind)
@@ -546,14 +635,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
             FamilyId      = s.FamilyId,
             Family        = s.Family.Name,
             Kind          = s.Kind,
-            IsCompilation = false,
-            FrontCoverId  = context.SoftwareCovers
-                                   .Where(c => (c.Release.SoftwareId == s.Id ||
-                                                 c.Release.SoftwareVersion.SoftwareId == s.Id) &&
-                                                c.Type == SoftwareCoverType.Front)
-                                   .OrderBy(c => c.Id)
-                                   .Select(c => (Guid?)c.Id)
-                                   .FirstOrDefault()
+            IsCompilation = false
         });
 
         if(!ShouldIncludeCompilations(kind)) return softwareQuery;
@@ -570,12 +652,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
             FamilyId      = null,
             Family        = null,
             Kind          = default,
-            IsCompilation = true,
-            FrontCoverId  = r.Covers
-                             .Where(cv => cv.Type == SoftwareCoverType.Front)
-                             .OrderBy(cv => cv.Id)
-                             .Select(cv => (Guid?)cv.Id)
-                             .FirstOrDefault()
+            IsCompilation = true
         });
 
         // Single SQL round-trip via Concat (UNION ALL).
@@ -1250,27 +1327,28 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<SoftwareDto>> GetAddonsAsync(ulong id) => context.Softwares
-       .Where(s => s.BaseSoftwareId == id)
-       .OrderBy(s => MarechaiContext.NaturalSortKey(s.Name))
-       .Select(s => new SoftwareDto
-        {
-            Id                = s.Id,
-            Name              = s.Name,
-            FamilyId          = s.FamilyId,
-            Family            = s.Family.Name,
-            Kind              = s.Kind,
-            BaseSoftwareId    = s.BaseSoftwareId,
-            BaseSoftware      = s.BaseSoftware.Name,
-            FrontCoverId = context.SoftwareCovers
-                                  .Where(c => (c.Release.SoftwareId == s.Id ||
-                                                c.Release.SoftwareVersion.SoftwareId == s.Id) &&
-                                               c.Type == SoftwareCoverType.Front)
-                                  .OrderBy(c => c.Id)
-                                  .Select(c => (Guid?)c.Id)
-                                  .FirstOrDefault()
-        })
-       .ToListAsync();
+    public async Task<List<SoftwareDto>> GetAddonsAsync(ulong id, CancellationToken cancellationToken = default)
+    {
+        List<SoftwareDto> list = await context.Softwares
+                                              .Where(s => s.BaseSoftwareId == id)
+                                              .OrderBy(s => MarechaiContext.NaturalSortKey(s.Name))
+                                              .Select(s => new SoftwareDto
+                                               {
+                                                   Id             = s.Id,
+                                                   Name           = s.Name,
+                                                   FamilyId       = s.FamilyId,
+                                                   Family         = s.Family.Name,
+                                                   Kind           = s.Kind,
+                                                   BaseSoftwareId = s.BaseSoftwareId,
+                                                   BaseSoftware   = s.BaseSoftware.Name,
+                                                   IsCompilation  = false
+                                               })
+                                              .ToListAsync(cancellationToken);
+
+        await PopulateFrontCoverIdsAsync(list, cancellationToken);
+
+        return list;
+    }
 
     [HttpGet("{id:ulong}/descriptions")]
     [AllowAnonymous]
@@ -1466,11 +1544,11 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<SoftwareDto>> GetSoftwareByGenreAsync(int genreId,
-                                                           [FromQuery] SoftwareKind? kind = null,
-                                                           [FromQuery] int? skip = null,
-                                                           [FromQuery] int? take = null,
-                                                           CancellationToken cancellationToken = default)
+    public async Task<List<SoftwareDto>> GetSoftwareByGenreAsync(int genreId,
+                                                                 [FromQuery] SoftwareKind? kind = null,
+                                                                 [FromQuery] int? skip = null,
+                                                                 [FromQuery] int? take = null,
+                                                                 CancellationToken cancellationToken = default)
     {
         IQueryable<SoftwareDto> combined = BuildByGenreQuery(genreId, kind);
 
@@ -1480,7 +1558,11 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
         if(take.HasValue) ordered = ordered.Take(take.Value);
 
-        return ordered.ToListAsync(cancellationToken);
+        List<SoftwareDto> list = await ordered.ToListAsync(cancellationToken);
+
+        await PopulateFrontCoverIdsAsync(list, cancellationToken);
+
+        return list;
     }
 
     [HttpGet("by-genre/{genreId:int}/count")]
@@ -1506,14 +1588,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
             FamilyId      = s.FamilyId,
             Family        = s.Family.Name,
             Kind          = s.Kind,
-            IsCompilation = false,
-            FrontCoverId = context.SoftwareCovers
-                                  .Where(c => (c.Release.SoftwareId == s.Id ||
-                                                c.Release.SoftwareVersion.SoftwareId == s.Id) &&
-                                               c.Type == SoftwareCoverType.Front)
-                                  .OrderBy(c => c.Id)
-                                  .Select(c => (Guid?)c.Id)
-                                  .FirstOrDefault()
+            IsCompilation = false
         });
 
         if(!ShouldIncludeCompilations(kind)) return softwareQuery;
@@ -1529,12 +1604,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                 FamilyId      = null,
                 Family        = null,
                 Kind          = default,
-                IsCompilation = true,
-                FrontCoverId  = r.Covers
-                                 .Where(cv => cv.Type == SoftwareCoverType.Front)
-                                 .OrderBy(cv => cv.Id)
-                                 .Select(cv => (Guid?)cv.Id)
-                                 .FirstOrDefault()
+                IsCompilation = true
             });
 
         return softwareQuery.Concat(compilationsQuery);
@@ -1589,13 +1659,13 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<SoftwareDto>> GetSoftwareBySpecAsync([FromQuery] string key, [FromQuery] string value,
-                                                          [FromQuery] SoftwareKind? kind = null,
-                                                          [FromQuery] int? skip = null,
-                                                          [FromQuery] int? take = null,
-                                                          CancellationToken cancellationToken = default)
+    public async Task<List<SoftwareDto>> GetSoftwareBySpecAsync([FromQuery] string key, [FromQuery] string value,
+                                                                [FromQuery] SoftwareKind? kind = null,
+                                                                [FromQuery] int? skip = null,
+                                                                [FromQuery] int? take = null,
+                                                                CancellationToken cancellationToken = default)
     {
-        if(key == "Notes") return Task.FromResult(new List<SoftwareDto>());
+        if(key == "Notes") return [];
 
         IQueryable<SoftwareDto> combined = BuildBySpecQuery(key, value, kind);
 
@@ -1605,7 +1675,11 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
         if(take.HasValue) ordered = ordered.Take(take.Value);
 
-        return ordered.ToListAsync(cancellationToken);
+        List<SoftwareDto> list = await ordered.ToListAsync(cancellationToken);
+
+        await PopulateFrontCoverIdsAsync(list, cancellationToken);
+
+        return list;
     }
 
     [HttpGet("by-spec/count")]
@@ -1643,14 +1717,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
             FamilyId      = s.FamilyId,
             Family        = s.Family.Name,
             Kind          = s.Kind,
-            IsCompilation = false,
-            FrontCoverId = context.SoftwareCovers
-                                  .Where(c => (c.Release.SoftwareId == s.Id ||
-                                                c.Release.SoftwareVersion.SoftwareId == s.Id) &&
-                                               c.Type == SoftwareCoverType.Front)
-                                  .OrderBy(c => c.Id)
-                                  .Select(c => (Guid?)c.Id)
-                                  .FirstOrDefault()
+            IsCompilation = false
         });
 
         if(!ShouldIncludeCompilations(kind)) return softwareQuery;
@@ -1667,12 +1734,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                 FamilyId      = null,
                 Family        = null,
                 Kind          = default,
-                IsCompilation = true,
-                FrontCoverId  = r.Covers
-                                 .Where(cv => cv.Type == SoftwareCoverType.Front)
-                                 .OrderBy(cv => cv.Id)
-                                 .Select(cv => (Guid?)cv.Id)
-                                 .FirstOrDefault()
+                IsCompilation = true
             });
 
         return softwareQuery.Concat(compilationsQuery);
@@ -2563,14 +2625,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                                                    .Average(),
                                       UserAvg = s.UserRatings.Select(r => (double?)r.Rating).Average(),
                                       CriticCount = s.CriticReviews.Count(r => r.NormalizedScore != null),
-                                      UserCount   = s.UserRatings.Count,
-                                      FrontCoverId = context.SoftwareCovers
-                                                            .Where(c => (c.Release.SoftwareId == s.Id ||
-                                                                         c.Release.SoftwareVersion.SoftwareId == s.Id) &&
-                                                                        c.Type == SoftwareCoverType.Front)
-                                                            .OrderBy(c => c.Id)
-                                                            .Select(c => (Guid?)c.Id)
-                                                            .FirstOrDefault()
+                                      UserCount   = s.UserRatings.Count
                                   })
                                  .ToListAsync(cancellationToken);
 
@@ -2595,7 +2650,6 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                                  s.Name,
                                  s.Kind,
                                  Family = s.Family?.Name,
-                                 s.FrontCoverId,
                                  Score   = Math.Round(score, 1),
                                  Critic  = s.CriticAvg,
                                  User    = s.UserAvg,
@@ -2613,7 +2667,6 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                              Name              = s.Name,
                              Kind              = s.Kind,
                              Family            = s.Family,
-                             FrontCoverId      = s.FrontCoverId,
                              MarechaiScore     = s.Score,
                              CriticAverage     = s.Critic,
                              UserStarAverage   = s.User,
@@ -2621,6 +2674,25 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                              UserRatingCount   = s.UserCount
                          })
                         .ToList();
+
+        // Backfill FrontCoverId for the top-N rows ONLY (was: per-row correlated subquery
+        // over EVERY rated software, run inside the materialization above). The helper
+        // expects SoftwareDto, so we adapt the ranking rows in place via a shim list and
+        // copy the resolved Guid back. All ranking rows are non-compilation entries.
+        // Name = "" because the shim is only used to drive PopulateFrontCoverIdsAsync
+        // and is discarded after the FrontCoverId backfill.
+        var coverShim = ranked.Select(r => new SoftwareDto
+                                {
+                                    Id            = r.SoftwareId,
+                                    Name          = string.Empty,
+                                    IsCompilation = false
+                                })
+                              .ToList();
+
+        await PopulateFrontCoverIdsAsync(coverShim, cancellationToken);
+
+        for(int i = 0; i < ranked.Count; i++)
+            ranked[i].FrontCoverId = coverShim[i].FrontCoverId;
 
         cache.Set(cacheKey, ranked, _marechaiRankingTtl);
 

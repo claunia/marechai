@@ -44,27 +44,27 @@ public class PeopleByCompanyController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<PersonByCompanyDto>> GetByCompany(int companyId) =>
-        (await context.PeopleByCompanies
-                      .Where(p => p.CompanyId == companyId)
-                      .Select(p => new PersonByCompanyDto
-                       {
-                           Id          = p.Id,
-                           Name        = p.Person.Name,
-                           Surname     = p.Person.Surname,
-                           Alias       = p.Person.Alias,
-                           DisplayName = p.Person.DisplayName,
-                           PersonId    = p.PersonId,
-                           CompanyId   = p.CompanyId,
-                           Position    = p.Position,
-                           Start       = p.Start,
-                           End         = p.End,
-                           Ongoing     = p.Ongoing
-                       })
-                      .ToListAsync()).OrderBy(p => p.FullName)
-       .ThenBy(p => p.Position)
-       .ThenBy(p => p.Start)
-       .ToList();
+    public Task<List<PersonByCompanyDto>> GetByCompany(int companyId) =>
+        context.PeopleByCompanies.AsNoTracking()
+               .Where(p => p.CompanyId == companyId)
+               .OrderBy(p => p.Person.DisplayName ?? p.Person.Alias ?? (p.Person.Name + " " + p.Person.Surname))
+               .ThenBy(p => p.Position)
+               .ThenBy(p => p.Start)
+               .Select(p => new PersonByCompanyDto
+                {
+                    Id          = p.Id,
+                    Name        = p.Person.Name,
+                    Surname     = p.Person.Surname,
+                    Alias       = p.Person.Alias,
+                    DisplayName = p.Person.DisplayName,
+                    PersonId    = p.PersonId,
+                    CompanyId   = p.CompanyId,
+                    Position    = p.Position,
+                    Start       = p.Start,
+                    End         = p.End,
+                    Ongoing     = p.Ongoing
+                })
+               .ToListAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]

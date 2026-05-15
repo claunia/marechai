@@ -23,6 +23,7 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -32,25 +33,37 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Marechai.Server.Controllers;
 
 [Route("/iso31661-numeric")]
 [ApiController]
-public class Iso31661NumericController(MarechaiContext context) : ControllerBase
+public class Iso31661NumericController(MarechaiContext context, IMemoryCache cache) : ControllerBase
 {
+    // ISO 3166-1 country list — reference standard, updated ~yearly. 24-hour TTL.
+    const           string   ISO_31661_ALL_KEY = "iso31661:all";
+    static readonly TimeSpan _referenceTtl     = TimeSpan.FromHours(24);
+
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<Iso31661NumericDto>> GetAsync()
+    public async Task<List<Iso31661NumericDto>> GetAsync()
     {
-        return context.Iso31661Numeric.OrderBy(c => c.Name)
-        .Select(c => new Iso31661NumericDto
-        {
-            Id = c.Id,
-            Name = c.Name
-        })
-        .ToListAsync();
+        if(cache.TryGetValue(ISO_31661_ALL_KEY, out List<Iso31661NumericDto> cached) && cached is not null)
+            return cached;
+
+        List<Iso31661NumericDto> list = await context.Iso31661Numeric.OrderBy(c => c.Name)
+                                                     .Select(c => new Iso31661NumericDto
+                                                      {
+                                                          Id   = c.Id,
+                                                          Name = c.Name
+                                                      })
+                                                     .ToListAsync();
+
+        cache.Set(ISO_31661_ALL_KEY, list, _referenceTtl);
+
+        return list;
     }
 }

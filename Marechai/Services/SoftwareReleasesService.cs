@@ -31,7 +31,7 @@ using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.Services;
 
-public class SoftwareReleasesService(Marechai.ApiClient.Client client)
+public class SoftwareReleasesService(Marechai.ApiClient.Client client, ReferenceDataCache referenceData)
 {
     public async Task<List<SoftwareReleaseDto>> GetAllAsync()
     {
@@ -437,19 +437,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<List<UnM49Dto>> GetAllUnM49Async()
-    {
-        try
-        {
-            List<UnM49Dto> regions = await client.UnM49.GetAsync();
-
-            return regions ?? [];
-        }
-        catch
-        {
-            return [];
-        }
-    }
+    public Task<List<UnM49Dto>> GetAllUnM49Async() => referenceData.GetUnM49Async();
 
     public async Task<List<UnM49BySoftwareReleaseDto>> GetReleaseRegionsAsync(int releaseId)
     {
@@ -813,19 +801,7 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<List<Iso639Dto>> GetAllLanguagesAsync()
-    {
-        try
-        {
-            List<Iso639Dto> languages = await client.Languages.GetAsync();
-
-            return languages ?? [];
-        }
-        catch
-        {
-            return [];
-        }
-    }
+    public Task<List<Iso639Dto>> GetAllLanguagesAsync() => referenceData.GetLanguagesAsync();
 
     public async Task<List<LanguageBySoftwareReleaseDto>> GetReleaseLanguagesAsync(int releaseId)
     {

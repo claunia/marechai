@@ -31,7 +31,7 @@ using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.Services;
 
-public class SoftwareVersionsService(Marechai.ApiClient.Client client)
+public class SoftwareVersionsService(Marechai.ApiClient.Client client, ReferenceDataCache referenceData)
 {
     public async Task<List<SoftwareVersionDto>> GetAllAsync()
     {
@@ -210,17 +210,5 @@ public class SoftwareVersionsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<List<LicenseDto>> GetAllLicensesAsync()
-    {
-        try
-        {
-            List<LicenseDto> licenses = await client.Licenses.GetAsync();
-
-            return licenses ?? [];
-        }
-        catch
-        {
-            return [];
-        }
-    }
+    public Task<List<LicenseDto>> GetAllLicensesAsync() => referenceData.GetLicensesAsync();
 }

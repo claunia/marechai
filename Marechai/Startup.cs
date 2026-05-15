@@ -84,6 +84,12 @@ public class Startup(IConfiguration configuration)
 
         services.AddMarechaiEmail(Configuration);
 
+        // Process-wide IMemoryCache shared across all user circuits. Used by
+        // ReferenceDataCache to memoise slow-changing lookup tables (countries,
+        // languages, licenses, machine families, ISO standards) so navigating
+        // between pages doesn't re-fetch the same dropdown data per circuit.
+        services.AddMemoryCache();
+
         string apiUrl = Configuration.GetSection("ApiClient:Url").Value ?? "http://localhost:5023";
 
         services.AddSingleton(new ApiAssetUrlProvider(apiUrl));

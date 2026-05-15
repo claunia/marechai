@@ -999,6 +999,14 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
 
             entity.HasIndex(e => e.Type).HasDatabaseName("idx_machines_type");
 
+            // Type+Introduced composite covers the device controllers' year-bucketed
+            // queries (`/computers/by-year/{N}`, `/consoles/by-year/{N}`, etc.). The
+            // existing standalone (Type) and (Introduced) indexes each serve one
+            // axis; MariaDB can index-merge but a composite avoids the merge cost
+            // entirely and lets the YEAR(Introduced) filter degrade to a seek.
+            entity.HasIndex(e => new { e.Type, e.Introduced })
+                  .HasDatabaseName("idx_machines_type_introduced");
+
             entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
             entity.Property(e => e.CompanyId)
@@ -2527,6 +2535,14 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
         {
             entity.HasIndex(x => x.SoftwareReleaseId);
 
+            // Type-leading composite for the FrontCoverId backfill query
+            // (`PopulateFrontCoverIdsAsync` in SoftwareController), which filters
+            // `Type == Front` first and then joins to SoftwareReleases on
+            // SoftwareReleaseId. Putting Type first lets MariaDB skip the ~half
+            // of rows that are back covers / spine / disc / etc.
+            entity.HasIndex(x => new { x.Type, x.SoftwareReleaseId })
+                  .HasDatabaseName("idx_software_covers_type_release");
+
             entity.HasOne(x => x.Release)
                   .WithMany(x => x.Covers)
                   .HasForeignKey(x => x.SoftwareReleaseId)
@@ -2833,6 +2849,12 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
         {
             entity.HasKey(e => new { e.SoftwareId, e.GenreId });
 
+            // Reverse-lookup: "which software titles share this genre". Without
+            // a standalone GenreId index, the composite PK only accelerates the
+            // SoftwareId-leading path; a query keyed by GenreId alone (e.g. the
+            // genre landing page) degenerates to a full table scan.
+            entity.HasIndex(e => e.GenreId).HasDatabaseName("idx_genres_by_software_genre");
+
             entity.HasOne(e => e.Software)
                   .WithMany(p => p.Genres)
                   .HasForeignKey(e => e.SoftwareId)
@@ -2847,6 +2869,15 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
         modelBuilder.Entity<PeopleBySoftware>(entity =>
         {
             entity.HasIndex(e => new { e.SoftwareId, e.PersonId, e.Role }).IsUnique();
+
+            // Reverse-lookup: "what did this person work on". Without an index on
+            // PersonId alone, the unique composite cannot serve PersonId-leading
+            // queries and the credit endpoint falls back to a full scan.
+            entity.HasIndex(e => e.PersonId).HasDatabaseName("idx_people_by_software_person");
+
+            // Role-filtered scan (e.g. "show all programmers"). Optional FK; the
+            // SetNull cascade means RoleId can be null which is fine for an index.
+            entity.HasIndex(e => e.RoleId).HasDatabaseName("idx_people_by_software_role");
 
             entity.HasOne(e => e.Software)
                   .WithMany(p => p.Credits)

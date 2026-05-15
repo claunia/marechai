@@ -31,7 +31,7 @@ using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.Services;
 
-public class CompaniesService(Marechai.ApiClient.Client client)
+public class CompaniesService(Marechai.ApiClient.Client client, ReferenceDataCache referenceData)
 {
     public async Task<List<CompanyDto>> GetAsync()
     {
@@ -254,19 +254,7 @@ public class CompaniesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<List<Iso31661NumericDto>> GetCountriesAsync()
-    {
-        try
-        {
-            List<Iso31661NumericDto> countries = await client.Iso31661Numeric.GetAsync();
-
-            return countries ?? [];
-        }
-        catch
-        {
-            return [];
-        }
-    }
+    public Task<List<Iso31661NumericDto>> GetCountriesAsync() => referenceData.GetCountriesAsync();
 
     public async Task<CompanyDto> GetSoldToAsync(int? id)
     {

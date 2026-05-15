@@ -34,7 +34,7 @@ using Microsoft.Kiota.Abstractions.Serialization;
 
 namespace Marechai.Services;
 
-public class ProcessorPhotosService(Marechai.ApiClient.Client client, IRequestAdapter requestAdapter)
+public class ProcessorPhotosService(Marechai.ApiClient.Client client, IRequestAdapter requestAdapter, ReferenceDataCache referenceData)
 {
     public async Task<List<Guid>> GetGuidsByProcessorAsync(int processorId)
     {
@@ -125,19 +125,7 @@ public class ProcessorPhotosService(Marechai.ApiClient.Client client, IRequestAd
         }
     }
 
-    public async Task<List<LicenseDto>> GetAllLicensesAsync()
-    {
-        try
-        {
-            List<LicenseDto> licenses = await client.Licenses.GetAsync();
-
-            return licenses?.OrderBy(l => l.Name).ToList() ?? [];
-        }
-        catch
-        {
-            return [];
-        }
-    }
+    public Task<List<LicenseDto>> GetAllLicensesAsync() => referenceData.GetLicensesAsync();
 
     /// <summary>
     ///     Delete a pending processor photo (a not-yet-submitted file the collaborator

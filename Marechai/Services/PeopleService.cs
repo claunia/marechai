@@ -32,7 +32,7 @@ using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.Services;
 
-public class PeopleService(Marechai.ApiClient.Client client)
+public class PeopleService(Marechai.ApiClient.Client client, ReferenceDataCache referenceData)
 {
     public async Task<int> GetPeopleCountAsync()
     {
@@ -350,19 +350,7 @@ public class PeopleService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<List<Iso31661NumericDto>> GetCountriesAsync()
-    {
-        try
-        {
-            List<Iso31661NumericDto> countries = await client.Iso31661Numeric.GetAsync();
-
-            return countries ?? [];
-        }
-        catch
-        {
-            return [];
-        }
-    }
+    public Task<List<Iso31661NumericDto>> GetCountriesAsync() => referenceData.GetCountriesAsync();
 
     public async Task<string> GetDescriptionTextAsync(int id, string lang = "eng")
     {

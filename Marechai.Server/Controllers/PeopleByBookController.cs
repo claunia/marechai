@@ -44,23 +44,25 @@ public class PeopleByBookController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<PersonByBookDto>> GetByBook(long bookId) => (await context.PeopleByBooks
-                                                                           .Where(p => p.BookId == bookId)
-                                                                           .Select(p => new PersonByBookDto
-                                                                            {
-                                                                                Id          = p.Id,
-                                                                                Name        = p.Person.Name,
-                                                                                Surname     = p.Person.Surname,
-                                                                                Alias       = p.Person.Alias,
-                                                                                DisplayName = p.Person.DisplayName,
-                                                                                PersonId    = p.PersonId,
-                                                                                RoleId      = p.RoleId,
-                                                                                Role        = p.Role.Name,
-                                                                                BookId      = p.BookId
-                                                                            })
-                                                                           .ToListAsync()).OrderBy(p => p.FullName)
-       .ThenBy(p => p.Role)
-       .ToList();
+    public Task<List<PersonByBookDto>> GetByBook(long bookId) => context.PeopleByBooks.AsNoTracking()
+                                                                        .Where(p => p.BookId == bookId)
+                                                                        .OrderBy(p => p.Person.DisplayName ??
+                                                                                      p.Person.Alias ??
+                                                                                      (p.Person.Name + " " + p.Person.Surname))
+                                                                        .ThenBy(p => p.Role.Name)
+                                                                        .Select(p => new PersonByBookDto
+                                                                         {
+                                                                             Id          = p.Id,
+                                                                             Name        = p.Person.Name,
+                                                                             Surname     = p.Person.Surname,
+                                                                             Alias       = p.Person.Alias,
+                                                                             DisplayName = p.Person.DisplayName,
+                                                                             PersonId    = p.PersonId,
+                                                                             RoleId      = p.RoleId,
+                                                                             Role        = p.Role.Name,
+                                                                             BookId      = p.BookId
+                                                                         })
+                                                                        .ToListAsync();
 
     [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]

@@ -455,6 +455,12 @@ file class Program
         // 6-hour slumber. Coordinated via TranslationPhaseCoordinator (registered above).
         builder.Services.AddHostedService<DescriptionTranslationWorker>();
 
+        // Backfills the rendered HTML column for any description row whose markdown Text has
+        // changed since the last HTML render. Previously this work was done synchronously
+        // before `app.Run()`, blocking the listening port; moving it to a hosted service lets
+        // the API start serving immediately and processes descriptions in batches afterwards.
+        builder.Services.AddHostedService<MarkdownHtmlBackfillWorker>();
+
         // Named HttpClient for the YouTube oEmbed endpoint
         // (https://www.youtube.com/oembed?url=...&format=json) used by
         // GpuVideoSuggestionApplier to auto-fetch the canonical video title at submission
@@ -521,7 +527,17 @@ file class Program
         {
             FileProvider        = new PhysicalFileProvider(assetRootPath),
             RequestPath         = "/assets",
-            ContentTypeProvider = provider
+            ContentTypeProvider = provider,
+            // Asset filenames under /assets are content-addressed by GUID, so any file
+            // served from here is byte-for-byte immutable for its lifetime. Tell browsers
+            // and intermediate caches they can keep it for a full day and skip
+            // revalidation. StaticFileMiddleware already emits ETag/Last-Modified and
+            // honours If-None-Match/If-Modified-Since for free; this just upgrades the
+            // freshness lifetime so the 304 round-trip itself disappears for hot assets.
+            OnPrepareResponse = ctx =>
+            {
+                ctx.Context.Response.Headers.CacheControl = "public, max-age=86400, immutable";
+            }
         });
 
         using(IServiceScope scope = app.Services.CreateScope())
@@ -583,86 +599,11 @@ file class Program
 
                 Console.WriteLine("\e[31;1mTook \e[32;1m{0} seconds\e[31;1m...\e[0m", (end - start).TotalSeconds);
 
-                start = DateTime.Now;
-                Console.WriteLine("\e[31;1mRendering markdown in company descriptions...\e[0m");
-                MarkdownPipeline pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
-
-                foreach(CompanyDescription companyDescription in
-                        context.CompanyDescriptions.Where(cd => cd.Html == null))
-                {
-                    companyDescription.Html = Markdown.ToHtml(companyDescription.Text, pipeline);
-                    context.Update(companyDescription);
-                }
-
-                context.SaveChanges();
-
-                end = DateTime.Now;
-
-                Console.WriteLine("\e[31;1mTook \e[32;1m{0} seconds\e[31;1m...\e[0m", (end - start).TotalSeconds);
-
-                start = DateTime.Now;
-                Console.WriteLine("\e[31;1mRendering markdown in machine descriptions...\e[0m");
-
-                foreach(MachineDescription machineDescription in
-                        context.MachineDescriptions.Where(md => md.Html == null))
-                {
-                    machineDescription.Html = Markdown.ToHtml(machineDescription.Text, pipeline);
-                    context.Update(machineDescription);
-                }
-
-                context.SaveChanges();
-
-                end = DateTime.Now;
-
-                Console.WriteLine("\e[31;1mTook \e[32;1m{0} seconds\e[31;1m...\e[0m", (end - start).TotalSeconds);
-
-                start = DateTime.Now;
-                Console.WriteLine("\e[31;1mRendering markdown in sound synth descriptions...\e[0m");
-
-                foreach(SoundSynthDescription soundSynthDescription in
-                        context.SoundSynthDescriptions.Where(sd => sd.Html == null))
-                {
-                    soundSynthDescription.Html = Markdown.ToHtml(soundSynthDescription.Text, pipeline);
-                    context.Update(soundSynthDescription);
-                }
-
-                context.SaveChanges();
-
-                end = DateTime.Now;
-
-                Console.WriteLine("\e[31;1mTook \e[32;1m{0} seconds\e[31;1m...\e[0m", (end - start).TotalSeconds);
-
-                start = DateTime.Now;
-                Console.WriteLine("\e[31;1mRendering markdown in processor descriptions...\e[0m");
-
-                foreach(ProcessorDescription processorDescription in
-                        context.ProcessorDescriptions.Where(pd => pd.Html == null))
-                {
-                    processorDescription.Html = Markdown.ToHtml(processorDescription.Text, pipeline);
-                    context.Update(processorDescription);
-                }
-
-                context.SaveChanges();
-
-                end = DateTime.Now;
-
-                Console.WriteLine("\e[31;1mTook \e[32;1m{0} seconds\e[31;1m...\e[0m", (end - start).TotalSeconds);
-
-                start = DateTime.Now;
-                Console.WriteLine("\e[31;1mRendering markdown in GPU descriptions...\e[0m");
-
-                foreach(GpuDescription gpuDescription in
-                        context.GpuDescriptions.Where(gd => gd.Html == null))
-                {
-                    gpuDescription.Html = Markdown.ToHtml(gpuDescription.Text, pipeline);
-                    context.Update(gpuDescription);
-                }
-
-                context.SaveChanges();
-
-                end = DateTime.Now;
-
-                Console.WriteLine("\e[31;1mTook \e[32;1m{0} seconds\e[31;1m...\e[0m", (end - start).TotalSeconds);
+                // Markdown→HTML backfill for the 5 description tables previously lived here as
+                // a synchronous foreach + SaveChanges per table. It now runs in
+                // MarkdownHtmlBackfillWorker (a BackgroundService registered above) so the API
+                // can start listening immediately. See comments on that worker for the
+                // rationale.
             }
             catch(Exception ex)
             {
