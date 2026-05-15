@@ -63,7 +63,66 @@
                 }
             </MudTabPanel>
 
-            @* Tab 2 - Company Roles (only for existing software) *@
+            @* Tab 2 - Genres (available in BOTH create and edit modes; create-mode adds
+                are buffered in _pendingGenreAdds and flushed by the parent admin page
+                after CreateAsync returns the new software id). One MudExpansionPanel per
+                SoftwareGenreType — Genre / Perspective / Gameplay / Setting / Category —
+                each with a type-filtered MudAutocomplete, mirroring SoftwareSuggestionDialog. *@
+            <MudTabPanel Text="@L["Genres"]" Icon="@Icons.Material.Filled.Category">
+                <MudExpansionPanels MultiExpansion="true">
+                    @foreach(Marechai.Data.SoftwareGenreType gt in Enum.GetValues<Marechai.Data.SoftwareGenreType>())
+                    {
+                        int gtInt = (int)gt;
+                        <MudExpansionPanel Text="@($"{L[FormatGenreTypeKey(gt)]} ({CountActiveGenresOfType(gtInt)})")"
+                                           Expanded="@HasGenreOpsOfType(gtInt)">
+                            @* Existing rows (edit mode only — _genreRows is empty in create mode). *@
+                            @foreach(SoftwareGenreDto g in (_genreRows ?? new()).Where(g => (g.Type ?? 0) == gtInt))
+                            {
+                                <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                                    <MudText>@(g.Name ?? $"#{g.Id}")</MudText>
+                                    @if(g.Id.HasValue)
+                                    {
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                                       OnClick="@(() => RemoveExistingGenre(g))"/>
+                                    }
+                                </MudStack>
+                            }
+
+                            @* Pending adds (create mode buffer). Bold "+ name" with a Remove button. *@
+                            @foreach(PendingGenreAdd p in _pendingGenreAdds.Where(p => p.Type == gtInt))
+                            {
+                                <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                                    <MudText><strong>+ @p.Name</strong></MudText>
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Default"
+                                                   OnClick="@(() => RemovePendingGenre(p.GenreId))"/>
+                                </MudStack>
+                            }
+
+                            @* Picker row. *@
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-2">
+                                <MudAutocomplete T="SoftwareGenreDto"
+                                                 Value="@(_pickGenreByType.TryGetValue(gtInt, out var picked) ? picked : null)"
+                                                 ValueChanged="@(g => { _pickGenreByType[gtInt] = g; })"
+                                                 SearchFunc="@((value, ct) => SearchGenresOfType(gtInt, value, ct))"
+                                                 Clearable="true"
+                                                 ToStringFunc="@(g => g?.Name ?? string.Empty)"
+                                                 Style="flex: 1;"/>
+                                <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
+                                           OnClick="@(() => AddGenreClick(gtInt))"
+                                           Disabled="@(!_pickGenreByType.TryGetValue(gtInt, out var pp) || pp is null)">@L["Add"]</MudButton>
+                            </MudStack>
+                        </MudExpansionPanel>
+                    }
+                </MudExpansionPanels>
+
+                @if(!string.IsNullOrWhiteSpace(_genreMessage))
+                {
+                    <MudAlert Severity="@_genreMessageSeverity" Class="mt-2" ShowCloseIcon="true"
+                              CloseIconClicked="() => _genreMessage = null">@_genreMessage</MudAlert>
+                }
+            </MudTabPanel>
+
+            @* Tab 3 - Company Roles (only for existing software) *@
             @if(!IsNew)
             {
                 <MudTabPanel Text="@L["Companies"]" Icon="@Icons.Material.Filled.Business">
@@ -148,6 +207,21 @@
     string                        _companyRoleMessage;
     Severity                       _companyRoleMessageSeverity;
 
+    // ── Genres tab state ──
+    List<SoftwareGenreDto>            _allGenres;
+    List<SoftwareGenreDto>            _genreRows;          // existing rows (edit mode); empty in create.
+    Dictionary<int, SoftwareGenreDto> _pickGenreByType = new();
+    List<PendingGenreAdd>             _pendingGenreAdds = new();
+    string                            _genreMessage;
+    Severity                          _genreMessageSeverity;
+
+    /// <summary>
+    ///     In-memory create-mode buffer: a genre the user picked but which can't be POSTed
+    ///     yet because the parent Software row doesn't exist. Flushed by the parent admin
+    ///     page after CreateAsync returns the new id.
+    /// </summary>
+    sealed record PendingGenreAdd(int GenreId, int Type, string Name);
+
     [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
 
     [Parameter] public bool IsNew { get; set; }
@@ -193,6 +267,16 @@
             _allRoles     = await SoftwareService.GetSoftwareRolesAsync();
             _companyRoles = await SoftwareService.GetCompanyRolesAsync(SoftwareId);
         }
+
+        // Genres available in BOTH create and edit modes. Pre-load both in parallel; in
+        // create mode _genreRows starts empty (the row doesn't exist yet).
+        Task<List<SoftwareGenreDto>> allGenresT  = SoftwareService.GetAllGenresAsync();
+        Task<List<SoftwareGenreDto>> genreRowsT  = IsNew
+                                                       ? Task.FromResult(new List<SoftwareGenreDto>())
+                                                       : SoftwareService.GetGenresAsync(SoftwareId);
+        await Task.WhenAll(allGenresT, genreRowsT);
+        _allGenres = allGenresT.Result;
+        _genreRows = genreRowsT.Result;
     }
 
     Task<IEnumerable<SoftwareFamilyDto>> SearchFamilies(string value, CancellationToken ct)
@@ -299,6 +383,112 @@
 
     void Cancel() => MudDialog.Cancel();
 
+    // ───────────────────────── Genre tab handlers ─────────────────────────
+
+    /// <summary>
+    ///     Localised label for a <see cref="Marechai.Data.SoftwareGenreType" /> enum value.
+    ///     Mirrors <c>SoftwareSuggestionDialog.FormatGenreTypeKey</c> so the resx keys
+    ///     match across the contributor and admin surfaces.
+    /// </summary>
+    static string FormatGenreTypeKey(Marechai.Data.SoftwareGenreType t) => t switch
+    {
+        Marechai.Data.SoftwareGenreType.Genre       => "Genre",
+        Marechai.Data.SoftwareGenreType.Perspective => "Perspective",
+        Marechai.Data.SoftwareGenreType.Gameplay    => "Gameplay",
+        Marechai.Data.SoftwareGenreType.Setting     => "Setting",
+        Marechai.Data.SoftwareGenreType.Category    => "Category",
+        _                                           => t.ToString()
+    };
+
+    int CountActiveGenresOfType(int gtInt)
+    {
+        int existing = (_genreRows ?? new()).Count(g => (g.Type ?? 0) == gtInt);
+        int pending  = _pendingGenreAdds.Count(p => p.Type == gtInt);
+        return existing + pending;
+    }
+
+    bool HasGenreOpsOfType(int gtInt) =>
+        _pendingGenreAdds.Any(p => p.Type == gtInt) ||
+        (_genreRows ?? new()).Any(g => (g.Type ?? 0) == gtInt);
+
+    /// <summary>
+    ///     Type-filtered autocomplete source. Excludes ids already linked (existing rows)
+    ///     and ids already queued in <c>_pendingGenreAdds</c> so the same genre cannot be
+    ///     added twice.
+    /// </summary>
+    Task<IEnumerable<SoftwareGenreDto>> SearchGenresOfType(int type, string value, CancellationToken ct)
+    {
+        var assigned = new HashSet<int>();
+        if(_genreRows is not null)
+            foreach(SoftwareGenreDto g in _genreRows)
+                if(g.Id.HasValue) assigned.Add(g.Id.Value);
+        foreach(PendingGenreAdd p in _pendingGenreAdds)
+            assigned.Add(p.GenreId);
+
+        IEnumerable<SoftwareGenreDto> r = (_allGenres ?? [])
+                                          .Where(x => x.Id.HasValue && !assigned.Contains(x.Id.Value))
+                                          .Where(x => (x.Type ?? 0) == type);
+        if(!string.IsNullOrWhiteSpace(value))
+            r = r.Where(x => x.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
+        return Task.FromResult(r.Take(50));
+    }
+
+    async Task AddGenreClick(int gtInt)
+    {
+        if(!_pickGenreByType.TryGetValue(gtInt, out SoftwareGenreDto picked) || picked is null || !picked.Id.HasValue)
+            return;
+
+        if(IsNew)
+        {
+            // Create mode: buffer in memory, parent admin page flushes after CreateAsync.
+            if(_pendingGenreAdds.Any(p => p.GenreId == picked.Id.Value)) return;
+            _pendingGenreAdds.Add(new PendingGenreAdd(picked.Id.Value, picked.Type ?? 0,
+                                                      picked.Name ?? $"#{picked.Id}"));
+            _pickGenreByType[gtInt] = null;
+            _genreMessage = null;
+            return;
+        }
+
+        // Edit mode: persist immediately.
+        (bool ok, string err) = await SoftwareService.AddGenreLinkAsync((ulong)SoftwareId, picked.Id.Value);
+        if(ok)
+        {
+            _genreRows              = await SoftwareService.GetGenresAsync(SoftwareId);
+            _pickGenreByType[gtInt] = null;
+            _genreMessage           = null;
+        }
+        else
+        {
+            _genreMessage         = err ?? L["Failed to add genre."];
+            _genreMessageSeverity = Severity.Error;
+        }
+    }
+
+    async Task RemoveExistingGenre(SoftwareGenreDto g)
+    {
+        if(!g.Id.HasValue) return;
+
+        // Existing rows only appear in EDIT mode (create mode has _genreRows empty), so
+        // this always hits the server.
+        (bool ok, string err) = await SoftwareService.RemoveGenreLinkAsync((ulong)SoftwareId, g.Id.Value);
+        if(ok)
+        {
+            _genreRows    = await SoftwareService.GetGenresAsync(SoftwareId);
+            _genreMessage = null;
+        }
+        else
+        {
+            _genreMessage         = err ?? L["Failed to remove genre."];
+            _genreMessageSeverity = Severity.Error;
+        }
+    }
+
+    void RemovePendingGenre(int genreId)
+    {
+        _pendingGenreAdds.RemoveAll(p => p.GenreId == genreId);
+        _genreMessage = null;
+    }
+
     void Submit()
     {
         if(string.IsNullOrWhiteSpace(Name))
@@ -313,7 +503,8 @@
             FamilyId          = _selectedFamily?.Id,
             PredecessorId     = _selectedPredecessor?.Id,
             BaseSoftwareId    = _selectedBaseSoftware?.Id,
-            Kind              = Kind
+            Kind              = Kind,
+            PendingGenreIds   = _pendingGenreAdds.Select(p => p.GenreId).ToList()
         }));
     }
 }

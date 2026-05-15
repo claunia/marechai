@@ -904,4 +904,13 @@
     <data name="Other (credits)" xml:space="preserve">
         <value>Other</value>
     </data>
+    <data name="Category" xml:space="preserve">
+        <value>Category</value>
+    </data>
+    <data name="Failed to add genre." xml:space="preserve">
+        <value>Failed to add genre.</value>
+    </data>
+    <data name="Failed to remove genre." xml:space="preserve">
+        <value>Failed to remove genre.</value>
+    </data>
 </root>

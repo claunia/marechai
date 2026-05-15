@@ -114,6 +114,25 @@ public partial class Software
 
             if(id is not null)
             {
+                // Flush genre links queued in the dialog. The Software row exists now, so
+                // each pending GenreId becomes a POST /software/genres-by-software call.
+                // Per-link failures accumulate into _errorMessage but do NOT abort the
+                // loop — the software was created and any partial state is recoverable
+                // via the Edit dialog.
+                if(data.PendingGenreIds is { Count: > 0 })
+                {
+                    var genreErrors = new List<string>();
+                    foreach(int genreId in data.PendingGenreIds)
+                    {
+                        (bool genreOk, string genreErr) =
+                            await SoftwareService.AddGenreLinkAsync((ulong)id.Value, genreId);
+                        if(!genreOk && !string.IsNullOrWhiteSpace(genreErr)) genreErrors.Add(genreErr);
+                    }
+
+                    if(genreErrors.Count > 0)
+                        _errorMessage = string.Join("\n", genreErrors);
+                }
+
                 _successMessage = L["Software created successfully."];
                 await _dataGrid.ReloadServerData();
             }

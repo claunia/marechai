@@ -1174,4 +1174,13 @@
     <data name="Other (credits)" xml:space="preserve">
         <value>Autres</value>
     </data>
+    <data name="Category" xml:space="preserve">
+        <value>Catégorie</value>
+    </data>
+    <data name="Failed to add genre." xml:space="preserve">
+        <value>Échec de l'ajout du genre.</value>
+    </data>
+    <data name="Failed to remove genre." xml:space="preserve">
+        <value>Échec de la suppression du genre.</value>
+    </data>
 </root>

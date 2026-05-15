@@ -156,6 +156,59 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
+    /// <summary>
+    ///     Links a SoftwareGenre to a Software via the GenresBySoftware junction table.
+    ///     Idempotent on the server — duplicate calls return Ok without inserting.
+    /// </summary>
+    public async Task<(bool succeeded, string error)> AddGenreLinkAsync(ulong softwareId, int genreId)
+    {
+        try
+        {
+            await client.Software.GenresBySoftware.PostAsync(new SoftwareGenreLinkDto
+            {
+                // Kiota widens uint64 wire fields to int? (no unsigned formats in OpenAPI),
+                // so cast. Real Software ids fit comfortably below int.MaxValue.
+                SoftwareId = (int)softwareId,
+                GenreId    = genreId
+            });
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    /// <summary>
+    ///     Removes a SoftwareGenre link from a Software. Returns (false, ...) when the link
+    ///     does not exist (server returns 404).
+    /// </summary>
+    public async Task<(bool succeeded, string error)> RemoveGenreLinkAsync(ulong softwareId, int genreId)
+    {
+        try
+        {
+            // Kiota emits int-typed indexers for both path segments (no unsigned formats in
+            // OpenAPI), so cast the ulong softwareId. Values within signed-int range cover
+            // all real Software ids in the database.
+            await client.Software.GenresBySoftware[(int)softwareId][genreId].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
     // ── Picker methods for admin ──
 
     public async Task<List<SoftwareRoleDto>> GetSoftwareRolesAsync()

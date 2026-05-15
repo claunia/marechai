@@ -1519,4 +1519,13 @@
     <data name="Other (credits)" xml:space="preserve">
         <value>Overige</value>
     </data>
+    <data name="Category" xml:space="preserve">
+        <value>Categorie</value>
+    </data>
+    <data name="Failed to add genre." xml:space="preserve">
+        <value>Genre toevoegen mislukt.</value>
+    </data>
+    <data name="Failed to remove genre." xml:space="preserve">
+        <value>Genre verwijderen mislukt.</value>
+    </data>
 </root>

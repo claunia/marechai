@@ -15,6 +15,7 @@ using Marechai.ApiClient.Software.Covers;
 using Marechai.ApiClient.Software.Credits;
 using Marechai.ApiClient.Software.Families;
 using Marechai.ApiClient.Software.Genres;
+using Marechai.ApiClient.Software.GenresBySoftware;
 using Marechai.ApiClient.Software.Item;
 using Marechai.ApiClient.Software.MaximumYear;
 using Marechai.ApiClient.Software.MinimumYear;
@@ -115,6 +116,11 @@ namespace Marechai.ApiClient.Software
         public global::Marechai.ApiClient.Software.Genres.GenresRequestBuilder Genres
         {
             get => new global::Marechai.ApiClient.Software.Genres.GenresRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The genresBySoftware property</summary>
+        public global::Marechai.ApiClient.Software.GenresBySoftware.GenresBySoftwareRequestBuilder GenresBySoftware
+        {
+            get => new global::Marechai.ApiClient.Software.GenresBySoftware.GenresBySoftwareRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The maximumYear property</summary>
         public global::Marechai.ApiClient.Software.MaximumYear.MaximumYearRequestBuilder MaximumYear

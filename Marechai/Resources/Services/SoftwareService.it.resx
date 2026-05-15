@@ -1089,4 +1089,13 @@
     <data name="Other (credits)" xml:space="preserve">
         <value>Altri</value>
     </data>
+    <data name="Category" xml:space="preserve">
+        <value>Categoria</value>
+    </data>
+    <data name="Failed to add genre." xml:space="preserve">
+        <value>Impossibile aggiungere il genere.</value>
+    </data>
+    <data name="Failed to remove genre." xml:space="preserve">
+        <value>Impossibile rimuovere il genere.</value>
+    </data>
 </root>
