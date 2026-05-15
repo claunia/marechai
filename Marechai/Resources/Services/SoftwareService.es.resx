@@ -324,6 +324,30 @@
         <value>Productor</value>
         <comment>Producer</comment>
     </data>
+    <data name="Documentation" xml:space="preserve">
+        <value>Documentación</value>
+        <comment>Documentation</comment>
+    </data>
+    <data name="Original Concept" xml:space="preserve">
+        <value>Concepto original</value>
+        <comment>Original Concept</comment>
+    </data>
+    <data name="Funder" xml:space="preserve">
+        <value>Financiador</value>
+        <comment>Funder</comment>
+    </data>
+    <data name="Casting" xml:space="preserve">
+        <value>Reparto</value>
+        <comment>Casting</comment>
+    </data>
+    <data name="Marketing" xml:space="preserve">
+        <value>Marketing</value>
+        <comment>Marketing</comment>
+    </data>
+    <data name="Writing" xml:space="preserve">
+        <value>Guion</value>
+        <comment>Writing</comment>
+    </data>
     <data name="Release date" xml:space="preserve">
         <value>Fecha de lanzamiento</value>
         <comment>Release date</comment>

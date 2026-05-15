@@ -1468,6 +1468,10 @@ public class ImportService
         "Additional Music by"      => "snd",
         "Original Concept by"      => "ocp",
         "Funded by"                => "fnd",
+        "Casting by"               => "cst",
+        "Marketed by"              => "mkt",
+        "Additional Design by"     => "des",
+        "Writing by"               => "wri",
         _                          => null
     };
 

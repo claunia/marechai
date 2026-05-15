@@ -1528,4 +1528,55 @@
     <data name="Failed to remove genre." xml:space="preserve">
         <value>Genre verwijderen mislukt.</value>
     </data>
+    <data name="Cutscenes" xml:space="preserve">
+        <value>Tussenfilmpjes</value>
+    </data>
+    <data name="Motion Capture" xml:space="preserve">
+        <value>Motion capture</value>
+    </data>
+    <data name="Additional Sound" xml:space="preserve">
+        <value>Extra geluid</value>
+    </data>
+    <data name="Package Design" xml:space="preserve">
+        <value>Verpakkingsontwerp</value>
+    </data>
+    <data name="Voice Recording" xml:space="preserve">
+        <value>Stemopname</value>
+    </data>
+    <data name="Game Engine" xml:space="preserve">
+        <value>Game engine</value>
+    </data>
+    <data name="Testing" xml:space="preserve">
+        <value>Tests</value>
+    </data>
+    <data name="Contributions" xml:space="preserve">
+        <value>Bijdragen</value>
+    </data>
+    <data name="Fonts" xml:space="preserve">
+        <value>Lettertypen</value>
+    </data>
+    <data name="Producer" xml:space="preserve">
+        <value>Producent</value>
+    </data>
+    <data name="Documentation" xml:space="preserve">
+        <value>Documentatie</value>
+    </data>
+    <data name="Original Concept" xml:space="preserve">
+        <value>Oorspronkelijk concept</value>
+    </data>
+    <data name="Funder" xml:space="preserve">
+        <value>Financier</value>
+    </data>
+    <data name="Casting" xml:space="preserve">
+        <value>Casting</value>
+    </data>
+    <data name="Marketing" xml:space="preserve">
+        <value>Marketing</value>
+    </data>
+    <data name="Design" xml:space="preserve">
+        <value>Ontwerp</value>
+    </data>
+    <data name="Writing" xml:space="preserve">
+        <value>Tekst</value>
+    </data>
 </root>
