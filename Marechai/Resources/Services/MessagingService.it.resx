@@ -113,4 +113,5 @@
     <data name="Report submitted." xml:space="preserve"><value>Segnalazione inviata.</value><comment>Report submitted.</comment></data>
     <data name="Submit report" xml:space="preserve"><value>Invia segnalazione</value><comment>Submit report</comment></data>
     <data name="(deleted)" xml:space="preserve"><value>(eliminato)</value><comment>(deleted)</comment></data>
+    <data name="Showing {0}–{1} of {2}" xml:space="preserve"><value>Da {0} a {1} di {2}</value><comment>Showing {0}–{1} of {2}</comment></data>
 </root>

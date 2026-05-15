@@ -247,4 +247,7 @@
     <data name="{0} / 5000 characters" xml:space="preserve">
         <value>{0} / 5000 tekens</value>
     </data>
+    <data name="Showing {0}–{1} of {2}" xml:space="preserve">
+        <value>{0}–{1} van {2}</value>
+    </data>
 </root>

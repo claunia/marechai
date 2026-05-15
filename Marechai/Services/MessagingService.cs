@@ -87,6 +87,31 @@ public class MessagingService(Marechai.ApiClient.Client client)
         }
     }
 
+    /// <summary>
+    ///     Returns the total number of conversations matching <paramref name="folder"/> for the current user.
+    ///     Used by the inbox/sent/reports pager on <c>/messages</c>.
+    /// </summary>
+    public async Task<(int total, string error)> GetConversationsCountAsync(string folder = "inbox")
+    {
+        try
+        {
+            int? result = await client.Messages.Conversations.Count.GetAsync(c =>
+            {
+                c.QueryParameters.Folder = folder;
+            });
+
+            return (result ?? 0, null);
+        }
+        catch(ApiException ex)
+        {
+            return (0, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (0, ex.Message);
+        }
+    }
+
     public async Task<(ConversationDto conversation, string error)> GetConversationAsync(long id)
     {
         try
@@ -272,13 +297,16 @@ public class MessagingService(Marechai.ApiClient.Client client)
 
     // ── Reports admin ──
 
-    public async Task<(List<MessageReportDto> reports, string error)> GetReportsAsync(bool includeResolved = false)
+    public async Task<(List<MessageReportDto> reports, string error)> GetReportsAsync(
+        bool includeResolved = false, int page = 1, int pageSize = 25)
     {
         try
         {
             List<MessageReportDto> result = await client.Messages.Reports.GetAsync(c =>
             {
                 c.QueryParameters.IncludeResolved = includeResolved;
+                c.QueryParameters.Page            = page;
+                c.QueryParameters.PageSize        = pageSize;
             });
 
             return (result ?? new List<MessageReportDto>(), null);
@@ -290,6 +318,31 @@ public class MessagingService(Marechai.ApiClient.Client client)
         catch(Exception ex)
         {
             return (new List<MessageReportDto>(), ex.Message);
+        }
+    }
+
+    /// <summary>
+    ///     Returns the total number of reports matching the <paramref name="includeResolved"/> filter.
+    ///     Used by the pager on <c>/admin/messages/reports</c>.
+    /// </summary>
+    public async Task<(int total, string error)> GetReportsCountAsync(bool includeResolved = false)
+    {
+        try
+        {
+            int? result = await client.Messages.Reports.Count.GetAsync(c =>
+            {
+                c.QueryParameters.IncludeResolved = includeResolved;
+            });
+
+            return (result ?? 0, null);
+        }
+        catch(ApiException ex)
+        {
+            return (0, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (0, ex.Message);
         }
     }
 

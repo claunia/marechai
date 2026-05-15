@@ -21,7 +21,7 @@
 }
 
 <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-3">
-    <MudCheckBox T="bool" @bind-Value="_includeResolved" @bind-Value:after="LoadAsync" Label="@L["Show resolved"]"/>
+    <MudCheckBox T="bool" @bind-Value="_includeResolved" @bind-Value:after="OnFilterChanged" Label="@L["Show resolved"]"/>
 </MudStack>
 
 @if(_isLoading)
@@ -38,6 +38,19 @@ else if(_reports is null || _reports.Count == 0)
 }
 else
 {
+    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-2">
+        <MudText Typo="Typo.caption" Color="Color.Default">@L["Showing {0}\u2013{1} of {2}", RangeStart, RangeEnd, _total]</MudText>
+        @if(TotalPages > 1)
+        {
+            <MudPagination Color="Color.Primary"
+                           Count="@TotalPages"
+                           Selected="@_currentPage"
+                           SelectedChanged="OnPageChanged"
+                           ShowFirstButton="true"
+                           ShowLastButton="true"/>
+        }
+    </MudStack>
+
     <MudTable Items="_reports" Hover="true" Dense="true" Bordered="false" Striped="true">
         <HeaderContent>
             <MudTh>@L["Date"]</MudTh>
@@ -83,15 +96,48 @@ else
             </MudTd>
         </RowTemplate>
     </MudTable>
+
+    @if(TotalPages > 1)
+    {
+        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.Center" Class="mt-4">
+            <MudPagination Color="Color.Primary"
+                           Count="@TotalPages"
+                           Selected="@_currentPage"
+                           SelectedChanged="OnPageChanged"
+                           ShowFirstButton="true"
+                           ShowLastButton="true"/>
+        </MudStack>
+    }
 }
 
 @code {
+    const int PageSize = 25;
+
     bool                                                       _isLoading = true;
     bool                                                       _includeResolved;
     string                                                     _errorMessage;
     System.Collections.Generic.List<MessageReportDto>          _reports;
+    int                                                        _currentPage = 1;
+    int                                                        _total;
+
+    int TotalPages => _total <= 0 ? 0 : (int)System.Math.Ceiling(_total / (double)PageSize);
+    int RangeStart => _total == 0 ? 0 : ((_currentPage - 1) * PageSize) + 1;
+    int RangeEnd   => System.Math.Min(_currentPage * PageSize, _total);
 
     protected override async Task OnInitializedAsync() => await LoadAsync();
+
+    async Task OnFilterChanged()
+    {
+        _currentPage = 1;
+        await LoadAsync();
+    }
+
+    async Task OnPageChanged(int newPage)
+    {
+        if(newPage == _currentPage) return;
+        _currentPage = newPage;
+        await LoadAsync();
+    }
 
     async Task LoadAsync()
     {
@@ -99,10 +145,19 @@ else
         _errorMessage = null;
         StateHasChanged();
 
-        var (list, err) = await MessagingService.GetReportsAsync(_includeResolved);
-        _reports        = list;
-        _errorMessage   = err;
-        _isLoading      = false;
+        var (count, countErr) = await MessagingService.GetReportsCountAsync(_includeResolved);
+        if(countErr is not null) _errorMessage = countErr;
+        _total = count;
+
+        // Clamp page to the new total in case the dataset shrank after a resolve.
+        int totalPages = TotalPages;
+        if(totalPages > 0 && _currentPage > totalPages) _currentPage = totalPages;
+        if(_currentPage < 1) _currentPage                            = 1;
+
+        var (list, err) = await MessagingService.GetReportsAsync(_includeResolved, _currentPage, PageSize);
+        if(err is not null) _errorMessage = err;
+        _reports   = list;
+        _isLoading = false;
         StateHasChanged();
     }
 

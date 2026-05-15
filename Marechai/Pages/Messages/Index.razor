@@ -55,7 +55,20 @@ else if(_conversations is null || _conversations.Count == 0)
 }
 else
 {
-    <MudList T="ConversationSummaryDto" Class="mt-4">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mt-4 mb-2">
+        <MudText Typo="Typo.caption" Color="Color.Default">@L["Showing {0}\u2013{1} of {2}", RangeStart, RangeEnd, _total]</MudText>
+        @if(TotalPages > 1)
+        {
+            <MudPagination Color="Color.Primary"
+                           Count="@TotalPages"
+                           Selected="@_currentPage"
+                           SelectedChanged="OnPageChanged"
+                           ShowFirstButton="true"
+                           ShowLastButton="true"/>
+        }
+    </MudStack>
+
+    <MudList T="ConversationSummaryDto" Class="mt-2">
         @foreach(ConversationSummaryDto conv in _conversations)
         {
             ConversationSummaryDto c = conv;
@@ -99,14 +112,34 @@ else
             </MudListItem>
         }
     </MudList>
+
+    @if(TotalPages > 1)
+    {
+        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.Center" Class="mt-4">
+            <MudPagination Color="Color.Primary"
+                           Count="@TotalPages"
+                           Selected="@_currentPage"
+                           SelectedChanged="OnPageChanged"
+                           ShowFirstButton="true"
+                           ShowLastButton="true"/>
+        </MudStack>
+    }
 }
 
 @code {
+    const int PageSize = 25;
+
     int                                _activeTab;
     bool                               _isLoading = true;
     string                             _errorMessage;
     string                             _successMessage;
     System.Collections.Generic.List<ConversationSummaryDto> _conversations;
+    int                                _currentPage = 1;
+    int                                _total;
+
+    int TotalPages => _total <= 0 ? 0 : (int)System.Math.Ceiling(_total / (double)PageSize);
+    int RangeStart => _total == 0 ? 0 : ((_currentPage - 1) * PageSize) + 1;
+    int RangeEnd   => System.Math.Min(_currentPage * PageSize, _total);
 
     protected override async Task OnInitializedAsync()
     {
@@ -122,6 +155,14 @@ else
 
     async Task OnTabChanged()
     {
+        _currentPage = 1;
+        await LoadAsync();
+    }
+
+    async Task OnPageChanged(int newPage)
+    {
+        if(newPage == _currentPage) return;
+        _currentPage = newPage;
         await LoadAsync();
     }
 
@@ -131,10 +172,19 @@ else
         _errorMessage = null;
         StateHasChanged();
 
-        var (list, err) = await MessagingService.GetConversationsAsync(CurrentFolder);
+        var (count, countErr) = await MessagingService.GetConversationsCountAsync(CurrentFolder);
+        if(countErr is not null) _errorMessage = countErr;
+        _total = count;
+
+        // Clamp page to the new total in case the dataset shrank after a delete.
+        int totalPages = TotalPages;
+        if(totalPages > 0 && _currentPage > totalPages) _currentPage = totalPages;
+        if(_currentPage < 1) _currentPage                            = 1;
+
+        var (list, err) = await MessagingService.GetConversationsAsync(CurrentFolder, _currentPage, PageSize);
         if(err is not null) _errorMessage = err;
         _conversations = list;
-        _isLoading = false;
+        _isLoading     = false;
         StateHasChanged();
     }
 

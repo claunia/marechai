@@ -57,6 +57,37 @@ public class MessagesController(
 
     // ───────────────────────────── Conversations ─────────────────────────────
 
+    /// <summary>
+    ///     Builds the conversation list for the given <paramref name="folder"/> already restricted to threads the
+    ///     <paramref name="userId"/> still participates in. Shared by <see cref="GetConversationsAsync"/> and
+    ///     <see cref="GetConversationsCountAsync"/> so the page and the total stay in sync.
+    /// </summary>
+    /// <remarks><paramref name="folder"/> is expected to be already lowercased/trimmed by the caller.</remarks>
+    IQueryable<Conversation> BuildFolderConversationsQuery(string userId, bool isAdmin, string folder)
+    {
+        // Conversations the current user is still part of (LeftOn is null) and the only-non-deleted-message condition
+        // for inbox/sent.
+        IQueryable<Conversation> baseQuery = context.Conversations
+            .Where(c => c.Participants.Any(p => p.UserId == userId && p.LeftOn == null));
+
+        IQueryable<Conversation> filtered = folder switch
+        {
+            "reports" => baseQuery.Where(c => c.IsSystemThread),
+            "sent" => baseQuery.Where(c => c.Messages
+                                            .Any(m => m.SenderId == userId
+                                                   && m.States.Any(s => s.UserId == userId && s.DeletedAt == null))),
+            _ /* inbox */ => baseQuery.Where(c => !c.IsSystemThread || isAdmin)
+                                      .Where(c => c.Messages
+                                                   .Any(m => m.SenderId != userId
+                                                          && m.States.Any(s => s.UserId == userId && s.DeletedAt == null)))
+        };
+
+        // Inbox already includes system threads when admin; reports tab is the dedicated system-thread view.
+        if(folder == "inbox") filtered = filtered.Where(c => !c.IsSystemThread);
+
+        return filtered;
+    }
+
     [HttpGet("conversations")]
     [ProducesResponseType(typeof(List<ConversationSummaryDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -79,25 +110,7 @@ public class MessagesController(
 
         if(folder == "reports" && !isAdmin) return Forbid();
 
-        // Conversations the current user is still part of (LeftOn is null) and the only-non-deleted-message condition
-        // for inbox/sent.
-        IQueryable<Conversation> baseQuery = context.Conversations
-            .Where(c => c.Participants.Any(p => p.UserId == userId && p.LeftOn == null));
-
-        IQueryable<Conversation> filtered = folder switch
-        {
-            "reports" => baseQuery.Where(c => c.IsSystemThread),
-            "sent" => baseQuery.Where(c => c.Messages
-                                            .Any(m => m.SenderId == userId
-                                                   && m.States.Any(s => s.UserId == userId && s.DeletedAt == null))),
-            _ /* inbox */ => baseQuery.Where(c => !c.IsSystemThread || isAdmin)
-                                      .Where(c => c.Messages
-                                                   .Any(m => m.SenderId != userId
-                                                          && m.States.Any(s => s.UserId == userId && s.DeletedAt == null)))
-        };
-
-        // Inbox already includes system threads when admin; reports tab is the dedicated system-thread view.
-        if(folder == "inbox") filtered = filtered.Where(c => !c.IsSystemThread);
+        IQueryable<Conversation> filtered = BuildFolderConversationsQuery(userId, isAdmin, folder);
 
         // Project to summaries with latest visible message + unread count.
         var rows = await filtered
@@ -177,6 +190,26 @@ public class MessagesController(
         }).ToList();
 
         return Ok(result);
+    }
+
+    [HttpGet("conversations/count")]
+    [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<int>> GetConversationsCountAsync([FromQuery] string folder = "inbox")
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        if(userId is null) return Unauthorized();
+
+        folder = (folder ?? "inbox").Trim().ToLowerInvariant();
+
+        bool isAdmin = await IsAdminAsync(userId);
+
+        if(folder == "reports" && !isAdmin) return Forbid();
+
+        int total = await BuildFolderConversationsQuery(userId, isAdmin, folder).CountAsync();
+
+        return Ok(total);
     }
 
     [HttpGet("conversations/{id:long}")]
@@ -766,8 +799,14 @@ public class MessagesController(
     [ProducesResponseType(typeof(List<MessageReportDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<ActionResult<List<MessageReportDto>>> GetReportsAsync([FromQuery] bool includeResolved = false)
+    public async Task<ActionResult<List<MessageReportDto>>> GetReportsAsync(
+        [FromQuery] bool includeResolved = false,
+        [FromQuery] int  page            = 1,
+        [FromQuery] int  pageSize        = 25)
     {
+        if(page < 1) page = 1;
+        if(pageSize is < 1 or > 200) pageSize = 25;
+
         IQueryable<MessageReport> query = context.MessageReports;
 
         if(!includeResolved) query = query.Where(r => !r.IsResolved);
@@ -809,6 +848,8 @@ public class MessagesController(
                 r.ResolvedOn,
                 r.CreatedOn
             })
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync();
 
         var ids = rows.SelectMany(r => new[] { r.Reporter?.Id, r.ResolvedBy?.Id })
@@ -849,6 +890,22 @@ public class MessagesController(
                              : Build(r.ResolvedBy.Id, r.ResolvedBy.UserName, r.ResolvedBy.DisplayName, r.ResolvedBy.Email,
                                      r.ResolvedBy.UseGravatar, r.ResolvedBy.AvatarGuid, r.ResolvedBy.IsSystemAccount)
         }).ToList());
+    }
+
+    [HttpGet("reports/count")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<int>> GetReportsCountAsync([FromQuery] bool includeResolved = false)
+    {
+        IQueryable<MessageReport> query = context.MessageReports;
+
+        if(!includeResolved) query = query.Where(r => !r.IsResolved);
+
+        int total = await query.CountAsync();
+
+        return Ok(total);
     }
 
     [HttpPut("reports/{id:long}/resolve")]
