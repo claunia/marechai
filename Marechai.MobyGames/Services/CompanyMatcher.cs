@@ -121,19 +121,47 @@ public partial class CompanyMatcher
             return (strippedLegalExact, "exact-stripped-legal");
         }
 
-        // Soundex match on full name
-        string soundex = SoundexHelper.Generate(normalizedName);
+        // Soundex-based matching: gather candidates from all four indexes (full name, legal name,
+        // stripped name, stripped legal name) into a single deduplicated list, then prompt the user
+        // once. Previously each index was checked sequentially and a later pass with a SINGLE
+        // candidate would silently override the user's "create new" choice from an earlier pass.
+        string soundex         = SoundexHelper.Generate(normalizedName);
+        string strippedSoundex = SoundexHelper.Generate(strippedInput);
 
-        if(_soundexIndex.TryGetValue(soundex, out var candidates) && candidates.Count > 0)
+        var soundexCandidates = new List<Company>();
+        var seenIds           = new HashSet<int>();
+
+        void AddCandidates(IEnumerable<Company> cs)
         {
-            if(candidates.Count == 1)
+            foreach(Company c in cs)
             {
-                _cache[normalizedName] = candidates[0];
-
-                return (candidates[0], "soundex");
+                if(seenIds.Add(c.Id))
+                    soundexCandidates.Add(c);
             }
+        }
 
-            var prompted = PromptMultiple(normalizedName, candidates);
+        if(_soundexIndex.TryGetValue(soundex, out var fullCandidates))
+            AddCandidates(fullCandidates);
+
+        if(_legalNameSoundexIndex.TryGetValue(soundex, out var legalCandidates))
+            AddCandidates(legalCandidates);
+
+        if(_strippedSoundexIndex.TryGetValue(strippedSoundex, out var strippedCandidates))
+            AddCandidates(strippedCandidates);
+
+        if(_strippedLegalNameSoundexIndex.TryGetValue(strippedSoundex, out var strippedLegalCandidates))
+            AddCandidates(strippedLegalCandidates);
+
+        if(soundexCandidates.Count == 1)
+        {
+            _cache[normalizedName] = soundexCandidates[0];
+
+            return (soundexCandidates[0], "soundex");
+        }
+
+        if(soundexCandidates.Count > 1)
+        {
+            Company prompted = PromptMultiple(normalizedName, soundexCandidates);
 
             if(prompted != null)
             {
@@ -141,70 +169,7 @@ public partial class CompanyMatcher
 
                 return (prompted, "soundex-selected");
             }
-        }
-
-        // Soundex match on legal name
-        if(_legalNameSoundexIndex.TryGetValue(soundex, out var legalCandidates) && legalCandidates.Count > 0)
-        {
-            if(legalCandidates.Count == 1)
-            {
-                _cache[normalizedName] = legalCandidates[0];
-
-                return (legalCandidates[0], "soundex-legal");
-            }
-
-            var prompted = PromptMultiple(normalizedName, legalCandidates);
-
-            if(prompted != null)
-            {
-                _cache[normalizedName] = prompted;
-
-                return (prompted, "soundex-legal-selected");
-            }
-        }
-
-        // Soundex match on stripped name
-        string strippedSoundex = SoundexHelper.Generate(strippedInput);
-
-        if(_strippedSoundexIndex.TryGetValue(strippedSoundex, out var strippedCandidates) &&
-           strippedCandidates.Count > 0)
-        {
-            if(strippedCandidates.Count == 1)
-            {
-                _cache[normalizedName] = strippedCandidates[0];
-
-                return (strippedCandidates[0], "soundex-stripped");
-            }
-
-            var prompted = PromptMultiple(normalizedName, strippedCandidates);
-
-            if(prompted != null)
-            {
-                _cache[normalizedName] = prompted;
-
-                return (prompted, "soundex-stripped-selected");
-            }
-        }
-
-        // Soundex match on stripped legal name
-        if(_strippedLegalNameSoundexIndex.TryGetValue(strippedSoundex, out var strippedLegalCandidates) &&
-           strippedLegalCandidates.Count > 0)
-        {
-            if(strippedLegalCandidates.Count == 1)
-            {
-                _cache[normalizedName] = strippedLegalCandidates[0];
-
-                return (strippedLegalCandidates[0], "soundex-stripped-legal");
-            }
-
-            var prompted = PromptMultiple(normalizedName, strippedLegalCandidates);
-
-            if(prompted != null)
-            {
-                _cache[normalizedName] = prompted;
-
-                return (prompted, "soundex-stripped-legal-selected");
-            }
+            // User chose 0 → fall through to create new company.
         }
 
         // Create new company
