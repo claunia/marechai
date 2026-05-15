@@ -101,14 +101,25 @@ public partial class Profile
     Severity                   _securitySeverity = Severity.Info;
     bool                       _isSecurityBusy;
 
+    // ── Notification preferences ──
+    NotificationPreferencesDto _notificationPreferences;
+    bool                       _editNotifyOnNewMessage = true;
+    bool                       _isSavingNotifications;
+    string                     _notificationsSuccessMessage;
+    string                     _notificationsErrorMessage;
+
     protected override async Task OnInitializedAsync()
     {
         _profile         = await AuthService.GetProfileAsync();
         _publicProfile   = await AuthService.GetPublicProfileAsync();
         _twoFactorStatus = await AuthService.GetTwoFactorStatusAsync();
+        _notificationPreferences = await AuthService.GetNotificationPreferencesAsync();
 
         if(_publicProfile is not null)
             PopulatePublicProfileFields();
+
+        if(_notificationPreferences is not null)
+            _editNotifyOnNewMessage = _notificationPreferences.NotifyOnNewMessage ?? true;
 
         _savedThemeId = _profile?.PreferredThemeId;
 
@@ -221,6 +232,39 @@ public partial class Profile
         else
         {
             _publicErrorMessage = errorMessage ?? L["Failed to update public profile."];
+        }
+    }
+
+    // ── Notification preferences methods ──
+
+    async Task SaveNotificationPreferencesAsync()
+    {
+        _isSavingNotifications      = true;
+        _notificationsErrorMessage  = null;
+        _notificationsSuccessMessage = null;
+
+        var request = new UpdateNotificationPreferencesRequest
+        {
+            NotifyOnNewMessage = _editNotifyOnNewMessage
+        };
+
+        (bool succeeded, string errorMessage) =
+            await AuthService.UpdateNotificationPreferencesAsync(request);
+
+        _isSavingNotifications = false;
+
+        if(succeeded)
+        {
+            _notificationPreferences = await AuthService.GetNotificationPreferencesAsync();
+
+            if(_notificationPreferences is not null)
+                _editNotifyOnNewMessage = _notificationPreferences.NotifyOnNewMessage ?? true;
+
+            _notificationsSuccessMessage = L["Notification preferences updated successfully."];
+        }
+        else
+        {
+            _notificationsErrorMessage = errorMessage ?? L["Failed to update notification preferences."];
         }
     }
 

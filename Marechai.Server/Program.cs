@@ -352,6 +352,13 @@ file class Program
         builder.Services.AddScoped<DeletionPendingFilter>();
         builder.Services.AddHostedService<AccountDeletionPurgeService>();
 
+        // In-memory queue + background drain that emails recipients when a new message lands in their inbox.
+        // The MessagesController writes to the queue after each successful SaveChangesAsync; the worker
+        // rehydrates from the DB inside its own scope, respects the recipient's NotifyOnNewMessage flag,
+        // and renders the email in the recipient's LastLanguageVisited culture (fallback English).
+        builder.Services.AddSingleton<Marechai.Server.Services.MessageNotifications.MessageNotificationQueue>();
+        builder.Services.AddHostedService<Marechai.Server.Services.MessageNotifications.MessageNotificationWorker>();
+
         // OpenAI + NLLB HttpClients (each registered only when its Url is configured) plus the
         // shared TranslationService singleton. Reused by both the SoftwareController genre
         // endpoints (via SoftwareGenreTranslationCache) and the TranslationWorker.
@@ -487,6 +494,13 @@ file class Program
 
         app.UseAuthentication();
         app.UseAuthorization();
+
+        // Capture Accept-Language on every authenticated request and persist it to
+        // ApplicationUser.LastLanguageVisited (with an in-memory cache so the DB is only touched on
+        // change). Reads what HttpAuthHandler in the Blazor app forwards from CurrentUICulture, so
+        // background workers (notably MessageNotificationWorker) can render emails in the recipient's
+        // preferred language even when the recipient is offline at send time.
+        app.UseMiddleware<Marechai.Server.Middleware.LastLanguageCaptureMiddleware>();
 
         app.MapControllers();
 

@@ -860,6 +860,63 @@ public class AuthController
         return Ok(await ProfileController.MapToPublicProfileAsync(user, userManager));
     }
 
+    [HttpGet]
+    [Route("me/notification-preferences")]
+    [Authorize]
+    [ProducesResponseType(typeof(NotificationPreferencesDto), StatusCodes.Status200OK,
+                          Description = "Returns the current user's email notification preferences.")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [Produces("application/json")]
+    public async Task<ActionResult<NotificationPreferencesDto>> GetNotificationPreferences()
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        ApplicationUser user = await userManager.FindByIdAsync(userId);
+
+        if(user is null) return Unauthorized();
+
+        return Ok(new NotificationPreferencesDto
+        {
+            NotifyOnNewMessage = user.NotifyOnNewMessage
+        });
+    }
+
+    [HttpPut]
+    [Route("me/notification-preferences")]
+    [Authorize]
+    [ProducesResponseType(typeof(NotificationPreferencesDto), StatusCodes.Status200OK,
+                          Description = "Updates the current user's email notification preferences.")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    public async Task<ActionResult<NotificationPreferencesDto>> UpdateNotificationPreferences(
+        [FromBody] UpdateNotificationPreferencesRequest request)
+    {
+        if(!ModelState.IsValid) return BadRequest(ModelState);
+
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        ApplicationUser user = await userManager.FindByIdAsync(userId);
+
+        if(user is null) return Unauthorized();
+
+        user.NotifyOnNewMessage = request.NotifyOnNewMessage;
+
+        IdentityResult result = await userManager.UpdateAsync(user);
+
+        if(!result.Succeeded) return BadRequest(result.Errors);
+
+        return Ok(new NotificationPreferencesDto
+        {
+            NotifyOnNewMessage = user.NotifyOnNewMessage
+        });
+    }
+
     [HttpPost]
     [Route("me/avatar/upload")]
     [Authorize]

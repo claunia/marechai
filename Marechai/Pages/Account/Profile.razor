@@ -559,6 +559,51 @@
         </MudGrid>
     </MudTabPanel>
 
+    @* ── Notifications Tab ── *@
+    <MudTabPanel Text="@L["Notifications"]" Icon="@Icons.Material.Filled.NotificationsActive">
+        <MudGrid Justify="Justify.Center" Class="pa-4">
+            <MudItem xs="12" sm="8" md="6">
+                @if(!string.IsNullOrWhiteSpace(_notificationsSuccessMessage))
+                {
+                    <MudAlert Severity="Severity.Success" Class="mb-4" ShowCloseIcon="true"
+                              CloseIconClicked="() => _notificationsSuccessMessage = null">@_notificationsSuccessMessage</MudAlert>
+                }
+
+                @if(!string.IsNullOrWhiteSpace(_notificationsErrorMessage))
+                {
+                    <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true"
+                              CloseIconClicked="() => _notificationsErrorMessage = null">@_notificationsErrorMessage</MudAlert>
+                }
+
+                <MudText Typo="Typo.h6" Class="mb-2">@L["Email notifications"]</MudText>
+                <MudText Typo="Typo.body2" Class="mb-4" Style="color: var(--mud-palette-text-secondary);">
+                    @L["Choose which email notifications you'd like to receive from Marechai."]
+                </MudText>
+
+                <MudSwitch T="bool" @bind-Value="_editNotifyOnNewMessage" Color="Color.Primary"
+                           Label="@L["Notify me by email when I receive a new message"]"
+                           Disabled="_isSavingNotifications"/>
+
+                <MudStack Row="true" Spacing="2" Justify="Justify.FlexEnd" Class="mt-4">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                               OnClick="SaveNotificationPreferencesAsync"
+                               Disabled="_isSavingNotifications"
+                               StartIcon="@(_isSavingNotifications ? null : Icons.Material.Filled.Save)">
+                        @if(_isSavingNotifications)
+                        {
+                            <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
+                            <span>@L["Saving..."]</span>
+                        }
+                        else
+                        {
+                            <span>@L["Save notification preferences"]</span>
+                        }
+                    </MudButton>
+                </MudStack>
+            </MudItem>
+        </MudGrid>
+    </MudTabPanel>
+
     @* ── My Collection Tab ── *@
     <MudTabPanel Text="@L["My Collection"]" Icon="@Icons.Material.Filled.Collections">
         <MudGrid Justify="Justify.Center" Class="pa-4">

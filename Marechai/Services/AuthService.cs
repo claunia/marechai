@@ -787,6 +787,43 @@ public sealed class AuthService(Marechai.ApiClient.Client             client,
         }
     }
 
+    public async Task<NotificationPreferencesDto> GetNotificationPreferencesAsync()
+    {
+        try
+        {
+            return await client.Auth.Me.NotificationPreferences.GetAsync();
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Error loading notification preferences");
+
+            return null;
+        }
+    }
+
+    public async Task<(bool Succeeded, string ErrorMessage)> UpdateNotificationPreferencesAsync(
+        UpdateNotificationPreferencesRequest request)
+    {
+        try
+        {
+            await client.Auth.Me.NotificationPreferences.PutAsync(request);
+
+            return (true, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            logger.LogWarning(ex, "Notification preferences update failed");
+
+            return (false, ex.Detail ?? ex.Title ?? "Update failed.");
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Notification preferences update failed");
+
+            return (false, "An error occurred while updating notification preferences.");
+        }
+    }
+
     public async Task<(bool Succeeded, string ErrorMessage)> UpdatePublicProfileAsync(
         UpdatePublicProfileRequest request)
     {

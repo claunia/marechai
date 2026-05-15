@@ -4,6 +4,7 @@ using Marechai.ApiClient.Auth.Me.Avatar;
 using Marechai.ApiClient.Auth.Me.Collection;
 using Marechai.ApiClient.Auth.Me.Delete;
 using Marechai.ApiClient.Auth.Me.Export;
+using Marechai.ApiClient.Auth.Me.NotificationPreferences;
 using Marechai.ApiClient.Auth.Me.PublicProfile;
 using Marechai.ApiClient.Auth.Me.Suggestions;
 using Marechai.ApiClient.Auth.Me.Theme;
@@ -44,6 +45,11 @@ namespace Marechai.ApiClient.Auth.Me
         public global::Marechai.ApiClient.Auth.Me.Export.ExportRequestBuilder Export
         {
             get => new global::Marechai.ApiClient.Auth.Me.Export.ExportRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The notificationPreferences property</summary>
+        public global::Marechai.ApiClient.Auth.Me.NotificationPreferences.NotificationPreferencesRequestBuilder NotificationPreferences
+        {
+            get => new global::Marechai.ApiClient.Auth.Me.NotificationPreferences.NotificationPreferencesRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The publicProfile property</summary>
         public global::Marechai.ApiClient.Auth.Me.PublicProfile.PublicProfileRequestBuilder PublicProfile

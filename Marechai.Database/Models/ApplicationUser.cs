@@ -96,6 +96,26 @@ public class ApplicationUser : IdentityUser
     public bool TwoFactorViaEmail { get; set; }
 
     /// <summary>
+    ///     When <see langword="true" /> the user receives an email each time a new conversation message is
+    ///     delivered to their inbox. Defaults to <see langword="true" /> for new accounts and is backfilled to
+    ///     <see langword="true" /> for existing accounts by the migration that introduced this column. Users can
+    ///     toggle this from their profile's <c>Notifications</c> section. The notification email is dispatched by
+    ///     <c>MessageNotificationWorker</c> and rendered in the recipient's <see cref="LastLanguageVisited" />
+    ///     culture (falling back to English when null/unsupported).
+    /// </summary>
+    public bool NotifyOnNewMessage { get; set; } = true;
+
+    /// <summary>
+    ///     BCP-47 language code (e.g. <c>en</c>, <c>es</c>, <c>pt-BR</c>) of the most recent UI culture the user
+    ///     was browsing the site in. Updated by the Razor host page on every authenticated visit so background
+    ///     workers (notably the new-message email composer) can render messages in the recipient's preferred
+    ///     language even though the recipient is offline at send time. <see langword="null" /> for accounts that
+    ///     have never visited the Blazor UI; consumers must fall back to <c>"en"</c>.
+    /// </summary>
+    [MaxLength(10)]
+    public string LastLanguageVisited { get; set; }
+
+    /// <summary>
     ///     UTC timestamp at which the user's self-service GDPR deletion request was confirmed (via the
     ///     emailed link). Null while the account is active. The background
     ///     <c>AccountDeletionPurgeService</c> hard-deletes accounts whose value is older than 30 days; the

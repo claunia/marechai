@@ -138,4 +138,22 @@
   <data name="AccountDeletion_Footer" xml:space="preserve">
     <value>If you didn't request to delete your account, you can safely ignore this email — nothing will happen.</value>
   </data>
+  <data name="NewMessage_Subject" xml:space="preserve">
+    <value>You have received a message in Marechai from {0}</value>
+  </data>
+  <data name="NewMessage_Title" xml:space="preserve">
+    <value>New message in Marechai</value>
+  </data>
+  <data name="NewMessage_Intro" xml:space="preserve">
+    <value>{0} sent you a message in Marechai:</value>
+  </data>
+  <data name="NewMessage_ButtonText" xml:space="preserve">
+    <value>Open conversation</value>
+  </data>
+  <data name="NewMessage_LinkFallback" xml:space="preserve">
+    <value>If the button does not work, copy and paste this link into your browser:</value>
+  </data>
+  <data name="NewMessage_Footer" xml:space="preserve">
+    <value>You're receiving this because new-message email notifications are enabled in your Marechai profile. You can turn them off in Profile › Notifications.</value>
+  </data>
 </root>

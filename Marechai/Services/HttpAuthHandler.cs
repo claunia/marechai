@@ -23,6 +23,7 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System.Globalization;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
@@ -39,6 +40,17 @@ public sealed class HttpAuthHandler(TokenProvider tokenProvider) : DelegatingHan
 
         if(!string.IsNullOrWhiteSpace(token))
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // Forward the user's current UI culture so the Marechai.Server can (a) localize per-request
+        // responses (e.g. translated genre/attribute names) and (b) capture LastLanguageVisited on
+        // ApplicationUser for offline workers like the new-message email composer.
+        string cultureTag = CultureInfo.CurrentUICulture?.Name;
+
+        if(!string.IsNullOrWhiteSpace(cultureTag))
+        {
+            request.Headers.AcceptLanguage.Clear();
+            request.Headers.AcceptLanguage.Add(new StringWithQualityHeaderValue(cultureTag));
+        }
 
         return await base.SendAsync(request, cancellationToken);
     }

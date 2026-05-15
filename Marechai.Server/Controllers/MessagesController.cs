@@ -31,6 +31,7 @@ using System.Threading.Tasks;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Marechai.Server.Helpers;
+using Marechai.Server.Services.MessageNotifications;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -42,7 +43,10 @@ namespace Marechai.Server.Controllers;
 [ApiController]
 [Route("messages")]
 [Authorize]
-public class MessagesController(MarechaiContext context, UserManager<ApplicationUser> userManager) : ControllerBase
+public class MessagesController(
+    MarechaiContext              context,
+    UserManager<ApplicationUser> userManager,
+    MessageNotificationQueue     notificationQueue) : ControllerBase
 {
     public const int InboxQuota          = 50;
     public const int RateLimitSeconds    = 60;
@@ -406,6 +410,11 @@ public class MessagesController(MarechaiContext context, UserManager<Application
 
         await context.SaveChangesAsync();
 
+        // Queue the new-message email notification. The worker re-checks the recipient's NotifyOnNewMessage
+        // flag, IsSystemAccount, and EmailConfirmed before sending, so we keep the controller's logic minimal.
+        await notificationQueue.EnqueueAsync(new MessageNotificationItem(message.Id, recipient.Id),
+                                              HttpContext.RequestAborted);
+
         return Created($"/messages/conversations/{conversation.Id}", conversation.Id);
     }
 
@@ -534,6 +543,14 @@ public class MessagesController(MarechaiContext context, UserManager<Application
         }
 
         await context.SaveChangesAsync();
+
+        // Queue one new-message email notification per non-sender participant. The worker filters out
+        // recipients with NotifyOnNewMessage off, system accounts, and unconfirmed emails before sending.
+        foreach(string recipientId in otherParticipantIds)
+        {
+            await notificationQueue.EnqueueAsync(new MessageNotificationItem(message.Id, recipientId),
+                                                  HttpContext.RequestAborted);
+        }
 
         return Created($"/messages/conversations/{id}", message.Id);
     }

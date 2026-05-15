@@ -31,6 +31,7 @@ public static class EmailServiceCollectionExtensions
         services.AddSingleton<EmailConfirmationEmailComposer>();
         services.AddSingleton<WelcomeEmailComposer>();
         services.AddSingleton<AccountDeletionConfirmationEmailComposer>();
+        services.AddSingleton<NewMessageEmailComposer>();
 
         return services;
     }

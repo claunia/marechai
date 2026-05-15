@@ -93,4 +93,29 @@ public static class EmailCulture
 
         return CultureInfo.GetCultureInfo("en");
     }
+
+    /// <summary>
+    ///     Maps an arbitrary BCP-47 language tag (such as the value persisted in
+    ///     <c>ApplicationUser.LastLanguageVisited</c>) onto the closest <see cref="Supported" /> email culture.
+    ///     Falls back to <c>"en"</c> for null, empty, or unsupported inputs. Used by background workers (notably
+    ///     <c>MessageNotificationWorker</c>) that must pick a culture without an inbound HTTP request.
+    /// </summary>
+    public static CultureInfo MapToSupported(string tag)
+    {
+        if(string.IsNullOrWhiteSpace(tag)) return CultureInfo.GetCultureInfo("en");
+
+        // Full tag match first (e.g. pt-BR).
+        if(_supportedSet.Contains(tag)) return CultureInfo.GetCultureInfo(tag);
+
+        // Two-letter language fallback (e.g. fr-CA -> fr).
+        int dash = tag.IndexOf('-');
+
+        if(dash > 0)
+        {
+            string lang = tag[..dash];
+            if(_supportedSet.Contains(lang)) return CultureInfo.GetCultureInfo(lang);
+        }
+
+        return CultureInfo.GetCultureInfo("en");
+    }
 }

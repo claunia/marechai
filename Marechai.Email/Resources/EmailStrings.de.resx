@@ -138,4 +138,22 @@
   <data name="AccountDeletion_Footer" xml:space="preserve">
     <value>Falls Sie keine Konto-Löschung angefordert haben, können Sie diese E-Mail ignorieren — es wird nichts passieren.</value>
   </data>
+  <data name="NewMessage_Subject" xml:space="preserve">
+    <value>Du hast eine Nachricht in Marechai von {0} erhalten</value>
+  </data>
+  <data name="NewMessage_Title" xml:space="preserve">
+    <value>Neue Nachricht in Marechai</value>
+  </data>
+  <data name="NewMessage_Intro" xml:space="preserve">
+    <value>{0} hat dir eine Nachricht in Marechai gesendet:</value>
+  </data>
+  <data name="NewMessage_ButtonText" xml:space="preserve">
+    <value>Unterhaltung öffnen</value>
+  </data>
+  <data name="NewMessage_LinkFallback" xml:space="preserve">
+    <value>Falls der Button nicht funktioniert, kopiere diesen Link in deinen Browser:</value>
+  </data>
+  <data name="NewMessage_Footer" xml:space="preserve">
+    <value>Du erhältst diese E-Mail, weil Benachrichtigungen über neue Nachrichten in deinem Marechai-Profil aktiviert sind. Du kannst sie unter Profil › Benachrichtigungen deaktivieren.</value>
+  </data>
 </root>

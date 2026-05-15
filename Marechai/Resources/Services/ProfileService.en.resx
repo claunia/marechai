@@ -740,4 +740,25 @@
     <data name="Failed to regenerate recovery codes." xml:space="preserve">
         <value>Failed to regenerate recovery codes.</value>
     </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>Notifications</value>
+  </data>
+  <data name="Email notifications" xml:space="preserve">
+    <value>Email notifications</value>
+  </data>
+  <data name="Choose which email notifications you'd like to receive from Marechai." xml:space="preserve">
+    <value>Choose which email notifications you'd like to receive from Marechai.</value>
+  </data>
+  <data name="Notify me by email when I receive a new message" xml:space="preserve">
+    <value>Notify me by email when I receive a new message</value>
+  </data>
+  <data name="Save notification preferences" xml:space="preserve">
+    <value>Save notification preferences</value>
+  </data>
+  <data name="Notification preferences updated successfully." xml:space="preserve">
+    <value>Notification preferences updated successfully.</value>
+  </data>
+  <data name="Failed to update notification preferences." xml:space="preserve">
+    <value>Failed to update notification preferences.</value>
+  </data>
 </root>
