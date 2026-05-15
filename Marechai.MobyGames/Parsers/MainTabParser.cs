@@ -343,6 +343,12 @@ public static partial class MainTabParser
         foreach(Match match in searchMatches)
         {
             string href     = match.Groups[1].Value;
+
+            // /search/quick?company=..., /search/quick?gamegroup=..., and /search/quick?developer=...
+            // links never represent a contained game — skip them outright so they don't
+            // pollute the admin's compilation report.
+            if(IsIgnorableSearchUrl(href)) continue;
+
             string gameName = WebUtility.HtmlDecode(match.Groups[2].Value).Trim();
             string absHref  = MakeAbsoluteMobyGamesUrl(href);
 
@@ -392,8 +398,11 @@ public static partial class MainTabParser
     ///     therefore should be ignored entirely (neither parsed as a slug nor recorded as
     ///     an unresolvable anchor). Covers tab/anchor-only links (<c>#</c>, <c>#anchor</c>),
     ///     empty hrefs, <c>javascript:</c> URLs, MobyGames game-group URLs
-    ///     (<c>/game-group/...</c>) which are series/franchise pages, and developer
-    ///     profile URLs (<c>/developer/...</c>) which are people pages, not games.
+    ///     (<c>/game-group/...</c>) which are series/franchise pages, developer
+    ///     profile URLs (<c>/developer/...</c>) which are people pages, and MobyGames
+    ///     non-game search URLs (<c>/search/quick?company=...</c> /
+    ///     <c>/search/quick?gamegroup=...</c> / <c>/search/quick?developer=...</c>) which
+    ///     are publisher / series / developer lookups, not games.
     /// </summary>
     static bool IsIgnorableHref(string href)
     {
@@ -411,7 +420,29 @@ public static partial class MainTabParser
         // /developer/... links are MobyGames people profile pages, not games.
         if(trimmed.Contains("/developer/", StringComparison.OrdinalIgnoreCase)) return true;
 
+        // /search/quick?company=..., /search/quick?gamegroup=..., and /search/quick?developer=...
+        // are MobyGames company / series / developer lookup search results, never a game.
+        // Recording them as unresolvable just pollutes the admin's compilation report.
+        if(IsIgnorableSearchUrl(trimmed)) return true;
+
         return false;
+    }
+
+    /// <summary>
+    ///     Returns <c>true</c> for MobyGames non-game search URLs in any of their common
+    ///     forms (relative <c>/search/quick?company=...</c> /
+    ///     <c>/search/quick?gamegroup=...</c> / <c>/search/quick?developer=...</c> or the
+    ///     absolute equivalents under <c>https://www.mobygames.com</c>). Such anchors are
+    ///     never game entries and must be filtered out of the compilation parser's
+    ///     "unresolvable anchors" report.
+    /// </summary>
+    static bool IsIgnorableSearchUrl(string href)
+    {
+        if(string.IsNullOrWhiteSpace(href)) return false;
+
+        return href.Contains("/search/quick?company",   StringComparison.OrdinalIgnoreCase) ||
+               href.Contains("/search/quick?gamegroup", StringComparison.OrdinalIgnoreCase) ||
+               href.Contains("/search/quick?developer", StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>
@@ -587,6 +618,12 @@ public static partial class MainTabParser
         foreach(Match match in searchMatches)
         {
             string href     = match.Groups[1].Value;
+
+            // /search/quick?company=..., /search/quick?gamegroup=..., and /search/quick?developer=...
+            // links never represent a contained game — skip them outright so they don't
+            // pollute the admin's compilation report.
+            if(IsIgnorableSearchUrl(href)) continue;
+
             string gameName = WebUtility.HtmlDecode(match.Groups[2].Value).Trim();
             string absHref  = MakeAbsoluteMobyGamesUrl(href);
 
