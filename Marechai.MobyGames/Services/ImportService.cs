@@ -21,6 +21,22 @@ public sealed class UserQuitException : Exception
     public UserQuitException() : base("User requested to quit") { }
 }
 
+/// <summary>
+///     Control-flow signal raised when an importer in <see cref="ImportService.Unattended" />
+///     mode reaches a code path that would normally prompt the user (duplicate-name match,
+///     fuzzy "possible duplicates" match, unknown product-code issuer, or a multi-candidate
+///     company-soundex match). The per-game batch loop catches this and skips the game
+///     without writing a row to <c>MobyGamesImportStates</c> so the game remains unprocessed
+///     and will be retried on a future interactive run.
+/// </summary>
+public sealed class NeedsInteractionException : Exception
+{
+    public string Reason { get; }
+
+    public NeedsInteractionException(string reason) : base($"Needs user interaction: {reason}") =>
+        Reason = reason;
+}
+
 public class ImportService
 {
     readonly IDbContextFactory<MarechaiContext> _contextFactory;
@@ -38,6 +54,16 @@ public class ImportService
     // Value == null means the user chose [S]kip for that Type.
     readonly Dictionary<string, ProductCodeIssuer?> _productCodeIssuerCache =
         new(StringComparer.Ordinal);
+
+    /// <summary>
+    ///     When true, the importer never blocks on a <c>Console.ReadLine</c> prompt. The top-level
+    ///     per-game Accept/Reject/Skip/All/Quit gate is bypassed (every game is auto-accepted), and
+    ///     any game that would otherwise prompt for duplicate resolution, unknown product-code
+    ///     issuer, or ambiguous company soundex match is skipped without being recorded in
+    ///     <c>MobyGamesImportStates</c> so a future interactive run can process it. Used by
+    ///     scheduled / CI imports where no operator is available.
+    /// </summary>
+    public bool Unattended { get; set; }
 
     public ImportService(
         IDbContextFactory<MarechaiContext> contextFactory,
@@ -91,8 +117,11 @@ public class ImportService
             return;
         }
 
-        bool acceptAll = false;
-        int  imported  = 0, rejected = 0, failed = 0;
+        bool acceptAll = Unattended;
+        int  imported  = 0, rejected = 0, failed = 0, skippedUnattended = 0;
+
+        if(Unattended)
+            Console.WriteLine("  Unattended mode: auto-accepting all games; skipping games that would require prompts.\n");
 
         for(int i = 0; i < gameIds.Count; i++)
         {
@@ -180,6 +209,20 @@ public class ImportService
                     continue;
                 }
 
+                if(Unattended)
+                {
+                    await using var preflightContext = await _contextFactory.CreateDbContextAsync();
+                    string         skipReason       = await WouldRequireUserInputAsync(preflightContext, game);
+
+                    if(skipReason is not null)
+                    {
+                        Console.WriteLine($"    SKIPPING (needs interaction): {skipReason}");
+                        skippedUnattended++;
+
+                        continue;
+                    }
+                }
+
                 await ImportGameAsync(game, batchNumber);
                 imported++;
             }
@@ -189,6 +232,14 @@ public class ImportService
 
                 return;
             }
+            catch(NeedsInteractionException ex)
+            {
+                // Defensive backstop — pre-flight should normally catch this. The game was not
+                // marked in MobyGamesImportStates so it remains unprocessed and will be retried
+                // on the next interactive run.
+                Console.WriteLine($"    SKIPPING (needs interaction at import): {ex.Reason}");
+                skippedUnattended++;
+            }
             catch(Exception ex)
             {
                 Console.WriteLine($"    ERROR: {ex}");
@@ -197,7 +248,8 @@ public class ImportService
             }
         }
 
-        Console.WriteLine($"\n  Batch complete: {imported} imported, {rejected} rejected, {failed} failed");
+        Console.WriteLine($"\n  Batch complete: {imported} imported, {rejected} rejected, {failed} failed" +
+                          (skippedUnattended > 0 ? $", {skippedUnattended} skipped (needs interaction)" : ""));
     }
 
     /// <summary>
@@ -223,6 +275,12 @@ public class ImportService
 
             return false;
         }
+
+        // In unattended mode we must never block on Console.ReadLine. The batch loop's
+        // pre-flight (WouldRequireUserInputAsync) should have already skipped this game, so a
+        // throw here is the defensive backstop.
+        if(Unattended)
+            throw new NeedsInteractionException($"unknown product code issuer \"{type}\"");
 
         var values = (ProductCodeIssuer[])Enum.GetValues(typeof(ProductCodeIssuer));
 
@@ -309,6 +367,131 @@ public class ImportService
         return state?.SoftwareId;
     }
 
+    /// <summary>
+    ///     Pre-flight scan that returns the first reason a game would require an interactive
+    ///     prompt during <see cref="ImportGameAsync" />, or <c>null</c> if the game can be
+    ///     imported with no prompts. Read-only — does not mutate the database, the company
+    ///     matcher cache, or the product-code issuer cache. Mirrors every prompt site in
+    ///     <see cref="ImportGameAsync" /> and the helpers it transitively calls so the batch
+    ///     loop can skip a game cleanly (leaving no row in <c>MobyGamesImportStates</c>) when
+    ///     <see cref="Unattended" /> is enabled.
+    /// </summary>
+    async Task<string> WouldRequireUserInputAsync(MarechaiContext context, ParsedGame game)
+    {
+        bool isCompilation = game.Genres.Any(g =>
+            (g.Name.Contains("DLC", StringComparison.OrdinalIgnoreCase) &&
+             g.Name.Contains("add-on", StringComparison.OrdinalIgnoreCase)) ||
+            (g.Type.Equals("Genre", StringComparison.OrdinalIgnoreCase) &&
+             g.Name.Equals("Add-on", StringComparison.OrdinalIgnoreCase)) ||
+            g.Name.Contains("Compilation", StringComparison.OrdinalIgnoreCase));
+
+        // The compilation path (ImportCompilationAsync) skips the duplicate-name and fuzzy
+        // duplicate prompts entirely, but still imports releases — which transitively call
+        // _companyMatcher and TryResolveProductCodeIssuer. Only run the duplicate checks for
+        // the regular-game path.
+        bool takesCompilationPath = isCompilation &&
+                                    (game.CompilationGameSlugs.Count > 0 ||
+                                     game.UnresolvableCompilationGames.Count > 0);
+
+        if(!takesCompilationPath)
+        {
+            // (a) Existing-by-name prompt (ImportGameAsync line ~391)
+            bool existingByName = await context.Softwares
+                                                .AnyAsync(s => s.Name == game.Name);
+
+            if(existingByName)
+                return $"existing software with name \"{game.Name}\"";
+
+            // (b) Fuzzy duplicates prompt (ImportGameAsync line ~490)
+            var fuzzyMatches = await FindFuzzySoftwareMatchesAsync(context, game.Name);
+
+            if(fuzzyMatches.Count > 0)
+                return $"possible duplicates of \"{game.Name}\" ({fuzzyMatches.Count} fuzzy match(es))";
+        }
+
+        // (c) Unknown product code Type prompt (TryResolveProductCodeIssuer)
+        foreach(var release in game.Releases)
+        {
+            foreach(var productCode in release.ProductCodes)
+            {
+                if(productCode.Type is null) continue;
+
+                switch(productCode.Type)
+                {
+                    case "Sony PN":
+                    case "PSN/SEN Code":
+                    case "Microsoft PN":
+                    case "Nintendo PN":
+                    case "Nintendo Media PN":
+                    case "Sega PN":
+                    case "Sega Region Code":
+                    case "Activision PN":
+                    case "Amazon ASIN":
+                    case "eBay Item No.":
+                        continue;
+                }
+
+                if(_productCodeIssuerCache.ContainsKey(productCode.Type))
+                    continue;
+
+                return $"unknown product code issuer \"{productCode.Type}\"";
+            }
+        }
+
+        // (d) Multi-candidate company soundex prompt (CompanyMatcher.PromptMultiple)
+        // Collect every name that ImportGameAsync / ImportReleasesInternalAsync /
+        // ImportBasicReleaseInternalAsync would pass to _companyMatcher.MatchOrCreateAsync.
+        var companyNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach(string dev in game.Developers)
+            if(!string.IsNullOrWhiteSpace(dev))
+                companyNames.Add(dev);
+
+        if(game.Releases.Count > 0)
+        {
+            string fallbackPublisher = game.Publishers.FirstOrDefault();
+
+            foreach(var release in game.Releases)
+            {
+                string pub = release.Publisher ?? fallbackPublisher;
+
+                if(!string.IsNullOrWhiteSpace(pub))
+                    companyNames.Add(pub);
+
+                if(!string.IsNullOrWhiteSpace(release.Distributor))
+                    companyNames.Add(release.Distributor);
+
+                if(!string.IsNullOrWhiteSpace(release.Localizer))
+                    companyNames.Add(release.Localizer);
+
+                // RunBatchAsync already skips games with any unmapped role-label, so only the
+                // mapped subset reaches the matcher.
+                foreach(var (roleLabel, companyName) in release.CompanyRoles)
+                {
+                    if(MapRoleLabel(roleLabel) is null) continue;
+                    if(string.IsNullOrWhiteSpace(companyName)) continue;
+
+                    companyNames.Add(companyName);
+                }
+            }
+        }
+        else
+        {
+            string mainPublisher = game.Publishers.FirstOrDefault();
+
+            if(!string.IsNullOrWhiteSpace(mainPublisher))
+                companyNames.Add(mainPublisher);
+        }
+
+        foreach(string name in companyNames)
+        {
+            if(_companyMatcher.WouldPromptForMatch(name))
+                return $"multiple Soundex matches for company \"{name}\"";
+        }
+
+        return null;
+    }
+
     async Task ImportGameAsync(ParsedGame game, int batchNumber)
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
@@ -393,6 +576,11 @@ public class ImportService
                 Console.WriteLine($"      [{existingByName.IndexOf(existing) + 1}] ID: {existing.Id}, " +
                                   $"Year(s): {yearStr}, Platforms: {platformStr}");
             }
+
+            // Defensive backstop: in unattended mode the batch loop's pre-flight should have
+            // already skipped this game. Throw rather than block on Console.ReadLine.
+            if(Unattended)
+                throw new NeedsInteractionException($"existing software with name \"{game.Name}\"");
 
             Console.Write("    [N]ew entry / [1-N] Link to existing / [S]kip: ");
             string input = Console.ReadLine()?.Trim().ToUpperInvariant();
@@ -486,6 +674,12 @@ public class ImportService
                     Console.WriteLine($"      [{m + 1}] \"{match.Name}\" (ID: {match.Id}, " +
                                       $"Score: {match.Score:F2}, Year(s): {yearStr}, Platforms: {platformStr})");
                 }
+
+                // Defensive backstop: in unattended mode the batch loop's pre-flight should
+                // have already skipped this game. Throw rather than block on Console.ReadLine.
+                if(Unattended)
+                    throw new NeedsInteractionException(
+                        $"possible duplicates of \"{game.Name}\" ({fuzzyMatches.Count} fuzzy match(es))");
 
                 Console.Write("    [N]ew entry / [1-N] Link to existing / [S]kip: ");
                 string input = Console.ReadLine()?.Trim().ToUpperInvariant();

@@ -48,6 +48,16 @@ public partial class CompanyMatcher
 
     public CompanyMatcher(IDbContextFactory<MarechaiContext> contextFactory) => _contextFactory = contextFactory;
 
+    /// <summary>
+    ///     When true, <see cref="MatchOrCreateAsync" /> throws
+    ///     <see cref="NeedsInteractionException" /> instead of calling
+    ///     <see cref="PromptMultiple" /> when more than one Soundex candidate is found and no
+    ///     exact match resolves the name. The batch loop's pre-flight uses
+    ///     <see cref="WouldPromptForMatch" /> to detect this condition before any DB mutation
+    ///     so the throw is only a defensive backstop.
+    /// </summary>
+    public bool Unattended { get; set; }
+
     public async Task LoadAsync()
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
@@ -60,6 +70,75 @@ public partial class CompanyMatcher
         _strippedSoundexIndex          = SoundexHelper.BuildSoundexIndex(_companies, c => StripSuffix(c.Name));
         _legalNameSoundexIndex         = SoundexHelper.BuildSoundexIndex(_companies, c => c.LegalName);
         _strippedLegalNameSoundexIndex = SoundexHelper.BuildSoundexIndex(_companies, c => StripSuffix(c.LegalName));
+    }
+
+    /// <summary>
+    ///     Read-only pre-flight check: returns <c>true</c> if calling
+    ///     <see cref="MatchOrCreateAsync" /> with the same name would block on
+    ///     <see cref="PromptMultiple" /> (more than one Soundex candidate and no earlier
+    ///     exact / cache resolution). Mirrors <see cref="MatchOrCreateAsync" /> exactly up
+    ///     to that point and does not modify <see cref="_cache" /> or any Soundex index.
+    /// </summary>
+    public bool WouldPromptForMatch(string name)
+    {
+        if(string.IsNullOrWhiteSpace(name))
+            return false;
+
+        string normalizedName = name.Replace("\u00a0", " ").Trim();
+
+        if(_cache.ContainsKey(normalizedName))
+            return false;
+
+        bool exactExists = _companies.Any(c =>
+            string.Equals(c.Name, normalizedName, StringComparison.OrdinalIgnoreCase));
+
+        if(exactExists) return false;
+
+        bool legalExactExists = _companies.Any(c =>
+            !string.IsNullOrWhiteSpace(c.LegalName) &&
+            string.Equals(c.LegalName, normalizedName, StringComparison.OrdinalIgnoreCase));
+
+        if(legalExactExists) return false;
+
+        string strippedInput = StripSuffix(normalizedName);
+
+        bool strippedExactExists = _companies.Any(c =>
+            string.Equals(StripSuffix(c.Name), strippedInput, StringComparison.OrdinalIgnoreCase));
+
+        if(strippedExactExists) return false;
+
+        bool strippedLegalExactExists = _companies.Any(c =>
+            !string.IsNullOrWhiteSpace(c.LegalName) &&
+            string.Equals(StripSuffix(c.LegalName), strippedInput, StringComparison.OrdinalIgnoreCase));
+
+        if(strippedLegalExactExists) return false;
+
+        string soundex         = SoundexHelper.Generate(normalizedName);
+        string strippedSoundex = SoundexHelper.Generate(strippedInput);
+
+        var seenIds = new HashSet<int>();
+        int count   = 0;
+
+        void Count(IEnumerable<Company> cs)
+        {
+            foreach(Company c in cs)
+                if(seenIds.Add(c.Id))
+                    count++;
+        }
+
+        if(_soundexIndex.TryGetValue(soundex, out var fullCandidates))
+            Count(fullCandidates);
+
+        if(_legalNameSoundexIndex.TryGetValue(soundex, out var legalCandidates))
+            Count(legalCandidates);
+
+        if(_strippedSoundexIndex.TryGetValue(strippedSoundex, out var strippedCandidates))
+            Count(strippedCandidates);
+
+        if(_strippedLegalNameSoundexIndex.TryGetValue(strippedSoundex, out var strippedLegalCandidates))
+            Count(strippedLegalCandidates);
+
+        return count > 1;
     }
 
     public async Task<(Company company, string matchType)> MatchOrCreateAsync(string name)
@@ -161,6 +240,12 @@ public partial class CompanyMatcher
 
         if(soundexCandidates.Count > 1)
         {
+            // Defensive backstop: in unattended mode the importer's pre-flight should have
+            // already skipped the game. Throw rather than block on Console.ReadLine.
+            if(Unattended)
+                throw new NeedsInteractionException(
+                    $"multiple Soundex matches for company \"{normalizedName}\"");
+
             Company prompted = PromptMultiple(normalizedName, soundexCandidates);
 
             if(prompted != null)

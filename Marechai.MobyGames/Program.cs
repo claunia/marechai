@@ -59,12 +59,18 @@ class Program
         {
             case "import":
                 int batchSize = config.GetValue("Import:BatchSize", 500);
+                bool unattended = false;
 
                 for(int i = 0; i < args.Length - 1; i++)
                 {
                     if(args[i] == "--batch-size" && int.TryParse(args[i + 1], out int bs))
                         batchSize = bs;
                 }
+
+                if(args.Contains("--unattended")) unattended = true;
+
+                importService.Unattended  = unattended;
+                companyMatcher.Unattended = unattended;
 
                 // Determine batch number
                 var processed = await stateService.GetProcessedGameIdsAsync();
@@ -446,9 +452,10 @@ class Program
 
             case "import-dlc-relations":
             {
-                int dlcBatchSize = 50;
-                int dlcDelayMs   = 2000;
-                bool dlcDryRun   = false;
+                int dlcBatchSize    = 50;
+                int dlcDelayMs      = 2000;
+                bool dlcDryRun      = false;
+                bool dlcUnattended  = false;
 
                 for(int i = 1; i < args.Length - 1; i++)
                 {
@@ -459,7 +466,8 @@ class Program
                         dlcDelayMs = dm;
                 }
 
-                if(args.Contains("--dry-run")) dlcDryRun = true;
+                if(args.Contains("--dry-run"))   dlcDryRun     = true;
+                if(args.Contains("--unattended")) dlcUnattended = true;
 
                 using var dlcHttpClient = new MobyGamesHttpClient(dlcDelayMs);
 
@@ -467,6 +475,9 @@ class Program
                 var dlcImportService = new ImportService(factory, sourceDb, companyMatcher,
                                                          personMatcher, platformMatcher,
                                                          countryMatcher, stateService, dlcHttpClient);
+
+                dlcImportService.Unattended = dlcUnattended;
+                companyMatcher.Unattended   = dlcUnattended;
 
                 var dlcService = new DlcRelationService(factory, dlcHttpClient, dlcImportService, sourceDb);
 
@@ -484,8 +495,9 @@ class Program
 
             case "resolve-compilation-relations":
             {
-                int  compBatchSize = 50;
-                bool compDryRun    = false;
+                int  compBatchSize  = 50;
+                bool compDryRun     = false;
+                bool compUnattended = false;
 
                 for(int i = 1; i < args.Length - 1; i++)
                 {
@@ -493,7 +505,8 @@ class Program
                         compBatchSize = bs;
                 }
 
-                if(args.Contains("--dry-run")) compDryRun = true;
+                if(args.Contains("--dry-run"))    compDryRun     = true;
+                if(args.Contains("--unattended")) compUnattended = true;
 
                 // Create import service without HTTP client (local only)
                 var compImportService = new ImportService(factory, sourceDb, companyMatcher,
@@ -501,6 +514,9 @@ class Program
                                                           countryMatcher, stateService,
                                                           mobyHttpClient: null,
                                                           adminMessenger: adminMessenger);
+
+                compImportService.Unattended = compUnattended;
+                companyMatcher.Unattended    = compUnattended;
 
                 var compService = new CompilationRelationService(factory, sourceDb, compImportService,
                                                                  adminMessenger);
@@ -538,7 +554,8 @@ class Program
 
             default:
                 Console.WriteLine("  Usage:");
-                Console.WriteLine("    import [--batch-size N]                       Import next batch of games");
+                Console.WriteLine("    import [--batch-size N] [--unattended]");
+                Console.WriteLine("                                                  Import next batch of games (--unattended skips games needing prompts)");
                 Console.WriteLine("    download-covers [--batch-size N] [--delay-ms N] [--dry-run]");
                 Console.WriteLine("                                                  Download covers for imported games");
                 Console.WriteLine("    import-reviews [--batch-size N]");
@@ -561,9 +578,9 @@ class Program
                 Console.WriteLine("    import-videos [--batch-size N] [--dry-run]");
                 Console.WriteLine("                                                  Import video links from scraped media pages");
                 Console.WriteLine("    video-status                                  Show video import status counts");
-                Console.WriteLine("    import-dlc-relations [--batch-size N] [--delay-ms N] [--dry-run]");
+                Console.WriteLine("    import-dlc-relations [--batch-size N] [--delay-ms N] [--dry-run] [--unattended]");
                 Console.WriteLine("                                                  Link DLC entries to their base games via MobyGames");
-                Console.WriteLine("    resolve-compilation-relations [--batch-size N] [--dry-run]");
+                Console.WriteLine("    resolve-compilation-relations [--batch-size N] [--dry-run] [--unattended]");
                 Console.WriteLine("                                                  Convert compilation Software to proper compilation releases");
                 Console.WriteLine("    reparse-specs [--batch-size N] [--dry-run]");
                 Console.WriteLine("                                                  Reparse Specs tab from raw HTML and split multi-anchor values into one row each");
