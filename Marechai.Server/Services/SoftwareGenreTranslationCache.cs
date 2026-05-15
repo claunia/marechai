@@ -47,8 +47,11 @@ namespace Marechai.Server.Services;
 /// <remarks>
 ///     <para>English (<c>"eng"</c>) is treated as the identity copy of the canonical English
 ///     <see cref="SoftwareGenre.Name" /> column and is NEVER stored in the translations dictionary;
-///     <see cref="GetName" /> falls back to the English name when no translation exists for the
-///     requested language. Lookup with an unknown <paramref name="genreId" /> returns
+///     <see cref="GetNameAsync" /> falls back to the English name when no translation exists for
+///     the requested language. If the <paramref name="genreId" /> is not yet known to the cache
+///     (e.g. inserted by the importer between worker ticks), <see cref="GetNameAsync" /> performs a
+///     single DB round-trip to load the row + every translation it has, registers them, and
+///     retries the lookup. Only when the DB also has no matching row does it return
 ///     <see cref="string.Empty" />.</para>
 ///     <para>Mutation is concurrent-safe (all state is in <see cref="ConcurrentDictionary{TKey,TValue}" />)
 ///     so the worker can keep updating while controllers read.</para>
@@ -135,21 +138,88 @@ public sealed class SoftwareGenreTranslationCache(IServiceScopeFactory          
     /// <summary>
     ///     Returns the translated name for <paramref name="genreId" /> in
     ///     <paramref name="languageCode" />, falling back to the canonical English name if no
-    ///     translation exists for that language. Returns <see cref="string.Empty" /> when the genreId is
-    ///     unknown — never throws. The cache MUST have been loaded first (callers in the request
-    ///     pipeline rely on the eager-warm in <c>Program.cs</c>).
+    ///     translation exists for that language. If the id is not yet known to the cache (e.g. the
+    ///     row was inserted after the eager warm and before the next worker tick), performs a single
+    ///     DB round-trip to load the row + every translation it has and retries the lookup. Returns
+    ///     <see cref="string.Empty" /> only when the DB also has no matching row — never throws.
     /// </summary>
-    public string GetName(int genreId, string languageCode)
+    public async Task<string> GetNameAsync(int genreId, string languageCode, CancellationToken ct = default)
     {
         if(string.IsNullOrEmpty(languageCode) || string.Equals(languageCode, "eng", StringComparison.Ordinal))
-            return _englishNames.TryGetValue(genreId, out string english) ? english : string.Empty;
+        {
+            if(_englishNames.TryGetValue(genreId, out string english)) return english;
+
+            // English miss → check the DB. If the loader registered the row, _englishNames now has it.
+            if(await LoadGenreFromDbAsync(genreId, ct).ConfigureAwait(false) &&
+               _englishNames.TryGetValue(genreId, out english))
+                return english;
+
+            return string.Empty;
+        }
 
         if(_translations.TryGetValue(genreId, out ConcurrentDictionary<string, string> langs) &&
            langs.TryGetValue(languageCode, out string translated)                              &&
            !string.IsNullOrWhiteSpace(translated))
             return translated;
 
-        return _englishNames.TryGetValue(genreId, out string fallback) ? fallback : string.Empty;
+        if(_englishNames.TryGetValue(genreId, out string fallback)) return fallback;
+
+        // Both translations AND English are missing → DB miss-load. Retry the lookups in the same
+        // order (translation first, then English fallback) before giving up.
+        if(!await LoadGenreFromDbAsync(genreId, ct).ConfigureAwait(false)) return string.Empty;
+
+        if(_translations.TryGetValue(genreId, out langs) &&
+           langs.TryGetValue(languageCode, out translated)                                 &&
+           !string.IsNullOrWhiteSpace(translated))
+            return translated;
+
+        return _englishNames.TryGetValue(genreId, out fallback) ? fallback : string.Empty;
+    }
+
+    /// <summary>
+    ///     Loads a single genre row + every translation it has from the DB and pushes them into
+    ///     the in-memory dictionaries via <see cref="RegisterGenre" /> / <see cref="Upsert" />.
+    ///     Returns <c>true</c> if a row was found, <c>false</c> if the id is not in the DB
+    ///     (data-integrity gap or transient race). Idempotent under concurrent calls — the
+    ///     <see cref="ConcurrentDictionary{TKey,TValue}" /> upserts coalesce duplicate writes for
+    ///     the same id. Does NOT take <see cref="_loadGate" />; that semaphore is for the bulk warm
+    ///     only.
+    /// </summary>
+    async Task<bool> LoadGenreFromDbAsync(int genreId, CancellationToken ct)
+    {
+        await using AsyncServiceScope scope = scopeFactory.CreateAsyncScope();
+        MarechaiContext               ctx   = scope.ServiceProvider.GetRequiredService<MarechaiContext>();
+
+        var genre = await ctx.SoftwareGenres
+                             .AsNoTracking()
+                             .Where(g => g.Id == genreId)
+                             .Select(g => new { g.Id, g.Name })
+                             .FirstOrDefaultAsync(ct)
+                             .ConfigureAwait(false);
+
+        if(genre is null) return false;
+
+        RegisterGenre(genre.Id, genre.Name);
+
+        List<SoftwareGenreTranslation> translations =
+            await ctx.SoftwareGenreTranslations
+                     .AsNoTracking()
+                     .Where(t => t.GenreId == genreId)
+                     .ToListAsync(ct)
+                     .ConfigureAwait(false);
+
+        foreach(SoftwareGenreTranslation t in translations)
+        {
+            if(string.IsNullOrEmpty(t.LanguageCode) || t.Name is null) continue;
+
+            Upsert(t.GenreId, t.LanguageCode, t.Name);
+        }
+
+        logger.LogDebug(
+            "SoftwareGenreTranslationCache miss-loaded genre {GenreId} (\"{Name}\") + {TranslationCount} translations.",
+            genre.Id, genre.Name, translations.Count);
+
+        return true;
     }
 
     /// <summary>

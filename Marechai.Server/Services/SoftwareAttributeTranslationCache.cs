@@ -47,9 +47,12 @@ namespace Marechai.Server.Services;
 /// <remarks>
 ///     <para>English (<c>"eng"</c>) is treated as the identity copy of the canonical pool
 ///     <see cref="SoftwareAttributeString.Text" /> and is NEVER stored in the translations dictionary;
-///     <see cref="GetTranslated" /> falls back to the original normalised text when no translation
-///     exists for the requested language. Looking up an unknown text returns the input verbatim
-///     (i.e. text not yet discovered by the worker — typical for fresh DB rows between worker ticks).</para>
+///     <see cref="GetTranslatedAsync" /> falls back to the original normalised text when no
+///     translation exists for the requested language. If the (normalised) text is not yet known to
+///     the cache (e.g. inserted by the provider between worker ticks), the lookup performs a single
+///     DB round-trip to load the pool row + every translation it has, registers them, and retries.
+///     Only when the DB also has no matching pool row does the lookup return the input text
+///     verbatim (typical for fresh attribute keys/values that haven't been pooled yet).</para>
 ///     <para>All inputs are NBSP-normalised via <see cref="NormalizeText" /> (U+00A0 → space, trim)
 ///     so MobyGames-imported rows merge with hand-curated rows in the same pool entry.</para>
 /// </remarks>
@@ -152,10 +155,12 @@ public sealed class SoftwareAttributeTranslationCache(IServiceScopeFactory      
     /// <summary>
     ///     Returns the translated text for <paramref name="text" /> in
     ///     <paramref name="languageCode" />, falling back to the (NBSP-normalised) original text if no
-    ///     translation exists. NEVER throws — unknown strings return the normalised input verbatim
-    ///     (typical between worker ticks for newly inserted attributes).
+    ///     translation exists. If the (normalised) text is not yet in the cache, performs a single
+    ///     DB round-trip to look it up in the pool + load every translation it has, then retries.
+    ///     NEVER throws — unknown strings (not in the pool at all) return the normalised input
+    ///     verbatim, matching the pre-existing contract for not-yet-discovered attribute text.
     /// </summary>
-    public string GetTranslated(string text, string languageCode)
+    public async Task<string> GetTranslatedAsync(string text, string languageCode, CancellationToken ct = default)
     {
         string normalised = NormalizeText(text);
 
@@ -163,7 +168,13 @@ public sealed class SoftwareAttributeTranslationCache(IServiceScopeFactory      
         if(string.IsNullOrEmpty(languageCode) || string.Equals(languageCode, "eng", StringComparison.Ordinal))
             return normalised;
 
-        if(!_textToId.TryGetValue(normalised, out int id)) return normalised;
+        if(!_textToId.TryGetValue(normalised, out int id))
+        {
+            // Pool miss → check the DB. If the loader registered the row, _textToId now has it.
+            if(!await LoadStringFromDbAsync(normalised, ct).ConfigureAwait(false) ||
+               !_textToId.TryGetValue(normalised, out id))
+                return normalised;
+        }
 
         if(_translations.TryGetValue(id, out ConcurrentDictionary<string, string> langs) &&
            langs.TryGetValue(languageCode, out string translated)                        &&
@@ -171,6 +182,53 @@ public sealed class SoftwareAttributeTranslationCache(IServiceScopeFactory      
             return translated;
 
         return normalised;
+    }
+
+    /// <summary>
+    ///     Loads a single pool row + every translation it has from the DB and pushes them into the
+    ///     in-memory dictionaries via <see cref="RegisterString" /> / <see cref="Upsert" />. The
+    ///     lookup uses straight equality on <see cref="SoftwareAttributeString.Text" />; the provider
+    ///     <see cref="SoftwareAttributeTranslationProvider" /> is the sole writer to the pool and
+    ///     always inserts normalised text, so a single equality probe suffices. Returns <c>true</c>
+    ///     if a row was found, <c>false</c> otherwise. Idempotent under concurrent calls — the
+    ///     <see cref="ConcurrentDictionary{TKey,TValue}" /> upserts coalesce duplicate writes. Does
+    ///     NOT take <see cref="_loadGate" />; that semaphore is for the bulk warm only.
+    /// </summary>
+    async Task<bool> LoadStringFromDbAsync(string normalisedText, CancellationToken ct)
+    {
+        await using AsyncServiceScope scope = scopeFactory.CreateAsyncScope();
+        MarechaiContext               ctx   = scope.ServiceProvider.GetRequiredService<MarechaiContext>();
+
+        var pool = await ctx.SoftwareAttributeStrings
+                            .AsNoTracking()
+                            .Where(s => s.Text == normalisedText)
+                            .Select(s => new { s.Id, s.Text })
+                            .FirstOrDefaultAsync(ct)
+                            .ConfigureAwait(false);
+
+        if(pool is null) return false;
+
+        RegisterString(pool.Id, pool.Text);
+
+        List<SoftwareAttributeStringTranslation> translations =
+            await ctx.SoftwareAttributeStringTranslations
+                     .AsNoTracking()
+                     .Where(t => t.StringId == pool.Id)
+                     .ToListAsync(ct)
+                     .ConfigureAwait(false);
+
+        foreach(SoftwareAttributeStringTranslation t in translations)
+        {
+            if(string.IsNullOrEmpty(t.LanguageCode) || t.Translation is null) continue;
+
+            Upsert(t.StringId, t.LanguageCode, t.Translation);
+        }
+
+        logger.LogDebug(
+            "SoftwareAttributeTranslationCache miss-loaded pool string {Id} (\"{Text}\") + {TranslationCount} translations.",
+            pool.Id, pool.Text, translations.Count);
+
+        return true;
     }
 
     /// <summary>

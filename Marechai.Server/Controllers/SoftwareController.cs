@@ -1533,9 +1533,17 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
         // Importer stores genre names with U+00A0 (non-breaking space); normalise before applying the
         // translation lookup so the cache (which holds the canonical English name from the DB) returns
-        // a consistent value when no translation exists for the requested language.
+        // a consistent value when no translation exists for the requested language. The cache falls
+        // back to a per-id DB load on miss (e.g. genres added between worker ticks).
         foreach(SoftwareGenreDto g in genres)
-            g.Name = genreCache.GetName(g.Id, resolvedLang)?.Replace('\u00A0', ' ') ?? g.Name?.Replace('\u00A0', ' ');
+        {
+            string translated =
+                await genreCache.GetNameAsync(g.Id, resolvedLang, HttpContext.RequestAborted);
+
+            g.Name = string.IsNullOrEmpty(translated)
+                         ? g.Name?.Replace('\u00A0', ' ')
+                         : translated.Replace('\u00A0', ' ');
+        }
 
         return genres;
     }
@@ -1644,15 +1652,31 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
         string resolvedLang = ResolveGenreLanguage(lang);
 
         // Always populate Display* — when resolvedLang == "eng" the cache returns the canonical
-        // text verbatim, so DisplayKey == Key (free, no allocation in the cache path).
-        return cached.Select(s => new SoftwareSpecKeyDto
-                      {
-                          Key           = s.Key,
-                          Values        = s.Values,
-                          DisplayKey    = attrCache.GetTranslated(s.Key, resolvedLang),
-                          DisplayValues = s.Values.Select(v => attrCache.GetTranslated(v, resolvedLang)).ToList()
-                      })
-                     .ToList();
+        // text verbatim, so DisplayKey == Key (free, no allocation in the cache path). The cache
+        // falls back to a per-id DB load on miss (e.g. pool strings added between worker ticks).
+        var result = new List<SoftwareSpecKeyDto>(cached.Count);
+
+        foreach((string Key, List<string> Values) s in cached)
+        {
+            string displayKey =
+                await attrCache.GetTranslatedAsync(s.Key, resolvedLang, HttpContext.RequestAborted);
+
+            var displayValues = new List<string>(s.Values.Count);
+
+            foreach(string v in s.Values)
+                displayValues.Add(await attrCache.GetTranslatedAsync(v, resolvedLang,
+                                                                     HttpContext.RequestAborted));
+
+            result.Add(new SoftwareSpecKeyDto
+            {
+                Key           = s.Key,
+                Values        = s.Values,
+                DisplayKey    = displayKey,
+                DisplayValues = displayValues
+            });
+        }
+
+        return result;
     }
 
     [HttpGet("by-spec")]
@@ -1765,9 +1789,17 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
         // Importer stores genre names with U+00A0 (non-breaking space); normalise before applying the
         // translation lookup so the cache (which holds the canonical English name from the DB) returns
-        // a consistent value when no translation exists for the requested language.
+        // a consistent value when no translation exists for the requested language. The cache falls
+        // back to a per-id DB load on miss (e.g. genres added between worker ticks).
         foreach(SoftwareGenreDto g in genres)
-            g.Name = genreCache.GetName(g.Id, resolvedLang)?.Replace('\u00A0', ' ') ?? g.Name?.Replace('\u00A0', ' ');
+        {
+            string translated =
+                await genreCache.GetNameAsync(g.Id, resolvedLang, HttpContext.RequestAborted);
+
+            g.Name = string.IsNullOrEmpty(translated)
+                         ? g.Name?.Replace('\u00A0', ' ')
+                         : translated.Replace('\u00A0', ' ');
+        }
 
         return genres;
     }
@@ -1815,8 +1847,8 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                 continue;
             }
 
-            a.Key   = attrCache.GetTranslated(a.Key,   resolvedLang);
-            a.Value = attrCache.GetTranslated(a.Value, resolvedLang);
+            a.Key   = await attrCache.GetTranslatedAsync(a.Key,   resolvedLang, HttpContext.RequestAborted);
+            a.Value = await attrCache.GetTranslatedAsync(a.Value, resolvedLang, HttpContext.RequestAborted);
         }
 
         return attributes;

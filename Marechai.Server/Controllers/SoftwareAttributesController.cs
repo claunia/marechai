@@ -155,9 +155,13 @@ public class SoftwareAttributesController(MarechaiContext                   cont
 
         string resolvedLang = LanguageResolver.Resolve(HttpContext, lang);
 
-        var translated = isRating
-                             ? raw.Select(SoftwareAttributeTranslationCache.NormalizeText)
-                             : raw.Select(k => attrCache.GetTranslated(k, resolvedLang));
+        var translated = new List<string>(raw.Count);
+
+        if(isRating)
+            foreach(string k in raw) translated.Add(SoftwareAttributeTranslationCache.NormalizeText(k));
+        else
+            foreach(string k in raw)
+                translated.Add(await attrCache.GetTranslatedAsync(k, resolvedLang, HttpContext.RequestAborted));
 
         return translated.Distinct().OrderBy(k => k).ToList();
     }
@@ -191,9 +195,13 @@ public class SoftwareAttributesController(MarechaiContext                   cont
 
         string resolvedLang = LanguageResolver.Resolve(HttpContext, lang);
 
-        var translated = isRating
-                             ? raw.Select(SoftwareAttributeTranslationCache.NormalizeText)
-                             : raw.Select(v => attrCache.GetTranslated(v, resolvedLang));
+        var translated = new List<string>(raw.Count);
+
+        if(isRating)
+            foreach(string v in raw) translated.Add(SoftwareAttributeTranslationCache.NormalizeText(v));
+        else
+            foreach(string v in raw)
+                translated.Add(await attrCache.GetTranslatedAsync(v, resolvedLang, HttpContext.RequestAborted));
 
         return translated.Distinct().OrderBy(v => v).ToList();
     }

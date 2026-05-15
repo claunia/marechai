@@ -365,13 +365,16 @@ file class Program
         builder.Services.AddMarechaiTranslation(builder.Configuration);
 
         // Process-lifetime cache holding every SoftwareGenre + every SoftwareGenreTranslation row.
-        // Populated once on startup (eager-warm below) and mutated thereafter ONLY by
-        // TranslationWorker. Controllers READ-only via SoftwareGenreTranslationCache.GetName(...).
+        // Populated once on startup (eager-warm below) and mutated thereafter by TranslationWorker
+        // (registrations + translation upserts) or on-demand by the cache itself on miss. Controllers
+        // READ-only via SoftwareGenreTranslationCache.GetNameAsync(...), which falls back to a per-id
+        // DB load when the id isn't in memory yet.
         builder.Services.AddSingleton<SoftwareGenreTranslationCache>();
 
         // Process-lifetime cache holding the SoftwareAttributeStrings pool + every
         // SoftwareAttributeStringTranslation. Same lifecycle as the genre cache. Read-only from
-        // controllers via SoftwareAttributeTranslationCache.GetTranslated(text, lang).
+        // controllers via SoftwareAttributeTranslationCache.GetTranslatedAsync(text, lang), which
+        // falls back to a per-text DB load on miss.
         builder.Services.AddSingleton<SoftwareAttributeTranslationCache>();
 
         // Genre translation provider (one of N — future entities register their own provider).
@@ -556,8 +559,8 @@ file class Program
 
                 // Eager-warm the genre-translation cache so the first /software/genres request
                 // doesn't pay the load cost. Singleton — resolved from the root provider, not the
-                // per-request scope. Failure is logged but non-fatal: GetName() falls back to the
-                // English name if the cache hasn't loaded yet.
+                // per-request scope. Failure is logged but non-fatal: GetNameAsync() will fall
+                // back to a per-id DB load on miss if the bulk warm never completed.
                 start = DateTime.Now;
                 Console.WriteLine("\e[31;1mWarming software genre translation cache...\e[0m");
 

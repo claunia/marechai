@@ -338,8 +338,8 @@ public class SoftwareReleasesController(MarechaiContext                   contex
                 continue;
             }
 
-            a.Key   = attrCache.GetTranslated(a.Key,   resolvedLang);
-            a.Value = attrCache.GetTranslated(a.Value, resolvedLang);
+            a.Key   = await attrCache.GetTranslatedAsync(a.Key,   resolvedLang, HttpContext.RequestAborted);
+            a.Value = await attrCache.GetTranslatedAsync(a.Value, resolvedLang, HttpContext.RequestAborted);
         }
 
         return attributes;
