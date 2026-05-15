@@ -65,6 +65,18 @@ public class ImportService
     /// </summary>
     public bool Unattended { get; set; }
 
+    /// <summary>
+    ///     When true (and <see cref="Unattended" /> is also true), the importer no longer skips
+    ///     games that would otherwise require an interactive prompt. Instead it picks the
+    ///     "create new / Other" default at every prompt site: a new <c>Software</c> row is
+    ///     created on existing-name or fuzzy-duplicate matches, a new <c>Company</c> row is
+    ///     created on multi-candidate company soundex matches, and an unknown product code
+    ///     Type is mapped to <see cref="ProductCodeIssuer.Other" /> (cached for the run).
+    ///     Equivalent to an operator who answers <c>[N]ew entry</c>, <c>[0] Create new
+    ///     company</c>, and the <c>Other</c> issuer at every prompt.
+    /// </summary>
+    public bool YesToAll { get; set; }
+
     public ImportService(
         IDbContextFactory<MarechaiContext> contextFactory,
         SourceDatabaseService sourceDb,
@@ -120,7 +132,9 @@ public class ImportService
         bool acceptAll = Unattended;
         int  imported  = 0, rejected = 0, failed = 0, skippedUnattended = 0;
 
-        if(Unattended)
+        if(YesToAll)
+            Console.WriteLine("  Unattended mode (yes-to-all): auto-creating new entries, no games will be skipped.\n");
+        else if(Unattended)
             Console.WriteLine("  Unattended mode: auto-accepting all games; skipping games that would require prompts.\n");
 
         for(int i = 0; i < gameIds.Count; i++)
@@ -209,7 +223,7 @@ public class ImportService
                     continue;
                 }
 
-                if(Unattended)
+                if(Unattended && !YesToAll)
                 {
                     await using var preflightContext = await _contextFactory.CreateDbContextAsync();
                     string         skipReason       = await WouldRequireUserInputAsync(preflightContext, game);
@@ -274,6 +288,17 @@ public class ImportService
             issuer = default;
 
             return false;
+        }
+
+        // In yes-to-all mode, map any unknown Type to ProductCodeIssuer.Other and cache the
+        // decision so repeat occurrences within the same run don't re-resolve.
+        if(YesToAll)
+        {
+            issuer                        = ProductCodeIssuer.Other;
+            _productCodeIssuerCache[type] = issuer;
+            Console.WriteLine($"    Auto-mapped unknown product code issuer \"{type}\" → Other");
+
+            return true;
         }
 
         // In unattended mode we must never block on Console.ReadLine. The batch loop's
@@ -579,11 +604,21 @@ public class ImportService
 
             // Defensive backstop: in unattended mode the batch loop's pre-flight should have
             // already skipped this game. Throw rather than block on Console.ReadLine.
-            if(Unattended)
+            if(Unattended && !YesToAll)
                 throw new NeedsInteractionException($"existing software with name \"{game.Name}\"");
 
-            Console.Write("    [N]ew entry / [1-N] Link to existing / [S]kip: ");
-            string input = Console.ReadLine()?.Trim().ToUpperInvariant();
+            string input;
+
+            if(YesToAll)
+            {
+                Console.WriteLine("    Auto-creating new entry (yes-to-all).");
+                input = "N";
+            }
+            else
+            {
+                Console.Write("    [N]ew entry / [1-N] Link to existing / [S]kip: ");
+                input = Console.ReadLine()?.Trim().ToUpperInvariant();
+            }
 
             if(input == "S")
             {
@@ -677,12 +712,22 @@ public class ImportService
 
                 // Defensive backstop: in unattended mode the batch loop's pre-flight should
                 // have already skipped this game. Throw rather than block on Console.ReadLine.
-                if(Unattended)
+                if(Unattended && !YesToAll)
                     throw new NeedsInteractionException(
                         $"possible duplicates of \"{game.Name}\" ({fuzzyMatches.Count} fuzzy match(es))");
 
-                Console.Write("    [N]ew entry / [1-N] Link to existing / [S]kip: ");
-                string input = Console.ReadLine()?.Trim().ToUpperInvariant();
+                string input;
+
+                if(YesToAll)
+                {
+                    Console.WriteLine("    Auto-creating new entry (yes-to-all).");
+                    input = "N";
+                }
+                else
+                {
+                    Console.Write("    [N]ew entry / [1-N] Link to existing / [S]kip: ");
+                    input = Console.ReadLine()?.Trim().ToUpperInvariant();
+                }
 
                 if(input == "S")
                 {

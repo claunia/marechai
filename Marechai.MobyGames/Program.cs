@@ -60,6 +60,7 @@ class Program
             case "import":
                 int batchSize = config.GetValue("Import:BatchSize", 500);
                 bool unattended = false;
+                bool yesToAll   = false;
 
                 for(int i = 0; i < args.Length - 1; i++)
                 {
@@ -68,9 +69,16 @@ class Program
                 }
 
                 if(args.Contains("--unattended")) unattended = true;
+                if(args.Contains("--yes-to-all"))
+                {
+                    yesToAll   = true;
+                    unattended = true; // --yes-to-all implies --unattended
+                }
 
                 importService.Unattended  = unattended;
+                importService.YesToAll    = yesToAll;
                 companyMatcher.Unattended = unattended;
+                companyMatcher.YesToAll   = yesToAll;
 
                 // Determine batch number
                 var processed = await stateService.GetProcessedGameIdsAsync();
@@ -554,8 +562,10 @@ class Program
 
             default:
                 Console.WriteLine("  Usage:");
-                Console.WriteLine("    import [--batch-size N] [--unattended]");
-                Console.WriteLine("                                                  Import next batch of games (--unattended skips games needing prompts)");
+                Console.WriteLine("    import [--batch-size N] [--unattended] [--yes-to-all]");
+                Console.WriteLine("                                                  Import next batch of games (--unattended skips games needing prompts;");
+                Console.WriteLine("                                                  --yes-to-all implies --unattended and auto-picks 'create new entry',");
+                Console.WriteLine("                                                  'create new company', and ProductCodeIssuer.Other instead of skipping)");
                 Console.WriteLine("    download-covers [--batch-size N] [--delay-ms N] [--dry-run]");
                 Console.WriteLine("                                                  Download covers for imported games");
                 Console.WriteLine("    import-reviews [--batch-size N]");

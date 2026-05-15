@@ -58,6 +58,14 @@ public partial class CompanyMatcher
     /// </summary>
     public bool Unattended { get; set; }
 
+    /// <summary>
+    ///     When true (in addition to <see cref="Unattended" />), <see cref="MatchOrCreateAsync" />
+    ///     falls through to the "create new company" branch on multi-candidate Soundex matches
+    ///     instead of throwing. Equivalent to an operator who answers <c>[0] Create new
+    ///     company</c> at the <see cref="PromptMultiple" /> prompt.
+    /// </summary>
+    public bool YesToAll { get; set; }
+
     public async Task LoadAsync()
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
@@ -240,21 +248,31 @@ public partial class CompanyMatcher
 
         if(soundexCandidates.Count > 1)
         {
-            // Defensive backstop: in unattended mode the importer's pre-flight should have
-            // already skipped the game. Throw rather than block on Console.ReadLine.
-            if(Unattended)
-                throw new NeedsInteractionException(
-                    $"multiple Soundex matches for company \"{normalizedName}\"");
-
-            Company prompted = PromptMultiple(normalizedName, soundexCandidates);
-
-            if(prompted != null)
+            // Yes-to-all mode: fall through to the "create new company" branch below,
+            // mirroring an operator who answers [0] at PromptMultiple.
+            if(YesToAll)
             {
-                _cache[normalizedName] = prompted;
-
-                return (prompted, "soundex-selected");
+                Console.WriteLine(
+                    $"  Multiple Soundex matches for \"{normalizedName}\" — auto-creating new company (yes-to-all).");
             }
-            // User chose 0 → fall through to create new company.
+            else
+            {
+                // Defensive backstop: in unattended mode the importer's pre-flight should have
+                // already skipped the game. Throw rather than block on Console.ReadLine.
+                if(Unattended)
+                    throw new NeedsInteractionException(
+                        $"multiple Soundex matches for company \"{normalizedName}\"");
+
+                Company prompted = PromptMultiple(normalizedName, soundexCandidates);
+
+                if(prompted != null)
+                {
+                    _cache[normalizedName] = prompted;
+
+                    return (prompted, "soundex-selected");
+                }
+                // User chose 0 → fall through to create new company.
+            }
         }
 
         // Create new company
