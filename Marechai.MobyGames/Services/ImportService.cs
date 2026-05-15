@@ -1639,6 +1639,7 @@ public class ImportService
         "Manufactured by"          => "mfg",
         "Licensed by"              => "lic",
         "Additional Development by" => "dev",
+        "Additional Programming by" => "dev",
         "Additional Graphics by"   => "gfx",
         "Graphics by"              => "gfx",
         "Copy Protection by"       => "cpy",
