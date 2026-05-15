@@ -199,6 +199,12 @@ public static partial class MainTabParser
         // Get the cleaned HTML (unwrap the wrapper div)
         string cleanedHtml = descDoc.DocumentNode.FirstChild.InnerHtml.Trim();
 
+        // Strip the trailing " (from Ad Blurbs)" fragment that MobyGames appends to
+        // ad-blurb sub-headings such as <h3>PlayStation Store Description (from Ad Blurbs)</h3>.
+        // The descriptive label ("PlayStation Store Description", "Steam Store Description",
+        // "Back of Box Description", etc.) is kept; only the parenthetical suffix is removed.
+        cleanedHtml = AdBlurbsSuffixRegex().Replace(cleanedHtml, string.Empty);
+
         if(string.IsNullOrWhiteSpace(cleanedHtml)) return;
 
         game.DescriptionHtml = cleanedHtml;
@@ -212,7 +218,9 @@ public static partial class MainTabParser
             RemoveComments      = true
         });
 
-        game.Description = converter.Convert(cleanedHtml).Trim();
+        // Defensive second pass on the converted markdown in case ReverseMarkdown
+        // reorders text in a way that resurrects the phrase.
+        game.Description = AdBlurbsSuffixRegex().Replace(converter.Convert(cleanedHtml), string.Empty).Trim();
     }
 
     static void ParseGroups(HtmlDocument doc, ParsedGame game)
@@ -472,6 +480,15 @@ public static partial class MainTabParser
     [GeneratedRegex(@"<a\s[^>]*href=""([^""]*(?:/search/|search\.php)[^""]*)""[^>]*>([^<]+)</a>",
                     RegexOptions.IgnoreCase)]
     private static partial Regex SearchUrlRegex();
+
+    /// <summary>
+    ///     Matches the trailing " (from Ad Blurbs)" fragment that MobyGames appends to
+    ///     ad-blurb sub-headings. Allows optional inline whitespace before the open paren
+    ///     (but not newlines, so a heading/body separator survives) and flexible spacing
+    ///     inside the parens. Case-insensitive.
+    /// </summary>
+    [GeneratedRegex(@"[ \t]*\(\s*from\s+Ad\s+Blurbs\s*\)", RegexOptions.IgnoreCase)]
+    private static partial Regex AdBlurbsSuffixRegex();
 
     /// <summary>
     ///     Extracts a MobyGames game slug from a single href URL.
