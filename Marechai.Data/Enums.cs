@@ -154,6 +154,35 @@ public enum SoftwareKind
     EmbeddedSoftware = 10
 }
 
+/// <summary>
+///     Classifies why a Software row appears on the /admin/software/orphan-addons page.
+///     Set on <see cref="Marechai.Data.Dtos.SoftwareAddonDto"/> by the controller projection.
+/// </summary>
+public enum AddonOrphanReason : byte
+{
+    /// <summary>DLC is correctly linked — appears only when the page is showing all add-ons (not just orphans).</summary>
+    [Description("Linked")]
+    Linked = 0,
+    /// <summary>DLC has no base software set.</summary>
+    [Description("No base")]
+    NoBase = 1,
+    /// <summary>DLC's BaseSoftwareId points to itself.</summary>
+    [Description("Self reference")]
+    SelfReference = 2,
+    /// <summary>DLC's BaseSoftwareId points to a row that no longer exists.</summary>
+    [Description("Dangling base")]
+    DanglingFk = 3,
+    /// <summary>DLC's base software is itself a DLC (forbidden chain).</summary>
+    [Description("Chained DLC")]
+    ChainedDlc = 4,
+    /// <summary>DLC's normalized base software name doesn't match the DLC's own normalized name.</summary>
+    [Description("Name mismatch")]
+    NameMismatch = 5,
+    /// <summary>Row is classified as Kind=Game but carries a "DLC / add-on" genre — misclassified at import time.</summary>
+    [Description("Misclassified as Game")]
+    MisclassifiedAsGame = 6
+}
+
 public enum MemoryType
 {
     /// <summary>Unknown memory type</summary>

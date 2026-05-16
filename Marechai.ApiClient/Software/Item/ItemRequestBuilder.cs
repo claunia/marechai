@@ -3,6 +3,7 @@
 using Marechai.ApiClient.Models;
 using Marechai.ApiClient.Software.Item.Addons;
 using Marechai.ApiClient.Software.Item.Attributes;
+using Marechai.ApiClient.Software.Item.BaseSoftware;
 using Marechai.ApiClient.Software.Item.Companies;
 using Marechai.ApiClient.Software.Item.CompanyRoles;
 using Marechai.ApiClient.Software.Item.Compilations;
@@ -48,6 +49,11 @@ namespace Marechai.ApiClient.Software.Item
         public global::Marechai.ApiClient.Software.Item.Attributes.AttributesRequestBuilder Attributes
         {
             get => new global::Marechai.ApiClient.Software.Item.Attributes.AttributesRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The baseSoftware property</summary>
+        public global::Marechai.ApiClient.Software.Item.BaseSoftware.BaseSoftwareRequestBuilder BaseSoftware
+        {
+            get => new global::Marechai.ApiClient.Software.Item.BaseSoftware.BaseSoftwareRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The companies property</summary>
         public global::Marechai.ApiClient.Software.Item.Companies.CompaniesRequestBuilder Companies

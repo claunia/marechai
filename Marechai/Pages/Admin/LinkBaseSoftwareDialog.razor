@@ -1,0 +1,126 @@
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@using Marechai.Services
+@using System.Threading
+
+@inject IStringLocalizer<SoftwareService> L
+
+<MudDialog>
+    <DialogContent>
+        @* Header: source DLC(s) summary. *@
+        @if(Addons.Count == 1)
+        {
+            <MudText Typo="Typo.body1" Class="mb-2">
+                @string.Format(L["Linking add-on \"{0}\" to a base game."], Addons[0].Name)
+            </MudText>
+        }
+        else
+        {
+            <MudText Typo="Typo.body1" Class="mb-2">
+                @string.Format(L["Linking {0} add-ons to the same base game."], Addons.Count)
+            </MudText>
+            <MudExpansionPanels Class="mb-2" Elevation="0">
+                <MudExpansionPanel Text="@L["Show selected rows"]">
+                    <MudList T="string" Dense="true">
+                        @foreach(SoftwareAddonDto a in Addons)
+                        {
+                            <MudListItem T="string">@a.Name</MudListItem>
+                        }
+                    </MudList>
+                </MudExpansionPanel>
+            </MudExpansionPanels>
+        }
+
+        @* Alert: any selected row that isn't Kind=Dlc will be flipped server-side. *@
+        @if(_hasMisclassified)
+        {
+            <MudAlert Severity="Severity.Info" Class="mb-3" Dense="true" Icon="@Icons.Material.Filled.AutoFixHigh">
+                @L["Linking will also change Kind to DLC for misclassified rows."]
+            </MudAlert>
+        }
+
+        @* Prefix filter — only useful in single-row mode where we have a deterministic token list. *@
+        @if(Addons.Count == 1 && _tokens.Length > 0)
+        {
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-2">
+                <MudSwitch T="bool" Value="_filterEnabled" ValueChanged="OnFilterEnabledChanged"
+                           Color="Color.Primary" Label="@L["Filter candidates by normalized name"]"/>
+                @if(_filterEnabled)
+                {
+                    <MudSelect T="AddonPrefixMode" Value="_prefixMode" ValueChanged="OnPrefixModeChanged"
+                               Variant="Variant.Outlined" Margin="Margin.Dense" Style="max-width: 180px;">
+                        <MudSelectItem T="AddonPrefixMode" Value="AddonPrefixMode.Exact">@L["Exact"]</MudSelectItem>
+                        <MudSelectItem T="AddonPrefixMode" Value="AddonPrefixMode.StartsWith">@L["Starts with"]</MudSelectItem>
+                    </MudSelect>
+                }
+            </MudStack>
+            @if(_filterEnabled)
+            {
+                <MudText Typo="Typo.caption" Class="mb-1">@L["Click to set the number of leading words used as the prefix."]</MudText>
+                <MudChipSet T="int" SelectedValue="_prefixWordCount" SelectedValueChanged="OnPrefixWordCountChanged"
+                            Class="mb-3" CheckMark="false">
+                    @for(int i = 1; i <= _tokens.Length; i++)
+                    {
+                        int idx = i; // capture
+                        <MudChip T="int" Value="@idx" Color="@(idx == _prefixWordCount ? Color.Primary : Color.Default)">
+                            @string.Join(' ', _tokens.Take(idx))
+                        </MudChip>
+                    }
+                </MudChipSet>
+            }
+        }
+
+        <MudAutocomplete T="SoftwareDto"
+                         Label="@L["Base software"]"
+                         @bind-Value="_selectedTarget"
+                         SearchFunc="SearchCandidates"
+                         ToStringFunc="@(s => s?.Name ?? string.Empty)"
+                         Variant="Variant.Outlined"
+                         Clearable="true"
+                         DebounceInterval="300"
+                         MinCharacters="0"
+                         CoerceText="true"
+                         ResetValueOnEmptyText="true"
+                         Class="mb-2"/>
+
+        @if(_autoSuggested)
+        {
+            <MudText Typo="Typo.caption" Color="Color.Success">@L["Suggested automatically based on name."]</MudText>
+        }
+
+        @if(!string.IsNullOrWhiteSpace(_errorMessage))
+        {
+            <MudAlert Severity="Severity.Error" Class="mt-3">@_errorMessage</MudAlert>
+        }
+
+        @if(_partialFailures is { Count: > 0 })
+        {
+            <MudPaper Class="pa-3 mt-3" Elevation="1">
+                <MudText Typo="Typo.subtitle2" Color="Color.Warning" Class="mb-2">
+                    @string.Format(L["{0} row(s) could not be linked:"], _partialFailures.Count)
+                </MudText>
+                <MudList T="string" Dense="true">
+                    @foreach(BulkSetBaseSoftwareFailureDto f in _partialFailures)
+                    {
+                        <MudListItem T="string">
+                            @($"#{f.Id}: {f.Reason}")
+                        </MudListItem>
+                    }
+                </MudList>
+            </MudPaper>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary"
+                   Variant="Variant.Filled"
+                   OnClick="ConfirmLink"
+                   Disabled="@(_selectedTarget is null || _isLinking)">
+            @if(_isLinking)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
+            }
+            @L["Link"]
+        </MudButton>
+    </DialogActions>
+</MudDialog>

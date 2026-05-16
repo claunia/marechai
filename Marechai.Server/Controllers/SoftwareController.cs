@@ -198,6 +198,23 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
             ? SOFTWARE_ADMIN_COUNT_CACHE_KEY
             : $"{SOFTWARE_ADMIN_COUNT_CACHE_KEY}:{(int)kind.Value}";
 
+    /// <summary>
+    ///     EF projection shape for the orphan-addons grid. Internal record so the
+    ///     <c>IQueryable&lt;AddonRow&gt;</c> sort switch in
+    ///     <see cref="GetAdminAddonsPagedAsync"/> can name the type (anonymous-type
+    ///     projections defeat the sortBy switch's branch unification).
+    /// </summary>
+    sealed class AddonRow
+    {
+        public ulong         Id             { get; set; }
+        public string        Name           { get; set; }
+        public SoftwareKind  Kind           { get; set; }
+        public ulong?        BaseSoftwareId { get; set; }
+        public string        BaseName       { get; set; }
+        public bool          HasDlcGenre    { get; set; }
+        public int           ReasonCode     { get; set; }
+    }
+
     [HttpGet("count")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -933,6 +950,511 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
         return baseQuery.GroupBy(s => MarechaiContext.NormalizeForDuplicate(s.Name))
                         .Where(g => g.Count() > 1)
                         .CountAsync(cancellationToken);
+    }
+
+    // -----------------------------------------------------------------------
+    // /admin/software/orphan-addons backend.
+    //
+    // Surfaces two row categories that should be linked to a base software:
+    //   1) Kind == Dlc rows whose BaseSoftwareId is broken.
+    //   2) Kind == Game rows that carry a "DLC / add-on" genre — misclassified
+    //      at import time (the MobyGames CLI fixup in
+    //      Marechai.MobyGames/Services/DlcRelationService.cs handles these in
+    //      batch; this UI does the same job interactively).
+    //
+    // Five endpoints:
+    //   GET   /software/admin/addons              (paged grid)
+    //   GET   /software/admin/addons/count        (grid total)
+    //   GET   /software/admin/addons/candidates   (autocomplete inside dialog)
+    //   PATCH /software/{id}/base-software        (single link)
+    //   PATCH /software/admin/addons/base-software-bulk  (bulk link)
+    // -----------------------------------------------------------------------
+
+    const           string   ADMIN_DLC_GENRE_IDS_CACHE_KEY = "admin.addons.dlc-genre-ids";
+    static readonly TimeSpan _adminAddonGenreCacheTtl       = TimeSpan.FromMinutes(5);
+
+    /// <summary>
+    ///     Returns the set of <see cref="SoftwareGenre"/> ids whose name marks a
+    ///     row as a DLC / add-on. Mirrors the predicate in
+    ///     <c>Marechai.MobyGames/Services/DlcRelationService.cs</c> lines 32‑37
+    ///     (the two <c>Contains</c> clauses cover the U+00A0 variant from old
+    ///     MobyGames HTML). Cached for <see cref="_adminAddonGenreCacheTtl"/>
+    ///     since these ids change at most when seed data is updated.
+    /// </summary>
+    async Task<int[]> GetDlcGenreIdsAsync(CancellationToken cancellationToken)
+    {
+        if(cache.TryGetValue(ADMIN_DLC_GENRE_IDS_CACHE_KEY, out int[] cached)) return cached;
+
+        int[] ids = await context.SoftwareGenres
+                                 .Where(g => g.Name.Contains("DLC") && g.Name.Contains("add-on") ||
+                                             g.Name == "Add-on")
+                                 .Select(g => g.Id)
+                                 .ToArrayAsync(cancellationToken);
+
+        cache.Set(ADMIN_DLC_GENRE_IDS_CACHE_KEY, ids, _adminAddonGenreCacheTtl);
+
+        return ids;
+    }
+
+    /// <summary>
+    ///     Server-side prefix normaliser that mirrors the MariaDB
+    ///     <c>NormalizeForMatch</c> function: lowercases, replaces every
+    ///     non-alphanumeric / non-whitespace char with a space, then collapses
+    ///     whitespace runs. Used to canonicalise the <c>prefix</c> query
+    ///     parameter before passing it through a server-evaluated comparison.
+    /// </summary>
+    static string NormalizePrefixForMatch(string input)
+    {
+        if(string.IsNullOrWhiteSpace(input)) return string.Empty;
+
+        var sb = new StringBuilder(input.Length);
+
+        foreach(char c in input)
+        {
+            if(char.IsLetterOrDigit(c))
+                sb.Append(char.ToLowerInvariant(c));
+            else
+                sb.Append(' ');
+        }
+
+        return string.Join(' ',
+                           sb.ToString()
+                             .Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
+    }
+
+    /// <summary>
+    ///     Escapes MariaDB <c>LIKE</c> metacharacters (<c>%</c>, <c>_</c>,
+    ///     backslash) so a user-supplied prefix is matched as a literal string
+    ///     prefix rather than a wildcard pattern. The default <c>LIKE</c>
+    ///     escape char in MariaDB is backslash.
+    /// </summary>
+    static string EscapeLikePrefix(string input) =>
+        input.Replace("\\", "\\\\").Replace("%", "\\%").Replace("_", "\\_");
+
+    /// <summary>
+    ///     Builds the union predicate for the orphan-addons grid: every
+    ///     <see cref="SoftwareKind.Dlc"/> row (linked or not, broken or not)
+    ///     plus every <see cref="SoftwareKind.Game"/> row that carries a
+    ///     DLC / add-on genre. The optional <paramref name="onlyOrphans"/>
+    ///     argument tightens the predicate to only rows whose computed
+    ///     <see cref="AddonOrphanReason"/> would be non-<see cref="AddonOrphanReason.Linked"/>.
+    /// </summary>
+    /// <remarks>
+    ///     The DLC genre predicate (the <c>EXISTS</c> sub-select on
+    ///     <c>GenresBySoftware</c>) is repeated in both the base filter and the
+    ///     projection's <c>HasDlcGenre</c> column. Pomelo / EF Core does NOT
+    ///     CSE the two identical sub-queries, so the SQL plan executes the
+    ///     genre lookup twice per row. Acceptable for an admin-only page on a
+    ///     dataset of a few thousand DLCs; if it becomes hot, materialise the
+    ///     genre set into a CTE.
+    /// </remarks>
+    IQueryable<Database.Models.Software> BuildOrphanQuery(int[] dlcGenreIds, bool onlyOrphans)
+    {
+        IQueryable<Database.Models.Software> baseQuery = context.Softwares
+            .Where(s => s.Kind == SoftwareKind.Dlc ||
+                        s.Kind == SoftwareKind.Game && context.GenresBySoftware
+                                                              .Any(g => g.SoftwareId == s.Id &&
+                                                                        dlcGenreIds.Contains(g.GenreId)));
+
+        if(!onlyOrphans) return baseQuery;
+
+        // A DLC's name is considered to "match" its base game when, after
+        // NormalizeForMatch (which strips colons / dashes / punctuation and
+        // lowercases), the DLC name either equals the base name or starts
+        // with the base name followed by a whitespace boundary. Equality with
+        // the base name alone never holds for legitimate DLCs (they always
+        // add a suffix like " Acceleration Pack") so the previous equality
+        // check flagged *every* correctly-linked DLC as a name mismatch.
+        // Using `base + ' '` as a LIKE prefix avoids the false positive where
+        // `Sonic` would otherwise be a prefix of `Sonicate Deluxe`.
+        return baseQuery.Where(s => s.Kind == SoftwareKind.Game ||
+                                    s.Kind == SoftwareKind.Dlc &&
+                                    (s.BaseSoftwareId == null ||
+                                     s.BaseSoftwareId == s.Id ||
+                                     s.BaseSoftware == null ||
+                                     s.BaseSoftware.Kind == SoftwareKind.Dlc ||
+                                     MarechaiContext.NormalizeForMatch(s.Name) !=
+                                     MarechaiContext.NormalizeForMatch(s.BaseSoftware.Name) &&
+                                     !EF.Functions.Like(MarechaiContext.NormalizeForMatch(s.Name),
+                                                        MarechaiContext.NormalizeForMatch(s.BaseSoftware.Name) +
+                                                        " %")));
+    }
+
+    /// <summary>
+    ///     Admin-only paged list backing <c>/admin/software/orphan-addons</c>.
+    ///     Returns <see cref="SoftwareAddonDto"/> rows with a server-computed
+    ///     <see cref="AddonOrphanReason"/> column suitable for the grid's
+    ///     orphan-reason chip.
+    /// </summary>
+    [HttpGet("admin/addons")]
+    [Authorize(Roles = "Admin, UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<List<SoftwareAddonDto>> GetAdminAddonsPagedAsync(
+        [FromQuery] int?  skip            = null,
+        [FromQuery] int?  take            = null,
+        [FromQuery] string search         = null,
+        [FromQuery] string sortBy         = null,
+        [FromQuery] bool   sortDescending = false,
+        [FromQuery] bool   onlyOrphans    = true,
+        CancellationToken  cancellationToken = default)
+    {
+        int[] dlcGenreIds = await GetDlcGenreIdsAsync(cancellationToken);
+
+        IQueryable<Database.Models.Software> baseQuery = BuildOrphanQuery(dlcGenreIds, onlyOrphans);
+
+        if(!string.IsNullOrWhiteSpace(search)) baseQuery = baseQuery.Where(s => s.Name.Contains(search));
+
+        // First-match-wins reason code, identical ordering to AddonOrphanReason:
+        //   6 = MisclassifiedAsGame (precedes everything for Kind == Game rows)
+        //   1 = NoBase
+        //   2 = SelfReference
+        //   3 = DanglingFk
+        //   4 = ChainedDlc
+        //   5 = NameMismatch
+        //   0 = Linked
+        // Cast to (int) so EF emits a plain INTEGER expression — using (byte)
+        // forces a tinyint cast that Pomelo sometimes mishandles inside CASE.
+        IQueryable<AddonRow> projected = baseQuery.Select(s => new AddonRow
+        {
+            Id             = s.Id,
+            Name           = s.Name,
+            Kind           = s.Kind,
+            BaseSoftwareId = s.BaseSoftwareId,
+            BaseName       = s.BaseSoftware != null ? s.BaseSoftware.Name : null,
+            HasDlcGenre    = context.GenresBySoftware
+                                    .Any(g => g.SoftwareId == s.Id && dlcGenreIds.Contains(g.GenreId)),
+            ReasonCode = s.Kind == SoftwareKind.Game ? 6 :
+                         s.BaseSoftwareId == null    ? 1 :
+                         s.BaseSoftwareId == s.Id    ? 2 :
+                         s.BaseSoftware   == null    ? 3 :
+                         s.BaseSoftware.Kind == SoftwareKind.Dlc ? 4 :
+                         MarechaiContext.NormalizeForMatch(s.Name) !=
+                         MarechaiContext.NormalizeForMatch(s.BaseSoftware.Name) &&
+                         !EF.Functions.Like(MarechaiContext.NormalizeForMatch(s.Name),
+                                            MarechaiContext.NormalizeForMatch(s.BaseSoftware.Name) +
+                                            " %") ? 5 : 0
+        });
+
+        IQueryable<AddonRow> ordered = sortBy switch
+        {
+            "Name"             => sortDescending
+                                      ? projected.OrderByDescending(p => MarechaiContext.NaturalSortKey(p.Name))
+                                      : projected.OrderBy(p => MarechaiContext.NaturalSortKey(p.Name)),
+            "Kind"             => sortDescending ? projected.OrderByDescending(p => p.Kind)
+                                                 : projected.OrderBy(p => p.Kind),
+            "BaseSoftwareName" => sortDescending
+                                      ? projected.OrderByDescending(p => MarechaiContext.NaturalSortKey(p.BaseName ?? string.Empty))
+                                      : projected.OrderBy(p => MarechaiContext.NaturalSortKey(p.BaseName ?? string.Empty)),
+            "OrphanReason"     => sortDescending ? projected.OrderByDescending(p => p.ReasonCode)
+                                                 : projected.OrderBy(p => p.ReasonCode),
+            _                  => projected.OrderBy(p => MarechaiContext.NaturalSortKey(p.Name))
+        };
+
+        if(skip.HasValue) ordered = ordered.Skip(skip.Value);
+
+        if(take.HasValue) ordered = ordered.Take(take.Value);
+
+        List<AddonRow> rows = await ordered.ToListAsync(cancellationToken);
+
+        return rows.Select(r => new SoftwareAddonDto
+                    {
+                        Id               = r.Id,
+                        Name             = r.Name,
+                        Kind             = r.Kind,
+                        HasDlcGenre      = r.HasDlcGenre,
+                        BaseSoftwareId   = r.BaseSoftwareId,
+                        BaseSoftwareName = r.BaseName,
+                        OrphanReason     = (AddonOrphanReason)r.ReasonCode
+                    })
+                   .ToList();
+    }
+
+    /// <summary>
+    ///     Count companion for <see cref="GetAdminAddonsPagedAsync"/>. Not
+    ///     cached — admins expect the total to drop as soon as they complete a
+    ///     link operation.
+    /// </summary>
+    [HttpGet("admin/addons/count")]
+    [Authorize(Roles = "Admin, UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<int> GetAdminAddonsCountAsync([FromQuery] string search      = null,
+                                                    [FromQuery] bool   onlyOrphans = true,
+                                                    CancellationToken cancellationToken = default)
+    {
+        int[] dlcGenreIds = await GetDlcGenreIdsAsync(cancellationToken);
+
+        IQueryable<Database.Models.Software> query = BuildOrphanQuery(dlcGenreIds, onlyOrphans);
+
+        if(!string.IsNullOrWhiteSpace(search)) query = query.Where(s => s.Name.Contains(search));
+
+        return await query.CountAsync(cancellationToken);
+    }
+
+    /// <summary>
+    ///     Backs the autocomplete inside the link dialog. Returns up to
+    ///     <paramref name="take"/> software rows that are valid base candidates:
+    ///     <c>Kind != Dlc</c> AND not carrying a DLC / add-on genre (so the
+    ///     operator can't pick another orphan as a parent).
+    /// </summary>
+    /// <param name="search">Optional substring match on <c>Name</c>.</param>
+    /// <param name="prefix">Optional pre-tokenised name prefix to compare against <c>NormalizeForMatch(Name)</c>.</param>
+    /// <param name="mode"><c>"exact"</c>, <c>"startswith"</c>, or <c>"off"</c> (default).</param>
+    /// <param name="take">Result cap; defaults to 50, clamped to [1, 200].</param>
+    [HttpGet("admin/addons/candidates")]
+    [Authorize(Roles = "Admin, UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<List<SoftwareDto>> GetAddonCandidatesAsync(
+        [FromQuery] string search = null,
+        [FromQuery] string prefix = null,
+        [FromQuery] string mode   = "off",
+        [FromQuery] int?   take   = null,
+        CancellationToken cancellationToken = default)
+    {
+        int[] dlcGenreIds = await GetDlcGenreIdsAsync(cancellationToken);
+
+        // Valid bases: not a DLC and not a misclassified Game-with-DLC-genre.
+        IQueryable<Database.Models.Software> query = context.Softwares
+            .Where(s => s.Kind != SoftwareKind.Dlc &&
+                        !context.GenresBySoftware.Any(g => g.SoftwareId == s.Id &&
+                                                           dlcGenreIds.Contains(g.GenreId)));
+
+        if(!string.IsNullOrWhiteSpace(search)) query = query.Where(s => s.Name.Contains(search));
+
+        string normalizedPrefix = NormalizePrefixForMatch(prefix);
+
+        switch((mode ?? "off").ToLowerInvariant())
+        {
+            case "exact" when !string.IsNullOrEmpty(normalizedPrefix):
+                query = query.Where(s => MarechaiContext.NormalizeForMatch(s.Name) == normalizedPrefix);
+
+                break;
+            case "startswith" when !string.IsNullOrEmpty(normalizedPrefix):
+                string likePattern = EscapeLikePrefix(normalizedPrefix) + "%";
+                query = query.Where(s => EF.Functions.Like(MarechaiContext.NormalizeForMatch(s.Name), likePattern));
+
+                break;
+        }
+
+        int resolvedTake = Math.Clamp(take ?? 50, 1, 200);
+
+        return await query.OrderBy(s => MarechaiContext.NaturalSortKey(s.Name))
+                          .Take(resolvedTake)
+                          .Select(s => new SoftwareDto
+                           {
+                               Id            = s.Id,
+                               Name          = s.Name,
+                               FamilyId      = s.FamilyId,
+                               Family        = s.Family.Name,
+                               Kind          = s.Kind,
+                               IsCompilation = false,
+                               FrontCoverId  = null
+                           })
+                          .ToListAsync(cancellationToken);
+    }
+
+    /// <summary>
+    ///     Sets (or clears) the base software of a single Software row. When
+    ///     <see cref="SetBaseSoftwareRequestDto.BaseSoftwareId"/> is non-null
+    ///     and the source row is not already <see cref="SoftwareKind.Dlc"/>,
+    ///     the row's <c>Kind</c> is also promoted to <see cref="SoftwareKind.Dlc"/>
+    ///     in the same transaction (mirrors the import-time fixup in
+    ///     <c>Marechai.MobyGames/Services/DlcRelationService.cs</c>).
+    /// </summary>
+    [HttpPatch("{id:ulong}/base-software")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult> SetBaseSoftwareAsync(ulong id, [FromBody] SetBaseSoftwareRequestDto request)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        Software model = await context.Softwares.FindAsync([id]);
+
+        if(model is null) return NotFound();
+
+        int[] dlcGenreIds = await GetDlcGenreIdsAsync(HttpContext.RequestAborted);
+
+        bool hasDlcGenre = await context.GenresBySoftware
+                                        .AnyAsync(g => g.SoftwareId == id && dlcGenreIds.Contains(g.GenreId),
+                                                  HttpContext.RequestAborted);
+
+        // Same scope as the orphan-addons grid: we only allow this PATCH on
+        // rows that page would list (a DLC, or a Game carrying a DLC genre).
+        if(model.Kind != SoftwareKind.Dlc && !(model.Kind == SoftwareKind.Game && hasDlcGenre))
+            return BadRequest("This endpoint only accepts DLC rows or Game rows carrying a DLC / add-on genre.");
+
+        ActionResult validationError = await ApplyBaseSoftwareLinkAsync(model, request.BaseSoftwareId, dlcGenreIds,
+                                                                       HttpContext.RequestAborted);
+
+        if(validationError is not null) return validationError;
+
+        await context.News.AddAsync(new News
+        {
+            AddedId = (long)model.Id,
+            Date    = DateTime.UtcNow,
+            Type    = NewsType.UpdatedSoftwareInDb,
+            Name    = model.Name
+        });
+
+        await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
+    }
+
+    /// <summary>
+    ///     Bulk variant of <see cref="SetBaseSoftwareAsync"/>: applies the
+    ///     same link operation to every id in
+    ///     <see cref="BulkSetBaseSoftwareRequestDto.SoftwareIds"/>. Per-row
+    ///     failures are reported in the response rather than rolling back the
+    ///     whole batch — the operator can re-run the failing rows manually.
+    /// </summary>
+    [HttpPatch("admin/addons/base-software-bulk")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<BulkSetBaseSoftwareResultDto>> SetBaseSoftwareBulkAsync(
+        [FromBody] BulkSetBaseSoftwareRequestDto request)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        if(request.SoftwareIds is null || request.SoftwareIds.Count == 0)
+            return BadRequest("softwareIds must contain at least one id.");
+
+        int[] dlcGenreIds = await GetDlcGenreIdsAsync(HttpContext.RequestAborted);
+
+        var result = new BulkSetBaseSoftwareResultDto
+        {
+            Failed = []
+        };
+
+        List<ulong> distinctIds = request.SoftwareIds.Distinct().ToList();
+
+        Dictionary<ulong, Software> models = await context.Softwares
+                                                          .Where(s => distinctIds.Contains(s.Id))
+                                                          .ToDictionaryAsync(s => s.Id, HttpContext.RequestAborted);
+
+        // Pre-compute which rows carry a DLC genre in a single query.
+        HashSet<ulong> dlcGenreRows = (await context.GenresBySoftware
+                                                    .Where(g => distinctIds.Contains(g.SoftwareId) &&
+                                                                dlcGenreIds.Contains(g.GenreId))
+                                                    .Select(g => g.SoftwareId)
+                                                    .Distinct()
+                                                    .ToListAsync(HttpContext.RequestAborted))
+                                     .ToHashSet();
+
+        foreach(ulong sourceId in distinctIds)
+        {
+            if(!models.TryGetValue(sourceId, out Software model))
+            {
+                result.Failed.Add(new BulkSetBaseSoftwareFailureDto
+                {
+                    Id     = sourceId,
+                    Reason = "Software not found."
+                });
+
+                continue;
+            }
+
+            if(model.Kind != SoftwareKind.Dlc &&
+               !(model.Kind == SoftwareKind.Game && dlcGenreRows.Contains(sourceId)))
+            {
+                result.Failed.Add(new BulkSetBaseSoftwareFailureDto
+                {
+                    Id     = sourceId,
+                    Reason = "Row is neither DLC nor a Game with a DLC / add-on genre."
+                });
+
+                continue;
+            }
+
+            ActionResult validationError = await ApplyBaseSoftwareLinkAsync(model, request.BaseSoftwareId, dlcGenreIds,
+                                                                           HttpContext.RequestAborted);
+
+            if(validationError is BadRequestObjectResult bad)
+            {
+                result.Failed.Add(new BulkSetBaseSoftwareFailureDto
+                {
+                    Id     = sourceId,
+                    Reason = bad.Value?.ToString() ?? "Validation failed."
+                });
+
+                continue;
+            }
+
+            await context.News.AddAsync(new News
+            {
+                AddedId = (long)model.Id,
+                Date    = DateTime.UtcNow,
+                Type    = NewsType.UpdatedSoftwareInDb,
+                Name    = model.Name
+            });
+
+            result.Updated++;
+        }
+
+        if(result.Updated > 0) await context.SaveChangesWithUserAsync(userId);
+
+        return result;
+    }
+
+    /// <summary>
+    ///     Shared mutation logic for the single + bulk PATCH endpoints.
+    ///     Mutates <paramref name="model"/> in place (BaseSoftwareId, possibly
+    ///     Kind) without saving — the caller batches the <see cref="News"/>
+    ///     row and <c>SaveChangesWithUserAsync</c>. Returns a non-null
+    ///     <see cref="BadRequestObjectResult"/> on validation failure;
+    ///     <c>null</c> means the in-memory model was successfully updated.
+    /// </summary>
+    async Task<ActionResult> ApplyBaseSoftwareLinkAsync(Software model, ulong? baseSoftwareId, int[] dlcGenreIds,
+                                                       CancellationToken cancellationToken)
+    {
+        if(!baseSoftwareId.HasValue)
+        {
+            // Clearing the link. The Software.UpdateAsync invariant requires
+            // BaseSoftwareId on a DLC row, so we refuse to leave the row in an
+            // invalid state — the operator must reclassify Kind via the full
+            // edit page if they really want to unlink.
+            if(model.Kind == SoftwareKind.Dlc)
+                return BadRequest("Cannot clear base software on a DLC row. Change Kind first via the full edit page.");
+
+            model.BaseSoftwareId = null;
+
+            return null;
+        }
+
+        ulong baseId = baseSoftwareId.Value;
+
+        if(baseId == model.Id) return BadRequest("Software cannot reference itself as its base.");
+
+        Software baseSw = await context.Softwares.FindAsync([baseId], cancellationToken);
+
+        if(baseSw is null) return BadRequest("Base software not found.");
+
+        if(baseSw.Kind == SoftwareKind.Dlc)
+            return BadRequest("Base software is itself a DLC / add-on; chained DLCs are not allowed.");
+
+        bool baseHasDlcGenre = await context.GenresBySoftware
+                                            .AnyAsync(g => g.SoftwareId == baseId &&
+                                                           dlcGenreIds.Contains(g.GenreId), cancellationToken);
+
+        if(baseHasDlcGenre)
+            return BadRequest("Base software is a misclassified Game carrying a DLC / add-on genre.");
+
+        model.BaseSoftwareId = baseId;
+
+        if(model.Kind != SoftwareKind.Dlc) model.Kind = SoftwareKind.Dlc;
+
+        return null;
     }
 
     [HttpGet("{id:ulong}")]

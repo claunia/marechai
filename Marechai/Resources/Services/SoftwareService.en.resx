@@ -997,4 +997,112 @@
     <data name="No duplicate software groups found." xml:space="preserve">
         <value>No duplicate software groups found.</value>
     </data>
+    <data name="Orphan add-ons &amp; DLCs" xml:space="preserve">
+        <value>Orphan add-ons &amp; DLCs</value>
+    </data>
+    <data name="Link DLCs to their base game and fix misclassified add-ons." xml:space="preserve">
+        <value>Link DLCs to their base game and fix misclassified add-ons.</value>
+    </data>
+    <data name="Show only orphans" xml:space="preserve">
+        <value>Show only orphans</value>
+    </data>
+    <data name="Link selected to base software ({0})" xml:space="preserve">
+        <value>Link selected to base software ({0})</value>
+    </data>
+    <data name="Link to base software" xml:space="preserve">
+        <value>Link to base software</value>
+    </data>
+    <data name="Link {0} rows to base software" xml:space="preserve">
+        <value>Link {0} rows to base software</value>
+    </data>
+    <data name="DLC name" xml:space="preserve">
+        <value>DLC name</value>
+    </data>
+    <data name="Current base software" xml:space="preserve">
+        <value>Current base software</value>
+    </data>
+    <data name="Row carries a DLC / add-on genre" xml:space="preserve">
+        <value>Row carries a DLC / add-on genre</value>
+    </data>
+    <data name="DLC genre" xml:space="preserve">
+        <value>DLC genre</value>
+    </data>
+    <data name="No base" xml:space="preserve">
+        <value>No base</value>
+    </data>
+    <data name="Self reference" xml:space="preserve">
+        <value>Self reference</value>
+    </data>
+    <data name="Dangling base" xml:space="preserve">
+        <value>Dangling base</value>
+    </data>
+    <data name="Chained DLC" xml:space="preserve">
+        <value>Chained DLC</value>
+    </data>
+    <data name="Name mismatch" xml:space="preserve">
+        <value>Name mismatch</value>
+    </data>
+    <data name="Misclassified as Game" xml:space="preserve">
+        <value>Misclassified as Game</value>
+    </data>
+    <data name="Linked" xml:space="preserve">
+        <value>Linked</value>
+    </data>
+    <data name="No orphan add-ons found." xml:space="preserve">
+        <value>No orphan add-ons found.</value>
+    </data>
+    <data name="Linking add-on &quot;{0}&quot; to a base game." xml:space="preserve">
+        <value>Linking add-on "{0}" to a base game.</value>
+    </data>
+    <data name="Linking {0} add-ons to the same base game." xml:space="preserve">
+        <value>Linking {0} add-ons to the same base game.</value>
+    </data>
+    <data name="Show selected rows" xml:space="preserve">
+        <value>Show selected rows</value>
+    </data>
+    <data name="Linking will also change Kind to DLC for misclassified rows." xml:space="preserve">
+        <value>Linking will also change Kind to DLC for misclassified rows.</value>
+    </data>
+    <data name="Filter candidates by normalized name" xml:space="preserve">
+        <value>Filter candidates by normalized name</value>
+    </data>
+    <data name="Exact" xml:space="preserve">
+        <value>Exact</value>
+    </data>
+    <data name="Starts with" xml:space="preserve">
+        <value>Starts with</value>
+    </data>
+    <data name="Click to set the number of leading words used as the prefix." xml:space="preserve">
+        <value>Click to set the number of leading words used as the prefix.</value>
+    </data>
+    <data name="Base software" xml:space="preserve">
+        <value>Base software</value>
+    </data>
+    <data name="Suggested automatically based on name." xml:space="preserve">
+        <value>Suggested automatically based on name.</value>
+    </data>
+    <data name="Link" xml:space="preserve">
+        <value>Link</value>
+    </data>
+    <data name="Linked &quot;{0}&quot; to &quot;{1}&quot;." xml:space="preserve">
+        <value>Linked "{0}" to "{1}".</value>
+    </data>
+    <data name="Linked {0} row(s) to &quot;{1}&quot;." xml:space="preserve">
+        <value>Linked {0} row(s) to "{1}".</value>
+    </data>
+    <data name="Linked {0} of {1} row(s) to &quot;{2}&quot;. {3} failed." xml:space="preserve">
+        <value>Linked {0} of {1} row(s) to "{2}". {3} failed.</value>
+    </data>
+    <data name="No rows linked. {0} failed." xml:space="preserve">
+        <value>No rows linked. {0} failed.</value>
+    </data>
+    <data name="Linking failed: {0}" xml:space="preserve">
+        <value>Linking failed: {0}</value>
+    </data>
+    <data name="{0} row(s) could not be linked:" xml:space="preserve">
+        <value>{0} row(s) could not be linked:</value>
+    </data>
+    <data name="—" xml:space="preserve">
+        <value>—</value>
+    </data>
 </root>

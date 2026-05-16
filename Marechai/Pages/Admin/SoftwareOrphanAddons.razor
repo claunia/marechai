@@ -1,0 +1,132 @@
+@page "/admin/software/orphan-addons"
+@attribute [Authorize(Roles = "Admin, UberAdmin")]
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@using Marechai.Services
+@inject SoftwareService SoftwareService
+@inject IStringLocalizer<SoftwareService> L
+@inject IDialogService DialogService
+@inject NavigationManager NavigationManager
+
+@*
+    /admin/software/orphan-addons — surfaces two intentionally heterogeneous row
+    classes through one grid:
+
+      1. Software rows with Kind = Dlc whose BaseSoftwareId link is broken
+         (null, self, dangling FK, parent is itself a DLC, or normalized-name
+         mismatch with the parent).
+      2. Software rows with Kind = Game that carry a "DLC / add-on" genre — the
+         row was misclassified at import time. Linking such a row also flips
+         Kind to Dlc.
+
+    The bulk "Link selected to base software" action and the per-row
+    LinkBaseSoftwareDialog reuse the same component; the dialog receives the
+    full SoftwareAddonDto list and switches between single/bulk wiring
+    internally.
+*@
+
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #4a148c 0%, #7b1fa2 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Filled.Extension" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Style="color: white;">@L["Orphan add-ons & DLCs"]</MudText>
+    </MudStack>
+    <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);" Class="mt-2">@L["Link DLCs to their base game and fix misclassified add-ons."]</MudText>
+</MudPaper>
+
+@if(!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+}
+
+@if(!string.IsNullOrWhiteSpace(_successMessage))
+{
+    <MudAlert Severity="Severity.Success" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _successMessage = null">@_successMessage</MudAlert>
+}
+
+<MudPaper Elevation="2" Class="rounded-lg">
+    <MudToolBar Dense="true">
+        <MudTextField T="string" ValueChanged="OnSearch" Placeholder="@L["Search by name..."]"
+                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
+                      IconSize="Size.Medium" Class="mt-0" DebounceInterval="300" Immediate="true"
+                      Style="max-width: 320px;"/>
+        <MudCheckBox T="bool" Value="_onlyOrphans" ValueChanged="OnOnlyOrphansChanged"
+                     Color="Color.Primary" Class="ml-4">
+            @L["Show only orphans"]
+        </MudCheckBox>
+        <MudSpacer/>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Link"
+                   Disabled="@(_selectedItems.Count == 0)" OnClick="OpenBulkLinkDialog">
+            @string.Format(L["Link selected to base software ({0})"], _selectedItems.Count)
+        </MudButton>
+        <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="ReloadAsync" Class="ml-2"/>
+    </MudToolBar>
+
+    <MudDataGrid @ref="_dataGrid" T="SoftwareAddonDto" ServerData="ServerReload"
+                 Dense="true" Hover="true" Striped="true" RowsPerPage="25"
+                 MultiSelection="true" SelectOnRowClick="false"
+                 @bind-SelectedItems="_selectedItems">
+        <Columns>
+            <SelectColumn T="SoftwareAddonDto"/>
+            <PropertyColumn Property="x => x.Name" Title="@L["DLC name"]"/>
+            <TemplateColumn Title="@L["Kind"]" Sortable="false" Filterable="false">
+                <CellTemplate>
+                    @{
+                        SoftwareKind currentKind = (SoftwareKind)(context.Item.Kind ?? 0);
+                        Color        kindColor   = currentKind == SoftwareKind.Dlc ? Color.Success : Color.Warning;
+                    }
+                    <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center">
+                        <MudChip T="string" Color="@kindColor" Size="Size.Small">@KindLabel(currentKind)</MudChip>
+                        @if(context.Item.HasDlcGenre == true && currentKind != SoftwareKind.Dlc)
+                        {
+                            <MudTooltip Text="@L["Row carries a DLC / add-on genre"]">
+                                <MudChip T="string" Color="Color.Secondary" Size="Size.Small" Variant="Variant.Outlined">@L["DLC genre"]</MudChip>
+                            </MudTooltip>
+                        }
+                    </MudStack>
+                </CellTemplate>
+            </TemplateColumn>
+            <TemplateColumn Title="@L["Current base software"]" Sortable="false" Filterable="false">
+                <CellTemplate>
+                    <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center">
+                        @if(context.Item.BaseSoftwareId.HasValue && !string.IsNullOrEmpty(context.Item.BaseSoftwareName))
+                        {
+                            <MudLink Href="@($"/software/{context.Item.BaseSoftwareId}")" Target="_blank">@context.Item.BaseSoftwareName</MudLink>
+                        }
+                        else if(context.Item.BaseSoftwareId.HasValue)
+                        {
+                            <MudText Typo="Typo.body2" Color="Color.Error">#@context.Item.BaseSoftwareId</MudText>
+                        }
+                        else
+                        {
+                            <MudText Typo="Typo.body2" Color="Color.Default">—</MudText>
+                        }
+                        <MudChip T="string" Color="@ReasonColor((AddonOrphanReason)(context.Item.OrphanReason ?? 0))"
+                                 Size="Size.Small" Variant="Variant.Filled">
+                            @ReasonLabel((AddonOrphanReason)(context.Item.OrphanReason ?? 0))
+                        </MudChip>
+                    </MudStack>
+                </CellTemplate>
+            </TemplateColumn>
+            <TemplateColumn Title="@L["Actions"]" Sortable="false" Filterable="false">
+                <CellTemplate>
+                    <MudStack Row="true" Spacing="1">
+                        <MudTooltip Text="@L["Link to base software"]">
+                            <MudIconButton Icon="@Icons.Material.Filled.Link" Size="Size.Small" Color="Color.Primary"
+                                           OnClick="() => OpenLinkDialog(context.Item)"/>
+                        </MudTooltip>
+                        <MudTooltip Text="@L["Open in new window"]">
+                            <MudIconButton Icon="@Icons.Material.Filled.OpenInNew" Size="Size.Small"
+                                           Href="@($"/software/{context.Item.Id}")" Target="_blank"/>
+                        </MudTooltip>
+                    </MudStack>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+        <NoRecordsContent>
+            <MudText>@L["No orphan add-ons found."]</MudText>
+        </NoRecordsContent>
+        <PagerContent>
+            <MudDataGridPager T="SoftwareAddonDto"/>
+        </PagerContent>
+    </MudDataGrid>
+</MudPaper>

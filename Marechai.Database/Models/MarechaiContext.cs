@@ -57,6 +57,16 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     [DbFunction("NormalizeForDuplicate", Schema = null)]
     public static string NormalizeForDuplicate(string value) => throw new NotSupportedException("This method is for EF Core LINQ-to-SQL translation only.");
 
+    /// <summary>
+    ///     Maps to the MariaDB NormalizeForMatch() function used by the /admin/software/orphan-addons page to
+    ///     compare DLC names by their leading word(s). Strips parenthesised/bracketed groups, then replaces every
+    ///     non-alphanumeric non-whitespace character (including colons and dashes) with a space, collapses
+    ///     whitespace, trims and lowercases. Designed for prefix LIKE comparisons against tokenized name prefixes.
+    ///     This method is for EF Core LINQ-to-SQL translation only and must not be called directly.
+    /// </summary>
+    [DbFunction("NormalizeForMatch", Schema = null)]
+    public static string NormalizeForMatch(string value) => throw new NotSupportedException("This method is for EF Core LINQ-to-SQL translation only.");
+
     public MarechaiContext() {}
 
     public MarechaiContext(DbContextOptions<MarechaiContext> options) : base(options) {}
@@ -318,6 +328,12 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
             [typeof(string)])!;
 
         modelBuilder.HasDbFunction(normalizeForDuplicateMethod).HasName("NormalizeForDuplicate");
+
+        MethodInfo normalizeForMatchMethod = typeof(MarechaiContext).GetMethod(nameof(NormalizeForMatch),
+            BindingFlags.Public | BindingFlags.Static,
+            [typeof(string)])!;
+
+        modelBuilder.HasDbFunction(normalizeForMatchMethod).HasName("NormalizeForMatch");
 
         modelBuilder.Entity<Book>(entity =>
         {

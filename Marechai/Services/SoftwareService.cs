@@ -37,6 +37,20 @@ using Microsoft.Kiota.Abstractions.Serialization;
 
 namespace Marechai.Services;
 
+/// <summary>
+///     Filter mode for <see cref="SoftwareService.GetAddonCandidatesAsync"/>.
+///     <see cref="Off"/> means no normalized-name predicate (plain
+///     <c>Name.Contains(search)</c> server-side). <see cref="Exact"/> requires
+///     <c>NormalizeForMatch(name) == prefix</c>; <see cref="StartsWith"/> uses a
+///     <c>LIKE prefix%</c> match.
+/// </summary>
+public enum AddonPrefixMode
+{
+    Off,
+    Exact,
+    StartsWith
+}
+
 public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter requestAdapter, ReferenceDataCache referenceData)
 {
     static string ExtractErrorMessage(ApiException ex)
@@ -806,6 +820,161 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         catch
         {
             return 0;
+        }
+    }
+
+    // ── Orphan add-ons / DLCs ──
+
+    /// <summary>
+    ///     Page of <see cref="SoftwareAddonDto"/> rows for the
+    ///     <c>/admin/software/orphan-addons</c> grid. When <paramref name="onlyOrphans"/>
+    ///     is true (default), returns only DLC-kind rows with a broken
+    ///     <c>BaseSoftwareId</c> link AND misclassified <c>Kind=Game</c> rows that
+    ///     carry a DLC / add-on genre. When false, returns the full DLC + misclassified
+    ///     set so the operator can also re-link rows that are already linked.
+    /// </summary>
+    public async Task<List<SoftwareAddonDto>> GetOrphanAddonsPagedAsync(int skip, int take, string search = null,
+                                                                       string sortBy = null,
+                                                                       bool sortDescending = false,
+                                                                       bool onlyOrphans = true,
+                                                                       CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            List<SoftwareAddonDto> rows = await client.Software.Admin.Addons.GetAsync(config =>
+            {
+                config.QueryParameters.Skip           = skip;
+                config.QueryParameters.Take           = take;
+                config.QueryParameters.Search         = search;
+                config.QueryParameters.SortBy         = sortBy;
+                config.QueryParameters.SortDescending = sortDescending;
+                config.QueryParameters.OnlyOrphans    = onlyOrphans;
+            }, cancellationToken);
+
+            return rows ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    /// <summary>
+    ///     Count companion to <see cref="GetOrphanAddonsPagedAsync"/>. Not cached:
+    ///     admins expect the total to drop as soon as they finish linking a row.
+    /// </summary>
+    public async Task<int> GetOrphanAddonsCountAsync(string search = null, bool onlyOrphans = true,
+                                                     CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            int? count = await client.Software.Admin.Addons.Count.GetAsync(config =>
+            {
+                config.QueryParameters.Search      = search;
+                config.QueryParameters.OnlyOrphans = onlyOrphans;
+            }, cancellationToken);
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
+
+    /// <summary>
+    ///     Candidate base-software lookup for the link dialog's autocomplete. The
+    ///     server excludes both DLC-kind rows and misclassified Game-with-DLC-genre
+    ///     rows so the operator can't pick another orphan as the parent. Use
+    ///     <paramref name="mode"/> = <see cref="AddonPrefixMode.Off"/> for plain
+    ///     server-side <c>Contains(search)</c>; the other two values gate the result
+    ///     on the SQL <c>NormalizeForMatch</c> of the candidate name.
+    /// </summary>
+    public async Task<List<SoftwareDto>> GetAddonCandidatesAsync(string search, string prefix, AddonPrefixMode mode,
+                                                                 int take = 50,
+                                                                 CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            string modeToken = mode switch
+            {
+                AddonPrefixMode.Exact      => "exact",
+                AddonPrefixMode.StartsWith => "startswith",
+                _                          => "off"
+            };
+
+            List<SoftwareDto> candidates = await client.Software.Admin.Addons.Candidates.GetAsync(config =>
+            {
+                config.QueryParameters.Search = search;
+                config.QueryParameters.Prefix = prefix;
+                config.QueryParameters.Mode   = modeToken;
+                config.QueryParameters.Take   = take;
+            }, cancellationToken);
+
+            return candidates ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    /// <summary>
+    ///     Single-row link operation. Sets <c>Software.BaseSoftwareId</c> for
+    ///     <paramref name="id"/> to <paramref name="baseSoftwareId"/> (or clears it
+    ///     when null), and atomically flips <c>Kind</c> to <c>Dlc</c> for
+    ///     misclassified <c>Kind=Game</c> rows.
+    /// </summary>
+    public async Task<(bool succeeded, string error)> SetBaseSoftwareAsync(ulong id, ulong? baseSoftwareId)
+    {
+        try
+        {
+            var body = new SetBaseSoftwareRequestDto
+            {
+                BaseSoftwareId = baseSoftwareId.HasValue ? (int?)baseSoftwareId.Value : null
+            };
+
+            await client.Software[(int)id].BaseSoftware.PatchAsync(body);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    /// <summary>
+    ///     Bulk link operation. Loops the same per-row validation server-side and
+    ///     returns <see cref="BulkSetBaseSoftwareResultDto"/> with the per-row
+    ///     failures so the dialog can render a partial-success summary.
+    /// </summary>
+    public async Task<(BulkSetBaseSoftwareResultDto result, string error)> SetBaseSoftwareBulkAsync(
+        IReadOnlyList<ulong> ids, ulong baseSoftwareId)
+    {
+        try
+        {
+            var body = new BulkSetBaseSoftwareRequestDto
+            {
+                BaseSoftwareId = (int)baseSoftwareId,
+                SoftwareIds    = ids.Select(i => (int?)i).ToList()
+            };
+
+            BulkSetBaseSoftwareResultDto result = await client.Software.Admin.Addons.BaseSoftwareBulk.PatchAsync(body);
+
+            return (result, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
         }
     }
 
