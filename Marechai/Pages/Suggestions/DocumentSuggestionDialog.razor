@@ -482,8 +482,21 @@
                                                      _machineAdds,
                                                      p => GetIntField(p, "machine_id")));
         IEnumerable<MachineDto> r = (_allMachines ?? []).Where(m => !assigned.Contains(m.Id));
-        if(!string.IsNullOrWhiteSpace(value))
-            r = r.Where(m => m.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
+
+        if(string.IsNullOrWhiteSpace(value))
+            return Task.FromResult(r.OrderBy(m => m.Company).ThenBy(m => m.Name).Take(50));
+
+        string query = value.Trim();
+
+        r = r.Where(m =>
+                (m.Name?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (m.Company?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false))
+            .OrderByDescending(m => m.Name?.Equals(query, StringComparison.OrdinalIgnoreCase) ?? false)
+            .ThenByDescending(m => m.Name?.StartsWith(query, StringComparison.OrdinalIgnoreCase) ?? false)
+            .ThenByDescending(m => m.Company?.StartsWith(query, StringComparison.OrdinalIgnoreCase) ?? false)
+            .ThenBy(m => m.Company)
+            .ThenBy(m => m.Name);
+
         return Task.FromResult(r.Take(50));
     }
 

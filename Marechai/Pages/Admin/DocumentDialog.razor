@@ -458,10 +458,22 @@
     {
         IEnumerable<MachineDto> results = _allMachines ?? [];
 
-        if(!string.IsNullOrWhiteSpace(value))
-            results = _allMachines?.Where(m => m.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ?? [];
+        if(string.IsNullOrWhiteSpace(value))
+            return Task.FromResult(results.OrderBy(m => m.Company).ThenBy(m => m.Name).Take(50));
 
-        return Task.FromResult(results);
+        string query = value.Trim();
+
+        results = (_allMachines ?? [])
+            .Where(m =>
+                (m.Name?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (m.Company?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false))
+            .OrderByDescending(m => m.Name?.Equals(query, StringComparison.OrdinalIgnoreCase) ?? false)
+            .ThenByDescending(m => m.Name?.StartsWith(query, StringComparison.OrdinalIgnoreCase) ?? false)
+            .ThenByDescending(m => m.Company?.StartsWith(query, StringComparison.OrdinalIgnoreCase) ?? false)
+            .ThenBy(m => m.Company)
+            .ThenBy(m => m.Name);
+
+        return Task.FromResult(results.Take(50));
     }
 
     Task<IEnumerable<MachineFamilyDto>> SearchMachineFamilies(string value, CancellationToken ct)
@@ -471,7 +483,7 @@
         if(!string.IsNullOrWhiteSpace(value))
             results = _allMachineFamilies?.Where(f => f.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ?? [];
 
-        return Task.FromResult(results);
+        return Task.FromResult(results.Take(50));
     }
 
     // --- Format helpers ---
