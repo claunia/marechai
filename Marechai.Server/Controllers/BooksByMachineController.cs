@@ -46,12 +46,15 @@ public class BooksByMachineController(MarechaiContext context) : ControllerBase
     public Task<List<BookByMachineDto>> GetByBook(long bookId) => context.BooksByMachines.Where(p => p.BookId == bookId)
                                                                          .Select(p => new BookByMachineDto
                                                                           {
-                                                                              Id        = p.Id,
-                                                                              BookId    = p.BookId,
-                                                                              MachineId = p.MachineId,
-                                                                              Machine   = p.Machine.Name
+                                                                              Id           = p.Id,
+                                                                              BookId       = p.BookId,
+                                                                              MachineId    = p.MachineId,
+                                                                              Machine      = p.Machine.Name,
+                                                                              Manufacturer = p.Machine.Company.Name,
+                                                                              Type         = p.Machine.Type
                                                                           })
-                                                                         .OrderBy(p => p.Machine)
+                                                                         .OrderBy(p => p.Manufacturer)
+                                                                         .ThenBy(p => p.Machine)
                                                                          .ToListAsync();
 
     [HttpDelete("{id:long}")]

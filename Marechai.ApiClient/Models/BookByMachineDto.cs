@@ -36,6 +36,16 @@ namespace Marechai.ApiClient.Models
 #endif
         /// <summary>The machine_id property</summary>
         public int? MachineId { get; set; }
+        /// <summary>The manufacturer property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? Manufacturer { get; set; }
+#nullable restore
+#else
+        public string Manufacturer { get; set; }
+#endif
+        /// <summary>The type property</summary>
+        public int? Type { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.ApiClient.Models.BookByMachineDto"/> and sets the default values.
         /// </summary>
@@ -66,6 +76,8 @@ namespace Marechai.ApiClient.Models
                 { "id", n => { Id = n.GetLongValue(); } },
                 { "machine", n => { Machine = n.GetStringValue(); } },
                 { "machine_id", n => { MachineId = n.GetIntValue(); } },
+                { "manufacturer", n => { Manufacturer = n.GetStringValue(); } },
+                { "type", n => { Type = n.GetIntValue(); } },
             };
         }
         /// <summary>
@@ -80,6 +92,8 @@ namespace Marechai.ApiClient.Models
             writer.WriteLongValue("id", Id);
             writer.WriteStringValue("machine", Machine);
             writer.WriteIntValue("machine_id", MachineId);
+            writer.WriteStringValue("manufacturer", Manufacturer);
+            writer.WriteIntValue("type", Type);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

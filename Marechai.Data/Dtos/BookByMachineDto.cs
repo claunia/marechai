@@ -40,4 +40,8 @@ public class BookByMachineDto : BaseDto<long>
     public int MachineId { get; set; }
     [JsonPropertyName("machine")]
     public string? Machine { get; set; }
+    [JsonPropertyName("manufacturer")]
+    public string? Manufacturer { get; set; }
+    [JsonPropertyName("type")]
+    public MachineType Type { get; set; }
 }

@@ -47,7 +47,11 @@ public partial class View
     PhotoLightbox                _lightbox;
     bool                         _loaded;
     List<BookByMachineFamilyDto> _machineFamilies;
-    List<BookByMachineDto>       _machines;
+    List<BookByMachineDto>       _computers;
+    List<BookByMachineDto>       _consoles;
+    List<BookByMachineDto>       _smartphones;
+    List<BookByMachineDto>       _tablets;
+    List<BookByMachineDto>       _pdas;
     List<PersonByBookDto>        _people;
     BookDto                      _previousBook;
     BookDto                      _sourceBook;
@@ -102,8 +106,14 @@ public partial class View
         _book            = full.Book;
         _people          = full.People          ?? [];
         _companies       = full.Companies       ?? [];
-        _machines        = full.Machines        ?? [];
         _machineFamilies = full.MachineFamilies ?? [];
+
+        List<BookByMachineDto> machines = full.Machines ?? [];
+        _computers   = machines.Where(m => m.Type == (int)MachineType.Computer)  .ToList();
+        _consoles    = machines.Where(m => m.Type == (int)MachineType.Console)   .ToList();
+        _smartphones = machines.Where(m => m.Type == (int)MachineType.Smartphone).ToList();
+        _tablets     = machines.Where(m => m.Type == (int)MachineType.Tablet)    .ToList();
+        _pdas        = machines.Where(m => m.Type == (int)MachineType.Pda)       .ToList();
 
         // Load the per-language synopsis state separately so we can detect language
         // fallback (the BookFullDto only carries the rendered synopsis text). The

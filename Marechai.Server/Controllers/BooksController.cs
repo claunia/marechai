@@ -396,12 +396,15 @@ public class BooksController(
             .Where(p => p.BookId == id)
             .Select(p => new BookByMachineDto
              {
-                 Id        = p.Id,
-                 BookId    = p.BookId,
-                 MachineId = p.MachineId,
-                 Machine   = p.Machine.Name
+                 Id           = p.Id,
+                 BookId       = p.BookId,
+                 MachineId    = p.MachineId,
+                 Machine      = p.Machine.Name,
+                 Manufacturer = p.Machine.Company.Name,
+                 Type         = p.Machine.Type
              })
-            .OrderBy(p => p.Machine)
+            .OrderBy(p => p.Manufacturer)
+            .ThenBy(p => p.Machine)
             .ToListAsync();
 
         // Mirrors BooksByMachineFamilyController.GetByBook.

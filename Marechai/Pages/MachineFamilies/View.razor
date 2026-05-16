@@ -84,7 +84,7 @@
                 @foreach(MachineDto computer in _computers)
                 {
                     <MudListItem T="MachineDto" Href="@($"/machine/{computer.Id}")" Icon="@Icons.Material.Filled.Computer">
-                        @computer.Name
+                        @computer.Company @computer.Name
                     </MudListItem>
                 }
             </MudList>
@@ -110,7 +110,7 @@
                 @foreach(MachineDto console in _consoles)
                 {
                     <MudListItem T="MachineDto" Href="@($"/machine/{console.Id}")" Icon="@Icons.Material.Filled.SportsEsports">
-                        @console.Name
+                        @console.Company @console.Name
                     </MudListItem>
                 }
             </MudList>
@@ -135,7 +135,7 @@
                 @foreach(MachineDto smartphone in _smartphones)
                 {
                     <MudListItem T="MachineDto" Href="@($"/machine/{smartphone.Id}")" Icon="@Icons.Material.Filled.Smartphone">
-                        @smartphone.Name
+                        @smartphone.Company @smartphone.Name
                     </MudListItem>
                 }
             </MudList>
@@ -160,7 +160,7 @@
                 @foreach(MachineDto tablet in _tablets)
                 {
                     <MudListItem T="MachineDto" Href="@($"/machine/{tablet.Id}")" Icon="@Icons.Material.Filled.Tablet">
-                        @tablet.Name
+                        @tablet.Company @tablet.Name
                     </MudListItem>
                 }
             </MudList>
@@ -185,7 +185,7 @@
                 @foreach(MachineDto pda in _pdas)
                 {
                     <MudListItem T="MachineDto" Href="@($"/machine/{pda.Id}")" Icon="@Icons.Material.Filled.Devices">
-                        @pda.Name
+                        @pda.Company @pda.Name
                     </MudListItem>
                 }
             </MudList>
