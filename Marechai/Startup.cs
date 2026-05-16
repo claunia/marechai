@@ -26,8 +26,12 @@
 using System;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.AspNetCore.StaticFiles;
 using MudBlazor.Services;
 using Marechai.Email;
 using Marechai.Services;
@@ -89,6 +93,32 @@ public class Startup(IConfiguration configuration)
         // languages, licenses, machine families, ISO standards) so navigating
         // between pages doesn't re-fetch the same dropdown data per circuit.
         services.AddMemoryCache();
+
+        // Brotli + Gzip response compression for the static asset payloads we
+        // ship with the Blazor server (MudBlazor.min.css is 607 KB raw — gzipping
+        // brings it under 90 KB which is the difference between a sub-second and
+        // an 11-second first paint on real-world links). The default MimeType list
+        // already covers text/css / application/javascript / text/html / image/svg+xml's
+        // siblings; we add `text/javascript` (now the default JS type emitted by
+        // .NET 10's static file middleware) and `application/wasm` for completeness.
+        services.AddResponseCompression(options =>
+        {
+            options.EnableForHttps = true;
+            options.Providers.Add<BrotliCompressionProvider>();
+            options.Providers.Add<GzipCompressionProvider>();
+            options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[]
+            {
+                "text/javascript", "application/javascript", "application/wasm",
+                "image/svg+xml", "application/json", "application/problem+json"
+            });
+        });
+
+        // Fastest level — the CPU cost of OptimalCompression on every static-file
+        // request is not worth the marginal extra size savings (and these are
+        // served behind a long Cache-Control so each file is gzipped at most once
+        // per browser anyway).
+        services.Configure<BrotliCompressionProviderOptions>(o => o.Level = CompressionLevel.Fastest);
+        services.Configure<GzipCompressionProviderOptions>(o   => o.Level = CompressionLevel.Fastest);
 
         string apiUrl = Configuration.GetSection("ApiClient:Url").Value ?? "http://localhost:5023";
 
@@ -176,7 +206,36 @@ public class Startup(IConfiguration configuration)
         });
 
         app.UseHttpsRedirection();
-        app.UseStaticFiles();
+
+        // Response compression must be registered BEFORE UseStaticFiles so the
+        // CSS / JS assets the static-file middleware serves get gzip/brotli'd.
+        app.UseResponseCompression();
+
+        // Long cache headers on the static assets. NuGet-packaged content under
+        // /_content and the Blazor framework files under /_framework are pinned
+        // to their package version, so they're safe to cache aggressively. Our
+        // own /css, /js, /img assets can change on each deploy → shorter cache.
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            OnPrepareResponse = ctx =>
+            {
+                string path = ctx.Context.Request.Path.Value ?? string.Empty;
+
+                if(path.StartsWith("/_content/", StringComparison.OrdinalIgnoreCase) ||
+                   path.StartsWith("/_framework/", StringComparison.OrdinalIgnoreCase))
+                {
+                    // 30 days — these only change when a NuGet package version bumps.
+                    ctx.Context.Response.Headers["Cache-Control"] = "public, max-age=2592000";
+                }
+                else
+                {
+                    // 1 day for site.css / our own JS / images so a same-day return visit pays no
+                    // network at all but a new deploy is picked up within 24h. ETag/Last-Modified
+                    // still ride along so a hard reload revalidates instantly.
+                    ctx.Context.Response.Headers["Cache-Control"] = "public, max-age=86400";
+                }
+            }
+        });
 
         // Add other security headers
         app.UseMiddleware<SecurityHeadersMiddleware>();
