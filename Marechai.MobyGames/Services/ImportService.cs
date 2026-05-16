@@ -1420,28 +1420,33 @@ public class ImportService
                 // Specs for this platform
                 foreach(var spec in game.Specs.Where(s => s.Platform == platformGroup.Key))
                 {
+                    // MobyGames serves cells like `3D&nbsp;Accelerator`; HtmlDecode turns &nbsp; into
+                    // U+00A0, and MariaDB's utf8mb4_*_ci collations treat U+00A0 != U+0020, breaking
+                    // exact-match search. Normalise NBSP -> regular space on the way into the DB.
                     context.SoftwareAttributes.Add(new SoftwareAttribute
                     {
                         SoftwareReleaseId = dbRelease.Id,
                         Category          = "Spec",
-                        Key               = spec.Key,
-                        Value             = spec.Value
+                        Key               = spec.Key.Replace('\u00A0',   ' '),
+                        Value             = spec.Value.Replace('\u00A0', ' ')
                     });
                 }
 
                 // Ratings for this platform
                 foreach(var rating in game.Ratings.Where(r => r.Platform == platformGroup.Key))
                 {
-                    string value = rating.Rating;
+                    // Same NBSP normalisation as the Spec write above; descriptors get folded into
+                    // the value string, so strip there too before concatenation.
+                    string value = rating.Rating.Replace('\u00A0', ' ');
 
                     if(!string.IsNullOrWhiteSpace(rating.Descriptors))
-                        value += $" ({rating.Descriptors})";
+                        value += $" ({rating.Descriptors.Replace('\u00A0', ' ')})";
 
                     context.SoftwareAttributes.Add(new SoftwareAttribute
                     {
                         SoftwareReleaseId = dbRelease.Id,
                         Category          = "Rating",
-                        Key               = rating.System,
+                        Key               = rating.System.Replace('\u00A0', ' '),
                         Value             = value
                     });
                 }

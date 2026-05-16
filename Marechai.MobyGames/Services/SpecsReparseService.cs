@@ -366,12 +366,15 @@ public class SpecsReparseService
 
         foreach(ParsedSpec spec in parsedSpecs)
         {
+            // MobyGames serves cells like `3D&nbsp;Accelerator`; HtmlDecode turns &nbsp; into U+00A0,
+            // and MariaDB's utf8mb4_*_ci collations treat U+00A0 != U+0020, breaking exact-match
+            // search. Normalise NBSP -> regular space on the way into the DB.
             context.SoftwareAttributes.Add(new SoftwareAttribute
             {
                 SoftwareReleaseId = release.Id,
                 Category          = "Spec",
-                Key               = spec.Key,
-                Value             = spec.Value
+                Key               = spec.Key.Replace('\u00A0',   ' '),
+                Value             = spec.Value.Replace('\u00A0', ' ')
             });
         }
 
