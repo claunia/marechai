@@ -33,6 +33,7 @@ using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -48,6 +49,7 @@ public class SoftwarePlatformsController(MarechaiContext context, IMemoryCache c
     static readonly TimeSpan _platformsCacheTtl  = TimeSpan.FromMinutes(5);
     [HttpGet]
     [AllowAnonymous]
+    [OutputCache(Duration = 300)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<List<SoftwarePlatformDto>> GetAsync()

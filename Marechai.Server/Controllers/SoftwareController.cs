@@ -41,6 +41,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Net.Http.Headers;
@@ -246,6 +247,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
     [HttpGet("minimum-year")]
     [AllowAnonymous]
+    [OutputCache(Duration = 300)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<int> GetMinimumYearAsync()
@@ -257,6 +259,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
     [HttpGet("maximum-year")]
     [AllowAnonymous]
+    [OutputCache(Duration = 300)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<int> GetMaximumYearAsync()
@@ -1689,42 +1692,70 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
     [HttpGet("genres")]
     [AllowAnonymous]
+    [OutputCache(Duration = 300, VaryByQueryKeys = ["lang"])]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<List<SoftwareGenreDto>> GetAllGenresAsync([FromQuery] string lang = null)
     {
         // The translated-name lookup uses the in-memory SoftwareGenreTranslationCache, so there is no
         // per-language IMemoryCache layer here — the cache is already in memory and lookups are O(1).
-        // Only the gating subset (`Where(g => g.Softwares.Any())` + ordering) hits the DB.
+        // The DB-derived gating subset (`Where(g => g.Softwares.Any())` + ordering + projection)
+        // is cached separately under SOFTWARE_GENRES_CACHE_KEY so repeated /software landing-page
+        // hits don't re-run the EXISTS subquery over the whole catalog.
         string resolvedLang = ResolveGenreLanguage(lang);
 
         await genreCache.EnsureLoadedAsync(HttpContext.RequestAborted);
 
-        List<SoftwareGenreDto> genres = await context.SoftwareGenres
-                                                     .Where(g => g.Softwares.Any())
-                                                     .OrderBy(g => g.Type)
-                                                     .ThenBy(g => g.Name)
-                                                     .Select(g => new SoftwareGenreDto
-                                                      {
-                                                          Id       = g.Id,
-                                                          Name     = g.Name,
-                                                          Type     = (int)g.Type,
-                                                          TypeName = g.Type.ToString()
-                                                      })
-                                                     .ToListAsync();
+        // Cache only the raw (id, canonical name, type) tuples — the canonical names are
+        // immutable across requests, translation runs per-request against the in-memory
+        // cache (~150 dictionary lookups). Keying the IMemoryCache entry on lang would
+        // multiply the cached payload by N supported languages for no real win.
+        if(!cache.TryGetValue(SOFTWARE_GENRES_CACHE_KEY,
+                              out List<(int Id, string Name, int Type, string TypeName)> cached) ||
+           cached is null)
+        {
+            var raw = await context.SoftwareGenres
+                                   .Where(g => g.Softwares.Any())
+                                   .OrderBy(g => g.Type)
+                                   .ThenBy(g => g.Name)
+                                   .Select(g => new
+                                    {
+                                        g.Id,
+                                        g.Name,
+                                        Type     = (int)g.Type,
+                                        TypeName = g.Type.ToString()
+                                    })
+                                   .ToListAsync();
+
+            cached = raw.Select(r => (r.Id, r.Name, r.Type, r.TypeName)).ToList();
+
+            cache.Set(SOFTWARE_GENRES_CACHE_KEY, cached, _catalogCacheTtl);
+        }
 
         // Importer stores genre names with U+00A0 (non-breaking space); normalise before applying the
         // translation lookup so the cache (which holds the canonical English name from the DB) returns
         // a consistent value when no translation exists for the requested language. The cache falls
         // back to a per-id DB load on miss (e.g. genres added between worker ticks).
-        foreach(SoftwareGenreDto g in genres)
+        // Always build a fresh result list — mutating the cached tuples is impossible (they're
+        // structs) but we still need to materialise translated SoftwareGenreDto instances per call.
+        var genres = new List<SoftwareGenreDto>(cached.Count);
+
+        foreach((int Id, string Name, int Type, string TypeName) g in cached)
         {
             string translated =
                 await genreCache.GetNameAsync(g.Id, resolvedLang, HttpContext.RequestAborted);
 
-            g.Name = string.IsNullOrEmpty(translated)
-                         ? g.Name?.Replace('\u00A0', ' ')
-                         : translated.Replace('\u00A0', ' ');
+            string displayName = string.IsNullOrEmpty(translated)
+                                     ? g.Name?.Replace('\u00A0', ' ')
+                                     : translated.Replace('\u00A0', ' ');
+
+            genres.Add(new SoftwareGenreDto
+            {
+                Id       = g.Id,
+                Name     = displayName,
+                Type     = g.Type,
+                TypeName = g.TypeName
+            });
         }
 
         return genres;
@@ -1802,6 +1833,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
     [HttpGet("specifications")]
     [AllowAnonymous]
+    [OutputCache(Duration = 300, VaryByQueryKeys = ["lang"])]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<List<SoftwareSpecKeyDto>> GetSpecificationsAsync([FromQuery] string lang = null)

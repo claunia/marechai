@@ -231,6 +231,17 @@ file class Program
         // ranking (avoids re-ranking the catalog on every page load).
         builder.Services.AddMemoryCache();
 
+        // Output caching for the /software landing-page endpoints. The controller
+        // layer already uses IMemoryCache for the heavy DB queries; the framework-
+        // level OutputCache adds a second layer that short-circuits before the
+        // controller method allocates / serialises (so repeated requests skip MVC
+        // pipeline overhead entirely). Each action that opts in via [OutputCache]
+        // picks up this 5-min base policy unless overridden.
+        builder.Services.AddOutputCache(options =>
+        {
+            options.AddBasePolicy(b => b.Expire(TimeSpan.FromMinutes(5)));
+        });
+
         // Compress JSON / text responses. Brotli + Gzip only — the application/json
         // payloads from this API compress to ~10–20% of their original size, which
         // is significant over real networks (and free on localhost).
@@ -500,6 +511,11 @@ file class Program
 
         // Use CORS before authentication/authorization
         app.UseCors("AllowFrontend");
+
+        // OutputCache must run before authentication for [AllowAnonymous] cache hits to
+        // avoid the per-request auth roundtrip, but after CORS so cached responses are
+        // still returned with the right Access-Control-Allow-Origin headers.
+        app.UseOutputCache();
 
         app.UseAuthentication();
         app.UseAuthorization();

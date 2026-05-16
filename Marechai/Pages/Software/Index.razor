@@ -119,57 +119,94 @@
     </MudPaper>
 }
 
+@* Genre section is collapsed by default and its chip body is rendered only when the
+   panel is expanded. Without the `@if(_genresPanelExpanded)` gate MudBlazor would
+   keep the ~150 genre chips in the render tree with `display:none`, which still
+   costs the initial SignalR diff. *@
 @if(_genresByType?.Count > 0)
 {
-    <MudPaper Elevation="2" Class="pa-4 mb-4 rounded-lg">
-        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
-            <MudIcon Icon="@Icons.Material.Filled.Category" Color="Color.Secondary" Size="Size.Small"/>
-            <MudText Typo="Typo.subtitle1">@L["Search software by genre"]</MudText>
-        </MudStack>
-        @foreach(var genreType in _genresByType)
-        {
-            <MudText Typo="Typo.subtitle2" Class="mt-2 mb-1"><strong>@L[genreType.Key]</strong></MudText>
-            <div class="d-flex flex-wrap gap-1">
-                @foreach(SoftwareGenreDto genre in genreType.Value.OrderBy(g => g.Name, NaturalUnitComparer.Instance))
+    <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+        <MudExpansionPanel Expanded="@_genresPanelExpanded"
+                           ExpandedChanged="@(v => _genresPanelExpanded = v)">
+            <TitleContent>
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIcon Icon="@Icons.Material.Filled.Category" Color="Color.Secondary" Size="Size.Small"/>
+                    <MudText Typo="Typo.subtitle1">@L["Search software by genre"] (@_genresByType.Sum(t => t.Value.Count))</MudText>
+                </MudStack>
+            </TitleContent>
+            <ChildContent>
+                @if(_genresPanelExpanded)
                 {
-                    <MudChip T="string" Href="@($"/software/genre/{genre.Id}")">@genre.Name</MudChip>
+                    @foreach(var genreType in _genresByType)
+                    {
+                        <MudText Typo="Typo.subtitle2" Class="mt-2 mb-1"><strong>@L[genreType.Key]</strong></MudText>
+                        <div class="d-flex flex-wrap gap-1">
+                            @foreach(SoftwareGenreDto genre in genreType.Value.OrderBy(g => g.Name, NaturalUnitComparer.Instance))
+                            {
+                                <MudChip T="string" Href="@($"/software/genre/{genre.Id}")">@genre.Name</MudChip>
+                            }
+                        </div>
+                    }
                 }
-            </div>
-        }
-    </MudPaper>
+            </ChildContent>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
 }
 
+@* Specifications section dominates the chip count: ~70 keys, some with 100–200 values
+   each (~1500–2000 chips total). Outer panel is collapsed by default; once expanded
+   it renders one nested panel per spec key (chip count only — no values yet); the
+   inner panels lazy-render their value chips when individually expanded. *@
 @if(_specsByKey?.Count > 0)
 {
-    <MudPaper Elevation="2" Class="pa-4 mb-4 rounded-lg">
-        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
-            <MudIcon Icon="@Icons.Material.Filled.Settings" Color="Color.Secondary" Size="Size.Small"/>
-            <MudText Typo="Typo.subtitle1">@L["Search software by specifications"]</MudText>
-        </MudStack>
-        @foreach(var specKey in _specsByKey)
-        {
-            <MudText Typo="Typo.subtitle2" Class="mt-2 mb-1"><strong>@specKey.DisplayKey</strong></MudText>
-            <div class="d-flex flex-wrap gap-1">
-                @{
-                    // Pair canonical Values[i] (used in the URL filter) with DisplayValues[i] (the
-                    // translated label) and sort by display so the UI order matches the user's locale.
-                    var paired = specKey.Values
-                                        .Select((v, i) => new
-                                                          {
-                                                              Raw     = v,
-                                                              Display = i < specKey.DisplayValues.Count
-                                                                            ? specKey.DisplayValues[i]
-                                                                            : v
-                                                          })
-                                        .OrderBy(p => p.Display, NaturalUnitComparer.Instance);
-                }
-                @foreach(var pair in paired)
+    <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+        <MudExpansionPanel Expanded="@_specsPanelExpanded"
+                           ExpandedChanged="@(v => _specsPanelExpanded = v)">
+            <TitleContent>
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIcon Icon="@Icons.Material.Filled.Settings" Color="Color.Secondary" Size="Size.Small"/>
+                    <MudText Typo="Typo.subtitle1">@L["Search software by specifications"] (@_specsByKey.Count)</MudText>
+                </MudStack>
+            </TitleContent>
+            <ChildContent>
+                @if(_specsPanelExpanded)
                 {
-                    <MudChip T="string" Href="@($"/software/spec?key={Uri.EscapeDataString(specKey.Key)}&value={Uri.EscapeDataString(pair.Raw)}")">@pair.Display</MudChip>
+                    <MudExpansionPanels MultiExpansion="true" Class="mt-2">
+                        @foreach(var specKey in _specsByKey)
+                        {
+                            // Capture loop variable for the lambda + dictionary lookup.
+                            var keyForClosure = specKey.Key;
+                            <MudExpansionPanel Text="@($"{specKey.DisplayKey} ({specKey.Values.Count})")"
+                                               Expanded="@(_specKeyExpanded.GetValueOrDefault(keyForClosure))"
+                                               ExpandedChanged="@(v => _specKeyExpanded[keyForClosure] = v)">
+                                @if(_specKeyExpanded.GetValueOrDefault(keyForClosure))
+                                {
+                                    // Pair canonical Values[i] (used in the URL filter) with DisplayValues[i] (the
+                                    // translated label) and sort by display so the UI order matches the user's locale.
+                                    var paired = specKey.Values
+                                                        .Select((v, i) => new
+                                                                          {
+                                                                              Raw     = v,
+                                                                              Display = i < specKey.DisplayValues.Count
+                                                                                            ? specKey.DisplayValues[i]
+                                                                                            : v
+                                                                          })
+                                                        .OrderBy(p => p.Display, NaturalUnitComparer.Instance);
+
+                                    <div class="d-flex flex-wrap gap-1">
+                                        @foreach(var pair in paired)
+                                        {
+                                            <MudChip T="string" Href="@($"/software/spec?key={Uri.EscapeDataString(specKey.Key)}&value={Uri.EscapeDataString(pair.Raw)}")">@pair.Display</MudChip>
+                                        }
+                                    </div>
+                                }
+                            </MudExpansionPanel>
+                        }
+                    </MudExpansionPanels>
                 }
-            </div>
-        }
-    </MudPaper>
+            </ChildContent>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
 }
 
 <MudPaper Elevation="2" Class="pa-4 mb-4 rounded-lg">

@@ -36,13 +36,28 @@ public partial class Index
 {
     int                                        _count;
     Dictionary<string, List<SoftwareGenreDto>> _genresByType;
+    // Heavy chip sections start collapsed; the body inside each MudExpansionPanel
+    // is `@if`-gated on these flags so the chips are not in the render tree (or
+    // the SignalR diff) until the user opens the panel.
+    bool                                       _genresPanelExpanded;
     bool                                       _loaded;
     int                                        _maxYear;
     int                                        _minYear;
     List<SoftwarePlatformDto>                  _platforms  = [];
     List<SoftwareSpecKeyDto>                   _specsByKey = [];
+    bool                                       _specsPanelExpanded;
+    // Per-spec-key expansion state, keyed by the canonical (untranslated) spec key.
+    readonly Dictionary<string, bool>          _specKeyExpanded = new();
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    /// <summary>
+    /// Loads the landing-page data during prerender (and again on interactive hydration
+    /// — both pass through the controller's `IMemoryCache` so the second call is a
+    /// dictionary lookup). Switching from `OnAfterRenderAsync` to `OnInitializedAsync`
+    /// is what eliminates the visible "spinner → swap to chips" flash: when the user's
+    /// browser receives the prerendered HTML the chip section headers are already
+    /// populated, so there is no second render with a giant SignalR diff.
+    /// </summary>
+    protected override async Task OnInitializedAsync()
     {
         if(_loaded) return;
 
@@ -70,7 +85,6 @@ public partial class Index
         _specsByKey = specsTask.Result;
 
         _loaded = true;
-        StateHasChanged();
     }
 
     /// <summary>
