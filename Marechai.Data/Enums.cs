@@ -111,6 +111,7 @@ public enum MachineType
     /// <summary>Smartphone</summary>
     Smartphone = 3,
     /// <summary>Personal digital assistant.</summary>
+    [Description("PDA")]
     Pda = 4,
     /// <summary>Tablet computer</summary>
     Tablet = 5
