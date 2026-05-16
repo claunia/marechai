@@ -46,6 +46,13 @@ public sealed class SoftwareGenreTranslationProvider(IServiceScopeFactory       
                                                      ILogger<SoftwareGenreTranslationProvider> logger)
     : ITranslationProvider
 {
+    /// <summary>
+    ///     Number of translations to accumulate before flushing to the database. Keeps the
+    ///     transaction window short so a worker cancellation mid-sweep doesn't lose more than
+    ///     this many already-translated rows.
+    /// </summary>
+    const int FlushBatchSize = 25;
+
     public string Name => "SoftwareGenre";
 
     public Task EnsureCacheLoadedAsync(CancellationToken ct) => cache.EnsureLoadedAsync(ct);
@@ -80,9 +87,9 @@ public sealed class SoftwareGenreTranslationProvider(IServiceScopeFactory       
 
     /// <summary>
     ///     Snapshot missing genres from the cache (no DB query), translate them one by one
-    ///     (OpenAI/NLLB serialised), then bulk-insert the resulting rows in a single
-    ///     <c>SaveChangesAsync</c>. Successful rows are also pushed to the cache so subsequent
-    ///     requests see them immediately.
+    ///     (OpenAI/NLLB serialised), then bulk-insert the resulting rows in
+    ///     <see cref="FlushBatchSize" />-sized chunks. Successful rows are also pushed to the cache
+    ///     so subsequent requests see them immediately.
     /// </summary>
     public async Task<int> TranslateMissingAsync(string languageCode, CancellationToken ct)
     {
@@ -98,7 +105,11 @@ public sealed class SoftwareGenreTranslationProvider(IServiceScopeFactory       
         const string domainContext =
             "The text is the name of a video-game / software genre or sub-genre (entertainment classification).";
 
-        var batch = new List<SoftwareGenreTranslation>(missing.Count);
+        await using AsyncServiceScope scope = scopeFactory.CreateAsyncScope();
+        MarechaiContext               ctx   = scope.ServiceProvider.GetRequiredService<MarechaiContext>();
+
+        var inserted = 0;
+        var batch    = new List<SoftwareGenreTranslation>(FlushBatchSize);
 
         foreach((int id, string englishName) in missing)
         {
@@ -127,18 +138,24 @@ public sealed class SoftwareGenreTranslationProvider(IServiceScopeFactory       
                 LanguageCode = languageCode,
                 Name         = translated
             });
+
+            if(batch.Count < FlushBatchSize) continue;
+
+            ctx.SoftwareGenreTranslations.AddRange(batch);
+            await ctx.SaveChangesAsync(ct);
+            foreach(SoftwareGenreTranslation row in batch) cache.Upsert(row.GenreId, row.LanguageCode, row.Name);
+            inserted += batch.Count;
+            batch.Clear();
         }
 
-        if(batch.Count == 0) return 0;
+        if(batch.Count > 0)
+        {
+            ctx.SoftwareGenreTranslations.AddRange(batch);
+            await ctx.SaveChangesAsync(ct);
+            foreach(SoftwareGenreTranslation row in batch) cache.Upsert(row.GenreId, row.LanguageCode, row.Name);
+            inserted += batch.Count;
+        }
 
-        await using AsyncServiceScope scope = scopeFactory.CreateAsyncScope();
-        MarechaiContext               ctx   = scope.ServiceProvider.GetRequiredService<MarechaiContext>();
-
-        ctx.SoftwareGenreTranslations.AddRange(batch);
-        await ctx.SaveChangesAsync(ct);
-
-        foreach(SoftwareGenreTranslation row in batch) cache.Upsert(row.GenreId, row.LanguageCode, row.Name);
-
-        return batch.Count;
+        return inserted;
     }
 }

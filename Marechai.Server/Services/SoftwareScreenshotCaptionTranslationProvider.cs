@@ -60,7 +60,7 @@ public sealed class SoftwareScreenshotCaptionTranslationProvider(
     ///     transaction window short so a worker cancellation mid-sweep doesn't lose more than
     ///     this many already-translated rows.
     /// </summary>
-    const int FlushBatchSize = 50;
+    const int FlushBatchSize = 25;
 
     public string Name => "SoftwareScreenshotCaption";
 

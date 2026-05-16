@@ -55,6 +55,13 @@ public sealed class SoftwarePromoArtGroupTranslationProvider(
     TranslationService                                   translationService,
     ILogger<SoftwarePromoArtGroupTranslationProvider>    logger) : ITranslationProvider
 {
+    /// <summary>
+    ///     Number of translations to accumulate before flushing to the database. Keeps the
+    ///     transaction window short so a worker cancellation mid-sweep doesn't lose more than
+    ///     this many already-translated rows.
+    /// </summary>
+    const int FlushBatchSize = 25;
+
     public string Name => "SoftwarePromoArtGroup";
 
     public Task EnsureCacheLoadedAsync(CancellationToken ct) => Task.CompletedTask;
@@ -64,7 +71,8 @@ public sealed class SoftwarePromoArtGroupTranslationProvider(
     /// <summary>
     ///     Anti-join query for groups lacking a translation row in <paramref name="languageCode" />,
     ///     translate each via <see cref="TranslationService.TranslateAsync" /> serially (preserves
-    ///     OpenAI rate-limit safety), then bulk-insert. Returns the number of rows inserted.
+    ///     OpenAI rate-limit safety), then bulk-insert in <see cref="FlushBatchSize" />-sized chunks.
+    ///     Returns the number of rows inserted.
     /// </summary>
     public async Task<int> TranslateMissingAsync(string languageCode, CancellationToken ct)
     {
@@ -95,7 +103,8 @@ public sealed class SoftwarePromoArtGroupTranslationProvider(
             "(e.g. 'Box Art', 'Magazine Advertisements', 'Trade Show Flyers'). " +
             "Keep brand names, product names and proper nouns unchanged.";
 
-        var batch = new List<SoftwarePromoArtGroupTranslation>(missing.Count);
+        var inserted = 0;
+        var batch    = new List<SoftwarePromoArtGroupTranslation>(FlushBatchSize);
 
         foreach((int id, string englishName) in missing)
         {
@@ -124,13 +133,22 @@ public sealed class SoftwarePromoArtGroupTranslationProvider(
                 LanguageCode = languageCode,
                 Name         = translated
             });
+
+            if(batch.Count < FlushBatchSize) continue;
+
+            ctx.SoftwarePromoArtGroupTranslations.AddRange(batch);
+            await ctx.SaveChangesAsync(ct);
+            inserted += batch.Count;
+            batch.Clear();
         }
 
-        if(batch.Count == 0) return 0;
+        if(batch.Count > 0)
+        {
+            ctx.SoftwarePromoArtGroupTranslations.AddRange(batch);
+            await ctx.SaveChangesAsync(ct);
+            inserted += batch.Count;
+        }
 
-        ctx.SoftwarePromoArtGroupTranslations.AddRange(batch);
-        await ctx.SaveChangesAsync(ct);
-
-        return batch.Count;
+        return inserted;
     }
 }

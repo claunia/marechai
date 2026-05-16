@@ -54,6 +54,13 @@ public sealed class SoftwareCoverCaptionTranslationProvider(
     TranslationService                                translationService,
     ILogger<SoftwareCoverCaptionTranslationProvider> logger) : ITranslationProvider
 {
+    /// <summary>
+    ///     Number of translations to accumulate before flushing to the database. Keeps the
+    ///     transaction window short so a worker cancellation mid-sweep doesn't lose more than
+    ///     this many already-translated rows.
+    /// </summary>
+    const int FlushBatchSize = 25;
+
     public string Name => "SoftwareCoverCaption";
 
     public Task EnsureCacheLoadedAsync(CancellationToken ct) => Task.CompletedTask;
@@ -64,7 +71,8 @@ public sealed class SoftwareCoverCaptionTranslationProvider(
     ///     Anti-join query for distinct cover captions lacking a translation row in
     ///     <paramref name="languageCode" />, translate each via
     ///     <see cref="TranslationService.TranslateAsync" /> serially (preserves OpenAI rate-limit
-    ///     safety), then bulk-insert. Returns the number of rows inserted.
+    ///     safety), then bulk-insert in <see cref="FlushBatchSize" />-sized chunks. Returns the
+    ///     number of rows inserted.
     /// </summary>
     public async Task<int> TranslateMissingAsync(string languageCode, CancellationToken ct)
     {
@@ -100,7 +108,8 @@ public sealed class SoftwareCoverCaptionTranslationProvider(
             "Keep brand names, publisher names, version numbers, edition labels and copyright " +
             "notices unchanged.";
 
-        var batch = new List<SoftwareCoverCaptionTranslation>(missing.Count);
+        var inserted = 0;
+        var batch    = new List<SoftwareCoverCaptionTranslation>(FlushBatchSize);
 
         foreach(string englishCaption in missing)
         {
@@ -132,13 +141,22 @@ public sealed class SoftwareCoverCaptionTranslationProvider(
                 LanguageCode = languageCode,
                 Translation  = translated
             });
+
+            if(batch.Count < FlushBatchSize) continue;
+
+            ctx.SoftwareCoverCaptionTranslations.AddRange(batch);
+            await ctx.SaveChangesAsync(ct);
+            inserted += batch.Count;
+            batch.Clear();
         }
 
-        if(batch.Count == 0) return 0;
+        if(batch.Count > 0)
+        {
+            ctx.SoftwareCoverCaptionTranslations.AddRange(batch);
+            await ctx.SaveChangesAsync(ct);
+            inserted += batch.Count;
+        }
 
-        ctx.SoftwareCoverCaptionTranslations.AddRange(batch);
-        await ctx.SaveChangesAsync(ct);
-
-        return batch.Count;
+        return inserted;
     }
 }

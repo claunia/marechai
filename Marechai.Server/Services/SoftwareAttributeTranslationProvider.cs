@@ -52,6 +52,13 @@ public sealed class SoftwareAttributeTranslationProvider(
     SoftwareAttributeTranslationCache                 cache,
     ILogger<SoftwareAttributeTranslationProvider>    logger) : ITranslationProvider
 {
+    /// <summary>
+    ///     Number of translations to accumulate before flushing to the database. Keeps the
+    ///     transaction window short so a worker cancellation mid-sweep doesn't lose more than
+    ///     this many already-translated rows.
+    /// </summary>
+    const int FlushBatchSize = 25;
+
     public string Name => "SoftwareAttribute";
 
     public Task EnsureCacheLoadedAsync(CancellationToken ct) => cache.EnsureLoadedAsync(ct);
@@ -143,8 +150,9 @@ public sealed class SoftwareAttributeTranslationProvider(
 
     /// <summary>
     ///     Snapshot pool strings missing translation for <paramref name="languageCode" />, translate
-    ///     each via OpenAI/NLLB serially, then bulk-insert the results in a single
-    ///     <c>SaveChangesAsync</c>. Successful rows are pushed to the cache.
+    ///     each via OpenAI/NLLB serially, then bulk-insert the results in
+    ///     <see cref="FlushBatchSize" />-sized chunks. Successful rows are pushed to the cache after
+    ///     each chunk lands.
     /// </summary>
     public async Task<int> TranslateMissingAsync(string languageCode, CancellationToken ct)
     {
@@ -164,7 +172,12 @@ public sealed class SoftwareAttributeTranslationProvider(
           + "(e.g. \"1 MB\", \"Mouse, Keyboard\", \"Windows 95\"). Use computer / video-game "
           + "terminology, NOT general-purpose translations. Keep brand names, version numbers, "
           + "units (MB, GB, MHz) and product titles unchanged.";
-        var batch = new List<SoftwareAttributeStringTranslation>(missing.Count);
+
+        await using AsyncServiceScope scope = scopeFactory.CreateAsyncScope();
+        MarechaiContext               ctx   = scope.ServiceProvider.GetRequiredService<MarechaiContext>();
+
+        var inserted = 0;
+        var batch    = new List<SoftwareAttributeStringTranslation>(FlushBatchSize);
 
         foreach((int id, string text) in missing)
         {
@@ -193,19 +206,26 @@ public sealed class SoftwareAttributeTranslationProvider(
                 LanguageCode = languageCode,
                 Translation  = translated
             });
+
+            if(batch.Count < FlushBatchSize) continue;
+
+            ctx.SoftwareAttributeStringTranslations.AddRange(batch);
+            await ctx.SaveChangesAsync(ct);
+            foreach(SoftwareAttributeStringTranslation row in batch)
+                cache.Upsert(row.StringId, row.LanguageCode, row.Translation);
+            inserted += batch.Count;
+            batch.Clear();
         }
 
-        if(batch.Count == 0) return 0;
+        if(batch.Count > 0)
+        {
+            ctx.SoftwareAttributeStringTranslations.AddRange(batch);
+            await ctx.SaveChangesAsync(ct);
+            foreach(SoftwareAttributeStringTranslation row in batch)
+                cache.Upsert(row.StringId, row.LanguageCode, row.Translation);
+            inserted += batch.Count;
+        }
 
-        await using AsyncServiceScope scope = scopeFactory.CreateAsyncScope();
-        MarechaiContext               ctx   = scope.ServiceProvider.GetRequiredService<MarechaiContext>();
-
-        ctx.SoftwareAttributeStringTranslations.AddRange(batch);
-        await ctx.SaveChangesAsync(ct);
-
-        foreach(SoftwareAttributeStringTranslation row in batch)
-            cache.Upsert(row.StringId, row.LanguageCode, row.Translation);
-
-        return batch.Count;
+        return inserted;
     }
 }
