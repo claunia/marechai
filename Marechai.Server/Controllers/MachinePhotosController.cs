@@ -34,9 +34,6 @@ using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Marechai.Helpers;
 using Marechai.Server.Helpers;
-using MetadataExtractor;
-using MetadataExtractor.Formats.Exif;
-using MetadataExtractor.Formats.Exif.Makernotes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -288,109 +285,7 @@ public class MachinePhotosController(MarechaiContext context, IConfiguration con
             OriginalExtension = extension.TrimStart('.')
         };
 
-        try
-        {
-            IReadOnlyList<MetadataExtractor.Directory> directories = ImageMetadataReader.ReadMetadata(ms);
-
-            var exifIfd0 = directories.OfType<ExifIfd0Directory>().FirstOrDefault();
-            var exifSub  = directories.OfType<ExifSubIfdDirectory>().FirstOrDefault();
-
-            if(exifIfd0 is not null)
-            {
-                if(exifIfd0.TryGetUInt16(ExifDirectoryBase.TagOrientation, out ushort orientation))
-                    model.Orientation = (Orientation)orientation;
-
-                model.CameraManufacturer = exifIfd0.GetDescription(ExifDirectoryBase.TagMake);
-                model.CameraModel        = exifIfd0.GetDescription(ExifDirectoryBase.TagModel);
-                model.SoftwareUsed       = exifIfd0.GetDescription(ExifDirectoryBase.TagSoftware);
-                model.Author             = exifIfd0.GetDescription(ExifDirectoryBase.TagArtist);
-
-                if(exifIfd0.TryGetDouble(ExifDirectoryBase.TagXResolution, out double xRes))
-                    model.HorizontalResolution = xRes;
-
-                if(exifIfd0.TryGetDouble(ExifDirectoryBase.TagYResolution, out double yRes))
-                    model.VerticalResolution = yRes;
-
-                if(exifIfd0.TryGetUInt16(ExifDirectoryBase.TagResolutionUnit, out ushort resUnit))
-                    model.ResolutionUnit = (ResolutionUnit)resUnit;
-            }
-
-            if(exifSub is not null)
-            {
-                if(exifSub.TryGetDouble(ExifDirectoryBase.TagFNumber, out double fNumber))
-                    model.Focal = fNumber;
-
-                if(exifSub.TryGetDouble(ExifDirectoryBase.TagAperture, out double aperture))
-                    model.Aperture = aperture;
-
-                if(exifSub.TryGetDouble(ExifDirectoryBase.TagExposureTime, out double exposureTime))
-                    model.ExposureTime = exposureTime;
-
-                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagExposureProgram, out ushort exposureProgram))
-                    model.ExposureProgram = (ExposureProgram)exposureProgram;
-
-                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagIsoEquivalent, out ushort isoRating))
-                    model.IsoRating = isoRating;
-
-                model.ExifVersion = exifSub.GetDescription(ExifDirectoryBase.TagExifVersion);
-
-                if(exifSub.TryGetDateTime(ExifDirectoryBase.TagDateTimeOriginal, out DateTime creationDate))
-                    model.CreationDate = creationDate;
-
-                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagMeteringMode, out ushort meteringMode))
-                    model.MeteringMode = (MeteringMode)meteringMode;
-
-                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagFlash, out ushort flash))
-                    model.Flash = (Flash)flash;
-
-                if(exifSub.TryGetDouble(ExifDirectoryBase.TagFocalLength, out double focalLength))
-                    model.FocalLength = focalLength;
-
-                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagColorSpace, out ushort colorSpace))
-                    model.ColorSpace = (ColorSpace)colorSpace;
-
-                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagExposureMode, out ushort exposureMode))
-                    model.ExposureMethod = (ExposureMode)exposureMode;
-
-                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagWhiteBalance, out ushort whiteBalance))
-                    model.WhiteBalance = (WhiteBalance)whiteBalance;
-
-                if(exifSub.TryGetDouble(ExifDirectoryBase.TagDigitalZoomRatio, out double digitalZoom))
-                    model.DigitalZoomRatio = digitalZoom;
-
-                if(exifSub.TryGetUInt16(ExifDirectoryBase.Tag35MMFilmEquivFocalLength, out ushort focalLengthEquiv))
-                    model.FocalLengthEquivalent = focalLengthEquiv;
-
-                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagSceneCaptureType, out ushort sceneCaptureType))
-                    model.SceneCaptureType = (SceneCaptureType)sceneCaptureType;
-
-                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagContrast, out ushort contrast))
-                    model.Contrast = (Contrast)contrast;
-
-                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagSaturation, out ushort saturation))
-                    model.Saturation = (Saturation)saturation;
-
-                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagSharpness, out ushort sharpness))
-                    model.Sharpness = (Sharpness)sharpness;
-
-                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagSubjectDistanceRange, out ushort subjectDistRange))
-                    model.SubjectDistanceRange = (SubjectDistanceRange)subjectDistRange;
-
-                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagSensingMethod, out ushort sensingMethod))
-                    model.SensingMethod = (SensingMethod)sensingMethod;
-
-                if(exifSub.TryGetUInt16(0x9208, out ushort lightSource))
-                    model.LightSource = (LightSource)lightSource;
-
-                model.Lens = exifSub.GetDescription(ExifDirectoryBase.TagLensModel);
-
-                model.Comments = exifSub.GetDescription(ExifDirectoryBase.TagUserComment);
-            }
-        }
-        catch
-        {
-            // EXIF extraction failed — continue without metadata
-        }
+        PhotoExifExtractor.ExtractInto(model, ms);
 
         // Save original file to disk
         Photos.EnsureCreated(_assetRootPath, false, "machines");

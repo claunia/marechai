@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Marechai.Data;
 using Marechai.Database.Models;
 using MetadataExtractor;
@@ -153,7 +154,8 @@ public static class PhotoExifExtractor
                 // Don't auto-overwrite an existing comment (collaborator-supplied per-photo
                 // comment takes precedence over the EXIF UserComment tag).
                 if(string.IsNullOrEmpty(target.Comments))
-                    target.Comments = exifSub.GetDescription(ExifDirectoryBase.TagUserComment);
+                    target.Comments = TruncateUtf8(exifSub.GetDescription(ExifDirectoryBase.TagUserComment),
+                                                   ExifUserCommentMaxBytes);
             }
         }
         catch
@@ -164,5 +166,35 @@ public static class PhotoExifExtractor
         {
             if(content.CanSeek) content.Position = origPos;
         }
+    }
+
+    /// <summary>
+    ///     Maximum byte length of the EXIF 2.x <c>UserComment</c> tag — 8-byte
+    ///     character-code prefix + up to 1015 bytes of payload, 1023 bytes total.
+    ///     Some cameras and editors emit longer values; we cap so the field stays
+    ///     spec-compliant and avoids surprising downstream consumers.
+    /// </summary>
+    private const int ExifUserCommentMaxBytes = 1023;
+
+    /// <summary>
+    ///     Truncate <paramref name="value" /> so its UTF-8 encoding is at most
+    ///     <paramref name="maxBytes" /> bytes long, without splitting a multi-byte
+    ///     code point. Returns <c>null</c> for null input and the original string
+    ///     when it already fits.
+    /// </summary>
+    private static string TruncateUtf8(string value, int maxBytes)
+    {
+        if(string.IsNullOrEmpty(value)) return value;
+
+        if(Encoding.UTF8.GetByteCount(value) <= maxBytes) return value;
+
+        byte[] bytes = Encoding.UTF8.GetBytes(value);
+        int    end   = maxBytes;
+
+        // Walk backwards while we're inside a UTF-8 continuation byte (10xxxxxx)
+        // so we never split a code point.
+        while(end > 0 && (bytes[end] & 0xC0) == 0x80) end--;
+
+        return Encoding.UTF8.GetString(bytes, 0, end);
     }
 }

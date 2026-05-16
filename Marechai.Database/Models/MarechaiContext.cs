@@ -1134,8 +1134,12 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
 
             entity.HasIndex(e => e.ColorSpace);
 
-            entity.HasIndex(e => e.Comments);
-
+            // `Comments` is intentionally NOT indexed: the EXIF UserComment payload
+            // can exceed varchar(255) (the implicit type Pomelo picks for indexed
+            // strings) and no query in the codebase filters or sorts by it. Leaving
+            // it un-indexed lets EF emit `longtext` (Pomelo default for unconstrained
+            // strings) so values up to the EXIF 2.x spec limit of 1023 bytes — and
+            // beyond — fit without truncation.
             entity.HasIndex(e => e.Contrast);
 
             entity.HasIndex(e => e.CreationDate);
@@ -1219,8 +1223,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
 
             entity.HasIndex(e => e.ColorSpace);
 
-            entity.HasIndex(e => e.Comments);
-
+            // `Comments` intentionally un-indexed — see GpuPhoto block above.
             entity.HasIndex(e => e.Contrast);
 
             entity.HasIndex(e => e.CreationDate);
@@ -1305,8 +1308,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
 
             entity.HasIndex(e => e.ColorSpace);
 
-            entity.HasIndex(e => e.Comments);
-
+            // `Comments` intentionally un-indexed — see GpuPhoto block above.
             entity.HasIndex(e => e.Contrast);
 
             entity.HasIndex(e => e.CreationDate);
@@ -1380,8 +1382,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
 
             entity.HasIndex(e => e.ColorSpace);
 
-            entity.HasIndex(e => e.Comments);
-
+            // `Comments` intentionally un-indexed — see GpuPhoto block above.
             entity.HasIndex(e => e.Contrast);
 
             entity.HasIndex(e => e.CreationDate);
