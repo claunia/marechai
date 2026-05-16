@@ -639,7 +639,15 @@ public class ImportService
                     Name    = software.Name
                 });
 
-                await context.SaveChangesAsync();
+                try
+                {
+                    await context.SaveChangesAsync();
+                }
+                catch(DbUpdateException ex)
+                {
+                    throw new Exception($"Failed to link '{game.Name}' to existing entry '{software.Name}' (ID: {software.Id}): {ExtractDbErrorDetails(ex)}", ex);
+                }
+
                 Console.WriteLine($"    Linked to existing Software ID: {software.Id}");
             }
             else
@@ -748,7 +756,15 @@ public class ImportService
                         Name    = software.Name
                     });
 
-                    await context.SaveChangesAsync();
+                    try
+                    {
+                        await context.SaveChangesAsync();
+                    }
+                    catch(DbUpdateException ex)
+                    {
+                        throw new Exception($"Failed to link '{game.Name}' to similar entry '{software.Name}' (ID: {software.Id}): {ExtractDbErrorDetails(ex)}", ex);
+                    }
+
                     Console.WriteLine($"    Linked to existing Software ID: {software.Id}");
                 }
                 else
@@ -1944,9 +1960,41 @@ public class ImportService
 
             if(baseImportState is not null)
             {
+                // Perform pre-link validation (same checks as server-side ApplyBaseSoftwareLinkAsync)
+                Software baseSoftware = await context.Softwares.FindAsync(baseImportState.SoftwareId);
+                
+                if(baseSoftware is null)
+                {
+                    Console.WriteLine($"    \u001b[33mWarning: Base software (ID {baseImportState.SoftwareId}) not found in database\u001b[0m");
+                    return;
+                }
+                
+                // Check: cannot self-reference
+                if(baseImportState.SoftwareId == software.Id)
+                {
+                    Console.WriteLine($"    \u001b[33mWarning: Cannot link DLC to itself\u001b[0m");
+                    return;
+                }
+                
+                // Check: base software cannot be a DLC (no chained DLCs)
+                if(baseSoftware.Kind == SoftwareKind.Dlc)
+                {
+                    Console.WriteLine($"    \u001b[33mWarning: Base software (ID {baseImportState.SoftwareId}) is itself a DLC; chained DLCs are not allowed\u001b[0m");
+                    return;
+                }
+                
                 software.BaseSoftwareId = (ulong)baseImportState.SoftwareId;
-                await context.SaveChangesAsync();
-                Console.WriteLine($"    Linked to base game Software ID: {baseImportState.SoftwareId}");
+                
+                try
+                {
+                    await context.SaveChangesAsync();
+                    Console.WriteLine($"    Linked to base game Software ID: {baseImportState.SoftwareId}");
+                }
+                catch(DbUpdateException ex)
+                {
+                    Console.WriteLine($"    \u001b[31mError: Failed to link DLC to base game (ID {baseImportState.SoftwareId}): {ExtractDbErrorDetails(ex)}\u001b[0m");
+                    throw; // Re-throw so batch loop catches it and marks game as failed
+                }
             }
             else
             {
@@ -1954,10 +2002,57 @@ public class ImportService
                                   "Run import-dlc-relations after importing base games.\u001b[0m");
             }
         }
+        catch(DbUpdateException ex)
+        {
+            Console.WriteLine($"    \u001b[31mError: Failed to resolve DLC base game: {ExtractDbErrorDetails(ex)}\u001b[0m");
+            throw; // Re-throw so batch loop catches it and marks game as failed
+        }
         catch(Exception ex)
         {
             Console.WriteLine($"    \u001b[33mWarning: Error resolving base game: {ex.Message}\u001b[0m");
+            // Don't re-throw warnings — they're non-fatal
         }
+    }
+
+    /// <summary>
+    ///     Extracts meaningful error details from a <see cref="DbUpdateException"/>.
+    ///     Attempts to identify common constraint violations and returns a
+    ///     user-friendly message. Falls back to the inner exception message
+    ///     if the error type cannot be identified.
+    /// </summary>
+    private string ExtractDbErrorDetails(DbUpdateException ex)
+    {
+        // Check if this is a concurrency conflict (record was modified/deleted by another user)
+        if(ex is DbUpdateConcurrencyException)
+            return "Record was modified or deleted by another operation. Retry the import.";
+
+        // Try to extract details from the inner exception (usually contains the actual DB error)
+        var innerEx = ex.InnerException;
+
+        if(innerEx != null)
+        {
+            string message = innerEx.Message;
+
+            // MySQL Foreign Key constraint violation
+            if(message.Contains("Foreign key constraint", StringComparison.OrdinalIgnoreCase) ||
+               message.Contains("Cannot add or update a child row", StringComparison.OrdinalIgnoreCase) ||
+               message.Contains("Cannot delete or update a parent row", StringComparison.OrdinalIgnoreCase))
+                return "Foreign key constraint violation: the base software record may have been deleted or is invalid.";
+
+            // MySQL Unique constraint violation
+            if(message.Contains("Duplicate entry", StringComparison.OrdinalIgnoreCase) ||
+               message.Contains("UNIQUE constraint", StringComparison.OrdinalIgnoreCase))
+                return "Unique constraint violation: this link or record already exists.";
+
+            // Return the raw exception message if it's reasonably short
+            if(message.Length < 250)
+                return $"Database error: {message}";
+
+            // Fallback for very long messages
+            return "A database constraint violation occurred.";
+        }
+
+        return "An unexpected error occurred while saving to the database.";
     }
 }
 
