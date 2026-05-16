@@ -5,12 +5,19 @@ using System.Threading.Tasks;
 using Marechai.Data;
 using Marechai.Database.Models;
 using Marechai.MobyGames.Parsers;
+using Marechai.MobyGames.Parsers.NewSite;
 using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.MobyGames.Services;
 
 public class DlcRelationService
 {
+    const int                               ChunkMain     = 0;
+    const int                               ChunkCredits  = 1;
+    const int                               ChunkReleases = 2;
+    const int                               ChunkSpecs    = 3;
+    const int                               ChunkCovers   = 4;
+    const int                               ChunkReviews  = 5;
     readonly IDbContextFactory<MarechaiContext> _contextFactory;
     readonly MobyGamesHttpClient               _httpClient;
     readonly ImportService                     _importService;
@@ -127,41 +134,14 @@ public class DlcRelationService
 
                 Console.Write($" base game MobyID={baseGameMobyId}, slug={baseGameSlug ?? "?"}...");
 
-                // Try to find base game in our DB by slug in MobyGamesImportState
-                ulong? baseSoftwareId = await FindBaseSoftwareIdAsync(context, baseGameSlug);
-
-                // If not found by slug, try importing from mobygames_raw
-                if(baseSoftwareId is null && baseGameSlug is not null)
-                {
-                    // Try slug variations in mobygames_raw: plain, with -, with platform/ prefix
-                    string[] slugsToTry = [baseGameSlug, $"-{baseGameSlug}"];
-
-                    foreach(string trySlug in slugsToTry)
-                    {
-                        var rows = await _sourceDb.GetRowsForGameAsync(trySlug);
-
-                        if(rows.Count > 0)
-                        {
-                            Console.Write($" importing '{trySlug}'...");
-
-                            if(!dryRun)
-                            {
-                                baseSoftwareId = await _importService.ImportGameBySlugAsync(trySlug);
-                            }
-                            else
-                            {
-                                Console.Write(" [dry-run: would import]");
-                                baseSoftwareId = 0; // placeholder for dry-run
-                            }
-
-                            break;
-                        }
-                    }
-                }
+                // Try to find the base game in the DB first, then fall back to raw rows,
+                // and finally live-site scraping if the base game has never been stored.
+                ulong? baseSoftwareId = await ResolveBaseSoftwareIdAsync(context, baseGameMobyId, baseGameSlug,
+                                                                         dryRun);
 
                 if(baseSoftwareId is null)
                 {
-                    Console.WriteLine($" Base game not in mobygames_raw. Needs scraping first.");
+                    Console.WriteLine(" Could not resolve base game.");
                     skipped++;
 
                     continue;
@@ -190,12 +170,129 @@ public class DlcRelationService
         Console.WriteLine($"\nDone: {linked} linked, {skipped} skipped, {failed} failed");
     }
 
-    /// <summary>
-    ///     Tries to find the Software ID for a base game by looking up its slug
-    ///     in MobyGamesImportState.MobyGameId (with and without leading dash).
-    /// </summary>
-    static async Task<ulong?> FindBaseSoftwareIdAsync(MarechaiContext context, string baseGameSlug)
+    async Task<ulong?> ResolveBaseSoftwareIdAsync(MarechaiContext context, int? baseGameMobyId,
+                                                  string baseGameSlug, bool dryRun)
     {
+        ulong? baseSoftwareId = await FindBaseSoftwareIdAsync(context, baseGameMobyId, baseGameSlug);
+
+        if(baseSoftwareId is not null)
+            return baseSoftwareId;
+
+        if(string.IsNullOrWhiteSpace(baseGameSlug))
+            return null;
+
+        string trimmedSlug = baseGameSlug.TrimStart('-');
+
+        foreach(string trySlug in new[] { trimmedSlug, $"-{trimmedSlug}" }
+                    .Distinct(StringComparer.Ordinal))
+        {
+            var rows = await _sourceDb.GetRowsForGameAsync(trySlug);
+
+            if(rows.Count == 0)
+                continue;
+
+            Console.Write($" importing '{trySlug}'...");
+
+            if(dryRun)
+            {
+                Console.Write(" [dry-run: would import]");
+
+                return 0;
+            }
+
+            baseSoftwareId = await _importService.ImportGameBySlugAsync(trySlug);
+
+            if(baseSoftwareId is not null)
+                return baseSoftwareId;
+        }
+
+        if(dryRun)
+        {
+            Console.Write(" [dry-run: would scrape live site and import]");
+
+            return 0;
+        }
+
+        int? numericId = baseGameMobyId;
+
+        if(numericId is null)
+            numericId = await _httpClient.ResolveNumericGameIdAsync(trimmedSlug);
+
+        if(numericId is null)
+            return null;
+
+        string url  = $"https://www.mobygames.com/game/{numericId}/{trimmedSlug}/";
+        string html = await _httpClient.FetchPageAsync(url);
+
+        if(string.IsNullOrWhiteSpace(html))
+            return null;
+
+        Console.Write($" scraping live base game '{trimmedSlug}'...");
+
+        await ScrapeGameToRawAsync(trimmedSlug, numericId.Value, html);
+
+        baseSoftwareId = await _importService.ImportGameBySlugAsync(trimmedSlug);
+
+        return baseSoftwareId;
+    }
+
+    async Task ScrapeGameToRawAsync(string slug, int numericId, string mainBody)
+    {
+        string baseUrl = $"https://www.mobygames.com/game/{numericId}/{slug}/";
+
+        try
+        {
+            await _sourceDb.InsertRowAsync(slug, ChunkMain, mainBody);
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"  Warning: db insert failed (main): {ex.Message}");
+        }
+
+        await TryFetchAndInsertAsync(slug, ChunkCredits,  baseUrl + "credits/");
+        await TryFetchAndInsertAsync(slug, ChunkReleases, baseUrl + "releases/");
+        await TryFetchAndInsertAsync(slug, ChunkSpecs,    baseUrl + "specs/");
+
+        if(MediaPresenceDetector.HasCoverArt(mainBody))
+            await TryFetchAndInsertAsync(slug, ChunkCovers, baseUrl + "covers/");
+
+        if(MediaPresenceDetector.HasReviews(mainBody))
+            await TryFetchAndInsertAsync(slug, ChunkReviews, baseUrl + "reviews/");
+    }
+
+    async Task TryFetchAndInsertAsync(string slug, int chunk, string url)
+    {
+        string body = await _httpClient.FetchPageAsync(url);
+
+        if(string.IsNullOrWhiteSpace(body))
+            return;
+
+        try
+        {
+            await _sourceDb.InsertRowAsync(slug, chunk, body);
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"  Warning: db insert failed (chunk {chunk}): {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    ///     Tries to find the Software ID for a base game by looking up its numeric ID or slug
+    ///     in MobyGamesImportState.
+    /// </summary>
+    static async Task<ulong?> FindBaseSoftwareIdAsync(MarechaiContext context, int? baseGameMobyId,
+                                                      string baseGameSlug)
+    {
+        if(baseGameMobyId is not null)
+        {
+            MobyGamesImportState numericState = await context.MobyGamesImportStates
+                .FirstOrDefaultAsync(s => s.MobyNumericId == baseGameMobyId &&
+                                          s.Status == MobyGamesImportStatus.Imported);
+
+            if(numericState?.SoftwareId is not null) return numericState.SoftwareId;
+        }
+
         if(string.IsNullOrWhiteSpace(baseGameSlug)) return null;
 
         // Try exact slug
