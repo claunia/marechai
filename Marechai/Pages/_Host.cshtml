@@ -106,6 +106,13 @@
 <app>
     <component render-mode="ServerPrerendered" type="typeof(App)"/>
 </app>
+@*  Ships per-component state from the prerender side to the interactive
+    SignalR hydration side. Pages that opt in via PersistentComponentState
+    (e.g. /software's landing data) can skip their second round-trip and,
+    more importantly, avoid the destructive Blazor diff that would otherwise
+    wipe the prerendered DOM and briefly show a loading spinner around 1s
+    after first paint. *@
+<persist-component-state/>
 <div id="blazor-error-ui">
     <environment include="Staging,Production">
         An error has occurred. This application may no longer respond until reloaded.
