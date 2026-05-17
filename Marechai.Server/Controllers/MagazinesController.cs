@@ -47,7 +47,9 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<int> GetMagazinesCountAsync() => context.Magazines.CountAsync();
+    public Task<int> GetMagazinesCountAsync([FromQuery(Name = "filters")] string[] filters = null,
+                                            CancellationToken cancellationToken = default) =>
+        ApplyFilters(context.Magazines.AsNoTracking(), filters).CountAsync(cancellationToken);
 
     [HttpGet("minimum-year")]
     [AllowAnonymous]
@@ -203,31 +205,230 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<MagazineDto>> GetAsync([FromQuery] int? skip = null, [FromQuery] int? take = null,
+                                            [FromQuery] string sortBy = null,
+                                            [FromQuery] bool sortDescending = false,
+                                            [FromQuery(Name = "filters")] string[] filters = null,
                                             CancellationToken cancellationToken = default)
     {
-        IQueryable<Magazine> ordered = context.Magazines
-                                              .OrderBy(b => MarechaiContext.NaturalSortKey(b.SortTitle))
-                                              .ThenBy(b => b.FirstPublication)
-                                              .ThenBy(b => MarechaiContext.NaturalSortKey(b.Title));
+        IQueryable<Magazine> query = ApplyFilters(context.Magazines.AsNoTracking(), filters);
 
-        if(skip.HasValue) ordered = ordered.Skip(skip.Value);
-        if(take.HasValue) ordered = ordered.Take(take.Value);
+        // When no user-supplied sort is set, keep the legacy default ordering
+        // (SortTitle → FirstPublication → Title) so anonymous unfiltered consumers
+        // see the same order they get today. A user-clicked column header
+        // suspends that ordering so the sort UX is predictable.
+        IOrderedQueryable<Magazine> ordered = sortBy switch
+        {
+            "Title" => sortDescending
+                           ? query.OrderByDescending(m => MarechaiContext.NaturalSortKey(m.Title))
+                           : query.OrderBy(m => MarechaiContext.NaturalSortKey(m.Title)),
+            "Issn" => sortDescending
+                          ? query.OrderByDescending(m => m.Issn)
+                          : query.OrderBy(m => m.Issn),
+            "FirstPublication" => sortDescending
+                                      ? query.OrderByDescending(m => m.FirstPublication)
+                                      : query.OrderBy(m => m.FirstPublication),
+            "Published" => sortDescending
+                               ? query.OrderByDescending(m => m.Published)
+                               : query.OrderBy(m => m.Published),
+            "Country" => sortDescending
+                             ? query.OrderByDescending(m => m.Country.Name)
+                             : query.OrderBy(m => m.Country.Name),
+            _ => query.OrderBy(b => MarechaiContext.NaturalSortKey(b.SortTitle))
+                      .ThenBy(b => b.FirstPublication)
+                      .ThenBy(b => MarechaiContext.NaturalSortKey(b.Title))
+        };
 
-        return ordered.Select(b => new MagazineDto
-                       {
-                           Id                        = b.Id,
-                           Title                     = b.Title,
-                           NativeTitle               = b.NativeTitle,
-                           SortTitle                 = b.SortTitle,
-                           Published                 = b.Published,
-                           PublishedPrecision        = b.PublishedPrecision,
-                           FirstPublication          = b.FirstPublication,
-                           FirstPublicationPrecision = b.FirstPublicationPrecision,
-                           Issn                      = b.Issn,
-                           CountryId                 = b.CountryId,
-                           Country                   = b.Country.Name
-                       })
-                      .ToListAsync(cancellationToken);
+        IQueryable<Magazine> paged = ordered;
+
+        if(skip.HasValue) paged = paged.Skip(skip.Value);
+        if(take.HasValue) paged = paged.Take(take.Value);
+
+        return paged.Select(b => new MagazineDto
+                     {
+                         Id                        = b.Id,
+                         Title                     = b.Title,
+                         NativeTitle               = b.NativeTitle,
+                         SortTitle                 = b.SortTitle,
+                         Published                 = b.Published,
+                         PublishedPrecision        = b.PublishedPrecision,
+                         FirstPublication          = b.FirstPublication,
+                         FirstPublicationPrecision = b.FirstPublicationPrecision,
+                         Issn                      = b.Issn,
+                         CountryId                 = b.CountryId,
+                         Country                   = b.Country.Name
+                     })
+                    .ToListAsync(cancellationToken);
+    }
+
+    /// <summary>
+    /// Translates MudDataGrid <c>FilterDefinition</c>s wired over the network as
+    /// <c>"{Column}||{Operator}||{Value}"</c> triples into LINQ predicates against
+    /// the <see cref="Magazine"/> entity. Recognized columns mirror the
+    /// <c>PropertyColumn</c> names emitted by the admin grid: <c>Title</c>,
+    /// <c>Issn</c>, <c>FirstPublication</c>, <c>Published</c>, <c>Country</c>.
+    /// Unknown columns and operators are silently ignored — filters MudBlazor may
+    /// emit for non-existent columns (or future ones) must never 400 the listing call.
+    /// </summary>
+    static IQueryable<Magazine> ApplyFilters(IQueryable<Magazine> query, string[] filters)
+    {
+        if(filters is null || filters.Length == 0) return query;
+
+        foreach(string raw in filters)
+        {
+            if(string.IsNullOrWhiteSpace(raw)) continue;
+
+            string[] parts = raw.Split("||", 3, StringSplitOptions.None);
+
+            if(parts.Length < 2) continue;
+
+            string column   = parts[0];
+            string op       = parts[1];
+            string value    = parts.Length >= 3 ? parts[2] : string.Empty;
+            bool   isEmpty  = op == "is empty";
+            bool   isNotEmp = op == "is not empty";
+
+            // Skip non-empty-check operators with no value supplied so a stray
+            // open-but-unfilled filter UI doesn't accidentally hide every row.
+            if(!isEmpty && !isNotEmp && string.IsNullOrEmpty(value)) continue;
+
+            switch(column)
+            {
+                case "Title":
+                    query = op switch
+                    {
+                        "contains"     => query.Where(m => m.Title.Contains(value)),
+                        "not contains" => query.Where(m => !m.Title.Contains(value)),
+                        "equals"       => query.Where(m => m.Title == value),
+                        "not equals"   => query.Where(m => m.Title != value),
+                        "starts with"  => query.Where(m => m.Title.StartsWith(value)),
+                        "ends with"    => query.Where(m => m.Title.EndsWith(value)),
+                        "is empty"     => query.Where(m => m.Title == null || m.Title == string.Empty),
+                        "is not empty" => query.Where(m => m.Title != null && m.Title != string.Empty),
+                        _              => query
+                    };
+                    break;
+
+                case "Issn":
+                    query = op switch
+                    {
+                        "contains"     => query.Where(m => m.Issn != null && m.Issn.Contains(value)),
+                        "not contains" => query.Where(m => m.Issn == null || !m.Issn.Contains(value)),
+                        "equals"       => query.Where(m => m.Issn == value),
+                        "not equals"   => query.Where(m => m.Issn != value),
+                        "starts with"  => query.Where(m => m.Issn != null && m.Issn.StartsWith(value)),
+                        "ends with"    => query.Where(m => m.Issn != null && m.Issn.EndsWith(value)),
+                        "is empty"     => query.Where(m => m.Issn == null || m.Issn == string.Empty),
+                        "is not empty" => query.Where(m => m.Issn != null && m.Issn != string.Empty),
+                        _              => query
+                    };
+                    break;
+
+                case "Country":
+                    query = op switch
+                    {
+                        "contains" => query.Where(m => m.Country != null && m.Country.Name.Contains(value)),
+                        "not contains" => query.Where(m =>
+                                                          m.Country == null || !m.Country.Name.Contains(value)),
+                        "equals"      => query.Where(m => m.Country != null && m.Country.Name == value),
+                        "not equals"  => query.Where(m => m.Country == null || m.Country.Name != value),
+                        "starts with" => query.Where(m => m.Country != null && m.Country.Name.StartsWith(value)),
+                        "ends with"   => query.Where(m => m.Country != null && m.Country.Name.EndsWith(value)),
+                        "is empty"    => query.Where(m => m.Country == null || m.Country.Name == string.Empty),
+                        "is not empty" => query.Where(m =>
+                                                          m.Country != null && m.Country.Name != string.Empty),
+                        _ => query
+                    };
+                    break;
+
+                case "FirstPublication":
+                    if(op == "is empty")
+                    {
+                        query = query.Where(m => m.FirstPublication == null);
+                        break;
+                    }
+
+                    if(op == "is not empty")
+                    {
+                        query = query.Where(m => m.FirstPublication != null);
+                        break;
+                    }
+
+                    if(!DateTime.TryParse(value, System.Globalization.CultureInfo.InvariantCulture,
+                                          System.Globalization.DateTimeStyles.AssumeUniversal |
+                                          System.Globalization.DateTimeStyles.AdjustToUniversal,
+                                          out DateTime parsedFp))
+                        continue;
+
+                    DateTime dayFp = parsedFp.Date;
+
+                    query = op switch
+                    {
+                        "is" => query.Where(m =>
+                                                m.FirstPublication.HasValue &&
+                                                m.FirstPublication.Value.Date == dayFp),
+                        "is not" => query.Where(m =>
+                                                    m.FirstPublication.HasValue &&
+                                                    m.FirstPublication.Value.Date != dayFp),
+                        "is after" => query.Where(m =>
+                                                      m.FirstPublication.HasValue &&
+                                                      m.FirstPublication.Value.Date > dayFp),
+                        "is before" => query.Where(m =>
+                                                       m.FirstPublication.HasValue &&
+                                                       m.FirstPublication.Value.Date < dayFp),
+                        "is on or after" => query.Where(m =>
+                                                            m.FirstPublication.HasValue &&
+                                                            m.FirstPublication.Value.Date >= dayFp),
+                        "is on or before" => query.Where(m =>
+                                                             m.FirstPublication.HasValue &&
+                                                             m.FirstPublication.Value.Date <= dayFp),
+                        _ => query
+                    };
+                    break;
+
+                case "Published":
+                    if(op == "is empty")
+                    {
+                        query = query.Where(m => m.Published == null);
+                        break;
+                    }
+
+                    if(op == "is not empty")
+                    {
+                        query = query.Where(m => m.Published != null);
+                        break;
+                    }
+
+                    if(!DateTime.TryParse(value, System.Globalization.CultureInfo.InvariantCulture,
+                                          System.Globalization.DateTimeStyles.AssumeUniversal |
+                                          System.Globalization.DateTimeStyles.AdjustToUniversal,
+                                          out DateTime parsedPub))
+                        continue;
+
+                    DateTime dayPub = parsedPub.Date;
+
+                    query = op switch
+                    {
+                        "is" => query.Where(m =>
+                                                m.Published.HasValue && m.Published.Value.Date == dayPub),
+                        "is not" => query.Where(m =>
+                                                    m.Published.HasValue && m.Published.Value.Date != dayPub),
+                        "is after" => query.Where(m =>
+                                                      m.Published.HasValue && m.Published.Value.Date > dayPub),
+                        "is before" => query.Where(m =>
+                                                       m.Published.HasValue && m.Published.Value.Date < dayPub),
+                        "is on or after" => query.Where(m =>
+                                                            m.Published.HasValue &&
+                                                            m.Published.Value.Date >= dayPub),
+                        "is on or before" => query.Where(m =>
+                                                             m.Published.HasValue &&
+                                                             m.Published.Value.Date <= dayPub),
+                        _ => query
+                    };
+                    break;
+            }
+        }
+
+        return query;
     }
 
     [HttpGet("titles")]

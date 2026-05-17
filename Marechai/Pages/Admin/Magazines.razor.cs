@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using MudBlazor;
@@ -8,18 +11,81 @@ namespace Marechai.Pages.Admin;
 
 public partial class Magazines
 {
-    string              _errorMessage;
-    bool                 _isLoading = true;
-    string              _successMessage;
-    List<MagazineDto>   _magazines;
+    string                   _errorMessage;
+    string                   _successMessage;
+    MudDataGrid<MagazineDto> _dataGrid;
 
-    protected override async Task OnInitializedAsync() => await LoadMagazinesAsync();
-
-    async Task LoadMagazinesAsync()
+    async Task<GridData<MagazineDto>> ServerReload(GridState<MagazineDto> state, CancellationToken cancellationToken)
     {
-        _isLoading = true;
-        _magazines = await MagazinesService.GetMagazinesAsync();
-        _isLoading = false;
+        int skip = state.Page * state.PageSize;
+        int take = state.PageSize;
+
+        string sortBy         = null;
+        bool   sortDescending = false;
+
+        SortDefinition<MagazineDto> sort = state.SortDefinitions.FirstOrDefault();
+
+        if(sort is not null)
+        {
+            sortBy         = sort.SortBy;
+            sortDescending = sort.Descending;
+        }
+
+        // Translate MudBlazor FilterDefinitions to the "{Column}||{Operator}||{Value}"
+        // wire format consumed by MagazinesController.ApplyFilters. Column comes from
+        // PropertyColumn binding via fd.Column?.PropertyName which matches the
+        // case labels in the controller switch (Title/Issn/FirstPublication/Published/Country).
+        List<string> filters = null;
+
+        foreach(IFilterDefinition<MagazineDto> fd in state.FilterDefinitions)
+        {
+            string column = fd.Column?.PropertyName;
+            string op     = fd.Operator;
+            if(string.IsNullOrEmpty(column) || string.IsNullOrEmpty(op)) continue;
+
+            bool isEmptyOp = op is "is empty" or "is not empty";
+
+            string value;
+
+            switch(fd.Value)
+            {
+                case null:
+                    if(!isEmptyOp) continue;
+                    value = string.Empty;
+                    break;
+                case DateTime dt:
+                    value = dt.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                    break;
+                case DateTimeOffset dto:
+                    value = dto.UtcDateTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                    break;
+                case IFormattable f:
+                    value = f.ToString(null, CultureInfo.InvariantCulture);
+                    break;
+                default:
+                    value = fd.Value.ToString();
+                    break;
+            }
+
+            // Skip non-empty-check operators with no meaningful value so a freshly
+            // opened (but unfilled) filter UI doesn't accidentally drop every row.
+            if(!isEmptyOp && string.IsNullOrEmpty(value)) continue;
+
+            filters ??= [];
+            filters.Add($"{column}||{op}||{value}");
+        }
+
+        Task<int>               countTask = MagazinesService.GetMagazinesCountAsync(filters, cancellationToken);
+        Task<List<MagazineDto>> dataTask  =
+            MagazinesService.GetMagazinesPagedAsync(skip, take, sortBy, sortDescending, filters, cancellationToken);
+
+        await Task.WhenAll(countTask, dataTask);
+
+        return new GridData<MagazineDto>
+        {
+            Items      = dataTask.Result,
+            TotalItems = countTask.Result
+        };
     }
 
     static string FormatDate(DateTimeOffset? date, int? precision = 0)
@@ -66,7 +132,7 @@ public partial class Magazines
             if(id is not null)
             {
                 _successMessage = L["Magazine created successfully."];
-                await LoadMagazinesAsync();
+                await _dataGrid.ReloadServerData();
             }
             else
             {
@@ -126,7 +192,7 @@ public partial class Magazines
             if(succeeded)
             {
                 _successMessage = L["Magazine updated successfully."];
-                await LoadMagazinesAsync();
+                await _dataGrid.ReloadServerData();
             }
             else
             {
@@ -164,7 +230,7 @@ public partial class Magazines
             if(succeeded)
             {
                 _successMessage = L["Magazine deleted successfully."];
-                await LoadMagazinesAsync();
+                await _dataGrid.ReloadServerData();
             }
             else
             {
@@ -186,6 +252,6 @@ public partial class Magazines
         DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
-            await LoadMagazinesAsync();
+            await _dataGrid.ReloadServerData();
     }
 }

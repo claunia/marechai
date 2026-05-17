@@ -37,11 +37,15 @@ namespace Marechai.Services;
 
 public class MagazinesService(Marechai.ApiClient.Client client, ReferenceDataCache referenceData)
 {
-    public async Task<int> GetMagazinesCountAsync()
+    public async Task<int> GetMagazinesCountAsync(IReadOnlyList<string> filters = null,
+                                                  CancellationToken cancellationToken = default)
     {
         try
         {
-            int? count = await client.Magazines.Count.GetAsync();
+            int? count = await client.Magazines.Count.GetAsync(config =>
+            {
+                if(filters is { Count: > 0 }) config.QueryParameters.Filters = filters.ToArray();
+            }, cancellationToken);
 
             return count ?? 0;
         }
@@ -183,6 +187,37 @@ public class MagazinesService(Marechai.ApiClient.Client client, ReferenceDataCac
             {
                 if(skip.HasValue) config.QueryParameters.Skip = skip.Value;
                 if(take.HasValue) config.QueryParameters.Take = take.Value;
+            }, cancellationToken);
+
+            return magazines ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    /// <summary>
+    ///     Server-side paged fetch used by the admin <c>MudDataGrid</c>. Pushes the
+    ///     sort + filter spec all the way down to the SQL query so paging,
+    ///     filtering and ordering happen in the database. Filters are
+    ///     <c>"{Column}||{Operator}||{Value}"</c> triples mirroring MudBlazor's
+    ///     <c>FilterDefinition</c> shape; <c>MagazinesController.ApplyFilters</c>
+    ///     translates them into LINQ predicates.
+    /// </summary>
+    public async Task<List<MagazineDto>> GetMagazinesPagedAsync(int skip, int take, string sortBy, bool sortDescending,
+                                                                IReadOnlyList<string> filters,
+                                                                CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            List<MagazineDto> magazines = await client.Magazines.GetAsync(config =>
+            {
+                config.QueryParameters.Skip = skip;
+                config.QueryParameters.Take = take;
+                if(!string.IsNullOrWhiteSpace(sortBy)) config.QueryParameters.SortBy = sortBy;
+                if(sortDescending) config.QueryParameters.SortDescending = true;
+                if(filters is { Count: > 0 }) config.QueryParameters.Filters = filters.ToArray();
             }, cancellationToken);
 
             return magazines ?? [];
