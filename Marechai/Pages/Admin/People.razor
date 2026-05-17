@@ -24,23 +24,15 @@
     <MudAlert Severity="Severity.Success" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _successMessage = null">@_successMessage</MudAlert>
 }
 
-@if(_isLoading)
-{
-    <div class="d-flex justify-center pa-8">
-        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
-    </div>
-    return;
-}
-
 <MudPaper Elevation="2" Class="rounded-lg">
     <MudToolBar Dense="true">
         <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="OpenAddPersonDialog">@L["Add Person"]</MudButton>
         <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Upload" OnClick="OpenImportDialog" Class="ml-2">@L["Import CSV"]</MudButton>
         <MudSpacer/>
-        <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadPeopleAsync"/>
+        <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="async () => await _dataGrid.ReloadServerData()"/>
     </MudToolBar>
 
-    <MudDataGrid Items="_people" Dense="true" Hover="true" Striped="true" Filterable="true">
+    <MudDataGrid @ref="_dataGrid" T="PersonDto" ServerData="ServerReload" Dense="true" Hover="true" Striped="true" Filterable="true" RowsPerPage="25">
         <Columns>
             <PropertyColumn Property="x => x.Name" Title="@L["Name"]"/>
             <PropertyColumn Property="x => x.Surname" Title="@L["Surname"]"/>
@@ -68,5 +60,8 @@
                 </CellTemplate>
             </TemplateColumn>
         </Columns>
+        <PagerContent>
+            <MudDataGridPager T="PersonDto" PageSizeOptions="new[] { 10, 25, 50, 100 }"/>
+        </PagerContent>
     </MudDataGrid>
 </MudPaper>

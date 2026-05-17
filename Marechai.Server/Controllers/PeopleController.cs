@@ -61,7 +61,10 @@ public class PeopleController(
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<int> GetPeopleCountAsync() => context.People.CountAsync();
+    public Task<int> GetPeopleCountAsync([FromQuery(Name = "filters")] string[] filters = null,
+                                         [FromQuery] string search = null,
+                                         CancellationToken cancellationToken = default) =>
+        ApplyFilters(context.People.AsNoTracking(), filters, search).CountAsync(cancellationToken);
 
     [HttpGet("minimum-year")]
     [AllowAnonymous]
@@ -308,26 +311,47 @@ public class PeopleController(
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<PersonDto>> GetAsync([FromQuery] int? skip = null, [FromQuery] int? take = null,
                                           [FromQuery] string search = null,
+                                          [FromQuery] string sortBy = null,
+                                          [FromQuery] bool sortDescending = false,
+                                          [FromQuery(Name = "filters")] string[] filters = null,
                                           CancellationToken cancellationToken = default)
     {
-        IQueryable<Person> baseQ = context.People;
+        IQueryable<Person> baseQ = ApplyFilters(context.People.AsNoTracking(), filters, search);
 
-        if(!string.IsNullOrWhiteSpace(search))
-            baseQ = baseQ.Where(p => (p.DisplayName != null && p.DisplayName.Contains(search))   ||
-                                     (p.Alias       != null && p.Alias.Contains(search))         ||
-                                     (p.Name        != null && p.Name.Contains(search))          ||
-                                     (p.Surname     != null && p.Surname.Contains(search)));
+        // When no user-supplied sort is set, keep the legacy default ordering
+        // (DisplayName → Alias → Name → Surname natural-sort) so anonymous
+        // unfiltered consumers (Marechai.App, public /people pages) see the
+        // same order they get today. A user-clicked column header suspends
+        // that ordering so the sort UX is predictable.
+        IOrderedQueryable<Person> ordered = sortBy switch
+        {
+            "Name" => sortDescending
+                          ? baseQ.OrderByDescending(p => MarechaiContext.NaturalSortKey(p.Name))
+                          : baseQ.OrderBy(p => MarechaiContext.NaturalSortKey(p.Name)),
+            "Surname" => sortDescending
+                             ? baseQ.OrderByDescending(p => MarechaiContext.NaturalSortKey(p.Surname))
+                             : baseQ.OrderBy(p => MarechaiContext.NaturalSortKey(p.Surname)),
+            "Country" => sortDescending
+                             ? baseQ.OrderByDescending(p => MarechaiContext.NaturalSortKey(p.CountryOfBirth.Name))
+                             : baseQ.OrderBy(p => MarechaiContext.NaturalSortKey(p.CountryOfBirth.Name)),
+            "Birthdate" => sortDescending
+                               ? baseQ.OrderByDescending(p => p.BirthDate)
+                               : baseQ.OrderBy(p => p.BirthDate),
+            "DeathDate" => sortDescending
+                               ? baseQ.OrderByDescending(p => p.DeathDate)
+                               : baseQ.OrderBy(p => p.DeathDate),
+            _ => baseQ.OrderBy(p => MarechaiContext.NaturalSortKey(p.DisplayName))
+                      .ThenBy(p => MarechaiContext.NaturalSortKey(p.Alias))
+                      .ThenBy(p => MarechaiContext.NaturalSortKey(p.Name))
+                      .ThenBy(p => MarechaiContext.NaturalSortKey(p.Surname))
+        };
 
-        IQueryable<Person> ordered = baseQ
-                                            .OrderBy(p => MarechaiContext.NaturalSortKey(p.DisplayName))
-                                            .ThenBy(p => MarechaiContext.NaturalSortKey(p.Alias))
-                                            .ThenBy(p => MarechaiContext.NaturalSortKey(p.Name))
-                                            .ThenBy(p => MarechaiContext.NaturalSortKey(p.Surname));
+        IQueryable<Person> paged = ordered;
 
-        if(skip.HasValue) ordered = ordered.Skip(skip.Value);
-        if(take.HasValue) ordered = ordered.Take(take.Value);
+        if(skip.HasValue) paged = paged.Skip(skip.Value);
+        if(take.HasValue) paged = paged.Take(take.Value);
 
-        return ordered.Select(p => new PersonDto
+        return paged.Select(p => new PersonDto
                        {
                            Id                 = p.Id,
                            Name               = p.Name,
@@ -345,6 +369,183 @@ public class PeopleController(
                            DisplayName        = p.DisplayName
                        })
                       .ToListAsync(cancellationToken);
+    }
+
+    /// <summary>
+    /// Translates MudDataGrid <c>FilterDefinition</c>s wired over the network as
+    /// <c>"{Column}||{Operator}||{Value}"</c> triples into LINQ predicates against
+    /// the <see cref="Person"/> entity. Recognized columns mirror the
+    /// <c>PropertyColumn</c> names emitted by the admin grid:
+    /// <c>Name</c>, <c>Surname</c>, <c>Country</c>, <c>Birthdate</c>, <c>DeathDate</c>.
+    /// The legacy <paramref name="search"/> parameter (kept for back-compat with
+    /// any external consumer) is OR-folded across Name/Surname/Alias/DisplayName.
+    /// Unknown columns and operators are silently ignored — filters MudBlazor
+    /// may emit for non-existent columns (or future ones) must never 400 the
+    /// listing call. <c>BirthDate</c> is non-nullable in the schema; the
+    /// sentinel <c>DateTime.MinValue</c> / <c>Year &lt;= 1000</c> indicates
+    /// "unknown" (same convention used by <see cref="GetMinimumYearAsync"/>).
+    /// </summary>
+    static IQueryable<Person> ApplyFilters(IQueryable<Person> query, string[] filters, string search = null)
+    {
+        if(!string.IsNullOrWhiteSpace(search))
+            query = query.Where(p => (p.DisplayName != null && p.DisplayName.Contains(search)) ||
+                                     (p.Alias       != null && p.Alias.Contains(search))       ||
+                                     (p.Name        != null && p.Name.Contains(search))        ||
+                                     (p.Surname     != null && p.Surname.Contains(search)));
+
+        if(filters is null || filters.Length == 0) return query;
+
+        foreach(string raw in filters)
+        {
+            if(string.IsNullOrWhiteSpace(raw)) continue;
+
+            string[] parts = raw.Split("||", 3, StringSplitOptions.None);
+
+            if(parts.Length < 2) continue;
+
+            string column   = parts[0];
+            string op       = parts[1];
+            string value    = parts.Length >= 3 ? parts[2] : string.Empty;
+            bool   isEmpty  = op == "is empty";
+            bool   isNotEmp = op == "is not empty";
+
+            // Skip non-empty-check operators with no value supplied so a stray
+            // open-but-unfilled filter UI doesn't accidentally hide every row.
+            if(!isEmpty && !isNotEmp && string.IsNullOrEmpty(value)) continue;
+
+            switch(column)
+            {
+                case "Name":
+                    query = op switch
+                    {
+                        "contains"     => query.Where(p => p.Name != null && p.Name.Contains(value)),
+                        "not contains" => query.Where(p => p.Name == null || !p.Name.Contains(value)),
+                        "equals"       => query.Where(p => p.Name == value),
+                        "not equals"   => query.Where(p => p.Name != value),
+                        "starts with"  => query.Where(p => p.Name != null && p.Name.StartsWith(value)),
+                        "ends with"    => query.Where(p => p.Name != null && p.Name.EndsWith(value)),
+                        "is empty"     => query.Where(p => p.Name == null || p.Name == string.Empty),
+                        "is not empty" => query.Where(p => p.Name != null && p.Name != string.Empty),
+                        _              => query
+                    };
+                    break;
+
+                case "Surname":
+                    query = op switch
+                    {
+                        "contains"     => query.Where(p => p.Surname != null && p.Surname.Contains(value)),
+                        "not contains" => query.Where(p => p.Surname == null || !p.Surname.Contains(value)),
+                        "equals"       => query.Where(p => p.Surname == value),
+                        "not equals"   => query.Where(p => p.Surname != value),
+                        "starts with"  => query.Where(p => p.Surname != null && p.Surname.StartsWith(value)),
+                        "ends with"    => query.Where(p => p.Surname != null && p.Surname.EndsWith(value)),
+                        "is empty"     => query.Where(p => p.Surname == null || p.Surname == string.Empty),
+                        "is not empty" => query.Where(p => p.Surname != null && p.Surname != string.Empty),
+                        _              => query
+                    };
+                    break;
+
+                case "Country":
+                    query = op switch
+                    {
+                        "contains" => query.Where(p =>
+                                                      p.CountryOfBirth != null && p.CountryOfBirth.Name != null &&
+                                                      p.CountryOfBirth.Name.Contains(value)),
+                        "not contains" => query.Where(p =>
+                                                          p.CountryOfBirth == null ||
+                                                          p.CountryOfBirth.Name == null ||
+                                                          !p.CountryOfBirth.Name.Contains(value)),
+                        "equals"     => query.Where(p => p.CountryOfBirth != null && p.CountryOfBirth.Name == value),
+                        "not equals" => query.Where(p => p.CountryOfBirth == null || p.CountryOfBirth.Name != value),
+                        "starts with" => query.Where(p =>
+                                                         p.CountryOfBirth != null && p.CountryOfBirth.Name != null &&
+                                                         p.CountryOfBirth.Name.StartsWith(value)),
+                        "ends with" => query.Where(p =>
+                                                       p.CountryOfBirth != null && p.CountryOfBirth.Name != null &&
+                                                       p.CountryOfBirth.Name.EndsWith(value)),
+                        "is empty" => query.Where(p =>
+                                                      p.CountryOfBirth == null || p.CountryOfBirth.Name == null ||
+                                                      p.CountryOfBirth.Name == string.Empty),
+                        "is not empty" => query.Where(p =>
+                                                          p.CountryOfBirth != null &&
+                                                          p.CountryOfBirth.Name != null &&
+                                                          p.CountryOfBirth.Name != string.Empty),
+                        _ => query
+                    };
+                    break;
+
+                case "Birthdate":
+                    // BirthDate is non-nullable in the schema; DateTime.MinValue /
+                    // Year <= 1000 is the unknown-date sentinel (consistent with
+                    // GetMinimumYearAsync above).
+                    if(op == "is empty")
+                    {
+                        query = query.Where(p => p.BirthDate == DateTime.MinValue || p.BirthDate.Year <= 1000);
+                        break;
+                    }
+
+                    if(op == "is not empty")
+                    {
+                        query = query.Where(p => p.BirthDate > DateTime.MinValue && p.BirthDate.Year > 1000);
+                        break;
+                    }
+
+                    if(!DateTime.TryParse(value, System.Globalization.CultureInfo.InvariantCulture,
+                                          System.Globalization.DateTimeStyles.AssumeUniversal |
+                                          System.Globalization.DateTimeStyles.AdjustToUniversal,
+                                          out DateTime birthDay))
+                        continue;
+
+                    DateTime bDay = birthDay.Date;
+
+                    query = op switch
+                    {
+                        "is"              => query.Where(p => p.BirthDate.Date == bDay),
+                        "is not"          => query.Where(p => p.BirthDate.Date != bDay),
+                        "is after"        => query.Where(p => p.BirthDate.Date > bDay),
+                        "is before"       => query.Where(p => p.BirthDate.Date < bDay),
+                        "is on or after"  => query.Where(p => p.BirthDate.Date >= bDay),
+                        "is on or before" => query.Where(p => p.BirthDate.Date <= bDay),
+                        _                 => query
+                    };
+                    break;
+
+                case "DeathDate":
+                    if(op == "is empty")
+                    {
+                        query = query.Where(p => p.DeathDate == null);
+                        break;
+                    }
+
+                    if(op == "is not empty")
+                    {
+                        query = query.Where(p => p.DeathDate != null);
+                        break;
+                    }
+
+                    if(!DateTime.TryParse(value, System.Globalization.CultureInfo.InvariantCulture,
+                                          System.Globalization.DateTimeStyles.AssumeUniversal |
+                                          System.Globalization.DateTimeStyles.AdjustToUniversal,
+                                          out DateTime deathDay))
+                        continue;
+
+                    DateTime dDay = deathDay.Date;
+
+                    query = op switch
+                    {
+                        "is"              => query.Where(p => p.DeathDate.HasValue && p.DeathDate.Value.Date == dDay),
+                        "is not"          => query.Where(p => p.DeathDate.HasValue && p.DeathDate.Value.Date != dDay),
+                        "is after"        => query.Where(p => p.DeathDate.HasValue && p.DeathDate.Value.Date > dDay),
+                        "is before"       => query.Where(p => p.DeathDate.HasValue && p.DeathDate.Value.Date < dDay),
+                        "is on or after"  => query.Where(p => p.DeathDate.HasValue && p.DeathDate.Value.Date >= dDay),
+                        "is on or before" => query.Where(p => p.DeathDate.HasValue && p.DeathDate.Value.Date <= dDay),
+                        _                 => query
+                    };
+                    break;
+            }
+        }
+
+        return query;
     }
 
     [HttpGet("{id:int}")]

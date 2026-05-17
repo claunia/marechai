@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
@@ -34,11 +35,16 @@ namespace Marechai.Services;
 
 public class PeopleService(Marechai.ApiClient.Client client, ReferenceDataCache referenceData)
 {
-    public async Task<int> GetPeopleCountAsync()
+    public async Task<int> GetPeopleCountAsync(IReadOnlyList<string> filters = null, string search = null,
+                                              CancellationToken cancellationToken = default)
     {
         try
         {
-            int? count = await client.People.Count.GetAsync();
+            int? count = await client.People.Count.GetAsync(config =>
+            {
+                if(filters is { Count: > 0 }) config.QueryParameters.Filters = filters.ToArray();
+                if(!string.IsNullOrEmpty(search)) config.QueryParameters.Search = search;
+            }, cancellationToken);
 
             return count ?? 0;
         }
@@ -143,6 +149,8 @@ public class PeopleService(Marechai.ApiClient.Client client, ReferenceDataCache 
     }
 
     public async Task<List<PersonDto>> GetPeopleAsync(int? skip = null, int? take = null,
+                                                      string sortBy = null, bool sortDescending = false,
+                                                      IReadOnlyList<string> filters = null, string search = null,
                                                       CancellationToken cancellationToken = default)
     {
         try
@@ -151,6 +159,10 @@ public class PeopleService(Marechai.ApiClient.Client client, ReferenceDataCache 
             {
                 if(skip.HasValue) config.QueryParameters.Skip = skip.Value;
                 if(take.HasValue) config.QueryParameters.Take = take.Value;
+                if(!string.IsNullOrEmpty(sortBy)) config.QueryParameters.SortBy = sortBy;
+                if(sortDescending) config.QueryParameters.SortDescending = true;
+                if(filters is { Count: > 0 }) config.QueryParameters.Filters = filters.ToArray();
+                if(!string.IsNullOrEmpty(search)) config.QueryParameters.Search = search;
             }, cancellationToken);
 
             return people ?? [];
