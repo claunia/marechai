@@ -32,7 +32,7 @@
         <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="async () => await _dataGrid.ReloadServerData()"/>
     </MudToolBar>
 
-    <MudDataGrid @ref="_dataGrid" T="MachineDto" ServerData="ServerReload" Dense="true" Hover="true" Striped="true" RowsPerPage="25">
+    <MudDataGrid @ref="_dataGrid" T="MachineDto" ServerData="ServerReload" Dense="true" Hover="true" Striped="true" Filterable="true" RowsPerPage="25">
         <NoRecordsContent>
             <MudText>@L["No machines found."]</MudText>
         </NoRecordsContent>
@@ -40,15 +40,15 @@
             <MudText>@L["Loading..."]</MudText>
         </LoadingContent>
         <Columns>
-            <PropertyColumn Property="x => x.Name" Title="@L["Name"]" Sortable="false" Filterable="false"/>
-            <PropertyColumn Property="x => x.Company" Title="@L["Company"]" Sortable="false" Filterable="false"/>
-            <PropertyColumn Property="x => x.Model" Title="@L["Model"]" Sortable="false" Filterable="false"/>
-            <PropertyColumn Property="x => x.Type" Title="@L["Type"]" Sortable="false" Filterable="false">
+            <PropertyColumn Property="x => x.Name" Title="@L["Name"]"/>
+            <PropertyColumn Property="x => x.Company" Title="@L["Company"]"/>
+            <PropertyColumn Property="x => x.Model" Title="@L["Model"]"/>
+            <PropertyColumn Property="x => x.Type" Title="@L["Type"]">
                 <CellTemplate>
                     @FormatType(context.Item.Type)
                 </CellTemplate>
             </PropertyColumn>
-            <PropertyColumn Property="x => x.Prototype" Title="@L["Prototype"]" Sortable="false" Filterable="false">
+            <PropertyColumn Property="x => x.Prototype" Title="@L["Prototype"]">
                 <CellTemplate>
                     @if(context.Item.Prototype == true)
                     {
@@ -56,12 +56,12 @@
                     }
                 </CellTemplate>
             </PropertyColumn>
-            <PropertyColumn Property="x => x.Introduced" Title="@L["Introduction date"]" Sortable="false" Filterable="false">
+            <PropertyColumn Property="x => x.Introduced" Title="@L["Introduction date"]">
                 <CellTemplate>
                     @FormatDate(context.Item.Introduced)
                 </CellTemplate>
             </PropertyColumn>
-            <PropertyColumn Property="x => x.Family" Title="@L["Family"]" Sortable="false" Filterable="false"/>
+            <PropertyColumn Property="x => x.Family" Title="@L["Family"]"/>
             <TemplateColumn Title="@L["Actions"]" Sortable="false" Filterable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">

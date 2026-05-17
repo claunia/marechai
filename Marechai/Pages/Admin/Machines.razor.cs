@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
@@ -15,15 +17,75 @@ public partial class Machines
 
     async Task<GridData<MachineDto>> ServerReload(GridState<MachineDto> state, CancellationToken cancellationToken)
     {
-        int page     = state.Page + 1;
-        int pageSize = state.PageSize;
+        int skip = state.Page * state.PageSize;
+        int take = state.PageSize;
 
-        MachinePageDto result = await MachinesService.GetPagedAsync(page, pageSize);
+        string sortBy         = null;
+        bool   sortDescending = false;
+
+        SortDefinition<MachineDto> sort = state.SortDefinitions.FirstOrDefault();
+
+        if(sort is not null)
+        {
+            sortBy         = sort.SortBy;
+            sortDescending = sort.Descending;
+        }
+
+        // Translate MudBlazor FilterDefinitions to the "{Column}||{Operator}||{Value}"
+        // wire format consumed by MachinesController.ApplyFilters. Column comes from
+        // PropertyColumn binding via fd.Column?.PropertyName which matches the
+        // case labels in the controller switch (Name/Company/Model/Type/Prototype/
+        // Introduced/Family).
+        List<string> filters = null;
+
+        foreach(IFilterDefinition<MachineDto> fd in state.FilterDefinitions)
+        {
+            string column = fd.Column?.PropertyName;
+            string op     = fd.Operator;
+            if(string.IsNullOrEmpty(column) || string.IsNullOrEmpty(op)) continue;
+
+            bool isEmptyOp = op is "is empty" or "is not empty";
+
+            string value;
+
+            switch(fd.Value)
+            {
+                case null:
+                    if(!isEmptyOp) continue;
+                    value = string.Empty;
+                    break;
+                case DateTime dt:
+                    value = dt.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                    break;
+                case DateTimeOffset dto:
+                    value = dto.UtcDateTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                    break;
+                case IFormattable f:
+                    value = f.ToString(null, CultureInfo.InvariantCulture);
+                    break;
+                default:
+                    value = fd.Value.ToString();
+                    break;
+            }
+
+            // Skip non-empty-check operators with no meaningful value so a freshly
+            // opened (but unfilled) filter UI doesn't accidentally drop every row.
+            if(!isEmptyOp && string.IsNullOrEmpty(value)) continue;
+
+            filters ??= [];
+            filters.Add($"{column}||{op}||{value}");
+        }
+
+        Task<int>              countTask = MachinesService.GetCountAsync(filters, cancellationToken);
+        Task<List<MachineDto>> dataTask  =
+            MachinesService.GetPagedAsync(skip, take, sortBy, sortDescending, filters, cancellationToken);
+
+        await Task.WhenAll(countTask, dataTask);
 
         return new GridData<MachineDto>
         {
-            Items      = result?.Items ?? new List<MachineDto>(),
-            TotalItems = result?.TotalCount ?? 0
+            Items      = dataTask.Result,
+            TotalItems = countTask.Result
         };
     }
 

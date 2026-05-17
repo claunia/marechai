@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.Data;
 using Marechai.Data.Dtos;
@@ -48,63 +49,242 @@ public class MachinesController(MarechaiContext context, IDbContextFactory<Marec
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<MachineDto>> GetAsync() => context.Machines.OrderBy(m => m.Company.Name)
-                                                       .ThenBy(m => m.Name)
-                                                       .ThenBy(m => m.Family.Name)
-                                                       .Select(m => new MachineDto
-                                                        {
-                                                            Id         = m.Id,
-                                                            Company    = m.Company.Name,
-                                                            Name       = m.Name,
-                                                            Model      = m.Model,
-                                                            Introduced = m.Introduced,
-                                                            IntroducedPrecision = m.IntroducedPrecision,
-                                                            Prototype  = m.Prototype,
-                                                            Type       = m.Type,
-                                                            Family     = m.Family.Name
-                                                        })
-                                                       .ToListAsync();
+    public Task<List<MachineDto>> GetAsync([FromQuery] int?    skip           = null,
+                                           [FromQuery] int?    take           = null,
+                                           [FromQuery] string  sortBy         = null,
+                                           [FromQuery] bool    sortDescending = false,
+                                           [FromQuery(Name = "filters")] string[] filters = null,
+                                           CancellationToken                       cancellationToken = default)
+    {
+        IQueryable<Machine> query = ApplyFilters(context.Machines.AsNoTracking(), filters);
 
-    [HttpGet("paged")]
-    [Authorize(Roles = "Admin,UberAdmin")]
+        // When no user-supplied sort is set, keep the legacy default ordering
+        // (Company.Name → Name → Family.Name) so anonymous unfiltered consumers
+        // (App admin ViewModels, MagazinesService, BooksService, DocumentsService,
+        // etc.) see the same order they get today. A user-clicked column header
+        // suspends that ordering so the sort UX is predictable.
+        IOrderedQueryable<Machine> ordered = sortBy switch
+        {
+            "Name" => sortDescending
+                          ? query.OrderByDescending(m => MarechaiContext.NaturalSortKey(m.Name))
+                          : query.OrderBy(m => MarechaiContext.NaturalSortKey(m.Name)),
+            "Company" => sortDescending
+                             ? query.OrderByDescending(m => MarechaiContext.NaturalSortKey(m.Company.Name))
+                             : query.OrderBy(m => MarechaiContext.NaturalSortKey(m.Company.Name)),
+            "Model" => sortDescending
+                           ? query.OrderByDescending(m => MarechaiContext.NaturalSortKey(m.Model))
+                           : query.OrderBy(m => MarechaiContext.NaturalSortKey(m.Model)),
+            "Type" => sortDescending
+                          ? query.OrderByDescending(m => m.Type)
+                          : query.OrderBy(m => m.Type),
+            "Prototype" => sortDescending
+                               ? query.OrderByDescending(m => m.Prototype)
+                               : query.OrderBy(m => m.Prototype),
+            "Introduced" => sortDescending
+                                ? query.OrderByDescending(m => m.Introduced)
+                                : query.OrderBy(m => m.Introduced),
+            "Family" => sortDescending
+                            ? query.OrderByDescending(m => MarechaiContext.NaturalSortKey(m.Family.Name))
+                            : query.OrderBy(m => MarechaiContext.NaturalSortKey(m.Family.Name)),
+            _ => query.OrderBy(m => m.Company.Name)
+                      .ThenBy(m => m.Name)
+                      .ThenBy(m => m.Family.Name)
+        };
+
+        IQueryable<Machine> paged = ordered;
+
+        if(skip.HasValue) paged = paged.Skip(skip.Value);
+        if(take.HasValue) paged = paged.Take(take.Value);
+
+        return paged.Select(m => new MachineDto
+                     {
+                         Id                  = m.Id,
+                         Company             = m.Company.Name,
+                         Name                = m.Name,
+                         Model               = m.Model,
+                         Introduced          = m.Introduced,
+                         IntroducedPrecision = m.IntroducedPrecision,
+                         Prototype           = m.Prototype,
+                         Type                = m.Type,
+                         Family              = m.Family.Name
+                     })
+                    .ToListAsync(cancellationToken);
+    }
+
+    [HttpGet("count")]
+    [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<MachinePageDto>> GetPagedAsync([FromQuery] int page     = 1,
-                                                                  [FromQuery] int pageSize = 25)
+    public Task<int> GetCountAsync([FromQuery(Name = "filters")] string[] filters           = null,
+                                   CancellationToken                      cancellationToken = default) =>
+        ApplyFilters(context.Machines.AsNoTracking(), filters).CountAsync(cancellationToken);
+
+    /// <summary>
+    /// Translates MudDataGrid <c>FilterDefinition</c>s wired over the network as
+    /// <c>"{Column}||{Operator}||{Value}"</c> triples into LINQ predicates against
+    /// the <see cref="Machine"/> entity. Recognized columns mirror the
+    /// <c>PropertyColumn</c> names emitted by the admin grid: <c>Name</c>,
+    /// <c>Company</c>, <c>Model</c>, <c>Type</c>, <c>Prototype</c>,
+    /// <c>Introduced</c>, <c>Family</c>. Unknown columns and operators are
+    /// silently ignored — filters MudBlazor may emit for non-existent columns
+    /// (or future ones) must never 400 the listing call.
+    /// </summary>
+    static IQueryable<Machine> ApplyFilters(IQueryable<Machine> query, string[] filters)
     {
-        if(page     < 1)   page     = 1;
-        if(pageSize < 1)   pageSize = 25;
-        if(pageSize > 200) pageSize = 200;
+        if(filters is null || filters.Length == 0) return query;
 
-        IQueryable<Machine> query = context.Machines;
-
-        int totalCount = await query.CountAsync();
-
-        List<MachineDto> items = await query.OrderBy(m => m.Company.Name)
-                                            .ThenBy(m => m.Name)
-                                            .ThenBy(m => m.Family.Name)
-                                            .Skip((page - 1) * pageSize)
-                                            .Take(pageSize)
-                                            .Select(m => new MachineDto
-                                             {
-                                                 Id                  = m.Id,
-                                                 Company             = m.Company.Name,
-                                                 Name                = m.Name,
-                                                 Model               = m.Model,
-                                                 Introduced          = m.Introduced,
-                                                 IntroducedPrecision = m.IntroducedPrecision,
-                                                 Prototype           = m.Prototype,
-                                                 Type                = m.Type,
-                                                 Family              = m.Family.Name
-                                             })
-                                            .ToListAsync();
-
-        return Ok(new MachinePageDto
+        foreach(string raw in filters)
         {
-            Items      = items,
-            TotalCount = totalCount
-        });
+            if(string.IsNullOrWhiteSpace(raw)) continue;
+
+            string[] parts = raw.Split("||", 3, StringSplitOptions.None);
+
+            if(parts.Length < 2) continue;
+
+            string column   = parts[0];
+            string op       = parts[1];
+            string value    = parts.Length >= 3 ? parts[2] : string.Empty;
+            bool   isEmpty  = op == "is empty";
+            bool   isNotEmp = op == "is not empty";
+
+            // Skip non-empty-check operators with no value supplied so a stray
+            // open-but-unfilled filter UI doesn't accidentally hide every row.
+            if(!isEmpty && !isNotEmp && string.IsNullOrEmpty(value)) continue;
+
+            switch(column)
+            {
+                case "Name":
+                    query = op switch
+                    {
+                        "contains"     => query.Where(m => m.Name.Contains(value)),
+                        "not contains" => query.Where(m => !m.Name.Contains(value)),
+                        "equals"       => query.Where(m => m.Name == value),
+                        "not equals"   => query.Where(m => m.Name != value),
+                        "starts with"  => query.Where(m => m.Name.StartsWith(value)),
+                        "ends with"    => query.Where(m => m.Name.EndsWith(value)),
+                        "is empty"     => query.Where(m => m.Name == null || m.Name == string.Empty),
+                        "is not empty" => query.Where(m => m.Name != null && m.Name != string.Empty),
+                        _              => query
+                    };
+                    break;
+
+                case "Company":
+                    query = op switch
+                    {
+                        "contains"     => query.Where(m => m.Company.Name.Contains(value)),
+                        "not contains" => query.Where(m => !m.Company.Name.Contains(value)),
+                        "equals"       => query.Where(m => m.Company.Name == value),
+                        "not equals"   => query.Where(m => m.Company.Name != value),
+                        "starts with"  => query.Where(m => m.Company.Name.StartsWith(value)),
+                        "ends with"    => query.Where(m => m.Company.Name.EndsWith(value)),
+                        "is empty"     => query.Where(m => m.Company.Name == null || m.Company.Name == string.Empty),
+                        "is not empty" => query.Where(m => m.Company.Name != null && m.Company.Name != string.Empty),
+                        _              => query
+                    };
+                    break;
+
+                case "Model":
+                    query = op switch
+                    {
+                        "contains"     => query.Where(m => m.Model != null && m.Model.Contains(value)),
+                        "not contains" => query.Where(m => m.Model == null || !m.Model.Contains(value)),
+                        "equals"       => query.Where(m => m.Model == value),
+                        "not equals"   => query.Where(m => m.Model != value),
+                        "starts with"  => query.Where(m => m.Model != null && m.Model.StartsWith(value)),
+                        "ends with"    => query.Where(m => m.Model != null && m.Model.EndsWith(value)),
+                        "is empty"     => query.Where(m => m.Model == null || m.Model == string.Empty),
+                        "is not empty" => query.Where(m => m.Model != null && m.Model != string.Empty),
+                        _              => query
+                    };
+                    break;
+
+                case "Family":
+                    query = op switch
+                    {
+                        "contains" => query.Where(m => m.Family != null && m.Family.Name.Contains(value)),
+                        "not contains" => query.Where(m =>
+                                                          m.Family == null || !m.Family.Name.Contains(value)),
+                        "equals"      => query.Where(m => m.Family != null && m.Family.Name == value),
+                        "not equals"  => query.Where(m => m.Family == null || m.Family.Name != value),
+                        "starts with" => query.Where(m => m.Family != null && m.Family.Name.StartsWith(value)),
+                        "ends with"   => query.Where(m => m.Family != null && m.Family.Name.EndsWith(value)),
+                        "is empty"    => query.Where(m => m.Family == null || m.Family.Name == string.Empty),
+                        "is not empty" => query.Where(m =>
+                                                          m.Family != null && m.Family.Name != string.Empty),
+                        _ => query
+                    };
+                    break;
+
+                case "Type":
+                    if(!int.TryParse(value, System.Globalization.NumberStyles.Integer,
+                                     System.Globalization.CultureInfo.InvariantCulture, out int typeInt))
+                        continue;
+
+                    MachineType typeVal = (MachineType)typeInt;
+
+                    query = op switch
+                    {
+                        "="          => query.Where(m => m.Type == typeVal),
+                        "equals"     => query.Where(m => m.Type == typeVal),
+                        "!="         => query.Where(m => m.Type != typeVal),
+                        "not equals" => query.Where(m => m.Type != typeVal),
+                        ">"          => query.Where(m => m.Type > typeVal),
+                        ">="         => query.Where(m => m.Type >= typeVal),
+                        "<"          => query.Where(m => m.Type < typeVal),
+                        "<="         => query.Where(m => m.Type <= typeVal),
+                        _            => query
+                    };
+                    break;
+
+                case "Prototype":
+                    if(!bool.TryParse(value, out bool protoVal)) continue;
+
+                    query = op switch
+                    {
+                        "is"     => query.Where(m => m.Prototype == protoVal),
+                        "equals" => query.Where(m => m.Prototype == protoVal),
+                        "is not" => query.Where(m => m.Prototype != protoVal),
+                        "not equals" => query.Where(m => m.Prototype != protoVal),
+                        _        => query
+                    };
+                    break;
+
+                case "Introduced":
+                    if(op == "is empty")
+                    {
+                        query = query.Where(m => m.Introduced == null);
+                        break;
+                    }
+
+                    if(op == "is not empty")
+                    {
+                        query = query.Where(m => m.Introduced != null);
+                        break;
+                    }
+
+                    if(!DateTime.TryParse(value, System.Globalization.CultureInfo.InvariantCulture,
+                                          System.Globalization.DateTimeStyles.AssumeUniversal |
+                                          System.Globalization.DateTimeStyles.AdjustToUniversal,
+                                          out DateTime parsed))
+                        continue;
+
+                    DateTime day = parsed.Date;
+
+                    query = op switch
+                    {
+                        "is"              => query.Where(m => m.Introduced.HasValue && m.Introduced.Value.Date == day),
+                        "is not"          => query.Where(m => m.Introduced.HasValue && m.Introduced.Value.Date != day),
+                        "is after"        => query.Where(m => m.Introduced.HasValue && m.Introduced.Value.Date > day),
+                        "is before"       => query.Where(m => m.Introduced.HasValue && m.Introduced.Value.Date < day),
+                        "is on or after"  => query.Where(m => m.Introduced.HasValue && m.Introduced.Value.Date >= day),
+                        "is on or before" => query.Where(m => m.Introduced.HasValue && m.Introduced.Value.Date <= day),
+                        _                 => query
+                    };
+                    break;
+            }
+        }
+
+        return query;
     }
 
     [HttpGet("{id:int}")]

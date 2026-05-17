@@ -25,6 +25,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.Kiota.Abstractions;
@@ -65,23 +67,52 @@ public class MachinesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<MachinePageDto> GetPagedAsync(int page, int pageSize)
+    /// <summary>
+    ///     Server-side paged fetch used by the admin <c>MudDataGrid</c>. Pushes the
+    ///     sort + filter spec all the way down to the SQL query so paging,
+    ///     filtering and ordering happen in the database. Filters are
+    ///     <c>"{Column}||{Operator}||{Value}"</c> triples mirroring MudBlazor's
+    ///     <c>FilterDefinition</c> shape; the controller's <c>ApplyFilters</c>
+    ///     helper translates them into LINQ predicates.
+    /// </summary>
+    public async Task<List<MachineDto>> GetPagedAsync(int skip, int take, string sortBy, bool sortDescending,
+                                                      IReadOnlyList<string> filters,
+                                                      CancellationToken cancellationToken = default)
     {
         try
         {
-            return await client.Machines.Paged.GetAsync(rc =>
+            List<MachineDto> machines = await client.Machines.GetAsync(config =>
             {
-                rc.QueryParameters.Page     = page;
-                rc.QueryParameters.PageSize = pageSize;
-            });
+                config.QueryParameters.Skip = skip;
+                config.QueryParameters.Take = take;
+                if(!string.IsNullOrWhiteSpace(sortBy)) config.QueryParameters.SortBy = sortBy;
+                if(sortDescending) config.QueryParameters.SortDescending = true;
+                if(filters is { Count: > 0 }) config.QueryParameters.Filters = filters.ToArray();
+            }, cancellationToken);
+
+            return machines ?? [];
         }
         catch
         {
-            return new MachinePageDto
+            return [];
+        }
+    }
+
+    public async Task<int> GetCountAsync(IReadOnlyList<string> filters = null,
+                                         CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            int? count = await client.Machines.Count.GetAsync(config =>
             {
-                Items      = new List<MachineDto>(),
-                TotalCount = 0
-            };
+                if(filters is { Count: > 0 }) config.QueryParameters.Filters = filters.ToArray();
+            }, cancellationToken);
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
         }
     }
 
