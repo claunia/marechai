@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -112,28 +113,63 @@ public sealed class MobyGamesBrowser : IAsyncDisposable
         Console.WriteLine("  Ensuring headless Chromium is available...");
         InstalledBrowser installed = await fetcher.DownloadAsync();
 
-        Console.WriteLine($"  Chromium {installed.BuildId} ready at {installed.GetExecutablePath()}");
+        string chromiumExe = installed.GetExecutablePath();
+        Console.WriteLine($"  Chromium {installed.BuildId} ready at {chromiumExe}");
 
-        _browser = await Puppeteer.LaunchAsync(new LaunchOptions
+        // Redirect XDG base-dir env vars into the state/ tree so Chromium's PathService
+        // resolves its config / data / cache (and therefore its crashpad database) inside our
+        // controlled location instead of $HOME/.config, which may not exist on a fresh box.
+        // When XDG_CONFIG_HOME is unset/missing, chrome::DIR_CRASH_DUMPS ends up empty and
+        // chrome_crashpad_handler is spawned with `--database=` → "--database is required".
+        string stateRoot = Path.GetFullPath(Path.Combine(_userDataDir, ".."));
+        string xdgConfig = Path.Combine(stateRoot, "xdg-config");
+        string xdgData   = Path.Combine(stateRoot, "xdg-data");
+        string xdgCache  = Path.Combine(stateRoot, "xdg-cache");
+        Directory.CreateDirectory(xdgConfig);
+        Directory.CreateDirectory(xdgData);
+        Directory.CreateDirectory(xdgCache);
+
+        try
         {
-            Headless       = _headless,
-            ExecutablePath = installed.GetExecutablePath(),
-            UserDataDir    = _userDataDir,
-            DefaultViewport = new ViewPortOptions
+            LaunchOptions opts = new()
             {
-                Width  = 1366,
-                Height = 768
-            },
-            Args = new[]
-            {
-                "--disable-blink-features=AutomationControlled",
-                "--no-sandbox",
-                // Suppress some additional automation fingerprints that Cloudflare looks for.
-                "--disable-features=IsolateOrigins,site-per-process,AutomationControlled",
-                "--disable-infobars",
-                $"--lang={Environment.GetEnvironmentVariable("LANG")?.Split('.')[0]?.Replace('_', '-') ?? "en-US"}"
-            }
-        });
+                Headless       = _headless,
+                ExecutablePath = chromiumExe,
+                UserDataDir    = _userDataDir,
+                DefaultViewport = new ViewPortOptions
+                {
+                    Width  = 1366,
+                    Height = 768
+                },
+                Args = new[]
+                {
+                    "--disable-blink-features=AutomationControlled",
+                    "--no-sandbox",
+                    // Suppress some additional automation fingerprints that Cloudflare looks for.
+                    "--disable-features=IsolateOrigins,site-per-process,AutomationControlled",
+                    "--disable-infobars",
+                    $"--lang={Environment.GetEnvironmentVariable("LANG")?.Split('.')[0]?.Replace('_', '-') ?? "en-US"}"
+                }
+            };
+
+            opts.Env["XDG_CONFIG_HOME"] = xdgConfig;
+            opts.Env["XDG_DATA_HOME"]   = xdgData;
+            opts.Env["XDG_CACHE_HOME"]  = xdgCache;
+
+            _browser = await Puppeteer.LaunchAsync(opts);
+        }
+        catch(Exception launchEx)
+        {
+            // PuppeteerSharp wraps anything that happens before the CDP handshake in a generic
+            // ProcessException with no inner. To diagnose the real cause, probe the binary
+            // directly: ldd reveals missing shared libs, and a `--version` invocation surfaces
+            // crashes/SIGSEGV from glibc, seccomp, or namespace restrictions.
+            await ProbeChromiumAsync(chromiumExe);
+
+            throw new InvalidOperationException(
+                $"Chromium launch failed at {chromiumExe}. See ldd/--version diagnostics above.",
+                launchEx);
+        }
 
         _page = await _browser.NewPageAsync();
         await _page.SetUserAgentAsync(DefaultUserAgent, null);
@@ -653,7 +689,21 @@ public sealed class MobyGamesBrowser : IAsyncDisposable
         }
         catch(Exception ex)
         {
-            Console.WriteLine($"\e[31m  MobyGames authentication failed: {ex.Message}\e[0m");
+            Console.WriteLine($"\e[31m  MobyGames authentication failed: {ex.GetType().FullName}: {ex.Message}\e[0m");
+
+            // PuppeteerSharp's "Failed to launch browser!" exception is a generic ProcessException
+            // wrapper. The actual reason (missing shared library, sandbox denial, profile lock,
+            // Chromium stderr, etc.) is in the inner exception chain. Unwrap and surface everything.
+            Exception inner = ex.InnerException;
+
+            while(inner != null)
+            {
+                Console.WriteLine($"\e[31m    caused by {inner.GetType().FullName}: {inner.Message}\e[0m");
+                inner = inner.InnerException;
+            }
+
+            if(ex.StackTrace != null) Console.WriteLine($"\e[90m{ex.StackTrace}\e[0m");
+
             Console.WriteLine("\e[33m  Continuing anonymous — downloads may be incomplete or rate-limited.\e[0m");
 
             return false;
@@ -676,6 +726,61 @@ public sealed class MobyGamesBrowser : IAsyncDisposable
             await _browser.CloseAsync();
 
         _browser?.Dispose();
+    }
+
+    /// <summary>
+    ///     Runs <c>ldd</c> and <c>&lt;chrome&gt; --version --no-sandbox</c> against the downloaded
+    ///     Chromium binary so launch failures surface a concrete cause (missing shared libs,
+    ///     SIGSEGV, glibc mismatch) instead of PuppeteerSharp's opaque ProcessException wrapper.
+    /// </summary>
+    static async Task ProbeChromiumAsync(string chromiumExe)
+    {
+        Console.WriteLine("\e[33m  Probing Chromium binary directly to diagnose launch failure...\e[0m");
+
+        await RunDiagnosticAsync("ldd",      chromiumExe,  highlightMissing: true);
+        await RunDiagnosticAsync(chromiumExe, "--version --no-sandbox", highlightMissing: false);
+    }
+
+    static async Task RunDiagnosticAsync(string fileName, string arguments, bool highlightMissing)
+    {
+        try
+        {
+            using var proc = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName               = fileName,
+                    Arguments              = arguments,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError  = true,
+                    UseShellExecute        = false
+                }
+            };
+
+            proc.Start();
+            string stdout = await proc.StandardOutput.ReadToEndAsync();
+            string stderr = await proc.StandardError.ReadToEndAsync();
+            await proc.WaitForExitAsync();
+
+            Console.WriteLine($"\e[90m    $ {fileName} {arguments}\e[0m");
+            Console.WriteLine($"\e[90m    exit={proc.ExitCode}\e[0m");
+
+            foreach(string line in stdout.Split('\n'))
+            {
+                if(string.IsNullOrWhiteSpace(line)) continue;
+
+                bool red = highlightMissing && line.Contains("not found", StringComparison.Ordinal);
+                Console.WriteLine($"\e[{(red ? "31" : "90")}m      {line.TrimEnd()}\e[0m");
+            }
+
+            foreach(string line in stderr.Split('\n'))
+                if(!string.IsNullOrWhiteSpace(line))
+                    Console.WriteLine($"\e[31m      stderr: {line.TrimEnd()}\e[0m");
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"\e[31m    probe ({fileName}) threw {ex.GetType().Name}: {ex.Message}\e[0m");
+        }
     }
 
     async Task<bool> TryRestoreCookiesAsync()
