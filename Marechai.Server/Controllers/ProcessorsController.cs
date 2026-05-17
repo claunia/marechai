@@ -50,59 +50,232 @@ public class ProcessorsController(MarechaiContext context, IDbContextFactory<Mar
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<ProcessorDto>> GetAsync([FromQuery] int? skip = null, [FromQuery] int? take = null,
+                                             [FromQuery] string sortBy = null,
+                                             [FromQuery] bool sortDescending = false,
+                                             [FromQuery(Name = "filters")] string[] filters = null,
                                              CancellationToken cancellationToken = default)
     {
-        IQueryable<Processor> ordered = context.Processors.AsNoTracking()
-                                               .OrderBy(p => p.Company.Name)
-                                               .ThenBy(p => p.Name)
-                                               .ThenBy(p => p.ModelCode);
+        IQueryable<Processor> query = ApplyFilters(context.Processors.AsNoTracking(), filters);
 
-        if(skip.HasValue) ordered = ordered.Skip(skip.Value);
-        if(take.HasValue) ordered = ordered.Take(take.Value);
+        // When no user-supplied sort is set, keep the legacy default ordering
+        // (Company → Name → ModelCode) so anonymous unfiltered consumers
+        // (Marechai.App admin, public /processor pages) see the same order they
+        // get today. A user-clicked column header suspends that ordering so the
+        // sort UX is predictable.
+        IOrderedQueryable<Processor> ordered = sortBy switch
+        {
+            "Name" => sortDescending
+                          ? query.OrderByDescending(p => MarechaiContext.NaturalSortKey(p.Name))
+                          : query.OrderBy(p => MarechaiContext.NaturalSortKey(p.Name)),
+            "Company" => sortDescending
+                             ? query.OrderByDescending(p => MarechaiContext.NaturalSortKey(p.Company.Name))
+                             : query.OrderBy(p => MarechaiContext.NaturalSortKey(p.Company.Name)),
+            "ModelCode" => sortDescending
+                               ? query.OrderByDescending(p => MarechaiContext.NaturalSortKey(p.ModelCode))
+                               : query.OrderBy(p => MarechaiContext.NaturalSortKey(p.ModelCode)),
+            "Introduced" => sortDescending
+                                ? query.OrderByDescending(p => p.Introduced)
+                                : query.OrderBy(p => p.Introduced),
+            "Speed" => sortDescending
+                           ? query.OrderByDescending(p => p.Speed)
+                           : query.OrderBy(p => p.Speed),
+            _ => query.OrderBy(p => p.Company.Name).ThenBy(p => p.Name).ThenBy(p => p.ModelCode)
+        };
 
-        return ordered.Select(p => new ProcessorDto
-                       {
-                           Name           = p.Name,
-                           CompanyName    = p.Company.Name,
-                           CompanyId      = p.Company.Id,
-                           ModelCode      = p.ModelCode,
-                           Introduced     = p.Introduced,
-                           IntroducedPrecision = p.IntroducedPrecision,
-                           Speed          = p.Speed,
-                           Package        = p.Package,
-                           Gprs           = p.Gprs,
-                           GprSize        = p.GprSize,
-                           Fprs           = p.Fprs,
-                           FprSize        = p.FprSize,
-                           Cores          = p.Cores,
-                           ThreadsPerCore = p.ThreadsPerCore,
-                           Process        = p.Process,
-                           ProcessNm      = p.ProcessNm,
-                           DieSize        = p.DieSize,
-                           Transistors    = p.Transistors,
-                           DataBus        = p.DataBus,
-                           AddrBus        = p.AddrBus,
-                           SimdRegisters  = p.SimdRegisters,
-                           SimdSize       = p.SimdSize,
-                           L1Instruction  = p.L1Instruction,
-                           L1Data         = p.L1Data,
-                           L2             = p.L2,
-                           L3             = p.L3,
-                           InstructionSet = p.InstructionSet.Name,
-                           Id             = p.Id,
-                           InstructionSetExtensions = p.InstructionSetExtensions
-                              .Select(e => e.Extension.Extension)
-                              .ToList()
-                       })
-                      .ToListAsync(cancellationToken);
+        IQueryable<Processor> paged = ordered;
+
+        if(skip.HasValue) paged = paged.Skip(skip.Value);
+        if(take.HasValue) paged = paged.Take(take.Value);
+
+        return paged.Select(p => new ProcessorDto
+                     {
+                         Name           = p.Name,
+                         CompanyName    = p.Company.Name,
+                         CompanyId      = p.Company.Id,
+                         ModelCode      = p.ModelCode,
+                         Introduced     = p.Introduced,
+                         IntroducedPrecision = p.IntroducedPrecision,
+                         Speed          = p.Speed,
+                         Package        = p.Package,
+                         Gprs           = p.Gprs,
+                         GprSize        = p.GprSize,
+                         Fprs           = p.Fprs,
+                         FprSize        = p.FprSize,
+                         Cores          = p.Cores,
+                         ThreadsPerCore = p.ThreadsPerCore,
+                         Process        = p.Process,
+                         ProcessNm      = p.ProcessNm,
+                         DieSize        = p.DieSize,
+                         Transistors    = p.Transistors,
+                         DataBus        = p.DataBus,
+                         AddrBus        = p.AddrBus,
+                         SimdRegisters  = p.SimdRegisters,
+                         SimdSize       = p.SimdSize,
+                         L1Instruction  = p.L1Instruction,
+                         L1Data         = p.L1Data,
+                         L2             = p.L2,
+                         L3             = p.L3,
+                         InstructionSet = p.InstructionSet.Name,
+                         Id             = p.Id,
+                         InstructionSetExtensions = p.InstructionSetExtensions
+                            .Select(e => e.Extension.Extension)
+                            .ToList()
+                     })
+                    .ToListAsync(cancellationToken);
     }
 
     [HttpGet("count")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<int> GetCountAsync(CancellationToken cancellationToken = default) =>
-        context.Processors.CountAsync(cancellationToken);
+    public Task<int> GetCountAsync([FromQuery(Name = "filters")] string[] filters = null,
+                                   CancellationToken cancellationToken = default) =>
+        ApplyFilters(context.Processors.AsNoTracking(), filters).CountAsync(cancellationToken);
+
+    /// <summary>
+    /// Translates MudDataGrid <c>FilterDefinition</c>s wired over the network as
+    /// <c>"{Column}||{Operator}||{Value}"</c> triples into LINQ predicates against
+    /// the <see cref="Processor"/> entity. Recognized columns mirror the
+    /// <c>PropertyColumn</c> names emitted by the admin grid: <c>Name</c>,
+    /// <c>Company</c>, <c>ModelCode</c>, <c>Introduced</c>, <c>Speed</c>. Unknown
+    /// columns and operators are silently ignored — filters MudBlazor may emit
+    /// for non-existent columns (or future ones) must never 400 the listing call.
+    /// </summary>
+    static IQueryable<Processor> ApplyFilters(IQueryable<Processor> query, string[] filters)
+    {
+        if(filters is null || filters.Length == 0) return query;
+
+        foreach(string raw in filters)
+        {
+            if(string.IsNullOrWhiteSpace(raw)) continue;
+
+            string[] parts = raw.Split("||", 3, StringSplitOptions.None);
+
+            if(parts.Length < 2) continue;
+
+            string column   = parts[0];
+            string op       = parts[1];
+            string value    = parts.Length >= 3 ? parts[2] : string.Empty;
+            bool   isEmpty  = op == "is empty";
+            bool   isNotEmp = op == "is not empty";
+
+            // Skip non-empty-check operators with no value supplied so a stray
+            // open-but-unfilled filter UI doesn't accidentally hide every row.
+            if(!isEmpty && !isNotEmp && string.IsNullOrEmpty(value)) continue;
+
+            switch(column)
+            {
+                case "Name":
+                    query = op switch
+                    {
+                        "contains"     => query.Where(p => p.Name.Contains(value)),
+                        "not contains" => query.Where(p => !p.Name.Contains(value)),
+                        "equals"       => query.Where(p => p.Name == value),
+                        "not equals"   => query.Where(p => p.Name != value),
+                        "starts with"  => query.Where(p => p.Name.StartsWith(value)),
+                        "ends with"    => query.Where(p => p.Name.EndsWith(value)),
+                        "is empty"     => query.Where(p => p.Name == null || p.Name == string.Empty),
+                        "is not empty" => query.Where(p => p.Name != null && p.Name != string.Empty),
+                        _              => query
+                    };
+                    break;
+
+                case "Company":
+                    query = op switch
+                    {
+                        "contains"     => query.Where(p => p.Company.Name.Contains(value)),
+                        "not contains" => query.Where(p => !p.Company.Name.Contains(value)),
+                        "equals"       => query.Where(p => p.Company.Name == value),
+                        "not equals"   => query.Where(p => p.Company.Name != value),
+                        "starts with"  => query.Where(p => p.Company.Name.StartsWith(value)),
+                        "ends with"    => query.Where(p => p.Company.Name.EndsWith(value)),
+                        "is empty"     => query.Where(p => p.Company.Name == null || p.Company.Name == string.Empty),
+                        "is not empty" => query.Where(p => p.Company.Name != null && p.Company.Name != string.Empty),
+                        _              => query
+                    };
+                    break;
+
+                case "ModelCode":
+                    query = op switch
+                    {
+                        "contains"     => query.Where(p => p.ModelCode != null && p.ModelCode.Contains(value)),
+                        "not contains" => query.Where(p => p.ModelCode == null || !p.ModelCode.Contains(value)),
+                        "equals"       => query.Where(p => p.ModelCode == value),
+                        "not equals"   => query.Where(p => p.ModelCode != value),
+                        "starts with"  => query.Where(p => p.ModelCode != null && p.ModelCode.StartsWith(value)),
+                        "ends with"    => query.Where(p => p.ModelCode != null && p.ModelCode.EndsWith(value)),
+                        "is empty"     => query.Where(p => p.ModelCode == null || p.ModelCode == string.Empty),
+                        "is not empty" => query.Where(p => p.ModelCode != null && p.ModelCode != string.Empty),
+                        _              => query
+                    };
+                    break;
+
+                case "Introduced":
+                    if(op == "is empty")
+                    {
+                        query = query.Where(p => p.Introduced == null);
+                        break;
+                    }
+
+                    if(op == "is not empty")
+                    {
+                        query = query.Where(p => p.Introduced != null);
+                        break;
+                    }
+
+                    if(!DateTime.TryParse(value, System.Globalization.CultureInfo.InvariantCulture,
+                                          System.Globalization.DateTimeStyles.AssumeUniversal |
+                                          System.Globalization.DateTimeStyles.AdjustToUniversal,
+                                          out DateTime parsed))
+                        continue;
+
+                    DateTime day = parsed.Date;
+
+                    query = op switch
+                    {
+                        "is"              => query.Where(p => p.Introduced.HasValue && p.Introduced.Value.Date == day),
+                        "is not"          => query.Where(p => p.Introduced.HasValue && p.Introduced.Value.Date != day),
+                        "is after"        => query.Where(p => p.Introduced.HasValue && p.Introduced.Value.Date > day),
+                        "is before"       => query.Where(p => p.Introduced.HasValue && p.Introduced.Value.Date < day),
+                        "is on or after"  => query.Where(p => p.Introduced.HasValue && p.Introduced.Value.Date >= day),
+                        "is on or before" => query.Where(p => p.Introduced.HasValue && p.Introduced.Value.Date <= day),
+                        _                 => query
+                    };
+                    break;
+
+                case "Speed":
+                    if(op == "is empty")
+                    {
+                        query = query.Where(p => p.Speed == null);
+                        break;
+                    }
+
+                    if(op == "is not empty")
+                    {
+                        query = query.Where(p => p.Speed != null);
+                        break;
+                    }
+
+                    if(!double.TryParse(value, System.Globalization.NumberStyles.Float,
+                                        System.Globalization.CultureInfo.InvariantCulture, out double speed))
+                        continue;
+
+                    query = op switch
+                    {
+                        "="  => query.Where(p => p.Speed == speed),
+                        "!=" => query.Where(p => p.Speed != speed),
+                        ">"  => query.Where(p => p.Speed > speed),
+                        "<"  => query.Where(p => p.Speed < speed),
+                        ">=" => query.Where(p => p.Speed >= speed),
+                        "<=" => query.Where(p => p.Speed <= speed),
+                        _    => query
+                    };
+                    break;
+            }
+        }
+
+        return query;
+    }
 
     [HttpGet("{processorId:int}/machines")]
     [AllowAnonymous]

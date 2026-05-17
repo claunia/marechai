@@ -66,7 +66,7 @@ namespace Marechai.ApiClient.Processors
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public ProcessorsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/processors{?skip*,take*}", pathParameters)
+        public ProcessorsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/processors{?filters*,skip*,sortBy*,sortDescending*,take*}", pathParameters)
         {
         }
         /// <summary>
@@ -74,7 +74,7 @@ namespace Marechai.ApiClient.Processors
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public ProcessorsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/processors{?skip*,take*}", rawUrl)
+        public ProcessorsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/processors{?filters*,skip*,sortBy*,sortDescending*,take*}", rawUrl)
         {
         }
         /// <returns>A List&lt;global::Marechai.ApiClient.Models.ProcessorDto&gt;</returns>
@@ -171,8 +171,28 @@ namespace Marechai.ApiClient.Processors
         public partial class ProcessorsRequestBuilderGetQueryParameters 
         #pragma warning restore CS1591
         {
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("filters")]
+            public string[]? Filters { get; set; }
+#nullable restore
+#else
+            [QueryParameter("filters")]
+            public string[] Filters { get; set; }
+#endif
             [QueryParameter("skip")]
             public int? Skip { get; set; }
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("sortBy")]
+            public string? SortBy { get; set; }
+#nullable restore
+#else
+            [QueryParameter("sortBy")]
+            public string SortBy { get; set; }
+#endif
+            [QueryParameter("sortDescending")]
+            public bool? SortDescending { get; set; }
             [QueryParameter("take")]
             public int? Take { get; set; }
         }
