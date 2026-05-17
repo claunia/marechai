@@ -145,118 +145,147 @@ public class OrphanCleanupService
     /// <summary>
     ///     For each child entity referencing <paramref name="orphanId" />: either redirect the
     ///     row to <paramref name="twinId" /> (if no conflicting row exists on the twin) or
-    ///     delete the orphan's row (if it would violate a unique constraint). Finally deletes
-    ///     the orphan <see cref="Software" /> row itself.
+    ///     delete the orphan's row (if the twin already has a content-equivalent or it would
+    ///     violate a unique/PK constraint). Finally deletes the orphan <see cref="Software" /> row.
+    ///     <para>
+    ///         Releases (and versions) are content-checked for duplication first: a release with
+    ///         the same (Title, PlatformId, PublisherId, ReleaseDate) tuple on the twin causes
+    ///         the orphan's release to be deleted (cascade-deleting all its children) so we
+    ///         don't end up with twin owning two copies of the same release. Junction tables
+    ///         (descriptions, genres, company roles, etc.) are deduped by their natural key.
+    ///         Other one-to-many media rows (screenshots, promo art, videos, reviews) have no
+    ///         reliable dedup key and are simply redirected; deduplication of those should be a
+    ///         separate exercise.
+    ///     </para>
+    ///     <para>
+    ///         All junction updates use <c>ExecuteDelete</c>/<c>ExecuteUpdate</c> rather than
+    ///         tracked-entity modifications. This is required for composite-PK tables
+    ///         (<see cref="GenreBySoftware" />, <see cref="SoftwareCompanyRole" />,
+    ///         <see cref="SoftwareBySoftwareRelease" />) whose <c>SoftwareId</c> is part of the
+    ///         primary key — EF's change tracker rejects in-place PK column modification with
+    ///         "the property is part of a key and so cannot be modified or marked as modified".
+    ///         For consistency and speed, the same pattern is used for the other junctions.
+    ///     </para>
     /// </summary>
     async Task MergeOneAsync(ulong orphanId, ulong twinId)
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
 
-        // ---- Tables with multi-column uniqueness: dedup first, then redirect remainder. ----
-
-        // SoftwareDescription: unique per (SoftwareId, LanguageCode)
-        var twinDescSet = new HashSet<string>(
-            await context.SoftwareDescriptions
-                         .Where(d => d.SoftwareId == twinId)
-                         .Select(d => d.LanguageCode)
-                         .ToListAsync());
-
-        foreach(var d in await context.SoftwareDescriptions.Where(x => x.SoftwareId == orphanId).ToListAsync())
-        {
-            if(twinDescSet.Contains(d.LanguageCode))
-                context.SoftwareDescriptions.Remove(d);
-            else
-                d.SoftwareId = twinId;
-        }
-
-        // GenreBySoftware: unique per (SoftwareId, GenreId)
-        var twinGenreSet = new HashSet<int>(
-            await context.GenresBySoftware
-                         .Where(g => g.SoftwareId == twinId)
-                         .Select(g => g.GenreId)
-                         .ToListAsync());
-
-        foreach(var g in await context.GenresBySoftware.Where(x => x.SoftwareId == orphanId).ToListAsync())
-        {
-            if(twinGenreSet.Contains(g.GenreId))
-                context.GenresBySoftware.Remove(g);
-            else
-                g.SoftwareId = twinId;
-        }
-
-        // SoftwareCompanyRole: dedup by (CompanyId, RoleId)
-        var twinCompanyRoleSet = new HashSet<(int, string)>(
-            (await context.SoftwareCompanyRoles
-                          .Where(r => r.SoftwareId == twinId)
-                          .Select(r => new { r.CompanyId, r.RoleId })
-                          .ToListAsync())
-            .Select(x => (x.CompanyId, x.RoleId)));
-
-        foreach(var r in await context.SoftwareCompanyRoles.Where(x => x.SoftwareId == orphanId).ToListAsync())
-        {
-            if(twinCompanyRoleSet.Contains((r.CompanyId, r.RoleId)))
-                context.SoftwareCompanyRoles.Remove(r);
-            else
-                r.SoftwareId = twinId;
-        }
-
-        // PeopleBySoftware has an autoincrement Id (BaseModel<long>) — no implicit uniqueness on
-        // (SoftwareId, PersonId, RoleId), but dedup conservatively to avoid duplicate credits.
-        var twinPeopleSet = new HashSet<(int, string)>(
-            (await context.PeopleBySoftware
-                          .Where(p => p.SoftwareId == twinId)
-                          .Select(p => new { p.PersonId, p.RoleId })
-                          .ToListAsync())
-            .Select(x => (x.PersonId, x.RoleId)));
-
-        foreach(var p in await context.PeopleBySoftware.Where(x => x.SoftwareId == orphanId).ToListAsync())
-        {
-            if(twinPeopleSet.Contains((p.PersonId, p.RoleId)))
-                context.PeopleBySoftware.Remove(p);
-            else
-                p.SoftwareId = twinId;
-        }
-
-        // MagazinesBySoftware: dedup by MagazineId
-        var twinMagSet = new HashSet<long>(
-            await context.MagazinesBySoftware
-                         .Where(m => m.SoftwareId == twinId)
-                         .Select(m => m.MagazineId)
-                         .ToListAsync());
-
-        foreach(var m in await context.MagazinesBySoftware.Where(x => x.SoftwareId == orphanId).ToListAsync())
-        {
-            if(twinMagSet.Contains(m.MagazineId))
-                context.MagazinesBySoftware.Remove(m);
-            else
-                m.SoftwareId = twinId;
-        }
-
-        // SoftwareBySoftwareRelease: dedup by ReleaseId
-        var twinSwSrSet = new HashSet<ulong>(
-            await context.SoftwareBySoftwareRelease
-                         .Where(j => j.SoftwareId == twinId)
-                         .Select(j => j.ReleaseId)
-                         .ToListAsync());
-
-        foreach(var j in await context.SoftwareBySoftwareRelease.Where(x => x.SoftwareId == orphanId).ToListAsync())
-        {
-            if(twinSwSrSet.Contains(j.ReleaseId))
-                context.SoftwareBySoftwareRelease.Remove(j);
-            else
-                j.SoftwareId = twinId;
-        }
-
-        await context.SaveChangesAsync();
-
-        // ---- Tables without a convenient dedup key: bulk-redirect via ExecuteUpdate. ----
+        // ====================================================================
+        // 1. SoftwareReleases — delete duplicates, redirect the rest.
+        // ====================================================================
+        // A release on the orphan is a duplicate of a release on the twin when
+        // (Title, PlatformId, PublisherId, ReleaseDate) all match. Duplicate
+        // releases on the orphan are DELETED (their children — Barcodes,
+        // ProductCodes, Covers, Attributes, SoftwareBySoftwareRelease rows,
+        // Languages, Regions, Gpus, SoundSynths, IncludedVersions — all
+        // cascade-delete automatically per the OnDelete(Cascade) FK config).
+        // Non-duplicate releases are redirected to the twin so the data isn't
+        // lost.
+        await context.SoftwareReleases
+                     .Where(r => r.SoftwareId == orphanId &&
+                                 context.SoftwareReleases.Any(t => t.SoftwareId  == twinId        &&
+                                                                   t.Title       == r.Title       &&
+                                                                   t.PlatformId  == r.PlatformId  &&
+                                                                   t.PublisherId == r.PublisherId &&
+                                                                   t.ReleaseDate == r.ReleaseDate))
+                     .ExecuteDeleteAsync();
 
         await context.SoftwareReleases.Where(r => r.SoftwareId == orphanId)
                      .ExecuteUpdateAsync(s => s.SetProperty(r => r.SoftwareId, _ => (ulong?)twinId));
 
+        // ====================================================================
+        // 2. SoftwareDescription — unique per (SoftwareId, LanguageCode).
+        // ====================================================================
+        await context.SoftwareDescriptions
+                     .Where(d => d.SoftwareId == orphanId &&
+                                 context.SoftwareDescriptions.Any(t => t.SoftwareId   == twinId &&
+                                                                       t.LanguageCode == d.LanguageCode))
+                     .ExecuteDeleteAsync();
+
+        await context.SoftwareDescriptions.Where(d => d.SoftwareId == orphanId)
+                     .ExecuteUpdateAsync(s => s.SetProperty(d => d.SoftwareId, _ => twinId));
+
+        // ====================================================================
+        // 3. GenreBySoftware — composite PK (SoftwareId, GenreId).
+        // ====================================================================
+        await context.GenresBySoftware
+                     .Where(g => g.SoftwareId == orphanId &&
+                                 context.GenresBySoftware.Any(t => t.SoftwareId == twinId && t.GenreId == g.GenreId))
+                     .ExecuteDeleteAsync();
+
+        await context.GenresBySoftware.Where(g => g.SoftwareId == orphanId)
+                     .ExecuteUpdateAsync(s => s.SetProperty(g => g.SoftwareId, _ => twinId));
+
+        // ====================================================================
+        // 4. SoftwareCompanyRole — composite PK (SoftwareId, CompanyId, RoleId).
+        // ====================================================================
+        await context.SoftwareCompanyRoles
+                     .Where(r => r.SoftwareId == orphanId &&
+                                 context.SoftwareCompanyRoles.Any(t => t.SoftwareId == twinId      &&
+                                                                       t.CompanyId  == r.CompanyId &&
+                                                                       t.RoleId     == r.RoleId))
+                     .ExecuteDeleteAsync();
+
+        await context.SoftwareCompanyRoles.Where(r => r.SoftwareId == orphanId)
+                     .ExecuteUpdateAsync(s => s.SetProperty(r => r.SoftwareId, _ => twinId));
+
+        // ====================================================================
+        // 5. PeopleBySoftware — own Id, dedup conservatively by (PersonId, RoleId).
+        // ====================================================================
+        await context.PeopleBySoftware
+                     .Where(p => p.SoftwareId == orphanId &&
+                                 context.PeopleBySoftware.Any(t => t.SoftwareId == twinId     &&
+                                                                   t.PersonId   == p.PersonId &&
+                                                                   t.RoleId     == p.RoleId))
+                     .ExecuteDeleteAsync();
+
+        await context.PeopleBySoftware.Where(p => p.SoftwareId == orphanId)
+                     .ExecuteUpdateAsync(s => s.SetProperty(p => p.SoftwareId, _ => twinId));
+
+        // ====================================================================
+        // 6. MagazinesBySoftware — own Id, dedup by MagazineId.
+        // ====================================================================
+        await context.MagazinesBySoftware
+                     .Where(m => m.SoftwareId == orphanId &&
+                                 context.MagazinesBySoftware.Any(t => t.SoftwareId == twinId &&
+                                                                      t.MagazineId == m.MagazineId))
+                     .ExecuteDeleteAsync();
+
+        await context.MagazinesBySoftware.Where(m => m.SoftwareId == orphanId)
+                     .ExecuteUpdateAsync(s => s.SetProperty(m => m.SoftwareId, _ => twinId));
+
+        // ====================================================================
+        // 7. SoftwareBySoftwareRelease — composite PK (SoftwareId, ReleaseId).
+        // ====================================================================
+        // Step 1 already cascade-deleted rows pointing at deleted orphan releases.
+        // Remaining rows have SoftwareId=orphanId pointing at twin/third-party releases.
+        await context.SoftwareBySoftwareRelease
+                     .Where(j => j.SoftwareId == orphanId &&
+                                 context.SoftwareBySoftwareRelease.Any(t => t.SoftwareId == twinId &&
+                                                                            t.ReleaseId  == j.ReleaseId))
+                     .ExecuteDeleteAsync();
+
+        await context.SoftwareBySoftwareRelease.Where(j => j.SoftwareId == orphanId)
+                     .ExecuteUpdateAsync(s => s.SetProperty(j => j.SoftwareId, _ => twinId));
+
+        // ====================================================================
+        // 8. SoftwareVersions — dedup by VersionString, redirect rest.
+        // ====================================================================
+        await context.SoftwareVersions
+                     .Where(v => v.SoftwareId == orphanId &&
+                                 context.SoftwareVersions.Any(t => t.SoftwareId    == twinId &&
+                                                                   t.VersionString == v.VersionString))
+                     .ExecuteDeleteAsync();
+
         await context.SoftwareVersions.Where(v => v.SoftwareId == orphanId)
                      .ExecuteUpdateAsync(s => s.SetProperty(v => v.SoftwareId, _ => twinId));
 
+        // ====================================================================
+        // 9. Other one-to-many child tables (screenshots, promo art, videos,
+        //    critic reviews, user ratings/reviews). No reliable dedup key — each
+        //    is its own content row — so just redirect orphan's to twin.
+        // ====================================================================
         await context.SoftwareScreenshots.Where(s => s.SoftwareId == orphanId)
                      .ExecuteUpdateAsync(s => s.SetProperty(x => x.SoftwareId, _ => twinId));
 
