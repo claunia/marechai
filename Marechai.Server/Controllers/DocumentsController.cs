@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
@@ -47,7 +48,9 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<int> GetDocumentsCountAsync() => context.Documents.CountAsync();
+    public Task<int> GetDocumentsCountAsync([FromQuery(Name = "filters")] string[] filters = null,
+                                            CancellationToken cancellationToken = default) =>
+        ApplyFilters(context.Documents.AsNoTracking(), filters).CountAsync(cancellationToken);
 
     [HttpGet("minimum-year")]
     [AllowAnonymous]
@@ -194,30 +197,169 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<DocumentDto>> GetAsync([FromQuery] int? skip = null, [FromQuery] int? take = null,
+    public Task<List<DocumentDto>> GetAsync([FromQuery] int?    skip           = null,
+                                            [FromQuery] int?    take           = null,
+                                            [FromQuery] string  sortBy         = null,
+                                            [FromQuery] bool    sortDescending = false,
+                                            [FromQuery(Name = "filters")] string[] filters = null,
                                             CancellationToken cancellationToken = default)
     {
-        IQueryable<Document> ordered = context.Documents
-                                              .OrderBy(b => MarechaiContext.NaturalSortKey(b.SortTitle))
-                                              .ThenBy(b => b.Published)
-                                              .ThenBy(b => MarechaiContext.NaturalSortKey(b.Title));
+        IQueryable<Document> query = ApplyFilters(context.Documents.AsNoTracking(), filters);
 
-        if(skip.HasValue) ordered = ordered.Skip(skip.Value);
-        if(take.HasValue) ordered = ordered.Take(take.Value);
+        // When no user-supplied sort is set, keep the legacy default ordering
+        // (SortTitle → Published → Title) so anonymous unfiltered consumers see
+        // the same order they get today.
+        IOrderedQueryable<Document> ordered = sortBy switch
+        {
+            "Title" => sortDescending
+                           ? query.OrderByDescending(b => MarechaiContext.NaturalSortKey(b.Title))
+                           : query.OrderBy(b => MarechaiContext.NaturalSortKey(b.Title)),
+            "Published" => sortDescending
+                               ? query.OrderByDescending(b => b.Published)
+                               : query.OrderBy(b => b.Published),
+            "Country" => sortDescending
+                             ? query.OrderByDescending(b => MarechaiContext.NaturalSortKey(b.Country.Name))
+                             : query.OrderBy(b => MarechaiContext.NaturalSortKey(b.Country.Name)),
+            "InternetArchiveUrl" => sortDescending
+                                        ? query.OrderByDescending(b => b.InternetArchiveUrl)
+                                        : query.OrderBy(b => b.InternetArchiveUrl),
+            _ => query.OrderBy(b => MarechaiContext.NaturalSortKey(b.SortTitle))
+                      .ThenBy(b => b.Published)
+                      .ThenBy(b => MarechaiContext.NaturalSortKey(b.Title))
+        };
 
-        return ordered.Select(b => new DocumentDto
-                       {
-                           Id                 = b.Id,
-                           Title              = b.Title,
-                           NativeTitle        = b.NativeTitle,
-                           SortTitle          = b.SortTitle,
-                           Published          = b.Published,
-                           PublishedPrecision = b.PublishedPrecision,
-                           CountryId          = b.CountryId,
-                           Country            = b.Country.Name,
-                           InternetArchiveUrl = b.InternetArchiveUrl
-                       })
-                      .ToListAsync(cancellationToken);
+        IQueryable<Document> paged = ordered;
+        if(skip.HasValue) paged = paged.Skip(skip.Value);
+        if(take.HasValue) paged = paged.Take(take.Value);
+
+        return paged.Select(b => new DocumentDto
+                     {
+                         Id                 = b.Id,
+                         Title              = b.Title,
+                         NativeTitle        = b.NativeTitle,
+                         SortTitle          = b.SortTitle,
+                         Published          = b.Published,
+                         PublishedPrecision = b.PublishedPrecision,
+                         CountryId          = b.CountryId,
+                         Country            = b.Country.Name,
+                         InternetArchiveUrl = b.InternetArchiveUrl
+                     })
+                    .ToListAsync(cancellationToken);
+    }
+
+    /// <summary>
+    /// Translates MudDataGrid <c>FilterDefinition</c>s wired over the network as
+    /// <c>"{Column}||{Operator}||{Value}"</c> triples into LINQ predicates against
+    /// the <see cref="Document"/> entity. Recognized columns mirror the
+    /// <c>PropertyColumn</c> names emitted by the admin grid: <c>Title</c>,
+    /// <c>Published</c>, <c>Country</c>, <c>InternetArchiveUrl</c>. Unknown columns
+    /// and operators are silently ignored — filters MudBlazor may emit for
+    /// non-existent columns must never 400 the listing call.
+    /// </summary>
+    static IQueryable<Document> ApplyFilters(IQueryable<Document> query, string[] filters)
+    {
+        if(filters is null || filters.Length == 0) return query;
+
+        foreach(string raw in filters)
+        {
+            if(string.IsNullOrWhiteSpace(raw)) continue;
+
+            string[] parts = raw.Split("||", 3, StringSplitOptions.None);
+            if(parts.Length < 2) continue;
+
+            string column   = parts[0];
+            string op       = parts[1];
+            string value    = parts.Length >= 3 ? parts[2] : string.Empty;
+            bool   isEmpty  = op == "is empty";
+            bool   isNotEmp = op == "is not empty";
+
+            // Skip non-empty-check operators with no value supplied so a stray
+            // open-but-unfilled filter UI doesn't accidentally hide every row.
+            if(!isEmpty && !isNotEmp && string.IsNullOrEmpty(value)) continue;
+
+            switch(column)
+            {
+                case "Title":
+                    query = op switch
+                    {
+                        "contains"     => query.Where(d => d.Title.Contains(value)),
+                        "not contains" => query.Where(d => !d.Title.Contains(value)),
+                        "equals"       => query.Where(d => d.Title == value),
+                        "not equals"   => query.Where(d => d.Title != value),
+                        "starts with"  => query.Where(d => d.Title.StartsWith(value)),
+                        "ends with"    => query.Where(d => d.Title.EndsWith(value)),
+                        "is empty"     => query.Where(d => d.Title == null || d.Title == string.Empty),
+                        "is not empty" => query.Where(d => d.Title != null && d.Title != string.Empty),
+                        _              => query
+                    };
+                    break;
+
+                case "Country":
+                    query = op switch
+                    {
+                        "contains"     => query.Where(d => d.Country.Name.Contains(value)),
+                        "not contains" => query.Where(d => !d.Country.Name.Contains(value)),
+                        "equals"       => query.Where(d => d.Country.Name == value),
+                        "not equals"   => query.Where(d => d.Country.Name != value),
+                        "starts with"  => query.Where(d => d.Country.Name.StartsWith(value)),
+                        "ends with"    => query.Where(d => d.Country.Name.EndsWith(value)),
+                        "is empty"     => query.Where(d => d.CountryId == null ||
+                                                          d.Country.Name == null ||
+                                                          d.Country.Name == string.Empty),
+                        "is not empty" => query.Where(d => d.CountryId != null &&
+                                                          d.Country.Name != null &&
+                                                          d.Country.Name != string.Empty),
+                        _              => query
+                    };
+                    break;
+
+                case "InternetArchiveUrl":
+                    query = op switch
+                    {
+                        "contains"     => query.Where(d => d.InternetArchiveUrl != null &&
+                                                          d.InternetArchiveUrl.Contains(value)),
+                        "not contains" => query.Where(d => d.InternetArchiveUrl == null ||
+                                                          !d.InternetArchiveUrl.Contains(value)),
+                        "equals"       => query.Where(d => d.InternetArchiveUrl == value),
+                        "not equals"   => query.Where(d => d.InternetArchiveUrl != value),
+                        "starts with"  => query.Where(d => d.InternetArchiveUrl != null &&
+                                                          d.InternetArchiveUrl.StartsWith(value)),
+                        "ends with"    => query.Where(d => d.InternetArchiveUrl != null &&
+                                                          d.InternetArchiveUrl.EndsWith(value)),
+                        "is empty"     => query.Where(d => d.InternetArchiveUrl == null ||
+                                                          d.InternetArchiveUrl == string.Empty),
+                        "is not empty" => query.Where(d => d.InternetArchiveUrl != null &&
+                                                          d.InternetArchiveUrl != string.Empty),
+                        _              => query
+                    };
+                    break;
+
+                case "Published":
+                    if(op == "is empty")    { query = query.Where(d => d.Published == null); break; }
+                    if(op == "is not empty"){ query = query.Where(d => d.Published != null); break; }
+
+                    if(!DateTime.TryParse(value, CultureInfo.InvariantCulture,
+                                          DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal,
+                                          out DateTime parsed))
+                        continue;
+
+                    DateTime day = parsed.Date;
+
+                    query = op switch
+                    {
+                        "is"              => query.Where(d => d.Published.HasValue && d.Published.Value.Date == day),
+                        "is not"          => query.Where(d => d.Published.HasValue && d.Published.Value.Date != day),
+                        "is after"        => query.Where(d => d.Published.HasValue && d.Published.Value.Date >  day),
+                        "is before"       => query.Where(d => d.Published.HasValue && d.Published.Value.Date <  day),
+                        "is on or after"  => query.Where(d => d.Published.HasValue && d.Published.Value.Date >= day),
+                        "is on or before" => query.Where(d => d.Published.HasValue && d.Published.Value.Date <= day),
+                        _                 => query
+                    };
+                    break;
+            }
+        }
+
+        return query;
     }
 
     [HttpGet("{id:long}")]

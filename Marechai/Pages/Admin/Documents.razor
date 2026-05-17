@@ -24,23 +24,15 @@
     <MudAlert Severity="Severity.Success" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _successMessage = null">@_successMessage</MudAlert>
 }
 
-@if(_isLoading)
-{
-    <div class="d-flex justify-center pa-8">
-        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
-    </div>
-    return;
-}
-
 <MudPaper Elevation="2" Class="rounded-lg">
     <MudToolBar Dense="true">
         <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="OpenAddDocumentDialog">@L["Add Document"]</MudButton>
         <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Upload" OnClick="OpenImportDialog" Class="ml-2">@L["Import CSV"]</MudButton>
         <MudSpacer/>
-        <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadDocumentsAsync"/>
+        <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="async () => await _dataGrid.ReloadServerData()"/>
     </MudToolBar>
 
-    <MudDataGrid Items="_documents" Dense="true" Hover="true" Striped="true" Filterable="true">
+    <MudDataGrid @ref="_dataGrid" T="DocumentDto" ServerData="ServerReload" Dense="true" Hover="true" Striped="true" Filterable="true" RowsPerPage="25">
         <Columns>
             <PropertyColumn Property="x => x.Title" Title="@L["Title"]"/>
             <PropertyColumn Property="x => x.Published" Title="@L["Published"]">
@@ -49,7 +41,7 @@
                 </CellTemplate>
             </PropertyColumn>
             <PropertyColumn Property="x => x.Country" Title="@L["Country"]"/>
-            <TemplateColumn Title="@L["Internet Archive link"]" Sortable="false" Filterable="false">
+            <PropertyColumn Property="x => x.InternetArchiveUrl" Title="@L["Internet Archive link"]">
                 <CellTemplate>
                     @if(!string.IsNullOrWhiteSpace(context.Item.InternetArchiveUrl))
                     {
@@ -62,7 +54,7 @@
                         </MudTooltip>
                     }
                 </CellTemplate>
-            </TemplateColumn>
+            </PropertyColumn>
             <TemplateColumn Title="@L["Actions"]" Sortable="false" Filterable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
@@ -74,5 +66,8 @@
                 </CellTemplate>
             </TemplateColumn>
         </Columns>
+        <PagerContent>
+            <MudDataGridPager T="DocumentDto" PageSizeOptions="new[] { 10, 25, 50, 100 }"/>
+        </PagerContent>
     </MudDataGrid>
 </MudPaper>
