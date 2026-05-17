@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
@@ -53,11 +54,46 @@ public class GpusService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<int> GetCountAsync(CancellationToken cancellationToken = default)
+    /// <summary>
+    ///     Server-side paged fetch used by the admin <c>MudDataGrid</c>. Pushes the
+    ///     sort + filter spec all the way down to the SQL query so paging,
+    ///     filtering and ordering happen in the database. Filters are
+    ///     <c>"{Column}||{Operator}||{Value}"</c> triples mirroring MudBlazor's
+    ///     <c>FilterDefinition</c> shape; <see cref="GpusController.ApplyFilters"/>
+    ///     translates them into LINQ predicates.
+    /// </summary>
+    public async Task<List<GpuDto>> GetPagedAsync(int skip, int take, string sortBy, bool sortDescending,
+                                                  IReadOnlyList<string> filters,
+                                                  CancellationToken cancellationToken = default)
     {
         try
         {
-            int? count = await client.Gpus.Count.GetAsync(cancellationToken: cancellationToken);
+            List<GpuDto> gpus = await client.Gpus.GetAsync(config =>
+            {
+                config.QueryParameters.Skip = skip;
+                config.QueryParameters.Take = take;
+                if(!string.IsNullOrWhiteSpace(sortBy)) config.QueryParameters.SortBy = sortBy;
+                if(sortDescending) config.QueryParameters.SortDescending = true;
+                if(filters is { Count: > 0 }) config.QueryParameters.Filters = filters.ToArray();
+            }, cancellationToken);
+
+            return gpus ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<int> GetCountAsync(IReadOnlyList<string> filters = null,
+                                         CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            int? count = await client.Gpus.Count.GetAsync(config =>
+            {
+                if(filters is { Count: > 0 }) config.QueryParameters.Filters = filters.ToArray();
+            }, cancellationToken);
 
             return count ?? 0;
         }

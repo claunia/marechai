@@ -49,42 +49,181 @@ public class GpusController(MarechaiContext context, IDbContextFactory<MarechaiC
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<GpuDto>> GetAsync([FromQuery] int? skip = null, [FromQuery] int? take = null,
+                                       [FromQuery] string sortBy = null,
+                                       [FromQuery] bool sortDescending = false,
+                                       [FromQuery(Name = "filters")] string[] filters = null,
                                        CancellationToken cancellationToken = default)
     {
-        IQueryable<Gpu> ordered = context.Gpus
-                                         .AsNoTracking()
-                                         // Pin the special "DB_FRAMEBUFFER", "DB_SOFTWARE" and "DB_NONE" rows
-                                         // to the top so the public /gpus page can display them first across
-                                         // paginated batches.
-                                         .OrderBy(g => g.Name == "DB_FRAMEBUFFER" ? 0 :
-                                                       g.Name == "DB_SOFTWARE"    ? 1 :
-                                                       g.Name == "DB_NONE"        ? 2 : 3)
-                                         .ThenBy(g => g.Company.Name)
-                                         .ThenBy(g => g.Name)
-                                         .ThenBy(g => g.Introduced);
+        IQueryable<Gpu> query = ApplyFilters(context.Gpus.AsNoTracking(), filters);
 
-        if(skip.HasValue) ordered = ordered.Skip(skip.Value);
-        if(take.HasValue) ordered = ordered.Take(take.Value);
+        // When no user-supplied sort is set, keep the legacy default ordering that
+        // pins the special "DB_FRAMEBUFFER", "DB_SOFTWARE" and "DB_NONE" rows to the
+        // top so the public /gpus page can display them first across paginated
+        // batches. A user-clicked column header suspends the pin so the sort UX is
+        // predictable.
+        IOrderedQueryable<Gpu> ordered = sortBy switch
+        {
+            "Name"      => sortDescending
+                               ? query.OrderByDescending(g => MarechaiContext.NaturalSortKey(g.Name))
+                               : query.OrderBy(g => MarechaiContext.NaturalSortKey(g.Name)),
+            "Company"   => sortDescending
+                               ? query.OrderByDescending(g => MarechaiContext.NaturalSortKey(g.Company.Name))
+                               : query.OrderBy(g => MarechaiContext.NaturalSortKey(g.Company.Name)),
+            "ModelCode" => sortDescending
+                               ? query.OrderByDescending(g => MarechaiContext.NaturalSortKey(g.ModelCode))
+                               : query.OrderBy(g => MarechaiContext.NaturalSortKey(g.ModelCode)),
+            "Introduced" => sortDescending
+                                ? query.OrderByDescending(g => g.Introduced)
+                                : query.OrderBy(g => g.Introduced),
+            _ => query.OrderBy(g => g.Name == "DB_FRAMEBUFFER" ? 0 :
+                                    g.Name == "DB_SOFTWARE"    ? 1 :
+                                    g.Name == "DB_NONE"        ? 2 : 3)
+                      .ThenBy(g => g.Company.Name)
+                      .ThenBy(g => g.Name)
+                      .ThenBy(g => g.Introduced)
+        };
 
-        return ordered.Select(g => new GpuDto
-                       {
-                           Id                  = g.Id,
-                           Company             = g.Company.Name,
-                           CompanyId           = g.CompanyId,
-                           Introduced          = g.Introduced,
-                           IntroducedPrecision = g.IntroducedPrecision,
-                           ModelCode           = g.ModelCode,
-                           Name                = g.Name
-                       })
-                      .ToListAsync(cancellationToken);
+        IQueryable<Gpu> paged = ordered;
+
+        if(skip.HasValue) paged = paged.Skip(skip.Value);
+        if(take.HasValue) paged = paged.Take(take.Value);
+
+        return paged.Select(g => new GpuDto
+                     {
+                         Id                  = g.Id,
+                         Company             = g.Company.Name,
+                         CompanyId           = g.CompanyId,
+                         Introduced          = g.Introduced,
+                         IntroducedPrecision = g.IntroducedPrecision,
+                         ModelCode           = g.ModelCode,
+                         Name                = g.Name
+                     })
+                    .ToListAsync(cancellationToken);
     }
 
     [HttpGet("count")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<int> GetCountAsync(CancellationToken cancellationToken = default) =>
-        context.Gpus.CountAsync(cancellationToken);
+    public Task<int> GetCountAsync([FromQuery(Name = "filters")] string[] filters = null,
+                                   CancellationToken cancellationToken = default) =>
+        ApplyFilters(context.Gpus.AsNoTracking(), filters).CountAsync(cancellationToken);
+
+    /// <summary>
+    /// Translates MudDataGrid <c>FilterDefinition</c>s wired over the network as
+    /// <c>"{Column}||{Operator}||{Value}"</c> triples into LINQ predicates against
+    /// the <see cref="Gpu"/> entity. Recognized columns mirror the
+    /// <c>PropertyColumn</c> names emitted by the admin grid: <c>Name</c>,
+    /// <c>Company</c>, <c>ModelCode</c>, <c>Introduced</c>. Unknown columns and
+    /// operators are silently ignored — filters MudBlazor may emit for non-
+    /// existent columns (or future ones) must never 400 the listing call.
+    /// </summary>
+    static IQueryable<Gpu> ApplyFilters(IQueryable<Gpu> query, string[] filters)
+    {
+        if(filters is null || filters.Length == 0) return query;
+
+        foreach(string raw in filters)
+        {
+            if(string.IsNullOrWhiteSpace(raw)) continue;
+
+            string[] parts = raw.Split("||", 3, StringSplitOptions.None);
+
+            if(parts.Length < 2) continue;
+
+            string column   = parts[0];
+            string op       = parts[1];
+            string value    = parts.Length >= 3 ? parts[2] : string.Empty;
+            bool   isEmpty  = op == "is empty";
+            bool   isNotEmp = op == "is not empty";
+
+            // Skip non-empty-check operators with no value supplied so a stray
+            // open-but-unfilled filter UI doesn't accidentally hide every row.
+            if(!isEmpty && !isNotEmp && string.IsNullOrEmpty(value)) continue;
+
+            switch(column)
+            {
+                case "Name":
+                    query = op switch
+                    {
+                        "contains"      => query.Where(g => g.Name.Contains(value)),
+                        "not contains"  => query.Where(g => !g.Name.Contains(value)),
+                        "equals"        => query.Where(g => g.Name == value),
+                        "not equals"    => query.Where(g => g.Name != value),
+                        "starts with"   => query.Where(g => g.Name.StartsWith(value)),
+                        "ends with"     => query.Where(g => g.Name.EndsWith(value)),
+                        "is empty"      => query.Where(g => g.Name == null || g.Name == string.Empty),
+                        "is not empty"  => query.Where(g => g.Name != null && g.Name != string.Empty),
+                        _               => query
+                    };
+                    break;
+
+                case "Company":
+                    query = op switch
+                    {
+                        "contains"      => query.Where(g => g.Company.Name.Contains(value)),
+                        "not contains"  => query.Where(g => !g.Company.Name.Contains(value)),
+                        "equals"        => query.Where(g => g.Company.Name == value),
+                        "not equals"    => query.Where(g => g.Company.Name != value),
+                        "starts with"   => query.Where(g => g.Company.Name.StartsWith(value)),
+                        "ends with"     => query.Where(g => g.Company.Name.EndsWith(value)),
+                        "is empty"      => query.Where(g => g.Company.Name == null || g.Company.Name == string.Empty),
+                        "is not empty"  => query.Where(g => g.Company.Name != null && g.Company.Name != string.Empty),
+                        _               => query
+                    };
+                    break;
+
+                case "ModelCode":
+                    query = op switch
+                    {
+                        "contains"      => query.Where(g => g.ModelCode != null && g.ModelCode.Contains(value)),
+                        "not contains"  => query.Where(g => g.ModelCode == null || !g.ModelCode.Contains(value)),
+                        "equals"        => query.Where(g => g.ModelCode == value),
+                        "not equals"    => query.Where(g => g.ModelCode != value),
+                        "starts with"   => query.Where(g => g.ModelCode != null && g.ModelCode.StartsWith(value)),
+                        "ends with"     => query.Where(g => g.ModelCode != null && g.ModelCode.EndsWith(value)),
+                        "is empty"      => query.Where(g => g.ModelCode == null || g.ModelCode == string.Empty),
+                        "is not empty"  => query.Where(g => g.ModelCode != null && g.ModelCode != string.Empty),
+                        _               => query
+                    };
+                    break;
+
+                case "Introduced":
+                    if(op == "is empty")
+                    {
+                        query = query.Where(g => g.Introduced == null);
+                        break;
+                    }
+
+                    if(op == "is not empty")
+                    {
+                        query = query.Where(g => g.Introduced != null);
+                        break;
+                    }
+
+                    if(!DateTime.TryParse(value, System.Globalization.CultureInfo.InvariantCulture,
+                                          System.Globalization.DateTimeStyles.AssumeUniversal |
+                                          System.Globalization.DateTimeStyles.AdjustToUniversal,
+                                          out DateTime parsed))
+                        continue;
+
+                    DateTime day = parsed.Date;
+
+                    query = op switch
+                    {
+                        "is"               => query.Where(g => g.Introduced.HasValue && g.Introduced.Value.Date == day),
+                        "is not"           => query.Where(g => g.Introduced.HasValue && g.Introduced.Value.Date != day),
+                        "is after"         => query.Where(g => g.Introduced.HasValue && g.Introduced.Value.Date > day),
+                        "is before"        => query.Where(g => g.Introduced.HasValue && g.Introduced.Value.Date < day),
+                        "is on or after"   => query.Where(g => g.Introduced.HasValue && g.Introduced.Value.Date >= day),
+                        "is on or before"  => query.Where(g => g.Introduced.HasValue && g.Introduced.Value.Date <= day),
+                        _                  => query
+                    };
+                    break;
+            }
+        }
+
+        return query;
+    }
 
     [HttpGet("/machines/{machineId:int}/gpus")]
     [AllowAnonymous]
