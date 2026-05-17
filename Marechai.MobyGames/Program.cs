@@ -221,13 +221,17 @@ class Program
                     return 1;
                 }
 
-                // Discovery runs through an embedded headless Chromium (PuppeteerSharp). The login
-                // session lifts the anonymous 14-page-per-filter cap, so we can paginate to the end
-                // of every year filter. Cookies are cached in state/mobygames-cookies.json between
-                // runs to avoid re-logging-in.
-                await using var browser          = new MobyGamesBrowser(config, delayMs);
-                var             discoveryState   = new DiscoveryStateService(factory);
-                var             discoveryScraper = new SearchDiscoveryScraper(browser, discoveryState);
+                // Discovery uses the SPA's `?format=json` endpoint over plain HTTP for speed.
+                // PuppeteerSharp is only used (transparently inside TryAttachCookiesAsync) to log
+                // in and bypass Cloudflare/Turnstile; once cookies are imported into the HTTP
+                // client, Chromium is disposed. The session lifts the anonymous 14-page cap and
+                // the `perPage=100` preference cookie lifts the page size from 18 to 100.
+                using var discoveryHttp  = new MobyGamesHttpClient(delayMs);
+
+                await MobyGamesBrowser.TryAttachCookiesAsync(config, discoveryHttp, delayMs);
+
+                var discoveryState   = new DiscoveryStateService(factory);
+                var discoveryScraper = new SearchDiscoveryScraper(discoveryHttp, discoveryState);
 
                 await discoveryScraper.RunAsync(fromYear, toYear, dryRun);
 

@@ -464,4 +464,72 @@ public sealed partial class MobyGamesHttpClient : IDisposable
             try { _handler.CookieContainer.Add(new Uri($"https://www.{cookie.Domain}/"), cookie); } catch { }
         }
     }
+
+    /// <summary>
+    ///     Set a MobyGames user-preference cookie on the underlying <see cref="CookieContainer"/>.
+    ///     Used to bump the search-results page size: the SPA's "Results Per Page" dropdown
+    ///     writes <c>perPage=N</c> on the apex domain, and the server honors it on subsequent
+    ///     requests. The server caps the effective value at 100 — anything larger is clamped.
+    /// </summary>
+    public void SetPreferenceCookie(string name, string value)
+    {
+        if(string.IsNullOrWhiteSpace(name)) return;
+
+        var cookie = new Cookie(name, value ?? string.Empty, "/", "mobygames.com")
+        {
+            Secure   = false,
+            HttpOnly = false,
+            Expires  = DateTime.UtcNow.AddYears(1)
+        };
+
+        try { _handler.CookieContainer.Add(new Uri("https://mobygames.com/"),     cookie); } catch { }
+        try { _handler.CookieContainer.Add(new Uri("https://www.mobygames.com/"), cookie); } catch { }
+    }
+
+    /// <summary>
+    ///     Fetch one page of year-filtered game search results as the SPA's JSON envelope.
+    ///     <para>
+    ///         The endpoint is the path-segment-filtered <c>/game/.../page:{N}/?format=json</c>
+    ///         URL the new MobyGames Vue SPA uses internally. Response shape is
+    ///         <c>{ apiVersion, data: { games[], page, perPage, total, maxPages, ... } }</c>.
+    ///         Set the <c>perPage</c> preference cookie via <see cref="SetPreferenceCookie"/>
+    ///         before calling to lift the default 18-row page cap up to the server-enforced
+    ///         maximum of 100.
+    ///     </para>
+    ///     <para>
+    ///         Returns the raw JSON body, or <c>null</c> on HTTP failure. Caller hands it to
+    ///         <see cref="Parsers.SearchResultsPageParser.ParseEnvelope"/>.
+    ///     </para>
+    /// </summary>
+    public async Task<string> FetchSearchPageJsonAsync(int year, int page)
+    {
+        string url = $"{BaseUrl}/game/from:{year}/include_dlc:true/include_nsfw:true/" +
+                     $"release_status:all/sort:title/until:{year}/page:{page}/?format=json";
+
+        if(_delayMs > 0)
+            await Task.Delay(_delayMs);
+
+        try
+        {
+            using var req = new HttpRequestMessage(HttpMethod.Get, url);
+            req.Headers.TryAddWithoutValidation("Accept", "application/json,*/*;q=0.1");
+
+            using HttpResponseMessage response = await _client.SendAsync(req);
+
+            if(!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"\e[33m  Warning: HTTP {(int)response.StatusCode} fetching {url}\e[0m");
+
+                return null;
+            }
+
+            return await response.Content.ReadAsStringAsync();
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"\e[33m  Warning: Error fetching {url}: {ex.Message}\e[0m");
+
+            return null;
+        }
+    }
 }

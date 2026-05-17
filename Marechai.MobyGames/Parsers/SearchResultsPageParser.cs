@@ -59,16 +59,15 @@ namespace Marechai.MobyGames.Parsers;
 /// </summary>
 public static partial class SearchResultsPageParser
 {
-    [GeneratedRegex(@"^/?game/(\d+)/([^/]+)/?$", RegexOptions.IgnoreCase)]
-    private static partial Regex GameInternalUrlRegex();
-
     /// <summary>
-    ///     Matches the slug + numeric id segment of a MobyGames game URL. Used for parsing the
-    ///     export endpoint's <c>moby_url</c> which is a FULL URL like
-    ///     <c>https://www.mobygames.com/game/246066/007-first-light/</c>, not a relative path.
+    ///     Matches the slug + numeric id segment of a MobyGames game URL. The Vue SPA's
+    ///     <c>?format=json</c> endpoint emits <c>internal_url</c> as a fully-qualified absolute
+    ///     URL (<c>https://www.mobygames.com/game/246066/007-first-light/</c>), so the regex is
+    ///     deliberately NOT anchored — it scans for the <c>/game/{id}/{slug}/</c> segment anywhere
+    ///     in the value.
     /// </summary>
     [GeneratedRegex(@"/game/(\d+)/([^/]+)/?", RegexOptions.IgnoreCase)]
-    private static partial Regex ExportMobyUrlRegex();
+    private static partial Regex GameInternalUrlRegex();
 
     /// <summary>
     ///     A single game row from the search-results JSON payload.
@@ -89,6 +88,33 @@ public static partial class SearchResultsPageParser
         int                                Total,
         int                                MaxPages,
         IReadOnlyList<SearchResultGame>    Games);
+
+    /// <summary>
+    ///     Decode the <c>?format=json</c> response envelope MobyGames' Vue SPA consumes
+    ///     directly. Shape is <c>{ apiVersion, data: { page, perPage, total, maxPages, games[] } }</c>;
+    ///     this method unwraps <c>data</c> and delegates to <see cref="Parse"/>.
+    ///     Returns <c>null</c> when the input is empty, malformed, or missing the <c>data</c> field.
+    /// </summary>
+    public static SearchResultsPage ParseEnvelope(string envelopeJson)
+    {
+        if(string.IsNullOrWhiteSpace(envelopeJson))
+            return null;
+
+        try
+        {
+            using var doc = JsonDocument.Parse(envelopeJson);
+
+            if(!doc.RootElement.TryGetProperty("data", out JsonElement dataEl) ||
+               dataEl.ValueKind != JsonValueKind.Object)
+                return null;
+
+            return Parse(dataEl.GetRawText());
+        }
+        catch(JsonException)
+        {
+            return null;
+        }
+    }
 
     /// <summary>
     ///     Decode the <c>:initial-values</c> JSON payload into a typed page.
@@ -132,118 +158,8 @@ public static partial class SearchResultsPageParser
     }
 
     /// <summary>
-    ///     Decode the response from MobyGames' MobyPlus <c>?export=json</c> endpoint, which
-    ///     returns ALL matching games for a year-filtered search as a flat JSON array — no
-    ///     pagination metadata. Each element is a game object with shape
-    ///     <code>
-    ///     {
-    ///         "id":            246066,
-    ///         "title":         "007: First Light",
-    ///         "release_date":  "2026"           // or "2026-03-31"
-    ///         "developers":    [ "Io-Interactive A/S" ],
-    ///         "publishers":    [ ... ],
-    ///         "platforms":     [ ... ],
-    ///         "genres":        [ ... ],
-    ///         "moby_score":    null,
-    ///         "moby_url":      "https://www.mobygames.com/game/246066/007-first-light/"
-    ///     }
-    ///     </code>
-    ///     <para>
-    ///         Returns <c>null</c> when the input is malformed (caller treats as fatal for the
-    ///         year). Returns an empty list when the array is present but contains no entries
-    ///         (treated as "no releases for this year" — non-fatal).
-    ///     </para>
+    ///     Decode a single <c>games[]</c> element from the search-results JSON envelope.
     /// </summary>
-    public static IReadOnlyList<SearchResultGame> ParseExport(string exportJson)
-    {
-        if(string.IsNullOrWhiteSpace(exportJson))
-            return null;
-
-        try
-        {
-            using var doc = JsonDocument.Parse(exportJson);
-
-            if(doc.RootElement.ValueKind != JsonValueKind.Array)
-                return null;
-
-            var games = new List<SearchResultGame>(doc.RootElement.GetArrayLength());
-
-            foreach(JsonElement g in doc.RootElement.EnumerateArray())
-            {
-                SearchResultGame parsed = ParseExportGame(g);
-
-                if(parsed is not null)
-                    games.Add(parsed);
-            }
-
-            return games;
-        }
-        catch(JsonException)
-        {
-            return null;
-        }
-    }
-
-    static SearchResultGame ParseExportGame(JsonElement g)
-    {
-        int    gameId  = GetIntOr(g,    "id",       0);
-        string title   = GetStringOr(g, "title",    null);
-        string mobyUrl = GetStringOr(g, "moby_url", null);
-
-        // Slug + (fallback) id come from the moby_url; the export endpoint's `id` field is
-        // authoritative when present, but moby_url is double-checked because some legacy entries
-        // have id=0 / id=null and only the URL identifies the game.
-        string slug = null;
-
-        if(!string.IsNullOrEmpty(mobyUrl))
-        {
-            Match m = ExportMobyUrlRegex().Match(mobyUrl);
-
-            if(m.Success)
-            {
-                if(gameId <= 0 &&
-                   int.TryParse(m.Groups[1].Value, NumberStyles.Integer, CultureInfo.InvariantCulture,
-                                out int idFromUrl))
-                    gameId = idFromUrl;
-
-                slug = m.Groups[2].Value;
-            }
-        }
-
-        if(gameId <= 0)
-            return null;
-
-        // release_date is either "YYYY" or "YYYY-MM-DD"; year is the leading 4 chars.
-        int?   releaseYear = null;
-        string releaseDate = GetStringOr(g, "release_date", null);
-
-        if(!string.IsNullOrEmpty(releaseDate) &&
-           releaseDate.Length >= 4 &&
-           int.TryParse(releaseDate[..4], NumberStyles.Integer, CultureInfo.InvariantCulture, out int year))
-            releaseYear = year;
-
-        // Developer = first non-empty entry in the `developers` string array (the export endpoint
-        // has already filtered companies by role, so we don't need the title_id=1 pivot from the
-        // SSR <game-browser> envelope).
-        string developer = null;
-
-        if(g.TryGetProperty("developers", out JsonElement devs) && devs.ValueKind == JsonValueKind.Array)
-        {
-            foreach(JsonElement d in devs.EnumerateArray())
-            {
-                if(d.ValueKind != JsonValueKind.String) continue;
-
-                developer = d.GetString();
-
-                if(!string.IsNullOrWhiteSpace(developer))
-                    break;
-            }
-        }
-
-        return new SearchResultGame(gameId, slug ?? string.Empty, title ?? string.Empty, releaseYear,
-                                    developer ?? string.Empty);
-    }
-
     static SearchResultGame ParseGame(JsonElement g)
     {
         int gameId = GetIntOr(g, "game_id", 0);
