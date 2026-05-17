@@ -553,7 +553,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
-    public async Task<List<SoftwareGenreDto>> GetAllGenresAsync()
+    public async Task<List<SoftwareGenreDto>> GetAllGenresAsync(bool includeUnused = false)
     {
         try
         {
@@ -562,6 +562,7 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
             List<SoftwareGenreDto> genres = await client.Software.Genres.GetAsync(config =>
             {
                 config.QueryParameters.Lang = lang;
+                if(includeUnused) config.QueryParameters.IncludeUnused = true;
             });
 
             return genres ?? [];
@@ -721,6 +722,33 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
                 config.QueryParameters.Search = search;
                 if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
             });
+
+            return software ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    /// <summary>
+    ///     Picker-friendly variant of <see cref="SearchSoftwareAsync" />: returns up to
+    ///     <paramref name="take" /> rows sorted alphabetically even when <paramref name="search" /> is
+    ///     null/whitespace, so admin pickers (e.g. Predecessor / Base Software in
+    ///     <c>SoftwareDialog</c>) can show a browseable initial list on first focus instead of an
+    ///     empty popover. Mirrors the precedent in <c>LinkBaseSoftwareDialog</c>.
+    /// </summary>
+    public async Task<List<SoftwareDto>> SearchSoftwareForPickerAsync(string            search,
+                                                                      int               take              = 50,
+                                                                      CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            List<SoftwareDto> software = await client.Software.GetAsync(config =>
+            {
+                config.QueryParameters.Take   = take;
+                config.QueryParameters.Search = search;
+            }, cancellationToken);
 
             return software ?? [];
         }

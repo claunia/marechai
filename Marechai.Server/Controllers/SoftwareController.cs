@@ -66,6 +66,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     // values, year range) and barely change between requests, so a short
     // memory cache turns 4 expensive queries into ~0 ms hits.
     const           string   SOFTWARE_GENRES_CACHE_KEY    = "software:genres";
+    const           string   SOFTWARE_ALL_GENRES_CACHE_KEY = "software:genres:all";
     internal const  string   SOFTWARE_SPECS_CACHE_KEY     = "software:specs";
     const           string   SOFTWARE_PLATFORMS_CACHE_KEY = "software:platforms";
     const           string   SOFTWARE_YEARS_CACHE_KEY     = "software:years";
@@ -2214,44 +2215,52 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
     [HttpGet("genres")]
     [AllowAnonymous]
-    [OutputCache(Duration = 300, VaryByQueryKeys = ["lang"])]
+    [OutputCache(Duration = 300, VaryByQueryKeys = ["lang", "includeUnused"])]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<SoftwareGenreDto>> GetAllGenresAsync([FromQuery] string lang = null)
+    public async Task<List<SoftwareGenreDto>> GetAllGenresAsync([FromQuery] string lang         = null,
+                                                                [FromQuery] bool   includeUnused = false)
     {
         // The translated-name lookup uses the in-memory SoftwareGenreTranslationCache, so there is no
         // per-language IMemoryCache layer here — the cache is already in memory and lookups are O(1).
         // The DB-derived gating subset (`Where(g => g.Softwares.Any())` + ordering + projection)
         // is cached separately under SOFTWARE_GENRES_CACHE_KEY so repeated /software landing-page
         // hits don't re-run the EXISTS subquery over the whole catalog.
+        // When includeUnused=true (admin pickers) we serve the ungated full list and cache it
+        // under SOFTWARE_ALL_GENRES_CACHE_KEY so freshly-seeded genres with no software links
+        // (e.g. the Category-type rows from AddSoftwareGenreCategoriesSeed) are still pickable.
         string resolvedLang = ResolveGenreLanguage(lang);
 
         await genreCache.EnsureLoadedAsync(HttpContext.RequestAborted);
+
+        string genresCacheKey = includeUnused ? SOFTWARE_ALL_GENRES_CACHE_KEY : SOFTWARE_GENRES_CACHE_KEY;
 
         // Cache only the raw (id, canonical name, type) tuples — the canonical names are
         // immutable across requests, translation runs per-request against the in-memory
         // cache (~150 dictionary lookups). Keying the IMemoryCache entry on lang would
         // multiply the cached payload by N supported languages for no real win.
-        if(!cache.TryGetValue(SOFTWARE_GENRES_CACHE_KEY,
+        if(!cache.TryGetValue(genresCacheKey,
                               out List<(int Id, string Name, int Type, string TypeName)> cached) ||
            cached is null)
         {
-            var raw = await context.SoftwareGenres
-                                   .Where(g => g.Softwares.Any())
-                                   .OrderBy(g => g.Type)
-                                   .ThenBy(g => g.Name)
-                                   .Select(g => new
-                                    {
-                                        g.Id,
-                                        g.Name,
-                                        Type     = (int)g.Type,
-                                        TypeName = g.Type.ToString()
-                                    })
-                                   .ToListAsync();
+            IQueryable<Database.Models.SoftwareGenre> q = context.SoftwareGenres;
+
+            if(!includeUnused) q = q.Where(g => g.Softwares.Any());
+
+            var raw = await q.OrderBy(g => g.Type)
+                             .ThenBy(g => g.Name)
+                             .Select(g => new
+                              {
+                                  g.Id,
+                                  g.Name,
+                                  Type     = (int)g.Type,
+                                  TypeName = g.Type.ToString()
+                              })
+                             .ToListAsync();
 
             cached = raw.Select(r => (r.Id, r.Name, r.Type, r.TypeName)).ToList();
 
-            cache.Set(SOFTWARE_GENRES_CACHE_KEY, cached, _catalogCacheTtl);
+            cache.Set(genresCacheKey, cached, _catalogCacheTtl);
         }
 
         // Importer stores genre names with U+00A0 (non-breaking space); normalise before applying the

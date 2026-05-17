@@ -23,6 +23,7 @@
                                  ToStringFunc="@(f => f?.Name ?? string.Empty)"
                                  Variant="Variant.Outlined"
                                  Clearable="true"
+                                 MinCharacters="0"
                                  Class="mb-4"/>
 
                 <MudAutocomplete T="SoftwareDto"
@@ -32,6 +33,7 @@
                                  ToStringFunc="@(s => s?.Name ?? string.Empty)"
                                  Variant="Variant.Outlined"
                                  Clearable="true"
+                                 MinCharacters="0"
                                  Class="mb-4"/>
 
                 <MudSelect T="Marechai.Data.SoftwareKind" @bind-Value="Kind" Label="@L["Kind"]" Variant="Variant.Outlined" Class="mb-4">
@@ -55,6 +57,7 @@
                                  ToStringFunc="@(s => s?.Name ?? string.Empty)"
                                  Variant="Variant.Outlined"
                                  Clearable="true"
+                                 MinCharacters="0"
                                  Class="mb-4"/>
 
                 @if(!string.IsNullOrWhiteSpace(_validationError))
@@ -105,6 +108,8 @@
                                                  ValueChanged="@(g => { _pickGenreByType[gtInt] = g; })"
                                                  SearchFunc="@((value, ct) => SearchGenresOfType(gtInt, value, ct))"
                                                  Clearable="true"
+                                                 MinCharacters="0"
+                                                 MaxItems="null"
                                                  ToStringFunc="@(g => g?.Name ?? string.Empty)"
                                                  Style="flex: 1;"/>
                                 <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
@@ -153,6 +158,7 @@
                                              ToStringFunc="@(c => c?.Name ?? string.Empty)"
                                              Variant="Variant.Outlined"
                                              Clearable="true"
+                                             MinCharacters="0"
                                              Style="flex: 1;"/>
                             <MudSelect T="SoftwareRoleDto"
                                        @bind-Value="_selectedRole"
@@ -196,11 +202,20 @@
 @code {
     string                        _validationError;
     SoftwareFamilyDto             _selectedFamily;
-    List<SoftwareFamilyDto>       _allFamilies;
+    // Pre-load tasks for the catalog lookups behind the autocompletes. Held as
+    // Task<List<…>> rather than the materialised lists so SearchFunc handlers
+    // can `await` the in-flight load — without this the popover that opens on
+    // first focus fires before OnInitializedAsync's await finishes and the
+    // dropdown ends up empty until the user types (Issue: "all mudautocomplete
+    // are empty until you start searching"). The MudAutocomplete popover
+    // re-renders once the awaited task resolves, so the user sees the full
+    // list as soon as the network round-trip lands.
+    Task<List<SoftwareFamilyDto>> _familiesLoadTask = Task.FromResult(new List<SoftwareFamilyDto>());
+    Task<List<SoftwareGenreDto>>  _genresLoadTask   = Task.FromResult(new List<SoftwareGenreDto>());
+    Task<List<CompanyDto>>        _companiesLoadTask = Task.FromResult(new List<CompanyDto>());
     SoftwareDto                   _selectedPredecessor;
     SoftwareDto                   _selectedBaseSoftware;
     CompanyDto                    _selectedCompany;
-    List<CompanyDto>              _allCompanies;
     SoftwareRoleDto               _selectedRole;
     List<SoftwareRoleDto>         _allRoles;
     List<SoftwareCompanyRoleDto>  _companyRoles;
@@ -208,7 +223,6 @@
     Severity                       _companyRoleMessageSeverity;
 
     // ── Genres tab state ──
-    List<SoftwareGenreDto>            _allGenres;
     List<SoftwareGenreDto>            _genreRows;          // existing rows (edit mode); empty in create.
     Dictionary<int, SoftwareGenreDto> _pickGenreByType = new();
     List<PendingGenreAdd>             _pendingGenreAdds = new();
@@ -238,10 +252,20 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _allFamilies = await SoftwareService.GetAllFamiliesAsync();
+        // Kick off all catalog loads as memoised Task fields; SearchFunc handlers below
+        // `await` these tasks instead of touching materialised lists, eliminating the
+        // race where the popover opens before the loads complete and shows an empty
+        // list.
+        _familiesLoadTask = SoftwareService.GetAllFamiliesAsync();
+        // `includeUnused: true` so the admin picker also shows freshly-seeded genres
+        // that have zero linked software yet (e.g. the `SoftwareGenreType.Category`
+        // rows from AddSoftwareGenreCategoriesSeed). The public landing-page callers
+        // keep the default (false) and continue to see only used genres.
+        _genresLoadTask = SoftwareService.GetAllGenresAsync(includeUnused: true);
 
-        if(FamilyId is not null && _allFamilies is not null)
-            _selectedFamily = _allFamilies.Find(f => f.Id == FamilyId);
+        List<SoftwareFamilyDto> families = await _familiesLoadTask;
+
+        if(FamilyId is not null && families is not null) _selectedFamily = families.Find(f => f.Id == FamilyId);
 
         if(PredecessorId is not null)
         {
@@ -263,76 +287,59 @@
 
         if(!IsNew)
         {
-            _allCompanies = await SoftwareService.GetAllCompaniesAsync();
-            _allRoles     = await SoftwareService.GetSoftwareRolesAsync();
-            _companyRoles = await SoftwareService.GetCompanyRolesAsync(SoftwareId);
+            _companiesLoadTask = SoftwareService.GetAllCompaniesAsync();
+            _allRoles          = await SoftwareService.GetSoftwareRolesAsync();
+            _companyRoles      = await SoftwareService.GetCompanyRolesAsync(SoftwareId);
         }
 
-        // Genres available in BOTH create and edit modes. Pre-load both in parallel; in
-        // create mode _genreRows starts empty (the row doesn't exist yet).
-        Task<List<SoftwareGenreDto>> allGenresT  = SoftwareService.GetAllGenresAsync();
-        Task<List<SoftwareGenreDto>> genreRowsT  = IsNew
-                                                       ? Task.FromResult(new List<SoftwareGenreDto>())
-                                                       : SoftwareService.GetGenresAsync(SoftwareId);
-        await Task.WhenAll(allGenresT, genreRowsT);
-        _allGenres = allGenresT.Result;
-        _genreRows = genreRowsT.Result;
+        // _genreRows is the edit-mode "currently linked" set; create-mode starts empty
+        // and is buffered via _pendingGenreAdds. _genresLoadTask covers the catalog
+        // dropdown for both modes.
+        _genreRows = IsNew
+                         ? new List<SoftwareGenreDto>()
+                         : await SoftwareService.GetGenresAsync(SoftwareId);
     }
 
-    Task<IEnumerable<SoftwareFamilyDto>> SearchFamilies(string value, CancellationToken ct)
+    async Task<IEnumerable<SoftwareFamilyDto>> SearchFamilies(string value, CancellationToken ct)
     {
-        IEnumerable<SoftwareFamilyDto> results = _allFamilies ?? [];
+        List<SoftwareFamilyDto> all = await _familiesLoadTask;
 
-        if(!string.IsNullOrWhiteSpace(value))
-        {
-            results = _allFamilies?
-                         .Where(f => f.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ??
-                      [];
-        }
+        if(string.IsNullOrWhiteSpace(value)) return all;
 
-        return Task.FromResult(results);
+        return all.Where(f => f.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
     }
 
     async Task<IEnumerable<SoftwareDto>> SearchPredecessors(string value, CancellationToken ct)
     {
-        if(string.IsNullOrWhiteSpace(value))
-            return [];
+        // Server-side picker variant returns up to 50 rows alphabetically when `value`
+        // is empty, so the dropdown shows a browseable initial list on first focus
+        // instead of an empty popover.
+        List<SoftwareDto> results = await SoftwareService.SearchSoftwareForPickerAsync(value, 50, ct);
 
-        List<SoftwareDto> results = await SoftwareService.SearchSoftwareAsync(value);
-
-        // Exclude current software from results to prevent self-reference
-        if(!IsNew && SoftwareId > 0)
-            results = results.Where(s => s.Id != SoftwareId).ToList();
+        // Exclude current software from results to prevent self-reference.
+        if(!IsNew && SoftwareId > 0) results = results.Where(s => s.Id != SoftwareId).ToList();
 
         return results;
     }
 
     async Task<IEnumerable<SoftwareDto>> SearchBaseSoftware(string value, CancellationToken ct)
     {
-        if(string.IsNullOrWhiteSpace(value))
-            return [];
+        // See SearchPredecessors for the picker-vs-search rationale.
+        List<SoftwareDto> results = await SoftwareService.SearchSoftwareForPickerAsync(value, 50, ct);
 
-        List<SoftwareDto> results = await SoftwareService.SearchSoftwareAsync(value);
-
-        // Exclude current software from results to prevent self-reference
-        if(!IsNew && SoftwareId > 0)
-            results = results.Where(s => s.Id != SoftwareId).ToList();
+        // Exclude current software from results to prevent self-reference.
+        if(!IsNew && SoftwareId > 0) results = results.Where(s => s.Id != SoftwareId).ToList();
 
         return results;
     }
 
-    Task<IEnumerable<CompanyDto>> SearchCompanies(string value, CancellationToken ct)
+    async Task<IEnumerable<CompanyDto>> SearchCompanies(string value, CancellationToken ct)
     {
-        IEnumerable<CompanyDto> results = _allCompanies ?? [];
+        List<CompanyDto> all = await _companiesLoadTask;
 
-        if(!string.IsNullOrWhiteSpace(value))
-        {
-            results = _allCompanies?
-                         .Where(c => c.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ??
-                      [];
-        }
+        if(string.IsNullOrWhiteSpace(value)) return all;
 
-        return Task.FromResult(results);
+        return all.Where(c => c.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
     }
 
     async Task AddCompanyRole()
@@ -414,9 +421,11 @@
     /// <summary>
     ///     Type-filtered autocomplete source. Excludes ids already linked (existing rows)
     ///     and ids already queued in <c>_pendingGenreAdds</c> so the same genre cannot be
-    ///     added twice.
+    ///     added twice. Awaits <see cref="_genresLoadTask" /> so the popover gets populated
+    ///     even when the user opens it before <c>OnInitializedAsync</c>'s catalog load
+    ///     completes.
     /// </summary>
-    Task<IEnumerable<SoftwareGenreDto>> SearchGenresOfType(int type, string value, CancellationToken ct)
+    async Task<IEnumerable<SoftwareGenreDto>> SearchGenresOfType(int type, string value, CancellationToken ct)
     {
         var assigned = new HashSet<int>();
         if(_genreRows is not null)
@@ -425,12 +434,14 @@
         foreach(PendingGenreAdd p in _pendingGenreAdds)
             assigned.Add(p.GenreId);
 
-        IEnumerable<SoftwareGenreDto> r = (_allGenres ?? [])
+        List<SoftwareGenreDto> allGenres = await _genresLoadTask;
+
+        IEnumerable<SoftwareGenreDto> r = allGenres
                                           .Where(x => x.Id.HasValue && !assigned.Contains(x.Id.Value))
                                           .Where(x => (x.Type ?? 0) == type);
         if(!string.IsNullOrWhiteSpace(value))
             r = r.Where(x => x.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
-        return Task.FromResult(r.Take(50));
+        return r;
     }
 
     async Task AddGenreClick(int gtInt)
