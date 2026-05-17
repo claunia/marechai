@@ -90,7 +90,7 @@ namespace Marechai.ApiClient.Books
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public BooksRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/books{?skip*,take*}", pathParameters)
+        public BooksRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/books{?filters*,skip*,sortBy*,sortDescending*,take*}", pathParameters)
         {
         }
         /// <summary>
@@ -98,7 +98,7 @@ namespace Marechai.ApiClient.Books
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public BooksRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/books{?skip*,take*}", rawUrl)
+        public BooksRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/books{?filters*,skip*,sortBy*,sortDescending*,take*}", rawUrl)
         {
         }
         /// <returns>A List&lt;global::Marechai.ApiClient.Models.BookDto&gt;</returns>
@@ -195,8 +195,28 @@ namespace Marechai.ApiClient.Books
         public partial class BooksRequestBuilderGetQueryParameters 
         #pragma warning restore CS1591
         {
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("filters")]
+            public string[]? Filters { get; set; }
+#nullable restore
+#else
+            [QueryParameter("filters")]
+            public string[] Filters { get; set; }
+#endif
             [QueryParameter("skip")]
             public int? Skip { get; set; }
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("sortBy")]
+            public string? SortBy { get; set; }
+#nullable restore
+#else
+            [QueryParameter("sortBy")]
+            public string SortBy { get; set; }
+#endif
+            [QueryParameter("sortDescending")]
+            public bool? SortDescending { get; set; }
             [QueryParameter("take")]
             public int? Take { get; set; }
         }

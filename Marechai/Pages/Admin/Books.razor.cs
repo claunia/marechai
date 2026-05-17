@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using MudBlazor;
@@ -8,18 +11,82 @@ namespace Marechai.Pages.Admin;
 
 public partial class Books
 {
-    string         _errorMessage;
-    bool            _isLoading = true;
-    string         _successMessage;
-    List<BookDto>  _books;
+    string              _errorMessage;
+    string              _successMessage;
+    MudDataGrid<BookDto> _dataGrid;
 
-    protected override async Task OnInitializedAsync() => await LoadBooksAsync();
-
-    async Task LoadBooksAsync()
+    async Task<GridData<BookDto>> ServerReload(GridState<BookDto> state, CancellationToken cancellationToken)
     {
-        _isLoading = true;
-        _books     = await BooksService.GetBooksAsync();
-        _isLoading = false;
+        int skip = state.Page * state.PageSize;
+        int take = state.PageSize;
+
+        string sortBy         = null;
+        bool   sortDescending = false;
+
+        SortDefinition<BookDto> sort = state.SortDefinitions.FirstOrDefault();
+
+        if(sort is not null)
+        {
+            sortBy         = sort.SortBy;
+            sortDescending = sort.Descending;
+        }
+
+        // Translate MudBlazor FilterDefinitions to the "{Column}||{Operator}||{Value}"
+        // wire format consumed by BooksController.ApplyFilters. Column comes from
+        // PropertyColumn binding via fd.Column?.PropertyName which matches the
+        // case labels in the controller switch (Title/Isbn/Edition/Pages/Published/
+        // Country/InternetArchiveUrl).
+        List<string> filters = null;
+
+        foreach(IFilterDefinition<BookDto> fd in state.FilterDefinitions)
+        {
+            string column = fd.Column?.PropertyName;
+            string op     = fd.Operator;
+            if(string.IsNullOrEmpty(column) || string.IsNullOrEmpty(op)) continue;
+
+            bool isEmptyOp = op is "is empty" or "is not empty";
+
+            string value;
+
+            switch(fd.Value)
+            {
+                case null:
+                    if(!isEmptyOp) continue;
+                    value = string.Empty;
+                    break;
+                case DateTime dt:
+                    value = dt.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                    break;
+                case DateTimeOffset dto:
+                    value = dto.UtcDateTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                    break;
+                case IFormattable f:
+                    value = f.ToString(null, CultureInfo.InvariantCulture);
+                    break;
+                default:
+                    value = fd.Value.ToString();
+                    break;
+            }
+
+            // Skip non-empty-check operators with no meaningful value so a freshly
+            // opened (but unfilled) filter UI doesn't accidentally drop every row.
+            if(!isEmptyOp && string.IsNullOrEmpty(value)) continue;
+
+            filters ??= [];
+            filters.Add($"{column}||{op}||{value}");
+        }
+
+        Task<int>           countTask = BooksService.GetBooksCountAsync(filters, cancellationToken);
+        Task<List<BookDto>> dataTask  =
+            BooksService.GetPagedAsync(skip, take, sortBy, sortDescending, filters, cancellationToken);
+
+        await Task.WhenAll(countTask, dataTask);
+
+        return new GridData<BookDto>
+        {
+            Items      = dataTask.Result,
+            TotalItems = countTask.Result
+        };
     }
 
     static string FormatDate(DateTimeOffset? date, int? precision = 0)
@@ -70,7 +137,7 @@ public partial class Books
             if(id is not null)
             {
                 _successMessage = L["Book created successfully."];
-                await LoadBooksAsync();
+                await _dataGrid.ReloadServerData();
             }
             else
             {
@@ -138,7 +205,7 @@ public partial class Books
             if(succeeded)
             {
                 _successMessage = L["Book updated successfully."];
-                await LoadBooksAsync();
+                await _dataGrid.ReloadServerData();
             }
             else
             {
@@ -160,7 +227,7 @@ public partial class Books
         DialogResult result = await dialog.Result;
 
         if(result is { Canceled: false })
-            await LoadBooksAsync();
+            await _dataGrid.ReloadServerData();
     }
 
     async Task ConfirmDeleteBook(BookDto book)
@@ -192,7 +259,7 @@ public partial class Books
             if(succeeded)
             {
                 _successMessage = L["Book deleted successfully."];
-                await LoadBooksAsync();
+                await _dataGrid.ReloadServerData();
             }
             else
             {
