@@ -51,44 +51,185 @@ public class SoundSynthsController(
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<SoundSynthDto>> GetAsync([FromQuery] int? skip = null, [FromQuery] int? take = null,
+                                              [FromQuery] string sortBy = null,
+                                              [FromQuery] bool sortDescending = false,
+                                              [FromQuery(Name = "filters")] string[] filters = null,
                                               CancellationToken cancellationToken = default)
     {
-        IQueryable<SoundSynth> ordered = context.SoundSynths
-                                                .AsNoTracking()
-                                                // Pin the special "DB_SOFTWARE" row to the top so the public
-                                                // /soundsynths page can display it first across paginated batches.
-                                                .OrderBy(s => s.Name == "DB_SOFTWARE" ? 0 : 1)
-                                                .ThenBy(s => s.Company.Name)
-                                                .ThenBy(s => s.Name)
-                                                .ThenBy(s => s.ModelCode);
+        IQueryable<SoundSynth> query = ApplyFilters(context.SoundSynths.AsNoTracking(), filters);
 
-        if(skip.HasValue) ordered = ordered.Skip(skip.Value);
-        if(take.HasValue) ordered = ordered.Take(take.Value);
+        // When no user-supplied sort is set, keep the legacy default ordering
+        // (DB_SOFTWARE pinned first → Company → Name → ModelCode) so anonymous
+        // unfiltered consumers (Marechai.App admin, public /soundsynth pages) see
+        // the same order they get today. A user-clicked column header suspends
+        // that ordering — including the DB_SOFTWARE pin — so the sort UX is
+        // predictable.
+        IOrderedQueryable<SoundSynth> ordered = sortBy switch
+        {
+            "Name" => sortDescending
+                          ? query.OrderByDescending(s => MarechaiContext.NaturalSortKey(s.Name))
+                          : query.OrderBy(s => MarechaiContext.NaturalSortKey(s.Name)),
+            "Company" => sortDescending
+                             ? query.OrderByDescending(s => MarechaiContext.NaturalSortKey(s.Company.Name))
+                             : query.OrderBy(s => MarechaiContext.NaturalSortKey(s.Company.Name)),
+            "ModelCode" => sortDescending
+                               ? query.OrderByDescending(s => MarechaiContext.NaturalSortKey(s.ModelCode))
+                               : query.OrderBy(s => MarechaiContext.NaturalSortKey(s.ModelCode)),
+            "Introduced" => sortDescending
+                                ? query.OrderByDescending(s => s.Introduced)
+                                : query.OrderBy(s => s.Introduced),
+            _ => query.OrderBy(s => s.Name == "DB_SOFTWARE" ? 0 : 1)
+                      .ThenBy(s => s.Company.Name)
+                      .ThenBy(s => s.Name)
+                      .ThenBy(s => s.ModelCode)
+        };
 
-        return ordered.Select(s => new SoundSynthDto
-                       {
-                           Id          = s.Id,
-                           Name        = s.Name,
-                           CompanyId   = s.Company.Id,
-                           CompanyName = s.Company.Name,
-                           ModelCode   = s.ModelCode,
-                           Introduced  = s.Introduced,
-                           Voices      = s.Voices,
-                           Frequency   = s.Frequency,
-                           Depth       = s.Depth,
-                           SquareWave  = s.SquareWave,
-                           WhiteNoise  = s.WhiteNoise,
-                           Type        = s.Type
-                       })
-                      .ToListAsync(cancellationToken);
+        IQueryable<SoundSynth> paged = ordered;
+
+        if(skip.HasValue) paged = paged.Skip(skip.Value);
+        if(take.HasValue) paged = paged.Take(take.Value);
+
+        return paged.Select(s => new SoundSynthDto
+                     {
+                         Id          = s.Id,
+                         Name        = s.Name,
+                         CompanyId   = s.Company.Id,
+                         CompanyName = s.Company.Name,
+                         ModelCode   = s.ModelCode,
+                         Introduced  = s.Introduced,
+                         Voices      = s.Voices,
+                         Frequency   = s.Frequency,
+                         Depth       = s.Depth,
+                         SquareWave  = s.SquareWave,
+                         WhiteNoise  = s.WhiteNoise,
+                         Type        = s.Type
+                     })
+                    .ToListAsync(cancellationToken);
     }
 
     [HttpGet("count")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<int> GetCountAsync(CancellationToken cancellationToken = default) =>
-        context.SoundSynths.CountAsync(cancellationToken);
+    public Task<int> GetCountAsync([FromQuery(Name = "filters")] string[] filters = null,
+                                   CancellationToken cancellationToken = default) =>
+        ApplyFilters(context.SoundSynths.AsNoTracking(), filters).CountAsync(cancellationToken);
+
+    /// <summary>
+    /// Translates MudDataGrid <c>FilterDefinition</c>s wired over the network as
+    /// <c>"{Column}||{Operator}||{Value}"</c> triples into LINQ predicates against
+    /// the <see cref="SoundSynth"/> entity. Recognized columns mirror the
+    /// <c>PropertyColumn</c> names emitted by the admin grid: <c>Name</c>,
+    /// <c>Company</c>, <c>ModelCode</c>, <c>Introduced</c>. Unknown columns and
+    /// operators are silently ignored — filters MudBlazor may emit for
+    /// non-existent columns (or future ones) must never 400 the listing call.
+    /// </summary>
+    static IQueryable<SoundSynth> ApplyFilters(IQueryable<SoundSynth> query, string[] filters)
+    {
+        if(filters is null || filters.Length == 0) return query;
+
+        foreach(string raw in filters)
+        {
+            if(string.IsNullOrWhiteSpace(raw)) continue;
+
+            string[] parts = raw.Split("||", 3, StringSplitOptions.None);
+
+            if(parts.Length < 2) continue;
+
+            string column   = parts[0];
+            string op       = parts[1];
+            string value    = parts.Length >= 3 ? parts[2] : string.Empty;
+            bool   isEmpty  = op == "is empty";
+            bool   isNotEmp = op == "is not empty";
+
+            // Skip non-empty-check operators with no value supplied so a stray
+            // open-but-unfilled filter UI doesn't accidentally hide every row.
+            if(!isEmpty && !isNotEmp && string.IsNullOrEmpty(value)) continue;
+
+            switch(column)
+            {
+                case "Name":
+                    query = op switch
+                    {
+                        "contains"     => query.Where(s => s.Name.Contains(value)),
+                        "not contains" => query.Where(s => !s.Name.Contains(value)),
+                        "equals"       => query.Where(s => s.Name == value),
+                        "not equals"   => query.Where(s => s.Name != value),
+                        "starts with"  => query.Where(s => s.Name.StartsWith(value)),
+                        "ends with"    => query.Where(s => s.Name.EndsWith(value)),
+                        "is empty"     => query.Where(s => s.Name == null || s.Name == string.Empty),
+                        "is not empty" => query.Where(s => s.Name != null && s.Name != string.Empty),
+                        _              => query
+                    };
+                    break;
+
+                case "Company":
+                    query = op switch
+                    {
+                        "contains"     => query.Where(s => s.Company.Name.Contains(value)),
+                        "not contains" => query.Where(s => !s.Company.Name.Contains(value)),
+                        "equals"       => query.Where(s => s.Company.Name == value),
+                        "not equals"   => query.Where(s => s.Company.Name != value),
+                        "starts with"  => query.Where(s => s.Company.Name.StartsWith(value)),
+                        "ends with"    => query.Where(s => s.Company.Name.EndsWith(value)),
+                        "is empty"     => query.Where(s => s.Company.Name == null || s.Company.Name == string.Empty),
+                        "is not empty" => query.Where(s => s.Company.Name != null && s.Company.Name != string.Empty),
+                        _              => query
+                    };
+                    break;
+
+                case "ModelCode":
+                    query = op switch
+                    {
+                        "contains"     => query.Where(s => s.ModelCode != null && s.ModelCode.Contains(value)),
+                        "not contains" => query.Where(s => s.ModelCode == null || !s.ModelCode.Contains(value)),
+                        "equals"       => query.Where(s => s.ModelCode == value),
+                        "not equals"   => query.Where(s => s.ModelCode != value),
+                        "starts with"  => query.Where(s => s.ModelCode != null && s.ModelCode.StartsWith(value)),
+                        "ends with"    => query.Where(s => s.ModelCode != null && s.ModelCode.EndsWith(value)),
+                        "is empty"     => query.Where(s => s.ModelCode == null || s.ModelCode == string.Empty),
+                        "is not empty" => query.Where(s => s.ModelCode != null && s.ModelCode != string.Empty),
+                        _              => query
+                    };
+                    break;
+
+                case "Introduced":
+                    if(op == "is empty")
+                    {
+                        query = query.Where(s => s.Introduced == null);
+                        break;
+                    }
+
+                    if(op == "is not empty")
+                    {
+                        query = query.Where(s => s.Introduced != null);
+                        break;
+                    }
+
+                    if(!DateTime.TryParse(value, System.Globalization.CultureInfo.InvariantCulture,
+                                          System.Globalization.DateTimeStyles.AssumeUniversal |
+                                          System.Globalization.DateTimeStyles.AdjustToUniversal,
+                                          out DateTime parsed))
+                        continue;
+
+                    DateTime day = parsed.Date;
+
+                    query = op switch
+                    {
+                        "is"              => query.Where(s => s.Introduced.HasValue && s.Introduced.Value.Date == day),
+                        "is not"          => query.Where(s => s.Introduced.HasValue && s.Introduced.Value.Date != day),
+                        "is after"        => query.Where(s => s.Introduced.HasValue && s.Introduced.Value.Date > day),
+                        "is before"       => query.Where(s => s.Introduced.HasValue && s.Introduced.Value.Date < day),
+                        "is on or after"  => query.Where(s => s.Introduced.HasValue && s.Introduced.Value.Date >= day),
+                        "is on or before" => query.Where(s => s.Introduced.HasValue && s.Introduced.Value.Date <= day),
+                        _                 => query
+                    };
+                    break;
+            }
+        }
+
+        return query;
+    }
 
     [HttpGet("/machines/{machineId:int}/sound-synths")]
     [AllowAnonymous]

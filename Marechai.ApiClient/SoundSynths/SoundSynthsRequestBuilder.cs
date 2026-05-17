@@ -66,7 +66,7 @@ namespace Marechai.ApiClient.SoundSynths
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public SoundSynthsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/sound-synths{?skip*,take*}", pathParameters)
+        public SoundSynthsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/sound-synths{?filters*,skip*,sortBy*,sortDescending*,take*}", pathParameters)
         {
         }
         /// <summary>
@@ -74,7 +74,7 @@ namespace Marechai.ApiClient.SoundSynths
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public SoundSynthsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/sound-synths{?skip*,take*}", rawUrl)
+        public SoundSynthsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/sound-synths{?filters*,skip*,sortBy*,sortDescending*,take*}", rawUrl)
         {
         }
         /// <returns>A List&lt;global::Marechai.ApiClient.Models.SoundSynthDto&gt;</returns>
@@ -171,8 +171,28 @@ namespace Marechai.ApiClient.SoundSynths
         public partial class SoundSynthsRequestBuilderGetQueryParameters 
         #pragma warning restore CS1591
         {
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("filters")]
+            public string[]? Filters { get; set; }
+#nullable restore
+#else
+            [QueryParameter("filters")]
+            public string[] Filters { get; set; }
+#endif
             [QueryParameter("skip")]
             public int? Skip { get; set; }
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("sortBy")]
+            public string? SortBy { get; set; }
+#nullable restore
+#else
+            [QueryParameter("sortBy")]
+            public string SortBy { get; set; }
+#endif
+            [QueryParameter("sortDescending")]
+            public bool? SortDescending { get; set; }
             [QueryParameter("take")]
             public int? Take { get; set; }
         }
