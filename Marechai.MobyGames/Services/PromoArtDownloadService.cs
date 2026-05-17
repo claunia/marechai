@@ -186,7 +186,9 @@ public class PromoArtDownloadService
                         continue;
                     }
 
-                    string originalUrl = MobyGamesHttpClient.ExtractFullSizeImageUrl(detailHtml);
+                    string originalUrl;
+                    bool   isHighRes;
+                    (originalUrl, isHighRes) = MobyGamesHttpClient.ExtractFullSizeImageUrl(detailHtml);
 
                     if(originalUrl is null)
                     {
@@ -208,7 +210,7 @@ public class PromoArtDownloadService
                         break;
                     }
 
-                    Console.Write(" downloading...");
+                    Console.Write(isHighRes ? " downloading (high res)..." : " downloading...");
 
                     var    promoArtId  = Guid.NewGuid();
                     string originalsDir = Path.Combine(_assetRootPath, "photos", PromoArtItemName, "originals");

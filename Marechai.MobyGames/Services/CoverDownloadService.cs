@@ -288,13 +288,14 @@ public class CoverDownloadService
                     // see a higher-resolution variant whose numeric IDs differ from the thumbnail).
                     // Fall back to /covers/s/→/covers/l/ rewriting when MobyPlus isn't available.
                     string originalUrl = null;
+                    bool   isHighRes  = false;
 
                     if(cover.DetailPageUrl is not null)
                     {
                         string detailHtml = await _httpClient.FetchPageAsync(cover.DetailPageUrl);
 
                         if(detailHtml is not null)
-                            originalUrl = MobyGamesHttpClient.ExtractFullSizeImageUrl(detailHtml);
+                            (originalUrl, isHighRes) = MobyGamesHttpClient.ExtractFullSizeImageUrl(detailHtml);
                     }
 
                     originalUrl ??= MobyGamesHttpClient.GetLargeImageUrl(cover.ThumbnailUrl);
@@ -312,7 +313,7 @@ public class CoverDownloadService
                         continue;
                     }
 
-                    Console.Write(" downloading...");
+                    Console.Write(isHighRes ? " downloading (high res)..." : " downloading...");
 
                     // Download the original image
                     // Check free disk space before downloading

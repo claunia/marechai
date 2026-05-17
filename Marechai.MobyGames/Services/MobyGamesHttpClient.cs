@@ -234,10 +234,16 @@ public sealed partial class MobyGamesHttpClient : IDisposable
     ///     <c>&lt;a download href="https://cdn.mobygames.com/..."&gt;</c> block pointing to the
     ///     ORIGINAL-resolution image; we prefer that when present. For anonymous sessions, we fall
     ///     back to the gallery <img> tag and finally to og:image meta.
+    ///     <para>
+    ///         <c>IsMobyPlusOriginal</c> is <c>true</c> when the URL was sourced from the
+    ///         <c>&lt;a download&gt;</c> link (MobyPlus original-resolution path), and <c>false</c>
+    ///         for any of the lower-resolution fallbacks. Callers use this to tag download log
+    ///         lines so we can tell which path actually served a given image.
+    ///     </para>
     /// </summary>
-    public static string ExtractFullSizeImageUrl(string detailPageHtml)
+    public static (string Url, bool IsMobyPlusOriginal) ExtractFullSizeImageUrl(string detailPageHtml)
     {
-        if(string.IsNullOrWhiteSpace(detailPageHtml)) return null;
+        if(string.IsNullOrWhiteSpace(detailPageHtml)) return (null, false);
 
         var doc = new HtmlAgilityPack.HtmlDocument();
         doc.LoadHtml(detailPageHtml);
@@ -253,7 +259,7 @@ public sealed partial class MobyGamesHttpClient : IDisposable
             string href = downloadLink.GetAttributeValue("href", null);
 
             if(!string.IsNullOrWhiteSpace(href))
-                return href;
+                return (href, true);
         }
 
         // Fallback 1: the visible full-size <img> inside #gallery-image (anonymous-session size).
@@ -265,7 +271,7 @@ public sealed partial class MobyGamesHttpClient : IDisposable
             string src = galleryImg.GetAttributeValue("src", null);
 
             if(!string.IsNullOrWhiteSpace(src))
-                return src;
+                return (src, false);
         }
 
         // Fallback 2: any <img> inside #gallery-image figure on the CDN.
@@ -277,7 +283,7 @@ public sealed partial class MobyGamesHttpClient : IDisposable
             string src = galleryImg.GetAttributeValue("src", null);
 
             if(!string.IsNullOrWhiteSpace(src) && src.Contains("cdn.mobygames.com"))
-                return src;
+                return (src, false);
         }
 
         // Fallback 3: og:image meta tag (always present in <head>, unaffected by mature-content gates).
@@ -288,17 +294,17 @@ public sealed partial class MobyGamesHttpClient : IDisposable
             string content = ogImage.GetAttributeValue("content", null);
 
             if(!string.IsNullOrWhiteSpace(content) && content.Contains("cdn.mobygames.com"))
-                return content;
+                return (content, false);
         }
 
-        return null;
+        return (null, false);
     }
 
     /// <summary>
     ///     Legacy name kept temporarily so callers that still reference the old method name compile.
     ///     Prefer <see cref="ExtractFullSizeImageUrl"/> in new code.
     /// </summary>
-    public static string ExtractFullSizeScreenshotUrl(string detailPageHtml) =>
+    public static (string Url, bool IsMobyPlusOriginal) ExtractFullSizeScreenshotUrl(string detailPageHtml) =>
         ExtractFullSizeImageUrl(detailPageHtml);
 
     /// <summary>

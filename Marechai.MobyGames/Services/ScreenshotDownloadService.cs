@@ -192,7 +192,9 @@ public class ScreenshotDownloadService
                         continue;
                     }
 
-                    string originalUrl = MobyGamesHttpClient.ExtractFullSizeImageUrl(detailHtml);
+                    string originalUrl;
+                    bool   isHighRes;
+                    (originalUrl, isHighRes) = MobyGamesHttpClient.ExtractFullSizeImageUrl(detailHtml);
 
                     if(originalUrl is null)
                     {
@@ -215,7 +217,7 @@ public class ScreenshotDownloadService
                         break;
                     }
 
-                    Console.Write(" downloading...");
+                    Console.Write(isHighRes ? " downloading (high res)..." : " downloading...");
 
                     var    screenshotId = Guid.NewGuid();
                     string originalsDir = Path.Combine(_assetRootPath, "photos", ScreenshotItemName, "originals");
