@@ -23,8 +23,11 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using MudBlazor;
@@ -33,19 +36,82 @@ namespace Marechai.Pages.Admin;
 
 public partial class Users
 {
-    string              _errorMessage;
-    bool                 _isLoading = true;
-    HashSet<UserDto>     _selectedUsers = new();
-    string              _successMessage;
-    List<UserDto>       _users;
+    string                _errorMessage;
+    HashSet<UserDto>      _selectedUsers = new();
+    string                _successMessage;
+    MudDataGrid<UserDto>  _dataGrid;
 
-    protected override async Task OnInitializedAsync() => await LoadUsersAsync();
-
-    async Task LoadUsersAsync()
+    async Task<GridData<UserDto>> ServerReload(GridState<UserDto> state, CancellationToken cancellationToken)
     {
-        _isLoading = true;
-        _users     = await UsersService.GetAllAsync();
-        _isLoading = false;
+        int skip = state.Page * state.PageSize;
+        int take = state.PageSize;
+
+        string sortBy         = null;
+        bool   sortDescending = false;
+
+        SortDefinition<UserDto> sort = state.SortDefinitions.FirstOrDefault();
+
+        if(sort is not null)
+        {
+            sortBy         = sort.SortBy;
+            sortDescending = sort.Descending;
+        }
+
+        // Translate MudBlazor FilterDefinitions to the "{Column}||{Operator}||{Value}"
+        // wire format consumed by UsersController.ApplyFilters. Column comes from
+        // PropertyColumn binding via fd.Column?.PropertyName which matches the
+        // case labels in the controller switch (Email/UserName/PhoneNumber/Roles).
+        List<string> filters = null;
+
+        foreach(IFilterDefinition<UserDto> fd in state.FilterDefinitions)
+        {
+            string column = fd.Column?.PropertyName;
+            string op     = fd.Operator;
+            if(string.IsNullOrEmpty(column) || string.IsNullOrEmpty(op)) continue;
+
+            bool isEmptyOp = op is "is empty" or "is not empty";
+
+            string value;
+
+            switch(fd.Value)
+            {
+                case null:
+                    if(!isEmptyOp) continue;
+                    value = string.Empty;
+                    break;
+                case DateTime dt:
+                    value = dt.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                    break;
+                case DateTimeOffset dto:
+                    value = dto.UtcDateTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                    break;
+                case IFormattable f:
+                    value = f.ToString(null, CultureInfo.InvariantCulture);
+                    break;
+                default:
+                    value = fd.Value.ToString();
+                    break;
+            }
+
+            // Skip non-empty-check operators with no meaningful value so a freshly
+            // opened (but unfilled) filter UI doesn't accidentally drop every row.
+            if(!isEmptyOp && string.IsNullOrEmpty(value)) continue;
+
+            filters ??= [];
+            filters.Add($"{column}||{op}||{value}");
+        }
+
+        Task<int>           countTask = UsersService.GetUsersCountAsync(filters, cancellationToken);
+        Task<List<UserDto>> dataTask  =
+            UsersService.GetPagedAsync(skip, take, sortBy, sortDescending, filters, cancellationToken);
+
+        await Task.WhenAll(countTask, dataTask);
+
+        return new GridData<UserDto>
+        {
+            Items      = dataTask.Result,
+            TotalItems = countTask.Result
+        };
     }
 
     async Task OpenAddUserDialog()
@@ -74,7 +140,7 @@ public partial class Users
             if(succeeded)
             {
                 _successMessage = L["User created successfully."];
-                await LoadUsersAsync();
+                await _dataGrid.ReloadServerData();
             }
             else
             {
@@ -118,7 +184,7 @@ public partial class Users
             if(succeeded)
             {
                 _successMessage = L["User updated successfully."];
-                await LoadUsersAsync();
+                await _dataGrid.ReloadServerData();
             }
             else
             {
@@ -190,7 +256,7 @@ public partial class Users
         await dialog.Result;
 
         // Always reload since roles may have changed
-        await LoadUsersAsync();
+        await _dataGrid.ReloadServerData();
     }
 
     async Task ConfirmDeleteUser(UserDto user)
@@ -218,7 +284,7 @@ public partial class Users
             if(succeeded)
             {
                 _successMessage = L["User deleted successfully."];
-                await LoadUsersAsync();
+                await _dataGrid.ReloadServerData();
             }
             else
             {
@@ -254,7 +320,7 @@ public partial class Users
             if(ok)
             {
                 _successMessage = L["2FA disabled for user."];
-                await LoadUsersAsync();
+                await _dataGrid.ReloadServerData();
             }
             else
             {
@@ -299,7 +365,7 @@ public partial class Users
                     _errorMessage = string.Join(" ", bulkResult.Errors);
 
                 _selectedUsers.Clear();
-                await LoadUsersAsync();
+                await _dataGrid.ReloadServerData();
             }
             else
             {
@@ -352,7 +418,7 @@ public partial class Users
                     _errorMessage = string.Join(" ", bulkResult.Errors);
 
                 _selectedUsers.Clear();
-                await LoadUsersAsync();
+                await _dataGrid.ReloadServerData();
             }
             else
             {
@@ -399,7 +465,7 @@ public partial class Users
                     _errorMessage = string.Join(" ", bulkResult.Errors);
 
                 _selectedUsers.Clear();
-                await LoadUsersAsync();
+                await _dataGrid.ReloadServerData();
             }
             else
             {

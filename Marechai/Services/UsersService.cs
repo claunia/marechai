@@ -25,6 +25,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.Extensions.Logging;
@@ -44,6 +46,62 @@ public sealed class UsersService(Marechai.ApiClient.Client client, ILogger<Users
         catch(Exception ex)
         {
             logger.LogError(ex, "Error loading users");
+
+            return [];
+        }
+    }
+
+    /// <summary>
+    ///     Returns the total user count, optionally constrained by the same
+    ///     <c>"{Column}||{Operator}||{Value}"</c> filter triples accepted by
+    ///     <see cref="GetPagedAsync" />. Used by MudDataGrid server pagination.
+    /// </summary>
+    public async Task<int> GetUsersCountAsync(IReadOnlyList<string> filters = null,
+                                              CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            int? count = await client.Users.Count.GetAsync(config =>
+            {
+                if(filters is { Count: > 0 }) config.QueryParameters.Filters = filters.ToArray();
+            }, cancellationToken);
+
+            return count ?? 0;
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Error fetching user count");
+
+            return 0;
+        }
+    }
+
+    /// <summary>
+    ///     Fetches a page of users with server-side sorting + filtering. Filters
+    ///     are <c>"{Column}||{Operator}||{Value}"</c> triples mirroring MudBlazor's
+    ///     <c>FilterDefinition</c> shape; <c>UsersController.ApplyFilters</c>
+    ///     translates them into LINQ predicates.
+    /// </summary>
+    public async Task<List<UserDto>> GetPagedAsync(int skip, int take, string sortBy, bool sortDescending,
+                                                   IReadOnlyList<string> filters,
+                                                   CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            List<UserDto> users = await client.Users.GetAsync(config =>
+            {
+                config.QueryParameters.Skip = skip;
+                config.QueryParameters.Take = take;
+                if(!string.IsNullOrWhiteSpace(sortBy)) config.QueryParameters.SortBy = sortBy;
+                if(sortDescending) config.QueryParameters.SortDescending = true;
+                if(filters is { Count: > 0 }) config.QueryParameters.Filters = filters.ToArray();
+            }, cancellationToken);
+
+            return users ?? [];
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Error loading users page");
 
             return [];
         }

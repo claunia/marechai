@@ -51,15 +51,6 @@
     <MudAlert Severity="Severity.Success" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _successMessage = null">@_successMessage</MudAlert>
 }
 
-@if(_isLoading)
-{
-    <div class="d-flex justify-center pa-8">
-        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
-    </div>
-
-    return;
-}
-
 <MudPaper Elevation="2" Class="rounded-lg">
     <MudToolBar Dense="true">
         <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.PersonAdd" OnClick="OpenAddUserDialog">@L["Add User"]</MudButton>
@@ -71,16 +62,16 @@
             <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Security" Size="Size.Small" OnClick="OpenBulkRoleDialog" Class="ml-1">@L["Roles"]</MudButton>
             <MudButton Variant="Variant.Outlined" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Lock" Size="Size.Small" OnClick="OpenBulkLockoutDialog" Class="ml-1">@L["Lockout"]</MudButton>
         }
-        <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadUsersAsync"/>
+        <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="@(async () => await _dataGrid.ReloadServerData())"/>
     </MudToolBar>
 
-    <MudDataGrid Items="_users" Dense="true" Hover="true" Striped="true" Filterable="true" MultiSelection="true" @bind-SelectedItems="_selectedUsers">
+    <MudDataGrid @ref="_dataGrid" T="UserDto" ServerData="ServerReload" RowsPerPage="25" Dense="true" Hover="true" Striped="true" Filterable="true" MultiSelection="true" @bind-SelectedItems="_selectedUsers">
         <Columns>
             <SelectColumn T="UserDto"/>
             <PropertyColumn Property="x => x.Email" Title="@L["Email"]"/>
             <PropertyColumn Property="x => x.UserName" Title="@L["Username"]"/>
             <PropertyColumn Property="x => x.PhoneNumber" Title="@L["Phone"]"/>
-            <TemplateColumn Title="@L["Roles"]" Filterable="false">
+            <TemplateColumn Title="@L["Roles"]" PropertyName="Roles" Sortable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
                         @if(context.Item.Roles is { Count: > 0 })
@@ -113,5 +104,8 @@
                 </CellTemplate>
             </TemplateColumn>
         </Columns>
+        <PagerContent>
+            <MudDataGridPager T="UserDto" PageSizeOptions="new[] { 10, 25, 50, 100 }"/>
+        </PagerContent>
     </MudDataGrid>
 </MudPaper>

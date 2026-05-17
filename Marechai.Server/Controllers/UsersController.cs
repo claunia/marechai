@@ -23,9 +23,11 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.Data.Models;
 using Marechai.Database.Models;
@@ -34,6 +36,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Server.Controllers;
 
@@ -41,22 +44,62 @@ namespace Marechai.Server.Controllers;
 [Route("users")]
 [Authorize(Roles = ApplicationRole.RoleUberAdmin)]
 public class UsersController(UserManager<ApplicationUser> userManager,
-                             UserAccountDeletionService    userAccountDeletionService) : ControllerBase
+                             UserAccountDeletionService   userAccountDeletionService,
+                             MarechaiContext              context) : ControllerBase
 {
     [HttpGet]
-    [ProducesResponseType(typeof(List<UserDto>), StatusCodes.Status200OK, Description = "Returns a list of all users.")]
+    [ProducesResponseType(typeof(List<UserDto>), StatusCodes.Status200OK,
+                          Description = "Returns users, optionally paged / filtered / sorted.")]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [Produces("application/json")]
-    public async Task<ActionResult<List<UserDto>>> GetAll()
+    public async Task<ActionResult<List<UserDto>>> GetAll([FromQuery] int?  skip           = null,
+                                                          [FromQuery] int?  take           = null,
+                                                          [FromQuery] string sortBy         = null,
+                                                          [FromQuery] bool   sortDescending = false,
+                                                          [FromQuery(Name = "filters")] string[] filters = null,
+                                                          CancellationToken cancellationToken = default)
     {
-        var users    = userManager.Users.ToList();
-        var userDtos = new List<UserDto>();
+        IQueryable<ApplicationUser> query = ApplyFilters(context.Users.AsNoTracking(), filters, context);
+
+        IOrderedQueryable<ApplicationUser> ordered = sortBy switch
+        {
+            "Email" => sortDescending
+                           ? query.OrderByDescending(u => u.Email)
+                           : query.OrderBy(u => u.Email),
+            "UserName" => sortDescending
+                              ? query.OrderByDescending(u => u.UserName)
+                              : query.OrderBy(u => u.UserName),
+            "PhoneNumber" => sortDescending
+                                 ? query.OrderByDescending(u => u.PhoneNumber)
+                                 : query.OrderBy(u => u.PhoneNumber),
+            _ => query.OrderBy(u => u.Email)
+        };
+
+        IQueryable<ApplicationUser> paged = ordered;
+        if(skip.HasValue) paged = paged.Skip(skip.Value);
+        if(take.HasValue) paged = paged.Take(take.Value);
+
+        // Materialize the page's user rows first, then batch-load every role assignment in a single round-trip.
+        // Avoids the previous N+1 (one `GetRolesAsync` call per user) when listing all users.
+        List<ApplicationUser> users = await paged.ToListAsync(cancellationToken);
+
+        List<string> userIds = users.Select(u => u.Id).ToList();
+
+        Dictionary<string, List<string>> roleMap = userIds.Count == 0
+            ? []
+            : await (from ur in context.UserRoles.AsNoTracking()
+                     join r in context.Roles.AsNoTracking() on ur.RoleId equals r.Id
+                     where userIds.Contains(ur.UserId)
+                     select new { ur.UserId, r.Name }).GroupBy(x => x.UserId)
+                                                     .ToDictionaryAsync(g => g.Key,
+                                                                        g => g.Select(x => x.Name).ToList(),
+                                                                        cancellationToken);
+
+        var userDtos = new List<UserDto>(users.Count);
 
         foreach(ApplicationUser user in users)
         {
-            IList<string> roles = await userManager.GetRolesAsync(user);
-
             userDtos.Add(new UserDto
             {
                 Id                    = user.Id,
@@ -71,11 +114,143 @@ public class UsersController(UserManager<ApplicationUser> userManager,
                 TwoFactorEnabled      = user.TwoFactorEnabled,
                 AuthenticatorEnabled  = user.TwoFactorViaAuthenticator,
                 EmailTwoFactorEnabled = user.TwoFactorViaEmail,
-                Roles                 = roles.ToList()
+                Roles                 = roleMap.TryGetValue(user.Id, out List<string> r) ? r : []
             });
         }
 
         return Ok(userDtos);
+    }
+
+    [HttpGet("count")]
+    [ProducesResponseType(typeof(int), StatusCodes.Status200OK, Description = "Returns the total user count matching the optional filters.")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [Produces("application/json")]
+    public Task<int> GetCountAsync([FromQuery(Name = "filters")] string[] filters = null,
+                                   CancellationToken cancellationToken = default) =>
+        ApplyFilters(context.Users.AsNoTracking(), filters, context).CountAsync(cancellationToken);
+
+    /// <summary>
+    /// Translates MudDataGrid <c>FilterDefinition</c>s wired over the network as
+    /// <c>"{Column}||{Operator}||{Value}"</c> triples into LINQ predicates against
+    /// <see cref="ApplicationUser"/>. Recognized columns mirror the
+    /// <c>PropertyColumn</c>/<c>TemplateColumn PropertyName</c> values emitted
+    /// by the admin grid: <c>Email</c>, <c>UserName</c>, <c>PhoneNumber</c>,
+    /// <c>Roles</c>. The <c>Roles</c> column is multi-valued; its predicates
+    /// match against ANY role assignment via a join into
+    /// <c>UserRoles</c>+<c>Roles</c>. Unknown columns/operators are silently
+    /// ignored so MudBlazor never 400s the listing call.
+    /// </summary>
+    static IQueryable<ApplicationUser> ApplyFilters(IQueryable<ApplicationUser> query, string[] filters,
+                                                    MarechaiContext ctx)
+    {
+        if(filters is null || filters.Length == 0) return query;
+
+        foreach(string raw in filters)
+        {
+            if(string.IsNullOrWhiteSpace(raw)) continue;
+
+            string[] parts = raw.Split("||", 3, StringSplitOptions.None);
+            if(parts.Length < 2) continue;
+
+            string column   = parts[0];
+            string op       = parts[1];
+            string value    = parts.Length >= 3 ? parts[2] : string.Empty;
+            bool   isEmpty  = op == "is empty";
+            bool   isNotEmp = op == "is not empty";
+
+            // Skip non-empty-check operators with no value supplied so a stray
+            // open-but-unfilled filter UI doesn't accidentally hide every row.
+            if(!isEmpty && !isNotEmp && string.IsNullOrEmpty(value)) continue;
+
+            switch(column)
+            {
+                case "Email":
+                    query = op switch
+                    {
+                        "contains"     => query.Where(u => u.Email.Contains(value)),
+                        "not contains" => query.Where(u => !u.Email.Contains(value)),
+                        "equals"       => query.Where(u => u.Email == value),
+                        "not equals"   => query.Where(u => u.Email != value),
+                        "starts with"  => query.Where(u => u.Email.StartsWith(value)),
+                        "ends with"    => query.Where(u => u.Email.EndsWith(value)),
+                        "is empty"     => query.Where(u => u.Email == null || u.Email == string.Empty),
+                        "is not empty" => query.Where(u => u.Email != null && u.Email != string.Empty),
+                        _              => query
+                    };
+                    break;
+
+                case "UserName":
+                    query = op switch
+                    {
+                        "contains"     => query.Where(u => u.UserName.Contains(value)),
+                        "not contains" => query.Where(u => !u.UserName.Contains(value)),
+                        "equals"       => query.Where(u => u.UserName == value),
+                        "not equals"   => query.Where(u => u.UserName != value),
+                        "starts with"  => query.Where(u => u.UserName.StartsWith(value)),
+                        "ends with"    => query.Where(u => u.UserName.EndsWith(value)),
+                        "is empty"     => query.Where(u => u.UserName == null || u.UserName == string.Empty),
+                        "is not empty" => query.Where(u => u.UserName != null && u.UserName != string.Empty),
+                        _              => query
+                    };
+                    break;
+
+                case "PhoneNumber":
+                    query = op switch
+                    {
+                        "contains"     => query.Where(u => u.PhoneNumber != null && u.PhoneNumber.Contains(value)),
+                        "not contains" => query.Where(u => u.PhoneNumber == null || !u.PhoneNumber.Contains(value)),
+                        "equals"       => query.Where(u => u.PhoneNumber == value),
+                        "not equals"   => query.Where(u => u.PhoneNumber != value),
+                        "starts with"  => query.Where(u => u.PhoneNumber != null && u.PhoneNumber.StartsWith(value)),
+                        "ends with"    => query.Where(u => u.PhoneNumber != null && u.PhoneNumber.EndsWith(value)),
+                        "is empty"     => query.Where(u => u.PhoneNumber == null || u.PhoneNumber == string.Empty),
+                        "is not empty" => query.Where(u => u.PhoneNumber != null && u.PhoneNumber != string.Empty),
+                        _              => query
+                    };
+                    break;
+
+                case "Roles":
+                    // Predicates over the multi-valued role assignment: "contains foo" means at least one of
+                    // the user's role names contains "foo"; "not contains" means none of them does; "equals"
+                    // means at least one role name equals exactly. "is empty" / "is not empty" check for the
+                    // presence of any role at all (membership) rather than empty role-name strings, which
+                    // ApplicationRole's seeded set never produces.
+                    query = op switch
+                    {
+                        "contains" => query.Where(u =>
+                            ctx.UserRoles.Any(ur => ur.UserId == u.Id &&
+                                                    ctx.Roles.Any(r => r.Id == ur.RoleId &&
+                                                                       r.Name.Contains(value)))),
+                        "not contains" => query.Where(u =>
+                            !ctx.UserRoles.Any(ur => ur.UserId == u.Id &&
+                                                     ctx.Roles.Any(r => r.Id == ur.RoleId &&
+                                                                        r.Name.Contains(value)))),
+                        "equals" => query.Where(u =>
+                            ctx.UserRoles.Any(ur => ur.UserId == u.Id &&
+                                                    ctx.Roles.Any(r => r.Id == ur.RoleId &&
+                                                                       r.Name == value))),
+                        "not equals" => query.Where(u =>
+                            !ctx.UserRoles.Any(ur => ur.UserId == u.Id &&
+                                                     ctx.Roles.Any(r => r.Id == ur.RoleId &&
+                                                                        r.Name == value))),
+                        "starts with" => query.Where(u =>
+                            ctx.UserRoles.Any(ur => ur.UserId == u.Id &&
+                                                    ctx.Roles.Any(r => r.Id == ur.RoleId &&
+                                                                       r.Name.StartsWith(value)))),
+                        "ends with" => query.Where(u =>
+                            ctx.UserRoles.Any(ur => ur.UserId == u.Id &&
+                                                    ctx.Roles.Any(r => r.Id == ur.RoleId &&
+                                                                       r.Name.EndsWith(value)))),
+                        "is empty"     => query.Where(u => !ctx.UserRoles.Any(ur => ur.UserId == u.Id)),
+                        "is not empty" => query.Where(u => ctx.UserRoles.Any(ur => ur.UserId == u.Id)),
+                        _              => query
+                    };
+                    break;
+            }
+        }
+
+        return query;
     }
 
     [HttpGet("{id}")]
