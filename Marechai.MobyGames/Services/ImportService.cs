@@ -420,18 +420,39 @@ public class ImportService
 
         if(!takesCompilationPath)
         {
+            // If this slug already maps to a Software via a state row, YesToAll will
+            // dedupe to that Software in ImportGameAsync — there is no prompt to skip.
+            // Phase 3 mirror: only declare existing-by-name / fuzzy as blocking if the
+            // candidate set does NOT include the already-linked Software.
+            ulong? sameSlugSoftwareId = await context.MobyGamesImportStates
+                                                     .Where(s => s.MobyGameId == game.MobyGameId &&
+                                                                 s.SoftwareId != null)
+                                                     .Select(s => s.SoftwareId)
+                                                     .FirstOrDefaultAsync();
+
             // (a) Existing-by-name prompt (ImportGameAsync line ~391)
-            bool existingByName = await context.Softwares
-                                                .AnyAsync(s => s.Name == game.Name);
+            var existingByNameIds = await context.Softwares
+                                                 .Where(s => s.Name == game.Name)
+                                                 .Select(s => s.Id)
+                                                 .ToListAsync();
 
-            if(existingByName)
-                return $"existing software with name \"{game.Name}\"";
+            if(existingByNameIds.Count > 0)
+            {
+                if(!(sameSlugSoftwareId is ulong existingId1 && existingByNameIds.Contains(existingId1)))
+                    return $"existing software with name \"{game.Name}\"";
+            }
+            else
+            {
+                // (b) Fuzzy duplicates prompt (ImportGameAsync line ~490)
+                var fuzzyMatches = await FindFuzzySoftwareMatchesAsync(context, game.Name);
 
-            // (b) Fuzzy duplicates prompt (ImportGameAsync line ~490)
-            var fuzzyMatches = await FindFuzzySoftwareMatchesAsync(context, game.Name);
-
-            if(fuzzyMatches.Count > 0)
-                return $"possible duplicates of \"{game.Name}\" ({fuzzyMatches.Count} fuzzy match(es))";
+                if(fuzzyMatches.Count > 0)
+                {
+                    if(!(sameSlugSoftwareId is ulong existingId2 &&
+                         fuzzyMatches.Any(m => m.Id == existingId2)))
+                        return $"possible duplicates of \"{game.Name}\" ({fuzzyMatches.Count} fuzzy match(es))";
+                }
+            }
         }
 
         // (c) Unknown product code Type prompt (TryResolveProductCodeIssuer)
@@ -554,6 +575,16 @@ public class ImportService
                                           .Select(s => new { s.Id, s.Name, s.Kind })
                                           .ToListAsync();
 
+        // If this slug already has a state row pointing at a Software, capture the SoftwareId so
+        // YesToAll can dedupe against it ("same slug, same Software") instead of blindly
+        // creating a duplicate when the existing-name or fuzzy candidate list includes that
+        // very Software. INVARIANT: a slug should never end up with two Software rows.
+        ulong? sameSlugSoftwareId = await context.MobyGamesImportStates
+                                                 .Where(s => s.MobyGameId == game.MobyGameId &&
+                                                             s.SoftwareId != null)
+                                                 .Select(s => s.SoftwareId)
+                                                 .FirstOrDefaultAsync();
+
         Software software;
 
         if(existingByName.Count > 0)
@@ -611,8 +642,33 @@ public class ImportService
 
             if(YesToAll)
             {
-                Console.WriteLine("    Auto-creating new entry (yes-to-all).");
-                input = "N";
+                // Phase 2: prefer linking to the SAME Software this slug already points at,
+                // if one of the same-named candidates is it. Avoids creating a duplicate.
+                int? autoPickIndex = null;
+
+                if(sameSlugSoftwareId is ulong existingId)
+                {
+                    for(int i = 0; i < existingByName.Count; i++)
+                    {
+                        if(existingByName[i].Id != existingId) continue;
+
+                        autoPickIndex = i + 1;
+
+                        break;
+                    }
+                }
+
+                if(autoPickIndex.HasValue)
+                {
+                    Console.WriteLine($"    Auto-linking to existing Software ID: {sameSlugSoftwareId} " +
+                                      "(yes-to-all, same slug already mapped).");
+                    input = autoPickIndex.Value.ToString();
+                }
+                else
+                {
+                    Console.WriteLine("    Auto-creating new entry (yes-to-all).");
+                    input = "N";
+                }
             }
             else
             {
@@ -728,8 +784,33 @@ public class ImportService
 
                 if(YesToAll)
                 {
-                    Console.WriteLine("    Auto-creating new entry (yes-to-all).");
-                    input = "N";
+                    // Phase 2: prefer linking to the SAME Software this slug already points at,
+                    // if one of the fuzzy candidates is it. Avoids creating a duplicate.
+                    int? autoPickIndex = null;
+
+                    if(sameSlugSoftwareId is ulong existingId)
+                    {
+                        for(int i = 0; i < fuzzyMatches.Count; i++)
+                        {
+                            if(fuzzyMatches[i].Id != existingId) continue;
+
+                            autoPickIndex = i + 1;
+
+                            break;
+                        }
+                    }
+
+                    if(autoPickIndex.HasValue)
+                    {
+                        Console.WriteLine($"    Auto-linking to existing Software ID: {sameSlugSoftwareId} " +
+                                          "(yes-to-all, same slug already mapped).");
+                        input = autoPickIndex.Value.ToString();
+                    }
+                    else
+                    {
+                        Console.WriteLine("    Auto-creating new entry (yes-to-all).");
+                        input = "N";
+                    }
                 }
                 else
                 {
@@ -802,6 +883,12 @@ public class ImportService
                 await context.SaveChangesAsync();
             }
         }
+
+        // Phase 1: lock the slug<->SoftwareId pair immediately. From here on, any failure in
+        // the rest of ImportGameAsync (descriptions, releases, credits, ...) preserves the
+        // SoftwareId in the state row via MarkFailedAsync, so the Software is never orphaned.
+        // Final MarkImportedAsync at the end of this method flips Status to Imported.
+        await _stateService.MarkSoftwareLinkedAsync(game.MobyGameId, software.Id, batchNumber);
 
         // 2. Description
         if(!string.IsNullOrWhiteSpace(game.Description))
@@ -1092,7 +1179,12 @@ public class ImportService
                     }
                 }
 
-                // Clear SoftwareId from any import state referencing this orphan
+                // Clear SoftwareId from any import state referencing this orphan.
+                // LEGITIMATE null-out: this is one of only two places allowed to clear
+                // MobyGamesImportState.SoftwareId. It is paired with the Softwares.Remove(orphan)
+                // call below, so the slug<->Software invariant holds (the Software is going away).
+                // See MarkFailedAsync / MarkRejectedAsync in StateService.cs which intentionally
+                // preserve SoftwareId on every other path.
                 var orphanStates = await context.MobyGamesImportStates
                     .Where(s => s.SoftwareId == orphan.Id)
                     .ToListAsync();

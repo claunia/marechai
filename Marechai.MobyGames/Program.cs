@@ -633,6 +633,17 @@ class Program
                 break;
             }
 
+            case "cleanup-orphan-duplicates":
+            {
+                bool cleanupDryRun = args.Contains("--dry-run");
+                bool cleanupYes    = args.Contains("--yes");
+
+                var cleanupService = new OrphanCleanupService(factory);
+                await cleanupService.RunAsync(cleanupDryRun, cleanupYes);
+
+                break;
+            }
+
             default:
                 Console.WriteLine("  Usage:");
                 Console.WriteLine("    import [--batch-size N] [--unattended] [--yes-to-all]");
@@ -673,6 +684,9 @@ class Program
                 Console.WriteLine("                                                  Convert compilation Software to proper compilation releases");
                 Console.WriteLine("    reparse-specs [--batch-size N] [--dry-run]");
                 Console.WriteLine("                                                  Reparse Specs tab from raw HTML and split multi-anchor values into one row each");
+                Console.WriteLine("    cleanup-orphan-duplicates [--dry-run] [--yes]");
+                Console.WriteLine("                                                  Merge duplicate orphan Software rows into their state-linked twin (backfill for");
+                Console.WriteLine("                                                  legacy data created before MarkSoftwareLinkedAsync). Prompts unless --yes is passed.");
                 Console.WriteLine("    reset --game <id>                             Reset a game to unprocessed");
 
                 break;

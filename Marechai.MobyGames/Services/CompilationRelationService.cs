@@ -227,7 +227,12 @@ public class CompilationRelationService
                         }
                     }
 
-                    // Update import state: clear SoftwareId (compilation has no Software)
+                    // Update import state: clear SoftwareId (compilation has no Software).
+                    // LEGITIMATE null-out: this is one of only two places allowed to clear
+                    // MobyGamesImportState.SoftwareId. It is paired with the Softwares.Remove(compilation)
+                    // call below, so the slug<->Software invariant holds (the Software is going away).
+                    // See MarkFailedAsync / MarkRejectedAsync in StateService.cs which intentionally
+                    // preserve SoftwareId on every other path.
                     importState.SoftwareId = null;
 
                     // Save before deleting the Software (SoftwareRelease FK is Restrict, but we already nulled it)
