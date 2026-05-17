@@ -192,7 +192,7 @@ public class ScreenshotDownloadService
                         continue;
                     }
 
-                    string originalUrl = MobyGamesHttpClient.ExtractFullSizeScreenshotUrl(detailHtml);
+                    string originalUrl = MobyGamesHttpClient.ExtractFullSizeImageUrl(detailHtml);
 
                     if(originalUrl is null)
                     {

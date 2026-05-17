@@ -1,0 +1,757 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using PuppeteerSharp;
+using PuppeteerSharp.BrowserData;
+
+namespace Marechai.MobyGames.Services;
+
+/// <summary>
+///     Embedded headless Chromium driver used to authenticate against MobyGames and fetch
+///     pages that require a logged-in (and optionally MobyPlus) session.
+///     <para>
+///         Cookies obtained here are exported via <see cref="ExportCookiesAsync"/> and copied
+///         into <see cref="MobyGamesHttpClient"/> so the existing fast HTTP code paths get the
+///         authenticated experience without paying the browser-launch cost per request.
+///     </para>
+///     <para>
+///         Chromium is auto-downloaded on first use via PuppeteerSharp's BrowserFetcher into
+///         <c>state/puppeteer-chromium</c> (configurable via <c>MobyGames:Auth:BrowserCachePath</c>).
+///         Cookies are persisted to <c>state/mobygames-cookies.json</c> between runs so we only
+///         go through the login flow when the saved session is missing or expired.
+///     </para>
+/// </summary>
+public sealed class MobyGamesBrowser : IAsyncDisposable
+{
+    // Must match the actual Chromium build PuppeteerSharp downloads. Advertising Firefox while
+    // running Chrome was an instant Cloudflare bot flag (mismatched UA + Chrome TLS/JS
+    // fingerprints). Use a plausible recent Chrome/Linux UA — the major version doesn't have to
+    // be exactly the Chromium build PuppeteerSharp pinned, but it should look like Chrome.
+    const string DefaultUserAgent =
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36";
+
+    static readonly JsonSerializerOptions s_jsonOptions = new()
+    {
+        WriteIndented = true
+    };
+
+    readonly string _email;
+    readonly string _password;
+    readonly string _cookieCachePath;
+    readonly string _browserCachePath;
+    readonly string _userDataDir;
+    readonly bool   _headless;
+    readonly int    _rateLimitMs;
+
+    IBrowser _browser;
+    IPage    _page;
+    DateTime _lastRequestUtc = DateTime.MinValue;
+    bool     _initialized;
+
+    public MobyGamesBrowser(IConfiguration cfg, int rateLimitMs)
+    {
+        _rateLimitMs = rateLimitMs;
+
+        IConfigurationSection auth = cfg.GetSection("MobyGames:Auth");
+        _email            = auth["Email"]             ?? string.Empty;
+        _password         = auth["Password"]          ?? string.Empty;
+        _cookieCachePath  = auth["CookieCachePath"]   ?? "state/mobygames-cookies.json";
+        _browserCachePath = auth["BrowserCachePath"]  ?? "state/puppeteer-chromium";
+        // Persistent profile so the cf_clearance cookie (and any other CF state) survives between
+        // runs. Critical because Cloudflare's Turnstile cannot be solved automatically — once the
+        // user passes it once (set Headless=false), the cleared profile keeps subsequent runs
+        // working without manual intervention.
+        _userDataDir      = auth["UserDataDir"]       ?? "state/puppeteer-profile";
+        _headless         = !bool.TryParse(auth["Headless"], out bool h) || h;
+    }
+
+    public bool IsLoggedIn { get; private set; }
+
+    public bool HasMobyPlus { get; private set; }
+
+    /// <summary>
+    ///     Returns true once Chromium has been launched, the cached cookies (if any) loaded,
+    ///     and login verified. Throws if neither cached cookies nor credentials are usable.
+    /// </summary>
+    public async Task InitializeAsync(CancellationToken ct = default)
+    {
+        if(_initialized)
+            return;
+
+        // Download Chromium on first launch (no-op when already cached).
+        Directory.CreateDirectory(_browserCachePath);
+        Directory.CreateDirectory(_userDataDir);
+
+        // Chromium writes a SingletonLock symlink into the profile dir to prevent two browser
+        // instances from sharing the same profile. If the previous run crashed (or was killed),
+        // this lock is left behind and the next launch aborts with
+        // "Failed to create .../SingletonLock: File exists". Since we are the only owner of this
+        // profile dir, it is safe to delete the stale lock files before launching.
+        foreach(string staleLock in new[] { "SingletonLock", "SingletonCookie", "SingletonSocket" })
+        {
+            string p = Path.Combine(_userDataDir, staleLock);
+
+            if(File.Exists(p) || Directory.Exists(p))
+            {
+                try { File.Delete(p); }
+                catch { /* ignore — Chromium will surface a clearer error if it really matters */ }
+            }
+        }
+
+        var fetcher = new BrowserFetcher(new BrowserFetcherOptions
+        {
+            Path = _browserCachePath
+        });
+
+        Console.WriteLine("  Ensuring headless Chromium is available...");
+        InstalledBrowser installed = await fetcher.DownloadAsync();
+
+        Console.WriteLine($"  Chromium {installed.BuildId} ready at {installed.GetExecutablePath()}");
+
+        _browser = await Puppeteer.LaunchAsync(new LaunchOptions
+        {
+            Headless       = _headless,
+            ExecutablePath = installed.GetExecutablePath(),
+            UserDataDir    = _userDataDir,
+            DefaultViewport = new ViewPortOptions
+            {
+                Width  = 1366,
+                Height = 768
+            },
+            Args = new[]
+            {
+                "--disable-blink-features=AutomationControlled",
+                "--no-sandbox",
+                // Suppress some additional automation fingerprints that Cloudflare looks for.
+                "--disable-features=IsolateOrigins,site-per-process,AutomationControlled",
+                "--disable-infobars",
+                $"--lang={Environment.GetEnvironmentVariable("LANG")?.Split('.')[0]?.Replace('_', '-') ?? "en-US"}"
+            }
+        });
+
+        _page = await _browser.NewPageAsync();
+        await _page.SetUserAgentAsync(DefaultUserAgent, null);
+
+        // Restore cached cookies if present.
+        bool cookiesRestored = await TryRestoreCookiesAsync();
+
+        // Quick probe — visit the homepage and see whether we land in a logged-in state.
+        await _page.GoToAsync("https://www.mobygames.com/", new NavigationOptions
+        {
+            Timeout   = 60_000,
+            WaitUntil = new[] { WaitUntilNavigation.DOMContentLoaded }
+        });
+
+        await WaitForCloudflareAsync();
+
+        await UpdateLoginStateAsync();
+
+        if(!IsLoggedIn)
+        {
+            if(string.IsNullOrWhiteSpace(_email) || string.IsNullOrWhiteSpace(_password))
+            {
+                if(cookiesRestored)
+                    throw new InvalidOperationException(
+                        "Cached MobyGames cookies are no longer valid and no credentials are configured. " +
+                        "Set MobyGames:Auth:Email and MobyGames:Auth:Password in appsettings.json.");
+
+                throw new InvalidOperationException(
+                    "MobyGames login required. Set MobyGames:Auth:Email and MobyGames:Auth:Password " +
+                    "in appsettings.json (or in user-secrets).");
+            }
+
+            // Mark initialized BEFORE LoginAsync/SaveCookiesAsync so the cookie-export path
+            // (which defensively calls EnsureInitializedAsync) doesn't re-enter InitializeAsync
+            // and try to launch a second Chromium against the same UserDataDir (which would
+            // collide with the SingletonLock of the already-running browser).
+            _initialized = true;
+
+            await LoginAsync(ct);
+            await SaveCookiesAsync();
+        }
+        else
+        {
+            Console.WriteLine($"  Logged in to MobyGames{(HasMobyPlus ? " (MobyPlus active)" : "")}");
+            _initialized = true;
+        }
+    }
+
+    /// <summary>
+    ///     Performs the form-based login flow on /user/login/. Throws if the post-submit page
+    ///     does not show the logout link.
+    /// </summary>
+    public async Task LoginAsync(CancellationToken ct = default)
+    {
+        Console.WriteLine("  Logging in to MobyGames...");
+
+        await _page.GoToAsync("https://www.mobygames.com/user/login/", new NavigationOptions
+        {
+            Timeout = 90_000,
+            // Networkidle2 lets Cloudflare's challenge complete (the /user/login/ URL is gated by
+            // a managed-challenge that flips the document twice before the real form appears).
+            WaitUntil = new[] { WaitUntilNavigation.Networkidle2 }
+        });
+
+        await WaitForCloudflareAsync();
+
+        // MobyGames' form field names have shifted over time; try each known variant and the
+        // first one that matches wins. The current site exposes `login` for the username and
+        // `password` for the secret, but older builds used `username`/`email`.
+        string[] userSelectors =
+        {
+            "input[name='login']", "input[name='username']", "input[name='email']", "input[type='email']"
+        };
+
+        string usernameSelector = null;
+
+        foreach(string sel in userSelectors)
+        {
+            try
+            {
+                await _page.WaitForSelectorAsync(sel,
+                                                 new WaitForSelectorOptions { Visible = true, Timeout = 15_000 });
+
+                usernameSelector = sel;
+
+                break;
+            }
+            catch(WaitTaskTimeoutException) { /* try next */ }
+        }
+
+        if(usernameSelector is null)
+        {
+            await DumpLoginDiagnosticsAsync("login-form-not-found");
+
+            throw new InvalidOperationException(
+                "MobyGames login form not found — no known username-field selector matched. " +
+                "Cloudflare may have served an interstitial; see state/mobygames-login-* diagnostics.");
+        }
+
+        await _page.TypeAsync(usernameSelector, _email);
+        await _page.TypeAsync("input[name='password']", _password);
+
+        // MobyGames uses htmx for form submission and injects a per-page CSRF token via an
+        // `htmx:configRequest` listener that adds the `X-CSRF-Token` header. If we click submit
+        // before htmx's script has registered the listener, the server returns
+        // "No CSRF token submitted." Wait until htmx is loaded AND its listener is attached.
+        try
+        {
+            await _page.WaitForFunctionAsync(
+                "() => typeof window.htmx !== 'undefined'",
+                new WaitForFunctionOptions { Timeout = 30_000 });
+        }
+        catch(WaitTaskTimeoutException)
+        {
+            // htmx not detected — the form may be a vanilla POST. Continue and let the click
+            // either succeed (vanilla form) or fail with the same CSRF message (in which case
+            // diagnostics get dumped below).
+        }
+
+        // MobyGames uses htmx to submit the form: the click fires an AJAX POST that swaps the
+        // page body in place rather than navigating, so WaitForNavigationAsync can time out
+        // even on a successful login. Instead we poll for the logged-in marker (a logout link)
+        // and surface a clear failure if it never appears.
+        await _page.ClickAsync("form button.btn.btn-primary", null);
+
+        try
+        {
+            await _page.WaitForFunctionAsync(
+                @"() => {
+                    if (document.querySelector('a[href=""/user/logout/""]')) return true;
+                    // Surface explicit server-rendered failures so we can fail fast.
+                    const text = document.body ? document.body.innerText : '';
+                    if (/no csrf token|invalid credentials|incorrect password|invalid username/i.test(text)) return true;
+                    return false;
+                }",
+                new WaitForFunctionOptions { Timeout = 60_000 });
+        }
+        catch(WaitTaskTimeoutException)
+        {
+            await DumpLoginDiagnosticsAsync("login-timeout");
+
+            throw new InvalidOperationException(
+                "MobyGames login form submitted but the page did not update within 60s. " +
+                "See state/mobygames-login-timeout.* diagnostics.");
+        }
+
+        await UpdateLoginStateAsync();
+
+        if(!IsLoggedIn)
+        {
+            // Try to surface the on-page error message so the user sees the real reason.
+            string errorText = await _page.EvaluateFunctionAsync<string>(
+                @"() => {
+                    const el = document.querySelector('.alert-danger, .error, .form-error, .invalid-feedback');
+                    if (el && el.innerText) return el.innerText.trim();
+                    const text = document.body ? document.body.innerText : '';
+                    const m = text.match(/no csrf token[^.\n]*|invalid credentials[^.\n]*|incorrect password[^.\n]*|invalid username[^.\n]*/i);
+                    return m ? m[0] : '';
+                }");
+
+            await DumpLoginDiagnosticsAsync("login-failure");
+
+            throw new InvalidOperationException(
+                $"MobyGames login failed — no logout link found after submitting the form." +
+                (string.IsNullOrEmpty(errorText) ? "" : $" Server message: {errorText}") +
+                " See state/mobygames-login-failure* diagnostics.");
+        }
+
+        Console.WriteLine($"  Logged in to MobyGames{(HasMobyPlus ? " (MobyPlus active)" : "")}");
+
+        if(!HasMobyPlus)
+            Console.WriteLine(
+                "\e[33m  Warning: account is not MobyPlus — original-resolution screenshots and promo " +
+                "art will not be downloaded.\e[0m");
+    }
+
+    async Task DumpLoginDiagnosticsAsync(string tag)
+    {
+        string dir = Path.GetDirectoryName(_cookieCachePath) ?? "state";
+
+        try
+        {
+            Directory.CreateDirectory(dir);
+            string screenshotPath = Path.Combine(dir, $"mobygames-{tag}.png");
+            string htmlPath       = Path.Combine(dir, $"mobygames-{tag}.html");
+
+            await _page.ScreenshotAsync(screenshotPath, new ScreenshotOptions { FullPage = true });
+            string html = await _page.GetContentAsync();
+            await File.WriteAllTextAsync(htmlPath, html);
+
+            Console.WriteLine(
+                $"\e[33m  Saved login diagnostics: {screenshotPath} (page URL: {_page.Url})\e[0m");
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"\e[33m  Failed to capture login diagnostics: {ex.Message}\e[0m");
+        }
+    }
+
+    /// <summary>
+    ///     Detects whether the current page is a Cloudflare interstitial (Turnstile checkbox,
+    ///     managed-challenge spinner, or "Attention Required" block page). Cloudflare's checks
+    ///     pass each request through one of these gates before serving the real content.
+    /// </summary>
+    async Task<bool> IsCloudflareChallengePresentAsync()
+    {
+        try
+        {
+            return await _page.EvaluateFunctionAsync<bool>(
+                @"() => {
+                    const title = (document.title || '').toLowerCase();
+                    if (/just a moment|attention required|cloudflare/.test(title)) return true;
+                    if (document.querySelector('iframe[src*=""challenges.cloudflare.com""]')) return true;
+                    if (document.querySelector('#challenge-running, #challenge-form, #challenge-stage')) return true;
+                    // Plain text hint used by the 'Performing security verification' page.
+                    const bodyText = document.body ? document.body.innerText : '';
+                    if (/verify you are human|performing security verification/i.test(bodyText)) return true;
+                    return false;
+                }");
+        }
+        catch
+        {
+            // Page navigation in flight or context destroyed — treat as transient.
+            return false;
+        }
+    }
+
+    /// <summary>
+    ///     If a Cloudflare interstitial is detected: in headful mode, wait up to 5 minutes for
+    ///     the user to solve it manually (the cleared cf_clearance cookie is persisted to
+    ///     <see cref="_userDataDir"/> so subsequent headless runs skip the challenge). In
+    ///     headless mode, fail fast with bootstrap instructions — there is no automated way to
+    ///     pass Turnstile's "Verify you are human" checkbox.
+    /// </summary>
+    async Task WaitForCloudflareAsync()
+    {
+        if(!await IsCloudflareChallengePresentAsync())
+            return;
+
+        if(_headless)
+        {
+            await DumpLoginDiagnosticsAsync("cloudflare-interstitial");
+
+            throw new InvalidOperationException(
+                "Cloudflare's \"Verify you are human\" challenge cannot be solved in headless mode.\n" +
+                "\n" +
+                "  One-time bootstrap:\n" +
+                "    1. Set \"MobyGames:Auth:Headless\": false in Marechai.MobyGames/appsettings.json\n" +
+                "    2. Re-run the same command — a Chromium window will open.\n" +
+                "    3. Click the \"Verify you are human\" checkbox; if the login form appears,\n" +
+                "       it will auto-fill and submit from the credentials in appsettings.json.\n" +
+                "    4. Once the homepage loads logged-in, the program continues automatically.\n" +
+                "    5. After it finishes you may revert Headless back to true. The cf_clearance\n" +
+                "       cookie stored in state/puppeteer-profile typically lasts ~30 days; until\n" +
+                "       it expires, headless runs reuse it without hitting the challenge again.");
+        }
+
+        Console.WriteLine(
+            "\e[33m  Cloudflare interstitial detected. Click the \"Verify you are human\" checkbox in the\n" +
+            "  browser window. Waiting up to 5 minutes for the challenge to clear...\e[0m");
+
+        DateTime deadline = DateTime.UtcNow.AddMinutes(5);
+
+        while(DateTime.UtcNow < deadline)
+        {
+            await Task.Delay(2000);
+
+            if(!await IsCloudflareChallengePresentAsync())
+            {
+                Console.WriteLine("  Cloudflare challenge cleared.");
+
+                // Give the post-challenge redirect a moment to settle before the caller proceeds.
+                await Task.Delay(1500);
+
+                return;
+            }
+        }
+
+        await DumpLoginDiagnosticsAsync("cloudflare-timeout");
+
+        throw new InvalidOperationException(
+            "Cloudflare challenge did not clear within 5 minutes. See state/mobygames-cloudflare-timeout.* " +
+            "diagnostics.");
+    }
+
+    /// <summary>
+    ///     Navigate to a year/page search results URL and return the raw JSON payload from the
+    ///     <c>game-browser</c> Vue component's <c>:initial-values</c> attribute (HTML-decoded).
+    /// </summary>
+    public async Task<string> FetchSearchPageJsonAsync(int year, int page, CancellationToken ct = default)
+    {
+        await EnsureInitializedAsync(ct);
+        await ApplyRateLimitAsync(ct);
+
+        // Filter segments:
+        //   from / until           — release year range (inclusive)
+        //   include_dlc:true       — surface add-ons / DLC (otherwise filtered out)
+        //   include_nsfw:true      — surface NSFW-flagged titles
+        //   release_status:all     — include unreleased / cancelled in addition to released
+        //   sort:title             — stable, deterministic ordering
+        //
+        // Query-string parameters (NOT path filters — MobyGames silently drops unknown path
+        // segments and falls back to defaults):
+        //   v2=true                — opt-in to the new Vue-based `game-browser` (beta), which is
+        //                            gated behind a MobyPlus subscription. Without this flag the
+        //                            response renders the classic browser, which has no
+        //                            `<game-browser>` element AND caps at 18 results per page.
+        //   per_page=100           — maximum supported page size in v2 (cuts request count ~5.5x
+        //                            vs the default 18). Only honored by the v2 browser; ignored
+        //                            in the classic one.
+        string url = $"https://www.mobygames.com/game/from:{year}/include_dlc:true/include_nsfw:true/" +
+                     $"release_status:all/sort:title/until:{year}/page:{page}/?v2=true&per_page=100";
+
+        await _page.GoToAsync(url, new NavigationOptions
+        {
+            Timeout = 120_000,
+            // Networkidle2 covers the ES-module Vue bundle settling; DOMContentLoaded is too early
+            // because the <game-browser> attribute is rendered server-side but the bundle still
+            // needs to finish parsing before the component is interactive.
+            WaitUntil = new[] { WaitUntilNavigation.Networkidle2 }
+        });
+
+        // The <game-browser> element ships server-side-rendered with the JSON envelope in its
+        // `:initial-values` attribute. Wait up to 60s per known selector (the new site can stall
+        // when MobyGames sorts through 200k+ titles, especially with NSFW+DLC enabled).
+        string[] selectors =
+        {
+            "game-browser[\\:initial-values]",
+            "game-browser",
+            "[\\:initial-values]"
+        };
+
+        string raw = null;
+
+        foreach(string sel in selectors)
+        {
+            try
+            {
+                await _page.WaitForSelectorAsync(sel,
+                                                 new WaitForSelectorOptions { Visible = false, Timeout = 60_000 });
+
+                raw = await _page.EvaluateExpressionAsync<string>(
+                    $"document.querySelector(\"{sel}\")?.getAttribute(':initial-values')");
+
+                if(!string.IsNullOrEmpty(raw))
+                    break;
+            }
+            catch(WaitTaskTimeoutException) { /* try next */ }
+        }
+
+        if(string.IsNullOrEmpty(raw))
+        {
+            await DumpLoginDiagnosticsAsync($"search-{year}-page{page}");
+
+            // Surface any custom-element names actually present on the page so the next iteration
+            // of this code knows what to look for.
+            string customTags = await _page.EvaluateFunctionAsync<string>(
+                @"() => Array.from(document.querySelectorAll('*'))
+                       .map(e => e.tagName.toLowerCase())
+                       .filter(t => t.includes('-'))
+                       .filter((t, i, a) => a.indexOf(t) === i)
+                       .join(', ')");
+
+            throw new InvalidOperationException(
+                $"Search results page for year={year} page={page} did not expose a `game-browser` " +
+                $"element with `:initial-values`. URL: {url}. Custom elements seen: " +
+                $"[{customTags}]. See state/mobygames-search-{year}-page{page}.{{png,html}}.");
+        }
+
+        return WebUtility.HtmlDecode(raw);
+    }
+
+    /// <summary>
+    ///     Fetch the MobyPlus <c>?export=json</c> endpoint for a year-filtered search and return
+    ///     the raw JSON body. The export endpoint bypasses pagination entirely: a single request
+    ///     returns ALL matching games for the year as a flat JSON array of game objects with
+    ///     <c>{id, title, release_date, developers[], publishers[], platforms[], genres[],
+    ///     moby_score, moby_url}</c>. Requires an authenticated MobyPlus session (the cookie
+    ///     jar is shared with the browser).
+    ///     <para>
+    ///         The fetch is performed via <c>window.fetch()</c> inside the authenticated page
+    ///         context rather than <see cref="IPage.GoToAsync"/> so Chrome's built-in JSON viewer
+    ///         doesn't interfere with response parsing. The page is first navigated to the
+    ///         MobyGames origin if it isn't already, so the request is same-origin and the auth
+    ///         cookies are attached automatically.
+    ///     </para>
+    /// </summary>
+    public async Task<string> FetchSearchExportJsonAsync(int year, CancellationToken ct = default)
+    {
+        await EnsureInitializedAsync(ct);
+        await ApplyRateLimitAsync(ct);
+
+        // window.fetch() obeys same-origin / CORS — the page must be on a mobygames.com origin
+        // for the auth cookies to attach. After login we are typically on the dashboard, but if
+        // someone re-uses the page elsewhere we navigate to the home page first.
+        if(_page.Url is null ||
+           !_page.Url.StartsWith("https://www.mobygames.com/", StringComparison.OrdinalIgnoreCase))
+        {
+            await _page.GoToAsync("https://www.mobygames.com/",
+                                  new NavigationOptions
+                                  {
+                                      Timeout    = 60_000,
+                                      WaitUntil  = new[] { WaitUntilNavigation.DOMContentLoaded }
+                                  });
+        }
+
+        string url = $"https://www.mobygames.com/game/from:{year}/include_dlc:true/include_nsfw:true/" +
+                     $"release_status:all/until:{year}/sort:title/page:1/?export=json";
+
+        // The fetch may legitimately return a very large payload (the 2026 snapshot is ~2000
+        // games / hundreds of KB). EvaluateFunctionAsync<string> handles that fine — the only
+        // ceiling is the V8 string limit, which is hundreds of MB.
+        string result = await _page.EvaluateFunctionAsync<string>(
+            @"async (u) => {
+                const r = await fetch(u, { credentials: 'include', headers: { 'Accept': 'application/json' } });
+                if (!r.ok) return '__HTTP_' + r.status + '__';
+                return await r.text();
+            }",
+            url);
+
+        if(string.IsNullOrEmpty(result))
+            throw new InvalidOperationException(
+                $"Export fetch for year={year} returned an empty body. URL: {url}");
+
+        if(result.StartsWith("__HTTP_", StringComparison.Ordinal))
+            throw new InvalidOperationException(
+                $"Export fetch for year={year} failed: {result}. URL: {url}. " +
+                $"Verify the session is still authenticated and has an active MobyPlus subscription.");
+
+        return result;
+    }
+
+    /// <summary>
+    ///     Returns all cookies currently held by the embedded browser, suitable for copying
+    ///     into <see cref="System.Net.CookieContainer"/>.
+    /// </summary>
+    public async Task<IReadOnlyList<CookieParam>> ExportCookiesAsync()
+    {
+        await EnsureInitializedAsync(CancellationToken.None);
+
+        // Pull cookies for both apex and www subdomain so HttpClient sees all of them.
+        CookieParam[] cookies = await _page.GetCookiesAsync(
+            "https://www.mobygames.com/",
+            "https://mobygames.com/");
+
+        return cookies;
+    }
+
+    /// <summary>
+    ///     Persist the current cookie set to <see cref="_cookieCachePath"/> as JSON.
+    /// </summary>
+    public async Task SaveCookiesAsync()
+    {
+        IReadOnlyList<CookieParam> cookies = await ExportCookiesAsync();
+        Directory.CreateDirectory(Path.GetDirectoryName(_cookieCachePath) ?? ".");
+        await File.WriteAllTextAsync(_cookieCachePath, JsonSerializer.Serialize(cookies, s_jsonOptions));
+    }
+
+    /// <summary>
+    ///     Convenience wrapper used by the download CLIs: when <c>MobyGames:Auth</c> is configured,
+    ///     spin up a transient browser session, export cookies into <paramref name="http"/>, then
+    ///     dispose Chromium so the rest of the command stays on the fast HTTP path. Returns
+    ///     <c>false</c> when auth is not configured (anonymous mode); the caller decides whether
+    ///     that's fatal.
+    /// </summary>
+    public static async Task<bool> TryAttachCookiesAsync(IConfiguration            cfg,
+                                                         MobyGamesHttpClient       http,
+                                                         int                       rateLimitMs,
+                                                         CancellationToken         ct = default)
+    {
+        IConfigurationSection auth = cfg.GetSection("MobyGames:Auth");
+
+        if(string.IsNullOrWhiteSpace(auth["Email"]) || string.IsNullOrWhiteSpace(auth["Password"]))
+        {
+            // Cached cookies may still be present from a previous run — try them.
+            string cookiePath = auth["CookieCachePath"] ?? "state/mobygames-cookies.json";
+
+            if(File.Exists(cookiePath))
+            {
+                try
+                {
+                    string        json = await File.ReadAllTextAsync(cookiePath, ct);
+                    CookieParam[] cookies = JsonSerializer.Deserialize<CookieParam[]>(json);
+
+                    if(cookies is { Length: > 0 })
+                    {
+                        http.ImportCookies(cookies);
+                        Console.WriteLine("  Loaded cached MobyGames cookies (no credentials configured).");
+
+                        return true;
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"\e[33m  Warning: failed to read cached cookies: {ex.Message}\e[0m");
+                }
+            }
+
+            Console.WriteLine(
+                "\e[33m  MobyGames:Auth not configured — proceeding anonymous (no MobyPlus, page caps may apply).\e[0m");
+
+            return false;
+        }
+
+        await using var browser = new MobyGamesBrowser(cfg, rateLimitMs);
+
+        try
+        {
+            await browser.InitializeAsync(ct);
+            IReadOnlyList<CookieParam> cookies = await browser.ExportCookiesAsync();
+            http.ImportCookies(cookies);
+
+            Console.WriteLine(
+                $"  Authenticated to MobyGames (MobyPlus={(browser.HasMobyPlus ? "yes" : "no")}).");
+
+            return true;
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"\e[31m  MobyGames authentication failed: {ex.Message}\e[0m");
+            Console.WriteLine("\e[33m  Continuing anonymous — downloads may be incomplete or rate-limited.\e[0m");
+
+            return false;
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            if(_initialized)
+                await SaveCookiesAsync();
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"\e[33m  Warning: failed to persist cookies: {ex.Message}\e[0m");
+        }
+
+        if(_browser is { IsClosed: false })
+            await _browser.CloseAsync();
+
+        _browser?.Dispose();
+    }
+
+    async Task<bool> TryRestoreCookiesAsync()
+    {
+        if(!File.Exists(_cookieCachePath))
+            return false;
+
+        try
+        {
+            string json = await File.ReadAllTextAsync(_cookieCachePath);
+
+            CookieParam[] cookies = JsonSerializer.Deserialize<CookieParam[]>(json);
+
+            if(cookies is null || cookies.Length == 0)
+                return false;
+
+            // Project the saved CookieParam list into CookieData entries (the browser-level
+            // SetCookieAsync API in PuppeteerSharp 24 expects CookieData).
+            CookieData[] data = cookies.Select(c => new CookieData
+            {
+                Name         = c.Name,
+                Value        = c.Value,
+                Domain       = c.Domain,
+                Path         = c.Path,
+                Expires      = c.Expires,
+                HttpOnly     = c.HttpOnly,
+                Secure       = c.Secure,
+                SameSite     = c.SameSite,
+                Priority     = c.Priority,
+                SourceScheme = c.SourceScheme
+            }).ToArray();
+
+            await _browser.SetCookieAsync(data);
+
+            return true;
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"\e[33m  Warning: failed to restore cached cookies: {ex.Message}\e[0m");
+
+            return false;
+        }
+    }
+
+    async Task UpdateLoginStateAsync()
+    {
+        IElementHandle logoutLink = await _page.QuerySelectorAsync("a[href='/user/logout/']");
+        IsLoggedIn = logoutLink is not null;
+
+        if(!IsLoggedIn)
+        {
+            HasMobyPlus = false;
+
+            return;
+        }
+
+        IElementHandle mobyPlusMarker = await _page.QuerySelectorAsync("[data-has-mobyplus='true']");
+        HasMobyPlus = mobyPlusMarker is not null;
+    }
+
+    async Task EnsureInitializedAsync(CancellationToken ct)
+    {
+        if(!_initialized)
+            await InitializeAsync(ct);
+    }
+
+    async Task ApplyRateLimitAsync(CancellationToken ct)
+    {
+        if(_rateLimitMs <= 0)
+            return;
+
+        TimeSpan since = DateTime.UtcNow - _lastRequestUtc;
+
+        if(since.TotalMilliseconds < _rateLimitMs)
+            await Task.Delay(_rateLimitMs - (int)since.TotalMilliseconds, ct);
+
+        _lastRequestUtc = DateTime.UtcNow;
+    }
+}

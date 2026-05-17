@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -17,16 +18,17 @@ namespace Marechai.MobyGames.Services;
 /// </summary>
 public sealed partial class MobyGamesHttpClient : IDisposable
 {
-    const    string     BaseUrl   = "https://www.mobygames.com";
-    const    string     UserAgent = "Mozilla/5.0 (X11; Linux x86_64; rv:138.0) Gecko/20100101 Firefox/138.0";
-    readonly HttpClient _client;
-    readonly int        _delayMs;
+    const    string          BaseUrl   = "https://www.mobygames.com";
+    const    string          UserAgent = "Mozilla/5.0 (X11; Linux x86_64; rv:138.0) Gecko/20100101 Firefox/138.0";
+    readonly HttpClient       _client;
+    readonly HttpClientHandler _handler;
+    readonly int              _delayMs;
 
     public MobyGamesHttpClient(int delayMs = 2000)
     {
         _delayMs = delayMs;
 
-        var handler = new HttpClientHandler
+        _handler = new HttpClientHandler
         {
             AllowAutoRedirect        = true,
             MaxAutomaticRedirections = 5,
@@ -36,10 +38,15 @@ public sealed partial class MobyGamesHttpClient : IDisposable
             AutomaticDecompression = DecompressionMethods.GZip
                                    | DecompressionMethods.Deflate
                                    | DecompressionMethods.Brotli,
-            UseCookies = false
+            // Cookies are now ENABLED so authenticated MobyPlus sessions cascade from the
+            // PuppeteerSharp-driven login (see MobyGamesBrowser) into this fast HTTP path via
+            // ImportCookies(). When no session is loaded, the container is simply empty and the
+            // client behaves anonymously exactly as before.
+            UseCookies     = true,
+            CookieContainer = new CookieContainer()
         };
 
-        _client = new HttpClient(handler)
+        _client = new HttpClient(_handler)
         {
             Timeout = TimeSpan.FromSeconds(120)
         };
@@ -222,19 +229,36 @@ public sealed partial class MobyGamesHttpClient : IDisposable
     }
 
     /// <summary>
-    ///     Extract the full-size screenshot URL from a MobyGames screenshot detail page HTML.
-    ///     The new MobyGames site uses CDN hash URLs that differ between thumbnail and full-size,
-    ///     so we must parse the detail page to find the actual image URL.
+    ///     Extract the full-size image URL from a MobyGames image detail page HTML (screenshots,
+    ///     promo art, or covers). MobyPlus accounts get a hidden
+    ///     <c>&lt;a download href="https://cdn.mobygames.com/..."&gt;</c> block pointing to the
+    ///     ORIGINAL-resolution image; we prefer that when present. For anonymous sessions, we fall
+    ///     back to the gallery <img> tag and finally to og:image meta.
     /// </summary>
-    public static string ExtractFullSizeScreenshotUrl(string detailPageHtml)
+    public static string ExtractFullSizeImageUrl(string detailPageHtml)
     {
         if(string.IsNullOrWhiteSpace(detailPageHtml)) return null;
 
         var doc = new HtmlAgilityPack.HtmlDocument();
         doc.LoadHtml(detailPageHtml);
 
-        // Primary: look for the full-size <img> inside #gallery-image
-        var galleryImg = doc.DocumentNode.SelectSingleNode("//div[@id='gallery-image']//img[contains(@class, 'img-fluid')]");
+        // PREFERRED: MobyPlus original-resolution download link. Numeric IDs in this URL DIFFER
+        // from the gallery preview URL, so a simple URL-swap won't work — we MUST parse this from
+        // the detail page when MobyPlus is active.
+        var downloadLink = doc.DocumentNode.SelectSingleNode(
+            "//a[@download and contains(@href, 'cdn.mobygames.com')]");
+
+        if(downloadLink is not null)
+        {
+            string href = downloadLink.GetAttributeValue("href", null);
+
+            if(!string.IsNullOrWhiteSpace(href))
+                return href;
+        }
+
+        // Fallback 1: the visible full-size <img> inside #gallery-image (anonymous-session size).
+        var galleryImg = doc.DocumentNode.SelectSingleNode(
+            "//div[@id='gallery-image']//img[contains(@class, 'img-fluid')]");
 
         if(galleryImg is not null)
         {
@@ -244,8 +268,9 @@ public sealed partial class MobyGamesHttpClient : IDisposable
                 return src;
         }
 
-        // Fallback 1: any <img> inside #gallery-image figure
-        galleryImg = doc.DocumentNode.SelectSingleNode("//div[@id='gallery-image']//figure//img[@src]");
+        // Fallback 2: any <img> inside #gallery-image figure on the CDN.
+        galleryImg =
+            doc.DocumentNode.SelectSingleNode("//div[@id='gallery-image']//figure//img[@src]");
 
         if(galleryImg is not null)
         {
@@ -255,7 +280,7 @@ public sealed partial class MobyGamesHttpClient : IDisposable
                 return src;
         }
 
-        // Fallback 2: og:image meta tag (always present in <head>, unaffected by mature content gates)
+        // Fallback 3: og:image meta tag (always present in <head>, unaffected by mature-content gates).
         var ogImage = doc.DocumentNode.SelectSingleNode("//meta[@property='og:image']");
 
         if(ogImage is not null)
@@ -266,19 +291,15 @@ public sealed partial class MobyGamesHttpClient : IDisposable
                 return content;
         }
 
-        // Fallback 3: MobyPlus original download link
-        var downloadLink = doc.DocumentNode.SelectSingleNode("//a[@download and contains(@href, 'cdn.mobygames.com')]");
-
-        if(downloadLink is not null)
-        {
-            string href = downloadLink.GetAttributeValue("href", null);
-
-            if(!string.IsNullOrWhiteSpace(href))
-                return href;
-        }
-
         return null;
     }
+
+    /// <summary>
+    ///     Legacy name kept temporarily so callers that still reference the old method name compile.
+    ///     Prefer <see cref="ExtractFullSizeImageUrl"/> in new code.
+    /// </summary>
+    public static string ExtractFullSizeScreenshotUrl(string detailPageHtml) =>
+        ExtractFullSizeImageUrl(detailPageHtml);
 
     /// <summary>
     ///     Extract the MobyGames numeric game ID from raw HTML already stored in the source database.
@@ -393,5 +414,54 @@ public sealed partial class MobyGamesHttpClient : IDisposable
         }
     }
 
-    public void Dispose() => _client?.Dispose();
+    public void Dispose()
+    {
+        _client?.Dispose();
+        _handler?.Dispose();
+    }
+
+    /// <summary>
+    ///     Copy a set of PuppeteerSharp cookies into this client's <see cref="CookieContainer"/>.
+    ///     Call this after the embedded browser (see <see cref="MobyGamesBrowser"/>) has logged in.
+    ///     Existing cookies for the same name/domain/path are overwritten.
+    /// </summary>
+    /// <param name="cookies">
+    ///     The cookies exported via <c>MobyGamesBrowser.ExportCookiesAsync()</c>.
+    /// </param>
+    public void ImportCookies(IEnumerable<PuppeteerSharp.CookieParam> cookies)
+    {
+        if(cookies is null) return;
+
+        foreach(PuppeteerSharp.CookieParam c in cookies)
+        {
+            if(string.IsNullOrWhiteSpace(c.Name) || string.IsNullOrWhiteSpace(c.Domain)) continue;
+
+            string domain = c.Domain.StartsWith('.') ? c.Domain : c.Domain;
+            string path   = string.IsNullOrEmpty(c.Path) ? "/" : c.Path;
+            bool   secure = c.Secure ?? false;
+
+            var cookie = new Cookie(c.Name, c.Value ?? string.Empty, path, domain.TrimStart('.'))
+            {
+                Secure   = secure,
+                HttpOnly = c.HttpOnly ?? false
+            };
+
+            if(c.Expires is > 0)
+            {
+                try
+                {
+                    cookie.Expires = DateTimeOffset.FromUnixTimeSeconds((long)c.Expires.Value).UtcDateTime;
+                }
+                catch
+                {
+                    /* leave session-scoped */
+                }
+            }
+
+            // Add against both apex and www so SameSite=lax cookies bound to apex still match
+            // www.mobygames.com requests issued by HttpClient.
+            try { _handler.CookieContainer.Add(new Uri($"https://{cookie.Domain}/"),     cookie); } catch { }
+            try { _handler.CookieContainer.Add(new Uri($"https://www.{cookie.Domain}/"), cookie); } catch { }
+        }
+    }
 }

@@ -86,9 +86,8 @@ public class DiscoveryStateService
     }
 
     /// <summary>
-    ///     Bulk variant of <see cref="UpsertAsync" /> — used by <c>SitemapDiscoveryScraper</c> to amortize
-    ///     EF tracking overhead across one sub-sitemap (~50,000 entries) at a time. Returns
-    ///     <c>(inserted, updated)</c> counts.
+    ///     Bulk variant of <see cref="UpsertAsync" /> — used by legacy callers that have only a slug,
+    ///     numeric id and an optional last-modified timestamp. Returns <c>(inserted, updated)</c> counts.
     /// </summary>
     public async Task<(int Inserted, int Updated)> UpsertBatchAsync(
         IReadOnlyList<(string Slug, int NumericId, DateTime? LastMod)> batch)
@@ -115,7 +114,7 @@ public class DiscoveryStateService
 
             int yr = lastMod?.Year ?? 0;
 
-            if(existing.TryGetValue(slug, out MobyGamesDiscoveredGame row))
+            if(existing.TryGetValue(slug, out MobyGamesDiscoveredGame row) && row is not null)
             {
                 row.NumericId  = numericId;
                 row.LastSeenAt = lastMod ?? now;
@@ -124,16 +123,25 @@ public class DiscoveryStateService
             }
             else
             {
-                context.MobyGamesDiscoveredGames.Add(new MobyGamesDiscoveredGame
+                var newRow = new MobyGamesDiscoveredGame
                 {
                     Slug              = slug,
                     NumericId         = numericId,
                     ReleaseYear       = yr,
                     FirstDiscoveredAt = now,
                     LastSeenAt        = lastMod ?? now
-                });
+                };
 
-                existing[slug] = null; // mark as seen so a duplicate slug inside the same batch updates
+                context.MobyGamesDiscoveredGames.Add(newRow);
+
+                // Track the freshly-added entity so a duplicate slug LATER in the same batch hits
+                // the update path (last-write-wins). The MobyGames PK is the numeric id, but the
+                // legacy `mobygames_raw` table keys by slug as PK — so two different MobyGames
+                // games sharing a slug (e.g. multiple `only-you` titles) MUST collapse into one
+                // discovered row, matching the storage constraint. Storing `null` here (the old
+                // marker) defeated the dedup, leading to either NRE (no null guard) or a SQL
+                // duplicate-key error (with null guard) on the unique IX_…_Slug index.
+                existing[slug] = newRow;
                 inserted++;
             }
         }
@@ -141,6 +149,84 @@ public class DiscoveryStateService
         await context.SaveChangesAsync();
 
         return (inserted, updated);
+    }
+
+    /// <summary>
+    ///     Search-results discovery variant of <see cref="UpsertBatchAsync(IReadOnlyList{ValueTuple{string,int,DateTime?}})"/>
+    ///     that also writes the <see cref="MobyGamesDiscoveredGame.Title"/>, <see cref="MobyGamesDiscoveredGame.Developer"/>
+    ///     and <see cref="MobyGamesDiscoveredGame.ReleaseYear"/> columns from the search payload. For
+    ///     existing rows, all four fields are refreshed along with <see cref="MobyGamesDiscoveredGame.LastSeenAt"/>;
+    ///     <see cref="MobyGamesDiscoveredGame.RawFetchedAt"/> and <see cref="MobyGamesDiscoveredGame.FirstDiscoveredAt"/>
+    ///     are preserved.
+    /// </summary>
+    public async Task<(int Inserted, int Updated)> UpsertBatchAsync(
+        IReadOnlyList<(string Slug, int NumericId, string Title, string Developer, int? Year)> batch)
+    {
+        if(batch is null || batch.Count == 0) return (0, 0);
+
+        await using var context = await _contextFactory.CreateDbContextAsync();
+
+        string[] slugs = batch.Select(b => b.Slug).Distinct().ToArray();
+
+        Dictionary<string, MobyGamesDiscoveredGame> existing =
+            await context.MobyGamesDiscoveredGames
+                         .Where(g => slugs.Contains(g.Slug))
+                         .ToDictionaryAsync(g => g.Slug, g => g);
+
+        DateTime now      = DateTime.UtcNow;
+        int      inserted = 0;
+        int      updated  = 0;
+
+        foreach((string slug, int numericId, string title, string developer, int? year) in batch)
+        {
+            if(string.IsNullOrWhiteSpace(slug)) continue;
+
+            string truncatedTitle     = Truncate(title,     512);
+            string truncatedDeveloper = Truncate(developer, 512);
+
+            if(existing.TryGetValue(slug, out MobyGamesDiscoveredGame row) && row is not null)
+            {
+                row.NumericId  = numericId;
+                row.LastSeenAt = now;
+
+                if(year.HasValue) row.ReleaseYear = year.Value;
+                if(!string.IsNullOrWhiteSpace(truncatedTitle))     row.Title     = truncatedTitle;
+                if(!string.IsNullOrWhiteSpace(truncatedDeveloper)) row.Developer = truncatedDeveloper;
+                updated++;
+            }
+            else
+            {
+                var newRow = new MobyGamesDiscoveredGame
+                {
+                    Slug              = slug,
+                    NumericId         = numericId,
+                    Title             = truncatedTitle,
+                    Developer         = truncatedDeveloper,
+                    ReleaseYear       = year ?? 0,
+                    FirstDiscoveredAt = now,
+                    LastSeenAt        = now
+                };
+
+                context.MobyGamesDiscoveredGames.Add(newRow);
+
+                // Track the freshly-added entity (NOT null) so a duplicate slug LATER in the
+                // same batch hits the update path. See the matching comment in the (Slug,
+                // NumericId, DateTime?) overload for the full rationale.
+                existing[slug] = newRow;
+                inserted++;
+            }
+        }
+
+        await context.SaveChangesAsync();
+
+        return (inserted, updated);
+    }
+
+    static string Truncate(string s, int max)
+    {
+        if(string.IsNullOrEmpty(s)) return s;
+
+        return s.Length <= max ? s : s[..max];
     }
 
     /// <summary>

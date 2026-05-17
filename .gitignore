@@ -455,3 +455,4 @@ appsettings.Development.json
 appsettings.Production.json
 *.sql
 Marechai.MobyGames/appsettings.json
+Marechai.MobyGames/state/

@@ -83,17 +83,18 @@ public class NewGameRawFetcher
         int totalErrored = 0;
         int totalGames   = 0;
 
-        while(!ct.IsCancellationRequested)
+        // Process a SINGLE batch of up to `batchSize` games per invocation. Re-running the command
+        // (or wrapping it in a shell loop) picks up the next batch. This matches the user-visible
+        // semantics of every other `--batch-size`-flavoured command in this CLI: "how many to do
+        // this run", NOT "how many per inner loop iteration".
+        List<MobyGamesDiscoveredGame> pending = await _discovery.GetPendingFetchAsync(batchSize);
+
+        if(pending.Count == 0)
         {
-            List<MobyGamesDiscoveredGame> pending = await _discovery.GetPendingFetchAsync(batchSize);
-
-            if(pending.Count == 0)
-            {
-                Console.WriteLine("\e[32mNo more pending games.\e[0m");
-
-                break;
-            }
-
+            Console.WriteLine("\e[32mNo more pending games.\e[0m");
+        }
+        else
+        {
             Console.WriteLine($"\e[36m  Processing batch of {pending.Count} games...\e[0m");
 
             foreach(MobyGamesDiscoveredGame game in pending)
@@ -167,9 +168,6 @@ public class NewGameRawFetcher
 
                 Console.WriteLine($"    \e[32m✓\e[0m {slug}");
             }
-
-            Console.WriteLine(
-                $"\e[36m  Batch totals so far: fetched={totalFetched}, skipped={totalSkipped}, errored={totalErrored} ({totalGames} processed)\e[0m");
         }
 
         Console.WriteLine("");

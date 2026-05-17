@@ -125,6 +125,10 @@ class Program
                 {
                     httpClient = new MobyGamesHttpClient(delayMs);
 
+                    // Authenticate first so the cover detail page yields the MobyPlus
+                    // <a download> original-resolution link instead of the thumbnail rewrite.
+                    await MobyGamesBrowser.TryAttachCookiesAsync(config, httpClient, delayMs);
+
                     // Ensure output directories exist
                     ImageConverter.EnsureDirectoriesCreated(assetRoot);
                 }
@@ -217,13 +221,13 @@ class Program
                     return 1;
                 }
 
-                // For the sitemap scraper we share the same HTTP client. The DigitalOcean Spaces
-                // endpoint has no rate limit so FetchBytesAsync zeroes the delay automatically when
-                // the host isn't mobygames.com.
-                using var discoveryHttp = new MobyGamesHttpClient(delayMs);
-
-                var discoveryState   = new DiscoveryStateService(factory);
-                var discoveryScraper = new SitemapDiscoveryScraper(discoveryHttp, discoveryState);
+                // Discovery runs through an embedded headless Chromium (PuppeteerSharp). The login
+                // session lifts the anonymous 14-page-per-filter cap, so we can paginate to the end
+                // of every year filter. Cookies are cached in state/mobygames-cookies.json between
+                // runs to avoid re-logging-in.
+                await using var browser          = new MobyGamesBrowser(config, delayMs);
+                var             discoveryState   = new DiscoveryStateService(factory);
+                var             discoveryScraper = new SearchDiscoveryScraper(browser, discoveryState);
 
                 await discoveryScraper.RunAsync(fromYear, toYear, dryRun);
 
@@ -283,7 +287,12 @@ class Program
                 MobyGamesHttpClient promoHttpClient = null;
 
                 if(!dryRun)
+                {
                     promoHttpClient = new MobyGamesHttpClient(delayMs);
+
+                    // Anonymous sessions cap promo art index pagination — authenticate first.
+                    await MobyGamesBrowser.TryAttachCookiesAsync(config, promoHttpClient, delayMs);
+                }
 
                 var promoScraper = new PromoArtScraper(factory, sourceDb, promoHttpClient);
 
@@ -327,6 +336,10 @@ class Program
                 if(!dryRun)
                 {
                     promoHttpClient2 = new MobyGamesHttpClient(delayMs);
+
+                    // Promo art always needs the MobyPlus original — no fallback URL pattern.
+                    await MobyGamesBrowser.TryAttachCookiesAsync(config, promoHttpClient2, delayMs);
+
                     ImageConverter.EnsureDirectoriesCreated(assetRoot, "software-promo-art");
                 }
 
@@ -374,7 +387,13 @@ class Program
                 MobyGamesHttpClient screenshotHttpClient = null;
 
                 if(!dryRun)
+                {
                     screenshotHttpClient = new MobyGamesHttpClient(delayMs);
+
+                    // The screenshot index pages also paginate behind the anonymous cap, so we
+                    // need authenticated cookies even before we hit any detail page.
+                    await MobyGamesBrowser.TryAttachCookiesAsync(config, screenshotHttpClient, delayMs);
+                }
 
                 var screenshotScraper = new ScreenshotScraper(factory, sourceDb, screenshotHttpClient);
 
@@ -418,6 +437,11 @@ class Program
                 if(!dryRun)
                 {
                     screenshotHttpClient2 = new MobyGamesHttpClient(delayMs);
+
+                    // Authenticated cookies unlock the higher-res MobyPlus screenshots and
+                    // bypass anonymous page caps for detail-page traversal.
+                    await MobyGamesBrowser.TryAttachCookiesAsync(config, screenshotHttpClient2, delayMs);
+
                     ImageConverter.EnsureDirectoriesCreated(assetRoot, "software-screenshots");
                 }
 
@@ -658,8 +682,9 @@ class Program
                 Console.WriteLine("    cover-status                                  Show cover download status counts");
                 Console.WriteLine("    review-status                                 Show review import status counts");
                 Console.WriteLine("    discover-games [--from-year N] [--to-year N] [--delay-ms N] [--dry-run]");
-                Console.WriteLine("                                                  Discover new MobyGames games via the DigitalOcean Spaces sitemaps");
-                Console.WriteLine("                                                  (default: --from-year 2019 --to-year <current>). Filters by <lastmod> year.");
+                Console.WriteLine("                                                  Discover MobyGames games by walking the year-filtered search results");
+                Console.WriteLine("                                                  via an embedded headless Chromium login (lifts the 14-page-per-filter cap");
+                Console.WriteLine("                                                  imposed on anonymous sessions). Default: --from-year 2019 --to-year <current>.");
                 Console.WriteLine("    scrape-new-games [--batch-size N] [--delay-ms N] [--dry-run]");
                 Console.WriteLine("                                                  Fetch main/credits/releases/specs HTML for discovered games into mobygames_raw");
                 Console.WriteLine("    discovery-status                              Show MobyGamesDiscoveredGames status counts");

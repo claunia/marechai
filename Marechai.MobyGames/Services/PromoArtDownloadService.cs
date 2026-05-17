@@ -164,15 +164,36 @@ public class PromoArtDownloadService
                         await _stateService.CreateStateAsync(existingState);
                     }
 
-                    // Get large image URL from thumbnail
-                    string originalUrl = MobyGamesHttpClient.GetLargePromoImageUrl(image.ThumbnailUrl);
+                    // Visit the promo-art detail page so we can extract the MobyPlus
+                    // <a download> link (numeric IDs in the original-resolution URL DIFFER from
+                    // the thumbnail URL, so we MUST parse the detail page).
+                    Console.Write($"      Fetching detail for image-{image.ImageId}...");
+
+                    string detailHtml = image.DetailPageUrl is null
+                                            ? null
+                                            : await _httpClient.FetchPageAsync(image.DetailPageUrl);
+
+                    if(detailHtml is null)
+                    {
+                        Console.WriteLine(" \e[31mFAILED\e[0m (detail page fetch failed)");
+
+                        existingState.Status       = MobyGamesCoverDownloadStatus.Failed;
+                        existingState.ErrorMessage = "Detail page fetch failed";
+                        existingState.ProcessedOn  = DateTime.UtcNow;
+                        await _stateService.UpdateStateAsync(existingState);
+                        failedCount++;
+
+                        continue;
+                    }
+
+                    string originalUrl = MobyGamesHttpClient.ExtractFullSizeImageUrl(detailHtml);
 
                     if(originalUrl is null)
                     {
-                        Console.WriteLine($"      \e[31mFAILED\e[0m image-{image.ImageId}: No thumbnail URL");
+                        Console.WriteLine(" \e[31mFAILED\e[0m (no image URL found in detail page)");
 
                         existingState.Status       = MobyGamesCoverDownloadStatus.Failed;
-                        existingState.ErrorMessage = "No thumbnail URL to derive original from";
+                        existingState.ErrorMessage = "No full-size image URL found in detail page";
                         existingState.ProcessedOn  = DateTime.UtcNow;
                         await _stateService.UpdateStateAsync(existingState);
                         failedCount++;
@@ -187,7 +208,7 @@ public class PromoArtDownloadService
                         break;
                     }
 
-                    Console.Write($"      Downloading image-{image.ImageId}...");
+                    Console.Write(" downloading...");
 
                     var    promoArtId  = Guid.NewGuid();
                     string originalsDir = Path.Combine(_assetRootPath, "photos", PromoArtItemName, "originals");

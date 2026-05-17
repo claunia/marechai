@@ -282,10 +282,22 @@ public class CoverDownloadService
                     }
 
                     // Fetch cover detail page (authenticated)
-                    Console.Write($"      Downloading {coverTypeStr}...");
+                    Console.Write($"      Fetching detail for {coverTypeStr}...");
 
-                    // Convert thumbnail URL /images/covers/s/ → /images/covers/l/ to get original
-                    string originalUrl = MobyGamesHttpClient.GetLargeImageUrl(cover.ThumbnailUrl);
+                    // Prefer the MobyPlus <a download> original on the detail page (logged-in users
+                    // see a higher-resolution variant whose numeric IDs differ from the thumbnail).
+                    // Fall back to /covers/s/→/covers/l/ rewriting when MobyPlus isn't available.
+                    string originalUrl = null;
+
+                    if(cover.DetailPageUrl is not null)
+                    {
+                        string detailHtml = await _httpClient.FetchPageAsync(cover.DetailPageUrl);
+
+                        if(detailHtml is not null)
+                            originalUrl = MobyGamesHttpClient.ExtractFullSizeImageUrl(detailHtml);
+                    }
+
+                    originalUrl ??= MobyGamesHttpClient.GetLargeImageUrl(cover.ThumbnailUrl);
 
                     if(originalUrl is null)
                     {
@@ -299,6 +311,8 @@ public class CoverDownloadService
 
                         continue;
                     }
+
+                    Console.Write(" downloading...");
 
                     // Download the original image
                     // Check free disk space before downloading

@@ -28,6 +28,7 @@
     <PackageVersion Include="HtmlAgilityPack" Version="1.12.4"/>
     <PackageVersion Include="MySqlConnector" Version="2.4.0"/>
     <PackageVersion Include="ReverseMarkdown" Version="5.3.0"/>
+    <PackageVersion Include="PuppeteerSharp" Version="24.42.0"/>
     <!-- Build infrastructure -->
     <PackageVersion Include="Packaging.Targets" Version="0.1.232"/>
     <!-- Unique to Marechai.Server.csproj -->
