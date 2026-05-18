@@ -34,6 +34,7 @@
                                  Variant="Variant.Outlined"
                                  Clearable="true"
                                  MinCharacters="0"
+                                 MaxItems="50"
                                  Class="mb-4"/>
 
                 <MudSelect T="Marechai.Data.SoftwareKind" @bind-Value="Kind" Label="@L["Kind"]" Variant="Variant.Outlined" Class="mb-4">
@@ -58,6 +59,7 @@
                                  Variant="Variant.Outlined"
                                  Clearable="true"
                                  MinCharacters="0"
+                                 MaxItems="50"
                                  Class="mb-4"/>
 
                 @if(!string.IsNullOrWhiteSpace(_validationError))
@@ -159,6 +161,7 @@
                                              Variant="Variant.Outlined"
                                              Clearable="true"
                                              MinCharacters="0"
+                                             MaxItems="50"
                                              Style="flex: 1;"/>
                             <MudSelect T="SoftwareRoleDto"
                                        @bind-Value="_selectedRole"
@@ -319,7 +322,7 @@
         // Exclude current software from results to prevent self-reference.
         if(!IsNew && SoftwareId > 0) results = results.Where(s => s.Id != SoftwareId).ToList();
 
-        return results;
+        return RankByRelevance(value, results, s => s.Name);
     }
 
     async Task<IEnumerable<SoftwareDto>> SearchBaseSoftware(string value, CancellationToken ct)
@@ -330,7 +333,7 @@
         // Exclude current software from results to prevent self-reference.
         if(!IsNew && SoftwareId > 0) results = results.Where(s => s.Id != SoftwareId).ToList();
 
-        return results;
+        return RankByRelevance(value, results, s => s.Name);
     }
 
     async Task<IEnumerable<CompanyDto>> SearchCompanies(string value, CancellationToken ct)
@@ -339,7 +342,51 @@
 
         if(string.IsNullOrWhiteSpace(value)) return all;
 
-        return all.Where(c => c.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
+        string query = value.Trim();
+
+        return RankByRelevance(query, all.Where(c => c.Name?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false), c => c.Name);
+    }
+
+    static IEnumerable<T> RankByRelevance<T>(string query, IEnumerable<T> candidates, Func<T, string> nameSelector)
+    {
+        if(string.IsNullOrWhiteSpace(query)) return candidates;
+
+        string trimmed = query.Trim();
+
+        return candidates.Select(c => (Item: c, Name: nameSelector(c), Score: ScoreNameMatch(trimmed, nameSelector(c))))
+                         .OrderByDescending(x => x.Score)
+                         .ThenBy(x => x.Name?.Length ?? int.MaxValue)
+                         .ThenBy(x => x.Name, StringComparer.OrdinalIgnoreCase)
+                         .Select(x => x.Item);
+    }
+
+    static double ScoreNameMatch(string query, string candidate)
+    {
+        if(string.IsNullOrEmpty(candidate)) return 0d;
+
+        double score = 0d;
+
+        if(string.Equals(candidate, query, StringComparison.OrdinalIgnoreCase)) score += 2.0d;
+        else if(candidate.StartsWith(query, StringComparison.OrdinalIgnoreCase)) score += 1.0d;
+        else if(candidate.Contains(query, StringComparison.OrdinalIgnoreCase)) score += 0.5d;
+
+        // Jaro-Winkler against the whole candidate AND each token; take the best.
+        double bestJw = JaroWinkler.Similarity(query, candidate);
+
+        foreach(string token in candidate.Split([' ', '-', '/', '.', ','], StringSplitOptions.RemoveEmptyEntries))
+        {
+            double jw = JaroWinkler.Similarity(query, token);
+            if(jw > bestJw) bestJw = jw;
+        }
+
+        score += bestJw;
+
+        // Length-ratio bias: candidates closer in length to the query rank higher.
+        double ratio = (double)query.Length / Math.Max(candidate.Length, 1);
+        if(ratio < 0.1d) ratio = 0.1d;
+        score *= 0.5d + 0.5d * ratio;
+
+        return score;
     }
 
     async Task AddCompanyRole()
