@@ -360,4 +360,51 @@
     <data name="Seo description" xml:space="preserve">
         <value>Discover {0} on Marechai — the master repository of computing history. Browse photos, specifications, history, and the people and companies who built it.</value>
     </data>
+    <data name="Merge" xml:space="preserve"><value>Merge</value></data>
+    <data name="Merge Company" xml:space="preserve"><value>Merge Company</value></data>
+    <data name="Company '{0}' merged successfully." xml:space="preserve"><value>Company '{0}' merged successfully.</value></data>
+    <data name="Cannot merge a company into itself." xml:space="preserve"><value>Cannot merge a company into itself.</value></data>
+    <data name="Failed to load merge preview. Please try again." xml:space="preserve"><value>Failed to load merge preview. Please try again.</value></data>
+    <data name="Merge failed: {0}" xml:space="preserve"><value>Merge failed: {0}</value></data>
+    <data name="Target Company" xml:space="preserve"><value>Target Company</value></data>
+    <data name="Merge Preview" xml:space="preserve"><value>Merge Preview</value></data>
+    <data name="Merging &quot;{0}&quot; into &quot;{1}&quot;" xml:space="preserve"><value>Merging "{0}" into "{1}"</value></data>
+    <data name="Field differences — choose which value to keep" xml:space="preserve"><value>Field differences — choose which value to keep</value></data>
+    <data name="Field" xml:space="preserve"><value>Field</value></data>
+    <data name="Target (will be kept)" xml:space="preserve"><value>Target (will be kept)</value></data>
+    <data name="Source (will be deleted)" xml:space="preserve"><value>Source (will be deleted)</value></data>
+    <data name="All scalar fields are identical between source and target. Only relationships will be merged." xml:space="preserve"><value>All scalar fields are identical between source and target. Only relationships will be merged.</value></data>
+    <data name="Related data that will be moved" xml:space="preserve"><value>Related data that will be moved</value></data>
+    <data name="Entity" xml:space="preserve"><value>Entity</value></data>
+    <data name="Will Move" xml:space="preserve"><value>Will Move</value></data>
+    <data name="Duplicates (skipped)" xml:space="preserve"><value>Duplicates (skipped)</value></data>
+    <data name="Logos" xml:space="preserve"><value>Logos</value></data>
+    <data name="GPUs" xml:space="preserve"><value>GPUs</value></data>
+    <data name="Processors" xml:space="preserve"><value>Processors</value></data>
+    <data name="Sound Synthesizers" xml:space="preserve"><value>Sound Synthesizers</value></data>
+    <data name="Machines" xml:space="preserve"><value>Machines</value></data>
+    <data name="Machine Families" xml:space="preserve"><value>Machine Families</value></data>
+    <data name="Software Releases" xml:space="preserve"><value>Software Releases</value></data>
+    <data name="Software Roles" xml:space="preserve"><value>Software Roles</value></data>
+    <data name="Books" xml:space="preserve"><value>Books</value></data>
+    <data name="Documents" xml:space="preserve"><value>Documents</value></data>
+    <data name="Magazines" xml:space="preserve"><value>Magazines</value></data>
+    <data name="Software Versions" xml:space="preserve"><value>Software Versions</value></data>
+    <data name="Software Families" xml:space="preserve"><value>Software Families</value></data>
+    <data name="Companies that referenced source as parent" xml:space="preserve"><value>Companies that referenced source as parent</value></data>
+    <data name="Search index entries" xml:space="preserve"><value>Search index entries</value></data>
+    <data name="Name" xml:space="preserve"><value>Name</value></data>
+    <data name="Legal Name" xml:space="preserve"><value>Legal Name</value></data>
+    <data name="Status" xml:space="preserve"><value>Status</value></data>
+    <data name="Founded" xml:space="preserve"><value>Founded</value></data>
+    <data name="Sold" xml:space="preserve"><value>Sold</value></data>
+    <data name="Sold To" xml:space="preserve"><value>Sold To</value></data>
+    <data name="Address" xml:space="preserve"><value>Address</value></data>
+    <data name="City" xml:space="preserve"><value>City</value></data>
+    <data name="Province" xml:space="preserve"><value>Province</value></data>
+    <data name="Postal Code" xml:space="preserve"><value>Postal Code</value></data>
+    <data name="Website" xml:space="preserve"><value>Website</value></data>
+    <data name="(none)" xml:space="preserve"><value>(none)</value></data>
+    <data name="This action cannot be undone. The source company will be permanently deleted after merging." xml:space="preserve"><value>This action cannot be undone. The source company will be permanently deleted after merging.</value></data>
+    <data name="Merge &quot;{0}&quot; into another company. All people, machines, software, books, magazines, documents, and other data will be moved to the target." xml:space="preserve"><value>Merge "{0}" into another company. All people, machines, software, books, magazines, documents, and other data will be moved to the target.</value></data>
 </root>

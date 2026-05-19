@@ -9,6 +9,8 @@ using Marechai.ApiClient.Companies.Item.Logos;
 using Marechai.ApiClient.Companies.Item.MachineFamilies;
 using Marechai.ApiClient.Companies.Item.Machines;
 using Marechai.ApiClient.Companies.Item.Magazines;
+using Marechai.ApiClient.Companies.Item.Merge;
+using Marechai.ApiClient.Companies.Item.MergePreview;
 using Marechai.ApiClient.Companies.Item.People;
 using Marechai.ApiClient.Companies.Item.Processors;
 using Marechai.ApiClient.Companies.Item.Software;
@@ -75,6 +77,16 @@ namespace Marechai.ApiClient.Companies.Item
         public global::Marechai.ApiClient.Companies.Item.Magazines.MagazinesRequestBuilder Magazines
         {
             get => new global::Marechai.ApiClient.Companies.Item.Magazines.MagazinesRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The merge property</summary>
+        public global::Marechai.ApiClient.Companies.Item.Merge.MergeRequestBuilder Merge
+        {
+            get => new global::Marechai.ApiClient.Companies.Item.Merge.MergeRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The mergePreview property</summary>
+        public global::Marechai.ApiClient.Companies.Item.MergePreview.MergePreviewRequestBuilder MergePreview
+        {
+            get => new global::Marechai.ApiClient.Companies.Item.MergePreview.MergePreviewRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The people property</summary>
         public global::Marechai.ApiClient.Companies.Item.People.PeopleRequestBuilder People

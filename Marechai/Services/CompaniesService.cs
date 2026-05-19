@@ -435,4 +435,38 @@ public class CompaniesService(Marechai.ApiClient.Client client, ReferenceDataCac
             return [];
         }
     }
+
+    public async Task<CompanyMergePreviewDto> GetMergePreviewAsync(int targetId, int sourceId)
+    {
+        try
+        {
+            return await client.Companies[targetId].MergePreview[sourceId].GetAsync();
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public async Task<(bool succeeded, string error)> MergeCompaniesAsync(int                     targetId,
+                                                                          int                     sourceId,
+                                                                          CompanyMergeRequestDto  request)
+    {
+        try
+        {
+            await client.Companies[targetId].Merge[sourceId].PostAsync(request);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            string detail = ex is ProblemDetails pd ? pd.Detail ?? pd.Title ?? ex.Message : ex.Message;
+
+            return (false, detail);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
 }

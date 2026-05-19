@@ -288,5 +288,29 @@ public partial class Companies
         await dialog.Result;
     }
 
+    async Task OpenMergeDialog(CompanyDto company)
+    {
+        DialogParameters<CompanyMergeDialog> parameters = new()
+        {
+            { x => x.SourceId, company.Id ?? 0 },
+            { x => x.SourceName, company.Name }
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<CompanyMergeDialog>(L["Merge Company"], parameters,
+                                                                                    new DialogOptions
+                                                                                    {
+                                                                                        MaxWidth  = MaxWidth.Large,
+                                                                                        FullWidth = true
+                                                                                    });
+
+        DialogResult result = await dialog.Result;
+
+        if(result is { Canceled: false })
+        {
+            _successMessage = string.Format(L["Company '{0}' merged successfully."], company.Name);
+            await _dataGrid.ReloadServerData();
+        }
+    }
+
     void NavigateToLogos(CompanyDto company) => NavigationManager.NavigateTo($"/admin/companies/{company.Id ?? 0}/logos");
 }

@@ -1,0 +1,206 @@
+@using Marechai.ApiClient.Models
+@using Marechai.Services
+@using System.Threading
+
+@inject IStringLocalizer<CompaniesService> L
+
+<MudDialog>
+    <DialogContent>
+        <MudText Typo="Typo.body1" Class="mb-4">
+            @string.Format(L["Merge \"{0}\" into another company. All people, machines, software, books, magazines, documents, and other data will be moved to the target."], SourceName)
+        </MudText>
+
+        @* Step 1: Select target company *@
+        <MudAutocomplete T="CompanyDto"
+                         Label="@L["Target Company"]"
+                         @bind-Value="_selectedTarget"
+                         SearchFunc="SearchCompanies"
+                         ToStringFunc="@(c => c?.Name ?? string.Empty)"
+                         Variant="Variant.Outlined"
+                         Clearable="true"
+                         DebounceInterval="300"
+                         MinCharacters="2"
+                         Class="mb-4"/>
+
+        @if(_selectedTarget is not null && _selectedTarget.Id == SourceId)
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4">@L["Cannot merge a company into itself."]</MudAlert>
+        }
+
+        @if(_isLoadingPreview)
+        {
+            <MudProgressLinear Indeterminate="true" Class="mb-4"/>
+        }
+
+        @if(!string.IsNullOrWhiteSpace(_errorMessage))
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4">@_errorMessage</MudAlert>
+        }
+
+        @* Step 2: Preview *@
+        @if(_preview is not null && _targetFull is not null && _sourceFull is not null)
+        {
+            <MudPaper Class="pa-4 mb-4" Elevation="1">
+                <MudText Typo="Typo.h6" Class="mb-2">@L["Merge Preview"]</MudText>
+                <MudText Typo="Typo.body2" Class="mb-3">
+                    @string.Format(L["Merging \"{0}\" into \"{1}\""], _preview.SourceName, _preview.TargetName)
+                </MudText>
+
+                @* ── Scalar field diff ── *@
+                @{
+                    bool anyDiff = HasAnyScalarDiff();
+                }
+
+                @if(anyDiff)
+                {
+                    <MudText Typo="Typo.subtitle1" Class="mt-3 mb-2">@L["Field differences — choose which value to keep"]</MudText>
+                    <MudSimpleTable Dense="true" Hover="true" Striped="true" Class="mb-4">
+                        <thead>
+                            <tr>
+                                <th style="width: 24%;">@L["Field"]</th>
+                                <th style="width: 38%;">@L["Target (will be kept)"]</th>
+                                <th style="width: 38%;">@L["Source (will be deleted)"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @RenderScalarDiff(L["Name"], _targetFull.Name, _sourceFull.Name, _fieldUseSource_Name, v => _fieldUseSource_Name = v)
+                            @RenderScalarDiff(L["Legal Name"], _targetFull.LegalName, _sourceFull.LegalName, _fieldUseSource_LegalName, v => _fieldUseSource_LegalName = v)
+                            @RenderScalarDiff(L["Status"], GetStatusText(_targetFull.Status), GetStatusText(_sourceFull.Status), _fieldUseSource_Status, v => _fieldUseSource_Status = v, _targetFull.Status != _sourceFull.Status)
+                            @RenderScalarDiff(L["Founded"], FormatDate(_targetFull.Founded, _targetFull.FoundedPrecision), FormatDate(_sourceFull.Founded, _sourceFull.FoundedPrecision), _fieldUseSource_Founded, v => _fieldUseSource_Founded = v, _targetFull.Founded != _sourceFull.Founded || _targetFull.FoundedPrecision != _sourceFull.FoundedPrecision)
+                            @RenderScalarDiff(L["Sold"], FormatDate(_targetFull.Sold, _targetFull.SoldPrecision), FormatDate(_sourceFull.Sold, _sourceFull.SoldPrecision), _fieldUseSource_Sold, v => _fieldUseSource_Sold = v, _targetFull.Sold != _sourceFull.Sold || _targetFull.SoldPrecision != _sourceFull.SoldPrecision)
+                            @RenderScalarDiff(L["Sold To"], _targetSoldToName, _sourceSoldToName, _fieldUseSource_SoldTo, v => _fieldUseSource_SoldTo = v, _targetFull.SoldToId != _sourceFull.SoldToId)
+                            @RenderScalarDiff(L["Country"], _targetFull.Country, _sourceFull.Country, _fieldUseSource_Country, v => _fieldUseSource_Country = v, _targetFull.CountryId != _sourceFull.CountryId)
+                            @RenderScalarDiff(L["Address"], _targetFull.Address, _sourceFull.Address, _fieldUseSource_Address, v => _fieldUseSource_Address = v)
+                            @RenderScalarDiff(L["City"], _targetFull.City, _sourceFull.City, _fieldUseSource_City, v => _fieldUseSource_City = v)
+                            @RenderScalarDiff(L["Province"], _targetFull.Province, _sourceFull.Province, _fieldUseSource_Province, v => _fieldUseSource_Province = v)
+                            @RenderScalarDiff(L["Postal Code"], _targetFull.PostalCode, _sourceFull.PostalCode, _fieldUseSource_PostalCode, v => _fieldUseSource_PostalCode = v)
+                            @RenderScalarDiff(L["Website"], _targetFull.Website, _sourceFull.Website, _fieldUseSource_Website, v => _fieldUseSource_Website = v)
+                            @RenderScalarDiff(L["Twitter"], _targetFull.Twitter, _sourceFull.Twitter, _fieldUseSource_Twitter, v => _fieldUseSource_Twitter = v)
+                            @RenderScalarDiff(L["Facebook"], _targetFull.Facebook, _sourceFull.Facebook, _fieldUseSource_Facebook, v => _fieldUseSource_Facebook = v)
+                        </tbody>
+                    </MudSimpleTable>
+                }
+                else
+                {
+                    <MudAlert Severity="Severity.Info" Class="mb-4">@L["All scalar fields are identical between source and target. Only relationships will be merged."]</MudAlert>
+                }
+
+                @* ── Relationships ── *@
+                <MudText Typo="Typo.subtitle1" Class="mt-3 mb-2">@L["Related data that will be moved"]</MudText>
+                <MudSimpleTable Dense="true" Hover="true" Striped="true">
+                    <thead>
+                        <tr>
+                            <th>@L["Entity"]</th>
+                            <th>@L["Will Move"]</th>
+                            <th>@L["Duplicates (skipped)"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>@L["Logos"]</td>
+                            <td>@_preview.LogosCount</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>@L["Descriptions"]</td>
+                            <td>@((_preview.DescriptionsTotal ?? 0) - (_preview.DescriptionsDuplicates ?? 0))</td>
+                            <td>@_preview.DescriptionsDuplicates</td>
+                        </tr>
+                        <tr>
+                            <td>@L["GPUs"]</td>
+                            <td>@_preview.GpusCount</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>@L["Processors"]</td>
+                            <td>@_preview.ProcessorsCount</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>@L["Sound Synthesizers"]</td>
+                            <td>@_preview.SoundSynthsCount</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>@L["Machines"]</td>
+                            <td>@_preview.MachinesCount</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>@L["Machine Families"]</td>
+                            <td>@_preview.MachineFamiliesCount</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>@L["Software Releases"]</td>
+                            <td>@_preview.SoftwareReleasesCount</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>@L["Software Roles"]</td>
+                            <td>@((_preview.SoftwareRolesTotal ?? 0) - (_preview.SoftwareRolesDuplicates ?? 0))</td>
+                            <td>@_preview.SoftwareRolesDuplicates</td>
+                        </tr>
+                        <tr>
+                            <td>@L["People"]</td>
+                            <td>@_preview.PeopleCount</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>@L["Books"]</td>
+                            <td>@((_preview.BooksTotal ?? 0) - (_preview.BooksDuplicates ?? 0))</td>
+                            <td>@_preview.BooksDuplicates</td>
+                        </tr>
+                        <tr>
+                            <td>@L["Documents"]</td>
+                            <td>@((_preview.DocumentsTotal ?? 0) - (_preview.DocumentsDuplicates ?? 0))</td>
+                            <td>@_preview.DocumentsDuplicates</td>
+                        </tr>
+                        <tr>
+                            <td>@L["Magazines"]</td>
+                            <td>@((_preview.MagazinesTotal ?? 0) - (_preview.MagazinesDuplicates ?? 0))</td>
+                            <td>@_preview.MagazinesDuplicates</td>
+                        </tr>
+                        <tr>
+                            <td>@L["Software Versions"]</td>
+                            <td>@((_preview.SoftwareVersionsTotal ?? 0) - (_preview.SoftwareVersionsDuplicates ?? 0))</td>
+                            <td>@_preview.SoftwareVersionsDuplicates</td>
+                        </tr>
+                        <tr>
+                            <td>@L["Software Families"]</td>
+                            <td>@((_preview.SoftwareFamiliesTotal ?? 0) - (_preview.SoftwareFamiliesDuplicates ?? 0))</td>
+                            <td>@_preview.SoftwareFamiliesDuplicates</td>
+                        </tr>
+                        <tr>
+                            <td>@L["Companies that referenced source as parent"]</td>
+                            <td>@_preview.InverseSoldToCount</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>@L["Search index entries"]</td>
+                            <td>@_preview.SearchEntryCompanyRefCount</td>
+                            <td>—</td>
+                        </tr>
+                    </tbody>
+                </MudSimpleTable>
+            </MudPaper>
+
+            <MudAlert Severity="Severity.Warning" Class="mb-4">
+                @L["This action cannot be undone. The source company will be permanently deleted after merging."]
+            </MudAlert>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Warning"
+                   Variant="Variant.Filled"
+                   OnClick="ConfirmMerge"
+                   Disabled="@(_preview is null || _isMerging || (_selectedTarget is not null && _selectedTarget.Id == SourceId))">
+            @if(_isMerging)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
+            }
+            @L["Merge"]
+        </MudButton>
+    </DialogActions>
+</MudDialog>
