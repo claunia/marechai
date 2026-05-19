@@ -286,4 +286,7 @@
         <value>Une version avec cette chaîne de version et cette version publique existe déjà.</value>
         <comment>A version with this version string and public version already exists.</comment>
     </data>
+    <data name="Create releases" xml:space="preserve">
+        <value>Créer des publications</value>
+    </data>
 </root>

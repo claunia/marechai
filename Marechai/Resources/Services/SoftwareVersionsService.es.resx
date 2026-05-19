@@ -241,4 +241,7 @@
         <value>Ya existe una versión con esta cadena de versión y versión pública.</value>
         <comment>A version with this version string and public version already exists.</comment>
     </data>
-<data name="Date precision" xml:space="preserve"><value>Precisión de fecha</value></data><data name="Full date" xml:space="preserve"><value>Fecha completa</value></data><data name="Month and year only" xml:space="preserve"><value>Solo mes y año</value></data><data name="Year only" xml:space="preserve"><value>Solo año</value></data></root>
+<data name="Date precision" xml:space="preserve"><value>Precisión de fecha</value></data><data name="Full date" xml:space="preserve"><value>Fecha completa</value></data><data name="Month and year only" xml:space="preserve"><value>Solo mes y año</value></data><data name="Year only" xml:space="preserve"><value>Solo año</value></data>    <data name="Create releases" xml:space="preserve">
+        <value>Crear publicaciones</value>
+    </data>
+</root>

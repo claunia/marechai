@@ -523,4 +523,49 @@
     <data name="{0} rows parsed. {1} auto-rejected (no publisher match, missing software, or validation error). Selected rows will be REJECTED — unselected rows will be imported." xml:space="preserve">
         <value>{0} rijen verwerkt. {1} automatisch afgewezen (geen overeenkomst met uitgever, ontbrekende software of validatiefout). Geselecteerde rijen worden AFGEWIJZEN – niet-geselecteerde rijen worden geïmporteerd.</value>
     </data>
+    <data name="Download a CSV prefilled with this software's known versions, edit it offline, and upload it to bulk-create releases." xml:space="preserve">
+        <value>Download een CSV vooraf ingevuld met de bekende versies van deze software, bewerk het offline en upload het om in bulk uitgaven aan te maken.</value>
+    </data>
+    <data name="Bulk creation will atomically create one release per row. Any sub-step failure rolls back the release." xml:space="preserve">
+        <value>Bulk-aanmaak maakt atomair één uitgave per rij. Een mislukte deelstap rolt de uitgave terug.</value>
+    </data>
+    <data name="{0} rows parsed. {1} auto-rejected (publisher missing/unmatched, version missing/mismatched, or unmatched region/language). Selected rows will be REJECTED — unselected rows will be imported." xml:space="preserve">
+        <value>{0} rijen verwerkt. {1} automatisch afgewezen (uitgever ontbreekt/niet overeenkomend, versie ontbreekt/niet overeenkomend, of regio/taal niet overeenkomend). Geselecteerde rijen worden AFGEWEZEN — niet-geselecteerde rijen worden geïmporteerd.</value>
+    </data>
+    <data name="(empty)" xml:space="preserve">
+        <value>(leeg)</value>
+    </data>
+    <data name="No release date provided. Release will be created with NULL date." xml:space="preserve">
+        <value>Geen uitgavedatum opgegeven. Uitgave wordt aangemaakt met NULL-datum.</value>
+    </data>
+    <data name="(no date)" xml:space="preserve">
+        <value>(geen datum)</value>
+    </data>
+    <data name="* A new platform will be created with this name during import." xml:space="preserve">
+        <value>* Tijdens het importeren wordt een nieuw platform met deze naam aangemaakt.</value>
+    </data>
+    <data name="Bulk creation complete. {0} imported, {1} rejected, {2} failed." xml:space="preserve">
+        <value>Bulk-aanmaak voltooid. {0} geïmporteerd, {1} afgewezen, {2} mislukt.</value>
+    </data>
+    <data name="Download failures" xml:space="preserve">
+        <value>Mislukte items downloaden</value>
+    </data>
+    <data name="Version is required." xml:space="preserve">
+        <value>Versie is vereist.</value>
+    </data>
+    <data name="Version does not match an existing version of this software." xml:space="preserve">
+        <value>Versie komt niet overeen met een bestaande versie van deze software.</value>
+    </data>
+    <data name="No matching publisher." xml:space="preserve">
+        <value>Geen overeenkomende uitgever.</value>
+    </data>
+    <data name="Region attach failed (release rolled back): {0}" xml:space="preserve">
+        <value>Koppelen van regio mislukt (uitgave teruggedraaid): {0}</value>
+    </data>
+    <data name="Release attach failed AND rollback failed: {0}. Release id {1} may be orphaned." xml:space="preserve">
+        <value>Koppelen aan uitgave mislukt EN terugdraaien mislukt: {0}. Uitgave-id {1} kan ouderloos zijn.</value>
+    </data>
+    <data name="Language attach failed (release rolled back): {0}" xml:space="preserve">
+        <value>Koppelen van taal mislukt (uitgave teruggedraaid): {0}</value>
+    </data>
 </root>

@@ -226,4 +226,7 @@
     <data name="{0} rows parsed. {1} auto-rejected (duplicate, missing version string, unresolved parent or license, or other validation error). Selected rows will be REJECTED — unselected rows will be imported." xml:space="preserve">
         <value>{0} rijen verwerkt. {1} automatisch geweigerd (duplicaat, ontbrekende versietekst, onopgeloste bovenliggende versie of licentie, of andere validatiefout). Geselecteerde rijen worden GEWEIGERD — niet-geselecteerde rijen worden geïmporteerd.</value>
     </data>
+    <data name="Create releases" xml:space="preserve">
+        <value>Uitgaven aanmaken</value>
+    </data>
 </root>

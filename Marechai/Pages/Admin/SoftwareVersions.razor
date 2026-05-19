@@ -40,6 +40,7 @@
     <MudToolBar Dense="true">
         <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="OpenAddDialog">@L["Add Version"]</MudButton>
         <MudButton Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Upload" OnClick="OpenImportDialog" Class="ml-2">@L["Import CSV"]</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.AddCircle" OnClick="OpenBulkCreateReleasesDialog" Class="ml-2">@L["Create releases"]</MudButton>
         <MudSpacer/>
         <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadDataAsync"/>
     </MudToolBar>
