@@ -129,71 +129,80 @@
                 }
             </MudTabPanel>
 
-            @* Tab 3 - Company Roles (only for existing software) *@
-            @if(!IsNew)
-            {
-                <MudTabPanel Text="@L["Companies"]" Icon="@Icons.Material.Filled.Business">
-                    @if(_companyRoles is { Count: > 0 })
-                    {
-                        <MudList T="SoftwareCompanyRoleDto" Dense="true">
-                            @foreach(SoftwareCompanyRoleDto role in _companyRoles)
+            @* Tab 3 - Company Roles (available in BOTH create and edit modes; create-mode
+                adds are buffered in _pendingCompanyAdds and flushed by the parent admin
+                page after CreateAsync returns the new software id, mirroring the Genres tab). *@
+            <MudTabPanel Text="@L["Companies"]" Icon="@Icons.Material.Filled.Business">
+                @if(_companyRoles is { Count: > 0 })
+                {
+                    <MudList T="SoftwareCompanyRoleDto" Dense="true">
+                        @foreach(SoftwareCompanyRoleDto role in _companyRoles)
+                        {
+                            <MudListItem T="SoftwareCompanyRoleDto">
+                                <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                    <MudText>@($"{role.Company} ({role.Role})")</MudText>
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                   Size="Size.Small"
+                                                   Color="Color.Error"
+                                                   OnClick="() => RemoveCompanyRole(role)"/>
+                                </MudStack>
+                            </MudListItem>
+                        }
+                    </MudList>
+                }
+
+                @* Pending adds (create mode buffer). Bold "+ Name (Role)" with a Remove button. *@
+                @foreach(PendingCompanyAdd p in _pendingCompanyAdds)
+                {
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                        <MudText><strong>+ @($"{p.CompanyName} ({p.RoleName})")</strong></MudText>
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Default"
+                                       OnClick="@(() => RemovePendingCompanyRole(p.CompanyId, p.RoleId))"/>
+                    </MudStack>
+                }
+
+                <MudPaper Class="pa-4 mt-2" Elevation="1">
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                        <MudAutocomplete T="CompanyDto"
+                                         Label="@L["Search Company"]"
+                                         @bind-Value="_selectedCompany"
+                                         SearchFunc="SearchCompanies"
+                                         ToStringFunc="@(c => c?.Name ?? string.Empty)"
+                                         Variant="Variant.Outlined"
+                                         Clearable="true"
+                                         MinCharacters="0"
+                                         MaxItems="50"
+                                         Style="flex: 1;"/>
+                        <MudSelect T="SoftwareRoleDto"
+                                   @bind-Value="_selectedRole"
+                                   Label="@L["Role"]"
+                                   ToStringFunc="@(r => r?.Name ?? string.Empty)"
+                                   Variant="Variant.Outlined"
+                                   Style="max-width: 200px;">
+                            @if(_allRoles is not null)
                             {
-                                <MudListItem T="SoftwareCompanyRoleDto">
-                                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                                        <MudText>@($"{role.Company} ({role.Role})")</MudText>
-                                        <MudIconButton Icon="@Icons.Material.Filled.Delete"
-                                                       Size="Size.Small"
-                                                       Color="Color.Error"
-                                                       OnClick="() => RemoveCompanyRole(role)"/>
-                                    </MudStack>
-                                </MudListItem>
-                            }
-                        </MudList>
-                    }
-
-                    <MudPaper Class="pa-4 mt-2" Elevation="1">
-                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
-                            <MudAutocomplete T="CompanyDto"
-                                             Label="@L["Search Company"]"
-                                             @bind-Value="_selectedCompany"
-                                             SearchFunc="SearchCompanies"
-                                             ToStringFunc="@(c => c?.Name ?? string.Empty)"
-                                             Variant="Variant.Outlined"
-                                             Clearable="true"
-                                             MinCharacters="0"
-                                             MaxItems="50"
-                                             Style="flex: 1;"/>
-                            <MudSelect T="SoftwareRoleDto"
-                                       @bind-Value="_selectedRole"
-                                       Label="@L["Role"]"
-                                       ToStringFunc="@(r => r?.Name ?? string.Empty)"
-                                       Variant="Variant.Outlined"
-                                       Style="max-width: 200px;">
-                                @if(_allRoles is not null)
+                                @foreach(SoftwareRoleDto role in _allRoles)
                                 {
-                                    @foreach(SoftwareRoleDto role in _allRoles)
-                                    {
-                                        <MudSelectItem T="SoftwareRoleDto" Value="role">@role.Name</MudSelectItem>
-                                    }
+                                    <MudSelectItem T="SoftwareRoleDto" Value="role">@role.Name</MudSelectItem>
                                 }
-                            </MudSelect>
-                            <MudButton Variant="Variant.Filled"
-                                       Color="Color.Primary"
-                                       Size="Size.Small"
-                                       OnClick="AddCompanyRole"
-                                       Disabled="@(_selectedCompany is null || _selectedRole is null)">
-                                @L["Add"]
-                            </MudButton>
-                        </MudStack>
-                    </MudPaper>
+                            }
+                        </MudSelect>
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   Size="Size.Small"
+                                   OnClick="AddCompanyRole"
+                                   Disabled="@(_selectedCompany is null || _selectedRole is null)">
+                            @L["Add"]
+                        </MudButton>
+                    </MudStack>
+                </MudPaper>
 
-                    @if(!string.IsNullOrWhiteSpace(_companyRoleMessage))
-                    {
-                        <MudAlert Severity="@_companyRoleMessageSeverity" Class="mt-2" ShowCloseIcon="true"
-                                  CloseIconClicked="() => _companyRoleMessage = null">@_companyRoleMessage</MudAlert>
-                    }
-                </MudTabPanel>
-            }
+                @if(!string.IsNullOrWhiteSpace(_companyRoleMessage))
+                {
+                    <MudAlert Severity="@_companyRoleMessageSeverity" Class="mt-2" ShowCloseIcon="true"
+                              CloseIconClicked="() => _companyRoleMessage = null">@_companyRoleMessage</MudAlert>
+                }
+            </MudTabPanel>
         </MudTabs>
     </DialogContent>
     <DialogActions>
@@ -224,6 +233,21 @@
     List<SoftwareCompanyRoleDto>  _companyRoles;
     string                        _companyRoleMessage;
     Severity                       _companyRoleMessageSeverity;
+
+    // Pending company-role pairs queued during CREATE-mode editing. Empty in EDIT mode
+    // (the dialog persists Add/Remove immediately). Flushed by the parent admin page
+    // via SoftwareService.AddCompanyRoleAsync after CreateAsync returns the new id,
+    // mirroring the _pendingGenreAdds pattern below. SoftwareCompanyRole has a
+    // 3-column composite primary key (SoftwareId + CompanyId + RoleId), so the same
+    // company under a different role is a distinct pair.
+    List<PendingCompanyAdd>       _pendingCompanyAdds = new();
+
+    /// <summary>
+    ///     In-memory create-mode buffer for a company/role pick that can't be POSTed yet
+    ///     because the parent Software row doesn't exist. Display fields are captured up
+    ///     front so the pending-row render doesn't need to re-resolve names.
+    /// </summary>
+    sealed record PendingCompanyAdd(int CompanyId, string RoleId, string CompanyName, string RoleName);
 
     // ── Genres tab state ──
     List<SoftwareGenreDto>            _genreRows;          // existing rows (edit mode); empty in create.
@@ -288,12 +312,12 @@
             };
         }
 
-        if(!IsNew)
-        {
-            _companiesLoadTask = SoftwareService.GetAllCompaniesAsync();
-            _allRoles          = await SoftwareService.GetSoftwareRolesAsync();
-            _companyRoles      = await SoftwareService.GetCompanyRolesAsync(SoftwareId);
-        }
+        // Catalog loads for the Companies tab run in BOTH modes — create mode still needs
+        // the picker dropdowns populated so the user can queue pending pairs. Existing
+        // junction rows (_companyRoles) only exist in edit mode.
+        _companiesLoadTask = SoftwareService.GetAllCompaniesAsync();
+        _allRoles          = await SoftwareService.GetSoftwareRolesAsync();
+        if(!IsNew) _companyRoles = await SoftwareService.GetCompanyRolesAsync(SoftwareId);
 
         // _genreRows is the edit-mode "currently linked" set; create-mode starts empty
         // and is buffered via _pendingGenreAdds. _genresLoadTask covers the catalog
@@ -392,12 +416,36 @@
     async Task AddCompanyRole()
     {
         if(_selectedCompany is null || _selectedRole is null) return;
+        if(!_selectedCompany.Id.HasValue || string.IsNullOrEmpty(_selectedRole.Id)) return;
 
+        int    companyId   = _selectedCompany.Id.Value;
+        string roleId      = _selectedRole.Id;
+        string companyName = _selectedCompany.Name ?? $"#{companyId}";
+        string roleName    = _selectedRole.Name    ?? roleId;
+
+        if(IsNew)
+        {
+            // Create mode: buffer in memory. Composite-key dedup against pending pairs
+            // \u2014 same company under a different role is allowed (matches the underlying
+            // SoftwareCompanyRole 3-column PK and the SoftwareCompaniesSuggestionDialog
+            // convention). Silently no-op on duplicate, matching the AddGenreClick pattern.
+            if(_pendingCompanyAdds.Any(p => p.CompanyId == companyId &&
+                                            string.Equals(p.RoleId, roleId, StringComparison.Ordinal)))
+                return;
+
+            _pendingCompanyAdds.Add(new PendingCompanyAdd(companyId, roleId, companyName, roleName));
+            _selectedCompany    = null;
+            _selectedRole       = null;
+            _companyRoleMessage = null;
+            return;
+        }
+
+        // Edit mode: persist immediately.
         var dto = new SoftwareCompanyRoleDto
         {
             SoftwareId = SoftwareId,
-            CompanyId  = _selectedCompany.Id,
-            RoleId     = _selectedRole.Id
+            CompanyId  = companyId,
+            RoleId     = roleId
         };
 
         (bool succeeded, string error) = await SoftwareService.AddCompanyRoleAsync(dto);
@@ -414,6 +462,13 @@
             _companyRoleMessage         = error;
             _companyRoleMessageSeverity = Severity.Error;
         }
+    }
+
+    void RemovePendingCompanyRole(int companyId, string roleId)
+    {
+        _pendingCompanyAdds.RemoveAll(p => p.CompanyId == companyId &&
+                                           string.Equals(p.RoleId, roleId, StringComparison.Ordinal));
+        _companyRoleMessage = null;
     }
 
     async Task RemoveCompanyRole(SoftwareCompanyRoleDto role)
@@ -562,7 +617,10 @@
             PredecessorId     = _selectedPredecessor?.Id,
             BaseSoftwareId    = _selectedBaseSoftware?.Id,
             Kind              = Kind,
-            PendingGenreIds   = _pendingGenreAdds.Select(p => p.GenreId).ToList()
+            PendingGenreIds   = _pendingGenreAdds.Select(p => p.GenreId).ToList(),
+            PendingCompanyRoles = _pendingCompanyAdds
+                                  .Select(p => new PendingCompanyRole(p.CompanyId, p.RoleId))
+                                  .ToList()
         }));
     }
 }

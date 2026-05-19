@@ -18,4 +18,21 @@ public sealed class SoftwareDialogResult
     ///     after <c>CreateAsync</c> returns the new software id.
     /// </summary>
     public List<int> PendingGenreIds { get; set; } = [];
+
+    /// <summary>
+    ///     Company/role junction pairs queued during CREATE-mode editing of
+    ///     <see cref="SoftwareDialog" />. Empty in EDIT mode (the dialog persists
+    ///     Add/Remove immediately to the server). The parent admin page flushes each
+    ///     pair via <c>SoftwareService.AddCompanyRoleAsync</c> after <c>CreateAsync</c>
+    ///     returns the new software id. <c>SoftwareCompanyRole</c> has a 3-column
+    ///     composite primary key (SoftwareId + CompanyId + RoleId), so the same
+    ///     company under a different role is a distinct pair.
+    /// </summary>
+    public List<PendingCompanyRole> PendingCompanyRoles { get; set; } = [];
 }
+
+/// <summary>
+///     Buffered company/role junction pick from the admin "New Software" dialog.
+///     <paramref name="RoleId" /> is the 3-char ASCII role code (e.g. "dev", "pub").
+/// </summary>
+public sealed record PendingCompanyRole(int CompanyId, string RoleId);

@@ -133,6 +133,34 @@ public partial class Software
                         _errorMessage = string.Join("\n", genreErrors);
                 }
 
+                // Flush company/role links queued in the dialog. Same partial-failure
+                // semantics as the genre flush above — errors accumulate into
+                // _errorMessage without aborting the loop, and a partial result is
+                // recoverable via the Edit dialog's Companies tab.
+                if(data.PendingCompanyRoles is { Count: > 0 })
+                {
+                    var companyErrors = new List<string>();
+                    foreach(PendingCompanyRole pending in data.PendingCompanyRoles)
+                    {
+                        var crDto = new SoftwareCompanyRoleDto
+                        {
+                            SoftwareId = id.Value,
+                            CompanyId  = pending.CompanyId,
+                            RoleId     = pending.RoleId
+                        };
+                        (bool crOk, string crErr) = await SoftwareService.AddCompanyRoleAsync(crDto);
+                        if(!crOk && !string.IsNullOrWhiteSpace(crErr)) companyErrors.Add(crErr);
+                    }
+
+                    if(companyErrors.Count > 0)
+                    {
+                        string joined = string.Join("\n", companyErrors);
+                        _errorMessage = string.IsNullOrWhiteSpace(_errorMessage)
+                                            ? joined
+                                            : _errorMessage + "\n" + joined;
+                    }
+                }
+
                 _successMessage = L["Software created successfully."];
                 await _dataGrid.ReloadServerData();
             }
