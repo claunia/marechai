@@ -101,7 +101,7 @@ public class SourceDatabaseService
         await connection.OpenAsync();
 
         await using var cmd = new MySqlCommand(
-            "INSERT INTO mobygames_raw (id, chunk, body) VALUES (@id, @chunk, @body)", connection);
+            "INSERT IGNORE INTO mobygames_raw (id, chunk, body) VALUES (@id, @chunk, @body)", connection);
 
         cmd.Parameters.AddWithValue("@id",    gameId);
         cmd.Parameters.AddWithValue("@chunk", chunk);
