@@ -922,87 +922,103 @@ else
 </MudTabPanel>
 
 @* ── SOFTWARE TAB (only when machine has software entries) ── *@
-@if(_software is { Count: > 0 })
+@if(_softwareTotal > 0)
 {
 <MudTabPanel Text="@L["Software"]" Icon="@Icons.Material.Filled.Apps" ToolTip="@L["Software"]">
 
-@* ── Software Card ── *@
-@if(_software is { Count: > 0 })
-{
-    <MudCard Elevation="2" Class="mb-4 rounded-lg">
-        <MudCardContent>
-            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
-                <MudIcon Icon="@Icons.Material.Filled.Apps" Color="Color.Primary"/>
-                <MudText Typo="Typo.h6">@L["Software"]</MudText>
-                <MudChip T="string" Size="Size.Small" Color="Color.Secondary">@_software.Count</MudChip>
-            </MudStack>
-            <MudList T="SoftwareDto" Dense="true">
-                @foreach(SoftwareDto sw in _software)
-                {
-                    <MudListItem T="SoftwareDto" Href="@($"/software/{sw.Id}")" Icon="@(sw.FrontCoverId.HasValue ? null : Icons.Material.Filled.Apps)">
-                        <div class="d-flex align-center gap-3">
-                            @if(sw.FrontCoverId.HasValue)
+<MudCard Elevation="2" Class="mb-4 rounded-lg">
+    <MudCardContent>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+            <MudIcon Icon="@Icons.Material.Filled.Apps" Color="Color.Primary"/>
+            <MudText Typo="Typo.h6">@L["Software"]</MudText>
+            <MudChip T="string" Size="Size.Small" Color="Color.Secondary">@_softwareTotal</MudChip>
+            <MudSpacer/>
+            <MudTextField T="string" ValueChanged="OnSoftwareSearch"
+                          Placeholder="@L["Search software..."]"
+                          Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
+                          IconSize="Size.Medium" Class="mt-0" DebounceInterval="300" Immediate="true"
+                          style="max-width: 300px;"/>
+        </MudStack>
+        @if(_softwareLoading)
+        {
+            <MudProgressLinear Indeterminate="true" Class="mb-2"/>
+        }
+        <MudList T="SoftwareDto" Dense="true">
+            @foreach(SoftwareDto sw in _softwareItems)
+            {
+                <MudListItem T="SoftwareDto" Href="@($"/software/{sw.Id}")" Icon="@(sw.FrontCoverId.HasValue ? null : Icons.Material.Filled.Apps)">
+                    <div class="d-flex align-center gap-3">
+                        @if(sw.FrontCoverId.HasValue)
+                        {
+                            <picture>
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(sw.FrontCoverId).jxl" type="image/jxl">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(sw.FrontCoverId).avif" type="image/avif">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(sw.FrontCoverId).webp" type="image/webp">
+                                <img alt="@sw.Name" height="48"
+                                     src="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(sw.FrontCoverId).jpg"
+                                     srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(sw.FrontCoverId).jpg"
+                                     style="object-fit: contain; border-radius: 4px;"/>
+                            </picture>
+                        }
+                        <div>
+                            <MudText Typo="Typo.body1">@sw.Name</MudText>
+                            @if(!string.IsNullOrEmpty(sw.Family))
                             {
-                                <picture>
-                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(sw.FrontCoverId).jxl" type="image/jxl">
-                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(sw.FrontCoverId).avif" type="image/avif">
-                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(sw.FrontCoverId).webp" type="image/webp">
-                                    <img alt="@sw.Name" height="48"
-                                         src="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(sw.FrontCoverId).jpg"
-                                         srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(sw.FrontCoverId).jpg"
-                                         style="object-fit: contain; border-radius: 4px;"/>
-                                </picture>
-                            }
-                            <div>
-                                <MudText Typo="Typo.body1">@sw.Name</MudText>
-                                @if(!string.IsNullOrEmpty(sw.Family))
-                                {
-                                    <MudText Typo="Typo.caption" Color="Color.Secondary">@sw.Family</MudText>
-                                }
-                            </div>
-                            @switch((Marechai.Data.SoftwareKind)(sw.Kind ?? 0))
-                            {
-                                case Marechai.Data.SoftwareKind.OperatingSystem:
-                                    <MudChip T="string" Size="Size.Small" Color="Color.Info" Variant="Variant.Outlined">@L["OS"]</MudChip>
-                                    break;
-                                case Marechai.Data.SoftwareKind.Game:
-                                    <MudChip T="string" Size="Size.Small" Color="Color.Success" Variant="Variant.Outlined">@L["Game"]</MudChip>
-                                    break;
-                                case Marechai.Data.SoftwareKind.Dlc:
-                                    <MudChip T="string" Size="Size.Small" Color="Color.Warning" Variant="Variant.Outlined">@L["DLC / Addon"]</MudChip>
-                                    break;
-                                case Marechai.Data.SoftwareKind.SystemSoftware:
-                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="color: #455A64; border-color: #455A64;">@L["System software"]</MudChip>
-                                    break;
-                                case Marechai.Data.SoftwareKind.Application:
-                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="color: #1976D2; border-color: #1976D2;">@L["Application"]</MudChip>
-                                    break;
-                                case Marechai.Data.SoftwareKind.DevelopmentSoftware:
-                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="color: #3F51B5; border-color: #3F51B5;">@L["Development software"]</MudChip>
-                                    break;
-                                case Marechai.Data.SoftwareKind.ServerSoftware:
-                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="color: #795548; border-color: #795548;">@L["Server software"]</MudChip>
-                                    break;
-                                case Marechai.Data.SoftwareKind.Middleware:
-                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="color: #00BCD4; border-color: #00BCD4;">@L["Middleware"]</MudChip>
-                                    break;
-                                case Marechai.Data.SoftwareKind.Firmware:
-                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="color: #827717; border-color: #CDDC39;">@L["Firmware"]</MudChip>
-                                    break;
-                                case Marechai.Data.SoftwareKind.EmbeddedSoftware:
-                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="color: #009688; border-color: #009688;">@L["Embedded software"]</MudChip>
-                                    break;
-                                default:
-                                    <MudChip T="string" Size="Size.Small" Color="Color.Default" Variant="Variant.Outlined">@L["Software"]</MudChip>
-                                    break;
+                                <MudText Typo="Typo.caption" Color="Color.Secondary">@sw.Family</MudText>
                             }
                         </div>
-                    </MudListItem>
-                }
-            </MudList>
-        </MudCardContent>
-    </MudCard>
-}
+                        @switch((Marechai.Data.SoftwareKind)(sw.Kind ?? 0))
+                        {
+                            case Marechai.Data.SoftwareKind.OperatingSystem:
+                                <MudChip T="string" Size="Size.Small" Color="Color.Info" Variant="Variant.Outlined">@L["OS"]</MudChip>
+                                break;
+                            case Marechai.Data.SoftwareKind.Game:
+                                <MudChip T="string" Size="Size.Small" Color="Color.Success" Variant="Variant.Outlined">@L["Game"]</MudChip>
+                                break;
+                            case Marechai.Data.SoftwareKind.Dlc:
+                                <MudChip T="string" Size="Size.Small" Color="Color.Warning" Variant="Variant.Outlined">@L["DLC / Addon"]</MudChip>
+                                break;
+                            case Marechai.Data.SoftwareKind.SystemSoftware:
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="color: #455A64; border-color: #455A64;">@L["System software"]</MudChip>
+                                break;
+                            case Marechai.Data.SoftwareKind.Application:
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="color: #1976D2; border-color: #1976D2;">@L["Application"]</MudChip>
+                                break;
+                            case Marechai.Data.SoftwareKind.DevelopmentSoftware:
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="color: #3F51B5; border-color: #3F51B5;">@L["Development software"]</MudChip>
+                                break;
+                            case Marechai.Data.SoftwareKind.ServerSoftware:
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="color: #795548; border-color: #795548;">@L["Server software"]</MudChip>
+                                break;
+                            case Marechai.Data.SoftwareKind.Middleware:
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="color: #00BCD4; border-color: #00BCD4;">@L["Middleware"]</MudChip>
+                                break;
+                            case Marechai.Data.SoftwareKind.Firmware:
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="color: #827717; border-color: #CDDC39;">@L["Firmware"]</MudChip>
+                                break;
+                            case Marechai.Data.SoftwareKind.EmbeddedSoftware:
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Style="color: #009688; border-color: #009688;">@L["Embedded software"]</MudChip>
+                                break;
+                            default:
+                                <MudChip T="string" Size="Size.Small" Color="Color.Default" Variant="Variant.Outlined">@L["Software"]</MudChip>
+                                break;
+                        }
+                    </div>
+                </MudListItem>
+            }
+        </MudList>
+        @if(_softwareTotal > _softwarePageSize)
+        {
+            <MudStack Row="true" Justify="Justify.Center" Class="mt-3">
+                <MudPagination Count="@((int)Math.Ceiling((double)_softwareTotal / _softwarePageSize))"
+                               Selected="_softwarePage"
+                               SelectedChanged="OnSoftwarePageChanged"
+                               ShowFirstButton="true" ShowLastButton="true"
+                               BoundaryCount="1" MiddleCount="3"/>
+            </MudStack>
+        }
+    </MudCardContent>
+</MudCard>
 
 </MudTabPanel>
 }

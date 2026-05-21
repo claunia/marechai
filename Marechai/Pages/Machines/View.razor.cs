@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Marechai.Data;
@@ -50,10 +51,17 @@ public partial class View
     PhotoLightbox    _lightbox;
     bool             _loaded;
     MachineDto _machine;
-    List<Guid>       _photos;
-    List<SoftwareDto> _software;
+    List<Guid>            _photos;
     List<MachineVideoDto> _videos;
-    bool             _togglingCollection;
+    bool                  _togglingCollection;
+
+    // Software tab — server-side pagination
+    List<SoftwareDto> _softwareItems  = [];
+    int               _softwareTotal;
+    int               _softwarePage     = 1;
+    const int         _softwarePageSize = 25;
+    string            _softwareSearch;
+    bool              _softwareLoading;
 
     // Tab state — backs the responsive sticky MudTabs in View.razor.
     // _tabNames is rebuilt after data loads to include "software" only when
@@ -114,17 +122,21 @@ public partial class View
             // service wrappers each issue a single HTTP request so they're
             // safe to run in parallel; this collapses what used to be sequential
             // round-trips into one parallel batch (bounded by the slowest call).
-            Task<MachineDto>           machineTask     = Service.GetMachine(Id);
-            Task<List<Guid>>           photosTask      = MachinePhotosService.GetGuidsByMachineAsync(Id);
-            Task<List<SoftwareDto>>    softwareTask    = Service.GetSoftwareByMachineAsync(Id);
-            Task<List<MachineVideoDto>> videosTask     = Service.GetVideosByMachineAsync(Id);
+            Task<MachineDto>            machineTask  = Service.GetMachine(Id);
+            Task<List<Guid>>            photosTask   = MachinePhotosService.GetGuidsByMachineAsync(Id);
+            Task<int>                   swCountTask  = Service.GetSoftwareByMachineCountAsync(Id);
+            Task<List<MachineVideoDto>> videosTask   = Service.GetVideosByMachineAsync(Id);
 
-            await Task.WhenAll(machineTask, photosTask, softwareTask, videosTask);
+            await Task.WhenAll(machineTask, photosTask, swCountTask, videosTask);
 
-            _machine     = machineTask.Result;
-            _photos      = photosTask.Result;
-            _software    = softwareTask.Result;
-            _videos      = videosTask.Result;
+            _machine       = machineTask.Result;
+            _photos        = photosTask.Result;
+            _softwareTotal = swCountTask.Result;
+            _videos        = videosTask.Result;
+
+            // Load first page of software if any exist.
+            if(_softwareTotal > 0)
+                await LoadSoftwarePageAsync();
 
             // Load the description state separately because it issues two API
             // calls (full DTO + descriptions list) that need to chain.
@@ -138,7 +150,7 @@ public partial class View
             // Insert the Software tab between Specifications and Media when the
             // machine has any software, so _activeTabIndex resolves "software"
             // correctly on first paint after a deep link.
-            _tabNames = _software is { Count: > 0 }
+            _tabNames = _softwareTotal > 0
                             ? ["specifications", "software", "media"]
                             : ["specifications", "media"];
 
@@ -149,6 +161,31 @@ public partial class View
         {
             // Component was disposed during async loading — ignore
         }
+    }
+
+    async Task LoadSoftwarePageAsync(CancellationToken cancellationToken = default)
+    {
+        _softwareLoading = true;
+        int skip = (_softwarePage - 1) * _softwarePageSize;
+        _softwareItems = await Service.GetSoftwareByMachinePagedAsync(
+            Id, skip, _softwarePageSize, _softwareSearch, cancellationToken: cancellationToken);
+        _softwareLoading = false;
+    }
+
+    async Task OnSoftwareSearch(string text)
+    {
+        _softwareSearch = text;
+        _softwarePage   = 1;
+        _softwareTotal  = await Service.GetSoftwareByMachineCountAsync(Id, _softwareSearch);
+        await LoadSoftwarePageAsync();
+        StateHasChanged();
+    }
+
+    async Task OnSoftwarePageChanged(int page)
+    {
+        _softwarePage = page;
+        await LoadSoftwarePageAsync();
+        StateHasChanged();
     }
 
     /// <summary>

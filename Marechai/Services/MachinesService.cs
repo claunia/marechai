@@ -598,6 +598,49 @@ public class MachinesService(Marechai.ApiClient.Client client)
         }
     }
 
+    public async Task<List<SoftwareDto>> GetSoftwareByMachinePagedAsync(int machineId, int skip, int take,
+                                                                         string search = null,
+                                                                         string sortBy = null,
+                                                                         bool sortDescending = false,
+                                                                         CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            List<SoftwareDto> software = await client.Machines[machineId].Software.GetAsync(config =>
+            {
+                config.QueryParameters.Skip           = skip;
+                config.QueryParameters.Take           = take;
+                if(!string.IsNullOrWhiteSpace(search)) config.QueryParameters.Search = search;
+                if(!string.IsNullOrWhiteSpace(sortBy)) config.QueryParameters.SortBy = sortBy;
+                if(sortDescending)                     config.QueryParameters.SortDescending = true;
+            }, cancellationToken);
+
+            return software ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<int> GetSoftwareByMachineCountAsync(int machineId, string search = null,
+                                                           CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            int? count = await client.Machines[machineId].Software.Count.GetAsync(config =>
+            {
+                if(!string.IsNullOrWhiteSpace(search)) config.QueryParameters.Search = search;
+            }, cancellationToken);
+
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
+
     // Software Platform junction management
     public async Task<List<SoftwarePlatformByMachineDto>> GetSoftwarePlatformsByMachineAsync(int machineId)
     {

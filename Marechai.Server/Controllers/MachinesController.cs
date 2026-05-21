@@ -622,33 +622,151 @@ public class MachinesController(MarechaiContext context, IDbContextFactory<Marec
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<SoftwareDto>> GetSoftwareByMachineAsync(int id)
+    public async Task<List<SoftwareDto>> GetSoftwareByMachineAsync(int id,
+                                                                    [FromQuery] int?   skip           = null,
+                                                                    [FromQuery] int?   take           = null,
+                                                                    [FromQuery] string search         = null,
+                                                                    [FromQuery] string sortBy         = null,
+                                                                    [FromQuery] bool   sortDescending = false,
+                                                                    CancellationToken  cancellationToken = default)
     {
-        IQueryable<ulong> platformIds = context.SoftwarePlatformsByMachine
+        // Step 1: fast indexed lookup — one small table, no joins.
+        List<ulong> platformIds = await context.SoftwarePlatformsByMachine
                                                .Where(sp => sp.MachineId == id)
-                                               .Select(sp => sp.SoftwarePlatformId);
+                                               .Select(sp => sp.SoftwarePlatformId)
+                                               .ToListAsync(cancellationToken);
 
-        return context.Softwares
-                      .Where(s => s.Versions.Any(v => v.Releases.Any(r => r.PlatformId != null &&
-                                                                          platformIds.Contains(r.PlatformId.Value)))
-                                || s.DirectReleases.Any(r => r.PlatformId != null &&
-                                                             platformIds.Contains(r.PlatformId.Value)))
-                      .OrderBy(s => MarechaiContext.NaturalSortKey(s.Name))
-                      .Select(s => new SoftwareDto
-                       {
-                           Id                = s.Id,
-                           Name              = s.Name,
-                           FamilyId          = s.FamilyId,
-                           Family            = s.Family.Name,
-                           Kind              = s.Kind,
-                           FrontCoverId = context.SoftwareCovers
-                                                 .Where(c => (c.Release.SoftwareId == s.Id ||
-                                                               c.Release.SoftwareVersion.SoftwareId == s.Id) &&
-                                                              c.Type == SoftwareCoverType.Front)
-                                                 .Select(c => (Guid?)c.Id)
-                                                 .FirstOrDefault()
-                       })
-                      .ToListAsync();
+        if(platformIds.Count == 0)
+            return [];
+
+        // Step 2: resolve software IDs via flat JOINs from SoftwareReleases outward.
+        IQueryable<ulong> viaDirect = context.SoftwareReleases
+                                             .Where(r => r.SoftwareId != null &&
+                                                         r.PlatformId != null &&
+                                                         platformIds.Contains(r.PlatformId.Value))
+                                             .Select(r => r.SoftwareId!.Value);
+
+        IQueryable<ulong> viaVersion = context.SoftwareReleases
+                                              .Where(r => r.SoftwareVersionId != null &&
+                                                          r.PlatformId != null &&
+                                                          platformIds.Contains(r.PlatformId.Value))
+                                              .Select(r => r.SoftwareVersion.SoftwareId);
+
+        List<ulong> softwareIds = await viaDirect.Union(viaVersion).Distinct().ToListAsync(cancellationToken);
+
+        if(softwareIds.Count == 0)
+            return [];
+
+        // Step 3: fetch software rows with optional search filter, sort and paging.
+        IQueryable<Software> baseQuery = context.Softwares.Where(s => softwareIds.Contains(s.Id));
+
+        if(!string.IsNullOrWhiteSpace(search))
+            baseQuery = baseQuery.Where(s => s.Name.Contains(search));
+
+        IQueryable<SoftwareDto> projected = baseQuery.Select(s => new SoftwareDto
+        {
+            Id       = s.Id,
+            Name     = s.Name,
+            FamilyId = s.FamilyId,
+            Family   = s.Family.Name,
+            Kind     = s.Kind
+        });
+
+        IQueryable<SoftwareDto> ordered = sortBy switch
+        {
+            "Name"   => sortDescending ? projected.OrderByDescending(s => MarechaiContext.NaturalSortKey(s.Name))
+                                       : projected.OrderBy(s => MarechaiContext.NaturalSortKey(s.Name)),
+            "Family" => sortDescending ? projected.OrderByDescending(s => MarechaiContext.NaturalSortKey(s.Family))
+                                       : projected.OrderBy(s => MarechaiContext.NaturalSortKey(s.Family)),
+            "Kind"   => sortDescending ? projected.OrderByDescending(s => s.Kind)
+                                       : projected.OrderBy(s => s.Kind),
+            _        => projected.OrderBy(s => MarechaiContext.NaturalSortKey(s.Name))
+        };
+
+        if(skip.HasValue) ordered = ordered.Skip(skip.Value);
+        if(take.HasValue) ordered = ordered.Take(take.Value);
+
+        List<SoftwareDto> softwares = await ordered.ToListAsync(cancellationToken);
+
+        if(softwares.Count == 0)
+            return softwares;
+
+        // Step 4: bulk cover lookup — only for the IDs on this page (at most pageSize items).
+        List<ulong> pageIds = softwares.Select(s => s.Id).ToList();
+
+        Dictionary<ulong, Guid> frontCovers =
+            (await context.SoftwareCovers
+                          .Where(c => c.Type               == SoftwareCoverType.Front &&
+                                      c.Release.SoftwareId != null                   &&
+                                      pageIds.Contains(c.Release.SoftwareId.Value))
+                          .Select(c => new { SoftwareId = c.Release.SoftwareId!.Value, CoverId = c.Id })
+                          .ToListAsync(cancellationToken))
+            .GroupBy(x => x.SoftwareId)
+            .ToDictionary(g => g.Key, g => g.First().CoverId);
+
+        List<ulong> uncoveredIds = pageIds.Except(frontCovers.Keys).ToList();
+
+        if(uncoveredIds.Count > 0)
+        {
+            foreach(var row in await context.SoftwareCovers
+                                            .Where(c => c.Type                      == SoftwareCoverType.Front &&
+                                                        c.Release.SoftwareVersionId != null                   &&
+                                                        uncoveredIds.Contains(c.Release.SoftwareVersion.SoftwareId))
+                                            .Select(c => new
+                                             {
+                                                 SoftwareId = c.Release.SoftwareVersion.SoftwareId,
+                                                 CoverId    = c.Id
+                                             })
+                                            .ToListAsync(cancellationToken))
+                frontCovers.TryAdd(row.SoftwareId, row.CoverId);
+        }
+
+        foreach(SoftwareDto s in softwares)
+            if(frontCovers.TryGetValue(s.Id, out Guid coverId))
+                s.FrontCoverId = coverId;
+
+        return softwares;
+    }
+
+    [HttpGet("{id:int}/software/count")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<int> GetSoftwareByMachineCountAsync(int id,
+                                                           [FromQuery] string search = null,
+                                                           CancellationToken cancellationToken = default)
+    {
+        List<ulong> platformIds = await context.SoftwarePlatformsByMachine
+                                               .Where(sp => sp.MachineId == id)
+                                               .Select(sp => sp.SoftwarePlatformId)
+                                               .ToListAsync(cancellationToken);
+
+        if(platformIds.Count == 0)
+            return 0;
+
+        IQueryable<ulong> viaDirect = context.SoftwareReleases
+                                             .Where(r => r.SoftwareId != null &&
+                                                         r.PlatformId != null &&
+                                                         platformIds.Contains(r.PlatformId.Value))
+                                             .Select(r => r.SoftwareId!.Value);
+
+        IQueryable<ulong> viaVersion = context.SoftwareReleases
+                                              .Where(r => r.SoftwareVersionId != null &&
+                                                          r.PlatformId != null &&
+                                                          platformIds.Contains(r.PlatformId.Value))
+                                              .Select(r => r.SoftwareVersion.SoftwareId);
+
+        List<ulong> softwareIds = await viaDirect.Union(viaVersion).Distinct().ToListAsync(cancellationToken);
+
+        if(softwareIds.Count == 0)
+            return 0;
+
+        IQueryable<Software> query = context.Softwares.Where(s => softwareIds.Contains(s.Id));
+
+        if(!string.IsNullOrWhiteSpace(search))
+            query = query.Where(s => s.Name.Contains(search));
+
+        return await query.CountAsync(cancellationToken);
     }
 
     [HttpDelete("{id:int}")]
