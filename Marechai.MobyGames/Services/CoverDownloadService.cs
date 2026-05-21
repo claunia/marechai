@@ -40,11 +40,13 @@ public class CoverDownloadService
         _assetRootPath     = assetRootPath;
     }
 
-    public async Task RunAsync(int batchSize, bool dryRun)
+    public async Task RunAsync(int batchSize, bool dryRun, bool downloadOnly = false)
     {
         Console.WriteLine(dryRun
                               ? "\n  \e[33;1m[DRY RUN]\e[0m Parsing covers without downloading...\n"
-                              : "\n  Starting cover download...\n");
+                              : downloadOnly
+                                  ? "\n  Starting cover download \e[33;1m(--download-only: conversion skipped)\e[0m...\n"
+                                  : "\n  Starting cover download...\n");
 
         // Load reference data
         Console.WriteLine("  Loading reference data...");
@@ -361,17 +363,26 @@ public class CoverDownloadService
                     coverContext.SoftwareCovers.Add(softwareCover);
                     await coverContext.SaveChangesAsync();
 
-                    // Run image conversion (30 variants)
-                    Console.Write(" converting...");
-
-                    try
+                    // Run image conversion (8 variants) unless the caller explicitly
+                    // opted out via --download-only (the conversion pass can be offloaded
+                    // to another machine via the `convert-images` command).
+                    if(downloadOnly)
                     {
-                        ImageConverter.ConvertAll(_assetRootPath, coverId, originalFilePath, extension);
-                        Console.WriteLine(" \e[32mOK\e[0m");
+                        Console.WriteLine(" \e[33mskipped conversion\e[0m");
                     }
-                    catch(Exception ex)
+                    else
                     {
-                        Console.WriteLine($" \e[33mconversion warning: {ex}\e[0m");
+                        Console.Write(" converting...");
+
+                        try
+                        {
+                            ImageConverter.ConvertAll(_assetRootPath, coverId, originalFilePath, extension);
+                            Console.WriteLine(" \e[32mOK\e[0m");
+                        }
+                        catch(Exception ex)
+                        {
+                            Console.WriteLine($" \e[33mconversion warning: {ex}\e[0m");
+                        }
                     }
 
                     // Update state

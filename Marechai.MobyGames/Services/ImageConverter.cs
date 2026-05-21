@@ -11,6 +11,20 @@ public static class ImageConverter
 {
     const string DefaultItemName = "software-covers";
 
+    // Keep these synchronised with the `formats` / `resolutions` arrays in ConvertAll
+    // and with the output-path layout in Convert(...). The conversion pass uses these
+    // to check, purely from the filesystem, whether all expected outputs exist for a
+    // given (id, itemName) pair without consulting any database.
+    static readonly (string Format, string Extension)[] OutputFormats =
+    {
+        ("jpeg", "jpg"),
+        ("webp", "webp"),
+        ("avif", "avif"),
+        ("jxl",  "jxl")
+    };
+
+    static readonly string[] OutputResolutions = { "4k" };
+
     public static void EnsureDirectoriesCreated(string assetRootPath) =>
         EnsureDirectoriesCreated(assetRootPath, DefaultItemName);
 
@@ -166,6 +180,45 @@ public static class ImageConverter
         {
             return false;
         }
+    }
+
+    /// <summary>
+    /// Returns the canonical originals path for an image of the given id under the named
+    /// item directory: <c>{assetRootPath}/photos/{itemName}/originals/{id}.{extension}</c>.
+    /// Used by the offline conversion pass to locate source files without any database
+    /// access.
+    /// </summary>
+    public static string GetOriginalPath(string assetRootPath, Guid id, string extension,
+                                         string itemName = DefaultItemName)
+    {
+        string ext = (extension ?? "").TrimStart('.').ToLowerInvariant();
+
+        return Path.Combine(assetRootPath, "photos", itemName, "originals", $"{id}.{ext}");
+    }
+
+    /// <summary>
+    /// Returns <c>true</c> only when EVERY converted output for <paramref name="id"/> exists
+    /// on disk under <paramref name="assetRootPath"/>/photos/<paramref name="itemName"/>/.
+    /// Used by the offline conversion pass to skip images that have already been fully
+    /// converted. The check is filesystem-only — no database access.
+    /// </summary>
+    public static bool HasAllVariants(string assetRootPath, Guid id, string itemName = DefaultItemName)
+    {
+        string photosRoot = Path.Combine(assetRootPath, "photos", itemName);
+
+        foreach((string format, string ext) in OutputFormats)
+        {
+            foreach(string resolution in OutputResolutions)
+            {
+                string thumbPath = Path.Combine(photosRoot, "thumbs", format, resolution, $"{id}.{ext}");
+                string fullPath  = Path.Combine(photosRoot, format, resolution, $"{id}.{ext}");
+
+                if(!File.Exists(thumbPath) || !File.Exists(fullPath))
+                    return false;
+            }
+        }
+
+        return true;
     }
 
 }

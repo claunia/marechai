@@ -15,8 +15,16 @@ class Program
         Console.WriteLine("\e[32;1mMarechai MobyGames HTML Import Tool\e[0m\n");
 
         var config = new ConfigurationBuilder()
-                    .AddJsonFile("appsettings.json")
+                    .AddJsonFile("appsettings.json", optional: true)
                     .Build();
+
+        // The `convert-images` command runs entirely offline (no DB, no browser, no
+        // HTTP). Branch BEFORE touching connection strings / the EF context so it
+        // can be invoked on a machine that has only the photos/ tree.
+        string commandName = args.Length > 0 ? args[0].ToLowerInvariant() : "import";
+
+        if(commandName == "convert-images")
+            return RunConvertImages(args, config);
 
         string marechaiConn = config.GetConnectionString("DefaultConnection");
         string mobyConn     = config.GetConnectionString("MobyGamesSource");
@@ -99,6 +107,7 @@ class Program
                 int delayMs        = config.GetValue("MobyGames:DelayMs", 2000);
                 string assetRoot   = config.GetValue<string>("MobyGames:AssetRootPath");
                 bool dryRun        = false;
+                bool downloadOnly  = false;
 
                 for(int i = 0; i < args.Length; i++)
                 {
@@ -110,6 +119,9 @@ class Program
 
                     if(args[i] == "--dry-run")
                         dryRun = true;
+
+                    if(args[i] == "--download-only")
+                        downloadOnly = true;
                 }
 
                 if(!dryRun && string.IsNullOrEmpty(assetRoot))
@@ -141,7 +153,7 @@ class Program
 
                 try
                 {
-                    await coverDownloadService.RunAsync(coverBatchSize, dryRun);
+                    await coverDownloadService.RunAsync(coverBatchSize, dryRun, downloadOnly);
                 }
                 finally
                 {
@@ -318,6 +330,7 @@ class Program
                 int delayMs        = config.GetValue("MobyGames:DelayMs", 2000);
                 string assetRoot   = config.GetValue<string>("MobyGames:AssetRootPath");
                 bool dryRun        = false;
+                bool downloadOnly  = false;
 
                 for(int i = 0; i < args.Length; i++)
                 {
@@ -327,6 +340,8 @@ class Program
                         delayMs = dms;
                     if(args[i] == "--dry-run")
                         dryRun = true;
+                    if(args[i] == "--download-only")
+                        downloadOnly = true;
                 }
 
                 if(!dryRun && string.IsNullOrEmpty(assetRoot))
@@ -354,7 +369,7 @@ class Program
 
                 try
                 {
-                    await promoDownloadService.RunAsync(promoBatchSize, dryRun);
+                    await promoDownloadService.RunAsync(promoBatchSize, dryRun, downloadOnly);
                 }
                 finally
                 {
@@ -419,6 +434,7 @@ class Program
                 int delayMs             = config.GetValue("MobyGames:DelayMs", 2000);
                 string assetRoot        = config.GetValue<string>("MobyGames:AssetRootPath");
                 bool dryRun             = false;
+                bool downloadOnly       = false;
 
                 for(int i = 0; i < args.Length; i++)
                 {
@@ -428,6 +444,8 @@ class Program
                         delayMs = dms;
                     if(args[i] == "--dry-run")
                         dryRun = true;
+                    if(args[i] == "--download-only")
+                        downloadOnly = true;
                 }
 
                 if(!dryRun && string.IsNullOrEmpty(assetRoot))
@@ -457,7 +475,7 @@ class Program
 
                 try
                 {
-                    await screenshotDownloadService.RunAsync(screenshotBatchSize, dryRun);
+                    await screenshotDownloadService.RunAsync(screenshotBatchSize, dryRun, downloadOnly);
                 }
                 finally
                 {
@@ -678,8 +696,9 @@ class Program
                 Console.WriteLine("                                                  Import next batch of games (--unattended skips games needing prompts;");
                 Console.WriteLine("                                                  --yes-to-all implies --unattended and auto-picks 'create new entry',");
                 Console.WriteLine("                                                  'create new company', and ProductCodeIssuer.Other instead of skipping)");
-                Console.WriteLine("    download-covers [--batch-size N] [--delay-ms N] [--dry-run]");
-                Console.WriteLine("                                                  Download covers for imported games");
+                Console.WriteLine("    download-covers [--batch-size N] [--delay-ms N] [--dry-run] [--download-only]");
+                Console.WriteLine("                                                  Download covers for imported games (--download-only skips the");
+                Console.WriteLine("                                                  ImageMagick conversion step; run `convert-images` later)");
                 Console.WriteLine("    import-reviews [--batch-size N]");
                 Console.WriteLine("                                                  Import critic reviews for imported games");
                 Console.WriteLine("    status                                        Show import status counts");
@@ -694,13 +713,17 @@ class Program
                 Console.WriteLine("    discovery-status                              Show MobyGamesDiscoveredGames status counts");
                 Console.WriteLine("    scrape-promo-pages [--batch-size N] [--delay-ms N] [--dry-run]");
                 Console.WriteLine("                                                  Scrape promo art pages from new MobyGames");
-                Console.WriteLine("    download-promo-art [--batch-size N] [--delay-ms N] [--dry-run]");
+                Console.WriteLine("    download-promo-art [--batch-size N] [--delay-ms N] [--dry-run] [--download-only]");
                 Console.WriteLine("                                                  Download promo art images for scraped games");
                 Console.WriteLine("    promo-art-status                              Show promo art download status counts");
                 Console.WriteLine("    scrape-screenshot-pages [--batch-size N] [--delay-ms N] [--dry-run]");
                 Console.WriteLine("                                                  Scrape screenshot pages from new MobyGames");
-                Console.WriteLine("    download-screenshots [--batch-size N] [--delay-ms N] [--dry-run]");
+                Console.WriteLine("    download-screenshots [--batch-size N] [--delay-ms N] [--dry-run] [--download-only]");
                 Console.WriteLine("                                                  Download screenshots for scraped games");
+                Console.WriteLine("    convert-images --type covers|promo-art|screenshots|all [--batch-size N] [--asset-root <path>] [--dry-run]");
+                Console.WriteLine("                                                  Run the ImageMagick conversion pass on already-downloaded originals.");
+                Console.WriteLine("                                                  Walks photos/<type>/originals/ on disk only - no DB, no browser, no HTTP.");
+                Console.WriteLine("                                                  Designed to be offloaded to a more powerful machine.");
                 Console.WriteLine("    screenshot-status                             Show screenshot download status counts");
                 Console.WriteLine("    scrape-media-pages [--batch-size N] [--delay-ms N] [--dry-run]");
                 Console.WriteLine("                                                  Scrape media (video) pages from new MobyGames");
@@ -723,4 +746,90 @@ class Program
 
         return 0;
     }
-}
+    /// <summary>
+    /// Synchronous, fully offline handler for the `convert-images` command. Walks
+    /// the asset root's photos/<type>/originals/ tree and runs the ImageMagick
+    /// conversion pass for every original whose 8 output variants are not all
+    /// present on disk. Touches no database, no browser, no HTTP client.
+    /// </summary>
+    static int RunConvertImages(string[] args, IConfiguration config)
+    {
+        int batchSize = 0; // 0 = no cap
+        bool dryRun = false;
+        string typeArg = "all";
+        string assetRoot = config.GetValue<string>("MobyGames:AssetRootPath");
+
+        for(int i = 1; i < args.Length; i++)
+        {
+            if(args[i] == "--batch-size" && i + 1 < args.Length && int.TryParse(args[i + 1], out int bs))
+                batchSize = bs;
+            else if(args[i] == "--type" && i + 1 < args.Length)
+                typeArg = args[i + 1].ToLowerInvariant();
+            else if(args[i] == "--asset-root" && i + 1 < args.Length)
+                assetRoot = args[i + 1];
+            else if(args[i] == "--dry-run")
+                dryRun = true;
+        }
+
+        if(string.IsNullOrEmpty(assetRoot))
+        {
+            Console.WriteLine("\e[31;1mMissing asset root.\e[0m Pass --asset-root <path> or set MobyGames:AssetRootPath in appsettings.json.");
+
+            return 1;
+        }
+
+        if(!System.IO.Directory.Exists(assetRoot))
+        {
+            Console.WriteLine($"\e[31;1mAsset root does not exist:\e[0m {assetRoot}");
+
+            return 1;
+        }
+
+        ImageConversionItemType[] types;
+
+        switch(typeArg)
+        {
+            case "covers":
+                types = new[] { ImageConversionItemType.Covers };
+                break;
+            case "promo-art":
+                types = new[] { ImageConversionItemType.PromoArt };
+                break;
+            case "screenshots":
+                types = new[] { ImageConversionItemType.Screenshots };
+                break;
+            case "all":
+                types = new[]
+                {
+                    ImageConversionItemType.Covers, ImageConversionItemType.PromoArt,
+                    ImageConversionItemType.Screenshots
+                };
+                break;
+            default:
+                Console.WriteLine($"\e[31;1mUnknown --type value:\e[0m {typeArg}");
+                Console.WriteLine("  Valid values: covers, promo-art, screenshots, all");
+
+                return 1;
+        }
+
+        Console.WriteLine($"  Asset root: {assetRoot}");
+        Console.WriteLine($"  Types:      {string.Join(", ", types)}");
+        Console.WriteLine($"  Batch size: {(batchSize <= 0 ? "no cap" : batchSize.ToString())}");
+        Console.WriteLine($"  Dry run:    {dryRun}");
+
+        int totalFailed = 0;
+
+        foreach(ImageConversionItemType type in types)
+            totalFailed += ImageConversionPassService.Run(assetRoot, type, batchSize, dryRun);
+
+        if(totalFailed > 0)
+        {
+            Console.WriteLine($"\e[33;1m{totalFailed} conversion(s) failed.\e[0m");
+
+            return 1;
+        }
+
+        Console.WriteLine("\e[32;1mConversion pass complete.\e[0m");
+
+        return 0;
+    }}

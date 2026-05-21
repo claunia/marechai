@@ -35,11 +35,13 @@ public class PromoArtDownloadService
         _assetRootPath  = assetRootPath;
     }
 
-    public async Task RunAsync(int batchSize, bool dryRun)
+    public async Task RunAsync(int batchSize, bool dryRun, bool downloadOnly = false)
     {
         Console.WriteLine(dryRun
                               ? "\n  \e[33;1m[DRY RUN]\e[0m Parsing promo art without downloading...\n"
-                              : "\n  Starting promo art download...\n");
+                              : downloadOnly
+                                  ? "\n  Starting promo art download \e[33;1m(--download-only: conversion skipped)\e[0m...\n"
+                                  : "\n  Starting promo art download...\n");
 
         await using var context = await _contextFactory.CreateDbContextAsync();
 
@@ -270,18 +272,25 @@ public class PromoArtDownloadService
                     dbContext.SoftwarePromoArt.Add(promoArt);
                     await dbContext.SaveChangesAsync();
 
-                    Console.Write(" converting...");
-
-                    try
+                    if(downloadOnly)
                     {
-                        ImageConverter.ConvertAll(_assetRootPath, promoArtId, originalFilePath, extension,
-                                                 PromoArtItemName);
-
-                        Console.WriteLine(" \e[32mOK\e[0m");
+                        Console.WriteLine(" \e[33mskipped conversion\e[0m");
                     }
-                    catch(Exception ex)
+                    else
                     {
-                        Console.WriteLine($" \e[33mconversion warning: {ex}\e[0m");
+                        Console.Write(" converting...");
+
+                        try
+                        {
+                            ImageConverter.ConvertAll(_assetRootPath, promoArtId, originalFilePath, extension,
+                                                     PromoArtItemName);
+
+                            Console.WriteLine(" \e[32mOK\e[0m");
+                        }
+                        catch(Exception ex)
+                        {
+                            Console.WriteLine($" \e[33mconversion warning: {ex}\e[0m");
+                        }
                     }
 
                     existingState.Status             = MobyGamesCoverDownloadStatus.Downloaded;
