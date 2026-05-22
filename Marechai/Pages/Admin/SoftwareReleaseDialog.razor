@@ -525,29 +525,93 @@
     {
         _isCompilation = IsCompilation;
 
-        _allPlatforms   = await SoftwareReleasesService.GetAllPlatformsAsync();
-        _allUnM49       = await SoftwareReleasesService.GetAllUnM49Async();
-        _allLanguages   = await SoftwareReleasesService.GetAllLanguagesAsync();
-        _allCompanies   = await SoftwareReleasesService.GetAllCompaniesAsync();
-        _allGpus        = await SoftwareReleasesService.GetAllGpusAsync();
-        _allSoundSynths = await SoftwareReleasesService.GetAllSoundSynthsAsync();
+        // Load independent reference data in parallel to reduce dialog startup latency.
+        Task<List<SoftwarePlatformDto>> referencePlatformsTask = SoftwareReleasesService.GetAllPlatformsAsync();
+        Task<List<UnM49Dto>> referenceRegionsTask = SoftwareReleasesService.GetAllUnM49Async();
+        Task<List<Iso639Dto>> referenceLanguagesTask = SoftwareReleasesService.GetAllLanguagesAsync();
+        Task<List<CompanyDto>> referenceCompaniesTask = SoftwareReleasesService.GetAllCompaniesAsync();
+        Task<List<GpuDto>> referenceGpusTask = SoftwareReleasesService.GetAllGpusAsync();
+        Task<List<SoundSynthDto>> referenceSoundSynthsTask = SoftwareReleasesService.GetAllSoundSynthsAsync();
+        Task<List<SoftwareDto>> referenceSoftwareTask = SoftwareReleasesService.GetAllSoftwareForPickerAsync();
 
-        // Load software list for picker (used in both single and compilation modes)
-        _allSoftwareForPicker = await SoftwareReleasesService.GetAllSoftwareForPickerAsync();
+        await Task.WhenAll(referencePlatformsTask,
+                           referenceRegionsTask,
+                           referenceLanguagesTask,
+                           referenceCompaniesTask,
+                           referenceGpusTask,
+                           referenceSoundSynthsTask,
+                           referenceSoftwareTask);
+
+        _allPlatforms        = referencePlatformsTask.Result;
+        _allUnM49            = referenceRegionsTask.Result;
+        _allLanguages        = referenceLanguagesTask.Result;
+        _allCompanies        = referenceCompaniesTask.Result;
+        _allGpus             = referenceGpusTask.Result;
+        _allSoundSynths      = referenceSoundSynthsTask.Result;
+        _allSoftwareForPicker = referenceSoftwareTask.Result;
 
         if(PlatformId is not null && _allPlatforms is not null)
             _selectedPlatform = _allPlatforms.Find(p => p.Id == PlatformId);
 
-        // Load existing regions for this release
         if(!IsNew && ReleaseId > 0)
-            _releaseRegions = await SoftwareReleasesService.GetReleaseRegionsAsync(ReleaseId);
-        else
-            _releaseRegions = [];
+        {
+            Task<List<UnM49BySoftwareReleaseDto>> releaseRegionsTask = SoftwareReleasesService.GetReleaseRegionsAsync(ReleaseId);
+            Task<List<LanguageBySoftwareReleaseDto>> releaseLanguagesTask = SoftwareReleasesService.GetReleaseLanguagesAsync(ReleaseId);
+            Task<List<SoftwareBarcodeDto>> barcodesTask = SoftwareReleasesService.GetBarcodesAsync(ReleaseId);
+            Task<List<SoftwareProductCodeDto>> productCodesTask = SoftwareReleasesService.GetProductCodesAsync(ReleaseId);
+            Task<List<GpuBySoftwareReleaseDto>> minimumGpusTask = SoftwareReleasesService.GetMinimumGpusAsync(ReleaseId);
+            Task<List<GpuBySoftwareReleaseDto>> recommendedGpusTask = SoftwareReleasesService.GetRecommendedGpusAsync(ReleaseId);
+            Task<List<SoundSynthBySoftwareReleaseDto>> soundSynthsTask = SoftwareReleasesService.GetSoundSynthsAsync(ReleaseId);
 
-        if(!IsNew && ReleaseId > 0)
-            _releaseLanguages = await SoftwareReleasesService.GetReleaseLanguagesAsync(ReleaseId);
+            if(_isCompilation)
+            {
+                Task<List<SoftwareVersionBySoftwareReleaseDto>> includedVersionsTask = SoftwareReleasesService.GetIncludedVersionsAsync(ReleaseId);
+                Task<List<SoftwareBySoftwareReleaseDto>> includedSoftwareTask = SoftwareReleasesService.GetIncludedSoftwareAsync(ReleaseId);
+
+                await Task.WhenAll(releaseRegionsTask,
+                                   releaseLanguagesTask,
+                                   barcodesTask,
+                                   productCodesTask,
+                                   minimumGpusTask,
+                                   recommendedGpusTask,
+                                   soundSynthsTask,
+                                   includedVersionsTask,
+                                   includedSoftwareTask);
+
+                _includedVersions = includedVersionsTask.Result;
+                _includedSoftware = includedSoftwareTask.Result;
+            }
+            else
+            {
+                await Task.WhenAll(releaseRegionsTask,
+                                   releaseLanguagesTask,
+                                   barcodesTask,
+                                   productCodesTask,
+                                   minimumGpusTask,
+                                   recommendedGpusTask,
+                                   soundSynthsTask);
+            }
+
+            _releaseRegions   = releaseRegionsTask.Result;
+            _releaseLanguages = releaseLanguagesTask.Result;
+            _barcodes         = barcodesTask.Result;
+            _productCodes     = productCodesTask.Result;
+            _minimumGpus      = minimumGpusTask.Result;
+            _recommendedGpus  = recommendedGpusTask.Result;
+            _soundSynths      = soundSynthsTask.Result;
+        }
         else
+        {
+            _releaseRegions   = [];
             _releaseLanguages = [];
+            _barcodes         = [];
+            _productCodes     = [];
+            _minimumGpus      = [];
+            _recommendedGpus  = [];
+            _soundSynths      = [];
+            _includedVersions = [];
+            _includedSoftware = [];
+        }
 
         if(PublisherId is not null && _allCompanies is not null)
             _selectedPublisher = _allCompanies.Find(c => c.Id == PublisherId);
@@ -566,21 +630,6 @@
 
                 if(SoftwareVersionId is not null)
                     _selectedVersion = _allVersionsForSelectedSoftware.Find(v => v.Id == SoftwareVersionId);
-            }
-        }
-
-        if(!IsNew)
-        {
-            _barcodes        = await SoftwareReleasesService.GetBarcodesAsync(ReleaseId);
-            _productCodes    = await SoftwareReleasesService.GetProductCodesAsync(ReleaseId);
-            _minimumGpus     = await SoftwareReleasesService.GetMinimumGpusAsync(ReleaseId);
-            _recommendedGpus = await SoftwareReleasesService.GetRecommendedGpusAsync(ReleaseId);
-            _soundSynths     = await SoftwareReleasesService.GetSoundSynthsAsync(ReleaseId);
-
-            if(_isCompilation)
-            {
-                _includedVersions = await SoftwareReleasesService.GetIncludedVersionsAsync(ReleaseId);
-                _includedSoftware = await SoftwareReleasesService.GetIncludedSoftwareAsync(ReleaseId);
             }
         }
 

@@ -46,6 +46,7 @@ public class SoundSynthBySoftwareReleaseController(MarechaiContext context) : Co
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<SoundSynthBySoftwareReleaseDto>> GetByReleaseAsync(ulong releaseId) =>
         context.SoundSynthBySoftwareRelease
+               .AsNoTracking()
                .Where(p => p.ReleaseId == releaseId)
                .Select(p => new SoundSynthBySoftwareReleaseDto
                 {

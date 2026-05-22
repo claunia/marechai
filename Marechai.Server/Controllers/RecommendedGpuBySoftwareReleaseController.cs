@@ -46,6 +46,7 @@ public class RecommendedGpuBySoftwareReleaseController(MarechaiContext context) 
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<GpuBySoftwareReleaseDto>> GetByReleaseAsync(ulong releaseId) =>
         context.RecommendedGpuBySoftwareRelease
+               .AsNoTracking()
                .Where(p => p.ReleaseId == releaseId)
                .Select(p => new GpuBySoftwareReleaseDto
                 {
