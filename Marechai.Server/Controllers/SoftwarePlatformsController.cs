@@ -33,7 +33,6 @@ using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -49,7 +48,6 @@ public class SoftwarePlatformsController(MarechaiContext context, IMemoryCache c
     static readonly TimeSpan _platformsCacheTtl  = TimeSpan.FromMinutes(5);
     [HttpGet]
     [AllowAnonymous]
-    [OutputCache(Duration = 300)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<List<SoftwarePlatformDto>> GetAsync()
@@ -100,6 +98,8 @@ public class SoftwarePlatformsController(MarechaiContext context, IMemoryCache c
         model.Name = dto.Name;
         await context.SaveChangesWithUserAsync(userId);
 
+        cache.Remove(PLATFORMS_CACHE_KEY);
+
         return Ok();
     }
 
@@ -122,6 +122,8 @@ public class SoftwarePlatformsController(MarechaiContext context, IMemoryCache c
         await context.SoftwarePlatforms.AddAsync(model);
         await context.SaveChangesWithUserAsync(userId);
 
+        cache.Remove(PLATFORMS_CACHE_KEY);
+
         return model.Id;
     }
 
@@ -143,6 +145,8 @@ public class SoftwarePlatformsController(MarechaiContext context, IMemoryCache c
         context.SoftwarePlatforms.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        cache.Remove(PLATFORMS_CACHE_KEY);
 
         return Ok();
     }
