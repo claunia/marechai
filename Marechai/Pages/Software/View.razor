@@ -750,7 +750,7 @@ else
                             }
                             @if(!string.IsNullOrEmpty(release.Platform))
                             {
-                                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Info">@release.Platform</MudChip>
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Warning">@release.Platform</MudChip>
                             }
                             @if(release.Regions is not null && release.Regions.Count > 0)
                             {
