@@ -269,16 +269,12 @@ public partial class View
 
             _versions.Sort((a, b) => NaturalStringComparer.Instance.Compare(a.VersionString, b.VersionString));
 
+            Dictionary<int, SoftwareReleaseDto> releasesById = _releases
+                                                               .Where(r => r.Id is not null)
+                                                               .ToDictionary(r => r.Id.GetValueOrDefault(), r => r);
+
             _coversByRelease = _covers
-                              .GroupBy(c =>
-                               {
-                                   string label = c.PlatformName ?? "Unknown";
-
-                                   if(!string.IsNullOrEmpty(c.RegionNames))
-                                       label += " — " + c.RegionNames;
-
-                                   return label;
-                               })
+                              .GroupBy(c => GetCoverGroupLabel(c, releasesById))
                               .OrderBy(g => g.Key)
                               .ToDictionary(g => g.Key, g => g.OrderBy(c => c.Type).ToList());
 
@@ -314,6 +310,59 @@ public partial class View
             (int)DatePrecision.YearOnly  => review.ReviewDate.Value.ToString("yyyy"),
             _                            => review.ReviewDate.Value.ToString("yyyy-MM-dd")
         };
+    }
+
+    static string GetCoverGroupLabel(SoftwareCoverDto cover,
+                                     IReadOnlyDictionary<int, SoftwareReleaseDto> releasesById)
+    {
+        if(cover is null)
+            return "Unknown";
+
+        if(cover.SoftwareReleaseId is > 0 && releasesById.TryGetValue(cover.SoftwareReleaseId.GetValueOrDefault(), out SoftwareReleaseDto release))
+        {
+            string label = FormatReleaseLabel(release);
+
+            if(!string.IsNullOrWhiteSpace(label))
+                return label;
+        }
+
+        if(!string.IsNullOrWhiteSpace(cover.ReleaseTitle))
+            return cover.ReleaseTitle;
+
+        List<string> parts = [];
+
+        if(!string.IsNullOrWhiteSpace(cover.PlatformName))
+            parts.Add(cover.PlatformName);
+
+        if(!string.IsNullOrWhiteSpace(cover.RegionNames))
+            parts.Add(cover.RegionNames);
+
+        return parts.Count == 0 ? "Unknown" : string.Join(" — ", parts);
+    }
+
+    static string FormatReleaseLabel(SoftwareReleaseDto release)
+    {
+        if(release is null)
+            return string.Empty;
+
+        List<string> parts = [];
+
+        if(!string.IsNullOrWhiteSpace(release.Title))
+            parts.Add(release.Title);
+
+        if(!string.IsNullOrWhiteSpace(release.SoftwareVersion))
+            parts.Add(release.SoftwareVersion);
+
+        if(!string.IsNullOrWhiteSpace(release.Platform))
+            parts.Add(release.Platform);
+
+        if(!string.IsNullOrWhiteSpace(release.Publisher))
+            parts.Add(release.Publisher);
+
+        if(release.ReleaseDate is not null)
+            parts.Add(release.ReleaseDate.Value.ToString("yyyy-MM-dd"));
+
+        return string.Join(" • ", parts);
     }
 
     async Task OnMyRatingChanged(float value)

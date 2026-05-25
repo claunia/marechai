@@ -114,6 +114,19 @@ public partial class SoftwareReleases
             NavigationManager.NavigateTo("/admin/software");
     }
 
+    void NavigateToCovers(SoftwareReleaseDto release)
+    {
+        if(release?.Id is null)
+            return;
+
+        int softwareId = release.SoftwareId ?? _parentSoftwareId ?? 0;
+
+        if(softwareId <= 0)
+            return;
+
+        NavigationManager.NavigateTo($"/admin/software/{softwareId}/covers/{release.Id.Value}");
+    }
+
     async Task OpenAddDialog()
     {
         bool isCompilation = !_isVersionContext && !_isSoftwareContext;

@@ -1,22 +1,33 @@
 @page "/admin/software/{SoftwareId:int}/covers"
+@page "/admin/software/{SoftwareId:int}/covers/{ReleaseId:int}"
 @attribute [Authorize(Roles = "Admin, UberAdmin")]
 @using System.Linq
 @using Marechai.ApiClient.Models
 @using Marechai.Services
 @inject SoftwareService SoftwareService
+@inject SoftwareReleasesService SoftwareReleasesService
 @inject IStringLocalizer<SoftwareService> L
 @inject IDialogService DialogService
 @inject NavigationManager NavigationManager
 @inject ApiAssetUrlProvider AssetUrls
 
-<MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" OnClick="@(() => NavigationManager.NavigateTo("/admin/software"))" Class="mb-4">@L["Back to Software"]</MudButton>
+<MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" OnClick="GoBack" Class="mb-4">@L["Back to Software"]</MudButton>
 
 <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #1565c0 0%, #42a5f5 100%); border-radius: 16px;">
     <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
         <MudIcon Icon="@Icons.Material.Filled.Image" Size="Size.Large" Style="color: white;"/>
         <MudText Typo="Typo.h4" Style="color: white;">@L["Software Cover Management"]</MudText>
     </MudStack>
-    <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);" Class="mt-2">@(_softwareName ?? L["Manage software covers."])</MudText>
+    <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);" Class="mt-2">
+        @if(_selectedRelease is not null)
+        {
+            @FormatReleaseLabel(_selectedRelease)
+        }
+        else
+        {
+            @(_softwareName ?? L["Manage software covers."])
+        }
+    </MudText>
 </MudPaper>
 
 @if(!string.IsNullOrWhiteSpace(_errorMessage))
@@ -41,20 +52,29 @@
 <MudPaper Elevation="2" Class="pa-4 mb-6 rounded-lg">
     <MudText Typo="Typo.h6" Class="mb-3">@L["Upload Cover"]</MudText>
     <MudStack Spacing="3">
-        <MudSelect T="SoftwareReleaseDto" @bind-Value="_selectedRelease"
-                   Label="@L["Release"]"
-                   Variant="Variant.Outlined"
-                   ToStringFunc="@(r => r is not null ? $"{r.Title} ({r.Platform})" : string.Empty)"
-                   Required="true"
-                   RequiredError="@L["Release is required."]">
-            @if(_releases is not null)
-            {
-                @foreach(SoftwareReleaseDto release in _releases)
+        @if(_selectedRelease is not null)
+        {
+            <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-2">
+                @L["Release"]: @FormatReleaseLabel(_selectedRelease)
+            </MudText>
+        }
+        else
+        {
+            <MudSelect T="SoftwareReleaseDto" @bind-Value="_selectedRelease"
+                       Label="@L["Release"]"
+                       Variant="Variant.Outlined"
+                       ToStringFunc="@(r => FormatReleaseLabel(r))"
+                       Required="true"
+                       RequiredError="@L["Release is required."]">
+                @if(_releases is not null)
                 {
-                    <MudSelectItem T="SoftwareReleaseDto" Value="release">@release.Title (@release.Platform)</MudSelectItem>
+                    @foreach(SoftwareReleaseDto release in _releases)
+                    {
+                        <MudSelectItem T="SoftwareReleaseDto" Value="release">@FormatReleaseLabel(release)</MudSelectItem>
+                    }
                 }
-            }
-        </MudSelect>
+            </MudSelect>
+        }
 
         <MudSelect T="int?" @bind-Value="_selectedType"
                    Label="@L["Cover Type"]"
@@ -160,20 +180,29 @@
                                 <MudText Typo="Typo.caption">@cover.ReleaseTitle</MudText>
                             }
 
-                            <MudSelect T="SoftwareReleaseDto"
-                                       Value="@(_releases?.FirstOrDefault(r => r.Id == cover.SoftwareReleaseId))"
-                                       ValueChanged="@(r => OnCoverReleaseChanged(cover, r))"
-                                       Label="@L["Release"]" Variant="Variant.Outlined" Dense="true"
-                                       ToStringFunc="@(r => r is not null ? $"{r.Title} ({r.Platform})" : string.Empty)"
-                                       Class="mt-2">
-                                @if(_releases is not null)
-                                {
-                                    @foreach(SoftwareReleaseDto release in _releases)
+                            @if(_selectedRelease is not null)
+                            {
+                                <MudText Typo="Typo.caption" Color="Color.Secondary" Class="mt-2">
+                                    @FormatReleaseLabel(_releases?.FirstOrDefault(r => r.Id == cover.SoftwareReleaseId))
+                                </MudText>
+                            }
+                            else
+                            {
+                                <MudSelect T="SoftwareReleaseDto"
+                                           Value="@(_releases?.FirstOrDefault(r => r.Id == cover.SoftwareReleaseId))"
+                                           ValueChanged="@(r => OnCoverReleaseChanged(cover, r))"
+                                           Label="@L["Release"]" Variant="Variant.Outlined" Dense="true"
+                                           ToStringFunc="@(r => FormatReleaseLabel(r))"
+                                           Class="mt-2">
+                                    @if(_releases is not null)
                                     {
-                                        <MudSelectItem T="SoftwareReleaseDto" Value="release">@release.Title (@release.Platform)</MudSelectItem>
+                                        @foreach(SoftwareReleaseDto release in _releases)
+                                        {
+                                            <MudSelectItem T="SoftwareReleaseDto" Value="release">@FormatReleaseLabel(release)</MudSelectItem>
+                                        }
                                     }
-                                }
-                            </MudSelect>
+                                </MudSelect>
+                            }
 
                             <MudSelect T="int?"
                                        Value="@(cover.Type)"

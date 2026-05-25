@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.AspNetCore.Components;
@@ -51,12 +52,28 @@ public partial class SoftwareCovers
     string                       _successMessage;
 
     [Parameter] public int SoftwareId { get; set; }
+    [Parameter] public int? ReleaseId { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
         SoftwareDto software = await SoftwareService.GetSoftwareByIdAsync(SoftwareId);
         _softwareName = software?.Name;
         _releases     = await SoftwareService.GetReleasesBySoftwareAsync(SoftwareId);
+
+        if(ReleaseId is > 0)
+        {
+            SoftwareReleaseDto release = await SoftwareReleasesService.GetByIdAsync(ReleaseId.Value);
+
+            if(release?.SoftwareId == SoftwareId)
+                _selectedRelease = release;
+            else
+                _selectedRelease = null;
+        }
+        else
+        {
+            _selectedRelease = null;
+        }
+
         await LoadDataAsync();
     }
 
@@ -64,6 +81,10 @@ public partial class SoftwareCovers
     {
         _isLoading = true;
         _covers    = await SoftwareService.GetCoversBySoftwareAsync(SoftwareId);
+
+        if(_selectedRelease?.Id is not null)
+            _covers = _covers.Where(c => c.SoftwareReleaseId == _selectedRelease.Id).ToList();
+
         _isLoading = false;
     }
 
@@ -197,6 +218,14 @@ public partial class SoftwareCovers
             _errorMessage = error;
     }
 
+    void GoBack()
+    {
+        if(_selectedRelease?.SoftwareVersionId is > 0)
+            NavigationManager.NavigateTo($"/admin/software/versions/{_selectedRelease.SoftwareVersionId}/releases");
+        else
+            NavigationManager.NavigateTo($"/admin/software/{SoftwareId}/releases");
+    }
+
     async Task ConfirmDeleteCover(SoftwareCoverDto cover)
     {
         DialogParameters<DeleteConfirmDialog> parameters = new()
@@ -231,6 +260,31 @@ public partial class SoftwareCovers
                 _errorMessage = errorMessage;
             }
         }
+    }
+
+    static string FormatReleaseLabel(SoftwareReleaseDto release)
+    {
+        if(release is null)
+            return string.Empty;
+
+        List<string> parts = [];
+
+        if(!string.IsNullOrWhiteSpace(release.Title))
+            parts.Add(release.Title);
+
+        if(!string.IsNullOrWhiteSpace(release.SoftwareVersion))
+            parts.Add(release.SoftwareVersion);
+
+        if(!string.IsNullOrWhiteSpace(release.Platform))
+            parts.Add(release.Platform);
+
+        if(!string.IsNullOrWhiteSpace(release.Publisher))
+            parts.Add(release.Publisher);
+
+        if(release.ReleaseDate is not null)
+            parts.Add(release.ReleaseDate.Value.ToString("yyyy-MM-dd"));
+
+        return string.Join(" • ", parts);
     }
 
     static string GetTypeName(int? type) => type switch
