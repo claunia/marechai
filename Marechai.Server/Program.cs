@@ -432,6 +432,15 @@ file class Program
         builder.Services.AddSingleton<Marechai.Translation.ITranslationProvider,
                                       SoftwareScreenshotCaptionTranslationProvider>();
 
+        // Software screenshot group translation provider — NO in-memory cache singleton; the
+        // read endpoints project the localized group name directly from the DB via a LEFT JOIN
+        // sub-query. The worker fills SoftwareScreenshotGroupTranslations in the background so
+        // subsequent requests in each non-English language find a row instead of falling back
+        // to the English canonical name. Mirrors the SoftwarePromoArtGroup provider pattern;
+        // unique group names are translated ONCE no matter how many screenshots reference them.
+        builder.Services.AddSingleton<Marechai.Translation.ITranslationProvider,
+                                      SoftwareScreenshotGroupTranslationProvider>();
+
         // Coordinator that hands off control between the primary TranslationWorker (running on
         // a 6-hour sweep cycle) and the companion DescriptionTranslationWorker (running ONLY
         // during the inter-sweep slumber). The companion fills missing per-language rows in

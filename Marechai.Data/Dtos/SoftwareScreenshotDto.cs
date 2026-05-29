@@ -67,6 +67,33 @@ public class SoftwareScreenshotDto : BaseDto<Guid>
     [JsonPropertyName("canonical_caption")]
     public string? CanonicalCaption { get; set; }
 
+    /// <summary>
+    ///     Optional FK into <c>SoftwareScreenshotGroups</c>. Multiple screenshots in the same
+    ///     software (or across the entire catalog) share the same row when they belong to the
+    ///     same group, so the translation worker only renders each unique group name once per
+    ///     supported language.
+    /// </summary>
+    [JsonPropertyName("group_id")]
+    public int? GroupId { get; set; }
+
+    /// <summary>
+    ///     Display name of the screenshot group, localized to the requested language with fallback
+    ///     to the canonical English value (= <see cref="CanonicalGroupName" />). Null when this
+    ///     screenshot has no group assigned.
+    /// </summary>
+    [JsonPropertyName("group_name")]
+    public string? GroupName { get; set; }
+
+    /// <summary>
+    ///     Canonical English name of the screenshot group as stored in
+    ///     <c>SoftwareScreenshotGroups.Name</c>. Always populated identically to the underlying
+    ///     column regardless of the requested language so admin / suggestion edit paths can
+    ///     rewrite the source-of-truth value via get-or-create. Null when this screenshot has no
+    ///     group assigned.
+    /// </summary>
+    [JsonPropertyName("canonical_group_name")]
+    public string? CanonicalGroupName { get; set; }
+
     [JsonPropertyName("original_extension")]
     [Required]
     public string OriginalExtension { get; set; }

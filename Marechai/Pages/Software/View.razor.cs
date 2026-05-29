@@ -62,7 +62,7 @@ public partial class View
     bool                                        _loaded;
     List<SoftwareReleaseDto>                     _releases = [];
     List<SoftwareScreenshotDto>                  _screenshots = [];
-    Dictionary<string, List<SoftwareScreenshotDto>> _screenshotsByPlatform = new();
+    List<ScreenshotVersionBucket>                _screenshotTree = [];
     SoftwareScreenshotDto                       _fullscreenScreenshot;
     List<SoftwareCoverDto>                       _covers = [];
     Dictionary<string, List<SoftwareCoverDto>>    _coversByRelease = new();
@@ -283,10 +283,7 @@ public partial class View
                               .OrderBy(g => g.Key)
                               .ToDictionary(g => g.Key, g => g.ToList());
 
-            _screenshotsByPlatform = _screenshots
-                                    .GroupBy(s => s.PlatformName ?? "Unknown")
-                                    .OrderBy(g => g.Key)
-                                    .ToDictionary(g => g.Key, g => g.ToList());
+            _screenshotTree = BuildScreenshotHierarchy(_screenshots);
 
             if(_isAuthenticated)
                 _myReview = _userReviews.FirstOrDefault(r => r.UserId == _currentUserId);
@@ -930,5 +927,126 @@ public partial class View
         if(result is null || result.Canceled) return;
 
         // No reload needed — videos only appear after admin acceptance.
+    }
+
+    // ──────────────────────────── Screenshot grouping ────────────────────────────
+
+    /// <summary>
+    ///     Hierarchical render model for the Screenshots card. Built once from the flat
+    ///     <c>_screenshots</c> list and consumed by the razor markup. The three nested levels
+    ///     (Version → Group → Platform) apply a UNIFORM rule: skip a level entirely when NO
+    ///     screenshot in scope has the attribute; otherwise emit one bucket per distinct
+    ///     non-null value PLUS a trailing null bucket only when the scope is mixed (some have
+    ///     the attribute, some don't). When the level is skipped, a single synthetic bucket
+    ///     with <see cref="ScreenshotVersionBucket.Label" /> / <see cref="ScreenshotGroupBucket.Label" /> /
+    ///     <see cref="ScreenshotPlatformBucket.Label" /> set to <c>null</c> AND
+    ///     <see cref="ScreenshotVersionBucket.IsTrailingNull" /> / etc. set to <c>false</c>
+    ///     descends to the next level without a heading. When the bucket is the trailing
+    ///     null one, <see cref="ScreenshotVersionBucket.IsTrailingNull" /> is <c>true</c> and
+    ///     the razor render emits the localized "No version specified" / "No platform" label
+    ///     (or, for group level, a visually-separated unlabeled block).
+    /// </summary>
+    public sealed record ScreenshotVersionBucket(
+        string                            Label,
+        bool                              IsTrailingNull,
+        IReadOnlyList<ScreenshotGroupBucket> Groups);
+
+    public sealed record ScreenshotGroupBucket(
+        string                                Label,
+        bool                                  IsTrailingNull,
+        IReadOnlyList<ScreenshotPlatformBucket> Platforms);
+
+    public sealed record ScreenshotPlatformBucket(
+        string                                 Label,
+        bool                                   IsTrailingNull,
+        IReadOnlyList<SoftwareScreenshotDto>   Screenshots);
+
+    /// <summary>
+    ///     Compute the version → group → platform tree per the spec. Every screenshot in
+    ///     <paramref name="screenshots" /> appears exactly once in the returned tree
+    ///     (<c>sum(leaf counts) == screenshots.Count</c>).
+    /// </summary>
+    static List<ScreenshotVersionBucket> BuildScreenshotHierarchy(List<SoftwareScreenshotDto> screenshots)
+    {
+        if(screenshots is null || screenshots.Count == 0) return [];
+
+        return BuildVersionBuckets(screenshots);
+    }
+
+    static List<ScreenshotVersionBucket> BuildVersionBuckets(IReadOnlyList<SoftwareScreenshotDto> scope)
+    {
+        // If no screenshot in scope has a version, collapse the version level — single
+        // synthetic bucket (Label=null, IsTrailingNull=false) descends to group level
+        // without emitting a heading.
+        bool anyHasVersion = scope.Any(s => s.SoftwareVersionId.HasValue);
+
+        if(!anyHasVersion)
+            return [new ScreenshotVersionBucket(null, false, BuildGroupBuckets(scope))];
+
+        var buckets = scope.Where(s => s.SoftwareVersionId.HasValue)
+                           .GroupBy(s => s.VersionString ?? $"#{s.SoftwareVersionId!.Value}",
+                                    StringComparer.CurrentCultureIgnoreCase)
+                           .OrderBy(g => g.Key, StringComparer.CurrentCultureIgnoreCase)
+                           .Select(g => new ScreenshotVersionBucket(g.Key, false,
+                                                                    BuildGroupBuckets(g.ToList())))
+                           .ToList();
+
+        // Mixed-scope trailing bucket: rendered as "No version specified" AFTER all real
+        // versions. Only emitted when at least one screenshot is versionless AND we're not
+        // in the all-versionless case (handled above).
+        var versionless = scope.Where(s => !s.SoftwareVersionId.HasValue).ToList();
+
+        if(versionless.Count > 0)
+            buckets.Add(new ScreenshotVersionBucket(null, true, BuildGroupBuckets(versionless)));
+
+        return buckets;
+    }
+
+    static List<ScreenshotGroupBucket> BuildGroupBuckets(IReadOnlyList<SoftwareScreenshotDto> scope)
+    {
+        bool anyHasGroup = scope.Any(s => s.GroupId.HasValue);
+
+        if(!anyHasGroup)
+            return [new ScreenshotGroupBucket(null, false, BuildPlatformBuckets(scope))];
+
+        var buckets = scope.Where(s => s.GroupId.HasValue)
+                           .GroupBy(s => s.GroupName ?? $"#{s.GroupId!.Value}",
+                                    StringComparer.CurrentCultureIgnoreCase)
+                           .OrderBy(g => g.Key, StringComparer.CurrentCultureIgnoreCase)
+                           .Select(g => new ScreenshotGroupBucket(g.Key, false,
+                                                                  BuildPlatformBuckets(g.ToList())))
+                           .ToList();
+
+        // Mixed-scope trailing block: screenshots that have no group, rendered AFTER all
+        // group sub-headings without a label (visual separation only). Only emitted when
+        // some — but not all — screenshots in scope have a group.
+        var ungrouped = scope.Where(s => !s.GroupId.HasValue).ToList();
+
+        if(ungrouped.Count > 0)
+            buckets.Add(new ScreenshotGroupBucket(null, true, BuildPlatformBuckets(ungrouped)));
+
+        return buckets;
+    }
+
+    static List<ScreenshotPlatformBucket> BuildPlatformBuckets(IReadOnlyList<SoftwareScreenshotDto> scope)
+    {
+        bool anyHasPlatform = scope.Any(s => s.SoftwarePlatformId.HasValue);
+
+        if(!anyHasPlatform)
+            return [new ScreenshotPlatformBucket(null, false, scope.ToList())];
+
+        var buckets = scope.Where(s => s.SoftwarePlatformId.HasValue)
+                           .GroupBy(s => s.PlatformName ?? $"#{s.SoftwarePlatformId!.Value}",
+                                    StringComparer.CurrentCultureIgnoreCase)
+                           .OrderBy(g => g.Key, StringComparer.CurrentCultureIgnoreCase)
+                           .Select(g => new ScreenshotPlatformBucket(g.Key, false, g.ToList()))
+                           .ToList();
+
+        var platformless = scope.Where(s => !s.SoftwarePlatformId.HasValue).ToList();
+
+        if(platformless.Count > 0)
+            buckets.Add(new ScreenshotPlatformBucket(null, true, platformless));
+
+        return buckets;
     }
 }

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.AspNetCore.Components;
@@ -16,6 +18,7 @@ public partial class SoftwareScreenshots
     List<SoftwarePlatformDto>     _platforms;
     List<SoftwareScreenshotDto>   _screenshots;
     SoftwarePlatformDto           _selectedPlatform;
+    string                        _selectedGroupName;
     string                        _softwareName;
     string                        _successMessage;
 
@@ -54,7 +57,8 @@ public partial class SoftwareScreenshots
                                    : null;
 
             SoftwareScreenshotDto result =
-                await SoftwareService.UploadScreenshotAsync(SoftwareId, fileBytes, file.Name, platformId);
+                await SoftwareService.UploadScreenshotAsync(SoftwareId, fileBytes, file.Name, platformId,
+                                                            canonicalGroupName: _selectedGroupName?.Trim());
 
             if(result is not null)
             {
@@ -117,6 +121,8 @@ public partial class SoftwareScreenshots
         screenshot.SoftwarePlatformId = newPlatformId;
         screenshot.PlatformName       = platform?.Name;
 
+        // Preserve the existing canonical group on the wire DTO so the server's resolve-or-create
+        // doesn't clear it when we only meant to change the platform.
         var dto = new SoftwareScreenshotDto
         {
             Id                 = screenshot.Id,
@@ -124,6 +130,8 @@ public partial class SoftwareScreenshots
             SoftwarePlatformId = newPlatformId,
             SoftwareVersionId  = screenshot.SoftwareVersionId,
             Caption            = screenshot.Caption,
+            CanonicalCaption   = screenshot.CanonicalCaption ?? screenshot.Caption,
+            CanonicalGroupName = screenshot.CanonicalGroupName,
             OriginalExtension  = screenshot.OriginalExtension
         };
 
@@ -131,5 +139,53 @@ public partial class SoftwareScreenshots
 
         if(!succeeded)
             _errorMessage = error;
+    }
+
+    async Task OnScreenshotGroupChanged(SoftwareScreenshotDto screenshot, string canonicalGroupName)
+    {
+        string trimmed = canonicalGroupName?.Trim();
+
+        // Treat "" identically to null — clearing the autocomplete drops the FK.
+        if(string.IsNullOrWhiteSpace(trimmed)) trimmed = null;
+
+        if(string.Equals(screenshot.CanonicalGroupName ?? string.Empty, trimmed ?? string.Empty,
+                         StringComparison.Ordinal))
+            return;
+
+        screenshot.CanonicalGroupName = trimmed;
+        screenshot.GroupName          = trimmed;
+
+        var dto = new SoftwareScreenshotDto
+        {
+            Id                 = screenshot.Id,
+            SoftwareId         = screenshot.SoftwareId,
+            SoftwarePlatformId = screenshot.SoftwarePlatformId,
+            SoftwareVersionId  = screenshot.SoftwareVersionId,
+            Caption            = screenshot.Caption,
+            CanonicalCaption   = screenshot.CanonicalCaption ?? screenshot.Caption,
+            CanonicalGroupName = trimmed,
+            OriginalExtension  = screenshot.OriginalExtension
+        };
+
+        (bool succeeded, string error) = await SoftwareService.UpdateScreenshotAsync(screenshot.Id!.Value, dto);
+
+        if(!succeeded)
+            _errorMessage = error;
+    }
+
+    /// <summary>
+    ///     Backing search delegate for the group <c>MudAutocomplete</c>. Returns the canonical
+    ///     English names matching <paramref name="search" /> so the autocomplete displays the
+    ///     same string it submits back to the server's resolve-or-create endpoint. Server-side
+    ///     filtering keeps the wire payload bounded (top-25) and avoids holding the full group
+    ///     catalog in memory client-side.
+    /// </summary>
+    async Task<IEnumerable<string>> SearchGroupsAsync(string search, CancellationToken cancellationToken)
+    {
+        List<SoftwareScreenshotGroupDto> groups = await SoftwareService.GetScreenshotGroupsAsync(search);
+
+        return groups.Select(g => g.CanonicalName)
+                     .Where(n => !string.IsNullOrWhiteSpace(n))
+                     .Distinct(StringComparer.OrdinalIgnoreCase);
     }
 }

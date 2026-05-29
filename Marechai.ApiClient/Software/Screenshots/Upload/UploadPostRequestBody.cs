@@ -14,6 +14,14 @@ namespace Marechai.ApiClient.Software.Screenshots.Upload
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
+        /// <summary>The canonicalGroupName property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? CanonicalGroupName { get; set; }
+#nullable restore
+#else
+        public string CanonicalGroupName { get; set; }
+#endif
         /// <summary>The caption property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -61,6 +69,7 @@ namespace Marechai.ApiClient.Software.Screenshots.Upload
         {
             return new Dictionary<string, Action<IParseNode>>
             {
+                { "canonicalGroupName", n => { CanonicalGroupName = n.GetStringValue(); } },
                 { "caption", n => { Caption = n.GetStringValue(); } },
                 { "file", n => { File = n.GetByteArrayValue(); } },
                 { "softwareId", n => { SoftwareId = n.GetIntValue(); } },
@@ -75,6 +84,7 @@ namespace Marechai.ApiClient.Software.Screenshots.Upload
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
+            writer.WriteStringValue("canonicalGroupName", CanonicalGroupName);
             writer.WriteStringValue("caption", Caption);
             writer.WriteByteArrayValue("file", File);
             writer.WriteIntValue("softwareId", SoftwareId);

@@ -22,6 +22,14 @@ namespace Marechai.ApiClient.Models
 #else
         public string CanonicalCaption { get; set; }
 #endif
+        /// <summary>The canonical_group_name property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? CanonicalGroupName { get; set; }
+#nullable restore
+#else
+        public string CanonicalGroupName { get; set; }
+#endif
         /// <summary>The caption property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -29,6 +37,16 @@ namespace Marechai.ApiClient.Models
 #nullable restore
 #else
         public string Caption { get; set; }
+#endif
+        /// <summary>The group_id property</summary>
+        public int? GroupId { get; set; }
+        /// <summary>The group_name property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? GroupName { get; set; }
+#nullable restore
+#else
+        public string GroupName { get; set; }
 #endif
         /// <summary>The id property</summary>
         public Guid? Id { get; set; }
@@ -96,7 +114,10 @@ namespace Marechai.ApiClient.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "canonical_caption", n => { CanonicalCaption = n.GetStringValue(); } },
+                { "canonical_group_name", n => { CanonicalGroupName = n.GetStringValue(); } },
                 { "caption", n => { Caption = n.GetStringValue(); } },
+                { "group_id", n => { GroupId = n.GetIntValue(); } },
+                { "group_name", n => { GroupName = n.GetStringValue(); } },
                 { "id", n => { Id = n.GetGuidValue(); } },
                 { "original_extension", n => { OriginalExtension = n.GetStringValue(); } },
                 { "platform_name", n => { PlatformName = n.GetStringValue(); } },
@@ -115,7 +136,10 @@ namespace Marechai.ApiClient.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("canonical_caption", CanonicalCaption);
+            writer.WriteStringValue("canonical_group_name", CanonicalGroupName);
             writer.WriteStringValue("caption", Caption);
+            writer.WriteIntValue("group_id", GroupId);
+            writer.WriteStringValue("group_name", GroupName);
             writer.WriteGuidValue("id", Id);
             writer.WriteStringValue("original_extension", OriginalExtension);
             writer.WriteStringValue("platform_name", PlatformName);

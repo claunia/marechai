@@ -23,28 +23,16 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
-using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Marechai.Database.Models;
 
-public class SoftwareScreenshot : BaseModel<Guid>
+public class SoftwareScreenshotGroup : BaseModel<int>
 {
     [Required]
-    public ulong SoftwareId { get;           set; }
-    public virtual Software Software { get; set; }
+    [StringLength(256)]
+    public string Name { get; set; }
 
-    public         ulong?           SoftwarePlatformId { get; set; }
-    public virtual SoftwarePlatform Platform           { get; set; }
-
-    public         ulong?          SoftwareVersionId { get; set; }
-    public virtual SoftwareVersion Version           { get; set; }
-
-    public         int?                     GroupId { get; set; }
-    public virtual SoftwareScreenshotGroup Group   { get; set; }
-
-    public string Caption { get; set; }
-
-    [Required]
-    public string OriginalExtension { get; set; }
+    public virtual ICollection<SoftwareScreenshot> Screenshots { get; set; }
 }

@@ -131,15 +131,18 @@ public class SoftwareScreenshotsController(MarechaiContext context, IConfigurati
                                                        VersionString = s.Version != null ? s.Version.VersionString : null,
                                                        Caption            = s.Caption,
                                                        CanonicalCaption   = s.Caption,
+                                                       GroupId            = s.GroupId,
+                                                       GroupName          = s.Group != null ? s.Group.Name : null,
+                                                       CanonicalGroupName = s.Group != null ? s.Group.Name : null,
                                                        OriginalExtension  = s.OriginalExtension
                                                    })
                                                   .FirstOrDefaultAsync();
 
         if(dto is null) return NotFound();
 
-        // Caption translation lookup is a separate query so EF doesn't emit a correlated
-        // subquery against the translations table inside the projection above. Only runs
-        // when a non-English language was resolved AND the canonical caption is non-null.
+        // Caption + group translation lookups are separate queries so EF doesn't emit
+        // correlated subqueries against the translations tables inside the projection above.
+        // Only run when a non-English language was resolved AND the canonical text is non-null.
         if(!isEnglish && dto.Caption != null)
         {
             string translated = await context.SoftwareScreenshotCaptionTranslations
@@ -148,6 +151,17 @@ public class SoftwareScreenshotsController(MarechaiContext context, IConfigurati
                                               .FirstOrDefaultAsync();
 
             if(translated != null) dto.Caption = translated;
+        }
+
+        if(!isEnglish && dto.GroupId.HasValue)
+        {
+            string translatedGroup = await context.SoftwareScreenshotGroupTranslations
+                                                  .Where(t => t.GroupId == dto.GroupId.Value &&
+                                                              t.LanguageCode == langCode)
+                                                  .Select(t => t.Name)
+                                                  .FirstOrDefaultAsync();
+
+            if(translatedGroup != null) dto.GroupName = translatedGroup;
         }
 
         return Ok(dto);
@@ -177,6 +191,11 @@ public class SoftwareScreenshotsController(MarechaiContext context, IConfigurati
                                                                                   : null,
                                                               Caption           = s.Caption,
                                                               CanonicalCaption  = s.Caption,
+                                                              GroupId           = s.GroupId,
+                                                              GroupName = s.Group != null ? s.Group.Name : null,
+                                                              CanonicalGroupName = s.Group != null
+                                                                                       ? s.Group.Name
+                                                                                       : null,
                                                               OriginalExtension = s.OriginalExtension
                                                           })
                                                          .ToListAsync();
@@ -187,25 +206,51 @@ public class SoftwareScreenshotsController(MarechaiContext context, IConfigurati
         // subquery inside the projection above, executed once per screenshot row).
         Guid[] ids = list.Where(d => d.Caption != null).Select(d => d.Id).ToArray();
 
-        if(ids.Length == 0) return list;
+        if(ids.Length > 0)
+        {
+            Dictionary<Guid, string> translations =
+                await context.SoftwareScreenshotCaptionTranslations
+                             .Where(t => ids.Contains(t.ScreenshotId) && t.LanguageCode == langCode)
+                             .Select(t => new
+                              {
+                                  t.ScreenshotId,
+                                  t.Caption
+                              })
+                             .ToDictionaryAsync(x => x.ScreenshotId, x => x.Caption);
 
-        Dictionary<Guid, string> translations =
-            await context.SoftwareScreenshotCaptionTranslations
-                         .Where(t => ids.Contains(t.ScreenshotId) && t.LanguageCode == langCode)
-                         .Select(t => new
-                          {
-                              t.ScreenshotId,
-                              t.Caption
-                          })
-                         .ToDictionaryAsync(x => x.ScreenshotId, x => x.Caption);
+            if(translations.Count > 0)
+            {
+                foreach(SoftwareScreenshotDto dto in list)
+                {
+                    if(dto.Caption == null) continue;
 
-        if(translations.Count == 0) return list;
+                    if(translations.TryGetValue(dto.Id, out string translated) && translated != null)
+                        dto.Caption = translated;
+                }
+            }
+        }
+
+        // Backfill non-English group names with the same IN-list pattern. Distinct groupId set
+        // ensures we don't redundantly fetch the same translation row for groups shared by
+        // multiple screenshots.
+        int[] groupIds = list.Where(d => d.GroupId.HasValue).Select(d => d.GroupId!.Value).Distinct().ToArray();
+
+        if(groupIds.Length == 0) return list;
+
+        Dictionary<int, string> groupTranslations =
+            await context.SoftwareScreenshotGroupTranslations
+                         .Where(t => groupIds.Contains(t.GroupId) && t.LanguageCode == langCode)
+                         .Select(t => new { t.GroupId, t.Name })
+                         .ToDictionaryAsync(x => x.GroupId, x => x.Name);
+
+        if(groupTranslations.Count == 0) return list;
 
         foreach(SoftwareScreenshotDto dto in list)
         {
-            if(dto.Caption == null) continue;
+            if(!dto.GroupId.HasValue) continue;
 
-            if(translations.TryGetValue(dto.Id, out string translated) && translated != null) dto.Caption = translated;
+            if(groupTranslations.TryGetValue(dto.GroupId.Value, out string translated) && translated != null)
+                dto.GroupName = translated;
         }
 
         return list;
@@ -221,7 +266,8 @@ public class SoftwareScreenshotsController(MarechaiContext context, IConfigurati
                                                                        [FromForm] ulong     softwareId,
                                                                        [FromForm] ulong?    softwarePlatformId,
                                                                        [FromForm] ulong?    softwareVersionId,
-                                                                       [FromForm] string   caption)
+                                                                       [FromForm] string   caption,
+                                                                       [FromForm] string   canonicalGroupName = null)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
@@ -265,6 +311,10 @@ public class SoftwareScreenshotsController(MarechaiContext context, IConfigurati
                 return BadRequest("Referenced software version does not exist or does not belong to this software.");
         }
 
+        // Optional group: resolve-or-create by canonical English name. Mirrors the PromoArt
+        // controller's pattern but stays optional (screenshots without a group are valid).
+        SoftwareScreenshotGroup group = await ResolveOrCreateGroupAsync(canonicalGroupName, userId);
+
         using var ms = new MemoryStream();
         await file.CopyToAsync(ms);
         ms.Position = 0;
@@ -275,6 +325,7 @@ public class SoftwareScreenshotsController(MarechaiContext context, IConfigurati
             SoftwareId         = softwareId,
             SoftwarePlatformId = softwarePlatformId,
             SoftwareVersionId  = softwareVersionId,
+            GroupId            = group?.Id,
             Caption            = caption,
             OriginalExtension  = extension.TrimStart('.')
         };
@@ -315,6 +366,9 @@ public class SoftwareScreenshotsController(MarechaiContext context, IConfigurati
             SoftwareVersionId  = model.SoftwareVersionId,
             Caption            = model.Caption,
             CanonicalCaption   = model.Caption,
+            GroupId            = model.GroupId,
+            GroupName          = group?.Name,
+            CanonicalGroupName = group?.Name,
             OriginalExtension  = model.OriginalExtension
         });
     }
@@ -355,6 +409,13 @@ public class SoftwareScreenshotsController(MarechaiContext context, IConfigurati
         model.Caption            = newCaption;
         model.SoftwarePlatformId = dto.SoftwarePlatformId;
         model.SoftwareVersionId  = dto.SoftwareVersionId;
+
+        // Group resolve-or-create: admin / suggestion edit submits the canonical English group
+        // name via dto.CanonicalGroupName. Null/empty CLEARS the group assignment (the FK is
+        // optional). Non-null gets resolved against SoftwareScreenshotGroups; missing rows are
+        // created on the fly so admins don't need to pre-seed groups before assigning them.
+        SoftwareScreenshotGroup group = await ResolveOrCreateGroupAsync(dto.CanonicalGroupName, userId);
+        model.GroupId = group?.Id;
 
         await context.SaveChangesWithUserAsync(userId);
 
@@ -422,6 +483,90 @@ public class SoftwareScreenshotsController(MarechaiContext context, IConfigurati
 
         foreach(string file in System.IO.Directory.GetFiles(directory, pattern))
             System.IO.File.Delete(file);
+    }
+
+    /// <summary>
+    ///     Resolve a free-form English group name to an existing
+    ///     <see cref="SoftwareScreenshotGroup" /> row, creating one on the fly if no
+    ///     case-sensitive match exists. Returns <c>null</c> when the input is null / empty so
+    ///     the caller can clear the optional FK. Trims whitespace and rejects names longer than
+    ///     256 characters via <see cref="System.ArgumentException" /> at the model boundary —
+    ///     that's defensive only; controllers should validate length before calling.
+    /// </summary>
+    /// <remarks>
+    ///     Unlike the PromoArt controller's helper (where groups are mandatory), this returns\n    ///     <c>null</c> for empty input so screenshots without a group keep <c>GroupId == null</c>.\n    ///     The unique index on <c>SoftwareScreenshotGroups.Name</c> guarantees no duplicate row\n    ///     is created under concurrent uploads; the worst case is a transient INSERT failure that\n    ///     the caller can retry once.\n    /// </remarks>
+    async Task<SoftwareScreenshotGroup> ResolveOrCreateGroupAsync(string canonicalName, string userId)
+    {
+        string trimmed = canonicalName?.Trim();
+        if(string.IsNullOrWhiteSpace(trimmed)) return null;
+
+        if(trimmed.Length > 256) trimmed = trimmed[..256];
+
+        SoftwareScreenshotGroup group =
+            await context.SoftwareScreenshotGroups.FirstOrDefaultAsync(g => g.Name == trimmed);
+
+        if(group is not null) return group;
+
+        group = new SoftwareScreenshotGroup { Name = trimmed };
+        await context.SoftwareScreenshotGroups.AddAsync(group);
+        await context.SaveChangesWithUserAsync(userId);
+
+        return group;
+    }
+
+    /// <summary>
+    ///     Autocomplete data source for the admin uploader + suggestion-dialog group pickers.
+    ///     Returns up to 25 groups whose canonical English name contains the <paramref name="search" />
+    ///     substring (case-insensitive), ordered alphabetically. Localized
+    ///     <see cref="SoftwareScreenshotGroupDto.Name" /> is filled with English fallback when no
+    ///     translation row exists for the requested language; <see cref="SoftwareScreenshotGroupDto.CanonicalName" />
+    ///     is always the English value so the edit-path submits back the canonical row identifier.
+    /// </summary>
+    [HttpGet("groups")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<List<SoftwareScreenshotGroupDto>> GetGroupsAsync([FromQuery] string search = null,
+                                                                       [FromQuery] string lang   = null)
+    {
+        string langCode  = LanguageResolver.Resolve(HttpContext, lang);
+        bool   isEnglish = string.Equals(langCode, "eng", StringComparison.Ordinal);
+
+        IQueryable<SoftwareScreenshotGroup> query = context.SoftwareScreenshotGroups.AsNoTracking();
+
+        if(!string.IsNullOrWhiteSpace(search))
+        {
+            string trimmed = search.Trim();
+            query = query.Where(g => EF.Functions.Like(g.Name, $"%{trimmed}%"));
+        }
+
+        List<SoftwareScreenshotGroupDto> groups = isEnglish
+                                                      ? await query.Select(g => new SoftwareScreenshotGroupDto
+                                                                    {
+                                                                        Id            = g.Id,
+                                                                        Name          = g.Name,
+                                                                        CanonicalName = g.Name
+                                                                    })
+                                                                   .Take(25)
+                                                                   .ToListAsync()
+                                                      : await query.Select(g => new SoftwareScreenshotGroupDto
+                                                                    {
+                                                                        Id   = g.Id,
+                                                                        Name = context.SoftwareScreenshotGroupTranslations
+                                                                                      .Where(t => t.GroupId      == g.Id &&
+                                                                                                  t.LanguageCode == langCode)
+                                                                                      .Select(t => t.Name)
+                                                                                      .FirstOrDefault() ?? g.Name,
+                                                                        CanonicalName = g.Name
+                                                                    })
+                                                                   .Take(25)
+                                                                   .ToListAsync();
+
+        // Sort in-memory by the localized Name so the displayed list is alphabetical in the
+        // requested language (sorting in EF would force the join into ORDER BY and complicate
+        // SQL — the result set is bounded to 25 rows).
+        groups.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.CurrentCultureIgnoreCase));
+
+        return groups;
     }
 
     // ─────────────── Collaborative pending-image endpoints ───────────────

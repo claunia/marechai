@@ -1105,4 +1105,16 @@
     <data name="—" xml:space="preserve">
         <value>—</value>
     </data>
+    <data name="Group (optional, in English)" xml:space="preserve">
+        <value>Group (optional, in English)</value>
+    </data>
+    <data name="Type a new group name or pick an existing one" xml:space="preserve">
+        <value>Type a new group name or pick an existing one</value>
+    </data>
+    <data name="No version specified" xml:space="preserve">
+        <value>No version specified</value>
+    </data>
+    <data name="No platform" xml:space="preserve">
+        <value>No platform</value>
+    </data>
 </root>

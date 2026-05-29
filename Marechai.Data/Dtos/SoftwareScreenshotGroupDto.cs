@@ -23,28 +23,29 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
-namespace Marechai.Database.Models;
+namespace Marechai.Data.Dtos;
 
-public class SoftwareScreenshot : BaseModel<Guid>
+public class SoftwareScreenshotGroupDto : BaseDto<int>
 {
+    /// <summary>
+    ///     Display name in the language requested by the caller (server resolves the language via
+    ///     <c>?lang=</c> → <c>Accept-Language</c> → <c>"eng"</c>). Falls back to the canonical English
+    ///     <see cref="CanonicalName" /> when no translation row exists for the requested language.
+    /// </summary>
+    [JsonPropertyName("name")]
     [Required]
-    public ulong SoftwareId { get;           set; }
-    public virtual Software Software { get; set; }
+    public string Name { get; set; } = string.Empty;
 
-    public         ulong?           SoftwarePlatformId { get; set; }
-    public virtual SoftwarePlatform Platform           { get; set; }
-
-    public         ulong?          SoftwareVersionId { get; set; }
-    public virtual SoftwareVersion Version           { get; set; }
-
-    public         int?                     GroupId { get; set; }
-    public virtual SoftwareScreenshotGroup Group   { get; set; }
-
-    public string Caption { get; set; }
-
+    /// <summary>
+    ///     Canonical English name as stored in <c>SoftwareScreenshotGroups.Name</c>. Edit-path
+    ///     autocompletes (admin uploader, suggestion dialog) display <see cref="Name" /> for the
+    ///     user but submit <see cref="CanonicalName" /> back to the server so the get-or-create
+    ///     keys on the same English row regardless of the user's locale.
+    /// </summary>
+    [JsonPropertyName("canonical_name")]
     [Required]
-    public string OriginalExtension { get; set; }
+    public string CanonicalName { get; set; } = string.Empty;
 }

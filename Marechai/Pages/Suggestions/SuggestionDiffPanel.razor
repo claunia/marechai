@@ -1172,6 +1172,9 @@ else
                 string caption = photo.TryGetProperty("caption", out JsonElement cj) && cj.ValueKind == JsonValueKind.String
                                      ? cj.GetString()
                                      : "";
+                string groupName = photo.TryGetProperty("groupName", out JsonElement grj) && grj.ValueKind == JsonValueKind.String
+                                       ? grj.GetString()
+                                       : "";
                 if(string.IsNullOrEmpty(guidStr) || !Guid.TryParse(guidStr, out _)) continue;
 
                 string acceptKey = "screenshot." + guidStr;
@@ -1199,6 +1202,12 @@ else
                             @if(!string.IsNullOrEmpty(caption))
                             {
                                 <MudText Typo="Typo.body2" Class="mt-1"><em>@caption</em></MudText>
+                            }
+                            @if(!string.IsNullOrEmpty(groupName))
+                            {
+                                <MudText Typo="Typo.caption" Class="mt-1">
+                                    <strong>@L["Group"]:</strong> @groupName
+                                </MudText>
                             }
                         </MudStack>
                     </MudStack>

@@ -275,7 +275,8 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
                                                                      string  fileName,
                                                                      ulong?  softwarePlatformId = null,
                                                                      ulong?  softwareVersionId  = null,
-                                                                     string caption             = null)
+                                                                     string caption             = null,
+                                                                     string canonicalGroupName  = null)
     {
         try
         {
@@ -301,6 +302,12 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
 
             if(!string.IsNullOrEmpty(caption))
                 body.AddOrReplacePart("caption", "text/plain", caption);
+
+            // Optional canonical English group name — server resolve-or-creates the
+            // SoftwareScreenshotGroup row. Omitting the part leaves GroupId null on the new
+            // screenshot row.
+            if(!string.IsNullOrWhiteSpace(canonicalGroupName))
+                body.AddOrReplacePart("canonicalGroupName", "text/plain", canonicalGroupName);
 
             var pathParams = new Dictionary<string, object> { { "baseurl", requestAdapter.BaseUrl } };
 
@@ -1331,6 +1338,31 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         catch(Exception ex)
         {
             return (false, ex.Message);
+        }
+    }
+
+    /// <summary>
+    ///     Autocomplete fetch for the admin uploader + suggestion-dialog screenshot-group
+    ///     picker. Returns up to 25 groups matching <paramref name="search" /> (substring,
+    ///     case-insensitive) localized to the current UI culture with English fallback. Both
+    ///     <see cref="SoftwareScreenshotGroupDto.Name" /> (localized) and
+    ///     <see cref="SoftwareScreenshotGroupDto.CanonicalName" /> (English) are populated so
+    ///     the UI can display the user-friendly localized text but submit the canonical English
+    ///     value back to the server's resolve-or-create helper.
+    /// </summary>
+    public async Task<List<SoftwareScreenshotGroupDto>> GetScreenshotGroupsAsync(string search = null)
+    {
+        try
+        {
+            return await client.Software.Screenshots.Groups.GetAsync(config =>
+            {
+                if(!string.IsNullOrWhiteSpace(search))
+                    config.QueryParameters.Search = search;
+            }) ?? [];
+        }
+        catch
+        {
+            return [];
         }
     }
 

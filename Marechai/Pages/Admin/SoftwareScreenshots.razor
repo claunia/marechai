@@ -38,17 +38,28 @@
 }
 
 <MudPaper Elevation="2" Class="rounded-lg pa-4">
-    <MudSelect T="SoftwarePlatformDto" @bind-Value="_selectedPlatform"
-               Label="@L["Platform"]" Variant="Variant.Outlined" Dense="true"
-               Clearable="true" Class="mb-3" Style="max-width: 300px;">
-        @if(_platforms is not null)
-        {
-            @foreach(SoftwarePlatformDto platform in _platforms)
+    <MudStack Row="true" Spacing="3" AlignItems="AlignItems.Start" Class="mb-3">
+        <MudSelect T="SoftwarePlatformDto" @bind-Value="_selectedPlatform"
+                   Label="@L["Platform"]" Variant="Variant.Outlined" Dense="true"
+                   Clearable="true" Style="max-width: 300px;">
+            @if(_platforms is not null)
             {
-                <MudSelectItem T="SoftwarePlatformDto" Value="platform">@platform.Name</MudSelectItem>
+                @foreach(SoftwarePlatformDto platform in _platforms)
+                {
+                    <MudSelectItem T="SoftwarePlatformDto" Value="platform">@platform.Name</MudSelectItem>
+                }
             }
-        }
-    </MudSelect>
+        </MudSelect>
+        <MudAutocomplete T="string"
+                         @bind-Value="_selectedGroupName"
+                         SearchFunc="SearchGroupsAsync"
+                         Label="@L["Group (optional, in English)"]"
+                         HelperText="@L["Type a new group name or pick an existing one"]"
+                         Variant="Variant.Outlined" Dense="true"
+                         Clearable="true" CoerceText="false" CoerceValue="true"
+                         ResetValueOnEmptyText="true" MaxLength="256"
+                         Style="max-width: 350px;"/>
+    </MudStack>
     <MudToolBar Dense="true">
         <MudFileUpload T="IBrowserFile"
                        Accept=".jpg,.jpeg,.png,.webp,.tiff,.tif,.bmp"
@@ -99,6 +110,16 @@
                                         }
                                     }
                                 </MudSelect>
+                                <MudAutocomplete T="string"
+                                                 Value="@screenshot.CanonicalGroupName"
+                                                 ValueChanged="@(v => OnScreenshotGroupChanged(screenshot, v))"
+                                                 SearchFunc="SearchGroupsAsync"
+                                                 Label="@L["Group (optional, in English)"]"
+                                                 HelperText="@L["Type a new group name or pick an existing one"]"
+                                                 Variant="Variant.Outlined" Dense="true"
+                                                 Clearable="true" CoerceText="false" CoerceValue="true"
+                                                 ResetValueOnEmptyText="true" MaxLength="256"
+                                                 Class="mt-2" Style="max-width: 250px;"/>
                             </MudCardContent>
                             <MudCardActions>
                                 <MudIconButton Icon="@Icons.Material.Filled.Delete"

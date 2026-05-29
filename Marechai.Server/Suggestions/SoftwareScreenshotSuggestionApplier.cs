@@ -82,6 +82,12 @@ public static class SoftwareScreenshotSuggestionApplier
     /// <summary>Maximum length for the per-image caption.</summary>
     public const int MaxCaptionLength = 500;
 
+    /// <summary>
+    ///     Maximum length for the per-image group name (matches the
+    ///     <c>SoftwareScreenshotGroups.Name</c> column width).
+    /// </summary>
+    public const int MaxGroupNameLength = 256;
+
     /// <summary>Allowed lower-case file extensions (matching the pending upload endpoint).</summary>
     static readonly HashSet<string> _allowedExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -195,6 +201,10 @@ public static class SoftwareScreenshotSuggestionApplier
             if(!string.IsNullOrEmpty(e.Caption) && e.Caption.Length > MaxCaptionLength)
                 return (false, $"Image #{i + 1}: caption cannot exceed {MaxCaptionLength} characters.");
 
+            if(!string.IsNullOrEmpty(e.GroupName) && e.GroupName.Length > MaxGroupNameLength)
+                return (false,
+                        $"Image #{i + 1}: group name cannot exceed {MaxGroupNameLength} characters.");
+
             // Sidecar must exist, belong to the uploader, be scoped to this Software.
             PendingImageStore.PendingMetadata meta =
                 await PendingImageStore.GetMetadataAsync(assetRootPath, "software-screenshots", e.Guid);
@@ -289,12 +299,36 @@ public static class SoftwareScreenshotSuggestionApplier
 
             if(movedPath is null || string.IsNullOrEmpty(ext)) return false;
 
+            // Optional group resolve-or-create. Mirrors
+            // SoftwareScreenshotsController.ResolveOrCreateGroupAsync — case-sensitive lookup
+            // on Name, create-if-missing. Empty / whitespace input clears the FK.
+            int? groupId = null;
+            string trimmedGroup = entry.GroupName?.Trim();
+
+            if(!string.IsNullOrWhiteSpace(trimmedGroup))
+            {
+                if(trimmedGroup.Length > MaxGroupNameLength) trimmedGroup = trimmedGroup[..MaxGroupNameLength];
+
+                SoftwareScreenshotGroup group =
+                    await context.SoftwareScreenshotGroups.FirstOrDefaultAsync(g => g.Name == trimmedGroup);
+
+                if(group is null)
+                {
+                    group = new SoftwareScreenshotGroup { Name = trimmedGroup };
+                    await context.SoftwareScreenshotGroups.AddAsync(group);
+                    await context.SaveChangesWithUserAsync(creditedUserId);
+                }
+
+                groupId = group.Id;
+            }
+
             var screenshot = new SoftwareScreenshot
             {
                 Id                 = entry.Guid,
                 SoftwareId         = softwareId,
                 SoftwarePlatformId = platformId,
                 SoftwareVersionId  = null,
+                GroupId            = groupId,
                 Caption            = string.IsNullOrEmpty(entry.Caption) ? null : entry.Caption,
                 OriginalExtension  = ext.TrimStart('.')
             };
@@ -339,6 +373,13 @@ public static class SoftwareScreenshotSuggestionApplier
         public Guid   Guid      { get; init; }
         public string Extension { get; init; }
         public string Caption   { get; init; }
+
+        /// <summary>
+        ///     Optional canonical English screenshot-group name. When non-null, the applier
+        ///     does a get-or-create against <see cref="SoftwareScreenshotGroup" /> and assigns
+        ///     the resulting Id to the new screenshot row. Empty / whitespace clears the FK.
+        /// </summary>
+        public string GroupName { get; init; }
     }
 
     static List<ScreenshotEntry> ParsePhotosArray(object raw)
@@ -390,7 +431,12 @@ public static class SoftwareScreenshotSuggestionApplier
                              ? capEl.GetString()
                              : null;
 
-        return new ScreenshotEntry { Guid = guid, Extension = extension, Caption = caption };
+        string groupName = obj.TryGetProperty("groupName", out JsonElement grpEl) &&
+                           grpEl.ValueKind == JsonValueKind.String
+                               ? grpEl.GetString()
+                               : null;
+
+        return new ScreenshotEntry { Guid = guid, Extension = extension, Caption = caption, GroupName = groupName };
     }
 
     static ScreenshotEntry ParseScreenshotFromObject(object item)
@@ -406,7 +452,15 @@ public static class SoftwareScreenshotSuggestionApplier
 
             string extension = dict.TryGetValue("extension", out object x) ? CoerceString(x) : null;
             string caption   = dict.TryGetValue("caption", out object c) ? CoerceString(c) : null;
-            return new ScreenshotEntry { Guid = guid, Extension = extension, Caption = caption };
+            string groupName = dict.TryGetValue("groupName", out object gn) ? CoerceString(gn) : null;
+
+            return new ScreenshotEntry
+            {
+                Guid      = guid,
+                Extension = extension,
+                Caption   = caption,
+                GroupName = groupName
+            };
         }
 
         return null;

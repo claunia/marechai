@@ -935,31 +935,76 @@ else
                 </MudStack>
             </TitleContent>
             <ChildContent>
-                @foreach(var group in _screenshotsByPlatform)
+                @* Hierarchical render: Version → Group → Platform. At each level the
+                   heading is emitted only when the bucket carries a non-null Label
+                   OR when it's the mixed-scope trailing null bucket ("No version
+                   specified" / "No platform"). The group level's trailing null bucket
+                   has no heading — only a visual divider — per spec. *@
+                @for(int vi = 0; vi < _screenshotTree.Count; vi++)
                 {
-                    <MudText Typo="Typo.subtitle1" Class="mt-3 mb-2"><strong>@group.Key</strong></MudText>
-                    <div class="d-flex flex-wrap gap-3">
-                        @foreach(SoftwareScreenshotDto screenshot in group.Value)
+                    var versionBucket = _screenshotTree[vi];
+                    string versionLabel = versionBucket.Label;
+
+                    if(versionLabel is not null)
+                    {
+                        <MudText Typo="Typo.h6" Class="mt-3 mb-2"><strong>@versionLabel</strong></MudText>
+                    }
+                    else if(versionBucket.IsTrailingNull)
+                    {
+                        <MudText Typo="Typo.h6" Class="mt-3 mb-2"><strong>@L["No version specified"]</strong></MudText>
+                    }
+
+                    @for(int gi = 0; gi < versionBucket.Groups.Count; gi++)
+                    {
+                        var groupBucket = versionBucket.Groups[gi];
+
+                        if(groupBucket.IsTrailingNull && gi > 0)
                         {
-                            <MudCard Elevation="1" Class="rounded-lg" Style="width: 200px; cursor: pointer;" @onclick="() => _fullscreenScreenshot = screenshot">
-                                <MudCardContent Class="pa-2">
-                                    <picture>
-                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jxl/4k/@(screenshot.Id).jxl" type="image/jxl">
-                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/avif/4k/@(screenshot.Id).avif" type="image/avif">
-                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/webp/4k/@(screenshot.Id).webp" type="image/webp">
-                                        <img alt="@screenshot.Caption"
-                                             src="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/4k/@(screenshot.Id).jpg"
-                                             srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/4k/@(screenshot.Id).jpg"
-                                             style="width: 100%; max-height: 150px; object-fit: contain; border-radius: 4px;"/>
-                                    </picture>
-                                    @if(!string.IsNullOrEmpty(screenshot.Caption))
-                                    {
-                                        <MudText Typo="Typo.caption" Align="Align.Center" Class="mt-1">@screenshot.Caption</MudText>
-                                    }
-                                </MudCardContent>
-                            </MudCard>
+                            // Visual separator between the named groups and the trailing
+                            // unlabeled block (screenshots in this version that have no group).
+                            <MudDivider Class="my-3"/>
                         }
-                    </div>
+
+                        if(groupBucket.Label is not null)
+                        {
+                            <MudText Typo="Typo.subtitle1" Class="mt-2 mb-2"><strong>@groupBucket.Label</strong></MudText>
+                        }
+
+                        @foreach(var platformBucket in groupBucket.Platforms)
+                        {
+                            if(platformBucket.Label is not null)
+                            {
+                                <MudText Typo="Typo.subtitle2" Class="mt-2 mb-1">@platformBucket.Label</MudText>
+                            }
+                            else if(platformBucket.IsTrailingNull)
+                            {
+                                <MudText Typo="Typo.subtitle2" Class="mt-2 mb-1">@L["No platform"]</MudText>
+                            }
+
+                            <div class="d-flex flex-wrap gap-3">
+                                @foreach(SoftwareScreenshotDto screenshot in platformBucket.Screenshots)
+                                {
+                                    <MudCard Elevation="1" Class="rounded-lg" Style="width: 200px; cursor: pointer;" @onclick="() => _fullscreenScreenshot = screenshot">
+                                        <MudCardContent Class="pa-2">
+                                            <picture>
+                                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jxl/4k/@(screenshot.Id).jxl" type="image/jxl">
+                                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/avif/4k/@(screenshot.Id).avif" type="image/avif">
+                                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/webp/4k/@(screenshot.Id).webp" type="image/webp">
+                                                <img alt="@screenshot.Caption"
+                                                     src="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/4k/@(screenshot.Id).jpg"
+                                                     srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jpeg/4k/@(screenshot.Id).jpg"
+                                                     style="width: 100%; max-height: 150px; object-fit: contain; border-radius: 4px;"/>
+                                            </picture>
+                                            @if(!string.IsNullOrEmpty(screenshot.Caption))
+                                            {
+                                                <MudText Typo="Typo.caption" Align="Align.Center" Class="mt-1">@screenshot.Caption</MudText>
+                                            }
+                                        </MudCardContent>
+                                    </MudCard>
+                                }
+                            </div>
+                        }
+                    }
                 }
             </ChildContent>
         </MudExpansionPanel>

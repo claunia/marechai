@@ -23,28 +23,30 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Marechai.Database.Models;
 
-public class SoftwareScreenshot : BaseModel<Guid>
+/// <summary>
+///     One translated <see cref="SoftwareScreenshotGroup.Name" /> per (<see cref="GroupId" />,
+///     <see cref="LanguageCode" />) pair. English (<c>eng</c>) is treated as the identity copy of
+///     <see cref="SoftwareScreenshotGroup.Name" /> and is NEVER stored here — read endpoints fall back
+///     to the parent <c>Name</c> column when no translation row exists for the requested language.
+///     The background <c>TranslationWorker</c> populates this table by calling OpenAI / NLLB; rows
+///     are append-only.
+/// </summary>
+public class SoftwareScreenshotGroupTranslation : BaseModel<int>
 {
+    public int GroupId { get; set; }
+
+    [StringLength(3)]
     [Required]
-    public ulong SoftwareId { get;           set; }
-    public virtual Software Software { get; set; }
+    public string LanguageCode { get; set; }
 
-    public         ulong?           SoftwarePlatformId { get; set; }
-    public virtual SoftwarePlatform Platform           { get; set; }
-
-    public         ulong?          SoftwareVersionId { get; set; }
-    public virtual SoftwareVersion Version           { get; set; }
-
-    public         int?                     GroupId { get; set; }
-    public virtual SoftwareScreenshotGroup Group   { get; set; }
-
-    public string Caption { get; set; }
-
+    [StringLength(256)]
     [Required]
-    public string OriginalExtension { get; set; }
+    public string Name { get; set; }
+
+    public virtual SoftwareScreenshotGroup Group    { get; set; }
+    public virtual Iso639                  Language { get; set; }
 }

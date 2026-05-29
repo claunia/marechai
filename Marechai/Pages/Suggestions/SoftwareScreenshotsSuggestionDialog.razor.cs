@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Marechai.Data;
@@ -277,7 +278,8 @@ public partial class SoftwareScreenshotsSuggestionDialog : ComponentBase, IAsync
                      {
                          guid      = p.ServerGuid.ToString("D", CultureInfo.InvariantCulture),
                          extension = p.Extension,
-                         caption   = p.Caption ?? string.Empty
+                         caption   = p.Caption ?? string.Empty,
+                         groupName = string.IsNullOrWhiteSpace(p.GroupName) ? string.Empty : p.GroupName.Trim()
                      })
                      .ToArray();
 
@@ -377,6 +379,22 @@ public partial class SoftwareScreenshotsSuggestionDialog : ComponentBase, IAsync
         return $"{bytes / (1024d * 1024d):0.0} MB";
     }
 
+    /// <summary>
+    ///     Backing search delegate for the per-image group <c>MudAutocomplete</c>. Returns the
+    ///     canonical English group names matching <paramref name="search" />; the autocomplete
+    ///     surfaces those identical strings back into <see cref="StagedScreenshot.GroupName" />
+    ///     so the submission carries the exact value the server's resolve-or-create helper keys
+    ///     on. Server-side filtering keeps the wire payload bounded to 25 rows.
+    /// </summary>
+    async Task<IEnumerable<string>> SearchGroupsAsync(string search, CancellationToken cancellationToken)
+    {
+        List<SoftwareScreenshotGroupDto> groups = await SoftwareService.GetScreenshotGroupsAsync(search);
+
+        return groups.Select(g => g.CanonicalName)
+                     .Where(n => !string.IsNullOrWhiteSpace(n))
+                     .Distinct(StringComparer.OrdinalIgnoreCase);
+    }
+
     sealed class StagedScreenshot
     {
         public string                 ClientGuid        { get; init; }
@@ -388,6 +406,14 @@ public partial class SoftwareScreenshotsSuggestionDialog : ComponentBase, IAsync
         public double                 UploadPercent     { get; set; }
         public string                 ErrorText         { get; set; }
         public string                 Caption           { get; set; }
+
+        /// <summary>
+        ///     Optional canonical English group name typed by the collaborator. Submitted as
+        ///     <c>groupName</c> in the per-image descriptor; server-side
+        ///     <c>SoftwareScreenshotSuggestionApplier</c> does a get-or-create against
+        ///     <c>SoftwareScreenshotGroups</c> on accept.
+        /// </summary>
+        public string                 GroupName         { get; set; }
         public string                 ImgElementId      { get; init; }
         public bool                   ThumbnailHydrated { get; set; }
     }

@@ -146,13 +146,23 @@
                                 }
                                 else if(s.Status == StagedScreenshotStatus.Ready)
                                 {
-                                    @* Optional caption only — type is batch-level (Platform) *@
+                                    @* Optional caption + optional group; type is batch-level (Platform) *@
                                     <MudTextField T="string" Label="@L["Caption (optional)"]"
                                                   MaxLength="500"
                                                   Value="@s.Caption"
                                                   ValueChanged="@(v => { s.Caption = v; })"
                                                   Variant="Variant.Outlined"
                                                   Margin="Margin.Dense"/>
+                                    <MudAutocomplete T="string"
+                                                     Value="@s.GroupName"
+                                                     ValueChanged="@(v => { s.GroupName = v; })"
+                                                     SearchFunc="SearchGroupsAsync"
+                                                     Label="@L["Group (optional, in English)"]"
+                                                     HelperText="@L["Type a new group name or pick an existing one"]"
+                                                     MaxLength="256"
+                                                     Variant="Variant.Outlined" Margin="Margin.Dense"
+                                                     Clearable="true" CoerceText="false" CoerceValue="true"
+                                                     ResetValueOnEmptyText="true"/>
                                 }
                             </MudStack>
                         </MudPaper>

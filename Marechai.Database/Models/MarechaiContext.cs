@@ -175,6 +175,8 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<LanguageBySoftwareRelease>          LanguageBySoftwareRelease            { get; set; }
     public virtual DbSet<SoftwareScreenshot>                  SoftwareScreenshots                  { get; set; }
     public virtual DbSet<SoftwareScreenshotCaptionTranslation> SoftwareScreenshotCaptionTranslations { get; set; }
+    public virtual DbSet<SoftwareScreenshotGroup>             SoftwareScreenshotGroups             { get; set; }
+    public virtual DbSet<SoftwareScreenshotGroupTranslation>  SoftwareScreenshotGroupTranslations  { get; set; }
     public virtual DbSet<SoftwareCover>                      SoftwareCovers                       { get; set; }
     public virtual DbSet<SoftwareCoverCaptionTranslation>    SoftwareCoverCaptionTranslations     { get; set; }
     public virtual DbSet<PeopleBySoftwareRoleTranslation>    PeopleBySoftwareRoleTranslations     { get; set; }
@@ -3037,6 +3039,39 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .WithMany()
                   .HasForeignKey(e => e.LanguageCode)
                   .HasConstraintName("fk_software_screenshot_caption_translations_language");
+        });
+
+        modelBuilder.Entity<SoftwareScreenshotGroup>(entity =>
+        {
+            entity.HasIndex(e => e.Name).IsUnique();
+        });
+
+        modelBuilder.Entity<SoftwareScreenshot>(entity =>
+        {
+            entity.HasIndex(e => e.GroupId);
+
+            entity.HasOne(e => e.Group)
+                  .WithMany(g => g.Screenshots)
+                  .HasForeignKey(e => e.GroupId)
+                  .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<SoftwareScreenshotGroupTranslation>(entity =>
+        {
+            entity.HasIndex(e => new { e.GroupId, e.LanguageCode })
+                  .IsUnique()
+                  .HasDatabaseName("idx_software_screenshot_group_translations_group_language");
+
+            entity.HasOne(e => e.Group)
+                  .WithMany()
+                  .HasForeignKey(e => e.GroupId)
+                  .HasConstraintName("fk_software_screenshot_group_translations_group")
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Language)
+                  .WithMany()
+                  .HasForeignKey(e => e.LanguageCode)
+                  .HasConstraintName("fk_software_screenshot_group_translations_language");
         });
 
         modelBuilder.Entity<MobyGamesPromoArtDownloadState>(entity =>
