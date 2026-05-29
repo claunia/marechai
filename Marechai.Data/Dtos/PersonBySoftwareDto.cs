@@ -56,6 +56,8 @@ public class PersonBySoftwareDto : BaseDto<long>
     public string? DisplayName { get; set; }
     [JsonPropertyName("software_name")]
     public string? SoftwareName { get; set; }
+    [JsonPropertyName("front_cover_id")]
+    public Guid? FrontCoverId { get; set; }
     [JsonIgnore]
     public string FullName => DisplayName ?? Alias ?? $"{Name} {Surname}";
 }

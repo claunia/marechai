@@ -451,13 +451,15 @@
 
                                                             <!-- Software Cover or Icon -->
                                                             <Grid Grid.Column="0"
-                                                                  Width="48"
-                                                                  Height="48"
+                                                                  Width="54"
+                                                                  Height="84"
+                                                                  CornerRadius="4"
+                                                                  Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
                                                                   VerticalAlignment="Center">
                                                                 <Image Source="{Binding CoverImageUrl}"
                                                                        Stretch="Uniform"
-                                                                       MaxWidth="48"
-                                                                       MaxHeight="48"
+                                                                       Width="54"
+                                                                       Height="84"
                                                                        Visibility="{Binding HasCover, Converter={StaticResource BoolToVisibilityConverter}}" />
                                                                 <FontIcon Glyph="&#xE74C;"
                                                                           FontSize="28"

@@ -33,6 +33,7 @@ using System.Threading.Tasks;
 using Marechai.Data;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
+using Marechai.Server.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -259,24 +260,56 @@ public class PeopleController(
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<PersonBySoftwareDto>> GetSoftwareByPersonAsync(int personId) =>
-        context.PeopleBySoftware.AsNoTracking()
-               .Where(p => p.PersonId == personId)
-               .OrderBy(p => p.Software.Name)
-               .ThenBy(p => p.DocumentRole != null ? p.DocumentRole.Name : p.Role)
-               .Select(p => new PersonBySoftwareDto
-                {
-                    Id           = p.Id,
-                    PersonId     = p.PersonId,
-                    SoftwareId   = p.SoftwareId,
-                    Role         = p.DocumentRole != null ? p.DocumentRole.Name : p.Role,
-                    SoftwareName = p.Software.Name,
-                    Name         = p.Person.Name,
-                    Surname      = p.Person.Surname,
-                    Alias        = p.Person.Alias,
-                    DisplayName  = p.Person.DisplayName
-                })
-               .ToListAsync();
+    public async Task<List<PersonBySoftwareDto>> GetSoftwareByPersonAsync(int personId)
+    {
+        List<PersonBySoftwareDto> list = await context.PeopleBySoftware.AsNoTracking()
+                                                      .Where(p => p.PersonId == personId)
+                                                      .OrderBy(p => p.Software.Name)
+                                                      .ThenBy(p => p.DocumentRole != null
+                                                                       ? p.DocumentRole.Name
+                                                                       : p.Role)
+                                                      .Select(p => new PersonBySoftwareDto
+                                                       {
+                                                           Id           = p.Id,
+                                                           PersonId     = p.PersonId,
+                                                           SoftwareId   = p.SoftwareId,
+                                                           Role = p.DocumentRole != null
+                                                                      ? p.DocumentRole.Name
+                                                                      : p.Role,
+                                                           SoftwareName = p.Software.Name,
+                                                           Name         = p.Person.Name,
+                                                           Surname      = p.Person.Surname,
+                                                           Alias        = p.Person.Alias,
+                                                           DisplayName  = p.Person.DisplayName
+                                                       })
+                                                      .ToListAsync();
+
+        await BackfillFrontCoverIdsAsync(list);
+
+        return list;
+    }
+
+    /// <summary>
+    ///     Backfills <see cref="PersonBySoftwareDto.FrontCoverId" /> on a materialized list of
+    ///     credit rows in two index-friendly IN/GROUP BY queries via
+    ///     <see cref="SoftwareCoverLookup.LookupFrontCoversAsync" />. Reuses the same SoftwareCovers
+    ///     lookup paths that <c>SoftwareController.PopulateFrontCoverIdsAsync</c> uses for software
+    ///     rows. No-op when the list is empty or no SoftwareId values are populated.
+    /// </summary>
+    async Task BackfillFrontCoverIdsAsync(List<PersonBySoftwareDto> list)
+    {
+        if(list.Count == 0) return;
+
+        List<ulong> softwareIds = list.Select(p => p.SoftwareId).Distinct().ToList();
+
+        Dictionary<ulong, Guid> covers = await SoftwareCoverLookup.LookupFrontCoversAsync(context, softwareIds);
+
+        foreach(PersonBySoftwareDto dto in list)
+        {
+            if(covers.TryGetValue(dto.SoftwareId, out Guid coverId))
+                dto.FrontCoverId = coverId;
+        }
+    }
 
     [HttpGet("{personId:int}/companies")]
     [AllowAnonymous]
@@ -752,6 +785,23 @@ public class PeopleController(
         List<PersonByDocumentDto> documents = documentsTask.Result;
         List<PersonByMagazineDto> magazines = magazinesTask.Result;
         List<PersonBySoftwareDto> software  = softwareTask.Result;
+
+        // Backfill FrontCoverId on the credits list — same approach as
+        // SoftwareController.PopulateFrontCoverIdsAsync, replacing a per-row correlated
+        // subquery with two bounded IN/GROUP BY round-trips.
+        if(software.Count > 0)
+        {
+            List<ulong> softwareIds = software.Select(p => p.SoftwareId).Distinct().ToList();
+
+            Dictionary<ulong, Guid> covers =
+                await SoftwareCoverLookup.LookupFrontCoversAsync(softwareCtx, softwareIds);
+
+            foreach(PersonBySoftwareDto dto in software)
+            {
+                if(covers.TryGetValue(dto.SoftwareId, out Guid coverId))
+                    dto.FrontCoverId = coverId;
+            }
+        }
 
         return new PersonFullDto
         {

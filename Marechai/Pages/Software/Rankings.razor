@@ -172,19 +172,22 @@ else
                     </div>
                     @if(item.FrontCoverId.HasValue)
                     {
-                        <picture>
-                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(item.FrontCoverId).jxl" type="image/jxl">
-                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(item.FrontCoverId).avif" type="image/avif">
-                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(item.FrontCoverId).webp" type="image/webp">
-                            <img alt="@item.Name" height="48"
-                                 src="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(item.FrontCoverId).jpg"
-                                 srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(item.FrontCoverId).jpg"
-                                 style="object-fit: contain; border-radius: 4px;"/>
-                        </picture>
+                        <div class="sw-cover-thumb sw-cover-thumb-md">
+                            <picture>
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(item.FrontCoverId).jxl" type="image/jxl">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(item.FrontCoverId).avif" type="image/avif">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(item.FrontCoverId).webp" type="image/webp">
+                                <img alt="@item.Name"
+                                     src="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(item.FrontCoverId).jpg"
+                                     srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(item.FrontCoverId).jpg"/>
+                            </picture>
+                        </div>
                     }
                     else
                     {
-                        <MudIcon Icon="@Icons.Material.Filled.Apps" Size="Size.Large" Color="Color.Default"/>
+                        <div class="sw-cover-thumb sw-cover-thumb-md">
+                            <MudIcon Icon="@Icons.Material.Filled.Apps" Size="Size.Large" Color="Color.Default"/>
+                        </div>
                     }
                     <div style="flex: 1; min-width: 0;">
                         <MudText Typo="Typo.body1">@item.Name</MudText>

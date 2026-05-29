@@ -2666,9 +2666,30 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                                                               })
                                                               .ToListAsync();
 
+        await BackfillCreditFrontCoverIdAsync(credits, softwareId);
+
         return credits.OrderBy(p => p.Role, StringComparer.CurrentCultureIgnoreCase)
                       .ThenBy(p => p.FullName, StringComparer.CurrentCultureIgnoreCase)
                       .ToList();
+    }
+
+    /// <summary>
+    ///     Sets <see cref="PersonBySoftwareDto.FrontCoverId" /> on every credit row in
+    ///     <paramref name="credits" /> to the front cover of
+    ///     <paramref name="softwareId" /> (the single Software whose credits this list
+    ///     describes). One bounded lookup via <see cref="SoftwareCoverLookup" />.
+    /// </summary>
+    async Task BackfillCreditFrontCoverIdAsync(List<PersonBySoftwareDto> credits, ulong softwareId)
+    {
+        if(credits.Count == 0) return;
+
+        Dictionary<ulong, Guid> covers =
+            await SoftwareCoverLookup.LookupFrontCoversAsync(context, new[] { softwareId });
+
+        if(!covers.TryGetValue(softwareId, out Guid coverId)) return;
+
+        foreach(PersonBySoftwareDto dto in credits)
+            dto.FrontCoverId = coverId;
     }
 
     /// <summary>

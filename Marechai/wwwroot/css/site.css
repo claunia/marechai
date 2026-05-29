@@ -239,3 +239,46 @@
   border-top: 1px solid var(--mud-palette-lines-default);
   margin: 1rem 0;
 }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Software cover thumbnails in list contexts.
+
+   When software titles are listed together (search results, machine
+   software tab, rankings, company/people software cards, etc.) every
+   cover must occupy a constant horizontal footprint so the title text
+   in every row starts at the same X coordinate. Real cover art has
+   wildly varying aspect ratios — boxed games, jewel cases, oversized
+   jackets, square floppy sleeves — so we lock a 9:14 portrait box and
+   letterbox the actual cover inside it with `object-fit: contain` on
+   a neutral background. Detail-page hero covers and "all covers of
+   the same title" grids deliberately do NOT use this class — they
+   keep natural aspect ratios.
+   ───────────────────────────────────────────────────────────────────────── */
+.sw-cover-thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.sw-cover-thumb > picture,
+.sw-cover-thumb > img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.sw-cover-thumb > picture > img,
+.sw-cover-thumb > img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Fixed 9:14 footprint — width AND height set explicitly so flex parents
+   can't shrink the box and aspect-ratio fallbacks aren't needed. */
+.sw-cover-thumb-sm { width: 36px;  height: 56px; } /* compact list rows */
+.sw-cover-thumb-md { width: 54px;  height: 84px; } /* default list rows */
+.sw-cover-thumb-lg { width: 72px;  height: 112px; } /* card-style usage */

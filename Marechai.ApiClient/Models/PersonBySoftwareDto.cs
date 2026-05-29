@@ -38,6 +38,8 @@ namespace Marechai.ApiClient.Models
 #else
         public string DisplayName { get; set; }
 #endif
+        /// <summary>The front_cover_id property</summary>
+        public Guid? FrontCoverId { get; set; }
         /// <summary>The id property</summary>
         public long? Id { get; set; }
         /// <summary>The name property</summary>
@@ -104,6 +106,7 @@ namespace Marechai.ApiClient.Models
                 { "alias", n => { Alias = n.GetStringValue(); } },
                 { "canonical_role", n => { CanonicalRole = n.GetStringValue(); } },
                 { "display_name", n => { DisplayName = n.GetStringValue(); } },
+                { "front_cover_id", n => { FrontCoverId = n.GetGuidValue(); } },
                 { "id", n => { Id = n.GetLongValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
                 { "person_id", n => { PersonId = n.GetIntValue(); } },
@@ -123,6 +126,7 @@ namespace Marechai.ApiClient.Models
             writer.WriteStringValue("alias", Alias);
             writer.WriteStringValue("canonical_role", CanonicalRole);
             writer.WriteStringValue("display_name", DisplayName);
+            writer.WriteGuidValue("front_cover_id", FrontCoverId);
             writer.WriteLongValue("id", Id);
             writer.WriteStringValue("name", Name);
             writer.WriteIntValue("person_id", PersonId);

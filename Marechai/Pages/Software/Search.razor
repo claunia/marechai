@@ -120,20 +120,27 @@
     <MudText Typo="Typo.body2" Class="mb-2">@string.Format(L["{0} software titles found in the database."], _total)</MudText>
     <div id="@_scrollerId" style="height: calc(100dvh - 280px); min-height: 360px; overflow-y: auto;">
         <MudList T="SoftwareDto" Dense="true">
-            <Virtualize Items="_software" Context="sw" ItemSize="64">
-            <MudListItem T="SoftwareDto" Href="@(sw.IsCompilation == true ? $"/software/release/{sw.Id}" : $"/software/{sw.Id}")" Icon="@(sw.FrontCoverId.HasValue ? null : Icons.Material.Filled.Apps)">
+            <Virtualize Items="_software" Context="sw" ItemSize="100">
+            <MudListItem T="SoftwareDto" Href="@(sw.IsCompilation == true ? $"/software/release/{sw.Id}" : $"/software/{sw.Id}")">
                 <div class="d-flex align-center gap-3">
                     @if(sw.FrontCoverId.HasValue)
                     {
-                        <picture>
-                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(sw.FrontCoverId).jxl" type="image/jxl">
-                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(sw.FrontCoverId).avif" type="image/avif">
-                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(sw.FrontCoverId).webp" type="image/webp">
-                            <img alt="@sw.Name" height="48"
-                                 src="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(sw.FrontCoverId).jpg"
-                                 srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(sw.FrontCoverId).jpg"
-                                 style="object-fit: contain; border-radius: 4px;"/>
-                        </picture>
+                        <div class="sw-cover-thumb sw-cover-thumb-md">
+                            <picture>
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(sw.FrontCoverId).jxl" type="image/jxl">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(sw.FrontCoverId).avif" type="image/avif">
+                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(sw.FrontCoverId).webp" type="image/webp">
+                                <img alt="@sw.Name"
+                                     src="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(sw.FrontCoverId).jpg"
+                                     srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(sw.FrontCoverId).jpg"/>
+                            </picture>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="sw-cover-thumb sw-cover-thumb-md">
+                            <MudIcon Icon="@Icons.Material.Filled.Apps" Size="Size.Large" Color="Color.Default"/>
+                        </div>
                     }
                     <div>
                         <MudText Typo="Typo.body1">@sw.Name</MudText>
