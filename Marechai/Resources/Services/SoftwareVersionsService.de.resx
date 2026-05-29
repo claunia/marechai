@@ -289,4 +289,122 @@
     <data name="Create releases" xml:space="preserve">
         <value>Veröffentlichungen anlegen</value>
     </data>
+  <data name="Suggest a new version of this software. A first release is required at the same time; both will be created together when an administrator accepts the suggestion." xml:space="preserve">
+    <value>Schlagen Sie eine neue Version dieser Software vor. Eine erste Veröffentlichung ist gleichzeitig erforderlich; beide werden zusammen angelegt, sobald ein Administrator den Vorschlag akzeptiert.</value>
+  </data>
+  <data name="Version of: {0}" xml:space="preserve">
+    <value>Version von: {0}</value>
+  </data>
+  <data name="Version info" xml:space="preserve">
+    <value>Versionsinformationen</value>
+  </data>
+  <data name="The canonical version identifier, e.g. &quot;4.00.950&quot; or &quot;2.0&quot;." xml:space="preserve">
+    <value>Die kanonische Versionsbezeichnung, z. B. „4.00.950“ oder „2.0“.</value>
+  </data>
+  <data name="Optional. The marketing name, e.g. &quot;Windows 95&quot; for version 4.00.950." xml:space="preserve">
+    <value>Optional. Der Vermarktungsname, z. B. „Windows 95“ für Version 4.00.950.</value>
+  </data>
+  <data name="Optional. Internal codename used during development." xml:space="preserve">
+    <value>Optional. Interner Codename, der während der Entwicklung verwendet wurde.</value>
+  </data>
+  <data name="Optional. Link to a sibling version of the same software (e.g. service-pack chains)." xml:space="preserve">
+    <value>Optional. Verknüpfung zu einer verwandten Version derselben Software (z. B. Service-Pack-Ketten).</value>
+  </data>
+  <data name="Optional. Apply when this specific version was released under a license different from the parent software." xml:space="preserve">
+    <value>Optional. Verwenden, wenn diese spezifische Version unter einer anderen Lizenz veröffentlicht wurde als die übergeordnete Software.</value>
+  </data>
+  <data name="First release" xml:space="preserve">
+    <value>Erste Veröffentlichung</value>
+  </data>
+  <data name="Title, publisher and platform are required for the accompanying release." xml:space="preserve">
+    <value>Für die begleitende Veröffentlichung sind Titel, Herausgeber und Plattform erforderlich.</value>
+  </data>
+  <data name="Release title" xml:space="preserve">
+    <value>Titel der Veröffentlichung</value>
+  </data>
+  <data name="Release title is required." xml:space="preserve">
+    <value>Der Titel der Veröffentlichung ist erforderlich.</value>
+  </data>
+  <data name="Platform" xml:space="preserve">
+    <value>Plattform</value>
+  </data>
+  <data name="Publisher" xml:space="preserve">
+    <value>Herausgeber</value>
+  </data>
+  <data name="Release date" xml:space="preserve">
+    <value>Veröffentlichungsdatum</value>
+  </data>
+  <data name="First release: Regions" xml:space="preserve">
+    <value>Erste Veröffentlichung: Regionen</value>
+  </data>
+  <data name="First release: Languages" xml:space="preserve">
+    <value>Erste Veröffentlichung: Sprachen</value>
+  </data>
+  <data name="First release: Barcodes" xml:space="preserve">
+    <value>Erste Veröffentlichung: Strichcodes</value>
+  </data>
+  <data name="First release: Product codes" xml:space="preserve">
+    <value>Erste Veröffentlichung: Produktcodes</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="Barcode" xml:space="preserve">
+    <value>Strichcode</value>
+  </data>
+  <data name="Issuer" xml:space="preserve">
+    <value>Aussteller</value>
+  </data>
+  <data name="Product code" xml:space="preserve">
+    <value>Produktcode</value>
+  </data>
+  <data name="Undo" xml:space="preserve">
+    <value>Rückgängig</value>
+  </data>
+  <data name="Add region" xml:space="preserve">
+    <value>Region hinzufügen</value>
+  </data>
+  <data name="Add language" xml:space="preserve">
+    <value>Sprache hinzufügen</value>
+  </data>
+  <data name="Add barcode" xml:space="preserve">
+    <value>Strichcode hinzufügen</value>
+  </data>
+  <data name="Add product code" xml:space="preserve">
+    <value>Produktcode hinzufügen</value>
+  </data>
+  <data name="This barcode is already present in the list." xml:space="preserve">
+    <value>Dieser Strichcode ist bereits in der Liste vorhanden.</value>
+  </data>
+  <data name="This product code is already present in the list." xml:space="preserve">
+    <value>Dieser Produktcode ist bereits in der Liste vorhanden.</value>
+  </data>
+  <data name="Optional comment (References, sources, etc...)" xml:space="preserve">
+    <value>Optionaler Kommentar (Referenzen, Quellen usw.)</value>
+  </data>
+  <data name="Submit suggestion" xml:space="preserve">
+    <value>Vorschlag senden</value>
+  </data>
+  <data name="Suggestion submitted. An administrator will review it." xml:space="preserve">
+    <value>Vorschlag gesendet. Ein Administrator wird ihn prüfen.</value>
+  </data>
+  <data name="Failed to submit suggestion." xml:space="preserve">
+    <value>Senden des Vorschlags fehlgeschlagen.</value>
+  </data>
+  <data name="Cannot submit: parent software is missing." xml:space="preserve">
+    <value>Kann nicht gesendet werden: Übergeordnete Software fehlt.</value>
+  </data>
+  <data name="Cannot open: parent software is missing." xml:space="preserve">
+    <value>Kann nicht geöffnet werden: Übergeordnete Software fehlt.</value>
+  </data>
+  <data name="Failed to load picker data — please retry." xml:space="preserve">
+    <value>Auswahldaten konnten nicht geladen werden — bitte erneut versuchen.</value>
+  </data>
+  <data name="Publisher is required." xml:space="preserve">
+    <value>Herausgeber ist erforderlich.</value>
+  </data>
+  <data name="Suggest new version" xml:space="preserve">
+    <value>Neue Version vorschlagen</value>
+  </data>
+
 </root>

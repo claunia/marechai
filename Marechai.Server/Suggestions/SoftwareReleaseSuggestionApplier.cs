@@ -69,6 +69,19 @@ internal static class SoftwareReleaseSuggestionApplier
     /// </summary>
     public const string FieldSoftwareId = "software_id";
 
+    /// <summary>
+    ///     Pseudo-field carrying the parent SoftwareVersion FK at addition time only
+    ///     (consumed by <see cref="CreateAsync" />). Same semantics as
+    ///     <see cref="FieldSoftwareId" />: NOT in <c>s_scalarFieldNames</c> (edit-mode
+    ///     re-parenting between versions stays admin-only), but whitelisted in
+    ///     <see cref="IsKnownFieldName" /> so the controller's field-name validator accepts
+    ///     it on the wire. Used by the combined SoftwareVersion + first-Release atomic
+    ///     creation flow (<c>Marechai.Server.Suggestions.SoftwareVersionSuggestionApplier</c>)
+    ///     to link the freshly-minted release to the freshly-minted version. Optional on
+    ///     stand-alone release creation — omitted when the release isn't version-scoped.
+    /// </summary>
+    public const string FieldSoftwareVersionId = "software_version_id";
+
     // ---- Junction group identifiers ---------------------------------------------------
     public const string GroupRegions      = "regions";
     public const string GroupLanguages    = "languages";
@@ -106,6 +119,7 @@ internal static class SoftwareReleaseSuggestionApplier
         if(string.IsNullOrEmpty(fieldName)) return false;
         if(s_scalarFieldNames.Contains(fieldName)) return true;
         if(fieldName == FieldSoftwareId) return true;
+        if(fieldName == FieldSoftwareVersionId) return true;
         return TryParseJunctionKey(fieldName, out _, out _, out _);
     }
 
@@ -233,6 +247,26 @@ internal static class SoftwareReleaseSuggestionApplier
         applied.Add(FieldPublisherId);
         applied.Add(FieldTitle);
         applied.Add(FieldPlatformId);
+
+        // Optional: SoftwareVersionId pseudo-field (creation-time only). Used by the
+        // combined SoftwareVersion + first-Release atomic creation flow to link the
+        // freshly-minted release back to the freshly-minted version. Silently skipped
+        // when not accepted or when the FK row doesn't exist (defence-in-depth — the
+        // caller injects this id from the just-saved SoftwareVersion.Id so it WILL
+        // exist in practice).
+        if(accepted.Contains(FieldSoftwareVersionId) &&
+           suggested.TryGetValue(FieldSoftwareVersionId, out object versionIdRaw))
+        {
+            ulong? versionIdParsed = ToUlong(versionIdRaw);
+            if(versionIdParsed.HasValue                                    &&
+               versionIdParsed.Value != 0                                  &&
+               await context.SoftwareVersions.AsNoTracking()
+                            .AnyAsync(v => v.Id == versionIdParsed.Value))
+            {
+                r.SoftwareVersionId = versionIdParsed.Value;
+                applied.Add(FieldSoftwareVersionId);
+            }
+        }
 
         // Apply remaining accepted scalar fields (release_date, release_date_precision).
         // Mandatory fields are handled above; junctions and software_id pseudo-field skip.

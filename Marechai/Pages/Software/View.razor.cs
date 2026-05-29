@@ -814,6 +814,48 @@ public partial class View
     }
 
     /// <summary>
+    ///     Opens the SoftwareVersionSuggestionDialog in CREATION mode for a brand-new
+    ///     version of this Software. Because a SoftwareVersion has no useful surface
+    ///     without a SoftwareRelease, the dialog also collects a mandatory first
+    ///     SoftwareRelease in the same submission; both rows are inserted atomically by
+    ///     the server applier when an administrator accepts the suggestion. The parent
+    ///     <c>software_id</c> + display label are prefilled and shown as a read-only
+    ///     "Version of: {0}" alert.
+    /// </summary>
+    async Task OpenSuggestNewVersionDialogAsync()
+    {
+        if(AuthState is null) return;
+
+        AuthenticationState state = await AuthState;
+        if(state?.User?.Identity?.IsAuthenticated != true) return;
+
+        long softwareId = Id;
+        if(softwareId <= 0 || _software is null) return;
+
+        var parameters = new DialogParameters<SoftwareVersionSuggestionDialog>
+        {
+            { x => x.EntityId,             0L },
+            { x => x.PrefillSoftwareId,    (ulong?)softwareId },
+            { x => x.PrefillSoftwareLabel, _software.Name }
+        };
+
+        var options = new DialogOptions
+        {
+            MaxWidth         = MaxWidth.Large,
+            FullWidth        = true,
+            CloseOnEscapeKey = true
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<SoftwareVersionSuggestionDialog>(
+            L["Suggest new version"], parameters, options);
+
+        DialogResult result = await dialog.Result;
+        if(result is null || result.Canceled) return;
+
+        // No reload needed — pending suggestions only take effect after admin review.
+    }
+
+    /// <summary>
     ///     Opens the SoftwarePromoArtSuggestionDialog so a logged-in collaborator can stage
     ///     1-30 pending promo art images for this Software, choose a group (free-text
     ///     autocomplete over existing groups), optionally annotate each with a caption, then

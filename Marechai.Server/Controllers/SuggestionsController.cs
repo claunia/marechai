@@ -109,7 +109,8 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.SoundSynth,
         SuggestionEntityType.Person,
         SuggestionEntityType.Software,
-        SuggestionEntityType.SoftwareRelease
+        SuggestionEntityType.SoftwareRelease,
+        SuggestionEntityType.SoftwareVersion
     };
 
     // ───────────────────────────── POST /suggestions ─────────────────────────────
@@ -1190,6 +1191,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.Person          => true,
         SuggestionEntityType.Software        => true,
         SuggestionEntityType.SoftwareRelease => true,
+        SuggestionEntityType.SoftwareVersion => true,
         SuggestionEntityType.GpuPhoto         => true,
         SuggestionEntityType.ProcessorPhoto   => true,
         SuggestionEntityType.SoundSynthPhoto  => true,
@@ -1247,6 +1249,9 @@ public class SuggestionsController(MarechaiContext context,
 
         if(type == SuggestionEntityType.SoftwareRelease)
             return Suggestions.SoftwareReleaseSuggestionApplier.IsKnownFieldName(fieldName);
+
+        if(type == SuggestionEntityType.SoftwareVersion)
+            return Suggestions.SoftwareVersionSuggestionApplier.IsKnownFieldName(fieldName);
 
         if(type == SuggestionEntityType.GpuPhoto)
             return Suggestions.GpuPhotoSuggestionApplier.IsKnownFieldName(fieldName);
@@ -1426,6 +1431,15 @@ public class SuggestionsController(MarechaiContext context,
             case SuggestionEntityType.SoftwareRelease:
             {
                 var (applied, missing) = await Suggestions.SoftwareReleaseSuggestionApplier.ApplyAsync(
+                    context, entityId, suggested, accepted);
+                return new ApplyResult(applied, missing);
+            }
+            case SuggestionEntityType.SoftwareVersion:
+            {
+                // Edit-mode is intentionally stubbed (creation-only port). The applier
+                // returns (empty, false) so the suggestion accepts cleanly with no field
+                // application — admins shouldn't reach this path through the UI today.
+                var (applied, missing) = await Suggestions.SoftwareVersionSuggestionApplier.ApplyAsync(
                     context, entityId, suggested, accepted);
                 return new ApplyResult(applied, missing);
             }
@@ -1840,6 +1854,34 @@ public class SuggestionsController(MarechaiContext context,
                     return "A new software suggestion must include a 'first_release_platform_id' field referencing the first release's platform.";
                 return null;
             }
+            case SuggestionEntityType.SoftwareVersion:
+            {
+                // A SoftwareVersion has no useful surface without a SoftwareRelease, so a
+                // brand-new SoftwareVersion suggestion MUST carry its first-release in the
+                // same submission. Validation order: software_id (parent FK) →
+                // version_string → first_release_title → first_release_publisher_id →
+                // first_release_platform_id. Matches the dialog's per-field
+                // defence-in-depth in priority order.
+                if(!values.ContainsKey(Suggestions.SoftwareVersionSuggestionApplier.FieldSoftwareId))
+                    return "A new software version suggestion must include a 'software_id' field referencing the parent software.";
+                if(!values.TryGetValue(Suggestions.SoftwareVersionSuggestionApplier.FieldVersionString, out object vs) ||
+                   string.IsNullOrWhiteSpace(ExtractStringForValidation(vs)))
+                    return "A new software version suggestion must include a non-empty 'version_string' field.";
+                string firstReleaseTitleKey = Suggestions.SoftwareVersionSuggestionApplier.FirstReleaseScalarPrefix +
+                                              Suggestions.SoftwareReleaseSuggestionApplier.FieldTitle;
+                if(!values.TryGetValue(firstReleaseTitleKey, out object frt) ||
+                   string.IsNullOrWhiteSpace(ExtractStringForValidation(frt)))
+                    return "A new software version suggestion must include a non-empty 'first_release_title' field (a version requires its first release at creation time).";
+                string firstReleasePublisherKey = Suggestions.SoftwareVersionSuggestionApplier.FirstReleaseScalarPrefix +
+                                                  Suggestions.SoftwareReleaseSuggestionApplier.FieldPublisherId;
+                if(!values.ContainsKey(firstReleasePublisherKey))
+                    return "A new software version suggestion must include a 'first_release_publisher_id' field referencing the first release's publisher.";
+                string firstReleasePlatformKey = Suggestions.SoftwareVersionSuggestionApplier.FirstReleaseScalarPrefix +
+                                                 Suggestions.SoftwareReleaseSuggestionApplier.FieldPlatformId;
+                if(!values.ContainsKey(firstReleasePlatformKey))
+                    return "A new software version suggestion must include a 'first_release_platform_id' field referencing the first release's platform.";
+                return null;
+            }
             default:
                 return $"Brand-new {type} suggestions are not supported.";
         }
@@ -1967,6 +2009,17 @@ public class SuggestionsController(MarechaiContext context,
                 }
                 return null;
             }
+            case SuggestionEntityType.SoftwareVersion:
+            {
+                // Display the version string in the queue. The first-release title is
+                // shown in the expanded admin diff via the prefixed first_release_title key.
+                if(values.TryGetValue(Suggestions.SoftwareVersionSuggestionApplier.FieldVersionString, out object n))
+                {
+                    string s = ExtractStringForValidation(n);
+                    return string.IsNullOrWhiteSpace(s) ? null : s.Trim();
+                }
+                return null;
+            }
             default:
                 return null;
         }
@@ -2050,6 +2103,12 @@ public class SuggestionsController(MarechaiContext context,
                 // games over decades). Dedupe on name alone would massively over-block;
                 // rely on admin moderation + the mandatory accompanying first-release
                 // (publisher/platform/title) to disambiguate.
+                return false;
+            case SuggestionEntityType.SoftwareVersion:
+                // Version strings repeat constantly ("1.0", "2.0", "1.0.0") across every
+                // software ever written. Dedupe on version_string only would over-block;
+                // the per-(software, version_string) uniqueness check is implicit in the
+                // accepting admin's review of the parent software_id pseudo-field.
                 return false;
             default:
                 return false;
@@ -2153,6 +2212,21 @@ public class SuggestionsController(MarechaiContext context,
                     context, suggested, accepted, creditedUserId);
                 // Software.Id is ulong; explicit cast to long? — implicit conversion from
                 // ulong? to long? doesn't exist in C# (per the SoftwareRelease port lesson).
+                return ((long?)id, applied);
+            }
+            case SuggestionEntityType.SoftwareVersion:
+            {
+                // A SoftwareVersion has no useful surface without a SoftwareRelease, so
+                // this CreateAsync orchestrates BOTH a SoftwareVersion AND its first
+                // SoftwareRelease in an atomic EF transaction. Same dual-prefix wire shape
+                // as the Software port; both software_id (parent FK on the release) and
+                // software_version_id (chain from release back to the new version) are
+                // injected by the applier from the freshly-minted version row, not the
+                // wire payload.
+                var (id, applied) = await Suggestions.SoftwareVersionSuggestionApplier.CreateAsync(
+                    context, suggested, accepted, creditedUserId);
+                // SoftwareVersion.Id is ulong; explicit cast to long? — implicit conversion
+                // from ulong? to long? doesn't exist in C#.
                 return ((long?)id, applied);
             }
             default:
@@ -2389,6 +2463,11 @@ public class SuggestionsController(MarechaiContext context,
             case SuggestionEntityType.SoftwareRelease:
             {
                 await ResolveSoftwareReleaseLabelsAsync(entityId, values, labels);
+                break;
+            }
+            case SuggestionEntityType.SoftwareVersion:
+            {
+                await ResolveSoftwareVersionLabelsAsync(entityId, values, labels);
                 break;
             }
             case SuggestionEntityType.GpuPhoto:
@@ -3899,6 +3978,99 @@ public class SuggestionsController(MarechaiContext context,
             }
         }
     }
+
+    /// <summary>
+    ///     Resolve readable labels for a SoftwareVersion creation suggestion. Resolves
+    ///     <c>software_id</c> to <c>Software.Name</c>, <c>parent_version_id</c> to its
+    ///     version string, and <c>license_id</c> to its name. First-release-prefixed keys
+    ///     are forwarded to <see cref="ResolveSoftwareReleaseLabelsAsync" /> via pre-strip
+    ///     + delegate (matches <see cref="ResolveSoftwareLabelsAsync" />). The applier has
+    ///     no junctions on the version side; companies stay admin-only.
+    /// </summary>
+    async Task ResolveSoftwareVersionLabelsAsync(long? entityId,
+                                                 Dictionary<string, JsonElement> values,
+                                                 Dictionary<string, string> labels)
+    {
+        _ = entityId;
+
+        // ---- software_id → Software.Name ---------------------------------------------
+        if(values.TryGetValue(Suggestions.SoftwareVersionSuggestionApplier.FieldSoftwareId, out JsonElement softwareE))
+        {
+            long? id = JsonElementToLong(softwareE);
+            if(id.HasValue && id.Value >= 0)
+            {
+                ulong sidU = (ulong)id.Value;
+                string name = await context.Softwares.AsNoTracking()
+                                           .Where(x => x.Id == sidU)
+                                           .Select(x => x.Name)
+                                           .FirstOrDefaultAsync();
+                if(!string.IsNullOrEmpty(name))
+                    labels[Suggestions.SoftwareVersionSuggestionApplier.FieldSoftwareId] = name;
+            }
+        }
+
+        // ---- parent_version_id → SoftwareVersion.VersionString (joined with software) ----
+        if(values.TryGetValue(Suggestions.SoftwareVersionSuggestionApplier.FieldParentVersionId, out JsonElement pvE))
+        {
+            long? id = JsonElementToLong(pvE);
+            if(id.HasValue && id.Value >= 0)
+            {
+                ulong pvU = (ulong)id.Value;
+                var row = await context.SoftwareVersions.AsNoTracking()
+                                       .Where(v => v.Id == pvU)
+                                       .Select(v => new { v.VersionString, ParentName = v.Software.Name })
+                                       .FirstOrDefaultAsync();
+                if(row is not null)
+                {
+                    string vlabel = string.IsNullOrEmpty(row.ParentName)
+                                        ? row.VersionString
+                                        : $"{row.ParentName} {row.VersionString}";
+                    if(!string.IsNullOrEmpty(vlabel))
+                        labels[Suggestions.SoftwareVersionSuggestionApplier.FieldParentVersionId] = vlabel;
+                }
+            }
+        }
+
+        // ---- license_id → License.Name -----------------------------------------------
+        if(values.TryGetValue(Suggestions.SoftwareVersionSuggestionApplier.FieldLicenseId, out JsonElement licE))
+        {
+            int? id = JsonElementToInt(licE);
+            if(id.HasValue)
+            {
+                string name = await context.Licenses.AsNoTracking()
+                                           .Where(l => l.Id == id.Value)
+                                           .Select(l => l.Name)
+                                           .FirstOrDefaultAsync();
+                if(!string.IsNullOrEmpty(name))
+                    labels[Suggestions.SoftwareVersionSuggestionApplier.FieldLicenseId] = name;
+            }
+        }
+
+        // ---- First-release-prefixed labels (creation mode only) ----------------------
+        // Pre-strip + delegate to the release-side resolver, then re-prefix emitted
+        // labels back to the wire shape. Junction-op keys contain a dot, scalars don't.
+        var releaseSubValues = new Dictionary<string, JsonElement>(StringComparer.Ordinal);
+        foreach(KeyValuePair<string, JsonElement> kv in values)
+        {
+            if(kv.Key.StartsWith(Suggestions.SoftwareVersionSuggestionApplier.FirstReleaseGroupPrefix, StringComparison.Ordinal))
+                releaseSubValues[kv.Key.Substring(Suggestions.SoftwareVersionSuggestionApplier.FirstReleaseGroupPrefix.Length)] = kv.Value;
+            else if(kv.Key.StartsWith(Suggestions.SoftwareVersionSuggestionApplier.FirstReleaseScalarPrefix, StringComparison.Ordinal))
+                releaseSubValues[kv.Key.Substring(Suggestions.SoftwareVersionSuggestionApplier.FirstReleaseScalarPrefix.Length)] = kv.Value;
+        }
+        if(releaseSubValues.Count > 0)
+        {
+            var releaseLabels = new Dictionary<string, string>(StringComparer.Ordinal);
+            await ResolveSoftwareReleaseLabelsAsync(null, releaseSubValues, releaseLabels);
+            foreach(KeyValuePair<string, string> kv in releaseLabels)
+            {
+                string prefix = kv.Key.Contains('.', StringComparison.Ordinal)
+                                    ? Suggestions.SoftwareVersionSuggestionApplier.FirstReleaseGroupPrefix
+                                    : Suggestions.SoftwareVersionSuggestionApplier.FirstReleaseScalarPrefix;
+                labels[prefix + kv.Key] = kv.Value;
+            }
+        }
+    }
+
     /// <summary>
     ///     Resolve readable labels for every Software junction-remove operation in the
     ///     suggested payload by looking up the targeted genre row. The resolved labels are
@@ -5209,6 +5381,12 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.Software              => $"/software/{entityId}",
         SuggestionEntityType.SoftwareDescription   => $"/software/{entityId}",
         SuggestionEntityType.SoftwareRelease       => $"/software/release/{entityId}",
+        // SoftwareVersion has no dedicated public page (versions render inline on the
+        // parent Software view). We don't know the parent SoftwareId at link-construction
+        // time without an extra DB lookup, so return null and let EntityLink fall back to
+        // the readable `'{name}' (#{id})` form in notification messages. The user can
+        // navigate to the Versions card on the parent Software view manually.
+        SuggestionEntityType.SoftwareVersion       => null,
         SuggestionEntityType.SoftwarePromoArt      => $"/software/{entityId}",
         SuggestionEntityType.SoftwareCover         => $"/software/release/{entityId}",
         SuggestionEntityType.SoftwareScreenshot    => $"/software/{entityId}",

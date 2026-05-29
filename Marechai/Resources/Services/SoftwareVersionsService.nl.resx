@@ -229,4 +229,122 @@
     <data name="Create releases" xml:space="preserve">
         <value>Uitgaven aanmaken</value>
     </data>
+  <data name="Suggest a new version of this software. A first release is required at the same time; both will be created together when an administrator accepts the suggestion." xml:space="preserve">
+    <value>Stel een nieuwe versie van deze software voor. Een eerste uitgave is tegelijkertijd vereist; beide worden samen aangemaakt wanneer een beheerder de suggestie accepteert.</value>
+  </data>
+  <data name="Version of: {0}" xml:space="preserve">
+    <value>Versie van: {0}</value>
+  </data>
+  <data name="Version info" xml:space="preserve">
+    <value>Versie-informatie</value>
+  </data>
+  <data name="The canonical version identifier, e.g. &quot;4.00.950&quot; or &quot;2.0&quot;." xml:space="preserve">
+    <value>De canonieke versie-aanduiding, bijvoorbeeld &quot;4.00.950&quot; of &quot;2.0&quot;.</value>
+  </data>
+  <data name="Optional. The marketing name, e.g. &quot;Windows 95&quot; for version 4.00.950." xml:space="preserve">
+    <value>Optioneel. De marketingnaam, bijvoorbeeld &quot;Windows 95&quot; voor versie 4.00.950.</value>
+  </data>
+  <data name="Optional. Internal codename used during development." xml:space="preserve">
+    <value>Optioneel. Interne codenaam die tijdens de ontwikkeling werd gebruikt.</value>
+  </data>
+  <data name="Optional. Link to a sibling version of the same software (e.g. service-pack chains)." xml:space="preserve">
+    <value>Optioneel. Koppeling naar een verwante versie van dezelfde software (bijv. service-pack-ketens).</value>
+  </data>
+  <data name="Optional. Apply when this specific version was released under a license different from the parent software." xml:space="preserve">
+    <value>Optioneel. Gebruik dit wanneer deze specifieke versie onder een andere licentie is uitgebracht dan de bovenliggende software.</value>
+  </data>
+  <data name="First release" xml:space="preserve">
+    <value>Eerste uitgave</value>
+  </data>
+  <data name="Title, publisher and platform are required for the accompanying release." xml:space="preserve">
+    <value>Titel, uitgever en platform zijn vereist voor de bijbehorende uitgave.</value>
+  </data>
+  <data name="Release title" xml:space="preserve">
+    <value>Titel van de uitgave</value>
+  </data>
+  <data name="Release title is required." xml:space="preserve">
+    <value>De titel van de uitgave is vereist.</value>
+  </data>
+  <data name="Platform" xml:space="preserve">
+    <value>Platform</value>
+  </data>
+  <data name="Publisher" xml:space="preserve">
+    <value>Uitgever</value>
+  </data>
+  <data name="Release date" xml:space="preserve">
+    <value>Uitgavedatum</value>
+  </data>
+  <data name="First release: Regions" xml:space="preserve">
+    <value>Eerste uitgave: regio&#x27;s</value>
+  </data>
+  <data name="First release: Languages" xml:space="preserve">
+    <value>Eerste uitgave: talen</value>
+  </data>
+  <data name="First release: Barcodes" xml:space="preserve">
+    <value>Eerste uitgave: streepjescodes</value>
+  </data>
+  <data name="First release: Product codes" xml:space="preserve">
+    <value>Eerste uitgave: productcodes</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Barcode" xml:space="preserve">
+    <value>Streepjescode</value>
+  </data>
+  <data name="Issuer" xml:space="preserve">
+    <value>Uitgever</value>
+  </data>
+  <data name="Product code" xml:space="preserve">
+    <value>Productcode</value>
+  </data>
+  <data name="Undo" xml:space="preserve">
+    <value>Ongedaan maken</value>
+  </data>
+  <data name="Add region" xml:space="preserve">
+    <value>Regio toevoegen</value>
+  </data>
+  <data name="Add language" xml:space="preserve">
+    <value>Taal toevoegen</value>
+  </data>
+  <data name="Add barcode" xml:space="preserve">
+    <value>Streepjescode toevoegen</value>
+  </data>
+  <data name="Add product code" xml:space="preserve">
+    <value>Productcode toevoegen</value>
+  </data>
+  <data name="This barcode is already present in the list." xml:space="preserve">
+    <value>Deze streepjescode staat al in de lijst.</value>
+  </data>
+  <data name="This product code is already present in the list." xml:space="preserve">
+    <value>Deze productcode staat al in de lijst.</value>
+  </data>
+  <data name="Optional comment (References, sources, etc...)" xml:space="preserve">
+    <value>Optionele opmerking (referenties, bronnen, enz.)</value>
+  </data>
+  <data name="Submit suggestion" xml:space="preserve">
+    <value>Suggestie indienen</value>
+  </data>
+  <data name="Suggestion submitted. An administrator will review it." xml:space="preserve">
+    <value>Suggestie ingediend. Een beheerder zal deze beoordelen.</value>
+  </data>
+  <data name="Failed to submit suggestion." xml:space="preserve">
+    <value>Kon suggestie niet indienen.</value>
+  </data>
+  <data name="Cannot submit: parent software is missing." xml:space="preserve">
+    <value>Kan niet indienen: bovenliggende software ontbreekt.</value>
+  </data>
+  <data name="Cannot open: parent software is missing." xml:space="preserve">
+    <value>Kan niet openen: bovenliggende software ontbreekt.</value>
+  </data>
+  <data name="Failed to load picker data — please retry." xml:space="preserve">
+    <value>Kon kiezergegevens niet laden — probeer het opnieuw.</value>
+  </data>
+  <data name="Publisher is required." xml:space="preserve">
+    <value>Uitgever is vereist.</value>
+  </data>
+  <data name="Suggest new version" xml:space="preserve">
+    <value>Nieuwe versie voorstellen</value>
+  </data>
+
 </root>

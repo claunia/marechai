@@ -1252,4 +1252,14 @@
     <data name="No platform" xml:space="preserve">
         <value>No platform</value>
     </data>
+  <data name="No versions recorded yet." xml:space="preserve">
+    <value>Noch keine Versionen erfasst.</value>
+  </data>
+  <data name="Suggest new version" xml:space="preserve">
+    <value>Neue Version vorschlagen</value>
+  </data>
+  <data name="Suggest a new version to be added to the catalogue." xml:space="preserve">
+    <value>Schlagen Sie eine neue Version vor, die dem Katalog hinzugefügt werden soll.</value>
+  </data>
+
 </root>

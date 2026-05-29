@@ -91,6 +91,7 @@ public static class SuggestionMetadataRegistry
             Marechai.Suggestions.Metadata.PersonSuggestionMetadata.EnsureRegistered();
             Marechai.Suggestions.Metadata.SoftwareSuggestionMetadata.EnsureRegistered();
             Marechai.Suggestions.Metadata.SoftwareReleaseSuggestionMetadata.EnsureRegistered();
+            Marechai.Suggestions.Metadata.SoftwareVersionSuggestionMetadata.EnsureRegistered();
             s_seeded = true;
         }
     }
