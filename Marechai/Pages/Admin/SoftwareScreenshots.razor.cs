@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
 
 namespace Marechai.Pages.Admin;
@@ -17,8 +15,6 @@ public partial class SoftwareScreenshots
     bool                           _isLoading = true;
     List<SoftwarePlatformDto>     _platforms;
     List<SoftwareScreenshotDto>   _screenshots;
-    SoftwarePlatformDto           _selectedPlatform;
-    string                        _selectedGroupName;
     string                        _softwareName;
     string                        _successMessage;
 
@@ -39,40 +35,37 @@ public partial class SoftwareScreenshots
         _isLoading   = false;
     }
 
-    async Task OnFileSelected(IBrowserFile file)
+    async Task OpenUploadDialog()
     {
-        if(file is null) return;
+        _errorMessage   = null;
+        _successMessage = null;
 
-        const int maxSize = 50 * 1024 * 1024;
-
-        try
+        var parameters = new DialogParameters<SoftwareScreenshotsBatchUploadDialog>
         {
-            await using Stream stream     = file.OpenReadStream(maxSize);
-            using var          memStream   = new MemoryStream();
-            await stream.CopyToAsync(memStream);
-            byte[] fileBytes = memStream.ToArray();
+            { x => x.SoftwareId,   SoftwareId },
+            { x => x.SoftwareName, _softwareName ?? string.Empty },
+            { x => x.Platforms,    _platforms ?? new List<SoftwarePlatformDto>() }
+        };
 
-            ulong? platformId = _selectedPlatform?.Id is not null
-                                   ? (ulong)_selectedPlatform.Id.Value
-                                   : null;
+        IDialogReference dialog =
+            await DialogService.ShowAsync<SoftwareScreenshotsBatchUploadDialog>(L["Upload Screenshots"], parameters,
+                new DialogOptions
+                {
+                    MaxWidth         = MaxWidth.Large,
+                    FullWidth        = true,
+                    CloseOnEscapeKey = false,
+                    BackdropClick    = false
+                });
 
-            SoftwareScreenshotDto result =
-                await SoftwareService.UploadScreenshotAsync(SoftwareId, fileBytes, file.Name, platformId,
-                                                            canonicalGroupName: _selectedGroupName?.Trim());
+        DialogResult result = await dialog.Result;
 
-            if(result is not null)
-            {
-                _successMessage = L["Screenshot uploaded successfully."];
-                await LoadDataAsync();
-            }
-            else
-            {
-                _errorMessage = L["Failed to upload screenshot."];
-            }
-        }
-        catch(Exception ex)
+        if(result is { Canceled: false })
         {
-            _errorMessage = ex.Message;
+            int succeeded = result.Data is int n ? n : 0;
+            if(succeeded > 0)
+                _successMessage = string.Format(L["{0} screenshot(s) uploaded successfully."].Value, succeeded);
+
+            await LoadDataAsync();
         }
     }
 

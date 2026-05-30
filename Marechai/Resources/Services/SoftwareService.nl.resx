@@ -1633,5 +1633,48 @@
   <data name="Suggest a new version to be added to the catalogue." xml:space="preserve">
     <value>Stel een nieuwe versie voor om aan de catalogus toe te voegen.</value>
   </data>
+  <data name="Add at least one successfully-uploaded image before uploading." xml:space="preserve">
+    <value>Voeg ten minste één succesvol geüploade afbeelding toe voordat u uploadt.</value>
+  </data>
+  <data name="Batch finished. {0} succeeded, {1} failed." xml:space="preserve">
+    <value>Batch voltooid. {0} geslaagd, {1} mislukt.</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Sluiten</value>
+  </data>
+  <data name="Failed to start batch upload." xml:space="preserve">
+    <value>Batch-upload kon niet worden gestart.</value>
+  </data>
+  <data name="No images staged yet. Use the Add images button above to pick files." xml:space="preserve">
+    <value>Nog geen afbeeldingen voorbereid. Gebruik de knop „Afbeeldingen toevoegen” hierboven om bestanden te kiezen.</value>
+  </data>
+  <data name="Processing image {0} of {1}" xml:space="preserve">
+    <value>Afbeelding {0} van {1} verwerken</value>
+  </data>
+  <data name="Processing images. Please keep this dialog open until processing finishes." xml:space="preserve">
+    <value>Bezig met verwerken van afbeeldingen. Houd dit dialoogvenster open totdat de verwerking voltooid is.</value>
+  </data>
+  <data name="Processing…" xml:space="preserve">
+    <value>Verwerken…</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Uploaden</value>
+  </data>
+  <data name="Upload screenshots" xml:space="preserve">
+    <value>Schermafbeeldingen uploaden</value>
+  </data>
+  <data name="Upload Screenshots" xml:space="preserve">
+    <value>Schermafbeeldingen uploaden</value>
+  </data>
+  <data name="Upload up to {0} screenshots for {1}. Accepted formats: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max 50 MB each)." xml:space="preserve">
+    <value>Upload tot {0} schermafbeeldingen voor {1}. Geaccepteerde formaten: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max. 50 MB per stuk).</value>
+  </data>
+  <data name="You have staged images that have not been uploaded. Closing this dialog will delete them. Continue?" xml:space="preserve">
+    <value>U heeft afbeeldingen in de wachtrij die nog niet zijn geüploaded. Door dit dialoogvenster te sluiten worden ze verwijderd. Doorgaan?</value>
+  </data>
+  <data name="{0} screenshot(s) uploaded successfully." xml:space="preserve">
+    <value>{0} schermafbeelding(en) succesvol geüploaded.</value>
+  </data>
+
 
 </root>

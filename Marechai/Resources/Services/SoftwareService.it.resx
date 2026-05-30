@@ -1180,5 +1180,48 @@
   <data name="Suggest a new version to be added to the catalogue." xml:space="preserve">
     <value>Suggerisci una nuova versione da aggiungere al catalogo.</value>
   </data>
+  <data name="Add at least one successfully-uploaded image before uploading." xml:space="preserve">
+    <value>Aggiungi almeno un'immagine caricata correttamente prima del caricamento.</value>
+  </data>
+  <data name="Batch finished. {0} succeeded, {1} failed." xml:space="preserve">
+    <value>Lotto completato. {0} riuscite, {1} fallite.</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Chiudi</value>
+  </data>
+  <data name="Failed to start batch upload." xml:space="preserve">
+    <value>Avvio del caricamento in lotto non riuscito.</value>
+  </data>
+  <data name="No images staged yet. Use the Add images button above to pick files." xml:space="preserve">
+    <value>Nessuna immagine in attesa. Usa il pulsante «Aggiungi immagini» qui sopra per scegliere i file.</value>
+  </data>
+  <data name="Processing image {0} of {1}" xml:space="preserve">
+    <value>Elaborazione immagine {0} di {1}</value>
+  </data>
+  <data name="Processing images. Please keep this dialog open until processing finishes." xml:space="preserve">
+    <value>Elaborazione delle immagini. Mantieni questa finestra aperta fino al termine dell'elaborazione.</value>
+  </data>
+  <data name="Processing…" xml:space="preserve">
+    <value>Elaborazione…</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Carica</value>
+  </data>
+  <data name="Upload screenshots" xml:space="preserve">
+    <value>Carica screenshot</value>
+  </data>
+  <data name="Upload Screenshots" xml:space="preserve">
+    <value>Carica screenshot</value>
+  </data>
+  <data name="Upload up to {0} screenshots for {1}. Accepted formats: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max 50 MB each)." xml:space="preserve">
+    <value>Carica fino a {0} screenshot per {1}. Formati accettati: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max 50 MB ciascuno).</value>
+  </data>
+  <data name="You have staged images that have not been uploaded. Closing this dialog will delete them. Continue?" xml:space="preserve">
+    <value>Hai immagini in attesa che non sono state caricate. Chiudere questa finestra le eliminerà. Continuare?</value>
+  </data>
+  <data name="{0} screenshot(s) uploaded successfully." xml:space="preserve">
+    <value>{0} screenshot caricato/i correttamente.</value>
+  </data>
+
 
 </root>

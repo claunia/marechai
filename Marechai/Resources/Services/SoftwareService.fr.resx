@@ -1261,5 +1261,48 @@
   <data name="Suggest a new version to be added to the catalogue." xml:space="preserve">
     <value>Suggérez une nouvelle version à ajouter au catalogue.</value>
   </data>
+  <data name="Add at least one successfully-uploaded image before uploading." xml:space="preserve">
+    <value>Ajoutez au moins une image correctement téléversée avant de téléverser.</value>
+  </data>
+  <data name="Batch finished. {0} succeeded, {1} failed." xml:space="preserve">
+    <value>Lot terminé. {0} réussies, {1} échouées.</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Fermer</value>
+  </data>
+  <data name="Failed to start batch upload." xml:space="preserve">
+    <value>Impossible de démarrer le téléversement par lot.</value>
+  </data>
+  <data name="No images staged yet. Use the Add images button above to pick files." xml:space="preserve">
+    <value>Aucune image préparée pour l'instant. Utilisez le bouton « Ajouter des images » ci-dessus pour choisir des fichiers.</value>
+  </data>
+  <data name="Processing image {0} of {1}" xml:space="preserve">
+    <value>Traitement de l'image {0} sur {1}</value>
+  </data>
+  <data name="Processing images. Please keep this dialog open until processing finishes." xml:space="preserve">
+    <value>Traitement des images. Veuillez laisser cette boîte de dialogue ouverte jusqu'à la fin du traitement.</value>
+  </data>
+  <data name="Processing…" xml:space="preserve">
+    <value>Traitement…</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Téléverser</value>
+  </data>
+  <data name="Upload screenshots" xml:space="preserve">
+    <value>Téléverser des captures d'écran</value>
+  </data>
+  <data name="Upload Screenshots" xml:space="preserve">
+    <value>Téléverser des captures d'écran</value>
+  </data>
+  <data name="Upload up to {0} screenshots for {1}. Accepted formats: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max 50 MB each)." xml:space="preserve">
+    <value>Téléversez jusqu'à {0} captures d'écran pour {1}. Formats acceptés : JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max. 50 Mo chacune).</value>
+  </data>
+  <data name="You have staged images that have not been uploaded. Closing this dialog will delete them. Continue?" xml:space="preserve">
+    <value>Vous avez des images préparées qui n'ont pas été téléversées. La fermeture de cette boîte de dialogue les supprimera. Continuer ?</value>
+  </data>
+  <data name="{0} screenshot(s) uploaded successfully." xml:space="preserve">
+    <value>{0} capture(s) d'écran téléversée(s) avec succès.</value>
+  </data>
+
 
 </root>

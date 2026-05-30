@@ -1215,5 +1215,48 @@
   <data name="Suggest a new version to be added to the catalogue." xml:space="preserve">
     <value>Sugiere una nueva versión para añadir al catálogo.</value>
   </data>
+  <data name="Add at least one successfully-uploaded image before uploading." xml:space="preserve">
+    <value>Añada al menos una imagen subida correctamente antes de cargar.</value>
+  </data>
+  <data name="Batch finished. {0} succeeded, {1} failed." xml:space="preserve">
+    <value>Lote completado. {0} con éxito, {1} con error.</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Cerrar</value>
+  </data>
+  <data name="Failed to start batch upload." xml:space="preserve">
+    <value>No se pudo iniciar la carga del lote.</value>
+  </data>
+  <data name="No images staged yet. Use the Add images button above to pick files." xml:space="preserve">
+    <value>Aún no hay imágenes preparadas. Use el botón «Añadir imágenes» de arriba para elegir archivos.</value>
+  </data>
+  <data name="Processing image {0} of {1}" xml:space="preserve">
+    <value>Procesando imagen {0} de {1}</value>
+  </data>
+  <data name="Processing images. Please keep this dialog open until processing finishes." xml:space="preserve">
+    <value>Procesando imágenes. Mantenga este diálogo abierto hasta que finalice el procesamiento.</value>
+  </data>
+  <data name="Processing…" xml:space="preserve">
+    <value>Procesando…</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Subir</value>
+  </data>
+  <data name="Upload screenshots" xml:space="preserve">
+    <value>Subir capturas de pantalla</value>
+  </data>
+  <data name="Upload Screenshots" xml:space="preserve">
+    <value>Subir capturas de pantalla</value>
+  </data>
+  <data name="Upload up to {0} screenshots for {1}. Accepted formats: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max 50 MB each)." xml:space="preserve">
+    <value>Sube hasta {0} capturas de pantalla para {1}. Formatos aceptados: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (máx. 50 MB cada una).</value>
+  </data>
+  <data name="You have staged images that have not been uploaded. Closing this dialog will delete them. Continue?" xml:space="preserve">
+    <value>Tiene imágenes preparadas que aún no se han subido. Al cerrar este diálogo se eliminarán. ¿Continuar?</value>
+  </data>
+  <data name="{0} screenshot(s) uploaded successfully." xml:space="preserve">
+    <value>{0} captura(s) de pantalla subida(s) correctamente.</value>
+  </data>
+
 
 </root>

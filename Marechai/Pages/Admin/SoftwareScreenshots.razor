@@ -38,42 +38,13 @@
 }
 
 <MudPaper Elevation="2" Class="rounded-lg pa-4">
-    <MudStack Row="true" Spacing="3" AlignItems="AlignItems.Start" Class="mb-3">
-        <MudSelect T="SoftwarePlatformDto" @bind-Value="_selectedPlatform"
-                   Label="@L["Platform"]" Variant="Variant.Outlined" Dense="true"
-                   Clearable="true" Style="max-width: 300px;">
-            @if(_platforms is not null)
-            {
-                @foreach(SoftwarePlatformDto platform in _platforms)
-                {
-                    <MudSelectItem T="SoftwarePlatformDto" Value="platform">@platform.Name</MudSelectItem>
-                }
-            }
-        </MudSelect>
-        <MudAutocomplete T="string"
-                         @bind-Value="_selectedGroupName"
-                         SearchFunc="SearchGroupsAsync"
-                         Label="@L["Group (optional, in English)"]"
-                         HelperText="@L["Type a new group name or pick an existing one"]"
-                         Variant="Variant.Outlined" Dense="true"
-                         Clearable="true" CoerceText="false" CoerceValue="true"
-                         ResetValueOnEmptyText="true" MaxLength="256"
-                         Style="max-width: 350px;"/>
-    </MudStack>
     <MudToolBar Dense="true">
-        <MudFileUpload T="IBrowserFile"
-                       Accept=".jpg,.jpeg,.png,.webp,.tiff,.tif,.bmp"
-                       FilesChanged="OnFileSelected"
-                       MaximumFileCount="1">
-            <CustomContent>
-                <MudButton Variant="Variant.Filled"
-                           Color="Color.Primary"
-                           StartIcon="@Icons.Material.Filled.Upload"
-                           OnClick="@context.OpenFilePickerAsync">
-                    @L["Upload Screenshot"]
-                </MudButton>
-            </CustomContent>
-        </MudFileUpload>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                   OnClick="OpenUploadDialog">
+            @L["Upload screenshots"]
+        </MudButton>
         <MudSpacer/>
         <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadDataAsync"/>
     </MudToolBar>

@@ -1261,5 +1261,48 @@
   <data name="Suggest a new version to be added to the catalogue." xml:space="preserve">
     <value>Schlagen Sie eine neue Version vor, die dem Katalog hinzugefügt werden soll.</value>
   </data>
+  <data name="Add at least one successfully-uploaded image before uploading." xml:space="preserve">
+    <value>Fügen Sie mindestens ein erfolgreich hochgeladenes Bild hinzu, bevor Sie hochladen.</value>
+  </data>
+  <data name="Batch finished. {0} succeeded, {1} failed." xml:space="preserve">
+    <value>Stapel abgeschlossen. {0} erfolgreich, {1} fehlgeschlagen.</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="Failed to start batch upload." xml:space="preserve">
+    <value>Stapelupload konnte nicht gestartet werden.</value>
+  </data>
+  <data name="No images staged yet. Use the Add images button above to pick files." xml:space="preserve">
+    <value>Noch keine Bilder vorgemerkt. Verwenden Sie die Schaltfläche „Bilder hinzufügen“ oben, um Dateien auszuwählen.</value>
+  </data>
+  <data name="Processing image {0} of {1}" xml:space="preserve">
+    <value>Verarbeite Bild {0} von {1}</value>
+  </data>
+  <data name="Processing images. Please keep this dialog open until processing finishes." xml:space="preserve">
+    <value>Bilder werden verarbeitet. Bitte lassen Sie diesen Dialog geöffnet, bis die Verarbeitung abgeschlossen ist.</value>
+  </data>
+  <data name="Processing…" xml:space="preserve">
+    <value>Verarbeitung…</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Hochladen</value>
+  </data>
+  <data name="Upload screenshots" xml:space="preserve">
+    <value>Screenshots hochladen</value>
+  </data>
+  <data name="Upload Screenshots" xml:space="preserve">
+    <value>Screenshots hochladen</value>
+  </data>
+  <data name="Upload up to {0} screenshots for {1}. Accepted formats: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max 50 MB each)." xml:space="preserve">
+    <value>Lade bis zu {0} Screenshots für {1} hoch. Akzeptierte Formate: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max. 50 MB pro Datei).</value>
+  </data>
+  <data name="You have staged images that have not been uploaded. Closing this dialog will delete them. Continue?" xml:space="preserve">
+    <value>Es gibt vorgemerkte Bilder, die noch nicht hochgeladen wurden. Beim Schließen dieses Dialogs werden sie gelöscht. Fortfahren?</value>
+  </data>
+  <data name="{0} screenshot(s) uploaded successfully." xml:space="preserve">
+    <value>{0} Screenshot(s) erfolgreich hochgeladen.</value>
+  </data>
+
 
 </root>

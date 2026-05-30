@@ -350,6 +350,63 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
+    /// <summary>
+    ///     Delete a single admin-staged pending software-screenshot image (the admin
+    ///     batch-upload dialog uses this when the admin removes a card before committing
+    ///     or cancels the dialog entirely). Returns false on any failure — caller decides
+    ///     whether to surface it.
+    /// </summary>
+    public async Task<bool> DeleteAdminPendingScreenshotAsync(Guid guid)
+    {
+        try
+        {
+            await client.Software.Screenshots.Admin.Pending[guid].DeleteAsync();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    ///     Commit a batch of admin-staged pending software-screenshot images. Returns the
+    ///     initial job snapshot (state=Queued) plus any error message; the caller is
+    ///     responsible for polling <see cref="GetAdminScreenshotBatchStatusAsync" /> until
+    ///     the job reaches a terminal state.
+    /// </summary>
+    public async Task<(AdminSoftwareScreenshotBatchJobStatusDto job, string error)> CommitAdminScreenshotBatchAsync(
+        AdminSoftwareScreenshotBatchCommitRequestDto request)
+    {
+        try
+        {
+            AdminSoftwareScreenshotBatchJobStatusDto job =
+                await client.Software.Screenshots.Admin.Batch.Commit.PostAsync(request);
+            return (job, null);
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    /// <summary>
+    ///     Fetch the current status of an in-flight admin software-screenshot batch-commit
+    ///     job. Returns null when the job id is unknown to the server (caller treats null
+    ///     as a terminal failure).
+    /// </summary>
+    public async Task<AdminSoftwareScreenshotBatchJobStatusDto> GetAdminScreenshotBatchStatusAsync(Guid jobId)
+    {
+        try
+        {
+            return await client.Software.Screenshots.Admin.Batch[jobId].Status.GetAsync();
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
     // ── Picker methods ──
 
     public async Task<int> GetSoftwareCountAsync(SoftwareKind? kind = null)
