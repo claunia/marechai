@@ -66,7 +66,10 @@ public static class ThemeIds
     /// <summary>Amber phosphor CRT terminal (IBM 5151 / Hercules / Wyse 50 era) — pure black background, warm amber text, VT323 monospace.</summary>
     public const string PhosphorAmber = "phosphor-amber";
 
+    /// <summary>Windows 95 classic light theme — teal desktop, silver window chrome, navy title bars, with the W95FA font (MS Sans Serif facsimile).</summary>
+    public const string Windows95 = "windows95";
+
     /// <summary>All recognised theme slugs. Used by the controller to validate incoming theme ids.</summary>
     public static readonly IReadOnlySet<string> All =
-        new HashSet<string>(StringComparer.OrdinalIgnoreCase) { DefaultDark, DefaultLight, AmigaOs, Dos, MacOs9, Cde, CdeSolaris, Cyberpunk, Phosphor, PhosphorAmber };
+        new HashSet<string>(StringComparer.OrdinalIgnoreCase) { DefaultDark, DefaultLight, AmigaOs, Dos, MacOs9, Cde, CdeSolaris, Cyberpunk, Phosphor, PhosphorAmber, Windows95 };
 }

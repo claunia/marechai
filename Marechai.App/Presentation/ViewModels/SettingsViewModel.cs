@@ -136,6 +136,11 @@ public partial class SettingsViewModel : ObservableObject
             },
             new()
             {
+                ThemeName   = "windows95",
+                DisplayName = _localizer["Windows95Theme"]
+            },
+            new()
+            {
                 ThemeName   = "macos9",
                 DisplayName = _localizer["MacOS9Theme"]
             },

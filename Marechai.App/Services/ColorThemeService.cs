@@ -52,6 +52,7 @@ public class ColorThemeService : IColorThemeService
     {
         DEFAULT_THEME,
         "windows311",
+        "windows95",
         "macos9",
         "dos",
         "amigaos",
@@ -119,6 +120,7 @@ public class ColorThemeService : IColorThemeService
                 newDictionary = themeName switch
                                 {
                                     "windows311"     => new Marechai.App.Styles.Win311ColorPalette(),
+                                    "windows95"      => new Marechai.App.Styles.Windows95ColorPalette(),
                                     "macos9"         => new Marechai.App.Styles.MacOS9ColorPalette(),
                                     "dos"            => new Marechai.App.Styles.DOSColorPalette(),
                                     "amigaos"        => new Marechai.App.Styles.AmigaColorPalette(),

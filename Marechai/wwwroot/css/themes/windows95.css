@@ -1,0 +1,30 @@
+/* Windows 95 theme web fonts.
+ *
+ * "MS Sans Serif" — a pixel-accurate FontStruct reconstruction by "lou" of the original Microsoft Sans
+ * Serif raster font that shipped with Windows 95. Bundled (regular + bold) under CC BY-SA 3.0.
+ * Source: https://fontstruct.com/fontstructions/show/1384746  (and …/1384862 for bold).
+ * Files obtained from https://github.com/jdan/98.css and kept here under the same licence; see
+ * /fonts/windows95/LICENSE.txt for the full attribution.
+ *
+ * The family name "MS Sans Serif" intentionally matches the Windows system font name: on Windows the
+ * native bitmap font wins (sharper at small sizes); on other platforms browsers fall through to this
+ * bundled @font-face.
+ */
+
+@font-face {
+    font-family: 'MS Sans Serif';
+    src: url('/fonts/windows95/ms_sans_serif.woff2') format('woff2'),
+         url('/fonts/windows95/ms_sans_serif.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'MS Sans Serif';
+    src: url('/fonts/windows95/ms_sans_serif_bold.woff2') format('woff2'),
+         url('/fonts/windows95/ms_sans_serif_bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}

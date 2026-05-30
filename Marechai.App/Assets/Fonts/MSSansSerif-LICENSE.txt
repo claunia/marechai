@@ -1,0 +1,15 @@
+MS Sans Serif and MS Sans Serif Bold — pixel-accurate FontStruct
+reconstructions of the Microsoft Sans Serif raster font that shipped with
+Windows 95, by "lou".
+
+Sources:
+  https://fontstruct.com/fontstructions/show/1384746  (Regular)
+  https://fontstruct.com/fontstructions/show/1384862  (Bold)
+
+Both are licensed under the Creative Commons Attribution-ShareAlike 3.0
+Unported license (CC BY-SA 3.0):
+  https://creativecommons.org/licenses/by-sa/3.0/
+
+Font files in this folder were obtained from the 98.css project
+(https://github.com/jdan/98.css), which redistributes them under the same
+licence.

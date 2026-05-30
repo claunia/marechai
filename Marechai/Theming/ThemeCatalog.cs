@@ -71,6 +71,10 @@ public static class ThemeCatalog
 
     static readonly IReadOnlyList<string> _phosphorFonts = ["/css/themes/phosphor.css"];
 
+    static readonly string[] _w95Stack = ["MS Sans Serif", "Microsoft Sans Serif", "Tahoma", "Geneva", "sans-serif"];
+
+    static readonly IReadOnlyList<string> _windows95Fonts = ["/css/themes/windows95.css"];
+
     /// <summary>The historical Marechai dark purple palette. Used as fallback for anonymous + null-preference users.</summary>
     public static readonly ThemeDefinition DefaultDark = new(ThemeIds.DefaultDark,
                                                              "Default (Dark)",
@@ -1440,8 +1444,170 @@ public static class ThemeCatalog
                                                                },
                                                                _phosphorFonts);
 
+    /// <summary>
+    ///     Windows 95 — the iconic August 1995 desktop: teal background, 3D silver (#C0C0C0) window chrome with
+    ///     white/black bevels, navy (#000080) active title bars and selection, and the proportional MS Sans Serif
+    ///     bitmap font. Rendered here with a CC BY-SA 3.0 FontStruct reconstruction by "lou" of the original 8pt
+    ///     MS Sans Serif glyphs, bundled at /fonts/windows95/. Light theme — Windows 95 had no native dark mode.
+    /// </summary>
+    public static readonly ThemeDefinition Windows95 = new(ThemeIds.Windows95,
+                                                           "Windows 95",
+                                                           false,
+                                                           new MudTheme
+                                                           {
+                                                               // Stock Windows 95 system colours (the values the
+                                                               // OS exposed via GetSysColor):
+                                                               //   Desktop          = #008080 (teal)
+                                                               //   3D face          = #C0C0C0 (silver — buttons, dialogs)
+                                                               //   3D highlight     = #FFFFFF (top/left bevel)
+                                                               //   3D shadow        = #808080 (bottom/right bevel)
+                                                               //   3D dark shadow   = #000000 (outer bevel)
+                                                               //   Active title     = #000080 (navy) / text #FFFFFF
+                                                               //   Inactive title   = #808080 / text #C0C0C0
+                                                               //   Selection        = #000080 / text #FFFFFF (matches title)
+                                                               //   Window bg        = #FFFFFF (text edit, list views)
+                                                               //   Window text      = #000000
+                                                               //   Tooltip / info   = #FFFFE1 (the only pastel in the OS)
+                                                               //
+                                                               // Mapping rationale:
+                                                               //   AppBar     = NAVY  (the active title-bar identity)
+                                                               //   Drawer     = SILVER (a sunken side panel, like a toolbar)
+                                                               //   Surface    = SILVER (3D dialog face)
+                                                               //   Background = TEAL  (the desktop showing through)
+                                                               //   Primary    = NAVY  (selection + focus rings)
+                                                               //   Secondary  = TEAL  (the desktop colour, as an accent)
+                                                               //   Tertiary   = GRAY  (#808080 — inactive chrome)
+                                                               PaletteLight = new PaletteLight
+                                                               {
+                                                                   Primary                  = "#000080",
+                                                                   PrimaryContrastText      = "#FFFFFF",
+                                                                   Secondary                = "#008080",
+                                                                   SecondaryContrastText    = "#FFFFFF",
+                                                                   Tertiary                 = "#808080",
+                                                                   TertiaryContrastText     = "#FFFFFF",
+                                                                   AppbarBackground         = "#000080",
+                                                                   AppbarText               = "#FFFFFF",
+                                                                   DrawerBackground         = "#C0C0C0",
+                                                                   DrawerText               = "#000000",
+                                                                   DrawerIcon               = "#000000",
+                                                                   Surface                  = "#C0C0C0",
+                                                                   Background               = "#008080",
+                                                                   BackgroundGray           = "#A0A0A0",
+                                                                   TextPrimary              = "#000000",
+                                                                   TextSecondary            = "#404040",
+                                                                   TextDisabled             = "#808080",
+                                                                   ActionDefault            = "#000000",
+                                                                   ActionDisabled           = "#808080",
+                                                                   ActionDisabledBackground = "#A0A0A0",
+                                                                   LinesDefault             = "#808080",
+                                                                   LinesInputs              = "#000000",
+                                                                   TableLines               = "#808080",
+                                                                   TableStriped             = "#DFDFDF",
+                                                                   TableHover               = "#E8E8E8",
+                                                                   Divider                  = "#808080",
+                                                                   DividerLight             = "#DFDFDF",
+                                                                   // Status colours from the Win95 system dialogs:
+                                                                   //   Info    = pure blue (hyperlinks, Information icon)
+                                                                   //   Success = dark green (Setup / progress complete)
+                                                                   //   Warning = mustard (Win95 Warning icon yellow #808000 face)
+                                                                   //   Error   = bright red (Critical Stop icon)
+                                                                   Info                     = "#0000FF",
+                                                                   Success                  = "#008000",
+                                                                   Warning                  = "#808000",
+                                                                   Error                    = "#FF0000",
+                                                                   Dark                     = "#000000"
+                                                               },
+                                                               LayoutProperties = new LayoutProperties
+                                                               {
+                                                                   DrawerWidthLeft     = "260px",
+                                                                   DrawerMiniWidthLeft = "72px"
+                                                               },
+                                                               Typography = new Typography
+                                                               {
+                                                                   Default = new DefaultTypography
+                                                                   {
+                                                                       FontFamily    = _w95Stack,
+                                                                       FontSize      = "0.875rem",
+                                                                       FontWeight    = "400",
+                                                                       LineHeight    = "1.4",
+                                                                       LetterSpacing = "0"
+                                                                   },
+                                                                   H1 = new H1Typography
+                                                                   {
+                                                                       FontFamily = _w95Stack,
+                                                                       FontSize   = "2rem",
+                                                                       FontWeight = "700"
+                                                                   },
+                                                                   H2 = new H2Typography
+                                                                   {
+                                                                       FontFamily = _w95Stack,
+                                                                       FontSize   = "1.75rem",
+                                                                       FontWeight = "700"
+                                                                   },
+                                                                   H3 = new H3Typography
+                                                                   {
+                                                                       FontFamily = _w95Stack,
+                                                                       FontSize   = "1.5rem",
+                                                                       FontWeight = "700"
+                                                                   },
+                                                                   H4 = new H4Typography
+                                                                   {
+                                                                       FontFamily = _w95Stack,
+                                                                       FontSize   = "1.25rem",
+                                                                       FontWeight = "700"
+                                                                   },
+                                                                   H5 = new H5Typography
+                                                                   {
+                                                                       FontFamily = _w95Stack,
+                                                                       FontSize   = "1.125rem",
+                                                                       FontWeight = "700"
+                                                                   },
+                                                                   H6 = new H6Typography
+                                                                   {
+                                                                       FontFamily = _w95Stack,
+                                                                       FontSize   = "1rem",
+                                                                       FontWeight = "700"
+                                                                   },
+                                                                   Subtitle1 = new Subtitle1Typography
+                                                                   {
+                                                                       FontFamily = _w95Stack,
+                                                                       FontWeight = "700"
+                                                                   },
+                                                                   Subtitle2 = new Subtitle2Typography
+                                                                   {
+                                                                       FontFamily = _w95Stack,
+                                                                       FontWeight = "700"
+                                                                   },
+                                                                   Body1 = new Body1Typography
+                                                                   {
+                                                                       FontFamily = _w95Stack
+                                                                   },
+                                                                   Body2 = new Body2Typography
+                                                                   {
+                                                                       FontFamily = _w95Stack
+                                                                   },
+                                                                   Button = new ButtonTypography
+                                                                   {
+                                                                       FontFamily    = _w95Stack,
+                                                                       FontWeight    = "700",
+                                                                       TextTransform = "none"
+                                                                   },
+                                                                   Caption = new CaptionTypography
+                                                                   {
+                                                                       FontFamily = _w95Stack
+                                                                   },
+                                                                   Overline = new OverlineTypography
+                                                                   {
+                                                                       FontFamily    = _w95Stack,
+                                                                       FontWeight    = "700",
+                                                                       TextTransform = "uppercase"
+                                                                   }
+                                                               }
+                                                           },
+                                                           _windows95Fonts);
+
     /// <summary>All themes available to users in the Appearance picker. Order matters — it's the display order.</summary>
-    public static readonly IReadOnlyList<ThemeDefinition> All = new[] { DefaultDark, DefaultLight, AmigaOs, Cde, CdeSolaris, Cyberpunk, Dos, MacOs9, Phosphor, PhosphorAmber };
+    public static readonly IReadOnlyList<ThemeDefinition> All = new[] { DefaultDark, DefaultLight, AmigaOs, Cde, CdeSolaris, Cyberpunk, Dos, MacOs9, Phosphor, PhosphorAmber, Windows95 };
 
     /// <summary>The default theme used when the user has no preference set.</summary>
     public static ThemeDefinition Default => DefaultDark;
