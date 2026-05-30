@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="old-dos.ru imports" xml:space="preserve">
+    <value>Importations old-dos.ru</value>
+  </data>
+  <data name="Review pending software pulled from old-dos.ru after the OpenAI enrichment passes." xml:space="preserve">
+    <value>Examiner les logiciels en attente recuperes depuis old-dos.ru apres les passes d'enrichissement OpenAI.</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Statut</value>
+  </data>
+  <data name="Ready or skipped" xml:space="preserve">
+    <value>Pret ou ignore</value>
+  </data>
+  <data name="Ready for review" xml:space="preserve">
+    <value>Pret pour la revue</value>
+  </data>
+  <data name="Skipped" xml:space="preserve">
+    <value>Ignore</value>
+  </data>
+  <data name="Accepted" xml:space="preserve">
+    <value>Accepte</value>
+  </data>
+  <data name="Discarded" xml:space="preserve">
+    <value>Rejete</value>
+  </data>
+  <data name="Crawled (awaiting enrichment)" xml:space="preserve">
+    <value>Recupere (en attente d'enrichissement)</value>
+  </data>
+  <data name="Search by name…" xml:space="preserve">
+    <value>Rechercher par nom…</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Rafraichir</value>
+  </data>
+  <data name="{0} item(s) shown" xml:space="preserve">
+    <value>{0} element(s) affiche(s)</value>
+  </data>
+  <data name="No pending old-dos imports." xml:space="preserve">
+    <value>Aucune importation old-dos en attente.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="Developer (raw)" xml:space="preserve">
+    <value>Developpeur (brut)</value>
+  </data>
+  <data name="OS" xml:space="preserve">
+    <value>OS</value>
+  </data>
+  <data name="Versions" xml:space="preserve">
+    <value>Versions</value>
+  </data>
+  <data name="Crawled" xml:space="preserve">
+    <value>Recupere</value>
+  </data>
+  <data name="Review" xml:space="preserve">
+    <value>Examiner</value>
+  </data>
+  <data name="Open on old-dos" xml:space="preserve">
+    <value>Ouvrir sur old-dos</value>
+  </data>
+  <data name="Translated" xml:space="preserve">
+    <value>Traduit</value>
+  </data>
+  <data name="Described" xml:space="preserve">
+    <value>Decrit</value>
+  </data>
+  <data name="Categorized" xml:space="preserve">
+    <value>Categorise</value>
+  </data>
+  <data name="Ready" xml:space="preserve">
+    <value>Pret</value>
+  </data>
+  <data name="Review old-dos import" xml:space="preserve">
+    <value>Examiner l'importation old-dos</value>
+  </data>
+</root>

@@ -1,0 +1,190 @@
+@page "/admin/old-dos-imports"
+@attribute [Authorize(Roles = "Admin, UberAdmin")]
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@inject OldDosImportsService Service
+@inject IDialogService       DialogService
+@inject ISnackbar            Snackbar
+@inject IStringLocalizer<OldDosImportsQueue> L
+
+<MudPaper Class="pa-6 mb-6" Elevation="0"
+          Style="background: linear-gradient(135deg, #6a1b9a 0%, #ab47bc 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Filled.Inventory2" Style="color: white; font-size: 48px;"/>
+        <MudStack Spacing="1">
+            <MudText Typo="Typo.h4" Style="color: white; font-weight: 700;">@L["old-dos.ru imports"]</MudText>
+            <MudText Typo="Typo.body2" Style="color: rgba(255,255,255,0.85);">
+                @L["Review pending software pulled from old-dos.ru after the OpenAI enrichment passes."]
+            </MudText>
+        </MudStack>
+    </MudStack>
+</MudPaper>
+
+<MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3" Class="mb-4">
+    <MudSelect T="OldDosSoftwareStatus?" Value="@_statusFilter" ValueChanged="@(async v => { _statusFilter = v; _hasError = false; await LoadAsync(); })"
+               Label="@L["Status"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="min-width: 220px;" Clearable="true" Disabled="_hasError">
+        <MudSelectItem T="OldDosSoftwareStatus?" Value="@((OldDosSoftwareStatus?)null)">@L["Ready or skipped"]</MudSelectItem>
+        <MudSelectItem T="OldDosSoftwareStatus?" Value="@((OldDosSoftwareStatus?)OldDosSoftwareStatus.ReadyForReview)">@L["Ready for review"]</MudSelectItem>
+        <MudSelectItem T="OldDosSoftwareStatus?" Value="@((OldDosSoftwareStatus?)OldDosSoftwareStatus.Skipped)">@L["Skipped"]</MudSelectItem>
+        <MudSelectItem T="OldDosSoftwareStatus?" Value="@((OldDosSoftwareStatus?)OldDosSoftwareStatus.Accepted)">@L["Accepted"]</MudSelectItem>
+        <MudSelectItem T="OldDosSoftwareStatus?" Value="@((OldDosSoftwareStatus?)OldDosSoftwareStatus.Discarded)">@L["Discarded"]</MudSelectItem>
+        <MudSelectItem T="OldDosSoftwareStatus?" Value="@((OldDosSoftwareStatus?)OldDosSoftwareStatus.Crawled)">@L["Crawled (needs translation)"]</MudSelectItem>
+        <MudSelectItem T="OldDosSoftwareStatus?" Value="@((OldDosSoftwareStatus?)OldDosSoftwareStatus.Translated)">@L["Translated (needs description)"]</MudSelectItem>
+        <MudSelectItem T="OldDosSoftwareStatus?" Value="@((OldDosSoftwareStatus?)OldDosSoftwareStatus.Described)">@L["Described (needs categorization)"]</MudSelectItem>
+        <MudSelectItem T="OldDosSoftwareStatus?" Value="@((OldDosSoftwareStatus?)OldDosSoftwareStatus.Categorized)">@L["Categorized (auto-promotes to Ready)"]</MudSelectItem>
+    </MudSelect>
+
+    <MudCheckBox T="bool" Value="@_hasError" ValueChanged="@(async v => { _hasError = v; await LoadAsync(); })"
+                 Label="@L["Has enrichment error"]" Color="Color.Error"/>
+
+    <MudTextField T="string" Value="@_search" ValueChanged="@(async v => { _search = v; await LoadAsync(); })"
+                  Placeholder="@L["Search by name…"]" Variant="Variant.Outlined" Margin="Margin.Dense"
+                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Style="min-width: 300px;" Immediate="false"/>
+
+    <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadAsync" Color="Color.Primary"
+                   aria-label="@L["Refresh"]"/>
+
+    <MudText Typo="Typo.body2" Color="Color.Secondary">
+        @string.Format(L["{0} item(s) shown"].Value, _items.Count)
+    </MudText>
+</MudStack>
+
+@if(!_loaded)
+{
+    <MudProgressLinear Indeterminate="true"/>
+}
+else if(_items.Count == 0)
+{
+    <MudAlert Severity="Severity.Info">@L["No pending old-dos imports."]</MudAlert>
+}
+else
+{
+    <MudTable Items="_items" Hover="true" Dense="true" Striped="true">
+        <HeaderContent>
+            <MudTh>@L["Name"]</MudTh>
+            <MudTh>@L["Developer (raw)"]</MudTh>
+            <MudTh>@L["OS"]</MudTh>
+            <MudTh>@L["Versions"]</MudTh>
+            <MudTh>@L["Status"]</MudTh>
+            <MudTh>@L["Crawled"]</MudTh>
+            <MudTh>@L["Error"]</MudTh>
+            <MudTh></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>
+                <MudStack Row="false" Spacing="0">
+                    <MudText Typo="Typo.body2">@context.Name</MudText>
+                    @if(!string.IsNullOrWhiteSpace(context.RussianCategoryPath))
+                    {
+                        <MudText Typo="Typo.caption" Color="Color.Secondary">@context.RussianCategoryPath</MudText>
+                    }
+                </MudStack>
+            </MudTd>
+            <MudTd>@(string.IsNullOrEmpty(context.DeveloperName) ? "—" : context.DeveloperName)</MudTd>
+            <MudTd>@(string.IsNullOrEmpty(context.OsName) ? "—" : context.OsName)</MudTd>
+            <MudTd>@context.VersionCount</MudTd>
+            <MudTd>
+                <MudChip T="string" Size="Size.Small" Color="@StatusColor(StatusOf(context))" Variant="Variant.Filled">
+                    @StatusLabel(StatusOf(context))
+                </MudChip>
+            </MudTd>
+            <MudTd>@(context.CrawledOn?.LocalDateTime.ToString("g"))</MudTd>
+            <MudTd>
+                @if(!string.IsNullOrEmpty(context.LastError))
+                {
+                    <MudTooltip Text="@context.LastError">
+                        <MudIcon Icon="@Icons.Material.Filled.ErrorOutline" Color="Color.Error" Size="Size.Small"/>
+                    </MudTooltip>
+                }
+            </MudTd>
+            <MudTd>
+                @if(StatusOf(context) is OldDosSoftwareStatus.ReadyForReview or OldDosSoftwareStatus.Skipped)
+                {
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                               StartIcon="@Icons.Material.Filled.Visibility"
+                               OnClick="@(() => OpenReviewAsync(context.Id ?? 0))">@L["Review"]</MudButton>
+                }
+                else if(!string.IsNullOrEmpty(context.SourceUrl))
+                {
+                    <MudLink Href="@AbsoluteOldDosUrl(context.SourceUrl)" Target="_blank" Color="Color.Default">@L["Open on old-dos"]</MudLink>
+                }
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+}
+
+@code
+{
+    List<OldDosPendingListItemDto> _items = new();
+    bool                            _loaded;
+    OldDosSoftwareStatus?           _statusFilter = OldDosSoftwareStatus.ReadyForReview;
+    string                          _search;
+    bool                            _hasError;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(!firstRender) return;
+        await LoadAsync();
+    }
+
+    async Task LoadAsync()
+    {
+        _loaded = false;
+        _items  = await Service.GetPendingAsync(0, 200, _hasError ? null : _statusFilter, _search, _hasError);
+        _loaded = true;
+        StateHasChanged();
+    }
+
+    async Task OpenReviewAsync(long id)
+    {
+        var parameters = new DialogParameters
+        {
+            ["InitialId"] = id
+        };
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.ExtraLarge
+        };
+        IDialogReference dlg = await DialogService.ShowAsync<OldDosImportReviewDialog>(L["Review old-dos import"], parameters, options);
+        await dlg.Result;
+        await LoadAsync();
+    }
+
+    static OldDosSoftwareStatus StatusOf(OldDosPendingListItemDto i) =>
+        i.Status.HasValue ? (OldDosSoftwareStatus)i.Status.Value : OldDosSoftwareStatus.Crawled;
+
+    string StatusLabel(OldDosSoftwareStatus status) => status switch
+    {
+        OldDosSoftwareStatus.Crawled        => L["Crawled"],
+        OldDosSoftwareStatus.Translated     => L["Translated"],
+        OldDosSoftwareStatus.Described      => L["Described"],
+        OldDosSoftwareStatus.Categorized    => L["Categorized"],
+        OldDosSoftwareStatus.ReadyForReview => L["Ready"],
+        OldDosSoftwareStatus.Accepted       => L["Accepted"],
+        OldDosSoftwareStatus.Skipped        => L["Skipped"],
+        OldDosSoftwareStatus.Discarded      => L["Discarded"],
+        _                                   => "—"
+    };
+
+    Color StatusColor(OldDosSoftwareStatus status) => status switch
+    {
+        OldDosSoftwareStatus.ReadyForReview => Color.Primary,
+        OldDosSoftwareStatus.Skipped        => Color.Warning,
+        OldDosSoftwareStatus.Accepted       => Color.Success,
+        OldDosSoftwareStatus.Discarded      => Color.Error,
+        _                                   => Color.Default
+    };
+
+    /// <summary>old-dos.ru `SourceUrl` is stored host-relative (e.g. <c>/index.php?…</c>); prefix the host
+    /// so the link opens the upstream page instead of resolving against the current admin host.</summary>
+    static string AbsoluteOldDosUrl(string url)
+    {
+        if(string.IsNullOrWhiteSpace(url)) return url;
+        if(url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+           url.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            return url;
+        return "https://old-dos.ru" + (url.StartsWith('/') ? url : "/" + url);
+    }
+}

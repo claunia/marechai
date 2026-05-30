@@ -51,4 +51,5 @@
     <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e305</value></resheader>
     <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e305</value></resheader>
     <data name="Suggestions Queue" xml:space="preserve"><value>Coda dei suggerimenti</value></data>
+  <data name="old-dos.ru Imports" xml:space="preserve"><value>Importazioni old-dos.ru</value></data>
 </root>

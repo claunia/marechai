@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Raw OS" xml:space="preserve">
+    <value>Roh-OS</value>
+  </data>
+  <data name="Raw developer" xml:space="preserve">
+    <value>Roh-Entwickler</value>
+  </data>
+  <data name="Existing software with the same normalized name found" xml:space="preserve">
+    <value>Bestehende Software mit demselben normalisierten Namen gefunden</value>
+  </data>
+  <data name="Possible existing matches" xml:space="preserve">
+    <value>Moegliche vorhandene Treffer</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Kind" xml:space="preserve">
+    <value>Art</value>
+  </data>
+  <data name="Year" xml:space="preserve">
+    <value>Jahr</value>
+  </data>
+  <data name="Releases" xml:space="preserve">
+    <value>Releases</value>
+  </data>
+  <data name="JW score" xml:space="preserve">
+    <value>JW-Wert</value>
+  </data>
+  <data name="Selected" xml:space="preserve">
+    <value>Ausgewaehlt</value>
+  </data>
+  <data name="Merge into this" xml:space="preserve">
+    <value>In diesen zusammenfuehren</value>
+  </data>
+  <data name="Switch back to create new" xml:space="preserve">
+    <value>Zurueck zu 'Neu anlegen'</value>
+  </data>
+  <data name="Russian original (read-only)" xml:space="preserve">
+    <value>Russisches Original (schreibgeschuetzt)</value>
+  </data>
+  <data name="Literal English translation (read-only)" xml:space="preserve">
+    <value>Wortwoertliche englische Uebersetzung (schreibgeschuetzt)</value>
+  </data>
+  <data name="Museum-grade English description (will be saved)" xml:space="preserve">
+    <value>Englische Beschreibung in Museumsqualitaet (wird gespeichert)</value>
+  </data>
+  <data name="Merging into '{0}'. Existing Name/Kind/descriptions on the target will NOT be overwritten — only missing description locales are added." xml:space="preserve">
+    <value>Zusammenfuehrung in '{0}'. Vorhandener Name/Art/Beschreibungen am Ziel werden NICHT ueberschrieben - es werden nur fehlende Beschreibungssprachen ergaenzt.</value>
+  </data>
+  <data name="Developer (Marechai company)" xml:space="preserve">
+    <value>Entwickler (Marechai-Firma)</value>
+  </data>
+  <data name="Categories (SoftwareGenre type=Category)" xml:space="preserve">
+    <value>Kategorien (SoftwareGenre Typ=Kategorie)</value>
+  </data>
+  <data name="Add category…" xml:space="preserve">
+    <value>Kategorie hinzufuegen…</value>
+  </data>
+  <data name="Versions" xml:space="preserve">
+    <value>Versionen</value>
+  </data>
+  <data name="Include" xml:space="preserve">
+    <value>Einbeziehen</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="Release date" xml:space="preserve">
+    <value>Veroeffentlichungsdatum</value>
+  </data>
+  <data name="Platform" xml:space="preserve">
+    <value>Plattform</value>
+  </data>
+  <data name="Download" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="(default)" xml:space="preserve">
+    <value>(Standard)</value>
+  </data>
+  <data name="Day" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="Month" xml:space="preserve">
+    <value>Monat</value>
+  </data>
+  <data name="Discard forever" xml:space="preserve">
+    <value>Endgueltig verwerfen</value>
+  </data>
+  <data name="Skip for later" xml:space="preserve">
+    <value>Fuer spaeter ueberspringen</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Schliessen</value>
+  </data>
+  <data name="Accept (create new)" xml:space="preserve">
+    <value>Akzeptieren (neu anlegen)</value>
+  </data>
+  <data name="Merge into '{0}'" xml:space="preserve">
+    <value>In '{0}' zusammenfuehren</value>
+  </data>
+  <data name="Pick a developer company first." xml:space="preserve">
+    <value>Bitte zuerst eine Entwicklerfirma auswaehlen.</value>
+  </data>
+  <data name="Promoted to software #{0} ({1} versions, {2} releases, {3} descriptions, {4} genres)." xml:space="preserve">
+    <value>Zu Software #{0} befoerdert ({1} Versionen, {2} Releases, {3} Beschreibungen, {4} Genres).</value>
+  </data>
+  <data name="Skipped." xml:space="preserve">
+    <value>Uebersprungen.</value>
+  </data>
+  <data name="Discarded." xml:space="preserve">
+    <value>Verworfen.</value>
+  </data>
+</root>

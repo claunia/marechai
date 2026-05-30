@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="old-dos.ru imports" xml:space="preserve">
+    <value>old-dos.ru-Importe</value>
+  </data>
+  <data name="Review pending software pulled from old-dos.ru after the OpenAI enrichment passes." xml:space="preserve">
+    <value>Pruefe ausstehende Software, die nach den OpenAI-Anreicherungsschritten von old-dos.ru geladen wurde.</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Ready or skipped" xml:space="preserve">
+    <value>Bereit oder uebersprungen</value>
+  </data>
+  <data name="Ready for review" xml:space="preserve">
+    <value>Bereit zur Pruefung</value>
+  </data>
+  <data name="Skipped" xml:space="preserve">
+    <value>Uebersprungen</value>
+  </data>
+  <data name="Accepted" xml:space="preserve">
+    <value>Akzeptiert</value>
+  </data>
+  <data name="Discarded" xml:space="preserve">
+    <value>Verworfen</value>
+  </data>
+  <data name="Crawled (awaiting enrichment)" xml:space="preserve">
+    <value>Erfasst (wartet auf Anreicherung)</value>
+  </data>
+  <data name="Search by name…" xml:space="preserve">
+    <value>Nach Name suchen…</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Aktualisieren</value>
+  </data>
+  <data name="{0} item(s) shown" xml:space="preserve">
+    <value>{0} Eintrag/Eintraege angezeigt</value>
+  </data>
+  <data name="No pending old-dos imports." xml:space="preserve">
+    <value>Keine ausstehenden old-dos-Importe.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Developer (raw)" xml:space="preserve">
+    <value>Entwickler (Rohwert)</value>
+  </data>
+  <data name="OS" xml:space="preserve">
+    <value>OS</value>
+  </data>
+  <data name="Versions" xml:space="preserve">
+    <value>Versionen</value>
+  </data>
+  <data name="Crawled" xml:space="preserve">
+    <value>Erfasst</value>
+  </data>
+  <data name="Review" xml:space="preserve">
+    <value>Pruefen</value>
+  </data>
+  <data name="Open on old-dos" xml:space="preserve">
+    <value>Auf old-dos oeffnen</value>
+  </data>
+  <data name="Translated" xml:space="preserve">
+    <value>Uebersetzt</value>
+  </data>
+  <data name="Described" xml:space="preserve">
+    <value>Beschrieben</value>
+  </data>
+  <data name="Categorized" xml:space="preserve">
+    <value>Kategorisiert</value>
+  </data>
+  <data name="Ready" xml:space="preserve">
+    <value>Bereit</value>
+  </data>
+  <data name="Review old-dos import" xml:space="preserve">
+    <value>old-dos-Import pruefen</value>
+  </data>
+</root>

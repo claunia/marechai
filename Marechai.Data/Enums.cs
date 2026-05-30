@@ -1258,4 +1258,41 @@ public enum SuggestionStatus : byte
     Stale              = 4,
     [Display(Name = "Withdrawn")]
     Withdrawn          = 5
+
+}
+
+public enum OldDosSoftwareStatus : byte
+{
+    [Display(Name = "Crawled")]
+    Crawled        = 0,
+    [Display(Name = "Translated")]
+    Translated     = 1,
+    [Display(Name = "Described")]
+    Described      = 2,
+    [Display(Name = "Categorized")]
+    Categorized    = 3,
+    [Display(Name = "Ready for review")]
+    ReadyForReview = 4,
+    [Display(Name = "Accepted")]
+    Accepted       = 5,
+    [Display(Name = "Skipped")]
+    Skipped        = 6,
+    [Display(Name = "Discarded")]
+    Discarded      = 7
+}
+
+public enum OldDosAcceptMode : byte
+{
+    [Display(Name = "Create new")]
+    CreateNew         = 0,
+    [Display(Name = "Merge into existing")]
+    MergeIntoExisting = 1
+}
+
+public enum OldDosNameMatchKind : byte
+{
+    [Display(Name = "Exact normalized")]
+    ExactNormalized = 0,
+    [Display(Name = "Fuzzy")]
+    Fuzzy           = 1
 }

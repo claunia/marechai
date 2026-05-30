@@ -225,6 +225,10 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<MessageReport>                       MessageReports                      { get; set; }
     public virtual DbSet<SearchEntry>                         SearchEntries                       { get; set; }
     public virtual DbSet<Suggestion>                          Suggestions                         { get; set; }
+    public virtual DbSet<OldDosCategory>                      OldDosCategories                    { get; set; }
+    public virtual DbSet<OldDosSoftware>                      OldDosSoftwares                     { get; set; }
+    public virtual DbSet<OldDosVersion>                       OldDosVersions                      { get; set; }
+    public virtual DbSet<OldDosOsPlatformMap>                 OldDosOsPlatformMaps                { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -2944,6 +2948,47 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
         {
             entity.HasIndex(e => e.MobyGameId).IsUnique();
             entity.HasIndex(e => e.Status);
+        });
+
+        modelBuilder.Entity<OldDosCategory>(entity =>
+        {
+            entity.HasIndex(e => e.ParentId);
+
+            entity.HasOne(e => e.Parent)
+                  .WithMany(p => p.Children)
+                  .HasForeignKey(e => e.ParentId)
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<OldDosSoftware>(entity =>
+        {
+            entity.HasIndex(e => e.SourceUrl).IsUnique();
+            entity.HasIndex(e => e.SourceId).IsUnique();
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => e.OldDosCategoryId);
+
+            entity.HasOne(e => e.OldDosCategory)
+                  .WithMany(p => p.Softwares)
+                  .HasForeignKey(e => e.OldDosCategoryId)
+                  .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<OldDosVersion>(entity =>
+        {
+            entity.HasIndex(e => e.OldDosSoftwareId);
+
+            entity.HasOne(e => e.OldDosSoftware)
+                  .WithMany(p => p.Versions)
+                  .HasForeignKey(e => e.OldDosSoftwareId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<OldDosOsPlatformMap>(entity =>
+        {
+            entity.HasOne(e => e.SoftwarePlatform)
+                  .WithMany()
+                  .HasForeignKey(e => e.SoftwarePlatformId)
+                  .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<MobyGamesDiscoveredGame>(entity =>

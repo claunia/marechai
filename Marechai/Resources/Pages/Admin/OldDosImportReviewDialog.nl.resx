@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Raw OS" xml:space="preserve">
+    <value>Ruw OS</value>
+  </data>
+  <data name="Raw developer" xml:space="preserve">
+    <value>Ruwe ontwikkelaar</value>
+  </data>
+  <data name="Existing software with the same normalized name found" xml:space="preserve">
+    <value>Bestaande software met dezelfde genormaliseerde naam gevonden</value>
+  </data>
+  <data name="Possible existing matches" xml:space="preserve">
+    <value>Mogelijke bestaande overeenkomsten</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Naam</value>
+  </data>
+  <data name="Kind" xml:space="preserve">
+    <value>Soort</value>
+  </data>
+  <data name="Year" xml:space="preserve">
+    <value>Jaar</value>
+  </data>
+  <data name="Releases" xml:space="preserve">
+    <value>Releases</value>
+  </data>
+  <data name="JW score" xml:space="preserve">
+    <value>JW-score</value>
+  </data>
+  <data name="Selected" xml:space="preserve">
+    <value>Geselecteerd</value>
+  </data>
+  <data name="Merge into this" xml:space="preserve">
+    <value>Samenvoegen met deze</value>
+  </data>
+  <data name="Switch back to create new" xml:space="preserve">
+    <value>Terug naar 'nieuw aanmaken'</value>
+  </data>
+  <data name="Russian original (read-only)" xml:space="preserve">
+    <value>Russisch origineel (alleen-lezen)</value>
+  </data>
+  <data name="Literal English translation (read-only)" xml:space="preserve">
+    <value>Letterlijke Engelse vertaling (alleen-lezen)</value>
+  </data>
+  <data name="Museum-grade English description (will be saved)" xml:space="preserve">
+    <value>Engelse beschrijving in museumkwaliteit (wordt opgeslagen)</value>
+  </data>
+  <data name="Merging into '{0}'. Existing Name/Kind/descriptions on the target will NOT be overwritten — only missing description locales are added." xml:space="preserve">
+    <value>Samenvoegen met '{0}'. Bestaande Naam/Soort/beschrijvingen op het doel worden NIET overschreven - alleen ontbrekende beschrijving-locales worden toegevoegd.</value>
+  </data>
+  <data name="Developer (Marechai company)" xml:space="preserve">
+    <value>Ontwikkelaar (Marechai-bedrijf)</value>
+  </data>
+  <data name="Categories (SoftwareGenre type=Category)" xml:space="preserve">
+    <value>Categorieen (SoftwareGenre type=Categorie)</value>
+  </data>
+  <data name="Add category…" xml:space="preserve">
+    <value>Categorie toevoegen…</value>
+  </data>
+  <data name="Versions" xml:space="preserve">
+    <value>Versies</value>
+  </data>
+  <data name="Include" xml:space="preserve">
+    <value>Insluiten</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Versie</value>
+  </data>
+  <data name="Release date" xml:space="preserve">
+    <value>Releasedatum</value>
+  </data>
+  <data name="Platform" xml:space="preserve">
+    <value>Platform</value>
+  </data>
+  <data name="Download" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="(default)" xml:space="preserve">
+    <value>(standaard)</value>
+  </data>
+  <data name="Day" xml:space="preserve">
+    <value>Dag</value>
+  </data>
+  <data name="Month" xml:space="preserve">
+    <value>Maand</value>
+  </data>
+  <data name="Discard forever" xml:space="preserve">
+    <value>Voorgoed verwerpen</value>
+  </data>
+  <data name="Skip for later" xml:space="preserve">
+    <value>Overslaan voor later</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Sluiten</value>
+  </data>
+  <data name="Accept (create new)" xml:space="preserve">
+    <value>Accepteren (nieuw aanmaken)</value>
+  </data>
+  <data name="Merge into '{0}'" xml:space="preserve">
+    <value>Samenvoegen met '{0}'</value>
+  </data>
+  <data name="Pick a developer company first." xml:space="preserve">
+    <value>Kies eerst een ontwikkelaarsbedrijf.</value>
+  </data>
+  <data name="Promoted to software #{0} ({1} versions, {2} releases, {3} descriptions, {4} genres)." xml:space="preserve">
+    <value>Bevorderd naar software #{0} ({1} versies, {2} releases, {3} beschrijvingen, {4} genres).</value>
+  </data>
+  <data name="Skipped." xml:space="preserve">
+    <value>Overgeslagen.</value>
+  </data>
+  <data name="Discarded." xml:space="preserve">
+    <value>Verworpen.</value>
+  </data>
+</root>

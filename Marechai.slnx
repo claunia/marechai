@@ -7,10 +7,10 @@
     <File Path="global.json" />
   </Folder>
   <Project Path="Marechai.App/Marechai.App.csproj" />
-  <Project Path="Marechai.ApiClient/Marechai.ApiClient.csproj" />
   <Project Path="Marechai.Data/Marechai.Data.csproj" />
   <Project Path="Marechai.Database/Marechai.Database.csproj" />
   <Project Path="Marechai.Email/Marechai.Email.csproj" />
+  <Project Path="Marechai.OldDos/Marechai.OldDos.csproj" />
   <Project Path="Marechai.Server/Marechai.Server.csproj" />
   <Project Path="Marechai.MobyGames/Marechai.MobyGames.csproj" />
   <Project Path="Marechai.Translation/Marechai.Translation.csproj" />

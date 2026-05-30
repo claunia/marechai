@@ -364,6 +364,7 @@ file class Program
         builder.Services.AddSingleton<FuzzySearchService>();
         builder.Services.AddScoped<UserAccountDeletionService>();
         builder.Services.AddScoped<DeletionPendingFilter>();
+        builder.Services.AddScoped<OldDosPromotionService>();
         builder.Services.AddHostedService<AccountDeletionPurgeService>();
 
         // In-memory registry for admin batch-upload commit jobs (software covers). Singleton

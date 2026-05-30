@@ -84,6 +84,7 @@ public static class Register
         services.AddScoped<ReviewReportService>();
         services.AddScoped<SearchService>();
         services.AddScoped<SuggestionsService>();
+        services.AddScoped<OldDosImportsService>();
 
         services.AddScoped<ThemeStateService>();
         services.AddScoped<ThemeFontLoader>();
