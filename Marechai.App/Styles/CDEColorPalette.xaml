@@ -1,24 +1,39 @@
 <ResourceDictionary x:Class="Marechai.App.Styles.CDEColorPalette" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- CDE (Common Desktop Environment) Theme -->
-    <!-- Classic teal/cyan title bars with beige/tan windows -->
+    <!-- CDE (Common Desktop Environment) Theme — synced with Marechai/Theming/ThemeCatalog.cs Cde. -->
+    <!-- Solaris/HP/IBM CDE 1.x default colour set (mid-1990s):
+         Desktop bg    #7B9494 blue-gray workspace
+         Window chrome #AEB2B2 warm medium-gray Motif 3D buttons
+         Title bar     #D6A564 warm tan (signature CDE colour, active window title)
+         Content       #D9D9D9 light gray pane backgrounds
+         Selection     #4D7B8A muted teal-blue (focus / toggled controls)
+         Input         #FFFFFF white text fields
+         Text          #000000 black -->
 
-    <!-- System Accent - Black for icons on tan, Teal for selections -->
-    <Color x:Key="SystemAccentColor">#000000</Color> <Color x:Key="SystemAccentColorLight1">#333333</Color>
-    <Color x:Key="SystemAccentColorLight2">#666666</Color> <Color x:Key="SystemAccentColorLight3">#999999</Color>
-    <Color x:Key="SystemAccentColorDark1">#000000</Color> <Color x:Key="SystemAccentColorDark2">#000000</Color>
-    <Color x:Key="SystemAccentColorDark3">#000000</Color>
+    <!-- System Accent - Muted CDE teal-blue (selection / focus) -->
+    <Color x:Key="SystemAccentColor">#4D7B8A</Color>
+    <Color x:Key="SystemAccentColorLight1">#6B95A2</Color>
+    <Color x:Key="SystemAccentColorLight2">#89AFB9</Color>
+    <Color x:Key="SystemAccentColorLight3">#A7C9D1</Color>
+    <Color x:Key="SystemAccentColorDark1">#3D636F</Color>
+    <Color x:Key="SystemAccentColorDark2">#2E4A53</Color>
+    <Color x:Key="SystemAccentColorDark3">#1E3138</Color>
 
-    <!-- ALL TEXT - Black on Tan, White on Teal -->
+    <!-- Font Family - DejaVu Sans (humanist sans-serif derived from Bitstream Vera,
+         closest freely-redistributable substitute for the Lucida Sans CDE shipped with).
+         Internal family name "DejaVu Sans" per the TTF name table. -->
+    <FontFamily x:Key="ContentControlThemeFontFamily">ms-appx:///Assets/Fonts/DejaVuSans-Regular.ttf#DejaVu Sans</FontFamily>
+
+    <!-- ALL TEXT - Black on Gray/Tan surfaces, White on Teal selection / Tan AppBar -->
     <SolidColorBrush x:Key="TextFillColorPrimaryBrush"
-                     Color="#FFFFFF" />
+                     Color="#000000" />
     <SolidColorBrush x:Key="TextFillColorSecondaryBrush"
-                     Color="#FFFFFF" />
+                     Color="#333333" />
     <SolidColorBrush x:Key="TextFillColorTertiaryBrush"
-                     Color="#E0E0E0" />
+                     Color="#333333" />
     <SolidColorBrush x:Key="TextFillColorDisabledBrush"
-                     Color="#888888" />
+                     Color="#777777" />
     <SolidColorBrush x:Key="TextControlForeground"
                      Color="#000000" />
     <SolidColorBrush x:Key="TextControlForegroundPointerOver"
@@ -26,17 +41,17 @@
     <SolidColorBrush x:Key="TextControlForegroundFocused"
                      Color="#000000" />
     <SolidColorBrush x:Key="TextControlForegroundDisabled"
-                     Color="#888888" />
+                     Color="#777777" />
     <SolidColorBrush x:Key="TextControlPlaceholderForeground"
-                     Color="#666666" />
+                     Color="#555555" />
     <SolidColorBrush x:Key="TextControlPlaceholderForegroundPointerOver"
-                     Color="#777777" />
+                     Color="#333333" />
     <SolidColorBrush x:Key="TextControlPlaceholderForegroundFocused"
-                     Color="#777777" />
+                     Color="#333333" />
     <SolidColorBrush x:Key="TextControlHeaderForeground"
-                     Color="#5F9EA0" />
+                     Color="#4D7B8A" />
 
-    <!-- Button Text -->
+    <!-- Button Text - Black on tan/gray Motif buttons -->
     <SolidColorBrush x:Key="ButtonForeground"
                      Color="#000000" />
     <SolidColorBrush x:Key="ButtonForegroundPointerOver"
@@ -44,7 +59,7 @@
     <SolidColorBrush x:Key="ButtonForegroundPressed"
                      Color="#000000" />
     <SolidColorBrush x:Key="ButtonForegroundDisabled"
-                     Color="#888888" />
+                     Color="#777777" />
 
     <!-- ComboBox Text -->
     <SolidColorBrush x:Key="ComboBoxForeground"
@@ -56,9 +71,9 @@
     <SolidColorBrush x:Key="ComboBoxForegroundFocused"
                      Color="#000000" />
     <SolidColorBrush x:Key="ComboBoxForegroundDisabled"
-                     Color="#888888" />
+                     Color="#777777" />
 
-    <!-- Navigation and List Text - White on Teal, Black on Tan -->
+    <!-- Navigation and List Text - White on blue-gray drawer, black on gray surfaces -->
     <SolidColorBrush x:Key="NavigationViewItemForeground"
                      Color="#FFFFFF" />
     <SolidColorBrush x:Key="NavigationViewItemForegroundPointerOver"
@@ -72,7 +87,7 @@
     <SolidColorBrush x:Key="ListViewItemForegroundSelected"
                      Color="#FFFFFF" />
 
-    <!-- Icon Colors - White on Teal Headers -->
+    <!-- Icon Colors - White on blue-gray drawer / on tan AppBar (black) -->
     <SolidColorBrush x:Key="IconElementForeground"
                      Color="#FFFFFF" />
     <SolidColorBrush x:Key="FontIconForeground"
@@ -82,69 +97,69 @@
     <SolidColorBrush x:Key="GlyphBrush"
                      Color="#FFFFFF" />
 
-    <!-- System Control Foreground - White on Teal -->
+    <!-- System Control Foreground -->
     <SolidColorBrush x:Key="SystemControlForegroundBaseHighBrush"
-                     Color="#FFFFFF" />
+                     Color="#000000" />
     <SolidColorBrush x:Key="SystemControlForegroundBaseMediumBrush"
-                     Color="#FFFFFF" />
+                     Color="#000000" />
     <SolidColorBrush x:Key="SystemControlForegroundBaseMediumHighBrush"
-                     Color="#FFFFFF" />
+                     Color="#000000" />
     <SolidColorBrush x:Key="SystemControlForegroundBaseMediumLowBrush"
-                     Color="#E0E0E0" />
+                     Color="#333333" />
     <SolidColorBrush x:Key="SystemControlForegroundBaseLowBrush"
-                     Color="#CCCCCC" />
+                     Color="#777777" />
 
-    <!-- System Colors - White on Teal -->
+    <!-- System Colors -->
     <SolidColorBrush x:Key="SystemBaseMediumColor"
-                     Color="#FFFFFF" />
+                     Color="#000000" />
     <SolidColorBrush x:Key="SystemBaseHighColor"
-                     Color="#FFFFFF" />
+                     Color="#000000" />
     <SolidColorBrush x:Key="SystemBaseMediumHighColor"
-                     Color="#FFFFFF" />
+                     Color="#000000" />
     <SolidColorBrush x:Key="SystemBaseMediumLowColor"
-                     Color="#E0E0E0" />
+                     Color="#333333" />
     <SolidColorBrush x:Key="SystemBaseLowColor"
-                     Color="#CCCCCC" />
+                     Color="#777777" />
 
-    <!-- Backgrounds - CDE Tan/Beige Primary -->
+    <!-- Backgrounds - Blue-gray Motif workspace, light-gray Surface (NOT tan!) -->
     <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush"
-                     Color="#C8B698" />
+                     Color="#7B9494" />
     <SolidColorBrush x:Key="LayerFillColorDefaultBrush"
-                     Color="#5F9EA0" />
+                     Color="#D9D9D9" />
     <SolidColorBrush x:Key="LayerFillColorAltBrush"
-                     Color="#4A7F81" />
+                     Color="#AEB2B2" />
     <SolidColorBrush x:Key="CardBackgroundFillColorDefaultBrush"
-                     Color="#5F9EA0" />
+                     Color="#D9D9D9" />
     <SolidColorBrush x:Key="CardBackgroundFillColorSecondaryBrush"
-                     Color="#4A7F81" />
+                     Color="#CCCCCC" />
     <SolidColorBrush x:Key="SurfaceFillColorDefaultBrush"
-                     Color="#D9C7B8" />
+                     Color="#D9D9D9" />
     <SolidColorBrush x:Key="ControlFillColorDefaultBrush"
-                     Color="#D9C7B8" />
+                     Color="#AEB2B2" />
     <SolidColorBrush x:Key="ControlFillColorSecondaryBrush"
-                     Color="#D0BEA8" />
+                     Color="#BBBBBB" />
     <SolidColorBrush x:Key="ControlFillColorTertiaryBrush"
-                     Color="#C8B698" />
+                     Color="#AEB2B2" />
     <SolidColorBrush x:Key="ControlFillColorDisabledBrush"
-                     Color="#B8A888" />
+                     Color="#BFBFBF" />
     <SolidColorBrush x:Key="SubtleFillColorTransparentBrush"
                      Color="Transparent" />
     <SolidColorBrush x:Key="SubtleFillColorSecondaryBrush"
-                     Color="#D0BEA8" />
+                     Color="#BBBBBB" />
     <SolidColorBrush x:Key="SubtleFillColorTertiaryBrush"
-                     Color="#C8B698" />
+                     Color="#AEB2B2" />
 
-    <!-- Button Backgrounds - Light Tan/Beige with 3D effect -->
+    <!-- Button Backgrounds - Warm medium-gray Motif 3D faces -->
     <SolidColorBrush x:Key="ButtonBackground"
-                     Color="#D9C7B8" />
+                     Color="#AEB2B2" />
     <SolidColorBrush x:Key="ButtonBackgroundPointerOver"
-                     Color="#E5D3C4" />
+                     Color="#BFC3C3" />
     <SolidColorBrush x:Key="ButtonBackgroundPressed"
-                     Color="#C0AE98" />
+                     Color="#888B8B" />
     <SolidColorBrush x:Key="ButtonBackgroundDisabled"
-                     Color="#B8A888" />
+                     Color="#BFBFBF" />
 
-    <!-- TextBox Backgrounds - White/Very Light Tan -->
+    <!-- TextBox Backgrounds - White input fields -->
     <SolidColorBrush x:Key="TextControlBackground"
                      Color="#FFFFFF" />
     <SolidColorBrush x:Key="TextControlBackgroundPointerOver"
@@ -166,27 +181,27 @@
     <SolidColorBrush x:Key="ComboBoxBackgroundDisabled"
                      Color="#E8E8E8" />
 
-    <!-- Navigation Backgrounds - Teal like title bars -->
+    <!-- Navigation Backgrounds - Blue-gray desktop (NavView pane = drawer = desktop) -->
     <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground"
-                     Color="#5F9EA0" />
+                     Color="#7B9494" />
     <SolidColorBrush x:Key="NavigationViewTopPaneBackground"
-                     Color="#5F9EA0" />
+                     Color="#D6A564" />
     <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground"
-                     Color="#5F9EA0" />
+                     Color="#7B9494" />
 
-    <!-- List Backgrounds - White items -->
+    <!-- List Backgrounds - White rows, teal selection -->
     <SolidColorBrush x:Key="ListViewItemBackground"
                      Color="#FFFFFF" />
     <SolidColorBrush x:Key="ListViewItemBackgroundPointerOver"
-                     Color="#E8E8E8" />
+                     Color="#B8D0D6" />
     <SolidColorBrush x:Key="ListViewItemBackgroundPressed"
-                     Color="#D0D0D0" />
+                     Color="#89AFB9" />
     <SolidColorBrush x:Key="ListViewItemBackgroundSelected"
-                     Color="#5F9EA0" />
+                     Color="#4D7B8A" />
     <SolidColorBrush x:Key="ListViewItemBackgroundSelectedPointerOver"
-                     Color="#7FB3B5" />
+                     Color="#6B95A2" />
 
-    <!-- Borders - Dark Gray -->
+    <!-- Borders - Dark Gray Motif 3D bevels -->
     <SolidColorBrush x:Key="CardStrokeColorDefaultBrush"
                      Color="#666666" />
     <SolidColorBrush x:Key="ControlStrokeColorDefaultBrush"
@@ -200,20 +215,20 @@
     <SolidColorBrush x:Key="TextControlBorderBrushPointerOver"
                      Color="#666666" />
     <SolidColorBrush x:Key="TextControlBorderBrushFocused"
-                     Color="#5F9EA0" />
+                     Color="#4D7B8A" />
     <SolidColorBrush x:Key="ComboBoxBorderBrush"
                      Color="#666666" />
     <SolidColorBrush x:Key="ComboBoxBorderBrushPointerOver"
                      Color="#666666" />
     <SolidColorBrush x:Key="ComboBoxBorderBrushPressed"
-                     Color="#5F9EA0" />
+                     Color="#4D7B8A" />
 
-    <!-- Accent Colors -->
+    <!-- Accent Colors - Teal primary, tan secondary (the iconic CDE title-bar colour) -->
     <SolidColorBrush x:Key="AccentFillColorDefaultBrush"
-                     Color="#5F9EA0" />
+                     Color="#4D7B8A" />
     <SolidColorBrush x:Key="AccentFillColorSecondaryBrush"
-                     Color="#7FB3B5" />
+                     Color="#D6A564" />
     <SolidColorBrush x:Key="AccentFillColorTertiaryBrush"
-                     Color="#9FC8CA" />
+                     Color="#AEB2B2" />
 
 </ResourceDictionary>

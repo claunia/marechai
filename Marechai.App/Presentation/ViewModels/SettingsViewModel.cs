@@ -119,43 +119,60 @@ public partial class SettingsViewModel : ObservableObject
             }
         };
 
-        // Initialize Color Themes
+        // Initialize Color Themes — IDs are kebab-case to match the Blazor
+        // ThemeIds catalog (Marechai.Data.Constants.ThemeIds), so a single
+        // server-side preference can be shared by both clients.
         AvailableColorThemes = new List<ColorThemeOption>
         {
             new()
             {
-                ThemeName   = "Default",
+                ThemeName   = "default",
                 DisplayName = _localizer["DefaultColorTheme"]
             },
             new()
             {
-                ThemeName   = "Windows311",
+                ThemeName   = "windows311",
                 DisplayName = _localizer["Windows311Theme"]
             },
             new()
             {
-                ThemeName   = "MacOS9",
+                ThemeName   = "macos9",
                 DisplayName = _localizer["MacOS9Theme"]
             },
             new()
             {
-                ThemeName   = "DOS",
+                ThemeName   = "dos",
                 DisplayName = _localizer["DOSTheme"]
             },
             new()
             {
-                ThemeName   = "Amiga",
+                ThemeName   = "amigaos",
                 DisplayName = _localizer["AmigaTheme"]
             },
             new()
             {
-                ThemeName   = "CDE",
+                ThemeName   = "cde",
                 DisplayName = _localizer["CDETheme"]
             },
             new()
             {
-                ThemeName   = "CDESolaris",
+                ThemeName   = "cde-solaris",
                 DisplayName = _localizer["CDESolarisTheme"]
+            },
+            new()
+            {
+                ThemeName   = "cyberpunk",
+                DisplayName = _localizer["CyberpunkTheme"]
+            },
+            new()
+            {
+                ThemeName   = "phosphor",
+                DisplayName = _localizer["PhosphorTheme"]
+            },
+            new()
+            {
+                ThemeName   = "phosphor-amber",
+                DisplayName = _localizer["PhosphorAmberTheme"]
             }
         };
 

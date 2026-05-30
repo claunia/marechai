@@ -1,0 +1,22 @@
+Cyberpunk theme — bundled font
+===============================
+
+Files: orbitron-regular.woff2, orbitron-bold.woff2
+  (subset + converted from Orbitron TTF via pyftsubset, sourced from Google Fonts)
+
+Source font: Orbitron
+Designer: Matt McInerney
+Upstream: https://fonts.google.com/specimen/Orbitron
+License: SIL Open Font License v1.1 (OFL-1.1)
+
+Copyright 2009 The Orbitron Project Authors
+(https://github.com/theleagueof/orbitron)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1.
+The full license text is available at:
+  https://openfontlicense.org/
+  https://scripts.sil.org/OFL
+
+You can use, study, modify, and redistribute these fonts under the terms of
+the OFL, including embedding them in commercial products. The license
+specifically permits bundling fonts with software you distribute.

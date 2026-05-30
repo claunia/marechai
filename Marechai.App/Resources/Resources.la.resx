@@ -218,6 +218,15 @@
   <data name="CDESolarisTheme" xml:space="preserve">
     <value>CDE / Motif (Solaris)</value>
   </data>
+  <data name="CyberpunkTheme" xml:space="preserve">
+    <value>Cyberpunctum</value>
+  </data>
+  <data name="PhosphorTheme" xml:space="preserve">
+    <value>Phosphorus (CRT Viridis)</value>
+  </data>
+  <data name="PhosphorAmberTheme" xml:space="preserve">
+    <value>Phosphorus (CRT Sucinus)</value>
+  </data>
   <data name="SettingsPage_BrightnessThemeSelector_Header" xml:space="preserve">
     <value>Claritas</value>
   </data>

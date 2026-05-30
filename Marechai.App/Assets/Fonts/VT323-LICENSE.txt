@@ -1,0 +1,26 @@
+Phosphor (Green CRT Terminal) theme — bundled font
+====================================================
+
+File: vt323.woff2
+  (subset + converted from VT323 TTF via pyftsubset, sourced from Google Fonts)
+
+Source font: VT323
+Designer: Peter Hull
+Upstream: https://fonts.google.com/specimen/VT323
+License: SIL Open Font License v1.1 (OFL-1.1)
+
+Copyright 2011 The VT323 Project Authors
+(https://github.com/phoikoi/VT323)
+
+VT323 is an explicit recreation of the DEC VT320 character ROM, the
+single-weight monospace bitmap font shipped on Digital Equipment
+Corporation's iconic VT-series serial terminals (1978-1995).
+
+The Font Software is licensed under the SIL Open Font License, Version 1.1.
+The full license text is available at:
+  https://openfontlicense.org/
+  https://scripts.sil.org/OFL
+
+You can use, study, modify, and redistribute these fonts under the terms of
+the OFL, including embedding them in commercial products. The license
+specifically permits bundling fonts with software you distribute.

@@ -218,6 +218,15 @@
   <data name="CDESolarisTheme" xml:space="preserve">
     <value>CDE / Motif (Solaris)</value>
   </data>
+  <data name="CyberpunkTheme" xml:space="preserve">
+    <value>Cyberpunk</value>
+  </data>
+  <data name="PhosphorTheme" xml:space="preserve">
+    <value>Fósforo (CRT Verde)</value>
+  </data>
+  <data name="PhosphorAmberTheme" xml:space="preserve">
+    <value>Fósforo (CRT Âmbar)</value>
+  </data>
   <data name="SettingsPage_BrightnessThemeSelector_Header" xml:space="preserve">
     <value>Brilho</value>
   </data>

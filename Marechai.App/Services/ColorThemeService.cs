@@ -21,8 +21,21 @@ public interface IColorThemeService
 public class ColorThemeService : IColorThemeService
 {
     private const string        COLOR_THEME_KEY = "ColorTheme";
-    private const string        DEFAULT_THEME   = "Default";
+    private const string        DEFAULT_THEME   = "default";
     private       IThemeService _themeService;
+
+    // Legacy PascalCase IDs persisted by older builds; mapped to the
+    // current kebab-case Blazor-aligned IDs in LoadSavedTheme().
+    private static readonly Dictionary<string, string> _legacyThemeIdMap = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["Default"]    = "default",
+        ["Windows311"] = "windows311",
+        ["MacOS9"]     = "macos9",
+        ["DOS"]        = "dos",
+        ["Amiga"]      = "amigaos",
+        ["CDE"]        = "cde",
+        ["CDESolaris"] = "cde-solaris"
+    };
 
     public ColorThemeService()
     {
@@ -33,15 +46,20 @@ public class ColorThemeService : IColorThemeService
 
     public IThemeService ThemeService => _themeService;
 
+    // Kebab-case IDs that mirror Marechai.Data.Constants.ThemeIds in the Blazor app.
+    // Note: "windows311" is Uno-only (no Blazor counterpart).
     public IReadOnlyList<string> AvailableColorThemes => new List<string>
     {
         DEFAULT_THEME,
-        "Windows311",
-        "MacOS9",
-        "DOS",
-        "Amiga",
-        "CDE",
-        "CDESolaris"
+        "windows311",
+        "macos9",
+        "dos",
+        "amigaos",
+        "cde",
+        "cde-solaris",
+        "cyberpunk",
+        "phosphor",
+        "phosphor-amber"
     };
 
     public void SetThemeService(IThemeService themeService)
@@ -100,13 +118,16 @@ public class ColorThemeService : IColorThemeService
             {
                 newDictionary = themeName switch
                                 {
-                                    "Windows311" => new Marechai.App.Styles.Win311ColorPalette(),
-                                    "MacOS9"     => new Marechai.App.Styles.MacOS9ColorPalette(),
-                                    "DOS"        => new Marechai.App.Styles.DOSColorPalette(),
-                                    "Amiga"      => new Marechai.App.Styles.AmigaColorPalette(),
-                                    "CDE"        => new Marechai.App.Styles.CDEColorPalette(),
-                                    "CDESolaris" => new Marechai.App.Styles.CDESolarisColorPalette(),
-                                    _            => null
+                                    "windows311"     => new Marechai.App.Styles.Win311ColorPalette(),
+                                    "macos9"         => new Marechai.App.Styles.MacOS9ColorPalette(),
+                                    "dos"            => new Marechai.App.Styles.DOSColorPalette(),
+                                    "amigaos"        => new Marechai.App.Styles.AmigaColorPalette(),
+                                    "cde"            => new Marechai.App.Styles.CDEColorPalette(),
+                                    "cde-solaris"    => new Marechai.App.Styles.CDESolarisColorPalette(),
+                                    "cyberpunk"      => new Marechai.App.Styles.CyberpunkColorPalette(),
+                                    "phosphor"       => new Marechai.App.Styles.PhosphorColorPalette(),
+                                    "phosphor-amber" => new Marechai.App.Styles.PhosphorAmberColorPalette(),
+                                    _                => null
                                 };
             }
             catch
@@ -132,10 +153,18 @@ public class ColorThemeService : IColorThemeService
             {
                 var savedTheme = localSettings.Values[COLOR_THEME_KEY] as string;
 
-                if(!string.IsNullOrEmpty(savedTheme) && AvailableColorThemes.Contains(savedTheme))
+                if(!string.IsNullOrEmpty(savedTheme))
                 {
-                    CurrentColorTheme = savedTheme;
-                    ApplyColorTheme(CurrentColorTheme);
+                    // Migrate legacy PascalCase IDs ("CDESolaris") to kebab-case ("cde-solaris")
+                    // so users who upgraded keep their selected theme.
+                    if(_legacyThemeIdMap.TryGetValue(savedTheme, out string migrated))
+                        savedTheme = migrated;
+
+                    if(AvailableColorThemes.Contains(savedTheme))
+                    {
+                        CurrentColorTheme = savedTheme;
+                        ApplyColorTheme(CurrentColorTheme);
+                    }
                 }
             }
         }
