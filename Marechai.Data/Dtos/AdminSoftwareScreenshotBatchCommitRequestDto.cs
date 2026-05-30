@@ -67,6 +67,15 @@ public class AdminSoftwareScreenshotBatchCommitRequestDto
     public int? SoftwarePlatformId { get; set; }
 
     /// <summary>
+    ///     Optional shared software version applied to every screenshot in the batch.
+    ///     Server validates that the version belongs to <see cref="SoftwareId" /> and
+    ///     assigns its id to <c>SoftwareScreenshot.SoftwareVersionId</c> on every row.
+    ///     Null leaves the version FK null on every screenshot.
+    /// </summary>
+    [JsonPropertyName("software_version_id")]
+    public int? SoftwareVersionId { get; set; }
+
+    /// <summary>
     ///     Optional shared canonical English group name applied to every screenshot in
     ///     the batch. Server resolves-or-creates the corresponding
     ///     <c>SoftwareScreenshotGroup</c> row once and assigns the resulting id to every

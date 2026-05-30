@@ -1168,6 +1168,12 @@
   <data name="{0} screenshot(s) uploaded successfully." xml:space="preserve">
     <value>{0} screenshot(s) uploaded successfully.</value>
   </data>
+  <data name="Back to Versions" xml:space="preserve">
+    <value>Back to Versions</value>
+  </data>
+  <data name="All uploads will be linked to version {0}." xml:space="preserve">
+    <value>All uploads will be linked to version {0}.</value>
+  </data>
 
 
 </root>

@@ -39,6 +39,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -62,7 +63,8 @@ namespace Marechai.Server.Controllers;
 public class SuggestionsController(MarechaiContext context,
                                    UserManager<ApplicationUser> userManager,
                                    IConfiguration configuration,
-                                   IHttpClientFactory httpClientFactory) : ControllerBase
+                                   IHttpClientFactory httpClientFactory,
+                                   IOutputCacheStore outputCache) : ControllerBase
 {
     public const string CollaboratorRole = "Collaborator";
     public const string CuratorRole      = "Curator";
@@ -1483,6 +1485,15 @@ public class SuggestionsController(MarechaiContext context,
             {
                 var (applied, missing) = await Suggestions.SoftwareScreenshotSuggestionApplier.ApplyAsync(
                     context, entityId, suggested, accepted, creditedUserId, _assetRootPath);
+
+                // Mirror the admin upload/update/delete paths: invalidate the
+                // OutputCache-tagged GETs in SoftwareScreenshotsController so the newly
+                // promoted screenshot rows show up on /software/{id} immediately instead
+                // of waiting up to 5 min for the framework cache entry to expire.
+                if(applied.Count > 0)
+                    await outputCache.EvictByTagAsync(SoftwareScreenshotsController.CacheTag,
+                                                      HttpContext.RequestAborted);
+
                 return new ApplyResult(applied, missing);
             }
             case SuggestionEntityType.GpuVideo:

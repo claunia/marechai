@@ -13,26 +13,78 @@ public partial class SoftwareScreenshots
 {
     string                        _errorMessage;
     bool                           _isLoading = true;
+    bool                           _isVersionContext;
     List<SoftwarePlatformDto>     _platforms;
+    int?                           _resolvedSoftwareId;
     List<SoftwareScreenshotDto>   _screenshots;
     string                        _softwareName;
     string                        _successMessage;
+    string                        _versionString;
 
     [Parameter] public int SoftwareId { get; set; }
+    [Parameter] public int VersionId  { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        SoftwareDto software = await SoftwareService.GetSoftwareByIdAsync(SoftwareId);
-        _softwareName = software?.Name;
-        _platforms    = await SoftwareService.GetPlatformsAsync();
+        _isVersionContext = VersionId > 0;
+
+        if(_isVersionContext)
+        {
+            SoftwareVersionDto version = await SoftwareService.GetVersionByIdAsync(VersionId);
+
+            if(version is not null)
+            {
+                _versionString      = version.VersionString;
+                _resolvedSoftwareId = version.SoftwareId;
+            }
+        }
+        else
+        {
+            _resolvedSoftwareId = SoftwareId;
+        }
+
+        if(_resolvedSoftwareId.HasValue)
+        {
+            SoftwareDto software = await SoftwareService.GetSoftwareByIdAsync(_resolvedSoftwareId.Value);
+            _softwareName = software?.Name;
+        }
+
+        _platforms = await SoftwareService.GetPlatformsAsync();
         await LoadDataAsync();
     }
 
     async Task LoadDataAsync()
     {
-        _isLoading   = true;
-        _screenshots = await SoftwareService.GetScreenshotsBySoftwareAsync(SoftwareId);
-        _isLoading   = false;
+        _isLoading = true;
+
+        if(_isVersionContext && _resolvedSoftwareId.HasValue)
+            _screenshots = await SoftwareService.GetScreenshotsByVersionAsync(_resolvedSoftwareId.Value, VersionId);
+        else if(_resolvedSoftwareId.HasValue)
+            _screenshots = await SoftwareService.GetScreenshotsBySoftwareAsync(_resolvedSoftwareId.Value);
+        else
+            _screenshots = [];
+
+        _isLoading = false;
+    }
+
+    string HeaderSubtitle()
+    {
+        if(_isVersionContext)
+        {
+            if(!string.IsNullOrWhiteSpace(_softwareName) && !string.IsNullOrWhiteSpace(_versionString))
+                return $"{_softwareName} \u2013 {_versionString}";
+            if(!string.IsNullOrWhiteSpace(_versionString)) return _versionString;
+        }
+
+        return _softwareName ?? L["Manage software screenshots."].Value;
+    }
+
+    void GoBack()
+    {
+        if(_isVersionContext && _resolvedSoftwareId.HasValue)
+            NavigationManager.NavigateTo($"/admin/software/{_resolvedSoftwareId.Value}/versions");
+        else
+            NavigationManager.NavigateTo("/admin/software");
     }
 
     async Task OpenUploadDialog()
@@ -42,9 +94,11 @@ public partial class SoftwareScreenshots
 
         var parameters = new DialogParameters<SoftwareScreenshotsBatchUploadDialog>
         {
-            { x => x.SoftwareId,   SoftwareId },
-            { x => x.SoftwareName, _softwareName ?? string.Empty },
-            { x => x.Platforms,    _platforms ?? new List<SoftwarePlatformDto>() }
+            { x => x.SoftwareId,            _resolvedSoftwareId ?? SoftwareId },
+            { x => x.SoftwareName,          _softwareName ?? string.Empty },
+            { x => x.Platforms,             _platforms ?? new List<SoftwarePlatformDto>() },
+            { x => x.SoftwareVersionId,     _isVersionContext ? (int?)VersionId : null },
+            { x => x.SoftwareVersionString, _isVersionContext ? (_versionString ?? string.Empty) : string.Empty }
         };
 
         IDialogReference dialog =

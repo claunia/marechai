@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.Data;
 using Marechai.Data.Dtos;
@@ -37,6 +38,7 @@ using Marechai.Server.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,14 +47,27 @@ namespace Marechai.Server.Controllers;
 
 [Route("/software/screenshots")]
 [ApiController]
-public class SoftwareScreenshotsController(MarechaiContext    context, IConfiguration configuration,
-                                           BatchUploadJobStore batchJobs) : ControllerBase
+public class SoftwareScreenshotsController(MarechaiContext     context, IConfiguration configuration,
+                                           BatchUploadJobStore  batchJobs,
+                                           IOutputCacheStore    outputCache) : ControllerBase
 {
     /// <summary>
     ///     Per-uploader cap of in-flight pending screenshot images per Software for the
     ///     collaborative suggestion flow.
     /// </summary>
     const int PendingScreenshotsPerUserPerSoftwareCap = 50;
+
+    /// <summary>
+    ///     OutputCache tag attached to every <c>[OutputCache]</c>-decorated screenshot GET
+    ///     endpoint (per-software / per-platform / per-version list, single-item details,
+    ///     and the unfiltered <c>GET /software/screenshots</c>). Any mutation in this
+    ///     controller — admin upload, batch-commit per-item, update, delete — and the
+    ///     suggestion-applier accept path call
+    ///     <see cref="IOutputCacheStore.EvictByTagAsync" /> with this tag so the next read
+    ///     re-hits the database instead of serving a stale list/detail from the framework
+    ///     OutputCache (5-min base policy in <c>Program.cs</c>).
+    /// </summary>
+    internal const string CacheTag = "software-screenshots";
 
     static readonly HashSet<string> _allowedExtensions = [".jpg", ".jpeg", ".png", ".webp", ".tiff", ".tif", ".bmp"];
 
@@ -80,6 +95,7 @@ public class SoftwareScreenshotsController(MarechaiContext    context, IConfigur
 
     [HttpGet("/software/{softwareId}/screenshots")]
     [AllowAnonymous]
+    [OutputCache(Tags = [CacheTag])]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public Task<List<Guid>> GetGuidsBySoftwareAsync(ulong softwareId) =>
         context.SoftwareScreenshots
@@ -91,6 +107,7 @@ public class SoftwareScreenshotsController(MarechaiContext    context, IConfigur
 
     [HttpGet("/software/{softwareId}/platforms/{platformId}/screenshots")]
     [AllowAnonymous]
+    [OutputCache(Tags = [CacheTag])]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public Task<List<Guid>> GetGuidsByPlatformAsync(ulong softwareId, ulong platformId) =>
         context.SoftwareScreenshots
@@ -102,6 +119,7 @@ public class SoftwareScreenshotsController(MarechaiContext    context, IConfigur
 
     [HttpGet("/software/{softwareId}/versions/{versionId}/screenshots")]
     [AllowAnonymous]
+    [OutputCache(Tags = [CacheTag])]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public Task<List<Guid>> GetGuidsByVersionAsync(ulong softwareId, ulong versionId) =>
         context.SoftwareScreenshots
@@ -113,6 +131,7 @@ public class SoftwareScreenshotsController(MarechaiContext    context, IConfigur
 
     [HttpGet("{id:Guid}")]
     [AllowAnonymous]
+    [OutputCache(Tags = [CacheTag], VaryByQueryKeys = ["lang"])]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<SoftwareScreenshotDto>> GetAsync(Guid id, [FromQuery] string lang = null)
@@ -171,6 +190,7 @@ public class SoftwareScreenshotsController(MarechaiContext    context, IConfigur
 
     [HttpGet]
     [AllowAnonymous]
+    [OutputCache(Tags = [CacheTag], VaryByQueryKeys = ["lang"])]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<List<SoftwareScreenshotDto>> GetAllAsync([FromQuery] string lang = null)
     {
@@ -360,6 +380,12 @@ public class SoftwareScreenshotsController(MarechaiContext    context, IConfigur
         await context.SoftwareScreenshots.AddAsync(model);
         await context.SaveChangesWithUserAsync(userId);
 
+        // Invalidate the framework OutputCache so the next read of any
+        // /software/{id}/screenshots (or platform/version sibling, or single-item GET, or
+        // the unfiltered GET /software/screenshots) re-runs the controller and sees this
+        // new row instead of serving the cached pre-upload list. See <see cref="CacheTag" />.
+        await outputCache.EvictByTagAsync(CacheTag, HttpContext.RequestAborted);
+
         return Ok(new SoftwareScreenshotDto
         {
             Id                 = model.Id,
@@ -421,6 +447,10 @@ public class SoftwareScreenshotsController(MarechaiContext    context, IConfigur
 
         await context.SaveChangesWithUserAsync(userId);
 
+        // Invalidate cached screenshot lists/details (caption, group, platform, version
+        // changes are all visible via the cached endpoints).
+        await outputCache.EvictByTagAsync(CacheTag, HttpContext.RequestAborted);
+
         return Ok();
     }
 
@@ -441,6 +471,9 @@ public class SoftwareScreenshotsController(MarechaiContext    context, IConfigur
 
         context.SoftwareScreenshots.Remove(model);
         await context.SaveChangesWithUserAsync(userId);
+
+        // Invalidate cached screenshot lists/details so the deleted GUID no longer surfaces.
+        await outputCache.EvictByTagAsync(CacheTag, HttpContext.RequestAborted);
 
         // Delete all generated files from disk
         string photosRoot = Path.Combine(_assetRootPath, "photos", "software-screenshots");
@@ -900,6 +933,15 @@ public class SoftwareScreenshotsController(MarechaiContext    context, IConfigur
             if(!platformExists) return NotFound("Software platform not found.");
         }
 
+        if(request.SoftwareVersionId.HasValue)
+        {
+            ulong versionId = (ulong)request.SoftwareVersionId.Value;
+            ulong softwareIdScope = (ulong)request.SoftwareId;
+            bool versionExists = await context.SoftwareVersions.AnyAsync(v => v.Id == versionId &&
+                                                                              v.SoftwareId == softwareIdScope);
+            if(!versionExists) return NotFound("Software version not found.");
+        }
+
         // Validate every pending id belongs to the caller and matches software/admin scope.
         foreach(AdminSoftwareScreenshotBatchCommitItemDto item in request.Items)
         {
@@ -924,10 +966,11 @@ public class SoftwareScreenshotsController(MarechaiContext    context, IConfigur
         List<AdminSoftwareScreenshotBatchCommitItemDto> items = request.Items;
         int softwareId = request.SoftwareId;
         int? platformIdNullable = request.SoftwarePlatformId;
+        int? versionIdNullable = request.SoftwareVersionId;
         string canonicalGroupName = request.CanonicalGroupName;
 
-        _ = Task.Run(() => RunBatchJobAsync(jobId, userId, softwareId, platformIdNullable, canonicalGroupName, items,
-                                            assetRootPath, scopeFactory));
+        _ = Task.Run(() => RunBatchJobAsync(jobId, userId, softwareId, platformIdNullable, versionIdNullable,
+                                            canonicalGroupName, items, assetRootPath, scopeFactory));
 
         AdminSoftwareScreenshotBatchJobStatusDto snapshot = SnapshotJob(batchJobs.GetForOwner(jobId, userId)!);
         return Accepted(snapshot);
@@ -978,13 +1021,14 @@ public class SoftwareScreenshotsController(MarechaiContext    context, IConfigur
 
     /// <summary>
     ///     Sequential worker that promotes each pending image into a SoftwareScreenshot
-    ///     row, applies the shared platform + group + per-item caption, runs the 8-variant
-    ///     conversion synchronously per image (so the progress bar advances one-at-a-time),
-    ///     and records per-item success/failure on the job. Group resolve-or-create runs
-    ///     once up-front so every image lands in the same group row.
+    ///     row, applies the shared platform + version + group + per-item caption, runs
+    ///     the 8-variant conversion synchronously per image (so the progress bar
+    ///     advances one-at-a-time), and records per-item success/failure on the job.
+    ///     Group resolve-or-create runs once up-front so every image lands in the same
+    ///     group row.
     /// </summary>
     async Task RunBatchJobAsync(Guid jobId, string userId, int softwareId, int? softwarePlatformId,
-                                string canonicalGroupName,
+                                int? softwareVersionId, string canonicalGroupName,
                                 List<AdminSoftwareScreenshotBatchCommitItemDto> items, string assetRootPath,
                                 IServiceScopeFactory scopeFactory)
     {
@@ -1039,6 +1083,7 @@ public class SoftwareScreenshotsController(MarechaiContext    context, IConfigur
 
         ulong  softwareIdUlong = (ulong)softwareId;
         ulong? platformIdUlong = softwarePlatformId.HasValue ? (ulong)softwarePlatformId.Value : null;
+        ulong? versionIdUlong  = softwareVersionId.HasValue ? (ulong)softwareVersionId.Value : null;
 
         for(int i = 0; i < items.Count; i++)
         {
@@ -1076,6 +1121,7 @@ public class SoftwareScreenshotsController(MarechaiContext    context, IConfigur
                     Id                 = screenshotId,
                     SoftwareId         = softwareIdUlong,
                     SoftwarePlatformId = platformIdUlong,
+                    SoftwareVersionId  = versionIdUlong,
                     GroupId            = groupId,
                     Caption            = caption,
                     OriginalExtension  = ext
@@ -1087,6 +1133,15 @@ public class SoftwareScreenshotsController(MarechaiContext    context, IConfigur
                     await ctx.SoftwareScreenshots.AddAsync(model);
                     await ctx.SaveChangesWithUserAsync(userId);
                 }
+
+                // Invalidate cached screenshot lists/details now that the DB row exists,
+                // BEFORE the (slow) conversion runs. This way the count on /software/{id}
+                // reflects the new screenshot as soon as the row is committed; the <img>
+                // tag may 404 until conversion completes but the page no longer reports
+                // the stale pre-upload count for up to 5 minutes.
+                // outputCache is a singleton, so calling it from this background Task
+                // (after the HTTP request has returned) is safe.
+                await outputCache.EvictByTagAsync(CacheTag, CancellationToken.None);
 
                 // Run the 8-variant conversion synchronously so the progress bar advances
                 // only after every variant for this image has landed.

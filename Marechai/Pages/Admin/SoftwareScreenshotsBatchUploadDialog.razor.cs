@@ -41,9 +41,11 @@ public partial class SoftwareScreenshotsBatchUploadDialog : ComponentBase, IAsyn
 
     [CascadingParameter] IMudDialogInstance MudDialog { get; set; }
 
-    [Parameter] public int                        SoftwareId   { get; set; }
-    [Parameter] public string                     SoftwareName { get; set; } = "";
-    [Parameter] public List<SoftwarePlatformDto>  Platforms    { get; set; } = new();
+    [Parameter] public int                        SoftwareId            { get; set; }
+    [Parameter] public string                     SoftwareName          { get; set; } = "";
+    [Parameter] public List<SoftwarePlatformDto>  Platforms             { get; set; } = new();
+    [Parameter] public int?                       SoftwareVersionId     { get; set; }
+    [Parameter] public string                     SoftwareVersionString { get; set; } = "";
 
     enum Phase { Staging, Committing, Done }
 
@@ -210,6 +212,7 @@ public partial class SoftwareScreenshotsBatchUploadDialog : ComponentBase, IAsyn
         {
             SoftwareId         = SoftwareId,
             SoftwarePlatformId = _selectedPlatform?.Id,
+            SoftwareVersionId  = SoftwareVersionId,
             CanonicalGroupName = string.IsNullOrWhiteSpace(_selectedGroupName) ? null : _selectedGroupName.Trim(),
             Items = _staged
                     .Where(s => s.Status == StagedScreenshotStatus.Ready)

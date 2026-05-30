@@ -33,6 +33,9 @@ public partial class SoftwareVersions
     void NavigateToReleases(SoftwareVersionDto version) =>
         NavigationManager.NavigateTo($"/admin/software/versions/{version.Id}/releases");
 
+    void NavigateToScreenshots(SoftwareVersionDto version) =>
+        NavigationManager.NavigateTo($"/admin/software/versions/{version.Id}/screenshots");
+
     async Task OpenAddDialog()
     {
         DialogParameters<SoftwareVersionDialog> parameters = new()

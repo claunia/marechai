@@ -38,6 +38,13 @@
     <DialogContent>
         @if(_phase == Phase.Staging)
         {
+            @if(SoftwareVersionId.HasValue)
+            {
+                <MudAlert Severity="Severity.Info" Class="mb-3" Icon="@Icons.Material.Filled.Link">
+                    @string.Format(L["All uploads will be linked to version {0}."].Value, SoftwareVersionString)
+                </MudAlert>
+            }
+
             <MudText Typo="Typo.body2" Class="mb-3">
                 @string.Format(L["Upload up to {0} screenshots for {1}. Accepted formats: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max 50 MB each)."].Value, MaxImages, SoftwareName)
             </MudText>

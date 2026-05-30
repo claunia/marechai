@@ -34,6 +34,8 @@ namespace Marechai.ApiClient.Models
         public int? SoftwareId { get; set; }
         /// <summary>The software_platform_id property</summary>
         public int? SoftwarePlatformId { get; set; }
+        /// <summary>The software_version_id property</summary>
+        public int? SoftwareVersionId { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.ApiClient.Models.AdminSoftwareScreenshotBatchCommitRequestDto"/> and sets the default values.
         /// </summary>
@@ -63,6 +65,7 @@ namespace Marechai.ApiClient.Models
                 { "items", n => { Items = n.GetCollectionOfObjectValues<global::Marechai.ApiClient.Models.AdminSoftwareScreenshotBatchCommitItemDto>(global::Marechai.ApiClient.Models.AdminSoftwareScreenshotBatchCommitItemDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "software_id", n => { SoftwareId = n.GetIntValue(); } },
                 { "software_platform_id", n => { SoftwarePlatformId = n.GetIntValue(); } },
+                { "software_version_id", n => { SoftwareVersionId = n.GetIntValue(); } },
             };
         }
         /// <summary>
@@ -76,6 +79,7 @@ namespace Marechai.ApiClient.Models
             writer.WriteCollectionOfObjectValues<global::Marechai.ApiClient.Models.AdminSoftwareScreenshotBatchCommitItemDto>("items", Items);
             writer.WriteIntValue("software_id", SoftwareId);
             writer.WriteIntValue("software_platform_id", SoftwarePlatformId);
+            writer.WriteIntValue("software_version_id", SoftwareVersionId);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

@@ -1384,6 +1384,32 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
+    public async Task<List<SoftwareScreenshotDto>> GetScreenshotsByVersionAsync(int softwareId, int versionId)
+    {
+        try
+        {
+            List<Guid?> ids = await client.Software[softwareId].Versions[versionId].Screenshots.GetAsync();
+
+            if(ids is null or { Count: 0 }) return [];
+
+            // Fan out: fetch every screenshot's details in parallel instead of N
+            // sequential round-trips. This turns an O(N) latency wall into O(1)
+            // (capped by the HttpClient connection pool).
+            Task<SoftwareScreenshotDto>[] tasks = ids
+                                                 .Where(id => id.HasValue)
+                                                 .Select(id => GetScreenshotDetailsAsync(id!.Value))
+                                                 .ToArray();
+
+            SoftwareScreenshotDto[] results = await Task.WhenAll(tasks);
+
+            return results.Where(d => d is not null).ToList();
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
     public async Task<(bool succeeded, string error)> UpdateScreenshotAsync(Guid id, SoftwareScreenshotDto dto)
     {
         try

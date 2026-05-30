@@ -1,3 +1,4 @@
+@page "/admin/software/versions/{VersionId:int}/screenshots"
 @page "/admin/software/{SoftwareId:int}/screenshots"
 @attribute [Authorize(Roles = "Admin, UberAdmin")]
 @using System.Linq
@@ -9,14 +10,21 @@
 @inject NavigationManager NavigationManager
 @inject ApiAssetUrlProvider AssetUrls
 
-<MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" OnClick="@(() => NavigationManager.NavigateTo("/admin/software"))" Class="mb-4">@L["Back to Software"]</MudButton>
+@if(_isVersionContext)
+{
+    <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" OnClick="@GoBack" Class="mb-4">@L["Back to Versions"]</MudButton>
+}
+else
+{
+    <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" OnClick="@(() => NavigationManager.NavigateTo("/admin/software"))" Class="mb-4">@L["Back to Software"]</MudButton>
+}
 
 <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #e65100 0%, #ff8a65 100%); border-radius: 16px;">
     <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
         <MudIcon Icon="@Icons.Material.Filled.Screenshot" Size="Size.Large" Style="color: white;"/>
         <MudText Typo="Typo.h4" Style="color: white;">@L["Software Screenshot Management"]</MudText>
     </MudStack>
-    <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);" Class="mt-2">@(_softwareName ?? L["Manage software screenshots."])</MudText>
+    <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);" Class="mt-2">@HeaderSubtitle()</MudText>
 </MudPaper>
 
 @if(!string.IsNullOrWhiteSpace(_errorMessage))
@@ -91,6 +99,10 @@
                                                  Clearable="true" CoerceText="false" CoerceValue="true"
                                                  ResetValueOnEmptyText="true" MaxLength="256"
                                                  Class="mt-2" Style="max-width: 250px;"/>
+                                @if(!_isVersionContext && !string.IsNullOrWhiteSpace(screenshot.VersionString))
+                                {
+                                    <MudChip T="string" Size="Size.Small" Color="Color.Info" Variant="Variant.Outlined" Class="mt-2">@screenshot.VersionString</MudChip>
+                                }
                             </MudCardContent>
                             <MudCardActions>
                                 <MudIconButton Icon="@Icons.Material.Filled.Delete"
