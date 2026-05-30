@@ -720,7 +720,7 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
                 return BadRequest($"Invalid cover type {item.Type} for pending image {item.PendingId}.");
         }
 
-        Guid jobId = batchJobs.StartJob(userId, request.SoftwareReleaseId, request.Items.Count);
+        Guid jobId = batchJobs.StartJob(userId, (long)request.SoftwareReleaseId, request.Items.Count);
 
         // Fire the worker. The worker uses its own DI scope (created from IServiceScopeFactory
         // injected via the controller's RequestServices) so DbContext lifetimes are correct.
@@ -732,7 +732,7 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
 
         _ = Task.Run(() => RunBatchJobAsync(jobId, userId, releaseId, items, assetRootPath, scopeFactory));
 
-        var snapshot = batchJobs.GetSnapshot(batchJobs.GetForOwner(jobId, userId)!);
+        AdminBatchJobStatusDto snapshot = SnapshotJob(batchJobs.GetForOwner(jobId, userId)!);
         return Accepted(snapshot);
     }
 
@@ -752,7 +752,30 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
         BatchUploadJobStore.BatchJob job = batchJobs.GetForOwner(jobId, userId);
         if(job is null) return NotFound();
 
-        return Ok(batchJobs.GetSnapshot(job));
+        return Ok(SnapshotJob(job));
+    }
+
+    static AdminBatchJobStatusDto SnapshotJob(BatchUploadJobStore.BatchJob job)
+    {
+        lock(job.Lock)
+        {
+            return new AdminBatchJobStatusDto
+            {
+                JobId            = job.JobId,
+                State            = (int)job.State,
+                Total            = job.Total,
+                Processed        = job.Processed,
+                CurrentPendingId = job.CurrentPendingId,
+                Results          = job.Results.Select(r => new AdminBatchJobItemResultDto
+                                       {
+                                           PendingId = r.PendingId,
+                                           Succeeded = r.Succeeded,
+                                           CoverId   = r.AssignedId,
+                                           Error     = r.Error
+                                       })
+                                       .ToList()
+            };
+        }
     }
 
     /// <summary>
@@ -842,12 +865,12 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
     {
         lock(job.Lock)
         {
-            job.Results.Add(new AdminBatchJobItemResultDto
+            job.Results.Add(new BatchJobItemResult
             {
-                PendingId = pendingId,
-                Succeeded = ok,
-                CoverId   = coverId,
-                Error     = error
+                PendingId  = pendingId,
+                Succeeded  = ok,
+                AssignedId = coverId,
+                Error      = error
             });
             job.LastTouchedOn = DateTime.UtcNow;
         }

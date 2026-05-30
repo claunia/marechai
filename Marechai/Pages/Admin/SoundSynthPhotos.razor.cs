@@ -1,27 +1,19 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
 
 namespace Marechai.Pages.Admin;
 
 public partial class SoundSynthPhotos
 {
-    const long MaxFileSize = 50 * 1024 * 1024; // 50 MB
-
     string                    _errorMessage;
-    bool                       _isLoading = true;
-    bool                       _isUploading;
+    bool                      _isLoading = true;
     List<LicenseDto>          _licenses;
     string                    _soundSynthName;
     List<SoundSynthPhotoDto>  _photos;
-    IBrowserFile              _selectedFile;
-    LicenseDto                _selectedLicense;
-    string                    _sourceUrl;
     string                    _successMessage;
 
     [Parameter] public int SoundSynthId { get; set; }
@@ -55,47 +47,37 @@ public partial class SoundSynthPhotos
         _isLoading = false;
     }
 
-    void OnFileSelected(IBrowserFile file) => _selectedFile = file;
-
-    async Task UploadPhoto()
+    async Task OpenUploadDialog()
     {
-        if(_selectedFile is null || _selectedLicense is null)
-            return;
-
-        _isUploading    = true;
         _errorMessage   = null;
         _successMessage = null;
 
-        try
+        var parameters = new DialogParameters<SoundSynthPhotosBatchUploadDialog>
         {
-            await using Stream stream = _selectedFile.OpenReadStream(MaxFileSize);
-            using var          ms     = new MemoryStream();
-            await stream.CopyToAsync(ms);
-            byte[] fileBytes = ms.ToArray();
+            { x => x.SoundSynthId,   SoundSynthId },
+            { x => x.SoundSynthName, _soundSynthName ?? string.Empty },
+            { x => x.Licenses,       _licenses ?? new List<LicenseDto>() }
+        };
 
-            (SoundSynthPhotoDto photo, string error) =
-                await SoundSynthPhotosService.UploadPhotoAsync(SoundSynthId, _selectedLicense.Id ?? 0, _sourceUrl,
-                                                               fileBytes, _selectedFile.Name);
+        IDialogReference dialog =
+            await DialogService.ShowAsync<SoundSynthPhotosBatchUploadDialog>(L["Upload Photos"], parameters,
+                                                                             new DialogOptions
+                                                                             {
+                                                                                 MaxWidth         = MaxWidth.Large,
+                                                                                 FullWidth        = true,
+                                                                                 CloseOnEscapeKey = false,
+                                                                                 BackdropClick    = false
+                                                                             });
 
-            if(photo is not null)
-            {
-                _successMessage = L["Photo uploaded successfully."];
-                _selectedFile   = null;
-                _sourceUrl      = null;
-                await LoadPhotosAsync();
-            }
-            else
-            {
-                _errorMessage = error ?? L["Failed to upload photo."];
-            }
-        }
-        catch(Exception ex)
+        DialogResult result = await dialog.Result;
+
+        if(result is { Canceled: false })
         {
-            _errorMessage = ex.Message;
-        }
-        finally
-        {
-            _isUploading = false;
+            int succeeded = result.Data is int n ? n : 0;
+            if(succeeded > 0)
+                _successMessage = string.Format(L["{0} photo(s) uploaded successfully."].Value, succeeded);
+
+            await LoadPhotosAsync();
         }
     }
 

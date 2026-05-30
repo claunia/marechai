@@ -474,4 +474,61 @@
         <value>Numero f</value>
         <comment>F-number</comment>
     </data>
+    <data name="Upload up to {0} photos for {1}. Accepted formats: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max 50 MB each)." xml:space="preserve">
+        <value>Carica fino a {0} foto per {1}. Formati accettati: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max 50 MB ciascuno).</value>
+    </data>
+    <data name="License is required." xml:space="preserve">
+        <value>La licenza è obbligatoria.</value>
+    </data>
+    <data name="Images: {0}/{1}" xml:space="preserve">
+        <value>Immagini: {0}/{1}</value>
+    </data>
+    <data name="Add images" xml:space="preserve">
+        <value>Aggiungi immagini</value>
+    </data>
+    <data name="No images staged yet. Use the Add images button above to pick files." xml:space="preserve">
+        <value>Nessuna immagine preparata. Usa il pulsante «Aggiungi immagini» sopra per scegliere i file.</value>
+    </data>
+    <data name="Source URL (optional)" xml:space="preserve">
+        <value>URL sorgente (facoltativo)</value>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Annulla</value>
+    </data>
+    <data name="Processing images. Please keep this dialog open until processing finishes." xml:space="preserve">
+        <value>Elaborazione delle immagini in corso. Mantieni aperta questa finestra fino al termine dell&#x27;elaborazione.</value>
+    </data>
+    <data name="Processing image {0} of {1}" xml:space="preserve">
+        <value>Elaborazione immagine {0} di {1}</value>
+    </data>
+    <data name="Batch finished. {0} succeeded, {1} failed." xml:space="preserve">
+        <value>Batch completato. {0} riuscite, {1} fallite.</value>
+    </data>
+    <data name="Processing…" xml:space="preserve">
+        <value>Elaborazione…</value>
+    </data>
+    <data name="Close" xml:space="preserve">
+        <value>Chiudi</value>
+    </data>
+    <data name="You have staged images that have not been uploaded. Closing this dialog will delete them. Continue?" xml:space="preserve">
+        <value>Hai immagini preparate che non sono state caricate. Chiudendo questa finestra verranno eliminate. Continuare?</value>
+    </data>
+    <data name="You must be logged in to upload images." xml:space="preserve">
+        <value>Devi aver effettuato l&#x27;accesso per caricare immagini.</value>
+    </data>
+    <data name="Pick a license and add at least one successfully-uploaded image before uploading." xml:space="preserve">
+        <value>Scegli una licenza e aggiungi almeno un&#x27;immagine caricata con successo prima di caricare.</value>
+    </data>
+    <data name="Failed to start batch upload." xml:space="preserve">
+        <value>Avvio del caricamento batch non riuscito.</value>
+    </data>
+    <data name="Upload photos" xml:space="preserve">
+        <value>Carica foto</value>
+    </data>
+    <data name="Upload Photos" xml:space="preserve">
+        <value>Carica foto</value>
+    </data>
+    <data name="{0} photo(s) uploaded successfully." xml:space="preserve">
+        <value>{0} foto caricata/e con successo.</value>
+    </data>
 </root>

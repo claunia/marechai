@@ -26,7 +26,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Marechai.Data.Dtos;
@@ -36,11 +35,25 @@ using Microsoft.Extensions.Logging;
 namespace Marechai.Server.Helpers;
 
 /// <summary>
+///     Entity-agnostic per-item result recorded on a <see cref="BatchUploadJobStore.BatchJob" />.
+///     Each controller maps this to its own response DTO (e.g. cover_id, photo_id) when
+///     building a status snapshot.
+/// </summary>
+public sealed class BatchJobItemResult
+{
+    public Guid   PendingId  { get; init; }
+    public bool   Succeeded  { get; init; }
+    public Guid?  AssignedId { get; init; }
+    public string Error      { get; init; }
+}
+
+/// <summary>
 ///     In-memory registry for in-flight admin batch-upload commit jobs. The controller
 ///     hands a request off to <see cref="StartJob" /> which spawns a worker on the thread
-///     pool; the client polls <see cref="GetSnapshot" /> until the job is in a terminal
-///     state (Completed / Failed). Owner authorisation is enforced via the user id stored
-///     with each job.
+///     pool; the client polls a controller-specific status endpoint that snapshots the
+///     job under <see cref="BatchJob.Lock" /> until the job is in a terminal state
+///     (Completed / Failed). Owner authorisation is enforced via the user id stored with
+///     each job.
 /// </summary>
 public sealed class BatchUploadJobStore
 {
@@ -48,34 +61,37 @@ public sealed class BatchUploadJobStore
 
     public sealed class BatchJob
     {
-        public Guid                              JobId            { get; init; }
-        public string                            OwnerUserId      { get; init; }
-        public ulong                             ReleaseId        { get; init; }
-        public int                               Total            { get; init; }
-        public DateTime                          CreatedOn        { get; init; }
-        public DateTime                          LastTouchedOn    { get; set; }
-        public BatchJobState                     State            { get; set; }
-        public int                               Processed        { get; set; }
-        public Guid?                             CurrentPendingId { get; set; }
-        public List<AdminBatchJobItemResultDto>  Results          { get; } = new();
-        public object                            Lock             { get; } = new();
+        public Guid                       JobId            { get; init; }
+        public string                     OwnerUserId      { get; init; }
+        public long                       ParentEntityId   { get; init; }
+        public int                        Total            { get; init; }
+        public DateTime                   CreatedOn        { get; init; }
+        public DateTime                   LastTouchedOn    { get; set; }
+        public BatchJobState              State            { get; set; }
+        public int                        Processed        { get; set; }
+        public Guid?                      CurrentPendingId { get; set; }
+        public List<BatchJobItemResult>   Results          { get; } = new();
+        public object                     Lock             { get; } = new();
     }
 
     /// <summary>
     ///     Create a new job record (state = Queued) and return its id. The caller is
     ///     expected to spawn the worker immediately (the store does not own the worker).
+    ///     <paramref name="parentEntityId" /> is a feature-agnostic parent id (release id,
+    ///     machine id, etc.); controllers cast their own typed id into long at the call
+    ///     site.
     /// </summary>
-    public Guid StartJob(string ownerUserId, ulong releaseId, int total)
+    public Guid StartJob(string ownerUserId, long parentEntityId, int total)
     {
         var job = new BatchJob
         {
-            JobId         = Guid.NewGuid(),
-            OwnerUserId   = ownerUserId,
-            ReleaseId     = releaseId,
-            Total         = total,
-            CreatedOn     = DateTime.UtcNow,
-            LastTouchedOn = DateTime.UtcNow,
-            State         = BatchJobState.Queued
+            JobId          = Guid.NewGuid(),
+            OwnerUserId    = ownerUserId,
+            ParentEntityId = parentEntityId,
+            Total          = total,
+            CreatedOn      = DateTime.UtcNow,
+            LastTouchedOn  = DateTime.UtcNow,
+            State          = BatchJobState.Queued
         };
 
         _jobs[job.JobId] = job;
@@ -93,33 +109,6 @@ public sealed class BatchUploadJobStore
         if(!string.Equals(job.OwnerUserId, callerUserId, StringComparison.Ordinal)) return null;
         job.LastTouchedOn = DateTime.UtcNow;
         return job;
-    }
-
-    /// <summary>
-    ///     Take a snapshot of the current job state suitable for serialisation. Acquires
-    ///     <see cref="BatchJob.Lock" /> internally so the snapshot is consistent.
-    /// </summary>
-    public AdminBatchJobStatusDto GetSnapshot(BatchJob job)
-    {
-        lock(job.Lock)
-        {
-            return new AdminBatchJobStatusDto
-            {
-                JobId            = job.JobId,
-                State            = (int)job.State,
-                Total            = job.Total,
-                Processed        = job.Processed,
-                CurrentPendingId = job.CurrentPendingId,
-                Results          = job.Results.Select(r => new AdminBatchJobItemResultDto
-                                       {
-                                           PendingId = r.PendingId,
-                                           Succeeded = r.Succeeded,
-                                           CoverId   = r.CoverId,
-                                           Error     = r.Error
-                                       })
-                                       .ToList()
-            };
-        }
     }
 
     /// <summary>

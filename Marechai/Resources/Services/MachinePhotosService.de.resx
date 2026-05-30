@@ -474,4 +474,61 @@
         <value>Blendenzahl</value>
         <comment>F-number</comment>
     </data>
+    <data name="Upload up to {0} photos for {1}. Accepted formats: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max 50 MB each)." xml:space="preserve">
+        <value>Laden Sie bis zu {0} Fotos für {1} hoch. Akzeptierte Formate: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max. 50 MB pro Datei).</value>
+    </data>
+    <data name="License is required." xml:space="preserve">
+        <value>Lizenz ist erforderlich.</value>
+    </data>
+    <data name="Images: {0}/{1}" xml:space="preserve">
+        <value>Bilder: {0}/{1}</value>
+    </data>
+    <data name="Add images" xml:space="preserve">
+        <value>Bilder hinzufügen</value>
+    </data>
+    <data name="No images staged yet. Use the Add images button above to pick files." xml:space="preserve">
+        <value>Noch keine Bilder vorbereitet. Verwenden Sie oben die Schaltfläche „Bilder hinzufügen“, um Dateien auszuwählen.</value>
+    </data>
+    <data name="Source URL (optional)" xml:space="preserve">
+        <value>Quell-URL (optional)</value>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Abbrechen</value>
+    </data>
+    <data name="Processing images. Please keep this dialog open until processing finishes." xml:space="preserve">
+        <value>Bilder werden verarbeitet. Bitte lassen Sie diesen Dialog geöffnet, bis die Verarbeitung abgeschlossen ist.</value>
+    </data>
+    <data name="Processing image {0} of {1}" xml:space="preserve">
+        <value>Bild {0} von {1} wird verarbeitet</value>
+    </data>
+    <data name="Batch finished. {0} succeeded, {1} failed." xml:space="preserve">
+        <value>Stapelverarbeitung abgeschlossen. {0} erfolgreich, {1} fehlgeschlagen.</value>
+    </data>
+    <data name="Processing…" xml:space="preserve">
+        <value>Verarbeitung…</value>
+    </data>
+    <data name="Close" xml:space="preserve">
+        <value>Schließen</value>
+    </data>
+    <data name="You have staged images that have not been uploaded. Closing this dialog will delete them. Continue?" xml:space="preserve">
+        <value>Sie haben vorbereitete Bilder, die nicht hochgeladen wurden. Beim Schließen dieses Dialogs werden sie gelöscht. Fortfahren?</value>
+    </data>
+    <data name="You must be logged in to upload images." xml:space="preserve">
+        <value>Sie müssen angemeldet sein, um Bilder hochzuladen.</value>
+    </data>
+    <data name="Pick a license and add at least one successfully-uploaded image before uploading." xml:space="preserve">
+        <value>Wählen Sie eine Lizenz und fügen Sie mindestens ein erfolgreich hochgeladenes Bild hinzu, bevor Sie hochladen.</value>
+    </data>
+    <data name="Failed to start batch upload." xml:space="preserve">
+        <value>Stapel-Upload konnte nicht gestartet werden.</value>
+    </data>
+    <data name="Upload photos" xml:space="preserve">
+        <value>Fotos hochladen</value>
+    </data>
+    <data name="Upload Photos" xml:space="preserve">
+        <value>Fotos hochladen</value>
+    </data>
+    <data name="{0} photo(s) uploaded successfully." xml:space="preserve">
+        <value>{0} Foto(s) erfolgreich hochgeladen.</value>
+    </data>
 </root>

@@ -1,27 +1,19 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
 
 namespace Marechai.Pages.Admin;
 
 public partial class ProcessorPhotos
 {
-    const long MaxFileSize = 50 * 1024 * 1024; // 50 MB
-
     string                    _errorMessage;
     bool                       _isLoading = true;
-    bool                       _isUploading;
     List<LicenseDto>          _licenses;
     string                    _processorName;
     List<ProcessorPhotoDto>   _photos;
-    IBrowserFile              _selectedFile;
-    LicenseDto                _selectedLicense;
-    string                    _sourceUrl;
     string                    _successMessage;
 
     [Parameter] public int ProcessorId { get; set; }
@@ -55,47 +47,37 @@ public partial class ProcessorPhotos
         _isLoading = false;
     }
 
-    void OnFileSelected(IBrowserFile file) => _selectedFile = file;
-
-    async Task UploadPhoto()
+    async Task OpenUploadDialog()
     {
-        if(_selectedFile is null || _selectedLicense is null)
-            return;
-
-        _isUploading    = true;
         _errorMessage   = null;
         _successMessage = null;
 
-        try
+        var parameters = new DialogParameters<ProcessorPhotosBatchUploadDialog>
         {
-            await using Stream stream = _selectedFile.OpenReadStream(MaxFileSize);
-            using var          ms     = new MemoryStream();
-            await stream.CopyToAsync(ms);
-            byte[] fileBytes = ms.ToArray();
+            { x => x.ProcessorId,   ProcessorId },
+            { x => x.ProcessorName, _processorName ?? string.Empty },
+            { x => x.Licenses,      _licenses ?? new List<LicenseDto>() }
+        };
 
-            (ProcessorPhotoDto photo, string error) =
-                await ProcessorPhotosService.UploadPhotoAsync(ProcessorId, _selectedLicense.Id ?? 0, _sourceUrl,
-                                                              fileBytes, _selectedFile.Name);
+        IDialogReference dialog =
+            await DialogService.ShowAsync<ProcessorPhotosBatchUploadDialog>(L["Upload Photos"], parameters,
+                                                                            new DialogOptions
+                                                                            {
+                                                                                MaxWidth         = MaxWidth.Large,
+                                                                                FullWidth        = true,
+                                                                                CloseOnEscapeKey = false,
+                                                                                BackdropClick    = false
+                                                                            });
 
-            if(photo is not null)
-            {
-                _successMessage = L["Photo uploaded successfully."];
-                _selectedFile   = null;
-                _sourceUrl      = null;
-                await LoadPhotosAsync();
-            }
-            else
-            {
-                _errorMessage = error ?? L["Failed to upload photo."];
-            }
-        }
-        catch(Exception ex)
+        DialogResult result = await dialog.Result;
+
+        if(result is { Canceled: false })
         {
-            _errorMessage = ex.Message;
-        }
-        finally
-        {
-            _isUploading = false;
+            int succeeded = result.Data is int n ? n : 0;
+            if(succeeded > 0)
+                _successMessage = string.Format(L["{0} photo(s) uploaded successfully."].Value, succeeded);
+
+            await LoadPhotosAsync();
         }
     }
 

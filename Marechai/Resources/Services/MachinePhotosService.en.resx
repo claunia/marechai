@@ -303,4 +303,64 @@
     <data name="Photo deleted successfully." xml:space="preserve">
         <value>Photo deleted successfully.</value>
     </data>
+    <data name="Upload up to {0} photos for {1}. Accepted formats: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max 50 MB each)." xml:space="preserve">
+        <value>Upload up to {0} photos for {1}. Accepted formats: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max 50 MB each).</value>
+    </data>
+    <data name="License" xml:space="preserve">
+        <value>License</value>
+    </data>
+    <data name="Images: {0}/{1}" xml:space="preserve">
+        <value>Images: {0}/{1}</value>
+    </data>
+    <data name="Add images" xml:space="preserve">
+        <value>Add images</value>
+    </data>
+    <data name="No images staged yet. Use the Add images button above to pick files." xml:space="preserve">
+        <value>No images staged yet. Use the Add images button above to pick files.</value>
+    </data>
+    <data name="Source URL (optional)" xml:space="preserve">
+        <value>Source URL (optional)</value>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Cancel</value>
+    </data>
+    <data name="Upload" xml:space="preserve">
+        <value>Upload</value>
+    </data>
+    <data name="Processing images. Please keep this dialog open until processing finishes." xml:space="preserve">
+        <value>Processing images. Please keep this dialog open until processing finishes.</value>
+    </data>
+    <data name="Processing image {0} of {1}" xml:space="preserve">
+        <value>Processing image {0} of {1}</value>
+    </data>
+    <data name="Batch finished. {0} succeeded, {1} failed." xml:space="preserve">
+        <value>Batch finished. {0} succeeded, {1} failed.</value>
+    </data>
+    <data name="Processing…" xml:space="preserve">
+        <value>Processing…</value>
+    </data>
+    <data name="Close" xml:space="preserve">
+        <value>Close</value>
+    </data>
+    <data name="You have staged images that have not been uploaded. Closing this dialog will delete them. Continue?" xml:space="preserve">
+        <value>You have staged images that have not been uploaded. Closing this dialog will delete them. Continue?</value>
+    </data>
+    <data name="You must be logged in to upload images." xml:space="preserve">
+        <value>You must be logged in to upload images.</value>
+    </data>
+    <data name="Pick a license and add at least one successfully-uploaded image before uploading." xml:space="preserve">
+        <value>Pick a license and add at least one successfully-uploaded image before uploading.</value>
+    </data>
+    <data name="Failed to start batch upload." xml:space="preserve">
+        <value>Failed to start batch upload.</value>
+    </data>
+    <data name="Upload photos" xml:space="preserve">
+        <value>Upload photos</value>
+    </data>
+    <data name="Upload Photos" xml:space="preserve">
+        <value>Upload Photos</value>
+    </data>
+    <data name="{0} photo(s) uploaded successfully." xml:space="preserve">
+        <value>{0} photo(s) uploaded successfully.</value>
+    </data>
 </root>

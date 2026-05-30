@@ -474,4 +474,61 @@
         <value>Ouverture focale</value>
         <comment>F-number</comment>
     </data>
+    <data name="Upload up to {0} photos for {1}. Accepted formats: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max 50 MB each)." xml:space="preserve">
+        <value>Téléversez jusqu&#x27;à {0} photos pour {1}. Formats acceptés : JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max. 50 Mo chacune).</value>
+    </data>
+    <data name="License is required." xml:space="preserve">
+        <value>La licence est requise.</value>
+    </data>
+    <data name="Images: {0}/{1}" xml:space="preserve">
+        <value>Images : {0}/{1}</value>
+    </data>
+    <data name="Add images" xml:space="preserve">
+        <value>Ajouter des images</value>
+    </data>
+    <data name="No images staged yet. Use the Add images button above to pick files." xml:space="preserve">
+        <value>Aucune image préparée pour le moment. Utilisez le bouton « Ajouter des images » ci-dessus pour choisir des fichiers.</value>
+    </data>
+    <data name="Source URL (optional)" xml:space="preserve">
+        <value>URL source (facultatif)</value>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Annuler</value>
+    </data>
+    <data name="Processing images. Please keep this dialog open until processing finishes." xml:space="preserve">
+        <value>Traitement des images en cours. Veuillez garder ce dialogue ouvert jusqu&#x27;à la fin du traitement.</value>
+    </data>
+    <data name="Processing image {0} of {1}" xml:space="preserve">
+        <value>Traitement de l&#x27;image {0} sur {1}</value>
+    </data>
+    <data name="Batch finished. {0} succeeded, {1} failed." xml:space="preserve">
+        <value>Lot terminé. {0} réussie(s), {1} échouée(s).</value>
+    </data>
+    <data name="Processing…" xml:space="preserve">
+        <value>Traitement…</value>
+    </data>
+    <data name="Close" xml:space="preserve">
+        <value>Fermer</value>
+    </data>
+    <data name="You have staged images that have not been uploaded. Closing this dialog will delete them. Continue?" xml:space="preserve">
+        <value>Vous avez des images préparées qui n&#x27;ont pas été téléversées. Fermer ce dialogue les supprimera. Continuer ?</value>
+    </data>
+    <data name="You must be logged in to upload images." xml:space="preserve">
+        <value>Vous devez être connecté pour téléverser des images.</value>
+    </data>
+    <data name="Pick a license and add at least one successfully-uploaded image before uploading." xml:space="preserve">
+        <value>Choisissez une licence et ajoutez au moins une image téléversée avec succès avant de téléverser.</value>
+    </data>
+    <data name="Failed to start batch upload." xml:space="preserve">
+        <value>Échec du démarrage du téléversement par lot.</value>
+    </data>
+    <data name="Upload photos" xml:space="preserve">
+        <value>Téléverser des photos</value>
+    </data>
+    <data name="Upload Photos" xml:space="preserve">
+        <value>Téléverser des photos</value>
+    </data>
+    <data name="{0} photo(s) uploaded successfully." xml:space="preserve">
+        <value>{0} photo(s) téléversée(s) avec succès.</value>
+    </data>
 </root>

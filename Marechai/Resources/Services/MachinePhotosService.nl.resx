@@ -101,7 +101,7 @@
         <value>El modelo de la cámara debe contener 255 caracteres o menos.</value>
     </data>
     <data name="Cancel" xml:space="preserve">
-        <value>Cancelar</value>
+        <value>Annuleren</value>
     </data>
     <data name="Cannot run ImageMagick please contact the administrator." xml:space="preserve">
         <value>No se puede ejecutar ImageMagick, por favor contacta con el administrador.</value>
@@ -290,10 +290,10 @@
         <value>El nombre del objetivo debe contener 255 caracteres o menos.</value>
     </data>
     <data name="License" xml:space="preserve">
-        <value>Licencia</value>
+        <value>Licentie</value>
     </data>
     <data name="License is required." xml:space="preserve">
-        <value>License is required.</value>
+        <value>Licentie is verplicht.</value>
     </data>
     <data name="Light source" xml:space="preserve">
         <value>Fuente de luz</value>
@@ -575,7 +575,7 @@
         <value>Unknown</value>
     </data>
     <data name="Upload" xml:space="preserve">
-        <value>Subir</value>
+        <value>Uploaden</value>
     </data>
     <data name="Upload Photo" xml:space="preserve">
         <value>Upload Photo</value>
@@ -612,5 +612,56 @@
     </data>
     <data name="Year only" xml:space="preserve">
         <value>Solo año</value>
+    </data>
+    <data name="Upload up to {0} photos for {1}. Accepted formats: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max 50 MB each)." xml:space="preserve">
+        <value>Upload tot {0} foto&#x27;s voor {1}. Geaccepteerde formaten: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max. 50 MB per stuk).</value>
+    </data>
+    <data name="Images: {0}/{1}" xml:space="preserve">
+        <value>Afbeeldingen: {0}/{1}</value>
+    </data>
+    <data name="Add images" xml:space="preserve">
+        <value>Afbeeldingen toevoegen</value>
+    </data>
+    <data name="No images staged yet. Use the Add images button above to pick files." xml:space="preserve">
+        <value>Nog geen afbeeldingen klaargezet. Gebruik de knop „Afbeeldingen toevoegen” hierboven om bestanden te kiezen.</value>
+    </data>
+    <data name="Source URL (optional)" xml:space="preserve">
+        <value>Bron-URL (optioneel)</value>
+    </data>
+    <data name="Processing images. Please keep this dialog open until processing finishes." xml:space="preserve">
+        <value>Afbeeldingen worden verwerkt. Houd dit dialoogvenster open totdat de verwerking is voltooid.</value>
+    </data>
+    <data name="Processing image {0} of {1}" xml:space="preserve">
+        <value>Afbeelding {0} van {1} wordt verwerkt</value>
+    </data>
+    <data name="Batch finished. {0} succeeded, {1} failed." xml:space="preserve">
+        <value>Batch voltooid. {0} geslaagd, {1} mislukt.</value>
+    </data>
+    <data name="Processing…" xml:space="preserve">
+        <value>Verwerken…</value>
+    </data>
+    <data name="Close" xml:space="preserve">
+        <value>Sluiten</value>
+    </data>
+    <data name="You have staged images that have not been uploaded. Closing this dialog will delete them. Continue?" xml:space="preserve">
+        <value>Er staan afbeeldingen klaar die niet zijn geüpload. Door dit dialoogvenster te sluiten worden ze verwijderd. Doorgaan?</value>
+    </data>
+    <data name="You must be logged in to upload images." xml:space="preserve">
+        <value>U moet zijn aangemeld om afbeeldingen te uploaden.</value>
+    </data>
+    <data name="Pick a license and add at least one successfully-uploaded image before uploading." xml:space="preserve">
+        <value>Kies een licentie en voeg ten minste één succesvol geüploade afbeelding toe voordat u uploadt.</value>
+    </data>
+    <data name="Failed to start batch upload." xml:space="preserve">
+        <value>Starten van batch-upload is mislukt.</value>
+    </data>
+    <data name="Upload photos" xml:space="preserve">
+        <value>Foto&#x27;s uploaden</value>
+    </data>
+    <data name="Upload Photos" xml:space="preserve">
+        <value>Foto&#x27;s uploaden</value>
+    </data>
+    <data name="{0} photo(s) uploaded successfully." xml:space="preserve">
+        <value>{0} foto(&#x27;s) succesvol geüpload.</value>
     </data>
 </root>

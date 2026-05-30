@@ -75,63 +75,6 @@
     return;
 }
 
-@* ── Upload Section ── *@
-<MudPaper Elevation="2" Class="pa-4 mb-6 rounded-lg">
-    <MudText Typo="Typo.h6" Class="mb-3">@L["Upload Photo"]</MudText>
-    <MudStack Spacing="3">
-        <MudSelect T="LicenseDto" @bind-Value="_selectedLicense"
-                   Label="@L["License"]"
-                   Variant="Variant.Outlined"
-                   ToStringFunc="@(l => l?.Name ?? string.Empty)"
-                   Required="true"
-                   RequiredError="@L["License is required."]">
-            @if(_licenses is not null)
-            {
-                @foreach(LicenseDto license in _licenses)
-                {
-                    <MudSelectItem T="LicenseDto" Value="license">@license.Name</MudSelectItem>
-                }
-            }
-        </MudSelect>
-
-        <MudTextField @bind-Value="_sourceUrl"
-                      Label="@L["Source URL"]"
-                      Variant="Variant.Outlined"/>
-
-        <MudFileUpload T="IBrowserFile" Accept=".jpg,.jpeg,.png,.webp,.tiff,.tif,.bmp"
-                       FilesChanged="OnFileSelected" MaximumFileCount="1">
-            <CustomContent>
-                <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.AttachFile"
-                           OnClick="@context.OpenFilePickerAsync">
-                    @if(_selectedFile is not null)
-                    {
-                        @_selectedFile.Name
-                    }
-                    else
-                    {
-                        @L["Select File"]
-                    }
-                </MudButton>
-            </CustomContent>
-        </MudFileUpload>
-
-        <MudButton Variant="Variant.Filled" Color="Color.Primary"
-                   StartIcon="@Icons.Material.Filled.CloudUpload"
-                   OnClick="UploadPhoto"
-                   Disabled="_isUploading || _selectedFile is null || _selectedLicense is null">
-            @if(_isUploading)
-            {
-                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
-                @L["Uploading..."]
-            }
-            else
-            {
-                @L["Upload"]
-            }
-        </MudButton>
-    </MudStack>
-</MudPaper>
-
 @* ── Photos Grid ── *@
 <MudPaper Elevation="2" Class="rounded-lg">
     <MudToolBar Dense="true">
@@ -141,6 +84,11 @@
             <MudChip T="string" Size="Size.Small" Color="Color.Secondary" Class="ml-2">@_photos.Count</MudChip>
         }
         <MudSpacer/>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                   OnClick="OpenUploadDialog" Class="mr-2">
+            @L["Upload photos"]
+        </MudButton>
         <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadPhotosAsync"/>
     </MudToolBar>
 

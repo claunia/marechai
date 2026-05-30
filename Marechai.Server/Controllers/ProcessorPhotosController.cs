@@ -39,12 +39,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Marechai.Server.Controllers;
 
 [Route("/processors/photos")]
 [ApiController]
-public class ProcessorPhotosController(MarechaiContext context, IConfiguration configuration) : ControllerBase
+public class ProcessorPhotosController(MarechaiContext context, IConfiguration configuration,
+                                       BatchUploadJobStore batchJobs) : ControllerBase
 {
     static readonly HashSet<string> _allowedExtensions = [".jpg", ".jpeg", ".png", ".webp", ".tiff", ".tif", ".bmp"];
 
@@ -569,5 +571,368 @@ public class ProcessorPhotosController(MarechaiContext context, IConfiguration c
 
         foreach(string file in System.IO.Directory.GetFiles(directory, pattern))
             System.IO.File.Delete(file);
+    }
+
+    // ───────────────────────────── Admin batch upload ──────────────────────────────
+
+    /// <summary>Maximum images an admin may stage in a single batch (matches dialog UI).</summary>
+    const int AdminBatchMaxImages = 25;
+
+    /// <summary>
+    ///     Allowed extensions accepted by the admin batch-upload staging endpoint. Wider
+    ///     than the collaborator-suggestion path because admins may upload formats the
+    ///     conversion pipeline supports end-to-end.
+    /// </summary>
+    static readonly HashSet<string> _adminBatchAllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ".jpg", ".jpeg", ".png", ".webp", ".avif", ".jxl", ".bmp", ".tif", ".tiff"
+    };
+
+    /// <summary>
+    ///     ImageMagick canonical format names (as returned by <c>identify -format %m</c>)
+    ///     trusted for admin batch uploads. Checked AFTER the file is written to disk so
+    ///     an attacker can't bypass it by lying about the extension or MIME type.
+    /// </summary>
+    static readonly HashSet<string> _adminBatchAllowedMagickFormats = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "JPEG", "PNG", "WEBP", "AVIF", "JXL", "BMP", "TIFF"
+    };
+
+    /// <summary>
+    ///     Stage a single image as part of an admin processor-photo batch upload. The server
+    ///     writes the file to the pending folder, content-sniffs it with ImageMagick
+    ///     (rejecting on mismatch regardless of extension/MIME), generates a 256x256
+    ///     thumbnail returned inline as a JPEG data URL, and stores both file + sidecar
+    ///     for later commit.
+    /// </summary>
+    [HttpPost("admin/pending")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [RequestSizeLimit(50 * 1024 * 1024)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
+    public async Task<ActionResult<AdminPendingProcessorPhotoUploadDto>> UploadAdminBatchPendingAsync(IFormFile file,
+        [FromQuery] int processorId)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        if(file is null || file.Length == 0) return BadRequest("No file provided.");
+        if(file.Length > 50 * 1024 * 1024) return BadRequest("File exceeds 50 MB limit.");
+
+        string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
+        if(!_adminBatchAllowedExtensions.Contains(extension))
+            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP, AVIF, JXL, BMP, TIFF.");
+
+        bool processorExists = await context.Processors.AnyAsync(p => p.Id == processorId);
+        if(!processorExists) return NotFound("Processor not found.");
+
+        int currentCount = PendingImageStore.CountAdminStagedByUploader(_assetRootPath, "processors", userId,
+            (byte)SuggestionEntityType.ProcessorPhoto);
+
+        if(currentCount >= AdminBatchMaxImages)
+            return Conflict($"You already have {currentCount} pending images staged. Maximum is " +
+                            $"{AdminBatchMaxImages}. Commit or remove some first.");
+
+        // Persist FIRST (with a temporary placeholder for dimensions), then content-sniff
+        // and either re-write the sidecar with real dimensions or reject + delete the file.
+        Guid guid;
+        await using(Stream stream = file.OpenReadStream())
+        {
+            guid = await PendingImageStore.StoreAsync(_assetRootPath, "processors", extension,
+                (byte)SuggestionEntityType.ProcessorPhoto, entityId: 0L, userId, file.ContentType, stream,
+                parentEntityId: processorId, _adminBatchAllowedExtensions, isAdminStaging: true,
+                width: null, height: null);
+        }
+
+        string imagePath = await PendingImageStore.GetImagePathAsync(_assetRootPath, "processors", guid);
+        if(imagePath is null)
+        {
+            PendingImageStore.Delete(_assetRootPath, "processors", guid);
+            return BadRequest("Failed to persist uploaded file.");
+        }
+
+        (string magickFormat, int width, int height) = Photos.Identify(imagePath);
+        if(magickFormat is null || !_adminBatchAllowedMagickFormats.Contains(magickFormat))
+        {
+            PendingImageStore.Delete(_assetRootPath, "processors", guid);
+            return StatusCode(StatusCodes.Status415UnsupportedMediaType,
+                              "File content does not match a supported image format.");
+        }
+
+        byte[] thumbBytes = Photos.GenerateThumbnailJpeg(imagePath);
+        if(thumbBytes is null)
+        {
+            PendingImageStore.Delete(_assetRootPath, "processors", guid);
+            return BadRequest("Failed to generate thumbnail for the uploaded image.");
+        }
+
+        await PendingImageStore.StoreThumbnailAsync(_assetRootPath, "processors", guid, thumbBytes);
+
+        // Re-write the sidecar so dimensions are captured for future consumers.
+        PendingImageStore.PendingMetadata meta =
+            await PendingImageStore.GetMetadataAsync(_assetRootPath, "processors", guid);
+        if(meta is not null)
+        {
+            meta.Width  = width;
+            meta.Height = height;
+            string sidecar = Path.Combine(_assetRootPath, "photos", "processors", "pending",
+                                          guid.ToString() + ".json");
+            await System.IO.File.WriteAllTextAsync(sidecar, System.Text.Json.JsonSerializer.Serialize(meta));
+        }
+
+        string dataUrl = "data:image/jpeg;base64," + Convert.ToBase64String(thumbBytes);
+
+        return Ok(new AdminPendingProcessorPhotoUploadDto
+        {
+            Id              = guid,
+            Extension       = extension.TrimStart('.'),
+            ThumbnailBase64 = dataUrl,
+            SizeBytes       = file.Length,
+            Width           = width,
+            Height          = height
+        });
+    }
+
+    /// <summary>
+    ///     Delete a single admin-staged pending processor-photo image before commit.
+    ///     Owner-only (an admin cannot delete another admin's in-flight staging entries).
+    /// </summary>
+    [HttpDelete("admin/pending/{guid:guid}")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> DeleteAdminBatchPendingAsync(Guid guid)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        PendingImageStore.PendingMetadata meta =
+            await PendingImageStore.GetMetadataAsync(_assetRootPath, "processors", guid);
+
+        if(meta is null) return NotFound();
+        if(meta.EntityType != (byte)SuggestionEntityType.ProcessorPhoto) return NotFound();
+        if(!meta.IsAdminStaging) return NotFound();
+        if(!string.Equals(meta.UploadedById, userId, StringComparison.Ordinal)) return Forbid();
+
+        PendingImageStore.Delete(_assetRootPath, "processors", guid);
+        return NoContent();
+    }
+
+    /// <summary>
+    ///     Commit a batch of admin-staged pending images into permanent <c>ProcessorPhoto</c>
+    ///     rows. The endpoint returns 202 with a <c>jobId</c> immediately and processes the
+    ///     batch on a background task; the client polls
+    ///     <c>GET /processors/photos/admin/batch/{jobId}/status</c> for progress and per-item
+    ///     results. Each image runs through the standard 8-variant conversion sequentially
+    ///     so the progress bar advances one image at a time.
+    /// </summary>
+    [HttpPost("admin/batch/commit")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(typeof(AdminProcessorPhotoBatchJobStatusDto), StatusCodes.Status202Accepted)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<AdminProcessorPhotoBatchJobStatusDto>> CommitAdminBatchAsync(
+        [FromBody] AdminProcessorPhotoBatchCommitRequestDto request)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        if(request is null || request.Items is null || request.Items.Count == 0)
+            return BadRequest("No items provided.");
+
+        if(request.Items.Count > AdminBatchMaxImages)
+            return BadRequest($"At most {AdminBatchMaxImages} images may be committed per batch.");
+
+        bool processorExists = await context.Processors.AnyAsync(p => p.Id == request.ProcessorId);
+        if(!processorExists) return NotFound("Processor not found.");
+
+        bool licenseExists = await context.Licenses.AnyAsync(l => l.Id == request.LicenseId);
+        if(!licenseExists) return NotFound("License not found.");
+
+        // Validate every pending id belongs to the caller and matches processor/admin scope.
+        foreach(AdminProcessorPhotoBatchCommitItemDto item in request.Items)
+        {
+            PendingImageStore.PendingMetadata meta =
+                await PendingImageStore.GetMetadataAsync(_assetRootPath, "processors", item.PendingId);
+
+            if(meta is null) return NotFound($"Pending image {item.PendingId} not found.");
+            if(meta.EntityType != (byte)SuggestionEntityType.ProcessorPhoto)
+                return BadRequest($"Pending image {item.PendingId} is not a processor photo.");
+            if(!meta.IsAdminStaging)
+                return BadRequest($"Pending image {item.PendingId} is not an admin-staged image.");
+            if(!string.Equals(meta.UploadedById, userId, StringComparison.Ordinal))
+                return Forbid();
+            if(meta.ParentEntityId != request.ProcessorId)
+                return BadRequest($"Pending image {item.PendingId} was staged for a different processor.");
+        }
+
+        Guid jobId = batchJobs.StartJob(userId, request.ProcessorId, request.Items.Count);
+
+        var scopeFactory = HttpContext.RequestServices.GetRequiredService<IServiceScopeFactory>();
+        string assetRootPath = _assetRootPath;
+        List<AdminProcessorPhotoBatchCommitItemDto> items = request.Items;
+        int processorId = request.ProcessorId;
+        int licenseId = request.LicenseId;
+
+        _ = Task.Run(() => RunBatchJobAsync(jobId, userId, processorId, licenseId, items, assetRootPath, scopeFactory));
+
+        AdminProcessorPhotoBatchJobStatusDto snapshot = SnapshotJob(batchJobs.GetForOwner(jobId, userId)!);
+        return Accepted(snapshot);
+    }
+
+    /// <summary>
+    ///     Poll the status of an in-flight admin processor-photo batch-commit job. Owner-only.
+    /// </summary>
+    [HttpGet("admin/batch/{jobId:guid}/status")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public ActionResult<AdminProcessorPhotoBatchJobStatusDto> GetAdminBatchStatus(Guid jobId)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        BatchUploadJobStore.BatchJob job = batchJobs.GetForOwner(jobId, userId);
+        if(job is null) return NotFound();
+
+        return Ok(SnapshotJob(job));
+    }
+
+    static AdminProcessorPhotoBatchJobStatusDto SnapshotJob(BatchUploadJobStore.BatchJob job)
+    {
+        lock(job.Lock)
+        {
+            return new AdminProcessorPhotoBatchJobStatusDto
+            {
+                JobId            = job.JobId,
+                State            = (int)job.State,
+                Total            = job.Total,
+                Processed        = job.Processed,
+                CurrentPendingId = job.CurrentPendingId,
+                Results          = job.Results.Select(r => new AdminProcessorPhotoBatchJobItemResultDto
+                                       {
+                                           PendingId = r.PendingId,
+                                           Succeeded = r.Succeeded,
+                                           PhotoId   = r.AssignedId,
+                                           Error     = r.Error
+                                       })
+                                       .ToList()
+            };
+        }
+    }
+
+    /// <summary>
+    ///     Sequential worker that promotes each pending image into a ProcessorPhoto row,
+    ///     extracts EXIF metadata, runs the 8-variant conversion synchronously per image
+    ///     (so the progress bar advances one-at-a-time), and records per-item
+    ///     success/failure on the job.
+    /// </summary>
+    async Task RunBatchJobAsync(Guid jobId, string userId, int processorId, int licenseId,
+                                List<AdminProcessorPhotoBatchCommitItemDto> items, string assetRootPath,
+                                IServiceScopeFactory scopeFactory)
+    {
+        BatchUploadJobStore.BatchJob job = batchJobs.GetForOwner(jobId, userId);
+        if(job is null) return;
+
+        lock(job.Lock) { job.State = BatchJobState.Processing; }
+
+        Photos.EnsureCreated(assetRootPath, false, "processors");
+
+        for(int i = 0; i < items.Count; i++)
+        {
+            AdminProcessorPhotoBatchCommitItemDto item = items[i];
+
+            lock(job.Lock)
+            {
+                job.CurrentPendingId = item.PendingId;
+                job.Processed        = i;
+                job.LastTouchedOn    = DateTime.UtcNow;
+            }
+
+            try
+            {
+                (string movedPath, string ext) = await PendingImageStore.PromoteToOriginalsAsync(assetRootPath,
+                                                     "processors", item.PendingId);
+
+                if(movedPath is null)
+                {
+                    AppendResult(job, item.PendingId, false, null, "Pending file missing at commit time.");
+                    continue;
+                }
+
+                // Rename the moved file to use a fresh photo guid so its filename matches the DB row id.
+                Guid   photoId      = Guid.NewGuid();
+                string originalsDir = Path.Combine(assetRootPath, "photos", "processors", "originals");
+                string finalPath    = Path.Combine(originalsDir, photoId.ToString() + "." + ext);
+                System.IO.File.Move(movedPath, finalPath, overwrite: true);
+
+                var model = new ProcessorPhoto
+                {
+                    Id                = photoId,
+                    ProcessorId       = processorId,
+                    LicenseId         = licenseId,
+                    Source            = string.IsNullOrWhiteSpace(item.Source) ? null : item.Source.Trim(),
+                    UserId            = userId,
+                    UploadDate        = DateTime.UtcNow,
+                    OriginalExtension = ext
+                };
+
+                // Extract EXIF metadata from the promoted file (same pipeline as single-upload).
+                await using(var fs = new FileStream(finalPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    PhotoExifExtractor.ExtractInto(model, fs);
+                }
+
+                using(IServiceScope scope = scopeFactory.CreateScope())
+                {
+                    var ctx = scope.ServiceProvider.GetRequiredService<MarechaiContext>();
+                    await ctx.ProcessorPhotos.AddAsync(model);
+                    await ctx.SaveChangesWithUserAsync(userId);
+                }
+
+                // Run the 8-variant conversion synchronously so the progress bar advances
+                // only after every variant for this image has landed.
+                var photos = new Photos();
+                photos.ConversionWorker(assetRootPath, photoId, finalPath, ext, false, "processors");
+
+                AppendResult(job, item.PendingId, true, photoId, null);
+            }
+            catch(Exception ex)
+            {
+                AppendResult(job, item.PendingId, false, null, ex.Message);
+            }
+        }
+
+        lock(job.Lock)
+        {
+            job.Processed        = items.Count;
+            job.CurrentPendingId = null;
+            job.State            = BatchJobState.Completed;
+            job.LastTouchedOn    = DateTime.UtcNow;
+        }
+    }
+
+    static void AppendResult(BatchUploadJobStore.BatchJob job, Guid pendingId, bool ok, Guid? photoId, string error)
+    {
+        lock(job.Lock)
+        {
+            job.Results.Add(new BatchJobItemResult
+            {
+                PendingId  = pendingId,
+                Succeeded  = ok,
+                AssignedId = photoId,
+                Error      = error
+            });
+            job.LastTouchedOn = DateTime.UtcNow;
+        }
     }
 }

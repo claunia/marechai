@@ -145,4 +145,61 @@ public class ProcessorPhotosService(Marechai.ApiClient.Client client, IRequestAd
             return false;
         }
     }
+
+    /// <summary>
+    ///     Delete a single admin-staged pending processor-photo image (the admin
+    ///     batch-upload dialog uses this when the admin removes a card before committing
+    ///     or cancels the dialog entirely). Returns false on any failure — caller decides
+    ///     whether to surface it.
+    /// </summary>
+    public async Task<bool> DeleteAdminPendingPhotoAsync(Guid guid)
+    {
+        try
+        {
+            await client.Processors.Photos.Admin.Pending[guid].DeleteAsync();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    ///     Commit a batch of admin-staged pending processor-photo images. Returns the
+    ///     initial job snapshot (state=Queued) plus any error message; the caller is
+    ///     responsible for polling <see cref="GetAdminBatchStatusAsync" /> until the job
+    ///     reaches a terminal state.
+    /// </summary>
+    public async Task<(AdminProcessorPhotoBatchJobStatusDto job, string error)> CommitAdminBatchAsync(
+        AdminProcessorPhotoBatchCommitRequestDto request)
+    {
+        try
+        {
+            AdminProcessorPhotoBatchJobStatusDto job =
+                await client.Processors.Photos.Admin.Batch.Commit.PostAsync(request);
+            return (job, null);
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    /// <summary>
+    ///     Fetch the current status of an in-flight admin processor-photo batch-commit job.
+    ///     Returns null when the job id is unknown to the server (caller treats null as
+    ///     a terminal failure).
+    /// </summary>
+    public async Task<AdminProcessorPhotoBatchJobStatusDto> GetAdminBatchStatusAsync(Guid jobId)
+    {
+        try
+        {
+            return await client.Processors.Photos.Admin.Batch[jobId].Status.GetAsync();
+        }
+        catch
+        {
+            return null;
+        }
+    }
 }

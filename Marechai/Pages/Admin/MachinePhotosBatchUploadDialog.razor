@@ -1,0 +1,233 @@
+@*
+    MachinePhotosBatchUploadDialog — admin batch upload modal for machine photos.
+
+    Replaces the inline single-photo upload form on the MachinePhotos admin page.
+    Admins can stage up to 25 images (JPEG/PNG/WebP/AVIF/JXL/BMP/TIFF, 50 MB each),
+    set a single shared License plus a per-image Source URL, then commit the batch
+    and watch a progress bar while the server promotes each image to a permanent
+    MachinePhoto row and runs the 8-variant conversion pipeline.
+
+    Architecture mirrors SoftwareCoversBatchUploadDialog:
+    * Per-file upload via XHR (machine-photo-batch-upload.js) with byte-level
+      progress reported back through DotNetObjectReference callbacks. Server
+      content-sniffs each image with ImageMagick and returns a 256x256 JPEG
+      thumbnail inline as a base64 data URL.
+    * Commit posts the per-image metadata batch (POST /machines/photos/admin/batch/commit),
+      receives a jobId, then polls GET /machines/photos/admin/batch/{jobId}/status
+      every 750 ms until the job is Completed/Failed.
+*@
+@using System
+@using System.Collections.Generic
+@using System.Linq
+@using System.Threading
+@using System.Threading.Tasks
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@using Marechai.Services
+@using Microsoft.JSInterop
+
+@inject IStringLocalizer<MachinePhotosService> L
+@inject ISnackbar                              Snackbar
+@inject MachinePhotosService                   PhotosService
+@inject IJSRuntime                             JS
+@inject TokenProvider                          TokenProvider
+@inject ApiAssetUrlProvider                    ApiAssetUrls
+
+<MudDialog>
+    <DialogContent>
+        @if(_phase == Phase.Staging)
+        {
+            <MudText Typo="Typo.body2" Class="mb-3">
+                @string.Format(L["Upload up to {0} photos for {1}. Accepted formats: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max 50 MB each)."].Value, MaxImages, MachineName)
+            </MudText>
+
+            <MudSelect T="LicenseDto" @bind-Value="_selectedLicense"
+                       Label="@L["License"]"
+                       Variant="Variant.Outlined"
+                       ToStringFunc="@(l => l?.Name ?? string.Empty)"
+                       Required="true"
+                       RequiredError="@L["License is required."]"
+                       Class="mb-3">
+                @if(Licenses is not null)
+                {
+                    @foreach(LicenseDto license in Licenses)
+                    {
+                        <MudSelectItem T="LicenseDto" Value="license">@license.Name</MudSelectItem>
+                    }
+                }
+            </MudSelect>
+
+            <MudPaper Outlined="true" Class="pa-3 mb-3">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-2">
+                    <MudText Typo="Typo.subtitle2">@string.Format(L["Images: {0}/{1}"].Value, _staged.Count, MaxImages)</MudText>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.AddPhotoAlternate"
+                               Disabled="@(_staged.Count >= MaxImages)"
+                               OnClick="TriggerFilePicker">
+                        @L["Add images"]
+                    </MudButton>
+                </MudStack>
+
+                <input type="file" id="@_fileInputId"
+                       accept="image/jpeg,image/png,image/webp,image/avif,image/jxl,image/bmp,image/tiff,.jpg,.jpeg,.png,.webp,.avif,.jxl,.bmp,.tif,.tiff"
+                       multiple style="display:none"
+                       @onchange="OnFilesPicked"/>
+            </MudPaper>
+
+            @if(_staged.Count == 0)
+            {
+                <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Class="mb-3">
+                    @L["No images staged yet. Use the Add images button above to pick files."]
+                </MudAlert>
+            }
+            else
+            {
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                    @foreach(StagedPhoto c in _staged)
+                    {
+                        <MudPaper Outlined="true" Class="pa-2" Key="@c.ClientGuid"
+                                  Style="width: 240px; flex: 0 0 240px;">
+                            <MudStack Spacing="1">
+                                <div style="position: relative; width: 100%; height: 160px; display: flex; align-items: center; justify-content: center; background: var(--mud-palette-background-grey); border-radius: 4px;">
+                                    @if(c.Status == StagedPhotoStatus.Ready)
+                                    {
+                                        <img src="@c.ThumbnailDataUrl" alt="@c.FileName"
+                                             style="max-width: 100%; max-height: 160px; object-fit: contain; border-radius: 4px;"/>
+                                    }
+                                    else if(c.Status == StagedPhotoStatus.Uploading)
+                                    {
+                                        <MudIcon Icon="@Icons.Material.Filled.CloudUpload" Color="Color.Default" Size="Size.Large"/>
+                                    }
+                                    else
+                                    {
+                                        <MudIcon Icon="@Icons.Material.Filled.ErrorOutline" Color="Color.Error" Size="Size.Large"/>
+                                    }
+
+                                    <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small"
+                                                   Color="Color.Error"
+                                                   OnClick="@(() => RemoveStagedAsync(c.ClientGuid))"
+                                                   Style="position: absolute; top: 2px; right: 2px; background: rgba(255,255,255,0.85);"/>
+                                </div>
+
+                                <MudText Typo="Typo.caption" Style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;" title="@c.FileName">
+                                    <strong>@c.FileName</strong>
+                                </MudText>
+                                <MudText Typo="Typo.caption" Style="opacity: 0.7;">@FormatCardSubtitle(c)</MudText>
+
+                                @if(c.Status == StagedPhotoStatus.Uploading)
+                                {
+                                    <MudProgressLinear Color="Color.Primary" Value="@c.UploadPercent" Min="0" Max="100"/>
+                                    <MudText Typo="Typo.caption" Align="Align.Right">@($"{c.UploadPercent:0}%")</MudText>
+                                }
+                                else if(c.Status == StagedPhotoStatus.Error)
+                                {
+                                    <MudAlert Severity="Severity.Error" Dense="true" NoIcon="true" Class="py-0 my-0">@c.ErrorText</MudAlert>
+                                }
+                                else if(c.Status == StagedPhotoStatus.Ready)
+                                {
+                                    <MudTextField T="string" Label="@L["Source URL (optional)"]"
+                                                  MaxLength="500"
+                                                  Value="@c.Source"
+                                                  ValueChanged="@(v => { c.Source = v; })"
+                                                  Variant="Variant.Outlined"
+                                                  Margin="Margin.Dense"/>
+                                }
+                            </MudStack>
+                        </MudPaper>
+                    }
+                </div>
+            }
+
+            @if(!string.IsNullOrEmpty(_validationError))
+            {
+                <MudAlert Severity="Severity.Error" Class="mt-3">@_validationError</MudAlert>
+            }
+        }
+        else if(_phase == Phase.Committing)
+        {
+            <MudText Typo="Typo.body1" Class="mb-3">
+                @L["Processing images. Please keep this dialog open until processing finishes."]
+            </MudText>
+
+            <MudProgressLinear Color="Color.Primary" Value="@_jobPercent" Min="0" Max="100" Class="mb-2"/>
+
+            <MudText Typo="Typo.body2" Class="mb-3">
+                @string.Format(L["Processing image {0} of {1}"].Value, Math.Min(_jobProcessed + 1, _jobTotal), _jobTotal)
+            </MudText>
+
+            <MudStack Spacing="1">
+                @foreach(StagedPhoto c in _staged)
+                {
+                    AdminMachinePhotoBatchJobItemResultDto result = _jobResults.FirstOrDefault(r => r.PendingId == c.ServerGuid);
+                    bool isCurrent = _currentPendingId.HasValue && _currentPendingId.Value == c.ServerGuid;
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+                        @if(result is not null)
+                        {
+                            if(result.Succeeded ?? false)
+                            {
+                                <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" Size="Size.Small"/>
+                            }
+                            else
+                            {
+                                <MudIcon Icon="@Icons.Material.Filled.Error" Color="Color.Error" Size="Size.Small"/>
+                            }
+                        }
+                        else if(isCurrent)
+                        {
+                            <MudProgressCircular Indeterminate="true" Size="Size.Small"/>
+                        }
+                        else
+                        {
+                            <MudIcon Icon="@Icons.Material.Filled.HourglassEmpty" Color="Color.Default" Size="Size.Small"/>
+                        }
+                        <MudText Typo="Typo.body2">@c.FileName</MudText>
+                        @if(result is not null && !(result.Succeeded ?? false) && !string.IsNullOrEmpty(result.Error))
+                        {
+                            <MudText Typo="Typo.caption" Color="Color.Error">@result.Error</MudText>
+                        }
+                    </MudStack>
+                }
+            </MudStack>
+        }
+        else
+        {
+            int ok    = _jobResults.Count(r => r.Succeeded ?? false);
+            int fail  = _jobResults.Count(r => !(r.Succeeded ?? false));
+            <MudAlert Severity="@(fail == 0 ? Severity.Success : Severity.Warning)" Class="mb-3">
+                @string.Format(L["Batch finished. {0} succeeded, {1} failed."].Value, ok, fail)
+            </MudAlert>
+            @if(fail > 0)
+            {
+                <MudStack Spacing="1">
+                    @foreach(AdminMachinePhotoBatchJobItemResultDto r in _jobResults.Where(r => !(r.Succeeded ?? false)))
+                    {
+                        StagedPhoto c = _staged.FirstOrDefault(s => s.ServerGuid == r.PendingId);
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+                            <MudIcon Icon="@Icons.Material.Filled.Error" Color="Color.Error" Size="Size.Small"/>
+                            <MudText Typo="Typo.body2">@(c?.FileName ?? r.PendingId?.ToString()): @r.Error</MudText>
+                        </MudStack>
+                    }
+                </MudStack>
+            }
+        }
+    </DialogContent>
+    <DialogActions>
+        @if(_phase == Phase.Staging)
+        {
+            <MudButton OnClick="OnCancelAsync">@L["Cancel"]</MudButton>
+            <MudButton Color="Color.Primary" Variant="Variant.Filled"
+                       OnClick="SubmitAsync"
+                       Disabled="@(!CanSubmit())">
+                @L["Upload"]
+            </MudButton>
+        }
+        else if(_phase == Phase.Committing)
+        {
+            <MudButton Disabled="true">@L["Processing\u2026"]</MudButton>
+        }
+        else
+        {
+            <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="OnDoneAsync">@L["Close"]</MudButton>
+        }
+    </DialogActions>
+</MudDialog>
