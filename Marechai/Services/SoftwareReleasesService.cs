@@ -876,4 +876,63 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client, Reference
             return false;
         }
     }
+
+    /// <summary>
+    ///     Delete a single admin-staged pending cover image (the admin batch-upload dialog
+    ///     uses this when the admin removes a card before committing or cancels the dialog
+    ///     entirely). Returns false on any failure — caller decides whether to surface it.
+    /// </summary>
+    public async Task<bool> DeleteAdminPendingCoverAsync(Guid guid)
+    {
+        try
+        {
+            await client.Software.Covers.Admin.Pending[guid].DeleteAsync();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    ///     Commit a batch of admin-staged pending cover images. Returns the initial job
+    ///     snapshot (state=Queued) plus any error message; the caller is responsible for
+    ///     polling <see cref="GetAdminBatchStatusAsync" /> until the job reaches a
+    ///     terminal state.
+    /// </summary>
+    public async Task<(AdminBatchJobStatusDto job, string error)> CommitAdminBatchAsync(
+        AdminBatchCommitRequestDto request)
+    {
+        try
+        {
+            AdminBatchJobStatusDto job = await client.Software.Covers.Admin.Batch.Commit.PostAsync(request);
+            return (job, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ex is ProblemDetails pd ? (pd.Detail ?? pd.Title ?? ex.Message) : ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    /// <summary>
+    ///     Fetch the current status of an in-flight admin batch-commit job. Returns null
+    ///     when the job id is unknown to the server (caller treats null as a terminal
+    ///     failure).
+    /// </summary>
+    public async Task<AdminBatchJobStatusDto> GetAdminBatchStatusAsync(Guid jobId)
+    {
+        try
+        {
+            return await client.Software.Covers.Admin.Batch[jobId].Status.GetAsync();
+        }
+        catch
+        {
+            return null;
+        }
+    }
 }

@@ -39,12 +39,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Marechai.Server.Controllers;
 
 [Route("/software/covers")]
 [ApiController]
-public class SoftwareCoversController(MarechaiContext context, IConfiguration configuration) : ControllerBase
+public class SoftwareCoversController(MarechaiContext context, IConfiguration configuration,
+                                      BatchUploadJobStore batchJobs) : ControllerBase
 {
     static readonly HashSet<string> _allowedExtensions = [".jpg", ".jpeg", ".png", ".webp", ".tiff", ".tif", ".bmp"];
 
@@ -515,5 +517,339 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
         var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
 
         return File(stream, meta.ContentType ?? "application/octet-stream");
+    }
+
+    // ────────────────────────────── Admin batch upload ──────────────────────────────
+
+    /// <summary>Maximum images an admin may stage in a single batch (matches dialog UI).</summary>
+    const int AdminBatchMaxImages = 25;
+
+    /// <summary>
+    ///     Allowed extensions accepted by the admin batch-upload staging endpoint. Wider
+    ///     than both the legacy <c>/upload</c> set (which also rejects AVIF/JXL) and the
+    ///     collaborator-suggestion set (which rejects everything beyond JPEG/PNG/WebP).
+    /// </summary>
+    static readonly HashSet<string> _adminBatchAllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ".jpg", ".jpeg", ".png", ".webp", ".avif", ".jxl", ".bmp", ".tif", ".tiff"
+    };
+
+    /// <summary>
+    ///     ImageMagick canonical format names (as returned by <c>identify -format %m</c>)
+    ///     that we trust for admin batch uploads. The set is checked AFTER the file is
+    ///     written to disk so an attacker can't bypass it by lying about the extension or
+    ///     MIME type.
+    /// </summary>
+    static readonly HashSet<string> _adminBatchAllowedMagickFormats = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "JPEG", "PNG", "WEBP", "AVIF", "JXL", "BMP", "TIFF"
+    };
+
+    /// <summary>
+    ///     Stage a single image as part of an admin batch upload. The server writes the
+    ///     file to the pending folder, content-sniffs it with ImageMagick (rejecting on
+    ///     mismatch regardless of extension/MIME), generates a 256x256 thumbnail returned
+    ///     inline as a JPEG data URL, and stores both file + sidecar for later commit.
+    /// </summary>
+    [HttpPost("admin/pending")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [RequestSizeLimit(50 * 1024 * 1024)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
+    public async Task<ActionResult<AdminPendingCoverUploadDto>> UploadAdminBatchPendingAsync(IFormFile         file,
+                                                                                              [FromQuery] ulong releaseId)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        if(file is null || file.Length == 0) return BadRequest("No file provided.");
+        if(file.Length > 50 * 1024 * 1024) return BadRequest("File exceeds 50 MB limit.");
+
+        string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
+        if(!_adminBatchAllowedExtensions.Contains(extension))
+            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP, AVIF, JXL, BMP, TIFF.");
+
+        bool releaseExists = await context.SoftwareReleases.AnyAsync(r => r.Id == releaseId);
+        if(!releaseExists) return NotFound("Software release not found.");
+
+        int currentCount = PendingImageStore.CountAdminStagedByUploader(_assetRootPath, "software-covers", userId,
+            (byte)SuggestionEntityType.SoftwareCover);
+
+        if(currentCount >= AdminBatchMaxImages)
+            return Conflict($"You already have {currentCount} pending images staged. Maximum is " +
+                            $"{AdminBatchMaxImages}. Commit or remove some first.");
+
+        // Persist FIRST (with a temporary placeholder for dimensions), then content-sniff
+        // and either re-write the sidecar with real dimensions or reject + delete the file.
+        Guid guid;
+        await using(Stream stream = file.OpenReadStream())
+        {
+            guid = await PendingImageStore.StoreAsync(_assetRootPath, "software-covers", extension,
+                (byte)SuggestionEntityType.SoftwareCover, entityId: 0L, userId, file.ContentType, stream,
+                parentEntityId: (long)releaseId, _adminBatchAllowedExtensions, isAdminStaging: true,
+                width: null, height: null);
+        }
+
+        string imagePath = await PendingImageStore.GetImagePathAsync(_assetRootPath, "software-covers", guid);
+        if(imagePath is null)
+        {
+            PendingImageStore.Delete(_assetRootPath, "software-covers", guid);
+            return BadRequest("Failed to persist uploaded file.");
+        }
+
+        (string magickFormat, int width, int height) = Photos.Identify(imagePath);
+        if(magickFormat is null || !_adminBatchAllowedMagickFormats.Contains(magickFormat))
+        {
+            PendingImageStore.Delete(_assetRootPath, "software-covers", guid);
+            return StatusCode(StatusCodes.Status415UnsupportedMediaType,
+                              "File content does not match a supported image format.");
+        }
+
+        byte[] thumbBytes = Photos.GenerateThumbnailJpeg(imagePath);
+        if(thumbBytes is null)
+        {
+            PendingImageStore.Delete(_assetRootPath, "software-covers", guid);
+            return BadRequest("Failed to generate thumbnail for the uploaded image.");
+        }
+
+        await PendingImageStore.StoreThumbnailAsync(_assetRootPath, "software-covers", guid, thumbBytes);
+
+        // Re-write the sidecar so dimensions are captured for future consumers.
+        PendingImageStore.PendingMetadata meta =
+            await PendingImageStore.GetMetadataAsync(_assetRootPath, "software-covers", guid);
+        if(meta is not null)
+        {
+            meta.Width  = width;
+            meta.Height = height;
+            string sidecar = Path.Combine(_assetRootPath, "photos", "software-covers", "pending",
+                                          guid.ToString() + ".json");
+            await System.IO.File.WriteAllTextAsync(sidecar, System.Text.Json.JsonSerializer.Serialize(meta));
+        }
+
+        string dataUrl = "data:image/jpeg;base64," + Convert.ToBase64String(thumbBytes);
+
+        return Ok(new AdminPendingCoverUploadDto
+        {
+            Id              = guid,
+            Extension       = extension.TrimStart('.'),
+            ThumbnailBase64 = dataUrl,
+            SizeBytes       = file.Length,
+            Width           = width,
+            Height          = height
+        });
+    }
+
+    /// <summary>
+    ///     Delete a single admin-staged pending image before commit. Owner-only (an admin
+    ///     cannot delete another admin's in-flight staging entries).
+    /// </summary>
+    [HttpDelete("admin/pending/{guid:guid}")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> DeleteAdminBatchPendingAsync(Guid guid)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        PendingImageStore.PendingMetadata meta =
+            await PendingImageStore.GetMetadataAsync(_assetRootPath, "software-covers", guid);
+
+        if(meta is null) return NotFound();
+        if(meta.EntityType != (byte)SuggestionEntityType.SoftwareCover) return NotFound();
+        if(!meta.IsAdminStaging) return NotFound();
+        if(!string.Equals(meta.UploadedById, userId, StringComparison.Ordinal)) return Forbid();
+
+        PendingImageStore.Delete(_assetRootPath, "software-covers", guid);
+        return NoContent();
+    }
+
+    /// <summary>
+    ///     Commit a batch of admin-staged pending images into permanent <c>SoftwareCover</c>
+    ///     rows. The endpoint returns 202 with a <c>jobId</c> immediately and processes the
+    ///     batch on a background task; the client polls
+    ///     <c>GET /software/covers/admin/batch/{jobId}/status</c> for progress and per-item
+    ///     results. Each image runs through the standard 8-variant conversion (JPEG/WebP/
+    ///     AVIF/JXL × full+thumb) sequentially so the progress bar advances one image at a
+    ///     time.
+    /// </summary>
+    [HttpPost("admin/batch/commit")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(typeof(AdminBatchJobStatusDto), StatusCodes.Status202Accepted)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<AdminBatchJobStatusDto>> CommitAdminBatchAsync(
+        [FromBody] AdminBatchCommitRequestDto request)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        if(request is null || request.Items is null || request.Items.Count == 0)
+            return BadRequest("No items provided.");
+
+        if(request.Items.Count > AdminBatchMaxImages)
+            return BadRequest($"At most {AdminBatchMaxImages} images may be committed per batch.");
+
+        bool releaseExists = await context.SoftwareReleases.AnyAsync(r => r.Id == request.SoftwareReleaseId);
+        if(!releaseExists) return NotFound("Software release not found.");
+
+        // Validate every pending id belongs to the caller and matches release/admin scope.
+        foreach(AdminBatchCommitItemDto item in request.Items)
+        {
+            PendingImageStore.PendingMetadata meta =
+                await PendingImageStore.GetMetadataAsync(_assetRootPath, "software-covers", item.PendingId);
+
+            if(meta is null) return NotFound($"Pending image {item.PendingId} not found.");
+            if(meta.EntityType != (byte)SuggestionEntityType.SoftwareCover)
+                return BadRequest($"Pending image {item.PendingId} is not a software cover.");
+            if(!meta.IsAdminStaging)
+                return BadRequest($"Pending image {item.PendingId} is not an admin-staged image.");
+            if(!string.Equals(meta.UploadedById, userId, StringComparison.Ordinal))
+                return Forbid();
+            if(meta.ParentEntityId != (long)request.SoftwareReleaseId)
+                return BadRequest($"Pending image {item.PendingId} was staged for a different release.");
+            if(!Enum.IsDefined(typeof(SoftwareCoverType), (byte)item.Type))
+                return BadRequest($"Invalid cover type {item.Type} for pending image {item.PendingId}.");
+        }
+
+        Guid jobId = batchJobs.StartJob(userId, request.SoftwareReleaseId, request.Items.Count);
+
+        // Fire the worker. The worker uses its own DI scope (created from IServiceScopeFactory
+        // injected via the controller's RequestServices) so DbContext lifetimes are correct.
+        var scopeFactory =
+            HttpContext.RequestServices.GetRequiredService<Microsoft.Extensions.DependencyInjection.IServiceScopeFactory>();
+        string assetRootPath = _assetRootPath;
+        List<AdminBatchCommitItemDto> items = request.Items;
+        ulong releaseId      = request.SoftwareReleaseId;
+
+        _ = Task.Run(() => RunBatchJobAsync(jobId, userId, releaseId, items, assetRootPath, scopeFactory));
+
+        var snapshot = batchJobs.GetSnapshot(batchJobs.GetForOwner(jobId, userId)!);
+        return Accepted(snapshot);
+    }
+
+    /// <summary>
+    ///     Poll the status of an in-flight admin batch-commit job. Owner-only.
+    /// </summary>
+    [HttpGet("admin/batch/{jobId:guid}/status")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public ActionResult<AdminBatchJobStatusDto> GetAdminBatchStatus(Guid jobId)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        BatchUploadJobStore.BatchJob job = batchJobs.GetForOwner(jobId, userId);
+        if(job is null) return NotFound();
+
+        return Ok(batchJobs.GetSnapshot(job));
+    }
+
+    /// <summary>
+    ///     Sequential worker that promotes each pending image into a SoftwareCover row,
+    ///     runs the 8-variant conversion synchronously per image (so the progress bar
+    ///     advances one-at-a-time), and records per-item success/failure on the job.
+    /// </summary>
+    async Task RunBatchJobAsync(Guid jobId, string userId, ulong releaseId,
+                                List<AdminBatchCommitItemDto> items, string assetRootPath,
+                                Microsoft.Extensions.DependencyInjection.IServiceScopeFactory scopeFactory)
+    {
+        BatchUploadJobStore.BatchJob job = batchJobs.GetForOwner(jobId, userId);
+        if(job is null) return;
+
+        lock(job.Lock) { job.State = BatchJobState.Processing; }
+
+        Photos.EnsureCreated(assetRootPath, false, "software-covers");
+
+        for(int i = 0; i < items.Count; i++)
+        {
+            AdminBatchCommitItemDto item = items[i];
+
+            lock(job.Lock)
+            {
+                job.CurrentPendingId = item.PendingId;
+                job.Processed        = i;
+                job.LastTouchedOn    = DateTime.UtcNow;
+            }
+
+            try
+            {
+                (string movedPath, string ext) = await PendingImageStore.PromoteToOriginalsAsync(assetRootPath,
+                                                     "software-covers", item.PendingId);
+
+                if(movedPath is null)
+                {
+                    AppendResult(job, item.PendingId, false, null, "Pending file missing at commit time.");
+                    continue;
+                }
+
+                // Rename the moved file to use a fresh cover guid so its filename matches the DB row id.
+                Guid   coverId       = Guid.NewGuid();
+                string originalsDir  = Path.Combine(assetRootPath, "photos", "software-covers", "originals");
+                string finalPath     = Path.Combine(originalsDir, coverId.ToString() + "." + ext);
+                System.IO.File.Move(movedPath, finalPath, overwrite: true);
+
+                using(Microsoft.Extensions.DependencyInjection.IServiceScope scope = scopeFactory.CreateScope())
+                {
+                    var ctx = scope.ServiceProvider
+                                   .GetRequiredService<MarechaiContext>();
+                    var model = new SoftwareCover
+                    {
+                        Id                = coverId,
+                        SoftwareReleaseId = releaseId,
+                        Type              = (SoftwareCoverType)(byte)item.Type,
+                        Caption           = string.IsNullOrWhiteSpace(item.Caption) ? null : item.Caption.Trim(),
+                        OriginalExtension = ext
+                    };
+
+                    await ctx.SoftwareCovers.AddAsync(model);
+                    await ctx.SaveChangesWithUserAsync(userId);
+                }
+
+                // Run the 8-variant conversion synchronously so the progress bar advances
+                // only after every variant for this image has landed.
+                var photos = new Photos();
+                photos.ConversionWorker(assetRootPath, coverId, finalPath, ext, false, "software-covers");
+
+                AppendResult(job, item.PendingId, true, coverId, null);
+            }
+            catch(Exception ex)
+            {
+                AppendResult(job, item.PendingId, false, null, ex.Message);
+            }
+        }
+
+        lock(job.Lock)
+        {
+            job.Processed        = items.Count;
+            job.CurrentPendingId = null;
+            job.State            = BatchJobState.Completed;
+            job.LastTouchedOn    = DateTime.UtcNow;
+        }
+    }
+
+    static void AppendResult(BatchUploadJobStore.BatchJob job, Guid pendingId, bool ok, Guid? coverId, string error)
+    {
+        lock(job.Lock)
+        {
+            job.Results.Add(new AdminBatchJobItemResultDto
+            {
+                PendingId = pendingId,
+                Succeeded = ok,
+                CoverId   = coverId,
+                Error     = error
+            });
+            job.LastTouchedOn = DateTime.UtcNow;
+        }
     }
 }

@@ -82,6 +82,24 @@ public static class PendingImageStore
         ///     Null for legacy single-image flows (book/issue/person covers).
         /// </summary>
         public long?    ParentEntityId { get; set; }
+
+        /// <summary>
+        ///     Marks the pending image as part of an admin batch-upload staging session
+        ///     rather than a collaborator suggestion. Admin entries share the same
+        ///     <c>pending/</c> folder but use a separate cap (counted by
+        ///     <see cref="CountAdminStagedByUploader" />) and bypass the suggestion-review
+        ///     workflow at commit time.
+        /// </summary>
+        public bool     IsAdminStaging { get; set; }
+
+        /// <summary>
+        ///     Image dimensions captured at staging time. Null when staging happened before
+        ///     this field was added (legacy suggestion uploads), or when identification
+        ///     failed for any reason.
+        /// </summary>
+        public int?     Width          { get; set; }
+
+        public int?     Height         { get; set; }
     }
 
     /// <summary>
@@ -112,12 +130,27 @@ public static class PendingImageStore
     ///     the same uploader can stage multiple in-flight images for the same parent (e.g.
     ///     GPU photos: parentEntityId = GpuId so the per-uploader cap is scoped per GPU).
     /// </summary>
+    public static Task<Guid> StoreAsync(string assetRootPath, string itemFolder, string extension,
+                                        byte entityType, long entityId, string uploadedById,
+                                        string contentType, Stream contents, long? parentEntityId) =>
+        StoreAsync(assetRootPath, itemFolder, extension, entityType, entityId, uploadedById, contentType, contents,
+                   parentEntityId, AllowedExtensions, isAdminStaging: false, width: null, height: null);
+
+    /// <summary>
+    ///     Full-control overload. <paramref name="allowedExtensions" /> overrides the default
+    ///     suggestion whitelist (admin batch staging accepts a wider set: JPEG/PNG/WebP/AVIF/JXL/BMP/TIFF);
+    ///     <paramref name="isAdminStaging" /> marks the sidecar so the admin-vs-suggestion counters
+    ///     can distinguish entries sharing the same pending folder.
+    /// </summary>
     public static async Task<Guid> StoreAsync(string assetRootPath, string itemFolder, string extension,
                                               byte entityType, long entityId, string uploadedById,
-                                              string contentType, Stream contents, long? parentEntityId)
+                                              string contentType, Stream contents, long? parentEntityId,
+                                              HashSet<string> allowedExtensions, bool isAdminStaging,
+                                              int? width, int? height)
     {
         if(string.IsNullOrEmpty(extension)) throw new ArgumentException("Extension required.", nameof(extension));
-        if(!AllowedExtensions.Contains(extension))
+        HashSet<string> whitelist = allowedExtensions ?? AllowedExtensions;
+        if(!whitelist.Contains(extension))
             throw new ArgumentException($"Extension '{extension}' is not in the allowed list.", nameof(extension));
         if(string.IsNullOrEmpty(uploadedById))
             throw new ArgumentException("Uploader id required.", nameof(uploadedById));
@@ -145,11 +178,38 @@ public static class PendingImageStore
             UploadedOn     = DateTime.UtcNow,
             ContentType    = contentType,
             SizeBytes      = size,
-            ParentEntityId = parentEntityId
+            ParentEntityId = parentEntityId,
+            IsAdminStaging = isAdminStaging,
+            Width          = width,
+            Height         = height
         };
         await File.WriteAllTextAsync(sidecar, JsonSerializer.Serialize(meta));
 
         return guid;
+    }
+
+    /// <summary>
+    ///     Persist a JPEG thumbnail next to a previously-stored pending image so the upload
+    ///     dialog can render a preview without re-reading the original. The thumbnail file
+    ///     uses the suffix <c>.thumb.jpg</c> and is cleaned up alongside the image by
+    ///     <see cref="Delete" /> via the glob fallback.
+    /// </summary>
+    public static async Task StoreThumbnailAsync(string assetRootPath, string itemFolder, Guid guid, byte[] jpegBytes)
+    {
+        string pendingDir = EnsurePendingDir(assetRootPath, itemFolder);
+        string thumbPath  = Path.Combine(pendingDir, guid.ToString() + ".thumb.jpg");
+        await File.WriteAllBytesAsync(thumbPath, jpegBytes);
+    }
+
+    /// <summary>
+    ///     Returns the JPEG thumbnail bytes for a pending image, or null when missing.
+    /// </summary>
+    public static async Task<byte[]> ReadThumbnailBytesAsync(string assetRootPath, string itemFolder, Guid guid)
+    {
+        string pendingDir = EnsurePendingDir(assetRootPath, itemFolder);
+        string thumbPath  = Path.Combine(pendingDir, guid.ToString() + ".thumb.jpg");
+        if(!File.Exists(thumbPath)) return null;
+        try { return await File.ReadAllBytesAsync(thumbPath); } catch { return null; }
     }
 
     /// <summary>Look up the sidecar metadata for a given guid; returns null when no sidecar exists.</summary>
@@ -184,7 +244,7 @@ public static class PendingImageStore
         return File.Exists(filePath) ? filePath : null;
     }
 
-    /// <summary>Delete the image+sidecar for a given guid. Silently absorbs missing files.</summary>
+    /// <summary>Delete the image+sidecar+thumbnail for a given guid. Silently absorbs missing files.</summary>
     public static void Delete(string assetRootPath, string itemFolder, Guid guid)
     {
         string pendingDir = EnsurePendingDir(assetRootPath, itemFolder);
@@ -210,7 +270,8 @@ public static class PendingImageStore
             // ignored
         }
 
-        // Fallback: glob delete in case extension lookup failed.
+        // Fallback: glob delete in case extension lookup failed. Picks up both the original
+        // image and the .thumb.jpg sidecar.
         try
         {
             foreach(string f in Directory.GetFiles(pendingDir, guid.ToString() + ".*"))
@@ -271,7 +332,8 @@ public static class PendingImageStore
     ///     Count pending images uploaded by <paramref name="userId" /> and scoped to the
     ///     given (entity type, parent entity id) combination. Used by batch flows (e.g.
     ///     GPU photos) to enforce a per-uploader cap (currently 15 in-flight pending photos
-    ///     per parent entity).
+    ///     per parent entity). Admin-staging entries are excluded so they don't double-count
+    ///     against the collaborator-suggestion cap.
     /// </summary>
     public static int CountByUploaderForParentEntity(string assetRootPath, string itemFolder,
                                                      string userId, byte entityType, long parentEntityId)
@@ -291,8 +353,46 @@ public static class PendingImageStore
             {
                 var meta = JsonSerializer.Deserialize<PendingMetadata>(File.ReadAllText(sidecar));
                 if(meta is null) continue;
+                if(meta.IsAdminStaging) continue;
                 if(meta.EntityType != entityType) continue;
                 if(meta.ParentEntityId != parentEntityId) continue;
+                if(!string.Equals(meta.UploadedById, userId, StringComparison.Ordinal)) continue;
+                count++;
+            }
+            catch
+            {
+                // ignored
+            }
+        }
+
+        return count;
+    }
+
+    /// <summary>
+    ///     Count admin-staging pending images uploaded by <paramref name="userId" /> for
+    ///     the given <paramref name="entityType" />. Used by the admin batch-upload dialog
+    ///     to enforce a per-user cap (currently 25 images in flight across all releases).
+    /// </summary>
+    public static int CountAdminStagedByUploader(string assetRootPath, string itemFolder,
+                                                 string userId, byte entityType)
+    {
+        if(string.IsNullOrEmpty(userId)) return 0;
+
+        string pendingDir = EnsurePendingDir(assetRootPath, itemFolder);
+        int    count      = 0;
+
+        IEnumerable<string> sidecars;
+        try { sidecars = Directory.EnumerateFiles(pendingDir, "*.json"); }
+        catch { return 0; }
+
+        foreach(string sidecar in sidecars)
+        {
+            try
+            {
+                var meta = JsonSerializer.Deserialize<PendingMetadata>(File.ReadAllText(sidecar));
+                if(meta is null) continue;
+                if(!meta.IsAdminStaging) continue;
+                if(meta.EntityType != entityType) continue;
                 if(!string.Equals(meta.UploadedById, userId, StringComparison.Ordinal)) continue;
                 count++;
             }

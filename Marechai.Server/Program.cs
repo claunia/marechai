@@ -366,6 +366,12 @@ file class Program
         builder.Services.AddScoped<DeletionPendingFilter>();
         builder.Services.AddHostedService<AccountDeletionPurgeService>();
 
+        // In-memory registry for admin batch-upload commit jobs (software covers). Singleton
+        // because jobs span multiple HTTP requests (start + poll). The reaper purges stale
+        // entries every 2 minutes.
+        builder.Services.AddSingleton<Marechai.Server.Helpers.BatchUploadJobStore>();
+        builder.Services.AddHostedService<Marechai.Server.Helpers.BatchUploadJobReaperService>();
+
         // In-memory queue + background drain that emails recipients when a new message lands in their inbox.
         // The MessagesController writes to the queue after each successful SaveChangesAsync; the worker
         // rehydrates from the DB inside its own scope, respects the recipient's NotifyOnNewMessage flag,

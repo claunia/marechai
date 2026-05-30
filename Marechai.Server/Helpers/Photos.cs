@@ -189,6 +189,103 @@ public class Photos
         }
     }
 
+    /// <summary>
+    ///     Real content-sniff via ImageMagick's <c>identify</c>. Returns the canonical
+    ///     uppercase format (e.g. <c>"JPEG"</c>, <c>"PNG"</c>, <c>"WEBP"</c>, <c>"AVIF"</c>,
+    ///     <c>"JXL"</c>, <c>"BMP"</c>, <c>"TIFF"</c>) plus dimensions. <c>(null, 0, 0)</c>
+    ///     when the file is unreadable or unrecognised.
+    /// </summary>
+    public static (string format, int width, int height) Identify(string path)
+    {
+        var identify = new Process
+        {
+            StartInfo =
+            {
+                FileName               = "identify",
+                CreateNoWindow         = true,
+                RedirectStandardError  = true,
+                RedirectStandardOutput = true,
+                ArgumentList =
+                {
+                    "-format",
+                    "%m|%w|%h",
+                    path + "[0]"
+                }
+            }
+        };
+
+        try
+        {
+            identify.Start();
+            string output = identify.StandardOutput.ReadToEnd();
+            identify.WaitForExit();
+
+            if(identify.ExitCode != 0 || string.IsNullOrWhiteSpace(output)) return (null, 0, 0);
+
+            string[] parts = output.Trim().Split('|');
+            if(parts.Length != 3) return (null, 0, 0);
+
+            string format = parts[0].Trim().ToUpperInvariant();
+            if(!int.TryParse(parts[1].Trim(), out int width))  return (null, 0, 0);
+            if(!int.TryParse(parts[2].Trim(), out int height)) return (null, 0, 0);
+
+            return (format, width, height);
+        }
+        catch(Exception)
+        {
+            return (null, 0, 0);
+        }
+    }
+
+    /// <summary>
+    ///     Generate a JPEG thumbnail constrained to <paramref name="maxWidth" />x
+    ///     <paramref name="maxHeight" /> (downscale only, aspect preserved). Returns the
+    ///     raw JPEG bytes or <c>null</c> on failure. Used by the admin batch-upload dialog
+    ///     to render staging previews via an inline data URL.
+    /// </summary>
+    public static byte[] GenerateThumbnailJpeg(string srcPath, int maxWidth = 256, int maxHeight = 256)
+    {
+        var convert = new Process
+        {
+            StartInfo =
+            {
+                FileName               = "convert",
+                CreateNoWindow         = true,
+                RedirectStandardError  = true,
+                RedirectStandardOutput = true,
+                ArgumentList =
+                {
+                    srcPath + "[0]",
+                    "-resize",
+                    $"{maxWidth}x{maxHeight}>",
+                    "-strip",
+                    "-quality",
+                    "80",
+                    "jpeg:-"
+                }
+            }
+        };
+
+        try
+        {
+            convert.StartInfo.RedirectStandardOutput = true;
+            convert.Start();
+
+            using var ms = new MemoryStream();
+            convert.StandardOutput.BaseStream.CopyTo(ms);
+            convert.WaitForExit();
+
+            if(convert.ExitCode != 0) return null;
+
+            byte[] bytes = ms.ToArray();
+            return bytes.Length == 0 ? null : bytes;
+        }
+        catch(Exception)
+        {
+            return null;
+        }
+    }
+
     public void ConversionWorker(string assetRootPath, Guid id, string originalFilePath, string sourceFormat, bool scan,
                                  string item)
     {

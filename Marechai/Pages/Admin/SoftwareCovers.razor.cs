@@ -25,29 +25,21 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
 
 namespace Marechai.Pages.Admin;
 
 public partial class SoftwareCovers
 {
-    const long MaxFileSize = 50 * 1024 * 1024; // 50 MB
-
-    string                       _caption;
     List<SoftwareCoverDto>       _covers;
     string                       _errorMessage;
     bool                         _isLoading = true;
-    bool                         _isUploading;
     List<SoftwareReleaseDto>     _releases;
-    IBrowserFile                 _selectedFile;
     SoftwareReleaseDto           _selectedRelease;
-    int?                         _selectedType;
     string                       _softwareName;
     string                       _successMessage;
 
@@ -88,47 +80,33 @@ public partial class SoftwareCovers
         _isLoading = false;
     }
 
-    void OnFileSelected(IBrowserFile file) => _selectedFile = file;
-
-    async Task UploadCover()
+    async Task OpenBatchUploadDialog()
     {
-        if(_selectedFile is null || _selectedRelease is null || _selectedType is null)
-            return;
+        if(_selectedRelease?.Id is null) return;
 
-        _isUploading    = true;
-        _errorMessage   = null;
-        _successMessage = null;
-
-        try
+        DialogParameters<SoftwareCoversBatchUploadDialog> parameters = new()
         {
-            await using Stream stream = _selectedFile.OpenReadStream(MaxFileSize);
-            using var          ms     = new MemoryStream();
-            await stream.CopyToAsync(ms);
-            byte[] fileBytes = ms.ToArray();
+            { x => x.SoftwareReleaseId, (ulong)_selectedRelease.Id.Value },
+            { x => x.ReleaseTitle,      FormatReleaseLabel(_selectedRelease) }
+        };
 
-            SoftwareCoverDto result =
-                await SoftwareService.UploadCoverAsync((ulong)_selectedRelease.Id!.Value, _selectedType.Value,
-                                                       _caption, fileBytes, _selectedFile.Name);
+        IDialogReference dialog =
+            await DialogService.ShowAsync<SoftwareCoversBatchUploadDialog>(L["Upload Covers"], parameters,
+                                                                            new DialogOptions
+                                                                            {
+                                                                                MaxWidth      = MaxWidth.Large,
+                                                                                FullWidth     = true,
+                                                                                CloseOnEscapeKey = false,
+                                                                                BackdropClick = false
+                                                                            });
 
-            if(result is not null)
-            {
-                _successMessage = L["Cover uploaded successfully."];
-                _selectedFile   = null;
-                _caption        = null;
-                await LoadDataAsync();
-            }
-            else
-            {
-                _errorMessage = L["Failed to upload cover."];
-            }
-        }
-        catch(Exception ex)
+        DialogResult result = await dialog.Result;
+        if(result is { Canceled: false })
         {
-            _errorMessage = ex.Message;
-        }
-        finally
-        {
-            _isUploading = false;
+            int uploaded = result.Data is int i ? i : 0;
+            if(uploaded > 0)
+                _successMessage = string.Format(L["Uploaded {0} cover(s) successfully."].Value, uploaded);
+            await LoadDataAsync();
         }
     }
 

@@ -50,7 +50,7 @@
 
 @* ── Upload Section ── *@
 <MudPaper Elevation="2" Class="pa-4 mb-6 rounded-lg">
-    <MudText Typo="Typo.h6" Class="mb-3">@L["Upload Cover"]</MudText>
+    <MudText Typo="Typo.h6" Class="mb-3">@L["Upload Covers"]</MudText>
     <MudStack Spacing="3">
         @if(_selectedRelease is not null)
         {
@@ -76,55 +76,11 @@
             </MudSelect>
         }
 
-        <MudSelect T="int?" @bind-Value="_selectedType"
-                   Label="@L["Cover Type"]"
-                   Variant="Variant.Outlined"
-                   Required="true"
-                   RequiredError="@L["Cover type is required."]">
-            <MudSelectItem T="int?" Value="0">@L["Front Cover"]</MudSelectItem>
-            <MudSelectItem T="int?" Value="1">@L["Back Cover"]</MudSelectItem>
-            <MudSelectItem T="int?" Value="2">@L["Inside Cover (Front)"]</MudSelectItem>
-            <MudSelectItem T="int?" Value="3">@L["Inside Cover (Back)"]</MudSelectItem>
-            <MudSelectItem T="int?" Value="4">@L["Media"]</MudSelectItem>
-            <MudSelectItem T="int?" Value="5">@L["Spine"]</MudSelectItem>
-            <MudSelectItem T="int?" Value="6">@L["Manual"]</MudSelectItem>
-            <MudSelectItem T="int?" Value="7">@L["Other"]</MudSelectItem>
-        </MudSelect>
-
-        <MudTextField @bind-Value="_caption"
-                      Label="@L["Caption"]"
-                      Variant="Variant.Outlined"/>
-
-        <MudFileUpload T="IBrowserFile" Accept=".jpg,.jpeg,.png,.webp,.tiff,.tif,.bmp"
-                       FilesChanged="OnFileSelected" MaximumFileCount="1">
-            <CustomContent>
-                <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.AttachFile"
-                           OnClick="@context.OpenFilePickerAsync">
-                    @if(_selectedFile is not null)
-                    {
-                        @_selectedFile.Name
-                    }
-                    else
-                    {
-                        @L["Select File"]
-                    }
-                </MudButton>
-            </CustomContent>
-        </MudFileUpload>
-
         <MudButton Variant="Variant.Filled" Color="Color.Primary"
                    StartIcon="@Icons.Material.Filled.CloudUpload"
-                   OnClick="UploadCover"
-                   Disabled="_isUploading || _selectedFile is null || _selectedRelease is null || _selectedType is null">
-            @if(_isUploading)
-            {
-                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
-                @L["Uploading..."]
-            }
-            else
-            {
-                @L["Upload"]
-            }
+                   OnClick="OpenBatchUploadDialog"
+                   Disabled="_selectedRelease is null">
+            @L["Upload covers\u2026"]
         </MudButton>
     </MudStack>
 </MudPaper>
