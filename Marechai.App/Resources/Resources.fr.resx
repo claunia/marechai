@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  
+
   <xs:schema id="root">
     <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xs:element name="root" ns1:IsDataSet="true">
@@ -214,6 +214,9 @@
   </data>
   <data name="CDETheme" xml:space="preserve">
     <value>CDE / Motif</value>
+  </data>
+  <data name="CDESolarisTheme" xml:space="preserve">
+    <value>CDE / Motif (Solaris)</value>
   </data>
   <data name="SettingsPage_BrightnessThemeSelector_Header" xml:space="preserve">
     <value>Luminosité</value>
@@ -1849,7 +1852,7 @@
   <data name="FailedToSaveMagazine" xml:space="preserve"><value>Échec de l'enregistrement du magazine.</value></data>
   <data name="FailedToDeleteMagazine" xml:space="preserve"><value>Échec de la suppression du magazine.</value></data>
   <data name="MagazineTitleRequired" xml:space="preserve"><value>Le titre est obligatoire.</value></data>
-  
+
   <data name="AccessDeniedTitle" xml:space="preserve"><value>Accès refusé</value></data>
   <data name="AccessDeniedMessage" xml:space="preserve"><value>Vous devez disposer de privilèges d'administrateur pour accéder à cette page.</value></data>
   <data name="AddButton" xml:space="preserve"><value>Ajouter</value></data>
@@ -1871,7 +1874,7 @@
   <data name="IsGameLabel" xml:space="preserve"><value>Jeu</value></data>
   <data name="VersionStringIsRequired" xml:space="preserve"><value>La chaîne de version est obligatoire.</value></data>
   <data name="VersionIsRequired" xml:space="preserve"><value>La version du logiciel est obligatoire.</value></data>
-  
+
   <data name="ParentColumn_Header" xml:space="preserve"><value>Parent</value></data>
   <data name="IntroducedColumn_Header" xml:space="preserve"><value>Introduit</value></data>
   <data name="FamilyColumn_Header" xml:space="preserve"><value>Famille</value></data>
@@ -1883,7 +1886,7 @@
   <data name="RegionColumn_Header" xml:space="preserve"><value>Région</value></data>
   <data name="PublisherColumn_Header" xml:space="preserve"><value>Éditeur</value></data>
   <data name="ReleaseDateColumn_Header" xml:space="preserve"><value>Date de sortie</value></data>
-  
+
   <data name="VersionStringLabel" xml:space="preserve"><value>Chaîne de version</value></data>
   <data name="PublicVersionLabel" xml:space="preserve"><value>Version publique</value></data>
   <data name="CodenameLabel" xml:space="preserve"><value>Nom de code</value></data>
@@ -1893,7 +1896,7 @@
   <data name="RegionLabel" xml:space="preserve"><value>Région</value></data>
   <data name="PublisherLabel" xml:space="preserve"><value>Éditeur</value></data>
   <data name="ReleaseDateLabel" xml:space="preserve"><value>Date de sortie</value></data>
-  
+
   <data name="SoftwarePlatformManagementTitle" xml:space="preserve"><value>Gestion des plateformes logicielles</value></data>
   <data name="SoftwarePlatformManagementSubtitle" xml:space="preserve"><value>Gérer les plateformes logicielles (ex. x86, ARM, PowerPC)</value></data>
   <data name="SoftwarePlatformMgmtAccessDeniedTitle" xml:space="preserve"><value>Accès refusé</value></data>
@@ -1906,12 +1909,12 @@
   <data name="SoftwareManagementSubtitle" xml:space="preserve"><value>Gérer les entrées de logiciels</value></data>
   <data name="SoftwareReleaseManagementTitle" xml:space="preserve"><value>Gestion des sorties de logiciels</value></data>
   <data name="SoftwareReleaseManagementSubtitle" xml:space="preserve"><value>Gérer les sorties de logiciels par plateformes et régions</value></data>
-  
+
   <data name="SoftwareAdminManagementButton" xml:space="preserve"><value>Logiciels</value></data>
   <data name="SoftwareReleaseManagementButton" xml:space="preserve"><value>Sorties de logiciels</value></data>
   <data name="SoftwarePlatformManagementButton" xml:space="preserve"><value>Plateformes logicielles</value></data>
   <data name="SoftwareFamilyManagementButton" xml:space="preserve"><value>Familles de logiciels</value></data>
-  
+
   <data name="AddSoftwarePlatformDialog_Title" xml:space="preserve"><value>Ajouter une plateforme logicielle</value></data>
   <data name="EditSoftwarePlatformDialog_Title" xml:space="preserve"><value>Modifier la plateforme logicielle</value></data>
   <data name="AddSoftwareFamilyDialog_Title" xml:space="preserve"><value>Ajouter une famille de logiciels</value></data>
@@ -1922,9 +1925,9 @@
   <data name="EditSoftwareVersionDialog_Title" xml:space="preserve"><value>Modifier la version</value></data>
   <data name="AddSoftwareReleaseDialog_Title" xml:space="preserve"><value>Ajouter une sortie de logiciel</value></data>
   <data name="EditSoftwareReleaseDialog_Title" xml:space="preserve"><value>Modifier la sortie de logiciel</value></data>
-  
+
   <data name="SoftwareVersionsForTitle" xml:space="preserve"><value>Versions pour : {0}</value></data>
-  
+
   <data name="FailedToLoadSoftwarePlatforms" xml:space="preserve"><value>Échec du chargement des plateformes logicielles.</value></data>
   <data name="FailedToDeleteSoftwarePlatform" xml:space="preserve"><value>Échec de la suppression de la plateforme logicielle.</value></data>
   <data name="FailedToSaveSoftwarePlatform" xml:space="preserve"><value>Échec de l'enregistrement de la plateforme logicielle.</value></data>
@@ -2035,7 +2038,7 @@
   <data name="PersonBooksLabel" xml:space="preserve"><value>Livres</value></data>
   <data name="PersonDocumentsLabel" xml:space="preserve"><value>Documents</value></data>
   <data name="PersonMagazinesLabel" xml:space="preserve"><value>Magazines</value></data>
-  
+
   <data name="Software in the database" xml:space="preserve"><value>Logiciels dans la base de données</value></data>
   <data name="No software found" xml:space="preserve"><value>Aucun logiciel trouvé</value></data>
   <data name="Failed to load software data. Please try again later." xml:space="preserve"><value>Échec du chargement des données logicielles. Veuillez réessayer plus tard.</value></data>
@@ -2095,7 +2098,7 @@
   <data name="RecommendedGpusLabel" xml:space="preserve"><value>GPUs recommandés</value></data>
   <data name="SupportedSoundSynthsLabel" xml:space="preserve"><value>Synthétiseurs sonores pris en charge</value></data>
   <data name="SoundSynthLabel" xml:space="preserve"><value>Synthétiseur sonore</value></data>
-  
+
   <data name="SoftwareScreenshotManagementButton" xml:space="preserve"><value>Software Screenshots</value></data>
   <data name="SoftwareScreenshotsTitle" xml:space="preserve"><value>Software Screenshots</value></data>
   <data name="SoftwareScreenshotsSubtitle" xml:space="preserve"><value>Manage screenshots for software</value></data>

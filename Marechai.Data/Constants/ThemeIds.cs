@@ -54,6 +54,9 @@ public static class ThemeIds
     /// <summary>CDE (Common Desktop Environment) — teal/gray Motif-style UI with DejaVu Sans (Lucida Sans substitute).</summary>
     public const string Cde = "cde";
 
+    /// <summary>CDE (Solaris) — Sun's distinctive mauve/berry CDE 1.x default palette with Luxi Sans (X11-licensed Lucida Sans substitute).</summary>
+    public const string CdeSolaris = "cde-solaris";
+
     /// <summary>1980s cyberpunk — deep purple-black backgrounds with hot magenta + electric cyan neon accents and the Orbitron geometric font.</summary>
     public const string Cyberpunk = "cyberpunk";
 
@@ -65,5 +68,5 @@ public static class ThemeIds
 
     /// <summary>All recognised theme slugs. Used by the controller to validate incoming theme ids.</summary>
     public static readonly IReadOnlySet<string> All =
-        new HashSet<string>(StringComparer.OrdinalIgnoreCase) { DefaultDark, DefaultLight, AmigaOs, Dos, MacOs9, Cde, Cyberpunk, Phosphor, PhosphorAmber };
+        new HashSet<string>(StringComparer.OrdinalIgnoreCase) { DefaultDark, DefaultLight, AmigaOs, Dos, MacOs9, Cde, CdeSolaris, Cyberpunk, Phosphor, PhosphorAmber };
 }

@@ -1,0 +1,27 @@
+/* CDE (Solaris) theme web font.
+ *
+ * Luxi Sans — humanist sans-serif designed by Bigelow & Holmes
+ * (the designers of Lucida Sans), donated to the X11/XFree86
+ * project. Used here as the closest freely-redistributable
+ * substitute for the Lucida Sans font shipped with Sun's
+ * Solaris CDE desktop.
+ *
+ * Source: https://www.x.org/releases/individual/font/font-bh-ttf-1.0.3.tar.bz2
+ * License: X11-style permissive (see /fonts/cde-solaris/LICENSE.txt).
+ */
+
+@font-face {
+    font-family: 'Luxi Sans CDE';
+    src: url('/fonts/cde-solaris/luxi-sans.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Luxi Sans CDE';
+    src: url('/fonts/cde-solaris/luxi-sans-bold.woff2') format('woff2');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}

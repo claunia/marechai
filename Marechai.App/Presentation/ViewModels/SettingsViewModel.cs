@@ -151,6 +151,11 @@ public partial class SettingsViewModel : ObservableObject
             {
                 ThemeName   = "CDE",
                 DisplayName = _localizer["CDETheme"]
+            },
+            new()
+            {
+                ThemeName   = "CDESolaris",
+                DisplayName = _localizer["CDESolarisTheme"]
             }
         };
 

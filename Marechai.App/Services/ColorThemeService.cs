@@ -40,7 +40,8 @@ public class ColorThemeService : IColorThemeService
         "MacOS9",
         "DOS",
         "Amiga",
-        "CDE"
+        "CDE",
+        "CDESolaris"
     };
 
     public void SetThemeService(IThemeService themeService)
@@ -104,6 +105,7 @@ public class ColorThemeService : IColorThemeService
                                     "DOS"        => new Marechai.App.Styles.DOSColorPalette(),
                                     "Amiga"      => new Marechai.App.Styles.AmigaColorPalette(),
                                     "CDE"        => new Marechai.App.Styles.CDEColorPalette(),
+                                    "CDESolaris" => new Marechai.App.Styles.CDESolarisColorPalette(),
                                     _            => null
                                 };
             }

@@ -282,3 +282,19 @@
 .sw-cover-thumb-sm { width: 36px;  height: 56px; } /* compact list rows */
 .sw-cover-thumb-md { width: 54px;  height: 84px; } /* default list rows */
 .sw-cover-thumb-lg { width: 72px;  height: 112px; } /* card-style usage */
+
+/* The per-page .sticky-tabs blocks (Gpus/Processors/SoundSynths/Software/Machines View)
+   force the tabbar background to a frosted-white tint regardless of theme. Combined with
+   <MudTabs Color="Color.Primary" ApplyEffectsToContainer="true">, MudBlazor sets the
+   tab text colour to --mud-palette-primary-text (white) — which becomes unreadable on
+   the near-white frost in any light theme. Re-anchor inactive tab text to
+   --mud-palette-text-primary and active tab text to --mud-palette-primary so both
+   adapt per theme and the active state still matches the slider colour. */
+.sticky-tabs .mud-tabs-tabbar,
+.sticky-tabs .mud-tabs-tabbar .mud-tab:not(.mud-tab-active) {
+  color: var(--mud-palette-text-primary) !important;
+}
+
+.sticky-tabs .mud-tabs-tabbar .mud-tab.mud-tab-active {
+  color: var(--mud-palette-primary) !important;
+}

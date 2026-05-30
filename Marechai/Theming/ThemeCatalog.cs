@@ -59,6 +59,10 @@ public static class ThemeCatalog
 
     static readonly IReadOnlyList<string> _cdeFonts = ["/css/themes/cde.css"];
 
+    static readonly string[] _luxiSansStack = ["Luxi Sans CDE", "Lucida Sans Unicode", "Lucida Sans", "DejaVu Sans", "Verdana", "sans-serif"];
+
+    static readonly IReadOnlyList<string> _cdeSolarisFonts = ["/css/themes/cde-solaris.css"];
+
     static readonly string[] _orbitronStack = ["Orbitron", "Eurostile", "Helvetica Neue", "Arial", "sans-serif"];
 
     static readonly IReadOnlyList<string> _cyberpunkFonts = ["/css/themes/cyberpunk.css"];
@@ -746,6 +750,165 @@ public static class ThemeCatalog
                                                      _cdeFonts);
 
     /// <summary>
+    ///     CDE (Solaris) — Sun's distinctive default colour scheme for CDE 1.x on Solaris 2.x
+    ///     (mid-1990s): a lilac/mauve workspace background, deep berry/burgundy active title bars,
+    ///     pink-mauve inactive chrome and panel, warm cream content areas, with Luxi Sans (by
+    ///     Bigelow & Holmes — the designers of Lucida Sans — donated to X11) as the closest
+    ///     freely-redistributable substitute for Sun's bundled Lucida Sans font.
+    /// </summary>
+    public static readonly ThemeDefinition CdeSolaris = new(ThemeIds.CdeSolaris,
+                                                            "CDE (Solaris)",
+                                                            false,
+                                                            new MudTheme
+                                                            {
+                                                                // Solaris CDE 1.x default palette ("sun.dt" colour set):
+                                                                //   Workspace bg  = #A89DA8  (lilac/mauve — the desktop wallpaper field)
+                                                                //   Active title  = #7A4F8C  (purple/violet — focused window title bar
+                                                                //                            and signature Solaris CDE accent colour)
+                                                                //   Inactive/panel= #C68FA0  (pinkish mauve — unfocused titles, the
+                                                                //                            front panel, and menu headers)
+                                                                //   Drawer/sidebar= #B5A2C2  (lighter purple-lilac — palettes / sidebars)
+                                                                //   3D chrome     = #B0A8B0  (medium gray-mauve — Motif button faces,
+                                                                //                            window frames)
+                                                                //   Content area  = #F0E8E0  (warm cream — file lists, dialog bodies)
+                                                                //   Input field   = #FFFFFF  (white)
+                                                                //   Text          = #000000  (black on cream/white)
+                                                                //
+                                                                // Mapping:
+                                                                //   AppBar     = PURPLE     (visible Solaris CDE violet — dominant chrome)
+                                                                //   Drawer     = LIGHT PURPLE (sidebar with clear purple tint)
+                                                                //   Surface    = CREAM      (cards / dialogs / panes)
+                                                                //   Background = LILAC      (page body = desktop)
+                                                                //   Primary    = PURPLE     (selection, focus ring, toggled controls,
+                                                                //                            active tab slider)
+                                                                //   Secondary  = PINK-MAUVE (status pills, secondary accent)
+                                                                //   Tertiary   = GRAY-MAUVE (Motif 3D button faces)
+                                                                PaletteLight = new PaletteLight
+                                                                {
+                                                                    Primary                  = "#7A4F8C",
+                                                                    PrimaryContrastText      = "#FFFFFF",
+                                                                    Secondary                = "#C68FA0",
+                                                                    SecondaryContrastText    = "#000000",
+                                                                    Tertiary                 = "#B0A8B0",
+                                                                    TertiaryContrastText     = "#000000",
+                                                                    AppbarBackground         = "#7A4F8C",
+                                                                    AppbarText               = "#FFFFFF",
+                                                                    DrawerBackground         = "#B5A2C2",
+                                                                    DrawerText               = "#2A1A3A",
+                                                                    DrawerIcon               = "#2A1A3A",
+                                                                    Surface                  = "#F0E8E0",
+                                                                    Background               = "#A89DA8",
+                                                                    BackgroundGray           = "#B0A8B0",
+                                                                    TextPrimary              = "#000000",
+                                                                    TextSecondary            = "#333333",
+                                                                    TextDisabled             = "#7A6A7A",
+                                                                    ActionDefault            = "#000000",
+                                                                    ActionDisabled           = "#7A6A7A",
+                                                                    ActionDisabledBackground = "#B0A8B0",
+                                                                    LinesDefault             = "#7A6A7A",
+                                                                    LinesInputs              = "#5A4A5A",
+                                                                    TableLines               = "#B0A8B0",
+                                                                    TableStriped             = "#E0D6CE",
+                                                                    TableHover               = "#D6C0CA",
+                                                                    Divider                  = "#7A6A7A",
+                                                                    DividerLight             = "#C0B6C0",
+                                                                    Info                     = "#5C6E91",
+                                                                    Success                  = "#5A8A5A",
+                                                                    Warning                  = "#C68F4A",
+                                                                    Error                    = "#8A3030",
+                                                                    Dark                     = "#3A2050",
+                                                                    HoverOpacity             = 0.08
+                                                                },
+                                                                LayoutProperties = new LayoutProperties
+                                                                {
+                                                                    DrawerWidthLeft     = "260px",
+                                                                    DrawerMiniWidthLeft = "72px"
+                                                                },
+                                                                Typography = new Typography
+                                                                {
+                                                                    Default = new DefaultTypography
+                                                                    {
+                                                                        FontFamily    = _luxiSansStack,
+                                                                        FontSize      = "0.875rem",
+                                                                        FontWeight    = "400",
+                                                                        LineHeight    = "1.45",
+                                                                        LetterSpacing = "0"
+                                                                    },
+                                                                    H1 = new H1Typography
+                                                                    {
+                                                                        FontFamily = _luxiSansStack,
+                                                                        FontSize   = "2rem",
+                                                                        FontWeight = "700"
+                                                                    },
+                                                                    H2 = new H2Typography
+                                                                    {
+                                                                        FontFamily = _luxiSansStack,
+                                                                        FontSize   = "1.75rem",
+                                                                        FontWeight = "700"
+                                                                    },
+                                                                    H3 = new H3Typography
+                                                                    {
+                                                                        FontFamily = _luxiSansStack,
+                                                                        FontSize   = "1.5rem",
+                                                                        FontWeight = "700"
+                                                                    },
+                                                                    H4 = new H4Typography
+                                                                    {
+                                                                        FontFamily = _luxiSansStack,
+                                                                        FontSize   = "1.25rem",
+                                                                        FontWeight = "700"
+                                                                    },
+                                                                    H5 = new H5Typography
+                                                                    {
+                                                                        FontFamily = _luxiSansStack,
+                                                                        FontSize   = "1.125rem",
+                                                                        FontWeight = "700"
+                                                                    },
+                                                                    H6 = new H6Typography
+                                                                    {
+                                                                        FontFamily = _luxiSansStack,
+                                                                        FontSize   = "1rem",
+                                                                        FontWeight = "700"
+                                                                    },
+                                                                    Subtitle1 = new Subtitle1Typography
+                                                                    {
+                                                                        FontFamily = _luxiSansStack,
+                                                                        FontWeight = "700"
+                                                                    },
+                                                                    Subtitle2 = new Subtitle2Typography
+                                                                    {
+                                                                        FontFamily = _luxiSansStack,
+                                                                        FontWeight = "700"
+                                                                    },
+                                                                    Body1 = new Body1Typography
+                                                                    {
+                                                                        FontFamily = _luxiSansStack
+                                                                    },
+                                                                    Body2 = new Body2Typography
+                                                                    {
+                                                                        FontFamily = _luxiSansStack
+                                                                    },
+                                                                    Button = new ButtonTypography
+                                                                    {
+                                                                        FontFamily    = _luxiSansStack,
+                                                                        FontWeight    = "700",
+                                                                        TextTransform = "none"
+                                                                    },
+                                                                    Caption = new CaptionTypography
+                                                                    {
+                                                                        FontFamily = _luxiSansStack
+                                                                    },
+                                                                    Overline = new OverlineTypography
+                                                                    {
+                                                                        FontFamily    = _luxiSansStack,
+                                                                        FontWeight    = "700",
+                                                                        TextTransform = "uppercase"
+                                                                    }
+                                                                }
+                                                            },
+                                                            _cdeSolarisFonts);
+
+    /// <summary>
     ///     Cyberpunk — the original 1980s vision: deep purple-black backgrounds with hot magenta and electric
     ///     cyan neon accents, geometric futurist typography. Inspired by Blade Runner (1982), William Gibson's
     ///     Neuromancer (1984), Akira (1988), and the synthwave / outrun aesthetic that grew out of MTV-era
@@ -1278,7 +1441,7 @@ public static class ThemeCatalog
                                                                _phosphorFonts);
 
     /// <summary>All themes available to users in the Appearance picker. Order matters — it's the display order.</summary>
-    public static readonly IReadOnlyList<ThemeDefinition> All = new[] { DefaultDark, DefaultLight, AmigaOs, Cde, Cyberpunk, Dos, MacOs9, Phosphor, PhosphorAmber };
+    public static readonly IReadOnlyList<ThemeDefinition> All = new[] { DefaultDark, DefaultLight, AmigaOs, Cde, CdeSolaris, Cyberpunk, Dos, MacOs9, Phosphor, PhosphorAmber };
 
     /// <summary>The default theme used when the user has no preference set.</summary>
     public static ThemeDefinition Default => DefaultDark;
