@@ -14,7 +14,7 @@
     <value>Bestehende Software mit demselben normalisierten Namen gefunden</value>
   </data>
   <data name="Possible existing matches" xml:space="preserve">
-    <value>Moegliche vorhandene Treffer</value>
+    <value>Mögliche vorhandene Treffer</value>
   </data>
   <data name="Name" xml:space="preserve">
     <value>Name</value>
@@ -32,25 +32,25 @@
     <value>JW-Wert</value>
   </data>
   <data name="Selected" xml:space="preserve">
-    <value>Ausgewaehlt</value>
+    <value>Ausgewählt</value>
   </data>
   <data name="Merge into this" xml:space="preserve">
-    <value>In diesen zusammenfuehren</value>
+    <value>In diesen zusammenführen</value>
   </data>
   <data name="Switch back to create new" xml:space="preserve">
-    <value>Zurueck zu 'Neu anlegen'</value>
+    <value>Zurück zu 'Neu anlegen'</value>
   </data>
   <data name="Russian original (read-only)" xml:space="preserve">
-    <value>Russisches Original (schreibgeschuetzt)</value>
+    <value>Russisches Original (schreibgeschützt)</value>
   </data>
   <data name="Literal English translation (read-only)" xml:space="preserve">
-    <value>Wortwoertliche englische Uebersetzung (schreibgeschuetzt)</value>
+    <value>Wortwörtliche englische Übersetzung (schreibgeschützt)</value>
   </data>
   <data name="Museum-grade English description (will be saved)" xml:space="preserve">
-    <value>Englische Beschreibung in Museumsqualitaet (wird gespeichert)</value>
+    <value>Englische Beschreibung in Museumsqualität (wird gespeichert)</value>
   </data>
   <data name="Merging into '{0}'. Existing Name/Kind/descriptions on the target will NOT be overwritten — only missing description locales are added." xml:space="preserve">
-    <value>Zusammenfuehrung in '{0}'. Vorhandener Name/Art/Beschreibungen am Ziel werden NICHT ueberschrieben - es werden nur fehlende Beschreibungssprachen ergaenzt.</value>
+    <value>Zusammenführung in '{0}'. Vorhandener Name/Art/Beschreibungen am Ziel werden NICHT überschrieben — es werden nur fehlende Beschreibungssprachen ergänzt.</value>
   </data>
   <data name="Developer (Marechai company)" xml:space="preserve">
     <value>Entwickler (Marechai-Firma)</value>
@@ -59,7 +59,7 @@
     <value>Kategorien (SoftwareGenre Typ=Kategorie)</value>
   </data>
   <data name="Add category…" xml:space="preserve">
-    <value>Kategorie hinzufuegen…</value>
+    <value>Kategorie hinzufügen…</value>
   </data>
   <data name="Versions" xml:space="preserve">
     <value>Versionen</value>
@@ -71,7 +71,7 @@
     <value>Version</value>
   </data>
   <data name="Release date" xml:space="preserve">
-    <value>Veroeffentlichungsdatum</value>
+    <value>Veröffentlichungsdatum</value>
   </data>
   <data name="Platform" xml:space="preserve">
     <value>Plattform</value>
@@ -89,28 +89,28 @@
     <value>Monat</value>
   </data>
   <data name="Discard forever" xml:space="preserve">
-    <value>Endgueltig verwerfen</value>
+    <value>Endgültig verwerfen</value>
   </data>
   <data name="Skip for later" xml:space="preserve">
-    <value>Fuer spaeter ueberspringen</value>
+    <value>Für später überspringen</value>
   </data>
   <data name="Close" xml:space="preserve">
-    <value>Schliessen</value>
+    <value>Schließen</value>
   </data>
   <data name="Accept (create new)" xml:space="preserve">
     <value>Akzeptieren (neu anlegen)</value>
   </data>
   <data name="Merge into '{0}'" xml:space="preserve">
-    <value>In '{0}' zusammenfuehren</value>
+    <value>In '{0}' zusammenführen</value>
   </data>
   <data name="Pick a developer company first." xml:space="preserve">
-    <value>Bitte zuerst eine Entwicklerfirma auswaehlen.</value>
+    <value>Bitte zuerst eine Entwicklerfirma auswählen.</value>
   </data>
   <data name="Promoted to software #{0} ({1} versions, {2} releases, {3} descriptions, {4} genres)." xml:space="preserve">
-    <value>Zu Software #{0} befoerdert ({1} Versionen, {2} Releases, {3} Beschreibungen, {4} Genres).</value>
+    <value>Zu Software #{0} befördert ({1} Versionen, {2} Releases, {3} Beschreibungen, {4} Genres).</value>
   </data>
   <data name="Skipped." xml:space="preserve">
-    <value>Uebersprungen.</value>
+    <value>Übersprungen.</value>
   </data>
   <data name="Discarded." xml:space="preserve">
     <value>Verworfen.</value>

@@ -11,7 +11,7 @@
     <value>Desarrollador sin procesar</value>
   </data>
   <data name="Existing software with the same normalized name found" xml:space="preserve">
-    <value>Se encontro software existente con el mismo nombre normalizado</value>
+    <value>Se encontró software existente con el mismo nombre normalizado</value>
   </data>
   <data name="Possible existing matches" xml:space="preserve">
     <value>Posibles coincidencias existentes</value>
@@ -23,13 +23,13 @@
     <value>Tipo</value>
   </data>
   <data name="Year" xml:space="preserve">
-    <value>Anio</value>
+    <value>Año</value>
   </data>
   <data name="Releases" xml:space="preserve">
     <value>Lanzamientos</value>
   </data>
   <data name="JW score" xml:space="preserve">
-    <value>Puntuacion JW</value>
+    <value>Puntuación JW</value>
   </data>
   <data name="Selected" xml:space="preserve">
     <value>Seleccionado</value>
@@ -44,22 +44,22 @@
     <value>Original ruso (solo lectura)</value>
   </data>
   <data name="Literal English translation (read-only)" xml:space="preserve">
-    <value>Traduccion literal al ingles (solo lectura)</value>
+    <value>Traducción literal al inglés (solo lectura)</value>
   </data>
   <data name="Museum-grade English description (will be saved)" xml:space="preserve">
-    <value>Descripcion en ingles de calidad museistica (se guardara)</value>
+    <value>Descripción en inglés de calidad museística (se guardará)</value>
   </data>
   <data name="Merging into '{0}'. Existing Name/Kind/descriptions on the target will NOT be overwritten — only missing description locales are added." xml:space="preserve">
-    <value>Fusionando con '{0}'. El nombre/tipo/descripciones existentes en el destino NO se sobrescribiran; solo se anaden las localizaciones de descripcion faltantes.</value>
+    <value>Fusionando con '{0}'. El nombre/tipo/descripciones existentes en el destino NO se sobrescribirán; solo se añaden las localizaciones de descripción faltantes.</value>
   </data>
   <data name="Developer (Marechai company)" xml:space="preserve">
     <value>Desarrollador (empresa Marechai)</value>
   </data>
   <data name="Categories (SoftwareGenre type=Category)" xml:space="preserve">
-    <value>Categorias (SoftwareGenre tipo=Categoria)</value>
+    <value>Categorías (SoftwareGenre tipo=Categoría)</value>
   </data>
   <data name="Add category…" xml:space="preserve">
-    <value>Anadir categoria…</value>
+    <value>Añadir categoría…</value>
   </data>
   <data name="Versions" xml:space="preserve">
     <value>Versiones</value>
@@ -68,7 +68,7 @@
     <value>Incluir</value>
   </data>
   <data name="Version" xml:space="preserve">
-    <value>Version</value>
+    <value>Versión</value>
   </data>
   <data name="Release date" xml:space="preserve">
     <value>Fecha de lanzamiento</value>
@@ -83,7 +83,7 @@
     <value>(predeterminado)</value>
   </data>
   <data name="Day" xml:space="preserve">
-    <value>Dia</value>
+    <value>Día</value>
   </data>
   <data name="Month" xml:space="preserve">
     <value>Mes</value>
@@ -92,7 +92,7 @@
     <value>Descartar para siempre</value>
   </data>
   <data name="Skip for later" xml:space="preserve">
-    <value>Omitir para mas tarde</value>
+    <value>Omitir para más tarde</value>
   </data>
   <data name="Close" xml:space="preserve">
     <value>Cerrar</value>
@@ -107,7 +107,7 @@
     <value>Selecciona primero una empresa desarrolladora.</value>
   </data>
   <data name="Promoted to software #{0} ({1} versions, {2} releases, {3} descriptions, {4} genres)." xml:space="preserve">
-    <value>Promovido a software #{0} ({1} versiones, {2} lanzamientos, {3} descripciones, {4} generos).</value>
+    <value>Promovido a software #{0} ({1} versiones, {2} lanzamientos, {3} descripciones, {4} géneros).</value>
   </data>
   <data name="Skipped." xml:space="preserve">
     <value>Omitido.</value>

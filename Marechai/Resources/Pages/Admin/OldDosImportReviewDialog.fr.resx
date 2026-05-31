@@ -8,10 +8,10 @@
     <value>OS brut</value>
   </data>
   <data name="Raw developer" xml:space="preserve">
-    <value>Developpeur brut</value>
+    <value>Développeur brut</value>
   </data>
   <data name="Existing software with the same normalized name found" xml:space="preserve">
-    <value>Logiciel existant trouve avec le meme nom normalise</value>
+    <value>Logiciel existant trouvé avec le même nom normalisé</value>
   </data>
   <data name="Possible existing matches" xml:space="preserve">
     <value>Correspondances existantes possibles</value>
@@ -23,7 +23,7 @@
     <value>Type</value>
   </data>
   <data name="Year" xml:space="preserve">
-    <value>Annee</value>
+    <value>Année</value>
   </data>
   <data name="Releases" xml:space="preserve">
     <value>Sorties</value>
@@ -32,34 +32,34 @@
     <value>Score JW</value>
   </data>
   <data name="Selected" xml:space="preserve">
-    <value>Selectionne</value>
+    <value>Sélectionné</value>
   </data>
   <data name="Merge into this" xml:space="preserve">
     <value>Fusionner avec celui-ci</value>
   </data>
   <data name="Switch back to create new" xml:space="preserve">
-    <value>Revenir a creer un nouveau</value>
+    <value>Revenir à créer un nouveau</value>
   </data>
   <data name="Russian original (read-only)" xml:space="preserve">
     <value>Original russe (lecture seule)</value>
   </data>
   <data name="Literal English translation (read-only)" xml:space="preserve">
-    <value>Traduction litterale en anglais (lecture seule)</value>
+    <value>Traduction littérale en anglais (lecture seule)</value>
   </data>
   <data name="Museum-grade English description (will be saved)" xml:space="preserve">
-    <value>Description anglaise de qualite museale (sera enregistree)</value>
+    <value>Description anglaise de qualité muséale (sera enregistrée)</value>
   </data>
   <data name="Merging into '{0}'. Existing Name/Kind/descriptions on the target will NOT be overwritten — only missing description locales are added." xml:space="preserve">
-    <value>Fusion dans '{0}'. Le nom/type/descriptions existants de la cible NE seront PAS ecrases - seules les locales de description manquantes sont ajoutees.</value>
+    <value>Fusion dans '{0}'. Le nom/type/descriptions existants de la cible NE seront PAS écrasés — seules les locales de description manquantes sont ajoutées.</value>
   </data>
   <data name="Developer (Marechai company)" xml:space="preserve">
-    <value>Developpeur (societe Marechai)</value>
+    <value>Développeur (société Marechai)</value>
   </data>
   <data name="Categories (SoftwareGenre type=Category)" xml:space="preserve">
-    <value>Categories (SoftwareGenre type=Categorie)</value>
+    <value>Catégories (SoftwareGenre type=Catégorie)</value>
   </data>
   <data name="Add category…" xml:space="preserve">
-    <value>Ajouter une categorie…</value>
+    <value>Ajouter une catégorie…</value>
   </data>
   <data name="Versions" xml:space="preserve">
     <value>Versions</value>
@@ -77,10 +77,10 @@
     <value>Plateforme</value>
   </data>
   <data name="Download" xml:space="preserve">
-    <value>Telecharger</value>
+    <value>Télécharger</value>
   </data>
   <data name="(default)" xml:space="preserve">
-    <value>(par defaut)</value>
+    <value>(par défaut)</value>
   </data>
   <data name="Day" xml:space="preserve">
     <value>Jour</value>
@@ -89,7 +89,7 @@
     <value>Mois</value>
   </data>
   <data name="Discard forever" xml:space="preserve">
-    <value>Rejeter definitivement</value>
+    <value>Rejeter définitivement</value>
   </data>
   <data name="Skip for later" xml:space="preserve">
     <value>Ignorer pour plus tard</value>
@@ -98,21 +98,21 @@
     <value>Fermer</value>
   </data>
   <data name="Accept (create new)" xml:space="preserve">
-    <value>Accepter (creer un nouveau)</value>
+    <value>Accepter (créer un nouveau)</value>
   </data>
   <data name="Merge into '{0}'" xml:space="preserve">
     <value>Fusionner avec '{0}'</value>
   </data>
   <data name="Pick a developer company first." xml:space="preserve">
-    <value>Selectionnez d'abord une societe de developpement.</value>
+    <value>Sélectionnez d'abord une société de développement.</value>
   </data>
   <data name="Promoted to software #{0} ({1} versions, {2} releases, {3} descriptions, {4} genres)." xml:space="preserve">
     <value>Promu en logiciel #{0} ({1} versions, {2} sorties, {3} descriptions, {4} genres).</value>
   </data>
   <data name="Skipped." xml:space="preserve">
-    <value>Ignore.</value>
+    <value>Ignoré.</value>
   </data>
   <data name="Discarded." xml:space="preserve">
-    <value>Rejete.</value>
+    <value>Rejeté.</value>
   </data>
 </root>

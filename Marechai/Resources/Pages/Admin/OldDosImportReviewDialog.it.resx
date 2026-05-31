@@ -47,7 +47,7 @@
     <value>Traduzione letterale in inglese (sola lettura)</value>
   </data>
   <data name="Museum-grade English description (will be saved)" xml:space="preserve">
-    <value>Descrizione inglese di livello museale (sara salvata)</value>
+    <value>Descrizione inglese di livello museale (sarà salvata)</value>
   </data>
   <data name="Merging into '{0}'. Existing Name/Kind/descriptions on the target will NOT be overwritten — only missing description locales are added." xml:space="preserve">
     <value>Unione in '{0}'. Nome/tipo/descrizioni esistenti sul target NON saranno sovrascritti - vengono aggiunte solo le localizzazioni di descrizione mancanti.</value>
