@@ -1,5 +1,7 @@
 @page "/admin/old-dos-imports"
 @attribute [Authorize(Roles = "Admin, UberAdmin")]
+@using System.Linq
+@using System.Threading
 @using Marechai.ApiClient.Models
 @using Marechai.Data
 @inject OldDosImportsService Service
@@ -21,7 +23,7 @@
 </MudPaper>
 
 <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3" Class="mb-4">
-    <MudSelect T="OldDosSoftwareStatus?" Value="@_statusFilter" ValueChanged="@(async v => { _statusFilter = v; _hasError = false; await LoadAsync(); })"
+    <MudSelect T="OldDosSoftwareStatus?" Value="@_statusFilter" ValueChanged="@(async v => { _statusFilter = v; _hasError = false; await ReloadAsync(); })"
                Label="@L["Status"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="min-width: 220px;" Clearable="true" Disabled="_hasError">
         <MudSelectItem T="OldDosSoftwareStatus?" Value="@((OldDosSoftwareStatus?)null)">@L["Ready or skipped"]</MudSelectItem>
         <MudSelectItem T="OldDosSoftwareStatus?" Value="@((OldDosSoftwareStatus?)OldDosSoftwareStatus.ReadyForReview)">@L["Ready for review"]</MudSelectItem>
@@ -34,119 +36,142 @@
         <MudSelectItem T="OldDosSoftwareStatus?" Value="@((OldDosSoftwareStatus?)OldDosSoftwareStatus.Categorized)">@L["Categorized (auto-promotes to Ready)"]</MudSelectItem>
     </MudSelect>
 
-    <MudCheckBox T="bool" Value="@_hasError" ValueChanged="@(async v => { _hasError = v; await LoadAsync(); })"
+    <MudCheckBox T="bool" Value="@_hasError" ValueChanged="@(async v => { _hasError = v; await ReloadAsync(); })"
                  Label="@L["Has enrichment error"]" Color="Color.Error"/>
 
-    <MudTextField T="string" Value="@_search" ValueChanged="@(async v => { _search = v; await LoadAsync(); })"
+    <MudTextField T="string" Value="@_search" ValueChanged="@(async v => { _search = v; await ReloadAsync(); })"
                   Placeholder="@L["Search by name…"]" Variant="Variant.Outlined" Margin="Margin.Dense"
-                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Style="min-width: 300px;" Immediate="false"/>
+                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Style="min-width: 300px;"
+                  DebounceInterval="300" Immediate="true"/>
 
-    <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadAsync" Color="Color.Primary"
+    <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="ReloadAsync" Color="Color.Primary"
                    aria-label="@L["Refresh"]"/>
-
-    <MudText Typo="Typo.body2" Color="Color.Secondary">
-        @string.Format(L["{0} item(s) shown"].Value, _items.Count)
-    </MudText>
 </MudStack>
 
-@if(!_loaded)
-{
-    <MudProgressLinear Indeterminate="true"/>
-}
-else if(_items.Count == 0)
-{
-    <MudAlert Severity="Severity.Info">@L["No pending old-dos imports."]</MudAlert>
-}
-else
-{
-    <MudTable Items="_items" Hover="true" Dense="true" Striped="true">
-        <HeaderContent>
-            <MudTh>@L["Name"]</MudTh>
-            <MudTh>@L["Developer (raw)"]</MudTh>
-            <MudTh>@L["OS"]</MudTh>
-            <MudTh>@L["Versions"]</MudTh>
-            <MudTh>@L["Status"]</MudTh>
-            <MudTh>@L["Crawled"]</MudTh>
-            <MudTh>@L["Error"]</MudTh>
-            <MudTh></MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd>
+<MudDataGrid @ref="_dataGrid" T="OldDosPendingListItemDto" ServerData="ServerReload"
+             Dense="true" Hover="true" Striped="true" RowsPerPage="25" SortMode="SortMode.Single">
+    <Columns>
+        <TemplateColumn Title="@L["Name"]" SortBy="@(new Func<OldDosPendingListItemDto, object>(x => x.Name))">
+            <CellTemplate>
                 <MudStack Row="false" Spacing="0">
-                    <MudText Typo="Typo.body2">@context.Name</MudText>
-                    @if(!string.IsNullOrWhiteSpace(context.RussianCategoryPath))
+                    <MudText Typo="Typo.body2">@context.Item.Name</MudText>
+                    @if(!string.IsNullOrWhiteSpace(context.Item.RussianCategoryPath))
                     {
-                        <MudText Typo="Typo.caption" Color="Color.Secondary">@context.RussianCategoryPath</MudText>
+                        <MudText Typo="Typo.caption" Color="Color.Secondary">@context.Item.RussianCategoryPath</MudText>
                     }
                 </MudStack>
-            </MudTd>
-            <MudTd>@(string.IsNullOrEmpty(context.DeveloperName) ? "—" : context.DeveloperName)</MudTd>
-            <MudTd>@(string.IsNullOrEmpty(context.OsName) ? "—" : context.OsName)</MudTd>
-            <MudTd>@context.VersionCount</MudTd>
-            <MudTd>
-                <MudChip T="string" Size="Size.Small" Color="@StatusColor(StatusOf(context))" Variant="Variant.Filled">
-                    @StatusLabel(StatusOf(context))
+            </CellTemplate>
+        </TemplateColumn>
+        <TemplateColumn Title="@L["Developer (raw)"]" SortBy="@(new Func<OldDosPendingListItemDto, object>(x => x.DeveloperName))">
+            <CellTemplate>@(string.IsNullOrEmpty(context.Item.DeveloperName) ? "—" : context.Item.DeveloperName)</CellTemplate>
+        </TemplateColumn>
+        <TemplateColumn Title="@L["OS"]" SortBy="@(new Func<OldDosPendingListItemDto, object>(x => x.OsName))">
+            <CellTemplate>@(string.IsNullOrEmpty(context.Item.OsName) ? "—" : context.Item.OsName)</CellTemplate>
+        </TemplateColumn>
+        <PropertyColumn Property="x => x.VersionCount" Title="@L["Versions"]"/>
+        <TemplateColumn Title="@L["Status"]" SortBy="@(new Func<OldDosPendingListItemDto, object>(x => x.Status))">
+            <CellTemplate>
+                <MudChip T="string" Size="Size.Small" Color="@StatusColor(StatusOf(context.Item))" Variant="Variant.Filled">
+                    @StatusLabel(StatusOf(context.Item))
                 </MudChip>
-            </MudTd>
-            <MudTd>@(context.CrawledOn?.LocalDateTime.ToString("g"))</MudTd>
-            <MudTd>
-                @if(!string.IsNullOrEmpty(context.LastError))
+            </CellTemplate>
+        </TemplateColumn>
+        <TemplateColumn Title="@L["Crawled"]" SortBy="@(new Func<OldDosPendingListItemDto, object>(x => x.CrawledOn))">
+            <CellTemplate>@(context.Item.CrawledOn?.LocalDateTime.ToString("g"))</CellTemplate>
+        </TemplateColumn>
+        <TemplateColumn Title="@L["Error"]" Sortable="false">
+            <CellTemplate>
+                @if(!string.IsNullOrEmpty(context.Item.LastError))
                 {
-                    <MudTooltip Text="@context.LastError">
+                    <MudTooltip Text="@context.Item.LastError">
                         <MudIcon Icon="@Icons.Material.Filled.ErrorOutline" Color="Color.Error" Size="Size.Small"/>
                     </MudTooltip>
                 }
-            </MudTd>
-            <MudTd>
+            </CellTemplate>
+        </TemplateColumn>
+        <TemplateColumn Title="" Sortable="false">
+            <CellTemplate>
                 <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center">
-                    @if(StatusOf(context) is OldDosSoftwareStatus.ReadyForReview or OldDosSoftwareStatus.Skipped)
+                    @if(StatusOf(context.Item) is OldDosSoftwareStatus.ReadyForReview or OldDosSoftwareStatus.Skipped)
                     {
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
                                    StartIcon="@Icons.Material.Filled.Visibility"
-                                   OnClick="@(() => OpenReviewAsync(context.Id ?? 0))">@L["Review"]</MudButton>
+                                   OnClick="@(() => OpenReviewAsync(context.Item.Id ?? 0))">@L["Review"]</MudButton>
                     }
-                    else if(!string.IsNullOrEmpty(context.SourceUrl))
+                    else if(!string.IsNullOrEmpty(context.Item.SourceUrl))
                     {
-                        <MudLink Href="@AbsoluteOldDosUrl(context.SourceUrl)" Target="_blank" Color="Color.Default">@L["Open on old-dos"]</MudLink>
+                        <MudLink Href="@AbsoluteOldDosUrl(context.Item.SourceUrl)" Target="_blank" Color="Color.Default">@L["Open on old-dos"]</MudLink>
                     }
 
                     @* Reject (discard) available for any status except the terminal ones — i.e. it works
                        on still-Crawled / still-Translated / still-Described / Categorized / ReadyForReview /
                        Skipped rows. The server-side DiscardAsync also refuses already-Accepted rows. *@
-                    @if(StatusOf(context) is not OldDosSoftwareStatus.Discarded and not OldDosSoftwareStatus.Accepted)
+                    @if(StatusOf(context.Item) is not OldDosSoftwareStatus.Discarded and not OldDosSoftwareStatus.Accepted)
                     {
                         <MudTooltip Text="@L["Reject this entry"]">
                             <MudIconButton Icon="@Icons.Material.Filled.Block" Color="Color.Error" Size="Size.Small"
-                                           OnClick="@(() => RejectAsync(context))"
+                                           OnClick="@(() => RejectAsync(context.Item))"
                                            aria-label="@L["Reject"]"/>
                         </MudTooltip>
                     }
                 </MudStack>
-            </MudTd>
-        </RowTemplate>
-    </MudTable>
-}
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+    <NoRecordsContent>
+        <MudText>@L["No pending old-dos imports."]</MudText>
+    </NoRecordsContent>
+    <PagerContent>
+        <MudDataGridPager T="OldDosPendingListItemDto"/>
+    </PagerContent>
+</MudDataGrid>
 
 @code
 {
-    List<OldDosPendingListItemDto> _items = new();
-    bool                            _loaded;
-    OldDosSoftwareStatus?           _statusFilter = OldDosSoftwareStatus.ReadyForReview;
-    string                          _search;
-    bool                            _hasError;
+    MudDataGrid<OldDosPendingListItemDto> _dataGrid;
+    OldDosSoftwareStatus?                  _statusFilter = OldDosSoftwareStatus.ReadyForReview;
+    string                                 _search;
+    bool                                   _hasError;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    async Task<GridData<OldDosPendingListItemDto>> ServerReload(GridState<OldDosPendingListItemDto> state,
+                                                                CancellationToken cancellationToken)
     {
-        if(!firstRender) return;
-        await LoadAsync();
+        int skip = state.Page * state.PageSize;
+        int take = state.PageSize;
+
+        // Map the MudDataGrid SortDefinition (which carries the column's bound
+        // property name) into the lowercase sort-key set the controller accepts.
+        string sortBy         = null;
+        bool   sortDescending = false;
+        SortDefinition<OldDosPendingListItemDto> sort = state.SortDefinitions.FirstOrDefault();
+        if(sort is not null)
+        {
+            sortBy         = sort.SortBy;
+            sortDescending = sort.Descending;
+        }
+
+        // Filter values are page-level state; the controller validates and clamps
+        // them. Fetch page + total count in parallel to keep round-trips tight.
+        OldDosSoftwareStatus? effectiveStatus = _hasError ? null : _statusFilter;
+
+        Task<List<OldDosPendingListItemDto>> pageTask =
+            Service.GetPendingAsync(skip, take, effectiveStatus, _search, _hasError, sortBy, sortDescending);
+
+        Task<int> countTask =
+            Service.GetPendingCountAsync(effectiveStatus, _search, _hasError);
+
+        await Task.WhenAll(pageTask, countTask);
+
+        return new GridData<OldDosPendingListItemDto>
+        {
+            Items      = pageTask.Result,
+            TotalItems = countTask.Result
+        };
     }
 
-    async Task LoadAsync()
+    async Task ReloadAsync()
     {
-        _loaded = false;
-        _items  = await Service.GetPendingAsync(0, 200, _hasError ? null : _statusFilter, _search, _hasError);
-        _loaded = true;
-        StateHasChanged();
+        if(_dataGrid is not null) await _dataGrid.ReloadServerData();
     }
 
     async Task OpenReviewAsync(long id)
@@ -163,7 +188,7 @@ else
         };
         IDialogReference dlg = await DialogService.ShowAsync<OldDosImportReviewDialog>(L["Review old-dos import"], parameters, options);
         await dlg.Result;
-        await LoadAsync();
+        await ReloadAsync();
     }
 
     /// <summary>
@@ -200,7 +225,7 @@ else
         if(ok)
         {
             Snackbar.Add(string.Format(L["Rejected '{0}'."].Value, item.Name), Severity.Success);
-            await LoadAsync();
+            await ReloadAsync();
         }
         else
         {

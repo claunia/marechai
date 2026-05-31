@@ -20,23 +20,48 @@ public sealed class OldDosImportsService(Client client, ILogger<OldDosImportsSer
     public async Task<List<OldDosPendingListItemDto>> GetPendingAsync(int skip, int take,
                                                                        OldDosSoftwareStatus? status,
                                                                        string search,
-                                                                       bool hasError = false)
+                                                                       bool hasError = false,
+                                                                       string sortBy = null,
+                                                                       bool sortDescending = false)
     {
         try
         {
             return await client.OldDos.Pending.GetAsync(c =>
             {
-                c.QueryParameters.Skip     = skip;
-                c.QueryParameters.Take     = take;
-                c.QueryParameters.Status   = status.HasValue ? (int)status.Value : null;
-                c.QueryParameters.Search   = search;
-                c.QueryParameters.HasError = hasError;
+                c.QueryParameters.Skip           = skip;
+                c.QueryParameters.Take           = take;
+                c.QueryParameters.Status         = status.HasValue ? (int)status.Value : null;
+                c.QueryParameters.Search         = search;
+                c.QueryParameters.HasError       = hasError;
+                c.QueryParameters.SortBy         = sortBy;
+                c.QueryParameters.SortDescending = sortDescending;
             });
         }
         catch(System.Exception ex)
         {
             logger.LogError(ex, "Failed to load old-dos pending queue");
             return new List<OldDosPendingListItemDto>();
+        }
+    }
+
+    /// <summary>Total row count matching the same filter set as <see cref="GetPendingAsync"/>.</summary>
+    public async Task<int> GetPendingCountAsync(OldDosSoftwareStatus? status, string search,
+                                                bool hasError = false)
+    {
+        try
+        {
+            int? count = await client.OldDos.Pending.Count.GetAsync(c =>
+            {
+                c.QueryParameters.Status   = status.HasValue ? (int)status.Value : null;
+                c.QueryParameters.Search   = search;
+                c.QueryParameters.HasError = hasError;
+            });
+            return count ?? 0;
+        }
+        catch(System.Exception ex)
+        {
+            logger.LogError(ex, "Failed to load old-dos pending count");
+            return 0;
         }
     }
 

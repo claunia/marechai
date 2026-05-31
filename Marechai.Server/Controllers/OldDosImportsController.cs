@@ -36,30 +36,36 @@ public class OldDosImportsController(MarechaiContext context, OldDosPromotionSer
         [FromQuery] int take                = 25,
         [FromQuery] OldDosSoftwareStatus? status = null,
         [FromQuery] string search           = null,
-        [FromQuery] bool hasError           = false)
+        [FromQuery] bool hasError           = false,
+        [FromQuery] string sortBy           = null,
+        [FromQuery] bool sortDescending     = false)
     {
-        if(take is <= 0 or > 200) take = 25;
+        if(take is <= 0 or > 500) take = 25;
         if(skip < 0) skip = 0;
 
-        IQueryable<OldDosSoftware> q = context.OldDosSoftwares.AsNoTracking();
+        IQueryable<OldDosSoftware> q = BuildFilteredQuery(status, search, hasError);
 
-        if(hasError)
-            q = q.Where(s => s.LastError != null && s.LastError != "");
-        else if(status.HasValue)
-            q = q.Where(s => s.Status == status.Value);
-        else
-            q = q.Where(s => s.Status == OldDosSoftwareStatus.ReadyForReview ||
-                             s.Status == OldDosSoftwareStatus.Skipped);
+        // Apply user-requested column sort, falling back to the legacy
+        // "ReadyForReview → Skipped, newest crawl first" priority when nothing
+        // explicit is supplied (preserves the queue's original review order).
+        IOrderedQueryable<OldDosSoftware> ordered = (sortBy?.ToLowerInvariant()) switch
+        {
+            "name"          => sortDescending ? q.OrderByDescending(s => s.Name)          : q.OrderBy(s => s.Name),
+            "developername" => sortDescending ? q.OrderByDescending(s => s.DeveloperName) : q.OrderBy(s => s.DeveloperName),
+            "developer"     => sortDescending ? q.OrderByDescending(s => s.DeveloperName) : q.OrderBy(s => s.DeveloperName),
+            "osname"        => sortDescending ? q.OrderByDescending(s => s.OsName)        : q.OrderBy(s => s.OsName),
+            "os"            => sortDescending ? q.OrderByDescending(s => s.OsName)        : q.OrderBy(s => s.OsName),
+            "versioncount"  => sortDescending ? q.OrderByDescending(s => s.Versions.Count): q.OrderBy(s => s.Versions.Count),
+            "versions"      => sortDescending ? q.OrderByDescending(s => s.Versions.Count): q.OrderBy(s => s.Versions.Count),
+            "status"        => sortDescending ? q.OrderByDescending(s => s.Status)        : q.OrderBy(s => s.Status),
+            "crawledon"     => sortDescending ? q.OrderByDescending(s => s.CrawledOn)     : q.OrderBy(s => s.CrawledOn),
+            "crawled"       => sortDescending ? q.OrderByDescending(s => s.CrawledOn)     : q.OrderBy(s => s.CrawledOn),
+            _               => q.OrderBy(s => s.Status == OldDosSoftwareStatus.ReadyForReview ? 0 :
+                                              s.Status == OldDosSoftwareStatus.Skipped         ? 1 : 2)
+                                .ThenByDescending(s => s.CrawledOn)
+        };
 
-        if(!string.IsNullOrWhiteSpace(search))
-            q = q.Where(s => s.Name.Contains(search));
-
-        // ReadyForReview first (status=4), then Skipped (status=6), within each by CrawledOn desc.
-        // Encode that as a computed sort key so EF can SQL-translate it.
-        var rows = await q.OrderBy(s => s.Status == OldDosSoftwareStatus.ReadyForReview ? 0 :
-                                       s.Status == OldDosSoftwareStatus.Skipped         ? 1 : 2)
-                          .ThenByDescending(s => s.CrawledOn)
-                          .Skip(skip).Take(take)
+        var rows = await ordered.Skip(skip).Take(take)
                           .Select(s => new OldDosPendingListItemDto
                           {
                               Id                  = s.Id,
@@ -79,6 +85,44 @@ public class OldDosImportsController(MarechaiContext context, OldDosPromotionSer
                           .ToListAsync();
 
         return Ok(rows);
+    }
+
+    /// <summary>
+    ///     Total row count matching the same filter set as <c>GET /old-dos/pending</c>.
+    ///     Required for server-side pagination in the Blazor admin grid.
+    /// </summary>
+    [HttpGet("pending/count")]
+    [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+    public async Task<ActionResult<int>> GetPendingCountAsync(
+        [FromQuery] OldDosSoftwareStatus? status = null,
+        [FromQuery] string search           = null,
+        [FromQuery] bool hasError           = false)
+    {
+        IQueryable<OldDosSoftware> q = BuildFilteredQuery(status, search, hasError);
+        int count = await q.CountAsync();
+        return Ok(count);
+    }
+
+    /// <summary>
+    ///     Shared filter builder used by both the page-data and count endpoints so
+    ///     they stay in lock-step.
+    /// </summary>
+    IQueryable<OldDosSoftware> BuildFilteredQuery(OldDosSoftwareStatus? status, string search, bool hasError)
+    {
+        IQueryable<OldDosSoftware> q = context.OldDosSoftwares.AsNoTracking();
+
+        if(hasError)
+            q = q.Where(s => s.LastError != null && s.LastError != "");
+        else if(status.HasValue)
+            q = q.Where(s => s.Status == status.Value);
+        else
+            q = q.Where(s => s.Status == OldDosSoftwareStatus.ReadyForReview ||
+                             s.Status == OldDosSoftwareStatus.Skipped);
+
+        if(!string.IsNullOrWhiteSpace(search))
+            q = q.Where(s => s.Name.Contains(search));
+
+        return q;
     }
 
     [HttpGet("pending/next")]
