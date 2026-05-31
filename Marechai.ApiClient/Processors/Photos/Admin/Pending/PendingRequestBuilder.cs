@@ -66,7 +66,6 @@ namespace Marechai.ApiClient.Processors.Photos.Admin.Pending
         /// <exception cref="global::Marechai.ApiClient.Models.ProblemDetails">When receiving a 400 status code</exception>
         /// <exception cref="global::Marechai.ApiClient.Models.ProblemDetails">When receiving a 401 status code</exception>
         /// <exception cref="global::Marechai.ApiClient.Models.ProblemDetails">When receiving a 404 status code</exception>
-        /// <exception cref="global::Marechai.ApiClient.Models.ProblemDetails">When receiving a 409 status code</exception>
         /// <exception cref="global::Marechai.ApiClient.Models.ProblemDetails">When receiving a 415 status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -84,7 +83,6 @@ namespace Marechai.ApiClient.Processors.Photos.Admin.Pending
                 { "400", global::Marechai.ApiClient.Models.ProblemDetails.CreateFromDiscriminatorValue },
                 { "401", global::Marechai.ApiClient.Models.ProblemDetails.CreateFromDiscriminatorValue },
                 { "404", global::Marechai.ApiClient.Models.ProblemDetails.CreateFromDiscriminatorValue },
-                { "409", global::Marechai.ApiClient.Models.ProblemDetails.CreateFromDiscriminatorValue },
                 { "415", global::Marechai.ApiClient.Models.ProblemDetails.CreateFromDiscriminatorValue },
             };
             return await RequestAdapter.SendAsync<global::Marechai.ApiClient.Models.AdminPendingProcessorPhotoUploadDto>(requestInfo, global::Marechai.ApiClient.Models.AdminPendingProcessorPhotoUploadDto.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);

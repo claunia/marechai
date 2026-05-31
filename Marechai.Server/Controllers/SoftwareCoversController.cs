@@ -521,9 +521,6 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
 
     // ────────────────────────────── Admin batch upload ──────────────────────────────
 
-    /// <summary>Maximum images an admin may stage in a single batch (matches dialog UI).</summary>
-    const int AdminBatchMaxImages = 25;
-
     /// <summary>
     ///     Allowed extensions accepted by the admin batch-upload staging endpoint. Wider
     ///     than both the legacy <c>/upload</c> set (which also rejects AVIF/JXL) and the
@@ -558,7 +555,6 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
     public async Task<ActionResult<AdminPendingCoverUploadDto>> UploadAdminBatchPendingAsync(IFormFile         file,
                                                                                               [FromQuery] ulong releaseId)
@@ -575,13 +571,6 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
 
         bool releaseExists = await context.SoftwareReleases.AnyAsync(r => r.Id == releaseId);
         if(!releaseExists) return NotFound("Software release not found.");
-
-        int currentCount = PendingImageStore.CountAdminStagedByUploader(_assetRootPath, "software-covers", userId,
-            (byte)SuggestionEntityType.SoftwareCover);
-
-        if(currentCount >= AdminBatchMaxImages)
-            return Conflict($"You already have {currentCount} pending images staged. Maximum is " +
-                            $"{AdminBatchMaxImages}. Commit or remove some first.");
 
         // Persist FIRST (with a temporary placeholder for dimensions), then content-sniff
         // and either re-write the sidecar with real dimensions or reject + delete the file.
@@ -694,9 +683,6 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
 
         if(request is null || request.Items is null || request.Items.Count == 0)
             return BadRequest("No items provided.");
-
-        if(request.Items.Count > AdminBatchMaxImages)
-            return BadRequest($"At most {AdminBatchMaxImages} images may be committed per batch.");
 
         bool releaseExists = await context.SoftwareReleases.AnyAsync(r => r.Id == request.SoftwareReleaseId);
         if(!releaseExists) return NotFound("Software release not found.");

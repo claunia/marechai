@@ -747,9 +747,6 @@ public class SoftwareScreenshotsController(MarechaiContext     context, IConfigu
 
     // ────────────────────────────── Admin batch upload ──────────────────────────────
 
-    /// <summary>Maximum images an admin may stage in a single batch (matches dialog UI).</summary>
-    const int AdminBatchMaxImages = 50;
-
     /// <summary>
     ///     Allowed extensions accepted by the admin batch-upload staging endpoint. Wider
     ///     than the legacy <c>/upload</c> set (adds AVIF/JXL) and the collaborator-suggestion
@@ -784,7 +781,6 @@ public class SoftwareScreenshotsController(MarechaiContext     context, IConfigu
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
     public async Task<ActionResult<AdminPendingSoftwareScreenshotUploadDto>> UploadAdminBatchPendingAsync(
         IFormFile file, [FromQuery] int softwareId)
@@ -801,13 +797,6 @@ public class SoftwareScreenshotsController(MarechaiContext     context, IConfigu
 
         bool softwareExists = await context.Softwares.AnyAsync(s => s.Id == (ulong)softwareId);
         if(!softwareExists) return NotFound("Software not found.");
-
-        int currentCount = PendingImageStore.CountAdminStagedByUploader(_assetRootPath, "software-screenshots", userId,
-            (byte)SuggestionEntityType.SoftwareScreenshot);
-
-        if(currentCount >= AdminBatchMaxImages)
-            return Conflict($"You already have {currentCount} pending images staged. Maximum is " +
-                            $"{AdminBatchMaxImages}. Commit or remove some first.");
 
         // Persist FIRST (with a temporary placeholder for dimensions), then content-sniff
         // and either re-write the sidecar with real dimensions or reject + delete the file.
@@ -919,9 +908,6 @@ public class SoftwareScreenshotsController(MarechaiContext     context, IConfigu
 
         if(request is null || request.Items is null || request.Items.Count == 0)
             return BadRequest("No items provided.");
-
-        if(request.Items.Count > AdminBatchMaxImages)
-            return BadRequest($"At most {AdminBatchMaxImages} images may be committed per batch.");
 
         bool softwareExists = await context.Softwares.AnyAsync(s => s.Id == (ulong)request.SoftwareId);
         if(!softwareExists) return NotFound("Software not found.");

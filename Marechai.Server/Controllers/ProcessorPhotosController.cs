@@ -575,9 +575,6 @@ public class ProcessorPhotosController(MarechaiContext context, IConfiguration c
 
     // ───────────────────────────── Admin batch upload ──────────────────────────────
 
-    /// <summary>Maximum images an admin may stage in a single batch (matches dialog UI).</summary>
-    const int AdminBatchMaxImages = 25;
-
     /// <summary>
     ///     Allowed extensions accepted by the admin batch-upload staging endpoint. Wider
     ///     than the collaborator-suggestion path because admins may upload formats the
@@ -612,7 +609,6 @@ public class ProcessorPhotosController(MarechaiContext context, IConfiguration c
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
     public async Task<ActionResult<AdminPendingProcessorPhotoUploadDto>> UploadAdminBatchPendingAsync(IFormFile file,
         [FromQuery] int processorId)
@@ -629,13 +625,6 @@ public class ProcessorPhotosController(MarechaiContext context, IConfiguration c
 
         bool processorExists = await context.Processors.AnyAsync(p => p.Id == processorId);
         if(!processorExists) return NotFound("Processor not found.");
-
-        int currentCount = PendingImageStore.CountAdminStagedByUploader(_assetRootPath, "processors", userId,
-            (byte)SuggestionEntityType.ProcessorPhoto);
-
-        if(currentCount >= AdminBatchMaxImages)
-            return Conflict($"You already have {currentCount} pending images staged. Maximum is " +
-                            $"{AdminBatchMaxImages}. Commit or remove some first.");
 
         // Persist FIRST (with a temporary placeholder for dimensions), then content-sniff
         // and either re-write the sidecar with real dimensions or reject + delete the file.
@@ -747,9 +736,6 @@ public class ProcessorPhotosController(MarechaiContext context, IConfiguration c
 
         if(request is null || request.Items is null || request.Items.Count == 0)
             return BadRequest("No items provided.");
-
-        if(request.Items.Count > AdminBatchMaxImages)
-            return BadRequest($"At most {AdminBatchMaxImages} images may be committed per batch.");
 
         bool processorExists = await context.Processors.AnyAsync(p => p.Id == request.ProcessorId);
         if(!processorExists) return NotFound("Processor not found.");

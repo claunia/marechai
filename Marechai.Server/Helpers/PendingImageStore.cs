@@ -86,9 +86,8 @@ public static class PendingImageStore
         /// <summary>
         ///     Marks the pending image as part of an admin batch-upload staging session
         ///     rather than a collaborator suggestion. Admin entries share the same
-        ///     <c>pending/</c> folder but use a separate cap (counted by
-        ///     <see cref="CountAdminStagedByUploader" />) and bypass the suggestion-review
-        ///     workflow at commit time.
+        ///     <c>pending/</c> folder but bypass the suggestion-review workflow at commit
+        ///     time.
         /// </summary>
         public bool     IsAdminStaging { get; set; }
 
@@ -356,43 +355,6 @@ public static class PendingImageStore
                 if(meta.IsAdminStaging) continue;
                 if(meta.EntityType != entityType) continue;
                 if(meta.ParentEntityId != parentEntityId) continue;
-                if(!string.Equals(meta.UploadedById, userId, StringComparison.Ordinal)) continue;
-                count++;
-            }
-            catch
-            {
-                // ignored
-            }
-        }
-
-        return count;
-    }
-
-    /// <summary>
-    ///     Count admin-staging pending images uploaded by <paramref name="userId" /> for
-    ///     the given <paramref name="entityType" />. Used by the admin batch-upload dialog
-    ///     to enforce a per-user cap (currently 25 images in flight across all releases).
-    /// </summary>
-    public static int CountAdminStagedByUploader(string assetRootPath, string itemFolder,
-                                                 string userId, byte entityType)
-    {
-        if(string.IsNullOrEmpty(userId)) return 0;
-
-        string pendingDir = EnsurePendingDir(assetRootPath, itemFolder);
-        int    count      = 0;
-
-        IEnumerable<string> sidecars;
-        try { sidecars = Directory.EnumerateFiles(pendingDir, "*.json"); }
-        catch { return 0; }
-
-        foreach(string sidecar in sidecars)
-        {
-            try
-            {
-                var meta = JsonSerializer.Deserialize<PendingMetadata>(File.ReadAllText(sidecar));
-                if(meta is null) continue;
-                if(!meta.IsAdminStaging) continue;
-                if(meta.EntityType != entityType) continue;
                 if(!string.Equals(meta.UploadedById, userId, StringComparison.Ordinal)) continue;
                 count++;
             }

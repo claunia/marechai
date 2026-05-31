@@ -575,9 +575,6 @@ public class SoundSynthPhotosController(MarechaiContext context, IConfiguration 
 
     // ────────────────────────────── Admin batch upload ──────────────────────────────
 
-    /// <summary>Maximum images an admin may stage in a single batch (matches dialog UI).</summary>
-    const int AdminBatchMaxImages = 25;
-
     /// <summary>
     ///     Allowed extensions accepted by the admin batch-upload staging endpoint. Wider
     ///     than the legacy <c>/upload</c> set (no AVIF/JXL) and the collaborator-suggestion
@@ -612,7 +609,6 @@ public class SoundSynthPhotosController(MarechaiContext context, IConfiguration 
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
     public async Task<ActionResult<AdminPendingSoundSynthPhotoUploadDto>> UploadAdminBatchPendingAsync(IFormFile file,
         [FromQuery] int soundSynthId)
@@ -629,13 +625,6 @@ public class SoundSynthPhotosController(MarechaiContext context, IConfiguration 
 
         bool soundSynthExists = await context.SoundSynths.AnyAsync(s => s.Id == soundSynthId);
         if(!soundSynthExists) return NotFound("Sound synthesizer not found.");
-
-        int currentCount = PendingImageStore.CountAdminStagedByUploader(_assetRootPath, "sound-synths", userId,
-            (byte)SuggestionEntityType.SoundSynthPhoto);
-
-        if(currentCount >= AdminBatchMaxImages)
-            return Conflict($"You already have {currentCount} pending images staged. Maximum is " +
-                            $"{AdminBatchMaxImages}. Commit or remove some first.");
 
         // Persist FIRST (with a temporary placeholder for dimensions), then content-sniff
         // and either re-write the sidecar with real dimensions or reject + delete the file.
@@ -747,9 +736,6 @@ public class SoundSynthPhotosController(MarechaiContext context, IConfiguration 
 
         if(request is null || request.Items is null || request.Items.Count == 0)
             return BadRequest("No items provided.");
-
-        if(request.Items.Count > AdminBatchMaxImages)
-            return BadRequest($"At most {AdminBatchMaxImages} images may be committed per batch.");
 
         bool soundSynthExists = await context.SoundSynths.AnyAsync(s => s.Id == request.SoundSynthId);
         if(!soundSynthExists) return NotFound("Sound synthesizer not found.");

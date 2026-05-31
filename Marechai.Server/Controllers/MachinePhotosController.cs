@@ -568,9 +568,6 @@ public class MachinePhotosController(MarechaiContext context, IConfiguration con
 
     // ────────────────────────────── Admin batch upload ──────────────────────────────
 
-    /// <summary>Maximum images an admin may stage in a single batch (matches dialog UI).</summary>
-    const int AdminBatchMaxImages = 25;
-
     /// <summary>
     ///     Allowed extensions accepted by the admin batch-upload staging endpoint. Wider
     ///     than the legacy <c>/upload</c> set (no AVIF/JXL) and the collaborator-suggestion
@@ -605,7 +602,6 @@ public class MachinePhotosController(MarechaiContext context, IConfiguration con
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
     public async Task<ActionResult<AdminPendingMachinePhotoUploadDto>> UploadAdminBatchPendingAsync(IFormFile file,
         [FromQuery] int machineId)
@@ -622,13 +618,6 @@ public class MachinePhotosController(MarechaiContext context, IConfiguration con
 
         bool machineExists = await context.Machines.AnyAsync(m => m.Id == machineId);
         if(!machineExists) return NotFound("Machine not found.");
-
-        int currentCount = PendingImageStore.CountAdminStagedByUploader(_assetRootPath, "machines", userId,
-            (byte)SuggestionEntityType.MachinePhoto);
-
-        if(currentCount >= AdminBatchMaxImages)
-            return Conflict($"You already have {currentCount} pending images staged. Maximum is " +
-                            $"{AdminBatchMaxImages}. Commit or remove some first.");
 
         // Persist FIRST (with a temporary placeholder for dimensions), then content-sniff
         // and either re-write the sidecar with real dimensions or reject + delete the file.
@@ -740,9 +729,6 @@ public class MachinePhotosController(MarechaiContext context, IConfiguration con
 
         if(request is null || request.Items is null || request.Items.Count == 0)
             return BadRequest("No items provided.");
-
-        if(request.Items.Count > AdminBatchMaxImages)
-            return BadRequest($"At most {AdminBatchMaxImages} images may be committed per batch.");
 
         bool machineExists = await context.Machines.AnyAsync(m => m.Id == request.MachineId);
         if(!machineExists) return NotFound("Machine not found.");
