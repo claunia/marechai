@@ -172,7 +172,21 @@ public class Startup(IConfiguration configuration)
 
         services.AddAuthorizationCore();
         services.AddRazorPages();
-        services.AddServerSideBlazor();
+
+        // The admin batch-upload dialogs (software screenshots/covers, machine/gpu/processor/
+        // sound-synth photos, etc.) round-trip the inline base64 thumbnail (a 256x256 JPEG
+        // wrapped in a "data:image/jpeg;base64," URL) from JS back into .NET via a
+        // [JSInvokable] callback. SignalR's default MaximumReceiveMessageSize of 32 KB is
+        // tight enough that a dense screenshot (game frame, complex UI) whose Q80 JPEG
+        // crosses ~22 KB produces a JSInvokable payload that exceeds the cap. The hub then
+        // drops the message and the circuit reconnects ("Reconnecting to the server…"
+        // flashes briefly), the OnScreenshotUploadCompleted / OnPhotoUploadCompleted /
+        // OnCoverUploadCompleted callback is never delivered, no thumbnail appears, and no
+        // entry shows up in the logs because no exception is thrown anywhere. Raise the cap
+        // to 5 MB to comfortably accommodate even the largest 256x256 JPEG plus any future
+        // payload growth on these callbacks.
+        services.AddServerSideBlazor()
+                .AddHubOptions(options => options.MaximumReceiveMessageSize = 5 * 1024 * 1024);
 
         services.AddLocalization(options => options.ResourcesPath = "Resources");
 
