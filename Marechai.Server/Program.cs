@@ -367,6 +367,13 @@ file class Program
         builder.Services.AddScoped<OldDosPromotionService>();
         builder.Services.AddHostedService<AccountDeletionPurgeService>();
 
+        // Daily sweep that deletes abandoned pending uploads (admin batch stagings and
+        // collaborator suggestion uploads) whose sidecar UploadedOn — or filesystem mtime
+        // when the sidecar is missing/unreadable — is older than 12h. Also wipes EVERY
+        // pending entry once at startup, on the assumption that anything that survived a
+        // process restart is orphan (admins won't be mid-upload across the boundary).
+        builder.Services.AddHostedService<PendingImagePurgeService>();
+
         // In-memory registry for admin batch-upload commit jobs (software covers). Singleton
         // because jobs span multiple HTTP requests (start + poll). The reaper purges stale
         // entries every 2 minutes.

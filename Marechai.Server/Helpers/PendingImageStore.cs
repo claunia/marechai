@@ -448,4 +448,100 @@ public static class PendingImageStore
 
         return (destPath, meta.Extension);
     }
+
+    /// <summary>
+    ///     Delete every pending entry (image + sidecar + thumbnail) in
+    ///     <paramref name="itemFolder" /> whose recorded <see cref="PendingMetadata.UploadedOn" />
+    ///     is older than <paramref name="olderThan" />. When the sidecar is unreadable
+    ///     or missing a usable <c>UploadedOn</c>, the file's UTC last-write time is used
+    ///     as a fallback so genuinely abandoned files are still cleaned up. Returns the
+    ///     number of pending entries removed. Used by the periodic
+    ///     <c>PendingImagePurgeService</c> background sweep.
+    /// </summary>
+    public static int PurgeStale(string assetRootPath, string itemFolder, TimeSpan olderThan)
+    {
+        string   pendingDir = EnsurePendingDir(assetRootPath, itemFolder);
+        DateTime cutoffUtc  = DateTime.UtcNow - olderThan;
+        int      removed    = 0;
+
+        IEnumerable<string> sidecars;
+        try { sidecars = Directory.EnumerateFiles(pendingDir, "*.json"); }
+        catch { return 0; }
+
+        foreach(string sidecar in sidecars)
+        {
+            Guid     guid;
+            DateTime whenUtc;
+
+            try
+            {
+                string baseName = Path.GetFileNameWithoutExtension(sidecar);
+                if(!Guid.TryParse(baseName, out guid)) continue;
+
+                whenUtc = File.GetLastWriteTimeUtc(sidecar);
+
+                try
+                {
+                    var meta = JsonSerializer.Deserialize<PendingMetadata>(File.ReadAllText(sidecar));
+                    if(meta is not null && meta.UploadedOn != default)
+                    {
+                        whenUtc = meta.UploadedOn.Kind == DateTimeKind.Utc
+                                      ? meta.UploadedOn
+                                      : meta.UploadedOn.ToUniversalTime();
+                    }
+                }
+                catch
+                {
+                    // Sidecar present but unreadable / wrong schema — fall through to the
+                    // filesystem mtime captured above and let the age check decide.
+                }
+            }
+            catch
+            {
+                continue;
+            }
+
+            if(whenUtc > cutoffUtc) continue;
+
+            Delete(assetRootPath, itemFolder, guid);
+            removed++;
+        }
+
+        // Also sweep orphan image/thumbnail files that have no matching sidecar at all
+        // (e.g. a crash between StoreAsync's image-write and sidecar-write). Use the file
+        // mtime as the only signal. Skip anything that still has a sibling .json — Delete
+        // above handles those.
+        IEnumerable<string> all;
+        try { all = Directory.EnumerateFiles(pendingDir); }
+        catch { return removed; }
+
+        foreach(string path in all)
+        {
+            if(path.EndsWith(".json", StringComparison.OrdinalIgnoreCase)) continue;
+
+            try
+            {
+                string baseName = Path.GetFileNameWithoutExtension(path);
+                // Strip the secondary ".thumb" extension component so the guid parses cleanly.
+                if(baseName.EndsWith(".thumb", StringComparison.OrdinalIgnoreCase))
+                    baseName = baseName[..^".thumb".Length];
+
+                if(!Guid.TryParse(baseName, out Guid _)) continue;
+
+                string companionSidecar = Path.Combine(pendingDir, baseName + ".json");
+                if(File.Exists(companionSidecar)) continue;
+
+                if(File.GetLastWriteTimeUtc(path) > cutoffUtc) continue;
+
+                try { File.Delete(path); }
+                catch { /* ignored */ }
+            }
+            catch
+            {
+                // ignored
+            }
+        }
+
+        return removed;
+    }
 }
