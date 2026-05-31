@@ -98,16 +98,30 @@ else
                 }
             </MudTd>
             <MudTd>
-                @if(StatusOf(context) is OldDosSoftwareStatus.ReadyForReview or OldDosSoftwareStatus.Skipped)
-                {
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
-                               StartIcon="@Icons.Material.Filled.Visibility"
-                               OnClick="@(() => OpenReviewAsync(context.Id ?? 0))">@L["Review"]</MudButton>
-                }
-                else if(!string.IsNullOrEmpty(context.SourceUrl))
-                {
-                    <MudLink Href="@AbsoluteOldDosUrl(context.SourceUrl)" Target="_blank" Color="Color.Default">@L["Open on old-dos"]</MudLink>
-                }
+                <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center">
+                    @if(StatusOf(context) is OldDosSoftwareStatus.ReadyForReview or OldDosSoftwareStatus.Skipped)
+                    {
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                                   StartIcon="@Icons.Material.Filled.Visibility"
+                                   OnClick="@(() => OpenReviewAsync(context.Id ?? 0))">@L["Review"]</MudButton>
+                    }
+                    else if(!string.IsNullOrEmpty(context.SourceUrl))
+                    {
+                        <MudLink Href="@AbsoluteOldDosUrl(context.SourceUrl)" Target="_blank" Color="Color.Default">@L["Open on old-dos"]</MudLink>
+                    }
+
+                    @* Reject (discard) available for any status except the terminal ones — i.e. it works
+                       on still-Crawled / still-Translated / still-Described / Categorized / ReadyForReview /
+                       Skipped rows. The server-side DiscardAsync also refuses already-Accepted rows. *@
+                    @if(StatusOf(context) is not OldDosSoftwareStatus.Discarded and not OldDosSoftwareStatus.Accepted)
+                    {
+                        <MudTooltip Text="@L["Reject this entry"]">
+                            <MudIconButton Icon="@Icons.Material.Filled.Block" Color="Color.Error" Size="Size.Small"
+                                           OnClick="@(() => RejectAsync(context))"
+                                           aria-label="@L["Reject"]"/>
+                        </MudTooltip>
+                    }
+                </MudStack>
             </MudTd>
         </RowTemplate>
     </MudTable>
@@ -150,6 +164,48 @@ else
         IDialogReference dlg = await DialogService.ShowAsync<OldDosImportReviewDialog>(L["Review old-dos import"], parameters, options);
         await dlg.Result;
         await LoadAsync();
+    }
+
+    /// <summary>
+    ///     Reject an old-dos import straight from the queue without opening the review dialog.
+    ///     Often the raw name alone is enough to know the entry is junk (test rips, ad-ware, etc.),
+    ///     even for items still in the early enrichment phases (Crawled / Translated / Described).
+    ///     The server-side discard endpoint accepts any status except <c>Accepted</c>.
+    /// </summary>
+    async Task RejectAsync(OldDosPendingListItemDto item)
+    {
+        DialogParameters<DeleteConfirmDialog> parameters = new()
+        {
+            {
+                x => x.ContentText,
+                string.Format(
+                    L["Are you sure you want to reject '{0}'? It will be marked as discarded and removed from the queue."]
+                       .Value,
+                    item.Name)
+            }
+        };
+
+        IDialogReference dialog =
+            await DialogService.ShowAsync<DeleteConfirmDialog>(L["Reject old-dos import"], parameters,
+                                                               new DialogOptions
+                                                               {
+                                                                   MaxWidth  = MaxWidth.ExtraSmall,
+                                                                   FullWidth = true
+                                                               });
+
+        DialogResult result = await dialog.Result;
+        if(result is null or { Canceled: true }) return;
+
+        bool ok = await Service.DiscardAsync(item.Id ?? 0);
+        if(ok)
+        {
+            Snackbar.Add(string.Format(L["Rejected '{0}'."].Value, item.Name), Severity.Success);
+            await LoadAsync();
+        }
+        else
+        {
+            Snackbar.Add(L["Failed to reject entry."], Severity.Error);
+        }
     }
 
     static OldDosSoftwareStatus StatusOf(OldDosPendingListItemDto i) =>

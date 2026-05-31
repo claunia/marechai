@@ -79,4 +79,22 @@
   <data name="Review old-dos import" xml:space="preserve">
     <value>old-dos-import beoordelen</value>
   </data>
+  <data name="Reject" xml:space="preserve">
+    <value>Afwijzen</value>
+  </data>
+  <data name="Reject this entry" xml:space="preserve">
+    <value>Deze invoer afwijzen</value>
+  </data>
+  <data name="Reject old-dos import" xml:space="preserve">
+    <value>old-dos-import afwijzen</value>
+  </data>
+  <data name="Are you sure you want to reject '{0}'? It will be marked as discarded and removed from the queue." xml:space="preserve">
+    <value>Weet je zeker dat je '{0}' wilt afwijzen? De invoer wordt als verworpen gemarkeerd en uit de wachtrij verwijderd.</value>
+  </data>
+  <data name="Rejected '{0}'." xml:space="preserve">
+    <value>'{0}' afgewezen.</value>
+  </data>
+  <data name="Failed to reject entry." xml:space="preserve">
+    <value>Kan invoer niet afwijzen.</value>
+  </data>
 </root>

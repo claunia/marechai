@@ -8,37 +8,37 @@
     <value>Importations old-dos.ru</value>
   </data>
   <data name="Review pending software pulled from old-dos.ru after the OpenAI enrichment passes." xml:space="preserve">
-    <value>Examiner les logiciels en attente recuperes depuis old-dos.ru apres les passes d'enrichissement OpenAI.</value>
+    <value>Examiner les logiciels en attente récupérés depuis old-dos.ru après les passes d'enrichissement OpenAI.</value>
   </data>
   <data name="Status" xml:space="preserve">
     <value>Statut</value>
   </data>
   <data name="Ready or skipped" xml:space="preserve">
-    <value>Pret ou ignore</value>
+    <value>Prêt ou ignoré</value>
   </data>
   <data name="Ready for review" xml:space="preserve">
-    <value>Pret pour la revue</value>
+    <value>Prêt pour la revue</value>
   </data>
   <data name="Skipped" xml:space="preserve">
-    <value>Ignore</value>
+    <value>Ignoré</value>
   </data>
   <data name="Accepted" xml:space="preserve">
-    <value>Accepte</value>
+    <value>Accepté</value>
   </data>
   <data name="Discarded" xml:space="preserve">
-    <value>Rejete</value>
+    <value>Rejeté</value>
   </data>
   <data name="Crawled (awaiting enrichment)" xml:space="preserve">
-    <value>Recupere (en attente d'enrichissement)</value>
+    <value>Récupéré (en attente d'enrichissement)</value>
   </data>
   <data name="Search by name…" xml:space="preserve">
     <value>Rechercher par nom…</value>
   </data>
   <data name="Refresh" xml:space="preserve">
-    <value>Rafraichir</value>
+    <value>Rafraîchir</value>
   </data>
   <data name="{0} item(s) shown" xml:space="preserve">
-    <value>{0} element(s) affiche(s)</value>
+    <value>{0} élément(s) affiché(s)</value>
   </data>
   <data name="No pending old-dos imports." xml:space="preserve">
     <value>Aucune importation old-dos en attente.</value>
@@ -47,7 +47,7 @@
     <value>Nom</value>
   </data>
   <data name="Developer (raw)" xml:space="preserve">
-    <value>Developpeur (brut)</value>
+    <value>Développeur (brut)</value>
   </data>
   <data name="OS" xml:space="preserve">
     <value>OS</value>
@@ -56,7 +56,7 @@
     <value>Versions</value>
   </data>
   <data name="Crawled" xml:space="preserve">
-    <value>Recupere</value>
+    <value>Récupéré</value>
   </data>
   <data name="Review" xml:space="preserve">
     <value>Examiner</value>
@@ -68,15 +68,33 @@
     <value>Traduit</value>
   </data>
   <data name="Described" xml:space="preserve">
-    <value>Decrit</value>
+    <value>Décrit</value>
   </data>
   <data name="Categorized" xml:space="preserve">
-    <value>Categorise</value>
+    <value>Catégorisé</value>
   </data>
   <data name="Ready" xml:space="preserve">
-    <value>Pret</value>
+    <value>Prêt</value>
   </data>
   <data name="Review old-dos import" xml:space="preserve">
     <value>Examiner l'importation old-dos</value>
+  </data>
+  <data name="Reject" xml:space="preserve">
+    <value>Rejeter</value>
+  </data>
+  <data name="Reject this entry" xml:space="preserve">
+    <value>Rejeter cette entrée</value>
+  </data>
+  <data name="Reject old-dos import" xml:space="preserve">
+    <value>Rejeter l'importation old-dos</value>
+  </data>
+  <data name="Are you sure you want to reject '{0}'? It will be marked as discarded and removed from the queue." xml:space="preserve">
+    <value>Êtes-vous sûr de vouloir rejeter '{0}' ? Elle sera marquée comme rejetée et retirée de la file.</value>
+  </data>
+  <data name="Rejected '{0}'." xml:space="preserve">
+    <value>'{0}' rejetée.</value>
+  </data>
+  <data name="Failed to reject entry." xml:space="preserve">
+    <value>Échec du rejet de l'entrée.</value>
   </data>
 </root>

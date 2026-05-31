@@ -79,4 +79,22 @@
   <data name="Review old-dos import" xml:space="preserve">
     <value>Esamina importazione old-dos</value>
   </data>
+  <data name="Reject" xml:space="preserve">
+    <value>Rifiuta</value>
+  </data>
+  <data name="Reject this entry" xml:space="preserve">
+    <value>Rifiuta questa voce</value>
+  </data>
+  <data name="Reject old-dos import" xml:space="preserve">
+    <value>Rifiuta importazione old-dos</value>
+  </data>
+  <data name="Are you sure you want to reject '{0}'? It will be marked as discarded and removed from the queue." xml:space="preserve">
+    <value>Sei sicuro di voler rifiutare '{0}'? Verrà contrassegnata come scartata e rimossa dalla coda.</value>
+  </data>
+  <data name="Rejected '{0}'." xml:space="preserve">
+    <value>'{0}' rifiutata.</value>
+  </data>
+  <data name="Failed to reject entry." xml:space="preserve">
+    <value>Impossibile rifiutare la voce.</value>
+  </data>
 </root>

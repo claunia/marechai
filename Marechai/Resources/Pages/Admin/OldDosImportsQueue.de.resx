@@ -8,19 +8,19 @@
     <value>old-dos.ru-Importe</value>
   </data>
   <data name="Review pending software pulled from old-dos.ru after the OpenAI enrichment passes." xml:space="preserve">
-    <value>Pruefe ausstehende Software, die nach den OpenAI-Anreicherungsschritten von old-dos.ru geladen wurde.</value>
+    <value>Prüfe ausstehende Software, die nach den OpenAI-Anreicherungsschritten von old-dos.ru geladen wurde.</value>
   </data>
   <data name="Status" xml:space="preserve">
     <value>Status</value>
   </data>
   <data name="Ready or skipped" xml:space="preserve">
-    <value>Bereit oder uebersprungen</value>
+    <value>Bereit oder übersprungen</value>
   </data>
   <data name="Ready for review" xml:space="preserve">
-    <value>Bereit zur Pruefung</value>
+    <value>Bereit zur Prüfung</value>
   </data>
   <data name="Skipped" xml:space="preserve">
-    <value>Uebersprungen</value>
+    <value>Übersprungen</value>
   </data>
   <data name="Accepted" xml:space="preserve">
     <value>Akzeptiert</value>
@@ -38,7 +38,7 @@
     <value>Aktualisieren</value>
   </data>
   <data name="{0} item(s) shown" xml:space="preserve">
-    <value>{0} Eintrag/Eintraege angezeigt</value>
+    <value>{0} Eintrag/Einträge angezeigt</value>
   </data>
   <data name="No pending old-dos imports." xml:space="preserve">
     <value>Keine ausstehenden old-dos-Importe.</value>
@@ -59,13 +59,13 @@
     <value>Erfasst</value>
   </data>
   <data name="Review" xml:space="preserve">
-    <value>Pruefen</value>
+    <value>Prüfen</value>
   </data>
   <data name="Open on old-dos" xml:space="preserve">
-    <value>Auf old-dos oeffnen</value>
+    <value>Auf old-dos öffnen</value>
   </data>
   <data name="Translated" xml:space="preserve">
-    <value>Uebersetzt</value>
+    <value>Übersetzt</value>
   </data>
   <data name="Described" xml:space="preserve">
     <value>Beschrieben</value>
@@ -77,6 +77,24 @@
     <value>Bereit</value>
   </data>
   <data name="Review old-dos import" xml:space="preserve">
-    <value>old-dos-Import pruefen</value>
+    <value>old-dos-Import prüfen</value>
+  </data>
+  <data name="Reject" xml:space="preserve">
+    <value>Ablehnen</value>
+  </data>
+  <data name="Reject this entry" xml:space="preserve">
+    <value>Diesen Eintrag ablehnen</value>
+  </data>
+  <data name="Reject old-dos import" xml:space="preserve">
+    <value>old-dos-Import ablehnen</value>
+  </data>
+  <data name="Are you sure you want to reject '{0}'? It will be marked as discarded and removed from the queue." xml:space="preserve">
+    <value>Möchten Sie '{0}' wirklich ablehnen? Der Eintrag wird als verworfen markiert und aus der Warteschlange entfernt.</value>
+  </data>
+  <data name="Rejected '{0}'." xml:space="preserve">
+    <value>'{0}' abgelehnt.</value>
+  </data>
+  <data name="Failed to reject entry." xml:space="preserve">
+    <value>Eintrag konnte nicht abgelehnt werden.</value>
   </data>
 </root>
