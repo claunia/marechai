@@ -114,12 +114,25 @@ window.MarechaiSoundSynthPhotoBatchUpload = (function () {
                         catch { /* ignored */ }
                     }
                 } else {
-                    let detail = `HTTP ${xhr.status}`;
+                    let detail = '';
                     try {
                         const body = xhr.response;
-                        if (body && (body.detail || body.title)) detail = body.detail || body.title;
-                        else if (typeof body === 'string' && body.length > 0 && body.length < 300) detail = body;
+                        if (body && typeof body === 'object') {
+                            detail = body.detail || body.title || body.error || body.message || '';
+                        } else if (typeof body === 'string' && body.length > 0) {
+                            detail = body;
+                        }
                     } catch { /* ignored */ }
+                    if (!detail) {
+                        try {
+                            const raw = xhr.responseText;
+                            if (raw && raw.length > 0) {
+                                const stripped = raw.replace(/<[^>]+>/g, '').trim();
+                                if (stripped.length > 0 && stripped.length < 500) detail = stripped;
+                            }
+                        } catch { /* ignored */ }
+                    }
+                    detail = detail ? `${detail} (HTTP ${xhr.status})` : `HTTP ${xhr.status}`;
                     try { dotNetRef.invokeMethodAsync('OnPhotoUploadFailed', clientGuid, `${file.name}: ${detail}`); }
                     catch { /* ignored */ }
                 }
