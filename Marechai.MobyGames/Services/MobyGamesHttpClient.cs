@@ -452,8 +452,16 @@ public sealed partial class MobyGamesHttpClient : IDisposable
 
         if(needle.Length == 0) return null;
 
+        var needleTokens = new HashSet<string>(needle.Split(' ', StringSplitOptions.RemoveEmptyEntries));
+
+        if(needleTokens.Count == 0) return null;
+
         // MobyGames search results live in <b><a href="/game/N/slug/">Title</a></b>. Parse them
-        // in order; the first sufficiently-similar hit wins.
+        // in order; the first hit whose token set is a superset of the needle's wins. Token-set
+        // comparison (vs substring) is required because MobyGames editors often reorder a
+        // title's words (e.g. our DB has "Rock Band: 'Godzilla' - Blue Öyster Cult" while the
+        // live title is "Rock Band: Blue Öyster Cult - 'Godzilla'" — same words, different
+        // order, never substrings of each other).
         var matches = System.Text.RegularExpressions.Regex.Matches(
             html,
             @"<b>\s*<a[^>]+href=""(?:https?://www\.mobygames\.com)?/game/(\d+)/[^""]*""[^>]*>([^<]+)</a>\s*</b>",
@@ -468,8 +476,9 @@ public sealed partial class MobyGamesHttpClient : IDisposable
 
             if(hay.Length == 0) continue;
 
-            if(hay == needle || hay.Contains(needle) || needle.Contains(hay))
-                return id;
+            var hayTokens = new HashSet<string>(hay.Split(' ', StringSplitOptions.RemoveEmptyEntries));
+
+            if(hayTokens.IsSupersetOf(needleTokens)) return id;
         }
 
         return null;
