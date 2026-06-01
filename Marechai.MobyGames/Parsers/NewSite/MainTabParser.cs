@@ -414,16 +414,120 @@ public static partial class MainTabParser
 
         if(!isCompilation) return;
 
-        var section = doc.DocumentNode.SelectSingleNode("//section[@id='gameOfficialDescription']");
+        var selfSlugs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        if(section is null) return;
+        if(!string.IsNullOrWhiteSpace(game.Slug))       selfSlugs.Add(game.Slug);
+        if(!string.IsNullOrWhiteSpace(game.MobyGameId)) selfSlugs.Add(game.MobyGameId);
+
+        (List<string> slugs, List<UnresolvableCompilationLink> unresolvable) =
+            ExtractCompilationContentsFromHtml(doc, selfSlugs);
+
+        foreach(string s in slugs)
+            if(!game.CompilationGameSlugs.Contains(s))
+                game.CompilationGameSlugs.Add(s);
+
+        foreach(var u in unresolvable)
+            if(!game.UnresolvableCompilationGames.Any(x =>
+                   string.Equals(x.Name, u.Name, StringComparison.OrdinalIgnoreCase) &&
+                   string.Equals(x.Href, u.Href, StringComparison.OrdinalIgnoreCase)))
+                game.UnresolvableCompilationGames.Add(u);
+    }
+
+    /// <summary>
+    ///     New-site equivalent of <see cref="Parsers.MainTabParser.ExtractCompilationContentsFromHtml"/>.
+    ///     Scopes the link walk to <c>&lt;section id="gameOfficialDescription"&gt;</c> so sidebar /
+    ///     related-games / compare-credits anchors elsewhere on the page are NOT picked up as
+    ///     compilation members. Used by <c>CompilationRelationService</c> when the cached chunk
+    ///     is post-2023 layout HTML.
+    /// </summary>
+    public static (List<string> slugs, List<UnresolvableCompilationLink> unresolvable)
+        ExtractCompilationContentsFromHtml(string html, string selfSlug = null)
+    {
+        if(string.IsNullOrWhiteSpace(html))
+            return ([], []);
+
+        var doc = new HtmlDocument();
+        doc.LoadHtml(html);
 
         var selfSlugs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        if(!string.IsNullOrWhiteSpace(game.Slug)) selfSlugs.Add(game.Slug);
-        if(!string.IsNullOrWhiteSpace(game.MobyGameId)) selfSlugs.Add(game.MobyGameId);
+        if(!string.IsNullOrWhiteSpace(selfSlug))
+        {
+            selfSlugs.Add(selfSlug);
+            selfSlugs.Add(selfSlug.TrimStart('-'));
+        }
 
-        var links = section.SelectNodes(".//li//a[@href]");
+        return ExtractCompilationContentsFromHtml(doc, selfSlugs);
+    }
+
+    static (List<string> slugs, List<UnresolvableCompilationLink> unresolvable)
+        ExtractCompilationContentsFromHtml(HtmlDocument doc, HashSet<string> selfSlugs)
+    {
+        var slugs        = new List<string>();
+        var unresolvable = new List<UnresolvableCompilationLink>();
+
+        // Source 1 (primary on new layout): sidebar / aside block of the shape
+        //   <div class="border border-1 mb flowroot">
+        //     <b>{LABEL}</b>     <!-- "Original", "Standard", "This Compilation Includes", ... -->
+        //     <ul id="related1" class="list-group toggle-long-text toggle-max-3 mb-0">
+        //       <li><a href=".../game/N/slug/"><img .../></a> <a href="...">Title</a> <small>(YYYY)</small></li>
+        //       ...
+        //     </ul>
+        //   </div>
+        // The same shape is reused by DLC pages for the "Base Game" link and by every game for
+        // optional "Series" / "Groups" lists, so we skip well-known non-compilation labels.
+        var relatedLists = doc.DocumentNode.SelectNodes("//ul[starts-with(@id,'related')]");
+
+        if(relatedLists is not null)
+        {
+            foreach(var ul in relatedLists)
+            {
+                string label = ul.ParentNode?.SelectSingleNode("./b")?.InnerText?.Trim() ?? "";
+
+                if(IsNonCompilationRelatedLabel(label)) continue;
+
+                CollectGameLinksFromLis(ul, selfSlugs, slugs, unresolvable);
+            }
+        }
+
+        // Source 2 (sometimes present alongside, sometimes the only source on old layouts):
+        // the description body inside <section id="gameOfficialDescription"> with an inline
+        // bullet list of titles (and possibly role suffixes like "(base game)").
+        var section = doc.DocumentNode.SelectSingleNode("//section[@id='gameOfficialDescription']");
+
+        if(section is not null)
+            CollectGameLinksFromLis(section, selfSlugs, slugs, unresolvable);
+
+        return (slugs, unresolvable);
+    }
+
+    /// <summary>
+    ///     Sidebar "related*" lists appear on EVERY new-layout game page, not just compilations.
+    ///     Skip labels we know never enumerate compilation contents so series / franchise /
+    ///     base-game links don't leak into the contained-games list.
+    /// </summary>
+    static bool IsNonCompilationRelatedLabel(string label)
+    {
+        if(string.IsNullOrWhiteSpace(label)) return false;
+
+        string l = label.Trim().TrimEnd(':').Trim();
+
+        return l.Equals("Base Game",       StringComparison.OrdinalIgnoreCase) ||
+               l.Equals("Base Games",      StringComparison.OrdinalIgnoreCase) ||
+               l.Equals("Series",          StringComparison.OrdinalIgnoreCase) ||
+               l.Equals("Groups",          StringComparison.OrdinalIgnoreCase) ||
+               l.Equals("Group",           StringComparison.OrdinalIgnoreCase) ||
+               l.Equals("DLC",             StringComparison.OrdinalIgnoreCase) ||
+               l.Equals("DLC / Add-Ons",   StringComparison.OrdinalIgnoreCase) ||
+               l.Equals("Add-Ons",         StringComparison.OrdinalIgnoreCase) ||
+               l.Equals("Expansions",      StringComparison.OrdinalIgnoreCase) ||
+               l.Equals("Related Games",   StringComparison.OrdinalIgnoreCase);
+    }
+
+    static void CollectGameLinksFromLis(HtmlNode scope, HashSet<string> selfSlugs,
+                                        List<string> slugs, List<UnresolvableCompilationLink> unresolvable)
+    {
+        var links = scope.SelectNodes(".//li//a[@href]");
 
         if(links is null) return;
 
@@ -440,8 +544,8 @@ public static partial class MainTabParser
             {
                 string slug = m.Groups[2].Value;
 
-                if(!selfSlugs.Contains(slug) && !game.CompilationGameSlugs.Contains(slug))
-                    game.CompilationGameSlugs.Add(slug);
+                if(!selfSlugs.Contains(slug) && !slugs.Contains(slug))
+                    slugs.Add(slug);
             }
             else if(href.Contains("/search/", StringComparison.OrdinalIgnoreCase) ||
                     !href.Contains("/game/",  StringComparison.OrdinalIgnoreCase))
@@ -456,12 +560,10 @@ public static partial class MainTabParser
                                        ? "https://www.mobygames.com" + href
                                        : "https://www.mobygames.com/" + href;
 
-                if(!game.UnresolvableCompilationGames.Any(u =>
+                if(!unresolvable.Any(u =>
                        string.Equals(u.Name, name, StringComparison.OrdinalIgnoreCase) &&
                        string.Equals(u.Href, abs,  StringComparison.OrdinalIgnoreCase)))
-                {
-                    game.UnresolvableCompilationGames.Add(new UnresolvableCompilationLink { Name = name, Href = abs });
-                }
+                    unresolvable.Add(new UnresolvableCompilationLink { Name = name, Href = abs });
             }
         }
     }

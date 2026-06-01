@@ -94,11 +94,18 @@ public class CompilationRelationService
 
                     if(rows.Count == 0) continue;
 
-                    // Parse the main tab HTML for game links AND unresolvable anchors in the description.
+                    // Parse the main tab HTML for game links AND unresolvable anchors in the
+                    // description. Dispatch by layout so new-site rows are scoped to
+                    // <section id="gameOfficialDescription"> and don't pick up sidebar /
+                    // related-games / compare-credits anchors as bogus compilation members.
                     foreach(var row in rows)
                     {
+                        (MobyTab _, MobyLayout layout) = TabDetector.DetectWithLayout(row.Body);
+
                         (List<string> extractedSlugs, List<UnresolvableCompilationLink> extractedUnresolvable) =
-                            MainTabParser.ExtractCompilationContentsFromHtml(row.Body, slug);
+                            layout == MobyLayout.New
+                                ? Parsers.NewSite.MainTabParser.ExtractCompilationContentsFromHtml(row.Body, slug)
+                                : MainTabParser.ExtractCompilationContentsFromHtml(row.Body, slug);
 
                         if(extractedSlugs.Count > 0 || extractedUnresolvable.Count > 0)
                         {
