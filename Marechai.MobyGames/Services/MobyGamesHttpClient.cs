@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace Marechai.MobyGames.Services;
 
@@ -63,6 +65,24 @@ public sealed partial class MobyGamesHttpClient : IDisposable
         _client.DefaultRequestHeaders.Add("Sec-Fetch-Site",            "none");
         _client.DefaultRequestHeaders.Add("Sec-Fetch-User",            "?1");
         _client.DefaultRequestHeaders.Add("Upgrade-Insecure-Requests", "1");
+    }
+
+    /// <summary>
+    ///     Constructs a <see cref="MobyGamesHttpClient"/> and immediately attaches the
+    ///     MobyGames browser session cookies via <see cref="MobyGamesBrowser.TryAttachCookiesAsync"/>.
+    ///     This is the preferred entry point for every command in <c>Program.cs</c> — using it
+    ///     guarantees that every HTTP request carries the Cloudflare clearance and (when
+    ///     credentials are configured) the MobyPlus auth cookies, so callers can't accidentally
+    ///     spawn an uncookied client that hits the "Just a moment..." challenge page.
+    /// </summary>
+    public static async Task<MobyGamesHttpClient> CreateAsync(IConfiguration    cfg,
+                                                              int               delayMs = 2000,
+                                                              CancellationToken ct      = default)
+    {
+        var client = new MobyGamesHttpClient(delayMs);
+        await MobyGamesBrowser.TryAttachCookiesAsync(cfg, client, delayMs, ct);
+
+        return client;
     }
 
     /// <summary>

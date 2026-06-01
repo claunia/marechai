@@ -135,11 +135,9 @@ class Program
 
                 if(!dryRun)
                 {
-                    httpClient = new MobyGamesHttpClient(delayMs);
-
                     // Authenticate first so the cover detail page yields the MobyPlus
                     // <a download> original-resolution link instead of the thumbnail rewrite.
-                    await MobyGamesBrowser.TryAttachCookiesAsync(config, httpClient, delayMs);
+                    httpClient = await MobyGamesHttpClient.CreateAsync(config, delayMs);
 
                     // Ensure output directories exist
                     ImageConverter.EnsureDirectoriesCreated(assetRoot);
@@ -185,7 +183,7 @@ class Program
                         reviewDelayMs = rdm;
                 }
 
-                using var reviewHttpClient = new MobyGamesHttpClient(reviewDelayMs);
+                using var reviewHttpClient = await MobyGamesHttpClient.CreateAsync(config, reviewDelayMs);
 
                 var magazineMatcher    = new MagazineMatcher(factory, countryMatcher, reviewHttpClient);
                 var reviewStateService = new ReviewStateService(factory);
@@ -234,13 +232,11 @@ class Program
                 }
 
                 // Discovery uses the SPA's `?format=json` endpoint over plain HTTP for speed.
-                // PuppeteerSharp is only used (transparently inside TryAttachCookiesAsync) to log
-                // in and bypass Cloudflare/Turnstile; once cookies are imported into the HTTP
-                // client, Chromium is disposed. The session lifts the anonymous 14-page cap and
-                // the `perPage=100` preference cookie lifts the page size from 18 to 100.
-                using var discoveryHttp  = new MobyGamesHttpClient(delayMs);
-
-                await MobyGamesBrowser.TryAttachCookiesAsync(config, discoveryHttp, delayMs);
+                // PuppeteerSharp is only used (transparently inside MobyGamesHttpClient.CreateAsync)
+                // to log in and bypass Cloudflare/Turnstile; once cookies are imported into the
+                // HTTP client, Chromium is disposed. The session lifts the anonymous 14-page cap
+                // and the `perPage=100` preference cookie lifts the page size from 18 to 100.
+                using var discoveryHttp = await MobyGamesHttpClient.CreateAsync(config, delayMs);
 
                 var discoveryState   = new DiscoveryStateService(factory);
                 var discoveryScraper = new SearchDiscoveryScraper(discoveryHttp, discoveryState);
@@ -266,7 +262,7 @@ class Program
                         dryRun = true;
                 }
 
-                using var newGameHttp = new MobyGamesHttpClient(delayMs);
+                using var newGameHttp = await MobyGamesHttpClient.CreateAsync(config, delayMs);
 
                 var newGameDiscovery = new DiscoveryStateService(factory);
                 var newGameFetcher   = new NewGameRawFetcher(newGameHttp, sourceDb, newGameDiscovery);
@@ -304,10 +300,8 @@ class Program
 
                 if(!dryRun)
                 {
-                    promoHttpClient = new MobyGamesHttpClient(delayMs);
-
                     // Anonymous sessions cap promo art index pagination — authenticate first.
-                    await MobyGamesBrowser.TryAttachCookiesAsync(config, promoHttpClient, delayMs);
+                    promoHttpClient = await MobyGamesHttpClient.CreateAsync(config, delayMs);
                 }
 
                 var promoScraper = new PromoArtScraper(factory, sourceDb, promoHttpClient);
@@ -354,10 +348,8 @@ class Program
 
                 if(!dryRun)
                 {
-                    promoHttpClient2 = new MobyGamesHttpClient(delayMs);
-
                     // Promo art always needs the MobyPlus original — no fallback URL pattern.
-                    await MobyGamesBrowser.TryAttachCookiesAsync(config, promoHttpClient2, delayMs);
+                    promoHttpClient2 = await MobyGamesHttpClient.CreateAsync(config, delayMs);
 
                     ImageConverter.EnsureDirectoriesCreated(assetRoot, "software-promo-art");
                 }
@@ -407,11 +399,9 @@ class Program
 
                 if(!dryRun)
                 {
-                    screenshotHttpClient = new MobyGamesHttpClient(delayMs);
-
                     // The screenshot index pages also paginate behind the anonymous cap, so we
                     // need authenticated cookies even before we hit any detail page.
-                    await MobyGamesBrowser.TryAttachCookiesAsync(config, screenshotHttpClient, delayMs);
+                    screenshotHttpClient = await MobyGamesHttpClient.CreateAsync(config, delayMs);
                 }
 
                 var screenshotScraper = new ScreenshotScraper(factory, sourceDb, screenshotHttpClient);
@@ -458,11 +448,9 @@ class Program
 
                 if(!dryRun)
                 {
-                    screenshotHttpClient2 = new MobyGamesHttpClient(delayMs);
-
                     // Authenticated cookies unlock the higher-res MobyPlus screenshots and
                     // bypass anonymous page caps for detail-page traversal.
-                    await MobyGamesBrowser.TryAttachCookiesAsync(config, screenshotHttpClient2, delayMs);
+                    screenshotHttpClient2 = await MobyGamesHttpClient.CreateAsync(config, delayMs);
 
                     ImageConverter.EnsureDirectoriesCreated(assetRoot, "software-screenshots");
                 }
@@ -510,7 +498,7 @@ class Program
 
                 if(args.Contains("--dry-run")) dryRun = true;
 
-                var mediaHttpClient = new MobyGamesHttpClient(delayMs);
+                var mediaHttpClient = await MobyGamesHttpClient.CreateAsync(config, delayMs);
                 var mediaScraper    = new MediaScraper(factory, sourceDb, mediaHttpClient);
 
                 try
@@ -596,7 +584,10 @@ class Program
                 if(args.Contains("--dry-run"))   dlcDryRun     = true;
                 if(args.Contains("--unattended")) dlcUnattended = true;
 
-                using var dlcHttpClient = new MobyGamesHttpClient(dlcDelayMs);
+                // Cookies attached automatically by CreateAsync — without them the new-site DLC
+                // page comes back as the Cloudflare "Just a moment..." challenge HTML and
+                // NewSiteMainPageParser.ParseBaseGameId silently returns null for every entry.
+                using var dlcHttpClient = await MobyGamesHttpClient.CreateAsync(config, dlcDelayMs);
 
                 // Create a separate import service with HTTP client for numeric ID resolution
                 var dlcImportService = new ImportService(factory, sourceDb, companyMatcher,
