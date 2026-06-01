@@ -203,6 +203,29 @@ public class DlcRelationService
             {
                 Console.WriteLine($" Error: {ex.GetType().FullName}: {ex.Message}");
 
+                // EF's DbUpdateException carries the entities that were in the failing batch.
+                // Surface each entry's type, key, and string-valued properties (with lengths)
+                // so we can identify which column exceeded its size limit without guessing.
+                if(ex is Microsoft.EntityFrameworkCore.DbUpdateException dbEx && dbEx.Entries is { Count: > 0 })
+                {
+                    Console.WriteLine($"    Failing entities ({dbEx.Entries.Count}):");
+
+                    foreach(var entry in dbEx.Entries)
+                    {
+                        Console.WriteLine($"      [{entry.State}] {entry.Entity.GetType().Name}");
+
+                        foreach(var prop in entry.Properties)
+                        {
+                            object val = prop.CurrentValue;
+
+                            if(val is string s)
+                                Console.WriteLine($"        {prop.Metadata.Name} (len={s.Length}): {s}");
+                            else if(val is not null)
+                                Console.WriteLine($"        {prop.Metadata.Name}: {val}");
+                        }
+                    }
+                }
+
                 Exception inner = ex.InnerException;
 
                 while(inner != null)
