@@ -687,6 +687,95 @@ class Program
                 break;
             }
 
+            case "refresh-slug":
+            {
+                string refreshSlug    = null;
+                int?   refreshId      = null;
+                int    refreshDelayMs = config.GetValue("MobyGames:DelayMs", 2000);
+
+                for(int i = 1; i < args.Length; i++)
+                {
+                    if(args[i] == "--slug"     && i + 1 < args.Length) refreshSlug = args[i + 1];
+                    if(args[i] == "--id"       && i + 1 < args.Length && int.TryParse(args[i + 1], out int rid)) refreshId = rid;
+                    if(args[i] == "--delay-ms" && i + 1 < args.Length && int.TryParse(args[i + 1], out int rdm)) refreshDelayMs = rdm;
+                }
+
+                if(string.IsNullOrWhiteSpace(refreshSlug))
+                {
+                    Console.WriteLine("  Usage: refresh-slug --slug <slug> [--id <numericId>] [--delay-ms N]");
+                    Console.WriteLine("         Downloads ALL chunks for the slug from the live site and replaces any cached rows.");
+                    Console.WriteLine("         --id is optional; if omitted, the numeric ID is resolved from the slug.");
+                    return 1;
+                }
+
+                using var refreshHttp = await MobyGamesHttpClient.CreateAsync(config, refreshDelayMs);
+
+                int? numericId = refreshId
+                                 ?? await refreshHttp.ResolveNumericGameIdAsync(refreshSlug);
+
+                if(numericId is null)
+                {
+                    Console.WriteLine($"  Could not resolve numeric ID for '{refreshSlug}'. Pass --id explicitly or check the slug.");
+                    return 1;
+                }
+
+                string trimmed = refreshSlug.TrimStart('-');
+                string baseUrl = $"https://www.mobygames.com/game/{numericId}/{trimmed}/";
+
+                Console.WriteLine($"  Refreshing slug='{trimmed}', numericId={numericId} from {baseUrl}");
+
+                string mainBody = await refreshHttp.FetchPageAsync(baseUrl);
+
+                if(string.IsNullOrWhiteSpace(mainBody))
+                {
+                    Console.WriteLine("  Live fetch returned empty body. Aborting; cache left untouched.");
+                    return 1;
+                }
+
+                // Delete every existing cached chunk for both '<slug>' and '-<slug>' variants
+                // before inserting so we end up with a single canonical set under the trimmed key.
+                int deletedTrimmed = await sourceDb.DeleteAllChunksAsync(trimmed);
+                int deletedDashed  = await sourceDb.DeleteAllChunksAsync($"-{trimmed}");
+                Console.WriteLine($"  Deleted {deletedTrimmed + deletedDashed} stale chunk(s) ({deletedTrimmed} under '{trimmed}', {deletedDashed} under '-{trimmed}')");
+
+                int saved = 0;
+
+                async Task<bool> SaveAsync(int chunk, string url, string body = null)
+                {
+                    body ??= await refreshHttp.FetchPageAsync(url);
+
+                    if(string.IsNullOrWhiteSpace(body)) return false;
+
+                    try
+                    {
+                        await sourceDb.InsertRowAsync(trimmed, chunk, body);
+                        saved++;
+                        Console.WriteLine($"    chunk {chunk}: {body.Length} bytes");
+                        return true;
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine($"    chunk {chunk}: INSERT failed: {ex.GetType().Name}: {ex.Message}");
+                        return false;
+                    }
+                }
+
+                await SaveAsync(0, baseUrl, mainBody);                  // main
+                await SaveAsync(1, baseUrl + "credits/");
+                await SaveAsync(2, baseUrl + "releases/");
+                await SaveAsync(3, baseUrl + "specs/");
+
+                if(Parsers.NewSite.MediaPresenceDetector.HasCoverArt(mainBody))
+                    await SaveAsync(4, baseUrl + "covers/");
+
+                if(Parsers.NewSite.MediaPresenceDetector.HasReviews(mainBody))
+                    await SaveAsync(5, baseUrl + "reviews/");
+
+                Console.WriteLine($"  Refresh complete: {saved} chunk(s) written.");
+
+                break;
+            }
+
             default:
                 Console.WriteLine("  Usage:");
                 Console.WriteLine("    import [--batch-size N] [--unattended] [--yes-to-all]");
@@ -736,6 +825,10 @@ class Program
                 Console.WriteLine("    cleanup-orphan-duplicates [--dry-run] [--yes]");
                 Console.WriteLine("                                                  Merge duplicate orphan Software rows into their state-linked twin (backfill for");
                 Console.WriteLine("                                                  legacy data created before MarkSoftwareLinkedAsync). Prompts unless --yes is passed.");
+                Console.WriteLine("    refresh-slug --slug <slug> [--id <numericId>] [--delay-ms N]");
+                Console.WriteLine("                                                  Re-download ALL chunks for one slug from the live site, deleting any");
+                Console.WriteLine("                                                  cached rows under both '<slug>' and '-<slug>' first. Use to evict stale");
+                Console.WriteLine("                                                  legacy-layout captures (e.g. since-corrected MobyGames data).");
                 Console.WriteLine("    reset --game <id>                             Reset a game to unprocessed");
 
                 break;
