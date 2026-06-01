@@ -117,12 +117,40 @@ public class DlcRelationService
                     continue;
                 }
 
-                // Fetch new-site page to find base game
+                // Fetch new-site page to find base game. Prefer the cached chunk-0 HTML in
+                // mobygames_raw (avoids a redundant Cloudflare round-trip) and only fall back
+                // to a live fetch when the cache is absent or the cached HTML doesn't contain
+                // a parseable "Base Game" link (e.g. legacy-layout rows).
                 string slug = importState.MobyGameId.TrimStart('-');
-                string url  = $"https://www.mobygames.com/game/{numericId}/{slug}/";
-                string html = await _httpClient.FetchPageAsync(url);
 
-                (int? baseGameMobyId, string baseGameSlug) = NewSiteMainPageParser.ParseBaseGame(html);
+                int?   baseGameMobyId = null;
+                string baseGameSlug   = null;
+                bool   fromCache      = false;
+
+                foreach(string trySlug in new[] { importState.MobyGameId, slug, $"-{slug}" }
+                            .Where(s => !string.IsNullOrWhiteSpace(s))
+                            .Distinct(StringComparer.Ordinal))
+                {
+                    var cachedRows = await _sourceDb.GetRowsForGameAsync(trySlug);
+                    var mainRow    = cachedRows.FirstOrDefault(r => r.Chunk == 0);
+
+                    if(mainRow is null) continue;
+
+                    (baseGameMobyId, baseGameSlug) = NewSiteMainPageParser.ParseBaseGame(mainRow.Body);
+
+                    if(baseGameMobyId is not null)
+                    {
+                        fromCache = true;
+                        break;
+                    }
+                }
+
+                if(baseGameMobyId is null)
+                {
+                    string url  = $"https://www.mobygames.com/game/{numericId}/{slug}/";
+                    string html = await _httpClient.FetchPageAsync(url);
+                    (baseGameMobyId, baseGameSlug) = NewSiteMainPageParser.ParseBaseGame(html);
+                }
 
                 if(baseGameMobyId is null)
                 {
@@ -132,7 +160,8 @@ public class DlcRelationService
                     continue;
                 }
 
-                Console.Write($" base game MobyID={baseGameMobyId}, slug={baseGameSlug ?? "?"}...");
+                Console.Write($" base game MobyID={baseGameMobyId}, slug={baseGameSlug ?? "?"}" +
+                              (fromCache ? " (cached)..." : " (live)..."));
 
                 // Try to find the base game in the DB first, then fall back to raw rows,
                 // and finally live-site scraping if the base game has never been stored.
