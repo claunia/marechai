@@ -201,7 +201,18 @@ public class DlcRelationService
             }
             catch(Exception ex)
             {
-                Console.WriteLine($" Error: {ex.Message}");
+                Console.WriteLine($" Error: {ex.GetType().FullName}: {ex.Message}");
+
+                Exception inner = ex.InnerException;
+
+                while(inner != null)
+                {
+                    Console.WriteLine($"    caused by {inner.GetType().FullName}: {inner.Message}");
+                    inner = inner.InnerException;
+                }
+
+                if(ex.StackTrace != null) Console.WriteLine(ex.StackTrace);
+
                 failed++;
             }
         }
@@ -285,7 +296,10 @@ public class DlcRelationService
         }
         catch(Exception ex)
         {
-            Console.WriteLine($"  Warning: db insert failed (main): {ex.Message}");
+            Console.WriteLine($"  Warning: db insert failed (main): {ex.GetType().FullName}: {ex.Message}");
+
+            for(Exception inner = ex.InnerException; inner != null; inner = inner.InnerException)
+                Console.WriteLine($"    caused by {inner.GetType().FullName}: {inner.Message}");
         }
 
         await TryFetchAndInsertAsync(slug, ChunkCredits,  baseUrl + "credits/");
@@ -312,7 +326,10 @@ public class DlcRelationService
         }
         catch(Exception ex)
         {
-            Console.WriteLine($"  Warning: db insert failed (chunk {chunk}): {ex.Message}");
+            Console.WriteLine($"  Warning: db insert failed (chunk {chunk}): {ex.GetType().FullName}: {ex.Message}");
+
+            for(Exception inner = ex.InnerException; inner != null; inner = inner.InnerException)
+                Console.WriteLine($"    caused by {inner.GetType().FullName}: {inner.Message}");
         }
     }
 
