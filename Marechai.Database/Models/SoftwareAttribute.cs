@@ -16,6 +16,6 @@ public class SoftwareAttribute : BaseModel<long>
     public string Key { get; set; }
 
     [Required]
-    [StringLength(512)]
+    [StringLength(2048)]
     public string Value { get; set; }
 }
