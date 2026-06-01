@@ -264,6 +264,44 @@ public class DlcRelationService
             if(rows.Count == 0)
                 continue;
 
+            // Refresh stale legacy-layout caches before importing. 2019-era captures often
+            // disagree with the live page (e.g. Assassin's Creed IV: Black Flag was
+            // mis-tagged with Genre=Compilation back then; MobyGames editors corrected
+            // it to Action since). Importing from the stale chunk routes the base game
+            // through ImportCompilationAsync, which then tries to merge/delete an
+            // existing Software row that has dependent SoftwareBySoftwareRelease links —
+            // FK-protected, fails, and repeats for every sibling DLC. Re-scrape from
+            // live once and reimport from the fresh new-layout chunks.
+            var mainRow = rows.FirstOrDefault(r => r.Chunk == 0);
+
+            if(!dryRun                                                          &&
+               mainRow is not null                                              &&
+               baseGameMobyId is not null                                       &&
+               TabDetector.DetectWithLayout(mainRow.Body).Layout == MobyLayout.Old)
+            {
+                Console.Write($" refreshing stale legacy-layout cache for '{trySlug}'...");
+
+                try
+                {
+                    string liveUrl  = $"https://www.mobygames.com/game/{baseGameMobyId}/{trimmedSlug}/";
+                    string liveMain = await _httpClient.FetchPageAsync(liveUrl);
+
+                    if(!string.IsNullOrWhiteSpace(liveMain))
+                    {
+                        await _sourceDb.DeleteAllChunksAsync(trySlug);
+                        await ScrapeGameToRawAsync(trySlug, baseGameMobyId.Value, liveMain);
+                    }
+                    else
+                    {
+                        Console.Write(" (live fetch returned empty, falling through to stale cache)");
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Console.Write($" (refresh failed: {ex.Message}, falling through to stale cache)");
+                }
+            }
+
             Console.Write($" importing '{trySlug}'...");
 
             if(dryRun)

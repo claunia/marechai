@@ -111,6 +111,26 @@ public class SourceDatabaseService
     }
 
     /// <summary>
+    ///     Delete every cached chunk for the given slug. Used to evict stale legacy-layout
+    ///     captures before re-scraping the current new-layout page (see
+    ///     <c>DlcRelationService.ResolveBaseSoftwareIdAsync</c>) — MobyGames data corrections
+    ///     since the 2019 capture mean the cached HTML often disagrees with the live page
+    ///     (e.g. mis-tagged genres) and would re-poison every downstream import otherwise.
+    /// </summary>
+    public async Task<int> DeleteAllChunksAsync(string gameId)
+    {
+        await using var connection = new MySqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        await using var cmd = new MySqlCommand(
+            "DELETE FROM mobygames_raw WHERE id = @id", connection);
+
+        cmd.Parameters.AddWithValue("@id", gameId);
+
+        return await cmd.ExecuteNonQueryAsync();
+    }
+
+    /// <summary>
     ///     Returns <c>true</c> if at least one <c>mobygames_raw</c> row exists for the supplied slug.
     ///     Short-circuited via <c>EXISTS</c> + <c>LIMIT 1</c> so the cost is independent of the number
     ///     of chunks already stored for that game.

@@ -626,18 +626,24 @@ class Program
                 if(args.Contains("--dry-run"))    compDryRun     = true;
                 if(args.Contains("--unattended")) compUnattended = true;
 
-                // Create import service without HTTP client (local only)
+                // Compilation resolver re-scrapes stale legacy-layout caches before parsing
+                // so the cookied HTTP client must be available.
+                using var compHttpClient = await MobyGamesHttpClient.CreateAsync(config,
+                    config.GetValue("MobyGames:DelayMs", 2000));
+
+                // Create import service WITH HTTP client so re-imported base games can also
+                // refresh their own caches if needed by the downstream chain.
                 var compImportService = new ImportService(factory, sourceDb, companyMatcher,
                                                           personMatcher, platformMatcher,
                                                           countryMatcher, stateService,
-                                                          mobyHttpClient: null,
+                                                          mobyHttpClient: compHttpClient,
                                                           adminMessenger: adminMessenger);
 
                 compImportService.Unattended = compUnattended;
                 companyMatcher.Unattended    = compUnattended;
 
                 var compService = new CompilationRelationService(factory, sourceDb, compImportService,
-                                                                 adminMessenger);
+                                                                 adminMessenger, compHttpClient);
 
                 try
                 {

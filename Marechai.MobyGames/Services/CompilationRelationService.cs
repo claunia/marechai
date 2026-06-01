@@ -16,15 +16,18 @@ public class CompilationRelationService
     readonly SourceDatabaseService             _sourceDb;
     readonly ImportService                     _importService;
     readonly AdminMessageService               _adminMessenger;
+    readonly MobyGamesHttpClient               _httpClient;
 
     public CompilationRelationService(IDbContextFactory<MarechaiContext> contextFactory,
                                       SourceDatabaseService sourceDb, ImportService importService,
-                                      AdminMessageService adminMessenger = null)
+                                      AdminMessageService adminMessenger = null,
+                                      MobyGamesHttpClient httpClient = null)
     {
         _contextFactory = contextFactory;
         _sourceDb       = sourceDb;
         _importService  = importService;
         _adminMessenger = adminMessenger;
+        _httpClient     = httpClient;
     }
 
     public async Task RunAsync(int batchSize, bool dryRun)
@@ -93,6 +96,43 @@ public class CompilationRelationService
                     var rows = await _sourceDb.GetRowsForGameAsync(trySlug);
 
                     if(rows.Count == 0) continue;
+
+                    // Refresh stale legacy-layout caches before parsing. 2019-era captures often
+                    // contain since-corrected MobyGames data (mis-tagged genres, mis-attributed
+                    // contained-game links). When we know the numeric ID and an HTTP client is
+                    // available, re-fetch the live new-layout page once and replace the cached
+                    // chunks before the layout dispatch below.
+                    var mainRow = rows.FirstOrDefault(r => r.Chunk == 0);
+
+                    if(!dryRun                                                          &&
+                       _httpClient is not null                                          &&
+                       mainRow is not null                                              &&
+                       importState.MobyNumericId is not null                            &&
+                       TabDetector.DetectWithLayout(mainRow.Body).Layout == MobyLayout.Old)
+                    {
+                        Console.Write($" refreshing stale legacy-layout cache for '{trySlug}'...");
+
+                        try
+                        {
+                            string liveUrl  = $"https://www.mobygames.com/game/{importState.MobyNumericId}/{trySlug.TrimStart('-')}/";
+                            string liveMain = await _httpClient.FetchPageAsync(liveUrl);
+
+                            if(!string.IsNullOrWhiteSpace(liveMain))
+                            {
+                                await _sourceDb.DeleteAllChunksAsync(trySlug);
+                                await _sourceDb.InsertRowAsync(trySlug, 0, liveMain);
+                                rows = await _sourceDb.GetRowsForGameAsync(trySlug);
+                            }
+                            else
+                            {
+                                Console.Write(" (live fetch returned empty, falling through to stale cache)");
+                            }
+                        }
+                        catch(Exception ex)
+                        {
+                            Console.Write($" (refresh failed: {ex.Message}, falling through to stale cache)");
+                        }
+                    }
 
                     // Parse the main tab HTML for game links AND unresolvable anchors in the
                     // description. Dispatch by layout so new-site rows are scoped to
