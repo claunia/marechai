@@ -414,6 +414,95 @@ public sealed partial class MobyGamesHttpClient : IDisposable
         return result;
     }
 
+    /// <summary>
+    ///     Fallback resolver for legacy rows where the slug-based redirect fails (typically
+    ///     because the slug is truncated to 64 chars by the old <c>mobygames_raw</c> schema,
+    ///     or because MobyGames editors have since renamed the title and the old slug now
+    ///     404s). Searches the public <c>/search/?q=…&amp;type=game</c> page and returns the
+    ///     numeric ID of the first result whose normalised title contains, equals, or is
+    ///     contained by the normalised <paramref name="name"/>. Conservative on purpose —
+    ///     prefer null over a wrong link in unattended runs.
+    /// </summary>
+    public async Task<int?> ResolveNumericGameIdByNameAsync(string name)
+    {
+        if(string.IsNullOrWhiteSpace(name)) return null;
+
+        if(_delayMs > 0) await Task.Delay(_delayMs);
+
+        string url = $"{BaseUrl}/search/?q={Uri.EscapeDataString(name)}&type=game";
+
+        string html;
+
+        try
+        {
+            using var response = await _client.GetAsync(url);
+
+            if(!response.IsSuccessStatusCode) return null;
+
+            html = await response.Content.ReadAsStringAsync();
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"\e[33m  Warning: search error for '{name}': {ex.Message}\e[0m");
+
+            return null;
+        }
+
+        string needle = NormalizeTitleForCompare(name);
+
+        if(needle.Length == 0) return null;
+
+        // MobyGames search results live in <b><a href="/game/N/slug/">Title</a></b>. Parse them
+        // in order; the first sufficiently-similar hit wins.
+        var matches = System.Text.RegularExpressions.Regex.Matches(
+            html,
+            @"<b>\s*<a[^>]+href=""(?:https?://www\.mobygames\.com)?/game/(\d+)/[^""]*""[^>]*>([^<]+)</a>\s*</b>",
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+        foreach(System.Text.RegularExpressions.Match m in matches)
+        {
+            if(!int.TryParse(m.Groups[1].Value, out int id)) continue;
+
+            string titleText = System.Net.WebUtility.HtmlDecode(m.Groups[2].Value);
+            string hay       = NormalizeTitleForCompare(titleText);
+
+            if(hay.Length == 0) continue;
+
+            if(hay == needle || hay.Contains(needle) || needle.Contains(hay))
+                return id;
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    ///     Lowercase, drop non-alphanumeric ASCII, collapse runs of whitespace. Used by the
+    ///     name-based fallback resolver so titles like
+    ///     <c>"Just Dance 2014: 'One Way Or Another (Teenage Kicks)' by One Direction"</c> and
+    ///     <c>"Just Dance 2014: One Direction - One Way or Another"</c> can be compared.
+    /// </summary>
+    static string NormalizeTitleForCompare(string s)
+    {
+        var sb = new System.Text.StringBuilder(s.Length);
+        bool lastSpace = false;
+
+        foreach(char c in s.ToLowerInvariant())
+        {
+            if(char.IsLetterOrDigit(c))
+            {
+                sb.Append(c);
+                lastSpace = false;
+            }
+            else if(!lastSpace && sb.Length > 0)
+            {
+                sb.Append(' ');
+                lastSpace = true;
+            }
+        }
+
+        return sb.ToString().Trim();
+    }
+
     async Task<int?> TryResolveSlugAsync(string slug)
     {
         if(_delayMs > 0)

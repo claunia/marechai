@@ -102,6 +102,16 @@ public class DlcRelationService
                 {
                     numericId = await _httpClient.ResolveNumericGameIdAsync(importState.MobyGameId);
 
+                    // Slug-based resolution fails for legacy rows where the slug was truncated
+                    // to 64 chars in the old mobygames_raw schema, or where MobyGames editors
+                    // have since renamed the title (the old slug now 404s while the numeric ID
+                    // remains valid). Fall back to name-based search using the Software.Name.
+                    if(numericId is null)
+                    {
+                        Console.Write(" slug failed, trying name search...");
+                        numericId = await _httpClient.ResolveNumericGameIdByNameAsync(dlc.Name);
+                    }
+
                     if(numericId is not null)
                     {
                         importState.MobyNumericId = numericId;
