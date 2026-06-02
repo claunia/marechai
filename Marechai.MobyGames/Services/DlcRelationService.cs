@@ -382,6 +382,13 @@ public class DlcRelationService
 
         Console.Write($" scraping live base game '{trimmedSlug}'...");
 
+        // Evict any stale rows (e.g. cached 404 pages from 2019 captures of slugs that didn't
+        // exist yet) under both slug variants before inserting fresh chunks. InsertRowAsync
+        // uses INSERT IGNORE, so without the delete, stale rows would survive and the
+        // subsequent ImportGameBySlugAsync would re-read the same garbage.
+        await _sourceDb.DeleteAllChunksAsync(trimmedSlug);
+        await _sourceDb.DeleteAllChunksAsync($"-{trimmedSlug}");
+
         await ScrapeGameToRawAsync(trimmedSlug, numericId.Value, html);
 
         baseSoftwareId = await _importService.ImportGameBySlugAsync(trimmedSlug);
