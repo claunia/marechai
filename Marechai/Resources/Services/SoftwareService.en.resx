@@ -289,6 +289,12 @@
     <data name="Writing" xml:space="preserve">
         <value>Writing</value>
     </data>
+    <data name="Hardware" xml:space="preserve">
+        <value>Hardware</value>
+    </data>
+    <data name="Music Recording" xml:space="preserve">
+        <value>Music Recording</value>
+    </data>
     <data name="Release date" xml:space="preserve">
         <value>Release date</value>
     </data>

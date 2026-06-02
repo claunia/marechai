@@ -1822,6 +1822,7 @@ public class ImportService
         "Music by"                 => "snd",
         "Package Design by"        => "pkg",
         "Voice Recording by"       => "vrc",
+        "Music Recording by"       => "mrc",
         "Game Engine by"           => "eng",
         "Graphic Engine by"        => "eng",
         "Sound Engine by"          => "eng",

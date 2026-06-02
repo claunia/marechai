@@ -350,6 +350,14 @@
         <value>Sceneggiatura</value>
         <comment>Writing</comment>
     </data>
+    <data name="Hardware" xml:space="preserve">
+        <value>Hardware</value>
+        <comment>Hardware</comment>
+    </data>
+    <data name="Music Recording" xml:space="preserve">
+        <value>Registrazione musicale</value>
+        <comment>Music Recording</comment>
+    </data>
     <data name="Release date" xml:space="preserve">
         <value>Data di pubblicazione</value>
         <comment>Release date</comment>
