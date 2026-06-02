@@ -60,7 +60,8 @@ public static class SoftwareRoles
             new() { Id = "cst", Name = "Casting",                   Enabled = true },
             new() { Id = "mkt", Name = "Marketing",                 Enabled = true },
             new() { Id = "des", Name = "Design",                    Enabled = true },
-            new() { Id = "wri", Name = "Writing",                   Enabled = true }
+            new() { Id = "wri", Name = "Writing",                   Enabled = true },
+            new() { Id = "hwr", Name = "Hardware",                  Enabled = true }
         ];
 
         foreach(SoftwareRole role in roles)

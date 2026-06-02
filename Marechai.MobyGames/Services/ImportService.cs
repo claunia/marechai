@@ -1808,6 +1808,7 @@ public class ImportService
         "Localized by"     => "loc",
         "Ported by"                => "por",
         "Manufactured by"          => "mfg",
+        "Hardware by"              => "hwr",
         "Licensed by"              => "lic",
         "Additional Development by" => "dev",
         "Additional Programming by" => "dev",
