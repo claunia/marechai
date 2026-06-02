@@ -100,6 +100,19 @@ public class DlcRelationService
 
                 if(numericId is null)
                 {
+                    // Cheapest source: mine the cached chunk for any /game/N/slug/ link.
+                    // Post-2019 games have NO slug-redirect (live /game/<slug>/ returns
+                    // "Error - MobyGames"), so HTTP resolution fails outright; but their
+                    // cached HTML is full of internal sub-page anchors that carry the
+                    // numeric ID. Try this BEFORE any HTTP round-trip.
+                    numericId = TryExtractNumericIdFromCachedChunks(importState.MobyGameId);
+
+                    if(numericId is not null)
+                        Console.Write($" numericId={numericId} (from cached chunk)...");
+                }
+
+                if(numericId is null)
+                {
                     numericId = await _httpClient.ResolveNumericGameIdAsync(importState.MobyGameId);
 
                     // Slug-based resolution fails for legacy rows where the slug was truncated
@@ -111,12 +124,12 @@ public class DlcRelationService
                         Console.Write(" slug failed, trying name search...");
                         numericId = await _httpClient.ResolveNumericGameIdByNameAsync(dlc.Name);
                     }
+                }
 
-                    if(numericId is not null)
-                    {
-                        importState.MobyNumericId = numericId;
-                        await context.SaveChangesAsync();
-                    }
+                if(numericId is not null && importState.MobyNumericId != numericId)
+                {
+                    importState.MobyNumericId = numericId;
+                    await context.SaveChangesAsync();
                 }
 
                 if(numericId is null)
@@ -475,5 +488,56 @@ public class DlcRelationService
                                       s.Status == MobyGamesImportStatus.Imported);
 
         return state?.SoftwareId;
+    }
+
+    /// <summary>
+    ///     Mines the cached <c>mobygames_raw</c> chunks for the slug to extract its own
+    ///     MobyGames numeric ID. Post-2019 game pages have NO working slug-only redirect
+    ///     URL (<c>/game/&lt;slug&gt;/</c> returns "Error - MobyGames"), so HTTP-based
+    ///     resolution fails outright; but every internal sub-page anchor on the cached
+    ///     page carries <c>/game/{N}/{slug}/...</c>. The most frequent (id, slug) pair
+    ///     matching the requested slug wins, ignoring stray cross-references to other
+    ///     games.
+    /// </summary>
+    int? TryExtractNumericIdFromCachedChunks(string mobyGameId)
+    {
+        if(string.IsNullOrWhiteSpace(mobyGameId)) return null;
+
+        string trimmedSlug = mobyGameId.TrimStart('-');
+
+        foreach(string trySlug in new[] { mobyGameId, trimmedSlug, $"-{trimmedSlug}" }
+                    .Where(s => !string.IsNullOrWhiteSpace(s))
+                    .Distinct(StringComparer.Ordinal))
+        {
+            // Sync over the existing async helper because we're called from a sync helper
+            // chain; the per-DLC cost is one DB call and we already pay it elsewhere in the
+            // loop.
+            var rows = _sourceDb.GetRowsForGameAsync(trySlug).GetAwaiter().GetResult();
+
+            if(rows.Count == 0) continue;
+
+            var counts = new Dictionary<int, int>();
+
+            foreach(var row in rows)
+            {
+                if(string.IsNullOrWhiteSpace(row.Body)) continue;
+
+                foreach(System.Text.RegularExpressions.Match m in
+                    System.Text.RegularExpressions.Regex.Matches(
+                        row.Body,
+                        $@"/game/(\d+)/{System.Text.RegularExpressions.Regex.Escape(trimmedSlug)}/",
+                        System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+                {
+                    if(int.TryParse(m.Groups[1].Value, out int id))
+                        counts[id] = counts.GetValueOrDefault(id) + 1;
+                }
+            }
+
+            if(counts.Count == 0) continue;
+
+            return counts.OrderByDescending(kv => kv.Value).First().Key;
+        }
+
+        return null;
     }
 }
