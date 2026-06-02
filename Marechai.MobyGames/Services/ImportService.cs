@@ -1499,6 +1499,19 @@ public class ImportService
                 {
                     string roleId = MapRoleLabel(roleLabel);
 
+                    // Unknown role labels return null. RoleId is part of the
+                    // SoftwareCompanyRole composite primary key so EF rejects a null with
+                    // "Unable to track an entity ... because its primary key property
+                    // 'RoleId' is null." Skip the row entirely (and don't waste a
+                    // CompanyMatcher prompt creating a fresh Company for a role we won't
+                    // record). Mirrors the same guard in WouldRequireUserInputAsync.
+                    if(string.IsNullOrEmpty(roleId))
+                    {
+                        Console.WriteLine($"    Skipping unknown company-role label '{roleLabel}' for '{companyName}'");
+
+                        continue;
+                    }
+
                     var (roleCompany, _) = await _companyMatcher.MatchOrCreateAsync(companyName);
 
                     if(roleCompany != null)
