@@ -228,7 +228,19 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
                 return (null, "OpenAI returned an unparseable response.");
             }
 
-            string content = result?.Choices?.FirstOrDefault()?.Message?.Content;
+            OpenAIMessage message = result?.Choices?.FirstOrDefault()?.Message;
+            string        content = message?.Content;
+
+            // Some OpenAI-compatible servers (notably LM Studio serving the Qwen3 family) place
+            // structured-output (`response_format: json_schema`) and even regular reply text in
+            // `reasoning_content` rather than `content`, leaving `content` an empty string. The
+            // OldDos OpenAiChatClient already does this fallback; mirror that here so translation
+            // works against reasoning models without per-model branching.
+            if(string.IsNullOrWhiteSpace(content) && !string.IsNullOrWhiteSpace(message?.ReasoningContent))
+                content = message.ReasoningContent;
+
+            if(string.IsNullOrWhiteSpace(content) && !string.IsNullOrWhiteSpace(message?.Reasoning))
+                content = message.Reasoning;
 
             if(string.IsNullOrWhiteSpace(content))
                 return (null, "OpenAI returned an empty response.");
@@ -298,32 +310,142 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
 
     /// <summary>
     ///     Extracts the <c>translation</c> string field from a JSON object reply. Returns null when the
-    ///     payload isn't a JSON object or doesn't contain a string field by that name. Tolerates a wider
-    ///     set of common envelope keys that some models default to (translated, output, result, text)
-    ///     so a small variation in model behaviour doesn't break the whole pipeline.
+    ///     payload doesn't contain a JSON object with a recognised string field. Tolerates a wider set
+    ///     of common envelope keys that some models default to (translated, output, result, text) so a
+    ///     small variation in model behaviour doesn't break the whole pipeline.
+    ///     <para>
+    ///         The extractor is lenient about what surrounds the JSON object — reasoning-channel output
+    ///         from Qwen3 / DeepSeek / similar models routinely arrives with:
+    ///         <list type="bullet">
+    ///             <item>A leading <c>```json</c> code fence (and trailing <c>```</c>).</item>
+    ///             <item>Trailing prose after the closing brace (e.g. "Final answer: …").</item>
+    ///             <item>A "thinking" preamble before the first <c>{</c>.</item>
+    ///         </list>
+    ///         We scan for the first balanced <c>{…}</c> substring (respecting string literals and
+    ///         escapes), parse that, and ignore everything outside it. Falls back to <c>last-brace</c>
+    ///         heuristic when balance walking fails (truncated reply).
+    ///     </para>
     /// </summary>
     static string TryExtractTranslationField(string content)
     {
         if(string.IsNullOrWhiteSpace(content)) return null;
 
-        try
+        // Strip a wrapping ```json … ``` fence if present.
+        string scan = content.Trim();
+        if(scan.StartsWith("```", StringComparison.Ordinal))
         {
-            using JsonDocument doc = JsonDocument.Parse(content);
-            if(doc.RootElement.ValueKind != JsonValueKind.Object) return null;
+            int firstNewline = scan.IndexOf('\n');
+            int lastFence    = scan.LastIndexOf("```", StringComparison.Ordinal);
+            if(firstNewline > 0 && lastFence > firstNewline)
+                scan = scan.Substring(firstNewline + 1, lastFence - firstNewline - 1).Trim();
+        }
 
-            foreach(string key in (string[])["translation", "translated", "output", "result", "text"])
+        // 1) Try strict parse first — cheapest path when the model behaves.
+        string s = TryParseAndExtract(scan);
+        if(s is not null) return s;
+
+        // 2) Find the first balanced {…} substring and parse that.
+        string balanced = ExtractFirstBalancedObject(scan);
+        if(balanced is not null && balanced.Length != scan.Length)
+        {
+            s = TryParseAndExtract(balanced);
+            if(s is not null) return s;
+        }
+
+        // 3) Last-resort: truncated reply (model ran out of tokens mid-JSON). Try slicing from the
+        //    first '{' to the LAST '}' and parsing.
+        int firstBrace = scan.IndexOf('{');
+        int lastBrace  = scan.LastIndexOf('}');
+        if(firstBrace >= 0 && lastBrace > firstBrace)
+        {
+            string slice = scan.Substring(firstBrace, lastBrace - firstBrace + 1);
+            s = TryParseAndExtract(slice);
+            if(s is not null) return s;
+        }
+
+        return null;
+
+        static string TryParseAndExtract(string text)
+        {
+            try
             {
-                if(doc.RootElement.TryGetProperty(key, out JsonElement val) &&
-                   val.ValueKind == JsonValueKind.String)
-                    return val.GetString();
+                using JsonDocument doc = JsonDocument.Parse(text);
+                if(doc.RootElement.ValueKind != JsonValueKind.Object) return null;
+
+                foreach(string key in (string[])["translation", "translated", "output", "result", "text"])
+                {
+                    if(doc.RootElement.TryGetProperty(key, out JsonElement val) &&
+                       val.ValueKind == JsonValueKind.String)
+                        return val.GetString();
+                }
+
+                return null;
+            }
+            catch(JsonException)
+            {
+                return null;
+            }
+        }
+    }
+
+    /// <summary>
+    ///     Returns the substring from the first <c>{</c> to its matching <c>}</c>, correctly skipping
+    ///     braces inside JSON string literals (with backslash escapes). Returns null when there is no
+    ///     balanced match (e.g. truncated content).
+    /// </summary>
+    static string ExtractFirstBalancedObject(string text)
+    {
+        if(string.IsNullOrEmpty(text)) return null;
+
+        int start = text.IndexOf('{');
+        if(start < 0) return null;
+
+        int  depth    = 0;
+        bool inString = false;
+        bool escape   = false;
+
+        for(int i = start; i < text.Length; i++)
+        {
+            char c = text[i];
+
+            if(escape)
+            {
+                escape = false;
+
+                continue;
             }
 
-            return null;
+            if(inString)
+            {
+                if(c == '\\')
+                    escape = true;
+                else if(c == '"')
+                    inString = false;
+
+                continue;
+            }
+
+            switch(c)
+            {
+                case '"':
+                    inString = true;
+
+                    break;
+                case '{':
+                    depth++;
+
+                    break;
+                case '}':
+                    depth--;
+
+                    if(depth == 0)
+                        return text.Substring(start, i - start + 1);
+
+                    break;
+            }
         }
-        catch(JsonException)
-        {
-            return null;
-        }
+
+        return null;
     }
 
     /// <summary>
@@ -418,6 +540,16 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
     {
         [JsonPropertyName("content")]
         public string Content { get; set; }
+
+        // Reasoning-model channels. Some OpenAI-compatible backends (LM Studio + Qwen3 family
+        // observed in the wild) return the final answer in one of these fields instead of
+        // `content`, leaving `content` blank. Read both spellings: `reasoning_content` (LM Studio,
+        // vLLM) and `reasoning` (some other proxies).
+        [JsonPropertyName("reasoning_content")]
+        public string ReasoningContent { get; set; }
+
+        [JsonPropertyName("reasoning")]
+        public string Reasoning { get; set; }
     }
 
 #endregion
