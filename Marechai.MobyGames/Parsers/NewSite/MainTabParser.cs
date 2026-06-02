@@ -466,62 +466,51 @@ public static partial class MainTabParser
         var slugs        = new List<string>();
         var unresolvable = new List<UnresolvableCompilationLink>();
 
-        // Source 1 (primary on new layout): sidebar / aside block of the shape
+        // Source 1: sidebar / aside block of the shape
         //   <div class="border border-1 mb flowroot">
-        //     <b>{LABEL}</b>     <!-- "Original", "Standard", "This Compilation Includes", ... -->
+        //     <b>This Compilation Includes</b>
         //     <ul id="related1" class="list-group toggle-long-text toggle-max-3 mb-0">
         //       <li><a href=".../game/N/slug/"><img .../></a> <a href="...">Title</a> <small>(YYYY)</small></li>
         //       ...
         //     </ul>
         //   </div>
-        // The same shape is reused by DLC pages for the "Base Game" link and by every game for
-        // optional "Series" / "Groups" lists, so we skip well-known non-compilation labels.
+        // MobyGames reuses the same shape for unrelated lists too — "Base Game" (DLC parent),
+        // "Series", "Groups", "Original" / "Standard" (package-edition contents on a base game
+        // that ships in multiple editions), "Add-on (official)" (the 100+ official DLCs of a
+        // base game like The Last of Us: Remastered). NONE of those are compilation contents.
+        // Only the exact label "This Compilation Includes" is a real compilation member list,
+        // so that's the only one we accept. This avoids mis-classifying base games with long
+        // add-on lists (e.g. Last of Us Remastered, AC4 Black Flag) as compilations.
         var relatedLists = doc.DocumentNode.SelectNodes("//ul[starts-with(@id,'related')]");
 
         if(relatedLists is not null)
         {
             foreach(var ul in relatedLists)
             {
-                string label = ul.ParentNode?.SelectSingleNode("./b")?.InnerText?.Trim() ?? "";
+                string label = ul.ParentNode?.SelectSingleNode("./b")?.InnerText?.Trim().TrimEnd(':').Trim() ?? "";
 
-                if(IsNonCompilationRelatedLabel(label)) continue;
+                if(!string.Equals(label, "This Compilation Includes", StringComparison.OrdinalIgnoreCase)) continue;
 
                 CollectGameLinksFromLis(ul, selfSlugs, slugs, unresolvable);
             }
         }
 
-        // Source 2 (sometimes present alongside, sometimes the only source on old layouts):
-        // the description body inside <section id="gameOfficialDescription"> with an inline
-        // bullet list of titles (and possibly role suffixes like "(base game)").
+        // Source 2: inside <section id="gameOfficialDescription"> a paragraph "This compilation
+        // includes:" introduces a <ul> of contained games (with role suffixes like "(base game)"
+        // / "(DLC / edition upgrade)"). Gate on the paragraph text — without it, the description
+        // could contain unrelated /game/ links (Wikipedia-style cross-references) that aren't
+        // compilation members.
         var section = doc.DocumentNode.SelectSingleNode("//section[@id='gameOfficialDescription']");
 
         if(section is not null)
-            CollectGameLinksFromLis(section, selfSlugs, slugs, unresolvable);
+        {
+            string sectionText = section.InnerText ?? "";
+
+            if(sectionText.IndexOf("this compilation includes", StringComparison.OrdinalIgnoreCase) >= 0)
+                CollectGameLinksFromLis(section, selfSlugs, slugs, unresolvable);
+        }
 
         return (slugs, unresolvable);
-    }
-
-    /// <summary>
-    ///     Sidebar "related*" lists appear on EVERY new-layout game page, not just compilations.
-    ///     Skip labels we know never enumerate compilation contents so series / franchise /
-    ///     base-game links don't leak into the contained-games list.
-    /// </summary>
-    static bool IsNonCompilationRelatedLabel(string label)
-    {
-        if(string.IsNullOrWhiteSpace(label)) return false;
-
-        string l = label.Trim().TrimEnd(':').Trim();
-
-        return l.Equals("Base Game",       StringComparison.OrdinalIgnoreCase) ||
-               l.Equals("Base Games",      StringComparison.OrdinalIgnoreCase) ||
-               l.Equals("Series",          StringComparison.OrdinalIgnoreCase) ||
-               l.Equals("Groups",          StringComparison.OrdinalIgnoreCase) ||
-               l.Equals("Group",           StringComparison.OrdinalIgnoreCase) ||
-               l.Equals("DLC",             StringComparison.OrdinalIgnoreCase) ||
-               l.Equals("DLC / Add-Ons",   StringComparison.OrdinalIgnoreCase) ||
-               l.Equals("Add-Ons",         StringComparison.OrdinalIgnoreCase) ||
-               l.Equals("Expansions",      StringComparison.OrdinalIgnoreCase) ||
-               l.Equals("Related Games",   StringComparison.OrdinalIgnoreCase);
     }
 
     static void CollectGameLinksFromLis(HtmlNode scope, HashSet<string> selfSlugs,

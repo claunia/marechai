@@ -133,6 +133,48 @@ public class DlcRelationService
                 // a parseable "Base Game" link (e.g. legacy-layout rows).
                 string slug = importState.MobyGameId.TrimStart('-');
 
+                // Refresh the DLC's own cached chunk-0 if it's still legacy layout. We always
+                // want NewSiteMainPageParser.ParseBaseGame operating on current new-layout
+                // HTML so the strict "<b>Base Game</b>" / "<b>Included in</b>" sidebar
+                // detection is reliable; the legacy chunk shape doesn't expose that block in
+                // a form the parser recognises, and stale 2019 captures often disagree with
+                // the live page anyway.
+                foreach(string refreshSlug in new[] { importState.MobyGameId, slug, $"-{slug}" }
+                            .Where(s => !string.IsNullOrWhiteSpace(s))
+                            .Distinct(StringComparer.Ordinal))
+                {
+                    var existingRows = await _sourceDb.GetRowsForGameAsync(refreshSlug);
+                    var existingMain = existingRows.FirstOrDefault(r => r.Chunk == 0);
+
+                    if(existingMain is null) continue;
+
+                    if(TabDetector.DetectWithLayout(existingMain.Body).Layout != MobyLayout.Old) continue;
+
+                    Console.Write(" refreshing DLC cache to new layout...");
+
+                    try
+                    {
+                        string url      = $"https://www.mobygames.com/game/{numericId}/{slug}/";
+                        string liveBody = await _httpClient.FetchPageAsync(url);
+
+                        if(!string.IsNullOrWhiteSpace(liveBody))
+                        {
+                            await _sourceDb.DeleteAllChunksAsync(refreshSlug);
+                            await _sourceDb.InsertRowAsync(slug, 0, liveBody);
+                        }
+                        else
+                        {
+                            Console.Write(" (live fetch returned empty, keeping stale cache)");
+                        }
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.Write($" (refresh failed: {ex.Message}, keeping stale cache)");
+                    }
+
+                    break;
+                }
+
                 int?   baseGameMobyId = null;
                 string baseGameSlug   = null;
                 bool   fromCache      = false;

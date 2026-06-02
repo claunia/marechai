@@ -578,6 +578,15 @@ public static partial class MainTabParser
 
         if(string.IsNullOrWhiteSpace(html)) return (slugs, unresolvable);
 
+        // GATE: legacy compilation pages introduce the contents list with a natural-language
+        // preamble in the Description section. Without one of these phrases, the chunk's
+        // <li><a href="/game/..."> items are almost certainly sidebar / related-games / DLC
+        // lists rather than compilation members. Mis-parsing those caused base games like
+        // Assassin's Creed IV: Black Flag and The Last of Us: Remastered to be treated as
+        // compilations containing 100+ unrelated add-ons. Mirror the new-layout strictness
+        // (which requires a literal <b>This Compilation Includes</b> sidebar label).
+        if(!HasLegacyCompilationPreamble(html)) return (slugs, unresolvable);
+
         var htmlDoc = new HtmlDocument();
         htmlDoc.LoadHtml($"<div>{html}</div>");
 
@@ -667,4 +676,92 @@ public static partial class MainTabParser
     [GeneratedRegex(@"(?:https?://(?:www\.)?mobygames\.com)?/game/([^""?\s#]+)",
                     RegexOptions.IgnoreCase)]
     private static partial Regex GameSlugRegex();
+
+    /// <summary>
+    ///     Detects whether the legacy chunk's Description body actually introduces a
+    ///     compilation contents list. Real compilation pages use one of a small set of
+    ///     stock phrases ("This compilation includes", "the following games are included",
+    ///     "This release includes", "is a compilation that features", etc.). Pages that
+    ///     merely happen to carry a "Compilation" genre row but never enumerate their
+    ///     members (typically Add-on / bundle / package-edition rows mis-tagged by
+    ///     MobyGames editors) do NOT contain any of these phrases. Gating on this avoids
+    ///     hoovering up unrelated /game/ links from sidebars or related-games panels.
+    /// </summary>
+    static bool HasLegacyCompilationPreamble(string html)
+    {
+        if(string.IsNullOrWhiteSpace(html)) return false;
+
+        // Phrase comparison is case-insensitive and ignores intervening &nbsp; / <br> /
+        // <i> / </i> markup. Strip tags + collapse whitespace once, then look for any
+        // known preamble.
+        string text = StripTagsAndCollapseWhitespace(html).ToLowerInvariant();
+
+        foreach(string phrase in CompilationPreamblePhrases)
+            if(text.Contains(phrase, StringComparison.Ordinal))
+                return true;
+
+        return false;
+    }
+
+    static readonly string[] CompilationPreamblePhrases =
+    [
+        "this compilation includes",
+        "this compilation contains",
+        "this compilation features",
+        "this compilation comprises",
+        "this release includes",
+        "this release contains",
+        "this release features",
+        "this bundle includes",
+        "this bundle contains",
+        "this collection includes",
+        "this collection contains",
+        "this collection features",
+        "this pack includes",
+        "this pack contains",
+        "this package includes",
+        "this package contains",
+        "the following games are included",
+        "the following titles are included",
+        "is a compilation that features",
+        "is a compilation that includes",
+        "is a compilation that contains",
+        "is a compilation of",
+        "is a collection that features",
+        "is a collection that includes",
+        "is a collection of",
+        "is a bundle that includes",
+        "is a bundle that contains",
+        "is a bundle of"
+    ];
+
+    static string StripTagsAndCollapseWhitespace(string html)
+    {
+        var sb       = new System.Text.StringBuilder(html.Length);
+        bool inTag   = false;
+        bool lastWs  = false;
+
+        foreach(char c in html)
+        {
+            if(c == '<') { inTag = true; continue; }
+            if(c == '>') { inTag = false; continue; }
+            if(inTag) continue;
+
+            if(char.IsWhiteSpace(c) || c == '\u00A0')
+            {
+                if(!lastWs && sb.Length > 0)
+                {
+                    sb.Append(' ');
+                    lastWs = true;
+                }
+
+                continue;
+            }
+
+            sb.Append(c);
+            lastWs = false;
+        }
+
+        return sb.ToString();
+    }
 }
