@@ -358,6 +358,10 @@
         <value>Registrazione musicale</value>
         <comment>Music Recording</comment>
     </data>
+    <data name="Consultant" xml:space="preserve">
+        <value>Consulente</value>
+        <comment>Consultant</comment>
+    </data>
     <data name="Release date" xml:space="preserve">
         <value>Data di pubblicazione</value>
         <comment>Release date</comment>

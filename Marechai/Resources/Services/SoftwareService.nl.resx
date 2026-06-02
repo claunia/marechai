@@ -1585,6 +1585,9 @@
     <data name="Music Recording" xml:space="preserve">
         <value>Muziekopname</value>
     </data>
+    <data name="Consultant" xml:space="preserve">
+        <value>Consultant</value>
+    </data>
     <data name="Software Duplicates" xml:space="preserve">
         <value>Software-duplicaten</value>
     </data>

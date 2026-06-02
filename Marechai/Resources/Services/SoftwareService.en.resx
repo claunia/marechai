@@ -295,6 +295,9 @@
     <data name="Music Recording" xml:space="preserve">
         <value>Music Recording</value>
     </data>
+    <data name="Consultant" xml:space="preserve">
+        <value>Consultant</value>
+    </data>
     <data name="Release date" xml:space="preserve">
         <value>Release date</value>
     </data>

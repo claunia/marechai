@@ -1823,6 +1823,7 @@ public class ImportService
         "Package Design by"        => "pkg",
         "Voice Recording by"       => "vrc",
         "Music Recording by"       => "mrc",
+        "Consulted by"             => "cns",
         "Game Engine by"           => "eng",
         "Graphic Engine by"        => "eng",
         "Sound Engine by"          => "eng",
