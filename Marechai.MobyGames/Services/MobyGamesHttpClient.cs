@@ -452,7 +452,7 @@ public sealed partial class MobyGamesHttpClient : IDisposable
 
         if(needle.Length == 0) return null;
 
-        var needleTokens = new HashSet<string>(needle.Split(' ', StringSplitOptions.RemoveEmptyEntries));
+        var needleTokens = TokeniseAndFilterStopWords(needle);
 
         if(needleTokens.Count == 0) return null;
 
@@ -461,7 +461,10 @@ public sealed partial class MobyGamesHttpClient : IDisposable
         // comparison (vs substring) is required because MobyGames editors often reorder a
         // title's words (e.g. our DB has "Rock Band: 'Godzilla' - Blue Öyster Cult" while the
         // live title is "Rock Band: Blue Öyster Cult - 'Godzilla'" — same words, different
-        // order, never substrings of each other).
+        // order, never substrings of each other). Connector words ("by", "ft", "feat", "the",
+        // "a", "an", "of", "vs", "and") are stripped on both sides because MobyGames editors
+        // often replace them with dashes / drop them (e.g. our DB has "'American Girl' by
+        // Bonnie McKee" while the live title is "Bonnie McKee - American Girl").
         var matches = System.Text.RegularExpressions.Regex.Matches(
             html,
             @"<b>\s*<a[^>]+href=""(?:https?://www\.mobygames\.com)?/game/(\d+)/[^""]*""[^>]*>([^<]+)</a>\s*</b>",
@@ -476,13 +479,30 @@ public sealed partial class MobyGamesHttpClient : IDisposable
 
             if(hay.Length == 0) continue;
 
-            var hayTokens = new HashSet<string>(hay.Split(' ', StringSplitOptions.RemoveEmptyEntries));
+            var hayTokens = TokeniseAndFilterStopWords(hay);
 
             if(hayTokens.IsSupersetOf(needleTokens)) return id;
         }
 
         return null;
     }
+
+    static readonly HashSet<string> TitleStopWords = new(StringComparer.Ordinal)
+    {
+        "a", "an", "the", "of", "by", "and", "vs", "ft", "feat", "featuring", "with", "from"
+    };
+
+    static HashSet<string> TokeniseAndFilterStopWords(string normalised)
+    {
+        var tokens = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach(string t in normalised.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+            if(!TitleStopWords.Contains(t))
+                tokens.Add(t);
+
+        return tokens;
+    }
+
 
     /// <summary>
     ///     Lowercase, drop non-alphanumeric ASCII, collapse runs of whitespace. Used by the
