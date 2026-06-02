@@ -1315,6 +1315,30 @@
   <data name="{0} screenshot(s) uploaded successfully." xml:space="preserve">
     <value>{0} Screenshot(s) erfolgreich hochgeladen.</value>
   </data>
+  <data name="Master" xml:space="preserve">
+    <value>Hauptdatensatz</value>
+  </data>
+  <data name="Mark this entry as the master for this duplicate group" xml:space="preserve">
+    <value>Diesen Eintrag als Hauptdatensatz dieser Duplikatgruppe markieren</value>
+  </data>
+  <data name="Select a master entry in this group first" xml:space="preserve">
+    <value>Wählen Sie zuerst einen Hauptdatensatz in dieser Gruppe aus</value>
+  </data>
+  <data name="This entry is the selected master" xml:space="preserve">
+    <value>Dieser Eintrag ist der ausgewählte Hauptdatensatz</value>
+  </data>
+  <data name="Merge this entry into the selected master" xml:space="preserve">
+    <value>Diesen Eintrag in den ausgewählten Hauptdatensatz zusammenführen</value>
+  </data>
+  <data name="Merge into other…" xml:space="preserve">
+    <value>Mit anderem zusammenführen…</value>
+  </data>
+  <data name="Pre-selected master from duplicate group." xml:space="preserve">
+    <value>Vorausgewählter Hauptdatensatz aus Duplikatgruppe.</value>
+  </data>
+  <data name="Change…" xml:space="preserve">
+    <value>Ändern…</value>
+  </data>
 
 
 </root>

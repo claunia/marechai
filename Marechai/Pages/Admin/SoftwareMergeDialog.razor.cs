@@ -50,7 +50,41 @@ public partial class SoftwareMergeDialog
     [Parameter] public int    SourceId   { get; set; }
     [Parameter] public string SourceName { get; set; } = string.Empty;
 
+    /// <summary>
+    /// Optional pre-selected target software id. When set (together with
+    /// <see cref="TargetName"/>), the dialog opens with the autocomplete locked
+    /// to that target and loads the preview immediately. Used by the
+    /// /admin/software/duplicates page's "Merge into master" quick action.
+    /// </summary>
+    [Parameter] public int? TargetId { get; set; }
+
+    /// <summary>Display name for <see cref="TargetId"/>.</summary>
+    [Parameter] public string TargetName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// When true the target autocomplete is locked to the pre-selected target.
+    /// Clicking the "Change…" link clears this so the admin can pick any other
+    /// target via the autocomplete instead.
+    /// </summary>
+    bool _targetLocked;
+
     [Inject] SoftwareService SoftwareService { get; set; } = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if(TargetId is not int targetId || targetId == 0 || targetId == SourceId) return;
+
+        _selectedTarget = new SoftwareDto
+        {
+            Id   = targetId,
+            Name = TargetName ?? string.Empty
+        };
+
+        _previousTarget = _selectedTarget;
+        _targetLocked   = true;
+
+        await LoadPreview();
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -69,6 +103,20 @@ public partial class SoftwareMergeDialog
             _releaseTitle   = null;
             StateHasChanged();
         }
+    }
+
+    /// <summary>
+    /// Unlocks the target autocomplete so the admin can pick a different target
+    /// than the one originally passed in via <see cref="TargetId"/>.
+    /// </summary>
+    void UnlockTarget()
+    {
+        _targetLocked   = false;
+        _selectedTarget = null;
+        _previousTarget = null;
+        _preview        = null;
+        _errorMessage   = null;
+        _releaseTitle   = null;
     }
 
     async Task<IEnumerable<SoftwareDto>> SearchSoftware(string value, CancellationToken ct)

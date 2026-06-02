@@ -1315,6 +1315,30 @@
   <data name="{0} screenshot(s) uploaded successfully." xml:space="preserve">
     <value>{0} capture(s) d'écran téléversée(s) avec succès.</value>
   </data>
+  <data name="Master" xml:space="preserve">
+    <value>Maître</value>
+  </data>
+  <data name="Mark this entry as the master for this duplicate group" xml:space="preserve">
+    <value>Marquer cette entrée comme maître de ce groupe de doublons</value>
+  </data>
+  <data name="Select a master entry in this group first" xml:space="preserve">
+    <value>Sélectionnez d'abord une entrée maître dans ce groupe</value>
+  </data>
+  <data name="This entry is the selected master" xml:space="preserve">
+    <value>Cette entrée est le maître sélectionné</value>
+  </data>
+  <data name="Merge this entry into the selected master" xml:space="preserve">
+    <value>Fusionner cette entrée dans le maître sélectionné</value>
+  </data>
+  <data name="Merge into other…" xml:space="preserve">
+    <value>Fusionner dans une autre…</value>
+  </data>
+  <data name="Pre-selected master from duplicate group." xml:space="preserve">
+    <value>Maître présélectionné du groupe de doublons.</value>
+  </data>
+  <data name="Change…" xml:space="preserve">
+    <value>Modifier…</value>
+  </data>
 
 
 </root>

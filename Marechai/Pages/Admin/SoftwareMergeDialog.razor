@@ -17,10 +17,19 @@
                          SearchFunc="SearchSoftware"
                          ToStringFunc="@(s => s?.Name ?? string.Empty)"
                          Variant="Variant.Outlined"
-                         Clearable="true"
+                         Clearable="@(!_targetLocked)"
+                         Disabled="_targetLocked"
                          DebounceInterval="300"
                          MinCharacters="2"
-                         Class="mb-4"/>
+                         Class="mb-2"/>
+
+        @if(_targetLocked)
+        {
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-4">
+                <MudText Typo="Typo.caption" Color="Color.Secondary">@L["Pre-selected master from duplicate group."]</MudText>
+                <MudLink OnClick="UnlockTarget" Typo="Typo.caption">@L["Change…"]</MudLink>
+            </MudStack>
+        }
 
         @if(_selectedTarget is not null && _selectedTarget.Id == SourceId)
         {

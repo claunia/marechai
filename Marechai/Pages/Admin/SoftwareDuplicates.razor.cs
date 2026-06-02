@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
@@ -27,6 +29,31 @@ public partial class SoftwareDuplicates
     string _successMessage;
 
     MudDataGrid<SoftwareDuplicateGroupDto> _dataGrid;
+
+    /// <summary>
+    /// Per-group master selection, keyed by <see cref="SoftwareDuplicateGroupDto.NormalizedName"/>.
+    /// The "Merge into master" action on each non-master row uses this id as the merge target.
+    /// Selection is in-memory only — it survives grid pagination/filter reloads as long as the
+    /// component instance lives, but is lost on navigation away from the page.
+    /// </summary>
+    readonly Dictionary<string, int> _masterByGroup = new(StringComparer.Ordinal);
+
+    void SetMaster(SoftwareDuplicateGroupDto group, int itemId)
+    {
+        if(group?.NormalizedName is null) return;
+
+        _masterByGroup[group.NormalizedName] = itemId;
+    }
+
+    int? GetMaster(SoftwareDuplicateGroupDto group)
+    {
+        if(group?.NormalizedName is null) return null;
+
+        return _masterByGroup.TryGetValue(group.NormalizedName, out int id) ? id : null;
+    }
+
+    bool IsMaster(SoftwareDuplicateGroupDto group, SoftwareDuplicateItemDto item) =>
+        GetMaster(group) is { } masterId && item.Id is { } itemId && masterId == itemId;
 
     async Task<GridData<SoftwareDuplicateGroupDto>> ServerReload(
         GridState<SoftwareDuplicateGroupDto> state,
@@ -85,6 +112,45 @@ public partial class SoftwareDuplicates
         {
             { x => x.SourceId,   (int)(item.Id ?? 0) },
             { x => x.SourceName, item.Name }
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<SoftwareMergeDialog>(
+                                      L["Merge Software"], parameters,
+                                      new DialogOptions
+                                      {
+                                          MaxWidth  = MaxWidth.Medium,
+                                          FullWidth = true
+                                      });
+
+        DialogResult result = await dialog.Result;
+
+        if(result is { Canceled: false })
+        {
+            _successMessage = string.Format(L["Software '{0}' merged successfully."], item.Name);
+            await _dataGrid.ReloadServerData();
+        }
+    }
+
+    /// <summary>
+    /// Quick-merge path used by the "Merge into master" action: opens the merge dialog
+    /// with the group's selected master pre-filled as the target. The admin still reviews
+    /// the preview and confirms — only the autocomplete step is skipped.
+    /// </summary>
+    async Task OpenMergeIntoMasterDialog(SoftwareDuplicateGroupDto group, SoftwareDuplicateItemDto item)
+    {
+        if(GetMaster(group) is not { } masterId) return;
+        if(item.Id == masterId) return;
+
+        SoftwareDuplicateItemDto master = group.Items?.FirstOrDefault(i => i.Id == masterId);
+
+        if(master is null) return;
+
+        DialogParameters<SoftwareMergeDialog> parameters = new()
+        {
+            { x => x.SourceId,   item.Id ?? 0 },
+            { x => x.SourceName, item.Name },
+            { x => x.TargetId,   masterId },
+            { x => x.TargetName, master.Name }
         };
 
         IDialogReference dialog = await DialogService.ShowAsync<SoftwareMergeDialog>(

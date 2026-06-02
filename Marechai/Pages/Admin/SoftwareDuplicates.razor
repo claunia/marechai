@@ -74,6 +74,7 @@
                 <MudSimpleTable Dense="true" Hover="true" Striped="true" Bordered="false">
                     <thead>
                         <tr>
+                            <th style="width: 1%;">@L["Master"]</th>
                             <th>@L["Name"]</th>
                             <th>@L["Kind"]</th>
                             <th>@L["Earliest release"]</th>
@@ -85,8 +86,31 @@
                     <tbody>
                         @foreach(SoftwareDuplicateItemDto item in context.Item.Items ?? new List<SoftwareDuplicateItemDto>())
                         {
-                            <tr>
-                                <td>@item.Name</td>
+                            bool   isMaster        = IsMaster(context.Item, item);
+                            bool   hasMaster       = GetMaster(context.Item).HasValue;
+                            string rowStyle        = isMaster ? "background-color: rgba(76, 175, 80, 0.12);" : null;
+                            string mergeTooltip    = isMaster
+                                                         ? L["This entry is the selected master"]
+                                                         : !hasMaster
+                                                             ? L["Select a master entry in this group first"]
+                                                             : L["Merge this entry into the selected master"];
+
+                            <tr style="@rowStyle">
+                                <td style="text-align: center;">
+                                    <MudTooltip Text="@L["Mark this entry as the master for this duplicate group"]">
+                                        <MudIconButton Icon="@(isMaster ? Icons.Material.Filled.RadioButtonChecked : Icons.Material.Filled.RadioButtonUnchecked)"
+                                                       Color="@(isMaster ? Color.Success : Color.Default)"
+                                                       Size="Size.Small"
+                                                       OnClick="@(() => SetMaster(context.Item, item.Id ?? 0))"/>
+                                    </MudTooltip>
+                                </td>
+                                <td>
+                                    @item.Name
+                                    @if(isMaster)
+                                    {
+                                        <MudChip T="string" Color="Color.Success" Size="Size.Small" Class="ml-2">@L["Master"]</MudChip>
+                                    }
+                                </td>
                                 <td>@KindLabel((SoftwareKind?)item.Kind)</td>
                                 <td>@(item.EarliestReleaseYear?.ToString() ?? "—")</td>
                                 <td>@item.ReleasesCount</td>
@@ -96,9 +120,16 @@
                                         <MudIconButton Icon="@Icons.Material.Filled.OpenInNew" Size="Size.Small"
                                                        Href="@($"/software/{item.Id}")" Target="_blank"/>
                                     </MudTooltip>
-                                    <MudTooltip Text="@L["Merge"]">
-                                        <MudIconButton Icon="@Icons.Material.Filled.MergeType" Size="Size.Small"
-                                                       Color="Color.Warning"
+                                    <MudTooltip Text="@mergeTooltip">
+                                        <span>
+                                            <MudIconButton Icon="@Icons.Material.Filled.MergeType" Size="Size.Small"
+                                                           Color="Color.Warning"
+                                                           Disabled="@(isMaster || !hasMaster)"
+                                                           OnClick="() => OpenMergeIntoMasterDialog(context.Item, item)"/>
+                                        </span>
+                                    </MudTooltip>
+                                    <MudTooltip Text="@L["Merge into other…"]">
+                                        <MudIconButton Icon="@Icons.Material.Filled.CallSplit" Size="Size.Small"
                                                        OnClick="() => OpenMergeDialog(item)"/>
                                     </MudTooltip>
                                 </td>

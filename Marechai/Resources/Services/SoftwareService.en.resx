@@ -1183,6 +1183,30 @@
   <data name="All uploads will be linked to version {0}." xml:space="preserve">
     <value>All uploads will be linked to version {0}.</value>
   </data>
+  <data name="Master" xml:space="preserve">
+    <value>Master</value>
+  </data>
+  <data name="Mark this entry as the master for this duplicate group" xml:space="preserve">
+    <value>Mark this entry as the master for this duplicate group</value>
+  </data>
+  <data name="Select a master entry in this group first" xml:space="preserve">
+    <value>Select a master entry in this group first</value>
+  </data>
+  <data name="This entry is the selected master" xml:space="preserve">
+    <value>This entry is the selected master</value>
+  </data>
+  <data name="Merge this entry into the selected master" xml:space="preserve">
+    <value>Merge this entry into the selected master</value>
+  </data>
+  <data name="Merge into other…" xml:space="preserve">
+    <value>Merge into other…</value>
+  </data>
+  <data name="Pre-selected master from duplicate group." xml:space="preserve">
+    <value>Pre-selected master from duplicate group.</value>
+  </data>
+  <data name="Change…" xml:space="preserve">
+    <value>Change…</value>
+  </data>
 
 
 </root>

@@ -1269,6 +1269,30 @@
   <data name="{0} screenshot(s) uploaded successfully." xml:space="preserve">
     <value>{0} captura(s) de pantalla subida(s) correctamente.</value>
   </data>
+  <data name="Master" xml:space="preserve">
+    <value>Maestro</value>
+  </data>
+  <data name="Mark this entry as the master for this duplicate group" xml:space="preserve">
+    <value>Marcar esta entrada como maestra de este grupo de duplicados</value>
+  </data>
+  <data name="Select a master entry in this group first" xml:space="preserve">
+    <value>Primero selecciona una entrada maestra en este grupo</value>
+  </data>
+  <data name="This entry is the selected master" xml:space="preserve">
+    <value>Esta entrada es la maestra seleccionada</value>
+  </data>
+  <data name="Merge this entry into the selected master" xml:space="preserve">
+    <value>Fusionar esta entrada con la maestra seleccionada</value>
+  </data>
+  <data name="Merge into other…" xml:space="preserve">
+    <value>Fusionar con otra…</value>
+  </data>
+  <data name="Pre-selected master from duplicate group." xml:space="preserve">
+    <value>Maestra preseleccionada del grupo de duplicados.</value>
+  </data>
+  <data name="Change…" xml:space="preserve">
+    <value>Cambiar…</value>
+  </data>
 
 
 </root>
