@@ -61,6 +61,21 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     const           string   MARECHAI_RANKING_CACHE_KEY = "marechai:ranking";
     static readonly TimeSpan _marechaiRankingTtl        = TimeSpan.FromMinutes(5);
 
+    // ── Marechai score fairness knobs ────────────────────────────────────────
+    // A software qualifies for the ranking only if it has at least this many
+    // critic reviews OR this many user ratings. Below the threshold the item
+    // is excluded from both the Top-N rankings page and the detail page's
+    // rank/score (it falls back to MarechaiScore = null, Rank = null).
+    const int MARECHAI_RANKING_MIN_CRITIC_COUNT = 3;
+    const int MARECHAI_RANKING_MIN_USER_COUNT   = 1;
+
+    // Bayesian shrinkage priors (IMDb-style weighted rating). A higher prior
+    // means low-vote averages are pulled harder toward the catalog mean,
+    // damping single-vote spikes. Tuned per side because critic and user
+    // count distributions differ.
+    const int MARECHAI_RANKING_CRITIC_PRIOR = 5;
+    const int MARECHAI_RANKING_USER_PRIOR   = 10;
+
     // Cache keys + TTL for the /software landing-page catalog endpoints.
     // These query the *whole* catalog (all genres, all platforms, all spec
     // values, year range) and barely change between requests, so a short
@@ -3278,28 +3293,21 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
         // User score: average of Rating (0-5), scaled to 0-10
         double? userScore = userAvg.HasValue ? Math.Round(userAvg.Value * 2.0, 1) : null;
 
-        // Marechai score: average of available components
+        // Marechai score + rank: read from the cached global ranking snapshot. The
+        // snapshot already applies the fairness threshold (>= MIN_CRITIC_COUNT
+        // critics OR >= MIN_USER_COUNT users) and per-side Bayesian shrinkage, so
+        // items below the threshold or with no aggregated signal at all are simply
+        // absent from the dictionary and surface as MarechaiScore = null / Rank = null.
+        MarechaiRankingSnapshot snapshot = await GetMarechaiRankingAsync();
+
         double? marechaiScore = null;
+        int?    rank          = null;
+        int     totalRanked   = snapshot.Ranking.Count;
 
-        if(criticScore.HasValue && userScore.HasValue)
-            marechaiScore = Math.Round((criticScore.Value + userScore.Value) / 2.0, 1);
-        else if(criticScore.HasValue)
-            marechaiScore = criticScore.Value;
-        else if(userScore.HasValue)
-            marechaiScore = userScore.Value;
-
-        // Rank — looked up from a 5-minute cached dictionary so we don't
-        // re-rank the entire catalog on every page load.
-        int?  rank        = null;
-        int   totalRanked = 0;
-
-        if(marechaiScore.HasValue)
+        if(snapshot.Ranking.TryGetValue(id, out (int Rank, double Score) entry))
         {
-            Dictionary<ulong, int> ranking = await GetMarechaiRankingAsync();
-
-            totalRanked = ranking.Count;
-
-            if(ranking.TryGetValue(id, out int found)) rank = found;
+            marechaiScore = Math.Round(entry.Score, 1);
+            rank          = entry.Rank;
         }
 
         return new MarechaiScoreDto
@@ -3313,13 +3321,74 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     }
 
     /// <summary>
-    /// Returns a software-id → rank dictionary spanning every software with at least
-    /// one critic review or user rating. Cached for <see cref="_marechaiRankingTtl"/>
-    /// so we don't re-rank the entire catalog on every page load.
+    /// In-memory snapshot of the global Marechai ranking. The dictionary holds the
+    /// rank position and the (unrounded) Bayesian-shrunken score keyed by software id
+    /// for every qualifying software (see <see cref="MARECHAI_RANKING_MIN_CRITIC_COUNT"/>
+    /// and <see cref="MARECHAI_RANKING_MIN_USER_COUNT"/>). The catalog-wide critic and
+    /// user means (both on the 0–10 scale) are carried alongside so that
+    /// <see cref="GetRankingsAsync"/> can re-score filtered candidates using the same
+    /// priors — guaranteeing the score shown on the rankings list matches what the
+    /// detail page shows for the same software.
     /// </summary>
-    async Task<Dictionary<ulong, int>> GetMarechaiRankingAsync()
+    sealed record MarechaiRankingSnapshot(
+        Dictionary<ulong, (int Rank, double Score)> Ranking,
+        double CriticMean10,
+        double UserMean10);
+
+    /// <summary>
+    /// Per-side Bayesian shrinkage (IMDb-style weighted rating) followed by an unweighted
+    /// average of the two shrunken sides. Returns null when the item fails the minimum-
+    /// evidence threshold. Inputs are the raw averages on their native scales
+    /// (critic 0–100, user 0–5) plus the catalog-wide means already on the 0–10 scale.
+    /// </summary>
+    static double? ComputeMarechaiScore(double? criticAvg100,
+                                        int     criticCount,
+                                        double? userAvg5,
+                                        int     userCount,
+                                        double  catalogCriticMean10,
+                                        double  catalogUserMean10)
     {
-        if(cache.TryGetValue(MARECHAI_RANKING_CACHE_KEY, out Dictionary<ulong, int> cached) && cached is not null)
+        bool hasCritic = criticAvg100.HasValue && criticCount >= MARECHAI_RANKING_MIN_CRITIC_COUNT;
+        bool hasUser   = userAvg5.HasValue && userCount >= MARECHAI_RANKING_MIN_USER_COUNT;
+
+        if(!hasCritic && !hasUser) return null;
+
+        double? shrunkCritic = null;
+        double? shrunkUser   = null;
+
+        if(hasCritic)
+        {
+            double r10 = criticAvg100!.Value / 10.0;
+
+            shrunkCritic = (criticCount * r10 + MARECHAI_RANKING_CRITIC_PRIOR * catalogCriticMean10) /
+                           (criticCount + MARECHAI_RANKING_CRITIC_PRIOR);
+        }
+
+        if(hasUser)
+        {
+            double r10 = userAvg5!.Value * 2.0;
+
+            shrunkUser = (userCount * r10 + MARECHAI_RANKING_USER_PRIOR * catalogUserMean10) /
+                         (userCount + MARECHAI_RANKING_USER_PRIOR);
+        }
+
+        if(shrunkCritic.HasValue && shrunkUser.HasValue)
+            return (shrunkCritic.Value + shrunkUser.Value) / 2.0;
+
+        return shrunkCritic ?? shrunkUser!.Value;
+    }
+
+    /// <summary>
+    /// Returns the cached snapshot of the global Marechai ranking. The ranking includes
+    /// every software with at least <see cref="MARECHAI_RANKING_MIN_CRITIC_COUNT"/> critic
+    /// reviews OR <see cref="MARECHAI_RANKING_MIN_USER_COUNT"/> user ratings. Scores use
+    /// per-side Bayesian shrinkage so low-evidence items don't outrank well-reviewed ones.
+    /// Cached for <see cref="_marechaiRankingTtl"/> so we don't re-rank the entire catalog
+    /// on every page load.
+    /// </summary>
+    async Task<MarechaiRankingSnapshot> GetMarechaiRankingAsync()
+    {
+        if(cache.TryGetValue(MARECHAI_RANKING_CACHE_KEY, out MarechaiRankingSnapshot cached) && cached is not null)
             return cached;
 
         var allScores = await context.Softwares
@@ -3330,37 +3399,47 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                                                        .Where(r => r.NormalizedScore != null)
                                                        .Select(r => (double?)r.NormalizedScore)
                                                        .Average(),
-                                          UserAvg = s.UserRatings
-                                                     .Select(r => (double?)r.Rating)
-                                                     .Average()
+                                          UserAvg = s.UserRatings.Select(r => (double?)r.Rating).Average(),
+                                          CriticCount = s.CriticReviews.Count(r => r.NormalizedScore != null),
+                                          UserCount   = s.UserRatings.Count
                                       })
-                                     .Where(s => s.CriticAvg != null || s.UserAvg != null)
+                                     .Where(s => s.CriticCount >= MARECHAI_RANKING_MIN_CRITIC_COUNT ||
+                                                 s.UserCount   >= MARECHAI_RANKING_MIN_USER_COUNT)
                                      .ToListAsync();
 
-        var ranking = allScores.Select(s =>
-                              {
-                                  double? c = s.CriticAvg.HasValue ? s.CriticAvg.Value / 10.0 : null;
-                                  double? u = s.UserAvg.HasValue ? s.UserAvg.Value * 2.0 : null;
+        // Catalog-wide means on the 0-10 scale, computed over the same set that is
+        // eligible for the ranking. These are the priors for the Bayesian shrinkage —
+        // any item with few votes gets pulled toward these means.
+        var criticItems = allScores.Where(s => s.CriticAvg.HasValue).ToList();
+        var userItems   = allScores.Where(s => s.UserAvg.HasValue).ToList();
 
-                                  double score;
+        double catalogCriticMean10 = criticItems.Count > 0 ? criticItems.Average(s => s.CriticAvg!.Value) / 10.0 : 7.0;
+        double catalogUserMean10   = userItems.Count > 0 ? userItems.Average(s => s.UserAvg!.Value) * 2.0 : 7.0;
 
-                                  if(c.HasValue && u.HasValue)
-                                      score = (c.Value + u.Value) / 2.0;
-                                  else if(c.HasValue)
-                                      score = c.Value;
-                                  else
-                                      score = u!.Value;
+        var ranking = allScores.Select(s => new
+                               {
+                                   s.Id,
+                                   s.CriticCount,
+                                   s.UserCount,
+                                   Score = ComputeMarechaiScore(s.CriticAvg,
+                                                                s.CriticCount,
+                                                                s.UserAvg,
+                                                                s.UserCount,
+                                                                catalogCriticMean10,
+                                                                catalogUserMean10)
+                               })
+                               .Where(s => s.Score.HasValue)
+                               .OrderByDescending(s => s.Score!.Value)
+                               .ThenByDescending(s => s.CriticCount + s.UserCount)
+                               .ThenBy(s => s.Id)
+                               .Select((s, i) => new { s.Id, Rank = i + 1, Score = s.Score!.Value })
+                               .ToDictionary(x => x.Id, x => (x.Rank, x.Score));
 
-                                  return new { s.Id, Score = Math.Round(score, 1) };
-                              })
-                              .OrderByDescending(s => s.Score)
-                              .ThenBy(s => s.Id)
-                              .Select((s, i) => new { s.Id, Rank = i + 1 })
-                              .ToDictionary(x => x.Id, x => x.Rank);
+        var snapshot = new MarechaiRankingSnapshot(ranking, catalogCriticMean10, catalogUserMean10);
 
-        cache.Set(MARECHAI_RANKING_CACHE_KEY, ranking, _marechaiRankingTtl);
+        cache.Set(MARECHAI_RANKING_CACHE_KEY, snapshot, _marechaiRankingTtl);
 
-        return ranking;
+        return snapshot;
     }
 
     /// <summary>
@@ -3389,10 +3468,13 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
         if(cache.TryGetValue(cacheKey, out List<SoftwareRankingDto> cached) && cached is not null) return cached;
 
         // Predicate mirrors GetMarechaiRankingAsync(): a software qualifies if it has at
-        // least one critic review or one user rating. Compilations are excluded — they
+        // least MARECHAI_RANKING_MIN_CRITIC_COUNT critic reviews OR
+        // MARECHAI_RANKING_MIN_USER_COUNT user ratings. Compilations are excluded — they
         // have their own Id space (SoftwareReleases) and no aggregated rating signal.
         IQueryable<Database.Models.Software> baseQuery =
-            context.Softwares.Where(s => s.UserRatings.Any() || s.CriticReviews.Any());
+            context.Softwares.Where(s => s.UserRatings.Count >= MARECHAI_RANKING_MIN_USER_COUNT ||
+                                         s.CriticReviews.Count(r => r.NormalizedScore != null) >=
+                                         MARECHAI_RANKING_MIN_CRITIC_COUNT);
 
         if(kind.HasValue) baseQuery = baseQuery.Where(s => s.Kind == kind.Value);
 
@@ -3410,7 +3492,8 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
         }
 
         // Pull all candidates with their averages + counts in a single round-trip,
-        // then compute the score in memory (mirrors GetMarechaiRankingAsync arithmetic).
+        // then score them in memory using the SAME priors as the global ranking so the
+        // score shown here matches what the detail page shows for the same software.
         var raw = await baseQuery.Select(s => new
                                   {
                                       s.Id,
@@ -3427,35 +3510,30 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                                   })
                                  .ToListAsync(cancellationToken);
 
-        var ranked = raw.Where(s => s.CriticAvg.HasValue || s.UserAvg.HasValue)
-                        .Select(s =>
+        // Reuse the global catalog means from the cached ranking snapshot so the score
+        // is invariant across filters — only the local rank changes per filter.
+        MarechaiRankingSnapshot snapshot = await GetMarechaiRankingAsync();
+
+        var ranked = raw.Select(s => new
                          {
-                             double? c = s.CriticAvg.HasValue ? s.CriticAvg.Value / 10.0 : null;
-                             double? u = s.UserAvg.HasValue ? s.UserAvg.Value * 2.0 : null;
-
-                             double score;
-
-                             if(c.HasValue && u.HasValue)
-                                 score = (c.Value + u.Value) / 2.0;
-                             else if(c.HasValue)
-                                 score = c.Value;
-                             else
-                                 score = u!.Value;
-
-                             return new
-                             {
-                                 s.Id,
-                                 s.Name,
-                                 s.Kind,
-                                 Family = s.Family?.Name,
-                                 Score   = Math.Round(score, 1),
-                                 Critic  = s.CriticAvg,
-                                 User    = s.UserAvg,
-                                 s.CriticCount,
-                                 s.UserCount
-                             };
+                             s.Id,
+                             s.Name,
+                             s.Kind,
+                             Family = s.Family?.Name,
+                             Score = ComputeMarechaiScore(s.CriticAvg,
+                                                          s.CriticCount,
+                                                          s.UserAvg,
+                                                          s.UserCount,
+                                                          snapshot.CriticMean10,
+                                                          snapshot.UserMean10),
+                             Critic = s.CriticAvg,
+                             User   = s.UserAvg,
+                             s.CriticCount,
+                             s.UserCount
                          })
-                        .OrderByDescending(s => s.Score)
+                        .Where(s => s.Score.HasValue)
+                        .OrderByDescending(s => s.Score!.Value)
+                        .ThenByDescending(s => s.CriticCount + s.UserCount)
                         .ThenBy(s => s.Id)
                         .Take(take)
                         .Select((s, i) => new SoftwareRankingDto
@@ -3465,7 +3543,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                              Name              = s.Name,
                              Kind              = s.Kind,
                              Family            = s.Family,
-                             MarechaiScore     = s.Score,
+                             MarechaiScore     = Math.Round(s.Score!.Value, 1),
                              CriticAverage     = s.Critic,
                              UserStarAverage   = s.User,
                              CriticReviewCount = s.CriticCount,
