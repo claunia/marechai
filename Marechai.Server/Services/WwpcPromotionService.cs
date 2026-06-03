@@ -16,6 +16,7 @@ using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Marechai.Helpers;
 using Marechai.Server.Helpers;
+using Markdig;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -375,7 +376,8 @@ public sealed class WwpcPromotionService
                     {
                         SoftwareId   = targetSoftwareId,
                         LanguageCode = "eng",
-                        Text         = museum
+                        Text         = museum,
+                        Html         = RenderMarkdown(museum)
                     });
                     insertedDescriptions++;
                 }
@@ -446,6 +448,20 @@ public sealed class WwpcPromotionService
         await _db.SaveChangesAsync();
         return true;
     }
+
+    /// <summary>
+    ///     Render the museum-grade markdown to HTML via Markdig with the same advanced-extensions
+    ///     pipeline used by <see cref="SoundSynthDescriptionSuggestionApplier" /> and friends.
+    ///     We populate both <c>SoftwareDescription.Text</c> (raw) and <c>SoftwareDescription.Html</c>
+    ///     (pre-rendered) because the public <c>/software/{id}</c> view reads <c>Html</c> first and
+    ///     falls back to dumping <c>Text</c> straight into a <c>MarkupString</c> — which collapses
+    ///     paragraph breaks because the raw markdown has no <c>&lt;p&gt;</c> tags.
+    /// </summary>
+    static readonly MarkdownPipeline s_markdownPipeline =
+        new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+
+    static string RenderMarkdown(string markdown) =>
+        string.IsNullOrWhiteSpace(markdown) ? string.Empty : Markdown.ToHtml(markdown, s_markdownPipeline);
 
     public static List<int> ParseSuggestedGenreIds(string json)
     {
