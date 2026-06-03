@@ -28,6 +28,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" />
     <PackageReference Include="MetadataExtractor" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" />
+    <PackageReference Include="Magick.NET-Q8-AnyCPU" />
   </ItemGroup>
 
   <ItemGroup>
