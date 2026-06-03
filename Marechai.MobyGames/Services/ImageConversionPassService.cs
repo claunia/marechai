@@ -140,9 +140,33 @@ public static class ImageConversionPassService
         if(!dryRun && pending.Count > 0)
         {
             int degree = parallelism <= 0 ? Environment.ProcessorCount : parallelism;
-            if(degree > pending.Count) degree = pending.Count;
 
-            Console.WriteLine($"    Spinning up {degree} conversion worker(s) for {pending.Count} file(s)...");
+            // Flatten every pending file into its 8 ImageMagick jobs (4 formats \u00d7 1 resolution
+            // \u00d7 thumb/full). The Parallel.ForEach below caps total concurrent IM subprocesses
+            // at `degree`, and each subprocess is pinned to 1 OpenMP thread via
+            // MAGICK_THREAD_LIMIT=1 inside ImageConverter \u2014 so the worker pool is also the CPU pool,
+            // no oversubscription.
+            var queue = new List<(int FileIndex, Guid FileId, ImageConverter.Variant Variant)>(pending.Count * 8);
+            var remainingPerFile = new System.Collections.Concurrent.ConcurrentDictionary<Guid, int>();
+            var failedPerFile    = new System.Collections.Concurrent.ConcurrentDictionary<Guid, int>();
+
+            for(int i = 0; i < pending.Count; i++)
+            {
+                var p = pending[i];
+                int variantCount = 0;
+                foreach(ImageConverter.Variant v in
+                        ImageConverter.EnumerateVariants(p.Id, p.FilePath, p.Extension, itemName))
+                {
+                    queue.Add((i, p.Id, v));
+                    variantCount++;
+                }
+                remainingPerFile[p.Id] = variantCount;
+            }
+
+            if(degree > queue.Count) degree = queue.Count;
+
+            Console.WriteLine($"    Spinning up {degree} ImageMagick worker(s) for {queue.Count} variant(s) "
+                            + $"across {pending.Count} original(s)...");
 
             int total = pending.Count;
             var sw    = System.Diagnostics.Stopwatch.StartNew();
@@ -180,7 +204,6 @@ public static class ImageConversionPassService
                     if(isTty)
                     {
                         Console.Write("\r" + line);
-                        // Pad with spaces if the previous line was longer so old characters don't linger.
                         if(line.Length < lastDrawLen) Console.Write(new string(' ', lastDrawLen - line.Length));
                         lastDrawLen = line.Length;
                         if(finalDraw) Console.WriteLine();
@@ -196,25 +219,40 @@ public static class ImageConversionPassService
                                          isTty ? TimeSpan.FromMilliseconds(500) : TimeSpan.FromSeconds(5));
 
             var po = new ParallelOptions { MaxDegreeOfParallelism = degree };
-            Parallel.ForEach(pending, po, item =>
+            Parallel.ForEach(queue, po, item =>
             {
-                try
+                bool ok;
+                try { ok = ImageConverter.ConvertOne(assetRootPath, item.Variant); }
+                catch
                 {
-                    ImageConverter.ConvertAll(assetRootPath, item.Id, item.FilePath, item.Extension, itemName);
-                    Interlocked.Increment(ref converted);
+                    ok = false;
                 }
-                catch(Exception ex)
+
+                if(!ok)
+                    failedPerFile.AddOrUpdate(item.FileId, 1, (_, n) => n + 1);
+
+                // Decrement the file's remaining-variant counter. When it hits 0, the file is
+                // fully processed \u2014 bump either the converted or failed bucket exactly once per
+                // file so the progress bar stays in originals/sec terms.
+                int left = remainingPerFile.AddOrUpdate(item.FileId, 0, (_, n) => n - 1);
+                if(left == 0)
                 {
-                    Interlocked.Increment(ref failed);
-                    // Failures jump the progress line so the operator sees the error in context.
-                    lock(drawLock)
+                    if(failedPerFile.TryGetValue(item.FileId, out int f) && f > 0)
                     {
-                        if(isTty && lastDrawLen > 0)
+                        Interlocked.Increment(ref failed);
+                        lock(drawLock)
                         {
-                            Console.Write("\r" + new string(' ', lastDrawLen) + "\r");
-                            lastDrawLen = 0;
+                            if(isTty && lastDrawLen > 0)
+                            {
+                                Console.Write("\r" + new string(' ', lastDrawLen) + "\r");
+                                lastDrawLen = 0;
+                            }
+                            Console.WriteLine($"    \e[31mFAILED\e[0m  {item.FileId}  ({f}/{8} variants failed)");
                         }
-                        Console.WriteLine($"    \e[31mFAILED\e[0m  {item.Id} ({item.Extension})  ({ex.Message})");
+                    }
+                    else
+                    {
+                        Interlocked.Increment(ref converted);
                     }
                 }
             });

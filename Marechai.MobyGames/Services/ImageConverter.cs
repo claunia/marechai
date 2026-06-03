@@ -60,36 +60,44 @@ public static class ImageConverter
     public static void ConvertAll(string assetRootPath, Guid id, string originalFilePath, string sourceFormat,
                                   string itemName)
     {
-        string[] formats     = ["JPEG", "WEBP", "AVIF", "JXL"];
-        string[] resolutions = ["4k"];
-
-        List<Task> pool = [];
-
-        foreach(string format in formats)
+        // Sequential walk through every variant. Callers that want concurrency should drive the
+        // flat-queue path directly (see <see cref="EnumerateVariants" /> + <see cref="ConvertOne" />),
+        // which is what <c>ImageConversionPassService</c> does so the whole pass shares a single
+        // <see cref="System.Threading.Tasks.Parallel.ForEach" /> with one ImageMagick subprocess per
+        // CPU core. The old <c>Task.WaitAll</c> shape exploded into 8 IM subprocesses per outer
+        // worker on a multi-file pass which catastrophically oversubscribed CPU.
+        foreach(Variant v in EnumerateVariants(id, originalFilePath, sourceFormat, itemName))
         {
-            foreach(string resolution in resolutions)
-            {
-                string f = format;
-                string r = resolution;
-
-                pool.Add(new Task(() =>
-                {
-                    bool thumbResult = Convert(assetRootPath, id, originalFilePath, sourceFormat, f, r, true, itemName);
-                    bool fullResult  = Convert(assetRootPath, id, originalFilePath, sourceFormat, f, r, false, itemName);
-
-                    if(!thumbResult)
-                        Console.WriteLine($"\e[33m    Warning: {f} {r} thumbnail conversion failed\e[0m");
-
-                    if(!fullResult)
-                        Console.WriteLine($"\e[33m    Warning: {f} {r} full conversion failed\e[0m");
-                }));
-            }
+            if(!ConvertOne(assetRootPath, v))
+                Console.WriteLine($"\e[33m    Warning: {v.OutputFormat} {v.Resolution} {(v.Thumbnail ? "thumbnail" : "full")} conversion failed\e[0m");
         }
-
-        foreach(Task thread in pool) thread.Start();
-
-        Task.WaitAll(pool.ToArray());
     }
+
+    /// <summary>
+    ///     One ImageMagick conversion job for a single (id, format, resolution, thumb/full) tuple.
+    ///     Used as the unit of parallelism by the offline conversion pass so we can size the worker
+    ///     pool to <see cref="Environment.ProcessorCount" /> and pin <c>MAGICK_THREAD_LIMIT=1</c>
+    ///     per process \u2014 N parallel IM subprocesses == N CPU cores, no thread thrash.
+    /// </summary>
+    public readonly record struct Variant(Guid Id, string OriginalPath, string SourceFormat,
+                                          string OutputFormat, string Resolution, bool Thumbnail, string ItemName);
+
+    /// <summary>Expand the canonical output set (4 formats \u00d7 1 resolution \u00d7 thumb/full = 8) for one source file.</summary>
+    public static IEnumerable<Variant> EnumerateVariants(Guid id, string originalFilePath, string sourceFormat,
+                                                         string itemName = DefaultItemName)
+    {
+        foreach((string format, string _) in OutputFormats)
+        foreach(string resolution in OutputResolutions)
+        {
+            yield return new Variant(id, originalFilePath, sourceFormat, format, resolution, true,  itemName);
+            yield return new Variant(id, originalFilePath, sourceFormat, format, resolution, false, itemName);
+        }
+    }
+
+    /// <summary>Run ImageMagick for a single <see cref="Variant" />. Returns <c>true</c> on success.</summary>
+    public static bool ConvertOne(string assetRootPath, Variant v) =>
+        Convert(assetRootPath, v.Id, v.OriginalPath, v.SourceFormat, v.OutputFormat, v.Resolution, v.Thumbnail,
+                v.ItemName);
 
     static bool Convert(string assetRootPath, Guid id, string originalPath, string sourceFormat,
                         string outputFormat,  string resolution, bool thumbnail, string itemName = DefaultItemName)
@@ -123,30 +131,74 @@ public static class ImageConverter
             case "jpeg":
                 outputPath = Path.Combine(outputPath, $"{id}.jpg");
 
-                return ConvertUsingImageMagick(originalPath, outputPath, width, height);
+                return ConvertUsingImageMagick(originalPath, outputPath, width, height, "jpeg", thumbnail);
 
             case "webp":
                 outputPath = Path.Combine(outputPath, $"{id}.webp");
 
-                return ConvertUsingImageMagick(originalPath, outputPath, width, height);
+                return ConvertUsingImageMagick(originalPath, outputPath, width, height, "webp", thumbnail);
 
             case "avif":
                 outputPath = Path.Combine(outputPath, $"{id}.avif");
 
-                return ConvertUsingImageMagick(originalPath, outputPath, width, height);
+                return ConvertUsingImageMagick(originalPath, outputPath, width, height, "avif", thumbnail);
 
             case "jxl":
                 outputPath = Path.Combine(outputPath, $"{id}.jxl");
 
-                return ConvertUsingImageMagick(originalPath, outputPath, width, height);
+                return ConvertUsingImageMagick(originalPath, outputPath, width, height, "jxl", thumbnail);
 
             default:
                 return false;
         }
     }
 
-    static bool ConvertUsingImageMagick(string originalPath, string outputPath, int width, int height)
+    /// <summary>
+    ///     Per-(format, thumbnail) encoder knobs. Tuned for offline batch throughput on multi-core
+    ///     hardware: thumbnails take the fastest preset since they're tiny anyway; full-resolution
+    ///     outputs take a medium-fast preset that still gets reasonable compression. Quality is
+    ///     lowered from the historical default of 80 because most assets here are 4k thumbnails for
+    ///     a catalogue grid view \u2014 70-75 is visually indistinguishable from 80 at typical viewing
+    ///     sizes and saves significant CPU on AVIF/JXL where higher quality means much slower encode.
+    /// </summary>
+    static (int Quality, string DefineKey, string DefineValue) GetEncoderTuning(string format, bool thumbnail)
     {
+        int quality = thumbnail ? 70 : 75;
+
+        return (format, thumbnail) switch
+        {
+            // JPEG has nothing beyond -quality; libjpeg-turbo is already fast.
+            ("jpeg", _)   => (quality, null,           null),
+
+            // libwebp `method`: 0 = fastest, 6 = slowest/best. Default is 4.
+            ("webp", true)  => (quality, "webp:method", "0"),
+            ("webp", false) => (quality, "webp:method", "3"),
+
+            // libheif/x265 `speed`: 1 = slowest/best, 9 = fastest. Default is 4.
+            // Thumbnails go full-speed; full-res uses a moderately fast preset (7).
+            ("avif", true)  => (quality, "heic:speed", "9"),
+            ("avif", false) => (quality, "heic:speed", "7"),
+
+            // libjxl `effort`: 1 = fastest, 9 = slowest/best. Default is 7.
+            // Thumbnails at 1 (lightning), full-res at 4 (decent compression, ~half default CPU).
+            ("jxl", true)  => (quality, "jxl:effort", "1"),
+            ("jxl", false) => (quality, "jxl:effort", "4"),
+
+            _ => (quality, null, null)
+        };
+    }
+
+    static bool ConvertUsingImageMagick(string originalPath, string outputPath, int width, int height,
+                                        string outputFormat, bool thumbnail)
+    {
+        // We deliberately do NOT wrap the spawn in `taskset -c <n>`. Empirically, pinning each
+        // convert to a single CPU cuts AVIF (libheif → x265) throughput by ~4×, which dominates
+        // total wall time. At the parallelism levels we use here the natural x265 thread pool
+        // (~4 cores per AVIF) plus the other 7 single-threaded variants for sibling files
+        // already saturate all available cores cleanly. The CPU ceiling for the full 8-variant
+        // set is roughly `Environment.ProcessorCount / per-file-CPU-cost` originals/sec.
+        (int quality, string defineKey, string defineValue) = GetEncoderTuning(outputFormat, thumbnail);
+
         var convert = new Process
         {
             StartInfo =
@@ -154,19 +206,33 @@ public static class ImageConverter
                 FileName               = "convert",
                 CreateNoWindow         = true,
                 RedirectStandardError  = true,
-                RedirectStandardOutput = true,
-                ArgumentList =
-                {
-                    "-resize",
-                    $"{width}x{height}>",
-                    "-strip",
-                    "-quality",
-                    "80",
-                    originalPath,
-                    outputPath
-                }
+                RedirectStandardOutput = true
             }
         };
+
+        // -limit thread 1 + MAGICK_THREAD_LIMIT=1 keep ImageMagick's own OpenMP core
+        // single-threaded so the only multi-threaded codec is libheif/x265 (AVIF),
+        // which has its own pool we let breathe.
+        convert.StartInfo.ArgumentList.Add("-limit");
+        convert.StartInfo.ArgumentList.Add("thread");
+        convert.StartInfo.ArgumentList.Add("1");
+
+        // Per-encoder speed/effort knob (skip for JPEG).
+        if(defineKey is not null)
+        {
+            convert.StartInfo.ArgumentList.Add("-define");
+            convert.StartInfo.ArgumentList.Add($"{defineKey}={defineValue}");
+        }
+
+        convert.StartInfo.ArgumentList.Add("-resize");
+        convert.StartInfo.ArgumentList.Add($"{width}x{height}>");
+        convert.StartInfo.ArgumentList.Add("-strip");
+        convert.StartInfo.ArgumentList.Add("-quality");
+        convert.StartInfo.ArgumentList.Add(quality.ToString());
+        convert.StartInfo.ArgumentList.Add(originalPath);
+        convert.StartInfo.ArgumentList.Add(outputPath);
+
+        convert.StartInfo.Environment["MAGICK_THREAD_LIMIT"] = "1";
 
         try
         {
