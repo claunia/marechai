@@ -121,6 +121,7 @@ public sealed class WwpcImportsService(Client client, ILogger<WwpcImportsService
 
     public async Task<(AcceptWwpcImportResultDto result, string error)> AcceptAsync(long id, AcceptWwpcImportDto dto)
     {
+        string endpoint = $"POST /wwpc/pending/{id}/accept";
         try
         {
             AcceptWwpcImportResultDto result = await client.Wwpc.Pending[(int)id].Accept.PostAsync(dto);
@@ -128,14 +129,30 @@ public sealed class WwpcImportsService(Client client, ILogger<WwpcImportsService
         }
         catch(ApiException ex)
         {
-            logger.LogWarning(ex, "Server rejected wwpc accept #{Id}", id);
-            return (null, $"HTTP {ex.ResponseStatusCode}");
+            logger.LogWarning(ex, "Server rejected {Endpoint} (status {Status}): {Message}",
+                              endpoint, ex.ResponseStatusCode, ex.Message);
+            return (null, BuildErrorMessage(endpoint, ex));
         }
         catch(System.Exception ex)
         {
-            logger.LogError(ex, "Error accepting wwpc #{Id}", id);
+            logger.LogError(ex, "Error calling {Endpoint}", endpoint);
             return (null, ex.Message);
         }
+    }
+
+    /// <summary>
+    ///     Build a human-readable diagnostic from a Kiota <see cref="ApiException"/>. Includes the HTTP
+    ///     status code plus, when present, a short slice of <c>ex.Message</c> (which usually carries the
+    ///     server's response body) so the admin dialog shows more than just <c>HTTP 404</c>. When the
+    ///     message is empty the endpoint path is appended so it's clear which call failed.
+    /// </summary>
+    static string BuildErrorMessage(string endpoint, ApiException ex)
+    {
+        string status = ex.ResponseStatusCode > 0 ? $"HTTP {ex.ResponseStatusCode}" : "HTTP error";
+        string msg    = ex.Message;
+        if(string.IsNullOrWhiteSpace(msg)) return $"{status} on {endpoint} (no response body)";
+        if(msg.Length > 400) msg = msg.Substring(0, 400) + "…";
+        return $"{status} on {endpoint} — {msg}";
     }
 
     public async Task<bool> SkipAsync(long id)

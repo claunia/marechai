@@ -110,6 +110,7 @@ public sealed class OldDosImportsService(Client client, ILogger<OldDosImportsSer
 
     public async Task<(AcceptOldDosImportResultDto result, string error)> AcceptAsync(long id, AcceptOldDosImportDto dto)
     {
+        string endpoint = $"POST /old-dos/pending/{id}/accept";
         try
         {
             AcceptOldDosImportResultDto result = await client.OldDos.Pending[(int)id].Accept.PostAsync(dto);
@@ -117,14 +118,34 @@ public sealed class OldDosImportsService(Client client, ILogger<OldDosImportsSer
         }
         catch(ApiException ex)
         {
-            logger.LogWarning(ex, "Server rejected old-dos accept #{Id}", id);
-            return (null, $"HTTP {ex.ResponseStatusCode}");
+            // Surface as much detail as Kiota gives us. For non-mapped status codes (anything
+            // other than 400 for this endpoint) ApiException.Message often carries the raw
+            // response body or the Kiota "no factory registered" diagnostic. Logging the
+            // headers too helps trace auth-redirect / WWW-Authenticate / proxy cases.
+            logger.LogWarning(ex, "Server rejected {Endpoint} (status {Status}): {Message}",
+                              endpoint, ex.ResponseStatusCode, ex.Message);
+            return (null, BuildErrorMessage(endpoint, ex));
         }
         catch(System.Exception ex)
         {
-            logger.LogError(ex, "Error accepting old-dos #{Id}", id);
+            logger.LogError(ex, "Error calling {Endpoint}", endpoint);
             return (null, ex.Message);
         }
+    }
+
+    /// <summary>
+    ///     Build a human-readable diagnostic from a Kiota <see cref="ApiException"/>. Includes the HTTP
+    ///     status code plus, when present, a short slice of <c>ex.Message</c> (which usually carries the
+    ///     server's response body) so the admin dialog shows more than just <c>HTTP 404</c>. When the
+    ///     message is empty the endpoint path is appended so it's clear which call failed.
+    /// </summary>
+    static string BuildErrorMessage(string endpoint, ApiException ex)
+    {
+        string status = ex.ResponseStatusCode > 0 ? $"HTTP {ex.ResponseStatusCode}" : "HTTP error";
+        string msg    = ex.Message;
+        if(string.IsNullOrWhiteSpace(msg)) return $"{status} on {endpoint} (no response body)";
+        if(msg.Length > 400) msg = msg.Substring(0, 400) + "…";
+        return $"{status} on {endpoint} — {msg}";
     }
 
     public async Task<bool> SkipAsync(long id)
