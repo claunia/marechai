@@ -61,13 +61,30 @@ public sealed class DescribeEnricher
                            .Take(limit)
                            .ToListAsync();
 
+        Console.WriteLine($"\e[36mDescribe: {rows.Count} Crawled row(s) to process (limit {limit}).\e[0m");
+
         int done = 0;
-        foreach(WwpcSoftware row in rows)
+        for(int idx = 0; idx < rows.Count; idx++)
         {
+            WwpcSoftware row = rows[idx];
             try
             {
-                string wikipedia = _wikipediaEnabled ? await FetchWikipediaSummaryAsync(row.Name) : null;
-                string search    = _searchEnabled    ? await FetchSearchSnippetAsync(row.Name)    : null;
+                Console.WriteLine($"\e[36m[{idx + 1}/{rows.Count}] #{row.Id} {row.Name}\e[0m");
+
+                string wikipedia = null;
+                if(_wikipediaEnabled)
+                {
+                    Console.Write("    wikipedia… ");
+                    wikipedia = await FetchWikipediaSummaryAsync(row.Name);
+                    Console.WriteLine(wikipedia is null ? "(none)" : $"{wikipedia.Length} chars");
+                }
+                string search = null;
+                if(_searchEnabled)
+                {
+                    Console.Write("    search…    ");
+                    search = await FetchSearchSnippetAsync(row.Name);
+                    Console.WriteLine(search is null ? "(none)" : $"{search.Length} chars");
+                }
 
                 string userPrompt = $"""
                     Software name: {row.Name}
@@ -87,19 +104,21 @@ public sealed class DescribeEnricher
                     {search}
                     """;
 
+                Console.Write("    openai…    ");
+                System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
                 row.EnglishDescriptionMuseum       = (await _openAi.CompleteAsync(SystemPrompt, userPrompt))?.Trim();
                 row.MuseumDescriptionPromptVersion = PromptVersion;
                 row.Status                         = WwpcSoftwareStatus.Described;
                 row.LastError                      = null;
                 await db.SaveChangesAsync();
                 done++;
-                Console.WriteLine($"  Described #{row.Id}: {row.Name}");
+                Console.WriteLine($"\e[32m{sw.ElapsedMilliseconds} ms, {row.EnglishDescriptionMuseum?.Length ?? 0} chars → Described\e[0m");
             }
             catch(Exception ex)
             {
                 row.LastError = "describe: " + ex.Message;
                 await db.SaveChangesAsync();
-                Console.WriteLine($"\e[31m  Describe failed #{row.Id}: {ex.Message}\e[0m");
+                Console.WriteLine($"\e[31m    FAILED: {ex.Message}\e[0m");
             }
         }
         return done;

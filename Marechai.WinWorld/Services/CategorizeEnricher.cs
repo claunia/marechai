@@ -70,6 +70,7 @@ public sealed class CategorizeEnricher
                            .Take(limit)
                            .ToListAsync();
 
+        Console.WriteLine($"\e[36mCategorize: {rows.Count} Described row(s) to process (limit {limit}).\e[0m");
         if(rows.Count == 0) return 0;
 
         var categories = await db.SoftwareGenres
@@ -77,14 +78,17 @@ public sealed class CategorizeEnricher
                                  .OrderBy(g => g.Name)
                                  .Select(g => new { g.Id, g.Name })
                                  .ToListAsync();
+        Console.WriteLine($"\e[36m  loaded {categories.Count} category allow-list entries\e[0m");
 
         string allow = string.Join("\n", categories.Select(c => $"  {c.Id} = {c.Name}"));
 
         int done = 0;
-        foreach(WwpcSoftware row in rows)
+        for(int idx = 0; idx < rows.Count; idx++)
         {
+            WwpcSoftware row = rows[idx];
             try
             {
+                Console.WriteLine($"\e[36m[{idx + 1}/{rows.Count}] #{row.Id} {row.Name}\e[0m");
                 string userPrompt = $"""
                     Allow-list (id = name):
                     {allow}
@@ -97,6 +101,8 @@ public sealed class CategorizeEnricher
                     {row.EnglishDescriptionMuseum}
                     """;
 
+                Console.Write("    openai…    ");
+                System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
                 string raw    = await _openAi.CompleteAsync(SystemPrompt, userPrompt, ResponseSchema);
                 List<int> picked = ExtractIds(raw)
                                   .Where(id => categories.Any(c => c.Id == id))
@@ -109,13 +115,13 @@ public sealed class CategorizeEnricher
                 row.LastError             = null;
                 await db.SaveChangesAsync();
                 done++;
-                Console.WriteLine($"  Categorized #{row.Id}: {row.Name} → [{string.Join(", ", picked)}]");
+                Console.WriteLine($"\e[32m{sw.ElapsedMilliseconds} ms → [{string.Join(", ", picked)}] (ReadyForReview)\e[0m");
             }
             catch(Exception ex)
             {
                 row.LastError = "categorize: " + ex.Message;
                 await db.SaveChangesAsync();
-                Console.WriteLine($"\e[31m  Categorize failed #{row.Id}: {ex.Message}\e[0m");
+                Console.WriteLine($"\e[31m    FAILED: {ex.Message}\e[0m");
             }
         }
         return done;
