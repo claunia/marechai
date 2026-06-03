@@ -98,7 +98,11 @@ public partial class WwpcImportReviewDialog
             SizeText                 = v.SizeText,
             DownloadUrl              = v.DownloadUrl,
             LinkToExistingVersionId  = null
-        }).ToList();
+        })
+        // Group by major release (natural sort), then by minor version within each group.
+        // Sorting on the combined override produces the same visual order in the UI table.
+        .OrderBy(v => v.VersionStringOverride, NaturalStringComparer.Instance)
+        .ToList();
 
         _screenshotDecisions = (_detail.Screenshots ?? new List<WwpcScreenshotDto>()).Select(s => new ScreenshotRow
         {

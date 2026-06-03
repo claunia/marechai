@@ -96,7 +96,9 @@ public partial class OldDosImportReviewDialog
             DownloadUrl           = v.DownloadUrl,
             FileName              = v.FileName,
             Platform              = ResolvePlatformByOsHint(v.OsHint)
-        }).ToList();
+        })
+        .OrderBy(v => v.OriginalVersionString, NaturalStringComparer.Instance)
+        .ToList();
 
         // Try to resolve a developer suggestion from existing companies using Jaro-Winkler over
         // the preloaded catalog. Auto-select only on a strong (>0.92) match; otherwise leave
