@@ -261,10 +261,27 @@ public partial class OldDosImportReviewDialog
 
     Task<IEnumerable<SoftwarePlatformDto>> SearchPlatformAsync(string value, CancellationToken ct)
     {
-        IEnumerable<SoftwarePlatformDto> q = _platforms;
-        if(!string.IsNullOrWhiteSpace(value))
-            q = q.Where(p => p.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
-        return Task.FromResult(q.Take(20));
+        // Empty query — show the catalog alphabetically (no Take limit; small list, admin-only).
+        if(string.IsNullOrWhiteSpace(value))
+            return Task.FromResult<IEnumerable<SoftwarePlatformDto>>(
+                _platforms.OrderBy(p => p.Name, StringComparer.OrdinalIgnoreCase));
+
+        string query = value.Trim();
+        // Rank by exact match (case-insensitive) first, then Jaro-Winkler similarity, then alpha.
+        // Includes any substring match too so "DOS" surfaces the literal "DOS" platform AND every
+        // platform whose name contains "DOS" (FreeDOS, DR-DOS, etc.).
+        IEnumerable<(SoftwarePlatformDto Platform, double Score, bool ExactMatch)> scored = _platforms
+           .Select(p => (Platform: p,
+                         Score: JaroWinkler.Similarity(query, p.Name ?? string.Empty),
+                         ExactMatch: string.Equals(p.Name, query, StringComparison.OrdinalIgnoreCase)))
+           .Where(t => t.ExactMatch || t.Score >= 0.6 ||
+                       (t.Platform.Name?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false));
+
+        return Task.FromResult<IEnumerable<SoftwarePlatformDto>>(
+            scored.OrderByDescending(t => t.ExactMatch)
+                  .ThenByDescending(t => t.Score)
+                  .ThenBy(t => t.Platform.Name, StringComparer.OrdinalIgnoreCase)
+                  .Select(t => t.Platform));
     }
 
     void AddGenre(SoftwareGenreDto g)

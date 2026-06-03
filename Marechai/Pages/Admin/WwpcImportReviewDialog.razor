@@ -298,7 +298,7 @@
                                          SearchFunc="@SearchPlatformAsync" ToStringFunc="@(p => p?.Name)"
                                          Placeholder="@L["Bulk platform…"]"
                                          Variant="Variant.Outlined" Margin="Margin.Dense" Style="min-width: 220px;"
-                                         Clearable="true" ResetValueOnEmptyText="true" CoerceText="false"/>
+                                         Clearable="true" MaxItems="null" ResetValueOnEmptyText="true" CoerceText="false"/>
                         <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
                                    StartIcon="@Icons.Material.Filled.Done"
                                    OnClick="ApplyBulkPlatform" Disabled="_bulkPlatform is null">@L["Apply to all"]</MudButton>
@@ -332,7 +332,7 @@
                                                  ValueChanged="@((SoftwarePlatformDto p) => { context.Platform = p; })"
                                                  SearchFunc="@SearchPlatformAsync" ToStringFunc="@(p => p?.Name)"
                                                  Variant="Variant.Outlined" Margin="Margin.Dense" Style="min-width: 200px;"
-                                                 Clearable="true" ResetValueOnEmptyText="true" CoerceText="false"/>
+                                                 Clearable="true" MaxItems="null" ResetValueOnEmptyText="true" CoerceText="false"/>
                             </MudTd>
                             <MudTd>@context.MajorRelease</MudTd>
                         </RowTemplate>
