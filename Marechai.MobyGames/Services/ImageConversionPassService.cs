@@ -144,23 +144,88 @@ public static class ImageConversionPassService
 
             Console.WriteLine($"    Spinning up {degree} conversion worker(s) for {pending.Count} file(s)...");
 
-            var po = new ParallelOptions { MaxDegreeOfParallelism = degree };
-            // Console.WriteLine is thread-safe; counters are Interlocked-incremented.
             int total = pending.Count;
+            var sw    = System.Diagnostics.Stopwatch.StartNew();
+
+            // Live progress bar repainted in-place via CR on a TTY. When stdout is redirected
+            // (file / pipe / journald) we fall back to a periodic stat line every 5 s so logs
+            // stay readable and the progress remains visible without smearing.
+            bool        isTty       = !Console.IsOutputRedirected;
+            int         lastDrawLen = 0;
+            const int   barWidth    = 28;
+            object      drawLock    = new();
+
+            void Draw(bool finalDraw)
+            {
+                int done    = Volatile.Read(ref converted) + Volatile.Read(ref failed);
+                double secs = Math.Max(sw.Elapsed.TotalSeconds, 0.001);
+                double rate = done / secs;
+                int    pct  = total == 0 ? 100 : (int)Math.Min(100, 100L * done / total);
+                int    filled = total == 0 ? barWidth : (int)((long)barWidth * done / total);
+                if(filled > barWidth) filled = barWidth;
+                string bar = "[" + new string('=', Math.Max(0, filled - 1)) +
+                             (done > 0 && filled < barWidth ? ">" : (filled == 0 ? "" : "=")) +
+                             new string(' ', barWidth - filled) + "]";
+                string etaStr;
+                if(done == 0 || done >= total) etaStr = finalDraw ? "" : "ETA --";
+                else
+                {
+                    double etaSec = (total - done) / rate;
+                    etaStr = $"ETA {FormatDuration(etaSec)}";
+                }
+                string line = $"    {bar} {done}/{total} {pct,3}%  {rate,5:0.00} orig/s  {etaStr}".TrimEnd();
+
+                lock(drawLock)
+                {
+                    if(isTty)
+                    {
+                        Console.Write("\r" + line);
+                        // Pad with spaces if the previous line was longer so old characters don't linger.
+                        if(line.Length < lastDrawLen) Console.Write(new string(' ', lastDrawLen - line.Length));
+                        lastDrawLen = line.Length;
+                        if(finalDraw) Console.WriteLine();
+                    }
+                    else
+                    {
+                        Console.WriteLine(line);
+                    }
+                }
+            }
+
+            using var ticker = new Timer(_ => Draw(false), null, TimeSpan.FromMilliseconds(500),
+                                         isTty ? TimeSpan.FromMilliseconds(500) : TimeSpan.FromSeconds(5));
+
+            var po = new ParallelOptions { MaxDegreeOfParallelism = degree };
             Parallel.ForEach(pending, po, item =>
             {
                 try
                 {
                     ImageConverter.ConvertAll(assetRootPath, item.Id, item.FilePath, item.Extension, itemName);
-                    int n = Interlocked.Increment(ref converted);
-                    Console.WriteLine($"    \e[32mOK\e[0m  {item.Id} ({item.Extension})  [{n}/{total}]");
+                    Interlocked.Increment(ref converted);
                 }
                 catch(Exception ex)
                 {
                     Interlocked.Increment(ref failed);
-                    Console.WriteLine($"    \e[31mFAILED\e[0m  {item.Id} ({item.Extension})  ({ex.Message})");
+                    // Failures jump the progress line so the operator sees the error in context.
+                    lock(drawLock)
+                    {
+                        if(isTty && lastDrawLen > 0)
+                        {
+                            Console.Write("\r" + new string(' ', lastDrawLen) + "\r");
+                            lastDrawLen = 0;
+                        }
+                        Console.WriteLine($"    \e[31mFAILED\e[0m  {item.Id} ({item.Extension})  ({ex.Message})");
+                    }
                 }
             });
+
+            // Stop the ticker and paint a final 100% line.
+            ticker.Change(Timeout.Infinite, Timeout.Infinite);
+            Draw(true);
+
+            sw.Stop();
+            double finalRate = sw.Elapsed.TotalSeconds > 0 ? total / sw.Elapsed.TotalSeconds : 0;
+            Console.WriteLine($"    Total elapsed {FormatDuration(sw.Elapsed.TotalSeconds)} \u2014 average {finalRate:0.00} orig/s");
         }
 
         Console.WriteLine("\n  ────────────────────────────────────");
@@ -187,5 +252,15 @@ public static class ImageConversionPassService
         Console.WriteLine("  ────────────────────────────────────\n");
 
         return failed;
+    }
+
+    /// <summary>Compact human-readable duration: <c>42s</c>, <c>3m17s</c>, <c>1h04m</c>.</summary>
+    static string FormatDuration(double seconds)
+    {
+        if(double.IsNaN(seconds) || double.IsInfinity(seconds) || seconds < 0) return "--";
+        var ts = TimeSpan.FromSeconds(seconds);
+        if(ts.TotalHours   >= 1) return $"{(int)ts.TotalHours}h{ts.Minutes:00}m";
+        if(ts.TotalMinutes >= 1) return $"{ts.Minutes}m{ts.Seconds:00}s";
+        return $"{ts.TotalSeconds:0}s";
     }
 }
