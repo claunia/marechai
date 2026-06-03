@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Marechai.MobyGames.Services;
 
@@ -36,7 +39,14 @@ public static class ImageConversionPassService
     /// conversions (0 on success). Never throws for individual file failures — each
     /// ImageMagick error is counted and logged, the pass continues.
     /// </summary>
-    public static int Run(string assetRootPath, ImageConversionItemType type, int batchSize, bool dryRun)
+    /// <param name="parallelism">
+    /// Maximum number of concurrent <see cref="ImageConverter.ConvertAll" /> invocations.
+    /// <c>0</c> means <see cref="Environment.ProcessorCount" /> (auto). <c>1</c> forces
+    /// the legacy sequential behaviour. ImageMagick already uses multiple threads per file
+    /// via OpenMP — the per-CPU cap here lets the operator dial that down on shared boxes.
+    /// </param>
+    public static int Run(string assetRootPath, ImageConversionItemType type, int batchSize, bool dryRun,
+                          int parallelism)
     {
         string itemName    = GetItemDirectoryName(type);
         string originalsDir = Path.Combine(assetRootPath, "photos", itemName, "originals");
@@ -56,14 +66,17 @@ public static class ImageConversionPassService
         int scanned          = 0;
         int alreadyConverted = 0;
         int wouldConvert     = 0;
-        int converted        = 0;
-        int failed           = 0;
         int skippedFilename  = 0;
 
         // Enumerate originals in stable order so re-runs with `--batch-size` advance
         // predictably across a partially-converted tree.
         var files = Directory.EnumerateFiles(originalsDir, "*", SearchOption.TopDirectoryOnly)
                              .OrderBy(p => p, StringComparer.Ordinal);
+
+        // First pass: enumerate + filter into a list of work items. Doing the scan up front
+        // (rather than streaming into the parallel loop) lets us honour --batch-size deterministically
+        // and report `Originals scanned` accurately whether or not the cap is hit.
+        var pending = new List<(Guid Id, string FilePath, string Extension)>();
 
         foreach(string filePath in files)
         {
@@ -110,27 +123,44 @@ public static class ImageConversionPassService
                 continue;
             }
 
+            pending.Add((id, filePath, extension));
+
             // Per-type batch cap so long runs can be throttled. Matches the throttle
             // semantics of the download commands.
-            if(batchSize > 0 && converted + failed >= batchSize)
+            if(batchSize > 0 && pending.Count >= batchSize)
             {
-                Console.WriteLine($"    Reached --batch-size cap ({batchSize}); stopping this type.");
+                Console.WriteLine($"    Reached --batch-size cap ({batchSize}); stopping enumeration for this type.");
                 break;
             }
+        }
 
-            Console.Write($"    Converting {id} ({extension})...");
+        int converted = 0;
+        int failed    = 0;
 
-            try
+        if(!dryRun && pending.Count > 0)
+        {
+            int degree = parallelism <= 0 ? Environment.ProcessorCount : parallelism;
+            if(degree > pending.Count) degree = pending.Count;
+
+            Console.WriteLine($"    Spinning up {degree} conversion worker(s) for {pending.Count} file(s)...");
+
+            var po = new ParallelOptions { MaxDegreeOfParallelism = degree };
+            // Console.WriteLine is thread-safe; counters are Interlocked-incremented.
+            int total = pending.Count;
+            Parallel.ForEach(pending, po, item =>
             {
-                ImageConverter.ConvertAll(assetRootPath, id, filePath, extension, itemName);
-                converted++;
-                Console.WriteLine(" \e[32mOK\e[0m");
-            }
-            catch(Exception ex)
-            {
-                failed++;
-                Console.WriteLine($" \e[31mFAILED\e[0m ({ex.Message})");
-            }
+                try
+                {
+                    ImageConverter.ConvertAll(assetRootPath, item.Id, item.FilePath, item.Extension, itemName);
+                    int n = Interlocked.Increment(ref converted);
+                    Console.WriteLine($"    \e[32mOK\e[0m  {item.Id} ({item.Extension})  [{n}/{total}]");
+                }
+                catch(Exception ex)
+                {
+                    Interlocked.Increment(ref failed);
+                    Console.WriteLine($"    \e[31mFAILED\e[0m  {item.Id} ({item.Extension})  ({ex.Message})");
+                }
+            });
         }
 
         Console.WriteLine("\n  ────────────────────────────────────");

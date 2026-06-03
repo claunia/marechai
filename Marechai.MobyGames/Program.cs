@@ -806,9 +806,10 @@ class Program
                 Console.WriteLine("                                                  Scrape screenshot pages from new MobyGames");
                 Console.WriteLine("    download-screenshots [--batch-size N] [--delay-ms N] [--dry-run] [--download-only]");
                 Console.WriteLine("                                                  Download screenshots for scraped games");
-                Console.WriteLine("    convert-images --type covers|promo-art|screenshots|all [--batch-size N] [--asset-root <path>] [--dry-run]");
+                Console.WriteLine("    convert-images --type covers|promo-art|screenshots|all [--batch-size N] [--parallel N] [--asset-root <path>] [--dry-run]");
                 Console.WriteLine("                                                  Run the ImageMagick conversion pass on already-downloaded originals.");
                 Console.WriteLine("                                                  Walks photos/<type>/originals/ on disk only - no DB, no browser, no HTTP.");
+                Console.WriteLine("                                                  --parallel N caps concurrent ImageMagick invocations (default: one per CPU core).");
                 Console.WriteLine("                                                  Designed to be offloaded to a more powerful machine.");
                 Console.WriteLine("    screenshot-status                             Show screenshot download status counts");
                 Console.WriteLine("    scrape-media-pages [--batch-size N] [--delay-ms N] [--dry-run]");
@@ -845,6 +846,7 @@ class Program
     static int RunConvertImages(string[] args, IConfiguration config)
     {
         int batchSize = 0; // 0 = no cap
+        int parallelism = 0; // 0 = auto = Environment.ProcessorCount
         bool dryRun = false;
         string typeArg = "all";
         string assetRoot = config.GetValue<string>("MobyGames:AssetRootPath");
@@ -853,6 +855,8 @@ class Program
         {
             if(args[i] == "--batch-size" && i + 1 < args.Length && int.TryParse(args[i + 1], out int bs))
                 batchSize = bs;
+            else if(args[i] == "--parallel" && i + 1 < args.Length && int.TryParse(args[i + 1], out int p))
+                parallelism = p;
             else if(args[i] == "--type" && i + 1 < args.Length)
                 typeArg = args[i + 1].ToLowerInvariant();
             else if(args[i] == "--asset-root" && i + 1 < args.Length)
@@ -905,12 +909,13 @@ class Program
         Console.WriteLine($"  Asset root: {assetRoot}");
         Console.WriteLine($"  Types:      {string.Join(", ", types)}");
         Console.WriteLine($"  Batch size: {(batchSize <= 0 ? "no cap" : batchSize.ToString())}");
+        Console.WriteLine($"  Parallel:   {(parallelism <= 0 ? $"auto ({Environment.ProcessorCount})" : parallelism.ToString())}");
         Console.WriteLine($"  Dry run:    {dryRun}");
 
         int totalFailed = 0;
 
         foreach(ImageConversionItemType type in types)
-            totalFailed += ImageConversionPassService.Run(assetRoot, type, batchSize, dryRun);
+            totalFailed += ImageConversionPassService.Run(assetRoot, type, batchSize, dryRun, parallelism);
 
         if(totalFailed > 0)
         {
