@@ -128,11 +128,31 @@ public partial class OldDosImportReviewDialog
     SoftwarePlatformDto ResolvePlatformByOsHint(string osHint)
     {
         if(string.IsNullOrWhiteSpace(osHint)) return null;
-        return _platforms.FirstOrDefault(p =>
-                   !string.IsNullOrEmpty(p.Name) &&
-                   (string.Equals(p.Name, osHint, StringComparison.OrdinalIgnoreCase) ||
-                    p.Name.Contains(osHint, StringComparison.OrdinalIgnoreCase) ||
-                    osHint.Contains(p.Name, StringComparison.OrdinalIgnoreCase)));
+        string hint = osHint.Trim();
+
+        // 1. Exact (case-insensitive) match wins outright. "DOS" → the literal "DOS" platform.
+        SoftwarePlatformDto exact = _platforms.FirstOrDefault(p =>
+            !string.IsNullOrEmpty(p.Name) &&
+            string.Equals(p.Name, hint, StringComparison.OrdinalIgnoreCase));
+        if(exact != null) return exact;
+
+        // 2. Otherwise rank fuzzy / substring candidates by Jaro-Winkler similarity, breaking ties
+        //    in favor of the SHORTER platform name. Without the length tiebreaker the dialog picks
+        //    composites like "Acorn 32-bit and DOS" / "Amiga and Windows" alphabetically before the
+        //    atomic "DOS" / "Windows" that the hint actually refers to.
+        const double JW_MIN = 0.6;
+        return _platforms
+              .Where(p => !string.IsNullOrEmpty(p.Name) &&
+                          (p.Name.Contains(hint, StringComparison.OrdinalIgnoreCase) ||
+                           hint.Contains(p.Name, StringComparison.OrdinalIgnoreCase) ||
+                           JaroWinkler.Similarity(hint, p.Name) >= JW_MIN))
+              .Select(p => (Platform: p,
+                            Score: JaroWinkler.Similarity(hint, p.Name)))
+              .OrderByDescending(t => t.Score)
+              .ThenBy(t => t.Platform.Name!.Length)
+              .ThenBy(t => t.Platform.Name, StringComparer.OrdinalIgnoreCase)
+              .Select(t => t.Platform)
+              .FirstOrDefault();
     }
 
     async Task RefreshMatchesAsync()
