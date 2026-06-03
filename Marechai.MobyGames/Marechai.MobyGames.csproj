@@ -15,6 +15,7 @@
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql"/>
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql.Json.Microsoft"/>
     <PackageReference Include="PuppeteerSharp"/>
+    <PackageReference Include="Magick.NET-Q8-AnyCPU"/>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Marechai.Database\Marechai.Database.csproj"/>
