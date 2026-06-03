@@ -296,6 +296,26 @@ public class CompilationRelationService
 
                     context.SoftwareCompanyRoles.RemoveRange(companyRoles);
 
+                    // SoftwareBySoftwareRelease.SoftwareId \u2192 Softwares.Id is also Restrict (no
+                    // cascade). When THIS Software is itself listed as a contained game in some
+                    // OTHER compilation's release (parent compilation), those junction rows
+                    // block the delete. Drop them with a warning so the operator knows the
+                    // parent compilation lost a member and can re-resolve it later.
+                    var inboundJunctions = await context.SoftwareBySoftwareRelease
+                        .Where(j => j.SoftwareId == compilation.Id)
+                        .ToListAsync();
+
+                    if(inboundJunctions.Count > 0)
+                    {
+                        var parentReleaseIds = inboundJunctions.Select(j => j.ReleaseId).Distinct().ToList();
+                        Console.WriteLine($"    \e[33mWarning: {inboundJunctions.Count} parent-compilation junction(s) " +
+                                          $"referenced this Software (parent release IDs: " +
+                                          $"{string.Join(", ", parentReleaseIds)}); dropping them so the " +
+                                          $"Software delete can proceed. Parent compilation(s) will lose a member " +
+                                          $"until re-resolved.\e[0m");
+                        context.SoftwareBySoftwareRelease.RemoveRange(inboundJunctions);
+                    }
+
                     context.Softwares.Remove(compilation);
                     await context.SaveChangesAsync();
 
@@ -336,7 +356,19 @@ public class CompilationRelationService
             }
             catch(Exception ex)
             {
-                Console.WriteLine($" Error: {ex.Message}");
+                // Unwrap inner exceptions so EF Core's DbUpdateException surfaces the actual
+                // SQL/constraint error instead of the unhelpful wrapper ("An error occurred
+                // while saving the entity changes. See the inner exception for details.").
+                Console.WriteLine(" Error:");
+                Exception cur = ex;
+                int       depth = 0;
+                while(cur is not null)
+                {
+                    string indent = depth == 0 ? "  " : new string(' ', 4 + depth * 2);
+                    Console.WriteLine($"{indent}[{cur.GetType().Name}] {cur.Message}");
+                    cur = cur.InnerException;
+                    depth++;
+                }
                 failed++;
             }
         }
