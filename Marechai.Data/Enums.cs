@@ -1296,3 +1296,55 @@ public enum OldDosNameMatchKind : byte
     [Display(Name = "Fuzzy")]
     Fuzzy           = 1
 }
+
+public enum WwpcSoftwareStatus : byte
+{
+    [Display(Name = "Crawled")]
+    Crawled        = 0,
+    [Display(Name = "Described")]
+    Described      = 1,
+    [Display(Name = "Categorized")]
+    Categorized    = 2,
+    [Display(Name = "Ready for review")]
+    ReadyForReview = 3,
+    [Display(Name = "Accepted")]
+    Accepted       = 4,
+    [Display(Name = "Skipped")]
+    Skipped        = 5,
+    [Display(Name = "Discarded")]
+    Discarded      = 6
+}
+
+public enum WwpcProductType : byte
+{
+    [Display(Name = "Application")]
+    Application = 1,
+    [Display(Name = "Development tool")]
+    DevTool     = 2,
+    [Display(Name = "System tool")]
+    System      = 3
+}
+
+public enum WwpcAcceptMode : byte
+{
+    [Display(Name = "Create new")]
+    CreateNew         = 0,
+    [Display(Name = "Merge into existing")]
+    MergeIntoExisting = 1
+}
+
+public enum WwpcNameMatchKind : byte
+{
+    [Display(Name = "Exact normalized")]
+    ExactNormalized = 0,
+    [Display(Name = "Fuzzy")]
+    Fuzzy           = 1
+}
+
+public enum WwpcCompanyMatchKind : byte
+{
+    [Display(Name = "Exact normalized")]
+    ExactNormalized = 0,
+    [Display(Name = "Fuzzy")]
+    Fuzzy           = 1
+}

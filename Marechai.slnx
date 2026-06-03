@@ -14,5 +14,6 @@
   <Project Path="Marechai.Server/Marechai.Server.csproj" />
   <Project Path="Marechai.MobyGames/Marechai.MobyGames.csproj" />
   <Project Path="Marechai.Translation/Marechai.Translation.csproj" />
+  <Project Path="Marechai.WinWorld/Marechai.WinWorld.csproj" />
   <Project Path="Marechai/Marechai.csproj" />
 </Solution>

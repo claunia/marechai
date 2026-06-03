@@ -365,6 +365,7 @@ file class Program
         builder.Services.AddScoped<UserAccountDeletionService>();
         builder.Services.AddScoped<DeletionPendingFilter>();
         builder.Services.AddScoped<OldDosPromotionService>();
+        builder.Services.AddScoped<WwpcPromotionService>();
         builder.Services.AddHostedService<AccountDeletionPurgeService>();
 
         // Daily sweep that deletes abandoned pending uploads (admin batch stagings and

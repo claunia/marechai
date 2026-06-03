@@ -229,6 +229,10 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<OldDosSoftware>                      OldDosSoftwares                     { get; set; }
     public virtual DbSet<OldDosVersion>                       OldDosVersions                      { get; set; }
     public virtual DbSet<OldDosOsPlatformMap>                 OldDosOsPlatformMaps                { get; set; }
+    public virtual DbSet<WwpcCategory>                        WwpcCategories                      { get; set; }
+    public virtual DbSet<WwpcSoftware>                        WwpcSoftwares                       { get; set; }
+    public virtual DbSet<WwpcVersion>                         WwpcVersions                        { get; set; }
+    public virtual DbSet<WwpcScreenshot>                      WwpcScreenshots                     { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -2989,6 +2993,48 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .WithMany()
                   .HasForeignKey(e => e.SoftwarePlatformId)
                   .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<WwpcCategory>(entity =>
+        {
+            entity.HasIndex(e => new { e.ProductType, e.Name }).IsUnique();
+        });
+
+        modelBuilder.Entity<WwpcSoftware>(entity =>
+        {
+            entity.HasIndex(e => e.SourceUrl).IsUnique();
+            entity.HasIndex(e => e.Slug);
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => e.ProductType);
+            entity.HasIndex(e => e.WwpcCategoryId);
+            entity.HasIndex(e => e.SuggestedVendorCompanyId);
+
+            entity.HasOne(e => e.WwpcCategory)
+                  .WithMany(p => p.Softwares)
+                  .HasForeignKey(e => e.WwpcCategoryId)
+                  .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<WwpcVersion>(entity =>
+        {
+            entity.HasIndex(e => e.WwpcSoftwareId);
+            entity.HasIndex(e => new { e.WwpcSoftwareId, e.MajorRelease, e.VersionString });
+
+            entity.HasOne(e => e.WwpcSoftware)
+                  .WithMany(p => p.Versions)
+                  .HasForeignKey(e => e.WwpcSoftwareId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<WwpcScreenshot>(entity =>
+        {
+            entity.HasIndex(e => e.WwpcSoftwareId);
+            entity.HasIndex(e => e.SourceUrl).IsUnique();
+
+            entity.HasOne(e => e.WwpcSoftware)
+                  .WithMany(p => p.Screenshots)
+                  .HasForeignKey(e => e.WwpcSoftwareId)
+                  .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<MobyGamesDiscoveredGame>(entity =>

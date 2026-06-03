@@ -1,0 +1,290 @@
+@page "/admin/wwpc-imports"
+@attribute [Authorize(Roles = "Admin, UberAdmin")]
+@using System.Linq
+@using System.Threading
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@inject WwpcImportsService Service
+@inject IDialogService     DialogService
+@inject ISnackbar          Snackbar
+@inject IStringLocalizer<WwpcImportsQueue> L
+
+<MudPaper Class="pa-6 mb-6" Elevation="0"
+          Style="background: linear-gradient(135deg, #1565c0 0%, #42a5f5 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Filled.CloudDownload" Style="color: white; font-size: 48px;"/>
+        <MudStack Spacing="1">
+            <MudText Typo="Typo.h4" Style="color: white; font-weight: 700;">@L["WinWorldPC imports"]</MudText>
+            <MudText Typo="Typo.body2" Style="color: rgba(255,255,255,0.85);">
+                @L["Review pending software pulled from winworldpc.com (Application / DevTool / System sections) after the OpenAI enrichment passes."]
+            </MudText>
+        </MudStack>
+    </MudStack>
+</MudPaper>
+
+<MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3" Class="mb-4">
+    <MudSelect T="WwpcSoftwareStatus?" Value="@_statusFilter" ValueChanged="@(async v => { _statusFilter = v; _hasError = false; await ReloadAsync(); })"
+               Label="@L["Status"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="min-width: 220px;" Clearable="true" Disabled="_hasError">
+        <MudSelectItem T="WwpcSoftwareStatus?" Value="@((WwpcSoftwareStatus?)null)">@L["Ready or skipped"]</MudSelectItem>
+        <MudSelectItem T="WwpcSoftwareStatus?" Value="@((WwpcSoftwareStatus?)WwpcSoftwareStatus.ReadyForReview)">@L["Ready for review"]</MudSelectItem>
+        <MudSelectItem T="WwpcSoftwareStatus?" Value="@((WwpcSoftwareStatus?)WwpcSoftwareStatus.Skipped)">@L["Skipped"]</MudSelectItem>
+        <MudSelectItem T="WwpcSoftwareStatus?" Value="@((WwpcSoftwareStatus?)WwpcSoftwareStatus.Accepted)">@L["Accepted"]</MudSelectItem>
+        <MudSelectItem T="WwpcSoftwareStatus?" Value="@((WwpcSoftwareStatus?)WwpcSoftwareStatus.Discarded)">@L["Discarded"]</MudSelectItem>
+        <MudSelectItem T="WwpcSoftwareStatus?" Value="@((WwpcSoftwareStatus?)WwpcSoftwareStatus.Crawled)">@L["Crawled (needs describe)"]</MudSelectItem>
+        <MudSelectItem T="WwpcSoftwareStatus?" Value="@((WwpcSoftwareStatus?)WwpcSoftwareStatus.Described)">@L["Described (needs categorize)"]</MudSelectItem>
+        <MudSelectItem T="WwpcSoftwareStatus?" Value="@((WwpcSoftwareStatus?)WwpcSoftwareStatus.Categorized)">@L["Categorized (auto-promotes to Ready)"]</MudSelectItem>
+    </MudSelect>
+
+    <MudSelect T="WwpcProductType?" Value="@_typeFilter" ValueChanged="@(async v => { _typeFilter = v; await ReloadAsync(); })"
+               Label="@L["Section"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="min-width: 180px;" Clearable="true">
+        <MudSelectItem T="WwpcProductType?" Value="@((WwpcProductType?)null)">@L["All"]</MudSelectItem>
+        <MudSelectItem T="WwpcProductType?" Value="@((WwpcProductType?)WwpcProductType.Application)">@L["Application"]</MudSelectItem>
+        <MudSelectItem T="WwpcProductType?" Value="@((WwpcProductType?)WwpcProductType.DevTool)">@L["DevTool"]</MudSelectItem>
+        <MudSelectItem T="WwpcProductType?" Value="@((WwpcProductType?)WwpcProductType.System)">@L["System"]</MudSelectItem>
+    </MudSelect>
+
+    <MudCheckBox T="bool" Value="@_hasError" ValueChanged="@(async v => { _hasError = v; await ReloadAsync(); })"
+                 Label="@L["Has enrichment error"]" Color="Color.Error"/>
+
+    <MudTextField T="string" Value="@_search" ValueChanged="@(async v => { _search = v; await ReloadAsync(); })"
+                  Placeholder="@L["Search by name…"]" Variant="Variant.Outlined" Margin="Margin.Dense"
+                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Style="min-width: 300px;"
+                  DebounceInterval="300" Immediate="true"/>
+
+    <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="ReloadAsync" Color="Color.Primary"
+                   aria-label="@L["Refresh"]"/>
+</MudStack>
+
+<MudDataGrid @ref="_dataGrid" T="WwpcPendingListItemDto" ServerData="ServerReload"
+             Dense="true" Hover="true" Striped="true" RowsPerPage="25" SortMode="SortMode.Single">
+    <Columns>
+        <TemplateColumn Title="@L["Name"]" SortBy="@(new Func<WwpcPendingListItemDto, object>(x => x.Name))">
+            <CellTemplate>
+                <MudStack Row="false" Spacing="0">
+                    <MudText Typo="Typo.body2">@context.Item.Name</MudText>
+                    @if(!string.IsNullOrWhiteSpace(context.Item.RawCategoriesCsv))
+                    {
+                        <MudText Typo="Typo.caption" Color="Color.Secondary">@context.Item.RawCategoriesCsv</MudText>
+                    }
+                </MudStack>
+            </CellTemplate>
+        </TemplateColumn>
+        <TemplateColumn Title="@L["Vendor"]" SortBy="@(new Func<WwpcPendingListItemDto, object>(x => x.VendorName))">
+            <CellTemplate>
+                @if(!string.IsNullOrEmpty(context.Item.VendorName))
+                {
+                    <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center">
+                        <MudText Typo="Typo.body2">@context.Item.VendorName</MudText>
+                        @if(context.Item.SuggestedVendorCompanyId.HasValue)
+                        {
+                            <MudTooltip Text="@L["Auto-linked to an existing company by exact name match"]">
+                                <MudIcon Icon="@Icons.Material.Filled.Link" Color="Color.Success" Size="Size.Small"/>
+                            </MudTooltip>
+                        }
+                    </MudStack>
+                }
+                else
+                {
+                    @("—")
+                }
+            </CellTemplate>
+        </TemplateColumn>
+        <TemplateColumn Title="@L["Section"]" SortBy="@(new Func<WwpcPendingListItemDto, object>(x => x.ProductType))">
+            <CellTemplate>@ProductTypeLabel(ProductTypeOf(context.Item))</CellTemplate>
+        </TemplateColumn>
+        <PropertyColumn Property="x => x.VersionCount" Title="@L["Versions"]"/>
+        <PropertyColumn Property="x => x.ScreenshotCount" Title="@L["Screenshots"]"/>
+        <TemplateColumn Title="@L["Status"]" SortBy="@(new Func<WwpcPendingListItemDto, object>(x => x.Status))">
+            <CellTemplate>
+                <MudChip T="string" Size="Size.Small" Color="@StatusColor(StatusOf(context.Item))" Variant="Variant.Filled">
+                    @StatusLabel(StatusOf(context.Item))
+                </MudChip>
+            </CellTemplate>
+        </TemplateColumn>
+        <TemplateColumn Title="@L["Crawled"]" SortBy="@(new Func<WwpcPendingListItemDto, object>(x => x.CrawledOn))">
+            <CellTemplate>@(context.Item.CrawledOn?.LocalDateTime.ToString("g"))</CellTemplate>
+        </TemplateColumn>
+        <TemplateColumn Title="@L["Error"]" Sortable="false">
+            <CellTemplate>
+                @if(!string.IsNullOrEmpty(context.Item.LastError))
+                {
+                    <MudTooltip Text="@context.Item.LastError">
+                        <MudIcon Icon="@Icons.Material.Filled.ErrorOutline" Color="Color.Error" Size="Size.Small"/>
+                    </MudTooltip>
+                }
+            </CellTemplate>
+        </TemplateColumn>
+        <TemplateColumn Title="" Sortable="false">
+            <CellTemplate>
+                <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center">
+                    @if(StatusOf(context.Item) is WwpcSoftwareStatus.ReadyForReview or WwpcSoftwareStatus.Skipped)
+                    {
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                                   StartIcon="@Icons.Material.Filled.Visibility"
+                                   OnClick="@(() => OpenReviewAsync(context.Item.Id ?? 0))">@L["Review"]</MudButton>
+                    }
+                    else if(!string.IsNullOrEmpty(context.Item.SourceUrl))
+                    {
+                        <MudLink Href="@AbsoluteWwpcUrl(context.Item.SourceUrl)" Target="_blank" Color="Color.Default">@L["Open on winworldpc.com"]</MudLink>
+                    }
+
+                    @if(StatusOf(context.Item) is not WwpcSoftwareStatus.Discarded and not WwpcSoftwareStatus.Accepted)
+                    {
+                        <MudTooltip Text="@L["Reject this entry"]">
+                            <MudIconButton Icon="@Icons.Material.Filled.Block" Color="Color.Error" Size="Size.Small"
+                                           OnClick="@(() => RejectAsync(context.Item))"
+                                           aria-label="@L["Reject"]"/>
+                        </MudTooltip>
+                    }
+                </MudStack>
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+    <NoRecordsContent>
+        <MudText>@L["No pending WinWorldPC imports."]</MudText>
+    </NoRecordsContent>
+    <PagerContent>
+        <MudDataGridPager T="WwpcPendingListItemDto"/>
+    </PagerContent>
+</MudDataGrid>
+
+@code
+{
+    MudDataGrid<WwpcPendingListItemDto> _dataGrid;
+    WwpcSoftwareStatus?                 _statusFilter = WwpcSoftwareStatus.ReadyForReview;
+    WwpcProductType?                    _typeFilter;
+    string                              _search;
+    bool                                _hasError;
+
+    async Task<GridData<WwpcPendingListItemDto>> ServerReload(GridState<WwpcPendingListItemDto> state,
+                                                              CancellationToken cancellationToken)
+    {
+        int skip = state.Page * state.PageSize;
+        int take = state.PageSize;
+
+        string sortBy         = null;
+        bool   sortDescending = false;
+        SortDefinition<WwpcPendingListItemDto> sort = state.SortDefinitions.FirstOrDefault();
+        if(sort is not null)
+        {
+            sortBy         = sort.SortBy;
+            sortDescending = sort.Descending;
+        }
+
+        WwpcSoftwareStatus? effectiveStatus = _hasError ? null : _statusFilter;
+
+        Task<List<WwpcPendingListItemDto>> pageTask =
+            Service.GetPendingAsync(skip, take, effectiveStatus, _typeFilter, _search, _hasError, sortBy, sortDescending);
+
+        Task<int> countTask =
+            Service.GetPendingCountAsync(effectiveStatus, _typeFilter, _search, _hasError);
+
+        await Task.WhenAll(pageTask, countTask);
+
+        return new GridData<WwpcPendingListItemDto>
+        {
+            Items      = pageTask.Result,
+            TotalItems = countTask.Result
+        };
+    }
+
+    async Task ReloadAsync()
+    {
+        if(_dataGrid is not null) await _dataGrid.ReloadServerData();
+    }
+
+    async Task OpenReviewAsync(long id)
+    {
+        var parameters = new DialogParameters { ["InitialId"] = id };
+        var options    = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.ExtraLarge
+        };
+        IDialogReference dlg =
+            await DialogService.ShowAsync<WwpcImportReviewDialog>(L["Review WinWorldPC import"], parameters, options);
+        await dlg.Result;
+        await ReloadAsync();
+    }
+
+    async Task RejectAsync(WwpcPendingListItemDto item)
+    {
+        DialogParameters<DeleteConfirmDialog> parameters = new()
+        {
+            {
+                x => x.ContentText,
+                string.Format(
+                    L["Are you sure you want to reject '{0}'? It will be marked as discarded and removed from the queue."]
+                       .Value,
+                    item.Name)
+            }
+        };
+
+        IDialogReference dialog =
+            await DialogService.ShowAsync<DeleteConfirmDialog>(L["Reject WinWorldPC import"], parameters,
+                                                               new DialogOptions
+                                                               {
+                                                                   MaxWidth  = MaxWidth.ExtraSmall,
+                                                                   FullWidth = true
+                                                               });
+        DialogResult result = await dialog.Result;
+        if(result is null or { Canceled: true }) return;
+
+        bool ok = await Service.DiscardAsync(item.Id ?? 0);
+        if(ok)
+        {
+            Snackbar.Add(string.Format(L["Rejected '{0}'."].Value, item.Name), Severity.Success);
+            await ReloadAsync();
+        }
+        else
+        {
+            Snackbar.Add(L["Failed to reject entry."], Severity.Error);
+        }
+    }
+
+    static WwpcSoftwareStatus StatusOf(WwpcPendingListItemDto i) =>
+        i.Status.HasValue ? (WwpcSoftwareStatus)i.Status.Value : WwpcSoftwareStatus.Crawled;
+
+    static WwpcProductType ProductTypeOf(WwpcPendingListItemDto i) =>
+        i.ProductType.HasValue ? (WwpcProductType)i.ProductType.Value : WwpcProductType.Application;
+
+    string StatusLabel(WwpcSoftwareStatus status) => status switch
+    {
+        WwpcSoftwareStatus.Crawled        => L["Crawled"],
+        WwpcSoftwareStatus.Described      => L["Described"],
+        WwpcSoftwareStatus.Categorized    => L["Categorized"],
+        WwpcSoftwareStatus.ReadyForReview => L["Ready"],
+        WwpcSoftwareStatus.Accepted       => L["Accepted"],
+        WwpcSoftwareStatus.Skipped        => L["Skipped"],
+        WwpcSoftwareStatus.Discarded      => L["Discarded"],
+        _                                 => "—"
+    };
+
+    Color StatusColor(WwpcSoftwareStatus status) => status switch
+    {
+        WwpcSoftwareStatus.ReadyForReview => Color.Primary,
+        WwpcSoftwareStatus.Skipped        => Color.Warning,
+        WwpcSoftwareStatus.Accepted       => Color.Success,
+        WwpcSoftwareStatus.Discarded      => Color.Error,
+        _                                 => Color.Default
+    };
+
+    string ProductTypeLabel(WwpcProductType t) => t switch
+    {
+        WwpcProductType.Application => L["Application"],
+        WwpcProductType.DevTool     => L["DevTool"],
+        WwpcProductType.System      => L["System"],
+        _                           => "—"
+    };
+
+    /// <summary>WinWorldPC `SourceUrl` is stored as <c>/product/{slug}</c>; prefix the host so it opens upstream.</summary>
+    static string AbsoluteWwpcUrl(string url)
+    {
+        if(string.IsNullOrWhiteSpace(url)) return url;
+        if(url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+           url.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            return url;
+        return "https://winworldpc.com" + (url.StartsWith('/') ? url : "/" + url);
+    }
+}

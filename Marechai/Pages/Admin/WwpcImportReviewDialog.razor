@@ -1,0 +1,358 @@
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@using Humanizer
+@inject WwpcImportsService Service
+@inject SoftwareService      SoftwareSvc
+@inject CompaniesService     CompaniesSvc
+@inject SoftwarePlatformsService PlatformsSvc
+@inject ISnackbar            Snackbar
+@inject IStringLocalizer<WwpcImportReviewDialog> L
+
+<MudDialog Style="min-width: 1100px; min-height: 750px;">
+    <DialogContent>
+        @if(_loading || _detail is null)
+        {
+            <MudProgressCircular Indeterminate="true" Class="ma-8"/>
+        }
+        else
+        {
+            <MudStack Spacing="3">
+                <!-- Header -->
+                <MudPaper Class="pa-3" Outlined="true">
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+                        <MudIcon Icon="@Icons.Material.Filled.CloudDownload"/>
+                        <MudStack Spacing="0">
+                            @if(!string.IsNullOrEmpty(_detail.SourceUrl))
+                            {
+                                <MudLink Href="@AbsoluteWwpcUrl(_detail.SourceUrl)" Target="_blank">
+                                    winworldpc.com@_detail.SourceUrl
+                                </MudLink>
+                            }
+                            <MudText Typo="Typo.caption">
+                                @L["Section"]: <strong>@ProductTypeLabel(_detail.ProductType)</strong> •
+                                @L["Vendor (raw)"]: <strong>@(_detail.VendorName ?? "—")</strong> •
+                                @L["Release date (raw)"]: <strong>@(_detail.ReleaseDateText ?? "—")</strong> •
+                                @L["User interface"]: <strong>@(_detail.UserInterface ?? "—")</strong>
+                            </MudText>
+                            @if(!string.IsNullOrWhiteSpace(_detail.PlatformsCsv))
+                            {
+                                <MudStack Row="true" Spacing="1" Style="flex-wrap: wrap;" Class="mt-1">
+                                    @foreach(string p in (_detail.PlatformsCsv ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries))
+                                    {
+                                        <MudChip T="string" Size="Size.Small" Color="Color.Info" Variant="Variant.Outlined">@p.Trim()</MudChip>
+                                    }
+                                </MudStack>
+                            }
+                            @if(!string.IsNullOrWhiteSpace(_detail.RawCategoriesCsv))
+                            {
+                                <MudStack Row="true" Spacing="1" Style="flex-wrap: wrap;" Class="mt-1">
+                                    @foreach(string c in (_detail.RawCategoriesCsv ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries))
+                                    {
+                                        <MudChip T="string" Size="Size.Small" Color="Color.Secondary" Variant="Variant.Outlined">@c.Trim()</MudChip>
+                                    }
+                                </MudStack>
+                            }
+                        </MudStack>
+                    </MudStack>
+                </MudPaper>
+
+                <!-- Name-collision warning -->
+                @if(_matches?.Matches?.Count > 0)
+                {
+                    <MudAlert Severity="@(HasExactMatch ? Severity.Warning : Severity.Info)" Variant="Variant.Outlined">
+                        <MudText Typo="Typo.subtitle2">
+                            @(HasExactMatch ? L["Existing software with the same normalized name found"] : L["Possible existing matches"])
+                        </MudText>
+                        <MudTable Items="_matches.Matches" Dense="true" Hover="true" Class="mt-2">
+                            <HeaderContent>
+                                <MudTh>@L["Name"]</MudTh>
+                                <MudTh>@L["Kind"]</MudTh>
+                                <MudTh>@L["Year"]</MudTh>
+                                <MudTh>@L["Releases"]</MudTh>
+                                <MudTh>@L["JW score"]</MudTh>
+                                <MudTh></MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd>
+                                    <MudLink Href="@($"/admin/software-edit/{context.SoftwareId}")" Target="_blank">@context.Name</MudLink>
+                                </MudTd>
+                                <MudTd>@KindLabel(context.Kind)</MudTd>
+                                <MudTd>@(context.EarliestReleaseYear?.ToString() ?? "—")</MudTd>
+                                <MudTd>@context.ReleaseCount</MudTd>
+                                <MudTd>@(context.JaroWinklerScore?.ToString("0.000") ?? "")</MudTd>
+                                <MudTd>
+                                    @if(_mergeTargetId == (long?)(long?)context.SoftwareId)
+                                    {
+                                        <MudChip T="string" Color="Color.Success" Size="Size.Small">@L["Selected"]</MudChip>
+                                    }
+                                    else
+                                    {
+                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                                                   OnClick="@(() => EnterMergeModeAsync((long?)context.SoftwareId, context.Name))">
+                                            @L["Merge into this"]
+                                        </MudButton>
+                                    }
+                                </MudTd>
+                            </RowTemplate>
+                        </MudTable>
+                        @if(_mergeTargetId.HasValue)
+                        {
+                            <MudButton Variant="Variant.Text" Color="Color.Default" Size="Size.Small" Class="mt-2"
+                                       StartIcon="@Icons.Material.Filled.Undo" OnClick="ExitMergeMode">
+                                @L["Switch back to create new"]
+                            </MudButton>
+                        }
+                    </MudAlert>
+                }
+
+                <!-- Raw description (read-only) -->
+                <MudExpansionPanels MultiExpansion="true">
+                    <MudExpansionPanel Text="@L["Raw description from WinWorldPC (read-only)"]" IsInitiallyExpanded="true">
+                        <MudText Typo="Typo.body2" Style="white-space: pre-wrap;">@_detail.RawDescription</MudText>
+                    </MudExpansionPanel>
+                </MudExpansionPanels>
+
+                <!-- Editable museum-grade description -->
+                <MudTextField T="string" @bind-Value="_museumEdited" Label="@L["Museum-grade English description (will be saved)"]"
+                              Lines="6" Variant="Variant.Outlined" Counter="262144" MaxLength="262144"/>
+
+                <!-- Software meta (hidden in merge mode) -->
+                @if(!_mergeTargetId.HasValue)
+                {
+                    <MudStack Row="true" Spacing="3">
+                        <MudTextField T="string" @bind-Value="_nameOverride" Label="@L["Name"]"
+                                      Variant="Variant.Outlined" Margin="Margin.Dense" Style="flex: 2;"
+                                      OnDebounceIntervalElapsed="OnNameChanged" DebounceInterval="300"/>
+                        <MudSelect T="byte" @bind-Value="_kindOverride" Label="@L["Kind"]"
+                                   Variant="Variant.Outlined" Margin="Margin.Dense" Style="flex: 1;">
+                            @foreach(SoftwareKind k in Enum.GetValues<SoftwareKind>())
+                            {
+                                <MudSelectItem T="byte" Value="@((byte)k)">@k.Humanize()</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudStack>
+                }
+                else
+                {
+                    <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">
+                        @string.Format(L["Merging into '{0}'. Existing Name/Kind/descriptions on the target will NOT be overwritten — only missing description locales are added."].Value, _mergeTargetName)
+                    </MudAlert>
+                }
+
+                <!-- Vendor (optional; auto-linked when an exact match exists) -->
+                <MudPaper Class="pa-3" Outlined="true">
+                    <MudStack Spacing="2">
+                        <MudText Typo="Typo.subtitle2">@L["Vendor / Developer"]</MudText>
+                        @if(_detail.SuggestedVendorCompanyId.HasValue && _vendor?.Id == _detail.SuggestedVendorCompanyId)
+                        {
+                            <MudAlert Severity="Severity.Success" Dense="true" Variant="Variant.Outlined">
+                                @string.Format(L["Auto-linked to existing company '{0}' by exact name match."].Value, _vendor?.Name)
+                            </MudAlert>
+                        }
+                        <MudStack Row="true" AlignItems="AlignItems.Start" Spacing="2">
+                            <MudAutocomplete T="CompanyDto" Label="@L["Marechai company (leave empty to skip vendor link)"]"
+                                             Value="@_vendor" ValueChanged="@(c => { _vendor = c; })"
+                                             SearchFunc="@SearchCompanyAsync" ToStringFunc="@(c => c?.Name)"
+                                             Variant="Variant.Outlined" Margin="Margin.Dense"
+                                             Clearable="true" MaxItems="50"
+                                             Style="flex: 1;"
+                                             ResetValueOnEmptyText="true" CoerceText="false"/>
+                            <MudButton Variant="Variant.Outlined" Color="Color.Primary"
+                                       StartIcon="@Icons.Material.Filled.AddBusiness"
+                                       OnClick="OpenCreateCompany"
+                                       Disabled="_creatingCompany"
+                                       Style="margin-top: 6px;">
+                                @L["Create new"]
+                            </MudButton>
+                        </MudStack>
+                        @if(_vendorFuzzy?.Matches?.Count > 0 && _vendor is null)
+                        {
+                            <MudAlert Severity="Severity.Info" Dense="true" Variant="Variant.Outlined">
+                                <MudText Typo="Typo.body2">@L["Fuzzy candidates for the raw vendor name:"]</MudText>
+                                <MudStack Row="true" Spacing="1" Style="flex-wrap: wrap;" Class="mt-1">
+                                    @foreach(WwpcCompanyMatchCandidateDto m in _vendorFuzzy.Matches)
+                                    {
+                                        <MudButton Size="Size.Small" Variant="Variant.Outlined"
+                                                   OnClick="@(() => PickVendor(m))">
+                                            @m.Name (@(m.JaroWinklerScore?.ToString("0.00") ?? ""))
+                                        </MudButton>
+                                    }
+                                </MudStack>
+                            </MudAlert>
+                        }
+                        @if(_showCreateCompany)
+                        {
+                            <MudPaper Class="pa-3" Outlined="true">
+                                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                    <MudTextField T="string" @bind-Value="_newCompanyName"
+                                                  Label="@L["New company name"]"
+                                                  Variant="Variant.Outlined" Margin="Margin.Dense"
+                                                  Style="flex: 1;" Immediate="true"/>
+                                    <MudButton Variant="Variant.Filled" Color="Color.Success"
+                                               OnClick="CreateCompanyAsync"
+                                               Disabled="@(_creatingCompany || string.IsNullOrWhiteSpace(_newCompanyName))">
+                                        @L["Create"]
+                                    </MudButton>
+                                    <MudButton Variant="Variant.Text" OnClick="@(() => { _showCreateCompany = false; _newCompanyName = null; })">
+                                        @L["Cancel"]
+                                    </MudButton>
+                                </MudStack>
+                            </MudPaper>
+                        }
+                    </MudStack>
+                </MudPaper>
+
+                <!-- Genres -->
+                <MudPaper Class="pa-3" Outlined="true">
+                    <MudStack Spacing="2">
+                        <MudText Typo="Typo.subtitle2">@L["Categories (SoftwareGenre type=Category)"]</MudText>
+                        <MudStack Row="true" Spacing="1" Style="flex-wrap: wrap;">
+                            @foreach(int gid in _selectedGenreIds)
+                            {
+                                SoftwareGenreDto g = _allGenres.FirstOrDefault(x => x.Id == gid);
+                                <MudChip T="string" Color="Color.Primary" Size="Size.Small" OnClose="@(() => RemoveGenre(gid))">
+                                    @(g?.Name ?? $"#{gid}")
+                                </MudChip>
+                            }
+                        </MudStack>
+                        <MudAutocomplete T="SoftwareGenreDto" Label="@L["Add category…"]"
+                                         SearchFunc="@SearchGenreAsync" ToStringFunc="@(g => g?.Name)"
+                                         Value="null" ValueChanged="AddGenre"
+                                         Variant="Variant.Outlined" Margin="Margin.Dense"
+                                         ResetValueOnEmptyText="true" CoerceText="false"/>
+                    </MudStack>
+                </MudPaper>
+
+                <!-- Versions -->
+                <MudPaper Class="pa-3" Outlined="true">
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-2">
+                        <MudText Typo="Typo.subtitle2">@L["Versions"]</MudText>
+                        <MudSpacer/>
+                        <MudButton Size="Size.Small" Variant="Variant.Outlined"
+                                   OnClick="@(() => { foreach(var v in _versionDecisions) v.Include = true; })">@L["Enable all"]</MudButton>
+                        <MudButton Size="Size.Small" Variant="Variant.Outlined"
+                                   OnClick="@(() => { foreach(var v in _versionDecisions) v.Include = false; })">@L["Disable all"]</MudButton>
+                    </MudStack>
+                    <MudTable Items="_versionDecisions" Dense="true" Hover="true">
+                        <HeaderContent>
+                            <MudTh>@L["Include"]</MudTh>
+                            <MudTh>@L["Major"]</MudTh>
+                            <MudTh>@L["Version"]</MudTh>
+                            <MudTh>@L["Language"]</MudTh>
+                            <MudTh>@L["Arch"]</MudTh>
+                            <MudTh>@L["Media"]</MudTh>
+                            <MudTh>@L["Size"]</MudTh>
+                            @if(_mergeTargetId.HasValue)
+                            {
+                                <MudTh>@L["Link to existing"]</MudTh>
+                            }
+                            <MudTh>@L["Download"]</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd><MudCheckBox T="bool" @bind-Value="context.Include"/></MudTd>
+                            <MudTd>@context.MajorRelease</MudTd>
+                            <MudTd>
+                                <MudTextField T="string" @bind-Value="context.VersionStringOverride"
+                                              Placeholder="@context.OriginalVersionString"
+                                              Variant="Variant.Outlined" Margin="Margin.Dense" Style="min-width: 160px;"/>
+                            </MudTd>
+                            <MudTd>@context.Language</MudTd>
+                            <MudTd>@context.Architecture</MudTd>
+                            <MudTd>@context.MediaKind</MudTd>
+                            <MudTd>@context.SizeText</MudTd>
+                            @if(_mergeTargetId.HasValue)
+                            {
+                                <MudTd>
+                                    <MudSelect T="int?" Value="context.LinkToExistingVersionId"
+                                               ValueChanged="@((int? v) => { context.LinkToExistingVersionId = v; })"
+                                               Variant="Variant.Outlined" Margin="Margin.Dense" Style="min-width: 200px;" Clearable="true">
+                                        <MudSelectItem T="int?" Value="@((int?)null)">@L["(create new)"]</MudSelectItem>
+                                        @foreach(SoftwareVersionDto sv in _existingVersions)
+                                        {
+                                            <MudSelectItem T="int?" Value="@sv.Id">@sv.VersionString</MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                </MudTd>
+                            }
+                            <MudTd>
+                                @if(!string.IsNullOrEmpty(context.DownloadUrl))
+                                {
+                                    <MudLink Href="@AbsoluteWwpcUrl(context.DownloadUrl)" Target="_blank">@L["Download"]</MudLink>
+                                }
+                            </MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                </MudPaper>
+
+                <!-- Screenshots -->
+                <MudPaper Class="pa-3" Outlined="true">
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-2">
+                        <MudText Typo="Typo.subtitle2">@L["Screenshots"]</MudText>
+                        <MudSpacer/>
+                        <MudButton Size="Size.Small" Variant="Variant.Outlined"
+                                   OnClick="@(() => { foreach(var s in _screenshotDecisions) s.Include = true; })">@L["Enable all"]</MudButton>
+                        <MudButton Size="Size.Small" Variant="Variant.Outlined"
+                                   OnClick="@(() => { foreach(var s in _screenshotDecisions) s.Include = false; })">@L["Disable all"]</MudButton>
+                        <MudAutocomplete T="SoftwarePlatformDto" Value="_bulkPlatform"
+                                         ValueChanged="@((SoftwarePlatformDto p) => { _bulkPlatform = p; })"
+                                         SearchFunc="@SearchPlatformAsync" ToStringFunc="@(p => p?.Name)"
+                                         Placeholder="@L["Bulk platform…"]"
+                                         Variant="Variant.Outlined" Margin="Margin.Dense" Style="min-width: 220px;"
+                                         Clearable="true" ResetValueOnEmptyText="true" CoerceText="false"/>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.Done"
+                                   OnClick="ApplyBulkPlatform" Disabled="_bulkPlatform is null">@L["Apply to all"]</MudButton>
+                    </MudStack>
+                    <MudTable Items="_screenshotDecisions" Dense="true" Hover="true">
+                        <HeaderContent>
+                            <MudTh>@L["Include"]</MudTh>
+                            <MudTh>@L["Thumbnail"]</MudTh>
+                            <MudTh>@L["Caption"]</MudTh>
+                            <MudTh>@L["Platform"]</MudTh>
+                            <MudTh>@L["Major"]</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd><MudCheckBox T="bool" @bind-Value="context.Include"/></MudTd>
+                            <MudTd>
+                                @if(!string.IsNullOrEmpty(context.ImageUrl))
+                                {
+                                    <MudLink Href="@AbsoluteWwpcUrl(context.SourceUrl)" Target="_blank">
+                                        <img src="@AbsoluteWwpcUrl(context.ImageUrl)" loading="lazy"
+                                             style="max-height: 80px; max-width: 160px;"/>
+                                    </MudLink>
+                                }
+                            </MudTd>
+                            <MudTd>
+                                <MudTextField T="string" @bind-Value="context.CaptionOverride"
+                                              Placeholder="@context.OriginalCaption"
+                                              Variant="Variant.Outlined" Margin="Margin.Dense" Style="min-width: 260px;"/>
+                            </MudTd>
+                            <MudTd>
+                                <MudAutocomplete T="SoftwarePlatformDto" Value="context.Platform"
+                                                 ValueChanged="@((SoftwarePlatformDto p) => { context.Platform = p; })"
+                                                 SearchFunc="@SearchPlatformAsync" ToStringFunc="@(p => p?.Name)"
+                                                 Variant="Variant.Outlined" Margin="Margin.Dense" Style="min-width: 200px;"
+                                                 Clearable="true" ResetValueOnEmptyText="true" CoerceText="false"/>
+                            </MudTd>
+                            <MudTd>@context.MajorRelease</MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                </MudPaper>
+
+                @if(!string.IsNullOrEmpty(_lastError))
+                {
+                    <MudAlert Severity="Severity.Error" Variant="Variant.Filled">@_lastError</MudAlert>
+                }
+            </MudStack>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="DiscardAsync" Color="Color.Error"   Disabled="_busy">@L["Discard forever"]</MudButton>
+        <MudButton OnClick="SkipAsync"    Color="Color.Default" Disabled="_busy">@L["Skip for later"]</MudButton>
+        <MudSpacer/>
+        <MudButton OnClick="Cancel" Disabled="_busy">@L["Close"]</MudButton>
+        <MudButton OnClick="AcceptAsync" Color="Color.Primary" Variant="Variant.Filled" Disabled="_busy">
+            @(_mergeTargetId.HasValue ? string.Format(L["Merge into '{0}'"].Value, _mergeTargetName) : L["Accept (create new)"])
+        </MudButton>
+    </DialogActions>
+</MudDialog>

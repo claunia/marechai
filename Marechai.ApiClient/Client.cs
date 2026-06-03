@@ -57,6 +57,7 @@ using Marechai.ApiClient.Suggestions;
 using Marechai.ApiClient.Tablets;
 using Marechai.ApiClient.UnM49;
 using Marechai.ApiClient.Users;
+using Marechai.ApiClient.Wwpc;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Serialization.Form;
@@ -359,6 +360,11 @@ namespace Marechai.ApiClient
         public global::Marechai.ApiClient.Users.UsersRequestBuilder Users
         {
             get => new global::Marechai.ApiClient.Users.UsersRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The wwpc property</summary>
+        public global::Marechai.ApiClient.Wwpc.WwpcRequestBuilder Wwpc
+        {
+            get => new global::Marechai.ApiClient.Wwpc.WwpcRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.ApiClient.Client"/> and sets the default values.
