@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using Marechai.Data;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
-using Marechai.Translation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -32,18 +31,16 @@ public sealed class OldDosPromotionService
     static readonly string[]     ENGLISH_LANG_CODE      = { "eng" };
 
     readonly MarechaiContext     _db;
-    readonly TranslationService  _translation;
     readonly FuzzySearchService  _fuzzy;
     readonly ILogger<OldDosPromotionService> _log;
 
-    public OldDosPromotionService(MarechaiContext db, TranslationService translation,
+    public OldDosPromotionService(MarechaiContext db,
                                   FuzzySearchService fuzzy,
                                   ILogger<OldDosPromotionService> log)
     {
-        _db          = db;
-        _translation = translation;
-        _fuzzy       = fuzzy;
-        _log         = log;
+        _db    = db;
+        _fuzzy = fuzzy;
+        _log   = log;
     }
 
     public async Task<OldDosNameMatchCandidatesDto> FindNameMatchesAsync(string candidateName)
@@ -228,19 +225,20 @@ public sealed class OldDosPromotionService
             }
             await _db.SaveChangesAsync();
 
-            // Descriptions: museum-grade English (always) + 5-locale fan-out (skip locales already present).
+            // Descriptions: only the English museum-grade source row. The 5-locale fan-out is the
+            // job of DescriptionTranslationWorker (see SoftwareDescriptionSource) which picks up
+            // any SoftwareDescription that's missing siblings in other languages and translates
+            // them in the background. Running NLLB inline here used to make AcceptAsync hit
+            // Apache's ProxyTimeout and surface as a 502 → masked 404 in the dialog.
             string museum = string.IsNullOrWhiteSpace(dto.MuseumDescriptionEdited)
                                 ? staging.EnglishDescriptionMuseum
                                 : dto.MuseumDescriptionEdited.Trim();
 
             if(!string.IsNullOrWhiteSpace(museum))
             {
-                HashSet<string> existing = new(await _db.SoftwareDescriptions
-                                                        .Where(d => d.SoftwareId == targetSoftwareId)
-                                                        .Select(d => d.LanguageCode)
-                                                        .ToListAsync(), StringComparer.OrdinalIgnoreCase);
-
-                if(!existing.Contains("eng"))
+                bool engExists = await _db.SoftwareDescriptions
+                                          .AnyAsync(d => d.SoftwareId == targetSoftwareId && d.LanguageCode == "eng");
+                if(!engExists)
                 {
                     _db.SoftwareDescriptions.Add(new SoftwareDescription
                     {
@@ -249,32 +247,6 @@ public sealed class OldDosPromotionService
                         Text         = museum
                     });
                     insertedDescriptions++;
-                    existing.Add("eng");
-                }
-
-                if(_translation.IsAvailable)
-                {
-                    foreach(string targetLang in TranslationService.SupportedLanguageCodes)
-                    {
-                        if(string.Equals(targetLang, "eng", StringComparison.OrdinalIgnoreCase)) continue;
-                        if(existing.Contains(targetLang)) continue;
-
-                        (string translated, string error) = await _translation.TranslateAsync(
-                            museum, targetLang, plainText: false, domainContext: "Vintage software catalog entry");
-                        if(error != null || string.IsNullOrWhiteSpace(translated))
-                        {
-                            _log.LogWarning("OldDos accept #{Id}: translation to {Lang} failed: {Error}",
-                                            oldDosId, targetLang, error);
-                            continue;
-                        }
-                        _db.SoftwareDescriptions.Add(new SoftwareDescription
-                        {
-                            SoftwareId   = targetSoftwareId,
-                            LanguageCode = targetLang,
-                            Text         = translated
-                        });
-                        insertedDescriptions++;
-                    }
                 }
             }
 

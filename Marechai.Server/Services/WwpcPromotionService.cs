@@ -16,7 +16,6 @@ using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Marechai.Helpers;
 using Marechai.Server.Helpers;
-using Marechai.Translation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -45,19 +44,17 @@ public sealed class WwpcPromotionService
     const double JARO_WINKLER_THRESHOLD = 0.85;
 
     readonly MarechaiContext               _db;
-    readonly TranslationService            _translation;
     readonly FuzzySearchService            _fuzzy;
     readonly IConfiguration                _config;
     readonly ILogger<WwpcPromotionService> _log;
 
-    public WwpcPromotionService(MarechaiContext db, TranslationService translation, FuzzySearchService fuzzy,
+    public WwpcPromotionService(MarechaiContext db, FuzzySearchService fuzzy,
                                 IConfiguration config, ILogger<WwpcPromotionService> log)
     {
-        _db          = db;
-        _translation = translation;
-        _fuzzy       = fuzzy;
-        _config      = config;
-        _log         = log;
+        _db     = db;
+        _fuzzy  = fuzzy;
+        _config = config;
+        _log    = log;
     }
 
     // ---------- Name match (Software) ----------
@@ -360,17 +357,19 @@ public sealed class WwpcPromotionService
             await _db.SaveChangesAsync();
 
             // ---- Descriptions ----
+            // Only the English museum-grade source row is inserted here. The 5-locale fan-out is
+            // owned by DescriptionTranslationWorker (SoftwareDescriptionSource) which picks up any
+            // SoftwareDescription that's missing siblings in other languages and translates them
+            // in the background. Inline NLLB calls used to make AcceptAsync hit Apache's
+            // ProxyTimeout and surface as a 502 → masked 404 in the dialog.
             string museum = string.IsNullOrWhiteSpace(dto.MuseumDescriptionEdited)
                                 ? staging.EnglishDescriptionMuseum
                                 : dto.MuseumDescriptionEdited.Trim();
             if(!string.IsNullOrWhiteSpace(museum))
             {
-                HashSet<string> existing = new(await _db.SoftwareDescriptions
-                                                        .Where(d => d.SoftwareId == targetSoftwareId)
-                                                        .Select(d => d.LanguageCode)
-                                                        .ToListAsync(), StringComparer.OrdinalIgnoreCase);
-
-                if(!existing.Contains("eng"))
+                bool engExists = await _db.SoftwareDescriptions
+                                          .AnyAsync(d => d.SoftwareId == targetSoftwareId && d.LanguageCode == "eng");
+                if(!engExists)
                 {
                     _db.SoftwareDescriptions.Add(new SoftwareDescription
                     {
@@ -379,32 +378,6 @@ public sealed class WwpcPromotionService
                         Text         = museum
                     });
                     insertedDescriptions++;
-                    existing.Add("eng");
-                }
-
-                if(_translation.IsAvailable)
-                {
-                    foreach(string targetLang in TranslationService.SupportedLanguageCodes)
-                    {
-                        if(string.Equals(targetLang, "eng", StringComparison.OrdinalIgnoreCase)) continue;
-                        if(existing.Contains(targetLang)) continue;
-
-                        (string translated, string error) = await _translation.TranslateAsync(
-                            museum, targetLang, plainText: false, domainContext: "Vintage software catalog entry");
-                        if(error != null || string.IsNullOrWhiteSpace(translated))
-                        {
-                            _log.LogWarning("WwpcAccept #{Id}: translation to {Lang} failed: {Error}",
-                                            wwpcId, targetLang, error);
-                            continue;
-                        }
-                        _db.SoftwareDescriptions.Add(new SoftwareDescription
-                        {
-                            SoftwareId   = targetSoftwareId,
-                            LanguageCode = targetLang,
-                            Text         = translated
-                        });
-                        insertedDescriptions++;
-                    }
                 }
             }
 
