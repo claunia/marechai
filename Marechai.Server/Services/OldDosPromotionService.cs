@@ -199,23 +199,25 @@ public sealed class OldDosPromotionService
                     if(map is { IgnoreOnPromote: false }) platformId = map.SoftwarePlatformId;
                 }
 
-                if(platformId.HasValue)
+                // PlatformId on SoftwareRelease is nullable \u2014 always create the release even
+                // when the admin removed the platform suggestion (and we couldn't resolve one
+                // from the OS hint). A "platformless" release is still useful: it groups the
+                // SoftwareVersion + Publisher + ReleaseDate metadata and can be edited later
+                // to add a platform.
+                DateTime? releaseDate          = vd.ReleaseDateOverride ?? staged.ReleaseDate;
+                DatePrecision releasePrecision = vd.ReleaseDatePrecisionOverride.HasValue
+                                                     ? (DatePrecision)vd.ReleaseDatePrecisionOverride.Value
+                                                     : staged.ReleaseDatePrecision;
+                _db.SoftwareReleases.Add(new SoftwareRelease
                 {
-                    DateTime? releaseDate           = vd.ReleaseDateOverride ?? staged.ReleaseDate;
-                    DatePrecision releasePrecision  = vd.ReleaseDatePrecisionOverride.HasValue
-                                                          ? (DatePrecision)vd.ReleaseDatePrecisionOverride.Value
-                                                          : staged.ReleaseDatePrecision;
-                    _db.SoftwareReleases.Add(new SoftwareRelease
-                    {
-                        Title                = string.IsNullOrWhiteSpace(dto.NameOverride) ? staging.Name : dto.NameOverride.Trim(),
-                        SoftwareVersionId    = version.Id,
-                        PlatformId           = platformId.Value,
-                        PublisherId          = developer.Id,
-                        ReleaseDate          = releaseDate,
-                        ReleaseDatePrecision = releasePrecision
-                    });
-                    insertedReleases++;
-                }
+                    Title                = string.IsNullOrWhiteSpace(dto.NameOverride) ? staging.Name : dto.NameOverride.Trim(),
+                    SoftwareVersionId    = version.Id,
+                    PlatformId           = platformId,
+                    PublisherId          = developer.Id,
+                    ReleaseDate          = releaseDate,
+                    ReleaseDatePrecision = releasePrecision
+                });
+                insertedReleases++;
 
                 _db.CompaniesBySoftwareVersions.Add(new CompanyBySoftwareVersion
                 {
