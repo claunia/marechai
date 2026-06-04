@@ -104,12 +104,13 @@ public class Photos
             {
                 StartInfo =
                 {
-                    FileName               = "identify",
+                    FileName               = "magick",
                     CreateNoWindow         = true,
                     RedirectStandardOutput = true,
                     RedirectStandardError  = true
                 }
             };
+            p.StartInfo.ArgumentList.Add("identify");
             p.StartInfo.ArgumentList.Add("-format");
             p.StartInfo.ArgumentList.Add("%m %w %h\n");
             p.StartInfo.ArgumentList.Add($"{path}[0]");
@@ -153,7 +154,7 @@ public class Photos
             {
                 StartInfo =
                 {
-                    FileName               = "convert",
+                    FileName               = "magick",
                     CreateNoWindow         = true,
                     RedirectStandardOutput = true,
                     RedirectStandardError  = true
@@ -300,7 +301,7 @@ public class Photos
             {
                 StartInfo =
                 {
-                    FileName               = "convert",
+                    FileName               = "magick",
                     CreateNoWindow         = true,
                     RedirectStandardError  = true,
                     RedirectStandardOutput = true

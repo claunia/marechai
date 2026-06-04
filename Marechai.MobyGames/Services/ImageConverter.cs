@@ -214,7 +214,7 @@ public static class ImageConverter
         {
             StartInfo =
             {
-                FileName               = "convert",
+                FileName               = "magick",
                 CreateNoWindow         = true,
                 RedirectStandardError  = true,
                 RedirectStandardOutput = true
@@ -240,7 +240,11 @@ public static class ImageConverter
         convert.StartInfo.ArgumentList.Add("-strip");
         convert.StartInfo.ArgumentList.Add("-quality");
         convert.StartInfo.ArgumentList.Add(quality.ToString());
-        convert.StartInfo.ArgumentList.Add(originalPath);
+        // [0] restricts multi-frame containers (animated GIF, multipage TIFF, PDF, ICO with
+        // varying sizes) to the first frame. JXL otherwise aborts with FramesNotSameDimensions
+        // when frame sizes differ, and AVIF/WebP would silently encode only the first frame
+        // anyway — making it explicit here keeps output consistent across encoders.
+        convert.StartInfo.ArgumentList.Add($"{originalPath}[0]");
         convert.StartInfo.ArgumentList.Add(outputPath);
 
         convert.StartInfo.Environment["MAGICK_THREAD_LIMIT"] = "1";
