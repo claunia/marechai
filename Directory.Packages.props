@@ -9,11 +9,11 @@
     <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.11"/>
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Proxies" Version="9.0.11"/>
     <!-- Unique to Marechai.csproj -->
-    <PackageVersion Include="MudBlazor" Version="9.2.0"/>
-    <PackageVersion Include="Markdig" Version="1.1.1"/>
-    <PackageVersion Include="DiffPlex" Version="1.7.2"/>
+    <PackageVersion Include="MudBlazor" Version="9.5.0"/>
+    <PackageVersion Include="Markdig" Version="1.2.0"/>
+    <PackageVersion Include="DiffPlex" Version="1.9.0"/>
     <PackageVersion Include="HtmlSanitizer" Version="9.0.892"/>
-    <PackageVersion Include="PSC.Blazor.Components.MarkdownEditor" Version="10.0.7"/>
+    <PackageVersion Include="PSC.Blazor.Components.MarkdownEditor" Version="10.0.9"/>
     <PackageVersion Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.11"/>
     <PackageVersion Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.11"/>
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.11"/>
@@ -26,32 +26,37 @@
     <PackageVersion Include="Pomelo.EntityFrameworkCore.MySql.Json.Microsoft" Version="9.0.0"/>
     <!-- Unique to Marechai.MobyGames -->
     <PackageVersion Include="HtmlAgilityPack" Version="1.12.4"/>
-    <PackageVersion Include="MySqlConnector" Version="2.4.0"/>
+    <PackageVersion Include="MySqlConnector" Version="2.6.0"/>
     <PackageVersion Include="ReverseMarkdown" Version="5.3.0"/>
-    <PackageVersion Include="PuppeteerSharp" Version="24.42.0"/>
+    <PackageVersion Include="PuppeteerSharp" Version="25.1.0"/>
     <!-- Build infrastructure -->
     <PackageVersion Include="Packaging.Targets" Version="0.1.232"/>
     <!-- Unique to Marechai.Server.csproj -->
-    <PackageVersion Include="MetadataExtractor" Version="2.9.2"/>
-    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5"/>
-    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.5"/>
-    <PackageVersion Include="Microsoft.AspNetCore.Components.Authorization" Version="10.0.5"/>
-    <PackageVersion Include="Microsoft.Extensions.Localization" Version="10.0.5"/>
+    <PackageVersion Include="MetadataExtractor" Version="2.9.3"/>
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.8"/>
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.8"/>
+    <PackageVersion Include="Microsoft.AspNetCore.Components.Authorization" Version="10.0.8"/>
+    <PackageVersion Include="Microsoft.Extensions.Localization" Version="10.0.8"/>
     <PackageVersion Include="Prism.DryIoc.Uno.WinUI" Version="9.0.537"/>
-    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.17.0"/>
-    <PackageVersion Include="Svg.Skia" Version="3.7.0"/>
+    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.19.1"/>
+    <PackageVersion Include="Svg.Skia" Version="5.0.0"/>
+    <!-- Svg.Skia 3.7.0 pulls SkiaSharp 2.88.9 + NativeAssets.macOS + NativeAssets.Win, but
+         NOT NativeAssets.Linux. Reference it explicitly in Marechai.Server.csproj so the
+         server can render SVGs on Linux without throwing "The type initializer for
+         'SkiaSharp.SKImageInfo' threw an exception." at first Skia use. -->
+    <PackageVersion Include="SkiaSharp.NativeAssets.Linux" Version="3.119.4"/>
     <!-- Email (Marechai.Email) -->
-    <PackageVersion Include="MailKit" Version="4.14.0"/>
+    <PackageVersion Include="MailKit" Version="4.17.0"/>
     <PackageVersion Include="RazorLight" Version="2.3.1"/>
     <!-- QR codes (2FA setup) -->
-    <PackageVersion Include="QRCoder" Version="1.6.0"/>
+    <PackageVersion Include="QRCoder" Version="1.8.0"/>
     <!-- Kiota (shared API client) -->
-    <PackageVersion Include="Microsoft.Kiota.Abstractions" Version="1.22.1"/>
-    <PackageVersion Include="Microsoft.Kiota.Http.HttpClientLibrary" Version="1.22.1"/>
-    <PackageVersion Include="Microsoft.Kiota.Serialization.Json" Version="1.22.1"/>
-    <PackageVersion Include="Microsoft.Kiota.Serialization.Text" Version="1.22.1"/>
-    <PackageVersion Include="Microsoft.Kiota.Serialization.Form" Version="1.22.1"/>
-    <PackageVersion Include="Microsoft.Kiota.Serialization.Multipart" Version="1.22.1"/>
+    <PackageVersion Include="Microsoft.Kiota.Abstractions" Version="2.0.0"/>
+    <PackageVersion Include="Microsoft.Kiota.Http.HttpClientLibrary" Version="2.0.0"/>
+    <PackageVersion Include="Microsoft.Kiota.Serialization.Json" Version="2.0.0"/>
+    <PackageVersion Include="Microsoft.Kiota.Serialization.Text" Version="2.0.0"/>
+    <PackageVersion Include="Microsoft.Kiota.Serialization.Form" Version="2.0.0"/>
+    <PackageVersion Include="Microsoft.Kiota.Serialization.Multipart" Version="2.0.0"/>
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">

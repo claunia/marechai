@@ -5,12 +5,10 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Aaru.CommonTypes"/>
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies"/>
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql"/>
     <FrameworkReference Include="Microsoft.AspNetCore.App"/>
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql.Json.Microsoft"/>

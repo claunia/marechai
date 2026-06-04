@@ -11,7 +11,6 @@
     <PackageReference Include="HtmlAgilityPack"/>
     <PackageReference Include="MySqlConnector"/>
     <PackageReference Include="ReverseMarkdown"/>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies"/>
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql"/>
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql.Json.Microsoft"/>
     <PackageReference Include="PuppeteerSharp"/>
