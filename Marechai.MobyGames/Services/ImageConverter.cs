@@ -224,9 +224,21 @@ public static class ImageConverter
         // -limit thread 1 + MAGICK_THREAD_LIMIT=1 keep ImageMagick's own OpenMP core
         // single-threaded so the only multi-threaded codec is libheif/x265 (AVIF),
         // which has its own pool we let breathe.
+        //
+        // IMv7 `magick` is strict about argument order: operations like -resize act on
+        // images already on the stack. Input MUST come before any operation, otherwise
+        // the operation fails with "no images found". -limit is a global setting and can
+        // precede the input. -define is per-encoder and must precede the output to take
+        // effect, so we place it between input and -resize.
         convert.StartInfo.ArgumentList.Add("-limit");
         convert.StartInfo.ArgumentList.Add("thread");
         convert.StartInfo.ArgumentList.Add("1");
+
+        // [0] restricts multi-frame containers (animated GIF, multipage TIFF, PDF, ICO with
+        // varying sizes) to the first frame. JXL otherwise aborts with FramesNotSameDimensions
+        // when frame sizes differ, and AVIF/WebP would silently encode only the first frame
+        // anyway — making it explicit here keeps output consistent across encoders.
+        convert.StartInfo.ArgumentList.Add($"{originalPath}[0]");
 
         // Per-encoder speed/effort knob (skip for JPEG).
         if(defineKey is not null)
@@ -240,11 +252,6 @@ public static class ImageConverter
         convert.StartInfo.ArgumentList.Add("-strip");
         convert.StartInfo.ArgumentList.Add("-quality");
         convert.StartInfo.ArgumentList.Add(quality.ToString());
-        // [0] restricts multi-frame containers (animated GIF, multipage TIFF, PDF, ICO with
-        // varying sizes) to the first frame. JXL otherwise aborts with FramesNotSameDimensions
-        // when frame sizes differ, and AVIF/WebP would silently encode only the first frame
-        // anyway — making it explicit here keeps output consistent across encoders.
-        convert.StartInfo.ArgumentList.Add($"{originalPath}[0]");
         convert.StartInfo.ArgumentList.Add(outputPath);
 
         convert.StartInfo.Environment["MAGICK_THREAD_LIMIT"] = "1";

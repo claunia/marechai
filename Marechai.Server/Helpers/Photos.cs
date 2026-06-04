@@ -117,10 +117,24 @@ public class Photos
             p.StartInfo.Environment["MAGICK_THREAD_LIMIT"] = "1";
 
             p.Start();
-            string stdout = p.StandardOutput.ReadToEnd();
-            p.WaitForExit();
 
-            if(p.ExitCode != 0) return (null, 0, 0);
+            // Drain both pipes concurrently. Stderr is captured (RedirectStandardError=true) so
+            // if `magick identify` ever writes more than ~64 KB of warnings the child blocks on
+            // write and WaitForExit hangs forever. ReadToEndAsync on both prevents that.
+            Task<string> stderrTask = p.StandardError.ReadToEndAsync();
+            Task<string> stdoutTask = p.StandardOutput.ReadToEndAsync();
+            p.WaitForExit();
+            string stdout = stdoutTask.GetAwaiter().GetResult();
+            string stderr = stderrTask.GetAwaiter().GetResult();
+
+            if(p.ExitCode != 0)
+            {
+                string detail = (stderr ?? "").Trim().Replace('\r', ' ').Replace('\n', ' ');
+                if(detail.Length > 400) detail = detail[..400] + "…";
+                if(detail.Length == 0)  detail = "(no stderr)";
+                Console.Error.WriteLine($"magick identify failed for {path}: exit {p.ExitCode}: {detail}");
+                return (null, 0, 0);
+            }
 
             string firstLine = stdout.Split('\n', 2)[0].Trim();
             string[] parts   = firstLine.Split(' ', StringSplitOptions.RemoveEmptyEntries);
@@ -175,16 +189,30 @@ public class Photos
 
             p.Start();
             using var ms = new MemoryStream();
+
+            // Drain stderr concurrently while we copy the JPEG bytes from stdout. Without this
+            // a >64 KB stderr from `magick` would deadlock the child against WaitForExit.
+            Task<string> stderrTask = p.StandardError.ReadToEndAsync();
             p.StandardOutput.BaseStream.CopyTo(ms);
             p.WaitForExit();
+            string stderr = stderrTask.GetAwaiter().GetResult();
 
-            if(p.ExitCode != 0) return null;
+            if(p.ExitCode != 0)
+            {
+                string detail = (stderr ?? "").Trim().Replace('\r', ' ').Replace('\n', ' ');
+                if(detail.Length > 400) detail = detail[..400] + "…";
+                if(detail.Length == 0)  detail = "(no stderr)";
+                Console.Error.WriteLine(
+                    $"magick thumbnail failed for {srcPath}: exit {p.ExitCode}: {detail}");
+                return null;
+            }
 
             byte[] bytes = ms.ToArray();
             return bytes.Length > 0 ? bytes : null;
         }
-        catch(Exception)
+        catch(Exception ex)
         {
+            Console.Error.WriteLine($"magick thumbnail spawn failed for {srcPath}: {ex.Message}");
             return null;
         }
     }
@@ -312,9 +340,17 @@ public class Photos
             // single-threaded so the only multi-threaded codec is whichever AVIF backend
             // libheif is wired to (libaom / libsvtav1 / x265), which has its own pool that we
             // let breathe — capping it costs more throughput than it saves.
+            //
+            // IMv7 `magick` is strict about argument order: operations like -resize act on
+            // images already on the stack, so the input MUST come before any operation or it
+            // fails with "no images found". -limit is a global setting and can precede the
+            // input; -define is per-encoder and must precede the output to take effect.
             p.StartInfo.ArgumentList.Add("-limit");
             p.StartInfo.ArgumentList.Add("thread");
             p.StartInfo.ArgumentList.Add("1");
+
+            // [0] selects the first frame for multi-frame containers (TIFF, GIF, PDF, ICO).
+            p.StartInfo.ArgumentList.Add($"{originalPath}[0]");
 
             // Per-encoder speed/effort knob (skip for JPEG).
             if(defineKey is not null)
@@ -328,8 +364,6 @@ public class Photos
             p.StartInfo.ArgumentList.Add("-strip");
             p.StartInfo.ArgumentList.Add("-quality");
             p.StartInfo.ArgumentList.Add(quality.ToString());
-            // [0] selects the first frame for multi-frame containers (TIFF, GIF, PDF, ICO).
-            p.StartInfo.ArgumentList.Add($"{originalPath}[0]");
             p.StartInfo.ArgumentList.Add(outputPath);
 
             p.StartInfo.Environment["MAGICK_THREAD_LIMIT"] = "1";
