@@ -927,12 +927,19 @@ public class ImportService
                 _             => SoftwareGenreType.Genre
             };
 
+            // MobyGames serves cells like `Action&nbsp;Adventure`; HtmlDecode turns &nbsp; into
+            // U+00A0, which breaks exact-match lookup against existing space-separated rows and
+            // produces duplicate (Name, Type) entries. Normalise to a regular space (and trim)
+            // before BOTH the SELECT and the INSERT, matching CompanyMatcher / PersonMatcher /
+            // PlatformMatcher / CountryMatcher / MagazineMatcher convention.
+            string normalizedName = genre.Name.Replace('\u00A0', ' ').Trim();
+
             var dbGenre = await context.SoftwareGenres
-                                       .FirstOrDefaultAsync(g => g.Name == genre.Name && g.Type == genreType);
+                                       .FirstOrDefaultAsync(g => g.Name == normalizedName && g.Type == genreType);
 
             if(dbGenre is null)
             {
-                dbGenre = new SoftwareGenre { Name = genre.Name, Type = genreType };
+                dbGenre = new SoftwareGenre { Name = normalizedName, Type = genreType };
                 context.SoftwareGenres.Add(dbGenre);
                 await context.SaveChangesAsync();
             }
