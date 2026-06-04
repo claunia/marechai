@@ -842,7 +842,6 @@ public class PeopleController(
         model.Webpage          = dto.Webpage;
         model.Twitter          = dto.Twitter;
         model.Facebook         = dto.Facebook;
-        model.Photo            = dto.Photo ?? Guid.Empty;
         model.Alias            = dto.Alias;
         model.DisplayName      = dto.DisplayName;
 
