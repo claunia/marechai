@@ -159,7 +159,7 @@ public static class ImageConversionPassService
             if(degree > variants.Count) degree = variants.Count;
 
             Console.WriteLine(
-                $"    Spinning up {degree} subprocess worker(s) for {variants.Count} variant(s) ({pending.Count} original(s) × 8)...");
+                $"    Spinning up {degree} subprocess worker(s) for {variants.Count} variant(s) ({pending.Count} original(s) × 6)...");
 
             int totalVariants = variants.Count;
             int totalFiles    = pending.Count;
@@ -175,8 +175,8 @@ public static class ImageConversionPassService
                 int doneVar  = Volatile.Read(ref convertedVariants) + Volatile.Read(ref failedVariants);
                 double secs  = Math.Max(sw.Elapsed.TotalSeconds, 0.001);
                 double varRate  = doneVar / secs;
-                double origRate = varRate / 8.0;
-                int    doneOrig = doneVar / 8;
+                double origRate = varRate / 6.0;
+                int    doneOrig = doneVar / 6;
                 int    pct      = totalVariants == 0 ? 100 : (int)Math.Min(100, 100L * doneVar / totalVariants);
                 int    filled   = totalVariants == 0 ? barWidth : (int)((long)barWidth * doneVar / totalVariants);
                 if(filled > barWidth) filled = barWidth;
@@ -256,12 +256,12 @@ public static class ImageConversionPassService
                 $"    Total elapsed {FormatDuration(sw.Elapsed.TotalSeconds)} — average {finalRate:0.00} orig/s");
         }
 
-        // Variants are tracked individually; report at file granularity (8 variants per file).
-        // "converted" counts files where ALL 8 variants succeeded; failed = the rest. Partial
-        // files (1-7 variants done) are folded into the failed bucket because HasAllVariants
+        // Variants are tracked individually; report at file granularity (6 variants per file).
+        // "converted" counts files where ALL 6 variants succeeded; failed = the rest. Partial
+        // files (1-5 variants done) are folded into the failed bucket because HasAllVariants
         // demands the full set, so a partial run is functionally equivalent to a fully-failed
         // one — the next pass picks it up regardless.
-        int converted = convertedVariants / 8;
+        int converted = convertedVariants / 6;
         int failed    = dryRun ? 0 : pending.Count - converted;
 
         Console.WriteLine("\n  ────────────────────────────────────");

@@ -363,7 +363,7 @@ public class CoverDownloadService
                     coverContext.SoftwareCovers.Add(softwareCover);
                     await coverContext.SaveChangesAsync();
 
-                    // Run image conversion (8 variants) unless the caller explicitly
+                    // Run image conversion (6 variants) unless the caller explicitly
                     // opted out via --download-only (the conversion pass can be offloaded
                     // to another machine via the `convert-images` command).
                     if(downloadOnly)
