@@ -544,7 +544,6 @@ file class Program
             {
                 // Add new mappings
                 [".avif"] = "image/avif",   // AVIF image format
-                [".jxl"]  = "image/jxl",    // JPEG-XL image format
                 [".webp"] = "image/webp",   // WebP image format
                 [".svg"]  = "image/svg+xml" // SVG image format
             }

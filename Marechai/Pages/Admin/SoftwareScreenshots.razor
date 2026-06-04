@@ -68,7 +68,6 @@ else
                         <MudCard>
                             <MudCardContent Class="pa-2 d-flex flex-column align-center">
                                 <picture>
-                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jxl/4k/@(screenshot.Id.Value).jxl" type="image/jxl">
                                     <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/avif/4k/@(screenshot.Id.Value).avif" type="image/avif">
                                     <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/webp/4k/@(screenshot.Id.Value).webp" type="image/webp">
                                     <img alt="@(screenshot.Caption ?? screenshot.Id.Value.ToString())"

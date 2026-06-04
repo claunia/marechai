@@ -137,7 +137,7 @@ public static class PendingImageStore
 
     /// <summary>
     ///     Full-control overload. <paramref name="allowedExtensions" /> overrides the default
-    ///     suggestion whitelist (admin batch staging accepts a wider set: JPEG/PNG/WebP/AVIF/JXL/BMP/TIFF);
+    ///     suggestion whitelist (admin batch staging accepts a wider set: JPEG/PNG/WebP/AVIF/BMP/TIFF);
     ///     <paramref name="isAdminStaging" /> marks the sidecar so the admin-vs-suggestion counters
     ///     can distinguish entries sharing the same pending folder.
     /// </summary>

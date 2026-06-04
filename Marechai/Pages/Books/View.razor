@@ -64,7 +64,6 @@
         @if(_book.CoverGuid.HasValue)
         {
             <picture>
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/jxl/4k/@(_book.CoverGuid).jxl" type="image/jxl">
                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/avif/4k/@(_book.CoverGuid).avif" type="image/avif">
                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/webp/4k/@(_book.CoverGuid).webp" type="image/webp">
                 <img alt="@_book.Title" height="200"
@@ -197,7 +196,6 @@
             </MudStack>
             <div class="d-flex justify-center" style="cursor: pointer;" @onclick="() => _lightbox.Show(new List<Guid> { _book.CoverGuid.Value }, _book.CoverGuid.Value)">
                 <picture>
-                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/jxl/4k/@(_book.CoverGuid).jxl" type="image/jxl">
                     <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/avif/4k/@(_book.CoverGuid).avif" type="image/avif">
                     <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/webp/4k/@(_book.CoverGuid).webp" type="image/webp">
                     <img alt="@_book.Title" src="@(AssetUrls.BaseUrl)/assets/photos/book-covers/jpeg/4k/@(_book.CoverGuid).jpg"

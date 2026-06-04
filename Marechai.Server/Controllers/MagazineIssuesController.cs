@@ -533,7 +533,7 @@ public class MagazineIssuesController(
     // flight; the file lives under photos/magazine-issue-covers/pending/<guid>.<ext>
     // with a sidecar JSON recording the uploader. On accept the
     // MagazineIssueSuggestionApplier promotes the file into originals/ and runs the
-    // ConversionWorker for AVIF/JXL/WebP/JPEG variants.
+    // ConversionWorker for AVIF/WebP/JPEG variants.
 
     /// <summary>
     ///     Upload a pending cover for a magazine issue that the caller is suggesting an edit

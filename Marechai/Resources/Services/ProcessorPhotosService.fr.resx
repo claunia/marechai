@@ -123,8 +123,8 @@
             PublicKeyToken=b77a5c561934e089
         </value>
     </resheader>
-    <data name="Upload up to {0} photos for {1}. Accepted formats: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max 50 MB each)." xml:space="preserve">
-        <value>Téléversez jusqu'à {0} photos pour {1}. Formats acceptés : JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max. 50 Mo chacune).</value>
+    <data name="Upload up to {0} photos for {1}. Accepted formats: JPG, PNG, WebP, AVIF, BMP, TIFF (max 50 MB each)." xml:space="preserve">
+        <value>Téléversez jusqu'à {0} photos pour {1}. Formats acceptés : JPG, PNG, WebP, AVIF, BMP, TIFF (max. 50 Mo chacune).</value>
     </data>
     <data name="License" xml:space="preserve">
         <value>Licence</value>

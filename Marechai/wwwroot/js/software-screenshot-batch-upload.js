@@ -44,11 +44,10 @@ window.MarechaiSoftwareScreenshotBatchUpload = (function () {
             'image/png',
             'image/webp',
             'image/avif',
-            'image/jxl',
             'image/bmp',
             'image/tiff'
         ];
-        const allowedExts = ['.jpg', '.jpeg', '.png', '.webp', '.avif', '.jxl', '.bmp', '.tif', '.tiff'];
+        const allowedExts = ['.jpg', '.jpeg', '.png', '.webp', '.avif', '.bmp', '.tif', '.tiff'];
         const url = `${apiBaseUrl.replace(/\/+$/, '')}/software/screenshots/admin/pending?softwareId=${encodeURIComponent(softwareId)}`;
 
         let accepted = 0;
@@ -74,7 +73,7 @@ window.MarechaiSoftwareScreenshotBatchUpload = (function () {
             const mimeOk = !file.type || allowedTypes.includes(file.type.toLowerCase());
             if (!extOk && !mimeOk) {
                 rejected++;
-                try { dotNetRef.invokeMethodAsync('OnScreenshotUploadFailed', cryptoRandomGuid(), `${file.name}: unsupported type (allowed: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF)`); }
+                try { dotNetRef.invokeMethodAsync('OnScreenshotUploadFailed', cryptoRandomGuid(), `${file.name}: unsupported type (allowed: JPG, PNG, WebP, AVIF, BMP, TIFF)`); }
                 catch { /* ignored */ }
                 continue;
             }

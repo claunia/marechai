@@ -303,8 +303,8 @@
     <data name="Photo deleted successfully." xml:space="preserve">
         <value>Photo deleted successfully.</value>
     </data>
-    <data name="Upload up to {0} photos for {1}. Accepted formats: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max 50 MB each)." xml:space="preserve">
-        <value>Upload up to {0} photos for {1}. Accepted formats: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max 50 MB each).</value>
+    <data name="Upload up to {0} photos for {1}. Accepted formats: JPG, PNG, WebP, AVIF, BMP, TIFF (max 50 MB each)." xml:space="preserve">
+        <value>Upload up to {0} photos for {1}. Accepted formats: JPG, PNG, WebP, AVIF, BMP, TIFF (max 50 MB each).</value>
     </data>
     <data name="License" xml:space="preserve">
         <value>License</value>

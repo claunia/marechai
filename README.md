@@ -174,7 +174,7 @@ The project is built on a modern .NET stack:
 - Kiota for API client generation
 - MudBlazor for web UI components
 - SkiaSharp for rendering-related work
-- ImageMagick with JXL support for media processing
+- ImageMagick with AVIF/HEIF and WebP support for media processing
 
 ## Prerequisites
 
@@ -182,7 +182,7 @@ To work on this repository locally, you will need:
 
 - the .NET 10.0 SDK (the repo is configured with `global.json`)
 - a MariaDB or MySQL-compatible database
-- ImageMagick with HEIF, WebP, AVIF, and JXL support available in `PATH`
+- ImageMagick with HEIF, WebP, and AVIF support available in `PATH`
 - the Uno Platform tooling needed for the cross-platform app
 - a working development environment that can build and run .NET applications
 

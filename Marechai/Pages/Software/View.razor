@@ -66,7 +66,6 @@
         @if(_heroCover is not null)
         {
             <picture>
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(_heroCover.Id).jxl" type="image/jxl">
                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(_heroCover.Id).avif" type="image/avif">
                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(_heroCover.Id).webp" type="image/webp">
                 <img alt="@_software.Name"
@@ -879,7 +878,6 @@ else
                             <MudCard Elevation="1" Class="rounded-lg" Style="width: 200px; cursor: pointer;" @onclick="() => _fullscreenCover = cover">
                                 <MudCardContent Class="pa-2">
                                     <picture>
-                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(cover.Id).jxl" type="image/jxl">
                                         <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(cover.Id).avif" type="image/avif">
                                         <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(cover.Id).webp" type="image/webp">
                                         <img alt="@(cover.TypeName ?? cover.Caption)"
@@ -908,7 +906,6 @@ else
     <MudOverlay Visible="true" DarkBackground="true" ZIndex="9999" OnClick="() => _fullscreenCover = null">
         <div class="d-flex flex-column align-center justify-center" style="width: 100vw; height: 100vh;">
             <picture>
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(cover.Id).jxl" type="image/jxl">
                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(cover.Id).avif" type="image/avif">
                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(cover.Id).webp" type="image/webp">
                 <img alt="@(cover.TypeName ?? cover.Caption)"
@@ -1006,7 +1003,6 @@ else
                                     <MudCard Elevation="1" Class="rounded-lg" Style="width: 200px; cursor: pointer;" @onclick="() => _fullscreenScreenshot = screenshot">
                                         <MudCardContent Class="pa-2">
                                             <picture>
-                                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jxl/4k/@(screenshot.Id).jxl" type="image/jxl">
                                                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/avif/4k/@(screenshot.Id).avif" type="image/avif">
                                                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/webp/4k/@(screenshot.Id).webp" type="image/webp">
                                                 <img alt="@screenshot.Caption"
@@ -1074,7 +1070,6 @@ else
     <MudOverlay Visible="true" DarkBackground="true" ZIndex="9999" OnClick="() => _fullscreenScreenshot = null">
         <div class="d-flex flex-column align-center justify-center" style="width: 100vw; height: 100vh;">
             <picture>
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/jxl/4k/@(screenshot.Id).jxl" type="image/jxl">
                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/avif/4k/@(screenshot.Id).avif" type="image/avif">
                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-screenshots/webp/4k/@(screenshot.Id).webp" type="image/webp">
                 <img alt="@screenshot.Caption"
@@ -1145,7 +1140,6 @@ else
                                      @onclick="() => _fullscreenPromo = promo">
                                 <MudCardContent Class="pa-2">
                                     <picture>
-                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/jxl/4k/@(promo.Id).jxl" type="image/jxl">
                                         <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/avif/4k/@(promo.Id).avif" type="image/avif">
                                         <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/webp/4k/@(promo.Id).webp" type="image/webp">
                                         <img alt="@(promo.Caption ?? promo.GroupName)"
@@ -1173,7 +1167,6 @@ else
     <MudOverlay Visible="true" DarkBackground="true" ZIndex="9999" OnClick="() => _fullscreenPromo = null">
         <div class="d-flex flex-column align-center justify-center" style="width: 100vw; height: 100vh;">
             <picture>
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/jxl/4k/@(promo.Id).jxl" type="image/jxl">
                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/avif/4k/@(promo.Id).avif" type="image/avif">
                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/webp/4k/@(promo.Id).webp" type="image/webp">
                 <img alt="@(promo.Caption ?? promo.GroupName)"

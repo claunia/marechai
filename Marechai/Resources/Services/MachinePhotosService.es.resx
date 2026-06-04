@@ -748,8 +748,8 @@
     <data name="Photo deleted successfully." xml:space="preserve">
         <value>Foto eliminada correctamente.</value>
     </data>
-<data name="Date precision" xml:space="preserve"><value>Precisión de fecha</value></data><data name="Full date" xml:space="preserve"><value>Fecha completa</value></data><data name="Month and year only" xml:space="preserve"><value>Solo mes y año</value></data><data name="Year only" xml:space="preserve"><value>Solo año</value></data>    <data name="Upload up to {0} photos for {1}. Accepted formats: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max 50 MB each)." xml:space="preserve">
-        <value>Sube hasta {0} fotos para {1}. Formatos aceptados: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (máx. 50 MB cada una).</value>
+<data name="Date precision" xml:space="preserve"><value>Precisión de fecha</value></data><data name="Full date" xml:space="preserve"><value>Fecha completa</value></data><data name="Month and year only" xml:space="preserve"><value>Solo mes y año</value></data><data name="Year only" xml:space="preserve"><value>Solo año</value></data>    <data name="Upload up to {0} photos for {1}. Accepted formats: JPG, PNG, WebP, AVIF, BMP, TIFF (max 50 MB each)." xml:space="preserve">
+        <value>Sube hasta {0} fotos para {1}. Formatos aceptados: JPG, PNG, WebP, AVIF, BMP, TIFF (máx. 50 MB cada una).</value>
     </data>
     <data name="Images: {0}/{1}" xml:space="preserve">
         <value>Imágenes: {0}/{1}</value>

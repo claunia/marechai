@@ -749,12 +749,12 @@ public class SoftwareScreenshotsController(MarechaiContext     context, IConfigu
 
     /// <summary>
     ///     Allowed extensions accepted by the admin batch-upload staging endpoint. Wider
-    ///     than the legacy <c>/upload</c> set (adds AVIF/JXL) and the collaborator-suggestion
+    ///     than the legacy <c>/upload</c> set (adds AVIF) and the collaborator-suggestion
     ///     set (JPEG/PNG/WebP only).
     /// </summary>
     static readonly HashSet<string> _adminBatchAllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
-        ".jpg", ".jpeg", ".png", ".webp", ".avif", ".jxl", ".bmp", ".tif", ".tiff"
+        ".jpg", ".jpeg", ".png", ".webp", ".avif", ".bmp", ".tif", ".tiff"
     };
 
     /// <summary>
@@ -764,7 +764,7 @@ public class SoftwareScreenshotsController(MarechaiContext     context, IConfigu
     /// </summary>
     static readonly HashSet<string> _adminBatchAllowedMagickFormats = new(StringComparer.OrdinalIgnoreCase)
     {
-        "JPEG", "PNG", "WEBP", "AVIF", "JXL", "BMP", "TIFF"
+        "JPEG", "PNG", "WEBP", "AVIF", "BMP", "TIFF"
     };
 
     /// <summary>
@@ -793,7 +793,7 @@ public class SoftwareScreenshotsController(MarechaiContext     context, IConfigu
 
         string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
         if(!_adminBatchAllowedExtensions.Contains(extension))
-            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP, AVIF, JXL, BMP, TIFF.");
+            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP, AVIF, BMP, TIFF.");
 
         bool softwareExists = await context.Softwares.AnyAsync(s => s.Id == (ulong)softwareId);
         if(!softwareExists) return NotFound("Software not found.");

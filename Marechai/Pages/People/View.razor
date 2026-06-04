@@ -61,7 +61,6 @@
         @if(_person.Photo.HasValue && _person.Photo.Value != Guid.Empty)
         {
             <picture>
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/people/jxl/4k/@(_person.Photo).jxl" type="image/jxl">
                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/people/avif/4k/@(_person.Photo).avif" type="image/avif">
                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/people/webp/4k/@(_person.Photo).webp" type="image/webp">
                 <img alt="@(_person.DisplayName ?? _person.Alias ?? $"{_person.Name} {_person.Surname}".Trim())" height="200"
@@ -209,7 +208,6 @@
             </MudStack>
             <div class="d-flex justify-center" style="cursor: pointer;" @onclick="() => _lightbox.Show(new List<Guid> { _person.Photo.Value }, _person.Photo.Value)">
                 <picture>
-                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/people/jxl/4k/@(_person.Photo).jxl" type="image/jxl">
                     <source srcset="@(AssetUrls.BaseUrl)/assets/photos/people/avif/4k/@(_person.Photo).avif" type="image/avif">
                     <source srcset="@(AssetUrls.BaseUrl)/assets/photos/people/webp/4k/@(_person.Photo).webp" type="image/webp">
                     <img alt="@(_person.DisplayName ?? _person.Alias ?? $"{_person.Name} {_person.Surname}".Trim())" src="@(AssetUrls.BaseUrl)/assets/photos/people/jpeg/4k/@(_person.Photo).jpg"
@@ -559,7 +557,6 @@ else
                             {
                                 <div class="sw-cover-thumb sw-cover-thumb-md">
                                     <picture>
-                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(credit.FrontCoverId).jxl" type="image/jxl">
                                         <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(credit.FrontCoverId).avif" type="image/avif">
                                         <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(credit.FrontCoverId).webp" type="image/webp">
                                         <img alt="@credit.SoftwareName"

@@ -1225,8 +1225,8 @@
   <data name="Upload Screenshots" xml:space="preserve">
     <value>Carica screenshot</value>
   </data>
-  <data name="Upload up to {0} screenshots for {1}. Accepted formats: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max 50 MB each)." xml:space="preserve">
-    <value>Carica fino a {0} screenshot per {1}. Formati accettati: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max 50 MB ciascuno).</value>
+  <data name="Upload up to {0} screenshots for {1}. Accepted formats: JPG, PNG, WebP, AVIF, BMP, TIFF (max 50 MB each)." xml:space="preserve">
+    <value>Carica fino a {0} screenshot per {1}. Formati accettati: JPG, PNG, WebP, AVIF, BMP, TIFF (max 50 MB ciascuno).</value>
   </data>
   <data name="You have staged images that have not been uploaded. Closing this dialog will delete them. Continue?" xml:space="preserve">
     <value>Hai immagini in attesa che non sono state caricate. Chiudere questa finestra le eliminerà. Continuare?</value>

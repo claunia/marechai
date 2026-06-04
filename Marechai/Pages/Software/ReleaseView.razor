@@ -58,7 +58,6 @@
         @if(_heroCover is not null)
         {
             <picture>
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(_heroCover.Id).jxl" type="image/jxl">
                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(_heroCover.Id).avif" type="image/avif">
                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(_heroCover.Id).webp" type="image/webp">
                 <img alt="@(!string.IsNullOrEmpty(_softwareName) ? _softwareName : _release.Title)"
@@ -590,7 +589,6 @@
                             <MudCard Elevation="1" Class="rounded-lg" Style="width: 200px; cursor: pointer;" @onclick="() => _fullscreenCover = cover">
                                 <MudCardContent Class="pa-2">
                                     <picture>
-                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(cover.Id).jxl" type="image/jxl">
                                         <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(cover.Id).avif" type="image/avif">
                                         <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(cover.Id).webp" type="image/webp">
                                         <img alt="@(cover.TypeName ?? cover.Caption)"
@@ -622,7 +620,6 @@
     <MudOverlay Visible="true" DarkBackground="true" ZIndex="9999" OnClick="() => _fullscreenCover = null">
         <div class="d-flex flex-column align-center justify-center" style="width: 100vw; height: 100vh;">
             <picture>
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jxl/4k/@(_fullscreenCover.Id).jxl" type="image/jxl">
                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(_fullscreenCover.Id).avif" type="image/avif">
                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(_fullscreenCover.Id).webp" type="image/webp">
                 <img alt="@(_fullscreenCover.TypeName ?? _fullscreenCover.Caption)"

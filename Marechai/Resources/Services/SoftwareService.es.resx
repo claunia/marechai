@@ -1260,8 +1260,8 @@
   <data name="Upload Screenshots" xml:space="preserve">
     <value>Subir capturas de pantalla</value>
   </data>
-  <data name="Upload up to {0} screenshots for {1}. Accepted formats: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max 50 MB each)." xml:space="preserve">
-    <value>Sube hasta {0} capturas de pantalla para {1}. Formatos aceptados: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (máx. 50 MB cada una).</value>
+  <data name="Upload up to {0} screenshots for {1}. Accepted formats: JPG, PNG, WebP, AVIF, BMP, TIFF (max 50 MB each)." xml:space="preserve">
+    <value>Sube hasta {0} capturas de pantalla para {1}. Formatos aceptados: JPG, PNG, WebP, AVIF, BMP, TIFF (máx. 50 MB cada una).</value>
   </data>
   <data name="You have staged images that have not been uploaded. Closing this dialog will delete them. Continue?" xml:space="preserve">
     <value>Tiene imágenes preparadas que aún no se han subido. Al cerrar este diálogo se eliminarán. ¿Continuar?</value>

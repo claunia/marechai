@@ -60,9 +60,6 @@ public class Photos
         paths.Add(Path.Combine(itemThumbsRoot, "avif", "4k"));
         paths.Add(Path.Combine(itemPhotosRoot, "avif", "4k"));
 
-        paths.Add(Path.Combine(itemThumbsRoot, "jxl", "4k"));
-        paths.Add(Path.Combine(itemPhotosRoot, "jxl", "4k"));
-
         foreach(string path in paths.Where(path => !Directory.Exists(path))) Directory.CreateDirectory(path);
     }
 
@@ -79,7 +76,6 @@ public class Photos
             "jpg" or "jpeg" => "jpeg",
             "webp"          => "webp",
             "avif"          => "avif",
-            "jxl"           => "jxl",
             _               => null
         };
         if(outputFormat is null) return false;
@@ -91,7 +87,7 @@ public class Photos
 
     /// <summary>
     ///     Content-sniff via the ImageMagick <c>identify</c> CLI. Returns the canonical uppercase
-    ///     format (e.g. <c>"JPEG"</c>, <c>"PNG"</c>, <c>"WEBP"</c>, <c>"AVIF"</c>, <c>"JXL"</c>,
+    ///     format (e.g. <c>"JPEG"</c>, <c>"PNG"</c>, <c>"WEBP"</c>, <c>"AVIF"</c>,
     ///     <c>"BMP"</c>, <c>"TIFF"</c>) plus dimensions. <c>(null, 0, 0)</c> when the file is
     ///     unreadable or unrecognised. The <c>[0]</c> frame selector restricts multi-frame
     ///     containers (TIFF, GIF, PDF, ICO) to the first page so the output is a single line.
@@ -222,8 +218,8 @@ public class Photos
     {
         string photosOrScans = scan ? "scans" : "photos";
 
-        // Pre-compute all 8 output paths so the parallel section is pure subprocess invocation.
-        var jobs = new List<(string Format, bool Thumbnail, string OutputPath, int Width, int Height)>(8);
+        // Pre-compute all 6 output paths so the parallel section is pure subprocess invocation.
+        var jobs = new List<(string Format, bool Thumbnail, string OutputPath, int Width, int Height)>(6);
         foreach((string format, string ext) in s_outputFormats)
         {
             string fullDir  = Path.Combine(assetRootPath, photosOrScans, item, format, "4k");
@@ -232,8 +228,8 @@ public class Photos
             jobs.Add((format, false, Path.Combine(fullDir,  $"{id}.{ext}"), 3840, 2160));
         }
 
-        // Subprocess `convert` per variant: 8 fork/exec per upload. Each subprocess gets a
-        // fresh address space, so any native arena retention in libheif / libaom / libjxl /
+        // Subprocess `convert` per variant: 6 fork/exec per upload. Each subprocess gets a
+        // fresh address space, so any native arena retention in libheif / libaom /
         // libsvtav1 is reclaimed by the kernel on exit — critical for a long-running server
         // that handles thousands of uploads before restart. The fork/exec overhead is
         // ~30-80 ms per variant; concurrency is bounded by whatever Parallel.ForEach picks
@@ -255,10 +251,8 @@ public class Photos
         FinishedRenderingWebp4k?.Invoke(results.GetValueOrDefault(("webp",         false)));
         FinishedRenderingAvif4kThumbnail?.Invoke(results.GetValueOrDefault(("avif", true)));
         FinishedRenderingAvif4K?.Invoke(results.GetValueOrDefault(("avif",         false)));
-        FinishedRenderingJxl4kThumbnail?.Invoke(results.GetValueOrDefault(("jxl", true)));
-        FinishedRenderingJxl4K?.Invoke(results.GetValueOrDefault(("jxl",          false)));
 
-        bool overall = results.Count == 8 && results.Values.All(v => v);
+        bool overall = results.Count == 6 && results.Values.All(v => v);
         FinishedAll?.Invoke(overall);
     }
 
@@ -270,15 +264,13 @@ public class Photos
     public event ConversionFinished FinishedRenderingWebp4k;
     public event ConversionFinished FinishedRenderingAvif4kThumbnail;
     public event ConversionFinished FinishedRenderingAvif4K;
-    public event ConversionFinished FinishedRenderingJxl4kThumbnail;
-    public event ConversionFinished FinishedRenderingJxl4K;
 
-    // ── Subprocess `convert` plumbing ─────────────────────────────────────────
+    // ── Subprocess `convert` plumbing ───────────────────────────────────
 
     /// <summary>Canonical output format list shared by single-variant <see cref="Convert" /> and bulk <see cref="ConversionWorker" />.</summary>
     static readonly (string Format, string Extension)[] s_outputFormats =
     {
-        ("jpeg", "jpg"), ("webp", "webp"), ("avif", "avif"), ("jxl", "jxl")
+        ("jpeg", "jpg"), ("webp", "webp"), ("avif", "avif")
     };
 
     /// <summary>
@@ -303,9 +295,6 @@ public class Photos
             // is libaom / libsvtav1 / x265 depending on the IM build.
             ("avif", true)  => (quality, "heic:speed",  "9"),
             ("avif", false) => (quality, "heic:speed",  "7"),
-            // libjxl `effort`: 1 = fastest, 9 = slowest/best. Default is 7.
-            ("jxl",  true)  => (quality, "jxl:effort",  "1"),
-            ("jxl",  false) => (quality, "jxl:effort",  "4"),
             _               => (quality, null, null)
         };
     }

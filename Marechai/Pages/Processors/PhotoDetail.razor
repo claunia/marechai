@@ -65,7 +65,6 @@
 <MudCard Elevation="2" Class="mb-4 rounded-lg">
     <MudCardContent Class="d-flex justify-center pa-4">
         <picture>
-            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/processors/jxl/4k/@(_photo.Id).jxl" type="image/jxl">
             <source srcset="@(AssetUrls.BaseUrl)/assets/photos/processors/avif/4k/@(_photo.Id).avif" type="image/avif">
             <source srcset="@(AssetUrls.BaseUrl)/assets/photos/processors/webp/4k/@(_photo.Id).webp" type="image/webp">
             <img alt="@_photo.ProcessorName" src="@(AssetUrls.BaseUrl)/assets/photos/processors/jpeg/4k/@(_photo.Id).jpg"

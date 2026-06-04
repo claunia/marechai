@@ -55,7 +55,7 @@ namespace Marechai.Server.Suggestions;
 ///         created with the suggestion-level license + source URL + per-photo comment +
 ///         auto-extracted EXIF metadata. The same fire-and-forget
 ///         <c>Photos.ConversionWorker</c> used by the admin upload path materialises all
-///         JPEG/WebP/AVIF/JXL variants. Rejected photos have their pending files deleted.
+///         JPEG/WebP/AVIF variants. Rejected photos have their pending files deleted.
 ///     </para>
 /// </summary>
 public static class MachinePhotoSuggestionApplier

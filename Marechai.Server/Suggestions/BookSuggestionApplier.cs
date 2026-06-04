@@ -70,7 +70,7 @@ internal static class BookSuggestionApplier
     ///     <see cref="Marechai.Server.Helpers.PendingImageStore.PromoteToOriginalsAsync" /> moves
     ///     the file into <c>book-covers/originals/</c> (extension comes from the sidecar) and
     ///     the existing <see cref="Marechai.Helpers.Photos.ConversionWorker" /> generates the
-    ///     AVIF/JXL/WebP/JPEG variants.
+    ///     AVIF/WebP/JPEG variants.
     /// </summary>
     public const string FieldCoverPendingGuid      = "cover_pending_guid";
 
@@ -356,7 +356,7 @@ internal static class BookSuggestionApplier
         b.OriginalCoverExtension = extension;
 
         // Fire conversion worker in the background — same pattern as the admin upload path
-        // (BooksController.UploadCoverAsync). Generates AVIF/JXL/WebP/JPEG variants at HD,
+        // (BooksController.UploadCoverAsync). Generates AVIF/WebP/JPEG variants at HD,
         // 1440p, 4K resolutions plus thumbnails.
         _ = Task.Run(() =>
         {
@@ -393,7 +393,7 @@ internal static class BookSuggestionApplier
 
         DeleteFilesByPattern(System.IO.Path.Combine(photosRoot, "originals"), guidStr + ".*");
 
-        string[] formats     = ["jpeg", "webp", "avif", "jxl"];
+        string[] formats     = ["jpeg", "webp", "avif"];
         string[] resolutions = ["4k"];
 
         foreach(string format in formats)
@@ -403,7 +403,6 @@ internal static class BookSuggestionApplier
                 "jpeg" => ".jpg",
                 "webp" => ".webp",
                 "avif" => ".avif",
-                "jxl"  => ".jxl",
                 _      => "." + format
             };
 

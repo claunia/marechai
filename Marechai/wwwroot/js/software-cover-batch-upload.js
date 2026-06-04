@@ -44,11 +44,10 @@ window.MarechaiSoftwareCoverBatchUpload = (function () {
             'image/png',
             'image/webp',
             'image/avif',
-            'image/jxl',
             'image/bmp',
             'image/tiff'
         ];
-        const allowedExts = ['.jpg', '.jpeg', '.png', '.webp', '.avif', '.jxl', '.bmp', '.tif', '.tiff'];
+        const allowedExts = ['.jpg', '.jpeg', '.png', '.webp', '.avif', '.bmp', '.tif', '.tiff'];
         const url = `${apiBaseUrl.replace(/\/+$/, '')}/software/covers/admin/pending?releaseId=${encodeURIComponent(releaseId)}`;
 
         let accepted = 0;
@@ -74,7 +73,7 @@ window.MarechaiSoftwareCoverBatchUpload = (function () {
             const mimeOk = !file.type || allowedTypes.includes(file.type.toLowerCase());
             if (!extOk && !mimeOk) {
                 rejected++;
-                try { dotNetRef.invokeMethodAsync('OnCoverUploadFailed', cryptoRandomGuid(), `${file.name}: unsupported type (allowed: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF)`); }
+                try { dotNetRef.invokeMethodAsync('OnCoverUploadFailed', cryptoRandomGuid(), `${file.name}: unsupported type (allowed: JPG, PNG, WebP, AVIF, BMP, TIFF)`); }
                 catch { /* ignored */ }
                 continue;
             }

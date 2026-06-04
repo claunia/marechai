@@ -323,7 +323,7 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
 
         DeleteFilesByPattern(Path.Combine(photosRoot, "originals"), $"{guidStr}.*");
 
-        string[] formats     = ["jpeg", "webp", "avif", "jxl"];
+        string[] formats     = ["jpeg", "webp", "avif"];
         string[] resolutions = ["4k"];
 
         foreach(string format in formats)
@@ -333,7 +333,6 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
                 "jpeg" => ".jpg",
                 "webp" => ".webp",
                 "avif" => ".avif",
-                "jxl"  => ".jxl",
                 _      => $".{format}"
             };
 
@@ -523,12 +522,12 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
 
     /// <summary>
     ///     Allowed extensions accepted by the admin batch-upload staging endpoint. Wider
-    ///     than both the legacy <c>/upload</c> set (which also rejects AVIF/JXL) and the
+    ///     than both the legacy <c>/upload</c> set (which also rejects AVIF) and the
     ///     collaborator-suggestion set (which rejects everything beyond JPEG/PNG/WebP).
     /// </summary>
     static readonly HashSet<string> _adminBatchAllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
-        ".jpg", ".jpeg", ".png", ".webp", ".avif", ".jxl", ".bmp", ".tif", ".tiff"
+        ".jpg", ".jpeg", ".png", ".webp", ".avif", ".bmp", ".tif", ".tiff"
     };
 
     /// <summary>
@@ -539,7 +538,7 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
     /// </summary>
     static readonly HashSet<string> _adminBatchAllowedMagickFormats = new(StringComparer.OrdinalIgnoreCase)
     {
-        "JPEG", "PNG", "WEBP", "AVIF", "JXL", "BMP", "TIFF"
+        "JPEG", "PNG", "WEBP", "AVIF", "BMP", "TIFF"
     };
 
     /// <summary>
@@ -567,7 +566,7 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
 
         string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
         if(!_adminBatchAllowedExtensions.Contains(extension))
-            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP, AVIF, JXL, BMP, TIFF.");
+            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP, AVIF, BMP, TIFF.");
 
         bool releaseExists = await context.SoftwareReleases.AnyAsync(r => r.Id == releaseId);
         if(!releaseExists) return NotFound("Software release not found.");
@@ -665,7 +664,7 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
     ///     batch on a background task; the client polls
     ///     <c>GET /software/covers/admin/batch/{jobId}/status</c> for progress and per-item
     ///     results. Each image runs through the standard 8-variant conversion (JPEG/WebP/
-    ///     AVIF/JXL × full+thumb) sequentially so the progress bar advances one image at a
+    ///     AVIF × full+thumb) sequentially so the progress bar advances one image at a
     ///     time.
     /// </summary>
     [HttpPost("admin/batch/commit")]

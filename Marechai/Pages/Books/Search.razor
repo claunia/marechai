@@ -65,7 +65,6 @@
                         @if(book.CoverGuid.HasValue)
                         {
                             <picture>
-                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/jxl/4k/@(book.CoverGuid).jxl" type="image/jxl">
                                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/avif/4k/@(book.CoverGuid).avif" type="image/avif">
                                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/book-covers/webp/4k/@(book.CoverGuid).webp" type="image/webp">
                                 <img alt="@book.Title" height="48"

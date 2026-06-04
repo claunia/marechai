@@ -601,7 +601,6 @@ else
                                           @onclick="() => _lightbox.Show(_photos, photo)">
 
                                 <picture>
-                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/processors/thumbs/jxl/4k/@(photo).jxl" type="image/jxl">
                                     <source srcset="@(AssetUrls.BaseUrl)/assets/photos/processors/thumbs/avif/4k/@(photo).avif" type="image/avif">
                                     <source srcset="@(AssetUrls.BaseUrl)/assets/photos/processors/thumbs/webp/4k/@(photo).webp" type="image/webp">
                                     <img alt="" src="@(AssetUrls.BaseUrl)/assets/photos/processors/thumbs/jpeg/4k/@(photo).jpg"

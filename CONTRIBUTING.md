@@ -12,7 +12,7 @@ A working local setup usually includes:
 
 - the .NET 10 SDK
 - a MariaDB or MySQL-compatible database
-- ImageMagick with HEIF, WebP, AVIF, and JXL support available in PATH
+- ImageMagick with HEIF, WebP, and AVIF support available in PATH
 - the Uno Platform tooling needed for the cross-platform app
 - a terminal and editor you are comfortable with
 
@@ -99,7 +99,7 @@ If you modify the database model or schema:
 
 If you touch media ingestion or image processing:
 
-- ensure the environment supports the expected formats, including JXL
+- ensure the environment supports the expected formats, including AVIF
 - keep conversion logic predictable and reproducible
 - document any new asset requirements or assumptions
 
@@ -140,7 +140,7 @@ Look for issues that are clearly scoped, low risk, and easy to verify. If someth
 
 ### Image processing issues
 
-- make sure ImageMagick is installed with HEIF, WebP, AVIF, and JXL support
+- make sure ImageMagick is installed with HEIF, WebP, and AVIF support
 - verify that the executable is available in PATH
 - if conversion-related features fail, check whether the system image libraries are present
 

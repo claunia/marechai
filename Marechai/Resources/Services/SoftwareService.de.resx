@@ -1306,8 +1306,8 @@
   <data name="Upload Screenshots" xml:space="preserve">
     <value>Screenshots hochladen</value>
   </data>
-  <data name="Upload up to {0} screenshots for {1}. Accepted formats: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max 50 MB each)." xml:space="preserve">
-    <value>Lade bis zu {0} Screenshots für {1} hoch. Akzeptierte Formate: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max. 50 MB pro Datei).</value>
+  <data name="Upload up to {0} screenshots for {1}. Accepted formats: JPG, PNG, WebP, AVIF, BMP, TIFF (max 50 MB each)." xml:space="preserve">
+    <value>Lade bis zu {0} Screenshots für {1} hoch. Akzeptierte Formate: JPG, PNG, WebP, AVIF, BMP, TIFF (max. 50 MB pro Datei).</value>
   </data>
   <data name="You have staged images that have not been uploaded. Closing this dialog will delete them. Continue?" xml:space="preserve">
     <value>Es gibt vorgemerkte Bilder, die noch nicht hochgeladen wurden. Beim Schließen dieses Dialogs werden sie gelöscht. Fortfahren?</value>

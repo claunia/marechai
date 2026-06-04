@@ -538,7 +538,6 @@ else
                         <MudCard Elevation="1" Class="rounded-lg">
                             <MudCardContent Class="pa-2 d-flex justify-center" @onclick="() => _lightbox.Show(_photos, photo)" Style="cursor: pointer;">
                                 <picture>
-                                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/jxl/4k/@(photo).jxl" type="image/jxl">
                                     <source srcset="@(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/avif/4k/@(photo).avif" type="image/avif">
                                     <source srcset="@(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/webp/4k/@(photo).webp" type="image/webp">
                                     <img alt="" height="auto" src="@(AssetUrls.BaseUrl)/assets/photos/sound-synths/thumbs/jpeg/4k/@(photo).jpg"

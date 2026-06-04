@@ -474,8 +474,8 @@
         <value>Numero f</value>
         <comment>F-number</comment>
     </data>
-    <data name="Upload up to {0} photos for {1}. Accepted formats: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max 50 MB each)." xml:space="preserve">
-        <value>Carica fino a {0} foto per {1}. Formati accettati: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max 50 MB ciascuno).</value>
+    <data name="Upload up to {0} photos for {1}. Accepted formats: JPG, PNG, WebP, AVIF, BMP, TIFF (max 50 MB each)." xml:space="preserve">
+        <value>Carica fino a {0} foto per {1}. Formati accettati: JPG, PNG, WebP, AVIF, BMP, TIFF (max 50 MB ciascuno).</value>
     </data>
     <data name="License is required." xml:space="preserve">
         <value>La licenza è obbligatoria.</value>

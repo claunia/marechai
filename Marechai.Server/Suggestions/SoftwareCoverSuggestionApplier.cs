@@ -60,7 +60,7 @@ namespace Marechai.Server.Suggestions;
 ///         created where the row Id IS the pending guid (matching the admin upload convention
 ///         where <c>model.Id</c> IS the original-file basename). The same fire-and-forget
 ///         <c>Photos.ConversionWorker</c> used by the admin upload path materialises all
-///         JPEG/WebP/AVIF/JXL variants. Rejected images have their pending files deleted.
+///         JPEG/WebP/AVIF variants. Rejected images have their pending files deleted.
 ///     </para>
 /// </summary>
 public static class SoftwareCoverSuggestionApplier

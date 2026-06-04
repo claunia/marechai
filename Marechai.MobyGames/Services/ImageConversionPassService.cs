@@ -16,7 +16,7 @@ public enum ImageConversionItemType
 
 /// <summary>
 /// Offline image conversion pass. Walks <c>photos/&lt;itemName&gt;/originals/</c> on disk
-/// and, for each Guid-named original whose 8 converted outputs (JPEG/WEBP/AVIF/JXL ×
+/// and, for each Guid-named original whose 6 converted outputs (JPEG/WEBP/AVIF ×
 /// thumb/full at 4k) are not all present, runs <see cref="ImageConverter.ConvertAll"/>.
 ///
 /// Designed to be runnable on a machine that has ONLY the <c>photos/</c> tree and
@@ -139,13 +139,13 @@ public static class ImageConversionPassService
 
         if(!dryRun && pending.Count > 0)
         {
-            // Output trees (jpeg/webp/avif/jxl × full/thumb) must exist before the subprocess
+            // Output trees (jpeg/webp/avif × full/thumb) must exist before the subprocess
             // `convert` writes into them.
             ImageConverter.EnsureDirectoriesCreated(assetRootPath, itemName);
 
             // Subprocess `convert` per variant: address-space isolation per encode. When
             // `convert` exits, the kernel reclaims 100% of the native codec buffers (libheif
-            // reference frames, libaom / libsvtav1 / x265 lookahead, libjxl thread pools)
+            // reference frames, libaom / libsvtav1 / x265 lookahead)
             // regardless of what the encoder retained internally. Trade-off is one fork/exec
             // + one PNG decode per variant (~30-80 ms each on Linux); on HDD-backed runs this
             // is dwarfed by disk wait anyway. The unit of parallelism is therefore one

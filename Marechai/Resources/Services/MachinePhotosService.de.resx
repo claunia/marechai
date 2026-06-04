@@ -474,8 +474,8 @@
         <value>Blendenzahl</value>
         <comment>F-number</comment>
     </data>
-    <data name="Upload up to {0} photos for {1}. Accepted formats: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max 50 MB each)." xml:space="preserve">
-        <value>Laden Sie bis zu {0} Fotos für {1} hoch. Akzeptierte Formate: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max. 50 MB pro Datei).</value>
+    <data name="Upload up to {0} photos for {1}. Accepted formats: JPG, PNG, WebP, AVIF, BMP, TIFF (max 50 MB each)." xml:space="preserve">
+        <value>Laden Sie bis zu {0} Fotos für {1} hoch. Akzeptierte Formate: JPG, PNG, WebP, AVIF, BMP, TIFF (max. 50 MB pro Datei).</value>
     </data>
     <data name="License is required." xml:space="preserve">
         <value>Lizenz ist erforderlich.</value>

@@ -384,7 +384,7 @@ public class SoftwarePromoArtController(MarechaiContext context, IConfiguration 
 
         DeleteFilesByPattern(Path.Combine(photosRoot, "originals"), $"{guidStr}.*");
 
-        string[] formats     = ["jpeg", "webp", "avif", "jxl"];
+        string[] formats     = ["jpeg", "webp", "avif"];
         string[] resolutions = ["4k"];
 
         foreach(string format in formats)
@@ -394,7 +394,6 @@ public class SoftwarePromoArtController(MarechaiContext context, IConfiguration 
                             "jpeg" => ".jpg",
                             "webp" => ".webp",
                             "avif" => ".avif",
-                            "jxl"  => ".jxl",
                             _      => $".{format}"
                         };
 

@@ -113,7 +113,6 @@
                         @if(issue.CoverGuid.HasValue)
                         {
                             <picture>
-                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/jxl/4k/@(issue.CoverGuid).jxl" type="image/jxl">
                                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/avif/4k/@(issue.CoverGuid).avif" type="image/avif">
                                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/magazine-issue-covers/webp/4k/@(issue.CoverGuid).webp" type="image/webp">
                                 <img alt="@issue.Caption"

@@ -19,8 +19,7 @@ public static class ImageConverter
     {
         ("jpeg", "jpg"),
         ("webp", "webp"),
-        ("avif", "avif"),
-        ("jxl",  "jxl")
+        ("avif", "avif")
     };
 
     static readonly string[] OutputResolutions = { "4k" };
@@ -42,7 +41,7 @@ public static class ImageConverter
         paths.Add(itemThumbsRoot);
         paths.Add(itemOriginalPhotosRoot);
 
-        foreach(string format in new[] { "jpeg", "webp", "avif", "jxl" })
+        foreach(string format in new[] { "jpeg", "webp", "avif" })
         {
             foreach(string resolution in new[] { "4k" })
             {
@@ -154,11 +153,6 @@ public static class ImageConverter
 
                 return ConvertUsingImageMagick(originalPath, outputPath, width, height, "avif", thumbnail);
 
-            case "jxl":
-                outputPath = Path.Combine(outputPath, $"{id}.jxl");
-
-                return ConvertUsingImageMagick(originalPath, outputPath, width, height, "jxl", thumbnail);
-
             default:
                 return (false, $"unsupported output format '{outputFormat}'");
         }
@@ -170,7 +164,7 @@ public static class ImageConverter
     ///     outputs take a medium-fast preset that still gets reasonable compression. Quality is
     ///     lowered from the historical default of 80 because most assets here are 4k thumbnails for
     ///     a catalogue grid view \u2014 70-75 is visually indistinguishable from 80 at typical viewing
-    ///     sizes and saves significant CPU on AVIF/JXL where higher quality means much slower encode.
+    ///     sizes and saves significant CPU on AVIF where higher quality means much slower encode.
     /// </summary>
     static (int Quality, string DefineKey, string DefineValue) GetEncoderTuning(string format, bool thumbnail)
     {
@@ -189,11 +183,6 @@ public static class ImageConverter
             // Thumbnails go full-speed; full-res uses a moderately fast preset (7).
             ("avif", true)  => (quality, "heic:speed", "9"),
             ("avif", false) => (quality, "heic:speed", "7"),
-
-            // libjxl `effort`: 1 = fastest, 9 = slowest/best. Default is 7.
-            // Thumbnails at 1 (lightning), full-res at 4 (decent compression, ~half default CPU).
-            ("jxl", true)  => (quality, "jxl:effort", "1"),
-            ("jxl", false) => (quality, "jxl:effort", "4"),
 
             _ => (quality, null, null)
         };
@@ -235,9 +224,8 @@ public static class ImageConverter
         convert.StartInfo.ArgumentList.Add("1");
 
         // [0] restricts multi-frame containers (animated GIF, multipage TIFF, PDF, ICO with
-        // varying sizes) to the first frame. JXL otherwise aborts with FramesNotSameDimensions
-        // when frame sizes differ, and AVIF/WebP would silently encode only the first frame
-        // anyway — making it explicit here keeps output consistent across encoders.
+        // varying sizes) to the first frame. AVIF/WebP would silently encode only the first
+        // frame anyway — making it explicit here keeps output consistent across encoders.
         convert.StartInfo.ArgumentList.Add($"{originalPath}[0]");
 
         // Per-encoder speed/effort knob (skip for JPEG).

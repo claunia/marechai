@@ -1306,8 +1306,8 @@
   <data name="Upload Screenshots" xml:space="preserve">
     <value>Téléverser des captures d'écran</value>
   </data>
-  <data name="Upload up to {0} screenshots for {1}. Accepted formats: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max 50 MB each)." xml:space="preserve">
-    <value>Téléversez jusqu'à {0} captures d'écran pour {1}. Formats acceptés : JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max. 50 Mo chacune).</value>
+  <data name="Upload up to {0} screenshots for {1}. Accepted formats: JPG, PNG, WebP, AVIF, BMP, TIFF (max 50 MB each)." xml:space="preserve">
+    <value>Téléversez jusqu'à {0} captures d'écran pour {1}. Formats acceptés : JPG, PNG, WebP, AVIF, BMP, TIFF (max. 50 Mo chacune).</value>
   </data>
   <data name="You have staged images that have not been uploaded. Closing this dialog will delete them. Continue?" xml:space="preserve">
     <value>Vous avez des images préparées qui n'ont pas été téléversées. La fermeture de cette boîte de dialogue les supprimera. Continuer ?</value>

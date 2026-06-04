@@ -3,7 +3,7 @@
     screenshots.
 
     Replaces the inline single-screenshot upload form on the SoftwareScreenshots admin
-    page. Admins can stage up to 50 images (JPEG/PNG/WebP/AVIF/JXL/BMP/TIFF, 50 MB
+    page. Admins can stage up to 50 images (JPEG/PNG/WebP/AVIF/BMP/TIFF, 50 MB
     each), pick a single shared Platform + Group for the whole batch, set a per-image
     Caption, then commit the batch and watch a progress bar while the server promotes
     each image to a permanent SoftwareScreenshot row and runs the 8-variant conversion
@@ -46,7 +46,7 @@
             }
 
             <MudText Typo="Typo.body2" Class="mb-3">
-                @string.Format(L["Upload up to {0} screenshots for {1}. Accepted formats: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max 50 MB each)."].Value, MaxImages, SoftwareName)
+                @string.Format(L["Upload up to {0} screenshots for {1}. Accepted formats: JPG, PNG, WebP, AVIF, BMP, TIFF (max 50 MB each)."].Value, MaxImages, SoftwareName)
             </MudText>
 
             <MudStack Row="true" Spacing="3" AlignItems="AlignItems.Start" Class="mb-3">
@@ -88,7 +88,7 @@
                 </MudStack>
 
                 <input type="file" id="@_fileInputId"
-                       accept="image/jpeg,image/png,image/webp,image/avif,image/jxl,image/bmp,image/tiff,.jpg,.jpeg,.png,.webp,.avif,.jxl,.bmp,.tif,.tiff"
+                       accept="image/jpeg,image/png,image/webp,image/avif,image/bmp,image/tiff,.jpg,.jpeg,.png,.webp,.avif,.bmp,.tif,.tiff"
                        multiple style="display:none"
                        @onchange="OnFilesPicked"/>
             </MudPaper>

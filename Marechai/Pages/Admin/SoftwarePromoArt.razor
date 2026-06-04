@@ -115,7 +115,6 @@
                     <MudCard Elevation="1" Class="rounded-lg">
                         <MudCardContent Class="pa-2 d-flex justify-center" Style="cursor: pointer;" @onclick="() => OpenFullscreen(promo)">
                             <picture>
-                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/thumbs/jxl/4k/@(promo.Id).jxl" type="image/jxl">
                                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/thumbs/avif/4k/@(promo.Id).avif" type="image/avif">
                                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/thumbs/webp/4k/@(promo.Id).webp" type="image/webp">
                                 <img alt="@(promo.Caption ?? promo.GroupName)"
@@ -168,7 +167,6 @@
     <MudOverlay Visible="true" DarkBackground="true" AutoClose="false" OnClick="() => _fullscreenItem = null" ZIndex="9999">
         <MudStack AlignItems="AlignItems.Center" Spacing="2" Style="max-width: 95vw; max-height: 95vh;">
             <picture>
-                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/jxl/4k/@(item.Id).jxl" type="image/jxl">
                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/avif/4k/@(item.Id).avif" type="image/avif">
                 <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-promo-art/webp/4k/@(item.Id).webp" type="image/webp">
                 <img alt="@(item.Caption ?? item.GroupName)"

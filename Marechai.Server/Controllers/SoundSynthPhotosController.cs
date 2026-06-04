@@ -577,12 +577,12 @@ public class SoundSynthPhotosController(MarechaiContext context, IConfiguration 
 
     /// <summary>
     ///     Allowed extensions accepted by the admin batch-upload staging endpoint. Wider
-    ///     than the legacy <c>/upload</c> set (no AVIF/JXL) and the collaborator-suggestion
+    ///     than the legacy <c>/upload</c> set (no AVIF) and the collaborator-suggestion
     ///     set (JPEG/PNG/WebP only).
     /// </summary>
     static readonly HashSet<string> _adminBatchAllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
-        ".jpg", ".jpeg", ".png", ".webp", ".avif", ".jxl", ".bmp", ".tif", ".tiff"
+        ".jpg", ".jpeg", ".png", ".webp", ".avif", ".bmp", ".tif", ".tiff"
     };
 
     /// <summary>
@@ -592,7 +592,7 @@ public class SoundSynthPhotosController(MarechaiContext context, IConfiguration 
     /// </summary>
     static readonly HashSet<string> _adminBatchAllowedMagickFormats = new(StringComparer.OrdinalIgnoreCase)
     {
-        "JPEG", "PNG", "WEBP", "AVIF", "JXL", "BMP", "TIFF"
+        "JPEG", "PNG", "WEBP", "AVIF", "BMP", "TIFF"
     };
 
     /// <summary>
@@ -621,7 +621,7 @@ public class SoundSynthPhotosController(MarechaiContext context, IConfiguration 
 
         string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
         if(!_adminBatchAllowedExtensions.Contains(extension))
-            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP, AVIF, JXL, BMP, TIFF.");
+            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP, AVIF, BMP, TIFF.");
 
         bool soundSynthExists = await context.SoundSynths.AnyAsync(s => s.Id == soundSynthId);
         if(!soundSynthExists) return NotFound("Sound synthesizer not found.");

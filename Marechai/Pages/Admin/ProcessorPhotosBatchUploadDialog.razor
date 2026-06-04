@@ -2,7 +2,7 @@
     ProcessorPhotosBatchUploadDialog — admin batch upload modal for processor photos.
 
     Replaces the inline single-photo upload form on the ProcessorPhotos admin page.
-    Admins can stage up to 25 images (JPEG/PNG/WebP/AVIF/JXL/BMP/TIFF, 50 MB each),
+    Admins can stage up to 25 images (JPEG/PNG/WebP/AVIF/BMP/TIFF, 50 MB each),
     set a single shared License plus a per-image Source URL, then commit the batch
     and watch a progress bar while the server promotes each image to a permanent
     ProcessorPhoto row and runs the 8-variant conversion pipeline.
@@ -38,7 +38,7 @@
         @if(_phase == Phase.Staging)
         {
             <MudText Typo="Typo.body2" Class="mb-3">
-                @string.Format(L["Upload up to {0} photos for {1}. Accepted formats: JPG, PNG, WebP, AVIF, JXL, BMP, TIFF (max 50 MB each)."].Value, MaxImages, ProcessorName)
+                @string.Format(L["Upload up to {0} photos for {1}. Accepted formats: JPG, PNG, WebP, AVIF, BMP, TIFF (max 50 MB each)."].Value, MaxImages, ProcessorName)
             </MudText>
 
             <MudSelect T="LicenseDto" @bind-Value="_selectedLicense"
@@ -69,7 +69,7 @@
                 </MudStack>
 
                 <input type="file" id="@_fileInputId"
-                       accept="image/jpeg,image/png,image/webp,image/avif,image/jxl,image/bmp,image/tiff,.jpg,.jpeg,.png,.webp,.avif,.jxl,.bmp,.tif,.tiff"
+                       accept="image/jpeg,image/png,image/webp,image/avif,image/bmp,image/tiff,.jpg,.jpeg,.png,.webp,.avif,.bmp,.tif,.tiff"
                        multiple style="display:none"
                        @onchange="OnFilesPicked"/>
             </MudPaper>
