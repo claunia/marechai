@@ -35,6 +35,19 @@ namespace Marechai.Services;
 
 public class PeopleService(Marechai.ApiClient.Client client, ReferenceDataCache referenceData)
 {
+    static string ExtractDetail(ApiException ex)
+    {
+        if(ex is ProblemDetails pd)
+        {
+            if(!string.IsNullOrWhiteSpace(pd.Detail)) return pd.Detail;
+            if(!string.IsNullOrWhiteSpace(pd.Title))  return pd.Title;
+        }
+
+        if(ex is { ResponseStatusCode: 0 } || string.IsNullOrWhiteSpace(ex.Message)) return "Unknown error";
+
+        return ex.Message;
+    }
+
     public async Task<int> GetPeopleCountAsync(IReadOnlyList<string> filters = null, string search = null,
                                               CancellationToken cancellationToken = default)
     {
@@ -286,7 +299,7 @@ public class PeopleService(Marechai.ApiClient.Client client, ReferenceDataCache 
         }
         catch(ApiException ex)
         {
-            return (null, ex.Message);
+            return (null, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -304,7 +317,7 @@ public class PeopleService(Marechai.ApiClient.Client client, ReferenceDataCache 
         }
         catch(ApiException ex)
         {
-            return (false, ex.Message);
+            return (false, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -322,7 +335,7 @@ public class PeopleService(Marechai.ApiClient.Client client, ReferenceDataCache 
         }
         catch(ApiException ex)
         {
-            return (false, ex.Message);
+            return (false, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -354,7 +367,7 @@ public class PeopleService(Marechai.ApiClient.Client client, ReferenceDataCache 
         }
         catch(ApiException ex)
         {
-            return (false, ex.Message);
+            return (false, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -426,7 +439,7 @@ public class PeopleService(Marechai.ApiClient.Client client, ReferenceDataCache 
         }
         catch(ApiException ex)
         {
-            return (false, ex.Message);
+            return (false, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -444,7 +457,7 @@ public class PeopleService(Marechai.ApiClient.Client client, ReferenceDataCache 
         }
         catch(ApiException ex)
         {
-            return (false, ex.Message);
+            return (false, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
