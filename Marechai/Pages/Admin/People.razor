@@ -29,6 +29,7 @@
         <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="OpenAddPersonDialog">@L["Add Person"]</MudButton>
         <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Upload" OnClick="OpenImportDialog" Class="ml-2">@L["Import CSV"]</MudButton>
         <MudSpacer/>
+        <MudTextField T="string" ValueChanged="OnSearch" Placeholder="@L["Search by name..."]" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" DebounceInterval="300" Immediate="true"/>
         <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="async () => await _dataGrid.ReloadServerData()"/>
     </MudToolBar>
 

@@ -12,6 +12,7 @@ namespace Marechai.Pages.Admin;
 public partial class People
 {
     string                 _errorMessage;
+    string                 _searchText;
     string                 _successMessage;
     MudDataGrid<PersonDto> _dataGrid;
 
@@ -75,9 +76,9 @@ public partial class People
             filters.Add($"{column}||{op}||{value}");
         }
 
-        Task<int>             countTask = PeopleService.GetPeopleCountAsync(filters, cancellationToken: cancellationToken);
+        Task<int>             countTask = PeopleService.GetPeopleCountAsync(filters, _searchText, cancellationToken);
         Task<List<PersonDto>> dataTask  = PeopleService.GetPeopleAsync(skip, take, sortBy, sortDescending, filters,
-                                                                       cancellationToken: cancellationToken);
+                                                                       _searchText, cancellationToken);
 
         await Task.WhenAll(countTask, dataTask);
 
@@ -86,6 +87,12 @@ public partial class People
             Items      = dataTask.Result,
             TotalItems = countTask.Result
         };
+    }
+
+    async Task OnSearch(string text)
+    {
+        _searchText = text;
+        await _dataGrid.ReloadServerData();
     }
 
     static string FormatDate(DateTimeOffset? date, int? precision = 0)
