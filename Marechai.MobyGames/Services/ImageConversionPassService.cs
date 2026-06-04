@@ -216,24 +216,16 @@ public static class ImageConversionPassService
             var po = new ParallelOptions { MaxDegreeOfParallelism = degree };
             Parallel.ForEach(variants, po, variant =>
             {
-                bool ok;
+                bool   ok;
+                string error;
                 try
                 {
-                    ok = ImageConverter.ConvertOne(assetRootPath, variant);
+                    (ok, error) = ImageConverter.ConvertOne(assetRootPath, variant);
                 }
                 catch(Exception ex)
                 {
-                    ok = false;
-                    lock(drawLock)
-                    {
-                        if(isTty && lastDrawLen > 0)
-                        {
-                            Console.Write("\r" + new string(' ', lastDrawLen) + "\r");
-                            lastDrawLen = 0;
-                        }
-                        Console.WriteLine(
-                            $"    \e[31mFAILED\e[0m  {variant.Id} {variant.OutputFormat} {variant.Resolution} {(variant.Thumbnail ? "thumb" : "full")}  ({ex.Message})");
-                    }
+                    ok    = false;
+                    error = $"unhandled exception: {ex.Message}";
                 }
 
                 if(ok)
@@ -248,8 +240,9 @@ public static class ImageConversionPassService
                             Console.Write("\r" + new string(' ', lastDrawLen) + "\r");
                             lastDrawLen = 0;
                         }
+                        string detail = string.IsNullOrEmpty(error) ? "" : $"  ({error})";
                         Console.WriteLine(
-                            $"    \e[31mFAILED\e[0m  {variant.Id} {variant.OutputFormat} {variant.Resolution} {(variant.Thumbnail ? "thumb" : "full")}");
+                            $"    \e[31mFAILED\e[0m  {variant.Id} {variant.OutputFormat} {variant.Resolution} {(variant.Thumbnail ? "thumb" : "full")}{detail}");
                     }
                 }
             });

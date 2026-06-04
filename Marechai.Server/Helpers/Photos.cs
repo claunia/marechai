@@ -334,13 +334,31 @@ public class Photos
             p.StartInfo.Environment["MAGICK_THREAD_LIMIT"] = "1";
 
             p.Start();
-            p.StandardOutput.ReadToEnd();
-            p.WaitForExit();
 
-            return p.ExitCode == 0;
+            // Read both pipes concurrently. If either pipe fills its kernel buffer (typical:
+            // 64 KB) the child blocks on write and the whole subprocess deadlocks against our
+            // WaitForExit. Async reads drain both in parallel and let large stderr text through.
+            Task<string> stderrTask = p.StandardError.ReadToEndAsync();
+            Task<string> stdoutTask = p.StandardOutput.ReadToEndAsync();
+            p.WaitForExit();
+            string stderr = stderrTask.GetAwaiter().GetResult();
+            _ = stdoutTask.GetAwaiter().GetResult();
+
+            if(p.ExitCode == 0) return true;
+
+            // Log the actual `convert` complaint so operators can tell apart "bad source
+            // file", "encoder doesn't like the colorspace", "disk full", etc. instead of
+            // just seeing a silent false.
+            string detail = (stderr ?? "").Trim().Replace('\r', ' ').Replace('\n', ' ');
+            if(detail.Length > 400) detail = detail[..400] + "…";
+            if(detail.Length == 0)  detail = "(no stderr)";
+            Console.Error.WriteLine(
+                $"convert failed for {outputFormat} {(thumbnail ? "thumb" : "full")} {outputPath}: exit {p.ExitCode}: {detail}");
+            return false;
         }
-        catch(Exception)
+        catch(Exception ex)
         {
+            Console.Error.WriteLine($"convert spawn failed for {outputPath}: {ex.Message}");
             return false;
         }
     }

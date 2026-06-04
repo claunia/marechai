@@ -68,8 +68,13 @@ public static class ImageConverter
         // worker on a multi-file pass which catastrophically oversubscribed CPU.
         foreach(Variant v in EnumerateVariants(id, originalFilePath, sourceFormat, itemName))
         {
-            if(!ConvertOne(assetRootPath, v))
-                Console.WriteLine($"\e[33m    Warning: {v.OutputFormat} {v.Resolution} {(v.Thumbnail ? "thumbnail" : "full")} conversion failed\e[0m");
+            (bool ok, string error) = ConvertOne(assetRootPath, v);
+            if(!ok)
+            {
+                string detail = string.IsNullOrEmpty(error) ? "" : $"  ({error})";
+                Console.WriteLine(
+                    $"\e[33m    Warning: {v.OutputFormat} {v.Resolution} {(v.Thumbnail ? "thumbnail" : "full")} conversion failed{detail}\e[0m");
+            }
         }
     }
 
@@ -77,7 +82,7 @@ public static class ImageConverter
     ///     One ImageMagick conversion job for a single (id, format, resolution, thumb/full) tuple.
     ///     Used as the unit of parallelism by the offline conversion pass so we can size the worker
     ///     pool to <see cref="Environment.ProcessorCount" /> and pin <c>MAGICK_THREAD_LIMIT=1</c>
-    ///     per process \u2014 N parallel IM subprocesses == N CPU cores, no thread thrash.
+    ///     per process — N parallel IM subprocesses == N CPU cores, no thread thrash.
     /// </summary>
     public readonly record struct Variant(Guid Id, string OriginalPath, string SourceFormat,
                                           string OutputFormat, string Resolution, bool Thumbnail, string ItemName);
@@ -94,13 +99,19 @@ public static class ImageConverter
         }
     }
 
-    /// <summary>Run ImageMagick for a single <see cref="Variant" />. Returns <c>true</c> on success.</summary>
-    public static bool ConvertOne(string assetRootPath, Variant v) =>
+    /// <summary>
+    ///     Run ImageMagick for a single <see cref="Variant" />. Returns <c>(true, null)</c> on
+    ///     success; on failure returns <c>(false, error)</c> where <c>error</c> is the trimmed
+    ///     <c>convert</c> stderr (or a process-spawn exception message) so callers can surface
+    ///     the actual cause instead of just "failed".
+    /// </summary>
+    public static (bool Ok, string Error) ConvertOne(string assetRootPath, Variant v) =>
         Convert(assetRootPath, v.Id, v.OriginalPath, v.SourceFormat, v.OutputFormat, v.Resolution, v.Thumbnail,
                 v.ItemName);
 
-    static bool Convert(string assetRootPath, Guid id, string originalPath, string sourceFormat,
-                        string outputFormat,  string resolution, bool thumbnail, string itemName = DefaultItemName)
+    static (bool Ok, string Error) Convert(string assetRootPath, Guid id, string originalPath, string sourceFormat,
+                                            string outputFormat, string resolution, bool thumbnail,
+                                            string itemName = DefaultItemName)
     {
         outputFormat = outputFormat.ToLowerInvariant();
         resolution   = resolution.ToLowerInvariant();
@@ -123,7 +134,7 @@ public static class ImageConverter
 
                 break;
             default:
-                return false;
+                return (false, $"unsupported resolution '{resolution}'");
         }
 
         switch(outputFormat)
@@ -149,7 +160,7 @@ public static class ImageConverter
                 return ConvertUsingImageMagick(originalPath, outputPath, width, height, "jxl", thumbnail);
 
             default:
-                return false;
+                return (false, $"unsupported output format '{outputFormat}'");
         }
     }
 
@@ -188,8 +199,8 @@ public static class ImageConverter
         };
     }
 
-    static bool ConvertUsingImageMagick(string originalPath, string outputPath, int width, int height,
-                                        string outputFormat, bool thumbnail)
+    static (bool Ok, string Error) ConvertUsingImageMagick(string originalPath, string outputPath, int width,
+                                                            int height, string outputFormat, bool thumbnail)
     {
         // We deliberately do NOT wrap the spawn in `taskset -c <n>`. Empirically, pinning each
         // convert to a single CPU cuts AVIF (libheif → x265) throughput by ~4×, which dominates
@@ -237,14 +248,29 @@ public static class ImageConverter
         try
         {
             convert.Start();
-            convert.StandardOutput.ReadToEnd();
-            convert.WaitForExit();
 
-            return convert.ExitCode == 0;
+            // Read both pipes concurrently. If either pipe fills its kernel buffer (typical:
+            // 64 KB) the child blocks on write and the whole subprocess deadlocks against our
+            // WaitForExit. Async reads drain both in parallel and let large stderr text through.
+            Task<string> stderrTask = convert.StandardError.ReadToEndAsync();
+            Task<string> stdoutTask = convert.StandardOutput.ReadToEndAsync();
+            convert.WaitForExit();
+            string stderr = stderrTask.GetAwaiter().GetResult();
+            _ = stdoutTask.GetAwaiter().GetResult();
+
+            if(convert.ExitCode == 0) return (true, null);
+
+            // Trim + collapse to a single line + truncate so a multi-megabyte ImageMagick
+            // dump doesn't blow up the progress display.
+            string detail = (stderr ?? "").Trim().Replace('\r', ' ').Replace('\n', ' ');
+            if(detail.Length > 400) detail = detail[..400] + "…";
+            if(detail.Length == 0)  detail = "(no stderr)";
+
+            return (false, $"exit {convert.ExitCode}: {detail}");
         }
-        catch(Exception)
+        catch(Exception ex)
         {
-            return false;
+            return (false, $"process spawn failed: {ex.Message}");
         }
     }
 
