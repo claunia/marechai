@@ -25,11 +25,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ImageMagick;
 
 namespace Marechai.Helpers;
 
@@ -66,103 +66,10 @@ public class Photos
         foreach(string path in paths.Where(path => !Directory.Exists(path))) Directory.CreateDirectory(path);
     }
 
-    public static void BackfillJxl(string assetRootPath, bool scan, string item)
-    {
-        string photosRoot     = Path.Combine(assetRootPath, scan ? "scans" : "photos");
-        string itemPhotosRoot = Path.Combine(photosRoot,    item);
-        string originalsRoot  = Path.Combine(itemPhotosRoot, "originals");
-
-        if(!Directory.Exists(originalsRoot)) return;
-
-        foreach(string originalFile in Directory.GetFiles(originalsRoot))
-        {
-            string fileNameWithoutExt = Path.GetFileNameWithoutExtension(originalFile);
-
-            if(!Guid.TryParse(fileNameWithoutExt, out Guid id)) continue;
-
-            string sourceFormat = Path.GetExtension(originalFile).TrimStart('.');
-
-            // Check if JXL 4k thumbnail already exists — if so, assume all variants exist
-            string checkPath = Path.Combine(itemPhotosRoot, "thumbs", "jxl", "4k", $"{id}.jxl");
-
-            if(File.Exists(checkPath)) continue;
-
-            Console.WriteLine("Backfilling JXL for {0}...", id);
-
-            Convert(assetRootPath, id, originalFile, sourceFormat, "JXL", "4k", true,  scan, item);
-            Convert(assetRootPath, id, originalFile, sourceFormat, "JXL", "4k", false, scan, item);
-        }
-    }
-
-    public static bool Convert(string assetRootPath,  Guid   id,         string originalPath, string sourceFormat,
-                               string outputFormat, string resolution, bool   thumbnail,    bool   scan, string item)
-    {
-        outputFormat = outputFormat.ToLowerInvariant();
-        resolution   = resolution.ToLowerInvariant();
-        sourceFormat = sourceFormat.ToLowerInvariant();
-
-        string outputPath = Path.Combine(assetRootPath, scan ? "scans" : "photos", item);
-        int    width, height;
-
-        if(thumbnail) outputPath = Path.Combine(outputPath, "thumbs");
-
-        outputPath = Path.Combine(outputPath, outputFormat);
-        outputPath = Path.Combine(outputPath, resolution);
-
-        switch(resolution)
-        {
-            case "4k":
-                if(thumbnail)
-                {
-                    width  = 512;
-                    height = 512;
-                }
-                else
-                {
-                    width  = 3840;
-                    height = 2160;
-                }
-
-                break;
-            default:
-                return false;
-        }
-
-        string fileExt = outputFormat switch
-        {
-            "jpeg" => "jpg",
-            "webp" => "webp",
-            "avif" => "avif",
-            "jxl"  => "jxl",
-            _      => null
-        };
-        if(fileExt is null) return false;
-
-        outputPath = Path.Combine(outputPath, $"{id}.{fileExt}");
-
-        // Single in-process variant: decode source, resize, encode. Used by callers that
-        // want one specific output (e.g. JXL backfill); the upload pipeline goes through
-        // <see cref="ConversionWorker" /> instead which shares one decode across all 8 variants.
-        EnsureMagickInitialized();
-        try
-        {
-            using var img = new MagickImage(originalPath);
-            img.Strip();
-            Resize(img, width, height);
-            WriteVariant(img, outputPath, outputFormat, thumbnail);
-            return true;
-        }
-        catch(Exception)
-        {
-            return false;
-        }
-    }
-
     /// <summary>
-    ///     Legacy entry point retained for source compatibility. Infers the encoder format from
-    ///     <paramref name="outputPath" />'s extension and dispatches through the in-process
-    ///     Magick.NET pipeline. Thumbnail-tier encoder tuning is applied when the path lives
-    ///     under a <c>/thumbs/</c> segment.
+    ///     Convert one variant by inferring the encoder format from <paramref name="outputPath" />'s
+    ///     extension. Thumbnail-tier encoder tuning is applied when the path lives under a
+    ///     <c>/thumbs/</c> segment.
     /// </summary>
     public static bool ConvertUsingImageMagick(string originalPath, string outputPath, int width, int height)
     {
@@ -179,41 +86,52 @@ public class Photos
 
         bool thumbnail = outputPath.Replace('\\', '/').Contains("/thumbs/", StringComparison.OrdinalIgnoreCase);
 
-        EnsureMagickInitialized();
-        try
-        {
-            using var img = new MagickImage(originalPath);
-            img.Strip();
-            Resize(img, width, height);
-            WriteVariant(img, outputPath, outputFormat, thumbnail);
-            return true;
-        }
-        catch(Exception)
-        {
-            return false;
-        }
+        return ConvertVariant(originalPath, outputPath, width, height, outputFormat, thumbnail);
     }
 
     /// <summary>
-    ///     Real content-sniff via Magick.NET's <see cref="MagickImageInfo" /> (in-process, no
-    ///     subprocess). Returns the canonical uppercase format (e.g. <c>"JPEG"</c>, <c>"PNG"</c>,
-    ///     <c>"WEBP"</c>, <c>"AVIF"</c>, <c>"JXL"</c>, <c>"BMP"</c>, <c>"TIFF"</c>) plus
-    ///     dimensions. <c>(null, 0, 0)</c> when the file is unreadable or unrecognised.
+    ///     Content-sniff via the ImageMagick <c>identify</c> CLI. Returns the canonical uppercase
+    ///     format (e.g. <c>"JPEG"</c>, <c>"PNG"</c>, <c>"WEBP"</c>, <c>"AVIF"</c>, <c>"JXL"</c>,
+    ///     <c>"BMP"</c>, <c>"TIFF"</c>) plus dimensions. <c>(null, 0, 0)</c> when the file is
+    ///     unreadable or unrecognised. The <c>[0]</c> frame selector restricts multi-frame
+    ///     containers (TIFF, GIF, PDF, ICO) to the first page so the output is a single line.
     /// </summary>
     public static (string format, int width, int height) Identify(string path)
     {
-        EnsureMagickInitialized();
         try
         {
-            var info = new MagickImageInfo(path);
+            var p = new Process
+            {
+                StartInfo =
+                {
+                    FileName               = "identify",
+                    CreateNoWindow         = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError  = true
+                }
+            };
+            p.StartInfo.ArgumentList.Add("-format");
+            p.StartInfo.ArgumentList.Add("%m %w %h\n");
+            p.StartInfo.ArgumentList.Add($"{path}[0]");
+            p.StartInfo.Environment["MAGICK_THREAD_LIMIT"] = "1";
 
-            // MagickFormat enum names are PascalCase (Jpeg, Png, WebP, Avif, Jxl, Bmp, Tiff,
-            // Tif). The existing admin-batch allow-lists compare against uppercase canonical
-            // names ("JPEG", "TIFF", ...) so we upper-case and collapse the Tif/Tiff alias.
-            string format = info.Format.ToString().ToUpperInvariant();
+            p.Start();
+            string stdout = p.StandardOutput.ReadToEnd();
+            p.WaitForExit();
+
+            if(p.ExitCode != 0) return (null, 0, 0);
+
+            string firstLine = stdout.Split('\n', 2)[0].Trim();
+            string[] parts   = firstLine.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            if(parts.Length < 3) return (null, 0, 0);
+            if(!int.TryParse(parts[1], out int w) || !int.TryParse(parts[2], out int h)) return (null, 0, 0);
+
+            // Existing admin-batch allow-lists compare against uppercase canonical names
+            // ("JPEG", "TIFF", ...); collapse the Tif/Tiff alias to match.
+            string format = parts[0].ToUpperInvariant();
             if(format == "TIF") format = "TIFF";
 
-            return (format, (int)info.Width, (int)info.Height);
+            return (format, w, h);
         }
         catch(Exception)
         {
@@ -229,16 +147,40 @@ public class Photos
     /// </summary>
     public static byte[] GenerateThumbnailJpeg(string srcPath, int maxWidth = 256, int maxHeight = 256)
     {
-        EnsureMagickInitialized();
         try
         {
-            using var img = new MagickImage(srcPath);
-            img.Strip();
-            Resize(img, maxWidth, maxHeight);
-            img.Quality = 80;
+            var p = new Process
+            {
+                StartInfo =
+                {
+                    FileName               = "convert",
+                    CreateNoWindow         = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError  = true
+                }
+            };
+            p.StartInfo.ArgumentList.Add("-limit");
+            p.StartInfo.ArgumentList.Add("thread");
+            p.StartInfo.ArgumentList.Add("1");
+            p.StartInfo.ArgumentList.Add($"{srcPath}[0]");
+            p.StartInfo.ArgumentList.Add("-resize");
+            p.StartInfo.ArgumentList.Add($"{maxWidth}x{maxHeight}>");
+            p.StartInfo.ArgumentList.Add("-strip");
+            p.StartInfo.ArgumentList.Add("-quality");
+            p.StartInfo.ArgumentList.Add("80");
+            // `jpeg:-` writes the encoded JPEG to stdout so we don't need a temp file.
+            p.StartInfo.ArgumentList.Add("jpeg:-");
+            p.StartInfo.Environment["MAGICK_THREAD_LIMIT"] = "1";
 
-            byte[] bytes = img.ToByteArray(MagickFormat.Jpeg);
-            return bytes is { Length: > 0 } ? bytes : null;
+            p.Start();
+            using var ms = new MemoryStream();
+            p.StandardOutput.BaseStream.CopyTo(ms);
+            p.WaitForExit();
+
+            if(p.ExitCode != 0) return null;
+
+            byte[] bytes = ms.ToArray();
+            return bytes.Length > 0 ? bytes : null;
         }
         catch(Exception)
         {
@@ -249,16 +191,9 @@ public class Photos
     public void ConversionWorker(string assetRootPath, Guid id, string originalFilePath, string sourceFormat, bool scan,
                                  string item)
     {
-        // In-process Magick.NET pipeline: decode the source ONCE and write all 8 variants
-        // (4 formats \u00d7 thumb/full) from clones. Saves 7 PNG decode passes and 8
-        // <c>convert</c> subprocess fork/exec cycles per upload vs the old per-variant
-        // Process.Start path. Encodes run in parallel inside the upload so per-request
-        // latency tracks the slowest single encoder (AVIF), not the sum of all 8.
-        EnsureMagickInitialized();
-
         string photosOrScans = scan ? "scans" : "photos";
 
-        // Pre-compute all 8 output paths so the parallel section is pure CPU work.
+        // Pre-compute all 8 output paths so the parallel section is pure subprocess invocation.
         var jobs = new List<(string Format, bool Thumbnail, string OutputPath, int Width, int Height)>(8);
         foreach((string format, string ext) in s_outputFormats)
         {
@@ -268,67 +203,20 @@ public class Photos
             jobs.Add((format, false, Path.Combine(fullDir,  $"{id}.{ext}"), 3840, 2160));
         }
 
-        MagickImage source;
-        try
-        {
-            source = new MagickImage(originalFilePath);
-            source.Strip();
-        }
-        catch(Exception)
-        {
-            // Mirror the legacy contract: invoke all per-variant events with `false` then the
-            // aggregate event. No subscribers in the current tree but the API is public.
-            InvokeVariantFailures();
-            FinishedAll?.Invoke(false);
-            return;
-        }
+        // Subprocess `convert` per variant: 8 fork/exec per upload. Each subprocess gets a
+        // fresh address space, so any native arena retention in libheif / libaom / libjxl /
+        // libsvtav1 is reclaimed by the kernel on exit — critical for a long-running server
+        // that handles thousands of uploads before restart. The fork/exec overhead is
+        // ~30-80 ms per variant; concurrency is bounded by whatever Parallel.ForEach picks
+        // from the thread pool (typically Environment.ProcessorCount).
+        var results = new System.Collections.Concurrent.ConcurrentDictionary<(string, bool), bool>();
 
-        // Per-variant success bookkeeping so we can fire the matching event afterwards.
-        var results   = new System.Collections.Concurrent.ConcurrentDictionary<(string, bool), bool>();
-        var cloneLock = new object();
-
-        try
+        Parallel.ForEach(jobs, job =>
         {
-            // Parallelism inside a single upload \u2014 each clone is an independent encode.
-            // ResourceLimits.Thread = 1 keeps OpenMP from oversubscribing CPUs if multiple
-            // uploads land at once. The Clone() call itself is guarded because Magick.NET's
-            // <see cref="IMagickImage{TQuantumType}" /> instances aren't documented as safe
-            // for concurrent reads (clone touches internal profile/settings state); cloning
-            // is fast (pixel-buffer memcpy) so the lock contention is negligible vs the
-            // multi-100 ms encode that follows.
-            Parallel.ForEach(jobs, job =>
-            {
-                IMagickImage<byte> clone;
-                try
-                {
-                    lock(cloneLock) clone = source.Clone();
-                }
-                catch(Exception)
-                {
-                    results[(job.Format, job.Thumbnail)] = false;
-                    return;
-                }
-
-                try
-                {
-                    Resize(clone, job.Width, job.Height);
-                    WriteVariant(clone, job.OutputPath, job.Format, job.Thumbnail);
-                    results[(job.Format, job.Thumbnail)] = true;
-                }
-                catch(Exception)
-                {
-                    results[(job.Format, job.Thumbnail)] = false;
-                }
-                finally
-                {
-                    clone.Dispose();
-                }
-            });
-        }
-        finally
-        {
-            source.Dispose();
-        }
+            bool ok = ConvertVariant(originalFilePath, job.OutputPath, job.Width, job.Height, job.Format,
+                                     job.Thumbnail);
+            results[(job.Format, job.Thumbnail)] = ok;
+        });
 
         // Fire per-variant events in a stable order, then the aggregate. None of these
         // currently have subscribers in the repo but the public surface is preserved.
@@ -343,18 +231,6 @@ public class Photos
 
         bool overall = results.Count == 8 && results.Values.All(v => v);
         FinishedAll?.Invoke(overall);
-
-        void InvokeVariantFailures()
-        {
-            FinishedRenderingJpeg4kThumbnail?.Invoke(false);
-            FinishedRenderingJpeg4K?.Invoke(false);
-            FinishedRenderingWebp4kThumbnail?.Invoke(false);
-            FinishedRenderingWebp4k?.Invoke(false);
-            FinishedRenderingAvif4kThumbnail?.Invoke(false);
-            FinishedRenderingAvif4K?.Invoke(false);
-            FinishedRenderingJxl4kThumbnail?.Invoke(false);
-            FinishedRenderingJxl4K?.Invoke(false);
-        }
     }
 
     public event ConversionFinished FinishedAll;
@@ -368,7 +244,7 @@ public class Photos
     public event ConversionFinished FinishedRenderingJxl4kThumbnail;
     public event ConversionFinished FinishedRenderingJxl4K;
 
-    // ── In-process Magick.NET plumbing ────────────────────────────────────────
+    // ── Subprocess `convert` plumbing ─────────────────────────────────────────
 
     /// <summary>Canonical output format list shared by single-variant <see cref="Convert" /> and bulk <see cref="ConversionWorker" />.</summary>
     static readonly (string Format, string Extension)[] s_outputFormats =
@@ -377,49 +253,95 @@ public class Photos
     };
 
     /// <summary>
-    ///     Shrink-only resize honouring ImageMagick's classic <c>{w}x{h}&gt;</c> behaviour
-    ///     (never upscale, preserve aspect ratio). Magick.NET's <c>MagickGeometry { Greater = true }</c>
-    ///     is the direct equivalent.
+    ///     Per-(format, thumbnail) encoder tuning. Mirrors the MobyGames conversion pipeline
+    ///     (<c>Marechai.MobyGames/Services/ImageConverter.cs</c>): quality 75 full / 70 thumb;
+    ///     per-encoder effort knobs biased towards speed for thumbnails (visible up to 512 px)
+    ///     and balanced for full-res. Returns <c>(quality, defineKey, defineValue)</c>;
+    ///     <c>defineKey</c> is <c>null</c> for JPEG (libjpeg-turbo has nothing beyond
+    ///     <c>-quality</c>).
     /// </summary>
-    static void Resize(IMagickImage<byte> img, int width, int height) =>
-        img.Resize(new MagickGeometry((uint)width, (uint)height) { Greater = true });
-
-    /// <summary>
-    ///     Apply per-(format, thumbnail) encoder tuning matching the MobyGames conversion
-    ///     pipeline (see <c>Marechai.MobyGames/Services/ImageConverter.cs</c>) and write
-    ///     <paramref name="outputPath" />. Quality 75 full / 70 thumb; per-encoder effort knobs
-    ///     biased towards speed for thumbnails (visible \u2264 512 px) and balanced for full-res.
-    /// </summary>
-    static void WriteVariant(IMagickImage<byte> img, string outputPath, string format, bool thumbnail)
+    static (int Quality, string DefineKey, string DefineValue) GetEncoderTuning(string format, bool thumbnail)
     {
-        (uint quality, string defineKey, string defineValue, MagickFormat mf) = format switch
-        {
-            "jpeg" => (thumbnail ? 70u : 75u, null,           null,            MagickFormat.Jpeg),
-            // libwebp `method`: 0 = fastest, 6 = slowest/best. Default is 4.
-            "webp" => (thumbnail ? 70u : 75u, "webp:method",  thumbnail ? "0" : "3", MagickFormat.WebP),
-            // libheif/x265 `speed`: 1 = slowest/best, 9 = fastest. Default is 4.
-            "avif" => (thumbnail ? 70u : 75u, "heic:speed",   thumbnail ? "9" : "7", MagickFormat.Avif),
-            // libjxl `effort`: 1 = fastest, 9 = slowest/best. Default is 7.
-            "jxl"  => (thumbnail ? 70u : 75u, "jxl:effort",   thumbnail ? "1" : "4", MagickFormat.Jxl),
-            _      => (75u, null, null, MagickFormat.Unknown)
-        };
-        if(mf == MagickFormat.Unknown) throw new InvalidOperationException($"Unsupported output format '{format}'.");
+        int quality = thumbnail ? 70 : 75;
 
-        img.Quality = quality;
-        if(defineKey is not null) img.Settings.SetDefine(defineKey, defineValue);
-        img.Write(outputPath, mf);
+        return (format, thumbnail) switch
+        {
+            ("jpeg", _)     => (quality, null,           null),
+            // libwebp `method`: 0 = fastest, 6 = slowest/best. Default is 4.
+            ("webp", true)  => (quality, "webp:method", "0"),
+            ("webp", false) => (quality, "webp:method", "3"),
+            // libheif `speed`: 1 = slowest/best, 9 = fastest. Default is 4. Underneath libheif
+            // is libaom / libsvtav1 / x265 depending on the IM build.
+            ("avif", true)  => (quality, "heic:speed",  "9"),
+            ("avif", false) => (quality, "heic:speed",  "7"),
+            // libjxl `effort`: 1 = fastest, 9 = slowest/best. Default is 7.
+            ("jxl",  true)  => (quality, "jxl:effort",  "1"),
+            ("jxl",  false) => (quality, "jxl:effort",  "4"),
+            _               => (quality, null, null)
+        };
     }
 
     /// <summary>
-    ///     One-shot Magick.NET configuration. Pins per-process OpenMP threads to 1 so that
-    ///     a burst of concurrent uploads doesn't catastrophically oversubscribe the CPU via
-    ///     libheif/x265's internal pools. Idempotent and lock-free via <see cref="Interlocked.CompareExchange" />.
+    ///     Run one ImageMagick <c>convert</c> subprocess for a single (originalPath, outputPath)
+    ///     transcode with the per-format tuning from <see cref="GetEncoderTuning" />. Returns
+    ///     <c>true</c> on a clean exit (status 0), <c>false</c> on any failure. Pixel data
+    ///     never enters the .NET process — stdin/stdout are not used and the encoder runs
+    ///     entirely in the subprocess's address space, so any native arena retention is
+    ///     reclaimed by the kernel on exit.
     /// </summary>
-    static int s_magickInitialized;
-    static void EnsureMagickInitialized()
+    static bool ConvertVariant(string originalPath, string outputPath, int width, int height,
+                               string outputFormat, bool thumbnail)
     {
-        if(Interlocked.CompareExchange(ref s_magickInitialized, 1, 0) != 0) return;
-        try { ResourceLimits.Thread = 1; }
-        catch { /* older versions may not expose Thread; harmless */ }
+        (int quality, string defineKey, string defineValue) = GetEncoderTuning(outputFormat, thumbnail);
+
+        try
+        {
+            var p = new Process
+            {
+                StartInfo =
+                {
+                    FileName               = "convert",
+                    CreateNoWindow         = true,
+                    RedirectStandardError  = true,
+                    RedirectStandardOutput = true
+                }
+            };
+
+            // -limit thread 1 + MAGICK_THREAD_LIMIT=1 keep ImageMagick's own OpenMP core
+            // single-threaded so the only multi-threaded codec is whichever AVIF backend
+            // libheif is wired to (libaom / libsvtav1 / x265), which has its own pool that we
+            // let breathe — capping it costs more throughput than it saves.
+            p.StartInfo.ArgumentList.Add("-limit");
+            p.StartInfo.ArgumentList.Add("thread");
+            p.StartInfo.ArgumentList.Add("1");
+
+            // Per-encoder speed/effort knob (skip for JPEG).
+            if(defineKey is not null)
+            {
+                p.StartInfo.ArgumentList.Add("-define");
+                p.StartInfo.ArgumentList.Add($"{defineKey}={defineValue}");
+            }
+
+            p.StartInfo.ArgumentList.Add("-resize");
+            p.StartInfo.ArgumentList.Add($"{width}x{height}>");
+            p.StartInfo.ArgumentList.Add("-strip");
+            p.StartInfo.ArgumentList.Add("-quality");
+            p.StartInfo.ArgumentList.Add(quality.ToString());
+            // [0] selects the first frame for multi-frame containers (TIFF, GIF, PDF, ICO).
+            p.StartInfo.ArgumentList.Add($"{originalPath}[0]");
+            p.StartInfo.ArgumentList.Add(outputPath);
+
+            p.StartInfo.Environment["MAGICK_THREAD_LIMIT"] = "1";
+
+            p.Start();
+            p.StandardOutput.ReadToEnd();
+            p.WaitForExit();
+
+            return p.ExitCode == 0;
+        }
+        catch(Exception)
+        {
+            return false;
+        }
     }
 }

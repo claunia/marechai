@@ -134,26 +134,36 @@ public static class ImageConversionPassService
             }
         }
 
-        int converted = 0;
-        int failed    = 0;
+        int convertedVariants = 0;
+        int failedVariants    = 0;
 
         if(!dryRun && pending.Count > 0)
         {
-            // Output trees (jpeg/webp/avif/jxl × full/thumb) must exist before MagickImage.Write
-            // \u2014 the in-process path doesn't get a free `mkdir -p` from the convert shell wrapper.
+            // Output trees (jpeg/webp/avif/jxl × full/thumb) must exist before the subprocess
+            // `convert` writes into them.
             ImageConverter.EnsureDirectoriesCreated(assetRootPath, itemName);
 
+            // Subprocess `convert` per variant: address-space isolation per encode. When
+            // `convert` exits, the kernel reclaims 100% of the native codec buffers (libheif
+            // reference frames, libaom / libsvtav1 / x265 lookahead, libjxl thread pools)
+            // regardless of what the encoder retained internally. Trade-off is one fork/exec
+            // + one PNG decode per variant (~30-80 ms each on Linux); on HDD-backed runs this
+            // is dwarfed by disk wait anyway. The unit of parallelism is therefore one
+            // VARIANT, not one file — the cap (--parallelism / Environment.ProcessorCount)
+            // bounds total concurrent `convert` processes so CPU never oversubscribes either.
+            var variants = pending
+                          .SelectMany(p => ImageConverter.EnumerateVariants(p.Id, p.FilePath, p.Extension, itemName))
+                          .ToList();
+
             int degree = parallelism <= 0 ? Environment.ProcessorCount : parallelism;
-            if(degree > pending.Count) degree = pending.Count;
+            if(degree > variants.Count) degree = variants.Count;
 
-            // We now use Magick.NET in-process per-file: each task decodes the source ONCE and
-            // writes all 8 outputs from the same pixel buffer. Saves 7 PNG decode passes and 8
-            // subprocess fork/exec cycles per file vs the flat-variant-queue path. The unit of
-            // parallelism is therefore one file again, not one variant.
-            Console.WriteLine($"    Spinning up {degree} in-process worker(s) for {pending.Count} original(s)...");
+            Console.WriteLine(
+                $"    Spinning up {degree} subprocess worker(s) for {variants.Count} variant(s) ({pending.Count} original(s) × 8)...");
 
-            int total = pending.Count;
-            var sw    = System.Diagnostics.Stopwatch.StartNew();
+            int totalVariants = variants.Count;
+            int totalFiles    = pending.Count;
+            var sw            = System.Diagnostics.Stopwatch.StartNew();
 
             bool        isTty       = !Console.IsOutputRedirected;
             int         lastDrawLen = 0;
@@ -162,23 +172,27 @@ public static class ImageConversionPassService
 
             void Draw(bool finalDraw)
             {
-                int done    = Volatile.Read(ref converted) + Volatile.Read(ref failed);
-                double secs = Math.Max(sw.Elapsed.TotalSeconds, 0.001);
-                double rate = done / secs;
-                int    pct  = total == 0 ? 100 : (int)Math.Min(100, 100L * done / total);
-                int    filled = total == 0 ? barWidth : (int)((long)barWidth * done / total);
+                int doneVar  = Volatile.Read(ref convertedVariants) + Volatile.Read(ref failedVariants);
+                double secs  = Math.Max(sw.Elapsed.TotalSeconds, 0.001);
+                double varRate  = doneVar / secs;
+                double origRate = varRate / 8.0;
+                int    doneOrig = doneVar / 8;
+                int    pct      = totalVariants == 0 ? 100 : (int)Math.Min(100, 100L * doneVar / totalVariants);
+                int    filled   = totalVariants == 0 ? barWidth : (int)((long)barWidth * doneVar / totalVariants);
                 if(filled > barWidth) filled = barWidth;
                 string bar = "[" + new string('=', Math.Max(0, filled - 1)) +
-                             (done > 0 && filled < barWidth ? ">" : (filled == 0 ? "" : "=")) +
+                             (doneVar > 0 && filled < barWidth ? ">" : (filled == 0 ? "" : "=")) +
                              new string(' ', barWidth - filled) + "]";
                 string etaStr;
-                if(done == 0 || done >= total) etaStr = finalDraw ? "" : "ETA --";
+                if(doneVar == 0 || doneVar >= totalVariants) etaStr = finalDraw ? "" : "ETA --";
                 else
                 {
-                    double etaSec = (total - done) / rate;
+                    double etaSec = (totalVariants - doneVar) / varRate;
                     etaStr = $"ETA {FormatDuration(etaSec)}";
                 }
-                string line = $"    {bar} {done}/{total} {pct,3}%  {rate,5:0.00} orig/s  {etaStr}".TrimEnd();
+                string line =
+                    $"    {bar} {doneOrig}/{totalFiles} orig ({doneVar}/{totalVariants} var) {pct,3}%  {origRate,5:0.00} orig/s  {etaStr}"
+                       .TrimEnd();
 
                 lock(drawLock)
                 {
@@ -200,17 +214,16 @@ public static class ImageConversionPassService
                                          isTty ? TimeSpan.FromMilliseconds(500) : TimeSpan.FromSeconds(5));
 
             var po = new ParallelOptions { MaxDegreeOfParallelism = degree };
-            Parallel.ForEach(pending, po, item =>
+            Parallel.ForEach(variants, po, variant =>
             {
-                int variantsFailed;
+                bool ok;
                 try
                 {
-                    variantsFailed = ImageConverter.ConvertFileInProcess(assetRootPath, item.Id, item.FilePath,
-                                                                          item.Extension, itemName);
+                    ok = ImageConverter.ConvertOne(assetRootPath, variant);
                 }
                 catch(Exception ex)
                 {
-                    variantsFailed = -1;
+                    ok = false;
                     lock(drawLock)
                     {
                         if(isTty && lastDrawLen > 0)
@@ -218,28 +231,25 @@ public static class ImageConversionPassService
                             Console.Write("\r" + new string(' ', lastDrawLen) + "\r");
                             lastDrawLen = 0;
                         }
-                        Console.WriteLine($"    \e[31mFAILED\e[0m  {item.Id} ({item.Extension})  ({ex.Message})");
+                        Console.WriteLine(
+                            $"    \e[31mFAILED\e[0m  {variant.Id} {variant.OutputFormat} {variant.Resolution} {(variant.Thumbnail ? "thumb" : "full")}  ({ex.Message})");
                     }
                 }
 
-                if(variantsFailed == 0)
-                {
-                    Interlocked.Increment(ref converted);
-                }
+                if(ok)
+                    Interlocked.Increment(ref convertedVariants);
                 else
                 {
-                    Interlocked.Increment(ref failed);
-                    if(variantsFailed > 0)
+                    Interlocked.Increment(ref failedVariants);
+                    lock(drawLock)
                     {
-                        lock(drawLock)
+                        if(isTty && lastDrawLen > 0)
                         {
-                            if(isTty && lastDrawLen > 0)
-                            {
-                                Console.Write("\r" + new string(' ', lastDrawLen) + "\r");
-                                lastDrawLen = 0;
-                            }
-                            Console.WriteLine($"    \e[31mFAILED\e[0m  {item.Id}  ({variantsFailed}/8 variants failed)");
+                            Console.Write("\r" + new string(' ', lastDrawLen) + "\r");
+                            lastDrawLen = 0;
                         }
+                        Console.WriteLine(
+                            $"    \e[31mFAILED\e[0m  {variant.Id} {variant.OutputFormat} {variant.Resolution} {(variant.Thumbnail ? "thumb" : "full")}");
                     }
                 }
             });
@@ -248,9 +258,18 @@ public static class ImageConversionPassService
             Draw(true);
 
             sw.Stop();
-            double finalRate = sw.Elapsed.TotalSeconds > 0 ? total / sw.Elapsed.TotalSeconds : 0;
-            Console.WriteLine($"    Total elapsed {FormatDuration(sw.Elapsed.TotalSeconds)} \u2014 average {finalRate:0.00} orig/s");
+            double finalRate = sw.Elapsed.TotalSeconds > 0 ? totalFiles / sw.Elapsed.TotalSeconds : 0;
+            Console.WriteLine(
+                $"    Total elapsed {FormatDuration(sw.Elapsed.TotalSeconds)} — average {finalRate:0.00} orig/s");
         }
+
+        // Variants are tracked individually; report at file granularity (8 variants per file).
+        // "converted" counts files where ALL 8 variants succeeded; failed = the rest. Partial
+        // files (1-7 variants done) are folded into the failed bucket because HasAllVariants
+        // demands the full set, so a partial run is functionally equivalent to a fully-failed
+        // one — the next pass picks it up regardless.
+        int converted = convertedVariants / 8;
+        int failed    = dryRun ? 0 : pending.Count - converted;
 
         Console.WriteLine("\n  ────────────────────────────────────");
         Console.WriteLine($"  {itemName}");

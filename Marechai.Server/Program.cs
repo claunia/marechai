@@ -186,25 +186,6 @@ file class Program
 
         Console.WriteLine("\e[31;1mTook \e[32;1m{0} seconds\e[31;1m...\e[0m", (end - start).TotalSeconds);
 
-        // JPEG-XL backfill on startup is disabled. The pass scans the entire photos/
-        // tree synchronously on every server boot, which is costly on large asset
-        // roots. Run the offline `Marechai.MobyGames convert-images` command, or
-        // re-enable this block manually, when JXL variants need to be regenerated.
-        // start = DateTime.Now;
-        // Console.WriteLine("\e[31;1mBackfilling missing JPEG-XL variants...\e[0m");
-        // Photos.BackfillJxl(assetRootPath, false, "machines");
-        // Photos.BackfillJxl(assetRootPath, false, "gpus");
-        // Photos.BackfillJxl(assetRootPath, false, "processors");
-        // Photos.BackfillJxl(assetRootPath, false, "sound-synths");
-        // Photos.BackfillJxl(assetRootPath, false, "people");
-        // Photos.BackfillJxl(assetRootPath, false, "software-screenshots");
-        // Photos.BackfillJxl(assetRootPath, false, "software-covers");
-        // Photos.BackfillJxl(assetRootPath, true,  "books");
-        // Photos.BackfillJxl(assetRootPath, true,  "documents");
-        // Photos.BackfillJxl(assetRootPath, true,  "magazines");
-        // end = DateTime.Now;
-        // Console.WriteLine("\e[31;1mTook \e[32;1m{0} seconds\e[31;1m...\e[0m", (end - start).TotalSeconds);
-
         // Add services to the container.
         builder.Services.AddControllers(options =>
                 {
