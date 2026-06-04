@@ -29,12 +29,18 @@
         <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="OpenAddPersonDialog">@L["Add Person"]</MudButton>
         <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Upload" OnClick="OpenImportDialog" Class="ml-2">@L["Import CSV"]</MudButton>
         <MudSpacer/>
+        @if(_selectedPeople.Count > 0)
+        {
+            <MudChip T="string" Size="Size.Small" Color="Color.Info" Variant="Variant.Filled">@string.Format(L["{0} selected"], _selectedPeople.Count)</MudChip>
+            <MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Filled.DeleteSweep" Size="Size.Small" OnClick="ConfirmBulkDeletePeople" Class="ml-2">@L["Delete"]</MudButton>
+        }
         <MudTextField T="string" ValueChanged="OnSearch" Placeholder="@L["Search by name..."]" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" DebounceInterval="300" Immediate="true"/>
         <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="async () => await _dataGrid.ReloadServerData()"/>
     </MudToolBar>
 
-    <MudDataGrid @ref="_dataGrid" T="PersonDto" ServerData="ServerReload" Dense="true" Hover="true" Striped="true" Filterable="true" RowsPerPage="25">
+    <MudDataGrid @ref="_dataGrid" T="PersonDto" ServerData="ServerReload" Dense="true" Hover="true" Striped="true" Filterable="true" RowsPerPage="25" MultiSelection="true" @bind-SelectedItems="_selectedPeople">
         <Columns>
+            <SelectColumn T="PersonDto"/>
             <PropertyColumn Property="x => x.Name" Title="@L["Name"]"/>
             <PropertyColumn Property="x => x.Surname" Title="@L["Surname"]"/>
             <PropertyColumn Property="x => x.Country" Title="@L["Country of birth"]"/>

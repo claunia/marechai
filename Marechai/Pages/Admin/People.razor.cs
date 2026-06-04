@@ -15,6 +15,7 @@ public partial class People
     string                 _searchText;
     string                 _successMessage;
     MudDataGrid<PersonDto> _dataGrid;
+    HashSet<PersonDto>     _selectedPeople = new();
 
     async Task<GridData<PersonDto>> ServerReload(GridState<PersonDto> state, CancellationToken cancellationToken)
     {
@@ -254,6 +255,58 @@ public partial class People
             {
                 _errorMessage = errorMessage;
             }
+        }
+    }
+
+    async Task ConfirmBulkDeletePeople()
+    {
+        DialogParameters<DeleteConfirmDialog> parameters = new()
+        {
+            {
+                x => x.ContentText,
+                string.Format(L["Are you sure you want to delete {0} person(s)? This action cannot be undone."],
+                              _selectedPeople.Count)
+            }
+        };
+
+        IDialogReference dialog =
+            await DialogService.ShowAsync<DeleteConfirmDialog>(L["Delete People"], parameters,
+                                                               new DialogOptions
+                                                               {
+                                                                   MaxWidth  = MaxWidth.ExtraSmall,
+                                                                   FullWidth = true
+                                                               });
+
+        DialogResult result = await dialog.Result;
+
+        if(result is { Canceled: false })
+        {
+            int succeeded = 0;
+            int failed    = 0;
+            List<string> errors = [];
+
+            foreach(PersonDto person in _selectedPeople)
+            {
+                (bool ok, string errorMessage) = await PeopleService.DeleteAsync(person.Id ?? 0);
+
+                if(ok)
+                    succeeded++;
+                else
+                {
+                    failed++;
+                    string displayName = person.DisplayName ?? person.Alias ?? $"{person.Name} {person.Surname}";
+                    errors.Add($"{displayName}: {errorMessage}");
+                }
+            }
+
+            _successMessage = string.Format(L["Deleted {0} person(s)."], succeeded) +
+                              (failed > 0 ? " " + string.Format(L["{0} failed."], failed) : "");
+
+            if(errors.Count > 0)
+                _errorMessage = string.Join(" ", errors);
+
+            _selectedPeople.Clear();
+            await _dataGrid.ReloadServerData();
         }
     }
 
