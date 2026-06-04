@@ -6,169 +6,172 @@
 
 <MudDialog>
     <DialogContent>
-        <MudTextField @bind-Value="Name"
-                      Label="@L["Name"]"
-                      Variant="Variant.Outlined"
-                      Required="true"
-                      RequiredError="@L["Name is required."]"
-                      Class="mb-4"/>
+        <MudTabs Rounded="true" ApplyEffectsToContainer="true" Class="mt-2">
+            <MudTabPanel Text="@L["Details"]">
+                <MudTextField @bind-Value="Name"
+                              Label="@L["Name"]"
+                              Variant="Variant.Outlined"
+                              Required="true"
+                              RequiredError="@L["Name is required."]"
+                              Class="mb-4 mt-4"/>
 
-        <MudTextField @bind-Value="LegalName"
-                      Label="@L["Legal name"]"
-                      Variant="Variant.Outlined"
-                      Class="mb-4"/>
+                <MudTextField @bind-Value="LegalName"
+                              Label="@L["Legal name"]"
+                              Variant="Variant.Outlined"
+                              Class="mb-4"/>
 
-        <MudSelect @bind-Value="StatusValue" Label="@L["Status"]" Variant="Variant.Outlined" Class="mb-4">
-            <MudSelectItem Value="0">@L["Unknown"]</MudSelectItem>
-            <MudSelectItem Value="1">@L["Active"]</MudSelectItem>
-            <MudSelectItem Value="2">@L["Sold"]</MudSelectItem>
-            <MudSelectItem Value="3">@L["Merged"]</MudSelectItem>
-            <MudSelectItem Value="4">@L["Bankrupt"]</MudSelectItem>
-            <MudSelectItem Value="5">@L["Defunct"]</MudSelectItem>
-            <MudSelectItem Value="6">@L["Renamed"]</MudSelectItem>
-        </MudSelect>
+                <MudSelect @bind-Value="StatusValue" Label="@L["Status"]" Variant="Variant.Outlined" Class="mb-4">
+                    <MudSelectItem Value="0">@L["Unknown"]</MudSelectItem>
+                    <MudSelectItem Value="1">@L["Active"]</MudSelectItem>
+                    <MudSelectItem Value="2">@L["Sold"]</MudSelectItem>
+                    <MudSelectItem Value="3">@L["Merged"]</MudSelectItem>
+                    <MudSelectItem Value="4">@L["Bankrupt"]</MudSelectItem>
+                    <MudSelectItem Value="5">@L["Defunct"]</MudSelectItem>
+                    <MudSelectItem Value="6">@L["Renamed"]</MudSelectItem>
+                </MudSelect>
 
-        <MudDatePicker @bind-Date="Founded"
-                       Label="@L["Founded"]"
-                       Variant="Variant.Outlined"
-                       Clearable="true"
-                       Class="mb-4"/>
+                <MudDatePicker @bind-Date="Founded"
+                               Label="@L["Founded"]"
+                               Variant="Variant.Outlined"
+                               Clearable="true"
+                               Class="mb-4"/>
 
-        <MudSelect T="int" @bind-Value="FoundedPrecision"
-                   Label="@L["Date precision"]"
-                   Variant="Variant.Outlined"
-                   Class="mb-4">
-            <MudSelectItem T="int" Value="0">@L["Full date"]</MudSelectItem>
-            <MudSelectItem T="int" Value="1">@L["Month and year only"]</MudSelectItem>
-            <MudSelectItem T="int" Value="2">@L["Year only"]</MudSelectItem>
-        </MudSelect>
-
-        @if(StatusValue is >= 2 and <= 6)
-        {
-            <MudDatePicker @bind-Date="Sold"
-                           Label="@L["Event Date (Sold/Merged/etc.)"]"
+                <MudSelect T="int" @bind-Value="FoundedPrecision"
+                           Label="@L["Date precision"]"
                            Variant="Variant.Outlined"
-                           Clearable="true"
-                           Class="mb-4"/>
+                           Class="mb-4">
+                    <MudSelectItem T="int" Value="0">@L["Full date"]</MudSelectItem>
+                    <MudSelectItem T="int" Value="1">@L["Month and year only"]</MudSelectItem>
+                    <MudSelectItem T="int" Value="2">@L["Year only"]</MudSelectItem>
+                </MudSelect>
 
-            <MudSelect T="int" @bind-Value="SoldPrecision"
-                       Label="@L["Date precision"]"
-                       Variant="Variant.Outlined"
-                       Class="mb-4">
-                <MudSelectItem T="int" Value="0">@L["Full date"]</MudSelectItem>
-                <MudSelectItem T="int" Value="1">@L["Month and year only"]</MudSelectItem>
-                <MudSelectItem T="int" Value="2">@L["Year only"]</MudSelectItem>
-            </MudSelect>
+                @if(StatusValue is >= 2 and <= 6)
+                {
+                    <MudDatePicker @bind-Date="Sold"
+                                   Label="@L["Event Date (Sold/Merged/etc.)"]"
+                                   Variant="Variant.Outlined"
+                                   Clearable="true"
+                                   Class="mb-4"/>
 
-            <MudAutocomplete T="CompanyDto"
-                             Label="@L["Sold To / Merged With"]"
-                             @bind-Value="_selectedSoldToCompany"
-                             SearchFunc="SearchCompanies"
-                             ToStringFunc="@(c => c?.Name ?? string.Empty)"
-                             Variant="Variant.Outlined"
-                             Clearable="true"
-                             Class="mb-4"/>
-        }
+                    <MudSelect T="int" @bind-Value="SoldPrecision"
+                               Label="@L["Date precision"]"
+                               Variant="Variant.Outlined"
+                               Class="mb-4">
+                        <MudSelectItem T="int" Value="0">@L["Full date"]</MudSelectItem>
+                        <MudSelectItem T="int" Value="1">@L["Month and year only"]</MudSelectItem>
+                        <MudSelectItem T="int" Value="2">@L["Year only"]</MudSelectItem>
+                    </MudSelect>
 
-        <MudAutocomplete T="Iso31661NumericDto"
-                         Label="@L["Country"]"
-                         @bind-Value="_selectedCountry"
-                         SearchFunc="SearchCountries"
-                         ToStringFunc="@(c => c?.Name ?? string.Empty)"
-                         Variant="Variant.Outlined"
-                         Clearable="true"
-                         Class="mb-4"/>
+                    <MudAutocomplete T="CompanyDto"
+                                     Label="@L["Sold To / Merged With"]"
+                                     @bind-Value="_selectedSoldToCompany"
+                                     SearchFunc="SearchCompanies"
+                                     ToStringFunc="@(c => c?.Name ?? string.Empty)"
+                                     Variant="Variant.Outlined"
+                                     Clearable="true"
+                                     Class="mb-4"/>
+                }
 
-        <MudTextField @bind-Value="Address"
-                      Label="@L["Address"]"
-                      Variant="Variant.Outlined"
-                      Class="mb-4"/>
+                <MudAutocomplete T="Iso31661NumericDto"
+                                 Label="@L["Country"]"
+                                 @bind-Value="_selectedCountry"
+                                 SearchFunc="SearchCountries"
+                                 ToStringFunc="@(c => c?.Name ?? string.Empty)"
+                                 Variant="Variant.Outlined"
+                                 Clearable="true"
+                                 Class="mb-4"/>
 
-        <MudTextField @bind-Value="City"
-                      Label="@L["City"]"
-                      Variant="Variant.Outlined"
-                      Class="mb-4"/>
+                <MudTextField @bind-Value="Address"
+                              Label="@L["Address"]"
+                              Variant="Variant.Outlined"
+                              Class="mb-4"/>
 
-        <MudTextField @bind-Value="Province"
-                      Label="@L["Province / State"]"
-                      Variant="Variant.Outlined"
-                      Class="mb-4"/>
+                <MudTextField @bind-Value="City"
+                              Label="@L["City"]"
+                              Variant="Variant.Outlined"
+                              Class="mb-4"/>
 
-        <MudTextField @bind-Value="PostalCode"
-                      Label="@L["Postal code"]"
-                      Variant="Variant.Outlined"
-                      Class="mb-4"/>
+                <MudTextField @bind-Value="Province"
+                              Label="@L["Province / State"]"
+                              Variant="Variant.Outlined"
+                              Class="mb-4"/>
 
-        <MudTextField @bind-Value="Website"
-                      Label="@L["Website"]"
-                      Variant="Variant.Outlined"
-                      Class="mb-4"/>
+                <MudTextField @bind-Value="PostalCode"
+                              Label="@L["Postal code"]"
+                              Variant="Variant.Outlined"
+                              Class="mb-4"/>
 
-        <MudTextField @bind-Value="Twitter"
-                      Label="@L["Twitter"]"
-                      Variant="Variant.Outlined"
-                      Class="mb-4"/>
+                <MudTextField @bind-Value="Website"
+                              Label="@L["Website"]"
+                              Variant="Variant.Outlined"
+                              Class="mb-4"/>
 
-        <MudTextField @bind-Value="Facebook"
-                      Label="@L["Facebook"]"
-                      Variant="Variant.Outlined"
-                      Class="mb-4"/>
+                <MudTextField @bind-Value="Twitter"
+                              Label="@L["Twitter"]"
+                              Variant="Variant.Outlined"
+                              Class="mb-4"/>
+
+                <MudTextField @bind-Value="Facebook"
+                              Label="@L["Facebook"]"
+                              Variant="Variant.Outlined"
+                              Class="mb-4"/>
+            </MudTabPanel>
+
+            @if(!IsNew && _people is not null)
+            {
+                <MudTabPanel Text="@L["People"]">
+                    @if(_people.Count > 0)
+                    {
+                        <MudList T="PersonByCompanyDto" Dense="true" Class="mt-2">
+                            @foreach(PersonByCompanyDto person in _people)
+                            {
+                                <MudListItem T="PersonByCompanyDto">
+                                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                        <MudText>@GetPersonDisplayName(person) — @(person.Position ?? L["N/A"]) @FormatDateRange(person)</MudText>
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmRemovePerson(person)"/>
+                                    </MudStack>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    }
+
+                    <MudPaper Class="pa-4 mt-2" Elevation="1">
+                        <MudText Typo="Typo.subtitle2" Class="mb-2">@L["Add Person"]</MudText>
+
+                        <MudAutocomplete T="PersonDto"
+                                         Label="@L["Search Person"]"
+                                         @bind-Value="_selectedPerson"
+                                         SearchFunc="SearchPeople"
+                                         ToStringFunc="@(p => p is null ? string.Empty : p.DisplayName ?? p.Alias ?? $"{p.Name} {p.Surname}")"
+                                         Variant="Variant.Outlined"
+                                         Clearable="true"
+                                         Class="mb-2"/>
+
+                        <MudTextField @bind-Value="_newPersonPosition"
+                                      Label="@L["Position"]"
+                                      Variant="Variant.Outlined"
+                                      Class="mb-2"/>
+
+                        <MudStack Row="true" Class="mb-2">
+                            <MudDatePicker @bind-Date="_newPersonStart" Label="@L["Start Date"]" Variant="Variant.Outlined" Clearable="true"/>
+                            <MudDatePicker @bind-Date="_newPersonEnd" Label="@L["End Date"]" Variant="Variant.Outlined" Clearable="true"/>
+                        </MudStack>
+
+                        <MudCheckBox @bind-Value="_newPersonOngoing" Label="@L["Ongoing"]" Class="mb-2"/>
+
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   Size="Size.Small"
+                                   OnClick="AddPerson"
+                                   Disabled="@(_selectedPerson is null)">@L["Add"]</MudButton>
+                    </MudPaper>
+                </MudTabPanel>
+            }
+        </MudTabs>
 
         @if(!string.IsNullOrWhiteSpace(_validationError))
         {
             <MudAlert Severity="Severity.Error" Class="mt-2">@_validationError</MudAlert>
-        }
-
-        @if(!IsNew && _people is not null)
-        {
-            <MudDivider Class="my-4"/>
-            <MudText Typo="Typo.h6" Class="mb-2">@L["People"]</MudText>
-
-            @if(_people.Count > 0)
-            {
-                <MudList T="PersonByCompanyDto" Dense="true">
-                    @foreach(PersonByCompanyDto person in _people)
-                    {
-                        <MudListItem T="PersonByCompanyDto">
-                            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                                <MudText>@GetPersonDisplayName(person) — @(person.Position ?? L["N/A"]) @FormatDateRange(person)</MudText>
-                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmRemovePerson(person)"/>
-                            </MudStack>
-                        </MudListItem>
-                    }
-                </MudList>
-            }
-
-            <MudPaper Class="pa-4 mt-2" Elevation="1">
-                <MudText Typo="Typo.subtitle2" Class="mb-2">@L["Add Person"]</MudText>
-
-                <MudAutocomplete T="PersonDto"
-                                 Label="@L["Search Person"]"
-                                 @bind-Value="_selectedPerson"
-                                 SearchFunc="SearchPeople"
-                                 ToStringFunc="@(p => p is null ? string.Empty : p.DisplayName ?? p.Alias ?? $"{p.Name} {p.Surname}")"
-                                 Variant="Variant.Outlined"
-                                 Clearable="true"
-                                 Class="mb-2"/>
-
-                <MudTextField @bind-Value="_newPersonPosition"
-                              Label="@L["Position"]"
-                              Variant="Variant.Outlined"
-                              Class="mb-2"/>
-
-                <MudStack Row="true" Class="mb-2">
-                    <MudDatePicker @bind-Date="_newPersonStart" Label="@L["Start Date"]" Variant="Variant.Outlined" Clearable="true"/>
-                    <MudDatePicker @bind-Date="_newPersonEnd" Label="@L["End Date"]" Variant="Variant.Outlined" Clearable="true"/>
-                </MudStack>
-
-                <MudCheckBox @bind-Value="_newPersonOngoing" Label="@L["Ongoing"]" Class="mb-2"/>
-
-                <MudButton Variant="Variant.Filled"
-                           Color="Color.Primary"
-                           Size="Size.Small"
-                           OnClick="AddPerson"
-                           Disabled="@(_selectedPerson is null)">@L["Add"]</MudButton>
-            </MudPaper>
         }
     </DialogContent>
     <DialogActions>
