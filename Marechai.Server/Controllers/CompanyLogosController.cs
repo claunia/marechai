@@ -38,13 +38,16 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Svg.Skia;
 
 namespace Marechai.Server.Controllers;
 
 [Route("/companies/logos")]
 [ApiController]
-public class CompanyLogosController(MarechaiContext context, IConfiguration configuration) : ControllerBase
+public class CompanyLogosController(MarechaiContext context,
+                                    IConfiguration configuration,
+                                    ILogger<CompanyLogosController> logger) : ControllerBase
 {
     private readonly string _assetRootPath = configuration["AssetRootPath"]!;
 
@@ -187,10 +190,10 @@ public class CompanyLogosController(MarechaiContext context, IConfiguration conf
         if(userId is null) return Unauthorized();
 
         if(file is null || file.Length == 0)
-            return BadRequest("No file provided.");
+            return Problem(detail: "No file provided.", statusCode: StatusCodes.Status400BadRequest);
 
         if(file.Length > 5 * 1024 * 1024)
-            return BadRequest("File exceeds 5 MB limit.");
+            return Problem(detail: "File exceeds 5 MB limit.", statusCode: StatusCodes.Status400BadRequest);
 
         // Read the file into memory for validation
         using var ms = new MemoryStream();
@@ -202,13 +205,13 @@ public class CompanyLogosController(MarechaiContext context, IConfiguration conf
         int headerRead = await ms.ReadAsync(headerBuffer);
 
         if(headerRead < 5)
-            return BadRequest("File is too small to be a valid SVG.");
+            return Problem(detail: "File is too small to be a valid SVG.", statusCode: StatusCodes.Status400BadRequest);
 
         string header = Encoding.UTF8.GetString(headerBuffer, 0, headerRead);
 
         if(!header.StartsWith("<?xml", StringComparison.OrdinalIgnoreCase) &&
            !header.StartsWith("<svg", StringComparison.OrdinalIgnoreCase))
-            return BadRequest("File does not appear to be a valid SVG.");
+            return Problem(detail: "File does not appear to be a valid SVG.", statusCode: StatusCodes.Status400BadRequest);
 
         // Validate SVG footer
         ms.Seek(-7, SeekOrigin.End);
@@ -217,7 +220,7 @@ public class CompanyLogosController(MarechaiContext context, IConfiguration conf
         string footer = Encoding.UTF8.GetString(footerBuffer, 0, footerRead).TrimEnd();
 
         if(!footer.EndsWith("</svg>", StringComparison.OrdinalIgnoreCase))
-            return BadRequest("File does not appear to be a valid SVG.");
+            return Problem(detail: "File does not appear to be a valid SVG.", statusCode: StatusCodes.Status400BadRequest);
 
         // Validate by loading with SkiaSharp
         ms.Position = 0;
@@ -228,11 +231,20 @@ public class CompanyLogosController(MarechaiContext context, IConfiguration conf
             svg.Load(ms);
 
             if(svg.Picture is null)
-                return BadRequest("SVG could not be parsed.");
+            {
+                logger.LogWarning("SVG upload rejected: SKSvg.Load returned null Picture (companyId={CompanyId})",
+                                  companyId);
+
+                return Problem(detail: "SVG could not be parsed (no picture produced).",
+                               statusCode: StatusCodes.Status400BadRequest);
+            }
         }
-        catch(Exception)
+        catch(Exception ex)
         {
-            return BadRequest("SVG could not be parsed.");
+            logger.LogWarning(ex, "SVG upload rejected: SKSvg.Load threw (companyId={CompanyId})", companyId);
+
+            return Problem(detail: $"SVG could not be parsed: {ex.Message}",
+                           statusCode: StatusCodes.Status400BadRequest);
         }
 
         // Generate GUID and render all variants
@@ -245,9 +257,12 @@ public class CompanyLogosController(MarechaiContext context, IConfiguration conf
             // so pass the parent of assetRootPath (which IS the assets directory)
             SvgRender.RenderCompanyLogo(guid, ms, Path.GetDirectoryName(_assetRootPath)!);
         }
-        catch(Exception)
+        catch(Exception ex)
         {
-            return BadRequest("SVG rendering failed.");
+            logger.LogError(ex, "SVG rendering failed (companyId={CompanyId}, guid={Guid})", companyId, guid);
+
+            return Problem(detail: $"SVG rendering failed: {ex.Message}",
+                           statusCode: StatusCodes.Status400BadRequest);
         }
 
         // Save original SVG to disk
