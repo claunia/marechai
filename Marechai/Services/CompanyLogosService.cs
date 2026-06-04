@@ -25,16 +25,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
-using Marechai.ApiClient.Companies.Logos.Upload;
 using Marechai.ApiClient.Models;
 using Microsoft.Kiota.Abstractions;
+using Microsoft.Kiota.Abstractions.Serialization;
 using ChangeYearBody =
     Marechai.ApiClient.Companies.Logos.ChangeYear.Item.ChangeYearItemRequestBuilder.ChangeYearPutRequestBody;
 
 namespace Marechai.Services;
 
-public class CompanyLogosService(Marechai.ApiClient.Client client)
+public class CompanyLogosService(Marechai.ApiClient.Client client, IRequestAdapter requestAdapter)
 {
     public async Task<List<CompanyLogoDto>> GetByCompany(int companyId)
     {
@@ -95,14 +96,29 @@ public class CompanyLogosService(Marechai.ApiClient.Client client)
     {
         try
         {
-            var body = new UploadPostRequestBody
+            var body = new MultipartBody();
+            body.AddOrReplacePart("file", "image/svg+xml", new MemoryStream(svgBytes), "logo.svg");
+            body.AddOrReplacePart("companyId", "text/plain", companyId.ToString());
+
+            if(year.HasValue)
+                body.AddOrReplacePart("year", "text/plain", year.Value.ToString());
+
+            var pathParams = new Dictionary<string, object> { { "baseurl", requestAdapter.BaseUrl } };
+
+            var requestInfo = new RequestInformation(Method.POST, "{+baseurl}/companies/logos/upload", pathParams);
+
+            requestInfo.Headers.TryAdd("Accept", "application/json");
+            requestInfo.SetContentFromParsable(requestAdapter, "multipart/form-data", body);
+
+            var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
             {
-                CompanyId = companyId,
-                File      = svgBytes,
-                Year      = year
+                { "400", ProblemDetails.CreateFromDiscriminatorValue },
+                { "401", ProblemDetails.CreateFromDiscriminatorValue }
             };
 
-            CompanyLogoDto result = await client.Companies.Logos.Upload.PostAsync(body);
+            CompanyLogoDto result = await requestAdapter.SendAsync(requestInfo,
+                                                                   CompanyLogoDto.CreateFromDiscriminatorValue,
+                                                                   errorMapping);
 
             return (result, null);
         }
