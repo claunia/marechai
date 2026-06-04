@@ -678,6 +678,16 @@
                 {
                     <MudListItem T="PersonByCompanyDto" Href="@($"/person/{person.PersonId}")" Icon="@Icons.Material.Filled.Person">
                         @(person.DisplayName ?? person.Alias ?? $"{person.Name} {person.Surname}")
+                        @if(!string.IsNullOrEmpty(person.Position))
+                        {
+                            <MudText Typo="Typo.caption" Color="Color.Secondary" Class="ml-2" Style="display: inline;">— @person.Position</MudText>
+                        }
+                        @if(person.Start.HasValue || person.End.HasValue || person.Ongoing == true)
+                        {
+                            <MudText Typo="Typo.caption" Color="Color.Tertiary" Class="ml-2" Style="display: inline;">
+                                (@(person.Start.HasValue ? person.Start.Value.Year.ToString() : "?")–@(person.Ongoing == true ? L["present"] : person.End.HasValue ? person.End.Value.Year.ToString() : "?"))
+                            </MudText>
+                        }
                     </MudListItem>
                 }
             </MudList>
