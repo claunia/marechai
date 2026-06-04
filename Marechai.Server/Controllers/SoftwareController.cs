@@ -1304,7 +1304,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
         // Same scope as the orphan-addons grid: we only allow this PATCH on
         // rows that page would list (a DLC, or a Game carrying a DLC genre).
         if(model.Kind != SoftwareKind.Dlc && !(model.Kind == SoftwareKind.Game && hasDlcGenre))
-            return BadRequest("This endpoint only accepts DLC rows or Game rows carrying a DLC / add-on genre.");
+            return Problem(detail: "This endpoint only accepts DLC rows or Game rows carrying a DLC / add-on genre.", statusCode: StatusCodes.Status400BadRequest);
 
         ActionResult validationError = await ApplyBaseSoftwareLinkAsync(model, request.BaseSoftwareId, dlcGenreIds,
                                                                        HttpContext.RequestAborted);
@@ -1344,7 +1344,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
         if(userId is null) return Unauthorized();
 
         if(request.SoftwareIds is null || request.SoftwareIds.Count == 0)
-            return BadRequest("softwareIds must contain at least one id.");
+            return Problem(detail: "softwareIds must contain at least one id.", statusCode: StatusCodes.Status400BadRequest);
 
         int[] dlcGenreIds = await GetDlcGenreIdsAsync(HttpContext.RequestAborted);
 
@@ -1441,7 +1441,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
             // invalid state — the operator must reclassify Kind via the full
             // edit page if they really want to unlink.
             if(model.Kind == SoftwareKind.Dlc)
-                return BadRequest("Cannot clear base software on a DLC row. Change Kind first via the full edit page.");
+                return Problem(detail: "Cannot clear base software on a DLC row. Change Kind first via the full edit page.", statusCode: StatusCodes.Status400BadRequest);
 
             model.BaseSoftwareId = null;
 
@@ -1450,21 +1450,21 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
         ulong baseId = baseSoftwareId.Value;
 
-        if(baseId == model.Id) return BadRequest("Software cannot reference itself as its base.");
+        if(baseId == model.Id) return Problem(detail: "Software cannot reference itself as its base.", statusCode: StatusCodes.Status400BadRequest);
 
         Software baseSw = await context.Softwares.FindAsync([baseId], cancellationToken);
 
-        if(baseSw is null) return BadRequest("Base software not found.");
+        if(baseSw is null) return Problem(detail: "Base software not found.", statusCode: StatusCodes.Status400BadRequest);
 
         if(baseSw.Kind == SoftwareKind.Dlc)
-            return BadRequest("Base software is itself a DLC / add-on; chained DLCs are not allowed.");
+            return Problem(detail: "Base software is itself a DLC / add-on; chained DLCs are not allowed.", statusCode: StatusCodes.Status400BadRequest);
 
         bool baseHasDlcGenre = await context.GenresBySoftware
                                             .AnyAsync(g => g.SoftwareId == baseId &&
                                                            dlcGenreIds.Contains(g.GenreId), cancellationToken);
 
         if(baseHasDlcGenre)
-            return BadRequest("Base software is a misclassified Game carrying a DLC / add-on genre.");
+            return Problem(detail: "Base software is a misclassified Game carrying a DLC / add-on genre.", statusCode: StatusCodes.Status400BadRequest);
 
         model.BaseSoftwareId = baseId;
 
@@ -1522,10 +1522,10 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
         model.BaseSoftwareId    = dto.BaseSoftwareId;
 
         if(model.Kind == SoftwareKind.Dlc && model.BaseSoftwareId is null)
-            return BadRequest("DLC / Addon software must have a base software.");
+            return Problem(detail: "DLC / Addon software must have a base software.", statusCode: StatusCodes.Status400BadRequest);
 
         if(model.Kind != SoftwareKind.Dlc && model.BaseSoftwareId is not null)
-            return BadRequest("Only DLC / Addon software can have a base software.");
+            return Problem(detail: "Only DLC / Addon software can have a base software.", statusCode: StatusCodes.Status400BadRequest);
 
         await context.News.AddAsync(new News
         {
@@ -1561,10 +1561,10 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
         };
 
         if(model.Kind == SoftwareKind.Dlc && model.BaseSoftwareId is null)
-            return BadRequest("DLC / Addon software must have a base software.");
+            return Problem(detail: "DLC / Addon software must have a base software.", statusCode: StatusCodes.Status400BadRequest);
 
         if(model.Kind != SoftwareKind.Dlc && model.BaseSoftwareId is not null)
-            return BadRequest("Only DLC / Addon software can have a base software.");
+            return Problem(detail: "Only DLC / Addon software can have a base software.", statusCode: StatusCodes.Status400BadRequest);
 
         await context.Softwares.AddAsync(model);
         await context.SaveChangesWithUserAsync(userId);
@@ -1622,15 +1622,15 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<SoftwareMergePreviewDto>> GetMergePreviewAsync(ulong targetId, ulong sourceId)
     {
-        if(targetId == sourceId) return BadRequest("Cannot merge a software entry into itself.");
+        if(targetId == sourceId) return Problem(detail: "Cannot merge a software entry into itself.", statusCode: StatusCodes.Status400BadRequest);
 
         Software target = await context.Softwares.FindAsync(targetId);
 
-        if(target is null) return NotFound("Target software not found.");
+        if(target is null) return Problem(detail: "Target software not found.", statusCode: StatusCodes.Status404NotFound);
 
         Software source = await context.Softwares.FindAsync(sourceId);
 
-        if(source is null) return NotFound("Source software not found.");
+        if(source is null) return Problem(detail: "Source software not found.", statusCode: StatusCodes.Status404NotFound);
 
         // Extract suggested release title from name difference
         string suggestedTitle = source.Name;
@@ -1786,18 +1786,18 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
         if(userId is null) return Unauthorized();
 
-        if(targetId == sourceId) return BadRequest("Cannot merge a software entry into itself.");
+        if(targetId == sourceId) return Problem(detail: "Cannot merge a software entry into itself.", statusCode: StatusCodes.Status400BadRequest);
 
         Software target = await context.Softwares.FindAsync(targetId);
 
-        if(target is null) return NotFound("Target software not found.");
+        if(target is null) return Problem(detail: "Target software not found.", statusCode: StatusCodes.Status404NotFound);
 
         Software source = await context.Softwares.FindAsync(sourceId);
 
-        if(source is null) return NotFound("Source software not found.");
+        if(source is null) return Problem(detail: "Source software not found.", statusCode: StatusCodes.Status404NotFound);
 
         if((source.Kind == SoftwareKind.Dlc) != (target.Kind == SoftwareKind.Dlc))
-            return Conflict("Cannot merge DLC / Addon software with non-DLC software.");
+            return Problem(detail: "Cannot merge DLC / Addon software with non-DLC software.", statusCode: StatusCodes.Status409Conflict);
 
         await using var transaction = await context.Database.BeginTransactionAsync();
 
@@ -2886,7 +2886,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     public async Task<IActionResult> UpsertMyRatingAsync(ulong id, [FromBody] SetRatingRequest dto)
     {
         if(dto.Rating < 0 || dto.Rating > 5)
-            return BadRequest("Rating must be between 0 and 5.");
+            return Problem(detail: "Rating must be between 0 and 5.", statusCode: StatusCodes.Status400BadRequest);
 
         // Snap to nearest 0.5
         float snapped = MathF.Round(dto.Rating * 2f) / 2f;
@@ -3036,7 +3036,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
         bool exists = await context.SoftwareUserReviews.AnyAsync(r => r.UserId == userId && r.SoftwareId == id);
 
-        if(exists) return Conflict("You have already reviewed this software.");
+        if(exists) return Problem(detail: "You have already reviewed this software.", statusCode: StatusCodes.Status409Conflict);
 
         var review = new SoftwareUserReview
         {
@@ -3229,7 +3229,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
         bool alreadyReported =
             await context.ReviewReports.AnyAsync(r => r.ReporterId == userId && r.ReviewId == reviewId);
 
-        if(alreadyReported) return Conflict("You have already reported this review.");
+        if(alreadyReported) return Problem(detail: "You have already reported this review.", statusCode: StatusCodes.Status409Conflict);
 
         context.ReviewReports.Add(new ReviewReport
         {

@@ -923,19 +923,19 @@ public class BooksController(
         if(userId is null) return Unauthorized();
 
         if(file is null || file.Length == 0)
-            return BadRequest("No file provided.");
+            return Problem(detail: "No file provided.", statusCode: StatusCodes.Status400BadRequest);
 
         if(file.Length > 50 * 1024 * 1024)
-            return BadRequest("File exceeds 50 MB limit.");
+            return Problem(detail: "File exceeds 50 MB limit.", statusCode: StatusCodes.Status400BadRequest);
 
         string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
 
         if(!_allowedExtensions.Contains(extension))
-            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP, TIFF, BMP.");
+            return Problem(detail: "Unsupported file format. Accepted: JPEG, PNG, WebP, TIFF, BMP.", statusCode: StatusCodes.Status400BadRequest);
 
         if(!string.IsNullOrEmpty(file.ContentType) &&
            !_allowedContentTypes.Contains(file.ContentType.ToLowerInvariant()))
-            return BadRequest("Unsupported content type.");
+            return Problem(detail: "Unsupported content type.", statusCode: StatusCodes.Status400BadRequest);
 
         Book book = await context.Books.FindAsync(id);
 
@@ -1053,18 +1053,18 @@ public class BooksController(
         if(userId is null) return Unauthorized();
 
         if(file is null || file.Length == 0)
-            return BadRequest("No file provided.");
+            return Problem(detail: "No file provided.", statusCode: StatusCodes.Status400BadRequest);
 
         if(file.Length > 50 * 1024 * 1024)
-            return BadRequest("File exceeds 50 MB limit.");
+            return Problem(detail: "File exceeds 50 MB limit.", statusCode: StatusCodes.Status400BadRequest);
 
         string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
         if(!_pendingAllowedExtensions.Contains(extension))
-            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP.");
+            return Problem(detail: "Unsupported file format. Accepted: JPEG, PNG, WebP.", statusCode: StatusCodes.Status400BadRequest);
 
         if(!string.IsNullOrEmpty(file.ContentType) &&
            !_pendingAllowedContentTypes.Contains(file.ContentType.ToLowerInvariant()))
-            return BadRequest("Unsupported content type.");
+            return Problem(detail: "Unsupported content type.", statusCode: StatusCodes.Status400BadRequest);
 
         // Verify the targeted book exists; we don't want stray uploads for nonexistent ids.
         bool bookExists = await context.Books.AsNoTracking().AnyAsync(b => b.Id == id);
@@ -1106,18 +1106,18 @@ public class BooksController(
         if(userId is null) return Unauthorized();
 
         if(file is null || file.Length == 0)
-            return BadRequest("No file provided.");
+            return Problem(detail: "No file provided.", statusCode: StatusCodes.Status400BadRequest);
 
         if(file.Length > 50 * 1024 * 1024)
-            return BadRequest("File exceeds 50 MB limit.");
+            return Problem(detail: "File exceeds 50 MB limit.", statusCode: StatusCodes.Status400BadRequest);
 
         string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
         if(!_pendingAllowedExtensions.Contains(extension))
-            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP.");
+            return Problem(detail: "Unsupported file format. Accepted: JPEG, PNG, WebP.", statusCode: StatusCodes.Status400BadRequest);
 
         if(!string.IsNullOrEmpty(file.ContentType) &&
            !_pendingAllowedContentTypes.Contains(file.ContentType.ToLowerInvariant()))
-            return BadRequest("Unsupported content type.");
+            return Problem(detail: "Unsupported content type.", statusCode: StatusCodes.Status400BadRequest);
 
         // Cleanup: each user gets at most ONE pending NEW-book cover at a time. Replace any
         // prior upload (keyed on EntityId=0) before storing the new one.

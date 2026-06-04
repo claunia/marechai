@@ -454,15 +454,15 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<CompanyMergePreviewDto>> GetMergePreviewAsync(int targetId, int sourceId)
     {
-        if(targetId == sourceId) return BadRequest("Cannot merge a company into itself.");
+        if(targetId == sourceId) return Problem(detail: "Cannot merge a company into itself.", statusCode: StatusCodes.Status400BadRequest);
 
         Company target = await context.Companies.FindAsync(targetId);
 
-        if(target is null) return NotFound("Target company not found.");
+        if(target is null) return Problem(detail: "Target company not found.", statusCode: StatusCodes.Status404NotFound);
 
         Company source = await context.Companies.FindAsync(sourceId);
 
-        if(source is null) return NotFound("Source company not found.");
+        if(source is null) return Problem(detail: "Source company not found.", statusCode: StatusCodes.Status404NotFound);
 
         // Logos — direct re-parent, no dedup
         int logosCount = await context.CompanyLogos.CountAsync(l => l.CompanyId == sourceId);
@@ -654,19 +654,19 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
 
         if(userId is null) return Unauthorized();
 
-        if(request is null) return BadRequest("Merge request body is required.");
+        if(request is null) return Problem(detail: "Merge request body is required.", statusCode: StatusCodes.Status400BadRequest);
 
-        if(string.IsNullOrWhiteSpace(request.Name)) return BadRequest("Name is required.");
+        if(string.IsNullOrWhiteSpace(request.Name)) return Problem(detail: "Name is required.", statusCode: StatusCodes.Status400BadRequest);
 
-        if(targetId == sourceId) return BadRequest("Cannot merge a company into itself.");
+        if(targetId == sourceId) return Problem(detail: "Cannot merge a company into itself.", statusCode: StatusCodes.Status400BadRequest);
 
         Company target = await context.Companies.FindAsync(targetId);
 
-        if(target is null) return NotFound("Target company not found.");
+        if(target is null) return Problem(detail: "Target company not found.", statusCode: StatusCodes.Status404NotFound);
 
         Company source = await context.Companies.FindAsync(sourceId);
 
-        if(source is null) return NotFound("Source company not found.");
+        if(source is null) return Problem(detail: "Source company not found.", statusCode: StatusCodes.Status404NotFound);
 
         string sourceName = source.Name;
 
@@ -947,7 +947,7 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
         {
             await transaction.RollbackAsync();
 
-            return Conflict($"Merge failed: {ex.Message}");
+            return Problem(detail: $"Merge failed: {ex.Message}", statusCode: StatusCodes.Status409Conflict);
         }
 
         // Mark pending suggestions for the deleted source company as Stale (mirrors DeleteAsync).

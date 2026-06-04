@@ -257,18 +257,18 @@ public class MachinePhotosController(MarechaiContext context, IConfiguration con
         if(userId is null) return Unauthorized();
 
         if(file is null || file.Length == 0)
-            return BadRequest("No file provided.");
+            return Problem(detail: "No file provided.", statusCode: StatusCodes.Status400BadRequest);
 
         if(file.Length > 50 * 1024 * 1024)
-            return BadRequest("File exceeds 50 MB limit.");
+            return Problem(detail: "File exceeds 50 MB limit.", statusCode: StatusCodes.Status400BadRequest);
 
         string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
 
         if(!_allowedExtensions.Contains(extension))
-            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP, TIFF, BMP.");
+            return Problem(detail: "Unsupported file format. Accepted: JPEG, PNG, WebP, TIFF, BMP.", statusCode: StatusCodes.Status400BadRequest);
 
         if(!string.IsNullOrEmpty(file.ContentType) && !_allowedContentTypes.Contains(file.ContentType.ToLowerInvariant()))
-            return BadRequest("Unsupported content type.");
+            return Problem(detail: "Unsupported content type.", statusCode: StatusCodes.Status400BadRequest);
 
         // Read the file into memory
         using var ms = new MemoryStream();
@@ -456,29 +456,30 @@ public class MachinePhotosController(MarechaiContext context, IConfiguration con
 
         if(string.IsNullOrEmpty(userId)) return Unauthorized();
 
-        if(file is null || file.Length == 0) return BadRequest("No file provided.");
+        if(file is null || file.Length == 0) return Problem(detail: "No file provided.", statusCode: StatusCodes.Status400BadRequest);
 
-        if(file.Length > 50 * 1024 * 1024) return BadRequest("File exceeds 50 MB limit.");
+        if(file.Length > 50 * 1024 * 1024) return Problem(detail: "File exceeds 50 MB limit.", statusCode: StatusCodes.Status400BadRequest);
 
         string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
 
         if(!_pendingAllowedExtensions.Contains(extension))
-            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP.");
+            return Problem(detail: "Unsupported file format. Accepted: JPEG, PNG, WebP.", statusCode: StatusCodes.Status400BadRequest);
 
         if(!string.IsNullOrEmpty(file.ContentType) &&
            !_pendingAllowedContentTypes.Contains(file.ContentType.ToLowerInvariant()))
-            return BadRequest("Unsupported content type.");
+            return Problem(detail: "Unsupported content type.", statusCode: StatusCodes.Status400BadRequest);
 
         bool machineExists = await context.Machines.AnyAsync(m => m.Id == machineId);
 
-        if(!machineExists) return NotFound("Machine not found.");
+        if(!machineExists) return Problem(detail: "Machine not found.", statusCode: StatusCodes.Status404NotFound);
 
         int currentCount = PendingImageStore.CountByUploaderForParentEntity(_assetRootPath, "machines", userId,
             (byte)SuggestionEntityType.MachinePhoto, machineId);
 
         if(currentCount >= PendingPhotosPerUserPerMachineCap)
-            return Conflict($"You already have {currentCount} pending photos for this machine. Maximum is " +
-                            $"{PendingPhotosPerUserPerMachineCap} per machine. Submit or remove some first.");
+            return Problem(detail: $"You already have {currentCount} pending photos for this machine. Maximum is " +
+                                   $"{PendingPhotosPerUserPerMachineCap} per machine. Submit or remove some first.",
+                           statusCode: StatusCodes.Status409Conflict);
 
         Guid guid;
 
@@ -609,15 +610,15 @@ public class MachinePhotosController(MarechaiContext context, IConfiguration con
         string userId = User.FindFirstValue(ClaimTypes.Sid);
         if(string.IsNullOrEmpty(userId)) return Unauthorized();
 
-        if(file is null || file.Length == 0) return BadRequest("No file provided.");
-        if(file.Length > 50 * 1024 * 1024) return BadRequest("File exceeds 50 MB limit.");
+        if(file is null || file.Length == 0) return Problem(detail: "No file provided.", statusCode: StatusCodes.Status400BadRequest);
+        if(file.Length > 50 * 1024 * 1024) return Problem(detail: "File exceeds 50 MB limit.", statusCode: StatusCodes.Status400BadRequest);
 
         string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
         if(!_adminBatchAllowedExtensions.Contains(extension))
-            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP, AVIF, BMP, TIFF.");
+            return Problem(detail: "Unsupported file format. Accepted: JPEG, PNG, WebP, AVIF, BMP, TIFF.", statusCode: StatusCodes.Status400BadRequest);
 
         bool machineExists = await context.Machines.AnyAsync(m => m.Id == machineId);
-        if(!machineExists) return NotFound("Machine not found.");
+        if(!machineExists) return Problem(detail: "Machine not found.", statusCode: StatusCodes.Status404NotFound);
 
         // Persist FIRST (with a temporary placeholder for dimensions), then content-sniff
         // and either re-write the sidecar with real dimensions or reject + delete the file.
@@ -634,22 +635,22 @@ public class MachinePhotosController(MarechaiContext context, IConfiguration con
         if(imagePath is null)
         {
             PendingImageStore.Delete(_assetRootPath, "machines", guid);
-            return BadRequest("Failed to persist uploaded file.");
+            return Problem(detail: "Failed to persist uploaded file.", statusCode: StatusCodes.Status400BadRequest);
         }
 
         (string magickFormat, int width, int height) = Photos.Identify(imagePath);
         if(magickFormat is null || !_adminBatchAllowedMagickFormats.Contains(magickFormat))
         {
             PendingImageStore.Delete(_assetRootPath, "machines", guid);
-            return StatusCode(StatusCodes.Status415UnsupportedMediaType,
-                              "File content does not match a supported image format.");
+            return Problem(detail: "File content does not match a supported image format.",
+                           statusCode: StatusCodes.Status415UnsupportedMediaType);
         }
 
         byte[] thumbBytes = Photos.GenerateThumbnailJpeg(imagePath);
         if(thumbBytes is null)
         {
             PendingImageStore.Delete(_assetRootPath, "machines", guid);
-            return BadRequest("Failed to generate thumbnail for the uploaded image.");
+            return Problem(detail: "Failed to generate thumbnail for the uploaded image.", statusCode: StatusCodes.Status400BadRequest);
         }
 
         await PendingImageStore.StoreThumbnailAsync(_assetRootPath, "machines", guid, thumbBytes);
@@ -728,13 +729,13 @@ public class MachinePhotosController(MarechaiContext context, IConfiguration con
         if(string.IsNullOrEmpty(userId)) return Unauthorized();
 
         if(request is null || request.Items is null || request.Items.Count == 0)
-            return BadRequest("No items provided.");
+            return Problem(detail: "No items provided.", statusCode: StatusCodes.Status400BadRequest);
 
         bool machineExists = await context.Machines.AnyAsync(m => m.Id == request.MachineId);
-        if(!machineExists) return NotFound("Machine not found.");
+        if(!machineExists) return Problem(detail: "Machine not found.", statusCode: StatusCodes.Status404NotFound);
 
         bool licenseExists = await context.Licenses.AnyAsync(l => l.Id == request.LicenseId);
-        if(!licenseExists) return NotFound("License not found.");
+        if(!licenseExists) return Problem(detail: "License not found.", statusCode: StatusCodes.Status404NotFound);
 
         // Validate every pending id belongs to the caller and matches machine/admin scope.
         foreach(AdminMachinePhotoBatchCommitItemDto item in request.Items)
@@ -742,15 +743,15 @@ public class MachinePhotosController(MarechaiContext context, IConfiguration con
             PendingImageStore.PendingMetadata meta =
                 await PendingImageStore.GetMetadataAsync(_assetRootPath, "machines", item.PendingId);
 
-            if(meta is null) return NotFound($"Pending image {item.PendingId} not found.");
+            if(meta is null) return Problem(detail: $"Pending image {item.PendingId} not found.", statusCode: StatusCodes.Status404NotFound);
             if(meta.EntityType != (byte)SuggestionEntityType.MachinePhoto)
-                return BadRequest($"Pending image {item.PendingId} is not a machine photo.");
+                return Problem(detail: $"Pending image {item.PendingId} is not a machine photo.", statusCode: StatusCodes.Status400BadRequest);
             if(!meta.IsAdminStaging)
-                return BadRequest($"Pending image {item.PendingId} is not an admin-staged image.");
+                return Problem(detail: $"Pending image {item.PendingId} is not an admin-staged image.", statusCode: StatusCodes.Status400BadRequest);
             if(!string.Equals(meta.UploadedById, userId, StringComparison.Ordinal))
                 return Forbid();
             if(meta.ParentEntityId != request.MachineId)
-                return BadRequest($"Pending image {item.PendingId} was staged for a different machine.");
+                return Problem(detail: $"Pending image {item.PendingId} was staged for a different machine.", statusCode: StatusCodes.Status400BadRequest);
         }
 
         Guid jobId = batchJobs.StartJob(userId, request.MachineId, request.Items.Count);

@@ -1118,19 +1118,19 @@ public class PeopleController(
         if(userId is null) return Unauthorized();
 
         if(file is null || file.Length == 0)
-            return BadRequest("No file provided.");
+            return Problem(detail: "No file provided.", statusCode: StatusCodes.Status400BadRequest);
 
         if(file.Length > 50 * 1024 * 1024)
-            return BadRequest("File exceeds 50 MB limit.");
+            return Problem(detail: "File exceeds 50 MB limit.", statusCode: StatusCodes.Status400BadRequest);
 
         string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
 
         if(!_allowedPhotoExtensions.Contains(extension))
-            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP, TIFF, BMP.");
+            return Problem(detail: "Unsupported file format. Accepted: JPEG, PNG, WebP, TIFF, BMP.", statusCode: StatusCodes.Status400BadRequest);
 
         if(!string.IsNullOrEmpty(file.ContentType) &&
            !_allowedPhotoContentTypes.Contains(file.ContentType.ToLowerInvariant()))
-            return BadRequest("Unsupported content type.");
+            return Problem(detail: "Unsupported content type.", statusCode: StatusCodes.Status400BadRequest);
 
         Person person = await context.People.FindAsync(id);
 
@@ -1245,18 +1245,18 @@ public class PeopleController(
         if(userId is null) return Unauthorized();
 
         if(file is null || file.Length == 0)
-            return BadRequest("No file provided.");
+            return Problem(detail: "No file provided.", statusCode: StatusCodes.Status400BadRequest);
 
         if(file.Length > 50 * 1024 * 1024)
-            return BadRequest("File exceeds 50 MB limit.");
+            return Problem(detail: "File exceeds 50 MB limit.", statusCode: StatusCodes.Status400BadRequest);
 
         string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
         if(!_pendingAllowedExtensions.Contains(extension))
-            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP.");
+            return Problem(detail: "Unsupported file format. Accepted: JPEG, PNG, WebP.", statusCode: StatusCodes.Status400BadRequest);
 
         if(!string.IsNullOrEmpty(file.ContentType) &&
            !_pendingAllowedContentTypes.Contains(file.ContentType.ToLowerInvariant()))
-            return BadRequest("Unsupported content type.");
+            return Problem(detail: "Unsupported content type.", statusCode: StatusCodes.Status400BadRequest);
 
         // Verify the targeted person exists; we don't want stray uploads for nonexistent ids.
         bool personExists = await context.People.AsNoTracking().AnyAsync(p => p.Id == id);
@@ -1298,18 +1298,18 @@ public class PeopleController(
         if(userId is null) return Unauthorized();
 
         if(file is null || file.Length == 0)
-            return BadRequest("No file provided.");
+            return Problem(detail: "No file provided.", statusCode: StatusCodes.Status400BadRequest);
 
         if(file.Length > 50 * 1024 * 1024)
-            return BadRequest("File exceeds 50 MB limit.");
+            return Problem(detail: "File exceeds 50 MB limit.", statusCode: StatusCodes.Status400BadRequest);
 
         string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
         if(!_pendingAllowedExtensions.Contains(extension))
-            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP.");
+            return Problem(detail: "Unsupported file format. Accepted: JPEG, PNG, WebP.", statusCode: StatusCodes.Status400BadRequest);
 
         if(!string.IsNullOrEmpty(file.ContentType) &&
            !_pendingAllowedContentTypes.Contains(file.ContentType.ToLowerInvariant()))
-            return BadRequest("Unsupported content type.");
+            return Problem(detail: "Unsupported content type.", statusCode: StatusCodes.Status400BadRequest);
 
         // Cleanup: each user gets at most ONE pending NEW-person photo at a time. Replace
         // any prior upload (keyed on EntityId=0) before storing the new one.

@@ -349,7 +349,7 @@ public class AuthController
         ApplicationUser user = await userManager.FindByEmailAsync(request.Email);
 
         // Generic message: do NOT differentiate between unknown user and bad/expired token.
-        if(user is null) return BadRequest("Invalid token or email.");
+        if(user is null) return Problem(detail: "Invalid token or email.", statusCode: StatusCodes.Status400BadRequest);
 
         IdentityResult result = await userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
 
@@ -932,19 +932,19 @@ public class AuthController
         if(string.IsNullOrEmpty(userId)) return Unauthorized();
 
         if(file is null || file.Length == 0)
-            return BadRequest("No file provided.");
+            return Problem(detail: "No file provided.", statusCode: StatusCodes.Status400BadRequest);
 
         if(file.Length > 50 * 1024 * 1024)
-            return BadRequest("File exceeds 50 MB limit.");
+            return Problem(detail: "File exceeds 50 MB limit.", statusCode: StatusCodes.Status400BadRequest);
 
         string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
 
         if(!_allowedExtensions.Contains(extension))
-            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP, TIFF, BMP.");
+            return Problem(detail: "Unsupported file format. Accepted: JPEG, PNG, WebP, TIFF, BMP.", statusCode: StatusCodes.Status400BadRequest);
 
         if(!string.IsNullOrEmpty(file.ContentType) &&
            !_allowedContentTypes.Contains(file.ContentType.ToLowerInvariant()))
-            return BadRequest("Unsupported content type.");
+            return Problem(detail: "Unsupported content type.", statusCode: StatusCodes.Status400BadRequest);
 
         ApplicationUser user = await userManager.FindByIdAsync(userId);
 
@@ -1256,7 +1256,7 @@ public class AuthController
                                       _               => null
                                   };
 
-        if(identityProvider is null) return BadRequest("Unknown two-factor provider.");
+        if(identityProvider is null) return Problem(detail: "Unknown two-factor provider.", statusCode: StatusCodes.Status400BadRequest);
 
         bool ok = await userManager.VerifyTwoFactorTokenAsync(user, identityProvider, request.Code);
 
@@ -1337,7 +1337,7 @@ public class AuthController
         ApplicationUser user = await userManager.FindByIdAsync(userId);
         if(user is null) return Unauthorized();
 
-        if(!user.TwoFactorViaEmail) return BadRequest("Email two-factor is not enabled for this account.");
+        if(!user.TwoFactorViaEmail) return Problem(detail: "Email two-factor is not enabled for this account.", statusCode: StatusCodes.Status400BadRequest);
 
         string code = await userManager.GenerateTwoFactorTokenAsync(user, TokenOptions.DefaultEmailProvider);
         await SendLocalizedLoginCodeAsync(user.Email!, code);
@@ -1419,7 +1419,7 @@ public class AuthController
         bool ok = await userManager.VerifyTwoFactorTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider,
                                                               request.Code);
 
-        if(!ok) return BadRequest("Invalid verification code.");
+        if(!ok) return Problem(detail: "Invalid verification code.", statusCode: StatusCodes.Status400BadRequest);
 
         bool wasFirstMethod = !user.TwoFactorEnabled;
 
@@ -1454,7 +1454,7 @@ public class AuthController
         ApplicationUser user = await userManager.FindByIdAsync(userId);
         if(user is null) return Unauthorized();
 
-        if(!user.EmailConfirmed) return BadRequest("Email is not confirmed.");
+        if(!user.EmailConfirmed) return Problem(detail: "Email is not confirmed.", statusCode: StatusCodes.Status400BadRequest);
 
         string code = await userManager.GenerateTwoFactorTokenAsync(user, TokenOptions.DefaultEmailProvider);
         await SendLocalizedLoginCodeAsync(user.Email!, code);
@@ -1480,13 +1480,13 @@ public class AuthController
         ApplicationUser user = await userManager.FindByIdAsync(userId);
         if(user is null) return Unauthorized();
 
-        if(!user.EmailConfirmed) return BadRequest("Email is not confirmed.");
+        if(!user.EmailConfirmed) return Problem(detail: "Email is not confirmed.", statusCode: StatusCodes.Status400BadRequest);
 
         if(!await userManager.CheckPasswordAsync(user, request.Password))
-            return BadRequest("Invalid password.");
+            return Problem(detail: "Invalid password.", statusCode: StatusCodes.Status400BadRequest);
 
         bool ok = await userManager.VerifyTwoFactorTokenAsync(user, TokenOptions.DefaultEmailProvider, request.Code);
-        if(!ok) return BadRequest("Invalid verification code.");
+        if(!ok) return Problem(detail: "Invalid verification code.", statusCode: StatusCodes.Status400BadRequest);
 
         bool wasFirstMethod = !user.TwoFactorEnabled;
 
@@ -1522,13 +1522,13 @@ public class AuthController
         ApplicationUser user = await userManager.FindByIdAsync(userId);
         if(user is null) return Unauthorized();
 
-        if(!user.TwoFactorViaAuthenticator) return BadRequest("Authenticator is not enabled.");
+        if(!user.TwoFactorViaAuthenticator) return Problem(detail: "Authenticator is not enabled.", statusCode: StatusCodes.Status400BadRequest);
 
         if(!await userManager.CheckPasswordAsync(user, request.Password))
-            return BadRequest("Invalid password.");
+            return Problem(detail: "Invalid password.", statusCode: StatusCodes.Status400BadRequest);
 
         if(!await VerifyOwnTwoFactorCodeAsync(user, request.Provider, request.Code))
-            return BadRequest("Invalid verification code.");
+            return Problem(detail: "Invalid verification code.", statusCode: StatusCodes.Status400BadRequest);
 
         await userManager.ResetAuthenticatorKeyAsync(user);
         user.TwoFactorViaAuthenticator = false;
@@ -1562,13 +1562,13 @@ public class AuthController
         ApplicationUser user = await userManager.FindByIdAsync(userId);
         if(user is null) return Unauthorized();
 
-        if(!user.TwoFactorViaEmail) return BadRequest("Email two-factor is not enabled.");
+        if(!user.TwoFactorViaEmail) return Problem(detail: "Email two-factor is not enabled.", statusCode: StatusCodes.Status400BadRequest);
 
         if(!await userManager.CheckPasswordAsync(user, request.Password))
-            return BadRequest("Invalid password.");
+            return Problem(detail: "Invalid password.", statusCode: StatusCodes.Status400BadRequest);
 
         if(!await VerifyOwnTwoFactorCodeAsync(user, request.Provider, request.Code))
-            return BadRequest("Invalid verification code.");
+            return Problem(detail: "Invalid verification code.", statusCode: StatusCodes.Status400BadRequest);
 
         user.TwoFactorViaEmail = false;
 
@@ -1603,13 +1603,13 @@ public class AuthController
         ApplicationUser user = await userManager.FindByIdAsync(userId);
         if(user is null) return Unauthorized();
 
-        if(!user.TwoFactorEnabled) return BadRequest("Two-factor authentication is not enabled.");
+        if(!user.TwoFactorEnabled) return Problem(detail: "Two-factor authentication is not enabled.", statusCode: StatusCodes.Status400BadRequest);
 
         if(!await userManager.CheckPasswordAsync(user, request.Password))
-            return BadRequest("Invalid password.");
+            return Problem(detail: "Invalid password.", statusCode: StatusCodes.Status400BadRequest);
 
         if(!await VerifyOwnTwoFactorCodeAsync(user, request.Provider, request.Code))
-            return BadRequest("Invalid verification code.");
+            return Problem(detail: "Invalid verification code.", statusCode: StatusCodes.Status400BadRequest);
 
         IEnumerable<string> codes = await userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10);
         await userManager.ResetAccessFailedCountAsync(user);

@@ -192,32 +192,32 @@ public class SoftwarePromoArtController(MarechaiContext context, IConfiguration 
         if(userId is null) return Unauthorized();
 
         if(file is null || file.Length == 0)
-            return BadRequest("No file provided.");
+            return Problem(detail: "No file provided.", statusCode: StatusCodes.Status400BadRequest);
 
         if(file.Length > 50 * 1024 * 1024)
-            return BadRequest("File exceeds 50 MB limit.");
+            return Problem(detail: "File exceeds 50 MB limit.", statusCode: StatusCodes.Status400BadRequest);
 
         string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
 
         if(!_allowedExtensions.Contains(extension))
-            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP, TIFF, BMP.");
+            return Problem(detail: "Unsupported file format. Accepted: JPEG, PNG, WebP, TIFF, BMP.", statusCode: StatusCodes.Status400BadRequest);
 
         if(!string.IsNullOrEmpty(file.ContentType) &&
            !_allowedContentTypes.Contains(file.ContentType.ToLowerInvariant()))
-            return BadRequest("Unsupported content type.");
+            return Problem(detail: "Unsupported content type.", statusCode: StatusCodes.Status400BadRequest);
 
         string trimmedGroup = groupName?.Trim();
 
         if(string.IsNullOrWhiteSpace(trimmedGroup))
-            return BadRequest("Group name is required.");
+            return Problem(detail: "Group name is required.", statusCode: StatusCodes.Status400BadRequest);
 
         if(trimmedGroup.Length > 256)
-            return BadRequest("Group name exceeds 256 characters.");
+            return Problem(detail: "Group name exceeds 256 characters.", statusCode: StatusCodes.Status400BadRequest);
 
         bool softwareExists = await context.Softwares.AnyAsync(s => s.Id == softwareId);
 
         if(!softwareExists)
-            return BadRequest("Referenced software does not exist.");
+            return Problem(detail: "Referenced software does not exist.", statusCode: StatusCodes.Status400BadRequest);
 
         SoftwarePromoArtGroup group =
             await context.SoftwarePromoArtGroups.FirstOrDefaultAsync(g => g.Name == trimmedGroup);
@@ -301,10 +301,10 @@ public class SoftwarePromoArtController(MarechaiContext context, IConfiguration 
             string trimmedGroup = dto.GroupName.Trim();
 
             if(string.IsNullOrWhiteSpace(trimmedGroup))
-                return BadRequest("Group name cannot be empty.");
+                return Problem(detail: "Group name cannot be empty.", statusCode: StatusCodes.Status400BadRequest);
 
             if(trimmedGroup.Length > 256)
-                return BadRequest("Group name exceeds 256 characters.");
+                return Problem(detail: "Group name exceeds 256 characters.", statusCode: StatusCodes.Status400BadRequest);
 
             SoftwarePromoArtGroup group =
                 await context.SoftwarePromoArtGroups.FirstOrDefaultAsync(g => g.Name == trimmedGroup);
@@ -459,22 +459,22 @@ public class SoftwarePromoArtController(MarechaiContext context, IConfiguration 
 
         if(string.IsNullOrEmpty(userId)) return Unauthorized();
 
-        if(file is null || file.Length == 0) return BadRequest("No file provided.");
+        if(file is null || file.Length == 0) return Problem(detail: "No file provided.", statusCode: StatusCodes.Status400BadRequest);
 
-        if(file.Length > 50 * 1024 * 1024) return BadRequest("File exceeds 50 MB limit.");
+        if(file.Length > 50 * 1024 * 1024) return Problem(detail: "File exceeds 50 MB limit.", statusCode: StatusCodes.Status400BadRequest);
 
         string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
 
         if(!_pendingAllowedExtensions.Contains(extension))
-            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP.");
+            return Problem(detail: "Unsupported file format. Accepted: JPEG, PNG, WebP.", statusCode: StatusCodes.Status400BadRequest);
 
         if(!string.IsNullOrEmpty(file.ContentType) &&
            !_pendingAllowedContentTypes.Contains(file.ContentType.ToLowerInvariant()))
-            return BadRequest("Unsupported content type.");
+            return Problem(detail: "Unsupported content type.", statusCode: StatusCodes.Status400BadRequest);
 
         bool softwareExists = await context.Softwares.AnyAsync(s => s.Id == softwareId);
 
-        if(!softwareExists) return NotFound("Software not found.");
+        if(!softwareExists) return Problem(detail: "Software not found.", statusCode: StatusCodes.Status404NotFound);
 
         long parentEntityId = (long)softwareId;
 
@@ -482,8 +482,9 @@ public class SoftwarePromoArtController(MarechaiContext context, IConfiguration 
             userId, (byte)SuggestionEntityType.SoftwarePromoArt, parentEntityId);
 
         if(currentCount >= PendingPhotosPerUserPerSoftwareCap)
-            return Conflict($"You already have {currentCount} pending promo art images for this software. Maximum " +
-                            $"is {PendingPhotosPerUserPerSoftwareCap} per software. Submit or remove some first.");
+            return Problem(detail: $"You already have {currentCount} pending promo art images for this software. Maximum " +
+                                   $"is {PendingPhotosPerUserPerSoftwareCap} per software. Submit or remove some first.",
+                           statusCode: StatusCodes.Status409Conflict);
 
         Guid guid;
 

@@ -362,11 +362,11 @@ public class SoftwareReleasesController(MarechaiContext                   contex
 
         // Enforce mutual exclusivity: cannot change IsCompilation after creation
         if(model.IsCompilation != dto.IsCompilation)
-            return BadRequest("Cannot change a release between single-release and compilation modes.");
+            return Problem(detail: "Cannot change a release between single-release and compilation modes.", statusCode: StatusCodes.Status400BadRequest);
 
         // Cannot change SoftwareId after creation
         if(model.SoftwareId != dto.SoftwareId)
-            return BadRequest("Cannot change the software associated with a release.");
+            return Problem(detail: "Cannot change the software associated with a release.", statusCode: StatusCodes.Status400BadRequest);
 
         model.Title             = dto.Title;
         model.SoftwareVersionId = dto.SoftwareVersionId;
@@ -497,24 +497,24 @@ public class SoftwareReleasesController(MarechaiContext                   contex
         if(release is null) return NotFound();
 
         if(!release.IsCompilation)
-            return BadRequest("Cannot add included versions to a non-compilation release.");
+            return Problem(detail: "Cannot add included versions to a non-compilation release.", statusCode: StatusCodes.Status400BadRequest);
 
         // Ensure this is a versioned compilation (not a versionless one)
         bool hasIncludedSoftware = await context.SoftwareBySoftwareRelease
                                                 .AnyAsync(x => x.ReleaseId == releaseId);
 
         if(hasIncludedSoftware)
-            return BadRequest("Cannot add included versions to a versionless compilation. Use included software instead.");
+            return Problem(detail: "Cannot add included versions to a versionless compilation. Use included software instead.", statusCode: StatusCodes.Status400BadRequest);
 
         bool exists = await context.SoftwareVersionBySoftwareRelease
                                    .AnyAsync(x => x.ReleaseId         == releaseId
                                                && x.SoftwareVersionId == dto.SoftwareVersionId);
 
-        if(exists) return BadRequest("This version is already included in the release.");
+        if(exists) return Problem(detail: "This version is already included in the release.", statusCode: StatusCodes.Status400BadRequest);
 
         bool versionExists = await context.SoftwareVersions.AnyAsync(v => v.Id == dto.SoftwareVersionId);
 
-        if(!versionExists) return BadRequest("The specified software version does not exist.");
+        if(!versionExists) return Problem(detail: "The specified software version does not exist.", statusCode: StatusCodes.Status400BadRequest);
 
         await context.SoftwareVersionBySoftwareRelease.AddAsync(new SoftwareVersionBySoftwareRelease
         {
@@ -544,7 +544,7 @@ public class SoftwareReleasesController(MarechaiContext                   contex
         if(release is null) return NotFound();
 
         if(!release.IsCompilation)
-            return BadRequest("Cannot remove included versions from a non-compilation release.");
+            return Problem(detail: "Cannot remove included versions from a non-compilation release.", statusCode: StatusCodes.Status400BadRequest);
 
         SoftwareVersionBySoftwareRelease entry =
             await context.SoftwareVersionBySoftwareRelease
@@ -675,24 +675,24 @@ public class SoftwareReleasesController(MarechaiContext                   contex
         if(release is null) return NotFound();
 
         if(!release.IsCompilation)
-            return BadRequest("Cannot add included software to a non-compilation release.");
+            return Problem(detail: "Cannot add included software to a non-compilation release.", statusCode: StatusCodes.Status400BadRequest);
 
         // Ensure this is a versionless compilation (not a versioned one)
         bool hasIncludedVersions = await context.SoftwareVersionBySoftwareRelease
                                                 .AnyAsync(x => x.ReleaseId == releaseId);
 
         if(hasIncludedVersions)
-            return BadRequest("Cannot add included software to a versioned compilation. Use included versions instead.");
+            return Problem(detail: "Cannot add included software to a versioned compilation. Use included versions instead.", statusCode: StatusCodes.Status400BadRequest);
 
         bool exists = await context.SoftwareBySoftwareRelease
                                    .AnyAsync(x => x.ReleaseId   == releaseId
                                                && x.SoftwareId  == dto.SoftwareId);
 
-        if(exists) return BadRequest("This software is already included in the release.");
+        if(exists) return Problem(detail: "This software is already included in the release.", statusCode: StatusCodes.Status400BadRequest);
 
         bool softwareExists = await context.Softwares.AnyAsync(s => s.Id == dto.SoftwareId);
 
-        if(!softwareExists) return BadRequest("The specified software does not exist.");
+        if(!softwareExists) return Problem(detail: "The specified software does not exist.", statusCode: StatusCodes.Status400BadRequest);
 
         await context.SoftwareBySoftwareRelease.AddAsync(new SoftwareBySoftwareRelease
         {
@@ -722,7 +722,7 @@ public class SoftwareReleasesController(MarechaiContext                   contex
         if(release is null) return NotFound();
 
         if(!release.IsCompilation)
-            return BadRequest("Cannot remove included software from a non-compilation release.");
+            return Problem(detail: "Cannot remove included software from a non-compilation release.", statusCode: StatusCodes.Status400BadRequest);
 
         SoftwareBySoftwareRelease entry =
             await context.SoftwareBySoftwareRelease
@@ -858,11 +858,11 @@ public class SoftwareReleasesController(MarechaiContext                   contex
                                    .AnyAsync(x => x.SoftwareReleaseId == releaseId
                                                && x.UnM49Id           == dto.UnM49Id);
 
-        if(exists) return BadRequest("This region is already assigned to the release.");
+        if(exists) return Problem(detail: "This region is already assigned to the release.", statusCode: StatusCodes.Status400BadRequest);
 
         bool regionExists = await context.UnM49.AnyAsync(r => r.Id == dto.UnM49Id);
 
-        if(!regionExists) return BadRequest("The specified region does not exist.");
+        if(!regionExists) return Problem(detail: "The specified region does not exist.", statusCode: StatusCodes.Status400BadRequest);
 
         await context.UnM49BySoftwareRelease.AddAsync(new UnM49BySoftwareRelease
         {
@@ -937,11 +937,11 @@ public class SoftwareReleasesController(MarechaiContext                   contex
                                    .AnyAsync(x => x.SoftwareReleaseId == releaseId
                                                && x.LanguageCode      == dto.LanguageCode);
 
-        if(exists) return BadRequest("This language is already assigned to the release.");
+        if(exists) return Problem(detail: "This language is already assigned to the release.", statusCode: StatusCodes.Status400BadRequest);
 
         bool languageExists = await context.Iso639.AnyAsync(l => l.Id == dto.LanguageCode);
 
-        if(!languageExists) return BadRequest("The specified language does not exist.");
+        if(!languageExists) return Problem(detail: "The specified language does not exist.", statusCode: StatusCodes.Status400BadRequest);
 
         await context.LanguageBySoftwareRelease.AddAsync(new LanguageBySoftwareRelease
         {

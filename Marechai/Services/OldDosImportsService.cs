@@ -135,17 +135,35 @@ public sealed class OldDosImportsService(Client client, ILogger<OldDosImportsSer
 
     /// <summary>
     ///     Build a human-readable diagnostic from a Kiota <see cref="ApiException"/>. Includes the HTTP
-    ///     status code plus, when present, a short slice of <c>ex.Message</c> (which usually carries the
-    ///     server's response body) so the admin dialog shows more than just <c>HTTP 404</c>. When the
-    ///     message is empty the endpoint path is appended so it's clear which call failed.
+    ///     status code plus, when present, a short slice of the extracted ProblemDetails detail / title
+    ///     (which is the human-friendly text the server intended to surface) so the admin dialog shows
+    ///     more than just <c>HTTP 404</c>. When the message is empty the endpoint path is appended so
+    ///     it's clear which call failed.
     /// </summary>
     static string BuildErrorMessage(string endpoint, ApiException ex)
     {
         string status = ex.ResponseStatusCode > 0 ? $"HTTP {ex.ResponseStatusCode}" : "HTTP error";
-        string msg    = ex.Message;
+        string msg    = ExtractDetail(ex);
         if(string.IsNullOrWhiteSpace(msg)) return $"{status} on {endpoint} (no response body)";
         if(msg.Length > 400) msg = msg.Substring(0, 400) + "…";
         return $"{status} on {endpoint} — {msg}";
+    }
+
+    static string ExtractDetail(ApiException ex)
+    {
+        // Kiota maps server error responses to a typed ProblemDetails (which inherits from
+        // ApiException). The base Exception.Message just returns "Exception of type 'X' was
+        // thrown." — the real, user-facing text lives on Detail / Title. Surface those when
+        // present, falling back to Message only if the server gave us nothing useful.
+        if(ex is ProblemDetails pd)
+        {
+            if(!string.IsNullOrWhiteSpace(pd.Detail)) return pd.Detail;
+            if(!string.IsNullOrWhiteSpace(pd.Title))  return pd.Title;
+        }
+
+        if(ex is { ResponseStatusCode: 0 } || string.IsNullOrWhiteSpace(ex.Message)) return "Unknown error";
+
+        return ex.Message;
     }
 
     public async Task<bool> SkipAsync(long id)

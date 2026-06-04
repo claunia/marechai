@@ -183,24 +183,24 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
         if(userId is null) return Unauthorized();
 
         if(file is null || file.Length == 0)
-            return BadRequest("No file provided.");
+            return Problem(detail: "No file provided.", statusCode: StatusCodes.Status400BadRequest);
 
         if(file.Length > 50 * 1024 * 1024)
-            return BadRequest("File exceeds 50 MB limit.");
+            return Problem(detail: "File exceeds 50 MB limit.", statusCode: StatusCodes.Status400BadRequest);
 
         string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
 
         if(!_allowedExtensions.Contains(extension))
-            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP, TIFF, BMP.");
+            return Problem(detail: "Unsupported file format. Accepted: JPEG, PNG, WebP, TIFF, BMP.", statusCode: StatusCodes.Status400BadRequest);
 
         if(!string.IsNullOrEmpty(file.ContentType) &&
            !_allowedContentTypes.Contains(file.ContentType.ToLowerInvariant()))
-            return BadRequest("Unsupported content type.");
+            return Problem(detail: "Unsupported content type.", statusCode: StatusCodes.Status400BadRequest);
 
         bool releaseExists = await context.SoftwareReleases.AnyAsync(r => r.Id == (ulong)releaseId);
 
         if(!releaseExists)
-            return BadRequest("Referenced software release does not exist.");
+            return Problem(detail: "Referenced software release does not exist.", statusCode: StatusCodes.Status400BadRequest);
 
         using var ms = new MemoryStream();
         await file.CopyToAsync(ms);
@@ -278,13 +278,13 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
                                                       .FirstOrDefaultAsync(r => r.Id == (ulong)dto.SoftwareReleaseId);
 
             if(newRelease is null)
-                return BadRequest("Referenced software release does not exist.");
+                return Problem(detail: "Referenced software release does not exist.", statusCode: StatusCodes.Status400BadRequest);
 
             ulong? currentSoftwareId = model.Release.SoftwareId ?? model.Release.SoftwareVersion?.SoftwareId;
             ulong? newSoftwareId     = newRelease.SoftwareId    ?? newRelease.SoftwareVersion?.SoftwareId;
 
             if(currentSoftwareId != newSoftwareId)
-                return BadRequest("Release does not belong to the same software.");
+                return Problem(detail: "Release does not belong to the same software.", statusCode: StatusCodes.Status400BadRequest);
 
             model.SoftwareReleaseId = (ulong)dto.SoftwareReleaseId;
         }
@@ -406,22 +406,22 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
 
         if(string.IsNullOrEmpty(userId)) return Unauthorized();
 
-        if(file is null || file.Length == 0) return BadRequest("No file provided.");
+        if(file is null || file.Length == 0) return Problem(detail: "No file provided.", statusCode: StatusCodes.Status400BadRequest);
 
-        if(file.Length > 50 * 1024 * 1024) return BadRequest("File exceeds 50 MB limit.");
+        if(file.Length > 50 * 1024 * 1024) return Problem(detail: "File exceeds 50 MB limit.", statusCode: StatusCodes.Status400BadRequest);
 
         string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
 
         if(!_pendingAllowedExtensions.Contains(extension))
-            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP.");
+            return Problem(detail: "Unsupported file format. Accepted: JPEG, PNG, WebP.", statusCode: StatusCodes.Status400BadRequest);
 
         if(!string.IsNullOrEmpty(file.ContentType) &&
            !_pendingAllowedContentTypes.Contains(file.ContentType.ToLowerInvariant()))
-            return BadRequest("Unsupported content type.");
+            return Problem(detail: "Unsupported content type.", statusCode: StatusCodes.Status400BadRequest);
 
         bool releaseExists = await context.SoftwareReleases.AnyAsync(r => r.Id == releaseId);
 
-        if(!releaseExists) return NotFound("Software release not found.");
+        if(!releaseExists) return Problem(detail: "Software release not found.", statusCode: StatusCodes.Status404NotFound);
 
         long parentEntityId = (long)releaseId;
 
@@ -429,8 +429,9 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
             userId, (byte)SuggestionEntityType.SoftwareCover, parentEntityId);
 
         if(currentCount >= PendingPhotosPerUserPerReleaseCap)
-            return Conflict($"You already have {currentCount} pending cover images for this release. Maximum is " +
-                            $"{PendingPhotosPerUserPerReleaseCap} per release. Submit or remove some first.");
+            return Problem(detail: $"You already have {currentCount} pending cover images for this release. Maximum is " +
+                                   $"{PendingPhotosPerUserPerReleaseCap} per release. Submit or remove some first.",
+                           statusCode: StatusCodes.Status409Conflict);
 
         Guid guid;
 
@@ -561,15 +562,15 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
         string userId = User.FindFirstValue(ClaimTypes.Sid);
         if(string.IsNullOrEmpty(userId)) return Unauthorized();
 
-        if(file is null || file.Length == 0) return BadRequest("No file provided.");
-        if(file.Length > 50 * 1024 * 1024) return BadRequest("File exceeds 50 MB limit.");
+        if(file is null || file.Length == 0) return Problem(detail: "No file provided.", statusCode: StatusCodes.Status400BadRequest);
+        if(file.Length > 50 * 1024 * 1024) return Problem(detail: "File exceeds 50 MB limit.", statusCode: StatusCodes.Status400BadRequest);
 
         string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
         if(!_adminBatchAllowedExtensions.Contains(extension))
-            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP, AVIF, BMP, TIFF.");
+            return Problem(detail: "Unsupported file format. Accepted: JPEG, PNG, WebP, AVIF, BMP, TIFF.", statusCode: StatusCodes.Status400BadRequest);
 
         bool releaseExists = await context.SoftwareReleases.AnyAsync(r => r.Id == releaseId);
-        if(!releaseExists) return NotFound("Software release not found.");
+        if(!releaseExists) return Problem(detail: "Software release not found.", statusCode: StatusCodes.Status404NotFound);
 
         // Persist FIRST (with a temporary placeholder for dimensions), then content-sniff
         // and either re-write the sidecar with real dimensions or reject + delete the file.
@@ -586,22 +587,22 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
         if(imagePath is null)
         {
             PendingImageStore.Delete(_assetRootPath, "software-covers", guid);
-            return BadRequest("Failed to persist uploaded file.");
+            return Problem(detail: "Failed to persist uploaded file.", statusCode: StatusCodes.Status400BadRequest);
         }
 
         (string magickFormat, int width, int height) = Photos.Identify(imagePath);
         if(magickFormat is null || !_adminBatchAllowedMagickFormats.Contains(magickFormat))
         {
             PendingImageStore.Delete(_assetRootPath, "software-covers", guid);
-            return StatusCode(StatusCodes.Status415UnsupportedMediaType,
-                              "File content does not match a supported image format.");
+            return Problem(detail: "File content does not match a supported image format.",
+                           statusCode: StatusCodes.Status415UnsupportedMediaType);
         }
 
         byte[] thumbBytes = Photos.GenerateThumbnailJpeg(imagePath);
         if(thumbBytes is null)
         {
             PendingImageStore.Delete(_assetRootPath, "software-covers", guid);
-            return BadRequest("Failed to generate thumbnail for the uploaded image.");
+            return Problem(detail: "Failed to generate thumbnail for the uploaded image.", statusCode: StatusCodes.Status400BadRequest);
         }
 
         await PendingImageStore.StoreThumbnailAsync(_assetRootPath, "software-covers", guid, thumbBytes);
@@ -681,10 +682,10 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
         if(string.IsNullOrEmpty(userId)) return Unauthorized();
 
         if(request is null || request.Items is null || request.Items.Count == 0)
-            return BadRequest("No items provided.");
+            return Problem(detail: "No items provided.", statusCode: StatusCodes.Status400BadRequest);
 
         bool releaseExists = await context.SoftwareReleases.AnyAsync(r => r.Id == request.SoftwareReleaseId);
-        if(!releaseExists) return NotFound("Software release not found.");
+        if(!releaseExists) return Problem(detail: "Software release not found.", statusCode: StatusCodes.Status404NotFound);
 
         // Validate every pending id belongs to the caller and matches release/admin scope.
         foreach(AdminBatchCommitItemDto item in request.Items)
@@ -692,17 +693,17 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
             PendingImageStore.PendingMetadata meta =
                 await PendingImageStore.GetMetadataAsync(_assetRootPath, "software-covers", item.PendingId);
 
-            if(meta is null) return NotFound($"Pending image {item.PendingId} not found.");
+            if(meta is null) return Problem(detail: $"Pending image {item.PendingId} not found.", statusCode: StatusCodes.Status404NotFound);
             if(meta.EntityType != (byte)SuggestionEntityType.SoftwareCover)
-                return BadRequest($"Pending image {item.PendingId} is not a software cover.");
+                return Problem(detail: $"Pending image {item.PendingId} is not a software cover.", statusCode: StatusCodes.Status400BadRequest);
             if(!meta.IsAdminStaging)
-                return BadRequest($"Pending image {item.PendingId} is not an admin-staged image.");
+                return Problem(detail: $"Pending image {item.PendingId} is not an admin-staged image.", statusCode: StatusCodes.Status400BadRequest);
             if(!string.Equals(meta.UploadedById, userId, StringComparison.Ordinal))
                 return Forbid();
             if(meta.ParentEntityId != (long)request.SoftwareReleaseId)
-                return BadRequest($"Pending image {item.PendingId} was staged for a different release.");
+                return Problem(detail: $"Pending image {item.PendingId} was staged for a different release.", statusCode: StatusCodes.Status400BadRequest);
             if(!Enum.IsDefined(typeof(SoftwareCoverType), (byte)item.Type))
-                return BadRequest($"Invalid cover type {item.Type} for pending image {item.PendingId}.");
+                return Problem(detail: $"Invalid cover type {item.Type} for pending image {item.PendingId}.", statusCode: StatusCodes.Status400BadRequest);
         }
 
         Guid jobId = batchJobs.StartJob(userId, (long)request.SoftwareReleaseId, request.Items.Count);

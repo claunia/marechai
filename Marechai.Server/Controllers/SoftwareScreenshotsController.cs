@@ -296,32 +296,32 @@ public class SoftwareScreenshotsController(MarechaiContext     context, IConfigu
         if(userId is null) return Unauthorized();
 
         if(file is null || file.Length == 0)
-            return BadRequest("No file provided.");
+            return Problem(detail: "No file provided.", statusCode: StatusCodes.Status400BadRequest);
 
         if(file.Length > 50 * 1024 * 1024)
-            return BadRequest("File exceeds 50 MB limit.");
+            return Problem(detail: "File exceeds 50 MB limit.", statusCode: StatusCodes.Status400BadRequest);
 
         string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
 
         if(!_allowedExtensions.Contains(extension))
-            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP, TIFF, BMP.");
+            return Problem(detail: "Unsupported file format. Accepted: JPEG, PNG, WebP, TIFF, BMP.", statusCode: StatusCodes.Status400BadRequest);
 
         if(!string.IsNullOrEmpty(file.ContentType) &&
            !_allowedContentTypes.Contains(file.ContentType.ToLowerInvariant()))
-            return BadRequest("Unsupported content type.");
+            return Problem(detail: "Unsupported content type.", statusCode: StatusCodes.Status400BadRequest);
 
         // Validate that the referenced software exists
         bool softwareExists = await context.Softwares.AnyAsync(s => s.Id == softwareId);
 
         if(!softwareExists)
-            return BadRequest("Referenced software does not exist.");
+            return Problem(detail: "Referenced software does not exist.", statusCode: StatusCodes.Status400BadRequest);
 
         if(softwarePlatformId.HasValue)
         {
             bool platformExists = await context.SoftwarePlatforms.AnyAsync(p => p.Id == softwarePlatformId.Value);
 
             if(!platformExists)
-                return BadRequest("Referenced software platform does not exist.");
+                return Problem(detail: "Referenced software platform does not exist.", statusCode: StatusCodes.Status400BadRequest);
         }
 
         if(softwareVersionId.HasValue)
@@ -330,7 +330,7 @@ public class SoftwareScreenshotsController(MarechaiContext     context, IConfigu
                                                                               v.SoftwareId == softwareId);
 
             if(!versionExists)
-                return BadRequest("Referenced software version does not exist or does not belong to this software.");
+                return Problem(detail: "Referenced software version does not exist or does not belong to this software.", statusCode: StatusCodes.Status400BadRequest);
         }
 
         // Optional group: resolve-or-create by canonical English name. Mirrors the PromoArt
@@ -633,22 +633,22 @@ public class SoftwareScreenshotsController(MarechaiContext     context, IConfigu
 
         if(string.IsNullOrEmpty(userId)) return Unauthorized();
 
-        if(file is null || file.Length == 0) return BadRequest("No file provided.");
+        if(file is null || file.Length == 0) return Problem(detail: "No file provided.", statusCode: StatusCodes.Status400BadRequest);
 
-        if(file.Length > 50 * 1024 * 1024) return BadRequest("File exceeds 50 MB limit.");
+        if(file.Length > 50 * 1024 * 1024) return Problem(detail: "File exceeds 50 MB limit.", statusCode: StatusCodes.Status400BadRequest);
 
         string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
 
         if(!_pendingAllowedExtensions.Contains(extension))
-            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP.");
+            return Problem(detail: "Unsupported file format. Accepted: JPEG, PNG, WebP.", statusCode: StatusCodes.Status400BadRequest);
 
         if(!string.IsNullOrEmpty(file.ContentType) &&
            !_pendingAllowedContentTypes.Contains(file.ContentType.ToLowerInvariant()))
-            return BadRequest("Unsupported content type.");
+            return Problem(detail: "Unsupported content type.", statusCode: StatusCodes.Status400BadRequest);
 
         bool softwareExists = await context.Softwares.AnyAsync(s => s.Id == softwareId);
 
-        if(!softwareExists) return NotFound("Software not found.");
+        if(!softwareExists) return Problem(detail: "Software not found.", statusCode: StatusCodes.Status404NotFound);
 
         long parentEntityId = (long)softwareId;
 
@@ -656,8 +656,9 @@ public class SoftwareScreenshotsController(MarechaiContext     context, IConfigu
             userId, (byte)SuggestionEntityType.SoftwareScreenshot, parentEntityId);
 
         if(currentCount >= PendingScreenshotsPerUserPerSoftwareCap)
-            return Conflict($"You already have {currentCount} pending screenshot images for this software. Maximum " +
-                            $"is {PendingScreenshotsPerUserPerSoftwareCap} per software. Submit or remove some first.");
+            return Problem(detail: $"You already have {currentCount} pending screenshot images for this software. Maximum " +
+                                   $"is {PendingScreenshotsPerUserPerSoftwareCap} per software. Submit or remove some first.",
+                           statusCode: StatusCodes.Status409Conflict);
 
         Guid guid;
 
@@ -788,15 +789,15 @@ public class SoftwareScreenshotsController(MarechaiContext     context, IConfigu
         string userId = User.FindFirstValue(ClaimTypes.Sid);
         if(string.IsNullOrEmpty(userId)) return Unauthorized();
 
-        if(file is null || file.Length == 0) return BadRequest("No file provided.");
-        if(file.Length > 50 * 1024 * 1024) return BadRequest("File exceeds 50 MB limit.");
+        if(file is null || file.Length == 0) return Problem(detail: "No file provided.", statusCode: StatusCodes.Status400BadRequest);
+        if(file.Length > 50 * 1024 * 1024) return Problem(detail: "File exceeds 50 MB limit.", statusCode: StatusCodes.Status400BadRequest);
 
         string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
         if(!_adminBatchAllowedExtensions.Contains(extension))
-            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP, AVIF, BMP, TIFF.");
+            return Problem(detail: "Unsupported file format. Accepted: JPEG, PNG, WebP, AVIF, BMP, TIFF.", statusCode: StatusCodes.Status400BadRequest);
 
         bool softwareExists = await context.Softwares.AnyAsync(s => s.Id == (ulong)softwareId);
-        if(!softwareExists) return NotFound("Software not found.");
+        if(!softwareExists) return Problem(detail: "Software not found.", statusCode: StatusCodes.Status404NotFound);
 
         // Persist FIRST (with a temporary placeholder for dimensions), then content-sniff
         // and either re-write the sidecar with real dimensions or reject + delete the file.
@@ -813,22 +814,22 @@ public class SoftwareScreenshotsController(MarechaiContext     context, IConfigu
         if(imagePath is null)
         {
             PendingImageStore.Delete(_assetRootPath, "software-screenshots", guid);
-            return BadRequest("Failed to persist uploaded file.");
+            return Problem(detail: "Failed to persist uploaded file.", statusCode: StatusCodes.Status400BadRequest);
         }
 
         (string magickFormat, int width, int height) = Photos.Identify(imagePath);
         if(magickFormat is null || !_adminBatchAllowedMagickFormats.Contains(magickFormat))
         {
             PendingImageStore.Delete(_assetRootPath, "software-screenshots", guid);
-            return StatusCode(StatusCodes.Status415UnsupportedMediaType,
-                              "File content does not match a supported image format.");
+            return Problem(detail: "File content does not match a supported image format.",
+                           statusCode: StatusCodes.Status415UnsupportedMediaType);
         }
 
         byte[] thumbBytes = Photos.GenerateThumbnailJpeg(imagePath);
         if(thumbBytes is null)
         {
             PendingImageStore.Delete(_assetRootPath, "software-screenshots", guid);
-            return BadRequest("Failed to generate thumbnail for the uploaded image.");
+            return Problem(detail: "Failed to generate thumbnail for the uploaded image.", statusCode: StatusCodes.Status400BadRequest);
         }
 
         await PendingImageStore.StoreThumbnailAsync(_assetRootPath, "software-screenshots", guid, thumbBytes);
@@ -907,16 +908,16 @@ public class SoftwareScreenshotsController(MarechaiContext     context, IConfigu
         if(string.IsNullOrEmpty(userId)) return Unauthorized();
 
         if(request is null || request.Items is null || request.Items.Count == 0)
-            return BadRequest("No items provided.");
+            return Problem(detail: "No items provided.", statusCode: StatusCodes.Status400BadRequest);
 
         bool softwareExists = await context.Softwares.AnyAsync(s => s.Id == (ulong)request.SoftwareId);
-        if(!softwareExists) return NotFound("Software not found.");
+        if(!softwareExists) return Problem(detail: "Software not found.", statusCode: StatusCodes.Status404NotFound);
 
         if(request.SoftwarePlatformId.HasValue)
         {
             ulong platformId = (ulong)request.SoftwarePlatformId.Value;
             bool platformExists = await context.SoftwarePlatforms.AnyAsync(p => p.Id == platformId);
-            if(!platformExists) return NotFound("Software platform not found.");
+            if(!platformExists) return Problem(detail: "Software platform not found.", statusCode: StatusCodes.Status404NotFound);
         }
 
         if(request.SoftwareVersionId.HasValue)
@@ -925,7 +926,7 @@ public class SoftwareScreenshotsController(MarechaiContext     context, IConfigu
             ulong softwareIdScope = (ulong)request.SoftwareId;
             bool versionExists = await context.SoftwareVersions.AnyAsync(v => v.Id == versionId &&
                                                                               v.SoftwareId == softwareIdScope);
-            if(!versionExists) return NotFound("Software version not found.");
+            if(!versionExists) return Problem(detail: "Software version not found.", statusCode: StatusCodes.Status404NotFound);
         }
 
         // Validate every pending id belongs to the caller and matches software/admin scope.
@@ -934,15 +935,15 @@ public class SoftwareScreenshotsController(MarechaiContext     context, IConfigu
             PendingImageStore.PendingMetadata meta =
                 await PendingImageStore.GetMetadataAsync(_assetRootPath, "software-screenshots", item.PendingId);
 
-            if(meta is null) return NotFound($"Pending image {item.PendingId} not found.");
+            if(meta is null) return Problem(detail: $"Pending image {item.PendingId} not found.", statusCode: StatusCodes.Status404NotFound);
             if(meta.EntityType != (byte)SuggestionEntityType.SoftwareScreenshot)
-                return BadRequest($"Pending image {item.PendingId} is not a software screenshot.");
+                return Problem(detail: $"Pending image {item.PendingId} is not a software screenshot.", statusCode: StatusCodes.Status400BadRequest);
             if(!meta.IsAdminStaging)
-                return BadRequest($"Pending image {item.PendingId} is not an admin-staged image.");
+                return Problem(detail: $"Pending image {item.PendingId} is not an admin-staged image.", statusCode: StatusCodes.Status400BadRequest);
             if(!string.Equals(meta.UploadedById, userId, StringComparison.Ordinal))
                 return Forbid();
             if(meta.ParentEntityId != request.SoftwareId)
-                return BadRequest($"Pending image {item.PendingId} was staged for a different software.");
+                return Problem(detail: $"Pending image {item.PendingId} was staged for a different software.", statusCode: StatusCodes.Status400BadRequest);
         }
 
         Guid jobId = batchJobs.StartJob(userId, request.SoftwareId, request.Items.Count);

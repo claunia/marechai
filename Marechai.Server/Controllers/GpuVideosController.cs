@@ -97,7 +97,7 @@ public class GpuVideosController(MarechaiContext context) : ControllerBase
         if(userId is null) return Unauthorized();
 
         if(string.IsNullOrWhiteSpace(request.Provider) || string.IsNullOrWhiteSpace(request.VideoId))
-            return BadRequest("Provider and Video ID are required.");
+            return Problem(detail: "Provider and Video ID are required.", statusCode: StatusCodes.Status400BadRequest);
 
         string provider = request.Provider.Trim();
         string videoId  = request.VideoId.Trim();
@@ -111,7 +111,7 @@ public class GpuVideosController(MarechaiContext context) : ControllerBase
                                                             v.Provider == provider &&
                                                             v.VideoId  == videoId);
 
-        if(exists) return Conflict("This video is already linked to this GPU.");
+        if(exists) return Problem(detail: "This video is already linked to this GPU.", statusCode: StatusCodes.Status409Conflict);
 
         var model = new GpuVideo
         {

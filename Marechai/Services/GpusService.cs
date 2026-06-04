@@ -146,7 +146,7 @@ public class GpusService(Marechai.ApiClient.Client client)
         }
         catch(ApiException ex)
         {
-            return (null, ex.Message);
+            return (null, ExtractErrorMessage(ex));
         }
         catch(Exception ex)
         {
@@ -164,7 +164,7 @@ public class GpusService(Marechai.ApiClient.Client client)
         }
         catch(ApiException ex)
         {
-            return (false, ex.Message);
+            return (false, ExtractErrorMessage(ex));
         }
         catch(Exception ex)
         {
@@ -182,7 +182,7 @@ public class GpusService(Marechai.ApiClient.Client client)
         }
         catch(ApiException ex)
         {
-            return (false, ex.Message);
+            return (false, ExtractErrorMessage(ex));
         }
         catch(Exception ex)
         {
@@ -229,7 +229,7 @@ public class GpusService(Marechai.ApiClient.Client client)
         }
         catch(ApiException ex)
         {
-            return (null, ex.Message);
+            return (null, ExtractErrorMessage(ex));
         }
         catch(Exception ex)
         {
@@ -247,7 +247,7 @@ public class GpusService(Marechai.ApiClient.Client client)
         }
         catch(ApiException ex)
         {
-            return (false, ex.Message);
+            return (false, ExtractErrorMessage(ex));
         }
         catch(Exception ex)
         {
@@ -358,7 +358,7 @@ public class GpusService(Marechai.ApiClient.Client client)
         }
         catch(ApiException ex)
         {
-            return (false, ex.Message);
+            return (false, ExtractErrorMessage(ex));
         }
         catch(Exception ex)
         {
@@ -376,7 +376,7 @@ public class GpusService(Marechai.ApiClient.Client client)
         }
         catch(ApiException ex)
         {
-            return (false, ex.Message);
+            return (false, ExtractErrorMessage(ex));
         }
         catch(Exception ex)
         {

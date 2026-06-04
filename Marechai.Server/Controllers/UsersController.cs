@@ -263,7 +263,7 @@ public class UsersController(UserManager<ApplicationUser> userManager,
     {
         ApplicationUser user = await userManager.FindByIdAsync(id);
 
-        if(user == null) return NotFound("User not found");
+        if(user == null) return Problem(detail: "User not found", statusCode: StatusCodes.Status404NotFound);
 
         IList<string> roles = await userManager.GetRolesAsync(user);
 
@@ -346,7 +346,7 @@ public class UsersController(UserManager<ApplicationUser> userManager,
 
         ApplicationUser user = await userManager.FindByIdAsync(id);
 
-        if(user == null) return NotFound("User not found");
+        if(user == null) return Problem(detail: "User not found", statusCode: StatusCodes.Status404NotFound);
 
         user.UserName    = request.UserName;
         user.Email       = request.Email;
@@ -389,7 +389,7 @@ public class UsersController(UserManager<ApplicationUser> userManager,
     {
         ApplicationUser user = await userManager.FindByIdAsync(id);
 
-        if(user == null) return NotFound("User not found");
+        if(user == null) return Problem(detail: "User not found", statusCode: StatusCodes.Status404NotFound);
 
         // Delegate to the shared deletion service so the admin path applies the same anonymise-content +
         // hard-delete-state + avatar-file-cleanup as the GDPR self-service path. The admin path is
@@ -398,7 +398,7 @@ public class UsersController(UserManager<ApplicationUser> userManager,
 
         bool ok = await userAccountDeletionService.PurgeAsync(id, actorUserIdForLog: actorId ?? "admin");
 
-        if(!ok) return BadRequest("Failed to purge user account.");
+        if(!ok) return Problem(detail: "Failed to purge user account.", statusCode: StatusCodes.Status400BadRequest);
 
         return NoContent();
     }
@@ -416,7 +416,7 @@ public class UsersController(UserManager<ApplicationUser> userManager,
 
         ApplicationUser user = await userManager.FindByIdAsync(id);
 
-        if(user == null) return NotFound("User not found");
+        if(user == null) return Problem(detail: "User not found", statusCode: StatusCodes.Status404NotFound);
 
         // Remove old password and set new one
         IdentityResult removeResult = await userManager.RemovePasswordAsync(user);
@@ -443,7 +443,7 @@ public class UsersController(UserManager<ApplicationUser> userManager,
 
         ApplicationUser user = await userManager.FindByIdAsync(id);
 
-        if(user == null) return NotFound("User not found");
+        if(user == null) return Problem(detail: "User not found", statusCode: StatusCodes.Status404NotFound);
 
         IdentityResult result = await userManager.AddToRoleAsync(user, request.RoleName);
 
@@ -462,7 +462,7 @@ public class UsersController(UserManager<ApplicationUser> userManager,
     {
         ApplicationUser user = await userManager.FindByIdAsync(id);
 
-        if(user == null) return NotFound("User not found");
+        if(user == null) return Problem(detail: "User not found", statusCode: StatusCodes.Status404NotFound);
 
         IdentityResult result = await userManager.RemoveFromRoleAsync(user, roleName);
 
@@ -685,7 +685,7 @@ public class UsersController(UserManager<ApplicationUser> userManager,
     {
         ApplicationUser user = await userManager.FindByIdAsync(id);
 
-        if(user == null) return NotFound("User not found");
+        if(user == null) return Problem(detail: "User not found", statusCode: StatusCodes.Status404NotFound);
 
         await userManager.SetTwoFactorEnabledAsync(user, false);
         await userManager.ResetAuthenticatorKeyAsync(user);

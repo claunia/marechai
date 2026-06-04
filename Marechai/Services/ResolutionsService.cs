@@ -69,7 +69,7 @@ public class ResolutionsService(Marechai.ApiClient.Client client)
         }
         catch(ApiException ex)
         {
-            return (null, ex.Message);
+            return (null, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -87,7 +87,7 @@ public class ResolutionsService(Marechai.ApiClient.Client client)
         }
         catch(ApiException ex)
         {
-            return (false, ex.Message);
+            return (false, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -105,11 +105,28 @@ public class ResolutionsService(Marechai.ApiClient.Client client)
         }
         catch(ApiException ex)
         {
-            return (false, ex.Message);
+            return (false, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
             return (false, ex.Message);
         }
+    }
+
+    static string ExtractDetail(ApiException ex)
+    {
+        // Kiota maps server error responses to a typed ProblemDetails (which inherits from
+        // ApiException). The base Exception.Message just returns "Exception of type 'X' was
+        // thrown." — the real, user-facing text lives on Detail / Title. Surface those when
+        // present, falling back to Message only if the server gave us nothing useful.
+        if(ex is ProblemDetails pd)
+        {
+            if(!string.IsNullOrWhiteSpace(pd.Detail)) return pd.Detail;
+            if(!string.IsNullOrWhiteSpace(pd.Title))  return pd.Title;
+        }
+
+        if(ex is { ResponseStatusCode: 0 } || string.IsNullOrWhiteSpace(ex.Message)) return "Unknown error";
+
+        return ex.Message;
     }
 }
