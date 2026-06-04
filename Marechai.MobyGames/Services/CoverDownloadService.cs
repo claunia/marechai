@@ -42,10 +42,17 @@ public class CoverDownloadService
 
     public async Task RunAsync(int batchSize, bool dryRun, bool downloadOnly = false)
     {
+        // When --download-only is set, originals are written to `photos-new/` instead of
+        // `photos/` so the operator can rsync them to a separate conversion host without
+        // colliding with the existing converted-asset tree. The conversion stage on the
+        // target host can then either merge `photos-new/` into `photos/` first or treat
+        // it as its own asset root for `convert-images`.
+        string photosRoot = downloadOnly ? "photos-new" : "photos";
+
         Console.WriteLine(dryRun
                               ? "\n  \e[33;1m[DRY RUN]\e[0m Parsing covers without downloading...\n"
                               : downloadOnly
-                                  ? "\n  Starting cover download \e[33;1m(--download-only: conversion skipped)\e[0m...\n"
+                                  ? $"\n  Starting cover download \e[33;1m(--download-only: conversion skipped, writing to {photosRoot}/)\e[0m...\n"
                                   : "\n  Starting cover download...\n");
 
         // Load reference data
@@ -328,7 +335,8 @@ public class CoverDownloadService
                     }
 
                     var    coverId       = Guid.NewGuid();
-                    string originalsDir = Path.Combine(_assetRootPath, "photos", "software-covers", "originals");
+                    string originalsDir = Path.Combine(_assetRootPath, photosRoot, "software-covers", "originals");
+                    Directory.CreateDirectory(originalsDir);
                     string destBasePath = Path.Combine(originalsDir, coverId.ToString());
 
                     string extension = await _httpClient.DownloadImageAsync(originalUrl, destBasePath);

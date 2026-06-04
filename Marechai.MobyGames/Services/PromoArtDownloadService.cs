@@ -37,10 +37,15 @@ public class PromoArtDownloadService
 
     public async Task RunAsync(int batchSize, bool dryRun, bool downloadOnly = false)
     {
+        // When --download-only is set, originals are written to `photos-new/` instead of
+        // `photos/` so the operator can rsync them to a separate conversion host without
+        // colliding with the existing converted-asset tree.
+        string photosRoot = downloadOnly ? "photos-new" : "photos";
+
         Console.WriteLine(dryRun
                               ? "\n  \e[33;1m[DRY RUN]\e[0m Parsing promo art without downloading...\n"
                               : downloadOnly
-                                  ? "\n  Starting promo art download \e[33;1m(--download-only: conversion skipped)\e[0m...\n"
+                                  ? $"\n  Starting promo art download \e[33;1m(--download-only: conversion skipped, writing to {photosRoot}/)\e[0m...\n"
                                   : "\n  Starting promo art download...\n");
 
         await using var context = await _contextFactory.CreateDbContextAsync();
@@ -215,7 +220,8 @@ public class PromoArtDownloadService
                     Console.Write(isHighRes ? " downloading (high res)..." : " downloading...");
 
                     var    promoArtId  = Guid.NewGuid();
-                    string originalsDir = Path.Combine(_assetRootPath, "photos", PromoArtItemName, "originals");
+                    string originalsDir = Path.Combine(_assetRootPath, photosRoot, PromoArtItemName, "originals");
+                    Directory.CreateDirectory(originalsDir);
                     string destBasePath = Path.Combine(originalsDir, promoArtId.ToString());
 
                     string extension = await _httpClient.DownloadImageAsync(originalUrl, destBasePath);

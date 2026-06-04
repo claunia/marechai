@@ -39,10 +39,15 @@ public class ScreenshotDownloadService
 
     public async Task RunAsync(int batchSize, bool dryRun, bool downloadOnly = false)
     {
+        // When --download-only is set, originals are written to `photos-new/` instead of
+        // `photos/` so the operator can rsync them to a separate conversion host without
+        // colliding with the existing converted-asset tree.
+        string photosRoot = downloadOnly ? "photos-new" : "photos";
+
         Console.WriteLine(dryRun
                               ? "\n  \e[33;1m[DRY RUN]\e[0m Parsing screenshots without downloading...\n"
                               : downloadOnly
-                                  ? "\n  Starting screenshot download \e[33;1m(--download-only: conversion skipped)\e[0m...\n"
+                                  ? $"\n  Starting screenshot download \e[33;1m(--download-only: conversion skipped, writing to {photosRoot}/)\e[0m...\n"
                                   : "\n  Starting screenshot download...\n");
 
         await using var context = await _contextFactory.CreateDbContextAsync();
@@ -222,7 +227,8 @@ public class ScreenshotDownloadService
                     Console.Write(isHighRes ? " downloading (high res)..." : " downloading...");
 
                     var    screenshotId = Guid.NewGuid();
-                    string originalsDir = Path.Combine(_assetRootPath, "photos", ScreenshotItemName, "originals");
+                    string originalsDir = Path.Combine(_assetRootPath, photosRoot, ScreenshotItemName, "originals");
+                    Directory.CreateDirectory(originalsDir);
                     string destBasePath = Path.Combine(originalsDir, screenshotId.ToString());
 
                     string extension = await _httpClient.DownloadImageAsync(originalUrl, destBasePath);
