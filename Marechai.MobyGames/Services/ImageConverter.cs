@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -190,6 +191,134 @@ public static class ImageConverter
 
     static (bool Ok, string Error) ConvertUsingImageMagick(string originalPath, string outputPath, int width,
                                                             int height, string outputFormat, bool thumbnail)
+    {
+        (bool ok, string error) = RunImageMagick(originalPath, outputPath, width, height, outputFormat, thumbnail);
+
+        if(ok) return (true, null);
+
+        // Some MobyGames PNGs are encoded with an unusual zlib stream that ImageMagick's
+        // libpng rejects (typically "IDAT: invalid distance too far back"). The files are
+        // not actually damaged — Python's one-shot zlib.decompress and ffmpeg's PNG decoder
+        // both read them fine; only libpng's chunked/incremental decoder errors out. We
+        // ask ffmpeg to re-encode the PNG to a temp file and retry magick against that.
+        // The original on disk is never modified. The repair is cached per source path
+        // (using a Lazy<string> so concurrent variants share the result) and reused for
+        // the other 7 sibling variants of the same image.
+        if(!IsLibPngIdatError(error) ||
+           !originalPath.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
+            return (false, error);
+
+        string repaired = GetOrCreateFfmpegRepair(originalPath, out string repairError);
+
+        if(repaired is null)
+            return (false, $"{error}; ffmpeg repair failed: {repairError ?? "unknown"}");
+
+        (bool retryOk, string retryError) =
+            RunImageMagick(repaired, outputPath, width, height, outputFormat, thumbnail);
+
+        if(retryOk) return (true, null);
+
+        return (false, $"{retryError} (after ffmpeg repair)");
+    }
+
+    static bool IsLibPngIdatError(string stderr) =>
+        stderr is not null &&
+        (stderr.Contains("invalid distance too far back", StringComparison.OrdinalIgnoreCase) ||
+         stderr.Contains("IDAT: ", StringComparison.Ordinal));
+
+    /// <summary>
+    ///     One cached <see cref="Lazy{T}"/> per source path so the 8 sibling variants
+    ///     (jpeg/webp/avif × thumb/full) all share a single ffmpeg re-encode. Lazy gives
+    ///     us correct one-shot semantics across threads with no explicit locking.
+    ///     The value is the path of a temp PNG on disk (or <c>null</c> if repair failed).
+    /// </summary>
+    static readonly ConcurrentDictionary<string, Lazy<(string Path, string Error)>> _ffmpegRepairs =
+        new(StringComparer.OrdinalIgnoreCase);
+
+    static string GetOrCreateFfmpegRepair(string originalPath, out string error)
+    {
+        Lazy<(string Path, string Error)> lazy = _ffmpegRepairs.GetOrAdd(originalPath,
+            p => new Lazy<(string, string)>(() => RepairPngWithFfmpeg(p),
+                                            System.Threading.LazyThreadSafetyMode.ExecutionAndPublication));
+
+        (string repaired, string repairError) = lazy.Value;
+        error = repairError;
+        return repaired;
+    }
+
+    static (string Path, string Error) RepairPngWithFfmpeg(string originalPath)
+    {
+        string tmpPath = Path.Combine(Path.GetTempPath(), $"marechai-png-repair-{Guid.NewGuid():N}.png");
+
+        try
+        {
+            var ffmpeg = new Process
+            {
+                StartInfo =
+                {
+                    FileName               = "ffmpeg",
+                    CreateNoWindow         = true,
+                    RedirectStandardError  = true,
+                    RedirectStandardOutput = true
+                }
+            };
+
+            // -y: overwrite, -v error: only print errors so stderr is meaningful on failure.
+            // No codec / pixel-format coercion — ffmpeg's PNG decoder reads the file (it's
+            // independent of libpng) and its PNG encoder writes back a libpng-friendly
+            // stream.
+            ffmpeg.StartInfo.ArgumentList.Add("-y");
+            ffmpeg.StartInfo.ArgumentList.Add("-v");
+            ffmpeg.StartInfo.ArgumentList.Add("error");
+            ffmpeg.StartInfo.ArgumentList.Add("-i");
+            ffmpeg.StartInfo.ArgumentList.Add(originalPath);
+            ffmpeg.StartInfo.ArgumentList.Add(tmpPath);
+
+            ffmpeg.Start();
+
+            Task<string> stderrTask = ffmpeg.StandardError.ReadToEndAsync();
+            Task<string> stdoutTask = ffmpeg.StandardOutput.ReadToEndAsync();
+            ffmpeg.WaitForExit();
+            string stderr = stderrTask.GetAwaiter().GetResult();
+            _ = stdoutTask.GetAwaiter().GetResult();
+
+            if(ffmpeg.ExitCode == 0 && File.Exists(tmpPath) && new FileInfo(tmpPath).Length > 0)
+                return (tmpPath, null);
+
+            string detail = (stderr ?? "").Trim().Replace('\r', ' ').Replace('\n', ' ');
+            if(detail.Length > 400) detail = detail[..400] + "…";
+            if(detail.Length == 0)  detail = "(no stderr)";
+
+            try { if(File.Exists(tmpPath)) File.Delete(tmpPath); } catch { /* ignore */ }
+
+            return (null, $"exit {ffmpeg.ExitCode}: {detail}");
+        }
+        catch(Exception ex)
+        {
+            try { if(File.Exists(tmpPath)) File.Delete(tmpPath); } catch { /* ignore */ }
+            return (null, $"process spawn failed: {ex.Message}");
+        }
+    }
+
+    static ImageConverter() =>
+        // Best-effort cleanup of ffmpeg-repair temp files on process exit. OS /tmp cleanup
+        // would eventually catch them anyway, but the conversion pass can produce hundreds
+        // of these in one run, so we sweep them at shutdown.
+        AppDomain.CurrentDomain.ProcessExit += (_, _) =>
+        {
+            foreach(Lazy<(string Path, string Error)> lazy in _ffmpegRepairs.Values)
+            {
+                if(!lazy.IsValueCreated) continue;
+
+                string path = lazy.Value.Path;
+                if(path is null) continue;
+
+                try { if(File.Exists(path)) File.Delete(path); } catch { /* ignore */ }
+            }
+        };
+
+    static (bool Ok, string Error) RunImageMagick(string originalPath, string outputPath, int width,
+                                                   int height, string outputFormat, bool thumbnail)
     {
         // We deliberately do NOT wrap the spawn in `taskset -c <n>`. Empirically, pinning each
         // convert to a single CPU cuts AVIF (libheif → x265) throughput by ~4×, which dominates
