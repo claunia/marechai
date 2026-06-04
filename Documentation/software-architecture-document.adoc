@@ -1,0 +1,34 @@
+= Software Architecture Document: Master Repository of Computing History Artifacts Information — MARECHAI
+Natalia Portillo
+:revnumber: 2.0
+:revdate: 2026/06/04
+:doctype: book
+:sectnums:
+:toc: left
+:toclevels: 4
+:icons: font
+:source-highlighter: rouge
+
+include::sad/00-metadata.adoc[leveloffset=+1]
+
+include::sad/01-introduction.adoc[leveloffset=+1]
+
+include::sad/02-architectural-goals.adoc[leveloffset=+1]
+
+include::sad/03-solution-structure.adoc[leveloffset=+1]
+
+include::sad/04-application-architecture.adoc[leveloffset=+1]
+
+include::sad/05-api-design.adoc[leveloffset=+1]
+
+include::sad/06-ai-content-and-translation.adoc[leveloffset=+1]
+
+include::sad/07-data-import.adoc[leveloffset=+1]
+
+include::sad/08-applications.adoc[leveloffset=+1]
+
+include::sad/09-artifacts.adoc[leveloffset=+1]
+
+include::sad/10-enumerations.adoc[leveloffset=+1]
+
+include::sad/11-examples.adoc[leveloffset=+1]

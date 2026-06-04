@@ -1,0 +1,133 @@
+= API Design
+
+This section describes the design of the Marechai REST API, including endpoint organization, the OpenAPI specification, client code generation, error handling, serialization conventions, and common patterns.
+
+== Endpoint Organization
+
+The API comprises 98 controllers organized by domain:
+
+[cols="1,3", options="header"]
+|===
+| Domain | Controllers
+
+| Hardware
+| ComputersController, ConsolesController, SmartphonesController, TabletsController, PdasController, MachinesController, MachineFamiliesController, MachinePhotosController, MachineVideosController
+
+| Processors & ISA
+| ProcessorsController, ProcessorPhotosController, ProcessorVideosController, InstructionSetsController, InstructionSetExtensionsController, InstructionSetExtensionsByProcessorController
+
+| Graphics
+| GpusController, GpuPhotosController, GpuVideosController, ResolutionsController, ScreensController, ResolutionsByGpuController, ResolutionsByScreenController
+
+| Sound
+| SoundSynthsController, SoundSynthPhotosController, SoundSynthVideosController
+
+| Hardware by Machine
+| GpusByMachineController, ProcessorsByMachineController, MemoriesByMachineController, StorageByMachineController, SoundSynthsByMachineController, ScreensByMachineController
+
+| Software
+| SoftwareController, SoftwareVersionsController, SoftwareReleasesController, SoftwareFamiliesController, SoftwareGenresController, SoftwarePlatformsController, SoftwareAttributesController, SoftwareRolesController, SoftwareCompanyRolesController, SoftwareBarcodesController, SoftwareProductCodesController, SoftwareRequirementsController, SoftwareOSCompatibilityController, SoftwarePlatformsByMachineController
+
+| Software Media
+| SoftwareCoversController, SoftwarePromoArtController, SoftwareScreenshotsController
+
+| Software by Release
+| MinimumGpuBySoftwareReleaseController, RecommendedGpuBySoftwareReleaseController, SoundSynthBySoftwareReleaseController
+
+| Publications
+| BooksController, DocumentsController, DocumentRolesController, MagazinesController, MagazineIssuesController
+
+| Publications by Machine
+| BooksByMachineController, BooksByMachineFamilyController, DocumentsByMachineController, DocumentsByMachineFamilyController, MagazinesByMachineController, MagazinesByMachineFamilyController, MagazinesBySoftwareController
+
+| Companies
+| CompaniesController, CompanyLogosController, CompaniesByBookController, CompaniesByDocumentController, CompaniesByMagazineController, CompanyBySoftwareFamilyController, CompanyBySoftwareVersionController
+
+| People
+| PeopleController, PeopleByBookController, PeopleByCompanyController, PeopleByDocumentController, PeopleByMagazineController
+
+| Authentication & Users
+| AuthController, UsersController, ProfileController
+
+| Reference Data
+| Iso4217Controller, Iso31661NumericController, UnM49Controller, LanguagesController, LicensesController, CurrencyInflationController, CurrencyPeggingController
+
+| Collections & Reviews
+| CollectionController, ReviewReportsController
+
+| System
+| SearchController, SuggestionsController, MessagesController, NewsController, DumpsController, MediaController, BrowserTestsController, InvitationCodesController
+
+| Import
+| OldDosImportsController, WwpcImportsController
+|===
+
+== OpenAPI Specification
+
+The API generates an OpenAPI specification document at runtime using `Microsoft.AspNetCore.OpenApi`. The specification is served at `/openapi/v1.json` when the server is running and serves as the single source of truth for client code generation.
+
+All controller actions, request/response types, and error responses are automatically documented in the specification. Enum-typed query parameters are emitted as `{type: integer}` with a `$ref` to the enum schema.
+
+== Kiota Client Generation
+
+The Kiota-generated API client (`Marechai.ApiClient`) is produced from the OpenAPI specification using the following workflow:
+
+. Start the Marechai.Server application (`dotnet run --launch-profile http`).
+. Download the specification: `curl -s http://localhost:5023/openapi/v1.json -o /tmp/openapi.json`.
+. Generate the client: `kiota generate -d /tmp/openapi.json -l CSharp -c Client -n Marechai.ApiClient -o . --ad`.
+. Stop the server.
+
+The `--co` (clean-output) flag must never be used, as the `Marechai.ApiClient` directory contains hand-maintained files that would be deleted: the project file, `CompositeSerializationWriterFactory.cs`, and several custom `RequestBuilder` implementations.
+
+After regeneration, the generated output may require manual cleanup:
+
+* Empty wrapper classes generated for enum `$ref` schemas (e.g. `Models/SoftwareKind.cs`) must be deleted to avoid ambiguity with the corresponding `Marechai.Data` enums.
+* Stale composed-type-wrapper member files for properties whose nullability was changed must be removed.
+* Removing a server controller does not automatically clean the corresponding generated directory; it must be manually deleted.
+
+== Error Handling
+
+API errors follow the RFC 9457 Problem Details specification. All validation and business logic errors are returned using `Problem(detail: "...", statusCode: ...)` rather than `BadRequest("string")`, ensuring that the Kiota client correctly deserializes the error body into a `ProblemDetails` instance with the `Detail` property populated.
+
+Custom `OnChallenge` and `OnForbidden` handlers in the JWT Bearer authentication configuration return `application/problem+json` responses for 401 and 403 status codes, providing consistent error format across all failure modes.
+
+Error mappings in the Kiota client associate HTTP 4xx status codes with `ProblemDetails.CreateFromDiscriminatorValue`, enabling typed exception handling on the client side.
+
+== Serialization Conventions
+
+JSON serialization uses the following conventions:
+
+* *Property naming*: camelCase via `JsonNamingPolicy.CamelCase`
+* *Indentation*: `WriteIndented = true` for human-readable responses
+* *Cycle handling*: `ReferenceHandler.IgnoreCycles` to prevent infinite loops on navigation properties
+* *Number handling*: `JsonNumberHandling.Strict` to reject non-numeric values
+* *Async action names*: `SuppressAsyncSuffixInActionNames = false` to preserve route matching for async controller actions
+
+== Custom Route Constraints
+
+The API registers custom route constraints for types not natively supported by ASP.NET Core routing:
+
+* `ulong`: Matches unsigned 64-bit integer values in route segments (used for software entity identifiers).
+* `char`: Matches single-character route segments (used for ISO 639 language scope and type codes).
+
+== Batch Operations
+
+Administrative photo and media uploads use a batch operation pattern:
+
+. *Stage*: Upload individual images to a staging area, receiving a temporary identifier.
+. *Review*: Set metadata (captions, licences, entity associations) on staged images via dedicated DTOs (e.g. `AdminPendingGpuPhotoUploadDto`).
+. *Commit*: Submit a batch commit request (e.g. `AdminGpuPhotoBatchCommitRequestDto`) to process all staged images: format conversion, metadata extraction, and persistent storage.
+. *Status*: Poll job status via dedicated status DTOs (e.g. `AdminGpuPhotoBatchJobStatusDto`).
+
+This pattern is implemented consistently across GPU photos, machine photos, processor photos, sound synthesizer photos, software screenshots, and software covers.
+
+== Pagination and Filtering
+
+List endpoints support pagination via `skip` and `take` query parameters. Filtering is supported via typed query parameters:
+
+* Enum-typed filters (e.g. `SoftwareKind? kind`) are serialized as integers on the wire. The server accepts both numeric values (`?kind=2`) and enum names (`?kind=Game`) through ASP.NET Core's model binder, though numeric is the canonical wire format as emitted by Kiota.
+* Nullable enum parameters use null-gating: the query parameter is only included when the filter has a value, preventing a default value of `0` from being serialized unintentionally.
+
+== Caching Headers
+
+Reference data endpoints (countries, languages, currencies, licences) use `IMemoryCache` with configurable expiration. The output cache middleware applies five-minute caching to high-traffic software listing endpoints.

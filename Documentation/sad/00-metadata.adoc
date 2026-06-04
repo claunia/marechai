@@ -1,0 +1,46 @@
+= Metadata
+:page-section: metadata
+
+== Revision History
+
+[cols="^1,^3,^2,^1", options="header"]
+|===
+| Version | Description of Versions / Changes | Responsible Party | Date
+
+| 1.0
+| Initial version
+| Natalia Portillo
+| 2019/08/18
+
+| 1.1
+| Renamed to Marechai and DiscImageChef renamed to Aaru
+| Natalia Portillo
+| 2020/05/23
+
+| 1.2
+| Changed hash database types to use binary instead of string. Defined file attributes. Defined subchannel flags. Defined dump status flags. Redefine standalone file as derivate of media file. Some minor fixes.
+| Natalia Portillo
+| 2020/06/11
+
+| 1.3
+| Change software by media by magazine to software by compilation media.
+| Natalia Portillo
+| 2020/06/12
+
+| 2.0
+| Complete architecture overhaul. Expanded from 8 to 13 chapters. Added solution structure, application architecture, API design, AI-powered content generation and translation, and data import pipeline chapters. Removed obsolete entities (DocumentCompany, DocumentPerson, SoftwareVariant, OwnedMachinePhoto). Added 60+ new entities covering software releases, reviews, ratings, messaging, rankings, collections, descriptions, and media assets. Fixed placeholder enumerations and added new ones. Updated technology stack references from .NET Core/Xamarin to .NET 10/Uno Platform/MudBlazor/Kiota. Documented AI content generation prompts and automated translation pipeline. Documented MobyGames, OldDos, and WinWorld data import systems.
+| Natalia Portillo
+| 2026/06/04
+|===
+
+== Approval Block
+
+[cols="^1,^3,^2,^1", options="header"]
+|===
+| Version | Comments | Responsible Party | Date
+
+| | | |
+| | | |
+| | | |
+| | | |
+|===

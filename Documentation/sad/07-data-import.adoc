@@ -1,0 +1,129 @@
+= Data Import Pipelines
+
+This section describes the external data source import tools that bootstrap catalogue coverage by crawling established computing history databases, enriching the imported data with AI, and promoting staged records into core domain entities.
+
+== Purpose
+
+Building a comprehensive computing history catalogue from scratch is prohibitively labour-intensive. The data import pipelines address this by:
+
+* Crawling external sources to discover software titles, metadata, and associated media
+* Matching imported entities against existing Marechai records to avoid duplication
+* Enriching imported data with AI-generated translations, descriptions, and categorizations
+* Staging imported data in dedicated tables for human review before promotion to production entities
+
+All importers are implemented as CLI tools that connect directly to the Marechai database via Entity Framework Core, bypassing the API layer for efficient bulk operations.
+
+== MobyGames Importer
+
+The `Marechai.MobyGames` project is the most comprehensive importer, crawling the MobyGames website to extract software metadata, credits, specifications, media, reviews, and ratings.
+
+=== Architecture
+
+The importer combines two web scraping approaches:
+
+* *PuppeteerSharp* (headless Chromium): Used for JavaScript-rendered pages that require browser execution to produce content.
+* *HtmlAgilityPack*: Used for static HTML parsing of page content once rendered.
+
+The parsing layer uses a strategy pattern, with dedicated parser classes for each MobyGames page type:
+
+* `MainTabParser`: Primary game information (title, description, platforms, release dates)
+* `CreditsTabParser`: Development and publishing credits
+* `SpecsTabParser`: Technical specifications and requirements
+* `RatingsTabParser`: User and critic ratings
+* `ReleasesTabParser`: Regional release information
+* `CoverArtTabParser` / `CoverDetailPageParser`: Box art and packaging imagery
+* `ScreenshotsPageParser`: In-game and title screenshots
+* `PromoArtPageParser`: Promotional artwork
+* `ReviewsPageParser` / `CriticPageParser`: Critic and user review text
+* `MediaPageParser`: Video and downloadable media
+* `SearchResultsPageParser`: Search result extraction for discovery
+* `NewSiteMainPageParser`: Parser adapted for MobyGames site redesign
+
+=== ETL Pipeline
+
+The import follows a multi-step Extract-Transform-Load pipeline:
+
+. *Crawl*: The `MobyGamesBrowser` manages Chromium instances and the `MobyGamesHttpClient` handles rate-limited HTTP requests. Discovered games are stored as `MobyGamesDiscoveredGame` records with `Crawled` status.
+. *Parse*: The `GameAssembler` orchestrates parsing across all tab parsers, producing `ParsedGame` structures containing all extracted metadata.
+. *Match*: Entity matchers deduplicate against existing Marechai records:
+** `CompanyMatcher`: Matches company names using Soundex fuzzy matching
+** `PersonMatcher`: Matches individual names
+** `PlatformMatcher`: Maps MobyGames platforms to Marechai `SoftwarePlatform` records
+** `CountryMatcher`: Maps regional release information to ISO 3166-1 country codes
+. *Download Media*: Dedicated download services (`CoverDownloadService`, `ScreenshotDownloadService`, `PromoArtDownloadService`) retrieve associated images, tracking progress via state models.
+. *Convert Images*: The `ImageConversionPassService` and `ImageConverter` process downloaded images into standardized formats.
+. *Upsert*: Processed records are inserted or updated in the database with deduplication by source URL.
+
+=== State Tracking
+
+Import progress is tracked through dedicated database models:
+
+* `MobyGamesImportState`: Overall import progress and configuration
+* `MobyGamesDiscoveredGame`: Per-game discovery and processing status
+* `MobyGamesCoverDownloadState`, `MobyGamesPromoArtDownloadState`, `MobyGamesScreenshotDownloadState`: Per-asset download progress
+* `MobyGamesVideoImportState`: Video import progress
+* `MobyGamesReviewImportState`: Review import progress
+* `MobyGamesRejection`: Games explicitly rejected from import (with review status: Pending, Confirmed, or Overridden)
+
+== OldDos Importer
+
+The `Marechai.OldDos` project crawls old-dos.ru, a Russian-language abandonware catalogue specializing in DOS and early Windows software.
+
+=== Pipeline
+
+The importer uses a four-step pipeline, each step tracked by a per-entity status field:
+
+. *Crawl* (`OldDosCrawler`): Scrapes HTML pages from old-dos.ru using a rate-limited HTTP client (`OldDosHttpClient`). Extracted data is stored in staging models: `OldDosSoftware`, `OldDosVersion`, and `OldDosCategory`. Status: `Crawled`.
+. *Translate* (`TranslateEnricher`): Sends Russian-language descriptions to OpenAI for literal translation to English. Status: `Translated`.
+. *Describe* (`DescribeEnricher`): Generates a museum-grade English description from the translated text using OpenAI with a domain-specific system prompt. Status: `Described`.
+. *Categorize* (`CategorizeEnricher`): Uses OpenAI to assign appropriate Marechai `SoftwareGenre` categories based on the generated description. Status: `ReadyForReview`.
+
+=== Promotion
+
+The `OldDosPromotionService` (registered in Marechai.Server) converts reviewed staging rows into core domain entities (`Software`, `SoftwareVersion`, `SoftwareRelease`), establishing proper relationships with existing companies, platforms, and genres.
+
+=== CLI Commands
+
+[source]
+----
+crawl [--root <id>] [--seed <id,id>] [--max-new <n>]
+enrich-translate [--limit <n>]
+enrich-describe [--limit <n>]
+enrich-categorize [--limit <n>]
+----
+
+== WinWorld Importer
+
+The `Marechai.WinWorld` project crawls WinWorldPC (winworldpc.com), an abandonware library specializing in historical operating systems, applications, and development tools.
+
+=== Pipeline
+
+The importer uses a three-step pipeline:
+
+. *Crawl* (`WwpcCrawler`): Scrapes HTML pages organized by section (applications, development tools, system software) using `WinWorldHttpClient`. Extracted data is stored in staging models: `WwpcSoftware`, `WwpcVersion`, `WwpcCategory`, and `WwpcScreenshot`.
+. *Describe* (`DescribeEnricher`): Generates a museum-grade English description using OpenAI.
+. *Categorize* (`CategorizeEnricher`): Assigns Marechai `SoftwareGenre` categories via OpenAI.
+
+=== Promotion
+
+The `WwpcPromotionService` (registered in Marechai.Server) converts reviewed staging rows into core domain entities with the same pattern as the OldDos promotion service.
+
+=== CLI Commands
+
+[source]
+----
+crawl [--section applications|dev|sys|all] [--max-new <n>] [--start-page <n>] [--end-page <n>]
+enrich-describe [--limit <n>]
+enrich-categorize [--limit <n>]
+----
+
+== Common Patterns
+
+All three importers share several architectural patterns:
+
+* *CLI interface*: Each importer is a standalone console application with command-line arguments for controlling crawl scope and enrichment limits.
+* *State machine*: Per-entity status fields enable pipeline interruption and resumption without reprocessing completed steps.
+* *Idempotent upserts*: Database operations use `INSERT ... WHERE NOT EXISTS` or equivalent EF Core patterns to prevent duplicate records on re-runs.
+* *Rate limiting*: HTTP clients implement configurable delays between requests to respect source website terms of service.
+* *AI enrichment*: OpenAI integration is wrapped in a shared `OpenAiChatClient` class that handles JSON parsing, error recovery, and refusal detection.
+* *Direct database access*: Importers connect directly via `IDbContextFactory<MarechaiContext>`, bypassing the API layer for bulk operation efficiency.

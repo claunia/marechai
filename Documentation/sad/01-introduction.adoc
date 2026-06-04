@@ -1,0 +1,70 @@
+= Introduction
+
+This document provides a comprehensive architectural overview of the Marechai software suite — a multi-project .NET solution for cataloguing, preserving, and presenting computing history artifacts. The suite encompasses a RESTful API server, a Blazor Server web application, a cross-platform Uno Platform client, AI-powered content generation and translation services, and multiple external data import pipelines.
+
+The document defines the architectural goals and constraints, describes the solution structure and inter-project relationships, details the application architecture and API design, and specifies the data model and classification enumerations that underpin the system.
+
+== Purpose
+
+The Software Architecture Document (SAD) provides a comprehensive architectural overview of the Master Repository of Computing History Artifacts Information (Marechai). It presents multiple architectural views to depict the different aspects of the system, from high-level solution structure through application architecture, API design, AI integration, and data import workflows, down to the individual database entities and their classification enumerations.
+
+== Scope
+
+The scope of this SAD is to explain the architecture of the Marechai system in its entirety.
+
+This document describes the various aspects of the Marechai system design that are considered to be architecturally significant. These elements and behaviours are fundamental for guiding the construction of the Marechai system and for understanding this project as a whole.
+
+== Definitions, Acronyms, and Abbreviations
+
+Artifact:: Any element registered in the database. It can be physical (e.g. a machine, a book) or digital (e.g. a software version, a media dump).
+
+Component:: A physical element that composes a physical artifact, such as a processor, GPU, memory module, or storage device installed in a machine.
+
+Dump:: The digital representation of the contents of a software artifact. Can be generated from a physical artifact (e.g. an installation disc or a game cartridge) or from a digital artifact (e.g. an installation package).
+
+Genre:: A classification category applied to software artifacts, encompassing genre, perspective, gameplay style, setting, and categorical groupings.
+
+Importer:: A tool or service that crawls an external data source (such as MobyGames, WinWorldPC, or old-dos.ru), extracts computing history data, and stages it for integration into the Marechai database.
+
+Inventory:: The cataloguing of physical artifacts belonging to an entity such as a museum, society, or collector.
+
+Machine:: A Turing-complete physical artifact, existing or at least prototyped, that allows the execution of software, whether user- or manufacturer-provided. It encompasses typical concepts such as computers, videogame consoles, smartphones, tablets, and personal digital assistants.
+
+Release:: A specific distribution of a software version on a particular platform, in a particular region, with particular packaging and media.
+
+Screenshot:: An image representing the execution of a software artifact on a specific platform.
+
+Translation:: The automated or manual localization of textual content (descriptions, synopses, genre names, attribute labels) into one or more target languages.
+
+== History
+
+The Marechai project started in 2002 as a database of old computer specifications, implemented in PHP. The second version of the database and front end was launched publicly on the 24th of December 2003 at http://museum.claunia.com/[museum.claunia.com], with moderate success. In 2004, a third version began development, but was halted due to lack of resources.
+
+Since then, the launch of Wikipedia and the establishment of several computer museums with their own websites changed the fundamental needs for the archival and representation of information about the history of computing.
+
+In 2017, a new version of the Marechai database was designed and implementation began in ASP.NET at a slow pace. The initial architecture consisted of a monolithic ASP.NET Core application with server-side rendered Razor pages, Bootstrap for styling, and Entity Framework Core with a MySQL/MariaDB backend.
+
+Between 2020 and 2023, the application was migrated to Blazor Server, replacing Razor pages with interactive Blazor components and adopting MudBlazor as the Material Design component library. This transition enabled richer client-side interactivity while retaining the server-side rendering model.
+
+In 2024, the architecture was fundamentally restructured into a multi-project solution. The data access layer was extracted into a dedicated Entity Framework Core project (Marechai.Database), shared data transfer objects and enumerations were isolated into a common library (Marechai.Data), and a standalone ASP.NET Core Web API server (Marechai.Server) was created to serve as the authoritative backend. A Kiota-generated API client (Marechai.ApiClient) was introduced to provide strongly-typed HTTP access for all frontend applications.
+
+Concurrently, a cross-platform client application was developed using the Uno Platform (Marechai.App), targeting Desktop, WebAssembly, Android, and iOS from a single codebase with the MVVM pattern via Prism.DryIoc.
+
+In 2025–2026, AI-powered capabilities were integrated into the system. A translation service with dual OpenAI and NLLB backends was added to automatically localize database content into eight languages. AI-generated museum-grade descriptions were introduced for companies, machines, and software, produced from carefully crafted prompt templates. External data import pipelines were built for MobyGames, WinWorldPC, and old-dos.ru, incorporating AI-driven enrichment steps (translation, description generation, and categorization) to bootstrap catalogue coverage.
+
+This document describes the current state of the architecture as of June 2026.
+
+== Overview
+
+In order to fully document all the aspects of the architecture, this Software Architecture Document contains the following sections:
+
+* <<_architectural_goals_and_constraints>>: Key requirements, system constraints, and framework selection rationale.
+* <<_solution_structure>>: Overview of all solution projects, their responsibilities, inter-project dependencies, and sister projects.
+* <<_application_architecture>>: Cross-cutting architectural concerns including authentication, database access, caching, background services, and image processing.
+* <<_api_design>>: REST API organization, OpenAPI specification, Kiota client generation, error handling, and serialization conventions.
+* <<_ai_powered_content_generation_and_translation>>: Prompt-based description generation, dual-backend translation service, and the coordinated background worker pipeline.
+* <<_data_import_pipelines>>: External data source crawlers, AI enrichment workflows, and staging-to-production promotion services.
+* <<_applications>>: User roles, Blazor Server web application, and Uno Platform cross-platform client.
+* <<_artifacts>>: Specification of all database entities, their fields, types, and relationships.
+* <<_enumerations>>: Classification enumerations used across the system.
+* <<_examples>>: Real-life usage examples.

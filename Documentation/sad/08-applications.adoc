@@ -1,0 +1,185 @@
+= Applications
+
+This section describes the client applications that comprise the Marechai user-facing system: the Blazor Server web application and the Uno Platform cross-platform client. It also defines the user roles and their associated permissions.
+
+== User
+
+A user is any person that accesses the application. A user may be anonymous (not logged in), limited to read-only access to the public information in the database, or a registered user with one or more roles determining access to specific parts of the system.
+
+The parts of the database accessible to anonymous users are configurable by the system administrator.
+
+Any anonymous user may register for an account. Registration may require an invitation code, depending on system configuration. Registered users may request account deletion at any time; the deletion process is handled by the `AccountDeletionPurgeService` background worker in compliance with GDPR requirements.
+
+All personal data of registered users complies with GDPR rules: data is stored securely, not shared with third parties unless explicitly authorized by the user, and removed completely and irrecoverably upon the user's request.
+
+User authentication is managed by ASP.NET Core Identity with JWT Bearer token issuance. Two-factor authentication is supported via TOTP authenticator applications and recovery codes.
+
+== Roles
+
+A role is a set of permissions governing access to and modification of specific parts of the system. Roles are managed through ASP.NET Core Identity and serialized as JWT claims.
+
+This list of roles is not exhaustive; new roles may be defined as the system evolves.
+
+=== Uberadmin
+
+The uberadmin is the maximum-privilege role, corresponding to the system administrator. It grants unrestricted access to all parts of the system, including all data, configuration, and user management functions.
+
+=== Writer
+
+The writer role grants permission to add new artifact data to the database (for example, the history of a company) and to modify existing data. Writers may also approve suggestions and proposed modifications submitted by other users.
+
+Only an uberadmin may assign the writer role.
+
+Modifications by a writer are stored in the database as deltas and applied to the main tables without requiring approval.
+
+=== Proofreader
+
+The proofreader role grants permission to correct textual data associated with artifacts. This role is intended for users with demonstrated proficiency in the primary language of the system (typically American English).
+
+Only uberadmins and writers may assign the proofreader role.
+
+This role may modify textual data only; it does not extend to relationships, specifications, or structural data.
+
+Modifications by a proofreader are stored as deltas and applied without requiring approval.
+
+=== Translator
+
+The translator role grants permission to propose translations of textual data associated with artifacts, or of system interface elements. A translator has one or more assigned languages, distinct from the primary language of the database.
+
+A translator may:
+
+* Create a new translation in any of their assigned languages, from any of their assigned languages or from the primary language
+* Proofread existing translations in any of their assigned languages
+
+Modifications created by a translator require approval by a supertranslator.
+
+Any registered user may request the translator role by proposing a translation of artifact-associated textual data in a language of their choice. The translator role may be assigned by an uberadmin or by a supertranslator who has the corresponding language assigned.
+
+=== Supertranslator
+
+The supertranslator role extends the translator role with the ability to create translations that are applied without approval, and to approve translations proposed by translators in any of their assigned languages.
+
+Any translator may be promoted to supertranslator. A user may hold supertranslator status for a set of languages while remaining a translator for a different, non-overlapping set.
+
+An uberadmin may promote any translator to supertranslator for any language. A supertranslator may promote translators to supertranslator status for any language in their own assignment set.
+
+=== Collaborator
+
+The collaborator role grants permission to propose additions or modifications to artifacts in the database, as well as to upload photographs and scans. This role does not extend to inventory or repair operations.
+
+Proposals from a collaborator require approval by a curator.
+
+Any registered user may request the collaborator role by proposing to add, modify, or upload content. The role may be assigned by an uberadmin or a curator.
+
+=== Curator
+
+The curator role has the same scope as the collaborator role, but additions, modifications, and uploads are applied directly without requiring approval.
+
+The curator role may be assigned by an uberadmin or another curator.
+
+=== Physical Curator
+
+The physical curator role extends the curator role to include inventory artifacts. This role is intended for users who manage physical collections in museums or private holdings.
+
+The physical curator role may be assigned by an uberadmin or another physical curator.
+
+=== Technician
+
+The technician role grants permission to modify repair records for inventory artifacts. Technicians may add photographs to repairs, record part exchanges, and request replacement parts.
+
+This role supports auditing of the repair process for physical inventory in museums or collections.
+
+The technician role may be assigned by an uberadmin or a supertechnician.
+
+=== Supertechnician
+
+The supertechnician role extends the technician role with the ability to create new repairs, close completed repairs, and approve repair and parts requests.
+
+The supertechnician role may be assigned only by an uberadmin.
+
+== Blazor Server Web Application
+
+The Blazor Server web application (`Marechai` project) provides both public artifact browsing and administrative interfaces through a browser-based client. It uses server-side rendering with SignalR for real-time UI updates.
+
+=== User Interface
+
+The application uses MudBlazor, a Material Design component library for Blazor, providing:
+
+* *Data grids* (`MudDataGrid`): For tabular listing of artifacts with sorting, filtering, and pagination
+* *Dialogs* (`MudDialog`): For entity creation and editing forms
+* *Snackbars* (`MudSnackbar`): For operation feedback and error messages
+* *Navigation* (`MudNavMenu`): For hierarchical site navigation
+* *Forms* (`MudForm`, `MudTextField`, `MudSelect`): For data entry with validation
+
+The application's pages are organized by entity type under the `Pages/` directory, with separate `Admin/` and `Account/` subdirectories for administrative and user management pages respectively.
+
+=== Public View
+
+The public view presents computing history artifacts to anonymous and registered users, organized by entity type: machines (computers, consoles, smartphones, tablets, PDAs), software, companies, books, magazines, documents, processors, GPUs, sound synthesizers, and people.
+
+=== Admin View
+
+The admin view provides data management interfaces accessible to users with appropriate roles. Key administrative workflows include:
+
+* *Entity CRUD*: Creation, reading, updating, and deletion of all artifact types
+* *Batch photo uploads*: Multi-image upload with staging, metadata assignment, and batch commit
+* *Suggestion review*: Viewing, approving, and rejecting proposed modifications with diff visualization
+* *Markdown editing*: Rich text editing for entity descriptions with live preview
+* *User management*: Role assignment, account locking, invitation code generation
+
+=== Services Layer
+
+The Blazor application contains 45+ service classes that wrap Kiota API client calls, providing error handling, DTO mapping, and caching for each entity domain. A `ReferenceDataCache` singleton provides in-memory caching of frequently-accessed lookup tables.
+
+=== Authentication
+
+Authentication in the Blazor application uses:
+
+* `JwtAuthenticationStateProvider`: Custom `AuthenticationStateProvider` that reads the JWT token from `ProtectedLocalStorage` and parses its claims
+* `TokenProvider`: Manages token storage, refresh, and expiration
+* `AuthService`: Handles login, registration, email confirmation, password management, and two-factor authentication flows
+
+== Uno Platform Application
+
+The Uno Platform application (`Marechai.App` project) provides a cross-platform client for artifact browsing, targeting Desktop, WebAssembly, Android, and iOS from a single C# and XAML codebase.
+
+=== Architecture
+
+The application follows the MVVM (Model-View-ViewModel) pattern using Prism.DryIoc:
+
+* *ViewModels* (`Presentation/ViewModels/`): 46 ViewModel classes containing presentation logic, command bindings, and data retrieval. ViewModels are registered as transient services, recreated for each navigation event.
+* *Views* (`Presentation/Views/`): 78 XAML pages with corresponding code-behind files. Views are paired with ViewModels via Prism's `ViewModelLocator` and registered using `RegisterForNavigation<TView, TViewModel>()`.
+* *Services* (`Services/`): 35+ domain services mirroring the Blazor service layer, each wrapping Kiota API client calls for a specific entity domain.
+
+=== Navigation
+
+Navigation is managed by Prism's navigation framework. Routes are registered in `App.xaml.cs` using `RegisterForNavigation` calls that pair each view with its corresponding ViewModel. The navigation service supports deep linking and back-stack management across platforms.
+
+=== Caching
+
+The application employs singleton cache services to minimize network requests and support offline-friendly browsing:
+
+* `FlagCache`: Country flag images
+* `LogoCache`: Company logo images
+* `MachinePhotoCache`, `GpuPhotoCache`, `ProcessorPhotoCache`, `SoundSynthPhotoCache`: Hardware photographs
+* `BookCoverCache`: Book cover images
+* `SoftwareScreenshotCache`: Software screenshot images
+
+Each cache service manages its own `ConcurrentDictionary` of image data, loading images asynchronously on first access and serving from memory on subsequent requests.
+
+=== API Client Integration
+
+The Uno Platform application uses the same Kiota-generated `Marechai.ApiClient` as the Blazor application. API authentication is handled by `HttpAuthHandler`, a custom `DelegatingHandler` that injects the JWT Bearer token from secure storage into each outgoing HTTP request. A `DebugHandler` is additionally registered in DEBUG builds for HTTP request/response logging.
+
+=== Rendering
+
+The application uses SkiaSharp as its rendering backend via the UnoFeature `SkiaRenderer`. SVG company logos are rendered using Svg.Skia, and Lottie animations are supported for loading indicators and empty-state illustrations.
+
+=== Dependency Injection
+
+Services, ViewModels, and caches are registered in `App.xaml.cs`:
+
+* *Singletons*: Services, caches, factories (colour theme, auth, news, computers, software, etc.)
+* *Transient*: ViewModels (recreated per navigation)
+* *Localization*: `LocalizedStrings` singleton for XAML binding via `Microsoft.Extensions.Localization`
+* *Logging*: Serilog with `ILoggerFactory` integration

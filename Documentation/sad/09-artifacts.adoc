@@ -1,0 +1,1319 @@
+= Artifacts
+
+The purpose of this section is to describe the various artifacts that are stored in the system's database. Each artifact corresponds to a database table (or Entity Framework Core model). All text is written in American English (_en-US_) and Latin script by default.
+
+NOTE: The system administrator may choose a different language as the primary text language.
+
+NOTE: When an Id field is not specified, or any other specified field is marked as a primary key, it is implicit that the artifact requires such a field for storage in the database.
+
+NOTE: Field types in _cursive_ represent links to another artifact.
+
+NOTE: All artifacts inherit `CreatedOn` and `UpdatedOn` timestamp fields from the base model class, which are omitted from the tables below for brevity.
+
+== Publications
+
+=== Book
+
+This artifact represents books about computing.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Title | String | Untranslated title in the default system writing script.
+| NativeTitle | String | Title as written on the book cover.
+| Published | Date | Date of publication.
+| PublishedPrecision | _Enum_ | Precision of the publication date (Full, MonthYear, YearOnly).
+| Country | _FK_ | Country of publication.
+| Isbn | String(13) | International Standard Book Number.
+| Pages | Short | Number of pages.
+| Edition | Int | Edition number.
+| Previous | _FK_ | Link to previous edition, if applicable.
+| Next | _FK_ | Link to next edition, if applicable.
+| Source | _FK_ | If this book is a derivative (e.g. translation) of another, link to the original.
+| CoverGuid | Guid | GUID identifying the cover image file stored in the system.
+| OriginalCoverExtension | String | Original file extension of the uploaded cover image.
+| InternetArchiveUrl | Url | URL to the book's entry on the Internet Archive, if available.
+| Synopses | _FK[]_ | List of synopsis translations.
+| Companies | _FK[]_ | Companies associated with this book.
+| People | _FK[]_ | People associated with this book.
+| Machines | _FK[]_ | Machines where this book is a main topic.
+| MachineFamilies | _FK[]_ | Machine families where this book is a main topic.
+| CollectedBy | _FK[]_ | Users who have this book in their collection.
+|===
+
+=== Book synopsis
+
+This artifact contains a translated synopsis of a book.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Book | _FK_ | Book this synopsis belongs to.
+| Language | _FK_ | Language of the synopsis.
+| Text | FullText | Markdown version of the synopsis.
+| Html | FullText | Rendered and cleaned HTML version of the synopsis.
+|===
+
+=== Document
+
+This artifact represents documents about computing (manuals, data sheets, white papers, etc.).
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Title | String | Untranslated title in the default system writing script.
+| NativeTitle | String | Title as written on the document cover.
+| Published | Date | Date of publication.
+| PublishedPrecision | _Enum_ | Precision of the publication date.
+| Country | _FK_ | Country of publication.
+| Synopses | _FK[]_ | List of synopsis translations.
+| Companies | _FK[]_ | Companies associated with this document.
+| People | _FK[]_ | People associated with this document.
+| Machines | _FK[]_ | Machines where this document is relevant.
+| MachineFamilies | _FK[]_ | Machine families where this document is relevant.
+|===
+
+=== Document synopsis
+
+This artifact contains a translated synopsis of a document.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Document | _FK_ | Document this synopsis belongs to.
+| Language | _FK_ | Language of the synopsis.
+| Text | FullText | Markdown version of the synopsis.
+| Html | FullText | Rendered and cleaned HTML version of the synopsis.
+|===
+
+=== Document role
+
+This artifact lists all the roles a person or company can have in a document. It is based on the EPUB specification list of roles, a standard used worldwide by publishers and libraries.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Id | String(3) | Role identifier as defined in the specification.
+| Name | String | Role name.
+| Enabled | Bool | Set if the role is currently usable; unset if it is historical.
+|===
+
+=== Magazine
+
+This artifact represents magazines about computing.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Title | String | Untranslated title in the default system writing script.
+| NativeTitle | String | Title as written on the magazine cover.
+| Country | _FK_ | Country of publication.
+| Issn | String(8) | International Standard Serial Number.
+| FirstPublication | Date | Date when the first issue was published.
+| Synopses | _FK[]_ | List of synopsis translations.
+| Issues | _FK[]_ | Published issues of this magazine.
+| Companies | _FK[]_ | Companies associated with this magazine.
+|===
+
+=== Magazine synopsis
+
+This artifact contains a translated synopsis of a magazine.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Magazine | _FK_ | Magazine this synopsis belongs to.
+| Language | _FK_ | Language of the synopsis.
+| Text | FullText | Markdown version of the synopsis.
+| Html | FullText | Rendered and cleaned HTML version of the synopsis.
+|===
+
+=== Magazine issue
+
+This artifact represents individual issues of a computing magazine.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Magazine | _FK_ | Link to the magazine.
+| Caption | String | Untranslated caption in the default system writing script.
+| NativeCaption | String | Original caption in the original writing script.
+| IssueNumber | Int | Issue number within the magazine's publication sequence.
+| Published | DateTime | Date and time when this issue was published.
+| PublishedPrecision | _Enum_ | Precision of the publication date.
+| ProductCode | String(18) | EAN or UPC barcode of this magazine issue.
+| Pages | Short | Number of pages.
+| CoverGuid | Guid | GUID identifying the cover image file stored in the system.
+| OriginalCoverExtension | String | Original file extension of the uploaded cover image.
+| InternetArchiveUrl | Url | URL to this issue's entry on the Internet Archive, if available.
+|===
+
+=== Companies by book / document / magazine
+
+These junction artifacts link publications with companies and their roles.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Company | _FK_ | Link to the company.
+| Book / Document / Magazine | _FK_ | Link to the publication.
+| Role | _FK_ | Role the company has in the publication.
+|===
+
+=== People by book / document / magazine
+
+These junction artifacts link publications with people and their roles.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Person | _FK_ | Link to the person.
+| Book / Document / Magazine | _FK_ | Link to the publication.
+| Role | _FK_ | Role the person has in the publication.
+|===
+
+=== Books / Documents / Magazines by machine
+
+These junction artifacts link publications with machines where they are a main topic.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Book / Document / Magazine | _FK_ | Link to the publication.
+| Machine | _FK_ | Link to the machine.
+|===
+
+=== Books / Documents / Magazines by machine family
+
+These junction artifacts link publications with machine families where they are a main topic.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Book / Document / Magazine | _FK_ | Link to the publication.
+| MachineFamily | _FK_ | Link to the machine family.
+|===
+
+=== Magazines by software
+
+This junction artifact links magazines with software they cover.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Magazine | _FK_ | Link to the magazine.
+| Software | _FK_ | Link to the software.
+|===
+
+== Companies and People
+
+=== Company
+
+This artifact represents a business entity that created artifacts belonging to computing history. It can be, but is not limited to, a manufacturer, software developer, publisher, or service provider.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Name | String | Company legal name, without company type identifier (no Inc., S.A., etc.).
+| LegalName | String | Full legal name including company type identifier.
+| Founded | Date | Date when the company was legally registered.
+| FoundedPrecision | _Enum_ | Precision of the founding date.
+| Website | Url | URL of the latest known company official website.
+| Twitter | String(45) | Twitter/X handle of the official company account.
+| Facebook | String(45) | Facebook account of the official company page.
+| Sold | Date | Date the company changed status.
+| SoldPrecision | _Enum_ | Precision of the status change date.
+| SoldTo | _FK_ | Link to the company that acquired this company.
+| Address | String(80) | Last known physical address of the company headquarters.
+| City | String(80) | City of the headquarters address.
+| Province | String(80) | Province or state of the headquarters address.
+| PostalCode | String(25) | Postal or ZIP code of the headquarters address.
+| Country | _FK_ | Country code where the company is or was legally registered.
+| Status | _Enum_ | Current status of the company (CompanyStatus enumeration).
+| Logos | _FK[]_ | Company logos.
+| Descriptions | _FK[]_ | Company description translations.
+| Machines | _FK[]_ | Machines manufactured by this company.
+| MachineFamilies | _FK[]_ | Machine families by this company.
+| Processors | _FK[]_ | Processors manufactured by this company.
+| Gpus | _FK[]_ | GPUs manufactured by this company.
+| SoundSynths | _FK[]_ | Sound synthesizers manufactured by this company.
+| People | _FK[]_ | People associated with this company.
+|===
+
+=== Company description
+
+This artifact contains a translated textual description and history of a company.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Company | _FK_ | Company this description belongs to.
+| Language | _FK_ | Language of the description.
+| Text | IndexedText | Markdown version of the description.
+| Html | IndexedText | Rendered and cleaned HTML version of the description.
+|===
+
+=== Company logo
+
+This artifact points to a vectorial representation of a company logo.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Company | _FK_ | Company this logo belongs to.
+| Year | Int[1000,3000] | Year the company started using this logo.
+| Guid | Guid | GUID used to generate the server-side file containing the logo.
+|===
+
+=== Person
+
+This artifact stores information about people who have been important in computing history.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Name | String | Person's given name.
+| Surname | String | Person's surname.
+| CountryOfBirth | _FK_ | Country of birth (uses historic country if applicable).
+| BirthDate | Date | Date of birth.
+| BirthDatePrecision | _Enum_ | Precision of the birth date.
+| DeathDate | Date | Date of death, if applicable.
+| DeathDatePrecision | _Enum_ | Precision of the death date.
+| Webpage | Url | Official webpage.
+| Twitter | String | Official Twitter/X handle.
+| Facebook | String | Official Facebook handle.
+| Photo | Guid | GUID identifying the photo stored in the system.
+| OriginalPhotoExtension | String | Original file extension of the uploaded photo.
+| Alias | String | Alias or pseudonym.
+| DisplayName | String | Preferred display name.
+| FullName | String | Computed full name (Name + Surname).
+| Descriptions | _FK[]_ | Person description translations.
+| Companies | _FK[]_ | Companies this person is associated with.
+| Books | _FK[]_ | Books this person contributed to.
+| Documents | _FK[]_ | Documents this person contributed to.
+| Magazines | _FK[]_ | Magazines this person contributed to.
+| Software | _FK[]_ | Software this person contributed to.
+|===
+
+=== Person description
+
+This artifact contains a translated textual description and biography of a person.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Person | _FK_ | Person this description belongs to.
+| Language | _FK_ | Language of the description.
+| Text | IndexedText | Markdown version of the description.
+| Html | IndexedText | Rendered and cleaned HTML version of the description.
+|===
+
+=== People by company
+
+This junction artifact links people with companies.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Person | _FK_ | Link to the person.
+| Company | _FK_ | Link to the company.
+|===
+
+== Hardware
+
+=== Machine
+
+This artifact represents a Turing-complete physical machine — typically a computer, videogame console, smartphone, tablet, or personal digital assistant.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Name | String | Name of the machine.
+| Company | _FK_ | Manufacturer of the machine.
+| MachineType | _Enum_ | Type of machine (Computer, Console, Smartphone, Pda, Tablet).
+| Introduced | DateTime | Date of public introduction (sale); minimum value for prototypes, NULL for unknown.
+| IntroducedPrecision | _Enum_ | Precision of the introduction date.
+| Family | _FK_ | Machine family this machine belongs to.
+| Model | String | Model number, SKU, or equivalent.
+| Gpus | _FK[]_ | GPUs installed from factory.
+| Memory | _FK[]_ | Memory installed from factory.
+| Processors | _FK[]_ | Processors installed from factory.
+| Sound | _FK[]_ | Sound synthesizers installed from factory.
+| Storage | _FK[]_ | Storage units installed from factory.
+| Photos | _FK[]_ | Photographs uploaded to the system.
+| Videos | _FK[]_ | Videos associated with this machine.
+| Screens | _FK[]_ | Screens physically installed from factory.
+| Descriptions | _FK[]_ | Machine description translations.
+| Documents | _FK[]_ | Documents where this machine is a main topic.
+| Books | _FK[]_ | Books where this machine is a main topic.
+| Magazines | _FK[]_ | Magazine issues where this machine is a main topic.
+| SoftwarePlatforms | _FK[]_ | Software platforms supported by this machine.
+|===
+
+=== Machine family
+
+This artifact represents a grouping of machines that are technically similar, differing only in configuration or regional variants. For example, the Sega Genesis / Mega Drive family or the Apple PowerBook 1400 family.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Name | String | Name of the machine family.
+| Company | _FK_ | Manufacturer of the machine family members.
+| Machines | _FK[]_ | Machines in this family.
+| Documents | _FK[]_ | Documents where this family is a main topic.
+| Books | _FK[]_ | Books where this family is a main topic.
+| Magazines | _FK[]_ | Magazine issues where this family is a main topic.
+|===
+
+=== Machine description
+
+This artifact contains a translated textual description of a machine.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Machine | _FK_ | Machine this description belongs to.
+| Language | _FK_ | Language of the description.
+| Text | IndexedText | Markdown version of the description.
+| Html | IndexedText | Rendered and cleaned HTML version of the description.
+|===
+
+=== Machine photo
+
+This artifact represents a photograph of a machine stored in the system. It extends the base photo model with EXIF metadata fields.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Machine | _FK_ | Machine this photo belongs to.
+| Author | String | Name of the photographer.
+| CreationDate | DateTime | Date and time the photo was taken.
+| UploadDate | DateTime | Date and time when the photo was uploaded.
+| User | _FK_ | User who uploaded this photo.
+| License | _FK_ | Licence covering the rights for this photo.
+| Source | Url | URL where this photo was obtained, if not original.
+| (EXIF fields) | Various | CameraManufacturer, CameraModel, ColorSpace, Contrast, ExposureMethod, ExposureProgram, Flash, Focal, FocalLength, IsoRating, Lens, LightSource, MeteringMode, Orientation, Saturation, SceneCaptureType, SensingMethod, Sharpness, WhiteBalance, and other standard EXIF metadata.
+|===
+
+=== Machine video
+
+This artifact represents a video associated with a machine, hosted on an external platform.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Machine | _FK_ | Machine this video belongs to.
+| Provider | String | Video hosting provider (e.g. "YouTube", "Vimeo").
+| VideoId | String | Provider-specific video identifier.
+|===
+
+=== Processor
+
+This artifact represents a chip or chipset that processes data, inputs, and outputs — the component that runs the Turing machine.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Name | String | Commercial name of the processor.
+| Company | _FK_ | Manufacturer of the processor.
+| Model | String | Model number, SKU, or equivalent.
+| Introduced | DateTime | Date of public introduction.
+| IntroducedPrecision | _Enum_ | Precision of the introduction date.
+| Speed | Double | Nominal sustained speed in Hz.
+| Package | String | Chip package type, if a single chip.
+| Gprs | Int | Number of general-purpose registers.
+| GprSize | Int | Size in bits of general-purpose registers.
+| Fprs | Int | Number of floating-point registers.
+| FprSize | Int | Size in bits of floating-point registers.
+| Cores | Int | Number of simultaneous executing cores.
+| ThreadsPerCore | Int | Number of simultaneous threads per core.
+| Process | String | Chip manufacturing process description.
+| ProcessNm | Float | Manufacturing process size in nanometres.
+| DieSize | Float | Die surface area in square millimetres.
+| Transistors | Long | Number of transistors.
+| DataBus | Int | External data bus width in bits.
+| AddrBus | Int | External address bus width in bits.
+| SimdRegisters | Int | Number of SIMD registers.
+| SimdSize | Int | Size of SIMD registers in bits.
+| L1Instruction | Float | L1 instruction cache size in kibibytes.
+| L1Data | Float | L1 data cache size in kibibytes.
+| L2 | Float | L2 cache size in kibibytes.
+| L3 | Float | L3 cache size in kibibytes.
+| InstructionSet | _FK_ | Instruction set implemented by this processor.
+| InstructionSetExtensions | _FK[]_ | Instruction set extensions implemented.
+| Descriptions | _FK[]_ | Processor description translations.
+| Photos | _FK[]_ | Photographs of this processor.
+| Videos | _FK[]_ | Videos about this processor.
+|===
+
+=== Processor description / photo / video
+
+These artifacts follow the same pattern as machine description, photo, and video, linked to a processor instead of a machine.
+
+=== Graphical Processing Unit
+
+This artifact represents a chip or chipset whose functionality is the generation of text, raster images, vector images, three-dimensional images, or ray-traced images.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Name | String | Commercial name of the GPU.
+| Company | _FK_ | Manufacturer of the GPU.
+| Model | String | Model number, SKU, or equivalent.
+| Introduced | DateTime | Date of public introduction.
+| IntroducedPrecision | _Enum_ | Precision of the introduction date.
+| Package | String | Chip package type, if a single chip.
+| Process | String | Manufacturing process description.
+| ProcessNm | Float | Manufacturing process size in nanometres.
+| DieSize | Float | Die surface area in square millimetres.
+| Transistors | Long | Number of transistors.
+| Resolutions | _FK[]_ | Resolutions the GPU can generate.
+| Descriptions | _FK[]_ | GPU description translations.
+| Photos | _FK[]_ | Photographs of this GPU.
+| Videos | _FK[]_ | Videos about this GPU.
+|===
+
+=== GPU description / photo / video
+
+These artifacts follow the same pattern as machine description, photo, and video, linked to a GPU instead of a machine.
+
+=== Sound synthesizer
+
+This artifact represents a chip or chipset whose functionality is the generation of sounds.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Name | String | Commercial name of the sound synthesizer.
+| Company | _FK_ | Manufacturer.
+| ModelCode | String | Model number, SKU, or equivalent.
+| Introduced | DateTime | Date of public introduction.
+| IntroducedPrecision | _Enum_ | Precision of the introduction date.
+| Voices | Int | Number of PCM voices the synthesizer can generate simultaneously.
+| Frequency | Double | Sample rate in Hz.
+| Depth | Int | Sample resolution in bits.
+| SquareWave | Int | Number of square wave generators.
+| WhiteNoise | Int | Number of white noise generators.
+| Type | _Enum_ | Type of sound synthesizer (SoundSynthType enumeration).
+| Descriptions | _FK[]_ | Sound synthesizer description translations.
+| Photos | _FK[]_ | Photographs.
+| Videos | _FK[]_ | Videos.
+|===
+
+=== Sound synthesizer description / photo / video
+
+These artifacts follow the same pattern as machine description, photo, and video, linked to a sound synthesizer.
+
+=== Instruction set / Instruction set extension
+
+These artifacts list the known instruction sets and their extensions that can be implemented by processors.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Name | String | Name of the instruction set or extension.
+|===
+
+=== Instruction set extensions by processor
+
+This junction artifact links processors with the instruction set extensions they implement.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Processor | _FK_ | Link to the processor.
+| Extension | _FK_ | Link to the instruction set extension.
+|===
+
+=== Resolution
+
+This artifact represents graphical resolution characteristics.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Width | Int | Width of the resolution.
+| Height | Int | Height of the resolution.
+| Colors | Long | Number of simultaneous colours.
+| Palette | Long | Number of colours available non-simultaneously.
+| Chars | Bool | If set, width and height indicate text characters rather than pixels.
+| Grayscale | Bool | If set, colours and palette refer to shades of grey.
+|===
+
+=== Screen
+
+This artifact represents a physical display screen.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Width | Double | Width of the visible area in millimetres.
+| Height | Double | Height of the visible area in millimetres.
+| Diagonal | Double | Diagonal of the visible area in inches.
+| NativeResolution | _FK_ | Native resolution of the screen.
+| EffectiveColors | Long | Maximum number of effective colours the screen can display.
+| Type | String | Physical type of screen (CRT, LCD, OLED, etc.).
+| Resolutions | _FK[]_ | Resolutions supported by the screen.
+|===
+
+=== Resolutions by GPU / Resolutions by screen
+
+These junction artifacts link GPUs or screens with supported resolutions.
+
+=== Hardware by machine junction artifacts
+
+The following junction artifacts link hardware components with machines:
+
+* *GPUs by machine*: Links a GPU with a machine.
+* *Processors by machine*: Links a processor with a machine, including the clock speed in MHz at which the processor runs in that machine.
+* *Memory by machine*: Links memory with a machine, specifying type, usage, size, and speed.
+* *Storage by machine*: Links storage with a machine, specifying type, interface, and capacity.
+* *Sound synthesizers by machine*: Links a sound synthesizer with a machine.
+* *Screens by machine*: Links a screen with a machine.
+* *Software platforms by machine*: Links a software platform with a machine.
+
+=== Memory (by machine)
+
+This artifact represents primary storage (memory) present in a machine.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Type | _Enum_ | Type of memory (MemoryType enumeration).
+| Usage | _Enum_ | What the memory is used for (MemoryUsage enumeration).
+| Size | Long | Size in bytes.
+| Speed | Double | Speed in Hz.
+|===
+
+=== Storage (by machine)
+
+This artifact represents secondary storage installed in a machine.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Type | _Enum_ | Storage type (StorageType enumeration).
+| Interface | _Enum_ | Interface the storage uses (StorageInterface enumeration).
+| Capacity | Long | Capacity in bytes.
+|===
+
+=== Owned machine
+
+This artifact represents a machine owned by the system operator (museum, preservation society, etc.) or a registered user.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| AcquisitionDate | DateTime | Date the machine was acquired.
+| AcquisitionDatePrecision | _Enum_ | Precision of the acquisition date.
+| LostDate | DateTime | Date when the machine was sold, traded, or otherwise lost.
+| LostDatePrecision | _Enum_ | Precision of the lost date.
+| Status | _Enum_ | Current status of the machine (StatusType enumeration).
+| LastStatusDate | DateTime | Last status check date and time.
+| LastStatusDatePrecision | _Enum_ | Precision of the last status check date.
+| Trade | Bool | If set, the machine is available for trading.
+| Boxed | Bool | If set, the user has the original packaging.
+| Manuals | Bool | If set, the user has the original manuals.
+| SerialNumber | String | Serial number of the machine.
+| SerialNumberVisible | Bool | If set, the serial number is visible to other users.
+| Machine | _FK_ | Link to the machine specifications.
+| User | _FK_ | Link to the owner user.
+|===
+
+== Software
+
+=== Software family
+
+This artifact identifies a software product family, encompassing all different platforms, regional, language, and other variations that are published, distributed, or prototyped.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Name | String | Name of the software family.
+| Parent | _FK_ | Parent software family, if this is a sub-family.
+| Introduced | Date | Date the software was first distributed in any form.
+| IntroducedPrecision | _Enum_ | Precision of the introduction date.
+| Children | _FK[]_ | Sub-families.
+| Softwares | _FK[]_ | Software titles in this family.
+| Companies | _FK[]_ | Companies associated with this family.
+|===
+
+=== Software
+
+This artifact represents a software title within a family.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Name | String | Name of the software.
+| Family | _FK_ | Software family this title belongs to.
+| Predecessor | _FK_ | Previous version or predecessor software.
+| Kind | _Enum_ | Classification of the software (SoftwareKind enumeration).
+| BaseSoftware | _FK_ | For DLC/add-ons, the base software this extends.
+| Addons | _FK[]_ | Add-ons and DLC for this software.
+| Successors | _FK[]_ | Successor software titles.
+| Versions | _FK[]_ | Versions of this software.
+| CompanyRoles | _FK[]_ | Companies and their roles in this software.
+| Credits | _FK[]_ | People credited in this software.
+| Descriptions | _FK[]_ | Software description translations.
+| Genres | _FK[]_ | Genre classifications.
+| DirectReleases | _FK[]_ | Standalone releases.
+| CompilationReleases | _FK[]_ | Compilation releases including this software.
+| CriticReviews | _FK[]_ | Critic reviews.
+| UserRatings | _FK[]_ | User star ratings.
+| UserReviews | _FK[]_ | User text reviews.
+| Screenshots | _FK[]_ | Screenshots.
+| PromoArt | _FK[]_ | Promotional artwork.
+| Videos | _FK[]_ | Videos.
+| Magazines | _FK[]_ | Magazines covering this software.
+|===
+
+=== Software version
+
+This artifact identifies a specific version of a software title.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Software | _FK_ | Software title this version belongs to.
+| Codename | String | Development codename.
+| VersionString | String | Version number string.
+| PublicVersion | String | Public-facing version string if different from internal.
+| Parent | _FK_ | Parent version if this is a sub-version.
+| License | _FK_ | Licence of this version.
+| Children | _FK[]_ | Sub-versions.
+| Requirements | _FK[]_ | Software requirements.
+| OSCompatibility | _FK[]_ | Operating system compatibility information.
+| Releases | _FK[]_ | Standalone releases of this version.
+| CompilationReleases | _FK[]_ | Compilation releases including this version.
+| Companies | _FK[]_ | Companies associated with this version.
+| Screenshots | _FK[]_ | Screenshots.
+|===
+
+=== Software release
+
+This artifact represents a specific distribution of a software version on a particular platform.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Title | String | Release title (may differ from the software title for regional variants).
+| IsCompilation | Bool | If set, this release is a compilation containing multiple software titles.
+| Software | _FK_ | Software title (for standalone releases).
+| SoftwareVersion | _FK_ | Software version (for standalone releases).
+| Platform | _FK_ | Software platform of this release.
+| Publisher | _FK_ | Publishing company.
+| ReleaseDate | Date | Date of release.
+| ReleaseDatePrecision | _Enum_ | Precision of the release date.
+| Regions | _FK[]_ | UN M.49 regions where this release was distributed.
+| Languages | _FK[]_ | Languages supported by this release.
+| Barcodes | _FK[]_ | Barcodes associated with this release.
+| ProductCodes | _FK[]_ | Product codes.
+| MinimumGpus | _FK[]_ | Minimum required GPUs.
+| RecommendedGpus | _FK[]_ | Recommended GPUs.
+| SupportedSoundSynths | _FK[]_ | Supported sound synthesizers.
+| IncludedVersions | _FK[]_ | Software versions included (for compilations).
+| IncludedSoftware | _FK[]_ | Software titles included (for compilations).
+| Covers | _FK[]_ | Cover artwork.
+| Attributes | _FK[]_ | Release-specific attributes.
+| CollectedBy | _FK[]_ | Users who have this release in their collection.
+|===
+
+=== Software platform
+
+This artifact represents a software execution platform (operating system, runtime, or hardware platform).
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Name | String | Name of the platform.
+| Machines | _FK[]_ | Machines that support this platform.
+|===
+
+=== Software genre
+
+This artifact classifies software by genre, perspective, gameplay style, setting, or category.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Name | String | Genre name.
+| Type | _Enum_ | Classification type (SoftwareGenreType: Genre, Perspective, Gameplay, Setting, Category).
+| Translations | _FK[]_ | Translations of the genre name.
+|===
+
+=== Software genre translation
+
+This artifact contains a translated genre name.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Genre | _FK_ | Genre this translation belongs to.
+| Language | _FK_ | Language of the translation.
+| TranslatedName | String | Translated genre name.
+|===
+
+=== Genre by software
+
+This junction artifact links software with genre classifications.
+
+=== Software description
+
+This artifact contains a translated description of a software title.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Software | _FK_ | Software this description belongs to.
+| Language | _FK_ | Language of the description.
+| Text | IndexedText | Markdown version of the description.
+| Html | IndexedText | Rendered and cleaned HTML version of the description.
+|===
+
+=== Software attribute
+
+This artifact stores key-value attribute pairs associated with a software release.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| SoftwareRelease | _FK_ | Release this attribute belongs to.
+| Category | String | Attribute category.
+| Key | String | Attribute key.
+| Value | String | Attribute value.
+|===
+
+=== Software attribute string / translation
+
+These artifacts provide translated labels for software attribute keys and values.
+
+=== Software role
+
+This artifact defines roles that companies or people can have in relation to software (e.g. Developer, Publisher, Distributor).
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Name | String | Role name.
+| Translations | _FK[]_ | Translations of the role name.
+|===
+
+=== Software company role
+
+This junction artifact links companies with software and their roles.
+
+=== Software barcode
+
+This artifact stores barcode data for a software release.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| SoftwareRelease | _FK_ | Release this barcode belongs to.
+| Type | _Enum_ | Barcode type (UPC-A, EAN-13, ISBN, etc.).
+| Value | String | Barcode value.
+|===
+
+=== Software product code
+
+This artifact stores product/catalogue codes for a software release.
+
+=== Software requirement
+
+This artifact stores software dependencies and requirements.
+
+=== Software OS compatibility
+
+This artifact records operating system compatibility for a software version.
+
+=== Software cover
+
+This artifact represents cover artwork for a software release.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| SoftwareRelease | _FK_ | Release this cover belongs to.
+| Type | _Enum_ | Cover type (Front, Back, Spine, Media, etc.).
+| Caption | String | Caption text.
+| Guid | Guid | GUID identifying the image file.
+| OriginalExtension | String | Original file extension.
+| CaptionTranslations | _FK[]_ | Translations of the caption.
+|===
+
+=== Software screenshot
+
+This artifact represents a screenshot of software running on a specific platform.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Software | _FK_ | Software this screenshot belongs to.
+| Group | _FK_ | Screenshot group (optional).
+| Caption | String | Caption text.
+| Guid | Guid | GUID identifying the image file.
+| OriginalExtension | String | Original file extension.
+| CaptionTranslations | _FK[]_ | Translations of the caption.
+|===
+
+=== Software screenshot group / translation
+
+These artifacts organize screenshots into named groups with translations.
+
+=== Software promotional art
+
+This artifact represents promotional artwork for a software title.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Software | _FK_ | Software this artwork belongs to.
+| Group | _FK_ | Promotional art group (optional).
+| Guid | Guid | GUID identifying the image file.
+| OriginalExtension | String | Original file extension.
+|===
+
+=== Software promotional art group / translation
+
+These artifacts organize promotional art into named groups with translations.
+
+=== Software video
+
+This artifact represents a video associated with a software title.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Software | _FK_ | Software this video belongs to.
+| Provider | String | Video hosting provider.
+| VideoId | String | Provider-specific video identifier.
+|===
+
+=== Software versions by software release
+
+This junction artifact links software versions to compilation releases.
+
+=== Software by software release
+
+This junction artifact links software titles to compilation releases.
+
+== Reviews and Ratings
+
+=== Software critic review
+
+This artifact represents a review of software by a professional critic or publication.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Software | _FK_ | Software being reviewed.
+| Magazine | _FK_ | Publication that published the review (optional).
+| Platform | _FK_ | Platform the review applies to.
+| NormalizedScore | Double | Score normalized to a 0–100 scale.
+| OriginalScore | String | Original score as published (e.g. "8/10", "4 stars").
+| ReviewText | FullText | Full text of the review.
+| ReviewDate | Date | Date of publication.
+| ReviewUrl | Url | URL of the original review.
+|===
+
+=== Software user rating
+
+This artifact represents a user's star rating for a software title.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| User | _FK_ | User who submitted the rating.
+| Software | _FK_ | Software being rated.
+| Rating | Int | Star rating (1–5).
+|===
+
+=== Software user review
+
+This artifact represents a user's text review of a software title.
+
+=== Software user review vote
+
+This artifact records votes on user reviews (helpful/unhelpful).
+
+=== Software score
+
+This artifact stores aggregated scores for a software title (global rank, critic average, user average).
+
+=== Review report
+
+This artifact records abuse reports on reviews.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Review | _FK_ | Review being reported.
+| Reporter | _FK_ | User submitting the report.
+| Reason | _Enum_ | Reason for the report (ReviewReportReason enumeration).
+| Details | String | Additional details.
+|===
+
+== Messaging
+
+=== Conversation
+
+This artifact represents a private conversation thread between users.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Subject | String | Conversation subject.
+| IsSystemThread | Bool | If set, this is a system-generated conversation.
+| Participants | _FK[]_ | Users participating in this conversation.
+| Messages | _FK[]_ | Messages in this conversation.
+|===
+
+=== Conversation participant
+
+This junction artifact links users to conversations they participate in.
+
+=== Message
+
+This artifact represents a single message within a conversation.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Conversation | _FK_ | Conversation this message belongs to.
+| Sender | _FK_ | User who sent the message.
+| Body | FullText | Message text.
+| IsSystemAuthored | Bool | If set, this message was generated by the system.
+| ParentMessage | _FK_ | Message this is a reply to (optional).
+| States | _FK[]_ | Read/unread states per participant.
+|===
+
+=== Message state
+
+This artifact tracks the read/unread status of a message for each conversation participant.
+
+=== Message report
+
+This artifact records abuse reports on messages.
+
+== Rankings
+
+=== Ranking definition
+
+This artifact defines a ranking dimension and its computation parameters.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Dimension | String | Ranking dimension name.
+| DimensionId | Long | Identifier of the entity being ranked.
+| EntryCount | Int | Number of entries in this ranking.
+| ComputedAt | DateTime | When this ranking was last computed.
+|===
+
+=== Ranking entry
+
+This artifact stores an individual placement within a ranking.
+
+== Collections
+
+=== Collected book / document / magazine issue / software release
+
+These artifacts track which books, documents, magazine issues, and software releases a user has in their personal collection.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| User | _FK_ | User who owns this item.
+| Book / Document / MagazineIssue / SoftwareRelease | _FK_ | The collected item.
+|===
+
+== Reference Data
+
+=== ISO 3166-1 Numeric
+
+This artifact contains country codes as defined by the ISO 3166-1 standard.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Id | Short | ISO 3166-1 Numeric country code.
+| Name | String(64) | Country name.
+|===
+
+=== ISO 4217
+
+This artifact lists all currencies as defined by the ISO 4217 standard.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Code | String(3) | Alphabetic code.
+| Numeric | Int(3) | Numeric code.
+| MinorUnit | Int(1) | Number of decimal digits for minor units.
+| Name | String | Currency name.
+| Withdrawn | Date | Date the currency became historic.
+|===
+
+=== ISO 639
+
+This artifact contains language codes as defined by the ISO 639 standard.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Id | Char(3) | ISO 639-3 language code.
+| Part2B | Char(3) | ISO 639-2 Bibliographic code.
+| Part2T | Char(3) | ISO 639-2 Terminological code.
+| Part1 | Char(2) | ISO 639-1 code.
+| Scope | Char(1) | Language scope.
+| Type | Char(1) | Language type.
+| ReferenceName | String(150) | Reference name.
+| Comment | String(150) | Comment.
+|===
+
+=== UN M.49
+
+This artifact contains region codes as defined by the United Nations M.49 standard.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Code | Int | M.49 numeric code.
+| Name | String | Region name.
+| Type | _Enum_ | Region type (World, Continent, SubRegion, Country).
+|===
+
+=== Currency inflation
+
+This artifact lists known inflation rates for currencies.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Currency | _FK_ | Currency.
+| Year | Year | Year the inflation applies.
+| Inflation | Float | Inflation rate for the specified year.
+|===
+
+=== Currency pegging
+
+This artifact links pegged currencies, enabling value conversion between them.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Source | _FK_ | Source currency.
+| Destination | _FK_ | Destination currency.
+| Ratio | Float | Conversion ratio.
+| Start | Date | Date the pegging became effective.
+| End | Date | Date the pegging ended, if applicable.
+|===
+
+=== Licence
+
+This artifact lists software, document, and copyright licences.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Name | String | Licence name.
+| SPDX | String | SPDX licence identifier.
+| FsfApproved | Bool | Approved by the Free Software Foundation.
+| OsiApproved | Bool | Approved by the Open Source Initiative.
+| Link | Url | Link to the licence authority.
+| Text | Text(131072) | Full licence text.
+|===
+
+== Media and Dumps
+
+=== Media
+
+This artifact represents physical media (discs, tapes, cartridges) that compose a software release.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Title | String | Title as shown on the media.
+| Sequence | Short | Sequence number within a media set.
+| LastSequence | Short | Last sequence number in the set.
+| Type | _Enum_ | Type of media.
+| WriteOffset | Int | Compact Disc write offset in bytes.
+| Sides | Short | Number of written/stamped sides (optical discs).
+| Layers | Short | Number of layers per side (optical discs).
+| Sessions | Short | Number of recorded sessions (optical discs).
+| Tracks | Short | Number of recorded tracks (optical discs).
+| Sectors | Long | Total number of sectors.
+| Size | Long | Total size in bytes.
+| CopyProtection | String | Copy protection, if applicable.
+| PartNumber | String | Part number or SKU.
+| SerialNumber | String | Manufacturer serial number.
+| Barcode | String | Barcode value.
+| CatalogueNumber | String | Publisher catalogue number.
+| Manufacturer | String | Media manufacturer.
+| Model | String | Media model.
+| Revision | String | Media revision.
+| Firmware | String | Media firmware version.
+| PhysicalBlockSize | Int | Physical block size when constant.
+| LogicalBlockSize | Int | Logical block size when constant.
+| StorageInterface | _Enum_ | Interface type (for non-removable media).
+| TableOfContents | _FK[]_ | Optical disc TOC entries.
+| Dumps | _FK[]_ | Known dumps.
+| Partitions | _FK[]_ | Logical partitions.
+| VariableBlockSizes | _FK[]_ | Block sizes per extent.
+|===
+
+=== Dump, dump hardware, extent, media dump, media dump image, media dump track image, media dump file image, media dump subchannel image, media tag dump
+
+These artifacts represent the dump ecosystem: the act of reading physical media, the hardware and software used, the resulting image files (full disc, per-track, per-file, subchannel), and media tags. Their field structures remain as specified in the original architecture document, with hash fields using `Binary(16)` for MD5, `Binary(20)` for SHA1, `Binary(32)` for SHA2-256, and `Binary(64)` for SHA3-512.
+
+=== File
+
+This artifact uniquely identifies a computer file by its content hashes.
+
+[cols="1,1,3", options="header"]
+|===
+| Field name | Field type | Description
+
+| Size | Long | Size in bytes.
+| Md5 | Binary(16) | MD5 hash.
+| Sha1 | Binary(20) | SHA1 hash.
+| Sha256 | Binary(32) | SHA2-256 hash.
+| Sha3 | Binary(64) | SHA3-512 hash.
+| Spamsum | String | SpamSum fuzzy hash.
+| Mime | String | MIME type.
+| Magic | String | libmagic identification string.
+| AccoustId | String | AcoustID for audio content.
+| Infected | Bool | If set, the file contains malware.
+| Malware | String | Malware name.
+| Hack | Bool | If set, the file has been modified (cracked, keygen, etc.).
+| HackGroup | String | Name of the modifying group.
+|===
+
+=== Media file, standalone file, file data stream, filesystem, logical partition, table of contents, variable block size, mastering texts by media
+
+These artifacts retain their structures from the original architecture document. Media files and standalone files extend the `BaseFile` base class. Standalone files are linked to a `SoftwareRelease` rather than to a media dump.
+
+== System and Administration
+
+=== Suggestion
+
+This artifact stores proposed modifications submitted by users for review.
+
+=== News
+
+This artifact represents news items and update notifications, classified by `NewsType`.
+
+=== Invitation code
+
+This artifact manages registration invitation codes for controlled account creation.
+
+=== Browser test
+
+This artifact stores browser compatibility test results.
+
+=== Search entry
+
+This artifact maintains a denormalized full-text search index, classified by `SearchEntityType`.
+
+=== Audit
+
+This artifact records change audit trails, storing the user, affected table, and old/new values for each modification.
+
+=== Log
+
+This artifact stores system log entries.
+
+=== Money donation
+
+This artifact tracks financial donations to the project.
+
+== Import Staging Tables
+
+The following artifacts are used exclusively by the data import pipelines for staging imported data before promotion to core domain entities. They are described in summary form, as they represent internal ETL state rather than public-facing domain entities.
+
+=== MobyGames staging
+
+* `MobyGamesDiscoveredGame`: Stores discovered game metadata with import status.
+* `MobyGamesImportState`: Tracks overall import progress and configuration.
+* `MobyGamesCoverDownloadState`, `MobyGamesPromoArtDownloadState`, `MobyGamesScreenshotDownloadState`: Track per-asset download progress.
+* `MobyGamesVideoImportState`, `MobyGamesReviewImportState`: Track video and review import progress.
+* `MobyGamesRejection`: Records games explicitly rejected from import.
+
+=== WinWorld staging
+
+* `WwpcSoftware`: Stores crawled software entries from WinWorldPC.
+* `WwpcVersion`: Version information for WinWorld software.
+* `WwpcCategory`: WinWorld category classifications.
+* `WwpcScreenshot`: Screenshots from WinWorld entries.
+
+=== OldDos staging
+
+* `OldDosSoftware`: Stores crawled software entries from old-dos.ru.
+* `OldDosVersion`: Version information.
+* `OldDosCategory`: Category classifications.
+* `OldDosOsPlatformMap`: Maps old-dos.ru OS/platform identifiers to Marechai platforms.

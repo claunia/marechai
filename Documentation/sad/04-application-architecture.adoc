@@ -1,0 +1,149 @@
+= Application Architecture
+
+This section describes the cross-cutting architectural concerns that span the Marechai solution, including the multi-tier architecture, authentication, database access, caching, background services, image processing, and search.
+
+== Multi-Tier Architecture
+
+The Marechai system follows a three-tier architecture:
+
+* *API tier* (Marechai.Server): Stateless ASP.NET Core Web API providing all data access and business logic through RESTful JSON endpoints. This is the only tier that communicates with the database.
+* *Web client tier* (Marechai, Blazor Server): Blazor Server application providing public browsing and administrative interfaces. Communicates with the API tier via the Kiota-generated HTTP client over HTTP.
+* *Cross-platform client tier* (Marechai.App, Uno Platform): Native and WebAssembly application providing browsing interfaces. Communicates with the API tier via the same Kiota-generated HTTP client.
+
+Both client tiers are functionally equivalent consumers of the API tier. They share the same Kiota-generated client library (`Marechai.ApiClient`) and the same DTO/enum definitions (`Marechai.Data`), ensuring consistent data handling across platforms.
+
+== Authentication and Authorization
+
+=== Identity Store
+
+User accounts are managed by ASP.NET Core Identity, backed by Entity Framework Core with the MariaDB/MySQL database. The identity store manages user credentials, email confirmation, two-factor authentication (TOTP and recovery codes), and account lockout policies.
+
+Account creation requires a confirmed email address (`SignIn.RequireConfirmedAccount = true`). An invitation code system provides controlled registration when open registration is disabled.
+
+=== JWT Bearer Authentication
+
+All API endpoints are secured with JWT Bearer tokens. The `TokenService` generates signed tokens containing the user's identity and role claims. Tokens are validated on each request using configured issuer, audience, lifetime, and signing key parameters from `appsettings.json`.
+
+Client applications store the JWT token locally (via `ProtectedLocalStorage` in Blazor, or secure storage in Uno Platform) and inject it into API requests via custom HTTP message handlers (`HttpAuthHandler` in Uno Platform, `TokenProvider` in Blazor).
+
+=== Role-Based Access Control
+
+The system implements hierarchical role-based access control with ten defined roles (detailed in the Applications section). Roles are stored as ASP.NET Identity role claims and evaluated by the API controllers using `[Authorize(Roles = "...")]` attributes.
+
+Error responses for authentication failures use `application/problem+json` (RFC 9457) format with custom `OnChallenge` and `OnForbidden` handlers.
+
+== Database Layer
+
+=== Entity Framework Core
+
+The data access layer uses Entity Framework Core 9.x with the Pomelo MySQL provider (9.0.0) for MariaDB/MySQL connectivity. Key configuration choices:
+
+* *Lazy loading proxies* are enabled, allowing navigation properties to be loaded on demand without explicit `Include()` calls.
+* *`IDbContextFactory<MarechaiContext>`* is used instead of direct `DbContext` injection, enabling concurrent database access from multiple threads (required for parallel query execution in controllers and background services).
+* *Single-query mode* is the default; split queries are opted into per-query where N+1 prevention provides a measurable benefit.
+* *Custom interceptors* (`AddMarechaiInterceptors`) provide audit logging and soft-delete support.
+
+=== Migration Strategy
+
+Entity Framework Core migrations are stored in `Marechai.Database/Migrations/`. The Marechai.Server application automatically applies pending migrations on startup during the initialization phase, eliminating the need for separate `dotnet ef database update` commands in development.
+
+Idempotent data seeding is performed within migrations using `INSERT ... WHERE NOT EXISTS` patterns, ensuring that repeated migration runs do not produce duplicate-key errors.
+
+=== Seeders
+
+Reference data is populated at application startup via dedicated seeder classes:
+
+* ISO 639 language codes
+* ISO 4217 currency codes
+* UN M.49 region codes
+* Document roles (from the EPUB specification)
+* Software roles
+* Software licences
+* ASP.NET Identity roles
+* System users (including the well-known `system` user for automated operations)
+
+== Caching Strategy
+
+The system employs a multi-level caching strategy:
+
+=== In-Memory Cache
+
+`IMemoryCache` is used for reference data that changes infrequently:
+
+* `ReferenceDataCache` in the Blazor application caches lookup tables (countries, languages, currencies, licences, document roles, software roles) to reduce API round-trips.
+* `SoftwareGenreTranslationCache` and `SoftwareAttributeTranslationCache` in the server are singletons pre-loaded at startup and updated by background translation workers.
+* Individual controllers (e.g. `LicensesController`, `Iso4217Controller`, `MachineFamiliesController`) cache frequently-accessed reference data.
+
+=== Output Cache
+
+Server-side output caching with a five-minute time-to-live is applied to high-traffic software endpoints, reducing database load for repeated identical queries.
+
+=== Response Compression
+
+Response compression is enabled with Brotli (primary) and Gzip (fallback) at `CompressionLevel.Fastest`, reducing wire payload sizes for JSON responses, CSS resources, and other compressible content.
+
+== Background Services
+
+The Marechai.Server application hosts several long-running background services implemented as `IHostedService` or `BackgroundService`:
+
+=== Translation Workers
+
+Two coordinated background workers process translations:
+
+* `TranslationWorker`: Iterates over `ITranslationProvider` implementations to translate lookup-table strings (genre names, attribute labels, cover captions, promo art group names, screenshot captions, software role names). Processes translations serially to respect AI API rate limits.
+* `DescriptionTranslationWorker`: Runs during the translation worker's sleep window, translating longer markdown descriptions and synopses for all entity types (machines, processors, GPUs, sound synthesizers, companies, people, books, magazines, documents, software).
+
+The two workers coordinate via `TranslationPhaseCoordinator`, a handshake protocol that ensures no concurrent API calls to the translation backend. The coordinator implements an enter-slumber/wait-for-slumber/exit-slumber cycle with a five-minute timeout cap.
+
+=== Account Management
+
+* `AccountDeletionPurgeService`: Periodically purges data for accounts that have requested deletion, ensuring GDPR compliance.
+
+=== Image Management
+
+* `PendingImagePurgeService`: Cleans up abandoned batch upload staging files every twelve hours.
+* `BatchUploadJobReaperService`: Monitors batch upload jobs and cleans up stale entries every two minutes.
+* `AvatarFileCleaner`: Removes orphaned avatar image files.
+
+=== Messaging and Notifications
+
+* `MessageNotificationWorker`: Processes the `MessageNotificationQueue` to deliver notifications for new messages in user conversations.
+
+=== Rankings
+
+* A ranking computation engine periodically recalculates software rankings and scores based on critic reviews, user ratings, and collection statistics.
+
+== Image Processing
+
+=== SVG Rendering
+
+Company logos are stored as SVG files and rendered at runtime using Svg.Skia (built on SkiaSharp). The server renders SVG logos to raster formats on demand for clients that do not support SVG natively. SkiaSharp.NativeAssets.Linux is explicitly included for headless Linux deployment.
+
+=== Photo Processing
+
+Uploaded photographs are processed through ImageMagick (required as an external dependency in PATH) for format conversion. The system supports HEIF, WebP, and AVIF output formats alongside traditional JPEG and PNG. EXIF metadata is extracted using MetadataExtractor and stored alongside the photo entity.
+
+=== Batch Upload Workflow
+
+Administrative photo uploads follow a staging workflow:
+
+. Images are uploaded to a pending staging area.
+. An administrator reviews the pending uploads and sets metadata (captions, licences, associations).
+. A batch commit request processes all staged images, converting formats and persisting final records.
+. The `BatchUploadJobStore` tracks job status; the `BatchUploadJobReaperService` cleans up completed or abandoned jobs.
+
+== Localization
+
+The system supports localization at two levels:
+
+=== UI Localization
+
+Both the Blazor and Uno Platform applications use `Microsoft.Extensions.Localization` with `.resx` resource files. The Blazor application supports six UI cultures: en-US (default), Spanish, French, Italian, German, and Dutch.
+
+=== Content Localization
+
+Database content (descriptions, synopses, genre names, attribute labels) is translated into eight languages via the AI-powered translation pipeline described in the AI Content and Translation section. Translated content is stored in dedicated translation entities (e.g. `MachineDescription`, `SoftwareGenreTranslation`) with a language foreign key.
+
+== Search
+
+The `FuzzySearchService` provides full-text fuzzy search across all major entity types. Search entries are maintained in a denormalized `SearchEntry` table indexed by `SearchEntityType`. The search service supports partial matching and is designed for real-time query-as-you-type scenarios in the client applications.

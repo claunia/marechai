@@ -1,0 +1,202 @@
+= Solution Structure
+
+The Marechai solution comprises eleven projects organized in a layered architecture. This section describes each project, its responsibilities, and the dependency relationships between them.
+
+== Solution Overview
+
+The solution is defined in `Marechai.slnx` and targets .NET 10.0 across all projects. Central package management is enforced via `Directory.Packages.props`, and common MSBuild properties are shared through `Directory.Build.props`.
+
+[source]
+----
+Marechai.slnx
+├── Marechai.Server/          ASP.NET Core Web API backend
+├── Marechai/                 Blazor Server web application
+├── Marechai.App/             Uno Platform cross-platform client
+├── Marechai.Database/        Entity Framework Core data access layer
+├── Marechai.Data/            Shared DTOs and enumerations
+├── Marechai.ApiClient/       Kiota-generated API client
+├── Marechai.Translation/     AI-powered translation service
+├── Marechai.Email/           Email delivery service
+├── Marechai.MobyGames/       MobyGames data importer
+├── Marechai.OldDos/          old-dos.ru data importer
+└── Marechai.WinWorld/        WinWorldPC data importer
+----
+
+== Project Descriptions
+
+=== Marechai.Server
+
+The ASP.NET Core Web API backend serves as the authoritative data layer for all client applications. It exposes RESTful JSON endpoints organized across 98 controllers, implements JWT Bearer authentication with ASP.NET Core Identity, and generates an OpenAPI specification document at runtime for client code generation.
+
+Key responsibilities:
+
+* RESTful CRUD operations for all domain entities
+* JWT token generation, validation, and refresh
+* OpenAPI document generation (served at `/openapi/v1.json`)
+* Entity Framework Core database access via `IDbContextFactory<MarechaiContext>`
+* Background services: translation workers, account deletion purge, pending image cleanup, batch upload management, message notifications, ranking computation
+* Response compression (Brotli and Gzip) and output caching
+* Image processing: SVG rendering via Svg.Skia, format conversion via ImageMagick
+* Email integration via the Marechai.Email project
+
+=== Marechai (Blazor Server)
+
+The Blazor Server web application provides both public artifact browsing and administrative interfaces. It communicates with the backend exclusively through the Kiota-generated API client, the same way the Uno Platform application does.
+
+Key responsibilities:
+
+* Public artifact browsing pages organized by entity type (machines, software, companies, books, magazines, documents, processors, GPUs, sound synthesizers, people)
+* Administrative interfaces for data entry, modification, batch photo uploads, and suggestion review
+* MudBlazor Material Design component library for UI rendering
+* Markdown editing (PSC.Blazor.Components.MarkdownEditor), diff visualization (DiffPlex), and HTML sanitization (HtmlSanitizer)
+* JWT authentication state management via `JwtAuthenticationStateProvider` and `ProtectedLocalStorage`
+* Reference data caching via `IMemoryCache`
+* Localization support for six UI languages (en-US, es, fr, it, de, nl) via `.resx` resource files
+
+=== Marechai.App (Uno Platform)
+
+The Uno Platform application provides a cross-platform client targeting Desktop (Windows, macOS, Linux), WebAssembly, Android, and iOS from a single codebase.
+
+Key responsibilities:
+
+* MVVM architecture with 46 ViewModels and 78 XAML pages, managed via Prism.DryIoc
+* API consumption through the same Kiota-generated client used by the Blazor application
+* SkiaSharp rendering with SVG logo support via Svg.Skia
+* Singleton image caches (FlagCache, LogoCache, MachinePhotoCache, GpuPhotoCache, ProcessorPhotoCache, BookCoverCache, SoftwareScreenshotCache, SoundSynthPhotoCache) for offline-friendly performance
+* JWT token management with automatic Bearer header injection via `HttpAuthHandler`
+* Multi-target builds: `net10.0-desktop`, `net10.0-browserwasm`, `net10.0-android`, `net10.0-ios`
+* UnoFeatures integration: Lottie animations, Toolkit, Logging (Serilog), Configuration, HttpKiota, Serialization, Localization, ThemeService, Storage
+
+=== Marechai.Database
+
+The Entity Framework Core data access layer encapsulates all database interaction, migrations, seeding, and schema management.
+
+Key responsibilities:
+
+* Database context (`MarechaiContext`) with 200+ `DbSet<T>` properties
+* Pomelo MySQL provider (9.0.0) for MariaDB/MySQL connectivity
+* Lazy loading proxies for navigation property resolution
+* Migration history in `Migrations/` with automatic application on server startup
+* Seeders for reference data: ISO 639 language codes, ISO 4217 currency codes, UN M.49 region codes, document roles, software roles, licences, ASP.NET Identity roles, and system users
+* Operations and update logic in `Operations/`
+* Legacy schema version tracking (database version 24, Entity Framework version 1984)
+
+=== Marechai.Data
+
+The shared library containing data transfer objects (DTOs) and enumerations used across all projects. This project has no infrastructure dependencies, making it suitable for inclusion in both server and client applications.
+
+Key contents:
+
+* 192 DTO classes following the `{Entity}Dto` naming convention, with JSON property naming via `[JsonPropertyName]`
+* 30+ enumeration types for domain classification (machine types, software kinds, memory types, storage types, etc.)
+* Validation attributes (`[Required]`) for OpenAPI schema generation
+* Reference to `Aaru.CommonTypes` for computing history metadata types shared with the Aaru project
+
+=== Marechai.ApiClient
+
+The Kiota-generated strongly-typed HTTP client providing type-safe access to all Marechai.Server API endpoints.
+
+Key characteristics:
+
+* Auto-generated from the OpenAPI specification via Microsoft Kiota
+* Endpoint classes organized by resource (Admin/, Auth/, Books/, Companies/, Computers/, Software/, etc.)
+* Auto-generated model classes in `Models/` matching server response shapes
+* Hand-maintained files coexisting with generated code: `Marechai.ApiClient.csproj`, `CompositeSerializationWriterFactory.cs`, and select custom `RequestBuilder` implementations
+* The `kiota-lock.json` file tracks generation state to enable incremental updates
+
+=== Marechai.Translation
+
+The AI-powered translation service providing automated localization of database content.
+
+Key responsibilities:
+
+* `TranslationService` singleton with dual-backend support: OpenAI (primary) and NLLB (fallback)
+* `ITranslationProvider` plugin interface for per-entity-type translation tables
+* Support for eight target languages: English, Spanish, German, French, Italian, Dutch, Latin, and Portuguese
+* JSON schema enforcement for structured translation responses from LLMs
+* Domain context parameter for disambiguation (e.g. distinguishing "Mouse" as a device versus an animal)
+
+=== Marechai.Email
+
+The email delivery service providing transactional email capabilities.
+
+Key responsibilities:
+
+* SMTP delivery via MailKit
+* Razor template rendering via RazorLight for email body composition
+* Development mode fallback: when SMTP is not configured, rendered HTML is logged to console instead of sent
+* Email composers for welcome messages, account confirmation, two-factor authentication codes, and password reset
+
+=== Marechai.MobyGames
+
+The MobyGames data import tool, implemented as a CLI application that crawls the MobyGames website and imports software data into the Marechai database.
+
+Key components:
+
+* Browser automation via PuppeteerSharp for JavaScript-rendered content
+* HTML parsing via HtmlAgilityPack with strategy-pattern parsers for different page types (Main, Credits, Specs, Ratings, Releases, CoverArt, Screenshots, PromoArt, Reviews tabs)
+* Entity matchers (CompanyMatcher, PersonMatcher, PlatformMatcher, CountryMatcher) using Soundex fuzzy matching for deduplication
+* Multi-step ETL pipeline: crawl → parse → match → download media → convert images → database upsert
+* State tracking models for import progress, media downloads, and rejection management
+
+=== Marechai.OldDos
+
+The old-dos.ru data import tool, implemented as a CLI application that crawls the Russian abandonware catalogue and enriches imported data using AI.
+
+Key components:
+
+* HTML scraper for old-dos.ru with rate-limited HTTP client
+* Four-step AI enrichment pipeline: crawl → translate (Russian to English via OpenAI) → describe (generate museum-grade description) → categorize (assign Marechai SoftwareGenre categories)
+* State machine tracking: Crawled → Translated → Described → ReadyForReview
+* Promotion service (`OldDosPromotionService`) for converting staging rows to core domain entities
+
+=== Marechai.WinWorld
+
+The WinWorldPC data import tool, implemented as a CLI application that crawls the WinWorldPC abandonware library and enriches imported data using AI.
+
+Key components:
+
+* HTML scraper with section-based crawling (applications, development tools, system software)
+* Three-step AI enrichment pipeline: crawl → describe → categorize
+* Promotion service (`WwpcPromotionService`) for staging-to-production conversion
+
+== Inter-Project Dependencies
+
+The following diagram describes the dependency relationships between projects:
+
+[source]
+----
+Marechai.App ──────────► Marechai.ApiClient ──(generated from)──► Marechai.Server
+                                                                      │
+Marechai (Blazor) ─────► Marechai.ApiClient                           │
+                                                                      ├──► Marechai.Database
+                                                                      ├──► Marechai.Data
+                                                                      ├──► Marechai.Email
+                                                                      └──► Marechai.Translation
+
+Marechai.Database ─────► Marechai.Data
+
+Marechai.MobyGames ────► Marechai.Database
+Marechai.OldDos ───────► Marechai.Database
+Marechai.WinWorld ─────► Marechai.Database
+----
+
+Both the Blazor and Uno Platform applications consume the same Kiota-generated API client, ensuring consistent API interaction patterns. The Marechai.Server project is the sole consumer of the database, translation, and email projects. The import tools access the database directly, bypassing the API layer, as they perform bulk operations that benefit from direct Entity Framework Core access.
+
+== Sister Projects
+
+=== Aaru
+
+Aaru is an open-source application designed as a complete management tool for media dumps. It can create dumps from physical media, analyse, convert, and hash them, and in many cases list the files contained in such dumps.
+
+It is, as of the writing of this document, the only known implementation of several historic filesystems (including the Apple Lisa filesystem) outside their original operating systems, and was used by the Computer History Museum to recover the historic source code of the Lisa operating system.
+
+Marechai shares the `Aaru.CommonTypes` library with Aaru for computing history metadata types, ensuring consistency between the two projects.
+
+It is currently hosted at https://www.github.com/aaru-dps[aaru-dps on GitHub].
+
+=== CICMMetadata
+
+The CICM Metadata sidecar specification defines a file format for storing metadata about digital artifacts. Such sidecar files can accompany copies of media dumps and contain information about the artifact, its contents, and how it was obtained.
+
+It is currently hosted at https://www.github.com/claunia/CICMMetadata[CICMMetadata on GitHub] and supported for creation of media dumps by Aaru.

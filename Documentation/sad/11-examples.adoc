@@ -1,0 +1,5 @@
+= Examples
+
+The purpose of this section is to give real-life examples of the artifacts described in the previous sections.
+
+NOTE: To be filled.

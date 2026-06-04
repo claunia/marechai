@@ -1,0 +1,41 @@
+= Architectural Goals and Constraints
+
+There are several key requirements and system constraints that have a significant bearing on the architecture. They are:
+
+. *Open-source licence.* All systems shall be released under an OSI-certified open-source licence. Development may be conducted privately until the software reaches a level of maturity sufficient for public use without encountering known issues or missing features already in the backlog.
+
+. *API-first backend.* The backend shall be implemented as a stateless RESTful Web API using the C# language on .NET 10.0, designed to run in a Linux environment or Docker container. All client applications shall consume this API rather than accessing the database directly.
+
+. *Cross-platform client.* A cross-platform client application shall be implemented in C# using the Uno Platform framework, targeting Desktop (Windows, macOS, Linux), WebAssembly, Android, and iOS from a single codebase.
+
+. *Web application.* A Blazor Server web application shall provide both public browsing and administrative interfaces. The user interface shall use MudBlazor, a Material Design component library for Blazor, ensuring a modern and consistent look and feel without relying on heavy JavaScript frameworks.
+
+. *User agnosticism.* All systems shall be designed to be user-agnostic, enabling deployment by any museum, preservation society, or private collector.
+
+. *AI-assisted content generation.* The system shall leverage large language models (LLMs) to generate museum-grade, factual descriptions for computing history entities (companies, machines, and software), using carefully crafted prompt templates that enforce verifiability and prohibit speculation.
+
+. *Automated multi-language translation.* The system shall automatically translate database content (descriptions, synopses, genre names, attribute labels) into multiple target languages using AI translation services, with a fallback chain from commercial LLMs to open-source neural machine translation models.
+
+. *External data seeding.* The system shall support importing data from established computing history databases (MobyGames, WinWorldPC, old-dos.ru) to bootstrap catalogue coverage, incorporating AI-driven enrichment steps (translation, description generation, categorization) as part of the import pipeline.
+
+. *JWT-based authentication.* Authentication shall use JSON Web Tokens (JWT) to enable stateless, token-based access control suitable for consumption by multiple client applications simultaneously.
+
+== Framework Selection Rationale
+
+The selection of frameworks and libraries was guided by the following considerations:
+
+=== MudBlazor for the Blazor Web Application
+
+MudBlazor was chosen over alternative Blazor component libraries (including Blazorise, which was used in earlier iterations) for its comprehensive Material Design implementation, rich component catalogue (data grids, dialogs, snackbars, navigation, forms), active community, and consistent API design. Material Design provides a well-established visual language suitable for both public-facing and administrative interfaces.
+
+=== Uno Platform for Cross-Platform Development
+
+Uno Platform was selected over .NET MAUI for the cross-platform client application. Key factors in this decision were Uno Platform's broader target support (including WebAssembly and Linux Desktop, which MAUI does not natively support), its WinUI-based XAML dialect providing a familiar development experience, and its mature integration with the Prism MVVM framework. The single-project structure with conditional compilation via `UnoFeatures` simplifies maintenance across targets.
+
+=== Kiota for API Client Generation
+
+Microsoft Kiota was chosen over alternative API client generators (such as NSwag or Refit) for its first-party Microsoft support, native OpenAPI compatibility, built-in support for deserializing `ProblemDetails` error responses (RFC 9457), and its ability to generate strongly-typed clients that closely mirror the API surface. The generated client coexists with hand-maintained extension files, enabling customization without code generation conflicts.
+
+=== Prism.DryIoc for MVVM
+
+Prism with the DryIoc dependency injection container was selected for the Uno Platform application's MVVM architecture. Prism provides a proven navigation framework, view-model locator, and dependency injection patterns specifically designed for WinUI and Uno Platform applications. DryIoc was chosen as the container for its performance characteristics and compatibility with the Uno Platform runtime.

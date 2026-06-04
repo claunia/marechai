@@ -1,0 +1,770 @@
+= Enumerations
+
+The purpose of this section is to describe the various enumerations that classify the artifacts stored in the database.
+
+== Status type
+
+This enumeration lists the status an owned machine can have.
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| Unknown | The status of the owned machine is unknown.
+| TestedGood | The last time the owned machine was tested it was working correctly.
+| NotTested | The owned machine has never been tested.
+| TestedBad | The last time the owned machine was tested it presented problems.
+|===
+
+== Company status
+
+This enumeration lists the status of a company.
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| Unknown | The status of the company is unknown or not set.
+| Active | The company exists and is active.
+| Sold | The company was sold, totally or partially.
+| Merged | The company merged with another to form a third company.
+| Bankrupt | The company legally filed for bankruptcy.
+| Defunct | The company ceased operations for reasons different from bankruptcy.
+| Renamed | The company was renamed, possibly with a change of direction.
+|===
+
+== Machine type
+
+This enumeration lists the types of machines.
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| Unknown | Unknown machine type.
+| Computer | Computer.
+| Console | Videogame console.
+| Smartphone | Personal digital assistant with integrated phone capabilities.
+| Pda | Personal digital assistant.
+| Tablet | Tablet computer.
+|===
+
+== Software kind
+
+This enumeration classifies the kind of software.
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| Software | Generic software.
+| OperatingSystem | Operating system.
+| Game | Videogame.
+| Dlc | DLC or add-on.
+| SystemSoftware | System software (drivers, system utilities, shells).
+| Application | End-user application (productivity, multimedia, etc.).
+| DevelopmentSoftware | Development software (compilers, IDEs, SDKs).
+| ServerSoftware | Server software (web, database, file, mail servers).
+| Middleware | Middleware (frameworks, runtimes, integration layers).
+| Firmware | Firmware (low-level device-resident software).
+| EmbeddedSoftware | Embedded software (device-specific application software).
+|===
+
+== Software genre type
+
+This enumeration classifies the type of genre classification applied to software.
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| Genre | Primary genre classification (e.g. Action, Adventure, Strategy).
+| Perspective | Visual perspective (e.g. First-person, Top-down, Isometric).
+| Gameplay | Gameplay style (e.g. Turn-based, Real-time, Puzzle).
+| Setting | Thematic setting (e.g. Sci-Fi, Fantasy, Historical).
+| Category | Broad functional category (e.g. Productivity, Education, Utility).
+|===
+
+== Add-on orphan reason
+
+This enumeration classifies why a DLC/add-on software entry appears on the orphan add-ons administrative page.
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| Linked | The DLC is correctly linked to its base software.
+| NoBase | The DLC has no base software set.
+| SelfReference | The DLC's base software identifier points to itself.
+| DanglingFk | The DLC's base software identifier points to a non-existent record.
+| ChainedDlc | The DLC's base software is itself a DLC (forbidden chain).
+| NameMismatch | The DLC's normalised base software name does not match its own.
+| MisclassifiedAsGame | The record is classified as Game but carries a "DLC / add-on" genre.
+|===
+
+== Memory type
+
+This enumeration lists the types of primary storage.
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| Unknown | The type of the memory is unknown or not set.
+| DRAM | Dynamic RAM.
+| FPM | Fast page mode DRAM.
+| EDO | Extended Data Out DRAM.
+| VRAM | Dual-ported video DRAM.
+| SDRAM | Synchronous DRAM.
+| DDR | DDR SDRAM.
+| DDR2 | DDR SDRAM v2.
+| DDR3 | DDR SDRAM v3.
+| DDR4 | DDR SDRAM v4.
+| RDRAM | Rambus DRAM.
+| SGRAM | Synchronous Graphics RAM.
+| PSRAM | Pseudostatic RAM.
+| SRAM | Static RAM.
+| ROM | Read-only memory.
+| PROM | Programmable ROM.
+| EPROM | Erasable and programmable ROM.
+| EEPROM | Electronically-erasable and programmable ROM.
+| NAND | NAND flash.
+| NOR | NOR flash.
+| ReRAM | Resistive RAM.
+| CBRAM | Conductive-bridging RAM.
+| DWM | Domain-wall memory.
+| NanoRAM | Nano-RAM.
+| Millipede | Millipede memory.
+| FJG | Floating Junction Gate RAM.
+| PunchedPaper | Punched paper.
+| DrumMemory | Drum memory.
+| MagneticCore | Magnetic-core.
+| PlatedWire | Plated wire memory.
+| CoreRope | Core rope memory.
+| ThinFilm | Thin-film memory.
+| Twistor | Twistor memory.
+| Bubble | Bubble memory.
+|===
+
+== Memory usage
+
+This enumeration lists the kind of uses for primary storage.
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| Unknown | The use of the memory is unknown or not set.
+| Bootloader | Contains a boot loader (usually read-only) whose only function is to load the next memory (firmware or cartridge).
+| Firmware | Contains hardware initialisation code, some (or many) low-level calls, and code to load software from secondary storage.
+| Work | Memory used by software running on the machine.
+| Video | Memory used by the graphics processing units.
+| Sound | Memory used by the sound synthesizers.
+| Wavetable | Memory used to store wave tables.
+| StorageBuffer | Memory used as a buffer from secondary storage.
+| Save | Memory used to save arbitrary data and possibly also configuration.
+| Configuration | Memory used to save only configuration.
+| Unified | Memory accessible directly to any of the processors in the machine, including graphical processing units and sound synthesizers.
+|===
+
+== Storage type
+
+This enumeration lists the types of secondary storage.
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| Empty | The interface is empty.
+| Unknown | The type of storage is unknown or not set.
+| MagnetoOptical | Unknown type of magneto-optical drive.
+| HardDisk | Generic hard disk drive.
+| Microdrive | IBM/Hitachi Microdrive.
+| ZonedHardDisk | Generic zoned hard disk drive.
+| FlashDrive | Generic flash drive.
+| CompactDisc | Compact Disc.
+| DDCD | Double-Density Compact Disc.
+| PD650 | PD650.
+| DVD | DVD.
+| DVDRAM | DVD-RAM.
+| HDDVDROM | HD DVD.
+| Bluray | Blu-ray.
+| EVD | Enhanced Versatile Disc.
+| FVD | Forward Versatile Disc.
+| HVD | Holographic Versatile Disc.
+| CBHD | China Blue High Definition.
+| HDVMD | High Definition Versatile Multilayer Disc.
+| VCDHD | Versatile Compact Disc High Density.
+| SVOD | Stacked Volumetric Optical Disc.
+| FDDVD | Five Dimensional disc.
+| LD | LaserDisc.
+| LDROM | LaserDisc with digital data (Pioneer variation).
+| LDROM2 | LaserDisc for LD-ROM2 PAC.
+| LVROM | LaserDisc with digital data (Philips variation).
+| MegaLD | LaserDisc for Mega LD PAC.
+| MD | MiniDisc.
+| MDData | MiniDisc Data.
+| MDData2 | MiniDisc Data 2.
+| HiMD | Hi-MD.
+| UDO | Ultra Density Optical.
+| UDO2 | Ultra Density Optical 2.
+| PlayStationMemoryCard | PlayStation memory card.
+| PlayStationMemoryCard2 | PlayStation 2 memory card.
+| PS1CD | PlayStation Compact Disc.
+| PS2CD | PlayStation 2 Compact Disc.
+| PS2DVD | PlayStation 2 DVD.
+| PS3DVD | PlayStation 3 DVD.
+| PS3BD | PlayStation 3 Blu-ray.
+| PS4BD | PlayStation 4 Blu-ray.
+| UMD | PlayStation Portable Universal Media Disc.
+| XGD | Xbox Game Disc.
+| XGD2 | Xbox 360 Game Disc.
+| XGD3 | Xbox 360 Game Disc (later variant).
+| XGD4 | Xbox One Game Disc.
+| MEGACD | Sega MegaCD (Sega CD) Compact Disc.
+| SATURNCD | Sega Saturn Compact Disc.
+| GDROM | Sega/Yamaha GD-ROM.
+| SegaCard | Sega game card.
+| HuCard | Hudson Soft game card.
+| SuperCDROM2 | Super CD-ROM2.
+| JaguarCD | Jaguar Compact Disc.
+| ThreeDO | 3DO Compact Disc.
+| PCFX | NEC PC-FX Compact Disc.
+| NeoGeoCD | SNK Neo-Geo Compact Disc.
+| Floppy | 8" floppy.
+| Minifloppy | 5¼" floppy.
+| Microfloppy | 3½" floppy.
+| AppleFileWare | Apple FileWare floppy.
+| Bernoulli | Iomega Bernoulli.
+| Bernoulli2 | Iomega Bernoulli (2nd generation).
+| Ditto | Iomega Ditto.
+| DittoMax | Iomega Ditto MAX.
+| Jaz | Iomega JAZ.
+| Jaz2 | Iomega JAZ (2nd generation).
+| PocketZip | Iomega Clik! (PocketZip).
+| REV120 | Iomega REV (120 GB variant).
+| REV70 | Iomega REV (70 GB variant).
+| REV35 | Iomega REV (35 GB variant).
+| ZIP100 | Iomega ZIP (100 MB variant).
+| ZIP250 | Iomega ZIP (250 MB variant).
+| ZIP750 | Iomega ZIP (750 MB variant).
+| CompactCassette | Philips Compact Cassette.
+| Data8 | Data8 cassette.
+| MiniDV | MiniDV cassette.
+| CFast | CFast memory card.
+| CompactFlash | CompactFlash memory card.
+| CompactFlashType2 | CompactFlash memory card (type 2).
+| EZ135 | SyQuest EZ135.
+| EZ230 | SyQuest EZ230.
+| Quest | SyQuest Quest.
+| SparQ | SyQuest SparQ.
+| SQ100–SQ2000 | SyQuest SQ series (100, 200, 300, 310, 327, 400, 800, 1500, 2000).
+| SyJet | SyQuest SyJet.
+| FamicomGamePak | Nintendo Famicom Game Pak.
+| GameBoyAdvanceGamePak | Nintendo Game Boy Advance Game Pak.
+| GameBoyGamePak | Nintendo Game Boy Game Pak.
+| GOD | Nintendo Gamecube Optical Disc.
+| N64DD | Nintendo 64 Disk Drive.
+| N64GamePak | Nintendo 64 Game Pak.
+| NESGamePak | Nintendo Entertainment System Game Pak.
+| Nintendo3DSGameCard | Nintendo 3DS Game Card.
+| NintendoDiskCard | Nintendo Famicom Disk Card.
+| NintendoDSGameCard | Nintendo DS Game Card.
+| NintendoDSiGameCard | Nintendo DSi Game Card.
+| SNESGamePak | Super Nintendo Entertainment System Game Pak.
+| SNESGamePakUS | Super Nintendo Entertainment System Game Pak (USA variant).
+| WOD | Nintendo Wii Optical Disc.
+| WUOD | Nintendo Wii U Optical Disc.
+| SwitchGameCard | Nintendo Switch Game Card.
+| MemoryStick | Memory Stick.
+| MemoryStickDuo | Memory Stick Duo.
+| MemoryStickMicro | Memory Stick Micro.
+| MemoryStickPro | Memory Stick Pro.
+| MemoryStickProDuo | Memory Stick Pro Duo.
+| microSD | microSD memory card.
+| miniSD | miniSD memory card.
+| SecureDigital | SecureDigital memory card.
+| MMC | MultiMediaCard.
+| MMCmicro | MMCmicro.
+| RSMMC | RS-MMC.
+| MMCplus | MMCplus.
+| MMCmobile | MMCmobile.
+| eMMC | eMMC.
+| MO120 | Generic 120 mm magneto-optical.
+| MO90 | Generic 90 mm magneto-optical.
+| MO300 | Generic 300 mm magneto-optical.
+| MO356 | Generic 356 mm magneto-optical.
+| CompactFloppy | 3" CompactFloppy.
+| DemiDiskette | 4" floppy.
+| Floptical | 3½" Floptical by Insite.
+| HiFD | 3½" HiFD by Sony.
+| QuickDisk | 2.8" Quick Disk.
+| UHD144 | 3½" UHD144 by Caleb.
+| VideoFloppy | 2" analogue video floppy.
+| Wafer | Rotronics Wafadrive.
+| ZXMicrodrive | Sinclair ZX Microdrive.
+| BeeCard | BeeCard.
+| Borsu | Borsu.
+| DataStore | DataStore.
+| MiniCard | MiniCard.
+| Orb | Castlewood Orb.
+| Orb5 | Castlewood Orb (2nd generation).
+| SmartMedia | SmartMedia memory card.
+| xD | xD memory card.
+| XQD | XQD memory card.
+| DataPlay | DataPlay.
+| LS120 | Imation LS-120.
+| LS240 | Imation LS-240.
+| FD32MB | 3½" floppy formatted in Imation LS-240 drive.
+| RDX | RDX interchangeable disk.
+| PunchedCard | Punched card.
+|===
+
+== Storage interface
+
+This enumeration lists the interfaces a machine can provide for secondary storage connection.
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| Unknown | The interface is unknown or not set.
+| ACSI | Atari Computer System Interface.
+| ATA | AT Attachment.
+| XTA | XT Attachment.
+| ESDI | Enhanced Small Disk Interface.
+| SCSI | Small Computer System Interface.
+| USB | Universal Serial Bus.
+| FireWire | IEEE 1394 (FireWire).
+| SASI | Shugart Associates System Interface.
+| ST506 | Seagate ST-506 interface.
+| IPI | Intelligent Peripheral Interface.
+| SMD | Storage Module Device.
+| SATA | Serial ATA.
+| SSA | Serial Storage Architecture.
+| DSSI | Digital Storage Systems Interconnect.
+| HIPPI | High Performance Parallel Interface.
+| SAS | Serial Attached SCSI.
+| FC | Fibre Channel.
+| PCIe | PCI Express.
+| M2 | M.2.
+| SataExpress | SATA Express.
+|===
+
+== Sound synthesizer type
+
+This enumeration lists the types of sound synthesizers.
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| DAC | Digital-to-analogue converter.
+| PSG | Programmable sound generator.
+| FM | Frequency modulation synthesis.
+| Wavetable | Wavetable synthesis.
+| PCM | PCM / sample-based synthesis.
+| Subtractive | Subtractive synthesis.
+| Additive | Additive synthesis.
+| PhysicalModeling | Physical modelling synthesis.
+| Hybrid | Hybrid synthesis (combination of multiple types).
+|===
+
+== Distribution mode
+
+This enumeration lists the distribution modes for software.
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| Unknown | The distribution mode is unknown or not set.
+| Retail | Commercially distributed through retail channels.
+| Bundle | Distributed as part of a hardware or software bundle.
+| Oem | Distributed through an original equipment manufacturer.
+|===
+
+== Date precision
+
+This enumeration indicates the precision of date fields throughout the database.
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| Full | Full date (year, month, day).
+| MonthYear | Month and year only.
+| YearOnly | Year only.
+|===
+
+== Mastering text type
+
+This enumeration lists the types of mastering text found on physical media.
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| Unknown | Unknown mastering text type.
+| LotNumber | Lot number, usually printed or engraved on floppies.
+| MasteringSid | Mastering SID code.
+| MouldSid | Mould SID code.
+| MasteringCode | Mastering code, written by laser.
+| Barcode | Barcode (not BCA) of optical discs, usually Code 39.
+| Toolstamp | Toolstamp code, engraved.
+|===
+
+== News type
+
+This enumeration classifies the types of news notifications generated when database content changes.
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| NewComputerInDb | A new computer was added.
+| NewConsoleInDb | A new console was added.
+| NewComputerInCollection | A computer was added to a user's collection.
+| NewConsoleInCollection | A console was added to a user's collection.
+| UpdatedComputerInDb | A computer entry was updated.
+| UpdatedConsoleInDb | A console entry was updated.
+| UpdatedComputerInCollection | A computer collection entry was updated.
+| UpdatedConsoleInCollection | A console collection entry was updated.
+| NewMoneyDonation | A new monetary donation was received.
+| NewBookInDb | A new book was added.
+| UpdatedBookInDb | A book entry was updated.
+| NewDocumentInDb | A new document was added.
+| UpdatedDocumentInDb | A document entry was updated.
+| NewMagazineInDb | A new magazine was added.
+| UpdatedMagazineInDb | A magazine entry was updated.
+| NewPersonInDb | A new person was added.
+| UpdatedPersonInDb | A person entry was updated.
+| NewSoftwareInDb | A new software title was added.
+| UpdatedSoftwareInDb | A software entry was updated.
+| NewSoftwareVersionInDb | A new software version was added.
+| UpdatedSoftwareVersionInDb | A software version was updated.
+| NewSoftwareReleaseInDb | A new software release was added.
+| UpdatedSoftwareReleaseInDb | A software release was updated.
+| NewGpuInDb | A new GPU was added.
+| UpdatedGpuInDb | A GPU entry was updated.
+| NewSoundSynthInDb | A new sound synthesizer was added.
+| UpdatedSoundSynthInDb | A sound synthesizer entry was updated.
+| NewProcessorInDb | A new processor was added.
+| UpdatedProcessorInDb | A processor entry was updated.
+| NewSmartphoneInDb | A new smartphone was added.
+| UpdatedSmartphoneInDb | A smartphone entry was updated.
+| NewSmartphoneInCollection | A smartphone was added to a user's collection.
+| UpdatedSmartphoneInCollection | A smartphone collection entry was updated.
+| NewMagazineIssueInDb | A new magazine issue was added.
+| UpdatedMagazineIssueInDb | A magazine issue was updated.
+|===
+
+== Search entity type
+
+This enumeration identifies the source entity type for rows in the denormalized full-text search index.
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| Company | Company entity.
+| Computer | Computer (machine type).
+| Console | Console (machine type).
+| Smartphone | Smartphone (machine type).
+| Book | Book entity.
+| Document | Document entity.
+| Magazine | Magazine entity.
+| Gpu | GPU entity.
+| Processor | Processor entity.
+| SoundSynth | Sound synthesizer entity.
+| Person | Person entity.
+| Software | Software entity.
+| SoftwareCompilation | Software compilation release.
+| Pda | Personal digital assistant (machine type).
+| Tablet | Tablet computer (machine type).
+|===
+
+== Review report reason
+
+This enumeration lists the reasons a user may report a review.
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| Spam | The review is spam or unsolicited advertising.
+| Offensive | The review contains offensive or inappropriate content.
+| Misleading | The review is misleading or factually incorrect.
+| OffTopic | The review is not relevant to the software being reviewed.
+| Other | Other reason (details provided in the report text).
+|===
+
+== EXIF Enumerations
+
+The following enumerations are used for storing EXIF metadata from uploaded photographs. They correspond to standard EXIF tag values.
+
+=== ColorSpace
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| 1 | sRGB.
+| 2 | Adobe RGB.
+| 4093 | Wide Gamut RGB.
+| 65534 | ICC Profile.
+| 65535 | Uncalibrated.
+|===
+
+=== Contrast / Saturation / Sharpness
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| 0 | Normal.
+| 1 | Low.
+| 2 | High.
+|===
+
+=== ExposureMode
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| 0 | Auto.
+| 1 | Manual.
+| 2 | Auto bracket.
+|===
+
+=== ExposureProgram
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| 0 | Not defined.
+| 1 | Manual.
+| 2 | Program AE.
+| 3 | Aperture-priority AE.
+| 4 | Shutter speed priority AE.
+| 5 | Creative (slow speed).
+| 6 | Action (high speed).
+| 7 | Portrait.
+| 8 | Landscape.
+| 9 | Bulb.
+|===
+
+=== FlashMode
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| 0 | No flash.
+| 1 | Fired.
+| 5 | Fired, return not detected.
+| 7 | Fired, return detected.
+| 8 | On, did not fire.
+| 9 | On, fired.
+| 13 | On, return not detected.
+| 15 | On, return detected.
+| 16 | Off, did not fire.
+| 20 | Off, did not fire, return not detected.
+| 24 | Auto, did not fire.
+| 25 | Auto, fired.
+| 29 | Auto, fired, return not detected.
+| 31 | Auto, fired, return detected.
+| 32 | No flash function.
+| 48 | Off, no flash function.
+| 65 | Fired, red-eye reduction.
+| 69 | Fired, red-eye reduction, return not detected.
+| 71 | Fired, red-eye reduction, return detected.
+| 73 | On, red-eye reduction.
+| 77 | On, red-eye reduction, return not detected.
+| 79 | On, red-eye reduction, return detected.
+| 80 | Off, red-eye reduction.
+| 88 | Auto, did not fire, red-eye reduction.
+| 89 | Auto, fired, red-eye reduction.
+| 93 | Auto, fired, red-eye reduction, return not detected.
+| 95 | Auto, fired, red-eye reduction, return detected.
+|===
+
+=== LightSource
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| 0 | Unknown.
+| 1 | Daylight.
+| 2 | Fluorescent.
+| 3 | Tungsten (incandescent).
+| 4 | Flash.
+| 9 | Fine weather.
+| 10 | Cloudy.
+| 11 | Shade.
+| 12 | Daylight fluorescent.
+| 13 | Day white fluorescent.
+| 14 | Cool white fluorescent.
+| 15 | White fluorescent.
+| 16 | Warm white fluorescent.
+| 17 | Standard light A.
+| 18 | Standard light B.
+| 19 | Standard light C.
+| 20 | D55.
+| 21 | D65.
+| 22 | D75.
+| 23 | D50.
+| 24 | ISO Studio Tungsten.
+| 255 | Other.
+|===
+
+=== MeteringMode
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| 0 | Unknown.
+| 1 | Average.
+| 2 | Centre-weighted average.
+| 3 | Spot.
+| 4 | Multi-spot.
+| 5 | Multi-segment.
+| 6 | Partial.
+| 255 | Other.
+|===
+
+=== Orientation
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| 1 | Horizontal.
+| 2 | Mirror horizontal.
+| 3 | Rotate 180°.
+| 4 | Mirror vertical.
+| 5 | Mirror horizontal and rotate 270° clockwise.
+| 6 | Rotate 90° clockwise.
+| 7 | Mirror horizontal and rotate 90° clockwise.
+| 8 | Rotate 270° clockwise.
+|===
+
+=== ResolutionUnit
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| 1 | None.
+| 2 | Inches.
+| 3 | Centimetres.
+|===
+
+=== SceneCaptureType
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| 0 | Standard.
+| 1 | Landscape.
+| 2 | Portrait.
+| 3 | Night.
+|===
+
+=== SensingMethod
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| 1 | Not defined.
+| 2 | One-chip colour area.
+| 3 | Two-chip colour area.
+| 4 | Three-chip colour area.
+| 5 | Colour sequential area.
+| 7 | Trilinear.
+| 8 | Colour sequential linear.
+|===
+
+=== SubjectDistanceRange
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| 0 | Unknown.
+| 1 | Macro.
+| 2 | Close.
+| 3 | Distant.
+|===
+
+=== WhiteBalance
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| 0 | Auto.
+| 1 | Manual.
+|===
+
+== Media Enumerations
+
+=== Media type
+
+This enumeration lists the types of media. It is maintained in synchronization with the Aaru media type enumeration. Due to its length (700+ values), the complete listing is maintained in the `Aaru.CommonTypes` shared library. The values cover all known optical disc formats, floppy disc formats (by manufacturer and density), game cartridge and card formats, tape formats, removable drive formats, and memory card formats.
+
+=== Dump status flags
+
+This enumeration lists the dump status flags. Values are bit flags that may be combined.
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| 0x00 | The dump status is unknown.
+| 0x01 | The dump has been stripped of copy protection (cracked).
+| 0x02 | The dump has been manually fixed.
+| 0x04 | The dump has been intentionally modified (hacked).
+| 0x08 | The dump has been unintentionally modified.
+| 0x10 | The dump is piracy, in a manner not described by other flags.
+| 0x20 | The dump has been modified to add a trainer or cheat systems.
+| 0x40 | The dump has been unofficially translated to another language.
+| 0x80 | The dump contains more data than the media indicates it should.
+| 0x100 | The dump contains less data than the media indicates it should.
+| 0x200 | The dump contains known malware (infected).
+| 0x400 | The media used to create the dump contains read errors.
+| 0x800 | Different dumpers have achieved the exact same dump using different media (verified).
+| 0x1000 | The dump is missing side data; it is unknown if this data is essential.
+| 0x2000 | The dump is missing side data; this data is known to be non-essential.
+| 0x4000 | The dump is missing side data; this data is known to be essential.
+| 0x8000 | The dump belongs to a Compact Disc with non-intentional subchannel damage.
+|===
+
+=== Subchannel flags
+
+This enumeration lists which subchannels are present in a dump. Values are bit flags.
+
+[cols="^1,3", options="header"]
+|===
+| Value | Description
+
+| 0x00 | No subchannel has been dumped.
+| 0x01 | P subchannel is present.
+| 0x02 | Q subchannel is present.
+| 0x04 | R subchannel is present.
+| 0x08 | S subchannel is present.
+| 0x10 | T subchannel is present.
+| 0x20 | U subchannel is present.
+| 0x40 | V subchannel is present.
+| 0x80 | W subchannel is present.
+|===
+
+=== File attributes
+
+This enumeration lists the possible attributes a file can have. It is maintained in synchronization with the Aaru file attributes enumeration. Values are bit flags. The complete listing includes 45+ attributes covering Unix, Windows, macOS, and historical filesystem attribute types.

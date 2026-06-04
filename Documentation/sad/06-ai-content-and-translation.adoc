@@ -1,0 +1,128 @@
+= AI-Powered Content Generation and Translation
+
+This section describes the AI-powered capabilities integrated into the Marechai system: prompt-based description generation for museum-grade content, the dual-backend translation service, and the coordinated background worker pipeline for automated localization.
+
+== Content Generation Prompts
+
+The `prompts/` directory contains three domain-specific prompt templates used to generate museum-grade descriptions for computing history entities via large language models:
+
+=== Company Descriptions (`prompts/companies.md`)
+
+This prompt template instructs the LLM to produce a factual article about a specified company. Required coverage includes founding history, corporate mission, key strategic decisions, major product lines, impact on computing history, standards involvement, corporate structure changes (acquisitions, mergers, reorganizations), and legacy. The prompt enforces:
+
+* Only verifiable information from Wikipedia, period magazines, manuals, corporate filings, and reputable archival sources
+* No speculation or inference beyond documented facts
+* Professional prose suitable for a museum audience
+* Clean Markdown output with no emojis or images
+* Strict focus on the requested company without discussing unrelated entities
+
+=== Machine Descriptions (`prompts/machine.md`)
+
+This prompt template produces a factual article about a specified machine (computer, console, or other computing device). Required coverage includes design history, manufacturer component decisions, announcement and launch details, technical specifications (where tables are permitted), variants, standards, launch pricing, weight and dimensions, software ecosystem, and legacy.
+
+=== Software Descriptions (`prompts/software.md`)
+
+This prompt template produces a factual article about a specified software title. Required coverage includes development history, purpose, origins and motivations, announcement and launch details, impact, and legacy. The prompt is lighter than the machine and company templates, reflecting the typically shorter and more focused nature of software descriptions.
+
+=== Usage Pattern
+
+The prompt templates use a placeholder marker (`XXXXXXXXXXXX`) that is replaced with the specific entity name at generation time. The generated Markdown content is stored in the corresponding description entity (e.g. `CompanyDescription`, `MachineDescription`, `SoftwareDescription`) with a language code indicating the source language (typically American English).
+
+== Translation Service Architecture
+
+The `Marechai.Translation` project provides the core translation capability through a singleton `TranslationService` with two configurable backends.
+
+=== Dual-Backend Design
+
+The translation service implements a fallback chain:
+
+. *OpenAI backend* (primary): Configured via `OpenAI:Url`, `OpenAI:ApiKey`, `OpenAI:Model`, `OpenAI:MaxTokens`, and `OpenAI:TimeoutSeconds` in `appsettings.json`. Uses the chat completions API with JSON schema enforcement for plain-text translations (forcing a structured `{"translation":"..."}` response). Supports reasoning-model output channels (`reasoning_content`, `reasoning` fields) from models such as Qwen3. Includes three-tier JSON extraction: strict parse, balanced-object parse, and first-brace-to-last-brace fallback.
+. *NLLB backend* (fallback): Configured via `NllbServe:Url`. Tokenizes text by line separators and translates line-by-line, preserving whitespace and empty lines. Activated only when OpenAI is unavailable or returns an error.
+
+=== Supported Languages
+
+Translations are produced for the following eight languages, identified by ISO 639-3 codes and mapped to NLLB language tags:
+
+[cols="^1,^2,^2", options="header"]
+|===
+| ISO 639-3 | Language | NLLB Tag
+
+| eng | English | eng_Latn
+| spa | Spanish | spa_Latn
+| deu | German | deu_Latn
+| fra | French | fra_Latn
+| ita | Italian | ita_Latn
+| nld | Dutch | nld_Latn
+| lat | Latin | lat_Latn
+| por | Portuguese | por_Latn
+|===
+
+=== Domain Context
+
+A domain context parameter is passed to the translation backend to steer the model away from generic translations. For example, when translating computing terminology, the context hint `"The text is an encyclopedic description of computing history..."` prevents the model from interpreting ambiguous terms in a non-technical sense (e.g. "Mouse" as a device rather than an animal).
+
+=== Text Normalization
+
+Input text is normalized before translation: non-breaking spaces (U+00A0) are replaced with regular spaces. Output is defensively stripped of Markdown decoration when plain-text translations are requested.
+
+== Translation Pipeline
+
+The automated translation pipeline operates through two coordinated background workers in the Marechai.Server process.
+
+=== TranslationWorker (Primary)
+
+The primary worker iterates over all registered `ITranslationProvider` implementations on a fixed schedule. Each provider manages a specific entity type's translation table:
+
+* `SoftwareGenreTranslationProvider`: Translates genre names
+* `SoftwareAttributeTranslationProvider`: Translates attribute labels
+* `SoftwareCoverCaptionTranslationProvider`: Translates cover art captions
+* `SoftwarePromoArtGroupTranslationProvider`: Translates promotional art group names
+* `SoftwareScreenshotCaptionTranslationProvider`: Translates screenshot captions
+* `SoftwareScreenshotGroupTranslationProvider`: Translates screenshot group names
+* `PeopleBySoftwareRoleTranslationProvider`: Translates software role names
+
+Each provider follows a three-phase lifecycle per tick:
+
+. `EnsureCacheLoadedAsync()`: Load the in-memory translation cache from the database (idempotent, first tick only).
+. `DiscoverNewItemsAsync()`: Delta query for newly added entities.
+. `TranslateMissingAsync(languageCode)`: For each non-English language, fetch untranslated rows, call the translation service for each, and bulk-insert results.
+
+=== DescriptionTranslationWorker (Companion)
+
+The companion worker translates longer markdown descriptions and synopses during the primary worker's sleep window. It round-robins over each `IDescriptionTranslationSource` implementation and each non-English language, translating one row at a time.
+
+Translation sources include descriptions for machines, processors, GPUs, sound synthesizers, companies, people, books, magazines, documents, and software.
+
+Key features:
+
+* *Language-specific disclaimers*: Each translated description is prepended with an italicized disclaimer in the target language (e.g. _(esta es una traducción automática; puedes ayudarnos...)_ in Spanish), informing readers that the text is a machine translation and inviting corrections.
+* *Markdown to HTML rendering*: Translated markdown is rendered to HTML via Markdig and stored in a parallel HTML column for display purposes.
+* *Size capping*: Output is defensively capped at 262 KB to respect database column limits. If the rendered HTML exceeds this limit, the HTML column is left empty and only the markdown is stored.
+
+=== TranslationPhaseCoordinator
+
+The two workers are coordinated by the `TranslationPhaseCoordinator`, which implements a handshake protocol to ensure that only one worker is making translation API calls at any given time:
+
+. The primary worker completes a sweep and calls `EnterSlumber()`, receiving a `CancellationToken`.
+. The description worker calls `WaitForSlumberAsync()`, which blocks until the primary worker enters slumber. It receives the slumber cancellation token and begins processing.
+. When the primary worker is ready to resume, it calls `ExitSlumberAsync()`, which cancels the slumber token and waits (capped at five minutes) for the description worker to acknowledge completion via `NotifyDescriptionStopped()`.
+. The description worker's finally block calls `NotifyDescriptionStopped()`, signalling the primary worker to resume.
+
+This coordination ensures serial access to the translation API, respecting rate limits without requiring external synchronization mechanisms.
+
+== AI Enrichment in Importers
+
+The data import tools (Marechai.OldDos, Marechai.WinWorld) incorporate AI enrichment as integral steps in their processing pipelines. Each importer uses an `OpenAiChatClient` wrapper to interact with the configured LLM. The enrichment steps vary by source:
+
+=== OldDos Enrichment Pipeline
+
+. *Translation* (`TranslateEnricher`): Translates Russian-language descriptions from old-dos.ru to English using literal translation.
+. *Description* (`DescribeEnricher`): Generates a museum-grade English description from the translated text.
+. *Categorization* (`CategorizeEnricher`): Assigns appropriate Marechai `SoftwareGenre` categories based on the description content.
+
+=== WinWorld Enrichment Pipeline
+
+. *Description* (`DescribeEnricher`): Generates a museum-grade English description from the crawled content.
+. *Categorization* (`CategorizeEnricher`): Assigns appropriate Marechai `SoftwareGenre` categories.
+
+In both cases, each enrichment step is tracked by a per-entity status field, enabling the pipeline to be interrupted and resumed without reprocessing already-completed steps.
