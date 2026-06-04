@@ -637,23 +637,83 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
-    public async Task<List<SoftwareRankingDto>> GetRankingsAsync(SoftwareKind? kind = null,
-                                                                 int? genreId = null,
-                                                                 int? platformId = null,
-                                                                 int? take = null,
+    /// <summary>
+    ///     Index of every available Marechai ranking (Overall + per-genre + per-platform),
+    ///     bundled with a freshness snapshot so the UI can render a "rankings are being
+    ///     computed" banner on fresh installs. Returns an empty index + IsComputing=false
+    ///     on transport failure (the loading state is preserved as best-effort).
+    /// </summary>
+    public async Task<RankingIndexResponseDto> GetRankingsIndexAsync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            string lang = UiLanguage.GetIso639_3();
+
+            RankingIndexResponseDto resp = await client.Software.Rankings.Index.GetAsync(config =>
+                                                                                          {
+                                                                                              config
+                                                                                                 .QueryParameters
+                                                                                                 .Lang = lang;
+                                                                                          },
+                                                                                          cancellationToken);
+
+            return resp ?? new RankingIndexResponseDto
+            {
+                Status   = new RankingsStatusDto(),
+                Rankings = []
+            };
+        }
+        catch
+        {
+            return new RankingIndexResponseDto
+            {
+                Status   = new RankingsStatusDto(),
+                Rankings = []
+            };
+        }
+    }
+
+    /// <summary>
+    ///     Top-N entries (≤ 250) for a single ranking by id. Returns an empty list if the
+    ///     ranking does not exist (HTTP 404) or on any other transport failure.
+    /// </summary>
+    public async Task<List<SoftwareRankingDto>> GetRankingAsync(int rankingId,
                                                                  CancellationToken cancellationToken = default)
     {
         try
         {
-            List<SoftwareRankingDto> ranked = await client.Software.Rankings.GetAsync(config =>
-            {
-                if(kind.HasValue) config.QueryParameters.Kind = (int)kind.Value;
-                if(genreId.HasValue) config.QueryParameters.GenreId = genreId.Value;
-                if(platformId.HasValue) config.QueryParameters.PlatformId = platformId.Value;
-                if(take.HasValue) config.QueryParameters.Take = take.Value;
-            }, cancellationToken);
+            List<SoftwareRankingDto> ranked =
+                await client.Software.Rankings[rankingId].GetAsync(cancellationToken: cancellationToken);
 
             return ranked ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    /// <summary>
+    ///     Every ranking the given software appears in (Overall + each per-genre + each
+    ///     per-platform ranking that includes this title in its top 250). Used to drive the
+    ///     chip row under the Marechai-score banner on the software detail page. Returns an
+    ///     empty list on transport failure so the chip row simply disappears.
+    /// </summary>
+    public async Task<List<SoftwareRankingPlacementDto>> GetRankingPlacementsAsync(
+        ulong softwareId, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            string lang = UiLanguage.GetIso639_3();
+
+            List<SoftwareRankingPlacementDto> placements =
+                await client.Software[(int)softwareId].Rankings.GetAsync(config =>
+                                                                          {
+                                                                              config.QueryParameters.Lang = lang;
+                                                                          },
+                                                                          cancellationToken);
+
+            return placements ?? [];
         }
         catch
         {

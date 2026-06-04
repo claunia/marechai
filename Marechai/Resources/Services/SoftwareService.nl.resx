@@ -1710,4 +1710,52 @@
   </data>
 
 
+  <data name="Overall" xml:space="preserve">
+    <value>Algemeen</value>
+  </data>
+  <data name="By genre" xml:space="preserve">
+    <value>Per genre</value>
+  </data>
+  <data name="By platform" xml:space="preserve">
+    <value>Per platform</value>
+  </data>
+  <data name="Back to rankings" xml:space="preserve">
+    <value>Terug naar rankings</value>
+  </data>
+  <data name="Ranking not found" xml:space="preserve">
+    <value>Ranking niet gevonden</value>
+  </data>
+  <data name="Last computed: {0}" xml:space="preserve">
+    <value>Laatst berekend: {0}</value>
+  </data>
+  <data name="{0} entries" xml:space="preserve">
+    <value>{0} items</value>
+  </data>
+  <data name="Rankings are being computed for the first time, please check back in a few minutes." xml:space="preserve">
+    <value>Rankings worden voor het eerst berekend, kom over een paar minuten terug.</value>
+  </data>
+  <data name="No rankings available yet." xml:space="preserve">
+    <value>Nog geen rankings beschikbaar.</value>
+  </data>
+  <data name="No ranked software in this ranking yet." xml:space="preserve">
+    <value>Nog geen gerangschikte software in deze ranking.</value>
+  </data>
+  <data name="Ranking" xml:space="preserve">
+    <value>Ranking</value>
+  </data>
+  <data name="Ranking #{0}" xml:space="preserve">
+    <value>Ranking #{0}</value>
+  </data>
+  <data name="Top 250 software of all time" xml:space="preserve">
+    <value>Top 250 software aller tijden</value>
+  </data>
+  <data name="By gameplay" xml:space="preserve">
+    <value>Per gameplay</value>
+  </data>
+  <data name="By setting" xml:space="preserve">
+    <value>Per setting</value>
+  </data>
+  <data name="By category" xml:space="preserve">
+    <value>Per categorie</value>
+  </data>
 </root>

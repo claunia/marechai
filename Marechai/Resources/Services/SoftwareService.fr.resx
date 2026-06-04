@@ -1341,4 +1341,52 @@
   </data>
 
 
+  <data name="Overall" xml:space="preserve">
+    <value>Général</value>
+  </data>
+  <data name="By genre" xml:space="preserve">
+    <value>Par genre</value>
+  </data>
+  <data name="By platform" xml:space="preserve">
+    <value>Par plateforme</value>
+  </data>
+  <data name="Back to rankings" xml:space="preserve">
+    <value>Retour aux classements</value>
+  </data>
+  <data name="Ranking not found" xml:space="preserve">
+    <value>Classement introuvable</value>
+  </data>
+  <data name="Last computed: {0}" xml:space="preserve">
+    <value>Dernier calcul : {0}</value>
+  </data>
+  <data name="{0} entries" xml:space="preserve">
+    <value>{0} entrées</value>
+  </data>
+  <data name="Rankings are being computed for the first time, please check back in a few minutes." xml:space="preserve">
+    <value>Les classements sont en cours de calcul pour la première fois, revenez dans quelques minutes.</value>
+  </data>
+  <data name="No rankings available yet." xml:space="preserve">
+    <value>Aucun classement disponible pour le moment.</value>
+  </data>
+  <data name="No ranked software in this ranking yet." xml:space="preserve">
+    <value>Aucun logiciel classé dans ce classement pour le moment.</value>
+  </data>
+  <data name="Ranking" xml:space="preserve">
+    <value>Classement</value>
+  </data>
+  <data name="Ranking #{0}" xml:space="preserve">
+    <value>Classement n°{0}</value>
+  </data>
+  <data name="Top 250 software of all time" xml:space="preserve">
+    <value>Top 250 des logiciels de tous les temps</value>
+  </data>
+  <data name="By gameplay" xml:space="preserve">
+    <value>Par gameplay</value>
+  </data>
+  <data name="By setting" xml:space="preserve">
+    <value>Par décor</value>
+  </data>
+  <data name="By category" xml:space="preserve">
+    <value>Par catégorie</value>
+  </data>
 </root>

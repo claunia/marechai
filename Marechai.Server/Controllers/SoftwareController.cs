@@ -51,30 +51,20 @@ namespace Marechai.Server.Controllers;
 [Route("/software")]
 [ApiController]
 public class SoftwareController(MarechaiContext context, IMemoryCache cache, UserManager<ApplicationUser> userManager,
-                                SoftwareGenreTranslationCache     genreCache,
-                                SoftwareAttributeTranslationCache attrCache) : ControllerBase
+                                SoftwareGenreTranslationCache                          genreCache,
+                                SoftwareAttributeTranslationCache                      attrCache,
+                                Marechai.Server.Services.Rankings.RankingsComputationState rankingsState,
+                                Marechai.Server.Services.Rankings.MarechaiRankingsCalculator rankingsCalculator)
+    : ControllerBase
 {
-    // Cache key + duration for the global Marechai score ranking.
-    // The full catalog ranking changes only when reviews/ratings are
-    // added; recomputing it on every page load was the dominant cost
-    // of /software/{id}/marechai-score.
-    const           string   MARECHAI_RANKING_CACHE_KEY = "marechai:ranking";
-    static readonly TimeSpan _marechaiRankingTtl        = TimeSpan.FromMinutes(5);
-
     // ── Marechai score fairness knobs ────────────────────────────────────────
-    // A software qualifies for the ranking only if it has at least this many
-    // critic reviews OR this many user ratings. Below the threshold the item
-    // is excluded from both the Top-N rankings page and the detail page's
-    // rank/score (it falls back to MarechaiScore = null, Rank = null).
-    const int MARECHAI_RANKING_MIN_CRITIC_COUNT = 3;
-    const int MARECHAI_RANKING_MIN_USER_COUNT   = 1;
-
-    // Bayesian shrinkage priors (IMDb-style weighted rating). A higher prior
-    // means low-vote averages are pulled harder toward the catalog mean,
-    // damping single-vote spikes. Tuned per side because critic and user
-    // count distributions differ.
-    const int MARECHAI_RANKING_CRITIC_PRIOR = 5;
-    const int MARECHAI_RANKING_USER_PRIOR   = 10;
+    // Re-exposed here as local aliases so existing comments and tooling still
+    // resolve the names; the canonical values now live on the calculator so the
+    // background worker and any future scoring code share a single source of truth.
+    const int MARECHAI_RANKING_MIN_CRITIC_COUNT =
+        Marechai.Server.Services.Rankings.MarechaiRankingsCalculator.MARECHAI_RANKING_MIN_CRITIC_COUNT;
+    const int MARECHAI_RANKING_MIN_USER_COUNT =
+        Marechai.Server.Services.Rankings.MarechaiRankingsCalculator.MARECHAI_RANKING_MIN_USER_COUNT;
 
     // Cache keys + TTL for the /software landing-page catalog endpoints.
     // These query the *whole* catalog (all genres, all platforms, all spec
@@ -3271,308 +3261,376 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<MarechaiScoreDto> GetMarechaiScoreAsync(ulong id)
     {
-        // Single round-trip: pull both critic and user averages in one query
-        // off the Software entity (was two sequential Average() awaits).
-        var avg = await context.Softwares
-                               .Where(s => s.Id == id)
+        // Single-query lookup against the precomputed SoftwareScores table populated
+        // by MarechaiRankingsWorker. CriticScore / UserScore are the per-side raw
+        // averages normalised to the 0-10 scale; MarechaiScore is the Bayesian-shrunken
+        // value. Items below the fairness threshold (>= MIN_CRITIC_COUNT critics OR
+        // >= MIN_USER_COUNT users) are absent from the table and surface as nulls.
+        var row = await context.SoftwareScores
+                               .AsNoTracking()
+                               .Where(s => s.SoftwareId == id)
                                .Select(s => new
                                 {
-                                    CriticAvg = (double?)s.CriticReviews
-                                                          .Where(r => r.NormalizedScore != null)
-                                                          .Average(r => (double?)r.NormalizedScore),
-                                    UserAvg = (double?)s.UserRatings.Average(r => (double?)r.Rating)
+                                    s.Score,
+                                    s.GlobalRank,
+                                    s.CriticAverage,
+                                    s.UserStarAverage
                                 })
                                .FirstOrDefaultAsync();
 
-        double? criticAvg = avg?.CriticAvg;
-        double? userAvg   = avg?.UserAvg;
+        int totalRanked = await context.SoftwareScores.AsNoTracking().CountAsync();
 
-        // Critic score: average of NormalizedScore (0-100), scaled to 0-10
-        double? criticScore = criticAvg.HasValue ? Math.Round(criticAvg.Value / 10.0, 1) : null;
-
-        // User score: average of Rating (0-5), scaled to 0-10
-        double? userScore = userAvg.HasValue ? Math.Round(userAvg.Value * 2.0, 1) : null;
-
-        // Marechai score + rank: read from the cached global ranking snapshot. The
-        // snapshot already applies the fairness threshold (>= MIN_CRITIC_COUNT
-        // critics OR >= MIN_USER_COUNT users) and per-side Bayesian shrinkage, so
-        // items below the threshold or with no aggregated signal at all are simply
-        // absent from the dictionary and surface as MarechaiScore = null / Rank = null.
-        MarechaiRankingSnapshot snapshot = await GetMarechaiRankingAsync();
-
-        double? marechaiScore = null;
-        int?    rank          = null;
-        int     totalRanked   = snapshot.Ranking.Count;
-
-        if(snapshot.Ranking.TryGetValue(id, out (int Rank, double Score) entry))
-        {
-            marechaiScore = Math.Round(entry.Score, 1);
-            rank          = entry.Rank;
-        }
+        if(row is null)
+            return new MarechaiScoreDto
+            {
+                CriticScore   = null,
+                UserScore     = null,
+                MarechaiScore = null,
+                Rank          = null,
+                TotalRanked   = totalRanked
+            };
 
         return new MarechaiScoreDto
         {
-            CriticScore   = criticScore,
-            UserScore     = userScore,
-            MarechaiScore = marechaiScore,
-            Rank          = rank,
+            CriticScore   = row.CriticAverage.HasValue   ? Math.Round(row.CriticAverage.Value   / 10.0, 1) : null,
+            UserScore     = row.UserStarAverage.HasValue ? Math.Round(row.UserStarAverage.Value * 2.0,  1) : null,
+            MarechaiScore = Math.Round(row.Score, 1),
+            Rank          = row.GlobalRank,
             TotalRanked   = totalRanked
         };
     }
 
-    /// <summary>
-    /// In-memory snapshot of the global Marechai ranking. The dictionary holds the
-    /// rank position and the (unrounded) Bayesian-shrunken score keyed by software id
-    /// for every qualifying software (see <see cref="MARECHAI_RANKING_MIN_CRITIC_COUNT"/>
-    /// and <see cref="MARECHAI_RANKING_MIN_USER_COUNT"/>). The catalog-wide critic and
-    /// user means (both on the 0–10 scale) are carried alongside so that
-    /// <see cref="GetRankingsAsync"/> can re-score filtered candidates using the same
-    /// priors — guaranteeing the score shown on the rankings list matches what the
-    /// detail page shows for the same software.
-    /// </summary>
-    sealed record MarechaiRankingSnapshot(
-        Dictionary<ulong, (int Rank, double Score)> Ranking,
-        double CriticMean10,
-        double UserMean10);
+    // ── Marechai Rankings: persisted multi-dimensional rankings ──────────────
+    // The legacy in-memory snapshot + per-filter cache has been replaced by
+    // three DB-backed tables (SoftwareScores, RankingDefinitions, RankingEntries)
+    // populated by MarechaiRankingsWorker on startup + every 24 h. The read
+    // endpoints below project from those tables; the per-request translation
+    // pipeline runs at the controller layer so that newly-translated genre
+    // names surface immediately without needing a rankings recompute.
 
     /// <summary>
-    /// Per-side Bayesian shrinkage (IMDb-style weighted rating) followed by an unweighted
-    /// average of the two shrunken sides. Returns null when the item fails the minimum-
-    /// evidence threshold. Inputs are the raw averages on their native scales
-    /// (critic 0–100, user 0–5) plus the catalog-wide means already on the 0–10 scale.
+    ///     Builds the localised display name for a ranking dimension. Overall is a fixed
+    ///     literal (translated client-side); genres are translated via the in-memory
+    ///     <see cref="SoftwareGenreTranslationCache" /> with English fallback and NBSP
+    ///     normalisation, matching the convention of <c>GetAllGenresAsync</c>; platforms
+    ///     are proper nouns and have no translation table — they pass through verbatim.
     /// </summary>
-    static double? ComputeMarechaiScore(double? criticAvg100,
-                                        int     criticCount,
-                                        double? userAvg5,
-                                        int     userCount,
-                                        double  catalogCriticMean10,
-                                        double  catalogUserMean10)
+    async Task<string> BuildDimensionDisplayNameAsync(RankingDimension  dimension,
+                                                       long?             dimensionId,
+                                                       string            rawGenreName,
+                                                       string            rawPlatformName,
+                                                       string            resolvedLang,
+                                                       CancellationToken ct)
     {
-        bool hasCritic = criticAvg100.HasValue && criticCount >= MARECHAI_RANKING_MIN_CRITIC_COUNT;
-        bool hasUser   = userAvg5.HasValue && userCount >= MARECHAI_RANKING_MIN_USER_COUNT;
-
-        if(!hasCritic && !hasUser) return null;
-
-        double? shrunkCritic = null;
-        double? shrunkUser   = null;
-
-        if(hasCritic)
+        switch(dimension)
         {
-            double r10 = criticAvg100!.Value / 10.0;
+            case RankingDimension.All:
+                return "Overall";
 
-            shrunkCritic = (criticCount * r10 + MARECHAI_RANKING_CRITIC_PRIOR * catalogCriticMean10) /
-                           (criticCount + MARECHAI_RANKING_CRITIC_PRIOR);
+            case RankingDimension.Genre:
+            {
+                if(!dimensionId.HasValue) return rawGenreName ?? string.Empty;
+
+                string translated =
+                    await genreCache.GetNameAsync((int)dimensionId.Value, resolvedLang, ct);
+
+                string display = string.IsNullOrEmpty(translated) ? rawGenreName : translated;
+
+                return display?.Replace('\u00A0', ' ') ?? string.Empty;
+            }
+
+            case RankingDimension.Platform:
+                return rawPlatformName ?? string.Empty;
+
+            default:
+                return string.Empty;
         }
-
-        if(hasUser)
-        {
-            double r10 = userAvg5!.Value * 2.0;
-
-            shrunkUser = (userCount * r10 + MARECHAI_RANKING_USER_PRIOR * catalogUserMean10) /
-                         (userCount + MARECHAI_RANKING_USER_PRIOR);
-        }
-
-        if(shrunkCritic.HasValue && shrunkUser.HasValue)
-            return (shrunkCritic.Value + shrunkUser.Value) / 2.0;
-
-        return shrunkCritic ?? shrunkUser!.Value;
     }
 
     /// <summary>
-    /// Returns the cached snapshot of the global Marechai ranking. The ranking includes
-    /// every software with at least <see cref="MARECHAI_RANKING_MIN_CRITIC_COUNT"/> critic
-    /// reviews OR <see cref="MARECHAI_RANKING_MIN_USER_COUNT"/> user ratings. Scores use
-    /// per-side Bayesian shrinkage so low-evidence items don't outrank well-reviewed ones.
-    /// Cached for <see cref="_marechaiRankingTtl"/> so we don't re-rank the entire catalog
-    /// on every page load.
+    ///     Index of every available ranking the worker has materialised. Returned alongside
+    ///     a freshness snapshot so the frontend can render a "rankings are being computed"
+    ///     banner on a fresh install (LastComputedAt null AND IsComputing true). Sorted:
+    ///     All first, then per-genre rankings alphabetically by translated genre name, then
+    ///     per-platform rankings alphabetically by raw platform name.
     /// </summary>
-    async Task<MarechaiRankingSnapshot> GetMarechaiRankingAsync()
+    [HttpGet("rankings/index")]
+    [AllowAnonymous]
+    [OutputCache(Duration = 300, VaryByQueryKeys = ["lang"])]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<RankingIndexResponseDto> GetRankingsIndexAsync([FromQuery] string lang = null,
+                                                                     CancellationToken cancellationToken = default)
     {
-        if(cache.TryGetValue(MARECHAI_RANKING_CACHE_KEY, out MarechaiRankingSnapshot cached) && cached is not null)
-            return cached;
+        string resolvedLang = ResolveGenreLanguage(lang);
 
-        var allScores = await context.Softwares
-                                     .Select(s => new
+        await genreCache.EnsureLoadedAsync(cancellationToken);
+
+        // Pull every definition in one round-trip, joined to the genre / platform tables
+        // for the raw display name. Genre names are translated below; platform names pass
+        // through as-is (no translation table — proper nouns).
+        var defs = await context.RankingDefinitions
+                                .AsNoTracking()
+                                .OrderBy(d => d.Dimension)
+                                .ThenBy(d => d.Id)
+                                .Select(d => new
+                                 {
+                                     d.Id,
+                                     d.Dimension,
+                                     d.DimensionId,
+                                     d.EntryCount,
+                                     d.ComputedAt,
+                                     GenreName = d.Dimension == RankingDimension.Genre && d.DimensionId.HasValue
+                                                     ? context.SoftwareGenres
+                                                              .Where(g => g.Id == (int)d.DimensionId.Value)
+                                                              .Select(g => g.Name)
+                                                              .FirstOrDefault()
+                                                     : null,
+                                     GenreType = d.Dimension == RankingDimension.Genre && d.DimensionId.HasValue
+                                                     ? context.SoftwareGenres
+                                                              .Where(g => g.Id == (int)d.DimensionId.Value)
+                                                              .Select(g => (byte?)g.Type)
+                                                              .FirstOrDefault()
+                                                     : null,
+                                     PlatformName = d.Dimension == RankingDimension.Platform && d.DimensionId.HasValue
+                                                        ? context.SoftwarePlatforms
+                                                                 .Where(p => p.Id == (ulong)d.DimensionId.Value)
+                                                                 .Select(p => p.Name)
+                                                                 .FirstOrDefault()
+                                                        : null
+                                 })
+                                .ToListAsync(cancellationToken);
+
+        var entries = new List<RankingIndexEntryDto>(defs.Count);
+
+        foreach(var d in defs)
+        {
+            string name = await BuildDimensionDisplayNameAsync(d.Dimension,
+                                                               d.DimensionId,
+                                                               d.GenreName,
+                                                               d.PlatformName,
+                                                               resolvedLang,
+                                                               cancellationToken);
+
+            entries.Add(new RankingIndexEntryDto
+            {
+                Id            = d.Id,
+                Dimension     = (byte)d.Dimension,
+                DimensionId   = d.DimensionId,
+                DimensionName = name,
+                EntryCount    = d.EntryCount,
+                GenreType     = d.GenreType,
+                ComputedAt    = d.ComputedAt
+            });
+        }
+
+        // Stable secondary sort by translated name within each dimension. The DB pass
+        // returned them ordered by (Dimension, Id); we now re-sort the genre + platform
+        // groups by display name so the UI shows them alphabetically in the requested
+        // language.
+        List<RankingIndexEntryDto> sorted = entries
+                                            .OrderBy(e => e.Dimension)
+                                            .ThenBy(e => e.DimensionName,
+                                                    StringComparer.CurrentCultureIgnoreCase)
+                                            .ToList();
+
+        return new RankingIndexResponseDto
+        {
+            Status = new RankingsStatusDto
+            {
+                LastComputedAt = rankingsState.LastComputedAt,
+                IsComputing    = rankingsState.IsComputing,
+                TotalRankings  = sorted.Count
+            },
+            Rankings = sorted
+        };
+    }
+
+    /// <summary>
+    ///     Top-N entries for a single ranking by <c>RankingDefinitions.Id</c>. Hard-capped
+    ///     server-side by what the worker stored (MARECHAI_RANKING_TOP_N = 250). Returns
+    ///     404 if the id does not match a materialised definition.
+    /// </summary>
+    [HttpGet("rankings/{id:int}")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<List<SoftwareRankingDto>>> GetRankingAsync(
+        int id, CancellationToken cancellationToken = default)
+    {
+        // Validate the definition exists so the FE can show a "not found" page rather
+        // than rendering an empty table for a stale URL.
+        bool exists = await context.RankingDefinitions
+                                   .AsNoTracking()
+                                   .AnyAsync(d => d.Id == (uint)id, cancellationToken);
+
+        if(!exists) return NotFound();
+
+        var rows = await context.RankingEntries
+                                .AsNoTracking()
+                                .Where(e => e.RankingDefinitionId == (uint)id)
+                                .OrderBy(e => e.Rank)
+                                .Join(context.Softwares,
+                                      e => e.SoftwareId,
+                                      s => s.Id,
+                                      (e, s) => new
                                       {
+                                          e.Rank,
+                                          e.Score,
                                           s.Id,
-                                          CriticAvg = s.CriticReviews
-                                                       .Where(r => r.NormalizedScore != null)
-                                                       .Select(r => (double?)r.NormalizedScore)
-                                                       .Average(),
-                                          UserAvg = s.UserRatings.Select(r => (double?)r.Rating).Average(),
+                                          s.Name,
+                                          s.Kind,
+                                          Family = s.Family != null ? s.Family.Name : null,
+                                          CriticAverage = s.CriticReviews
+                                                           .Where(r => r.NormalizedScore != null)
+                                                           .Select(r => (double?)r.NormalizedScore)
+                                                           .Average(),
+                                          UserAverage = s.UserRatings
+                                                         .Select(r => (double?)r.Rating)
+                                                         .Average(),
                                           CriticCount = s.CriticReviews.Count(r => r.NormalizedScore != null),
                                           UserCount   = s.UserRatings.Count
                                       })
-                                     .Where(s => s.CriticCount >= MARECHAI_RANKING_MIN_CRITIC_COUNT ||
-                                                 s.UserCount   >= MARECHAI_RANKING_MIN_USER_COUNT)
-                                     .ToListAsync();
+                                .ToListAsync(cancellationToken);
 
-        // Catalog-wide means on the 0-10 scale, computed over the same set that is
-        // eligible for the ranking. These are the priors for the Bayesian shrinkage —
-        // any item with few votes gets pulled toward these means.
-        var criticItems = allScores.Where(s => s.CriticAvg.HasValue).ToList();
-        var userItems   = allScores.Where(s => s.UserAvg.HasValue).ToList();
+        List<SoftwareRankingDto> ranked = rows.Select(r => new SoftwareRankingDto
+                                                      {
+                                                          Rank              = r.Rank,
+                                                          SoftwareId        = r.Id,
+                                                          Name              = r.Name,
+                                                          Kind              = r.Kind,
+                                                          Family            = r.Family,
+                                                          MarechaiScore     = Math.Round(r.Score, 1),
+                                                          CriticAverage     = r.CriticAverage,
+                                                          UserStarAverage   = r.UserAverage,
+                                                          CriticReviewCount = r.CriticCount,
+                                                          UserRatingCount   = r.UserCount
+                                                      })
+                                              .ToList();
 
-        double catalogCriticMean10 = criticItems.Count > 0 ? criticItems.Average(s => s.CriticAvg!.Value) / 10.0 : 7.0;
-        double catalogUserMean10   = userItems.Count > 0 ? userItems.Average(s => s.UserAvg!.Value) * 2.0 : 7.0;
-
-        var ranking = allScores.Select(s => new
-                               {
-                                   s.Id,
-                                   s.CriticCount,
-                                   s.UserCount,
-                                   Score = ComputeMarechaiScore(s.CriticAvg,
-                                                                s.CriticCount,
-                                                                s.UserAvg,
-                                                                s.UserCount,
-                                                                catalogCriticMean10,
-                                                                catalogUserMean10)
-                               })
-                               .Where(s => s.Score.HasValue)
-                               .OrderByDescending(s => s.Score!.Value)
-                               .ThenByDescending(s => s.CriticCount + s.UserCount)
-                               .ThenBy(s => s.Id)
-                               .Select((s, i) => new { s.Id, Rank = i + 1, Score = s.Score!.Value })
-                               .ToDictionary(x => x.Id, x => (x.Rank, x.Score));
-
-        var snapshot = new MarechaiRankingSnapshot(ranking, catalogCriticMean10, catalogUserMean10);
-
-        cache.Set(MARECHAI_RANKING_CACHE_KEY, snapshot, _marechaiRankingTtl);
-
-        return snapshot;
-    }
-
-    /// <summary>
-    /// Returns the top-N software ranked by Marechai score (0-10), optionally filtered by
-    /// kind, genre, and/or platform. Results include the local rank within the filtered set
-    /// (1..N), Marechai score, critic average (0-100 scale), user star average (0-5 scale),
-    /// and the underlying review/rating counts. Hard-capped at 250 server-side. Cached per
-    /// (kind, genreId, platformId, take) tuple for 5 minutes.
-    /// </summary>
-    [HttpGet("rankings")]
-    [AllowAnonymous]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<List<SoftwareRankingDto>> GetRankingsAsync([FromQuery] SoftwareKind? kind = null,
-                                                                 [FromQuery] int? genreId = null,
-                                                                 [FromQuery] ulong? platformId = null,
-                                                                 [FromQuery] int take = 250,
-                                                                 CancellationToken cancellationToken = default)
-    {
-        if(take <= 0) take = 250;
-        if(take > 250) take = 250;
-
-        string cacheKey = $"marechai:ranking:list:{(kind.HasValue ? ((int)kind.Value).ToString() : "_")}:" +
-                          $"{(genreId.HasValue ? genreId.Value.ToString() : "_")}:" +
-                          $"{(platformId.HasValue ? platformId.Value.ToString() : "_")}:{take}";
-
-        if(cache.TryGetValue(cacheKey, out List<SoftwareRankingDto> cached) && cached is not null) return cached;
-
-        // Predicate mirrors GetMarechaiRankingAsync(): a software qualifies if it has at
-        // least MARECHAI_RANKING_MIN_CRITIC_COUNT critic reviews OR
-        // MARECHAI_RANKING_MIN_USER_COUNT user ratings. Compilations are excluded — they
-        // have their own Id space (SoftwareReleases) and no aggregated rating signal.
-        IQueryable<Database.Models.Software> baseQuery =
-            context.Softwares.Where(s => s.UserRatings.Count >= MARECHAI_RANKING_MIN_USER_COUNT ||
-                                         s.CriticReviews.Count(r => r.NormalizedScore != null) >=
-                                         MARECHAI_RANKING_MIN_CRITIC_COUNT);
-
-        if(kind.HasValue) baseQuery = baseQuery.Where(s => s.Kind == kind.Value);
-
-        if(genreId.HasValue)
-        {
-            int genre = genreId.Value;
-            baseQuery = baseQuery.Where(s => s.Genres.Any(g => g.GenreId == genre));
-        }
-
-        if(platformId.HasValue)
-        {
-            ulong platform = platformId.Value;
-            baseQuery = baseQuery.Where(s => s.Versions.Any(v => v.Releases.Any(r => r.PlatformId == platform)) ||
-                                             s.DirectReleases.Any(r => r.PlatformId == platform));
-        }
-
-        // Pull all candidates with their averages + counts in a single round-trip,
-        // then score them in memory using the SAME priors as the global ranking so the
-        // score shown here matches what the detail page shows for the same software.
-        var raw = await baseQuery.Select(s => new
-                                  {
-                                      s.Id,
-                                      s.Name,
-                                      s.Kind,
-                                      s.Family,
-                                      CriticAvg = s.CriticReviews
-                                                   .Where(r => r.NormalizedScore != null)
-                                                   .Select(r => (double?)r.NormalizedScore)
-                                                   .Average(),
-                                      UserAvg = s.UserRatings.Select(r => (double?)r.Rating).Average(),
-                                      CriticCount = s.CriticReviews.Count(r => r.NormalizedScore != null),
-                                      UserCount   = s.UserRatings.Count
-                                  })
-                                 .ToListAsync(cancellationToken);
-
-        // Reuse the global catalog means from the cached ranking snapshot so the score
-        // is invariant across filters — only the local rank changes per filter.
-        MarechaiRankingSnapshot snapshot = await GetMarechaiRankingAsync();
-
-        var ranked = raw.Select(s => new
-                         {
-                             s.Id,
-                             s.Name,
-                             s.Kind,
-                             Family = s.Family?.Name,
-                             Score = ComputeMarechaiScore(s.CriticAvg,
-                                                          s.CriticCount,
-                                                          s.UserAvg,
-                                                          s.UserCount,
-                                                          snapshot.CriticMean10,
-                                                          snapshot.UserMean10),
-                             Critic = s.CriticAvg,
-                             User   = s.UserAvg,
-                             s.CriticCount,
-                             s.UserCount
-                         })
-                        .Where(s => s.Score.HasValue)
-                        .OrderByDescending(s => s.Score!.Value)
-                        .ThenByDescending(s => s.CriticCount + s.UserCount)
-                        .ThenBy(s => s.Id)
-                        .Take(take)
-                        .Select((s, i) => new SoftwareRankingDto
-                         {
-                             Rank              = i + 1,
-                             SoftwareId        = s.Id,
-                             Name              = s.Name,
-                             Kind              = s.Kind,
-                             Family            = s.Family,
-                             MarechaiScore     = Math.Round(s.Score!.Value, 1),
-                             CriticAverage     = s.Critic,
-                             UserStarAverage   = s.User,
-                             CriticReviewCount = s.CriticCount,
-                             UserRatingCount   = s.UserCount
-                         })
-                        .ToList();
-
-        // Backfill FrontCoverId for the top-N rows ONLY (was: per-row correlated subquery
-        // over EVERY rated software, run inside the materialization above). The helper
-        // expects SoftwareDto, so we adapt the ranking rows in place via a shim list and
-        // copy the resolved Guid back. All ranking rows are non-compilation entries.
-        // Name = "" because the shim is only used to drive PopulateFrontCoverIdsAsync
-        // and is discarded after the FrontCoverId backfill.
-        var coverShim = ranked.Select(r => new SoftwareDto
-                                {
-                                    Id            = r.SoftwareId,
-                                    Name          = string.Empty,
-                                    IsCompilation = false
-                                })
-                              .ToList();
+        // Backfill FrontCoverId via the existing helper that drives the rest of the
+        // software-listing UI. The shim's Name is left empty because the helper only
+        // needs (Id, IsCompilation) to issue its batched cover lookup.
+        List<SoftwareDto> coverShim = ranked.Select(r => new SoftwareDto
+                                             {
+                                                 Id            = r.SoftwareId,
+                                                 Name          = string.Empty,
+                                                 IsCompilation = false
+                                             })
+                                            .ToList();
 
         await PopulateFrontCoverIdsAsync(coverShim, cancellationToken);
 
-        for(int i = 0; i < ranked.Count; i++)
-            ranked[i].FrontCoverId = coverShim[i].FrontCoverId;
-
-        cache.Set(cacheKey, ranked, _marechaiRankingTtl);
+        for(int i = 0; i < ranked.Count; i++) ranked[i].FrontCoverId = coverShim[i].FrontCoverId;
 
         return ranked;
+    }
+
+    /// <summary>
+    ///     Every ranking the given software appears in. Drives the chip row under the
+    ///     Marechai-score banner on the software detail page. Genre dimension names are
+    ///     translated; platform names are passed through as-is. Sorted by dimension (All →
+    ///     Genre → Platform) and then by rank ascending.
+    /// </summary>
+    [HttpGet("{softwareId:ulong}/rankings")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<List<SoftwareRankingPlacementDto>> GetSoftwareRankingPlacementsAsync(
+        ulong softwareId, [FromQuery] string lang = null, CancellationToken cancellationToken = default)
+    {
+        string resolvedLang = ResolveGenreLanguage(lang);
+
+        await genreCache.EnsureLoadedAsync(cancellationToken);
+
+        var rows = await context.RankingEntries
+                                .AsNoTracking()
+                                .Where(e => e.SoftwareId == softwareId)
+                                .Join(context.RankingDefinitions,
+                                      e => e.RankingDefinitionId,
+                                      d => d.Id,
+                                      (e, d) => new
+                                      {
+                                          RankingId = d.Id,
+                                          d.Dimension,
+                                          d.DimensionId,
+                                          d.EntryCount,
+                                          e.Rank,
+                                          e.Score,
+                                          GenreName = d.Dimension == RankingDimension.Genre && d.DimensionId.HasValue
+                                                          ? context.SoftwareGenres
+                                                                   .Where(g => g.Id == (int)d.DimensionId.Value)
+                                                                   .Select(g => g.Name)
+                                                                   .FirstOrDefault()
+                                                          : null,
+                                          PlatformName =
+                                              d.Dimension == RankingDimension.Platform && d.DimensionId.HasValue
+                                                  ? context.SoftwarePlatforms
+                                                           .Where(p => p.Id == (ulong)d.DimensionId.Value)
+                                                           .Select(p => p.Name)
+                                                           .FirstOrDefault()
+                                                  : null
+                                      })
+                                .ToListAsync(cancellationToken);
+
+        var placements = new List<SoftwareRankingPlacementDto>(rows.Count);
+
+        foreach(var r in rows)
+        {
+            string name = await BuildDimensionDisplayNameAsync(r.Dimension,
+                                                               r.DimensionId,
+                                                               r.GenreName,
+                                                               r.PlatformName,
+                                                               resolvedLang,
+                                                               cancellationToken);
+
+            placements.Add(new SoftwareRankingPlacementDto
+            {
+                RankingId     = r.RankingId,
+                Dimension     = (byte)r.Dimension,
+                DimensionId   = r.DimensionId,
+                DimensionName = name,
+                Rank          = r.Rank,
+                EntryCount    = r.EntryCount,
+                Score         = Math.Round(r.Score, 1)
+            });
+        }
+
+        return placements
+              .OrderBy(p => p.Dimension)
+              .ThenBy(p => p.Rank)
+              .ToList();
+    }
+
+    /// <summary>
+    ///     Fires a background recompute of the persisted rankings tables. Returns 202 on
+    ///     accept, 409 when a recompute is already in flight. UberAdmin-gated insurance for
+    ///     ops; the worker also recomputes automatically every 24 hours.
+    /// </summary>
+    [HttpPost("rankings/recompute")]
+    [Authorize(Roles = "UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status202Accepted)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public IActionResult RecomputeRankings()
+    {
+        if(rankingsState.IsComputing)
+            return Conflict(new
+            {
+                error = "A rankings recompute is already in progress."
+            });
+
+        // Fire-and-forget on a non-request scope. The calculator owns its own
+        // IDbContextFactory so the request-scoped MarechaiContext does not need to
+        // outlive this call. Worker / calculator handle their own logging on failure.
+        _ = Task.Run(async () =>
+                     {
+                         try { await rankingsCalculator.ComputeAllAsync(CancellationToken.None); }
+                         catch
+                         {
+                             // Swallow so an unobserved task exception doesn't crash the
+                             // host. The calculator logs failures via ILogger.
+                         }
+                     });
+
+        return Accepted();
     }
 
     static string GetAvatarUrl(ApplicationUser user)

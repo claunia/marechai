@@ -233,6 +233,9 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<WwpcSoftware>                        WwpcSoftwares                       { get; set; }
     public virtual DbSet<WwpcVersion>                         WwpcVersions                        { get; set; }
     public virtual DbSet<WwpcScreenshot>                      WwpcScreenshots                     { get; set; }
+    public virtual DbSet<RankingDefinition>                   RankingDefinitions                  { get; set; }
+    public virtual DbSet<RankingEntry>                        RankingEntries                      { get; set; }
+    public virtual DbSet<SoftwareScore>                       SoftwareScores                      { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -3509,6 +3512,53 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .WithMany()
                   .HasForeignKey(e => e.ReviewedById)
                   .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<RankingDefinition>(entity =>
+        {
+            entity.Property(e => e.Dimension).HasConversion<byte>().IsRequired();
+
+            // One row per (dimension, dimensionId) pair. NULL DimensionId is allowed
+            // only for the single Dimension=All row; the unique index treats NULL as a
+            // distinct value so a uniqueness violation only ever fires on a duplicate
+            // (Genre, genreId) or (Platform, platformId) — defence against worker bugs.
+            entity.HasIndex(e => new { e.Dimension, e.DimensionId }).IsUnique();
+        });
+
+        modelBuilder.Entity<RankingEntry>(entity =>
+        {
+            entity.HasKey(e => new { e.RankingDefinitionId, e.SoftwareId });
+
+            // Ordered fetch: "give me ranking N's top 250 by rank ascending".
+            entity.HasIndex(e => new { e.RankingDefinitionId, e.Rank })
+                  .HasDatabaseName("idx_ranking_entries_definition_rank");
+
+            // Reverse-lookup: "which rankings does this software appear in" — drives the
+            // chip row under the Marechai-score banner on the software detail page.
+            entity.HasIndex(e => e.SoftwareId).HasDatabaseName("idx_ranking_entries_software");
+
+            entity.HasOne(e => e.RankingDefinition)
+                  .WithMany(p => p.Entries)
+                  .HasForeignKey(e => e.RankingDefinitionId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Software)
+                  .WithMany()
+                  .HasForeignKey(e => e.SoftwareId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<SoftwareScore>(entity =>
+        {
+            entity.HasKey(e => e.SoftwareId);
+
+            // Browsing the eligible set by rank (e.g. "compute the median Marechai score").
+            entity.HasIndex(e => e.GlobalRank).HasDatabaseName("idx_software_scores_global_rank");
+
+            entity.HasOne(e => e.Software)
+                  .WithMany()
+                  .HasForeignKey(e => e.SoftwareId)
+                  .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

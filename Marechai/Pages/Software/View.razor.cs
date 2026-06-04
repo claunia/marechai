@@ -82,6 +82,7 @@ public partial class View
     List<SoftwareUserReviewDto>                 _userReviews = [];
     UserReviewSummaryDto                        _userReviewSummary;
     MarechaiScoreDto                            _marechaiScore;
+    List<SoftwareRankingPlacementDto>           _rankingPlacements = [];
     SoftwareUserReviewDto                       _myReview;
     float                                       _myRatingFloat;
     bool                                        _isAuthenticated;
@@ -168,6 +169,10 @@ public partial class View
             Task<List<SoftwareDto>>                 addonsTask        = Service.GetAddonsAsync(Id);
             Task<List<SoftwareCoverDto>>            coversTask        = Service.GetCoversBySoftwareAsync(Id);
             Task<MarechaiScoreDto>                  marechaiScoreTask = AuthService.GetMarechaiScoreAsync(Id);
+            // Placements drive the per-software badge row directly under the Marechai score.
+            // Loaded in Phase 1 because the badges sit in the header card and we want them
+            // visible at first paint when present.
+            Task<List<SoftwareRankingPlacementDto>> placementsTask    = Service.GetRankingPlacementsAsync((ulong)Id);
             Task<UserReviewSummaryDto>              userSummaryTask   = AuthService.GetUserReviewSummaryAsync(Id);
             Task<AuthenticationState>               authStateTask     = AuthStateProvider.GetAuthenticationStateAsync();
             Task<SoftwareUserRatingDto>             myRatingTask      = AuthService.GetMyRatingAsync(Id);
@@ -188,12 +193,13 @@ public partial class View
 
             // ── Phase 1 await ──
             await Task.WhenAll(genresTask, addonsTask, coversTask,
-                               marechaiScoreTask, userSummaryTask, authStateTask, myRatingTask);
+                               marechaiScoreTask, placementsTask, userSummaryTask, authStateTask, myRatingTask);
 
             _genres            = genresTask.Result;
             _addons            = addonsTask.Result;
             _covers            = coversTask.Result;
             _marechaiScore     = marechaiScoreTask.Result;
+            _rankingPlacements = placementsTask.Result ?? [];
             _userReviewSummary = userSummaryTask.Result;
 
             AuthenticationState authState = authStateTask.Result;

@@ -23,134 +23,61 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
-using Marechai.Data;
-using MudBlazor;
 
 namespace Marechai.Pages.Software;
 
+/// <summary>
+///     Index page listing every available Marechai ranking grouped by axis: Overall
+///     first (a single entry — "Top 250 Software"), then per-genre rankings, then
+///     per-platform rankings. Empty groups are not rendered. Clicking a row navigates
+///     to <c>RankingDetail</c> at <c>/software/rankings/{Id}</c>.
+/// </summary>
 public partial class Rankings
 {
-    const int                            _topCount = 250;
-    bool                                 _filtersExpanded;
-    bool                                 _loading = true;
-    SoftwareKind?                        _selectedKind;
-    SoftwareGenreDto                     _selectedGenre;
-    SoftwarePlatformDto                  _selectedPlatform;
-    List<SoftwareGenreDto>               _genres    = [];
-    List<SoftwarePlatformDto>            _platforms = [];
-    List<SoftwareRankingDto>             _results   = [];
+    // SoftwareGenreType byte mirror (Marechai.Data.SoftwareGenreType): 0=Genre,
+    // 1=Perspective (excluded from rankings), 2=Gameplay, 3=Setting, 4=Category.
+    // Kept as a private const set so the split below stays self-documenting and
+    // robust to future enum additions (anything we don't recognise lands in the
+    // "By genre" bucket as a safe default).
+    const byte GENRE_TYPE_GENRE    = 0;
+    const byte GENRE_TYPE_GAMEPLAY = 2;
+    const byte GENRE_TYPE_SETTING  = 3;
+    const byte GENRE_TYPE_CATEGORY = 4;
 
-    int _activeFilterCount =>
-        (_selectedKind.HasValue ? 1 : 0) +
-        (_selectedGenre is not null ? 1 : 0) +
-        (_selectedPlatform is not null ? 1 : 0);
+    bool                       _loading = true;
+    RankingsStatusDto          _status;
+    List<RankingIndexEntryDto> _overall   = [];
+    List<RankingIndexEntryDto> _gameplay  = [];
+    List<RankingIndexEntryDto> _genres    = [];
+    List<RankingIndexEntryDto> _settings  = [];
+    List<RankingIndexEntryDto> _categories = [];
+    List<RankingIndexEntryDto> _platforms = [];
 
     protected override async Task OnInitializedAsync()
     {
-        Task<List<SoftwareGenreDto>>    genresTask    = Service.GetAllGenresAsync();
-        Task<List<SoftwarePlatformDto>> platformsTask = Service.GetPlatformsAsync();
-        Task<List<SoftwareRankingDto>>  rankingsTask  = Service.GetRankingsAsync(take: _topCount);
+        RankingIndexResponseDto resp = await Service.GetRankingsIndexAsync();
 
-        await Task.WhenAll(genresTask, platformsTask, rankingsTask);
+        _status = resp?.Status;
 
-        _genres    = genresTask.Result    ?? [];
-        _platforms = platformsTask.Result ?? [];
-        _results   = rankingsTask.Result  ?? [];
-        _loading   = false;
-    }
+        List<RankingIndexEntryDto> rankings = resp?.Rankings ?? [];
 
-    async Task ReloadAsync()
-    {
-        _loading = true;
-        StateHasChanged();
+        // Dimension byte: 0 = Overall, 1 = Genre, 2 = Platform. Already sorted server-side
+        // by (Dimension, DimensionName) so we just split here. Per-genre rankings are then
+        // further split by the SoftwareGenre.Type byte (carried on the DTO as GenreType).
+        _overall   = rankings.Where(r => r.Dimension == 0).ToList();
+        _platforms = rankings.Where(r => r.Dimension == 2).ToList();
 
-        _results = await Service.GetRankingsAsync(_selectedKind, _selectedGenre?.Id, _selectedPlatform?.Id,
-                                                  _topCount);
+        List<RankingIndexEntryDto> allGenres = rankings.Where(r => r.Dimension == 1).ToList();
+
+        _gameplay   = allGenres.Where(r => r.GenreType == GENRE_TYPE_GAMEPLAY).ToList();
+        _genres     = allGenres.Where(r => r.GenreType == GENRE_TYPE_GENRE).ToList();
+        _settings   = allGenres.Where(r => r.GenreType == GENRE_TYPE_SETTING).ToList();
+        _categories = allGenres.Where(r => r.GenreType == GENRE_TYPE_CATEGORY).ToList();
 
         _loading = false;
-        StateHasChanged();
-    }
-
-    async Task OnKindChanged(SoftwareKind? kind)
-    {
-        _selectedKind = kind;
-        await ReloadAsync();
-    }
-
-    async Task OnGenreChanged(SoftwareGenreDto genre)
-    {
-        _selectedGenre = genre;
-        await ReloadAsync();
-    }
-
-    async Task OnPlatformChanged(SoftwarePlatformDto platform)
-    {
-        _selectedPlatform = platform;
-        await ReloadAsync();
-    }
-
-    async Task ClearFilters()
-    {
-        _selectedKind     = null;
-        _selectedGenre    = null;
-        _selectedPlatform = null;
-        await ReloadAsync();
-    }
-
-    Task<IEnumerable<SoftwareGenreDto>> SearchGenres(string value, CancellationToken cancellationToken)
-    {
-        if(string.IsNullOrWhiteSpace(value)) return Task.FromResult<IEnumerable<SoftwareGenreDto>>(_genres);
-
-        IEnumerable<SoftwareGenreDto> filtered = _genres.Where(g =>
-            !string.IsNullOrEmpty(g.Name) &&
-             g.Name.Contains(value, StringComparison.OrdinalIgnoreCase));
-
-        return Task.FromResult(filtered);
-    }
-
-    Task<IEnumerable<SoftwarePlatformDto>> SearchPlatforms(string value, CancellationToken cancellationToken)
-    {
-        if(string.IsNullOrWhiteSpace(value)) return Task.FromResult<IEnumerable<SoftwarePlatformDto>>(_platforms);
-
-        IEnumerable<SoftwarePlatformDto> filtered = _platforms.Where(p =>
-            !string.IsNullOrEmpty(p.Name) &&
-            p.Name.Contains(value, StringComparison.OrdinalIgnoreCase));
-
-        return Task.FromResult(filtered);
-    }
-
-    static (string label, Color color) KindChip(SoftwareKind kind) => kind switch
-    {
-        SoftwareKind.OperatingSystem     => ("OS", Color.Info),
-        SoftwareKind.Game                => ("Game", Color.Success),
-        SoftwareKind.Dlc                 => ("DLC / Addon", Color.Warning),
-        SoftwareKind.SystemSoftware      => ("System software", Color.Default),
-        SoftwareKind.Application         => ("Application", Color.Primary),
-        SoftwareKind.DevelopmentSoftware => ("Development software", Color.Secondary),
-        SoftwareKind.ServerSoftware      => ("Server software", Color.Tertiary),
-        SoftwareKind.Middleware          => ("Middleware", Color.Info),
-        SoftwareKind.Firmware            => ("Firmware", Color.Default),
-        SoftwareKind.EmbeddedSoftware    => ("Embedded software", Color.Default),
-        _                                => ("Software", Color.Default)
-    };
-
-    string ReviewCountSummary(SoftwareRankingDto item)
-    {
-        int reviews = item.CriticReviewCount ?? 0;
-        int ratings = item.UserRatingCount   ?? 0;
-
-        return (reviews, ratings) switch
-        {
-            (0, 0) => string.Empty,
-            (_, 0) => string.Format(L["{0} reviews"], reviews),
-            (0, _) => string.Format(L["{0} ratings"], ratings),
-            _      => string.Format(L["{0} reviews / {1} ratings"], reviews, ratings)
-        };
     }
 }

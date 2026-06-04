@@ -483,6 +483,16 @@ file class Program
         // the API start serving immediately and processes descriptions in batches afterwards.
         builder.Services.AddHostedService<MarkdownHtmlBackfillWorker>();
 
+        // Persisted Marechai-rankings infrastructure. The singleton state tracks freshness +
+        // concurrency for both the periodic worker and the optional UberAdmin recompute
+        // endpoint. The calculator does the full-catalog sweep (Bayesian shrinkage + per-genre
+        // / per-platform top-250 emission) inside one atomic transaction. The worker runs on
+        // startup (defers ~10 s so EF migrations finish, then recomputes if stale or empty)
+        // and every 24 h thereafter. HTTP listener is NEVER blocked by the calculator.
+        builder.Services.AddSingleton<Marechai.Server.Services.Rankings.RankingsComputationState>();
+        builder.Services.AddSingleton<Marechai.Server.Services.Rankings.MarechaiRankingsCalculator>();
+        builder.Services.AddHostedService<Marechai.Server.Services.Rankings.MarechaiRankingsWorker>();
+
         // Named HttpClient for the YouTube oEmbed endpoint
         // (https://www.youtube.com/oembed?url=...&format=json) used by
         // GpuVideoSuggestionApplier to auto-fetch the canonical video title at submission
