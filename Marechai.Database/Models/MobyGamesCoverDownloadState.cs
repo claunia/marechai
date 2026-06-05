@@ -24,7 +24,7 @@ public class MobyGamesCoverDownloadState : BaseModel<long>
     [StringLength(256)]
     public string Platform { get; set; }
 
-    [StringLength(512)]
+    [StringLength(2048)]
     public string Countries { get; set; }
 
     [StringLength(64)]
