@@ -278,6 +278,9 @@ public static partial class CoverArtTabParser
 
     static IEnumerable<string> SplitPlatforms(string heading)
     {
+        // Strip embedded URLs that MobyGames sometimes puts in headings (broken entries)
+        heading = UrlInHeadingRegex().Replace(heading, "").Trim();
+
         // "Foo and Bar and Baz" → ["Foo","Bar","Baz"]; preserve parenthesised suffixes.
         foreach(string part in heading.Split([" and "], System.StringSplitOptions.RemoveEmptyEntries))
         {
@@ -285,4 +288,7 @@ public static partial class CoverArtTabParser
             if(!string.IsNullOrEmpty(trimmed)) yield return trimmed;
         }
     }
+
+    [GeneratedRegex(@"\s*\(?https?://\S+\)?\s*", RegexOptions.Compiled)]
+    private static partial Regex UrlInHeadingRegex();
 }

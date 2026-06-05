@@ -258,7 +258,7 @@ public class CoverDownloadService
                                 SoftwareId   = game.SoftwareId!.Value,
                                 CoverPageUrl = cover.DetailPageUrl,
                                 CoverType    = coverTypeStr,
-                                Platform     = group.Platform,
+                                Platform     = Truncate(group.Platform, 256),
                                 Countries    = string.Join(", ", group.Countries),
                                 GroupId      = group.GroupId,
                                 Status       = MobyGamesCoverDownloadStatus.NoRelease,
@@ -280,7 +280,7 @@ public class CoverDownloadService
                             SoftwareId        = game.SoftwareId!.Value,
                             CoverPageUrl      = cover.DetailPageUrl,
                             CoverType         = coverTypeStr,
-                            Platform          = group.Platform,
+                            Platform          = Truncate(group.Platform, 256),
                             Countries         = string.Join(", ", group.Countries),
                             GroupId           = group.GroupId,
                             Status            = MobyGamesCoverDownloadStatus.Pending,
@@ -526,4 +526,7 @@ public class CoverDownloadService
             return true;
         }
     }
+
+    static string Truncate(string value, int maxLength) =>
+        string.IsNullOrEmpty(value) ? value : value.Length <= maxLength ? value : value[..maxLength];
 }

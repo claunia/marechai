@@ -31,6 +31,13 @@ public class PlatformMatcher
 
         string normalized = name.Replace("\u00a0", " ").Trim();
 
+        // DB column is varchar(255) — truncate to avoid DbUpdateException
+        if(normalized.Length > 255)
+        {
+            Console.WriteLine($"\e[33m  Warning: Platform name too long ({normalized.Length} chars), truncating: \"{normalized[..80]}...\"\e[0m");
+            normalized = normalized[..255];
+        }
+
         if(_cache.TryGetValue(normalized, out var cached))
             return cached;
 
