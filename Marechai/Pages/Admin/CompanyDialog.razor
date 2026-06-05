@@ -1,4 +1,5 @@
 @using Marechai.ApiClient.Models
+@using Marechai.Helpers
 @using Marechai.Services
 @using System.Threading
 
@@ -69,6 +70,7 @@
                                      ToStringFunc="@(c => c?.Name ?? string.Empty)"
                                      Variant="Variant.Outlined"
                                      Clearable="true"
+                                     MaxItems="50"
                                      Class="mb-4"/>
                 }
 
@@ -252,10 +254,20 @@
 
     Task<IEnumerable<CompanyDto>> SearchCompanies(string value, CancellationToken ct)
     {
-        IEnumerable<CompanyDto> results = _allCompanies ?? [];
+        if(string.IsNullOrWhiteSpace(value))
+            return Task.FromResult<IEnumerable<CompanyDto>>(
+                (_allCompanies ?? []).OrderBy(c => c.Name, StringComparer.OrdinalIgnoreCase).Take(50));
 
-        if(!string.IsNullOrWhiteSpace(value))
-            results = _allCompanies?.Where(c => c.Name.Contains(value, StringComparison.OrdinalIgnoreCase)) ?? [];
+        string query = value.Trim();
+
+        IEnumerable<CompanyDto> results = (_allCompanies ?? [])
+           .Select(c => (Company: c, Score: JaroWinkler.Similarity(query, c.Name ?? string.Empty)))
+           .Where(t => t.Score >= 0.6 ||
+                       (t.Company.Name?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false))
+           .OrderByDescending(t => t.Score)
+           .ThenBy(t => t.Company.Name, StringComparer.OrdinalIgnoreCase)
+           .Select(t => t.Company)
+           .Take(50);
 
         return Task.FromResult(results);
     }
