@@ -53,6 +53,22 @@ public sealed partial class MobyGamesHttpClient : IDisposable
             Timeout = TimeSpan.FromSeconds(120)
         };
 
+        // Always opt in to mature/adult content so cover detail pages for adult games
+        // render the actual image instead of a gate page with <img src="none">.
+        _handler.CookieContainer.Add(new Uri("https://mobygames.com/"),
+                                     new Cookie("adult_quicksearch", "true", "/", "mobygames.com")
+                                     {
+                                         Secure = false, HttpOnly = false,
+                                         Expires = DateTime.UtcNow.AddYears(1)
+                                     });
+
+        _handler.CookieContainer.Add(new Uri("https://www.mobygames.com/"),
+                                     new Cookie("adult_quicksearch", "true", "/", "www.mobygames.com")
+                                     {
+                                         Secure = false, HttpOnly = false,
+                                         Expires = DateTime.UtcNow.AddYears(1)
+                                     });
+
         // Browser-like headers so per-game pages don't trip Cloudflare's bot heuristics.
         _client.DefaultRequestHeaders.Add("User-Agent", UserAgent);
         _client.DefaultRequestHeaders.Add(
@@ -166,6 +182,10 @@ public sealed partial class MobyGamesHttpClient : IDisposable
     {
         if(string.IsNullOrWhiteSpace(thumbnailUrl)) return null;
 
+        // Reject placeholder values like "none" that aren't real URLs or paths
+        if(!thumbnailUrl.StartsWith("http") && !thumbnailUrl.StartsWith("/"))
+            return null;
+
         // Replace /s/ with /l/ in the path to get the large/original version
         string largeUrl = thumbnailUrl.Replace("/covers/s/", "/covers/l/");
 
@@ -182,27 +202,52 @@ public sealed partial class MobyGamesHttpClient : IDisposable
         if(_delayMs > 0)
             await Task.Delay(_delayMs);
 
-        if(!url.StartsWith("http"))
-            url = BaseUrl + url;
-
-        using var response = await _client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
-
-        if(!response.IsSuccessStatusCode)
+        if(!url.StartsWith("http") && !url.StartsWith("/"))
         {
-            Console.WriteLine($"\e[33m  Warning: HTTP {(int)response.StatusCode} downloading {url}\e[0m");
+            Console.WriteLine($"\e[33m  Warning: Invalid image URL '{url}' — skipping download\e[0m");
 
             return null;
         }
 
-        // Determine file extension from content type or URL
-        string extension = GetExtensionFromResponse(response, url);
-        string fullPath  = $"{destPath}.{extension}";
+        if(!url.StartsWith("http"))
+            url = BaseUrl + url;
 
-        await using var stream = await response.Content.ReadAsStreamAsync();
-        await using var file   = File.Create(fullPath);
-        await stream.CopyToAsync(file);
+        // Final safety check: reject URLs where BaseUrl concatenation produced a broken hostname
+        if(!Uri.TryCreate(url, UriKind.Absolute, out var parsedUri) ||
+           (parsedUri.Scheme != "http" && parsedUri.Scheme != "https"))
+        {
+            Console.WriteLine($"\e[33m  Warning: Malformed URL '{url}' — skipping download\e[0m");
 
-        return extension;
+            return null;
+        }
+
+        try
+        {
+            using var response = await _client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+
+            if(!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"\e[33m  Warning: HTTP {(int)response.StatusCode} downloading {url}\e[0m");
+
+                return null;
+            }
+
+            // Determine file extension from content type or URL
+            string extension = GetExtensionFromResponse(response, url);
+            string fullPath  = $"{destPath}.{extension}";
+
+            await using var stream = await response.Content.ReadAsStreamAsync();
+            await using var file   = File.Create(fullPath);
+            await stream.CopyToAsync(file);
+
+            return extension;
+        }
+        catch(HttpRequestException ex)
+        {
+            Console.WriteLine($"\e[33m  Warning: Download failed for {url}: {ex.Message}\e[0m");
+
+            return null;
+        }
     }
 
     static string GetExtensionFromResponse(HttpResponseMessage response, string url)
@@ -239,6 +284,10 @@ public sealed partial class MobyGamesHttpClient : IDisposable
     public static string GetLargePromoImageUrl(string thumbnailUrl)
     {
         if(string.IsNullOrWhiteSpace(thumbnailUrl)) return null;
+
+        // Reject placeholder values like "none" that aren't real URLs or paths
+        if(!thumbnailUrl.StartsWith("http") && !thumbnailUrl.StartsWith("/"))
+            return null;
 
         string largeUrl = thumbnailUrl.Replace("/promo/s/", "/promo/l/");
 
@@ -290,7 +339,7 @@ public sealed partial class MobyGamesHttpClient : IDisposable
         {
             string src = galleryImg.GetAttributeValue("src", null);
 
-            if(!string.IsNullOrWhiteSpace(src))
+            if(!string.IsNullOrWhiteSpace(src) && (src.StartsWith("http") || src.StartsWith("/")))
                 return (src, false);
         }
 
@@ -302,7 +351,8 @@ public sealed partial class MobyGamesHttpClient : IDisposable
         {
             string src = galleryImg.GetAttributeValue("src", null);
 
-            if(!string.IsNullOrWhiteSpace(src) && src.Contains("cdn.mobygames.com"))
+            if(!string.IsNullOrWhiteSpace(src) && (src.StartsWith("http") || src.StartsWith("/")) &&
+               src.Contains("cdn.mobygames.com"))
                 return (src, false);
         }
 
