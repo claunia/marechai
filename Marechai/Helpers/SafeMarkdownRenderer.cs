@@ -67,14 +67,14 @@ public static class SafeMarkdownRenderer
                     "blockquote",
                     "pre", "code",
                     "strong", "em", "del", "ins",
-                    "a", "img",
+                    "a", "img", "sup",
                     "table", "thead", "tbody", "tfoot", "tr", "th", "td",
                     "span", "div"
                 })
             s.AllowedTags.Add(tag);
 
         s.AllowedAttributes.Clear();
-        foreach(string attr in new[] { "href", "title", "alt", "src", "colspan", "rowspan" })
+        foreach(string attr in new[] { "href", "title", "alt", "src", "colspan", "rowspan", "id" })
             s.AllowedAttributes.Add(attr);
 
         // Drop class/style/id and every event handler. HtmlSanitizer already strips on*= handlers by default; this

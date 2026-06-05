@@ -147,6 +147,7 @@ public partial class View
         _videos = full.Videos ?? [];
 
         _description = full.DescriptionHtml ?? full.DescriptionText;
+        _description = HtmlFragmentFixer.FixFragmentLinks(_description, $"/soundsynth/{Id}");
         _descriptionLanguageServed = full.DescriptionLanguageCode;
 
         string requested = UiLanguage.GetIso639_3();

@@ -104,6 +104,7 @@ public partial class View
             _magazines       = full.Magazines       ?? [];
             _softwareCredits = full.SoftwareCredits ?? [];
             _description     = full.DescriptionHtml ?? full.DescriptionText;
+            _description     = HtmlFragmentFixer.FixFragmentLinks(_description, $"/person/{Id}");
 
             _descriptionLanguageServed = full.DescriptionLanguageCode;
 

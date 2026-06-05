@@ -133,6 +133,7 @@ public partial class View
         CompanyDescriptionDto served = await Service.GetDescriptionAsync(Id, requested);
 
         _description               = served?.Html ?? served?.Markdown ?? string.Empty;
+        _description               = HtmlFragmentFixer.FixFragmentLinks(_description, $"/company/{Id}");
         _descriptionLanguageServed = served?.LanguageCode;
         _hasAnyDescription         = !string.IsNullOrWhiteSpace(_description);
         _descriptionFellBack       = _hasAnyDescription

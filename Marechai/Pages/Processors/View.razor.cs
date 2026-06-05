@@ -140,6 +140,7 @@ public partial class View
         _pdas        = machines.Where(m => m.Type == (int)MachineType.Pda).ToList();
 
         _description = full.DescriptionHtml ?? full.DescriptionText;
+        _description = HtmlFragmentFixer.FixFragmentLinks(_description, $"/processor/{Id}");
         _descriptionLanguageServed = full.DescriptionLanguageCode;
 
         string requested = UiLanguage.GetIso639_3();

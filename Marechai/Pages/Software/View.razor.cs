@@ -534,6 +534,7 @@ public partial class View
         SoftwareDescriptionDto served = await Service.GetDescriptionAsync(Id, requested);
 
         _description               = served?.Html ?? served?.Markdown ?? string.Empty;
+        _description               = HtmlFragmentFixer.FixFragmentLinks(_description, $"/software/{Id}");
         _descriptionLanguageServed = served?.LanguageCode;
         _hasAnyDescription         = !string.IsNullOrWhiteSpace(_description);
         _descriptionFellBack       = _hasAnyDescription
