@@ -30,5 +30,6 @@ Requirements:
 - Tables are allowed when appropriate (e.g., timelines, product families, corporate structure).
 - Focus strictly on the specific company requested. Do not discuss unrelated subsidiaries, successors, or predecessor companies unless directly relevant.
 - If a regional branch or subsidiary is requested, restrict the article to that region’s specifics and ignore global variants.
+- Use inline citations and references
 
 Now write the article about: XXXXXXXXXXXX
