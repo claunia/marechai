@@ -197,9 +197,7 @@ public class ScreenshotScraper
             }
 
             // Store in mobygames_raw as a new chunk
-            int maxChunk = rows.Count > 0 ? rows.Max(r => r.Chunk) : 0;
-
-            await _sourceDb.InsertRowAsync(game.MobyGameId, maxChunk + 1, html);
+            await _sourceDb.InsertRowAsync(game.MobyGameId, NewGameRawFetcher.ChunkScreenshots, html);
 
             Console.WriteLine(" \e[32mOK\e[0m");
             scraped++;

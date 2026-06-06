@@ -7,6 +7,7 @@ using Marechai.Data;
 using Marechai.Database.Models;
 using Marechai.MobyGames.Models;
 using Marechai.MobyGames.Parsers;
+using NewSite = Marechai.MobyGames.Parsers.NewSite;
 using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.MobyGames.Services;
@@ -70,6 +71,7 @@ public class PromoArtDownloadService
         int skippedCount    = 0;
         int failedCount     = 0;
         int noPromoPage     = 0;
+        int parseFailed     = 0;
         int gamesProcessed  = 0;
         bool aborted        = false;
 
@@ -78,20 +80,8 @@ public class PromoArtDownloadService
             if(aborted) break;
             gamesProcessed++;
 
-            var rows = await _sourceDb.GetRowsForGameAsync(game.MobyGameId);
-
-            // Find the promo art page chunk (new MobyGames HTML stored by scraper)
-            string promoHtml = null;
-
-            foreach(var row in rows)
-            {
-                // New site promo pages contain /promo/group- pattern
-                if(row.Body.Contains("/promo/group-"))
-                {
-                    promoHtml = row.Body;
-                    break;
-                }
-            }
+            // Fetch the promo art page directly from the fixed chunk slot
+            string promoHtml = await _sourceDb.GetChunkBodyAsync(game.MobyGameId, NewGameRawFetcher.ChunkPromo);
 
             if(promoHtml is null)
             {
@@ -106,11 +96,18 @@ public class PromoArtDownloadService
                 continue;
             }
 
-            var promoGroups = PromoArtPageParser.Parse(promoHtml);
+            var promoGroups = NewSite.PromoArtTabParser.Parse(promoHtml);
 
             if(promoGroups.Count == 0)
             {
-                Console.WriteLine($"  [{gamesProcessed}/{Math.Min(batchSize, importedGames.Count)}] {game.MobyGameId}: Promo page found but no groups parsed");
+                parseFailed++;
+
+                if(dryRun || parseFailed <= 20)
+                    Console.WriteLine($"  [{gamesProcessed}/{Math.Min(batchSize, importedGames.Count)}] {game.MobyGameId}: Promo page found but no groups parsed");
+
+                if(parseFailed == 20 && !dryRun)
+                    Console.WriteLine("  ... suppressing further 'no groups parsed' messages ...");
+
                 continue;
             }
 
@@ -130,7 +127,7 @@ public class PromoArtDownloadService
                 int groupId = 0;
 
                 if(!dryRun)
-                    groupId = await GetOrCreateGroupAsync(group.GroupName);
+                    groupId = await GetOrCreateGroupAsync(group.GroupName, group.GroupId);
 
                 foreach(var image in group.Images)
                 {
@@ -317,12 +314,14 @@ public class PromoArtDownloadService
             Console.WriteLine("  \e[33;1m[DRY RUN]\e[0m No changes made");
             Console.WriteLine($"    Games scanned:       {gamesProcessed}");
             Console.WriteLine($"    No promo page:       {noPromoPage}");
+            Console.WriteLine($"    Parse failed:        {parseFailed}");
             Console.WriteLine($"    Total images found:  {totalImages}");
         }
         else
         {
             Console.WriteLine($"    Games processed:     {gamesProcessed}");
             Console.WriteLine($"    No promo page:       {noPromoPage}");
+            Console.WriteLine($"    Parse failed:        {parseFailed}");
             Console.WriteLine($"    Total images found:  {totalImages}");
             Console.WriteLine($"    Downloaded:          {downloadedCount}");
             Console.WriteLine($"    Skipped (existing):  {skippedCount}");
@@ -332,9 +331,56 @@ public class PromoArtDownloadService
         Console.WriteLine("  ────────────────────────────────────\n");
     }
 
-    async Task<int> GetOrCreateGroupAsync(string groupName)
+    async Task<int> GetOrCreateGroupAsync(string groupName, string groupId = null)
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
+
+        // If we have a groupId, check if a previous run created a bad "Group {id}" entry
+        // and rename it to the real name. Skip if the current name IS the bad pattern
+        // (regex fallback couldn't extract the real name — nothing to repair).
+        if(groupId is not null)
+        {
+            string badName = $"Group {groupId}";
+
+            if(groupName != badName)
+            {
+                var badEntry = await context.SoftwarePromoArtGroups
+                                            .FirstOrDefaultAsync(g => g.Name == badName);
+
+                if(badEntry is not null)
+                {
+                    // Check if the real name already exists too
+                    var realEntry = await context.SoftwarePromoArtGroups
+                                                 .FirstOrDefaultAsync(g => g.Name == groupName);
+
+                    if(realEntry is null)
+                    {
+                        // Just rename the bad entry
+                        badEntry.Name = groupName;
+                        await context.SaveChangesAsync();
+                        Console.WriteLine($"      \e[33mRepaired\e[0m group \"{badName}\" → \"{groupName}\"");
+
+                        return badEntry.Id;
+                    }
+
+                    // Both exist — migrate promo art from bad group to real group, then delete bad
+                    var orphaned = await context.SoftwarePromoArt
+                                                .Where(p => p.GroupId == badEntry.Id)
+                                                .ToListAsync();
+
+                    foreach(var art in orphaned)
+                        art.GroupId = realEntry.Id;
+
+                    context.SoftwarePromoArtGroups.Remove(badEntry);
+                    await context.SaveChangesAsync();
+
+                    if(orphaned.Count > 0)
+                        Console.WriteLine($"      \e[33mRepaired\e[0m migrated {orphaned.Count} images from \"{badName}\" → \"{groupName}\"");
+
+                    return realEntry.Id;
+                }
+            }
+        }
 
         var existing = await context.SoftwarePromoArtGroups
                                     .FirstOrDefaultAsync(g => g.Name == groupName);

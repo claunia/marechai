@@ -61,6 +61,9 @@ public class NewGameRawFetcher
     const    int                   ChunkSpecs    = 3;
     const    int                   ChunkCovers   = 4;
     const    int                   ChunkReviews  = 5;
+    internal const int             ChunkPromo       = 10;
+    internal const int             ChunkScreenshots = 11;
+    internal const int             ChunkMedia       = 12;
     readonly DiscoveryStateService _discovery;
     readonly MobyGamesHttpClient   _http;
     readonly SourceDatabaseService _sourceDb;

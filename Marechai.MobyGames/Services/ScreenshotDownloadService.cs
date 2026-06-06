@@ -81,21 +81,8 @@ public class ScreenshotDownloadService
 
             gamesProcessed++;
 
-            var rows = await _sourceDb.GetRowsForGameAsync(game.MobyGameId);
-
-            // Find the screenshot page chunk (new MobyGames HTML)
-            // The gtag content_type "game-list-screenshots" is always present on screenshot list pages
-            string screenshotHtml = null;
-
-            foreach(var row in rows)
-            {
-                if(row.Body.Contains("game-list-screenshots"))
-                {
-                    screenshotHtml = row.Body;
-
-                    break;
-                }
-            }
+            // Fetch the screenshot page directly from the fixed chunk slot
+            string screenshotHtml = await _sourceDb.GetChunkBodyAsync(game.MobyGameId, NewGameRawFetcher.ChunkScreenshots);
 
             if(screenshotHtml is null)
             {

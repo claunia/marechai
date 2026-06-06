@@ -113,9 +113,22 @@ public class PromoArtScraper
 
             Console.WriteLine($"  [{gamesChecked}/{Math.Min(batchSize, importedGames.Count)}] \e[36;1m{game.MobyGameId}\e[0m: Has promo art");
 
-            // Check if we already scraped this game's promo page
-            // New site pages contain /promo/group- pattern (old site doesn't)
-            bool alreadyScraped = rows.Any(r => r.Body.Contains("/promo/group-"));
+            // Check if we already scraped this game's promo page.
+            // Must verify via TabDetector that the row IS actually a promo page,
+            // not just the main page which also contains /promo/group- image links.
+            bool alreadyScraped = false;
+
+            foreach(var row in rows)
+            {
+                var (tab, _) = TabDetector.DetectWithLayout(row.Body);
+
+                if(tab == MobyTab.PromoArt)
+                {
+                    alreadyScraped = true;
+
+                    break;
+                }
+            }
 
             if(alreadyScraped)
             {
@@ -185,10 +198,8 @@ public class PromoArtScraper
                 continue;
             }
 
-            // Store in mobygames_raw as a new chunk
-            int maxChunk = rows.Count > 0 ? rows.Max(r => r.Chunk) : 0;
-
-            await _sourceDb.InsertRowAsync(game.MobyGameId, maxChunk + 1, html);
+            // Store in mobygames_raw at the fixed promo chunk slot
+            await _sourceDb.InsertRowAsync(game.MobyGameId, NewGameRawFetcher.ChunkPromo, html);
 
             Console.WriteLine(" \e[32mOK\e[0m");
             scraped++;

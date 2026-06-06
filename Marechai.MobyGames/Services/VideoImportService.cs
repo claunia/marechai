@@ -61,21 +61,8 @@ public class VideoImportService
         {
             gamesProcessed++;
 
-            var rows = await _sourceDb.GetRowsForGameAsync(game.MobyGameId);
-
-            // Find the media page chunk (new MobyGames HTML)
-            // The gtag content_type "game-list-media" is present on media pages
-            string mediaHtml = null;
-
-            foreach(var row in rows)
-            {
-                if(row.Body.Contains("game-list-media"))
-                {
-                    mediaHtml = row.Body;
-
-                    break;
-                }
-            }
+            // Fetch the media page directly from the fixed chunk slot
+            string mediaHtml = await _sourceDb.GetChunkBodyAsync(game.MobyGameId, NewGameRawFetcher.ChunkMedia);
 
             if(mediaHtml is null)
             {

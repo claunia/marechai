@@ -111,6 +111,101 @@ public class SourceDatabaseService
     }
 
     /// <summary>
+    ///     Moves a row from one chunk number to another. Used by the chunk migrator
+    ///     to reassign dynamically-allocated chunks to their fixed slot numbers.
+    ///     Returns the number of affected rows (0 if the source chunk didn't exist,
+    ///     or the target chunk already exists via <c>INSERT IGNORE</c>).
+    /// </summary>
+    public async Task<int> MoveChunkAsync(string gameId, int fromChunk, int toChunk)
+    {
+        await using var connection = new MySqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        // Copy to new chunk (IGNORE if target already exists), then delete old
+        await using var insert = new MySqlCommand(
+            "INSERT IGNORE INTO mobygames_raw (id, chunk, body) SELECT id, @toChunk, body FROM mobygames_raw WHERE id = @id AND chunk = @fromChunk",
+            connection);
+
+        insert.Parameters.AddWithValue("@id",        gameId);
+        insert.Parameters.AddWithValue("@fromChunk", fromChunk);
+        insert.Parameters.AddWithValue("@toChunk",   toChunk);
+
+        int inserted = await insert.ExecuteNonQueryAsync();
+
+        await using var delete = new MySqlCommand(
+            "DELETE FROM mobygames_raw WHERE id = @id AND chunk = @fromChunk", connection);
+
+        delete.Parameters.AddWithValue("@id",        gameId);
+        delete.Parameters.AddWithValue("@fromChunk", fromChunk);
+
+        await delete.ExecuteNonQueryAsync();
+
+        return inserted;
+    }
+
+    /// <summary>
+    ///     Returns all (id, chunk) pairs whose chunk number is outside the known fixed slots
+    ///     (0-5 and 10-12). These are candidates for chunk migration.
+    /// </summary>
+    public async Task<List<(string Id, int Chunk)>> GetMisplacedChunksAsync()
+    {
+        var results = new List<(string, int)>();
+
+        await using var connection = new MySqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        await using var cmd = new MySqlCommand(
+            "SELECT id, chunk FROM mobygames_raw WHERE chunk NOT IN (0,1,2,3,4,5,10,11,12) ORDER BY id, chunk",
+            connection);
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+
+        while(await reader.ReadAsync())
+            results.Add((reader.GetString(0), reader.GetInt32(1)));
+
+        return results;
+    }
+
+    /// <summary>
+    ///     Returns the body of a single (id, chunk) row. Used by the chunk migrator
+    ///     to detect the page type without loading all chunks for a game.
+    /// </summary>
+    public async Task<string> GetChunkBodyAsync(string gameId, int chunk)
+    {
+        await using var connection = new MySqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        await using var cmd = new MySqlCommand(
+            "SELECT body FROM mobygames_raw WHERE id = @id AND chunk = @chunk LIMIT 1", connection);
+
+        cmd.Parameters.AddWithValue("@id",    gameId);
+        cmd.Parameters.AddWithValue("@chunk", chunk);
+
+        var result = await cmd.ExecuteScalarAsync();
+
+        return result as string;
+    }
+
+    /// <summary>
+    ///     Returns true if a row exists for the given (id, chunk) pair.
+    /// </summary>
+    public async Task<bool> ChunkExistsAsync(string gameId, int chunk)
+    {
+        await using var connection = new MySqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        await using var cmd = new MySqlCommand(
+            "SELECT EXISTS (SELECT 1 FROM mobygames_raw WHERE id = @id AND chunk = @chunk LIMIT 1)", connection);
+
+        cmd.Parameters.AddWithValue("@id",    gameId);
+        cmd.Parameters.AddWithValue("@chunk", chunk);
+
+        var result = await cmd.ExecuteScalarAsync();
+
+        return System.Convert.ToInt32(result) == 1;
+    }
+
+    /// <summary>
     ///     Delete every cached chunk for the given slug. Used to evict stale legacy-layout
     ///     captures before re-scraping the current new-layout page (see
     ///     <c>DlcRelationService.ResolveBaseSoftwareIdAsync</c>) — MobyGames data corrections

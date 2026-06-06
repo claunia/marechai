@@ -137,9 +137,7 @@ public class MediaScraper
             bool hasVideos = html.Contains("lazyframe", StringComparison.OrdinalIgnoreCase);
 
             // Store in mobygames_raw as a new chunk (even without videos, to avoid re-fetching)
-            int maxChunk = rows.Count > 0 ? rows.Max(r => r.Chunk) : 0;
-
-            await _sourceDb.InsertRowAsync(game.MobyGameId, maxChunk + 1, html);
+            await _sourceDb.InsertRowAsync(game.MobyGameId, NewGameRawFetcher.ChunkMedia, html);
 
             if(hasVideos)
             {

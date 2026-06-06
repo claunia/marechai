@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Marechai.Database;
 using Marechai.Database.Models;
@@ -776,6 +778,94 @@ class Program
                 break;
             }
 
+            case "migrate-chunks":
+            {
+                Console.WriteLine("\n  Migrating dynamically-allocated chunks to fixed slot numbers...\n");
+                Console.WriteLine("  Fixed slots: Promo=10, Screenshots=11, Media=12\n");
+
+                var misplaced = await sourceDb.GetMisplacedChunksAsync();
+
+                Console.WriteLine($"  Found {misplaced.Count} chunk(s) outside fixed slots\n");
+
+                int migrated = 0;
+                int skipped  = 0;
+                int errors   = 0;
+                var skipReasons = new Dictionary<string, int>();
+
+                for(int i = 0; i < misplaced.Count; i++)
+                {
+                    var (gameId, chunk) = misplaced[i];
+
+                    if((i + 1) % 1000 == 0)
+                        Console.WriteLine($"  [{i + 1}/{misplaced.Count}] migrated={migrated} skipped={skipped} errors={errors}");
+
+                    string body = await sourceDb.GetChunkBodyAsync(gameId, chunk);
+
+                    if(body is null)
+                    {
+                        skipped++;
+                        continue;
+                    }
+
+                    var (tab, _) = Parsers.TabDetector.DetectWithLayout(body);
+
+                    int? targetChunk = tab switch
+                    {
+                        Parsers.MobyTab.PromoArt    => NewGameRawFetcher.ChunkPromo,
+                        Parsers.MobyTab.Screenshots => NewGameRawFetcher.ChunkScreenshots,
+                        Parsers.MobyTab.Media       => NewGameRawFetcher.ChunkMedia,
+                        _                           => null
+                    };
+
+                    if(targetChunk is null)
+                    {
+                        string reason = tab.ToString();
+                        skipReasons.TryGetValue(reason, out int cnt);
+                        skipReasons[reason] = cnt + 1;
+                        skipped++;
+                        continue;
+                    }
+
+                    // Don't overwrite if target slot already has data
+                    if(await sourceDb.ChunkExistsAsync(gameId, targetChunk.Value))
+                    {
+                        string reason = $"{tab} → {targetChunk.Value} (slot occupied)";
+                        skipReasons.TryGetValue(reason, out int cnt);
+                        skipReasons[reason] = cnt + 1;
+                        skipped++;
+                        continue;
+                    }
+
+                    try
+                    {
+                        await sourceDb.MoveChunkAsync(gameId, chunk, targetChunk.Value);
+                        migrated++;
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine($"  ERROR {gameId} chunk {chunk} → {targetChunk.Value}: {ex.Message}");
+                        errors++;
+                    }
+                }
+
+                Console.WriteLine($"\n  ────────────────────────────────────");
+                Console.WriteLine($"    Chunks scanned:  {misplaced.Count}");
+                Console.WriteLine($"    Migrated:        {migrated}");
+                Console.WriteLine($"    Skipped:         {skipped}");
+                Console.WriteLine($"    Errors:          {errors}");
+
+                if(skipReasons.Count > 0)
+                {
+                    Console.WriteLine("    Skip breakdown:");
+
+                    foreach(var kv in skipReasons.OrderByDescending(kv => kv.Value))
+                        Console.WriteLine($"      {kv.Key}: {kv.Value}");
+                }
+                Console.WriteLine($"  ────────────────────────────────────\n");
+
+                break;
+            }
+
             default:
                 Console.WriteLine("  Usage:");
                 Console.WriteLine("    import [--batch-size N] [--unattended] [--yes-to-all]");
@@ -831,6 +921,8 @@ class Program
                 Console.WriteLine("                                                  cached rows under both '<slug>' and '-<slug>' first. Use to evict stale");
                 Console.WriteLine("                                                  legacy-layout captures (e.g. since-corrected MobyGames data).");
                 Console.WriteLine("    reset --game <id>                             Reset a game to unprocessed");
+                Console.WriteLine("    migrate-chunks                                Move dynamically-allocated chunks (6-9, 13+) to fixed slots:");
+                Console.WriteLine("                                                  Promo→10, Screenshots→11, Media→12. Run once after upgrading.");
 
                 break;
         }
