@@ -250,18 +250,18 @@ public sealed class SitemapService(IHttpClientFactory httpClientFactory, IMemory
 
             int skip = (page - 1) * UrlsPerSitemap;
 
-            var entities = await client.GetFromJsonAsync<List<SitemapEntity>>(
-                $"/{apiEndpoint}?skip={skip}&take={UrlsPerSitemap}");
+            var ids = await client.GetFromJsonAsync<List<long>>(
+                $"/sitemap/{apiEndpoint}/ids?skip={skip}&take={UrlsPerSitemap}");
 
-            if(entities is not null)
+            if(ids is not null)
             {
-                foreach(SitemapEntity entity in entities)
-                    urls.Add($"{urlPrefix}{entity.Id}");
+                foreach(long id in ids)
+                    urls.Add($"{urlPrefix}{id}");
             }
         }
         catch(Exception ex)
         {
-            logger.LogWarning(ex, "Failed to fetch entities from /{Endpoint} page {Page} for sitemap",
+            logger.LogWarning(ex, "Failed to fetch IDs from /sitemap/{Endpoint}/ids page {Page} for sitemap",
                               apiEndpoint, page);
         }
 
@@ -332,7 +332,4 @@ public sealed class SitemapService(IHttpClientFactory httpClientFactory, IMemory
         Indent      = true,
         OmitXmlDeclaration = false
     };
-
-    /// <summary>Minimal DTO for deserializing only the <c>id</c> field from the API response.</summary>
-    sealed record SitemapEntity(long Id);
 }
