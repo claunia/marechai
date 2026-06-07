@@ -89,5 +89,7 @@ public static class Register
 
         services.AddScoped<ThemeStateService>();
         services.AddScoped<ThemeFontLoader>();
+
+        services.AddSingleton<SitemapService>();
     }
 }

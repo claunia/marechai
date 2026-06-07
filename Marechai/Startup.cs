@@ -30,6 +30,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.StaticFiles;
 using MudBlazor.Services;
@@ -163,6 +164,11 @@ public class Startup(IConfiguration configuration)
         services.AddHttpClient("Plausible", client =>
         {
             client.BaseAddress = new Uri("https://plausible.claunia.com");
+        });
+
+        services.AddHttpClient("SitemapApi", client =>
+        {
+            client.BaseAddress = new Uri(apiUrl);
         });
 
         // OpenAI + NLLB HttpClients (each registered only when its Url is configured) plus the
@@ -327,6 +333,39 @@ public class Startup(IConfiguration configuration)
                 context.Response.StatusCode = (int)response.StatusCode;
 
                 await response.Content.CopyToAsync(context.Response.Body);
+            });
+
+            endpoints.MapGet("/robots.txt", context =>
+            {
+                context.Response.ContentType              = "text/plain";
+                context.Response.Headers["Cache-Control"] = "public, max-age=86400";
+
+                return context.Response.WriteAsync(
+                    $"User-agent: *\nAllow: /\n\nSitemap: {Helpers.SeoMeta.CanonicalHost}/sitemap.xml\n");
+            });
+
+            endpoints.MapGet("/sitemap.xml", async context =>
+            {
+                var sitemapService = context.RequestServices.GetRequiredService<SitemapService>();
+
+                context.Response.ContentType              = "application/xml; charset=utf-8";
+                context.Response.Headers["Cache-Control"] = "public, max-age=86400";
+
+                await context.Response.WriteAsync(await sitemapService.GenerateSitemapIndexAsync());
+            });
+
+            endpoints.MapGet("/sitemap-{section}.xml", async context =>
+            {
+                string section = (string?)context.Request.RouteValues["section"] ?? "static";
+
+                var sitemapService = context.RequestServices.GetRequiredService<SitemapService>();
+
+                string xml = await sitemapService.GenerateSectionSitemapAsync(section);
+
+                context.Response.ContentType              = "application/xml; charset=utf-8";
+                context.Response.Headers["Cache-Control"] = "public, max-age=86400";
+
+                await context.Response.WriteAsync(xml);
             });
 
             endpoints.MapBlazorHub();
