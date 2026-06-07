@@ -243,6 +243,22 @@ public sealed class WwpcPromotionService
                 targetSoftwareId = fresh.Id;
             }
 
+            // ---- Company → Software link ----
+            if(developer != null)
+            {
+                bool alreadyLinked = await _db.SoftwareCompanyRoles
+                                              .AnyAsync(r => r.SoftwareId == targetSoftwareId &&
+                                                             r.CompanyId  == developer.Id &&
+                                                             r.RoleId     == DEV_ROLE_ID);
+                if(!alreadyLinked)
+                    _db.SoftwareCompanyRoles.Add(new SoftwareCompanyRole
+                    {
+                        SoftwareId = targetSoftwareId,
+                        CompanyId  = developer.Id,
+                        RoleId     = DEV_ROLE_ID
+                    });
+            }
+
             // ---- Versions ----
             // Map staging WwpcVersion.Id → real SoftwareVersion.Id so screenshots can be linked.
             var versionMap = new Dictionary<long, ulong>();
