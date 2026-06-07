@@ -72,7 +72,6 @@
                         <MudSelectItem T="string" Value="@("deu")">Deutsch</MudSelectItem>
                         <MudSelectItem T="string" Value="@("fra")">Français</MudSelectItem>
                         <MudSelectItem T="string" Value="@("por")">Português</MudSelectItem>
-                        <MudSelectItem T="string" Value="@("lat")">Latin</MudSelectItem>
                     </MudSelect>
 
                     @if(TranslationService.IsAvailable)
@@ -513,7 +512,6 @@
         "deu" => "Deutsch",
         "fra" => "Français",
         "por" => "Português",
-        "lat" => "Latin",
         _     => code ?? "?"
     };
 

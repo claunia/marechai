@@ -41,7 +41,7 @@ The translation service implements a fallback chain:
 
 === Supported Languages
 
-Translations are produced for the following eight languages, identified by ISO 639-3 codes and mapped to NLLB language tags:
+Translations are produced for the following seven languages, identified by ISO 639-3 codes and mapped to NLLB language tags:
 
 [cols="^1,^2,^2", options="header"]
 |===
@@ -53,7 +53,6 @@ Translations are produced for the following eight languages, identified by ISO 6
 | fra | French | fra_Latn
 | ita | Italian | ita_Latn
 | nld | Dutch | nld_Latn
-| lat | Latin | lat_Latn
 | por | Portuguese | por_Latn
 |===
 

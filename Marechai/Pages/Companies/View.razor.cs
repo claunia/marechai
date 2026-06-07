@@ -268,7 +268,6 @@ public partial class View
         "deu" => "German",
         "fra" => "French",
         "ita" => "Italian",
-        "lat" => "Latin",
         "por" => "Portuguese",
         _     => iso639_3
     };

@@ -82,9 +82,9 @@
     /// </summary>
     [Parameter] public string DefaultLanguage { get; set; } = "eng";
 
-    // The 6 fully-supported UI languages, plus lat/por which exist server-side. Latin and
-    // Portuguese are only shown when the entity already has a description in them OR the
-    // user's UI language happens to be one of them (rare). Keep them out of the default list.
+    // The 6 fully-supported UI languages, plus por which exists server-side. Portuguese
+    // is only shown when the entity already has a description in it OR the user's UI
+    // language happens to be Portuguese (rare). Keep it out of the default list.
     static readonly (string Code, string NameKey)[] _baseLanguages =
     [
         ("eng", "English"),
@@ -101,12 +101,9 @@
     {
         _languageOptions = new List<(string, string)>(_baseLanguages);
 
-        // Include lat/por only if relevant (already has a description, or user's UI language).
-        foreach(string extra in new[] { "lat", "por" })
-        {
-            if(ExistingLanguages?.Contains(extra) == true || DefaultLanguage == extra)
-                _languageOptions.Add((extra, extra == "lat" ? "Latin" : "Portuguese"));
-        }
+        // Include por only if relevant (already has a description, or user's UI language).
+        if(ExistingLanguages?.Contains("por") == true || DefaultLanguage == "por")
+            _languageOptions.Add(("por", "Portuguese"));
     }
 
     void Choose(string code) => MudDialog.Close(DialogResult.Ok(code));
