@@ -328,7 +328,7 @@ public sealed class WwpcPromotionService
                         SoftwareId         = targetSoftwareId,
                         SoftwarePlatformId = sd.SoftwarePlatformId ?? staged.SuggestedSoftwarePlatformId,
                         SoftwareVersionId  = sd.SoftwareVersionId
-                                          ?? (versionMap.TryGetValue(staged.Id, out ulong vId) ? vId : (ulong?)null),
+                                          ?? (sd.WwpcVersionId.HasValue && versionMap.TryGetValue(sd.WwpcVersionId.Value, out ulong vId) ? vId : (ulong?)null),
                         Caption            = string.IsNullOrWhiteSpace(sd.CaptionOverride) ? staged.Caption : sd.CaptionOverride,
                         OriginalExtension  = extension.TrimStart('.')
                     };

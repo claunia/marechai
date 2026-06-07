@@ -309,6 +309,7 @@
                             <MudTh>@L["Thumbnail"]</MudTh>
                             <MudTh>@L["Caption"]</MudTh>
                             <MudTh>@L["Platform"]</MudTh>
+                            <MudTh>@L["Version"]</MudTh>
                             <MudTh>@L["Major"]</MudTh>
                         </HeaderContent>
                         <RowTemplate>
@@ -331,6 +332,13 @@
                                 <MudAutocomplete T="SoftwarePlatformDto" Value="context.Platform"
                                                  ValueChanged="@((SoftwarePlatformDto p) => { context.Platform = p; })"
                                                  SearchFunc="@SearchPlatformAsync" ToStringFunc="@(p => p?.Name)"
+                                                 Variant="Variant.Outlined" Margin="Margin.Dense" Style="min-width: 200px;"
+                                                 Clearable="true" MaxItems="null" ResetValueOnEmptyText="true" CoerceText="false"/>
+                            </MudTd>
+                            <MudTd>
+                                <MudAutocomplete T="VersionRow" Value="context.Version"
+                                                 ValueChanged="@((VersionRow v) => { context.Version = v; })"
+                                                 SearchFunc="@SearchVersionAsync" ToStringFunc="@(v => v?.VersionStringOverride)"
                                                  Variant="Variant.Outlined" Margin="Margin.Dense" Style="min-width: 200px;"
                                                  Clearable="true" MaxItems="null" ResetValueOnEmptyText="true" CoerceText="false"/>
                             </MudTd>

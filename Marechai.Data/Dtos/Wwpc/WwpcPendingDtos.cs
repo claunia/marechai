@@ -138,6 +138,8 @@ public class AcceptWwpcScreenshotDecisionDto
     public ulong? SoftwarePlatformId      { get; set; }
     /// <summary>Optional: link the new screenshot to a specific <c>SoftwareVersion</c> (typically the one a matching <see cref="AcceptWwpcVersionDecisionDto" /> resolved to).</summary>
     public ulong? SoftwareVersionId       { get; set; }
+    /// <summary>Optional: the staging <c>WwpcVersion.Id</c> whose promoted version this screenshot should be linked to.</summary>
+    public long?  WwpcVersionId           { get; set; }
 }
 
 public class AcceptWwpcImportResultDto

@@ -113,7 +113,8 @@ public partial class WwpcImportReviewDialog
             ImageUrl        = s.ImageUrl,
             OriginalCaption = s.Caption,
             CaptionOverride = s.Caption,
-            Platform        = ResolvePlatformById(s.SuggestedSoftwarePlatformId)
+            Platform        = ResolvePlatformById(s.SuggestedSoftwarePlatformId),
+            Version         = ResolveVersionByMajorRelease(s.MajorRelease)
         }).ToList();
 
         // Pre-select the auto-linked vendor company, if any.
@@ -134,6 +135,22 @@ public partial class WwpcImportReviewDialog
     {
         if(!id.HasValue) return null;
         return _platforms.FirstOrDefault(p => p.Id == id.Value);
+    }
+
+    VersionRow ResolveVersionByMajorRelease(string majorRelease)
+    {
+        if(string.IsNullOrEmpty(majorRelease)) return null;
+        return _versionDecisions.FirstOrDefault(v =>
+            string.Equals(v.MajorRelease, majorRelease, StringComparison.Ordinal));
+    }
+
+    Task<IEnumerable<VersionRow>> SearchVersionAsync(string value, CancellationToken ct)
+    {
+        IEnumerable<VersionRow> q = _versionDecisions.Where(v => v.Include);
+        if(!string.IsNullOrWhiteSpace(value))
+            q = q.Where(v => v.VersionStringOverride?.Contains(value, StringComparison.OrdinalIgnoreCase) == true ||
+                             v.MajorRelease?.Contains(value, StringComparison.OrdinalIgnoreCase) == true);
+        return Task.FromResult(q);
     }
 
     async Task RefreshMatchesAsync()
@@ -326,7 +343,8 @@ public partial class WwpcImportReviewDialog
                 Include            = s.Include,
                 CaptionOverride    = s.CaptionOverride,
                 SoftwarePlatformId = s.Platform?.Id,
-                SoftwareVersionId  = null
+                SoftwareVersionId  = null,
+                WwpcVersionId      = s.Version?.Id is > 0 ? s.Version.Id : null
             }).ToList()
         };
 
@@ -403,5 +421,6 @@ public partial class WwpcImportReviewDialog
         public string              OriginalCaption { get; set; }
         public string              CaptionOverride { get; set; }
         public SoftwarePlatformDto Platform        { get; set; }
+        public VersionRow          Version         { get; set; }
     }
 }

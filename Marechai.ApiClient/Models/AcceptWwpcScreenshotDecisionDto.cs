@@ -30,6 +30,8 @@ namespace Marechai.ApiClient.Models
         public int? SoftwareVersionId { get; set; }
         /// <summary>The wwpcScreenshotId property</summary>
         public long? WwpcScreenshotId { get; set; }
+        /// <summary>The wwpcVersionId property</summary>
+        public long? WwpcVersionId { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.ApiClient.Models.AcceptWwpcScreenshotDecisionDto"/> and sets the default values.
         /// </summary>
@@ -60,6 +62,7 @@ namespace Marechai.ApiClient.Models
                 { "softwarePlatformId", n => { SoftwarePlatformId = n.GetIntValue(); } },
                 { "softwareVersionId", n => { SoftwareVersionId = n.GetIntValue(); } },
                 { "wwpcScreenshotId", n => { WwpcScreenshotId = n.GetLongValue(); } },
+                { "wwpcVersionId", n => { WwpcVersionId = n.GetLongValue(); } },
             };
         }
         /// <summary>
@@ -74,6 +77,7 @@ namespace Marechai.ApiClient.Models
             writer.WriteIntValue("softwarePlatformId", SoftwarePlatformId);
             writer.WriteIntValue("softwareVersionId", SoftwareVersionId);
             writer.WriteLongValue("wwpcScreenshotId", WwpcScreenshotId);
+            writer.WriteLongValue("wwpcVersionId", WwpcVersionId);
             writer.WriteAdditionalData(AdditionalData);
         }
     }
