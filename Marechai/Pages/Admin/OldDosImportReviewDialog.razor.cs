@@ -33,6 +33,7 @@ public partial class OldDosImportReviewDialog
     List<VersionRow>             _versionDecisions = new();
     CompanyDto                   _developer;
     string                       _museumEdited;
+    int                          _editorKey;
     string                       _nameOverride;
     byte                         _kindOverride = (byte)SoftwareKind.Game;
     List<int>                    _selectedGenreIds = new();
@@ -80,6 +81,7 @@ public partial class OldDosImportReviewDialog
         }
 
         _museumEdited     = _detail.EnglishDescriptionMuseum ?? string.Empty;
+        _editorKey++;
         _nameOverride     = _detail.Name ?? string.Empty;
         _kindOverride     = (byte)SoftwareKind.Game;
         _selectedGenreIds = (_detail.SuggestedGenreIds ?? new List<int?>()).Where(x => x.HasValue).Select(x => x!.Value).ToList();

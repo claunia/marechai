@@ -39,6 +39,7 @@ public partial class WwpcImportReviewDialog
     CompanyDto                    _vendor;
     SoftwarePlatformDto           _bulkPlatform;
     string                        _museumEdited;
+    int                           _editorKey;
     string                        _nameOverride;
     byte                          _kindOverride = (byte)SoftwareKind.Application;
     List<int>                     _selectedGenreIds = new();
@@ -79,6 +80,7 @@ public partial class WwpcImportReviewDialog
         }
 
         _museumEdited     = _detail.EnglishDescriptionMuseum ?? string.Empty;
+        _editorKey++;
         _nameOverride     = _detail.Name ?? string.Empty;
         _kindOverride     = (byte)SoftwareKind.Application;
         _selectedGenreIds = (_detail.SuggestedGenreIds ?? new List<int?>()).Where(x => x.HasValue)

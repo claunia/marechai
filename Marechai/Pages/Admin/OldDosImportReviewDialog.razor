@@ -100,8 +100,13 @@
                 </MudExpansionPanels>
 
                 <!-- Editable museum-grade description -->
-                <MudTextField T="string" @bind-Value="_museumEdited" Label="@L["Museum-grade English description (will be saved)"]"
-                              Lines="6" Variant="Variant.Outlined" Counter="262144" MaxLength="262144"/>
+                <MudText Typo="Typo.subtitle2" Class="mb-1">@L["Museum-grade English description (will be saved)"]</MudText>
+                <MarkdownEditor @bind-Value="_museumEdited"
+                                @key="_editorKey"
+                                SpellChecker="false"
+                                MinHeight="200px"
+                                MaxHeight="400px"
+                                Placeholder="@L["Enter description in Markdown..."]"/>
 
                 <!-- Software meta (hidden in merge mode) -->
                 @if(!_mergeTargetId.HasValue)
