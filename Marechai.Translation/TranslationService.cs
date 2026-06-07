@@ -122,19 +122,50 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
         {
             HttpClient client = httpClientFactory.CreateClient("OpenAI");
 
-            // For plain-text inputs (e.g. genre names like "Action", "Puzzle") the markdown-preserving
-            // prompt sometimes provoked the model to add markdown decoration (heading hashes, list
-            // bullets) to the output. Switching to JSON mode + a strict envelope contract eliminates
-            // that whole class of bug: the model can ONLY return {"translation":"..."}.
-            string systemPrompt = plainText
-                ? $"You are a translator. Translate the user's text from English to {targetEnglishName}. "
-                + "The input is plain text (typically a short label, never markdown). DO NOT add any "
-                + "formatting characters (#, *, _, `, -, >). Output ONLY a JSON object of the form "
-                + "{\"translation\":\"...\"} containing the translated text, nothing else."
-                : $"You are a translator. Translate the user's text from English to {targetEnglishName}, "
-                + "preserving all markdown formatting exactly (headings, lists, links, code spans, fenced "
-                + "code blocks, tables, emphasis). Output ONLY the translated markdown — no preamble, no "
-                + "explanation, no surrounding code fence.";
+            string model = configuration["OpenAI:Model"];
+
+            // Optional separate model for markdown translations (e.g. a non-thinking model that
+            // handles verbose formatting instructions without entering a reasoning loop).
+            // When set, markdown translations use this model + the verbose prompt; when null,
+            // we auto-detect thinking models by name and fall back to a minimal prompt.
+            string markdownModel = configuration["OpenAI:MarkdownModel"];
+
+            // Effective model for this request: use the markdown-specific model for non-plainText
+            // when configured, otherwise use the default model.
+            string effectiveModel = !plainText && !string.IsNullOrWhiteSpace(markdownModel)
+                                        ? markdownModel
+                                        : model;
+
+            bool isThinkingModel = effectiveModel is not null &&
+                                   effectiveModel.Contains("qwen", StringComparison.OrdinalIgnoreCase);
+
+            string systemPrompt;
+
+            if(plainText)
+            {
+                systemPrompt = $"You are a translator. Translate the user's text from English to {targetEnglishName}. "
+                             + "The input is plain text (typically a short label, never markdown). DO NOT add any "
+                             + "formatting characters (#, *, _, `, -, >). Output ONLY a JSON object of the form "
+                             + "{\"translation\":\"...\"} containing the translated text, nothing else.";
+            }
+            else if(isThinkingModel)
+            {
+                // Thinking models (Qwen 3.x) enter an unbounded reasoning loop when given verbose
+                // markdown-preservation instructions — even with /no_think and json_schema. A
+                // minimal prompt avoids this while still requesting formatting preservation.
+                systemPrompt = $"You are a translator. Translate the user's text from English to {targetEnglishName}. "
+                             + "Keep all markdown formatting unchanged. Output ONLY the translated text — "
+                             + "no preamble, no explanation, no surrounding code fence.";
+            }
+            else
+            {
+                // Non-thinking models handle verbose instructions well and benefit from the
+                // explicit enumeration of markdown elements to preserve.
+                systemPrompt = $"You are a translator. Translate the user's text from English to {targetEnglishName}, "
+                             + "preserving all markdown formatting exactly (headings, lists, links, code spans, fenced "
+                             + "code blocks, tables, emphasis). Output ONLY the translated markdown — no preamble, no "
+                             + "explanation, no surrounding code fence.";
+            }
 
             // Optional caller-supplied domain hint (e.g. "The text is a software genre name." or
             // "The text is a video-game technical specification key or value (computer/console
@@ -175,10 +206,14 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
             if(plainText)
             {
                 // Force the model to emit a strictly-typed JSON object with a single `translation`
-                // string. OpenAI structured-outputs / LM Studio / vLLM all accept this `json_schema`
-                // shape; the older `json_object` is rejected by some servers (LM Studio in
-                // particular requires `json_schema` or `text`). Combined with the system prompt
-                // forbidding markdown, this guarantees a clean string we can extract.
+                // string. This is CRITICAL for reasoning models (Qwen 3.x on LM Studio) — without
+                // json_schema, they enter an unbounded thinking loop. With it, output is capped to
+                // the actual translation.
+                //
+                // NOTE: json_schema MUST NOT be used for markdown translations. Qwen 3.x enters an
+                // infinite reasoning loop when markdown syntax is present in the user message AND
+                // json_schema is active — regardless of prompt wording. For markdown, we rely on
+                // unconstrained output + HTTP timeout + NLLB fallback.
                 body["response_format"] = new
                 {
                     type        = "json_schema",
@@ -200,10 +235,8 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
                 };
             }
 
-            string model = configuration["OpenAI:Model"];
-
-            if(!string.IsNullOrWhiteSpace(model))
-                body["model"] = model;
+            if(!string.IsNullOrWhiteSpace(effectiveModel))
+                body["model"] = effectiveModel;
 
             if(int.TryParse(configuration["OpenAI:MaxTokens"], out int maxTokens) && maxTokens > 0)
                 body["max_tokens"] = maxTokens;
@@ -283,12 +316,23 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
             }
             else
             {
-                // Defensive: if a noncompliant model wrapped the whole reply in a single outer fence,
-                // peel it off. Skip when the payload contains inner fenced blocks.
-                string peeled = TryStripOuterFence(content);
+                // Some models wrap the translation in a JSON envelope even when not asked to.
+                // Try to extract from {"translation":"..."} first; fall back to raw content.
+                string fromJson = TryExtractTranslationField(content);
 
-                if(peeled is not null)
-                    content = peeled;
+                if(fromJson is not null)
+                {
+                    content = fromJson.Trim();
+                }
+                else
+                {
+                    // Defensive: if a noncompliant model wrapped the whole reply in a single outer
+                    // fence, peel it off. Skip when the payload contains inner fenced blocks.
+                    string peeled = TryStripOuterFence(content);
+
+                    if(peeled is not null)
+                        content = peeled;
+                }
             }
 
             // Cheap refusal detection: very short replies starting with refusal phrases when the
