@@ -52,7 +52,6 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
         { "fra", new LanguageInfo("fra_Latn", "French") },
         { "ita", new LanguageInfo("ita_Latn", "Italian") },
         { "nld", new LanguageInfo("nld_Latn", "Dutch") },
-        { "lat", new LanguageInfo("lat_Latn", "Latin") },
         { "por", new LanguageInfo("por_Latn", "Portuguese") }
     };
 
@@ -145,6 +144,16 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
             if(!string.IsNullOrWhiteSpace(domainContext))
                 systemPrompt += " Context: " + domainContext.Trim();
 
+            // Qwen 3.x models have "thinking" enabled by default and can burn 60k+ tokens of
+            // internal reasoning before producing a one-line translation. The /no_think directive
+            // at the start of the system message disables this at the chat-template level,
+            // regardless of serving backend (vLLM, LM Studio, etc.).
+            bool disableThinking = string.Equals(configuration["OpenAI:DisableThinking"], "true",
+                                                 StringComparison.OrdinalIgnoreCase);
+
+            if(disableThinking)
+                systemPrompt = "/no_think\n" + systemPrompt;
+
             // Build the body as a Dictionary so optional fields (model, max_tokens, response_format)
             // can be omitted entirely when not needed, which matches what local OpenAI-compatible
             // servers expect.
@@ -157,6 +166,11 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
                 },
                 ["temperature"] = 0
             };
+
+            // Also pass the vLLM / LM Studio extension that disables thinking at the engine level,
+            // for servers that support it (silently ignored by others).
+            if(disableThinking)
+                body["chat_template_kwargs"] = new { enable_thinking = false };
 
             if(plainText)
             {
