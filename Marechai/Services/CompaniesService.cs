@@ -31,7 +31,7 @@ using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.Services;
 
-public class CompaniesService(Marechai.ApiClient.Client client, ReferenceDataCache referenceData)
+public class CompaniesService(Marechai.ApiClient.Client client, ReferenceDataCache referenceData, IndexNowService indexNow)
 {
     public async Task<List<CompanyDto>> GetAsync()
     {
@@ -104,6 +104,8 @@ public class CompaniesService(Marechai.ApiClient.Client client, ReferenceDataCac
         {
             int? id = await client.Companies.PostAsync(dto);
 
+            if(id.HasValue) indexNow.EnqueueUrl($"/company/{id}");
+
             return (id, null);
         }
         catch(ApiException ex)
@@ -121,6 +123,8 @@ public class CompaniesService(Marechai.ApiClient.Client client, ReferenceDataCac
         try
         {
             await client.Companies[id].PutAsync(dto);
+
+            indexNow.EnqueueUrl($"/company/{id}");
 
             return (true, null);
         }

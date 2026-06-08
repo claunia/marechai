@@ -33,7 +33,7 @@ using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.Services;
 
-public class PeopleService(Marechai.ApiClient.Client client, ReferenceDataCache referenceData)
+public class PeopleService(Marechai.ApiClient.Client client, ReferenceDataCache referenceData, IndexNowService indexNow)
 {
     static string ExtractDetail(ApiException ex)
     {
@@ -295,6 +295,8 @@ public class PeopleService(Marechai.ApiClient.Client client, ReferenceDataCache 
         {
             long? id = await client.People.PostAsync(dto);
 
+            if(id.HasValue) indexNow.EnqueueUrl($"/person/{id}");
+
             return (id, null);
         }
         catch(ApiException ex)
@@ -312,6 +314,8 @@ public class PeopleService(Marechai.ApiClient.Client client, ReferenceDataCache 
         try
         {
             await client.People[id].PutAsync(dto);
+
+            indexNow.EnqueueUrl($"/person/{id}");
 
             return (true, null);
         }

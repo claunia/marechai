@@ -33,7 +33,7 @@ using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.Services;
 
-public class SoundSynthsService(Marechai.ApiClient.Client client)
+public class SoundSynthsService(Marechai.ApiClient.Client client, IndexNowService indexNow)
 {
     static string ExtractErrorMessage(ApiException ex)
     {
@@ -151,6 +151,8 @@ public class SoundSynthsService(Marechai.ApiClient.Client client)
         {
             long? id = await client.SoundSynths.PostAsync(dto);
 
+            if(id.HasValue) indexNow.EnqueueUrl($"/soundsynth/{id}");
+
             return (id, null);
         }
         catch(ApiException ex)
@@ -168,6 +170,8 @@ public class SoundSynthsService(Marechai.ApiClient.Client client)
         try
         {
             await client.SoundSynths[id].PutAsync(dto);
+
+            indexNow.EnqueueUrl($"/soundsynth/{id}");
 
             return (true, null);
         }

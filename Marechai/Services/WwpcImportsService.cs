@@ -15,7 +15,7 @@ using Microsoft.Kiota.Abstractions;
 namespace Marechai.Services;
 
 /// <summary>Client wrapper around the <c>/wwpc</c> admin endpoints.</summary>
-public sealed class WwpcImportsService(Client client, ILogger<WwpcImportsService> logger)
+public sealed class WwpcImportsService(Client client, ILogger<WwpcImportsService> logger, IndexNowService indexNow)
 {
     public async Task<List<WwpcPendingListItemDto>> GetPendingAsync(int skip, int take,
                                                                     WwpcSoftwareStatus? status,
@@ -125,6 +125,10 @@ public sealed class WwpcImportsService(Client client, ILogger<WwpcImportsService
         try
         {
             AcceptWwpcImportResultDto result = await client.Wwpc.Pending[(int)id].Accept.PostAsync(dto);
+
+            if(result?.Success == true && result.PromotedSoftwareId.HasValue)
+                indexNow.EnqueueUrl($"/software/{result.PromotedSoftwareId.Value}");
+
             return (result, result?.Success == false ? result.Error : null);
         }
         catch(ApiException ex)

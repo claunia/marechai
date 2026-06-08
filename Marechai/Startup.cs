@@ -30,6 +30,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.StaticFiles;
@@ -170,6 +171,9 @@ public class Startup(IConfiguration configuration)
         {
             client.BaseAddress = new Uri(apiUrl);
         });
+
+        services.Configure<IndexNowOptions>(Configuration.GetSection("IndexNow"));
+        services.AddHttpClient("IndexNow");
 
         // OpenAI + NLLB HttpClients (each registered only when its Url is configured) plus the
         // shared TranslationService singleton. Lives in Marechai.Translation so the API server
@@ -342,6 +346,27 @@ public class Startup(IConfiguration configuration)
 
                 return context.Response.WriteAsync(
                     $"User-agent: *\nAllow: /\n\nSitemap: {Helpers.SeoMeta.CanonicalHost}/sitemap.xml\n");
+            });
+
+            // IndexNow key verification file — search engines crawl /{key}.txt to prove
+            // we own the domain. Served dynamically so the key lives only in appsettings.
+            endpoints.MapGet("/{filename}.txt", context =>
+            {
+                string filename  = (string)context.Request.RouteValues["filename"];
+                string configKey = Configuration["IndexNow:Key"];
+
+                if(string.IsNullOrWhiteSpace(configKey) ||
+                   !string.Equals(filename, configKey, StringComparison.Ordinal))
+                {
+                    context.Response.StatusCode = 404;
+
+                    return Task.CompletedTask;
+                }
+
+                context.Response.ContentType              = "text/plain; charset=utf-8";
+                context.Response.Headers["Cache-Control"] = "public, max-age=86400";
+
+                return context.Response.WriteAsync(configKey);
             });
 
             endpoints.MapGet("/sitemap.xml", async context =>

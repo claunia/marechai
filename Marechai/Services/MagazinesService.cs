@@ -35,7 +35,7 @@ using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.Services;
 
-public class MagazinesService(Marechai.ApiClient.Client client, ReferenceDataCache referenceData)
+public class MagazinesService(Marechai.ApiClient.Client client, ReferenceDataCache referenceData, IndexNowService indexNow)
 {
     public async Task<int> GetMagazinesCountAsync(IReadOnlyList<string> filters = null,
                                                   CancellationToken cancellationToken = default)
@@ -350,6 +350,8 @@ public class MagazinesService(Marechai.ApiClient.Client client, ReferenceDataCac
         {
             long? id = await client.Magazines.PostAsync(dto);
 
+            if(id.HasValue) indexNow.EnqueueUrl($"/magazine/{id}");
+
             return (id, null);
         }
         catch(ApiException ex)
@@ -367,6 +369,8 @@ public class MagazinesService(Marechai.ApiClient.Client client, ReferenceDataCac
         try
         {
             await client.Magazines[id].PutAsync(dto);
+
+            indexNow.EnqueueUrl($"/magazine/{id}");
 
             return (true, null);
         }

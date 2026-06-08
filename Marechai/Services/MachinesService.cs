@@ -33,7 +33,7 @@ using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.Services;
 
-public class MachinesService(Marechai.ApiClient.Client client)
+public class MachinesService(Marechai.ApiClient.Client client, IndexNowService indexNow)
 {
     static string ExtractErrorMessage(ApiException ex)
     {
@@ -134,6 +134,8 @@ public class MachinesService(Marechai.ApiClient.Client client)
         {
             long? id = await client.Machines.PostAsync(dto);
 
+            if(id.HasValue) indexNow.EnqueueUrl($"/machine/{id}");
+
             return (id, null);
         }
         catch(ApiException ex)
@@ -151,6 +153,8 @@ public class MachinesService(Marechai.ApiClient.Client client)
         try
         {
             await client.Machines[id].PutAsync(dto);
+
+            indexNow.EnqueueUrl($"/machine/{id}");
 
             return (true, null);
         }

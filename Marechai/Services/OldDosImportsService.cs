@@ -15,7 +15,7 @@ using Microsoft.Kiota.Abstractions;
 namespace Marechai.Services;
 
 /// <summary>Client wrapper around the <c>/old-dos</c> admin endpoints.</summary>
-public sealed class OldDosImportsService(Client client, ILogger<OldDosImportsService> logger)
+public sealed class OldDosImportsService(Client client, ILogger<OldDosImportsService> logger, IndexNowService indexNow)
 {
     public async Task<List<OldDosPendingListItemDto>> GetPendingAsync(int skip, int take,
                                                                        OldDosSoftwareStatus? status,
@@ -114,6 +114,10 @@ public sealed class OldDosImportsService(Client client, ILogger<OldDosImportsSer
         try
         {
             AcceptOldDosImportResultDto result = await client.OldDos.Pending[(int)id].Accept.PostAsync(dto);
+
+            if(result?.Success == true && result.PromotedSoftwareId.HasValue)
+                indexNow.EnqueueUrl($"/software/{result.PromotedSoftwareId.Value}");
+
             return (result, result?.Success == false ? result.Error : null);
         }
         catch(ApiException ex)

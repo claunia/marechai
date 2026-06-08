@@ -223,6 +223,7 @@ public sealed class WwpcPromotionService
             int insertedGenres       = 0;
 
             ulong targetSoftwareId;
+            string softwareName;
             if(dto.Mode == WwpcAcceptMode.MergeIntoExisting)
             {
                 if(dto.TargetSoftwareId is not { } tid)
@@ -230,6 +231,7 @@ public sealed class WwpcPromotionService
                 Software target = await _db.Softwares.FindAsync(tid);
                 if(target == null) return Fail("Target software not found.");
                 targetSoftwareId = target.Id;
+                softwareName     = target.Name;
             }
             else
             {
@@ -241,6 +243,7 @@ public sealed class WwpcPromotionService
                 _db.Softwares.Add(fresh);
                 await _db.SaveChangesAsync();
                 targetSoftwareId = fresh.Id;
+                softwareName     = fresh.Name;
             }
 
             // ---- Company → Software link ----
@@ -420,6 +423,17 @@ public sealed class WwpcPromotionService
             staging.PromotedSoftwareId = targetSoftwareId;
             staging.ReviewedBy         = adminUserId;
             staging.ReviewedOn         = DateTime.UtcNow;
+
+            _db.News.Add(new News
+            {
+                AddedId = (long)targetSoftwareId,
+                Date    = DateTime.UtcNow,
+                Type    = dto.Mode == WwpcAcceptMode.MergeIntoExisting
+                              ? NewsType.UpdatedSoftwareInDb
+                              : NewsType.NewSoftwareInDb,
+                Name = softwareName
+            });
+
             await _db.SaveChangesAsync();
             await tx.CommitAsync();
 

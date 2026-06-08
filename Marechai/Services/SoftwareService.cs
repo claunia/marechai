@@ -51,7 +51,7 @@ public enum AddonPrefixMode
     StartsWith
 }
 
-public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter requestAdapter, ReferenceDataCache referenceData)
+public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter requestAdapter, ReferenceDataCache referenceData, IndexNowService indexNow)
 {
     static string ExtractErrorMessage(ApiException ex)
     {
@@ -68,6 +68,8 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         try
         {
             int? id = await client.Software.PostAsync(dto);
+
+            if(id.HasValue) indexNow.EnqueueUrl($"/software/{id}");
 
             return (id, null);
         }
@@ -86,6 +88,8 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         try
         {
             await client.Software[id].PutAsync(dto);
+
+            indexNow.EnqueueUrl($"/software/{id}");
 
             return (true, null);
         }

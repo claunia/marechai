@@ -144,6 +144,7 @@ public sealed class OldDosPromotionService
         try
         {
             ulong targetSoftwareId;
+            string softwareName;
             int   insertedDescriptions = 0;
             int   insertedGenres       = 0;
             int   insertedVersions     = 0;
@@ -159,6 +160,7 @@ public sealed class OldDosPromotionService
                     return new AcceptOldDosImportResultDto { Success = false, Error = "Target software not found." };
 
                 targetSoftwareId = target.Id;
+                softwareName     = target.Name;
             }
             else
             {
@@ -170,6 +172,7 @@ public sealed class OldDosPromotionService
                 _db.Softwares.Add(fresh);
                 await _db.SaveChangesAsync();
                 targetSoftwareId = fresh.Id;
+                softwareName     = fresh.Name;
             }
 
             // Per-version attach (Version + Release + DEV company role).
@@ -275,6 +278,17 @@ public sealed class OldDosPromotionService
             staging.PromotedSoftwareId = targetSoftwareId;
             staging.ReviewedBy         = adminUserId;
             staging.ReviewedOn         = DateTime.UtcNow;
+
+            _db.News.Add(new News
+            {
+                AddedId = (long)targetSoftwareId,
+                Date    = DateTime.UtcNow,
+                Type    = dto.Mode == OldDosAcceptMode.MergeIntoExisting
+                              ? NewsType.UpdatedSoftwareInDb
+                              : NewsType.NewSoftwareInDb,
+                Name = softwareName
+            });
+
             await _db.SaveChangesAsync();
             await tx.CommitAsync();
 

@@ -91,5 +91,8 @@ public static class Register
         services.AddScoped<ThemeFontLoader>();
 
         services.AddSingleton<SitemapService>();
+
+        services.AddSingleton<IndexNowService>();
+        services.AddHostedService<IndexNowBackgroundService>();
     }
 }

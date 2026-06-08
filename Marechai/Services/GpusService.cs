@@ -33,7 +33,7 @@ using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.Services;
 
-public class GpusService(Marechai.ApiClient.Client client)
+public class GpusService(Marechai.ApiClient.Client client, IndexNowService indexNow)
 {
     public async Task<List<GpuDto>> GetAllAsync(int? skip = null, int? take = null,
                                                 CancellationToken cancellationToken = default)
@@ -142,6 +142,8 @@ public class GpusService(Marechai.ApiClient.Client client)
         {
             long? id = await client.Gpus.PostAsync(dto);
 
+            if(id.HasValue) indexNow.EnqueueUrl($"/gpu/{id}");
+
             return (id, null);
         }
         catch(ApiException ex)
@@ -159,6 +161,8 @@ public class GpusService(Marechai.ApiClient.Client client)
         try
         {
             await client.Gpus[id].PutAsync(dto);
+
+            indexNow.EnqueueUrl($"/gpu/{id}");
 
             return (true, null);
         }

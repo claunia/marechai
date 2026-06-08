@@ -33,7 +33,7 @@ using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.Services;
 
-public class BooksService(Marechai.ApiClient.Client client, ReferenceDataCache referenceData)
+public class BooksService(Marechai.ApiClient.Client client, ReferenceDataCache referenceData, IndexNowService indexNow)
 {
     public async Task<int> GetBooksCountAsync(IReadOnlyList<string> filters = null,
                                               CancellationToken cancellationToken = default)
@@ -352,6 +352,8 @@ public class BooksService(Marechai.ApiClient.Client client, ReferenceDataCache r
         {
             long? id = await client.Books.PostAsync(dto);
 
+            if(id.HasValue) indexNow.EnqueueUrl($"/book/{id}");
+
             return (id, null);
         }
         catch(ApiException ex)
@@ -369,6 +371,8 @@ public class BooksService(Marechai.ApiClient.Client client, ReferenceDataCache r
         try
         {
             await client.Books[id].PutAsync(dto);
+
+            indexNow.EnqueueUrl($"/book/{id}");
 
             return (true, null);
         }

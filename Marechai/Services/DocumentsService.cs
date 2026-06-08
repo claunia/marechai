@@ -33,7 +33,7 @@ using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.Services;
 
-public class DocumentsService(Marechai.ApiClient.Client client, ReferenceDataCache referenceData)
+public class DocumentsService(Marechai.ApiClient.Client client, ReferenceDataCache referenceData, IndexNowService indexNow)
 {
     public async Task<int> GetDocumentsCountAsync(IReadOnlyList<string> filters = null,
                                                   CancellationToken cancellationToken = default)
@@ -333,6 +333,8 @@ public class DocumentsService(Marechai.ApiClient.Client client, ReferenceDataCac
         {
             long? id = await client.Documents.PostAsync(dto);
 
+            if(id.HasValue) indexNow.EnqueueUrl($"/document/{id}");
+
             return (id, null);
         }
         catch(ApiException ex)
@@ -350,6 +352,8 @@ public class DocumentsService(Marechai.ApiClient.Client client, ReferenceDataCac
         try
         {
             await client.Documents[id].PutAsync(dto);
+
+            indexNow.EnqueueUrl($"/document/{id}");
 
             return (true, null);
         }

@@ -33,7 +33,7 @@ using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.Services;
 
-public class ProcessorsService(Marechai.ApiClient.Client client)
+public class ProcessorsService(Marechai.ApiClient.Client client, IndexNowService indexNow)
 {
     public async Task<List<ProcessorDto>> GetAllAsync(int? skip = null, int? take = null,
                                                       CancellationToken cancellationToken = default)
@@ -142,6 +142,8 @@ public class ProcessorsService(Marechai.ApiClient.Client client)
         {
             long? id = await client.Processors.PostAsync(dto);
 
+            if(id.HasValue) indexNow.EnqueueUrl($"/processor/{id}");
+
             return (id, null);
         }
         catch(ApiException ex)
@@ -159,6 +161,8 @@ public class ProcessorsService(Marechai.ApiClient.Client client)
         try
         {
             await client.Processors[id].PutAsync(dto);
+
+            indexNow.EnqueueUrl($"/processor/{id}");
 
             return (true, null);
         }
