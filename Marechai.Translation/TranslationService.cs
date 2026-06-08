@@ -172,7 +172,11 @@ public class TranslationService(IHttpClientFactory httpClientFactory, IConfigura
             // hardware terminology)."). Steers the model away from over-generic translations on
             // short labels — without this, e.g. "Mouse" gets translated as the animal in some
             // languages instead of the input device.
-            if(!string.IsNullOrWhiteSpace(domainContext))
+            //
+            // Skip for thinking models: verbose domain hints (especially "Keep brand names,
+            // character names..." combined with proper nouns in the input) trigger Qwen 3.x into
+            // an unbounded reasoning loop about what to preserve vs. translate.
+            if(!isThinkingModel && !string.IsNullOrWhiteSpace(domainContext))
                 systemPrompt += " Context: " + domainContext.Trim();
 
             // Qwen 3.x models have "thinking" enabled by default and can burn 60k+ tokens of
