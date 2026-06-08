@@ -36,6 +36,9 @@ public class PromoArtStateService
 
     public async Task CreateStateAsync(MobyGamesPromoArtDownloadState state)
     {
+        if(state.Caption?.Length > 256)
+            state.Caption = state.Caption[..256];
+
         await using var context = await _contextFactory.CreateDbContextAsync();
 
         context.MobyGamesPromoArtDownloadStates.Add(state);
