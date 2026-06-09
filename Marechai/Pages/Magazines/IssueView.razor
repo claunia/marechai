@@ -51,6 +51,11 @@
     return;
 }
 
+<EntityMetaTags Title="@(_issue.NativeCaption ?? _issue.Caption ?? L["Magazine issue"])"
+               Description="@string.Format("View magazine issue details from the Marechai computing history archive.")"
+               CanonicalPath="@($"/magazine/issue/{Id}")"
+               Breadcrumbs="@(new (string, string?)[] { (L["Magazines"], "/magazines"), (_issue.NativeCaption ?? _issue.Caption ?? L["Issue"], null) })" />
+
 @* ── Hero Header ── *@
 <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
     <MudStack AlignItems="AlignItems.Center" Spacing="3">

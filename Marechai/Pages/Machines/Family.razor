@@ -46,6 +46,12 @@
     return;
 }
 
+<EntityMetaTags Title="@_family.Name"
+               Description="@string.Format("Browse machines in the {0} family from the Marechai computing history catalogue.", _family.Name)"
+               CanonicalPath="@($"/machines/family/{Id}")"
+               OgType="website"
+               Breadcrumbs="@(new (string, string?)[] { (L["Machines"], "/computers"), (_family.Name, null) })" />
+
 <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
     <MudText Typo="Typo.h5" Style="color: white;">@_family.Name</MudText>
     @if(!string.IsNullOrEmpty(_family.Company))

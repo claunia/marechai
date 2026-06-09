@@ -57,6 +57,11 @@
     return;
 }
 
+<EntityMetaTags Title="@string.Format(L["Issues from {0}"], Year)"
+               Description="@string.Format("Browse {0} magazine issues from {1} in the Marechai computing history archive.", _magazine?.Title, Year)"
+               CanonicalPath="@($"/magazine/{MagazineId}/year/{Year}")"
+               OgType="website" />
+
 @* ── Slim header band ── *@
 <MudPaper Class="pa-4 mb-4" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 12px;">
     <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Wrap="Wrap.Wrap">

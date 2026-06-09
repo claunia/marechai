@@ -7,6 +7,8 @@
 @inject IDialogService DialogService
 @inject NavigationManager NavigationManager
 
+<EntityMetaTags Title="@L["New Message"]" Description="Compose a new message." CanonicalPath="/messages/compose" NoIndex="true" />
+
 <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack"
            OnClick="@(() => NavigationManager.NavigateTo("/messages"))" Class="mb-4">@L["Back to messages"]</MudButton>
 

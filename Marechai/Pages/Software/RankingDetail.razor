@@ -32,7 +32,10 @@
 @inject IStringLocalizer<SoftwareService> L
 @inject ApiAssetUrlProvider               AssetUrls
 @inject NavigationManager                 Navigation
-
+<EntityMetaTags Title="@(string.IsNullOrEmpty(_title) ? L["Ranking"] : _title)"
+               Description="@string.Format("Software ranking details from the Marechai computing history archive.")"
+               CanonicalPath="@($"/software/rankings/{Id}")"
+               Breadcrumbs="@(new (string, string?)[] { (L["Software"], "/software"), (L["Rankings"], "/software/rankings"), (string.IsNullOrEmpty(_title) ? L["Ranking"] : _title, null) })" />
 @* ── Hero / title bar ─────────────────────────────────────────────────────── *@
 <MudPaper Class="pa-6 mb-4" Elevation="0"
           Style="background: linear-gradient(135deg, #ff8a65 0%, #ffb74d 100%); border-radius: 16px;">

@@ -40,6 +40,13 @@
 
     return;
 }
+
+<EntityMetaTags Title="@L["Browse tablets"]"
+               Description="Search and browse tablet computers by name, year or letter."
+               CanonicalPath="/tablets/all"
+               OgType="website"
+               Breadcrumbs="@(new (string, string?)[] { (L["Tablets"], "/tablets"), (L["Browse"], null) })" />
+
 <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
     <MudText Typo="Typo.h5" Style="color: white;">@L["Search results:"]</MudText>
     @if(_character.HasValue)

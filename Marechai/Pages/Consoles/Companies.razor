@@ -41,6 +41,12 @@
     return;
 }
 
+<EntityMetaTags Title="@L["Consoles by company"]"
+               Description="Browse video game consoles by manufacturer and company."
+               CanonicalPath="/consoles/companies"
+               OgType="website"
+               Breadcrumbs="@(new (string, string?)[] { (L["Consoles"], "/consoles"), (L["Companies"], null) })" />
+
 @* ── Hero Header ── *@
 <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
     <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3" Class="mb-3">

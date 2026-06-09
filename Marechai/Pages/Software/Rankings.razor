@@ -31,6 +31,12 @@
 @inject IStringLocalizer<SoftwareService> L
 @inject NavigationManager                 Navigation
 
+<EntityMetaTags Title="@L["Rankings"]"
+               Description="Software rankings by Marechai score: overall, gameplay, genre, platform and more."
+               CanonicalPath="/software/rankings"
+               OgType="website"
+               Breadcrumbs="@(new (string, string?)[] { (L["Software"], "/software"), (L["Rankings"], null) })" />
+
 <MudPaper Class="pa-6 mb-4" Elevation="0"
           Style="background: linear-gradient(135deg, #ff8a65 0%, #ffb74d 100%); border-radius: 16px;">
     <div class="d-flex justify-space-between align-center gap-4 flex-wrap">
