@@ -196,4 +196,24 @@ public sealed class WwpcImportsService(Client client, ILogger<WwpcImportsService
             return false;
         }
     }
+
+    public async Task<(long? newId, string error)> DuplicateAsync(long id, string newName)
+    {
+        try
+        {
+            long? newId = await client.Wwpc.Pending[(int)id].Duplicate.PostAsync(
+                new DuplicateWwpcImportDto { NewName = newName });
+            return (newId, null);
+        }
+        catch(ApiException ex)
+        {
+            logger.LogWarning(ex, "Server rejected duplicate for wwpc #{Id}", id);
+            return (null, ExtractDetail(ex));
+        }
+        catch(System.Exception ex)
+        {
+            logger.LogError(ex, "Error duplicating wwpc #{Id}", id);
+            return (null, ex.Message);
+        }
+    }
 }

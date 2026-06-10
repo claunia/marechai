@@ -219,6 +219,20 @@ public class WwpcImportsController(MarechaiContext context, WwpcPromotionService
         return ok ? NoContent() : NotFound();
     }
 
+    [HttpPost("pending/{id:long}/duplicate")]
+    [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<long>> DuplicateAsync(long id, [FromBody] DuplicateWwpcImportDto dto)
+    {
+        if(!ModelState.IsValid)
+            return Problem(detail: "A name is required.", statusCode: StatusCodes.Status400BadRequest);
+
+        long? newId = await promotion.DuplicateAsync(id, dto.NewName);
+        if(newId == null) return NotFound();
+        return Ok(newId.Value);
+    }
+
     static WwpcPendingDetailDto Map(WwpcSoftware s) => new()
     {
         Id                             = s.Id,

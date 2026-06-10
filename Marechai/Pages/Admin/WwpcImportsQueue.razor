@@ -128,6 +128,15 @@
                         <MudLink Href="@AbsoluteWwpcUrl(context.Item.SourceUrl)" Target="_blank" Color="Color.Default">@L["Open on winworldpc.com"]</MudLink>
                     }
 
+                    @if(StatusOf(context.Item) is WwpcSoftwareStatus.ReadyForReview or WwpcSoftwareStatus.Skipped)
+                    {
+                        <MudTooltip Text="@L["Duplicate this entry for splitting into multiple software"]">
+                            <MudIconButton Icon="@Icons.Material.Filled.ContentCopy" Color="Color.Default" Size="Size.Small"
+                                           OnClick="@(() => DuplicateAsync(context.Item))"
+                                           aria-label="@L["Duplicate"]"/>
+                        </MudTooltip>
+                    }
+
                     @if(StatusOf(context.Item) is not WwpcSoftwareStatus.Discarded and not WwpcSoftwareStatus.Accepted)
                     {
                         <MudTooltip Text="@L["Reject this entry"]">
@@ -240,6 +249,42 @@
         else
         {
             Snackbar.Add(L["Failed to reject entry."], Severity.Error);
+        }
+    }
+
+    async Task DuplicateAsync(WwpcPendingListItemDto item)
+    {
+        string defaultName = $"{item.Name} (Dup)";
+
+        var parameters = new DialogParameters
+        {
+            ["ContentText"] = string.Format(
+                L["Create a copy of '{0}' with a new name. You can then review each copy separately and pick which versions belong to each."].Value,
+                item.Name),
+            ["DefaultName"] = defaultName
+        };
+        IDialogReference dialog =
+            await DialogService.ShowAsync<WwpcDuplicateDialog>(L["Duplicate WinWorldPC import"], parameters,
+                                                                new DialogOptions
+                                                                {
+                                                                    MaxWidth  = MaxWidth.Small,
+                                                                    FullWidth = true
+                                                                });
+        DialogResult result = await dialog.Result;
+        if(result is null or { Canceled: true }) return;
+
+        string newName = result.Data as string;
+        if(string.IsNullOrWhiteSpace(newName)) return;
+
+        (long? newId, string error) = await Service.DuplicateAsync(item.Id ?? 0, newName);
+        if(newId.HasValue)
+        {
+            Snackbar.Add(string.Format(L["Duplicated as '{0}' (id {1})."].Value, newName, newId.Value), Severity.Success);
+            await ReloadAsync();
+        }
+        else
+        {
+            Snackbar.Add(string.Format(L["Failed to duplicate: {0}"].Value, error ?? "unknown"), Severity.Error);
         }
     }
 

@@ -152,3 +152,10 @@ public class AcceptWwpcImportResultDto
     public int    InsertedDescriptionCount { get; set; }
     public int    InsertedGenreCount       { get; set; }
 }
+
+public class DuplicateWwpcImportDto
+{
+    [Required]
+    [StringLength(512, MinimumLength = 1)]
+    public string NewName { get; set; }
+}

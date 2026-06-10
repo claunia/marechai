@@ -1,0 +1,36 @@
+@using MudBlazor
+@using Marechai.Services
+
+@inject IStringLocalizer<WwpcImportsQueue> L
+
+<MudDialog>
+    <DialogContent>
+        <MudText Typo="Typo.body1" Class="mb-4">@ContentText</MudText>
+        <MudTextField @bind-Value="_name" Label="@L["Name for the duplicate"]"
+                      Variant="Variant.Outlined" Immediate="true" AutoFocus="true"
+                      Required="true" RequiredError="@L["A name is required."]"/>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Confirm"
+                   Disabled="@string.IsNullOrWhiteSpace(_name)">@L["Duplicate"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public string ContentText { get; set; } = string.Empty;
+
+    [Parameter]
+    public string DefaultName { get; set; } = string.Empty;
+
+    string _name = string.Empty;
+
+    protected override void OnParametersSet() => _name = DefaultName;
+
+    void Cancel() => MudDialog.Cancel();
+    void Confirm() => MudDialog.Close(DialogResult.Ok(_name));
+}

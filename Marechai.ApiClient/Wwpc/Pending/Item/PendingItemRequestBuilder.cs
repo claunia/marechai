@@ -3,6 +3,7 @@
 using Marechai.ApiClient.Models;
 using Marechai.ApiClient.Wwpc.Pending.Item.Accept;
 using Marechai.ApiClient.Wwpc.Pending.Item.Discard;
+using Marechai.ApiClient.Wwpc.Pending.Item.Duplicate;
 using Marechai.ApiClient.Wwpc.Pending.Item.NameMatches;
 using Marechai.ApiClient.Wwpc.Pending.Item.Skip;
 using Marechai.ApiClient.Wwpc.Pending.Item.VendorMatches;
@@ -31,6 +32,11 @@ namespace Marechai.ApiClient.Wwpc.Pending.Item
         public global::Marechai.ApiClient.Wwpc.Pending.Item.Discard.DiscardRequestBuilder Discard
         {
             get => new global::Marechai.ApiClient.Wwpc.Pending.Item.Discard.DiscardRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The duplicate property</summary>
+        public global::Marechai.ApiClient.Wwpc.Pending.Item.Duplicate.DuplicateRequestBuilder Duplicate
+        {
+            get => new global::Marechai.ApiClient.Wwpc.Pending.Item.Duplicate.DuplicateRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The nameMatches property</summary>
         public global::Marechai.ApiClient.Wwpc.Pending.Item.NameMatches.NameMatchesRequestBuilder NameMatches

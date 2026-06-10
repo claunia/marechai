@@ -480,6 +480,85 @@ public sealed class WwpcPromotionService
     }
 
     /// <summary>
+    ///     Duplicates a <see cref="WwpcSoftware" /> staging entry (including its child versions and
+    ///     screenshots) so that an admin can split one WinWorldPC product page into multiple Marechai
+    ///     software entities. The clone gets the supplied <paramref name="newName" />, status
+    ///     <see cref="WwpcSoftwareStatus.ReadyForReview" />, and all review/promotion fields cleared.
+    ///     <c>SourceUrl</c> gets a <c>#dup-{timestamp}</c> fragment appended to satisfy the unique
+    ///     index.  Screenshot <c>SourceUrl</c>s likewise get a unique suffix.
+    /// </summary>
+    public async Task<long?> DuplicateAsync(long id, string newName)
+    {
+        WwpcSoftware source = await _db.WwpcSoftwares
+                                       .Include(s => s.Versions)
+                                       .Include(s => s.Screenshots)
+                                       .FirstOrDefaultAsync(s => s.Id == id);
+        if(source == null) return null;
+
+        string suffix = $"#dup-{DateTime.UtcNow.Ticks}";
+
+        var clone = new WwpcSoftware
+        {
+            SourceUrl                      = source.SourceUrl + suffix,
+            Slug                           = source.Slug,
+            Status                         = WwpcSoftwareStatus.ReadyForReview,
+            ProductType                    = source.ProductType,
+            Name                           = newName,
+            VendorName                     = source.VendorName,
+            VendorUrl                      = source.VendorUrl,
+            RawCategoriesCsv               = source.RawCategoriesCsv,
+            PlatformsCsv                   = source.PlatformsCsv,
+            ReleaseDateText                = source.ReleaseDateText,
+            UserInterface                  = source.UserInterface,
+            RawDescription                 = source.RawDescription,
+            EnglishDescriptionMuseum       = source.EnglishDescriptionMuseum,
+            MuseumDescriptionPromptVersion = source.MuseumDescriptionPromptVersion,
+            SuggestedGenreIdsJson          = source.SuggestedGenreIdsJson,
+            SuggestedVendorCompanyId       = source.SuggestedVendorCompanyId,
+            WwpcCategoryId                 = source.WwpcCategoryId,
+            CrawledOn                      = source.CrawledOn
+        };
+
+        _db.WwpcSoftwares.Add(clone);
+        await _db.SaveChangesAsync();
+
+        foreach(WwpcVersion v in source.Versions)
+        {
+            _db.WwpcVersions.Add(new WwpcVersion
+            {
+                WwpcSoftwareId   = clone.Id,
+                MajorRelease     = v.MajorRelease,
+                MajorReleaseUrl  = v.MajorReleaseUrl,
+                VersionString    = v.VersionString,
+                Language         = v.Language,
+                Architecture     = v.Architecture,
+                MediaKind        = v.MediaKind,
+                SizeText         = v.SizeText,
+                DownloadUrl      = v.DownloadUrl,
+                IsEnabledByDefault = true
+            });
+        }
+
+        foreach(WwpcScreenshot s in source.Screenshots)
+        {
+            _db.WwpcScreenshots.Add(new WwpcScreenshot
+            {
+                WwpcSoftwareId             = clone.Id,
+                MajorRelease               = s.MajorRelease,
+                SourceUrl                  = s.SourceUrl + suffix,
+                ImageUrl                   = s.ImageUrl,
+                Caption                    = s.Caption,
+                SuggestedSoftwarePlatformId = s.SuggestedSoftwarePlatformId,
+                IsEnabledByDefault         = true,
+                CrawledOn                  = s.CrawledOn
+            });
+        }
+
+        await _db.SaveChangesAsync();
+        return clone.Id;
+    }
+
+    /// <summary>
     ///     Render the museum-grade markdown to HTML via Markdig with the same advanced-extensions
     ///     pipeline used by <see cref="SoundSynthDescriptionSuggestionApplier" /> and friends.
     ///     We populate both <c>SoftwareDescription.Text</c> (raw) and <c>SoftwareDescription.Html</c>
