@@ -123,7 +123,7 @@ public class ProcessorVideosController(MarechaiContext context) : ControllerBase
         };
 
         context.ProcessorVideos.Add(model);
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         string processorName = await context.Processors.Where(p => p.Id == processorId)
                                             .Select(p => p.Name)
@@ -161,7 +161,7 @@ public class ProcessorVideosController(MarechaiContext context) : ControllerBase
 
         video.Title = string.IsNullOrWhiteSpace(request.Title) ? null : request.Title.Trim();
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         return NoContent();
     }
@@ -183,7 +183,7 @@ public class ProcessorVideosController(MarechaiContext context) : ControllerBase
         if(video is null) return NotFound();
 
         context.ProcessorVideos.Remove(video);
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         return NoContent();
     }

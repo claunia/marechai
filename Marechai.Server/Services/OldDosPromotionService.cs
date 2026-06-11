@@ -170,7 +170,7 @@ public sealed class OldDosPromotionService
                     Kind = dto.KindOverride.HasValue ? (SoftwareKind)dto.KindOverride.Value : SoftwareKind.Game
                 };
                 _db.Softwares.Add(fresh);
-                await _db.SaveChangesAsync();
+                await _db.SaveChangesWithUserAsync(adminUserId);
                 targetSoftwareId = fresh.Id;
                 softwareName     = fresh.Name;
             }
@@ -190,7 +190,7 @@ public sealed class OldDosPromotionService
                                         : vd.VersionStringOverride
                 };
                 _db.SoftwareVersions.Add(version);
-                await _db.SaveChangesAsync();
+                await _db.SaveChangesWithUserAsync(adminUserId);
                 staged.PromotedSoftwareVersionId = version.Id;
                 insertedVersions++;
 
@@ -229,7 +229,7 @@ public sealed class OldDosPromotionService
                     RoleId            = DEV_ROLE_ID
                 });
             }
-            await _db.SaveChangesAsync();
+            await _db.SaveChangesWithUserAsync(adminUserId);
 
             // Descriptions: only the English museum-grade source row. The 5-locale fan-out is the
             // job of DescriptionTranslationWorker (see SoftwareDescriptionSource) which picks up
@@ -289,7 +289,7 @@ public sealed class OldDosPromotionService
                 Name = softwareName
             });
 
-            await _db.SaveChangesAsync();
+            await _db.SaveChangesWithUserAsync(adminUserId);
             await tx.CommitAsync();
 
             return new AcceptOldDosImportResultDto
@@ -318,7 +318,7 @@ public sealed class OldDosPromotionService
         row.Status     = OldDosSoftwareStatus.Skipped;
         row.ReviewedBy = adminUserId;
         row.ReviewedOn = DateTime.UtcNow;
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesWithUserAsync(adminUserId);
         return true;
     }
 
@@ -330,7 +330,7 @@ public sealed class OldDosPromotionService
         row.Status     = OldDosSoftwareStatus.Discarded;
         row.ReviewedBy = adminUserId;
         row.ReviewedOn = DateTime.UtcNow;
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesWithUserAsync(adminUserId);
         return true;
     }
 

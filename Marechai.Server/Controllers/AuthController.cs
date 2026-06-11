@@ -143,7 +143,7 @@ public class AuthController
         }
 
         string accessToken = tokenService.CreateToken(userInDb, await userManager.GetRolesAsync(managedUser));
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userInDb.Id);
 
         return Ok(new AuthResponse
         {
@@ -445,7 +445,7 @@ public class AuthController
 
         try
         {
-            await context.SaveChangesAsync();
+            await context.SaveChangesWithUserAsync(user.Id);
         }
         catch(DbUpdateConcurrencyException)
         {

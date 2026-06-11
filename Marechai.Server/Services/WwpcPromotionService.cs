@@ -241,7 +241,7 @@ public sealed class WwpcPromotionService
                     Kind = dto.KindOverride.HasValue ? (SoftwareKind)dto.KindOverride.Value : SoftwareKind.Application
                 };
                 _db.Softwares.Add(fresh);
-                await _db.SaveChangesAsync();
+                await _db.SaveChangesWithUserAsync(adminUserId);
                 targetSoftwareId = fresh.Id;
                 softwareName     = fresh.Name;
             }
@@ -294,7 +294,7 @@ public sealed class WwpcPromotionService
                         VersionString = finalVersionString
                     };
                     _db.SoftwareVersions.Add(version);
-                    await _db.SaveChangesAsync();
+                    await _db.SaveChangesWithUserAsync(adminUserId);
                     versionId                        = version.Id;
                     staged.PromotedSoftwareVersionId = versionId;
                     insertedVersions++;
@@ -309,7 +309,7 @@ public sealed class WwpcPromotionService
                 }
                 versionMap[staged.Id] = versionId;
             }
-            await _db.SaveChangesAsync();
+            await _db.SaveChangesWithUserAsync(adminUserId);
 
             // ---- Screenshots ----
             string assetRootPath = _config["AssetRootPath"];
@@ -374,7 +374,7 @@ public sealed class WwpcPromotionService
                     _log.LogWarning(ex, "WwpcAccept #{Id}: screenshot {ShotId} download failed.", wwpcId, staged.Id);
                 }
             }
-            await _db.SaveChangesAsync();
+            await _db.SaveChangesWithUserAsync(adminUserId);
 
             // ---- Descriptions ----
             // Only the English museum-grade source row is inserted here. The 5-locale fan-out is
@@ -434,7 +434,7 @@ public sealed class WwpcPromotionService
                 Name = softwareName
             });
 
-            await _db.SaveChangesAsync();
+            await _db.SaveChangesWithUserAsync(adminUserId);
             await tx.CommitAsync();
 
             return new AcceptWwpcImportResultDto
@@ -463,7 +463,7 @@ public sealed class WwpcPromotionService
         row.Status     = WwpcSoftwareStatus.Skipped;
         row.ReviewedBy = adminUserId;
         row.ReviewedOn = DateTime.UtcNow;
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesWithUserAsync(adminUserId);
         return true;
     }
 
@@ -475,7 +475,7 @@ public sealed class WwpcPromotionService
         row.Status     = WwpcSoftwareStatus.Discarded;
         row.ReviewedBy = adminUserId;
         row.ReviewedOn = DateTime.UtcNow;
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesWithUserAsync(adminUserId);
         return true;
     }
 
@@ -487,7 +487,7 @@ public sealed class WwpcPromotionService
     ///     <c>SourceUrl</c> gets a <c>#dup-{timestamp}</c> fragment appended to satisfy the unique
     ///     index.  Screenshot <c>SourceUrl</c>s likewise get a unique suffix.
     /// </summary>
-    public async Task<long?> DuplicateAsync(long id, string newName)
+    public async Task<long?> DuplicateAsync(long id, string newName, string adminUserId)
     {
         WwpcSoftware source = await _db.WwpcSoftwares
                                        .Include(s => s.Versions)
@@ -520,7 +520,7 @@ public sealed class WwpcPromotionService
         };
 
         _db.WwpcSoftwares.Add(clone);
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesWithUserAsync(adminUserId);
 
         foreach(WwpcVersion v in source.Versions)
         {
@@ -554,7 +554,7 @@ public sealed class WwpcPromotionService
             });
         }
 
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesWithUserAsync(adminUserId);
         return clone.Id;
     }
 

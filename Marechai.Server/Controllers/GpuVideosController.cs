@@ -122,7 +122,7 @@ public class GpuVideosController(MarechaiContext context) : ControllerBase
         };
 
         context.GpuVideos.Add(model);
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         string gpuName = await context.Gpus.Where(g => g.Id == gpuId)
                                       .Select(g => g.Name)
@@ -160,7 +160,7 @@ public class GpuVideosController(MarechaiContext context) : ControllerBase
 
         video.Title = string.IsNullOrWhiteSpace(request.Title) ? null : request.Title.Trim();
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         return NoContent();
     }
@@ -182,7 +182,7 @@ public class GpuVideosController(MarechaiContext context) : ControllerBase
         if(video is null) return NotFound();
 
         context.GpuVideos.Remove(video);
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         return NoContent();
     }

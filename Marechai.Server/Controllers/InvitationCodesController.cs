@@ -103,7 +103,7 @@ public class InvitationCodesController(MarechaiContext            context,
 
             try
             {
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithUserAsync(userId);
 
                 string createdByUserName = await context.Users.Where(u => u.Id == userId)
                                                         .Select(u => u.UserName)
@@ -142,6 +142,10 @@ public class InvitationCodesController(MarechaiContext            context,
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> RevokeAsync(string code)
     {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
         InvitationCode entity = await context.InvitationCodes.FirstOrDefaultAsync(c => c.Code == code);
 
         if(entity is null) return NotFound();
@@ -152,7 +156,7 @@ public class InvitationCodesController(MarechaiContext            context,
                            title: "INVITATION_CODE_ALREADY_USED");
 
         context.InvitationCodes.Remove(entity);
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         return NoContent();
     }

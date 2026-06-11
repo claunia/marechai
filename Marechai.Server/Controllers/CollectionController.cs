@@ -292,7 +292,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
         if(alreadyCollected) return Conflict();
 
         context.CollectedBooks.Add(new CollectedBook { UserId = userId, BookId = bookId });
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         return StatusCode(StatusCodes.Status201Created);
     }
@@ -312,7 +312,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
         if(entry is null) return NotFound();
 
         context.CollectedBooks.Remove(entry);
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         return NoContent();
     }
@@ -352,7 +352,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
         if(alreadyCollected) return Conflict();
 
         context.CollectedDocuments.Add(new CollectedDocument { UserId = userId, DocumentId = documentId });
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         return StatusCode(StatusCodes.Status201Created);
     }
@@ -373,7 +373,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
         if(entry is null) return NotFound();
 
         context.CollectedDocuments.Remove(entry);
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         return NoContent();
     }
@@ -420,7 +420,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
             Status                  = StatusType.Unknown
         });
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         return StatusCode(StatusCodes.Status201Created);
     }
@@ -440,7 +440,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
         if(entry is null) return NotFound();
 
         context.OwnedMachines.Remove(entry);
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         return NoContent();
     }
@@ -487,7 +487,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
             SoftwareReleaseId = releaseId
         });
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         return StatusCode(StatusCodes.Status201Created);
     }
@@ -509,7 +509,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
         if(entry is null) return NotFound();
 
         context.CollectedSoftwareReleases.Remove(entry);
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         return NoContent();
     }
@@ -554,7 +554,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
             MagazineIssueId = issueId
         });
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         return StatusCode(StatusCodes.Status201Created);
     }
@@ -575,7 +575,7 @@ public class CollectionController(UserManager<ApplicationUser> userManager, Mare
         if(entry is null) return NotFound();
 
         context.CollectedMagazineIssues.Remove(entry);
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         return NoContent();
     }

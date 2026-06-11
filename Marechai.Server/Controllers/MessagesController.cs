@@ -441,7 +441,7 @@ public class MessagesController(
             Message = message, UserId = recipient.Id, IsRead = false
         });
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         // Queue the new-message email notification. The worker re-checks the recipient's NotifyOnNewMessage
         // flag, IsSystemAccount, and EmailConfirmed before sending, so we keep the controller's logic minimal.
@@ -575,7 +575,7 @@ public class MessagesController(
             });
         }
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         // Queue one new-message email notification per non-sender participant. The worker filters out
         // recipients with NotifyOnNewMessage off, system accounts, and unconfirmed emails before sending.
@@ -613,7 +613,7 @@ public class MessagesController(
                               && s.Message.ConversationId == id)
                      .ExecuteUpdateAsync(setters => setters.SetProperty(s => s.DeletedAt, now));
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         return NoContent();
     }
@@ -635,7 +635,7 @@ public class MessagesController(
         if(state is null) return NotFound();
 
         state.DeletedAt = DateTime.UtcNow;
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         return NoContent();
     }
@@ -687,7 +687,7 @@ public class MessagesController(
             Explanation = dto.Explanation
         });
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         // Send a system-authored thread to all admins/uberadmins with the report context and quoted body.
         try
@@ -927,7 +927,7 @@ public class MessagesController(
             report.IsResolved       = true;
             report.ResolvedByUserId = userId;
             report.ResolvedOn       = DateTime.UtcNow;
-            await context.SaveChangesAsync();
+            await context.SaveChangesWithUserAsync(userId);
         }
 
         return NoContent();

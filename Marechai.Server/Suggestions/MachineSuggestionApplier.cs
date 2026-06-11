@@ -212,10 +212,7 @@ internal static class MachineSuggestionApplier
 
         await context.Machines.AddAsync(m);
 
-        if(string.IsNullOrEmpty(creditedUserId))
-            await context.SaveChangesAsync();
-        else
-            await context.SaveChangesWithUserAsync(creditedUserId);
+        await context.SaveChangesWithUserAsync(creditedUserId);
 
         // Now apply junction adds with the freshly-minted machine id. Remove keys are silently
         // ignored — a brand-new entity has nothing to remove from.
@@ -227,7 +224,7 @@ internal static class MachineSuggestionApplier
 
             try
             {
-                if(await ApplyJunctionAdd(context, m.Id, group, value)) applied.Add(fieldName);
+                if(await ApplyJunctionAdd(context, m.Id, group, value, creditedUserId)) applied.Add(fieldName);
             }
             catch
             {
@@ -246,7 +243,8 @@ internal static class MachineSuggestionApplier
     public static async Task<(HashSet<string> applied, bool entityMissing)> ApplyAsync(
         MarechaiContext context, long entityId,
         Dictionary<string, object> suggested,
-        HashSet<string> accepted)
+        HashSet<string> accepted,
+        string creditedUserId)
     {
         var applied = new HashSet<string>(StringComparer.Ordinal);
 
@@ -274,8 +272,8 @@ internal static class MachineSuggestionApplier
                 if(TryParseJunctionKey(fieldName, out string group, out string op, out string token))
                 {
                     bool ok = op == "add"
-                                  ? await ApplyJunctionAdd(context, (int)entityId, group, value)
-                                  : await ApplyJunctionRemove(context, (int)entityId, group, token);
+                                  ? await ApplyJunctionAdd(context, (int)entityId, group, value, creditedUserId)
+                                  : await ApplyJunctionRemove(context, (int)entityId, group, token, creditedUserId);
                     if(ok) applied.Add(fieldName);
                 }
             }
@@ -285,7 +283,7 @@ internal static class MachineSuggestionApplier
             }
         }
 
-        if(scalarChanged) await context.SaveChangesAsync();
+        if(scalarChanged) await context.SaveChangesWithUserAsync(creditedUserId);
 
         return (applied, false);
     }
@@ -351,7 +349,8 @@ internal static class MachineSuggestionApplier
 
     // ───────────────────────────── Junction add ─────────────────────────────
 
-    static async Task<bool> ApplyJunctionAdd(MarechaiContext context, int machineId, string group, object value)
+    static async Task<bool> ApplyJunctionAdd(MarechaiContext context, int machineId, string group, object value,
+        string creditedUserId)
     {
         Dictionary<string, object> payload = ExtractObject(value);
         if(payload is null) return false;
@@ -371,7 +370,7 @@ internal static class MachineSuggestionApplier
                     MachineId = machineId,
                     GpuId     = gid.Value
                 });
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithUserAsync(creditedUserId);
                 return true;
             }
             case GroupProcessors:
@@ -386,7 +385,7 @@ internal static class MachineSuggestionApplier
                     ProcessorId = pid.Value,
                     Speed       = speed
                 });
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithUserAsync(creditedUserId);
                 return true;
             }
             case GroupSoundSynths:
@@ -402,7 +401,7 @@ internal static class MachineSuggestionApplier
                     MachineId    = machineId,
                     SoundSynthId = sid.Value
                 });
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithUserAsync(creditedUserId);
                 return true;
             }
             case GroupScreens:
@@ -418,7 +417,7 @@ internal static class MachineSuggestionApplier
                     MachineId = machineId,
                     ScreenId  = scid.Value
                 });
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithUserAsync(creditedUserId);
                 return true;
             }
             case GroupMemory:
@@ -438,7 +437,7 @@ internal static class MachineSuggestionApplier
                     Size      = size,
                     Speed     = speed
                 });
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithUserAsync(creditedUserId);
                 return true;
             }
             case GroupStorage:
@@ -456,7 +455,7 @@ internal static class MachineSuggestionApplier
                     Interface = (StorageInterface)ifVal.Value,
                     Capacity  = capacity
                 });
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithUserAsync(creditedUserId);
                 return true;
             }
             case GroupSoftwarePlatforms:
@@ -473,7 +472,7 @@ internal static class MachineSuggestionApplier
                     MachineId          = machineId,
                     SoftwarePlatformId = spId
                 });
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithUserAsync(creditedUserId);
                 return true;
             }
             default:
@@ -483,7 +482,8 @@ internal static class MachineSuggestionApplier
 
     // ───────────────────────────── Junction remove ─────────────────────────────
 
-    static async Task<bool> ApplyJunctionRemove(MarechaiContext context, int machineId, string group, string token)
+    static async Task<bool> ApplyJunctionRemove(MarechaiContext context, int machineId, string group, string token,
+        string creditedUserId)
     {
         if(!long.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out long rowId)) return false;
 

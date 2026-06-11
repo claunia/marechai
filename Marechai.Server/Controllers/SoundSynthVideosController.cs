@@ -123,7 +123,7 @@ public class SoundSynthVideosController(MarechaiContext context) : ControllerBas
         };
 
         context.SoundSynthVideos.Add(model);
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         string soundSynthName = await context.SoundSynths.Where(s => s.Id == soundSynthId)
                                              .Select(s => s.Name)
@@ -161,7 +161,7 @@ public class SoundSynthVideosController(MarechaiContext context) : ControllerBas
 
         video.Title = string.IsNullOrWhiteSpace(request.Title) ? null : request.Title.Trim();
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         return NoContent();
     }
@@ -183,7 +183,7 @@ public class SoundSynthVideosController(MarechaiContext context) : ControllerBas
         if(video is null) return NotFound();
 
         context.SoundSynthVideos.Remove(video);
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         return NoContent();
     }

@@ -123,7 +123,7 @@ public class MachineVideosController(MarechaiContext context) : ControllerBase
         };
 
         context.MachineVideos.Add(model);
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         string machineName = await context.Machines.Where(m => m.Id == machineId)
                                           .Select(m => m.Name)
@@ -161,7 +161,7 @@ public class MachineVideosController(MarechaiContext context) : ControllerBase
 
         video.Title = string.IsNullOrWhiteSpace(request.Title) ? null : request.Title.Trim();
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         return NoContent();
     }
@@ -183,7 +183,7 @@ public class MachineVideosController(MarechaiContext context) : ControllerBase
         if(video is null) return NotFound();
 
         context.MachineVideos.Remove(video);
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         return NoContent();
     }

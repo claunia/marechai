@@ -98,7 +98,8 @@ internal static class CompanyDescriptionSuggestionApplier
     public static async Task<(HashSet<string> applied, bool entityMissing)> ApplyAsync(
         MarechaiContext context, long entityId, string languageCode,
         Dictionary<string, object> suggested,
-        HashSet<string> accepted)
+        HashSet<string> accepted,
+        string creditedUserId)
     {
         var applied = new HashSet<string>(StringComparer.Ordinal);
 
@@ -153,7 +154,7 @@ internal static class CompanyDescriptionSuggestionApplier
             current.Html = html;
         }
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(creditedUserId);
 
         applied.Add(FieldMarkdown);
         return (applied, false);

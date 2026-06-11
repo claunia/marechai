@@ -151,10 +151,7 @@ internal static class SoundSynthSuggestionApplier
 
         await context.SoundSynths.AddAsync(s);
 
-        if(string.IsNullOrEmpty(creditedUserId))
-            await context.SaveChangesAsync();
-        else
-            await context.SaveChangesWithUserAsync(creditedUserId);
+        await context.SaveChangesWithUserAsync(creditedUserId);
 
         return (s.Id, applied);
     }
@@ -166,7 +163,8 @@ internal static class SoundSynthSuggestionApplier
     public static async Task<(HashSet<string> applied, bool entityMissing)> ApplyAsync(
         MarechaiContext context, long entityId,
         Dictionary<string, object> suggested,
-        HashSet<string> accepted)
+        HashSet<string> accepted,
+        string creditedUserId)
     {
         var applied = new HashSet<string>(StringComparer.Ordinal);
 
@@ -196,7 +194,7 @@ internal static class SoundSynthSuggestionApplier
             }
         }
 
-        if(scalarChanged) await context.SaveChangesAsync();
+        if(scalarChanged) await context.SaveChangesWithUserAsync(creditedUserId);
 
         return (applied, false);
     }

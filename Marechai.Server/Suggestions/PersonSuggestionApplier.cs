@@ -182,10 +182,7 @@ internal static class PersonSuggestionApplier
 
         await context.People.AddAsync(p);
 
-        if(string.IsNullOrEmpty(creditedUserId))
-            await context.SaveChangesAsync();
-        else
-            await context.SaveChangesWithUserAsync(creditedUserId);
+        await context.SaveChangesWithUserAsync(creditedUserId);
 
         // Person has no in-scope junctions — the five junctions (PeopleByCompany,
         // PeopleByBook, PeopleByDocument, PeopleByMagazine, PeopleBySoftware) are owned
@@ -201,7 +198,8 @@ internal static class PersonSuggestionApplier
         MarechaiContext context, long entityId,
         Dictionary<string, object> suggested,
         HashSet<string> accepted,
-        string assetRootPath)
+        string assetRootPath,
+        string creditedUserId)
     {
         var applied = new HashSet<string>(StringComparer.Ordinal);
 
@@ -252,7 +250,7 @@ internal static class PersonSuggestionApplier
             }
         }
 
-        if(scalarChanged) await context.SaveChangesAsync();
+        if(scalarChanged) await context.SaveChangesWithUserAsync(creditedUserId);
 
         return (applied, false);
     }

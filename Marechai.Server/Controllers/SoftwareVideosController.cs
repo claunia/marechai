@@ -123,7 +123,7 @@ public class SoftwareVideosController(MarechaiContext context) : ControllerBase
         };
 
         context.SoftwareVideos.Add(model);
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         string softwareName = await context.Softwares.Where(s => s.Id == softwareId)
                                             .Select(s => s.Name)
@@ -161,7 +161,7 @@ public class SoftwareVideosController(MarechaiContext context) : ControllerBase
 
         video.Title = string.IsNullOrWhiteSpace(request.Title) ? null : request.Title.Trim();
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         return NoContent();
     }
@@ -183,7 +183,7 @@ public class SoftwareVideosController(MarechaiContext context) : ControllerBase
         if(video is null) return NotFound();
 
         context.SoftwareVideos.Remove(video);
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         return NoContent();
     }

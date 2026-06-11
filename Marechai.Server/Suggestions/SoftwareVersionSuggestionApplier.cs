@@ -133,12 +133,14 @@ internal static class SoftwareVersionSuggestionApplier
     public static Task<(HashSet<string> applied, bool entityMissing)> ApplyAsync(
         MarechaiContext context, long entityId,
         Dictionary<string, object> suggested,
-        HashSet<string> accepted)
+        HashSet<string> accepted,
+        string creditedUserId)
     {
         _ = context;
         _ = entityId;
         _ = suggested;
         _ = accepted;
+        _ = creditedUserId;
         return Task.FromResult((new HashSet<string>(StringComparer.Ordinal), false));
     }
 
@@ -296,10 +298,7 @@ internal static class SoftwareVersionSuggestionApplier
 
             await context.SoftwareVersions.AddAsync(v);
 
-            if(string.IsNullOrEmpty(creditedUserId))
-                await context.SaveChangesAsync();
-            else
-                await context.SaveChangesWithUserAsync(creditedUserId);
+            await context.SaveChangesWithUserAsync(creditedUserId);
 
             applied.Add(FieldSoftwareId);
             applied.Add(FieldVersionString);

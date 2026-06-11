@@ -260,10 +260,7 @@ internal static class MagazineIssueSuggestionApplier
 
         await context.MagazineIssues.AddAsync(mi);
 
-        if(string.IsNullOrEmpty(creditedUserId))
-            await context.SaveChangesAsync();
-        else
-            await context.SaveChangesWithUserAsync(creditedUserId);
+        await context.SaveChangesWithUserAsync(creditedUserId);
 
         // Now apply junction adds with the freshly-minted issue id. Remove keys are silently
         // ignored — a brand-new entity has nothing to remove from.
@@ -275,7 +272,7 @@ internal static class MagazineIssueSuggestionApplier
 
             try
             {
-                if(await ApplyJunctionAdd(context, mi.Id, group, value)) applied.Add(fieldName);
+                if(await ApplyJunctionAdd(context, mi.Id, group, value, creditedUserId)) applied.Add(fieldName);
             }
             catch
             {
@@ -295,7 +292,8 @@ internal static class MagazineIssueSuggestionApplier
         MarechaiContext context, long entityId,
         Dictionary<string, object> suggested,
         HashSet<string> accepted,
-        string assetRootPath)
+        string assetRootPath,
+        string creditedUserId)
     {
         var applied = new HashSet<string>(StringComparer.Ordinal);
 
@@ -347,8 +345,8 @@ internal static class MagazineIssueSuggestionApplier
                 if(TryParseJunctionKey(fieldName, out string group, out string op, out string token))
                 {
                     bool ok = op == "add"
-                                  ? await ApplyJunctionAdd(context, entityId, group, value)
-                                  : await ApplyJunctionRemove(context, entityId, group, token);
+                                  ? await ApplyJunctionAdd(context, entityId, group, value, creditedUserId)
+                                  : await ApplyJunctionRemove(context, entityId, group, token, creditedUserId);
                     if(ok) applied.Add(fieldName);
                 }
             }
@@ -358,7 +356,7 @@ internal static class MagazineIssueSuggestionApplier
             }
         }
 
-        if(scalarChanged) await context.SaveChangesAsync();
+        if(scalarChanged) await context.SaveChangesWithUserAsync(creditedUserId);
 
         return (applied, false);
     }
@@ -529,7 +527,8 @@ internal static class MagazineIssueSuggestionApplier
 
     // ───────────────────────────── Junction add ─────────────────────────────
 
-    static async Task<bool> ApplyJunctionAdd(MarechaiContext context, long issueId, string group, object value)
+    static async Task<bool> ApplyJunctionAdd(MarechaiContext context, long issueId, string group, object value,
+        string creditedUserId)
     {
         Dictionary<string, object> payload = ExtractObject(value);
         if(payload is null) return false;
@@ -556,7 +555,7 @@ internal static class MagazineIssueSuggestionApplier
                     PersonId   = pid.Value,
                     RoleId     = roleId
                 });
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithUserAsync(creditedUserId);
                 return true;
             }
             case GroupMachines:
@@ -572,7 +571,7 @@ internal static class MagazineIssueSuggestionApplier
                     MagazineId = issueId,
                     MachineId  = mid.Value
                 });
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithUserAsync(creditedUserId);
                 return true;
             }
             case GroupMachineFamilies:
@@ -588,7 +587,7 @@ internal static class MagazineIssueSuggestionApplier
                     MagazineId      = issueId,
                     MachineFamilyId = fid.Value
                 });
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithUserAsync(creditedUserId);
                 return true;
             }
             case GroupSoftware:
@@ -605,7 +604,7 @@ internal static class MagazineIssueSuggestionApplier
                     MagazineId = issueId,
                     SoftwareId = sidU
                 });
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithUserAsync(creditedUserId);
                 return true;
             }
             default:
@@ -615,7 +614,8 @@ internal static class MagazineIssueSuggestionApplier
 
     // ───────────────────────────── Junction remove ─────────────────────────────
 
-    static async Task<bool> ApplyJunctionRemove(MarechaiContext context, long issueId, string group, string token)
+    static async Task<bool> ApplyJunctionRemove(MarechaiContext context, long issueId, string group, string token,
+        string creditedUserId)
     {
         if(!long.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out long rowId)) return false;
 

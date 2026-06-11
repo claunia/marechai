@@ -228,7 +228,8 @@ public class WwpcImportsController(MarechaiContext context, WwpcPromotionService
         if(!ModelState.IsValid)
             return Problem(detail: "A name is required.", statusCode: StatusCodes.Status400BadRequest);
 
-        long? newId = await promotion.DuplicateAsync(id, dto.NewName);
+        string userId = User.FindFirstValue(ClaimTypes.Sid) ?? User.FindFirstValue(ClaimTypes.NameIdentifier);
+        long? newId = await promotion.DuplicateAsync(id, dto.NewName, userId);
         if(newId == null) return NotFound();
         return Ok(newId.Value);
     }

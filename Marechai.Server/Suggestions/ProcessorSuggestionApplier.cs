@@ -225,10 +225,7 @@ internal static class ProcessorSuggestionApplier
 
         await context.Processors.AddAsync(p);
 
-        if(string.IsNullOrEmpty(creditedUserId))
-            await context.SaveChangesAsync();
-        else
-            await context.SaveChangesWithUserAsync(creditedUserId);
+        await context.SaveChangesWithUserAsync(creditedUserId);
 
         // Now apply junction adds with the freshly-minted processor id. Remove keys are
         // silently ignored — a brand-new entity has nothing to remove from.
@@ -240,7 +237,7 @@ internal static class ProcessorSuggestionApplier
 
             try
             {
-                if(await ApplyJunctionAdd(context, p.Id, group, value)) applied.Add(fieldName);
+                if(await ApplyJunctionAdd(context, p.Id, group, value, creditedUserId)) applied.Add(fieldName);
             }
             catch
             {
@@ -259,7 +256,8 @@ internal static class ProcessorSuggestionApplier
     public static async Task<(HashSet<string> applied, bool entityMissing)> ApplyAsync(
         MarechaiContext context, long entityId,
         Dictionary<string, object> suggested,
-        HashSet<string> accepted)
+        HashSet<string> accepted,
+        string creditedUserId)
     {
         var applied = new HashSet<string>(StringComparer.Ordinal);
 
@@ -287,8 +285,8 @@ internal static class ProcessorSuggestionApplier
                 if(TryParseJunctionKey(fieldName, out string group, out string op, out string token))
                 {
                     bool ok = op == "add"
-                                  ? await ApplyJunctionAdd(context, (int)entityId, group, value)
-                                  : await ApplyJunctionRemove(context, (int)entityId, group, token);
+                                  ? await ApplyJunctionAdd(context, (int)entityId, group, value, creditedUserId)
+                                  : await ApplyJunctionRemove(context, (int)entityId, group, token, creditedUserId);
                     if(ok) applied.Add(fieldName);
                 }
             }
@@ -298,7 +296,7 @@ internal static class ProcessorSuggestionApplier
             }
         }
 
-        if(scalarChanged) await context.SaveChangesAsync();
+        if(scalarChanged) await context.SaveChangesWithUserAsync(creditedUserId);
 
         return (applied, false);
     }
@@ -498,7 +496,8 @@ internal static class ProcessorSuggestionApplier
 
     // ───────────────────────────── Junction add ─────────────────────────────
 
-    static async Task<bool> ApplyJunctionAdd(MarechaiContext context, int processorId, string group, object value)
+    static async Task<bool> ApplyJunctionAdd(MarechaiContext context, int processorId, string group, object value,
+        string creditedUserId)
     {
         Dictionary<string, object> payload = ExtractObject(value);
         if(payload is null) return false;
@@ -521,7 +520,7 @@ internal static class ProcessorSuggestionApplier
                     ProcessorId = processorId,
                     ExtensionId = eid.Value
                 });
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithUserAsync(creditedUserId);
                 return true;
             }
             default:
@@ -531,7 +530,8 @@ internal static class ProcessorSuggestionApplier
 
     // ───────────────────────────── Junction remove ─────────────────────────────
 
-    static async Task<bool> ApplyJunctionRemove(MarechaiContext context, int processorId, string group, string token)
+    static async Task<bool> ApplyJunctionRemove(MarechaiContext context, int processorId, string group, string token,
+        string creditedUserId)
     {
         if(!long.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out long rowId)) return false;
 

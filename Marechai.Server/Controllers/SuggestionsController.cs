@@ -674,7 +674,7 @@ public class SuggestionsController(MarechaiContext context,
         };
 
         context.Suggestions.Add(suggestion);
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         // ---- Notify all admins/uberadmins -------------------------------------------
         ApplicationUser sender = await userManager.FindByIdAsync(userId);
@@ -926,7 +926,7 @@ public class SuggestionsController(MarechaiContext context,
                 s.Status     = SuggestionStatus.Stale;
                 s.ReviewedById = adminId;
                 s.ReviewedOn = DateTime.UtcNow;
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithUserAsync(adminId);
                 return Problem(title: "Entity no longer exists",
                                detail: "The targeted entity has been deleted; the suggestion was closed as stale.",
                                statusCode: StatusCodes.Status404NotFound);
@@ -1054,7 +1054,7 @@ public class SuggestionsController(MarechaiContext context,
         s.ReviewedOn    = DateTime.UtcNow;
         s.AppliedFields = accepted.ToDictionary(k => k, _ => string.Empty, StringComparer.Ordinal);
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(adminId);
 
         // Pending-image cleanup: every suggestion that carried a cover_pending_guid in its
         // payload but did NOT end up applying the cover (rejected, or partially accepted
@@ -1145,7 +1145,7 @@ public class SuggestionsController(MarechaiContext context,
 
         s.Status     = SuggestionStatus.Withdrawn;
         s.ReviewedOn = DateTime.UtcNow;
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         return NoContent();
     }
@@ -1307,133 +1307,133 @@ public class SuggestionsController(MarechaiContext context,
             case SuggestionEntityType.Company:
             {
                 var (applied, missing) = await Suggestions.CompanySuggestionApplier.ApplyAsync(
-                    context, entityId, suggested, accepted);
+                    context, entityId, suggested, accepted, creditedUserId);
                 return new ApplyResult(applied, missing);
             }
             case SuggestionEntityType.CompanyDescription:
             {
                 var (applied, missing) = await Suggestions.CompanyDescriptionSuggestionApplier.ApplyAsync(
-                    context, entityId, subkey, suggested, accepted);
+                    context, entityId, subkey, suggested, accepted, creditedUserId);
                 return new ApplyResult(applied, missing);
             }
             case SuggestionEntityType.MachineDescription:
             {
                 var (applied, missing) = await Suggestions.MachineDescriptionSuggestionApplier.ApplyAsync(
-                    context, entityId, subkey, suggested, accepted);
+                    context, entityId, subkey, suggested, accepted, creditedUserId);
                 return new ApplyResult(applied, missing);
             }
             case SuggestionEntityType.BookSynopsis:
             {
                 var (applied, missing) = await Suggestions.BookSynopsisSuggestionApplier.ApplyAsync(
-                    context, entityId, subkey, suggested, accepted);
+                    context, entityId, subkey, suggested, accepted, creditedUserId);
                 return new ApplyResult(applied, missing);
             }
             case SuggestionEntityType.DocumentSynopsis:
             {
                 var (applied, missing) = await Suggestions.DocumentSynopsisSuggestionApplier.ApplyAsync(
-                    context, entityId, subkey, suggested, accepted);
+                    context, entityId, subkey, suggested, accepted, creditedUserId);
                 return new ApplyResult(applied, missing);
             }
             case SuggestionEntityType.MagazineSynopsis:
             {
                 var (applied, missing) = await Suggestions.MagazineSynopsisSuggestionApplier.ApplyAsync(
-                    context, entityId, subkey, suggested, accepted);
+                    context, entityId, subkey, suggested, accepted, creditedUserId);
                 return new ApplyResult(applied, missing);
             }
             case SuggestionEntityType.GpuDescription:
             {
                 var (applied, missing) = await Suggestions.GpuDescriptionSuggestionApplier.ApplyAsync(
-                    context, entityId, subkey, suggested, accepted);
+                    context, entityId, subkey, suggested, accepted, creditedUserId);
                 return new ApplyResult(applied, missing);
             }
             case SuggestionEntityType.ProcessorDescription:
             {
                 var (applied, missing) = await Suggestions.ProcessorDescriptionSuggestionApplier.ApplyAsync(
-                    context, entityId, subkey, suggested, accepted);
+                    context, entityId, subkey, suggested, accepted, creditedUserId);
                 return new ApplyResult(applied, missing);
             }
             case SuggestionEntityType.SoundSynthDescription:
             {
                 var (applied, missing) = await Suggestions.SoundSynthDescriptionSuggestionApplier.ApplyAsync(
-                    context, entityId, subkey, suggested, accepted);
+                    context, entityId, subkey, suggested, accepted, creditedUserId);
                 return new ApplyResult(applied, missing);
             }
             case SuggestionEntityType.PersonDescription:
             {
                 var (applied, missing) = await Suggestions.PersonDescriptionSuggestionApplier.ApplyAsync(
-                    context, entityId, subkey, suggested, accepted);
+                    context, entityId, subkey, suggested, accepted, creditedUserId);
                 return new ApplyResult(applied, missing);
             }
             case SuggestionEntityType.SoftwareDescription:
             {
                 var (applied, missing) = await Suggestions.SoftwareDescriptionSuggestionApplier.ApplyAsync(
-                    context, entityId, subkey, suggested, accepted);
+                    context, entityId, subkey, suggested, accepted, creditedUserId);
                 return new ApplyResult(applied, missing);
             }
             case SuggestionEntityType.Machine:
             {
                 var (applied, missing) = await Suggestions.MachineSuggestionApplier.ApplyAsync(
-                    context, entityId, suggested, accepted);
+                    context, entityId, suggested, accepted, creditedUserId);
                 return new ApplyResult(applied, missing);
             }
             case SuggestionEntityType.Book:
             {
                 var (applied, missing) = await Suggestions.BookSuggestionApplier.ApplyAsync(
-                    context, entityId, suggested, accepted, _assetRootPath);
+                    context, entityId, suggested, accepted, _assetRootPath, creditedUserId);
                 return new ApplyResult(applied, missing);
             }
             case SuggestionEntityType.Document:
             {
                 var (applied, missing) = await Suggestions.DocumentSuggestionApplier.ApplyAsync(
-                    context, entityId, suggested, accepted);
+                    context, entityId, suggested, accepted, creditedUserId);
                 return new ApplyResult(applied, missing);
             }
             case SuggestionEntityType.Magazine:
             {
                 var (applied, missing) = await Suggestions.MagazineSuggestionApplier.ApplyAsync(
-                    context, entityId, suggested, accepted);
+                    context, entityId, suggested, accepted, creditedUserId);
                 return new ApplyResult(applied, missing);
             }
             case SuggestionEntityType.MagazineIssue:
             {
                 var (applied, missing) = await Suggestions.MagazineIssueSuggestionApplier.ApplyAsync(
-                    context, entityId, suggested, accepted, _assetRootPath);
+                    context, entityId, suggested, accepted, _assetRootPath, creditedUserId);
                 return new ApplyResult(applied, missing);
             }
             case SuggestionEntityType.Gpu:
             {
                 var (applied, missing) = await Suggestions.GpuSuggestionApplier.ApplyAsync(
-                    context, entityId, suggested, accepted);
+                    context, entityId, suggested, accepted, creditedUserId);
                 return new ApplyResult(applied, missing);
             }
             case SuggestionEntityType.Processor:
             {
                 var (applied, missing) = await Suggestions.ProcessorSuggestionApplier.ApplyAsync(
-                    context, entityId, suggested, accepted);
+                    context, entityId, suggested, accepted, creditedUserId);
                 return new ApplyResult(applied, missing);
             }
             case SuggestionEntityType.SoundSynth:
             {
                 var (applied, missing) = await Suggestions.SoundSynthSuggestionApplier.ApplyAsync(
-                    context, entityId, suggested, accepted);
+                    context, entityId, suggested, accepted, creditedUserId);
                 return new ApplyResult(applied, missing);
             }
             case SuggestionEntityType.Person:
             {
                 var (applied, missing) = await Suggestions.PersonSuggestionApplier.ApplyAsync(
-                    context, entityId, suggested, accepted, _assetRootPath);
+                    context, entityId, suggested, accepted, _assetRootPath, creditedUserId);
                 return new ApplyResult(applied, missing);
             }
             case SuggestionEntityType.Software:
             {
                 var (applied, missing) = await Suggestions.SoftwareSuggestionApplier.ApplyAsync(
-                    context, entityId, suggested, accepted);
+                    context, entityId, suggested, accepted, creditedUserId);
                 return new ApplyResult(applied, missing);
             }
             case SuggestionEntityType.SoftwareRelease:
             {
                 var (applied, missing) = await Suggestions.SoftwareReleaseSuggestionApplier.ApplyAsync(
-                    context, entityId, suggested, accepted);
+                    context, entityId, suggested, accepted, creditedUserId);
                 return new ApplyResult(applied, missing);
             }
             case SuggestionEntityType.SoftwareVersion:
@@ -1442,7 +1442,7 @@ public class SuggestionsController(MarechaiContext context,
                 // returns (empty, false) so the suggestion accepts cleanly with no field
                 // application — admins shouldn't reach this path through the UI today.
                 var (applied, missing) = await Suggestions.SoftwareVersionSuggestionApplier.ApplyAsync(
-                    context, entityId, suggested, accepted);
+                    context, entityId, suggested, accepted, creditedUserId);
                 return new ApplyResult(applied, missing);
             }
             case SuggestionEntityType.GpuPhoto:

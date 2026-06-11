@@ -133,7 +133,7 @@ public static class SvgRender
                     Guid      = guid
                 });
 
-                context.SaveChanges();
+                context.SaveChangesWithUserAsync(WellKnownUsers.SystemUserId).GetAwaiter().GetResult();
             }
             catch(Exception)
             {

@@ -2018,11 +2018,11 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                 addon.BaseSoftwareId = targetId;
 
             // Flush all changes before deleting the source to avoid FK violations
-            await context.SaveChangesAsync();
+            await context.SaveChangesWithUserAsync(userId);
 
             // 10. Delete source software
             context.Softwares.Remove(source);
-            await context.SaveChangesAsync();
+            await context.SaveChangesWithUserAsync(userId);
 
             await transaction.CommitAsync();
 
@@ -2900,7 +2900,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
             });
         }
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         return Ok();
     }
@@ -2919,7 +2919,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
         if(rating is not null)
         {
             context.SoftwareUserRatings.Remove(rating);
-            await context.SaveChangesAsync();
+            await context.SaveChangesWithUserAsync(userId);
         }
 
         return NoContent();
@@ -3057,7 +3057,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                 });
         }
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         dto.Id = review.Id;
 
@@ -3106,7 +3106,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                 });
         }
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         return Ok();
     }
@@ -3130,7 +3130,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
             return Problem("You do not have permission to delete this review.", statusCode: StatusCodes.Status403Forbidden);
 
         context.SoftwareUserReviews.Remove(review);
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         return NoContent();
     }
@@ -3168,7 +3168,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                 IsUpvote = dto.IsUpvote
             });
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         return Ok();
     }
@@ -3187,7 +3187,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
         if(vote is not null)
         {
             context.SoftwareUserReviewVotes.Remove(vote);
-            await context.SaveChangesAsync();
+            await context.SaveChangesWithUserAsync(userId);
         }
 
         return NoContent();
@@ -3229,7 +3229,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
             Explanation = dto.Explanation
         });
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         // Notify all admins/uberadmins via the messaging system. Sent post-save so the report row exists when admins
         // click through. Failures are non-fatal: the report itself is what matters.

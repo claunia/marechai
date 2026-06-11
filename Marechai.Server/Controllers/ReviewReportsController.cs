@@ -86,7 +86,7 @@ public class ReviewReportsController(MarechaiContext context) : ControllerBase
         report.ResolvedByUserId = userId;
         report.ResolvedOn       = DateTime.UtcNow;
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(userId);
 
         return Ok();
     }
@@ -95,12 +95,14 @@ public class ReviewReportsController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> DeleteReportAsync(long id)
     {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         ReviewReport report = await context.ReviewReports.FindAsync(id);
 
         if(report is not null)
         {
             context.ReviewReports.Remove(report);
-            await context.SaveChangesAsync();
+            await context.SaveChangesWithUserAsync(userId);
         }
 
         return NoContent();

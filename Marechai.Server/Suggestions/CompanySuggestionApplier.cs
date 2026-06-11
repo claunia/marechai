@@ -104,7 +104,8 @@ internal static class CompanySuggestionApplier
     public static async Task<(HashSet<string> applied, bool entityMissing)> ApplyAsync(
         MarechaiContext context, long entityId,
         Dictionary<string, object> suggested,
-        HashSet<string> accepted)
+        HashSet<string> accepted,
+        string creditedUserId)
     {
         var applied = new HashSet<string>(StringComparer.Ordinal);
 
@@ -229,7 +230,7 @@ internal static class CompanySuggestionApplier
             }
         }
 
-        if(applied.Count > 0) await context.SaveChangesAsync();
+        if(applied.Count > 0) await context.SaveChangesWithUserAsync(creditedUserId);
 
         return (applied, false);
     }
@@ -364,10 +365,7 @@ internal static class CompanySuggestionApplier
         }
 
         await context.Companies.AddAsync(c);
-        if(string.IsNullOrEmpty(creditedUserId))
-            await context.SaveChangesAsync();
-        else
-            await context.SaveChangesWithUserAsync(creditedUserId);
+        await context.SaveChangesWithUserAsync(creditedUserId);
 
         return (c.Id, applied);
     }

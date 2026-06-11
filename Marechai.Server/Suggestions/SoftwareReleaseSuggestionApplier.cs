@@ -291,10 +291,7 @@ internal static class SoftwareReleaseSuggestionApplier
 
         await context.SoftwareReleases.AddAsync(r);
 
-        if(string.IsNullOrEmpty(creditedUserId))
-            await context.SaveChangesAsync();
-        else
-            await context.SaveChangesWithUserAsync(creditedUserId);
+        await context.SaveChangesWithUserAsync(creditedUserId);
 
         // Now apply junction adds with the freshly-minted release id. Remove keys are
         // silently ignored — a brand-new entity has nothing to remove from.
@@ -306,7 +303,7 @@ internal static class SoftwareReleaseSuggestionApplier
 
             try
             {
-                if(await ApplyJunctionAdd(context, r.Id, group, value)) applied.Add(fieldName);
+                if(await ApplyJunctionAdd(context, r.Id, group, value, creditedUserId)) applied.Add(fieldName);
             }
             catch
             {
@@ -320,7 +317,8 @@ internal static class SoftwareReleaseSuggestionApplier
     public static async Task<(HashSet<string> applied, bool entityMissing)> ApplyAsync(
         MarechaiContext context, long entityId,
         Dictionary<string, object> suggested,
-        HashSet<string> accepted)
+        HashSet<string> accepted,
+        string creditedUserId)
     {
         var applied = new HashSet<string>(StringComparer.Ordinal);
 
@@ -348,8 +346,8 @@ internal static class SoftwareReleaseSuggestionApplier
                 if(TryParseJunctionKey(fieldName, out string group, out string op, out string token))
                 {
                     bool ok = op == "add"
-                                  ? await ApplyJunctionAdd(context, (ulong)entityId, group, value)
-                                  : await ApplyJunctionRemove(context, (ulong)entityId, group, token);
+                                  ? await ApplyJunctionAdd(context, (ulong)entityId, group, value, creditedUserId)
+                                  : await ApplyJunctionRemove(context, (ulong)entityId, group, token, creditedUserId);
                     if(ok) applied.Add(fieldName);
                 }
             }
@@ -359,7 +357,7 @@ internal static class SoftwareReleaseSuggestionApplier
             }
         }
 
-        if(scalarChanged) await context.SaveChangesAsync();
+        if(scalarChanged) await context.SaveChangesWithUserAsync(creditedUserId);
 
         return (applied, false);
     }
@@ -415,7 +413,8 @@ internal static class SoftwareReleaseSuggestionApplier
 
     // ───────────────────────────── Junction add ─────────────────────────────
 
-    static async Task<bool> ApplyJunctionAdd(MarechaiContext context, ulong releaseId, string group, object value)
+    static async Task<bool> ApplyJunctionAdd(MarechaiContext context, ulong releaseId, string group, object value,
+        string creditedUserId)
     {
         Dictionary<string, object> payload = ExtractObject(value);
         if(payload is null) return false;
@@ -437,7 +436,7 @@ internal static class SoftwareReleaseSuggestionApplier
                     SoftwareReleaseId = releaseId,
                     UnM49Id           = id
                 });
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithUserAsync(creditedUserId);
                 return true;
             }
             case GroupLanguages:
@@ -455,7 +454,7 @@ internal static class SoftwareReleaseSuggestionApplier
                     SoftwareReleaseId = releaseId,
                     LanguageCode      = code
                 });
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithUserAsync(creditedUserId);
                 return true;
             }
             case GroupBarcodes:
@@ -474,7 +473,7 @@ internal static class SoftwareReleaseSuggestionApplier
                     Code      = code,
                     Type      = (BarcodeType)typeRaw.Value
                 });
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithUserAsync(creditedUserId);
                 return true;
             }
             case GroupProductCodes:
@@ -495,13 +494,13 @@ internal static class SoftwareReleaseSuggestionApplier
                     Issuer    = issuer,
                     Code      = code
                 });
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithUserAsync(creditedUserId);
                 return true;
             }
             case GroupSpecs:
-                return await AddSoftwareAttributeAsync(context, releaseId, payload, AttributeCategorySpec);
+                return await AddSoftwareAttributeAsync(context, releaseId, payload, AttributeCategorySpec, creditedUserId);
             case GroupRatings:
-                return await AddSoftwareAttributeAsync(context, releaseId, payload, AttributeCategoryRating);
+                return await AddSoftwareAttributeAsync(context, releaseId, payload, AttributeCategoryRating, creditedUserId);
             case GroupMinGpus:
             {
                 int? gpuId = GetInt(payload, "gpu_id");
@@ -515,7 +514,7 @@ internal static class SoftwareReleaseSuggestionApplier
                     ReleaseId = releaseId,
                     GpuId     = gpuId.Value
                 });
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithUserAsync(creditedUserId);
                 return true;
             }
             case GroupRecGpus:
@@ -531,7 +530,7 @@ internal static class SoftwareReleaseSuggestionApplier
                     ReleaseId = releaseId,
                     GpuId     = gpuId.Value
                 });
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithUserAsync(creditedUserId);
                 return true;
             }
             case GroupSoundSynths:
@@ -547,7 +546,7 @@ internal static class SoftwareReleaseSuggestionApplier
                     ReleaseId    = releaseId,
                     SoundSynthId = synthId.Value
                 });
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithUserAsync(creditedUserId);
                 return true;
             }
             default:
@@ -563,7 +562,8 @@ internal static class SoftwareReleaseSuggestionApplier
     ///     rejected. Both length limits mirror the database column constraints.
     /// </summary>
     static async Task<bool> AddSoftwareAttributeAsync(MarechaiContext context, ulong releaseId,
-                                                      Dictionary<string, object> payload, string category)
+                                                      Dictionary<string, object> payload, string category,
+                                                      string creditedUserId)
     {
         string key   = GetString(payload, "key");
         string value = GetString(payload, "value");
@@ -584,13 +584,14 @@ internal static class SoftwareReleaseSuggestionApplier
             Key               = key,
             Value             = value
         });
-        await context.SaveChangesAsync();
+        await context.SaveChangesWithUserAsync(creditedUserId);
         return true;
     }
 
     // ───────────────────────────── Junction remove ─────────────────────────────
 
-    static async Task<bool> ApplyJunctionRemove(MarechaiContext context, ulong releaseId, string group, string token)
+    static async Task<bool> ApplyJunctionRemove(MarechaiContext context, ulong releaseId, string group, string token,
+        string creditedUserId)
     {
         switch(group)
         {
@@ -630,9 +631,9 @@ internal static class SoftwareReleaseSuggestionApplier
                                     .ExecuteDeleteAsync() > 0;
             }
             case GroupSpecs:
-                return await RemoveSoftwareAttributeAsync(context, releaseId, token, AttributeCategorySpec);
+                return await RemoveSoftwareAttributeAsync(context, releaseId, creditedUserId, token, AttributeCategorySpec);
             case GroupRatings:
-                return await RemoveSoftwareAttributeAsync(context, releaseId, token, AttributeCategoryRating);
+                return await RemoveSoftwareAttributeAsync(context, releaseId, creditedUserId, token, AttributeCategoryRating);
             case GroupMinGpus:
             {
                 if(!int.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out int gpuId))
@@ -669,7 +670,7 @@ internal static class SoftwareReleaseSuggestionApplier
     ///     if the user knows its id, and an attacker cannot delete attributes belonging to
     ///     another release by guessing a row id.
     /// </summary>
-    static async Task<bool> RemoveSoftwareAttributeAsync(MarechaiContext context, ulong releaseId,
+    static async Task<bool> RemoveSoftwareAttributeAsync(MarechaiContext context, ulong releaseId, string creditedUserId,
                                                          string token, string category)
     {
         if(!long.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out long rowId)) return false;

@@ -232,10 +232,7 @@ internal static class BookSuggestionApplier
 
         await context.Books.AddAsync(b);
 
-        if(string.IsNullOrEmpty(creditedUserId))
-            await context.SaveChangesAsync();
-        else
-            await context.SaveChangesWithUserAsync(creditedUserId);
+        await context.SaveChangesWithUserAsync(creditedUserId);
 
         // Now apply junction adds with the freshly-minted book id. Remove keys are silently
         // ignored — a brand-new entity has nothing to remove from.
@@ -247,7 +244,7 @@ internal static class BookSuggestionApplier
 
             try
             {
-                if(await ApplyJunctionAdd(context, b.Id, group, value)) applied.Add(fieldName);
+                if(await ApplyJunctionAdd(context, b.Id, group, value, creditedUserId)) applied.Add(fieldName);
             }
             catch
             {
@@ -267,7 +264,8 @@ internal static class BookSuggestionApplier
         MarechaiContext context, long entityId,
         Dictionary<string, object> suggested,
         HashSet<string> accepted,
-        string assetRootPath)
+        string assetRootPath,
+        string creditedUserId)
     {
         var applied = new HashSet<string>(StringComparer.Ordinal);
 
@@ -319,8 +317,8 @@ internal static class BookSuggestionApplier
                 if(TryParseJunctionKey(fieldName, out string group, out string op, out string token))
                 {
                     bool ok = op == "add"
-                                  ? await ApplyJunctionAdd(context, entityId, group, value)
-                                  : await ApplyJunctionRemove(context, entityId, group, token);
+                                  ? await ApplyJunctionAdd(context, entityId, group, value, creditedUserId)
+                                  : await ApplyJunctionRemove(context, entityId, group, token, creditedUserId);
                     if(ok) applied.Add(fieldName);
                 }
             }
@@ -330,7 +328,7 @@ internal static class BookSuggestionApplier
             }
         }
 
-        if(scalarChanged) await context.SaveChangesAsync();
+        if(scalarChanged) await context.SaveChangesWithUserAsync(creditedUserId);
 
         return (applied, false);
     }
@@ -525,7 +523,8 @@ internal static class BookSuggestionApplier
 
     // ───────────────────────────── Junction add ─────────────────────────────
 
-    static async Task<bool> ApplyJunctionAdd(MarechaiContext context, long bookId, string group, object value)
+    static async Task<bool> ApplyJunctionAdd(MarechaiContext context, long bookId, string group, object value,
+        string creditedUserId)
     {
         Dictionary<string, object> payload = ExtractObject(value);
         if(payload is null) return false;
@@ -550,7 +549,7 @@ internal static class BookSuggestionApplier
                     PersonId = pid.Value,
                     RoleId   = roleId
                 });
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithUserAsync(creditedUserId);
                 return true;
             }
             case GroupCompanies:
@@ -569,7 +568,7 @@ internal static class BookSuggestionApplier
                     CompanyId = cid.Value,
                     RoleId    = roleId
                 });
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithUserAsync(creditedUserId);
                 return true;
             }
             case GroupMachines:
@@ -585,7 +584,7 @@ internal static class BookSuggestionApplier
                     BookId    = bookId,
                     MachineId = mid.Value
                 });
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithUserAsync(creditedUserId);
                 return true;
             }
             case GroupMachineFamilies:
@@ -601,7 +600,7 @@ internal static class BookSuggestionApplier
                     BookId          = bookId,
                     MachineFamilyId = fid.Value
                 });
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithUserAsync(creditedUserId);
                 return true;
             }
             default:
@@ -611,7 +610,8 @@ internal static class BookSuggestionApplier
 
     // ───────────────────────────── Junction remove ─────────────────────────────
 
-    static async Task<bool> ApplyJunctionRemove(MarechaiContext context, long bookId, string group, string token)
+    static async Task<bool> ApplyJunctionRemove(MarechaiContext context, long bookId, string group, string token,
+        string creditedUserId)
     {
         if(!long.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out long rowId)) return false;
 

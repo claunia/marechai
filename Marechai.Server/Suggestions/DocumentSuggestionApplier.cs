@@ -188,10 +188,7 @@ internal static class DocumentSuggestionApplier
 
         await context.Documents.AddAsync(d);
 
-        if(string.IsNullOrEmpty(creditedUserId))
-            await context.SaveChangesAsync();
-        else
-            await context.SaveChangesWithUserAsync(creditedUserId);
+        await context.SaveChangesWithUserAsync(creditedUserId);
 
         // Now apply junction adds with the freshly-minted document id. Remove keys are
         // silently ignored — a brand-new entity has nothing to remove from.
@@ -203,7 +200,7 @@ internal static class DocumentSuggestionApplier
 
             try
             {
-                if(await ApplyJunctionAdd(context, d.Id, group, value)) applied.Add(fieldName);
+                if(await ApplyJunctionAdd(context, d.Id, group, value, creditedUserId)) applied.Add(fieldName);
             }
             catch
             {
@@ -222,7 +219,8 @@ internal static class DocumentSuggestionApplier
     public static async Task<(HashSet<string> applied, bool entityMissing)> ApplyAsync(
         MarechaiContext context, long entityId,
         Dictionary<string, object> suggested,
-        HashSet<string> accepted)
+        HashSet<string> accepted,
+        string creditedUserId)
     {
         var applied = new HashSet<string>(StringComparer.Ordinal);
 
@@ -250,8 +248,8 @@ internal static class DocumentSuggestionApplier
                 if(TryParseJunctionKey(fieldName, out string group, out string op, out string token))
                 {
                     bool ok = op == "add"
-                                  ? await ApplyJunctionAdd(context, entityId, group, value)
-                                  : await ApplyJunctionRemove(context, entityId, group, token);
+                                  ? await ApplyJunctionAdd(context, entityId, group, value, creditedUserId)
+                                  : await ApplyJunctionRemove(context, entityId, group, token, creditedUserId);
                     if(ok) applied.Add(fieldName);
                 }
             }
@@ -261,7 +259,7 @@ internal static class DocumentSuggestionApplier
             }
         }
 
-        if(scalarChanged) await context.SaveChangesAsync();
+        if(scalarChanged) await context.SaveChangesWithUserAsync(creditedUserId);
 
         return (applied, false);
     }
@@ -321,7 +319,8 @@ internal static class DocumentSuggestionApplier
 
     // ───────────────────────────── Junction add ─────────────────────────────
 
-    static async Task<bool> ApplyJunctionAdd(MarechaiContext context, long documentId, string group, object value)
+    static async Task<bool> ApplyJunctionAdd(MarechaiContext context, long documentId, string group, object value,
+        string creditedUserId)
     {
         Dictionary<string, object> payload = ExtractObject(value);
         if(payload is null) return false;
@@ -346,7 +345,7 @@ internal static class DocumentSuggestionApplier
                     PersonId   = pid.Value,
                     RoleId     = roleId
                 });
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithUserAsync(creditedUserId);
                 return true;
             }
             case GroupCompanies:
@@ -365,7 +364,7 @@ internal static class DocumentSuggestionApplier
                     CompanyId  = cid.Value,
                     RoleId     = roleId
                 });
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithUserAsync(creditedUserId);
                 return true;
             }
             case GroupMachines:
@@ -381,7 +380,7 @@ internal static class DocumentSuggestionApplier
                     DocumentId = documentId,
                     MachineId  = mid.Value
                 });
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithUserAsync(creditedUserId);
                 return true;
             }
             case GroupMachineFamilies:
@@ -397,7 +396,7 @@ internal static class DocumentSuggestionApplier
                     DocumentId      = documentId,
                     MachineFamilyId = fid.Value
                 });
-                await context.SaveChangesAsync();
+                await context.SaveChangesWithUserAsync(creditedUserId);
                 return true;
             }
             default:
@@ -407,7 +406,8 @@ internal static class DocumentSuggestionApplier
 
     // ───────────────────────────── Junction remove ─────────────────────────────
 
-    static async Task<bool> ApplyJunctionRemove(MarechaiContext context, long documentId, string group, string token)
+    static async Task<bool> ApplyJunctionRemove(MarechaiContext context, long documentId, string group, string token,
+        string creditedUserId)
     {
         if(!long.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out long rowId)) return false;
 
