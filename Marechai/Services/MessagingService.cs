@@ -362,5 +362,19 @@ public class MessagingService(Marechai.ApiClient.Client client)
         {
             return (false, ex.Message);
         }
+    
+    }
+
+    static string ExtractDetail(ApiException ex)
+    {
+        if(ex is ProblemDetails pd)
+        {
+            if(!string.IsNullOrWhiteSpace(pd.Detail)) return pd.Detail;
+            if(!string.IsNullOrWhiteSpace(pd.Title))  return pd.Title;
+        }
+
+        if(ex is { ResponseStatusCode: 0 } || string.IsNullOrWhiteSpace(ex.Message)) return "Unknown error";
+
+        return ex.Message;
     }
 }

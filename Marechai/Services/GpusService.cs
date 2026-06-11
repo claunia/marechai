@@ -148,7 +148,7 @@ public class GpusService(Marechai.ApiClient.Client client, IndexNowService index
         }
         catch(ApiException ex)
         {
-            return (null, ExtractErrorMessage(ex));
+            return (null, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -168,7 +168,7 @@ public class GpusService(Marechai.ApiClient.Client client, IndexNowService index
         }
         catch(ApiException ex)
         {
-            return (false, ExtractErrorMessage(ex));
+            return (false, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -186,7 +186,7 @@ public class GpusService(Marechai.ApiClient.Client client, IndexNowService index
         }
         catch(ApiException ex)
         {
-            return (false, ExtractErrorMessage(ex));
+            return (false, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -233,7 +233,7 @@ public class GpusService(Marechai.ApiClient.Client client, IndexNowService index
         }
         catch(ApiException ex)
         {
-            return (null, ExtractErrorMessage(ex));
+            return (null, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -251,7 +251,7 @@ public class GpusService(Marechai.ApiClient.Client client, IndexNowService index
         }
         catch(ApiException ex)
         {
-            return (false, ExtractErrorMessage(ex));
+            return (false, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -362,7 +362,7 @@ public class GpusService(Marechai.ApiClient.Client client, IndexNowService index
         }
         catch(ApiException ex)
         {
-            return (false, ExtractErrorMessage(ex));
+            return (false, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -380,7 +380,7 @@ public class GpusService(Marechai.ApiClient.Client client, IndexNowService index
         }
         catch(ApiException ex)
         {
-            return (false, ExtractErrorMessage(ex));
+            return (false, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -390,12 +390,6 @@ public class GpusService(Marechai.ApiClient.Client client, IndexNowService index
 
     // ── Videos ──
 
-    static string ExtractErrorMessage(ApiException ex)
-    {
-        if(ex is ProblemDetails pd) return pd.Detail ?? pd.Title ?? ex.Message;
-
-        return ex.Message;
-    }
 
     public async Task<List<GpuVideoDto>> GetVideosByGpuAsync(int gpuId)
     {
@@ -429,7 +423,7 @@ public class GpusService(Marechai.ApiClient.Client client, IndexNowService index
         }
         catch(ApiException ex)
         {
-            return (null, ExtractErrorMessage(ex));
+            return (null, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -450,7 +444,7 @@ public class GpusService(Marechai.ApiClient.Client client, IndexNowService index
         }
         catch(ApiException ex)
         {
-            return (false, ExtractErrorMessage(ex));
+            return (false, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -468,11 +462,25 @@ public class GpusService(Marechai.ApiClient.Client client, IndexNowService index
         }
         catch(ApiException ex)
         {
-            return (false, ExtractErrorMessage(ex));
+            return (false, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
             return (false, ex.Message);
         }
+    
+    }
+
+    static string ExtractDetail(ApiException ex)
+    {
+        if(ex is ProblemDetails pd)
+        {
+            if(!string.IsNullOrWhiteSpace(pd.Detail)) return pd.Detail;
+            if(!string.IsNullOrWhiteSpace(pd.Title))  return pd.Title;
+        }
+
+        if(ex is { ResponseStatusCode: 0 } || string.IsNullOrWhiteSpace(ex.Message)) return "Unknown error";
+
+        return ex.Message;
     }
 }

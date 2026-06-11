@@ -153,7 +153,7 @@ public sealed class CollectionService(Client client, ILogger<CollectionService> 
         {
             logger.LogError(ex, "API error adding book {BookId} to collection", bookId);
 
-            return (false, ex.Message);
+            return (false, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -175,7 +175,7 @@ public sealed class CollectionService(Client client, ILogger<CollectionService> 
         {
             logger.LogError(ex, "API error removing book {BookId} from collection", bookId);
 
-            return (false, ex.Message);
+            return (false, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -215,7 +215,7 @@ public sealed class CollectionService(Client client, ILogger<CollectionService> 
         {
             logger.LogError(ex, "API error adding document {DocumentId} to collection", documentId);
 
-            return (false, ex.Message);
+            return (false, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -237,7 +237,7 @@ public sealed class CollectionService(Client client, ILogger<CollectionService> 
         {
             logger.LogError(ex, "API error removing document {DocumentId} from collection", documentId);
 
-            return (false, ex.Message);
+            return (false, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -277,7 +277,7 @@ public sealed class CollectionService(Client client, ILogger<CollectionService> 
         {
             logger.LogError(ex, "API error adding machine {MachineId} to collection", machineId);
 
-            return (false, ex.Message);
+            return (false, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -299,7 +299,7 @@ public sealed class CollectionService(Client client, ILogger<CollectionService> 
         {
             logger.LogError(ex, "API error removing machine {MachineId} from collection", machineId);
 
-            return (false, ex.Message);
+            return (false, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -339,7 +339,7 @@ public sealed class CollectionService(Client client, ILogger<CollectionService> 
         {
             logger.LogError(ex, "API error adding software release {ReleaseId} to collection", releaseId);
 
-            return (false, ex.Message);
+            return (false, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -361,7 +361,7 @@ public sealed class CollectionService(Client client, ILogger<CollectionService> 
         {
             logger.LogError(ex, "API error removing software release {ReleaseId} from collection", releaseId);
 
-            return (false, ex.Message);
+            return (false, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -401,7 +401,7 @@ public sealed class CollectionService(Client client, ILogger<CollectionService> 
         {
             logger.LogError(ex, "API error adding magazine issue {IssueId} to collection", issueId);
 
-            return (false, ex.Message);
+            return (false, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -423,7 +423,7 @@ public sealed class CollectionService(Client client, ILogger<CollectionService> 
         {
             logger.LogError(ex, "API error removing magazine issue {IssueId} from collection", issueId);
 
-            return (false, ex.Message);
+            return (false, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -431,5 +431,19 @@ public sealed class CollectionService(Client client, ILogger<CollectionService> 
 
             return (false, ex.Message);
         }
+    
+    }
+
+    static string ExtractDetail(ApiException ex)
+    {
+        if(ex is ProblemDetails pd)
+        {
+            if(!string.IsNullOrWhiteSpace(pd.Detail)) return pd.Detail;
+            if(!string.IsNullOrWhiteSpace(pd.Title))  return pd.Title;
+        }
+
+        if(ex is { ResponseStatusCode: 0 } || string.IsNullOrWhiteSpace(ex.Message)) return "Unknown error";
+
+        return ex.Message;
     }
 }

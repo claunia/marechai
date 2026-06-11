@@ -147,8 +147,8 @@ public class ProcessorsService(Marechai.ApiClient.Client client, IndexNowService
             return (id, null);
         }
         catch(ApiException ex)
-        {
-            return (null, ex.Message);
+            {
+                return (null, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -167,8 +167,8 @@ public class ProcessorsService(Marechai.ApiClient.Client client, IndexNowService
             return (true, null);
         }
         catch(ApiException ex)
-        {
-            return (false, ex.Message);
+            {
+                return (false, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -185,8 +185,8 @@ public class ProcessorsService(Marechai.ApiClient.Client client, IndexNowService
             return (true, null);
         }
         catch(ApiException ex)
-        {
-            return (false, ex.Message);
+            {
+                return (false, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -285,8 +285,8 @@ public class ProcessorsService(Marechai.ApiClient.Client client, IndexNowService
             return (id, null);
         }
         catch(ApiException ex)
-        {
-            return (null, ex.Message);
+            {
+                return (null, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -303,8 +303,8 @@ public class ProcessorsService(Marechai.ApiClient.Client client, IndexNowService
             return (true, null);
         }
         catch(ApiException ex)
-        {
-            return (false, ex.Message);
+            {
+                return (false, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -374,8 +374,8 @@ public class ProcessorsService(Marechai.ApiClient.Client client, IndexNowService
             return (true, null);
         }
         catch(ApiException ex)
-        {
-            return (false, ex.Message);
+            {
+                return (false, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -392,8 +392,8 @@ public class ProcessorsService(Marechai.ApiClient.Client client, IndexNowService
             return (true, null);
         }
         catch(ApiException ex)
-        {
-            return (false, ex.Message);
+            {
+                return (false, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -487,5 +487,19 @@ public class ProcessorsService(Marechai.ApiClient.Client client, IndexNowService
         {
             return (false, ex.Message);
         }
+    
+    }
+
+    static string ExtractDetail(ApiException ex)
+    {
+        if(ex is ProblemDetails pd)
+        {
+            if(!string.IsNullOrWhiteSpace(pd.Detail)) return pd.Detail;
+            if(!string.IsNullOrWhiteSpace(pd.Title))  return pd.Title;
+        }
+
+        if(ex is { ResponseStatusCode: 0 } || string.IsNullOrWhiteSpace(ex.Message)) return "Unknown error";
+
+        return ex.Message;
     }
 }
