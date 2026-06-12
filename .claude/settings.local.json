@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(dotnet build *)",
-      "Bash(grep -E \"\\\\.\\(cs|xaml|razor|ts|tsx|jsx|js\\)$\")"
+      "Bash(grep -E \"\\\\.\\(cs|xaml|razor|ts|tsx|jsx|js\\)$\")",
+      "Bash(awk '/modelBuilder.Entity<SoftwareRelease>/,/^        \\\\}\\\\\\);/' /home/claunia/Development/marechai/Marechai.Database/Models/MarechaiContext.cs)",
+      "Bash(kiota generate *)",
+      "Bash(grep -A 50 '\"/software/platforms\"' /tmp/openapi.json | grep -A 20 '\"parameters\"')",
+      "Read(//tmp/**)"
     ]
   }
 }

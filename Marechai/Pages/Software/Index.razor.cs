@@ -92,7 +92,7 @@ public partial class Index
         Task<int>                       countTask     = Service.GetSoftwareCountAsync();
         Task<int>                       minYearTask   = Service.GetMinimumYearAsync();
         Task<int>                       maxYearTask   = Service.GetMaximumYearAsync();
-        Task<List<SoftwarePlatformDto>> platformsTask = Service.GetPlatformsAsync();
+        Task<List<SoftwarePlatformDto>> platformsTask = Service.GetPlatformsAsync(includeUnused: false);
         Task<List<SoftwareGenreDto>>    genresTask    = Service.GetAllGenresAsync();
         Task<List<SoftwareSpecKeyDto>>  specsTask     = Service.GetSpecificationsAsync();
 

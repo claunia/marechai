@@ -33,6 +33,7 @@ using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -44,26 +45,35 @@ public class SoftwarePlatformsController(MarechaiContext context, IMemoryCache c
 {
     // Software platforms barely change — cache the full list briefly so the
     // /software landing page doesn't re-hit the DB on every load.
-    const           string   PLATFORMS_CACHE_KEY = "software:platforms:list";
-    static readonly TimeSpan _platformsCacheTtl  = TimeSpan.FromMinutes(5);
+    const           string   PLATFORMS_CACHE_KEY              = "software:platforms:list";
+    const           string   PLATFORMS_WITH_SOFTWARE_CACHE_KEY = "software:platforms:with-software";
+    static readonly TimeSpan _platformsCacheTtl               = TimeSpan.FromMinutes(5);
+
     [HttpGet]
     [AllowAnonymous]
+    [OutputCache(Duration = 300, VaryByQueryKeys = ["includeUnused"])]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<SoftwarePlatformDto>> GetAsync()
+    public async Task<List<SoftwarePlatformDto>> GetAsync([FromQuery] bool includeUnused = true)
     {
-        if(cache.TryGetValue(PLATFORMS_CACHE_KEY, out List<SoftwarePlatformDto> cached) && cached is not null)
+        string cacheKey = includeUnused ? PLATFORMS_CACHE_KEY : PLATFORMS_WITH_SOFTWARE_CACHE_KEY;
+
+        if(cache.TryGetValue(cacheKey, out List<SoftwarePlatformDto> cached) && cached is not null)
             return cached;
 
-        List<SoftwarePlatformDto> platforms = await context.SoftwarePlatforms.OrderBy(p => p.Name)
-                                                           .Select(p => new SoftwarePlatformDto
-                                                            {
-                                                                Id   = p.Id,
-                                                                Name = p.Name
-                                                            })
-                                                           .ToListAsync();
+        IQueryable<SoftwarePlatform> query = context.SoftwarePlatforms;
+        if(!includeUnused)
+            query = query.Where(p => p.SoftwareReleases.Any());
 
-        cache.Set(PLATFORMS_CACHE_KEY, platforms, _platformsCacheTtl);
+        List<SoftwarePlatformDto> platforms = await query.OrderBy(p => p.Name)
+                                                         .Select(p => new SoftwarePlatformDto
+                                                          {
+                                                              Id   = p.Id,
+                                                              Name = p.Name
+                                                          })
+                                                         .ToListAsync();
+
+        cache.Set(cacheKey, platforms, _platformsCacheTtl);
 
         return platforms;
     }
@@ -99,6 +109,7 @@ public class SoftwarePlatformsController(MarechaiContext context, IMemoryCache c
         await context.SaveChangesWithUserAsync(userId);
 
         cache.Remove(PLATFORMS_CACHE_KEY);
+        cache.Remove(PLATFORMS_WITH_SOFTWARE_CACHE_KEY);
 
         return Ok();
     }
@@ -123,6 +134,7 @@ public class SoftwarePlatformsController(MarechaiContext context, IMemoryCache c
         await context.SaveChangesWithUserAsync(userId);
 
         cache.Remove(PLATFORMS_CACHE_KEY);
+        cache.Remove(PLATFORMS_WITH_SOFTWARE_CACHE_KEY);
 
         return model.Id;
     }
@@ -147,6 +159,7 @@ public class SoftwarePlatformsController(MarechaiContext context, IMemoryCache c
         await context.SaveChangesWithUserAsync(userId);
 
         cache.Remove(PLATFORMS_CACHE_KEY);
+        cache.Remove(PLATFORMS_WITH_SOFTWARE_CACHE_KEY);
 
         return Ok();
     }
@@ -209,6 +222,7 @@ public class SoftwarePlatformsController(MarechaiContext context, IMemoryCache c
         await context.SaveChangesWithUserAsync(userId);
 
         cache.Remove(PLATFORMS_CACHE_KEY);
+        cache.Remove(PLATFORMS_WITH_SOFTWARE_CACHE_KEY);
 
         return Ok();
     }

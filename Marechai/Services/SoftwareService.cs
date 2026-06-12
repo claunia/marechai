@@ -458,11 +458,14 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
-    public async Task<List<SoftwarePlatformDto>> GetPlatformsAsync()
+    public async Task<List<SoftwarePlatformDto>> GetPlatformsAsync(bool includeUnused = true)
     {
         try
         {
-            List<SoftwarePlatformDto> platforms = await client.Software.Platforms.GetAsync();
+            List<SoftwarePlatformDto> platforms = await client.Software.Platforms.GetAsync(config =>
+            {
+                if(!includeUnused) config.QueryParameters.IncludeUnused = false;
+            });
 
             return platforms ?? [];
         }

@@ -416,9 +416,12 @@ public class SoftwareBrowsingService
     {
         try
         {
-            _logger.LogInformation("Fetching all software platforms from API");
+            _logger.LogInformation("Fetching software platforms with software from API");
 
-            List<SoftwarePlatformDto> platforms = await _apiClient.Software.Platforms.GetAsync();
+            List<SoftwarePlatformDto> platforms = await _apiClient.Software.Platforms.GetAsync(config =>
+            {
+                config.QueryParameters.IncludeUnused = false;
+            });
 
             if(platforms == null) return [];
 
