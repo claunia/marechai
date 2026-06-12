@@ -15,6 +15,7 @@ using Marechai.Server.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Server.Controllers;
@@ -28,7 +29,8 @@ namespace Marechai.Server.Controllers;
 [ApiController]
 [Route("/wwpc")]
 [Authorize(Roles = "Admin, UberAdmin")]
-public class WwpcImportsController(MarechaiContext context, WwpcPromotionService promotion) : ControllerBase
+public class WwpcImportsController(MarechaiContext context, WwpcPromotionService promotion,
+                                     IOutputCacheStore outputCache) : ControllerBase
 {
     [HttpGet("pending")]
     [ProducesResponseType(typeof(List<WwpcPendingListItemDto>), StatusCodes.Status200OK)]
@@ -196,6 +198,10 @@ public class WwpcImportsController(MarechaiContext context, WwpcPromotionService
         string userId = User.FindFirstValue(ClaimTypes.Sid) ?? User.FindFirstValue(ClaimTypes.NameIdentifier);
         AcceptWwpcImportResultDto result = await promotion.AcceptAsync(id, dto, userId);
         if(!result.Success) return BadRequest(result);
+
+        if(result.InsertedScreenshotCount > 0)
+            await outputCache.EvictByTagAsync(SoftwareScreenshotsController.CacheTag, HttpContext.RequestAborted);
+
         return Ok(result);
     }
 
