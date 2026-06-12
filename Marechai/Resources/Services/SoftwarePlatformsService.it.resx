@@ -142,4 +142,40 @@
         <value>Solo anno</value>
         <comment>Year only</comment>
     </data>
+    <data name="Merge Platforms" xml:space="preserve">
+        <value>Unisci piattaforme</value>
+        <comment>Merge Platforms</comment>
+    </data>
+    <data name="Platforms merged successfully." xml:space="preserve">
+        <value>Piattaforme unite con successo.</value>
+        <comment>Platforms merged successfully.</comment>
+    </data>
+    <data name="Target Platform" xml:space="preserve">
+        <value>Piattaforma di destinazione</value>
+        <comment>Target Platform</comment>
+    </data>
+    <data name="Select target platform" xml:space="preserve">
+        <value>Selezionare la piattaforma di destinazione</value>
+        <comment>Select target platform</comment>
+    </data>
+    <data name="Platforms to Merge" xml:space="preserve">
+        <value>Piattaforme da unire</value>
+        <comment>Platforms to Merge</comment>
+    </data>
+    <data name="Select one or more platforms to merge into the target. The selected platforms will be deleted after merging their data." xml:space="preserve">
+        <value>Selezionare una o più piattaforme da unire nella destinazione. Le piattaforme selezionate verranno eliminate dopo l'unione dei loro dati.</value>
+        <comment>Select one or more platforms to merge into the target. The selected platforms will be deleted after merging their data.</comment>
+    </data>
+    <data name="Will merge" xml:space="preserve">
+        <value>Unirà</value>
+        <comment>Will merge</comment>
+    </data>
+    <data name="platform(s) into" xml:space="preserve">
+        <value>piattaforma(e) in</value>
+        <comment>platform(s) into</comment>
+    </data>
+    <data name="Select a target platform and the platforms to merge into it. The target platform will keep its name and ID, and all references will be updated." xml:space="preserve">
+        <value>Selezionare una piattaforma di destinazione e le piattaforme da unire. La piattaforma di destinazione manterrà il suo nome e ID, e tutti i riferimenti verranno aggiornati.</value>
+        <comment>Select a target platform and the platforms to merge into it. The target platform will keep its name and ID, and all references will be updated.</comment>
+    </data>
 </root>

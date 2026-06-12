@@ -150,4 +150,66 @@ public class SoftwarePlatformsController(MarechaiContext context, IMemoryCache c
 
         return Ok();
     }
+
+    /// <summary>
+    /// Merge multiple software platforms into a target platform.
+    /// </summary>
+    /// <param name="id">The target platform ID to merge into.</param>
+    /// <param name="request">The merge request containing source platform IDs.</param>
+    /// <returns>No content on success.</returns>
+    [HttpPost("{id:ulong}/merge")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult> MergeAsync(ulong id, [FromBody] MergePlatformsRequest request)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        if(request?.SourceIds == null || request.SourceIds.Count == 0)
+            return BadRequest("At least one source platform must be specified");
+
+        SoftwarePlatform targetPlatform = await context.SoftwarePlatforms.FindAsync(id);
+
+        if(targetPlatform is null) return NotFound("Target platform not found");
+
+        if(request.SourceIds.Contains(id))
+            return BadRequest("Target platform cannot be in the source list");
+
+        var sourcePlatformsToDelete = await context.SoftwarePlatforms
+                                                   .Where(p => request.SourceIds.Contains(p.Id))
+                                                   .ToListAsync();
+
+        if(sourcePlatformsToDelete.Count != request.SourceIds.Count)
+            return NotFound("One or more source platforms not found");
+
+        await context.SoftwareReleases
+                    .Where(sr => sr.PlatformId.HasValue && request.SourceIds.Contains(sr.PlatformId.Value))
+                    .ExecuteUpdateAsync(setters => setters.SetProperty(sr => sr.PlatformId, (ulong?)id));
+
+        await context.SoftwareScreenshots
+                    .Where(ss => ss.SoftwarePlatformId.HasValue && request.SourceIds.Contains(ss.SoftwarePlatformId.Value))
+                    .ExecuteUpdateAsync(setters => setters.SetProperty(ss => ss.SoftwarePlatformId, (ulong?)id));
+
+        await context.SoftwarePlatformsByMachine
+                    .Where(spm => request.SourceIds.Contains(spm.SoftwarePlatformId))
+                    .ExecuteUpdateAsync(setters => setters.SetProperty(spm => spm.SoftwarePlatformId, id));
+
+        await context.OldDosOsPlatformMaps
+                    .Where(dopm => dopm.SoftwarePlatformId.HasValue &&
+                                   request.SourceIds.Contains(dopm.SoftwarePlatformId.Value))
+                    .ExecuteUpdateAsync(setters => setters.SetProperty(dopm => dopm.SoftwarePlatformId, (ulong?)id));
+
+        foreach(var platform in sourcePlatformsToDelete)
+            context.SoftwarePlatforms.Remove(platform);
+
+        await context.SaveChangesWithUserAsync(userId);
+
+        cache.Remove(PLATFORMS_CACHE_KEY);
+
+        return Ok();
+    }
 }

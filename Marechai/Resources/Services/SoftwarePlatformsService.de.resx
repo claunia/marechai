@@ -142,4 +142,40 @@
         <value>Nur Jahr</value>
         <comment>Year only</comment>
     </data>
+    <data name="Merge Platforms" xml:space="preserve">
+        <value>Plattformen zusammenführen</value>
+        <comment>Merge Platforms</comment>
+    </data>
+    <data name="Platforms merged successfully." xml:space="preserve">
+        <value>Plattformen erfolgreich zusammengeführt.</value>
+        <comment>Platforms merged successfully.</comment>
+    </data>
+    <data name="Target Platform" xml:space="preserve">
+        <value>Zielplattform</value>
+        <comment>Target Platform</comment>
+    </data>
+    <data name="Select target platform" xml:space="preserve">
+        <value>Zielplattform auswählen</value>
+        <comment>Select target platform</comment>
+    </data>
+    <data name="Platforms to Merge" xml:space="preserve">
+        <value>Zu mergende Plattformen</value>
+        <comment>Platforms to Merge</comment>
+    </data>
+    <data name="Select one or more platforms to merge into the target. The selected platforms will be deleted after merging their data." xml:space="preserve">
+        <value>Wählen Sie eine oder mehrere Plattformen aus, um sie in die Zielplattform zu mergen. Die ausgewählten Plattformen werden nach dem Zusammenführen ihrer Daten gelöscht.</value>
+        <comment>Select one or more platforms to merge into the target. The selected platforms will be deleted after merging their data.</comment>
+    </data>
+    <data name="Will merge" xml:space="preserve">
+        <value>Wird mergen</value>
+        <comment>Will merge</comment>
+    </data>
+    <data name="platform(s) into" xml:space="preserve">
+        <value>Plattform(en) in</value>
+        <comment>platform(s) into</comment>
+    </data>
+    <data name="Select a target platform and the platforms to merge into it. The target platform will keep its name and ID, and all references will be updated." xml:space="preserve">
+        <value>Wählen Sie eine Zielplattform und die Plattformen aus, die Sie darin mergen möchten. Die Zielplattform behält ihren Namen und ihre ID, und alle Verweise werden aktualisiert.</value>
+        <comment>Select a target platform and the platforms to merge into it. The target platform will keep its name and ID, and all references will be updated.</comment>
+    </data>
 </root>

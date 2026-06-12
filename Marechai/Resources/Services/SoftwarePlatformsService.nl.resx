@@ -118,4 +118,31 @@
     <data name="Year only" xml:space="preserve">
         <value>Alleen jaar</value>
     </data>
+    <data name="Merge Platforms" xml:space="preserve">
+        <value>Platforms samenvoegen</value>
+    </data>
+    <data name="Platforms merged successfully." xml:space="preserve">
+        <value>Platforms met succes samengevoegd.</value>
+    </data>
+    <data name="Target Platform" xml:space="preserve">
+        <value>Doelplatform</value>
+    </data>
+    <data name="Select target platform" xml:space="preserve">
+        <value>Doelplatform selecteren</value>
+    </data>
+    <data name="Platforms to Merge" xml:space="preserve">
+        <value>Platforms om samen te voegen</value>
+    </data>
+    <data name="Select one or more platforms to merge into the target. The selected platforms will be deleted after merging their data." xml:space="preserve">
+        <value>Selecteer een of meer platforms om samen te voegen in het doel. De geselecteerde platforms worden verwijderd na het samenvoegen van hun gegevens.</value>
+    </data>
+    <data name="Will merge" xml:space="preserve">
+        <value>Zal samenvoegen</value>
+    </data>
+    <data name="platform(s) into" xml:space="preserve">
+        <value>platform(s) in</value>
+    </data>
+    <data name="Select a target platform and the platforms to merge into it. The target platform will keep its name and ID, and all references will be updated." xml:space="preserve">
+        <value>Selecteer een doelplatform en de platforms om daarin samen te voegen. Het doelplatform behoudt zijn naam en ID, en alle verwijzingen worden bijgewerkt.</value>
+    </data>
 </root>

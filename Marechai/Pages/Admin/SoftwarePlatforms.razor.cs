@@ -134,4 +134,36 @@ public partial class SoftwarePlatforms
             }
         }
     }
+
+    async Task OpenMergeDialog()
+    {
+        DialogParameters<MergePlatformsDialog> parameters = new()
+        {
+            { x => x.Platforms, _platforms }
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<MergePlatformsDialog>(L["Merge Platforms"], parameters,
+                                                                                      new DialogOptions
+                                                                                      {
+                                                                                          MaxWidth  = MaxWidth.Small,
+                                                                                          FullWidth = true
+                                                                                      });
+
+        DialogResult result = await dialog.Result;
+
+        if(result is { Canceled: false, Data: MergePlatformsDialogResult data })
+        {
+            (bool succeeded, string errorMessage) = await SoftwarePlatformsService.MergeAsync(data.TargetId, data.SourceIds);
+
+            if(succeeded)
+            {
+                _successMessage = L["Platforms merged successfully."];
+                await LoadDataAsync();
+            }
+            else
+            {
+                _errorMessage = errorMessage;
+            }
+        }
+    }
 }

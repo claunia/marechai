@@ -1,0 +1,67 @@
+@using Marechai.ApiClient.Models
+@using Marechai.Services
+@inject IStringLocalizer<SoftwarePlatformsService> L
+
+<MudDialog>
+    <DialogContent>
+        <MudStack Spacing="3">
+            <MudAlert Severity="Severity.Info">
+                @L["Select a target platform and the platforms to merge into it. The target platform will keep its name and ID, and all references will be updated."]
+            </MudAlert>
+
+            <MudStack Spacing="2">
+                <MudText Typo="Typo.subtitle2" Class="font-weight-bold">@L["Target Platform"]</MudText>
+                <MudSelect T="SoftwarePlatformDto"
+                          Value="SelectedTarget"
+                          ValueChanged="OnTargetChanged"
+                          Label="@L["Select target platform"]"
+                          AnchorOrigin="Origin.BottomCenter"
+                          Variant="Variant.Outlined">
+                    @foreach(var platform in AvailablePlatforms)
+                    {
+                        <MudSelectItem Value="platform">@platform.Name</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudStack>
+
+            @if(SelectedTarget != null)
+            {
+                <MudStack Spacing="2">
+                    <MudText Typo="Typo.subtitle2" Class="font-weight-bold">@L["Platforms to Merge"]</MudText>
+                    <MudText Typo="Typo.caption">
+                        @L["Select one or more platforms to merge into the target. The selected platforms will be deleted after merging their data."]
+                    </MudText>
+
+                    <MudPaper Elevation="0" Class="pa-3" Style="background-color: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.12); border-radius: 4px; max-height: 250px; overflow-y: auto;">
+                        <MudStack Spacing="2">
+                            @foreach(var platform in MergeCandidates)
+                            {
+                                <MudCheckBox T="bool"
+                                           Value="@IsSelected((ulong)(platform.Id ?? 0))"
+                                           ValueChanged="@((bool val) => OnPlatformToggled((ulong)(platform.Id ?? 0), val))"
+                                           Label="@platform.Name"
+                                           Dense="true"/>
+                            }
+                        </MudStack>
+                    </MudPaper>
+
+                    @if(SelectedSources.Count > 0)
+                    {
+                        <MudAlert Severity="Severity.Warning">
+                            @L["Will merge"] @SelectedSources.Count @L["platform(s) into"] "<strong>@SelectedTarget.Name</strong>".
+                        </MudAlert>
+                    }
+                </MudStack>
+            }
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel" Variant="Variant.Text">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Warning"
+                  Variant="Variant.Filled"
+                  OnClick="Merge"
+                  Disabled="@(SelectedTarget == null || SelectedSources.Count == 0)">
+            @L["Merge Platforms"]
+        </MudButton>
+    </DialogActions>
+</MudDialog>

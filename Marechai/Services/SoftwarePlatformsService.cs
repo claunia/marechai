@@ -113,6 +113,30 @@ public class SoftwarePlatformsService(Marechai.ApiClient.Client client)
         }
     }
 
+    public async Task<(bool succeeded, string error)> MergeAsync(ulong targetId, List<ulong> sourceIds)
+    {
+        try
+        {
+            var request = new Marechai.ApiClient.Models.MergePlatformsRequest
+            {
+                TargetId = (int?)targetId,
+                SourceIds = sourceIds.ConvertAll(id => (int?)id)
+            };
+
+            await client.Software.Platforms[targetId.ToString()].Merge.PostAsync(request);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ExtractDetail(ex));
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
     static string ExtractDetail(ApiException ex)
     {
         // Kiota maps server error responses to a typed ProblemDetails (which inherits from

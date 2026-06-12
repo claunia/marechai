@@ -110,4 +110,32 @@
     <data name="Save" xml:space="preserve">
         <value>Guardar</value>
     </data>
-<data name="Date precision" xml:space="preserve"><value>Precisión de fecha</value></data><data name="Full date" xml:space="preserve"><value>Fecha completa</value></data><data name="Month and year only" xml:space="preserve"><value>Solo mes y año</value></data><data name="Year only" xml:space="preserve"><value>Solo año</value></data></root>
+<data name="Date precision" xml:space="preserve"><value>Precisión de fecha</value></data><data name="Full date" xml:space="preserve"><value>Fecha completa</value></data><data name="Month and year only" xml:space="preserve"><value>Solo mes y año</value></data><data name="Year only" xml:space="preserve"><value>Solo año</value></data>
+    <data name="Merge Platforms" xml:space="preserve">
+        <value>Fusionar plataformas</value>
+    </data>
+    <data name="Platforms merged successfully." xml:space="preserve">
+        <value>Plataformas fusionadas correctamente.</value>
+    </data>
+    <data name="Target Platform" xml:space="preserve">
+        <value>Plataforma de destino</value>
+    </data>
+    <data name="Select target platform" xml:space="preserve">
+        <value>Seleccionar plataforma de destino</value>
+    </data>
+    <data name="Platforms to Merge" xml:space="preserve">
+        <value>Plataformas a fusionar</value>
+    </data>
+    <data name="Select one or more platforms to merge into the target. The selected platforms will be deleted after merging their data." xml:space="preserve">
+        <value>Seleccione una o más plataformas para fusionar en el destino. Las plataformas seleccionadas se eliminarán después de fusionar sus datos.</value>
+    </data>
+    <data name="Will merge" xml:space="preserve">
+        <value>Se fusionarán</value>
+    </data>
+    <data name="platform(s) into" xml:space="preserve">
+        <value>plataforma(s) en</value>
+    </data>
+    <data name="Select a target platform and the platforms to merge into it. The target platform will keep its name and ID, and all references will be updated." xml:space="preserve">
+        <value>Seleccione una plataforma de destino y las plataformas a fusionar en ella. La plataforma de destino mantendrá su nombre e ID, y todas las referencias se actualizarán.</value>
+    </data>
+</root>
