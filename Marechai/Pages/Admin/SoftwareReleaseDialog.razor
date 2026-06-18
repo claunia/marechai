@@ -663,17 +663,36 @@
 
     async Task AddRegion()
     {
-        if(_selectedRegionToAdd?.Id is null || ReleaseId <= 0) return;
+        if(_selectedRegionToAdd?.Id is null) return;
 
-        await SoftwareReleasesService.AddRegionToReleaseAsync(ReleaseId, _selectedRegionToAdd.Id ?? 0);
-        _releaseRegions = await SoftwareReleasesService.GetReleaseRegionsAsync(ReleaseId);
+        if(ReleaseId > 0)
+        {
+            await SoftwareReleasesService.AddRegionToReleaseAsync(ReleaseId, _selectedRegionToAdd.Id ?? 0);
+            _releaseRegions = await SoftwareReleasesService.GetReleaseRegionsAsync(ReleaseId);
+        }
+        else
+        {
+            _releaseRegions ??= [];
+            _releaseRegions.Add(new UnM49BySoftwareReleaseDto
+            {
+                UnM49Id    = _selectedRegionToAdd.Id,
+                RegionName = _selectedRegionToAdd.Name
+            });
+        }
+
         _selectedRegionToAdd = null;
         StateHasChanged();
     }
 
     async Task RemoveRegion(UnM49BySoftwareReleaseDto region)
     {
-        if(ReleaseId <= 0) return;
+        if(ReleaseId <= 0)
+        {
+            _releaseRegions?.Remove(region);
+            StateHasChanged();
+
+            return;
+        }
 
         await SoftwareReleasesService.RemoveRegionFromReleaseAsync(ReleaseId, region.UnM49Id ?? 0);
         _releaseRegions = await SoftwareReleasesService.GetReleaseRegionsAsync(ReleaseId);
@@ -691,17 +710,38 @@
 
     async Task AddLanguage()
     {
-        if(_selectedLanguageToAdd?.Id is null || ReleaseId <= 0) return;
+        if(_selectedLanguageToAdd?.Id is null) return;
 
-        await SoftwareReleasesService.AddLanguageToReleaseAsync(ReleaseId, _selectedLanguageToAdd.Id);
-        _releaseLanguages = await SoftwareReleasesService.GetReleaseLanguagesAsync(ReleaseId);
+        if(ReleaseId > 0)
+        {
+            await SoftwareReleasesService.AddLanguageToReleaseAsync(ReleaseId, _selectedLanguageToAdd.Id);
+            _releaseLanguages = await SoftwareReleasesService.GetReleaseLanguagesAsync(ReleaseId);
+        }
+        else
+        {
+            _releaseLanguages ??= [];
+            _releaseLanguages.Add(new LanguageBySoftwareReleaseDto
+            {
+                LanguageCode = _selectedLanguageToAdd.Id,
+                Language     = _selectedLanguageToAdd.ReferenceName
+            });
+        }
+
         _selectedLanguageToAdd = null;
         StateHasChanged();
     }
 
     async Task RemoveLanguage(LanguageBySoftwareReleaseDto lang)
     {
-        if(ReleaseId <= 0 || lang.LanguageCode is null) return;
+        if(ReleaseId <= 0)
+        {
+            _releaseLanguages?.Remove(lang);
+            StateHasChanged();
+
+            return;
+        }
+
+        if(lang.LanguageCode is null) return;
 
         await SoftwareReleasesService.RemoveLanguageFromReleaseAsync(ReleaseId, lang.LanguageCode);
         _releaseLanguages = await SoftwareReleasesService.GetReleaseLanguagesAsync(ReleaseId);
@@ -939,7 +979,18 @@
             PlatformId   = _selectedPlatform?.Id,
             PublisherId  = _selectedPublisher?.Id,
             ReleaseDate  = ReleaseDate,
-            ReleaseDatePrecision = ReleaseDatePrecision
+            ReleaseDatePrecision = ReleaseDatePrecision,
+            RegionIds = (_releaseRegions ?? [])
+                .Select(r => r.UnM49Id)
+                .OfType<int>()
+                .Distinct()
+                .ToList(),
+            LanguageCodes = (_releaseLanguages ?? [])
+                .Select(l => l.LanguageCode)
+                .Where(code => !string.IsNullOrWhiteSpace(code))
+                .Select(code => code!)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList()
         }));
     }
 }

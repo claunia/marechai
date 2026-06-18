@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
@@ -169,14 +170,58 @@ public partial class SoftwareReleases
 
             if(id is not null)
             {
-                _successMessage = L["Release created successfully."];
+                List<string> attachErrors = [];
+
+                foreach(int regionId in data.RegionIds.Distinct())
+                {
+                    (bool succeeded, string attachError) =
+                        await SoftwareReleasesService.AddRegionToReleaseAsync(id.Value, regionId);
+
+                    if(!succeeded)
+                        attachErrors.Add(attachError ?? L["Unknown error"]);
+                }
+
+                foreach(string languageCode in data.LanguageCodes
+                                                 .Where(code => !string.IsNullOrWhiteSpace(code))
+                                                 .Distinct(StringComparer.OrdinalIgnoreCase))
+                {
+                    (bool succeeded, string attachError) =
+                        await SoftwareReleasesService.AddLanguageToReleaseAsync(id.Value, languageCode);
+
+                    if(!succeeded)
+                        attachErrors.Add(attachError ?? L["Unknown error"]);
+                }
+
                 await _dataGrid.ReloadServerData();
+
+                if(attachErrors.Count == 0)
+                {
+                    _errorMessage   = null;
+                    _successMessage = L["Release created successfully."];
+                }
+                else
+                {
+                    _successMessage = null;
+                    _errorMessage   = BuildAttachmentFailureMessage(id.Value, attachErrors);
+                }
             }
             else
             {
+                _successMessage = null;
                 _errorMessage = errorMessage;
             }
         }
+    }
+
+    string BuildAttachmentFailureMessage(int releaseId, List<string> attachErrors)
+    {
+        StringBuilder builder = new();
+        builder.Append($"Release {releaseId} was created, but one or more region/language attachments failed.");
+
+        if(attachErrors.Count > 0)
+            builder.Append($" {string.Join(" | ", attachErrors)}");
+
+        return builder.ToString();
     }
 
     async Task OpenEditDialog(SoftwareReleaseDto release)
