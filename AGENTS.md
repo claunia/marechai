@@ -110,6 +110,8 @@ Test results are stored in the `TestResults/` directory.
 
 ## Notes for AI Agents
 
+0. Persistent agent notes and lessons learned should be stored under `.agents/` in this repository.
+
 1. When adding new pages/views to Marechai.App:
    - Create ViewModel in `Presentation/ViewModels/`
    - Create View (XAML) in `Presentation/Views/`
@@ -129,4 +131,3 @@ Test results are stored in the `TestResults/` directory.
 4. Package versions are centrally managed - update `Directory.Packages.props` when adding/updating packages.
 
 5. The project targets .NET 10.0 preview - be aware of potential API changes.
-
