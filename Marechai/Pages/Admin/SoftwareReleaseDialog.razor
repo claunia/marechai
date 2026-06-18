@@ -25,17 +25,30 @@
 
                 @if(!_isCompilation)
                 {
-                    <MudAutocomplete T="SoftwareDto"
-                                     Label="@L["Software"]"
-                                     @bind-Value="_selectedSoftware"
-                                     SearchFunc="SearchSoftware"
-                                     ToStringFunc="@(s => s?.Name ?? string.Empty)"
-                                     Variant="Variant.Outlined"
-                                     Clearable="true"
-                                     Class="mb-4"
-                                     Required="true"/>
+                    @if(IsSoftwareSelectionLocked)
+                    {
+                        <MudTextField T="string"
+                                      Value="SoftwareName"
+                                      Label="@L["Software"]"
+                                      Variant="Variant.Outlined"
+                                      ReadOnly="true"
+                                      Class="mb-4"/>
+                    }
+                    else
+                    {
+                        <MudAutocomplete T="SoftwareDto"
+                                         Label="@L["Software"]"
+                                         Value="_selectedSoftware"
+                                         ValueChanged="OnSoftwareChanged"
+                                         SearchFunc="SearchSoftware"
+                                         ToStringFunc="@(s => s?.Name ?? string.Empty)"
+                                         Variant="Variant.Outlined"
+                                         Clearable="true"
+                                         Class="mb-4"
+                                         Required="true"/>
+                    }
 
-                    @if(_selectedSoftware is not null)
+                    @if(ShouldShowVersionPicker)
                     {
                         <MudAutocomplete T="SoftwareVersionDto"
                                          Label="@L["Version (optional)"]"
@@ -518,14 +531,20 @@
     [Parameter] public int       ReleaseDatePrecision { get; set; }
     [Parameter] public string Title { get; set; }
     [Parameter] public bool IsCompilation { get; set; }
+    [Parameter] public bool LockSoftwareSelection { get; set; }
     [Parameter] public int? SoftwareId { get; set; }
+    [Parameter] public string SoftwareName { get; set; }
     [Parameter] public int? SoftwareVersionId { get; set; }
 
     [Inject] SoftwareReleasesService SoftwareReleasesService { get; set; } = null!;
 
+    bool IsSoftwareSelectionLocked => LockSoftwareSelection && !_isCompilation && SoftwareId is not null;
+    bool ShouldShowVersionPicker => !_isCompilation && (_selectedSoftware is not null || IsSoftwareSelectionLocked);
+
     protected override async Task OnInitializedAsync()
     {
         _isCompilation = IsCompilation;
+        bool shouldLoadSoftwarePicker = _isCompilation || !IsSoftwareSelectionLocked;
 
         // Load independent reference data in parallel to reduce dialog startup latency.
         Task<List<SoftwarePlatformDto>> referencePlatformsTask = SoftwareReleasesService.GetAllPlatformsAsync();
@@ -534,7 +553,9 @@
         Task<List<CompanyDto>> referenceCompaniesTask = SoftwareReleasesService.GetAllCompaniesAsync();
         Task<List<GpuDto>> referenceGpusTask = SoftwareReleasesService.GetAllGpusAsync();
         Task<List<SoundSynthDto>> referenceSoundSynthsTask = SoftwareReleasesService.GetAllSoundSynthsAsync();
-        Task<List<SoftwareDto>> referenceSoftwareTask = SoftwareReleasesService.GetAllSoftwareForPickerAsync();
+        Task<List<SoftwareDto>> referenceSoftwareTask = shouldLoadSoftwarePicker
+                                                            ? SoftwareReleasesService.GetAllSoftwareForPickerAsync()
+                                                            : Task.FromResult(new List<SoftwareDto>());
 
         await Task.WhenAll(referencePlatformsTask,
                            referenceRegionsTask,
@@ -544,12 +565,12 @@
                            referenceSoundSynthsTask,
                            referenceSoftwareTask);
 
-        _allPlatforms        = referencePlatformsTask.Result;
-        _allUnM49            = referenceRegionsTask.Result;
-        _allLanguages        = referenceLanguagesTask.Result;
-        _allCompanies        = referenceCompaniesTask.Result;
-        _allGpus             = referenceGpusTask.Result;
-        _allSoundSynths      = referenceSoundSynthsTask.Result;
+        _allPlatforms         = referencePlatformsTask.Result;
+        _allUnM49             = referenceRegionsTask.Result;
+        _allLanguages         = referenceLanguagesTask.Result;
+        _allCompanies         = referenceCompaniesTask.Result;
+        _allGpus              = referenceGpusTask.Result;
+        _allSoundSynths       = referenceSoundSynthsTask.Result;
         _allSoftwareForPicker = referenceSoftwareTask.Result;
 
         if(PlatformId is not null && _allPlatforms is not null)
@@ -618,21 +639,16 @@
         if(PublisherId is not null && _allCompanies is not null)
             _selectedPublisher = _allCompanies.Find(c => c.Id == PublisherId);
 
-        // Pre-select software and version for non-compilation releases
-        if(!_isCompilation && SoftwareId is not null && _allSoftwareForPicker is not null)
+        // Pre-select software and version for non-compilation releases.
+        if(!_isCompilation && SoftwareId is not null)
         {
-            _selectedSoftware = _allSoftwareForPicker.Find(s => s.Id == SoftwareId);
+            if(!IsSoftwareSelectionLocked && _allSoftwareForPicker is not null)
+                _selectedSoftware = _allSoftwareForPicker.Find(s => s.Id == SoftwareId);
 
-            if(_selectedSoftware is not null)
-            {
-                _allVersionsForSelectedSoftware = await SoftwareReleasesService.GetAllVersionsAsync();
-                _allVersionsForSelectedSoftware = _allVersionsForSelectedSoftware
-                    .Where(v => v.SoftwareId == (int?)_selectedSoftware.Id)
-                    .ToList();
+            await LoadVersionsForSoftwareAsync(SoftwareId.Value);
 
-                if(SoftwareVersionId is not null)
-                    _selectedVersion = _allVersionsForSelectedSoftware.Find(v => v.Id == SoftwareVersionId);
-            }
+            if(SoftwareVersionId is not null)
+                _selectedVersion = _allVersionsForSelectedSoftware.Find(v => v.Id == SoftwareVersionId);
         }
 
         if(_isCompilation)
@@ -914,6 +930,22 @@
         return Task.FromResult(results);
     }
 
+    async Task OnSoftwareChanged(SoftwareDto software)
+    {
+        _selectedSoftware = software;
+        _selectedVersion = null;
+
+        if(software?.Id is int softwareId)
+            await LoadVersionsForSoftwareAsync(softwareId);
+        else
+            _allVersionsForSelectedSoftware = [];
+    }
+
+    async Task LoadVersionsForSoftwareAsync(int softwareId)
+    {
+        _allVersionsForSelectedSoftware = await SoftwareReleasesService.GetVersionsBySoftwareAsync(softwareId);
+    }
+
     async Task AddIncludedVersion()
     {
         if(_selectedIncludedVersion is null) return;
@@ -974,7 +1006,7 @@
         {
             Title        = Title,
             IsCompilation = _isCompilation,
-            SoftwareId   = _isCompilation ? null : (int?)_selectedSoftware?.Id,
+            SoftwareId   = _isCompilation ? null : (IsSoftwareSelectionLocked ? SoftwareId : (int?)_selectedSoftware?.Id),
             SoftwareVersionId = _isCompilation ? null : (int?)_selectedVersion?.Id,
             PlatformId   = _selectedPlatform?.Id,
             PublisherId  = _selectedPublisher?.Id,

@@ -14,6 +14,7 @@ public partial class SoftwareReleases
 {
     string                            _errorMessage;
     int?                              _parentSoftwareId;
+    string                            _parentSoftwareName;
     string                            _searchText;
     string                            _successMessage;
     string                            _versionName;
@@ -34,10 +35,14 @@ public partial class SoftwareReleases
             SoftwareVersionDto version = await SoftwareVersionsService.GetByIdAsync(VersionId);
             _versionName      = version is not null ? $"{version.Software} - {version.VersionString}" : null;
             _parentSoftwareId = version?.SoftwareId;
+            _parentSoftwareName = version?.Software;
         }
         else if(_isSoftwareContext)
         {
             _parentSoftwareId = SoftwareId;
+
+            SoftwareDto software = await SoftwareService.GetSoftwareByIdAsync(SoftwareId);
+            _parentSoftwareName = software?.Name;
         }
     }
 
@@ -137,6 +142,8 @@ public partial class SoftwareReleases
             { x => x.IsNew, true },
             { x => x.ParentVersionId, VersionId },
             { x => x.IsCompilation, isCompilation },
+            { x => x.LockSoftwareSelection, _isSoftwareContext || _isVersionContext },
+            { x => x.SoftwareName, _parentSoftwareName },
             { x => x.SoftwareId, _isSoftwareContext ? SoftwareId : (_isVersionContext ? _parentSoftwareId : null) },
             { x => x.SoftwareVersionId, _isVersionContext ? (int?)VersionId : null }
         };
@@ -242,6 +249,8 @@ public partial class SoftwareReleases
             { x => x.ParentVersionId, VersionId },
             { x => x.Title, full.Title },
             { x => x.IsCompilation, full.IsCompilation == true },
+            { x => x.LockSoftwareSelection, _isSoftwareContext || _isVersionContext },
+            { x => x.SoftwareName, _parentSoftwareName ?? full.Software },
             { x => x.SoftwareId, full.SoftwareId },
             { x => x.SoftwareVersionId, full.SoftwareVersionId },
             { x => x.PlatformId, full.PlatformId },

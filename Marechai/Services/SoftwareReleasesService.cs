@@ -409,6 +409,20 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client, Reference
         }
     }
 
+    public async Task<List<SoftwareVersionDto>> GetVersionsBySoftwareAsync(int softwareId)
+    {
+        try
+        {
+            List<SoftwareVersionDto> versions = await client.Software[softwareId].Versions.GetAsync();
+
+            return versions ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
     public async Task<List<SoftwarePlatformDto>> GetAllPlatformsAsync()
     {
         try
