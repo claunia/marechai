@@ -1210,6 +1210,108 @@
   <data name="We have no videos available about this machine." xml:space="preserve">
     <value>No tenemos vídeos disponibles sobre esta máquina.</value>
   </data>
+  <data name="Promo Art" xml:space="preserve">
+    <value>Arte promocional</value>
+  </data>
+  <data name="Suggest promo art" xml:space="preserve">
+    <value>Sugerir arte promocional</value>
+  </data>
+  <data name="Suggest more promo art" xml:space="preserve">
+    <value>Sugerir más arte promocional</value>
+  </data>
+  <data name="No promo art for this machine yet — help us by uploading some." xml:space="preserve">
+    <value>Todavía no hay arte promocional para esta máquina; ayúdanos subiendo algo.</value>
+  </data>
+  <data name="Other (promo art)" xml:space="preserve">
+    <value>Otros</value>
+  </data>
+  <data name="Suggest promo art for {0}. Upload up to {1} JPG, PNG or WebP files (max 50 MB each). All images in this batch share the same group." xml:space="preserve">
+    <value>Sugiere arte promocional para {0}. Sube hasta {1} archivos JPG, PNG o WebP (máximo 50 MB cada uno). Todas las imágenes de este lote comparten el mismo grupo.</value>
+  </data>
+  <data name="Group" xml:space="preserve">
+    <value>Grupo</value>
+  </data>
+  <data name="Group name" xml:space="preserve">
+    <value>Nombre del grupo</value>
+  </data>
+  <data name="Pick an existing promo art group, or type a new name to create one." xml:space="preserve">
+    <value>Elige un grupo de arte promocional existente o escribe un nombre nuevo para crear uno.</value>
+  </data>
+  <data name="Images: {0}/{1}" xml:space="preserve">
+    <value>Imágenes: {0}/{1}</value>
+  </data>
+  <data name="Add images" xml:space="preserve">
+    <value>Añadir imágenes</value>
+  </data>
+  <data name="Pick one or more files at a time. Each image is uploaded immediately and held on the server until you submit the batch." xml:space="preserve">
+    <value>Selecciona uno o varios archivos cada vez. Cada imagen se sube de inmediato y se conserva en el servidor hasta que envíes el lote.</value>
+  </data>
+  <data name="No images staged yet. Use the Add images button above to pick files from your device." xml:space="preserve">
+    <value>Todavía no hay imágenes preparadas. Usa el botón «Añadir imágenes» de arriba para elegir archivos de tu dispositivo.</value>
+  </data>
+  <data name="Caption (optional)" xml:space="preserve">
+    <value>Pie de foto (opcional)</value>
+  </data>
+  <data name="You must be logged in to upload images." xml:space="preserve">
+    <value>Debes iniciar sesión para subir imágenes.</value>
+  </data>
+  <data name="Type or pick a group name and add at least one successfully-uploaded image before submitting." xml:space="preserve">
+    <value>Escribe o elige un nombre de grupo y añade al menos una imagen subida correctamente antes de enviarlo.</value>
+  </data>
+  <data name="Promo art submitted for review. An administrator will accept or reject each image." xml:space="preserve">
+    <value>Arte promocional enviado para revisión. Un administrador aceptará o rechazará cada imagen.</value>
+  </data>
+  <data name="You have staged images that have not been submitted yet. Closing this dialog will delete them. Continue?" xml:space="preserve">
+    <value>Tienes imágenes preparadas que aún no se han enviado. Si cierras este diálogo se eliminarán. ¿Continuar?</value>
+  </data>
+  <data name="Promo Art Management" xml:space="preserve">
+    <value>Gestión de arte promocional</value>
+  </data>
+  <data name="Manage promo art for machine '{0}'." xml:space="preserve">
+    <value>Gestionar el arte promocional de la máquina «{0}».</value>
+  </data>
+  <data name="Manage promo art for this machine." xml:space="preserve">
+    <value>Gestionar el arte promocional de esta máquina.</value>
+  </data>
+  <data name="Upload Promo Art" xml:space="preserve">
+    <value>Subir arte promocional</value>
+  </data>
+  <data name="Group is required." xml:space="preserve">
+    <value>El grupo es obligatorio.</value>
+  </data>
+  <data name="Select an existing group or type a new name." xml:space="preserve">
+    <value>Selecciona un grupo existente o escribe un nombre nuevo.</value>
+  </data>
+  <data name="Caption" xml:space="preserve">
+    <value>Pie de foto</value>
+  </data>
+  <data name="Select File" xml:space="preserve">
+    <value>Seleccionar archivo</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Subir</value>
+  </data>
+  <data name="Uploading..." xml:space="preserve">
+    <value>Subiendo...</value>
+  </data>
+  <data name="No promo art found for this machine." xml:space="preserve">
+    <value>No se encontró arte promocional para esta máquina.</value>
+  </data>
+  <data name="Promo art uploaded successfully." xml:space="preserve">
+    <value>Arte promocional subido correctamente.</value>
+  </data>
+  <data name="Failed to upload promo art." xml:space="preserve">
+    <value>No se pudo subir el arte promocional.</value>
+  </data>
+  <data name="Delete Promo Art" xml:space="preserve">
+    <value>Eliminar arte promocional</value>
+  </data>
+  <data name="Are you sure you want to delete this promo art? This action cannot be undone." xml:space="preserve">
+    <value>¿Seguro que quieres eliminar este arte promocional? Esta acción no se puede deshacer.</value>
+  </data>
+  <data name="Promo art deleted successfully." xml:space="preserve">
+    <value>Arte promocional eliminado correctamente.</value>
+  </data>
     <data name="Seo description" xml:space="preserve">
         <value>Descubre {0} en Marechai — el repositorio maestro de la historia de la computación. Explora fotos, especificaciones, historia y las personas y empresas que lo construyeron.</value>
     </data>

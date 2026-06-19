@@ -42,9 +42,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace Marechai.Server.Controllers;
 
-[Route("/software/promo-art")]
+[Route("/machines/promo-art")]
 [ApiController]
-public class SoftwarePromoArtController(MarechaiContext context, IConfiguration configuration) : ControllerBase
+public class MachinePromoArtController(MarechaiContext context, IConfiguration configuration) : ControllerBase
 {
     static readonly HashSet<string> _allowedExtensions = [".jpg", ".jpeg", ".png", ".webp", ".tiff", ".tif", ".bmp"];
 
@@ -53,50 +53,59 @@ public class SoftwarePromoArtController(MarechaiContext context, IConfiguration 
         "image/jpeg", "image/png", "image/webp", "image/tiff", "image/bmp"
     ];
 
+    static readonly HashSet<string> _pendingAllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ".jpg", ".jpeg", ".png", ".webp"
+    };
+
+    static readonly HashSet<string> _pendingAllowedContentTypes = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "image/jpeg", "image/png", "image/webp"
+    };
+
+    const int PendingPhotosPerUserPerMachineCap = 30;
+
     readonly string _assetRootPath = configuration["AssetRootPath"]!;
 
-    [HttpGet("/software/{softwareId:ulong}/promo-art")]
+    [HttpGet("/machines/{machineId:int}/promo-art")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<SoftwarePromoArtDto>> GetBySoftwareAsync(ulong softwareId, [FromQuery] string lang = null)
+    public Task<List<MachinePromoArtDto>> GetByMachineAsync(int machineId, [FromQuery] string lang = null)
     {
         string langCode = LanguageResolver.Resolve(HttpContext, lang);
 
-        // English fast-path: no need for the translation sub-query — return the canonical column.
         if(string.Equals(langCode, "eng", StringComparison.Ordinal))
-            return context.SoftwarePromoArt
-                          .Where(p => p.SoftwareId == softwareId)
+            return context.MachinePromoArt
+                          .Where(p => p.MachineId == machineId)
                           .OrderBy(p => p.Group.Name)
                           .ThenBy(p => p.CreatedOn)
                           .ThenBy(p => p.Id)
-                          .Select(p => new SoftwarePromoArtDto
+                          .Select(p => new MachinePromoArtDto
                            {
-                               Id                = p.Id,
-                               SoftwareId        = p.SoftwareId,
-                               GroupId           = p.GroupId,
-                               GroupName         = p.Group.Name,
-                               Caption           = p.Caption,
+                               Id = p.Id,
+                               MachineId = p.MachineId,
+                               GroupId = p.GroupId,
+                               GroupName = p.Group.Name,
+                               Caption = p.Caption,
                                OriginalExtension = p.OriginalExtension
                            })
                           .ToListAsync();
 
-        return context.SoftwarePromoArt
-                      .Where(p => p.SoftwareId == softwareId)
+        return context.MachinePromoArt
+                      .Where(p => p.MachineId == machineId)
                       .OrderBy(p => p.Group.Name)
                       .ThenBy(p => p.CreatedOn)
                       .ThenBy(p => p.Id)
-                      .Select(p => new SoftwarePromoArtDto
+                      .Select(p => new MachinePromoArtDto
                        {
-                           Id         = p.Id,
-                           SoftwareId = p.SoftwareId,
-                           GroupId    = p.GroupId,
+                           Id = p.Id,
+                           MachineId = p.MachineId,
+                           GroupId = p.GroupId,
                            GroupName = context.SoftwarePromoArtGroupTranslations
-                                              .Where(t => t.GroupId      == p.GroupId &&
-                                                          t.LanguageCode == langCode)
+                                              .Where(t => t.GroupId == p.GroupId && t.LanguageCode == langCode)
                                               .Select(t => t.Name)
                                               .FirstOrDefault() ?? p.Group.Name,
-                           Caption           = p.Caption,
+                           Caption = p.Caption,
                            OriginalExtension = p.OriginalExtension
                        })
                       .ToListAsync();
@@ -106,32 +115,31 @@ public class SoftwarePromoArtController(MarechaiContext context, IConfiguration 
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<SoftwarePromoArtDto>> GetAsync(Guid id, [FromQuery] string lang = null)
+    public async Task<ActionResult<MachinePromoArtDto>> GetAsync(Guid id, [FromQuery] string lang = null)
     {
         string langCode = LanguageResolver.Resolve(HttpContext, lang);
-        bool   isEnglish = string.Equals(langCode, "eng", StringComparison.Ordinal);
+        bool isEnglish = string.Equals(langCode, "eng", StringComparison.Ordinal);
 
-        var promo = await context.SoftwarePromoArt
+        var promo = await context.MachinePromoArt
                                  .Where(p => p.Id == id)
-                                 .Select(p => new SoftwarePromoArtDto
+                                 .Select(p => new MachinePromoArtDto
                                   {
-                                      Id         = p.Id,
-                                      SoftwareId = p.SoftwareId,
-                                      GroupId    = p.GroupId,
+                                      Id = p.Id,
+                                      MachineId = p.MachineId,
+                                      GroupId = p.GroupId,
                                       GroupName = isEnglish
                                                       ? p.Group.Name
                                                       : context.SoftwarePromoArtGroupTranslations
-                                                               .Where(t => t.GroupId      == p.GroupId &&
+                                                               .Where(t => t.GroupId == p.GroupId &&
                                                                            t.LanguageCode == langCode)
                                                                .Select(t => t.Name)
                                                                .FirstOrDefault() ?? p.Group.Name,
-                                      Caption           = p.Caption,
+                                      Caption = p.Caption,
                                       OriginalExtension = p.OriginalExtension
                                   })
                                  .FirstOrDefaultAsync();
 
         if(promo is null) return NotFound();
-
         return promo;
     }
 
@@ -141,17 +149,14 @@ public class SoftwarePromoArtController(MarechaiContext context, IConfiguration 
     public async Task<List<SoftwarePromoArtGroupDto>> GetGroupsAsync([FromQuery] string lang = null)
     {
         string langCode = LanguageResolver.Resolve(HttpContext, lang);
-        bool   isEnglish = string.Equals(langCode, "eng", StringComparison.Ordinal);
+        bool isEnglish = string.Equals(langCode, "eng", StringComparison.Ordinal);
 
-        // Project both the localized Name (with English fallback) and the canonical English
-        // CanonicalName so edit-path autocompletes can display the localized text but submit
-        // the canonical English name back to the get-or-create upload/update endpoints.
         List<SoftwarePromoArtGroupDto> groups = isEnglish
                                                     ? await context.SoftwarePromoArtGroups
                                                                    .Select(g => new SoftwarePromoArtGroupDto
                                                                     {
-                                                                        Id            = g.Id,
-                                                                        Name          = g.Name,
+                                                                        Id = g.Id,
+                                                                        Name = g.Name,
                                                                         CanonicalName = g.Name
                                                                     })
                                                                    .ToListAsync()
@@ -160,7 +165,7 @@ public class SoftwarePromoArtController(MarechaiContext context, IConfiguration 
                                                                     {
                                                                         Id = g.Id,
                                                                         Name = context.SoftwarePromoArtGroupTranslations
-                                                                                      .Where(t => t.GroupId      == g.Id &&
+                                                                                      .Where(t => t.GroupId == g.Id &&
                                                                                                   t.LanguageCode == langCode)
                                                                                       .Select(t => t.Name)
                                                                                       .FirstOrDefault() ?? g.Name,
@@ -168,11 +173,7 @@ public class SoftwarePromoArtController(MarechaiContext context, IConfiguration 
                                                                     })
                                                                    .ToListAsync();
 
-        // Sort in-memory by the localized Name so the displayed list is alphabetical in the
-        // requested language (sorting in EF would force the join into ORDER BY and complicate
-        // SQL — the groups list is small).
         groups.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.CurrentCultureIgnoreCase));
-
         return groups;
     }
 
@@ -182,42 +183,35 @@ public class SoftwarePromoArtController(MarechaiContext context, IConfiguration 
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<SoftwarePromoArtDto>> UploadAsync(IFormFile         file,
-                                                                     [FromForm] ulong  softwareId,
-                                                                     [FromForm] string groupName,
-                                                                     [FromForm] string caption)
+    public async Task<ActionResult<MachinePromoArtDto>> UploadAsync(IFormFile file,
+                                                                    [FromForm] int machineId,
+                                                                    [FromForm] string groupName,
+                                                                    [FromForm] string caption)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
-
         if(userId is null) return Unauthorized();
 
         if(file is null || file.Length == 0)
             return Problem(detail: "No file provided.", statusCode: StatusCodes.Status400BadRequest);
-
         if(file.Length > 50 * 1024 * 1024)
             return Problem(detail: "File exceeds 50 MB limit.", statusCode: StatusCodes.Status400BadRequest);
 
         string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
-
         if(!_allowedExtensions.Contains(extension))
             return Problem(detail: "Unsupported file format. Accepted: JPEG, PNG, WebP, TIFF, BMP.", statusCode: StatusCodes.Status400BadRequest);
-
         if(!string.IsNullOrEmpty(file.ContentType) &&
            !_allowedContentTypes.Contains(file.ContentType.ToLowerInvariant()))
             return Problem(detail: "Unsupported content type.", statusCode: StatusCodes.Status400BadRequest);
 
         string trimmedGroup = groupName?.Trim();
-
         if(string.IsNullOrWhiteSpace(trimmedGroup))
             return Problem(detail: "Group name is required.", statusCode: StatusCodes.Status400BadRequest);
-
         if(trimmedGroup.Length > 256)
             return Problem(detail: "Group name exceeds 256 characters.", statusCode: StatusCodes.Status400BadRequest);
 
-        bool softwareExists = await context.Softwares.AnyAsync(s => s.Id == softwareId);
-
-        if(!softwareExists)
-            return Problem(detail: "Referenced software does not exist.", statusCode: StatusCodes.Status400BadRequest);
+        bool machineExists = await context.Machines.AnyAsync(m => m.Id == machineId);
+        if(!machineExists)
+            return Problem(detail: "Referenced machine does not exist.", statusCode: StatusCodes.Status400BadRequest);
 
         SoftwarePromoArtGroup group =
             await context.SoftwarePromoArtGroups.FirstOrDefaultAsync(g => g.Name == trimmedGroup);
@@ -233,47 +227,43 @@ public class SoftwarePromoArtController(MarechaiContext context, IConfiguration 
         await file.CopyToAsync(ms);
         ms.Position = 0;
 
-        var model = new SoftwarePromoArt
+        var model = new MachinePromoArt
         {
-            Id                = Guid.NewGuid(),
-            SoftwareId        = softwareId,
-            GroupId           = group.Id,
-            Caption           = string.IsNullOrWhiteSpace(caption) ? null : caption,
+            Id = Guid.NewGuid(),
+            MachineId = machineId,
+            GroupId = group.Id,
+            Caption = string.IsNullOrWhiteSpace(caption) ? null : caption,
             OriginalExtension = extension.TrimStart('.')
         };
 
-        Photos.EnsureCreated(_assetRootPath, false, "software-promo-art");
+        Photos.EnsureCreated(_assetRootPath, false, "machine-promo-art");
 
-        string originalsDir = Path.Combine(_assetRootPath, "photos", "software-promo-art", "originals");
+        string originalsDir = Path.Combine(_assetRootPath, "photos", "machine-promo-art", "originals");
         string originalPath = Path.Combine(originalsDir, $"{model.Id}{extension}");
 
         ms.Position = 0;
-
         await using(var fs = new FileStream(originalPath, FileMode.CreateNew, FileAccess.Write))
         {
             await ms.CopyToAsync(fs);
         }
 
         string sourceFormat = extension.TrimStart('.');
-
         _ = Task.Run(() =>
         {
             var photos = new Photos();
-
-            photos.ConversionWorker(_assetRootPath, model.Id, originalPath, sourceFormat, false,
-                                    "software-promo-art");
+            photos.ConversionWorker(_assetRootPath, model.Id, originalPath, sourceFormat, false, "machine-promo-art");
         });
 
-        await context.SoftwarePromoArt.AddAsync(model);
+        await context.MachinePromoArt.AddAsync(model);
         await context.SaveChangesWithUserAsync(userId);
 
-        return Ok(new SoftwarePromoArtDto
+        return Ok(new MachinePromoArtDto
         {
-            Id                = model.Id,
-            SoftwareId        = model.SoftwareId,
-            GroupId           = model.GroupId,
-            GroupName         = group.Name,
-            Caption           = model.Caption,
+            Id = model.Id,
+            MachineId = model.MachineId,
+            GroupId = model.GroupId,
+            GroupName = group.Name,
+            Caption = model.Caption,
             OriginalExtension = model.OriginalExtension
         });
     }
@@ -284,14 +274,12 @@ public class SoftwarePromoArtController(MarechaiContext context, IConfiguration 
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> UpdateAsync(Guid id, [FromBody] UpdateSoftwarePromoArtRequest dto)
+    public async Task<ActionResult> UpdateAsync(Guid id, [FromBody] UpdateMachinePromoArtRequest dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
-
         if(userId is null) return Unauthorized();
 
-        SoftwarePromoArt model = await context.SoftwarePromoArt.FirstOrDefaultAsync(p => p.Id == id);
-
+        MachinePromoArt model = await context.MachinePromoArt.FirstOrDefaultAsync(p => p.Id == id);
         if(model is null) return NotFound();
 
         int oldGroupId = model.GroupId;
@@ -299,10 +287,8 @@ public class SoftwarePromoArtController(MarechaiContext context, IConfiguration 
         if(dto.GroupName is not null)
         {
             string trimmedGroup = dto.GroupName.Trim();
-
             if(string.IsNullOrWhiteSpace(trimmedGroup))
                 return Problem(detail: "Group name cannot be empty.", statusCode: StatusCodes.Status400BadRequest);
-
             if(trimmedGroup.Length > 256)
                 return Problem(detail: "Group name exceeds 256 characters.", statusCode: StatusCodes.Status400BadRequest);
 
@@ -320,28 +306,10 @@ public class SoftwarePromoArtController(MarechaiContext context, IConfiguration 
         }
 
         model.Caption = string.IsNullOrWhiteSpace(dto.Caption) ? null : dto.Caption;
-
         await context.SaveChangesWithUserAsync(userId);
 
-        // Auto-purge orphan group if reassignment left it unused by BOTH software and
-        // machine promo art (they share the same group catalog).
         if(model.GroupId != oldGroupId)
-        {
-            bool oldGroupHasSoftwareItems = await context.SoftwarePromoArt.AnyAsync(p => p.GroupId == oldGroupId);
-            bool oldGroupHasMachineItems  = await context.MachinePromoArt.AnyAsync(p => p.GroupId == oldGroupId);
-
-            if(!oldGroupHasSoftwareItems && !oldGroupHasMachineItems)
-            {
-                SoftwarePromoArtGroup oldGroup =
-                    await context.SoftwarePromoArtGroups.FirstOrDefaultAsync(g => g.Id == oldGroupId);
-
-                if(oldGroup is not null)
-                {
-                    context.SoftwarePromoArtGroups.Remove(oldGroup);
-                    await context.SaveChangesWithUserAsync(userId);
-                }
-            }
-        }
+            await DeleteOrphanGroupIfUnusedAsync(oldGroupId, userId);
 
         return Ok();
     }
@@ -354,55 +322,39 @@ public class SoftwarePromoArtController(MarechaiContext context, IConfiguration 
     public async Task<ActionResult> DeleteAsync(Guid id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
-
         if(userId is null) return Unauthorized();
 
-        SoftwarePromoArt model = await context.SoftwarePromoArt.FirstOrDefaultAsync(p => p.Id == id);
-
+        MachinePromoArt model = await context.MachinePromoArt.FirstOrDefaultAsync(p => p.Id == id);
         if(model is null) return NotFound();
 
         int oldGroupId = model.GroupId;
 
-        context.SoftwarePromoArt.Remove(model);
+        context.MachinePromoArt.Remove(model);
         await context.SaveChangesWithUserAsync(userId);
 
-        // Auto-purge orphan group if it became unused by BOTH software and machine promo art.
-        bool oldGroupHasSoftwareItems = await context.SoftwarePromoArt.AnyAsync(p => p.GroupId == oldGroupId);
-        bool oldGroupHasMachineItems  = await context.MachinePromoArt.AnyAsync(p => p.GroupId == oldGroupId);
+        await DeleteOrphanGroupIfUnusedAsync(oldGroupId, userId);
 
-        if(!oldGroupHasSoftwareItems && !oldGroupHasMachineItems)
-        {
-            SoftwarePromoArtGroup oldGroup =
-                await context.SoftwarePromoArtGroups.FirstOrDefaultAsync(g => g.Id == oldGroupId);
-
-            if(oldGroup is not null)
-            {
-                context.SoftwarePromoArtGroups.Remove(oldGroup);
-                await context.SaveChangesWithUserAsync(userId);
-            }
-        }
-
-        string photosRoot = Path.Combine(_assetRootPath, "photos", "software-promo-art");
-        string guidStr    = id.ToString();
+        string photosRoot = Path.Combine(_assetRootPath, "photos", "machine-promo-art");
+        string guidStr = id.ToString();
 
         DeleteFilesByPattern(Path.Combine(photosRoot, "originals"), $"{guidStr}.*");
 
-        string[] formats     = ["jpeg", "webp", "avif"];
+        string[] formats = ["jpeg", "webp", "avif"];
         string[] resolutions = ["4k"];
 
         foreach(string format in formats)
         {
             string ext = format switch
-                        {
-                            "jpeg" => ".jpg",
-                            "webp" => ".webp",
-                            "avif" => ".avif",
-                            _      => $".{format}"
-                        };
+            {
+                "jpeg" => ".jpg",
+                "webp" => ".webp",
+                "avif" => ".avif",
+                _ => $".{format}"
+            };
 
             foreach(string res in resolutions)
             {
-                string fullPath  = Path.Combine(photosRoot, format, res, $"{guidStr}{ext}");
+                string fullPath = Path.Combine(photosRoot, format, res, $"{guidStr}{ext}");
                 string thumbPath = Path.Combine(photosRoot, "thumbs", format, res, $"{guidStr}{ext}");
 
                 if(System.IO.File.Exists(fullPath))
@@ -416,37 +368,6 @@ public class SoftwarePromoArtController(MarechaiContext context, IConfiguration 
         return Ok();
     }
 
-    /// <summary>
-    ///     Maximum in-flight pending promo art images a single collaborator may stage for a
-    ///     given Software before they submit (or cancel) the suggestion. Mirrors the
-    ///     per-batch cap enforced by the dialog.
-    /// </summary>
-    const int PendingPhotosPerUserPerSoftwareCap = 30;
-
-    /// <summary>
-    ///     Allowed extensions for collaborator-uploaded promo art images (narrower than the
-    ///     admin upload set; must match server-side JS validation).
-    /// </summary>
-    static readonly HashSet<string> _pendingAllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
-    {
-        ".jpg", ".jpeg", ".png", ".webp"
-    };
-
-    /// <summary>
-    ///     Allowed content types for collaborator-uploaded promo art images (narrower than
-    ///     the admin upload set; must match server-side JS validation).
-    /// </summary>
-    static readonly HashSet<string> _pendingAllowedContentTypes = new(StringComparer.OrdinalIgnoreCase)
-    {
-        "image/jpeg", "image/png", "image/webp"
-    };
-
-    /// <summary>
-    ///     Stage a single pending promo art image for a brand-new collaborative suggestion.
-    ///     The uploader keeps each pending file on the server (sidecar tracks ownership +
-    ///     parent <c>softwareId</c>) until they call <c>POST /suggestions</c> referencing the
-    ///     returned <c>guid</c>. Per-uploader cap of 30 in-flight pending images per Software.
-    /// </summary>
     [HttpPost("pending")]
     [Authorize]
     [RequestSizeLimit(50 * 1024 * 1024)]
@@ -455,63 +376,48 @@ public class SoftwarePromoArtController(MarechaiContext context, IConfiguration 
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<PendingImageUploadDto>> UploadPendingAsync(IFormFile          file,
-                                                                              [FromQuery] ulong softwareId)
+    public async Task<ActionResult<PendingImageUploadDto>> UploadPendingAsync(IFormFile file,
+                                                                              [FromQuery] int machineId)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
-
         if(string.IsNullOrEmpty(userId)) return Unauthorized();
 
         if(file is null || file.Length == 0) return Problem(detail: "No file provided.", statusCode: StatusCodes.Status400BadRequest);
-
         if(file.Length > 50 * 1024 * 1024) return Problem(detail: "File exceeds 50 MB limit.", statusCode: StatusCodes.Status400BadRequest);
 
         string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
-
         if(!_pendingAllowedExtensions.Contains(extension))
             return Problem(detail: "Unsupported file format. Accepted: JPEG, PNG, WebP.", statusCode: StatusCodes.Status400BadRequest);
-
         if(!string.IsNullOrEmpty(file.ContentType) &&
            !_pendingAllowedContentTypes.Contains(file.ContentType.ToLowerInvariant()))
             return Problem(detail: "Unsupported content type.", statusCode: StatusCodes.Status400BadRequest);
 
-        bool softwareExists = await context.Softwares.AnyAsync(s => s.Id == softwareId);
+        bool machineExists = await context.Machines.AnyAsync(m => m.Id == machineId);
+        if(!machineExists) return Problem(detail: "Machine not found.", statusCode: StatusCodes.Status404NotFound);
 
-        if(!softwareExists) return Problem(detail: "Software not found.", statusCode: StatusCodes.Status404NotFound);
+        int currentCount = PendingImageStore.CountByUploaderForParentEntity(_assetRootPath, "machine-promo-art",
+            userId, (byte)SuggestionEntityType.MachinePromoArt, machineId);
 
-        long parentEntityId = (long)softwareId;
-
-        int currentCount = PendingImageStore.CountByUploaderForParentEntity(_assetRootPath, "software-promo-art",
-            userId, (byte)SuggestionEntityType.SoftwarePromoArt, parentEntityId);
-
-        if(currentCount >= PendingPhotosPerUserPerSoftwareCap)
-            return Problem(detail: $"You already have {currentCount} pending promo art images for this software. Maximum " +
-                                   $"is {PendingPhotosPerUserPerSoftwareCap} per software. Submit or remove some first.",
+        if(currentCount >= PendingPhotosPerUserPerMachineCap)
+            return Problem(detail: $"You already have {currentCount} pending promo art images for this machine. Maximum is " +
+                                   $"{PendingPhotosPerUserPerMachineCap} per machine. Submit or remove some first.",
                            statusCode: StatusCodes.Status409Conflict);
 
         Guid guid;
-
         await using(Stream stream = file.OpenReadStream())
         {
-            // EntityId stays 0 because the suggestion row that will reference these images
-            // doesn't exist yet. ParentEntityId carries the softwareId so the per-uploader
-            // cap and cleanup-by-parent helpers can scope correctly.
-            guid = await PendingImageStore.StoreAsync(_assetRootPath, "software-promo-art", extension,
-                (byte)SuggestionEntityType.SoftwarePromoArt, entityId: 0L, userId, file.ContentType, stream,
-                parentEntityId: parentEntityId);
+            guid = await PendingImageStore.StoreAsync(_assetRootPath, "machine-promo-art", extension,
+                (byte)SuggestionEntityType.MachinePromoArt, entityId: 0L, userId, file.ContentType, stream,
+                parentEntityId: machineId);
         }
 
         return Ok(new PendingImageUploadDto
         {
-            Guid      = guid,
+            Guid = guid,
             Extension = extension.TrimStart('.')
         });
     }
 
-    /// <summary>
-    ///     Delete a pending promo art image before it has been submitted as part of a
-    ///     suggestion. Only the original uploader (or an admin) may delete.
-    /// </summary>
     [HttpDelete("pending/{guid:guid}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -521,29 +427,21 @@ public class SoftwarePromoArtController(MarechaiContext context, IConfiguration 
     public async Task<ActionResult> DeletePendingAsync(Guid guid)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
-
         if(string.IsNullOrEmpty(userId)) return Unauthorized();
 
         PendingImageStore.PendingMetadata meta =
-            await PendingImageStore.GetMetadataAsync(_assetRootPath, "software-promo-art", guid);
+            await PendingImageStore.GetMetadataAsync(_assetRootPath, "machine-promo-art", guid);
 
         if(meta is null) return NotFound();
-        if(meta.EntityType != (byte)SuggestionEntityType.SoftwarePromoArt) return NotFound();
+        if(meta.EntityType != (byte)SuggestionEntityType.MachinePromoArt) return NotFound();
 
         bool isAdmin = User.IsInRole("Admin") || User.IsInRole("UberAdmin");
-
         if(!PendingImageStore.CanAccess(meta, userId, isAdmin)) return Forbid();
 
-        PendingImageStore.Delete(_assetRootPath, "software-promo-art", guid);
-
+        PendingImageStore.Delete(_assetRootPath, "machine-promo-art", guid);
         return NoContent();
     }
 
-    /// <summary>
-    ///     Stream the binary contents of a pending promo art image. Used by the dialog
-    ///     thumbnail preview AND by the admin SuggestionDiffPanel preview. Auth-gated: only
-    ///     the uploader and admins can read.
-    /// </summary>
     [HttpGet("pending/{guid:guid}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -553,26 +451,39 @@ public class SoftwarePromoArtController(MarechaiContext context, IConfiguration 
     public async Task<ActionResult> GetPendingAsync(Guid guid)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
-
         if(string.IsNullOrEmpty(userId)) return Unauthorized();
 
         PendingImageStore.PendingMetadata meta =
-            await PendingImageStore.GetMetadataAsync(_assetRootPath, "software-promo-art", guid);
+            await PendingImageStore.GetMetadataAsync(_assetRootPath, "machine-promo-art", guid);
 
         if(meta is null) return NotFound();
-        if(meta.EntityType != (byte)SuggestionEntityType.SoftwarePromoArt) return NotFound();
+        if(meta.EntityType != (byte)SuggestionEntityType.MachinePromoArt) return NotFound();
 
         bool isAdmin = User.IsInRole("Admin") || User.IsInRole("UberAdmin");
-
         if(!PendingImageStore.CanAccess(meta, userId, isAdmin)) return Forbid();
 
-        string path = await PendingImageStore.GetImagePathAsync(_assetRootPath, "software-promo-art", guid);
-
+        string path = await PendingImageStore.GetImagePathAsync(_assetRootPath, "machine-promo-art", guid);
         if(path is null || !System.IO.File.Exists(path)) return NotFound();
 
         var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-
         return File(stream, meta.ContentType ?? "application/octet-stream");
+    }
+
+    async Task DeleteOrphanGroupIfUnusedAsync(int groupId, string userId)
+    {
+        bool usedBySoftware = await context.SoftwarePromoArt.AnyAsync(p => p.GroupId == groupId);
+        bool usedByMachine = await context.MachinePromoArt.AnyAsync(p => p.GroupId == groupId);
+
+        if(usedBySoftware || usedByMachine) return;
+
+        SoftwarePromoArtGroup oldGroup =
+            await context.SoftwarePromoArtGroups.FirstOrDefaultAsync(g => g.Id == groupId);
+
+        if(oldGroup is not null)
+        {
+            context.SoftwarePromoArtGroups.Remove(oldGroup);
+            await context.SaveChangesWithUserAsync(userId);
+        }
     }
 
     static void DeleteFilesByPattern(string directory, string pattern)

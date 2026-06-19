@@ -1012,6 +1012,108 @@
     <data name="{0}µm" xml:space="preserve">
         <value>{0}µm</value>
     </data>
+    <data name="Promo Art" xml:space="preserve">
+        <value>Promotiemateriaal</value>
+    </data>
+    <data name="Suggest promo art" xml:space="preserve">
+        <value>Promotiemateriaal voorstellen</value>
+    </data>
+    <data name="Suggest more promo art" xml:space="preserve">
+        <value>Meer promotiemateriaal voorstellen</value>
+    </data>
+    <data name="No promo art for this machine yet — help us by uploading some." xml:space="preserve">
+        <value>Er is nog geen promotiemateriaal voor deze machine. Help ons door wat te uploaden.</value>
+    </data>
+    <data name="Other (promo art)" xml:space="preserve">
+        <value>Overig</value>
+    </data>
+    <data name="Suggest promo art for {0}. Upload up to {1} JPG, PNG or WebP files (max 50 MB each). All images in this batch share the same group." xml:space="preserve">
+        <value>Stel promotiemateriaal voor voor {0}. Upload maximaal {1} JPG-, PNG- of WebP-bestanden (maximaal 50 MB per stuk). Alle afbeeldingen in deze batch delen dezelfde groep.</value>
+    </data>
+    <data name="Group" xml:space="preserve">
+        <value>Groep</value>
+    </data>
+    <data name="Group name" xml:space="preserve">
+        <value>Groepsnaam</value>
+    </data>
+    <data name="Pick an existing promo art group, or type a new name to create one." xml:space="preserve">
+        <value>Kies een bestaande groep voor promotiemateriaal of typ een nieuwe naam om er een aan te maken.</value>
+    </data>
+    <data name="Images: {0}/{1}" xml:space="preserve">
+        <value>Afbeeldingen: {0}/{1}</value>
+    </data>
+    <data name="Add images" xml:space="preserve">
+        <value>Afbeeldingen toevoegen</value>
+    </data>
+    <data name="Pick one or more files at a time. Each image is uploaded immediately and held on the server until you submit the batch." xml:space="preserve">
+        <value>Kies één of meer bestanden tegelijk. Elke afbeelding wordt direct geüpload en op de server bewaard totdat je de batch indient.</value>
+    </data>
+    <data name="No images staged yet. Use the Add images button above to pick files from your device." xml:space="preserve">
+        <value>Er zijn nog geen afbeeldingen klaargezet. Gebruik hierboven de knop ‘Afbeeldingen toevoegen’ om bestanden van je apparaat te kiezen.</value>
+    </data>
+    <data name="Caption (optional)" xml:space="preserve">
+        <value>Bijschrift (optioneel)</value>
+    </data>
+    <data name="You must be logged in to upload images." xml:space="preserve">
+        <value>Je moet aangemeld zijn om afbeeldingen te uploaden.</value>
+    </data>
+    <data name="Type or pick a group name and add at least one successfully-uploaded image before submitting." xml:space="preserve">
+        <value>Typ of kies een groepsnaam en voeg ten minste één succesvol geüploade afbeelding toe voordat je indient.</value>
+    </data>
+    <data name="Promo art submitted for review. An administrator will accept or reject each image." xml:space="preserve">
+        <value>Promotiemateriaal is ingediend ter beoordeling. Een beheerder zal elke afbeelding accepteren of afwijzen.</value>
+    </data>
+    <data name="You have staged images that have not been submitted yet. Closing this dialog will delete them. Continue?" xml:space="preserve">
+        <value>Je hebt afbeeldingen klaargezet die nog niet zijn ingediend. Als je dit dialoogvenster sluit, worden ze verwijderd. Doorgaan?</value>
+    </data>
+    <data name="Promo Art Management" xml:space="preserve">
+        <value>Beheer van promotiemateriaal</value>
+    </data>
+    <data name="Manage promo art for machine '{0}'." xml:space="preserve">
+        <value>Beheer promotiemateriaal voor machine ‘{0}’.</value>
+    </data>
+    <data name="Manage promo art for this machine." xml:space="preserve">
+        <value>Beheer promotiemateriaal voor deze machine.</value>
+    </data>
+    <data name="Upload Promo Art" xml:space="preserve">
+        <value>Promotiemateriaal uploaden</value>
+    </data>
+    <data name="Group is required." xml:space="preserve">
+        <value>Een groep is verplicht.</value>
+    </data>
+    <data name="Select an existing group or type a new name." xml:space="preserve">
+        <value>Selecteer een bestaande groep of typ een nieuwe naam.</value>
+    </data>
+    <data name="Caption" xml:space="preserve">
+        <value>Bijschrift</value>
+    </data>
+    <data name="Select File" xml:space="preserve">
+        <value>Bestand selecteren</value>
+    </data>
+    <data name="Upload" xml:space="preserve">
+        <value>Uploaden</value>
+    </data>
+    <data name="Uploading..." xml:space="preserve">
+        <value>Bezig met uploaden...</value>
+    </data>
+    <data name="No promo art found for this machine." xml:space="preserve">
+        <value>Geen promotiemateriaal gevonden voor deze machine.</value>
+    </data>
+    <data name="Promo art uploaded successfully." xml:space="preserve">
+        <value>Promotiemateriaal is succesvol geüpload.</value>
+    </data>
+    <data name="Failed to upload promo art." xml:space="preserve">
+        <value>Uploaden van promotiemateriaal is mislukt.</value>
+    </data>
+    <data name="Delete Promo Art" xml:space="preserve">
+        <value>Promotiemateriaal verwijderen</value>
+    </data>
+    <data name="Are you sure you want to delete this promo art? This action cannot be undone." xml:space="preserve">
+        <value>Weet je zeker dat je dit promotiemateriaal wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.</value>
+    </data>
+    <data name="Promo art deleted successfully." xml:space="preserve">
+        <value>Promotiemateriaal is succesvol verwijderd.</value>
+    </data>
     <data name="Seo description" xml:space="preserve">
         <value>Ontdek {0} op Marechai — de hoofdrepository van de computergeschiedenis. Blader door foto’s, specificaties, geschiedenis en de mensen en bedrijven die het hebben gemaakt.</value>
     </data>

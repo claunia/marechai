@@ -35,6 +35,7 @@
 @inject IStringLocalizer<MachinesService> L
 @inject ApiAssetUrlProvider               AssetUrls
 @inject MachinePhotosService              MachinePhotosService
+@inject MachinePromoArtService            MachinePromoArtService
 @inject CollectionService                 CollectionSvc
 @inject IDialogService                    DialogService
 @inject SuggestionsService                Suggestions
@@ -1097,6 +1098,107 @@ else
             </Authorized>
         </AuthorizeView>
     </MudStack>
+}
+
+@* ── Promo Art Card ── *@
+<MudCard Elevation="2" Class="mb-4 rounded-lg">
+    <MudCardContent>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-3">
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.Campaign" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Promo Art"]</MudText>
+                @if(_promoArt.Count > 0)
+                {
+                    <MudChip T="string" Size="Size.Small" Color="Color.Secondary">@_promoArt.Count</MudChip>
+                }
+            </MudStack>
+            @if(_promoArt.Count > 0)
+            {
+                <AuthorizeView>
+                    <Authorized>
+                        <MudTooltip Text="@L["Suggest more promo art"]">
+                            <MudIconButton Icon="@Icons.Material.Filled.AddPhotoAlternate"
+                                           Color="Color.Primary" Size="Size.Small"
+                                           OnClick="OpenSuggestPromoArtDialog"/>
+                        </MudTooltip>
+                    </Authorized>
+                </AuthorizeView>
+            }
+        </MudStack>
+
+        @if(_promoArt.Count == 0)
+        {
+            <MudStack AlignItems="AlignItems.Center" Spacing="2" Class="py-3">
+                <MudText Typo="Typo.body2" Align="Align.Center">
+                    @L["No promo art for this machine yet — help us by uploading some."]
+                </MudText>
+                <AuthorizeView>
+                    <Authorized>
+                        <MudButton Variant="Variant.Outlined" Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.AddPhotoAlternate"
+                                   OnClick="OpenSuggestPromoArtDialog">
+                            @L["Suggest promo art"]
+                        </MudButton>
+                    </Authorized>
+                </AuthorizeView>
+            </MudStack>
+        }
+        else
+        {
+            @foreach(var group in _promoArtByGroup)
+            {
+                <MudText Typo="Typo.subtitle1" Class="mt-3 mb-2"><strong>@group.Key</strong></MudText>
+                <MudGrid>
+                    @foreach(MachinePromoArtDto promo in group.Value)
+                    {
+                        <MudItem xs="12" sm="6" md="4" lg="3">
+                            <MudCard Elevation="1" Class="rounded-lg" Style="cursor: pointer;"
+                                     @onclick="() => _fullscreenPromo = promo">
+                                <MudCardContent Class="pa-2">
+                                    <picture>
+                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/machine-promo-art/avif/4k/@(promo.Id).avif" type="image/avif">
+                                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/machine-promo-art/webp/4k/@(promo.Id).webp" type="image/webp">
+                                        <img alt="@(promo.Caption ?? promo.GroupName)"
+                                             src="@(AssetUrls.BaseUrl)/assets/photos/machine-promo-art/jpeg/4k/@(promo.Id).jpg"
+                                             srcset="@(AssetUrls.BaseUrl)/assets/photos/machine-promo-art/jpeg/4k/@(promo.Id).jpg"
+                                             style="width: 100%; height: auto; border-radius: 4px;"/>
+                                    </picture>
+                                    @if(!string.IsNullOrEmpty(promo.Caption))
+                                    {
+                                        <MudText Typo="Typo.caption" Align="Align.Center" Class="mt-1">@promo.Caption</MudText>
+                                    }
+                                </MudCardContent>
+                            </MudCard>
+                        </MudItem>
+                    }
+                </MudGrid>
+            }
+        }
+    </MudCardContent>
+</MudCard>
+
+@if(_fullscreenPromo is not null)
+{
+    var promo = _fullscreenPromo;
+    <MudOverlay Visible="true" DarkBackground="true" ZIndex="9999" OnClick="() => _fullscreenPromo = null">
+        <div class="d-flex flex-column align-center justify-center" style="width: 100vw; height: 100vh;">
+            <picture>
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/machine-promo-art/avif/4k/@(promo.Id).avif" type="image/avif">
+                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/machine-promo-art/webp/4k/@(promo.Id).webp" type="image/webp">
+                <img alt="@(promo.Caption ?? promo.GroupName)"
+                     src="@(AssetUrls.BaseUrl)/assets/photos/machine-promo-art/jpeg/4k/@(promo.Id).jpg"
+                     style="max-width: 95vw; max-height: 90vh; object-fit: contain;"/>
+            </picture>
+            @if(!string.IsNullOrEmpty(promo.GroupName))
+            {
+                <MudText Typo="Typo.subtitle1" Style="color: white;" Class="mt-2">@promo.GroupName</MudText>
+            }
+            @if(!string.IsNullOrEmpty(promo.Caption))
+            {
+                <MudText Typo="Typo.body2" Style="color: rgba(255,255,255,0.8);" Class="mt-1">@promo.Caption</MudText>
+            }
+        </div>
+    </MudOverlay>
 }
 
 @* ── Videos Card ──

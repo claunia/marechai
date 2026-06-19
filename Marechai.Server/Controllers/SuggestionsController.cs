@@ -438,6 +438,18 @@ public class SuggestionsController(MarechaiContext context,
                                statusCode: StatusCodes.Status400BadRequest);
         }
 
+        // ---- Machine promo art batch payload validation ------------------------------
+        if(dto.EntityType == SuggestionEntityType.MachinePromoArt)
+        {
+            var (ok, err) = await Suggestions.MachinePromoArtSuggestionApplier.ValidateAsync(
+                                context, dto.EntityId, values, _assetRootPath, userId);
+
+            if(!ok)
+                return Problem(title: "Invalid machine promo art suggestion",
+                               detail: err,
+                               statusCode: StatusCodes.Status400BadRequest);
+        }
+
         // ---- Software cover batch payload validation ----------------------------------
         if(dto.EntityType == SuggestionEntityType.SoftwareCover)
         {
@@ -608,6 +620,7 @@ public class SuggestionsController(MarechaiContext context,
                dto.EntityType != SuggestionEntityType.SoundSynthPhoto &&
                dto.EntityType != SuggestionEntityType.MachinePhoto &&
                dto.EntityType != SuggestionEntityType.SoftwarePromoArt &&
+               dto.EntityType != SuggestionEntityType.MachinePromoArt &&
                dto.EntityType != SuggestionEntityType.SoftwareCover &&
                dto.EntityType != SuggestionEntityType.SoftwareScreenshot)
             {
@@ -1018,6 +1031,18 @@ public class SuggestionsController(MarechaiContext context,
             else
                 newStatus = SuggestionStatus.PartiallyAccepted;
         }
+        else if(s.EntityType == SuggestionEntityType.MachinePromoArt)
+        {
+            int totalPhotos = CountSuggestedMachinePromoArt(s);
+            int acceptedPhotos = accepted.Count(k => k.StartsWith("promo.", StringComparison.Ordinal));
+
+            if(acceptedPhotos == 0)
+                newStatus = SuggestionStatus.Rejected;
+            else if(totalPhotos > 0 && acceptedPhotos >= totalPhotos)
+                newStatus = SuggestionStatus.Accepted;
+            else
+                newStatus = SuggestionStatus.PartiallyAccepted;
+        }
         else if(s.EntityType == SuggestionEntityType.SoftwareCover)
         {
             int totalCovers = CountSuggestedSoftwareCovers(s);
@@ -1199,6 +1224,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.SoundSynthPhoto  => true,
         SuggestionEntityType.MachinePhoto     => true,
         SuggestionEntityType.SoftwarePromoArt   => true,
+        SuggestionEntityType.MachinePromoArt    => true,
         SuggestionEntityType.SoftwareCover      => true,
         SuggestionEntityType.SoftwareScreenshot => true,
         SuggestionEntityType.GpuVideo           => true,
@@ -1269,6 +1295,9 @@ public class SuggestionsController(MarechaiContext context,
 
         if(type == SuggestionEntityType.SoftwarePromoArt)
             return Suggestions.SoftwarePromoArtSuggestionApplier.IsKnownFieldName(fieldName);
+
+        if(type == SuggestionEntityType.MachinePromoArt)
+            return Suggestions.MachinePromoArtSuggestionApplier.IsKnownFieldName(fieldName);
 
         if(type == SuggestionEntityType.SoftwareCover)
             return Suggestions.SoftwareCoverSuggestionApplier.IsKnownFieldName(fieldName);
@@ -1475,6 +1504,12 @@ public class SuggestionsController(MarechaiContext context,
                     context, entityId, suggested, accepted, creditedUserId, _assetRootPath);
                 return new ApplyResult(applied, missing);
             }
+            case SuggestionEntityType.MachinePromoArt:
+            {
+                var (applied, missing) = await Suggestions.MachinePromoArtSuggestionApplier.ApplyAsync(
+                    context, entityId, suggested, accepted, creditedUserId, _assetRootPath);
+                return new ApplyResult(applied, missing);
+            }
             case SuggestionEntityType.SoftwareCover:
             {
                 var (applied, missing) = await Suggestions.SoftwareCoverSuggestionApplier.ApplyAsync(
@@ -1591,6 +1626,8 @@ public class SuggestionsController(MarechaiContext context,
                 await Suggestions.MachinePhotoSuggestionApplier.GetCurrentValuesAsync(context, entityId),
             SuggestionEntityType.SoftwarePromoArt =>
                 await Suggestions.SoftwarePromoArtSuggestionApplier.GetCurrentValuesAsync(context, entityId),
+            SuggestionEntityType.MachinePromoArt =>
+                await Suggestions.MachinePromoArtSuggestionApplier.GetCurrentValuesAsync(context, entityId),
             SuggestionEntityType.SoftwareCover =>
                 await Suggestions.SoftwareCoverSuggestionApplier.GetCurrentValuesAsync(context, entityId),
             SuggestionEntityType.SoftwareScreenshot =>
@@ -1622,6 +1659,7 @@ public class SuggestionsController(MarechaiContext context,
             case SuggestionEntityType.Machine:
             case SuggestionEntityType.MachineDescription:
             case SuggestionEntityType.MachinePhoto:
+            case SuggestionEntityType.MachinePromoArt:
             case SuggestionEntityType.MachineVideo:
                 return await context.Machines.AsNoTracking()
                                     .Where(m => m.Id == (int)entityId)
@@ -2559,6 +2597,17 @@ public class SuggestionsController(MarechaiContext context,
                     string name = gj.GetString();
                     if(!string.IsNullOrEmpty(name))
                         labels[Suggestions.SoftwarePromoArtSuggestionApplier.FieldGroupName] = name;
+                }
+                break;
+            }
+            case SuggestionEntityType.MachinePromoArt:
+            {
+                if(values.TryGetValue(Suggestions.MachinePromoArtSuggestionApplier.FieldGroupName,
+                                      out JsonElement gj) && gj.ValueKind == JsonValueKind.String)
+                {
+                    string name = gj.GetString();
+                    if(!string.IsNullOrEmpty(name))
+                        labels[Suggestions.MachinePromoArtSuggestionApplier.FieldGroupName] = name;
                 }
                 break;
             }
@@ -4789,6 +4838,30 @@ public class SuggestionsController(MarechaiContext context,
 
                     break;
                 }
+                case SuggestionEntityType.MachinePromoArt:
+                {
+                    if(!s.SuggestedValues.TryGetValue(
+                           Suggestions.MachinePromoArtSuggestionApplier.FieldPhotos, out object photosRaw))
+                        return;
+
+                    if(photosRaw is not JsonElement arr || arr.ValueKind != JsonValueKind.Array) return;
+
+                    foreach(JsonElement photo in arr.EnumerateArray())
+                    {
+                        if(photo.ValueKind != JsonValueKind.Object) continue;
+                        if(!photo.TryGetProperty("guid", out JsonElement gj) ||
+                           gj.ValueKind != JsonValueKind.String) continue;
+                        if(!Guid.TryParse(gj.GetString(), out Guid pg)) continue;
+
+                        string acceptKey = Suggestions.MachinePromoArtSuggestionApplier.PromoAcceptKey(pg);
+
+                        if(accepted.Contains(acceptKey)) continue;
+
+                        Marechai.Server.Helpers.PendingImageStore.Delete(_assetRootPath, "machine-promo-art", pg);
+                    }
+
+                    break;
+                }
                 case SuggestionEntityType.SoftwareCover:
                 {
                     // Sweep every per-image pending file the suggester referenced that did NOT
@@ -4947,6 +5020,21 @@ public class SuggestionsController(MarechaiContext context,
     {
         if(s?.SuggestedValues is null) return 0;
         if(!s.SuggestedValues.TryGetValue(Suggestions.SoftwarePromoArtSuggestionApplier.FieldPhotos, out object raw))
+            return 0;
+
+        return raw switch
+        {
+            JsonElement je when je.ValueKind == JsonValueKind.Array => je.GetArrayLength(),
+            System.Collections.ICollection col                      => col.Count,
+            System.Collections.IEnumerable enumerable               => enumerable.Cast<object>().Count(),
+            _                                                       => 0
+        };
+    }
+
+    static int CountSuggestedMachinePromoArt(Suggestion s)
+    {
+        if(s?.SuggestedValues is null) return 0;
+        if(!s.SuggestedValues.TryGetValue(Suggestions.MachinePromoArtSuggestionApplier.FieldPhotos, out object raw))
             return 0;
 
         return raw switch
@@ -5241,6 +5329,37 @@ public class SuggestionsController(MarechaiContext context,
                 if(roleGranted) body += "\n\nYou are now a Collaborator!";
             }
         }
+        else if(s.EntityType == SuggestionEntityType.MachinePromoArt)
+        {
+            int photoTotal    = CountSuggestedMachinePromoArt(s);
+            int photoAccepted = (s.AppliedFields ?? new Dictionary<string, string>())
+                .Count(kv => kv.Key.StartsWith("promo.", StringComparison.Ordinal));
+
+            string plural = photoTotal == 1 ? "image" : "images";
+
+            if(photoAccepted == 0)
+            {
+                subject = "Your machine promo art upload was not accepted";
+                body =
+                    $"Your suggested upload of {photoTotal} promo art {plural} for {entityRef} was reviewed but no images were accepted. " +
+                    $"Thank you for contributing — feel free to refine and try again.";
+            }
+            else if(photoAccepted == photoTotal)
+            {
+                subject = "Your machine promo art upload was accepted";
+                body =
+                    $"Your suggested upload of {photoTotal} promo art {plural} for {entityRef} was accepted. Thank you!";
+                if(roleGranted) body += "\n\nYou are now a Collaborator!";
+            }
+            else
+            {
+                subject = "Your machine promo art upload was partially accepted";
+                body =
+                    $"Your suggested upload for {entityRef} was reviewed. " +
+                    $"{photoAccepted} of {photoTotal} promo art {plural} were accepted; the rest were declined.";
+                if(roleGranted) body += "\n\nYou are now a Collaborator!";
+            }
+        }
         else if(s.EntityType == SuggestionEntityType.SoftwareScreenshot)
         {
             int screenshotTotal    = CountSuggestedSoftwareScreenshots(s);
@@ -5398,6 +5517,7 @@ public class SuggestionsController(MarechaiContext context,
         // the readable `'{name}' (#{id})` form in notification messages. The user can
         // navigate to the Versions card on the parent Software view manually.
         SuggestionEntityType.SoftwareVersion       => null,
+        SuggestionEntityType.MachinePromoArt       => $"/machine/{entityId}",
         SuggestionEntityType.SoftwarePromoArt      => $"/software/{entityId}",
         SuggestionEntityType.SoftwareCover         => $"/software/release/{entityId}",
         SuggestionEntityType.SoftwareScreenshot    => $"/software/{entityId}",
@@ -5435,6 +5555,7 @@ public class SuggestionsController(MarechaiContext context,
         SuggestionEntityType.ProcessorPhoto      => "processor photo upload",
         SuggestionEntityType.SoundSynthPhoto     => "sound synth photo upload",
         SuggestionEntityType.MachinePhoto        => "machine photo upload",
+        SuggestionEntityType.MachinePromoArt     => "machine promo art upload",
         SuggestionEntityType.SoftwarePromoArt    => "software promo art upload",
         SuggestionEntityType.SoftwareCover       => "software cover upload",
         SuggestionEntityType.SoftwareScreenshot  => "software screenshot upload",

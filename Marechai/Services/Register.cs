@@ -50,6 +50,7 @@ public static class Register
         services.AddScoped<MachinesService>();
         services.AddScoped<MachineFamiliesService>();
         services.AddScoped<MachinePhotosService>();
+        services.AddScoped<MachinePromoArtService>();
         services.AddScoped<GpuPhotosService>();
         services.AddScoped<SoundSynthPhotosService>();
         services.AddScoped<ProcessorPhotosService>();

@@ -112,6 +112,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<Machine>                             Machines                            { get; set; }
     public virtual DbSet<MachineDescription>                  MachineDescriptions                 { get; set; }
     public virtual DbSet<MachineFamily>                       MachineFamilies                     { get; set; }
+    public virtual DbSet<MachinePromoArt>                     MachinePromoArt                     { get; set; }
     public virtual DbSet<SoundSynthDescription>               SoundSynthDescriptions              { get; set; }
     public virtual DbSet<ProcessorDescription>                ProcessorDescriptions               { get; set; }
     public virtual DbSet<GpuDescription>                      GpuDescriptions                     { get; set; }

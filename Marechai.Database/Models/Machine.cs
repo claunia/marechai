@@ -68,6 +68,7 @@ public class Machine : BaseModel<int>
     public virtual ICollection<SoundByMachine>      Sound      { get; set; }
     public virtual ICollection<StorageByMachine>    Storage    { get; set; }
     public virtual ICollection<MachinePhoto>        Photos     { get; set; }
+    public virtual ICollection<MachinePromoArt>     PromoArt   { get; set; }
     public virtual ICollection<ScreensByMachine>    Screens    { get; set; }
     public virtual ICollection<DocumentsByMachine>          Documents         { get; set; }
     public virtual ICollection<BooksByMachine>               Books             { get; set; }

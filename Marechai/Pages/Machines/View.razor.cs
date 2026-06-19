@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
@@ -50,10 +51,13 @@ public partial class View
     bool             _isCollected;
     PhotoLightbox    _lightbox;
     bool             _loaded;
-    MachineDto _machine;
-    List<Guid>            _photos;
+    MachineDto       _machine;
+    List<Guid>       _photos;
+    List<MachinePromoArtDto> _promoArt = [];
+    Dictionary<string, List<MachinePromoArtDto>> _promoArtByGroup = new();
+    MachinePromoArtDto _fullscreenPromo;
     List<MachineVideoDto> _videos;
-    bool                  _togglingCollection;
+    bool _togglingCollection;
 
     // Software tab — server-side pagination
     List<SoftwareDto> _softwareItems  = [];
@@ -122,17 +126,23 @@ public partial class View
             // service wrappers each issue a single HTTP request so they're
             // safe to run in parallel; this collapses what used to be sequential
             // round-trips into one parallel batch (bounded by the slowest call).
-            Task<MachineDto>            machineTask  = Service.GetMachine(Id);
-            Task<List<Guid>>            photosTask   = MachinePhotosService.GetGuidsByMachineAsync(Id);
-            Task<int>                   swCountTask  = Service.GetSoftwareByMachineCountAsync(Id);
-            Task<List<MachineVideoDto>> videosTask   = Service.GetVideosByMachineAsync(Id);
+            Task<MachineDto>              machineTask  = Service.GetMachine(Id);
+            Task<List<Guid>>              photosTask   = MachinePhotosService.GetGuidsByMachineAsync(Id);
+            Task<List<MachinePromoArtDto>> promoArtTask = MachinePromoArtService.GetPromoArtByMachineAsync(Id);
+            Task<int>                     swCountTask  = Service.GetSoftwareByMachineCountAsync(Id);
+            Task<List<MachineVideoDto>>   videosTask   = Service.GetVideosByMachineAsync(Id);
 
-            await Task.WhenAll(machineTask, photosTask, swCountTask, videosTask);
+            await Task.WhenAll(machineTask, photosTask, promoArtTask, swCountTask, videosTask);
 
             _machine       = machineTask.Result;
             _photos        = photosTask.Result;
+            _promoArt      = promoArtTask.Result;
             _softwareTotal = swCountTask.Result;
             _videos        = videosTask.Result;
+            _promoArtByGroup = _promoArt
+                              .GroupBy(p => p.GroupName ?? L["Other (promo art)"].Value)
+                              .OrderBy(g => g.Key)
+                              .ToDictionary(g => g.Key, g => g.ToList());
 
             // Load first page of software if any exist.
             if(_softwareTotal > 0)
@@ -444,6 +454,34 @@ public partial class View
         {
             // Photos won't appear until an admin accepts them; nothing to refresh now.
             // Method left as a hook in case future revisions want to surface a hint.
+        }
+    }
+
+    async Task OpenSuggestPromoArtDialog()
+    {
+        int machineId = Id;
+        if(machineId <= 0) return;
+
+        var dialogParams = new DialogParameters
+        {
+            ["MachineId"]   = machineId,
+            ["MachineName"] = _machine?.Name ?? string.Empty
+        };
+        var dialogOptions = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth        = true,
+            MaxWidth         = MaxWidth.Large
+        };
+
+        var dialogRef = await DialogService.ShowAsync<MachinePromoArtSuggestionDialog>(
+            L["Suggest promo art"], dialogParams, dialogOptions);
+
+        DialogResult result = await dialogRef.Result;
+
+        if(result is { Canceled: false })
+        {
+            // Promo art won't appear until an admin accepts it; nothing to refresh now.
         }
     }
 

@@ -1167,6 +1167,18 @@ public enum SuggestionEntityType : byte
     /// </summary>
     SoftwareScreenshot = 33,
     /// <summary>
+    ///     A batch of one or more pending Machine promo art images uploaded by a
+    ///     collaborator for review by an admin. The EntityId on the Suggestion row holds
+    ///     the parent Machine Id. The SuggestedValues JSON carries one suggestion-level
+    ///     <c>group_name</c> (max 256 chars; the server does get-or-create on
+    ///     <see cref="Marechai.Database.Models.SoftwarePromoArtGroup" /> on accept) and a
+    ///     <c>photos</c> array (max 30 entries) of pending image descriptors
+    ///     (<c>guid</c>, <c>extension</c>, per-image <c>caption</c>). Per-image
+    ///     accept/reject is signalled by including/omitting the field-name key
+    ///     <c>promo.{guid}</c> in <c>AppliedFields</c>. The pending Guid becomes the new
+    ///     <see cref="Marechai.Database.Models.MachinePromoArt" /> row Id directly.
+    /// </summary>
+    /// <summary>
     ///     A single brand-new YouTube video link suggested by a collaborator for an existing
     ///     <see cref="Marechai.Database.Models.Gpu" />. The EntityId on the Suggestion row
     ///     holds the parent Gpu Id. The SuggestedValues JSON carries a single
@@ -1241,7 +1253,20 @@ public enum SuggestionEntityType : byte
     ///     <see cref="Marechai.Database.Models.MachineVideo" /> row with
     ///     Provider=<c>"YouTube"</c>. Only YouTube URLs are supported.
     /// </summary>
-    MachineVideo = 38
+    MachineVideo = 38,
+    /// <summary>
+    ///     A batch of one or more pending Machine promo art images uploaded by a
+    ///     collaborator for review by an admin. The EntityId on the Suggestion row holds
+    ///     the parent Machine Id. The SuggestedValues JSON carries one suggestion-level
+    ///     <c>group_name</c> (max 256 chars; the server does get-or-create on
+    ///     <see cref="Marechai.Database.Models.SoftwarePromoArtGroup" /> on accept) and a
+    ///     <c>photos</c> array (max 30 entries) of pending image descriptors
+    ///     (<c>guid</c>, <c>extension</c>, per-image <c>caption</c>). Per-image
+    ///     accept/reject is signalled by including/omitting the field-name key
+    ///     <c>promo.{guid}</c> in <c>AppliedFields</c>. The pending Guid becomes the new
+    ///     <see cref="Marechai.Database.Models.MachinePromoArt" /> row Id directly.
+    /// </summary>
+    MachinePromoArt = 39
 }
 
 public enum SuggestionStatus : byte

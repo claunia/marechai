@@ -845,6 +845,108 @@
   <data name="We have no videos available about this machine." xml:space="preserve">
     <value>Nous n'avons pas de vidéos disponibles sur cette machine.</value>
   </data>
+  <data name="Promo Art" xml:space="preserve">
+    <value>Illustrations promotionnelles</value>
+  </data>
+  <data name="Suggest promo art" xml:space="preserve">
+    <value>Suggérer des illustrations promotionnelles</value>
+  </data>
+  <data name="Suggest more promo art" xml:space="preserve">
+    <value>Suggérer plus d’illustrations promotionnelles</value>
+  </data>
+  <data name="No promo art for this machine yet — help us by uploading some." xml:space="preserve">
+    <value>Il n’y a pas encore d’illustrations promotionnelles pour cette machine — aidez-nous en en téléversant.</value>
+  </data>
+  <data name="Other (promo art)" xml:space="preserve">
+    <value>Autres</value>
+  </data>
+  <data name="Suggest promo art for {0}. Upload up to {1} JPG, PNG or WebP files (max 50 MB each). All images in this batch share the same group." xml:space="preserve">
+    <value>Suggérez des illustrations promotionnelles pour {0}. Téléversez jusqu’à {1} fichiers JPG, PNG ou WebP (50 Mo max chacun). Toutes les images de ce lot partagent le même groupe.</value>
+  </data>
+  <data name="Group" xml:space="preserve">
+    <value>Groupe</value>
+  </data>
+  <data name="Group name" xml:space="preserve">
+    <value>Nom du groupe</value>
+  </data>
+  <data name="Pick an existing promo art group, or type a new name to create one." xml:space="preserve">
+    <value>Choisissez un groupe d’illustrations promotionnelles existant ou saisissez un nouveau nom pour en créer un.</value>
+  </data>
+  <data name="Images: {0}/{1}" xml:space="preserve">
+    <value>Images : {0}/{1}</value>
+  </data>
+  <data name="Add images" xml:space="preserve">
+    <value>Ajouter des images</value>
+  </data>
+  <data name="Pick one or more files at a time. Each image is uploaded immediately and held on the server until you submit the batch." xml:space="preserve">
+    <value>Sélectionnez un ou plusieurs fichiers à la fois. Chaque image est téléversée immédiatement et conservée sur le serveur jusqu’à l’envoi du lot.</value>
+  </data>
+  <data name="No images staged yet. Use the Add images button above to pick files from your device." xml:space="preserve">
+    <value>Aucune image préparée pour le moment. Utilisez le bouton « Ajouter des images » ci-dessus pour choisir des fichiers depuis votre appareil.</value>
+  </data>
+  <data name="Caption (optional)" xml:space="preserve">
+    <value>Légende (facultatif)</value>
+  </data>
+  <data name="You must be logged in to upload images." xml:space="preserve">
+    <value>Vous devez être connecté pour téléverser des images.</value>
+  </data>
+  <data name="Type or pick a group name and add at least one successfully-uploaded image before submitting." xml:space="preserve">
+    <value>Saisissez ou choisissez un nom de groupe et ajoutez au moins une image téléversée avec succès avant d’envoyer.</value>
+  </data>
+  <data name="Promo art submitted for review. An administrator will accept or reject each image." xml:space="preserve">
+    <value>Illustrations promotionnelles soumises à révision. Un administrateur acceptera ou rejettera chaque image.</value>
+  </data>
+  <data name="You have staged images that have not been submitted yet. Closing this dialog will delete them. Continue?" xml:space="preserve">
+    <value>Vous avez préparé des images qui n’ont pas encore été envoyées. Fermer cette boîte de dialogue les supprimera. Continuer ?</value>
+  </data>
+  <data name="Promo Art Management" xml:space="preserve">
+    <value>Gestion des illustrations promotionnelles</value>
+  </data>
+  <data name="Manage promo art for machine '{0}'." xml:space="preserve">
+    <value>Gérer les illustrations promotionnelles de la machine « {0} ».</value>
+  </data>
+  <data name="Manage promo art for this machine." xml:space="preserve">
+    <value>Gérer les illustrations promotionnelles de cette machine.</value>
+  </data>
+  <data name="Upload Promo Art" xml:space="preserve">
+    <value>Téléverser des illustrations promotionnelles</value>
+  </data>
+  <data name="Group is required." xml:space="preserve">
+    <value>Le groupe est requis.</value>
+  </data>
+  <data name="Select an existing group or type a new name." xml:space="preserve">
+    <value>Sélectionnez un groupe existant ou saisissez un nouveau nom.</value>
+  </data>
+  <data name="Caption" xml:space="preserve">
+    <value>Légende</value>
+  </data>
+  <data name="Select File" xml:space="preserve">
+    <value>Sélectionner un fichier</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Téléverser</value>
+  </data>
+  <data name="Uploading..." xml:space="preserve">
+    <value>Téléversement...</value>
+  </data>
+  <data name="No promo art found for this machine." xml:space="preserve">
+    <value>Aucune illustration promotionnelle trouvée pour cette machine.</value>
+  </data>
+  <data name="Promo art uploaded successfully." xml:space="preserve">
+    <value>Illustrations promotionnelles téléversées avec succès.</value>
+  </data>
+  <data name="Failed to upload promo art." xml:space="preserve">
+    <value>Échec du téléversement des illustrations promotionnelles.</value>
+  </data>
+  <data name="Delete Promo Art" xml:space="preserve">
+    <value>Supprimer les illustrations promotionnelles</value>
+  </data>
+  <data name="Are you sure you want to delete this promo art? This action cannot be undone." xml:space="preserve">
+    <value>Voulez-vous vraiment supprimer cette illustration promotionnelle ? Cette action est irréversible.</value>
+  </data>
+  <data name="Promo art deleted successfully." xml:space="preserve">
+    <value>Illustration promotionnelle supprimée avec succès.</value>
+  </data>
     <data name="Seo description" xml:space="preserve">
         <value>Découvrez {0} sur Marechai — le référentiel principal de l’histoire de l’informatique. Parcourez photos, spécifications, histoire et les personnes et entreprises qui l’ont créé.</value>
     </data>
