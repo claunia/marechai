@@ -1,0 +1,53 @@
+@using MudBlazor
+@using Marechai.Services
+
+@inject IStringLocalizer<UsersService> L
+
+<MudDialog>
+    <DialogContent>
+        <MudText Typo="Typo.body2" Class="mb-4">@((MarkupString)string.Format(L["Grant invitation codes to {0}"], $"<strong>{UserEmail}</strong>"))</MudText>
+
+        <MudNumericField @bind-Value="_count"
+                         Label="@L["Number of codes"]"
+                         Variant="Variant.Outlined"
+                         Min="1"
+                         Max="50"
+                         Required="true"
+                         RequiredError="@L["Count is required."]"
+                         HelperText="@L["Between 1 and 50"]"
+                         Class="mb-4"/>
+
+        @if(!string.IsNullOrWhiteSpace(_validationError))
+        {
+            <MudAlert Severity="Severity.Error" Class="mt-2">@_validationError</MudAlert>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit">@L["Grant"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    int _count = 1;
+    string _validationError;
+
+    [CascadingParameter]
+    IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public string UserEmail { get; set; } = string.Empty;
+
+    void Cancel() => MudDialog.Cancel();
+
+    void Submit()
+    {
+        if(_count < 1 || _count > 50)
+        {
+            _validationError = L["Count must be between 1 and 50."];
+            return;
+        }
+
+        MudDialog.Close(DialogResult.Ok(_count));
+    }
+}

@@ -45,6 +45,7 @@ namespace Marechai.Server.Controllers;
 [Authorize(Roles = ApplicationRole.RoleUberAdmin)]
 public class UsersController(UserManager<ApplicationUser> userManager,
                              UserAccountDeletionService   userAccountDeletionService,
+                             InvitationCodeGenerator      invitationCodeGenerator,
                              MarechaiContext              context) : ControllerBase
 {
     [HttpGet]
@@ -698,5 +699,40 @@ public class UsersController(UserManager<ApplicationUser> userManager,
         await userManager.ResetAccessFailedCountAsync(user);
 
         return NoContent();
+    }
+
+    [HttpPost("{id}/invitation-codes")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(typeof(List<InvitationCodeDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    public async Task<ActionResult<List<InvitationCodeDto>>> GrantInvitationCodesAsync(
+        string id,
+        [FromBody] GrantInvitationCodesRequest request)
+    {
+        if(!ModelState.IsValid) return BadRequest(ModelState);
+
+        ApplicationUser user = await userManager.FindByIdAsync(id);
+
+        if(user == null) return NotFound();
+
+        string adminId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(string.IsNullOrEmpty(adminId)) return Unauthorized();
+
+        List<InvitationCode> created = await invitationCodeGenerator.GenerateForOwnerAsync(context, id, request.Count);
+
+        return Ok(created.Select(c => new InvitationCodeDto
+                  {
+                      Code              = c.Code,
+                      CreatedOn         = c.CreatedOn,
+                      CreatedByUserName = user.UserName,
+                      IsUsed            = false
+                  })
+                  .ToList());
     }
 }

@@ -101,4 +101,20 @@ public sealed class InvitationCodesService(Marechai.ApiClient.Client client, ILo
             return (false, "An error occurred while revoking the invitation code.");
         }
     }
+
+    public async Task<List<MyInvitationCodeDto>> GetMyAsync()
+    {
+        try
+        {
+            List<MyInvitationCodeDto> codes = await client.InvitationCodes.Mine.GetAsync();
+
+            return codes ?? [];
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Error loading own invitation codes");
+
+            return [];
+        }
+    }
 }

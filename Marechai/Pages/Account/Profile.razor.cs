@@ -81,6 +81,10 @@ public partial class Profile
     // ── Suggestions state ──
     List<SuggestionDto> _mySuggestions = new();
 
+    // ── Invitation Codes state ──
+    bool _isLoadingInvitationCodes;
+    List<MyInvitationCodeDto> _myInvitationCodes;
+
     // ── Appearance / theme state ──
     string _savedThemeId;
     string _pendingThemeId;
@@ -125,8 +129,9 @@ public partial class Profile
 
         _isLoading = false;
 
-        // Load collection in background
+        // Load collection and invitation codes in background
         _ = LoadCollectionAsync();
+        _ = LoadInvitationCodesAsync();
     }
 
     void PopulatePublicProfileFields()
@@ -374,6 +379,17 @@ public partial class Profile
         StateHasChanged();
     }
 
+    async Task LoadInvitationCodesAsync()
+    {
+        _isLoadingInvitationCodes = true;
+        StateHasChanged();
+
+        _myInvitationCodes = await InvitationCodesSvc.GetMyAsync();
+
+        _isLoadingInvitationCodes = false;
+        StateHasChanged();
+    }
+
     async Task WithdrawSuggestionAsync(SuggestionDto suggestion)
     {
         if(suggestion?.Id is null) return;
@@ -386,6 +402,11 @@ public partial class Profile
             _mySuggestions = await SuggestionsSvc.GetMyAsync();
             StateHasChanged();
         }
+    }
+
+    void CopyCodeToClipboard(string code)
+    {
+        Snackbar.Add(L["Invitation code copied to clipboard!"], Severity.Success);
     }
 
     MudBlazor.Color SuggestionStatusColor(Marechai.Data.SuggestionStatus? s) => s switch

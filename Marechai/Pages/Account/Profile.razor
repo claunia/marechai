@@ -33,9 +33,11 @@
 @inject NavigationManager Navigation
 @inject CollectionService CollectionSvc
 @inject SuggestionsService SuggestionsSvc
+@inject InvitationCodesService InvitationCodesSvc
 @inject ThemeStateService ThemeState
 @inject IDialogService DialogService
 @inject IStringLocalizer<ProfileService> L
+@inject ISnackbar Snackbar
 
 <EntityMetaTags Title="@L["Profile"]" Description="Your Marechai profile." CanonicalPath="/account/profile" NoIndex="true" />
 
@@ -908,6 +910,63 @@
         else
         {
             <MudAlert Severity="Severity.Info">@L["You haven't submitted any suggestions yet."]</MudAlert>
+        }
+    </MudTabPanel>
+
+    @* ── My Invitation Codes Tab ── *@
+    <MudTabPanel Text="@L["My Invitation Codes"]" Icon="@Icons.Material.Filled.ConfirmationNumber">
+        <MudText Typo="Typo.h5" GutterBottom="true">@L["My Invitation Codes"]</MudText>
+        <MudText Typo="Typo.body2" Class="mb-4">@L["Codes you can share to invite others. Used codes are marked."]</MudText>
+
+        @if(_isLoadingInvitationCodes)
+        {
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Small" />
+        }
+        else if(_myInvitationCodes?.Count > 0)
+        {
+            <MudTable Items="_myInvitationCodes" Hover="true" Dense="true" Striped="true">
+                <HeaderContent>
+                    <MudTh>@L["Code"]</MudTh>
+                    <MudTh>@L["Status"]</MudTh>
+                    <MudTh></MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd>
+                        @if(context.IsUsed == true)
+                        {
+                            <MudText Style="text-decoration: line-through; color: var(--mud-palette-text-secondary);">@context.Code</MudText>
+                        }
+                        else
+                        {
+                            <MudText Style="font-family: monospace; font-weight: 500;">@context.Code</MudText>
+                        }
+                    </MudTd>
+                    <MudTd>
+                        @if(context.IsUsed == true)
+                        {
+                            <MudChip T="string" Size="Size.Small" Color="Color.Secondary" Variant="Variant.Filled">@L["Used"]</MudChip>
+                        }
+                        else
+                        {
+                            <MudChip T="string" Size="Size.Small" Color="Color.Success" Variant="Variant.Filled">@L["Available"]</MudChip>
+                        }
+                    </MudTd>
+                    <MudTd>
+                        @if(context.IsUsed != true)
+                        {
+                            <MudTooltip Text="@L["Copy to clipboard"]">
+                                <MudIconButton Icon="@Icons.Material.Filled.ContentCopy"
+                                               Size="Size.Small"
+                                               OnClick="@(() => CopyCodeToClipboard(context.Code))"/>
+                            </MudTooltip>
+                        }
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+        }
+        else
+        {
+            <MudAlert Severity="Severity.Info">@L["You have no invitation codes yet. They will appear here once you confirm your email."]</MudAlert>
         }
     </MudTabPanel>
 </MudTabs>

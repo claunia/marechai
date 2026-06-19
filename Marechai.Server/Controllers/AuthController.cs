@@ -62,6 +62,7 @@ public class AuthController
      AccountDeletionConfirmationEmailComposer accountDeletionConfirmationEmailComposer,
      UserAccountDeletionService     userAccountDeletionService,
      AvatarFileCleaner              avatarFileCleaner,
+     InvitationCodeGenerator        invitationCodeGenerator,
      ILogger<AuthController>        logger) : ControllerBase
 {
     static readonly HashSet<string> _allowedExtensions = [".jpg", ".jpeg", ".png", ".webp", ".tiff", ".tif", ".bmp"];
@@ -512,6 +513,19 @@ public class AuthController
             return Problem(GENERIC_ERROR,
                            statusCode: StatusCodes.Status400BadRequest,
                            title: "INVALID_CONFIRMATION");
+
+        // Mint initial invitation codes: dispatched once on first successful confirmation. A failure here MUST NOT
+        // fail the confirmation itself &mdash; the user is already legitimately confirmed and can log in.
+        try
+        {
+            await invitationCodeGenerator.GenerateForOwnerAsync(context, user.Id, 5);
+        }
+        catch(Exception ex)
+        {
+            logger.LogWarning(ex,
+                              "Invitation code generation failed for {UserId} during email confirmation \u2014 confirmation succeeded anyway",
+                              user.Id);
+        }
 
         // Welcome email: dispatched once on first successful confirmation. A failure here MUST NOT fail the
         // confirmation itself &mdash; the user is already legitimately confirmed and can log in.

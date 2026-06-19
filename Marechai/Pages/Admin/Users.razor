@@ -30,8 +30,10 @@
 @using Marechai.ApiClient.Models
 @using Marechai.Services
 @inject UsersService UsersService
+@inject InvitationCodesService InvitationCodesService
 @inject IStringLocalizer<UsersService> L
 @inject IDialogService DialogService
+@inject ISnackbar Snackbar
 
 <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
     <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
@@ -92,6 +94,8 @@
                         <MudTooltip Text="@L["Change Password"]"><MudIconButton Icon="@Icons.Material.Filled.Lock" Size="Size.Small" OnClick="() => OpenChangePasswordDialog(context.Item)"/></MudTooltip>
 
                         <MudTooltip Text="@L["Manage Roles"]"><MudIconButton Icon="@Icons.Material.Filled.Security" Size="Size.Small" OnClick="() => OpenManageRolesDialog(context.Item)"/></MudTooltip>
+
+                        <MudTooltip Text="@L["Give Invitation Codes"]"><MudIconButton Icon="@Icons.Material.Filled.ConfirmationNumber" Size="Size.Small" OnClick="() => OpenGiveInvitationCodesDialog(context.Item)"/></MudTooltip>
 
                         @if(context.Item.TwoFactorEnabled == true)
                         {

@@ -45,6 +45,32 @@ public class InvitationCodesController(MarechaiContext            context,
                                        InvitationCodeGenerator    generator) : ControllerBase
 {
     /// <summary>
+    ///     Lists the current user's own invitation codes (those they created/were granted). For self-service use;
+    ///     users are not told who redeemed their codes.
+    /// </summary>
+    [HttpGet("mine")]
+    [Authorize]
+    [ProducesResponseType(typeof(List<MyInvitationCodeDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [Produces("application/json")]
+    public Task<List<MyInvitationCodeDto>> GetMineAsync()
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(string.IsNullOrEmpty(userId)) return Task.FromResult(new List<MyInvitationCodeDto>());
+
+        return context.InvitationCodes.AsNoTracking()
+                      .Where(c => c.CreatedById == userId)
+                      .OrderByDescending(c => c.CreatedOn)
+                      .Select(c => new MyInvitationCodeDto
+                       {
+                           Code    = c.Code,
+                           IsUsed  = c.UsedById != null
+                       })
+                      .ToListAsync();
+    }
+
+    /// <summary>
     ///     Lists invitation codes. Admins can filter to only-unused via <paramref name="unusedOnly" />=true.
     /// </summary>
     [HttpGet]

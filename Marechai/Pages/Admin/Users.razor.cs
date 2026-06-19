@@ -259,6 +259,39 @@ public partial class Users
         await _dataGrid.ReloadServerData();
     }
 
+    async Task OpenGiveInvitationCodesDialog(UserDto user)
+    {
+        DialogParameters<InvitationCodesCountDialog> parameters = new()
+        {
+            {
+                x => x.UserEmail, user.Email
+            }
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<InvitationCodesCountDialog>(L["Give Invitation Codes"], parameters,
+                                                                                           new DialogOptions
+                                                                                           {
+                                                                                               MaxWidth = MaxWidth.Small,
+                                                                                               FullWidth = true
+                                                                                           });
+
+        DialogResult result = await dialog.Result;
+
+        if(result.Data is int count)
+        {
+            (bool succeeded, string errorMessage) = await UsersService.GrantInvitationCodesAsync(user.Id, count);
+
+            if(succeeded)
+            {
+                _successMessage = string.Format(L["Successfully granted {0} invitation code(s) to {1}"], count, user.Email);
+            }
+            else
+            {
+                _errorMessage = errorMessage ?? L["Failed to grant invitation codes."];
+            }
+        }
+    }
+
     async Task ConfirmDeleteUser(UserDto user)
     {
         DialogParameters<DeleteConfirmDialog> parameters = new()

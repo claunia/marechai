@@ -23,8 +23,13 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
+using Marechai.Database.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Server.Services;
 
@@ -53,5 +58,46 @@ public sealed class InvitationCodeGenerator
         }
 
         return sb.ToString();
+    }
+
+    /// <summary>
+    ///     Generates and persists N unique invitation codes for a given owner, with the same collision-retry logic
+    ///     used in single-code generation. Each code is saved individually (not batched) to match the existing pattern.
+    ///     Returns the list of created codes.
+    /// </summary>
+    public async Task<List<InvitationCode>> GenerateForOwnerAsync(MarechaiContext context, string ownerId, int count)
+    {
+        var created = new List<InvitationCode>();
+
+        for(int codeIndex = 0; codeIndex < count; codeIndex++)
+        {
+            for(int attempt = 0; attempt < 5; attempt++)
+            {
+                string code = Generate();
+
+                var entity = new InvitationCode
+                {
+                    Code        = code,
+                    CreatedById = ownerId,
+                    CreatedOn   = DateTime.UtcNow,
+                    RowVersion  = Guid.NewGuid()
+                };
+
+                context.InvitationCodes.Add(entity);
+
+                try
+                {
+                    await context.SaveChangesWithUserAsync(ownerId);
+                    created.Add(entity);
+                    break;
+                }
+                catch(DbUpdateException)
+                {
+                    context.Entry(entity).State = EntityState.Detached;
+                }
+            }
+        }
+
+        return created;
     }
 }

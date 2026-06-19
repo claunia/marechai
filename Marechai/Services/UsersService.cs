@@ -422,4 +422,27 @@ public sealed class UsersService(Marechai.ApiClient.Client client, ILogger<Users
             return (false, "An error occurred while disabling 2FA.");
         }
     }
+
+    public async Task<(bool Succeeded, string ErrorMessage)> GrantInvitationCodesAsync(string userId, int count)
+    {
+        try
+        {
+            var request = new GrantInvitationCodesRequest { Count = count };
+            await client.Users[userId].InvitationCodes.PostAsync(request);
+
+            return (true, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            logger.LogWarning(ex, "Grant invitation codes failed");
+
+            return (false, ex.Detail ?? ex.Title ?? "Failed to grant invitation codes.");
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Grant invitation codes failed");
+
+            return (false, "An error occurred while granting invitation codes.");
+        }
+    }
 }
