@@ -26,6 +26,7 @@
 }
 
 @page "/software/rankings/{Id:int}"
+@page "/software/rankings/{Slug}"
 @using Marechai.ApiClient.Models
 @using Marechai.Data
 @inherits OwningComponentBase<SoftwareService>
@@ -34,7 +35,7 @@
 @inject NavigationManager                 Navigation
 <EntityMetaTags Title="@(string.IsNullOrEmpty(_title) ? L["Ranking"] : _title)"
                Description="@string.Format("Software ranking details from the Marechai computing history archive.")"
-               CanonicalPath="@($"/software/rankings/{Id}")"
+               CanonicalPath="@(Slug == "top250" ? "/software/rankings/top250" : $"/software/rankings/{_resolvedRankingId}")"
                Breadcrumbs="@(new (string, string?)[] { (L["Software"], "/software"), (L["Rankings"], "/software/rankings"), (string.IsNullOrEmpty(_title) ? L["Ranking"] : _title, null) })" />
 @* ── Hero / title bar ─────────────────────────────────────────────────────── *@
 <MudPaper Class="pa-6 mb-4" Elevation="0"

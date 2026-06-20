@@ -36,14 +36,19 @@ namespace Marechai.Pages.Software;
 
 public partial class RankingDetail
 {
-    /// <summary><c>RankingDefinitions.Id</c> from the URL.</summary>
+    /// <summary><c>RankingDefinitions.Id</c> from the URL (numeric route only).</summary>
     [Parameter]
     public int Id { get; set; }
+
+    /// <summary>Route slug: "top250" for the overall ranking.</summary>
+    [Parameter]
+    public string Slug { get; set; } = string.Empty;
 
     bool                     _loading  = true;
     bool                     _notFound;
     string                   _title    = string.Empty;
     List<SoftwareRankingDto> _results  = [];
+    int                      _resolvedRankingId;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -51,20 +56,51 @@ public partial class RankingDetail
         _notFound = false;
         _title    = string.Empty;
         _results  = [];
+        _resolvedRankingId = 0;
 
-        // Two parallel hits: pull the matching index entry (for the localised title +
-        // entry count) and the actual top-N rows. The index call is cheap (one DB pass
-        // for ~all rankings) and lets us label the page before falling back to a
-        // generic "Ranking #{Id}" caption.
-        Task<RankingIndexResponseDto>  indexTask = Service.GetRankingsIndexAsync();
-        Task<List<SoftwareRankingDto>> resultsTask = Service.GetRankingAsync(Id);
+        Task<RankingIndexResponseDto> indexTask = Service.GetRankingsIndexAsync();
 
-        await Task.WhenAll(indexTask, resultsTask);
+        // Determine the effective ranking ID: either from the route parameter (numeric
+        // route) or by looking up the "Dimension == 0" entry (top250 route).
+        int effectiveId;
+
+        if(!string.IsNullOrEmpty(Slug) && Slug == "top250")
+        {
+            // top250 route: fetch index to resolve the current overall ranking ID.
+            RankingIndexResponseDto indexResp = await indexTask;
+            RankingIndexEntryDto overallEntry =
+                indexResp?.Rankings?.FirstOrDefault(r => r.Dimension == 0);
+
+            if(overallEntry is null)
+            {
+                _notFound = true;
+                _title    = L["Ranking not found"];
+                _loading  = false;
+                return;
+            }
+
+            effectiveId = (int)overallEntry.Id;
+            _resolvedRankingId = effectiveId;
+        }
+        else
+        {
+            // Numeric route: use the Id parameter.
+            effectiveId = Id;
+        }
+
+        // Fetch the ranking results and index in parallel.
+        Task<List<SoftwareRankingDto>> resultsTask = Service.GetRankingAsync(effectiveId);
+
+        if(string.IsNullOrEmpty(Slug))
+            // Already started for the top250 route; await again if not yet done.
+            await Task.WhenAll(indexTask, resultsTask);
+        else
+            await resultsTask;
 
         _results = resultsTask.Result ?? [];
 
         RankingIndexEntryDto entry =
-            indexTask.Result?.Rankings?.FirstOrDefault(r => r.Id == (uint)Id);
+            indexTask.Result?.Rankings?.FirstOrDefault(r => r.Id == effectiveId);
 
         if(entry is not null)
         {
@@ -74,7 +110,18 @@ public partial class RankingDetail
             // carries the translated display string.
             _title = entry.Dimension == 0
                          ? L["Top 250 software of all time"]
-                         : entry.DimensionName ?? string.Format(L["Ranking #{0}"], Id);
+                         : entry.DimensionName ?? string.Format(L["Ranking #{0}"], effectiveId);
+
+            // If invoked via the numeric route and this is the overall ranking,
+            // redirect to the canonical static URL.
+            if(string.IsNullOrEmpty(Slug) && entry.Dimension == 0)
+            {
+                Navigation.NavigateTo("/software/rankings/top250", replace: true);
+                _loading = false;
+                return;
+            }
+
+            _resolvedRankingId = effectiveId;
         }
         else if(_results.Count == 0)
         {
@@ -83,7 +130,10 @@ public partial class RankingDetail
             _title    = L["Ranking not found"];
         }
         else
-            _title = string.Format(L["Ranking #{0}"], Id);
+        {
+            _title = string.Format(L["Ranking #{0}"], effectiveId);
+            _resolvedRankingId = effectiveId;
+        }
 
         _loading = false;
     }
