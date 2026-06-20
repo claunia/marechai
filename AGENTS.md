@@ -10,7 +10,7 @@ Marechai (Master repository of computing history artifacts information) is a .NE
 
 ```
 Marechai.slnx
-├── Marechai/              # Blazor Server web application (legacy)
+├── Marechai/              # Blazor Server web application (primary)
 ├── Marechai.App/          # Uno Platform cross-platform client app
 ├── Marechai.Server/       # ASP.NET Core Web API backend
 ├── Marechai.Database/     # Entity Framework Core data access layer
@@ -19,7 +19,7 @@ Marechai.slnx
 
 ### Project Details
 
-- **Marechai** (`Marechai.csproj`): Blazor Server web application using ASP.NET Core with Identity, Bootstrap via Blazorise, and Entity Framework Core with MySQL/MariaDB.
+- **Marechai** (`Marechai.csproj`): Primary Blazor Server web application using ASP.NET Core with Identity, Bootstrap via Blazorise, and Entity Framework Core with MySQL/MariaDB.
 
 - **Marechai.App** (`Marechai.App.csproj`): Uno Platform cross-platform application targeting Android, iOS, WebAssembly (WASM), and Desktop. Uses MVVM pattern with Uno.Extensions for navigation, hosting, HTTP (Kiota), localization, and theming. Employs SkiaSharp for rendering.
 
