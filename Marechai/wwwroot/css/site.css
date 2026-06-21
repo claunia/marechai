@@ -298,3 +298,13 @@
 .sticky-tabs .mud-tabs-tabbar .mud-tab.mud-tab-active {
   color: var(--mud-palette-primary) !important;
 }
+
+/* Full-width search results dropdown in top bar.
+   MudAutocomplete normally anchors the popover to match the input width.
+   This class overrides that to span from the search box to the right edge of the screen. */
+.search-popover-fullwidth {
+  left: auto !important;
+  right: 0 !important;
+  width: auto !important;
+  max-width: none !important;
+}
