@@ -10,7 +10,9 @@
 @inject SearchService SearchService
 @inject NavigationManager Nav
 @inject StringLocalizer<NavMenu> L
+@inject IJSRuntime JS
 
+<div id="search-bar-anchor">
 <MudAutocomplete T="SearchResultDto"
                  @bind-Value="_selected"
                  @bind-Value:after="OnSelected"
@@ -32,6 +34,7 @@
                  AdornmentColor="Color.Default"
                  OnAdornmentClick="OnAdornmentClick"
                  OnKeyDown="OnKeyDown"
+                 RelativeWidth="DropdownWidth.Ignore"
                  PopoverClass="search-popover-fullwidth"
                  Style="background-color: rgba(255,255,255,0.15); border-radius: 4px;"
                  @ref="_autocomplete">
@@ -81,11 +84,17 @@
         </MudStack>
     </NoItemsTemplate>
 </MudAutocomplete>
+</div>
 
 @code {
     SearchResultDto _selected;
     string _lastQuery = string.Empty;
     MudAutocomplete<SearchResultDto> _autocomplete;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender) await JS.InvokeVoidAsync("SearchDropdownPositioning.attach", "search-bar-anchor");
+    }
 
     Task<IEnumerable<SearchResultDto>> SearchAsync(string value, CancellationToken ct)
         => SearchAsyncCore(value, ct);

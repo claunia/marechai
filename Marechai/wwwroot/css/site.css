@@ -300,10 +300,13 @@
 }
 
 /* Full-width search results dropdown in top bar.
-   MudAutocomplete normally anchors the popover to match the input width.
-   This class overrides that to span from the search box to the right edge of the screen. */
+   These are just the initial values for first paint — MudBlazor's own JS
+   actively rewrites this popover's inline `left`/`width` on open, resize, and
+   via its internal flip/collision logic, fighting any CSS-only override.
+   js/search-dropdown-positioning.js watches this element and re-asserts
+   `left` (anchored to the search box) and `right: 0; width: auto` (stretched
+   to the viewport's right edge) every time MudBlazor changes it. */
 .search-popover-fullwidth {
-  left: auto !important;
   right: 0 !important;
   width: auto !important;
   max-width: none !important;
