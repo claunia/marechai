@@ -116,49 +116,22 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
         if(softwareIds.Count > 0)
         {
-            // Path 1: cover.Release.SoftwareId — release attached to software directly.
-            // Index used: SoftwareReleases.SoftwareId + SoftwareCovers.SoftwareReleaseId.
-            var direct = await context.SoftwareCovers
-                                      .Where(sc => sc.Type == SoftwareCoverType.Front &&
-                                                   sc.Release.SoftwareId.HasValue    &&
-                                                   softwareIds.Contains(sc.Release.SoftwareId.Value))
-                                      .Select(sc => new
-                                       {
-                                           SoftwareId = sc.Release.SoftwareId.Value,
-                                           CoverId    = sc.Id
-                                       })
-                                      .ToListAsync(ct);
+            // SoftwareCovers.SoftwareId is the direct, always-populated link to the owning
+            // Software, regardless of whether (or which) release the cover has been attached
+            // to — no need to traverse Release/SoftwareVersion to find it.
+            var rows = await context.SoftwareCovers
+                                    .Where(sc => sc.Type == SoftwareCoverType.Front &&
+                                                 sc.SoftwareId.HasValue &&
+                                                 softwareIds.Contains(sc.SoftwareId.Value))
+                                    .Select(sc => new
+                                     {
+                                         SoftwareId = sc.SoftwareId.Value,
+                                         CoverId = sc.Id
+                                     })
+                                    .ToListAsync(ct);
 
-            foreach(IGrouping<ulong, Guid> g in direct.GroupBy(x => x.SoftwareId, x => x.CoverId))
+            foreach(IGrouping<ulong, Guid> g in rows.GroupBy(x => x.SoftwareId, x => x.CoverId))
                 softwareCovers[g.Key] = g.Min();
-
-            // Path 2: cover.Release.SoftwareVersion.SoftwareId — release attached to a
-            // version of the software. SoftwareVersion.SoftwareId is non-nullable ulong.
-            var indirect = await context.SoftwareCovers
-                                        .Where(sc => sc.Type == SoftwareCoverType.Front &&
-                                                     sc.Release.SoftwareVersionId.HasValue &&
-                                                     softwareIds.Contains(sc.Release.SoftwareVersion.SoftwareId))
-                                        .Select(sc => new
-                                         {
-                                             SoftwareId = sc.Release.SoftwareVersion.SoftwareId,
-                                             CoverId    = sc.Id
-                                         })
-                                        .ToListAsync(ct);
-
-            foreach(IGrouping<ulong, Guid> g in indirect.GroupBy(x => x.SoftwareId, x => x.CoverId))
-            {
-                Guid candidate = g.Min();
-
-                if(softwareCovers.TryGetValue(g.Key, out Guid existing))
-                {
-                    // Both paths matched: pick the lower Guid to mirror the original
-                    // FirstOrDefault(OrderBy(Id)) semantics across the union of covers.
-                    if(candidate.CompareTo(existing) < 0)
-                        softwareCovers[g.Key] = candidate;
-                }
-                else
-                    softwareCovers[g.Key] = candidate;
-            }
         }
 
         var compilationCovers = new Dictionary<ulong, Guid>();
@@ -169,10 +142,11 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
             // covers directly via SoftwareCovers.SoftwareReleaseId (single indexed column).
             var rows = await context.SoftwareCovers
                                     .Where(sc => sc.Type == SoftwareCoverType.Front &&
-                                                 compilationReleaseIds.Contains(sc.SoftwareReleaseId))
+                                                 sc.SoftwareReleaseId.HasValue &&
+                                                 compilationReleaseIds.Contains(sc.SoftwareReleaseId.Value))
                                     .Select(sc => new
                                      {
-                                         ReleaseId = sc.SoftwareReleaseId,
+                                         ReleaseId = sc.SoftwareReleaseId.Value,
                                          CoverId   = sc.Id
                                      })
                                     .ToListAsync(ct);

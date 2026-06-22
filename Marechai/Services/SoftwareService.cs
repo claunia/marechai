@@ -1930,6 +1930,25 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
+    public async Task<(bool succeeded, string error)> AssignCoverGroupToReleaseAsync(string groupId, int releaseId)
+    {
+        try
+        {
+            await client.Software.Covers.Groups[groupId].AssignRelease.PostAsync(
+                new AssignCoverGroupToReleaseRequestDto { ReleaseId = releaseId });
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
     public async Task<SoftwareMergePreviewDto> GetMergePreviewAsync(int targetId, int sourceId)
     {
         try

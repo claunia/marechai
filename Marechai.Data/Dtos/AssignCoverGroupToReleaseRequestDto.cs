@@ -23,30 +23,20 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.ComponentModel.DataAnnotations;
-using Marechai.Data;
+using System.Text.Json.Serialization;
 
-namespace Marechai.Database.Models;
+namespace Marechai.Data.Dtos;
 
-public class SoftwareCover : BaseModel<Guid>
+/// <summary>
+///     Request body for
+///     <c>POST /software/covers/groups/{groupId}/assign-release</c>. Assigns every
+///     <c>SoftwareCover</c> sharing the given <c>GroupId</c> to a single
+///     <see cref="ReleaseId"/> in one action.
+/// </summary>
+public class AssignCoverGroupToReleaseRequestDto
 {
-    // Nullable: a cover attached to a compilation release (which bundles several Software
-    // entries with no single owner) is anchored by SoftwareReleaseId alone instead.
-    public         ulong?   SoftwareId { get;              set; }
-    public virtual Software Software { get; set; }
-
-    public ulong? SoftwareReleaseId { get;              set; }
-    public virtual SoftwareRelease Release { get; set; }
-
-    [StringLength(64)]
-    public string GroupId { get; set; }
-
+    [JsonPropertyName("release_id")]
     [Required]
-    public SoftwareCoverType Type { get; set; }
-
-    public string Caption { get; set; }
-
-    [Required]
-    public string OriginalExtension { get; set; }
+    public ulong ReleaseId { get; set; }
 }

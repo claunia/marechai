@@ -30,8 +30,18 @@ namespace Marechai.ApiClient.Software.Covers.Upload
 #else
         public byte[] File { get; set; }
 #endif
+        /// <summary>The groupId property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? GroupId { get; set; }
+#nullable restore
+#else
+        public string GroupId { get; set; }
+#endif
         /// <summary>The releaseId property</summary>
         public int? ReleaseId { get; set; }
+        /// <summary>The softwareId property</summary>
+        public int? SoftwareId { get; set; }
         /// <summary>The type property</summary>
         public int? Type { get; set; }
         /// <summary>
@@ -61,7 +71,9 @@ namespace Marechai.ApiClient.Software.Covers.Upload
             {
                 { "caption", n => { Caption = n.GetStringValue(); } },
                 { "file", n => { File = n.GetByteArrayValue(); } },
+                { "groupId", n => { GroupId = n.GetStringValue(); } },
                 { "releaseId", n => { ReleaseId = n.GetIntValue(); } },
+                { "softwareId", n => { SoftwareId = n.GetIntValue(); } },
                 { "type", n => { Type = n.GetIntValue(); } },
             };
         }
@@ -74,7 +86,9 @@ namespace Marechai.ApiClient.Software.Covers.Upload
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("caption", Caption);
             writer.WriteByteArrayValue("file", File);
+            writer.WriteStringValue("groupId", GroupId);
             writer.WriteIntValue("releaseId", ReleaseId);
+            writer.WriteIntValue("softwareId", SoftwareId);
             writer.WriteIntValue("type", Type);
             writer.WriteAdditionalData(AdditionalData);
         }

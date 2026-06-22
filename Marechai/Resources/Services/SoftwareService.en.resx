@@ -1257,4 +1257,16 @@
   <data name="By category" xml:space="preserve">
     <value>By category</value>
   </data>
+  <data name="Cover group" xml:space="preserve">
+    <value>Cover group</value>
+  </data>
+  <data name="Assign group to release" xml:space="preserve">
+    <value>Assign group to release</value>
+  </data>
+  <data name="Assign" xml:space="preserve">
+    <value>Assign</value>
+  </data>
+  <data name="Assigned cover group to {0}." xml:space="preserve">
+    <value>Assigned cover group to {0}.</value>
+  </data>
 </root>

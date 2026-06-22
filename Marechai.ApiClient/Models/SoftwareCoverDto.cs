@@ -30,6 +30,14 @@ namespace Marechai.ApiClient.Models
 #else
         public string Caption { get; set; }
 #endif
+        /// <summary>The group_id property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? GroupId { get; set; }
+#nullable restore
+#else
+        public string GroupId { get; set; }
+#endif
         /// <summary>The id property</summary>
         public Guid? Id { get; set; }
         /// <summary>The original_extension property</summary>
@@ -64,6 +72,8 @@ namespace Marechai.ApiClient.Models
 #else
         public string ReleaseTitle { get; set; }
 #endif
+        /// <summary>The software_id property</summary>
+        public int? SoftwareId { get; set; }
         /// <summary>The software_release_id property</summary>
         public int? SoftwareReleaseId { get; set; }
         /// <summary>The type property</summary>
@@ -103,11 +113,13 @@ namespace Marechai.ApiClient.Models
             {
                 { "canonical_caption", n => { CanonicalCaption = n.GetStringValue(); } },
                 { "caption", n => { Caption = n.GetStringValue(); } },
+                { "group_id", n => { GroupId = n.GetStringValue(); } },
                 { "id", n => { Id = n.GetGuidValue(); } },
                 { "original_extension", n => { OriginalExtension = n.GetStringValue(); } },
                 { "platform_name", n => { PlatformName = n.GetStringValue(); } },
                 { "region_names", n => { RegionNames = n.GetStringValue(); } },
                 { "release_title", n => { ReleaseTitle = n.GetStringValue(); } },
+                { "software_id", n => { SoftwareId = n.GetIntValue(); } },
                 { "software_release_id", n => { SoftwareReleaseId = n.GetIntValue(); } },
                 { "type", n => { Type = n.GetIntValue(); } },
                 { "type_name", n => { TypeName = n.GetStringValue(); } },
@@ -122,11 +134,13 @@ namespace Marechai.ApiClient.Models
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("canonical_caption", CanonicalCaption);
             writer.WriteStringValue("caption", Caption);
+            writer.WriteStringValue("group_id", GroupId);
             writer.WriteGuidValue("id", Id);
             writer.WriteStringValue("original_extension", OriginalExtension);
             writer.WriteStringValue("platform_name", PlatformName);
             writer.WriteStringValue("region_names", RegionNames);
             writer.WriteStringValue("release_title", ReleaseTitle);
+            writer.WriteIntValue("software_id", SoftwareId);
             writer.WriteIntValue("software_release_id", SoftwareReleaseId);
             writer.WriteIntValue("type", Type);
             writer.WriteStringValue("type_name", TypeName);

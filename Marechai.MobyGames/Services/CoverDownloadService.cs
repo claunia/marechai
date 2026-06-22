@@ -16,8 +16,6 @@ public class CoverDownloadService
 {
     readonly IDbContextFactory<MarechaiContext> _contextFactory;
     readonly SourceDatabaseService             _sourceDb;
-    readonly PlatformMatcher                   _platformMatcher;
-    readonly CountryMatcher                    _countryMatcher;
     readonly CoverStateService                 _coverStateService;
     readonly MobyGamesHttpClient               _httpClient;
     readonly string                            _assetRootPath;
@@ -25,16 +23,12 @@ public class CoverDownloadService
     public CoverDownloadService(
         IDbContextFactory<MarechaiContext> contextFactory,
         SourceDatabaseService             sourceDb,
-        PlatformMatcher                   platformMatcher,
-        CountryMatcher                    countryMatcher,
         CoverStateService                 coverStateService,
         MobyGamesHttpClient               httpClient,
         string                            assetRootPath)
     {
         _contextFactory    = contextFactory;
         _sourceDb          = sourceDb;
-        _platformMatcher   = platformMatcher;
-        _countryMatcher    = countryMatcher;
         _coverStateService = coverStateService;
         _httpClient        = httpClient;
         _assetRootPath     = assetRootPath;
@@ -55,11 +49,6 @@ public class CoverDownloadService
                                   ? $"\n  Starting cover download \e[33;1m(--download-only: conversion skipped, writing to {photosRoot}/)\e[0m...\n"
                                   : "\n  Starting cover download...\n");
 
-        // Load reference data
-        Console.WriteLine("  Loading reference data...");
-        await _platformMatcher.LoadAsync();
-        await _countryMatcher.LoadAsync();
-
         // Get all imported games with SoftwareId
         await using var context = await _contextFactory.CreateDbContextAsync();
 
@@ -78,7 +67,6 @@ public class CoverDownloadService
 
         int totalCovers     = 0;
         int matchedCovers   = 0;
-        int unmatchedCovers = 0;
         int downloadedCount = 0;
         int skippedCount    = 0;
         int failedCount     = 0;
@@ -181,33 +169,11 @@ public class CoverDownloadService
                 if(!string.IsNullOrWhiteSpace(group.Packaging))
                     Console.WriteLine($"    Packaging: {group.Packaging}");
 
-                // Match platform
-                var platform = await _platformMatcher.MatchOrCreateAsync(group.Platform);
-
-                // Match countries to UnM49
-                var matchedCountries = new List<UnM49>();
-
-                foreach(string country in group.Countries)
-                {
-                    var unm49 = _countryMatcher.Match(country);
-
-                    if(unm49 is not null)
-                        matchedCountries.Add(unm49);
-                }
-
-                // Find best matching SoftwareRelease
-                var release = await FindBestReleaseAsync(
-                    game.SoftwareId!.Value, platform?.Id, matchedCountries);
-
-                if(release is not null)
-                {
-                    Console.WriteLine($"    \e[32mMatched release #{release.Id}\e[0m");
-                }
-                else
-                {
-                    Console.WriteLine($"    \e[33m[NO RELEASE]\e[0m");
-                }
-
+                // Covers are no longer attached to a specific SoftwareRelease at import time —
+                // a region-specific cover is evidence a matching release MAY exist, not proof of
+                // which one. Every cover is downloaded and clustered by Software + GroupId
+                // instead; correct release attribution (if any) is left to manual curation via
+                // the admin cover UI's "assign group to release" action.
                 foreach(var cover in group.Covers)
                 {
                     string coverTypeStr = cover.Type;
@@ -215,16 +181,8 @@ public class CoverDownloadService
 
                     if(dryRun)
                     {
-                        string releaseStr = release is not null
-                                                ? $"→ Release #{release.Id}"
-                                                : "\e[33m[NO RELEASE]\e[0m";
-
-                        Console.WriteLine($"      {coverTypeStr,-25} cover-{cover.CoverId} {releaseStr}");
-
-                        if(release is not null)
-                            matchedCovers++;
-                        else
-                            unmatchedCovers++;
+                        Console.WriteLine($"      {coverTypeStr,-25} cover-{cover.CoverId} group {group.GroupId}");
+                        matchedCovers++;
 
                         continue;
                     }
@@ -247,44 +205,19 @@ public class CoverDownloadService
                         continue;
                     }
 
-                    if(release is null)
-                    {
-                        // No matching release — track as NoRelease
-                        if(existingState is null)
-                        {
-                            await _coverStateService.CreateStateAsync(new MobyGamesCoverDownloadState
-                            {
-                                MobyGameId   = game.MobyGameId,
-                                SoftwareId   = game.SoftwareId!.Value,
-                                CoverPageUrl = cover.DetailPageUrl,
-                                CoverType    = coverTypeStr,
-                                Platform     = Truncate(group.Platform, 256),
-                                Countries    = string.Join(", ", group.Countries),
-                                GroupId      = group.GroupId,
-                                Status       = MobyGamesCoverDownloadStatus.NoRelease,
-                                ProcessedOn  = DateTime.UtcNow
-                            });
-                        }
-
-                        unmatchedCovers++;
-
-                        continue;
-                    }
-
                     // Create or get state record
                     if(existingState is null)
                     {
                         existingState = new MobyGamesCoverDownloadState
                         {
-                            MobyGameId        = game.MobyGameId,
-                            SoftwareId        = game.SoftwareId!.Value,
-                            CoverPageUrl      = cover.DetailPageUrl,
-                            CoverType         = coverTypeStr,
-                            Platform          = Truncate(group.Platform, 256),
-                            Countries         = string.Join(", ", group.Countries),
-                            GroupId           = group.GroupId,
-                            Status            = MobyGamesCoverDownloadStatus.Pending,
-                            SoftwareReleaseId = release.Id
+                            MobyGameId   = game.MobyGameId,
+                            SoftwareId   = game.SoftwareId!.Value,
+                            CoverPageUrl = cover.DetailPageUrl,
+                            CoverType    = coverTypeStr,
+                            Platform     = Truncate(group.Platform, 256),
+                            Countries    = string.Join(", ", group.Countries),
+                            GroupId      = group.GroupId,
+                            Status       = MobyGamesCoverDownloadStatus.Pending
                         };
 
                         await _coverStateService.CreateStateAsync(existingState);
@@ -362,7 +295,8 @@ public class CoverDownloadService
                     var softwareCover = new SoftwareCover
                     {
                         Id                = coverId,
-                        SoftwareReleaseId = release.Id,
+                        SoftwareId        = game.SoftwareId!.Value,
+                        GroupId           = group.GroupId,
                         Type              = coverType,
                         Caption           = coverTypeStr,
                         OriginalExtension = extension
@@ -414,8 +348,7 @@ public class CoverDownloadService
             Console.WriteLine("  \e[33;1m[DRY RUN]\e[0m No changes made");
             Console.WriteLine($"    Games scanned:       {gamesProcessed}");
             Console.WriteLine($"    Total covers found:  {totalCovers}");
-            Console.WriteLine($"    Matched to release:  {matchedCovers}");
-            Console.WriteLine($"    No matching release: {unmatchedCovers}");
+            Console.WriteLine($"    Would download:      {matchedCovers}");
         }
         else
         {
@@ -424,56 +357,98 @@ public class CoverDownloadService
             Console.WriteLine($"    Downloaded:          {downloadedCount}");
             Console.WriteLine($"    Skipped (existing):  {skippedCount}");
             Console.WriteLine($"    Failed:              {failedCount}");
-            Console.WriteLine($"    No matching release: {unmatchedCovers}");
         }
 
         Console.WriteLine("  ────────────────────────────────────\n");
     }
 
-    async Task<SoftwareRelease> FindBestReleaseAsync(ulong softwareId, ulong? platformId,
-                                                     List<UnM49> matchedCountries)
+    /// <summary>
+    ///     One-time/idempotent remediation for covers downloaded before the importer stopped
+    ///     forcing every cover onto a (possibly wrong) <see cref="SoftwareRelease" />. Every
+    ///     row in <see cref="MobyGamesCoverDownloadState" /> that reached
+    ///     <see cref="MobyGamesCoverDownloadStatus.Downloaded" /> and has a linked
+    ///     <see cref="SoftwareCover" /> already carries everything needed to fix it — no
+    ///     network access required. The cover's <c>SoftwareReleaseId</c> is cleared and its
+    ///     <c>SoftwareId</c>/<c>GroupId</c> are (re)populated from the state row, so it stops
+    ///     sitting on a release it was never actually evidence for and becomes correctly
+    ///     clustered with the rest of its original MobyGames cover group instead. Re-running
+    ///     this after a real pass is a no-op for already-fixed rows.
+    /// </summary>
+    public async Task RepairMisassignedCoversAsync(bool dryRun, int batchSize = 1000)
     {
+        Console.WriteLine(dryRun
+                              ? "\n  \e[33;1m[DRY RUN]\e[0m Scanning for misassigned covers...\n"
+                              : "\n  Repairing misassigned covers...\n");
+
         await using var context = await _contextFactory.CreateDbContextAsync();
 
-        // Get all releases for this software
-        var releases = await context.SoftwareReleases
-                                    .Where(r => r.SoftwareId == softwareId)
-                                    .Include(r => r.Regions)
-                                    .ToListAsync();
+        int scanned  = 0;
+        int detached = 0;
+        int skipped  = 0;
+        long lastId  = 0;
 
-        if(releases.Count == 0) return null;
-
-        // Filter by platform if we have one
-        var candidates = platformId is not null
-                             ? releases.Where(r => r.PlatformId == platformId).ToList()
-                             : releases;
-
-        // If platform filter emptied our candidates, fall back to all releases
-        if(candidates.Count == 0)
-            candidates = releases;
-
-        if(candidates.Count == 1) return candidates[0];
-
-        // Score by country overlap
-        if(matchedCountries.Count > 0)
+        while(true)
         {
-            var countryIds = matchedCountries.Select(c => c.Id).ToHashSet();
+            List<MobyGamesCoverDownloadState> batch = await context.MobyGamesCoverDownloadStates
+                                                                    .Where(s => s.Id > lastId &&
+                                                                                s.Status ==
+                                                                                MobyGamesCoverDownloadStatus
+                                                                                   .Downloaded &&
+                                                                                s.SoftwareCoverId != null)
+                                                                    .OrderBy(s => s.Id)
+                                                                    .Take(batchSize)
+                                                                    .ToListAsync();
 
-            var scored = candidates
-                        .Select(r => new
-                         {
-                             Release = r,
-                             Score = r.Regions?.Count(reg => countryIds.Contains(reg.UnM49Id)) ?? 0
-                         })
-                        .OrderByDescending(x => x.Score)
-                        .ToList();
+            if(batch.Count == 0) break;
 
-            // Return the best match if it has any overlap
-            if(scored[0].Score > 0) return scored[0].Release;
+            lastId = batch[^1].Id;
+
+            foreach(MobyGamesCoverDownloadState state in batch)
+            {
+                scanned++;
+
+                SoftwareCover cover = await context.SoftwareCovers.FirstOrDefaultAsync(c => c.Id == state.SoftwareCoverId);
+
+                if(cover is null)
+                {
+                    skipped++;
+
+                    continue;
+                }
+
+                bool alreadyCorrect = cover.SoftwareReleaseId is null &&
+                                      cover.SoftwareId == state.SoftwareId &&
+                                      cover.GroupId    == state.GroupId;
+
+                if(alreadyCorrect)
+                {
+                    skipped++;
+
+                    continue;
+                }
+
+                Console.WriteLine($"    [DETACH] cover {cover.Id}: release {cover.SoftwareReleaseId} -> " +
+                                   $"software {state.SoftwareId}, group {state.GroupId ?? "(none)"}");
+
+                if(!dryRun)
+                {
+                    cover.SoftwareReleaseId = null;
+                    cover.SoftwareId        = state.SoftwareId;
+                    cover.GroupId           = state.GroupId;
+                }
+
+                detached++;
+            }
+
+            if(!dryRun) await context.SaveChangesAsync();
         }
 
-        // Fallback: return the first candidate
-        return candidates.FirstOrDefault();
+        Console.WriteLine("\n  ────────────────────────────────────");
+        Console.WriteLine(dryRun ? "  \e[33;1m[DRY RUN]\e[0m No changes made" : "  Repair complete");
+        Console.WriteLine($"    Scanned:        {scanned}");
+        Console.WriteLine($"    Detached/fixed: {detached}");
+        Console.WriteLine($"    Already correct/skipped: {skipped}");
+        Console.WriteLine("  ────────────────────────────────────\n");
     }
 
     static SoftwareCoverType MapCoverType(string mobyType)

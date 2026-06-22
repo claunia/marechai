@@ -2580,6 +2580,8 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
         modelBuilder.Entity<SoftwareCover>(entity =>
         {
             entity.HasIndex(x => x.SoftwareReleaseId);
+            entity.HasIndex(x => x.SoftwareId);
+            entity.HasIndex(x => x.GroupId);
 
             // Type-leading composite for the FrontCoverId backfill query
             // (`PopulateFrontCoverIdsAsync` in SoftwareController), which filters
@@ -2589,10 +2591,17 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
             entity.HasIndex(x => new { x.Type, x.SoftwareReleaseId })
                   .HasDatabaseName("idx_software_covers_type_release");
 
+            entity.HasOne(x => x.Software)
+                  .WithMany(x => x.Covers)
+                  .HasForeignKey(x => x.SoftwareId)
+                  .IsRequired(false)
+                  .OnDelete(DeleteBehavior.Cascade);
+
             entity.HasOne(x => x.Release)
                   .WithMany(x => x.Covers)
                   .HasForeignKey(x => x.SoftwareReleaseId)
-                  .OnDelete(DeleteBehavior.Cascade);
+                  .IsRequired(false)
+                  .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<UnM49>(entity =>

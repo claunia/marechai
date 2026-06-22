@@ -1308,4 +1308,16 @@
   <data name="By category" xml:space="preserve">
     <value>Per categoria</value>
   </data>
+  <data name="Cover group" xml:space="preserve">
+    <value>Gruppo di copertine</value>
+  </data>
+  <data name="Assign group to release" xml:space="preserve">
+    <value>Assegna gruppo a edizione</value>
+  </data>
+  <data name="Assign" xml:space="preserve">
+    <value>Assegna</value>
+  </data>
+  <data name="Assigned cover group to {0}." xml:space="preserve">
+    <value>Gruppo di copertine assegnato a {0}.</value>
+  </data>
 </root>

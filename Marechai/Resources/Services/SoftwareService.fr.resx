@@ -1389,4 +1389,16 @@
   <data name="By category" xml:space="preserve">
     <value>Par catégorie</value>
   </data>
+  <data name="Cover group" xml:space="preserve">
+    <value>Groupe de jaquettes</value>
+  </data>
+  <data name="Assign group to release" xml:space="preserve">
+    <value>Affecter le groupe à l'édition</value>
+  </data>
+  <data name="Assign" xml:space="preserve">
+    <value>Affecter</value>
+  </data>
+  <data name="Assigned cover group to {0}." xml:space="preserve">
+    <value>Groupe de jaquettes affecté à {0}.</value>
+  </data>
 </root>

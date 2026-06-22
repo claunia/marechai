@@ -270,10 +270,7 @@ public sealed class SearchIndexInterceptor : SaveChangesInterceptor
         ulong swId = sw.Id;
         bool hasImg = ctx.SoftwareScreenshots.Any(s => s.SoftwareId == swId) ||
                       ctx.SoftwarePromoArt.Any(p => p.SoftwareId == swId) ||
-                      ctx.SoftwareCovers.Any(c => ctx.SoftwareReleases
-                                                     .Where(r => r.SoftwareId == swId)
-                                                     .Select(r => r.Id)
-                                                     .Contains(c.SoftwareReleaseId));
+                      ctx.SoftwareCovers.Any(c => c.SoftwareId == swId);
         SearchIndexUpdater.Upsert(ctx, SearchEntityType.Software, (long)sw.Id, sw.Name, null, null, null, null, hasImg,
                                   (byte)sw.Kind);
         return true;

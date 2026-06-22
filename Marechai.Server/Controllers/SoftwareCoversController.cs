@@ -77,7 +77,7 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
         bool   isEnglish = string.Equals(langCode, "eng", StringComparison.Ordinal);
 
         IQueryable<SoftwareCover> source = context.SoftwareCovers
-                                                  .Where(c => c.Release.SoftwareId == softwareId)
+                                                  .Where(c => c.SoftwareId == softwareId)
                                                   .OrderBy(c => c.Type)
                                                   .ThenBy(c => c.Release.PlatformId);
 
@@ -87,15 +87,19 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
             return source.Select(c => new SoftwareCoverDto
                           {
                               Id                = c.Id,
+                              SoftwareId        = c.SoftwareId,
                               SoftwareReleaseId = c.SoftwareReleaseId,
-                              ReleaseTitle      = c.Release.Title,
+                              GroupId           = c.GroupId,
+                              ReleaseTitle      = c.Release != null ? c.Release.Title : null,
                               Type              = (int)c.Type,
                               TypeName          = c.Type.ToString(),
                               Caption           = c.Caption,
                               CanonicalCaption  = c.Caption,
                               OriginalExtension = c.OriginalExtension,
-                              PlatformName      = c.Release.Platform != null ? c.Release.Platform.Name : null,
-                              RegionNames = c.Release.Regions != null
+                              PlatformName = c.Release != null && c.Release.Platform != null
+                                                 ? c.Release.Platform.Name
+                                                 : null,
+                              RegionNames = c.Release != null && c.Release.Regions != null
                                                 ? string.Join(", ", c.Release.Regions.Select(r => r.UnM49.Name))
                                                 : null
                           })
@@ -104,8 +108,10 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
         return source.Select(c => new SoftwareCoverDto
                       {
                           Id                = c.Id,
+                          SoftwareId        = c.SoftwareId,
                           SoftwareReleaseId = c.SoftwareReleaseId,
-                          ReleaseTitle      = c.Release.Title,
+                          GroupId           = c.GroupId,
+                          ReleaseTitle      = c.Release != null ? c.Release.Title : null,
                           Type              = (int)c.Type,
                           TypeName          = c.Type.ToString(),
                           Caption = c.Caption == null
@@ -117,8 +123,10 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
                                                   .FirstOrDefault() ?? c.Caption),
                           CanonicalCaption  = c.Caption,
                           OriginalExtension = c.OriginalExtension,
-                          PlatformName      = c.Release.Platform != null ? c.Release.Platform.Name : null,
-                          RegionNames = c.Release.Regions != null
+                          PlatformName = c.Release != null && c.Release.Platform != null
+                                             ? c.Release.Platform.Name
+                                             : null,
+                          RegionNames = c.Release != null && c.Release.Regions != null
                                             ? string.Join(", ", c.Release.Regions.Select(r => r.UnM49.Name))
                                             : null
                       })
@@ -139,8 +147,10 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
                                             .Select(c => new SoftwareCoverDto
                                              {
                                                  Id                = c.Id,
+                                                 SoftwareId        = c.SoftwareId,
                                                  SoftwareReleaseId = c.SoftwareReleaseId,
-                                                 ReleaseTitle      = c.Release.Title,
+                                                 GroupId           = c.GroupId,
+                                                 ReleaseTitle      = c.Release != null ? c.Release.Title : null,
                                                  Type              = (int)c.Type,
                                                  TypeName          = c.Type.ToString(),
                                                  Caption = isEnglish || c.Caption == null
@@ -152,10 +162,10 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
                                                                          .FirstOrDefault() ?? c.Caption),
                                                  CanonicalCaption  = c.Caption,
                                                  OriginalExtension = c.OriginalExtension,
-                                                 PlatformName = c.Release.Platform != null
+                                                 PlatformName = c.Release != null && c.Release.Platform != null
                                                                     ? c.Release.Platform.Name
                                                                     : null,
-                                                 RegionNames = c.Release.Regions != null
+                                                 RegionNames = c.Release != null && c.Release.Regions != null
                                                                    ? string.Join(", ",
                                                                        c.Release.Regions.Select(r => r.UnM49.Name))
                                                                    : null
@@ -174,7 +184,9 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<SoftwareCoverDto>> UploadAsync(IFormFile                    file,
-                                                                   [FromForm] ulong             releaseId,
+                                                                   [FromForm] ulong             softwareId,
+                                                                   [FromForm] ulong?            releaseId,
+                                                                   [FromForm] string           groupId,
                                                                    [FromForm] SoftwareCoverType type,
                                                                    [FromForm] string           caption)
     {
@@ -197,10 +209,18 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
            !_allowedContentTypes.Contains(file.ContentType.ToLowerInvariant()))
             return Problem(detail: "Unsupported content type.", statusCode: StatusCodes.Status400BadRequest);
 
-        bool releaseExists = await context.SoftwareReleases.AnyAsync(r => r.Id == (ulong)releaseId);
+        bool softwareExists = await context.Softwares.AnyAsync(s => s.Id == softwareId);
 
-        if(!releaseExists)
-            return Problem(detail: "Referenced software release does not exist.", statusCode: StatusCodes.Status400BadRequest);
+        if(!softwareExists)
+            return Problem(detail: "Referenced software does not exist.", statusCode: StatusCodes.Status400BadRequest);
+
+        if(releaseId is not null)
+        {
+            bool releaseExists = await context.SoftwareReleases.AnyAsync(r => r.Id == releaseId.Value);
+
+            if(!releaseExists)
+                return Problem(detail: "Referenced software release does not exist.", statusCode: StatusCodes.Status400BadRequest);
+        }
 
         using var ms = new MemoryStream();
         await file.CopyToAsync(ms);
@@ -209,7 +229,9 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
         var model = new SoftwareCover
         {
             Id                = Guid.NewGuid(),
+            SoftwareId        = softwareId,
             SoftwareReleaseId = releaseId,
+            GroupId           = groupId,
             Type              = type,
             Caption           = caption,
             OriginalExtension = extension.TrimStart('.')
@@ -242,7 +264,9 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
         return Ok(new SoftwareCoverDto
         {
             Id                = model.Id,
+            SoftwareId        = model.SoftwareId,
             SoftwareReleaseId = model.SoftwareReleaseId,
+            GroupId           = model.GroupId,
             Type              = (int)model.Type,
             TypeName          = model.Type.ToString(),
             Caption           = model.Caption,
@@ -263,30 +287,33 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
 
         if(userId is null) return Unauthorized();
 
-        SoftwareCover model = await context.SoftwareCovers
-                                           .Include(c => c.Release)
-                                           .ThenInclude(r => r.SoftwareVersion)
-                                           .FirstOrDefaultAsync(c => c.Id == id);
+        SoftwareCover model = await context.SoftwareCovers.FirstOrDefaultAsync(c => c.Id == id);
 
         if(model is null) return NotFound();
 
-        // Allow release reassignment only within the same software
-        if(dto.SoftwareReleaseId != 0 && (ulong)dto.SoftwareReleaseId != model.SoftwareReleaseId)
+        // Allow release reassignment only within the same software, or clearing it (null).
+        if(dto.SoftwareReleaseId != model.SoftwareReleaseId)
         {
-            SoftwareRelease newRelease = await context.SoftwareReleases
-                                                      .Include(r => r.SoftwareVersion)
-                                                      .FirstOrDefaultAsync(r => r.Id == (ulong)dto.SoftwareReleaseId);
+            if(dto.SoftwareReleaseId is null)
+            {
+                model.SoftwareReleaseId = null;
+            }
+            else
+            {
+                SoftwareRelease newRelease = await context.SoftwareReleases
+                                                          .Include(r => r.SoftwareVersion)
+                                                          .FirstOrDefaultAsync(r => r.Id == dto.SoftwareReleaseId.Value);
 
-            if(newRelease is null)
-                return Problem(detail: "Referenced software release does not exist.", statusCode: StatusCodes.Status400BadRequest);
+                if(newRelease is null)
+                    return Problem(detail: "Referenced software release does not exist.", statusCode: StatusCodes.Status400BadRequest);
 
-            ulong? currentSoftwareId = model.Release.SoftwareId ?? model.Release.SoftwareVersion?.SoftwareId;
-            ulong? newSoftwareId     = newRelease.SoftwareId    ?? newRelease.SoftwareVersion?.SoftwareId;
+                ulong? newSoftwareId = newRelease.SoftwareId ?? newRelease.SoftwareVersion?.SoftwareId;
 
-            if(currentSoftwareId != newSoftwareId)
-                return Problem(detail: "Release does not belong to the same software.", statusCode: StatusCodes.Status400BadRequest);
+                if(newSoftwareId != model.SoftwareId)
+                    return Problem(detail: "Release does not belong to the same software.", statusCode: StatusCodes.Status400BadRequest);
 
-            model.SoftwareReleaseId = (ulong)dto.SoftwareReleaseId;
+                model.SoftwareReleaseId = dto.SoftwareReleaseId;
+            }
         }
 
         // Admin / suggestion edit submits the canonical English caption (DTO.CanonicalCaption
@@ -294,6 +321,59 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
         // The translation worker fills in localized rows on its next sweep.
         model.Caption = !string.IsNullOrEmpty(dto.CanonicalCaption) ? dto.CanonicalCaption : dto.Caption;
         model.Type    = (SoftwareCoverType)dto.Type;
+
+        await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
+    }
+
+    /// <summary>
+    ///     Bulk-assign every <c>SoftwareCover</c> sharing the given MobyGames
+    ///     <paramref name="groupId" /> to a single <see cref="SoftwareRelease" />. Used by the
+    ///     admin cover UI once a human has identified which release a whole regional cover
+    ///     group (front/back/spine/etc. for the same edition) actually belongs to, instead of
+    ///     requiring one reassignment per cover.
+    /// </summary>
+    [HttpPost("groups/{groupId}/assign-release")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult> AssignGroupToReleaseAsync(string                                     groupId,
+                                                                [FromBody] AssignCoverGroupToReleaseRequestDto dto)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        List<SoftwareCover> covers = await context.SoftwareCovers
+                                                   .Where(c => c.GroupId == groupId)
+                                                   .ToListAsync();
+
+        if(covers.Count == 0) return NotFound();
+
+        SoftwareRelease release = await context.SoftwareReleases.FirstOrDefaultAsync(r => r.Id == dto.ReleaseId);
+
+        if(release is null)
+            return Problem(detail: "Referenced software release does not exist.", statusCode: StatusCodes.Status400BadRequest);
+
+        ulong? groupSoftwareId = covers[0].SoftwareId;
+
+        if(groupSoftwareId is null)
+            return Problem(detail: "Cover group has no associated software; cannot bulk-assign.",
+                           statusCode: StatusCodes.Status400BadRequest);
+
+        if(covers.Any(c => c.SoftwareId != groupSoftwareId))
+            return Problem(detail: "Cover group spans more than one software; refusing to bulk-assign.",
+                           statusCode: StatusCodes.Status400BadRequest);
+
+        if(release.SoftwareId != groupSoftwareId)
+            return Problem(detail: "Release does not belong to the same software as the cover group.",
+                           statusCode: StatusCodes.Status400BadRequest);
+
+        foreach(SoftwareCover cover in covers)
+            cover.SoftwareReleaseId = dto.ReleaseId;
 
         await context.SaveChangesWithUserAsync(userId);
 

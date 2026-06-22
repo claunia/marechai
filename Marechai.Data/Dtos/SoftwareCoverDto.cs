@@ -31,9 +31,14 @@ namespace Marechai.Data.Dtos;
 
 public class SoftwareCoverDto : BaseDto<Guid>
 {
+    [JsonPropertyName("software_id")]
+    public ulong? SoftwareId { get; set; }
+
     [JsonPropertyName("software_release_id")]
-    [Required]
-    public ulong SoftwareReleaseId { get; set; }
+    public ulong? SoftwareReleaseId { get; set; }
+
+    [JsonPropertyName("group_id")]
+    public string? GroupId { get; set; }
 
     [JsonPropertyName("release_title")]
     public string? ReleaseTitle { get; set; }

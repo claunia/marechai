@@ -103,94 +103,139 @@
     }
     else
     {
-        <MudGrid Class="pa-4">
-            @foreach(SoftwareCoverDto cover in _covers)
-            {
-                <MudItem xs="12" sm="6" md="4" lg="3">
-                    <MudCard Elevation="1" Class="rounded-lg">
-                        <MudCardContent Class="pa-2 d-flex justify-center">
-                            <picture>
-                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/thumbs/avif/4k/@(cover.Id).avif" type="image/avif">
-                                <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/thumbs/webp/4k/@(cover.Id).webp" type="image/webp">
-                                <img alt="@(cover.Caption ?? cover.TypeName)"
-                                     src="@(AssetUrls.BaseUrl)/assets/photos/software-covers/thumbs/jpeg/4k/@(cover.Id).jpg"
-                                     srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/thumbs/jpeg/4k/@(cover.Id).jpg"
-                                     style="max-height: 256px; max-width: 100%; border-radius: 8px;" width="auto" height="auto"/>
-                            </picture>
-                        </MudCardContent>
-                        <MudCardContent Class="pa-2">
-                            @if(!string.IsNullOrWhiteSpace(cover.PlatformName))
+        @foreach(IGrouping<string, SoftwareCoverDto> group in GetCoverGroups())
+        {
+            <MudPaper Elevation="0" Class="ma-4 pa-3 rounded-lg" Style="border: 1px solid var(--mud-palette-lines-default);">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-2">
+                    <MudIcon Icon="@Icons.Material.Filled.Collections" Size="Size.Small"/>
+                    <MudText Typo="Typo.subtitle2">@L["Cover group"]: @group.Key</MudText>
+                    <MudChip T="string" Size="Size.Small">@group.Count()</MudChip>
+                    <MudSpacer/>
+                    <MudSelect T="SoftwareReleaseDto"
+                               Value="@(_groupReleaseSelections.GetValueOrDefault(group.Key))"
+                               ValueChanged="@(r => _groupReleaseSelections[group.Key] = r)"
+                               Label="@L["Assign group to release"]" Variant="Variant.Outlined" Dense="true"
+                               ToStringFunc="@(r => FormatReleaseLabel(r))"
+                               Style="min-width: 280px;">
+                        @if(_releases is not null)
+                        {
+                            @foreach(SoftwareReleaseDto release in _releases)
                             {
-                                <MudText Typo="Typo.body2" Class="text-truncate">
-                                    <MudIcon Icon="@Icons.Material.Filled.Devices" Size="Size.Small" Class="mr-1"/>
-                                    @cover.PlatformName
-                                </MudText>
+                                <MudSelectItem T="SoftwareReleaseDto" Value="release">@FormatReleaseLabel(release)</MudSelectItem>
                             }
-                            @if(!string.IsNullOrWhiteSpace(cover.RegionNames))
-                            {
-                                <MudText Typo="Typo.caption" Color="Color.Secondary">@cover.RegionNames</MudText>
-                            }
-                            @if(!string.IsNullOrWhiteSpace(cover.ReleaseTitle))
-                            {
-                                <MudText Typo="Typo.caption">@cover.ReleaseTitle</MudText>
-                            }
+                        }
+                    </MudSelect>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                               Disabled="@(!_groupReleaseSelections.TryGetValue(group.Key, out SoftwareReleaseDto r) || r is null)"
+                               OnClick="() => AssignGroupToReleaseAsync(group.Key)">
+                        @L["Assign"]
+                    </MudButton>
+                </MudStack>
+                <MudGrid>
+                    @foreach(SoftwareCoverDto cover in group)
+                    {
+                        @RenderCover(cover)
+                    }
+                </MudGrid>
+            </MudPaper>
+        }
 
-                            @if(_selectedRelease is not null)
-                            {
-                                <MudText Typo="Typo.caption" Color="Color.Secondary" Class="mt-2">
-                                    @FormatReleaseLabel(_releases?.FirstOrDefault(r => r.Id == cover.SoftwareReleaseId))
-                                </MudText>
-                            }
-                            else
-                            {
-                                <MudSelect T="SoftwareReleaseDto"
-                                           Value="@(_releases?.FirstOrDefault(r => r.Id == cover.SoftwareReleaseId))"
-                                           ValueChanged="@(r => OnCoverReleaseChanged(cover, r))"
-                                           Label="@L["Release"]" Variant="Variant.Outlined" Dense="true"
-                                           ToStringFunc="@(r => FormatReleaseLabel(r))"
-                                           Class="mt-2">
-                                    @if(_releases is not null)
-                                    {
-                                        @foreach(SoftwareReleaseDto release in _releases)
-                                        {
-                                            <MudSelectItem T="SoftwareReleaseDto" Value="release">@FormatReleaseLabel(release)</MudSelectItem>
-                                        }
-                                    }
-                                </MudSelect>
-                            }
-
-                            <MudSelect T="int?"
-                                       Value="@(cover.Type)"
-                                       ValueChanged="@(t => OnCoverTypeChanged(cover, t))"
-                                       Label="@L["Cover Type"]" Variant="Variant.Outlined" Dense="true"
-                                       Class="mt-2">
-                                <MudSelectItem T="int?" Value="0">@L["Front Cover"]</MudSelectItem>
-                                <MudSelectItem T="int?" Value="1">@L["Back Cover"]</MudSelectItem>
-                                <MudSelectItem T="int?" Value="2">@L["Inside Cover (Front)"]</MudSelectItem>
-                                <MudSelectItem T="int?" Value="3">@L["Inside Cover (Back)"]</MudSelectItem>
-                                <MudSelectItem T="int?" Value="4">@L["Media"]</MudSelectItem>
-                                <MudSelectItem T="int?" Value="5">@L["Spine"]</MudSelectItem>
-                                <MudSelectItem T="int?" Value="6">@L["Manual"]</MudSelectItem>
-                                <MudSelectItem T="int?" Value="7">@L["Other"]</MudSelectItem>
-                            </MudSelect>
-
-                            @* Admins always edit the canonical English caption regardless of UI locale; localized
-                               captions surface on public pages via SoftwareCoverCaptionTranslations. *@
-                            <MudTextField T="string"
-                                          Value="@cover.CanonicalCaption"
-                                          ValueChanged="@(c => OnCaptionChanged(cover, c))"
-                                          Label="@L["Caption"]" Variant="Variant.Outlined"
-                                          DebounceInterval="500"
-                                          Class="mt-2"/>
-                        </MudCardContent>
-                        <MudCardActions>
-                            <MudButton Variant="Variant.Text" Color="Color.Error" Size="Size.Small"
-                                       StartIcon="@Icons.Material.Filled.Delete"
-                                       OnClick="() => ConfirmDeleteCover(cover)">@L["Delete"]</MudButton>
-                        </MudCardActions>
-                    </MudCard>
-                </MudItem>
-            }
-        </MudGrid>
+        if(GetUngroupedCovers() is { Count: > 0 } ungrouped)
+        {
+            <MudGrid Class="pa-4">
+                @foreach(SoftwareCoverDto cover in ungrouped)
+                {
+                    @RenderCover(cover)
+                }
+            </MudGrid>
+        }
     }
 </MudPaper>
+
+@code
+{
+    RenderFragment RenderCover(SoftwareCoverDto cover) => @<MudItem xs="12" sm="6" md="4" lg="3">
+        <MudCard Elevation="1" Class="rounded-lg">
+            <MudCardContent Class="pa-2 d-flex justify-center">
+                <picture>
+                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/thumbs/avif/4k/@(cover.Id).avif" type="image/avif">
+                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/thumbs/webp/4k/@(cover.Id).webp" type="image/webp">
+                    <img alt="@(cover.Caption ?? cover.TypeName)"
+                         src="@(AssetUrls.BaseUrl)/assets/photos/software-covers/thumbs/jpeg/4k/@(cover.Id).jpg"
+                         srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/thumbs/jpeg/4k/@(cover.Id).jpg"
+                         style="max-height: 256px; max-width: 100%; border-radius: 8px;" width="auto" height="auto"/>
+                </picture>
+            </MudCardContent>
+            <MudCardContent Class="pa-2">
+                @if(!string.IsNullOrWhiteSpace(cover.PlatformName))
+                {
+                    <MudText Typo="Typo.body2" Class="text-truncate">
+                        <MudIcon Icon="@Icons.Material.Filled.Devices" Size="Size.Small" Class="mr-1"/>
+                        @cover.PlatformName
+                    </MudText>
+                }
+                @if(!string.IsNullOrWhiteSpace(cover.RegionNames))
+                {
+                    <MudText Typo="Typo.caption" Color="Color.Secondary">@cover.RegionNames</MudText>
+                }
+                @if(!string.IsNullOrWhiteSpace(cover.ReleaseTitle))
+                {
+                    <MudText Typo="Typo.caption">@cover.ReleaseTitle</MudText>
+                }
+
+                @if(_selectedRelease is not null)
+                {
+                    <MudText Typo="Typo.caption" Color="Color.Secondary" Class="mt-2">
+                        @FormatReleaseLabel(_releases?.FirstOrDefault(r => r.Id == cover.SoftwareReleaseId))
+                    </MudText>
+                }
+                else
+                {
+                    <MudSelect T="SoftwareReleaseDto"
+                               Value="@(_releases?.FirstOrDefault(r => r.Id == cover.SoftwareReleaseId))"
+                               ValueChanged="@(r => OnCoverReleaseChanged(cover, r))"
+                               Label="@L["Release"]" Variant="Variant.Outlined" Dense="true"
+                               ToStringFunc="@(r => FormatReleaseLabel(r))"
+                               Class="mt-2">
+                        @if(_releases is not null)
+                        {
+                            @foreach(SoftwareReleaseDto release in _releases)
+                            {
+                                <MudSelectItem T="SoftwareReleaseDto" Value="release">@FormatReleaseLabel(release)</MudSelectItem>
+                            }
+                        }
+                    </MudSelect>
+                }
+
+                <MudSelect T="int?"
+                           Value="@(cover.Type)"
+                           ValueChanged="@(t => OnCoverTypeChanged(cover, t))"
+                           Label="@L["Cover Type"]" Variant="Variant.Outlined" Dense="true"
+                           Class="mt-2">
+                    <MudSelectItem T="int?" Value="0">@L["Front Cover"]</MudSelectItem>
+                    <MudSelectItem T="int?" Value="1">@L["Back Cover"]</MudSelectItem>
+                    <MudSelectItem T="int?" Value="2">@L["Inside Cover (Front)"]</MudSelectItem>
+                    <MudSelectItem T="int?" Value="3">@L["Inside Cover (Back)"]</MudSelectItem>
+                    <MudSelectItem T="int?" Value="4">@L["Media"]</MudSelectItem>
+                    <MudSelectItem T="int?" Value="5">@L["Spine"]</MudSelectItem>
+                    <MudSelectItem T="int?" Value="6">@L["Manual"]</MudSelectItem>
+                    <MudSelectItem T="int?" Value="7">@L["Other"]</MudSelectItem>
+                </MudSelect>
+
+                @* Admins always edit the canonical English caption regardless of UI locale; localized
+                   captions surface on public pages via SoftwareCoverCaptionTranslations. *@
+                <MudTextField T="string"
+                              Value="@cover.CanonicalCaption"
+                              ValueChanged="@(c => OnCaptionChanged(cover, c))"
+                              Label="@L["Caption"]" Variant="Variant.Outlined"
+                              DebounceInterval="500"
+                              Class="mt-2"/>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton Variant="Variant.Text" Color="Color.Error" Size="Size.Small"
+                           StartIcon="@Icons.Material.Filled.Delete"
+                           OnClick="() => ConfirmDeleteCover(cover)">@L["Delete"]</MudButton>
+            </MudCardActions>
+        </MudCard>
+    </MudItem>;
+}

@@ -148,8 +148,7 @@ class Program
                 var coverStateService = new CoverStateService(factory);
 
                 var coverDownloadService = new CoverDownloadService(
-                    factory, sourceDb, platformMatcher, countryMatcher,
-                    coverStateService, httpClient, assetRoot ?? "");
+                    factory, sourceDb, coverStateService, httpClient, assetRoot ?? "");
 
                 try
                 {
@@ -167,6 +166,30 @@ class Program
             {
                 var coverStateService2 = new CoverStateService(factory);
                 await coverStateService2.PrintCoverStatusAsync();
+
+                break;
+            }
+
+            case "repair-covers":
+            {
+                int repairBatchSize = 1000;
+                bool repairDryRun   = false;
+
+                for(int i = 0; i < args.Length; i++)
+                {
+                    if(args[i] == "--batch-size" && i + 1 < args.Length && int.TryParse(args[i + 1], out int rbs))
+                        repairBatchSize = rbs;
+
+                    if(args[i] == "--dry-run")
+                        repairDryRun = true;
+                }
+
+                var repairStateService = new CoverStateService(factory);
+
+                var repairService = new CoverDownloadService(
+                    factory, sourceDb, repairStateService, httpClient: null, assetRootPath: "");
+
+                await repairService.RepairMisassignedCoversAsync(repairDryRun, repairBatchSize);
 
                 break;
             }

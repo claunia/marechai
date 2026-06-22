@@ -1758,4 +1758,16 @@
   <data name="By category" xml:space="preserve">
     <value>Per categorie</value>
   </data>
+  <data name="Cover group" xml:space="preserve">
+    <value>Omslaggroep</value>
+  </data>
+  <data name="Assign group to release" xml:space="preserve">
+    <value>Groep toewijzen aan release</value>
+  </data>
+  <data name="Assign" xml:space="preserve">
+    <value>Toewijzen</value>
+  </data>
+  <data name="Assigned cover group to {0}." xml:space="preserve">
+    <value>Omslaggroep toegewezen aan {0}.</value>
+  </data>
 </root>

@@ -35,13 +35,14 @@ namespace Marechai.Pages.Admin;
 
 public partial class SoftwareCovers
 {
-    List<SoftwareCoverDto>       _covers;
-    string                       _errorMessage;
-    bool                         _isLoading = true;
-    List<SoftwareReleaseDto>     _releases;
-    SoftwareReleaseDto           _selectedRelease;
-    string                       _softwareName;
-    string                       _successMessage;
+    List<SoftwareCoverDto>          _covers;
+    string                          _errorMessage;
+    bool                            _isLoading = true;
+    List<SoftwareReleaseDto>        _releases;
+    SoftwareReleaseDto              _selectedRelease;
+    string                          _softwareName;
+    string                          _successMessage;
+    Dictionary<string, SoftwareReleaseDto> _groupReleaseSelections = new();
 
     [Parameter] public int SoftwareId { get; set; }
     [Parameter] public int? ReleaseId { get; set; }
@@ -77,7 +78,42 @@ public partial class SoftwareCovers
         if(_selectedRelease?.Id is not null)
             _covers = _covers.Where(c => c.SoftwareReleaseId == _selectedRelease.Id).ToList();
 
+        _groupReleaseSelections.Clear();
         _isLoading = false;
+    }
+
+    /// <summary>
+    ///     Covers sharing a MobyGames-import GroupId, clustered together so an admin can
+    ///     identify the whole regional cover set (front/back/spine/etc. for one edition) and
+    ///     assign it to a release in one action instead of one cover at a time. Only relevant
+    ///     when browsing all of a software's covers (not a single pre-selected release).
+    /// </summary>
+    IEnumerable<IGrouping<string, SoftwareCoverDto>> GetCoverGroups() =>
+        _selectedRelease is not null || _covers is null
+            ? []
+            : _covers.Where(c => !string.IsNullOrEmpty(c.GroupId)).GroupBy(c => c.GroupId);
+
+    List<SoftwareCoverDto> GetUngroupedCovers() =>
+        _selectedRelease is not null || _covers is null
+            ? _covers ?? []
+            : _covers.Where(c => string.IsNullOrEmpty(c.GroupId)).ToList();
+
+    async Task AssignGroupToReleaseAsync(string groupId)
+    {
+        if(!_groupReleaseSelections.TryGetValue(groupId, out SoftwareReleaseDto release) || release?.Id is null)
+            return;
+
+        (bool succeeded, string error) = await SoftwareService.AssignCoverGroupToReleaseAsync(groupId, release.Id.Value);
+
+        if(succeeded)
+        {
+            _successMessage = string.Format(L["Assigned cover group to {0}."].Value, FormatReleaseLabel(release));
+            await LoadDataAsync();
+        }
+        else
+        {
+            _errorMessage = error;
+        }
     }
 
     async Task OpenBatchUploadDialog()

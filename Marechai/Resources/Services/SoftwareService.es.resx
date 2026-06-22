@@ -515,6 +515,10 @@
     <data name="Spine" xml:space="preserve"><value>Lomo</value></data>
     <data name="Manual" xml:space="preserve"><value>Manual</value></data>
     <data name="Other" xml:space="preserve"><value>Otro</value></data>
+    <data name="Cover group" xml:space="preserve"><value>Grupo de portadas</value></data>
+    <data name="Assign group to release" xml:space="preserve"><value>Asignar grupo a edición</value></data>
+    <data name="Assign" xml:space="preserve"><value>Asignar</value></data>
+    <data name="Assigned cover group to {0}." xml:space="preserve"><value>Grupo de portadas asignado a {0}.</value></data>
     <data name="Credits" xml:space="preserve">
         <value>Créditos</value>
         <comment>Credits</comment>
