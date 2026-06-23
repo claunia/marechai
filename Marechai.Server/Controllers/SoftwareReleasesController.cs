@@ -739,84 +739,62 @@ public class SoftwareReleasesController(MarechaiContext                   contex
 
     async Task<string> BuildSoftwareReleaseNewsNameAsync(SoftwareRelease model)
     {
-        // Use Title if available
-        if(!string.IsNullOrWhiteSpace(model.Title))
-        {
-            if(model.PlatformId is not null)
-            {
-                SoftwarePlatform platform = await context.SoftwarePlatforms.FindAsync(model.PlatformId);
-
-                if(platform is not null) return $"{model.Title} ({platform.Name})";
-            }
-
-            return model.Title;
-        }
+        string baseName;
 
         // Single-version release: build from version info
         if(model.SoftwareVersionId is not null)
         {
-            string name = "";
-
             SoftwareVersion version = await context.SoftwareVersions.Include(v => v.Software)
                                                    .FirstOrDefaultAsync(v => v.Id == model.SoftwareVersionId);
 
             if(version?.Software is not null)
-                name = $"{version.Software.Name} {version.VersionString}";
+                baseName = $"{version.Software.Name} {version.VersionString}";
             else if(version is not null)
-                name = version.VersionString;
-
-            if(model.PlatformId is not null)
-            {
-                SoftwarePlatform platform = await context.SoftwarePlatforms.FindAsync(model.PlatformId);
-
-                if(platform is not null)
-                    name = string.IsNullOrEmpty(name) ? platform.Name : $"{name} ({platform.Name})";
-            }
-
-            return name;
+                baseName = version.VersionString;
+            else
+                baseName = "";
         }
-
         // Versionless single release: build from software name
-        if(!model.IsCompilation && model.SoftwareId is not null)
+        else if(!model.IsCompilation && model.SoftwareId is not null)
         {
             Software software = await context.Softwares.FindAsync(model.SoftwareId);
-            string   name     = software?.Name ?? "";
+            baseName = software?.Name ?? "";
+        }
+        // Compilation: build from included versions or software
+        else
+        {
+            List<string> versionNames = await context.SoftwareVersionBySoftwareRelease
+                                                     .Where(x => x.ReleaseId == model.Id)
+                                                     .OrderBy(x => x.SoftwareVersion.Software.Name)
+                                                     .Select(x => $"{x.SoftwareVersion.Software.Name} {x.SoftwareVersion.VersionString}")
+                                                     .ToListAsync();
 
-            if(model.PlatformId is not null)
-            {
-                SoftwarePlatform platform = await context.SoftwarePlatforms.FindAsync(model.PlatformId);
+            List<string> softwareNames = await context.SoftwareBySoftwareRelease
+                                                      .Where(x => x.ReleaseId == model.Id)
+                                                      .OrderBy(x => x.Software.Name)
+                                                      .Select(x => x.Software.Name)
+                                                      .ToListAsync();
 
-                if(platform is not null)
-                    name = string.IsNullOrEmpty(name) ? platform.Name : $"{name} ({platform.Name})";
-            }
-
-            return name;
+            List<string> allNames = versionNames.Concat(softwareNames).ToList();
+            baseName = allNames.Count > 0 ? string.Join(" + ", allNames) : "Compilation";
         }
 
-        // Compilation without title: build from included versions or software
-        List<string> versionNames = await context.SoftwareVersionBySoftwareRelease
-                                                 .Where(x => x.ReleaseId == model.Id)
-                                                 .OrderBy(x => x.SoftwareVersion.Software.Name)
-                                                 .Select(x => $"{x.SoftwareVersion.Software.Name} {x.SoftwareVersion.VersionString}")
-                                                 .ToListAsync();
-
-        List<string> softwareNames = await context.SoftwareBySoftwareRelease
-                                                  .Where(x => x.ReleaseId == model.Id)
-                                                  .OrderBy(x => x.Software.Name)
-                                                  .Select(x => x.Software.Name)
-                                                  .ToListAsync();
-
-        List<string> allNames       = versionNames.Concat(softwareNames).ToList();
-        string       compilationName = allNames.Count > 0 ? string.Join(" + ", allNames) : "Compilation";
+        // The game's name always takes precedence; the release's own Title, if set, is a qualifier.
+        string name = string.IsNullOrWhiteSpace(model.Title)
+                           ? baseName
+                           : string.IsNullOrWhiteSpace(baseName)
+                               ? model.Title
+                               : $"{baseName} ({model.Title})";
 
         if(model.PlatformId is not null)
         {
-            SoftwarePlatform plat = await context.SoftwarePlatforms.FindAsync(model.PlatformId);
+            SoftwarePlatform platform = await context.SoftwarePlatforms.FindAsync(model.PlatformId);
 
-            if(plat is not null) compilationName = $"{compilationName} ({plat.Name})";
+            if(platform is not null)
+                name = string.IsNullOrEmpty(name) ? platform.Name : $"{name} ({platform.Name})";
         }
 
-        return compilationName;
+        return name;
     }
 
     // --- Region junction endpoints ---
