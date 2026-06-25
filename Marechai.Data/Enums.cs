@@ -972,6 +972,16 @@ public enum MobyGamesRejectionReview : byte
     Overridden = 2
 }
 
+public enum IgdbMatchStatus : byte
+{
+    Pending     = 0,
+    Matched     = 1,
+    NoMatch     = 2,
+    NeedsReview = 3,
+    Skipped     = 4,
+    Error       = 5
+}
+
 public enum SoftwareCoverType : byte
 {
     [Display(Name = "Front Cover")]

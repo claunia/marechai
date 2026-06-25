@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Marechai.MobyGames.Services;
+namespace Marechai.Data.Helpers;
 
 public static class SoundexHelper
 {

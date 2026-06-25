@@ -10,6 +10,7 @@
   <Project Path="Marechai.Data/Marechai.Data.csproj" />
   <Project Path="Marechai.Database/Marechai.Database.csproj" />
   <Project Path="Marechai.Email/Marechai.Email.csproj" />
+  <Project Path="Marechai.Igdb/Marechai.Igdb.csproj" />
   <Project Path="Marechai.OldDos/Marechai.OldDos.csproj" />
   <Project Path="Marechai.Server/Marechai.Server.csproj" />
   <Project Path="Marechai.MobyGames/Marechai.MobyGames.csproj" />

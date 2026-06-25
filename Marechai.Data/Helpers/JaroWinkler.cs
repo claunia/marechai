@@ -27,7 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Marechai.Helpers;
+namespace Marechai.Data.Helpers;
 
 public static class JaroWinkler
 {

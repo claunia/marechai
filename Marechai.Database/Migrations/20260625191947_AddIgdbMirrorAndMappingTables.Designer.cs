@@ -4,6 +4,7 @@ using Marechai.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Marechai.Database.Migrations
 {
     [DbContext(typeof(MarechaiContext))]
-    partial class MarechaiContextModelSnapshot : ModelSnapshot
+    [Migration("20260625191947_AddIgdbMirrorAndMappingTables")]
+    partial class AddIgdbMirrorAndMappingTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2607,6 +2610,49 @@ namespace Marechai.Database.Migrations
                     b.HasIndex("Name");
 
                     b.ToTable("IgdbCompanies");
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.IgdbExternalGame", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<DateTime>("CreatedOn"));
+
+                    b.Property<long>("GameIgdbId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("IgdbId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Uid")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("UpdatedOn"));
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GameIgdbId");
+
+                    b.HasIndex("IgdbId")
+                        .IsUnique();
+
+                    b.HasIndex("Uid");
+
+                    b.ToTable("IgdbExternalGames");
                 });
 
             modelBuilder.Entity("Marechai.Database.Models.IgdbGame", b =>

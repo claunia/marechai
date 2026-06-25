@@ -99,6 +99,11 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<Forbidden>                           Forbidden                           { get; set; }
     public virtual DbSet<Gpu>                                 Gpus                                { get; set; }
     public virtual DbSet<GpusByMachine>                       GpusByMachine                       { get; set; }
+    public virtual DbSet<IgdbCompany>                         IgdbCompanies                       { get; set; }
+    public virtual DbSet<IgdbGame>                            IgdbGames                           { get; set; }
+    public virtual DbSet<IgdbGameType>                        IgdbGameTypes                       { get; set; }
+    public virtual DbSet<IgdbInvolvedCompany>                 IgdbInvolvedCompanies               { get; set; }
+    public virtual DbSet<IgdbPlatform>                        IgdbPlatforms                       { get; set; }
     public virtual DbSet<InstructionSet>                      InstructionSets                     { get; set; }
     public virtual DbSet<InstructionSetExtension>             InstructionSetExtensions            { get; set; }
     public virtual DbSet<InstructionSetExtensionsByProcessor> InstructionSetExtensionsByProcessor { get; set; }
@@ -2965,6 +2970,44 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
         {
             entity.HasIndex(e => e.MobyGameId).IsUnique();
             entity.HasIndex(e => e.Status);
+        });
+
+        modelBuilder.Entity<IgdbPlatform>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.HasIndex(e => e.MatchStatus);
+            entity.HasIndex(e => e.SoftwarePlatformId);
+        });
+
+        modelBuilder.Entity<IgdbCompany>(entity =>
+        {
+            entity.HasIndex(e => e.IgdbId).IsUnique();
+            entity.HasIndex(e => e.Name);
+            entity.HasIndex(e => e.MatchStatus);
+            entity.HasIndex(e => e.CompanyId);
+        });
+
+        modelBuilder.Entity<IgdbGame>(entity =>
+        {
+            entity.HasIndex(e => e.IgdbId).IsUnique();
+            entity.HasIndex(e => e.Name);
+            entity.HasIndex(e => e.MatchStatus);
+            entity.HasIndex(e => e.SoftwareId);
+            entity.HasIndex(e => e.ParentGameId);
+            entity.HasIndex(e => e.VersionParentId);
+            entity.HasIndex(e => e.GameTypeId);
+        });
+
+        modelBuilder.Entity<IgdbGameType>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
+        });
+
+        modelBuilder.Entity<IgdbInvolvedCompany>(entity =>
+        {
+            entity.HasIndex(e => e.IgdbId).IsUnique();
+            entity.HasIndex(e => e.GameIgdbId);
+            entity.HasIndex(e => e.CompanyIgdbId);
         });
 
         modelBuilder.Entity<OldDosCategory>(entity =>
