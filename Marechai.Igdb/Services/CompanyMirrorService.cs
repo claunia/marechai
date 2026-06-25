@@ -58,7 +58,10 @@ public class CompanyMirrorService
     async Task<(int count, long lastId)> FetchAndUpsertPageAsync(long afterId, int pageSize, int batchNumber,
                                                                    bool dryRun)
     {
-        string query = new ApicalypseQueryBuilder().Fields("id,name")
+        string query = new ApicalypseQueryBuilder().Fields("id,name,country,start_date,start_date_format," +
+                                                            "change_date,change_date_format,status,parent," +
+                                                            "websites.url,websites.category,description,logo.image_id," +
+                                                            "company_type_histories")
                                                      .Where($"id > {afterId}")
                                                      .Sort("id asc")
                                                      .Limit(pageSize)
@@ -87,10 +90,45 @@ public class CompanyMirrorService
 
                 context.IgdbCompanies.Add(new IgdbCompany
                 {
-                    IgdbId      = igdbId,
-                    Name        = name,
-                    MatchStatus = IgdbMatchStatus.Pending,
-                    BatchNumber = batchNumber
+                    IgdbId                 = igdbId,
+                    Name                   = name,
+                    MatchStatus            = IgdbMatchStatus.Pending,
+                    BatchNumber            = batchNumber,
+                    Country                = element.TryGetProperty("country", out JsonElement country)
+                                                  ? (short)country.GetInt32()
+                                                  : null,
+                    StartDate              = element.TryGetProperty("start_date", out JsonElement startDate)
+                                                  ? startDate.GetInt64()
+                                                  : null,
+                    StartDateFormat        = element.TryGetProperty("start_date_format", out JsonElement startFmt)
+                                                  ? startFmt.GetInt32()
+                                                  : null,
+                    ChangeDate              = element.TryGetProperty("change_date", out JsonElement changeDate)
+                                                  ? changeDate.GetInt64()
+                                                  : null,
+                    ChangeDateFormat        = element.TryGetProperty("change_date_format", out JsonElement changeFmt)
+                                                  ? changeFmt.GetInt32()
+                                                  : null,
+                    Status                  = element.TryGetProperty("status", out JsonElement status)
+                                                  ? status.GetInt32()
+                                                  : null,
+                    ParentIgdbId            = element.TryGetProperty("parent", out JsonElement parent)
+                                                  ? parent.GetInt64()
+                                                  : null,
+                    LogoImageId             = element.TryGetProperty("logo", out JsonElement logo) &&
+                                               logo.TryGetProperty("image_id", out JsonElement imageId)
+                                                  ? imageId.GetString()
+                                                  : null,
+                    DescriptionRaw          = element.TryGetProperty("description", out JsonElement description)
+                                                  ? description.GetString()
+                                                  : null,
+                    WebsitesJson            = element.TryGetProperty("websites", out JsonElement websites)
+                                                  ? websites.GetRawText()
+                                                  : null,
+                    CompanyTypeHistoryJson  = element.TryGetProperty("company_type_histories",
+                                                                      out JsonElement typeHistories)
+                                                  ? typeHistories.GetRawText()
+                                                  : null
                 });
 
                 lastId = igdbId;

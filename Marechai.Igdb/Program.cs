@@ -151,6 +151,28 @@ class Program
                 break;
             }
 
+            case "enrich-companies":
+            {
+                string logoCachePath = config.GetValue("LogoCachePath", "state/igdb-logo-cache");
+                var enricher = new CompanyEnricherService(factory, logoCachePath);
+                CompanyEnricherService.Stats stats = await enricher.RunAsync(dryRun);
+
+                Console.WriteLine($"""
+
+                                    Done. Processed {stats.CompaniesProcessed} companies ({stats.CompaniesSkippedNoLocalMatch} skipped, no local match).
+                                      Countries filled:     {stats.CountriesFilled}
+                                      Websites filled:      {stats.WebsitesFilled}
+                                      Founded dates filled: {stats.FoundedFilled}
+                                      Status updated:       {stats.StatusFilled}
+                                      Sold dates filled:    {stats.SoldFilled}
+                                      SoldTo resolved:      {stats.SoldToFilled}
+                                      Descriptions added:   {stats.DescriptionsAdded}
+                                      Logos cached:         {stats.LogosCached}
+                                    """);
+
+                break;
+            }
+
             case "stats":
             {
                 var stats = new MatchStatsService(factory);
@@ -184,7 +206,7 @@ class Program
 
                 if(igdbId == null || type == null)
                 {
-                    Console.WriteLine("  --igdb-id <id> and --type companies|games|platforms are required.");
+                    Console.WriteLine("  --igdb-id <id> and --type companies|companies-enrichment|games|platforms are required.");
 
                     return 1;
                 }
@@ -254,6 +276,19 @@ class Program
                 break;
             }
 
+            case "companies-enrichment":
+            {
+                IgdbCompany entity = await context.IgdbCompanies.FirstOrDefaultAsync(c => c.IgdbId == igdbId);
+
+                if(entity != null)
+                {
+                    entity.EnrichmentApplied = false;
+                    entity.EnrichedOn        = null;
+                }
+
+                break;
+            }
+
             case "games":
             {
                 IgdbGame entity = await context.IgdbGames.FirstOrDefaultAsync(g => g.IgdbId == igdbId);
@@ -313,9 +348,10 @@ class Program
                                match-platforms             Match mirrored platforms against SoftwarePlatform
                                match-companies              Match mirrored companies against Company
                                match-games                  Match mirrored games against Software
+                               enrich-companies              Fill empty Company fields from matched IGDB data (resumable)
                                stats                        Print match status counts
                                review-ambiguous --type <companies|games|platforms> [--limit N]
-                               reset --igdb-id <id> --type <companies|games|platforms>
+                               reset --igdb-id <id> --type <companies|companies-enrichment|games|platforms>
 
                              Options:
                                --batch-size N   Mirror one batch of up to N rows (default Import:BatchSize).

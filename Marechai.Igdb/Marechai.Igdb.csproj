@@ -8,6 +8,7 @@
     <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Markdig"/>
     <PackageReference Include="MySqlConnector"/>
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql"/>
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql.Json.Microsoft"/>
