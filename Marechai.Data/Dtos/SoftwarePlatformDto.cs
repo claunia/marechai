@@ -23,6 +23,7 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
@@ -33,4 +34,10 @@ public class SoftwarePlatformDto : BaseDto<ulong>
     [JsonPropertyName("name")]
     [Required]
     public required string Name { get; set; }
+
+    [JsonPropertyName("logo_id")]
+    public Guid? LogoId { get; set; }
+
+    [JsonPropertyName("logo_extension")]
+    public string LogoExtension { get; set; }
 }

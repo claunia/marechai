@@ -1943,6 +1943,11 @@
   <data name="FailedToLoadSoftwarePlatforms" xml:space="preserve"><value>Échec du chargement des plateformes logicielles.</value></data>
   <data name="FailedToDeleteSoftwarePlatform" xml:space="preserve"><value>Échec de la suppression de la plateforme logicielle.</value></data>
   <data name="FailedToSaveSoftwarePlatform" xml:space="preserve"><value>Échec de l'enregistrement de la plateforme logicielle.</value></data>
+  <data name="FailedToUploadLogo" xml:space="preserve"><value>Échec du téléchargement du logo.</value></data>
+  <data name="FailedToRemoveLogo" xml:space="preserve"><value>Échec de la suppression du logo.</value></data>
+  <data name="LogoLabel" xml:space="preserve"><value>Logo</value></data>
+  <data name="UploadLogoButton" xml:space="preserve"><value>Télécharger le logo</value></data>
+  <data name="RemoveLogoButton" xml:space="preserve"><value>Supprimer le logo</value></data>
   <data name="FailedToLoadSoftwareFamilies" xml:space="preserve"><value>Échec du chargement des familles de logiciels.</value></data>
   <data name="FailedToDeleteSoftwareFamily" xml:space="preserve"><value>Échec de la suppression de la famille de logiciels.</value></data>
   <data name="FailedToSaveSoftwareFamily" xml:space="preserve"><value>Échec de l'enregistrement de la famille de logiciels.</value></data>

@@ -2302,6 +2302,11 @@
   <data name="FailedToLoadSoftwarePlatforms" xml:space="preserve"><value>Failed to load software platforms.</value></data>
   <data name="FailedToDeleteSoftwarePlatform" xml:space="preserve"><value>Failed to delete software platform.</value></data>
   <data name="FailedToSaveSoftwarePlatform" xml:space="preserve"><value>Failed to save software platform.</value></data>
+  <data name="FailedToUploadLogo" xml:space="preserve"><value>Failed to upload logo.</value></data>
+  <data name="FailedToRemoveLogo" xml:space="preserve"><value>Failed to remove logo.</value></data>
+  <data name="LogoLabel" xml:space="preserve"><value>Logo</value></data>
+  <data name="UploadLogoButton" xml:space="preserve"><value>Upload logo</value></data>
+  <data name="RemoveLogoButton" xml:space="preserve"><value>Remove logo</value></data>
   <data name="FailedToLoadSoftwareFamilies" xml:space="preserve"><value>Failed to load software families.</value></data>
   <data name="FailedToDeleteSoftwareFamily" xml:space="preserve"><value>Failed to delete software family.</value></data>
   <data name="FailedToSaveSoftwareFamily" xml:space="preserve"><value>Failed to save software family.</value></data>

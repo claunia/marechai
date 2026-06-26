@@ -3,11 +3,13 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
+using Microsoft.Extensions.Configuration;
 
 namespace Marechai.App.Presentation.ViewModels.Admin;
 
@@ -18,6 +20,7 @@ public partial class AdminSoftwarePlatformsViewModel : ObservableObject, IRegion
     private readonly IStringLocalizer                           _localizer;
     private readonly ILogger<AdminSoftwarePlatformsViewModel>   _logger;
     private readonly ITokenService                              _tokenService;
+    private readonly IConfiguration                              _configuration;
 
     [ObservableProperty] private ObservableCollection<SoftwarePlatformDto> _platforms = [];
     [ObservableProperty] private ObservableCollection<SoftwarePlatformDto> _filteredPlatforms = [];
@@ -31,21 +34,29 @@ public partial class AdminSoftwarePlatformsViewModel : ObservableObject, IRegion
     [ObservableProperty] private bool                                      _isEditing;
     [ObservableProperty] private string                                   _editPanelTitle = string.Empty;
     [ObservableProperty] private string                                   _platformName = string.Empty;
+    [ObservableProperty] private Guid?                                    _logoId;
+    [ObservableProperty] private bool                                      _isUploadingLogo;
 
     private int?                       _editingId;
     private List<SoftwarePlatformDto>? _allPlatforms;
+
+    public string? LogoThumbnailUrl => LogoId.HasValue
+                                            ? $"{_configuration.GetSection("ApiClient:Url").Value}/assets/photos/platform-logos/thumbs/webp/4k/{LogoId}.webp"
+                                            : null;
 
     public AdminSoftwarePlatformsViewModel(SoftwarePlatformsService                  service,
                                            IJwtService                               jwtService,
                                            ITokenService                             tokenService,
                                            ILogger<AdminSoftwarePlatformsViewModel>  logger,
-                                           IStringLocalizer                          localizer)
+                                           IStringLocalizer                          localizer,
+                                           IConfiguration                             configuration)
     {
         _service      = service;
         _jwtService   = jwtService;
         _tokenService = tokenService;
         _logger       = logger;
         _localizer    = localizer;
+        _configuration = configuration;
 
         LoadCommand   = new AsyncRelayCommand(LoadAsync);
         OpenAddCommand = new RelayCommand(OpenAdd);
@@ -53,6 +64,8 @@ public partial class AdminSoftwarePlatformsViewModel : ObservableObject, IRegion
         DeleteCommand  = new AsyncRelayCommand<SoftwarePlatformDto>(DeleteAsync);
         SaveCommand    = new AsyncRelayCommand(SaveAsync);
         CancelEditCommand = new RelayCommand(CancelEdit);
+        UploadLogoCommand = new AsyncRelayCommand(UploadLogoAsync);
+        RemoveLogoCommand = new AsyncRelayCommand(RemoveLogoAsync);
 
         CheckAdminRole();
     }
@@ -63,6 +76,10 @@ public partial class AdminSoftwarePlatformsViewModel : ObservableObject, IRegion
     public IAsyncRelayCommand<SoftwarePlatformDto>  DeleteCommand    { get; }
     public IAsyncRelayCommand                       SaveCommand      { get; }
     public IRelayCommand                            CancelEditCommand { get; }
+    public IAsyncRelayCommand                       UploadLogoCommand { get; }
+    public IAsyncRelayCommand                       RemoveLogoCommand { get; }
+
+    partial void OnLogoIdChanged(Guid? value) => OnPropertyChanged(nameof(LogoThumbnailUrl));
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
@@ -131,6 +148,7 @@ public partial class AdminSoftwarePlatformsViewModel : ObservableObject, IRegion
         _editingId     = item.Id;
         EditPanelTitle = _localizer["EditSoftwarePlatformDialog_Title"];
         PlatformName   = item.Name ?? string.Empty;
+        LogoId         = item.LogoId;
         HasError       = false;
         ErrorMessage   = string.Empty;
         IsEditing      = true;
@@ -210,7 +228,96 @@ public partial class AdminSoftwarePlatformsViewModel : ObservableObject, IRegion
     private void ClearForm()
     {
         PlatformName = string.Empty;
+        LogoId       = null;
         HasError     = false;
         ErrorMessage = string.Empty;
+    }
+
+    private async Task UploadLogoAsync()
+    {
+        if(_editingId == null) return;
+
+        try
+        {
+            var picker = new Windows.Storage.Pickers.FileOpenPicker();
+            picker.FileTypeFilter.Add(".jpg");
+            picker.FileTypeFilter.Add(".jpeg");
+            picker.FileTypeFilter.Add(".png");
+            picker.FileTypeFilter.Add(".webp");
+            picker.FileTypeFilter.Add(".bmp");
+
+#if !HAS_UNO
+            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
+            WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
+#endif
+
+            Windows.Storage.StorageFile? file = await picker.PickSingleFileAsync();
+
+            if(file == null) return;
+
+            IsUploadingLogo = true;
+            HasError        = false;
+
+            using Stream stream = await file.OpenStreamForReadAsync();
+            using var    ms     = new MemoryStream();
+            await stream.CopyToAsync(ms);
+            byte[] fileBytes = ms.ToArray();
+
+            SoftwarePlatformDto? result =
+                await _service.UploadLogoAsync(_editingId.Value, fileBytes, file.Name, file.ContentType);
+
+            if(result == null)
+            {
+                ErrorMessage = _localizer["FailedToUploadLogo"];
+                HasError     = true;
+
+                return;
+            }
+
+            LogoId = result.LogoId;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error uploading logo for software platform {Id}", _editingId);
+            ErrorMessage = _localizer["FailedToUploadLogo"];
+            HasError     = true;
+        }
+        finally
+        {
+            IsUploadingLogo = false;
+        }
+    }
+
+    private async Task RemoveLogoAsync()
+    {
+        if(_editingId == null) return;
+
+        try
+        {
+            IsUploadingLogo = true;
+            HasError        = false;
+
+            bool success = await _service.DeleteLogoAsync(_editingId.Value);
+
+            if(!success)
+            {
+                ErrorMessage = _localizer["FailedToRemoveLogo"];
+                HasError     = true;
+
+                return;
+            }
+
+            LogoId = null;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error removing logo for software platform {Id}", _editingId);
+            ErrorMessage = _localizer["FailedToRemoveLogo"];
+            HasError     = true;
+        }
+        finally
+        {
+            IsUploadingLogo = false;
+        }
     }
 }

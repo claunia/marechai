@@ -33,6 +33,7 @@
 @inherits OwningComponentBase<SoftwareService>
 @inject IStringLocalizer<SoftwareService> L
 @inject IDialogService                    DialogService
+@inject ApiAssetUrlProvider                AssetUrls
 
 @if(!_loaded)
 {
@@ -119,7 +120,18 @@
         <div class="d-flex flex-wrap gap-1">
             @foreach(SoftwarePlatformDto platform in _platforms.OrderBy(p => p.Name, NaturalUnitComparer.Instance))
             {
-                <MudChip T="string" Href="@($"/software/platform/{platform.Id}")">@platform.Name</MudChip>
+                <MudChip T="string" Href="@($"/software/platform/{platform.Id}")">
+                    @if(platform.LogoId.HasValue)
+                    {
+                        <picture>
+                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/platform-logos/thumbs/avif/4k/@(platform.LogoId).avif" type="image/avif">
+                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/platform-logos/thumbs/webp/4k/@(platform.LogoId).webp" type="image/webp">
+                            <img alt="" src="@(AssetUrls.BaseUrl)/assets/photos/platform-logos/thumbs/jpeg/4k/@(platform.LogoId).jpg"
+                                 style="height: 18px; width: 18px; object-fit: contain; margin-right: 4px; vertical-align: middle;"/>
+                        </picture>
+                    }
+                    @platform.Name
+                </MudChip>
             }
         </div>
     </MudPaper>

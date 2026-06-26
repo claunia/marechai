@@ -25,9 +25,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.Kiota.Abstractions;
+using Microsoft.Kiota.Abstractions.Serialization;
 
 namespace Marechai.Services;
 
@@ -124,6 +126,47 @@ public class SoftwarePlatformsService(Marechai.ApiClient.Client client)
             };
 
             await client.Software.Platforms[targetId.ToString()].Merge.PostAsync(request);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ExtractDetail(ex));
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(SoftwarePlatformDto platform, string error)> UploadLogoAsync(int id, byte[] fileBytes,
+                                                                                     string fileName,
+                                                                                     string contentType)
+    {
+        try
+        {
+            var body = new MultipartBody();
+            body.AddOrReplacePart("file", contentType, new MemoryStream(fileBytes), fileName);
+
+            SoftwarePlatformDto result = await client.Software.Platforms[id].Logo.PostAsync(body);
+
+            return (result, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ExtractDetail(ex));
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string error)> DeleteLogoAsync(int id)
+    {
+        try
+        {
+            await client.Software.Platforms[id].Logo.DeleteAsync();
 
             return (true, null);
         }

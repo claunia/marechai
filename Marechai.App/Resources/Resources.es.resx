@@ -1979,6 +1979,11 @@
   <data name="FailedToLoadSoftwarePlatforms" xml:space="preserve"><value>Error al cargar plataformas de software.</value></data>
   <data name="FailedToDeleteSoftwarePlatform" xml:space="preserve"><value>Error al eliminar plataforma de software.</value></data>
   <data name="FailedToSaveSoftwarePlatform" xml:space="preserve"><value>Error al guardar plataforma de software.</value></data>
+  <data name="FailedToUploadLogo" xml:space="preserve"><value>Error al subir el logo.</value></data>
+  <data name="FailedToRemoveLogo" xml:space="preserve"><value>Error al eliminar el logo.</value></data>
+  <data name="LogoLabel" xml:space="preserve"><value>Logo</value></data>
+  <data name="UploadLogoButton" xml:space="preserve"><value>Subir logo</value></data>
+  <data name="RemoveLogoButton" xml:space="preserve"><value>Eliminar logo</value></data>
   <data name="FailedToLoadSoftwareFamilies" xml:space="preserve"><value>Error al cargar familias de software.</value></data>
   <data name="FailedToDeleteSoftwareFamily" xml:space="preserve"><value>Error al eliminar familia de software.</value></data>
   <data name="FailedToSaveSoftwareFamily" xml:space="preserve"><value>Error al guardar familia de software.</value></data>

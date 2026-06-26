@@ -2,8 +2,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.App.Services;
 
@@ -91,6 +93,40 @@ public class SoftwarePlatformsService
         catch(Exception ex)
         {
             _logger.LogError(ex, "Error deleting software platform {Id}", id);
+
+            return false;
+        }
+    }
+
+    public async Task<SoftwarePlatformDto?> UploadLogoAsync(int id, byte[] fileBytes, string fileName,
+                                                             string contentType)
+    {
+        try
+        {
+            var body = new MultipartBody();
+            body.AddOrReplacePart("file", contentType, new MemoryStream(fileBytes), fileName);
+
+            return await _apiClient.Software.Platforms[id].Logo.PostAsync(body);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error uploading logo for software platform {Id}", id);
+
+            return null;
+        }
+    }
+
+    public async Task<bool> DeleteLogoAsync(int id)
+    {
+        try
+        {
+            await _apiClient.Software.Platforms[id].Logo.DeleteAsync();
+
+            return true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting logo for software platform {Id}", id);
 
             return false;
         }

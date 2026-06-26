@@ -63,7 +63,9 @@ public partial class SoftwarePlatforms
         DialogParameters<SoftwarePlatformDialog> parameters = new()
         {
             { x => x.IsNew, false },
-            { x => x.Name, platform.Name }
+            { x => x.Id, (int)(platform.Id ?? 0) },
+            { x => x.Name, platform.Name },
+            { x => x.LogoId, platform.LogoId }
         };
 
         IDialogReference dialog = await DialogService.ShowAsync<SoftwarePlatformDialog>(L["Edit Platform"], parameters,

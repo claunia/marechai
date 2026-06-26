@@ -16,6 +16,16 @@ namespace Marechai.ApiClient.Models
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The id property</summary>
         public int? Id { get; set; }
+        /// <summary>The logo_extension property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? LogoExtension { get; set; }
+#nullable restore
+#else
+        public string LogoExtension { get; set; }
+#endif
+        /// <summary>The logo_id property</summary>
+        public Guid? LogoId { get; set; }
         /// <summary>The name property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -50,6 +60,8 @@ namespace Marechai.ApiClient.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "id", n => { Id = n.GetIntValue(); } },
+                { "logo_extension", n => { LogoExtension = n.GetStringValue(); } },
+                { "logo_id", n => { LogoId = n.GetGuidValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
             };
         }
@@ -61,6 +73,8 @@ namespace Marechai.ApiClient.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteIntValue("id", Id);
+            writer.WriteStringValue("logo_extension", LogoExtension);
+            writer.WriteGuidValue("logo_id", LogoId);
             writer.WriteStringValue("name", Name);
             writer.WriteAdditionalData(AdditionalData);
         }

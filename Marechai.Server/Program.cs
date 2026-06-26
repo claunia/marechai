@@ -178,6 +178,7 @@ file class Program
         Photos.EnsureCreated(assetRootPath, false, "people");
         Photos.EnsureCreated(assetRootPath, false, "software-screenshots");
     Photos.EnsureCreated(assetRootPath, false, "software-covers");
+        Photos.EnsureCreated(assetRootPath, false, "platform-logos");
         Console.WriteLine("\e[31;1mEnsuring scan folders exist...\e[0m");
         Photos.EnsureCreated(assetRootPath, true, "books");
         Photos.EnsureCreated(assetRootPath, true, "documents");

@@ -5,6 +5,7 @@
 @inject SoftwarePlatformsService SoftwarePlatformsService
 @inject IStringLocalizer<SoftwarePlatformsService> L
 @inject IDialogService DialogService
+@inject ApiAssetUrlProvider AssetUrls
 
 <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #546e7a 0%, #90a4ae 100%); border-radius: 16px;">
     <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
@@ -42,6 +43,19 @@
 
     <MudDataGrid Items="_platforms" Dense="true" Hover="true" Striped="true" Filterable="true">
         <Columns>
+            <TemplateColumn Title="@L["Logo"]" Sortable="false" Filterable="false">
+                <CellTemplate>
+                    @if(context.Item.LogoId.HasValue)
+                    {
+                        <picture>
+                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/platform-logos/thumbs/avif/4k/@(context.Item.LogoId).avif" type="image/avif">
+                            <source srcset="@(AssetUrls.BaseUrl)/assets/photos/platform-logos/thumbs/webp/4k/@(context.Item.LogoId).webp" type="image/webp">
+                            <img alt="" src="@(AssetUrls.BaseUrl)/assets/photos/platform-logos/thumbs/jpeg/4k/@(context.Item.LogoId).jpg"
+                                 style="height: 24px; width: 24px; object-fit: contain;"/>
+                        </picture>
+                    }
+                </CellTemplate>
+            </TemplateColumn>
             <PropertyColumn Property="x => x.Name" Title="@L["Name"]"/>
             <TemplateColumn Title="@L["Actions"]" Sortable="false" Filterable="false">
                 <CellTemplate>

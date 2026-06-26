@@ -1839,6 +1839,11 @@
   <data name="FailedToLoadSoftwarePlatforms" xml:space="preserve"><value>Softwareplattformen konnten nicht geladen werden.</value></data>
   <data name="FailedToDeleteSoftwarePlatform" xml:space="preserve"><value>Softwareplattform konnte nicht gelöscht werden.</value></data>
   <data name="FailedToSaveSoftwarePlatform" xml:space="preserve"><value>Softwareplattform konnte nicht gespeichert werden.</value></data>
+  <data name="FailedToUploadLogo" xml:space="preserve"><value>Logo konnte nicht hochgeladen werden.</value></data>
+  <data name="FailedToRemoveLogo" xml:space="preserve"><value>Logo konnte nicht entfernt werden.</value></data>
+  <data name="LogoLabel" xml:space="preserve"><value>Logo</value></data>
+  <data name="UploadLogoButton" xml:space="preserve"><value>Logo hochladen</value></data>
+  <data name="RemoveLogoButton" xml:space="preserve"><value>Logo entfernen</value></data>
   <data name="FailedToLoadSoftwareFamilies" xml:space="preserve"><value>Softwarefamilien konnten nicht geladen werden.</value></data>
   <data name="FailedToDeleteSoftwareFamily" xml:space="preserve"><value>Softwarefamilie konnte nicht gelöscht werden.</value></data>
   <data name="FailedToSaveSoftwareFamily" xml:space="preserve"><value>Softwarefamilie konnte nicht gespeichert werden.</value></data>

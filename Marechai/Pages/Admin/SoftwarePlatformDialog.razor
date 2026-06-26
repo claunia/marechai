@@ -1,6 +1,9 @@
 @using Marechai.Services
+@using Microsoft.AspNetCore.Components.Forms
 
 @inject IStringLocalizer<SoftwarePlatformsService> L
+@inject SoftwarePlatformsService SoftwarePlatformsService
+@inject ApiAssetUrlProvider AssetUrls
 
 <MudDialog>
     <DialogContent>
@@ -10,6 +13,51 @@
                       Required="true"
                       RequiredError="@L["Name is required."]"
                       Class="mb-4"/>
+
+        @if(!IsNew)
+        {
+            <MudText Typo="Typo.subtitle2" Class="mb-2">@L["Logo"]</MudText>
+
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3" Class="mb-4">
+                @if(_logoId.HasValue)
+                {
+                    <picture>
+                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/platform-logos/thumbs/avif/4k/@(_logoId).avif" type="image/avif">
+                        <source srcset="@(AssetUrls.BaseUrl)/assets/photos/platform-logos/thumbs/webp/4k/@(_logoId).webp" type="image/webp">
+                        <img alt="@Name" src="@(AssetUrls.BaseUrl)/assets/photos/platform-logos/thumbs/jpeg/4k/@(_logoId).jpg"
+                             style="max-height: 48px; max-width: 48px; object-fit: contain;"/>
+                    </picture>
+                }
+                else
+                {
+                    <MudIcon Icon="@Icons.Material.Filled.ImageNotSupported" Color="Color.Default"/>
+                }
+
+                <MudFileUpload T="IBrowserFile" FilesChanged="OnLogoSelectedAsync" Accept=".jpg,.jpeg,.png,.webp,.bmp"
+                               MaximumFileCount="1">
+                    <CustomContent>
+                        <MudButton Variant="Variant.Outlined"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.Upload"
+                                   Disabled="_isUploading"
+                                   OnClick="@context.OpenFilePickerAsync">
+                            @(_isUploading ? L["Uploading..."] : L["Upload logo"])
+                        </MudButton>
+                    </CustomContent>
+                </MudFileUpload>
+
+                @if(_logoId.HasValue)
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Disabled="_isUploading"
+                                   OnClick="RemoveLogoAsync"/>
+                }
+            </MudStack>
+
+            @if(!string.IsNullOrWhiteSpace(_logoError))
+            {
+                <MudAlert Severity="Severity.Error" Class="mb-4">@_logoError</MudAlert>
+            }
+        }
 
         @if(!string.IsNullOrWhiteSpace(_validationError))
         {
@@ -24,11 +72,18 @@
 
 @code {
     string _validationError;
+    string _logoError;
+    bool   _isUploading;
+    Guid?  _logoId;
 
     [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
 
-    [Parameter] public bool IsNew { get; set; }
-    [Parameter] public string Name { get; set; } = string.Empty;
+    [Parameter] public bool   IsNew { get; set; }
+    [Parameter] public int    Id    { get; set; }
+    [Parameter] public string Name  { get; set; } = string.Empty;
+    [Parameter] public Guid?  LogoId { get; set; }
+
+    protected override void OnInitialized() => _logoId = LogoId;
 
     void Cancel() => MudDialog.Cancel();
 
@@ -41,5 +96,51 @@
         }
 
         MudDialog.Close(DialogResult.Ok(new SoftwarePlatformDialogResult { Name = Name }));
+    }
+
+    async Task OnLogoSelectedAsync(IBrowserFile file)
+    {
+        if(file is null) return;
+
+        _logoError   = null;
+        _isUploading = true;
+
+        try
+        {
+            using var stream = file.OpenReadStream(5 * 1024 * 1024);
+            using var ms     = new MemoryStream();
+            await stream.CopyToAsync(ms);
+
+            (Marechai.ApiClient.Models.SoftwarePlatformDto platform, string error) =
+                await SoftwarePlatformsService.UploadLogoAsync(Id, ms.ToArray(), file.Name, file.ContentType);
+
+            if(platform is not null)
+                _logoId = platform.LogoId;
+            else
+                _logoError = error;
+        }
+        catch(Exception ex)
+        {
+            _logoError = ex.Message;
+        }
+        finally
+        {
+            _isUploading = false;
+        }
+    }
+
+    async Task RemoveLogoAsync()
+    {
+        _logoError   = null;
+        _isUploading = true;
+
+        (bool succeeded, string error) = await SoftwarePlatformsService.DeleteLogoAsync(Id);
+
+        if(succeeded)
+            _logoId = null;
+        else
+            _logoError = error;
+
+        _isUploading = false;
     }
 }

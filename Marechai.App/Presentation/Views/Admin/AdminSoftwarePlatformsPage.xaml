@@ -138,6 +138,20 @@
                                         <TextBox Header="{Binding Source={StaticResource Strings}, Path=NameLabel}"
                                                  Text="{Binding PlatformName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                  PlaceholderText="{Binding Source={StaticResource Strings}, Path=NameLabel}" />
+
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=LogoLabel}" />
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <Image Source="{Binding LogoThumbnailUrl}" Width="48" Height="48"
+                                                   Stretch="Uniform"
+                                                   Visibility="{Binding LogoId, Converter={StaticResource NullToVisibilityConverter}}" />
+                                            <Button Content="{Binding Source={StaticResource Strings}, Path=UploadLogoButton}"
+                                                    Command="{Binding UploadLogoCommand}"
+                                                    IsEnabled="{Binding IsUploadingLogo, Converter={StaticResource InvertBoolConverter}}" />
+                                            <Button Content="{Binding Source={StaticResource Strings}, Path=RemoveLogoButton}"
+                                                    Command="{Binding RemoveLogoCommand}"
+                                                    Visibility="{Binding LogoId, Converter={StaticResource NullToVisibilityConverter}}"
+                                                    IsEnabled="{Binding IsUploadingLogo, Converter={StaticResource InvertBoolConverter}}" />
+                                        </StackPanel>
                                     </StackPanel>
                                 </ScrollViewer>
 
