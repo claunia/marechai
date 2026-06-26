@@ -9,12 +9,12 @@ This document describes Claude Code automation for the Marechai computing histor
 - **Marechai.Server**: ASP.NET Core Web API backend with OpenAPI documentation
 - **Marechai.Database**: Entity Framework Core data access layer with MySQL/MariaDB
 - **Marechai.App**: Uno Platform cross-platform client (Android, iOS, WASM, Desktop)
-- **Marechai** (legacy): Original Blazor Server web application
+- **Marechai** (principal): Original Blazor Server web application
 - Supporting projects: Email, Translation, MobyGames, WinWorld integrations
 
 ### Key Technologies
 
-- **.NET 10.0** (prerelease, see `global.json`)
+- **.NET 10.0**
 - **Entity Framework Core 9.x** with **Pomelo MySQL** provider
 - **Uno Platform SDK 6.5.36** for cross-platform UI
 - **ASP.NET Core Identity** + JWT Bearer authentication

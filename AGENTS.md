@@ -31,7 +31,7 @@ Marechai.slnx
 
 ## Technology Stack
 
-- **.NET 10.0** (Preview/Prerelease)
+- **.NET 10.0**
 - **Uno Platform SDK 6.4.24** for cross-platform development
 - **Entity Framework Core 9.x** with Pomelo MySQL provider
 - **ASP.NET Core Identity** for authentication
@@ -48,7 +48,7 @@ Marechai.slnx
 - .NET 10.0 SDK (with prerelease allowed per `global.json`)
 - Uno Platform SDK 6.4.24
 - MariaDB or MySQL database
-- ImageMagick with HEIF, WebP and AVIF support (in PATH)
+- ImageMagick with WebP and AVIF support (in PATH)
 
 ### Configuration
 
@@ -129,5 +129,3 @@ Test results are stored in the `TestResults/` directory.
    - Update DTOs in `Marechai.Data/` if needed
 
 4. Package versions are centrally managed - update `Directory.Packages.props` when adding/updating packages.
-
-5. The project targets .NET 10.0 preview - be aware of potential API changes.

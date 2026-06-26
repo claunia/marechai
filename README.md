@@ -89,8 +89,8 @@ The solution is organized as a set of related projects, each with a clear respon
 
 ```text
 Marechai.slnx
-├── Marechai/              # Legacy Blazor Server web application
-├── Marechai.App/          # Uno Platform cross-platform client
+├── Marechai/              # Main Blazor Server web application
+├── Marechai.App/          # Experimental Uno Platform cross-platform client
 ├── Marechai.Server/       # ASP.NET Core API backend
 ├── Marechai.Database/     # EF Core data models, migrations, and data access
 ├── Marechai.Data/         # Shared DTOs, enums, and contracts
@@ -107,13 +107,13 @@ Marechai.slnx
 
 This is the main web application, built with Blazor Server and MudBlazor.
 
-It is the legacy but still important presentation layer for the catalog, especially for administrative workflows, content browsing, and the public-facing web experience.
+It is the main presentation layer for the catalog, especially for administrative workflows, content browsing, and the public-facing web experience.
 
 ### Marechai.App
 
 This is the modern cross-platform client built with Uno Platform.
 
-It targets desktop, mobile, and web scenarios with a shared UI and a responsive design approach. The app is intended to provide a smoother, more flexible experience for users who want to browse the catalog outside the browser.
+It targets desktop, mobile, and web scenarios with a shared UI and a responsive design approach. The app is intended to provide a smoother, more flexible experience for users who want to browse the catalog outside the browser. It is still in an experimental phase, but it is a key part of the long-term vision for the project.
 
 ### Marechai.Server
 
