@@ -32,6 +32,7 @@ using Marechai.Translation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Marechai.Server.Services;
 
@@ -43,6 +44,7 @@ namespace Marechai.Server.Services;
 public sealed class SoftwareGenreTranslationProvider(IServiceScopeFactory                       scopeFactory,
                                                      TranslationService                         translationService,
                                                      SoftwareGenreTranslationCache              cache,
+                                                     IOptionsMonitor<TranslationOptions>        options,
                                                      ILogger<SoftwareGenreTranslationProvider> logger)
     : ITranslationProvider
 {
@@ -86,8 +88,8 @@ public sealed class SoftwareGenreTranslationProvider(IServiceScopeFactory       
     }
 
     /// <summary>
-    ///     Snapshot missing genres from the cache (no DB query), translate them one by one
-    ///     (OpenAI/NLLB serialised), then bulk-insert the resulting rows in
+    ///     Snapshot missing genres from the cache (no DB query), translate them in bounded waves,
+    ///     then bulk-insert the resulting rows in
     ///     <see cref="FlushBatchSize" />-sized chunks. Successful rows are also pushed to the cache
     ///     so subsequent requests see them immediately.
     /// </summary>
@@ -111,11 +113,45 @@ public sealed class SoftwareGenreTranslationProvider(IServiceScopeFactory       
         var inserted = 0;
         var batch    = new List<SoftwareGenreTranslation>(FlushBatchSize);
 
-        foreach((int id, string englishName) in missing)
+        for(var index = 0; index < missing.Count;)
+        {
+            int maxParallelTranslations =
+                await BackgroundTranslationSettings.WaitForAvailableParallelismAsync(options, ct);
+            var wave = new List<Task<SoftwareGenreTranslation>>(
+                System.Math.Min(maxParallelTranslations, missing.Count - index));
+
+            for(var launched = 0; launched < maxParallelTranslations && index < missing.Count; launched++, index++)
+            {
+                (int id, string englishName) = missing[index];
+
+                wave.Add(TranslateOneAsync(id, englishName));
+            }
+
+            SoftwareGenreTranslation[] translatedWave = await Task.WhenAll(wave);
+
+            foreach(SoftwareGenreTranslation row in translatedWave)
+            {
+                if(row is null) continue;
+                batch.Add(row);
+            }
+
+            inserted += await BackgroundTranslationSettings.FlushFullBatchesAsync(batch, FlushBatchSize,
+                                                                                  PersistBatchAsync, ct);
+        }
+
+        if(batch.Count > 0)
+        {
+            await PersistBatchAsync(batch, ct);
+            inserted += batch.Count;
+        }
+
+        return inserted;
+
+        async Task<SoftwareGenreTranslation> TranslateOneAsync(int id, string englishName)
         {
             ct.ThrowIfCancellationRequested();
 
-            if(string.IsNullOrWhiteSpace(englishName)) continue;
+            if(string.IsNullOrWhiteSpace(englishName)) return null;
 
             (string translated, string error) = await translationService.TranslateAsync(
                 englishName, languageCode, progress: null, plainText: true, domainContext: domainContext);
@@ -126,36 +162,26 @@ public sealed class SoftwareGenreTranslationProvider(IServiceScopeFactory       
                     "SoftwareGenre provider: failed to translate genre {GenreId} (\"{English}\") into {Lang}: {Error}",
                     id, englishName, languageCode, error ?? "no result");
 
-                continue;
+                return null;
             }
 
-            // Defensive: trim to the column max length (varchar(128)).
             if(translated.Length > 128) translated = translated[..128];
 
-            batch.Add(new SoftwareGenreTranslation
+            return new SoftwareGenreTranslation
             {
                 GenreId      = id,
                 LanguageCode = languageCode,
                 Name         = translated
-            });
-
-            if(batch.Count < FlushBatchSize) continue;
-
-            ctx.SoftwareGenreTranslations.AddRange(batch);
-            await ctx.SaveChangesAsync(ct);
-            foreach(SoftwareGenreTranslation row in batch) cache.Upsert(row.GenreId, row.LanguageCode, row.Name);
-            inserted += batch.Count;
-            batch.Clear();
+            };
         }
 
-        if(batch.Count > 0)
+        async Task PersistBatchAsync(List<SoftwareGenreTranslation> rows, CancellationToken saveCt)
         {
-            ctx.SoftwareGenreTranslations.AddRange(batch);
-            await ctx.SaveChangesAsync(ct);
-            foreach(SoftwareGenreTranslation row in batch) cache.Upsert(row.GenreId, row.LanguageCode, row.Name);
-            inserted += batch.Count;
-        }
+            ctx.SoftwareGenreTranslations.AddRange(rows);
+            await ctx.SaveChangesAsync(saveCt);
 
-        return inserted;
+            foreach(SoftwareGenreTranslation row in rows)
+                cache.Upsert(row.GenreId, row.LanguageCode, row.Name);
+        }
     }
 }

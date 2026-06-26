@@ -32,6 +32,7 @@ using Marechai.Translation;
 using Markdig;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Marechai.Server.Services;
 
@@ -39,8 +40,8 @@ namespace Marechai.Server.Services;
 ///     Companion to <see cref="TranslationWorker" />: while the primary worker is in its
 ///     inter-sweep slumber (signalled via <see cref="TranslationPhaseCoordinator" />) this worker
 ///     fills missing per-language rows for every description / synopsis table by translating the
-///     English source one row at a time. Each row is saved immediately so progress is durable;
-///     when the primary worker wakes, the in-progress translation is allowed to finish + save and
+///     English source in bounded waves. Each row is saved immediately so progress is durable; when
+///     the primary worker wakes, the in-progress translations are allowed to finish + save and
 ///     this worker yields back gracefully.
 /// </summary>
 /// <remarks>
@@ -48,12 +49,14 @@ namespace Marechai.Server.Services;
 ///     prepended in the target language so the model never sees / mangles it. Description tables
 ///     also get a Markdig-rendered HTML column populated, mirroring the
 ///     <c>*Controller.CreateOrUpdateDescriptionAsync</c> + <c>*SuggestionApplier</c> path.</para>
-///     <para>One translation at a time. No parallelism. Mirrors <see cref="TranslationWorker" />
-///     for OpenAI rate-limit safety.</para>
+///     <para>Wave size is controlled by the server's live-reloaded
+///     <see cref="TranslationOptions.MaxParallelTranslations" /> setting. <c>0</c> pauses this
+///     worker until the setting is raised again.</para>
 /// </remarks>
 public sealed class DescriptionTranslationWorker(TranslationService                          translationService,
                                                  TranslationPhaseCoordinator                 coordinator,
                                                  IEnumerable<IDescriptionTranslationSource>  sources,
+                                                 IOptionsMonitor<TranslationOptions>         options,
                                                  ILogger<DescriptionTranslationWorker>       logger)
     : BackgroundService
 {
@@ -162,6 +165,8 @@ public sealed class DescriptionTranslationWorker(TranslationService             
                                    CancellationToken                   slumberCt, CancellationToken stoppingToken)
     {
         logger.LogInformation("DescriptionTranslationWorker: slumber pass starting.");
+        using var schedulingCts = CancellationTokenSource.CreateLinkedTokenSource(slumberCt, stoppingToken);
+        CancellationToken schedulingToken = schedulingCts.Token;
 
         // Snapshot the non-eng target languages once per pass.
         var targetLanguages = new List<string>();
@@ -182,21 +187,40 @@ public sealed class DescriptionTranslationWorker(TranslationService             
 
             bool madeProgressThisRound = false;
 
-            foreach(IDescriptionTranslationSource source in sourceList)
+            for(var sourceIndex = 0; sourceIndex < sourceList.Count;)
             {
-                foreach(string lang in targetLanguages)
-                {
-                    if(slumberCt.IsCancellationRequested || stoppingToken.IsCancellationRequested)
-                    {
-                        logger.LogInformation(
-                            "DescriptionTranslationWorker: stop requested mid-round, yielding.");
+                int maxParallelTranslations =
+                    await BackgroundTranslationSettings.WaitForAvailableParallelismAsync(options, schedulingToken);
+                var wave = new List<Task<bool>>(maxParallelTranslations);
 
-                        return;
+                while(wave.Count < maxParallelTranslations && sourceIndex < sourceList.Count)
+                {
+                    IDescriptionTranslationSource source = sourceList[sourceIndex];
+
+                    foreach(string lang in targetLanguages)
+                    {
+                        if(wave.Count >= maxParallelTranslations) break;
+
+                        if(slumberCt.IsCancellationRequested || stoppingToken.IsCancellationRequested)
+                        {
+                            logger.LogInformation(
+                                "DescriptionTranslationWorker: stop requested mid-round, yielding.");
+
+                            return;
+                        }
+
+                        wave.Add(TryTranslateOneAsync(source, lang, pipeline, stoppingToken));
                     }
 
-                    bool didWork =
-                        await TryTranslateOneAsync(source, lang, pipeline, stoppingToken);
+                    sourceIndex++;
+                }
 
+                if(wave.Count == 0) break;
+
+                bool[] waveResults = await Task.WhenAll(wave);
+
+                foreach(bool didWork in waveResults)
+                {
                     if(didWork) madeProgressThisRound = true;
                 }
             }

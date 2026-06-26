@@ -374,6 +374,7 @@ file class Program
         // shared TranslationService singleton. Reused by both the SoftwareController genre
         // endpoints (via SoftwareGenreTranslationCache) and the TranslationWorker.
         builder.Services.AddMarechaiTranslation(builder.Configuration);
+        builder.Services.AddOptions<TranslationOptions>().Bind(builder.Configuration.GetSection("Translation"));
 
         // Process-lifetime cache holding every SoftwareGenre + every SoftwareGenreTranslation row.
         // Populated once on startup (eager-warm below) and mutated thereafter by TranslationWorker

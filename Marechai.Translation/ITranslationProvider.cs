@@ -32,8 +32,8 @@ namespace Marechai.Translation;
 ///     Plug-in contract used by the background <c>TranslationWorker</c> to discover and translate
 ///     entities for which a DB-backed translation table exists. One implementation per entity type
 ///     (e.g. <c>SoftwareGenreTranslationProvider</c>, <c>SoftwareAttributeTranslationProvider</c>).
-///     The worker iterates registered providers SERIALLY on each tick to keep OpenAI rate-limit
-///     handling trivial — providers must NOT spawn parallel translation calls themselves.
+///     The worker iterates registered providers SERIALLY on each tick, but each provider may run
+///     its own bounded translation waves based on the server's background-translation settings.
 /// </summary>
 /// <remarks>
 ///     Lifecycle on each tick:
@@ -64,9 +64,9 @@ public interface ITranslationProvider
 
     /// <summary>
     ///     For the given non-<c>eng</c> language, snapshot the items that lack a translation, call the
-    ///     <c>TranslationService</c> serially for each, then bulk-insert the resulting rows in a single
-    ///     <c>SaveChangesAsync</c> call. Returns the number of rows inserted (may be 0 if every item
-    ///     is already translated or every translation call failed).
+    ///     <c>TranslationService</c> in bounded waves, then bulk-insert the resulting rows. Returns
+    ///     the number of rows inserted (may be 0 if every item is already translated or every
+    ///     translation call failed).
     /// </summary>
     Task<int> TranslateMissingAsync(string languageCode, CancellationToken ct);
 }

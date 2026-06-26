@@ -32,6 +32,7 @@ using Marechai.Translation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Marechai.Server.Services;
 
@@ -52,7 +53,8 @@ namespace Marechai.Server.Services;
 /// </remarks>
 public sealed class SoftwareAlternativeTitleCommentTranslationProvider(
     IServiceScopeFactory                                            scopeFactory,
-    TranslationService                                               translationService,
+    TranslationService                                              translationService,
+    IOptionsMonitor<TranslationOptions>                             options,
     ILogger<SoftwareAlternativeTitleCommentTranslationProvider> logger) : ITranslationProvider
 {
     /// <summary>
@@ -70,9 +72,8 @@ public sealed class SoftwareAlternativeTitleCommentTranslationProvider(
 
     /// <summary>
     ///     Anti-join query for distinct alternative-title comments lacking a translation row in
-    ///     <paramref name="languageCode" />, translate each via
-    ///     <see cref="TranslationService.TranslateAsync" /> serially (preserves OpenAI rate-limit
-    ///     safety), then bulk-insert in <see cref="FlushBatchSize" />-sized chunks. Returns the
+    ///     <paramref name="languageCode" />, translate them in bounded waves, then bulk-insert in
+    ///     <see cref="FlushBatchSize" />-sized chunks. Returns the
     ///     number of rows inserted.
     /// </summary>
     public async Task<int> TranslateMissingAsync(string languageCode, CancellationToken ct)
@@ -109,11 +110,45 @@ public sealed class SoftwareAlternativeTitleCommentTranslationProvider(
         var inserted = 0;
         var batch    = new List<SoftwareAlternativeTitleCommentTranslation>(FlushBatchSize);
 
-        foreach(string englishComment in missing)
+        for(var index = 0; index < missing.Count;)
+        {
+            int maxParallelTranslations =
+                await BackgroundTranslationSettings.WaitForAvailableParallelismAsync(options, ct);
+            var wave = new List<Task<SoftwareAlternativeTitleCommentTranslation>>(
+                System.Math.Min(maxParallelTranslations, missing.Count - index));
+
+            for(var launched = 0; launched < maxParallelTranslations && index < missing.Count; launched++, index++)
+            {
+                string englishComment = missing[index];
+
+                wave.Add(TranslateOneAsync(englishComment));
+            }
+
+            SoftwareAlternativeTitleCommentTranslation[] translatedWave = await Task.WhenAll(wave);
+
+            foreach(SoftwareAlternativeTitleCommentTranslation row in translatedWave)
+            {
+                if(row is null) continue;
+                batch.Add(row);
+            }
+
+            inserted += await BackgroundTranslationSettings.FlushFullBatchesAsync(batch, FlushBatchSize,
+                                                                                  PersistBatchAsync, ct);
+        }
+
+        if(batch.Count > 0)
+        {
+            await PersistBatchAsync(batch, ct);
+            inserted += batch.Count;
+        }
+
+        return inserted;
+
+        async Task<SoftwareAlternativeTitleCommentTranslation> TranslateOneAsync(string englishComment)
         {
             ct.ThrowIfCancellationRequested();
 
-            if(string.IsNullOrWhiteSpace(englishComment)) continue;
+            if(string.IsNullOrWhiteSpace(englishComment)) return null;
 
             (string translated, string error) = await translationService.TranslateAsync(
                 englishComment, languageCode, progress: null, plainText: true,
@@ -125,36 +160,25 @@ public sealed class SoftwareAlternativeTitleCommentTranslationProvider(
                     "SoftwareAlternativeTitleComment provider: failed to translate comment \"{English}\" into {Lang}: {Error}",
                     englishComment, languageCode, error ?? "no result");
 
-                continue;
+                return null;
             }
 
-            // Defensive: trim to the column max length (varchar(500)).
             if(translated.Length > 500) translated = translated[..500];
 
             string canonical = englishComment.Length > 500 ? englishComment[..500] : englishComment;
 
-            batch.Add(new SoftwareAlternativeTitleCommentTranslation
+            return new SoftwareAlternativeTitleCommentTranslation
             {
                 CommentText  = canonical,
                 LanguageCode = languageCode,
                 Translation  = translated
-            });
-
-            if(batch.Count < FlushBatchSize) continue;
-
-            ctx.SoftwareAlternativeTitleCommentTranslations.AddRange(batch);
-            await ctx.SaveChangesAsync(ct);
-            inserted += batch.Count;
-            batch.Clear();
+            };
         }
 
-        if(batch.Count > 0)
+        async Task PersistBatchAsync(List<SoftwareAlternativeTitleCommentTranslation> rows, CancellationToken saveCt)
         {
-            ctx.SoftwareAlternativeTitleCommentTranslations.AddRange(batch);
-            await ctx.SaveChangesAsync(ct);
-            inserted += batch.Count;
+            ctx.SoftwareAlternativeTitleCommentTranslations.AddRange(rows);
+            await ctx.SaveChangesAsync(saveCt);
         }
-
-        return inserted;
     }
 }

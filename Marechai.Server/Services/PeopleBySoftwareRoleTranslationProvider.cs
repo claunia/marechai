@@ -32,6 +32,7 @@ using Marechai.Translation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Marechai.Server.Services;
 
@@ -57,6 +58,7 @@ namespace Marechai.Server.Services;
 public sealed class PeopleBySoftwareRoleTranslationProvider(
     IServiceScopeFactory                              scopeFactory,
     TranslationService                                translationService,
+    IOptionsMonitor<TranslationOptions>               options,
     ILogger<PeopleBySoftwareRoleTranslationProvider> logger) : ITranslationProvider
 {
     /// <summary>
@@ -74,9 +76,8 @@ public sealed class PeopleBySoftwareRoleTranslationProvider(
 
     /// <summary>
     ///     Anti-join query for distinct credit role strings lacking a translation row in
-    ///     <paramref name="languageCode" />, translate each via
-    ///     <see cref="TranslationService.TranslateAsync" /> serially (preserves OpenAI rate-limit
-    ///     safety), then bulk-insert in <see cref="FlushBatchSize" />-sized chunks. Returns the
+    ///     <paramref name="languageCode" />, translate them in bounded waves, then bulk-insert in
+    ///     <see cref="FlushBatchSize" />-sized chunks. Returns the
     ///     number of rows inserted.
     /// </summary>
     public async Task<int> TranslateMissingAsync(string languageCode, CancellationToken ct)
@@ -118,11 +119,45 @@ public sealed class PeopleBySoftwareRoleTranslationProvider(
         var inserted = 0;
         var batch    = new List<PeopleBySoftwareRoleTranslation>(FlushBatchSize);
 
-        foreach(string englishRole in missing)
+        for(var index = 0; index < missing.Count;)
+        {
+            int maxParallelTranslations =
+                await BackgroundTranslationSettings.WaitForAvailableParallelismAsync(options, ct);
+            var wave = new List<Task<PeopleBySoftwareRoleTranslation>>(
+                System.Math.Min(maxParallelTranslations, missing.Count - index));
+
+            for(var launched = 0; launched < maxParallelTranslations && index < missing.Count; launched++, index++)
+            {
+                string englishRole = missing[index];
+
+                wave.Add(TranslateOneAsync(englishRole));
+            }
+
+            PeopleBySoftwareRoleTranslation[] translatedWave = await Task.WhenAll(wave);
+
+            foreach(PeopleBySoftwareRoleTranslation row in translatedWave)
+            {
+                if(row is null) continue;
+                batch.Add(row);
+            }
+
+            inserted += await BackgroundTranslationSettings.FlushFullBatchesAsync(batch, FlushBatchSize,
+                                                                                  PersistBatchAsync, ct);
+        }
+
+        if(batch.Count > 0)
+        {
+            await PersistBatchAsync(batch, ct);
+            inserted += batch.Count;
+        }
+
+        return inserted;
+
+        async Task<PeopleBySoftwareRoleTranslation> TranslateOneAsync(string englishRole)
         {
             ct.ThrowIfCancellationRequested();
 
-            if(string.IsNullOrWhiteSpace(englishRole)) continue;
+            if(string.IsNullOrWhiteSpace(englishRole)) return null;
 
             (string translated, string error) = await translationService.TranslateAsync(
                 englishRole, languageCode, progress: null, plainText: true,
@@ -134,36 +169,25 @@ public sealed class PeopleBySoftwareRoleTranslationProvider(
                     "PeopleBySoftwareRole provider: failed to translate role \"{English}\" into {Lang}: {Error}",
                     englishRole, languageCode, error ?? "no result");
 
-                continue;
+                return null;
             }
 
-            // Defensive: trim to the column max length (varchar(256)).
             if(translated.Length > 256) translated = translated[..256];
 
             string canonical = englishRole.Length > 256 ? englishRole[..256] : englishRole;
 
-            batch.Add(new PeopleBySoftwareRoleTranslation
+            return new PeopleBySoftwareRoleTranslation
             {
                 RoleText     = canonical,
                 LanguageCode = languageCode,
                 Translation  = translated
-            });
-
-            if(batch.Count < FlushBatchSize) continue;
-
-            ctx.PeopleBySoftwareRoleTranslations.AddRange(batch);
-            await ctx.SaveChangesAsync(ct);
-            inserted += batch.Count;
-            batch.Clear();
+            };
         }
 
-        if(batch.Count > 0)
+        async Task PersistBatchAsync(List<PeopleBySoftwareRoleTranslation> rows, CancellationToken saveCt)
         {
-            ctx.PeopleBySoftwareRoleTranslations.AddRange(batch);
-            await ctx.SaveChangesAsync(ct);
-            inserted += batch.Count;
+            ctx.PeopleBySoftwareRoleTranslations.AddRange(rows);
+            await ctx.SaveChangesAsync(saveCt);
         }
-
-        return inserted;
     }
 }

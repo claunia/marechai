@@ -34,6 +34,7 @@ using Marechai.Translation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Marechai.Server.Services;
 
@@ -50,6 +51,7 @@ public sealed class SoftwareAttributeTranslationProvider(
     IServiceScopeFactory                              scopeFactory,
     TranslationService                                translationService,
     SoftwareAttributeTranslationCache                 cache,
+    IOptionsMonitor<TranslationOptions>               options,
     ILogger<SoftwareAttributeTranslationProvider>    logger) : ITranslationProvider
 {
     /// <summary>
@@ -150,7 +152,7 @@ public sealed class SoftwareAttributeTranslationProvider(
 
     /// <summary>
     ///     Snapshot pool strings missing translation for <paramref name="languageCode" />, translate
-    ///     each via OpenAI/NLLB serially, then bulk-insert the results in
+    ///     them in bounded waves, then bulk-insert the results in
     ///     <see cref="FlushBatchSize" />-sized chunks. Successful rows are pushed to the cache after
     ///     each chunk lands.
     /// </summary>
@@ -179,14 +181,48 @@ public sealed class SoftwareAttributeTranslationProvider(
         var inserted = 0;
         var batch    = new List<SoftwareAttributeStringTranslation>(FlushBatchSize);
 
-        foreach((int id, string text) in missing)
+        for(var index = 0; index < missing.Count;)
+        {
+            int maxParallelTranslations =
+                await BackgroundTranslationSettings.WaitForAvailableParallelismAsync(options, ct);
+            var wave = new List<Task<SoftwareAttributeStringTranslation>>(
+                Math.Min(maxParallelTranslations, missing.Count - index));
+
+            for(var launched = 0; launched < maxParallelTranslations && index < missing.Count; launched++, index++)
+            {
+                (int id, string text) = missing[index];
+
+                wave.Add(TranslateOneAsync(id, text));
+            }
+
+            SoftwareAttributeStringTranslation[] translatedWave = await Task.WhenAll(wave);
+
+            foreach(SoftwareAttributeStringTranslation row in translatedWave)
+            {
+                if(row is null) continue;
+                batch.Add(row);
+            }
+
+            inserted += await BackgroundTranslationSettings.FlushFullBatchesAsync(batch, FlushBatchSize,
+                                                                                  PersistBatchAsync, ct);
+        }
+
+        if(batch.Count > 0)
+        {
+            await PersistBatchAsync(batch, ct);
+            inserted += batch.Count;
+        }
+
+        return inserted;
+
+        async Task<SoftwareAttributeStringTranslation> TranslateOneAsync(int id, string text)
         {
             ct.ThrowIfCancellationRequested();
 
-            if(string.IsNullOrWhiteSpace(text)) continue;
+            if(string.IsNullOrWhiteSpace(text)) return null;
 
             (string translated, string error) = await translationService.TranslateAsync(
-                text, languageCode, progress: null, plainText: true);
+                text, languageCode, progress: null, plainText: true, domainContext: domainContext);
 
             if(string.IsNullOrWhiteSpace(translated))
             {
@@ -194,38 +230,26 @@ public sealed class SoftwareAttributeTranslationProvider(
                     "SoftwareAttribute provider: failed to translate pool string {Id} (\"{Text}\") into {Lang}: {Error}",
                     id, text, languageCode, error ?? "no result");
 
-                continue;
+                return null;
             }
 
-            // Defensive: trim to the column max length (varchar(512)).
             if(translated.Length > 512) translated = translated[..512];
 
-            batch.Add(new SoftwareAttributeStringTranslation
+            return new SoftwareAttributeStringTranslation
             {
                 StringId     = id,
                 LanguageCode = languageCode,
                 Translation  = translated
-            });
-
-            if(batch.Count < FlushBatchSize) continue;
-
-            ctx.SoftwareAttributeStringTranslations.AddRange(batch);
-            await ctx.SaveChangesAsync(ct);
-            foreach(SoftwareAttributeStringTranslation row in batch)
-                cache.Upsert(row.StringId, row.LanguageCode, row.Translation);
-            inserted += batch.Count;
-            batch.Clear();
+            };
         }
 
-        if(batch.Count > 0)
+        async Task PersistBatchAsync(List<SoftwareAttributeStringTranslation> rows, CancellationToken saveCt)
         {
-            ctx.SoftwareAttributeStringTranslations.AddRange(batch);
-            await ctx.SaveChangesAsync(ct);
-            foreach(SoftwareAttributeStringTranslation row in batch)
-                cache.Upsert(row.StringId, row.LanguageCode, row.Translation);
-            inserted += batch.Count;
-        }
+            ctx.SoftwareAttributeStringTranslations.AddRange(rows);
+            await ctx.SaveChangesAsync(saveCt);
 
-        return inserted;
+            foreach(SoftwareAttributeStringTranslation row in rows)
+                cache.Upsert(row.StringId, row.LanguageCode, row.Translation);
+        }
     }
 }

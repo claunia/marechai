@@ -32,6 +32,7 @@ using Marechai.Translation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Marechai.Server.Services;
 
@@ -53,6 +54,7 @@ namespace Marechai.Server.Services;
 public sealed class SoftwarePromoArtGroupTranslationProvider(
     IServiceScopeFactory                                 scopeFactory,
     TranslationService                                   translationService,
+    IOptionsMonitor<TranslationOptions>                  options,
     ILogger<SoftwarePromoArtGroupTranslationProvider>    logger) : ITranslationProvider
 {
     /// <summary>
@@ -70,9 +72,8 @@ public sealed class SoftwarePromoArtGroupTranslationProvider(
 
     /// <summary>
     ///     Anti-join query for groups lacking a translation row in <paramref name="languageCode" />,
-    ///     translate each via <see cref="TranslationService.TranslateAsync" /> serially (preserves
-    ///     OpenAI rate-limit safety), then bulk-insert in <see cref="FlushBatchSize" />-sized chunks.
-    ///     Returns the number of rows inserted.
+    ///     translate them in bounded waves, then bulk-insert in
+    ///     <see cref="FlushBatchSize" />-sized chunks. Returns the number of rows inserted.
     /// </summary>
     public async Task<int> TranslateMissingAsync(string languageCode, CancellationToken ct)
     {
@@ -106,11 +107,45 @@ public sealed class SoftwarePromoArtGroupTranslationProvider(
         var inserted = 0;
         var batch    = new List<SoftwarePromoArtGroupTranslation>(FlushBatchSize);
 
-        foreach((int id, string englishName) in missing)
+        for(var index = 0; index < missing.Count;)
+        {
+            int maxParallelTranslations =
+                await BackgroundTranslationSettings.WaitForAvailableParallelismAsync(options, ct);
+            var wave = new List<Task<SoftwarePromoArtGroupTranslation>>(
+                System.Math.Min(maxParallelTranslations, missing.Count - index));
+
+            for(var launched = 0; launched < maxParallelTranslations && index < missing.Count; launched++, index++)
+            {
+                (int id, string englishName) = missing[index];
+
+                wave.Add(TranslateOneAsync(id, englishName));
+            }
+
+            SoftwarePromoArtGroupTranslation[] translatedWave = await Task.WhenAll(wave);
+
+            foreach(SoftwarePromoArtGroupTranslation row in translatedWave)
+            {
+                if(row is null) continue;
+                batch.Add(row);
+            }
+
+            inserted += await BackgroundTranslationSettings.FlushFullBatchesAsync(batch, FlushBatchSize,
+                                                                                  PersistBatchAsync, ct);
+        }
+
+        if(batch.Count > 0)
+        {
+            await PersistBatchAsync(batch, ct);
+            inserted += batch.Count;
+        }
+
+        return inserted;
+
+        async Task<SoftwarePromoArtGroupTranslation> TranslateOneAsync(int id, string englishName)
         {
             ct.ThrowIfCancellationRequested();
 
-            if(string.IsNullOrWhiteSpace(englishName)) continue;
+            if(string.IsNullOrWhiteSpace(englishName)) return null;
 
             (string translated, string error) = await translationService.TranslateAsync(
                 englishName, languageCode, progress: null, plainText: true, domainContext: domainContext);
@@ -121,34 +156,23 @@ public sealed class SoftwarePromoArtGroupTranslationProvider(
                     "SoftwarePromoArtGroup provider: failed to translate group {GroupId} (\"{English}\") into {Lang}: {Error}",
                     id, englishName, languageCode, error ?? "no result");
 
-                continue;
+                return null;
             }
 
-            // Defensive: trim to the column max length (varchar(256)).
             if(translated.Length > 256) translated = translated[..256];
 
-            batch.Add(new SoftwarePromoArtGroupTranslation
+            return new SoftwarePromoArtGroupTranslation
             {
                 GroupId      = id,
                 LanguageCode = languageCode,
                 Name         = translated
-            });
-
-            if(batch.Count < FlushBatchSize) continue;
-
-            ctx.SoftwarePromoArtGroupTranslations.AddRange(batch);
-            await ctx.SaveChangesAsync(ct);
-            inserted += batch.Count;
-            batch.Clear();
+            };
         }
 
-        if(batch.Count > 0)
+        async Task PersistBatchAsync(List<SoftwarePromoArtGroupTranslation> rows, CancellationToken saveCt)
         {
-            ctx.SoftwarePromoArtGroupTranslations.AddRange(batch);
-            await ctx.SaveChangesAsync(ct);
-            inserted += batch.Count;
+            ctx.SoftwarePromoArtGroupTranslations.AddRange(rows);
+            await ctx.SaveChangesAsync(saveCt);
         }
-
-        return inserted;
     }
 }

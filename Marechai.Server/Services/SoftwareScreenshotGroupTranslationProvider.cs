@@ -32,6 +32,7 @@ using Marechai.Translation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Marechai.Server.Services;
 
@@ -45,6 +46,7 @@ namespace Marechai.Server.Services;
 public sealed class SoftwareScreenshotGroupTranslationProvider(
     IServiceScopeFactory                                  scopeFactory,
     TranslationService                                    translationService,
+    IOptionsMonitor<TranslationOptions>                   options,
     ILogger<SoftwareScreenshotGroupTranslationProvider>   logger) : ITranslationProvider
 {
     /// <summary>
@@ -62,9 +64,8 @@ public sealed class SoftwareScreenshotGroupTranslationProvider(
 
     /// <summary>
     ///     Anti-join query for groups lacking a translation row in <paramref name="languageCode" />,
-    ///     translate each via <see cref="TranslationService.TranslateAsync" /> serially (preserves
-    ///     OpenAI rate-limit safety), then bulk-insert in <see cref="FlushBatchSize" />-sized chunks.
-    ///     Returns the number of rows inserted.
+    ///     translate them in bounded waves, then bulk-insert in
+    ///     <see cref="FlushBatchSize" />-sized chunks. Returns the number of rows inserted.
     /// </summary>
     public async Task<int> TranslateMissingAsync(string languageCode, CancellationToken ct)
     {
@@ -98,11 +99,45 @@ public sealed class SoftwareScreenshotGroupTranslationProvider(
         var inserted = 0;
         var batch    = new List<SoftwareScreenshotGroupTranslation>(FlushBatchSize);
 
-        foreach((int id, string englishName) in missing)
+        for(var index = 0; index < missing.Count;)
+        {
+            int maxParallelTranslations =
+                await BackgroundTranslationSettings.WaitForAvailableParallelismAsync(options, ct);
+            var wave = new List<Task<SoftwareScreenshotGroupTranslation>>(
+                System.Math.Min(maxParallelTranslations, missing.Count - index));
+
+            for(var launched = 0; launched < maxParallelTranslations && index < missing.Count; launched++, index++)
+            {
+                (int id, string englishName) = missing[index];
+
+                wave.Add(TranslateOneAsync(id, englishName));
+            }
+
+            SoftwareScreenshotGroupTranslation[] translatedWave = await Task.WhenAll(wave);
+
+            foreach(SoftwareScreenshotGroupTranslation row in translatedWave)
+            {
+                if(row is null) continue;
+                batch.Add(row);
+            }
+
+            inserted += await BackgroundTranslationSettings.FlushFullBatchesAsync(batch, FlushBatchSize,
+                                                                                  PersistBatchAsync, ct);
+        }
+
+        if(batch.Count > 0)
+        {
+            await PersistBatchAsync(batch, ct);
+            inserted += batch.Count;
+        }
+
+        return inserted;
+
+        async Task<SoftwareScreenshotGroupTranslation> TranslateOneAsync(int id, string englishName)
         {
             ct.ThrowIfCancellationRequested();
 
-            if(string.IsNullOrWhiteSpace(englishName)) continue;
+            if(string.IsNullOrWhiteSpace(englishName)) return null;
 
             (string translated, string error) = await translationService.TranslateAsync(
                 englishName, languageCode, progress: null, plainText: true, domainContext: domainContext);
@@ -113,34 +148,23 @@ public sealed class SoftwareScreenshotGroupTranslationProvider(
                     "SoftwareScreenshotGroup provider: failed to translate group {GroupId} (\"{English}\") into {Lang}: {Error}",
                     id, englishName, languageCode, error ?? "no result");
 
-                continue;
+                return null;
             }
 
-            // Defensive: trim to the column max length (varchar(256)).
             if(translated.Length > 256) translated = translated[..256];
 
-            batch.Add(new SoftwareScreenshotGroupTranslation
+            return new SoftwareScreenshotGroupTranslation
             {
                 GroupId      = id,
                 LanguageCode = languageCode,
                 Name         = translated
-            });
-
-            if(batch.Count < FlushBatchSize) continue;
-
-            ctx.SoftwareScreenshotGroupTranslations.AddRange(batch);
-            await ctx.SaveChangesAsync(ct);
-            inserted += batch.Count;
-            batch.Clear();
+            };
         }
 
-        if(batch.Count > 0)
+        async Task PersistBatchAsync(List<SoftwareScreenshotGroupTranslation> rows, CancellationToken saveCt)
         {
-            ctx.SoftwareScreenshotGroupTranslations.AddRange(batch);
-            await ctx.SaveChangesAsync(ct);
-            inserted += batch.Count;
+            ctx.SoftwareScreenshotGroupTranslations.AddRange(rows);
+            await ctx.SaveChangesAsync(saveCt);
         }
-
-        return inserted;
     }
 }

@@ -32,6 +32,7 @@ using Marechai.Translation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Marechai.Server.Services;
 
@@ -52,6 +53,7 @@ namespace Marechai.Server.Services;
 public sealed class SoftwareCoverCaptionTranslationProvider(
     IServiceScopeFactory                              scopeFactory,
     TranslationService                                translationService,
+    IOptionsMonitor<TranslationOptions>               options,
     ILogger<SoftwareCoverCaptionTranslationProvider> logger) : ITranslationProvider
 {
     /// <summary>
@@ -69,9 +71,8 @@ public sealed class SoftwareCoverCaptionTranslationProvider(
 
     /// <summary>
     ///     Anti-join query for distinct cover captions lacking a translation row in
-    ///     <paramref name="languageCode" />, translate each via
-    ///     <see cref="TranslationService.TranslateAsync" /> serially (preserves OpenAI rate-limit
-    ///     safety), then bulk-insert in <see cref="FlushBatchSize" />-sized chunks. Returns the
+    ///     <paramref name="languageCode" />, translate them in bounded waves, then bulk-insert in
+    ///     <see cref="FlushBatchSize" />-sized chunks. Returns the
     ///     number of rows inserted.
     /// </summary>
     public async Task<int> TranslateMissingAsync(string languageCode, CancellationToken ct)
@@ -111,11 +112,45 @@ public sealed class SoftwareCoverCaptionTranslationProvider(
         var inserted = 0;
         var batch    = new List<SoftwareCoverCaptionTranslation>(FlushBatchSize);
 
-        foreach(string englishCaption in missing)
+        for(var index = 0; index < missing.Count;)
+        {
+            int maxParallelTranslations =
+                await BackgroundTranslationSettings.WaitForAvailableParallelismAsync(options, ct);
+            var wave = new List<Task<SoftwareCoverCaptionTranslation>>(
+                System.Math.Min(maxParallelTranslations, missing.Count - index));
+
+            for(var launched = 0; launched < maxParallelTranslations && index < missing.Count; launched++, index++)
+            {
+                string englishCaption = missing[index];
+
+                wave.Add(TranslateOneAsync(englishCaption));
+            }
+
+            SoftwareCoverCaptionTranslation[] translatedWave = await Task.WhenAll(wave);
+
+            foreach(SoftwareCoverCaptionTranslation row in translatedWave)
+            {
+                if(row is null) continue;
+                batch.Add(row);
+            }
+
+            inserted += await BackgroundTranslationSettings.FlushFullBatchesAsync(batch, FlushBatchSize,
+                                                                                  PersistBatchAsync, ct);
+        }
+
+        if(batch.Count > 0)
+        {
+            await PersistBatchAsync(batch, ct);
+            inserted += batch.Count;
+        }
+
+        return inserted;
+
+        async Task<SoftwareCoverCaptionTranslation> TranslateOneAsync(string englishCaption)
         {
             ct.ThrowIfCancellationRequested();
 
-            if(string.IsNullOrWhiteSpace(englishCaption)) continue;
+            if(string.IsNullOrWhiteSpace(englishCaption)) return null;
 
             (string translated, string error) = await translationService.TranslateAsync(
                 englishCaption, languageCode, progress: null, plainText: true,
@@ -127,36 +162,25 @@ public sealed class SoftwareCoverCaptionTranslationProvider(
                     "SoftwareCoverCaption provider: failed to translate caption \"{English}\" into {Lang}: {Error}",
                     englishCaption, languageCode, error ?? "no result");
 
-                continue;
+                return null;
             }
 
-            // Defensive: trim to the column max length (varchar(500)).
             if(translated.Length > 500) translated = translated[..500];
 
             string canonical = englishCaption.Length > 500 ? englishCaption[..500] : englishCaption;
 
-            batch.Add(new SoftwareCoverCaptionTranslation
+            return new SoftwareCoverCaptionTranslation
             {
                 CaptionText  = canonical,
                 LanguageCode = languageCode,
                 Translation  = translated
-            });
-
-            if(batch.Count < FlushBatchSize) continue;
-
-            ctx.SoftwareCoverCaptionTranslations.AddRange(batch);
-            await ctx.SaveChangesAsync(ct);
-            inserted += batch.Count;
-            batch.Clear();
+            };
         }
 
-        if(batch.Count > 0)
+        async Task PersistBatchAsync(List<SoftwareCoverCaptionTranslation> rows, CancellationToken saveCt)
         {
-            ctx.SoftwareCoverCaptionTranslations.AddRange(batch);
-            await ctx.SaveChangesAsync(ct);
-            inserted += batch.Count;
+            ctx.SoftwareCoverCaptionTranslations.AddRange(rows);
+            await ctx.SaveChangesAsync(saveCt);
         }
-
-        return inserted;
     }
 }
