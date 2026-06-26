@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Marechai.Data;
 
 namespace Marechai.Database.Models;
@@ -55,4 +56,13 @@ public class IgdbGame : BaseModel<long>
     public int BatchNumber { get; set; }
 
     public ulong? SoftwareId { get; set; }
+
+    public bool EnrichmentApplied { get; set; }
+
+    public DateTime? EnrichedOn { get; set; }
+
+    /// <summary>Raw JSON array of IGDB screenshot <c>image_id</c> strings, cached here for a later
+    /// screenshot-download phase that has not been implemented yet.</summary>
+    [Column(TypeName = "text")]
+    public string ScreenshotImageIdsJson { get; set; }
 }

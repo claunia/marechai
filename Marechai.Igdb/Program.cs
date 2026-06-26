@@ -225,6 +225,43 @@ class Program
                 break;
             }
 
+            case "enrich-games":
+            {
+                IgdbHttpClient client = RequireClient();
+
+                if(client == null)
+                    return 1;
+
+                string assetRootPath = config.GetValue<string>("AssetRootPath");
+
+                if(string.IsNullOrEmpty(assetRootPath))
+                {
+                    Console.WriteLine("\e[31;1mMissing AssetRootPath in appsettings.json\e[0m");
+
+                    return 1;
+                }
+
+                var enricher = new GameEnricherService(factory, client, assetRootPath);
+                GameEnricherService.Stats stats = await enricher.RunAsync(dryRun);
+
+                Console.WriteLine($"""
+
+                                    Done. Processed {stats.GamesProcessed} games ({stats.GamesFailed} failed).
+                                      Families created:        {stats.FamiliesCreated}
+                                      Families linked:          {stats.FamiliesLinked}
+                                      Company roles added:      {stats.CompanyRolesAdded}
+                                      Descriptions added:       {stats.DescriptionsAdded}
+                                      Videos added:              {stats.VideosAdded}
+                                      Releases added:            {stats.ReleasesAdded}
+                                      Platforms auto-created:    {stats.PlatformsAutoCreated}
+                                      Ratings added:             {stats.RatingsAdded}
+                                      Screenshot ids cached:     {stats.ScreenshotsCached}
+                                      Similar-software links:    {stats.SimilarLinksAdded}
+                                    """);
+
+                break;
+            }
+
             case "stats":
             {
                 var stats = new MatchStatsService(factory);
@@ -258,7 +295,7 @@ class Program
 
                 if(igdbId == null || type == null)
                 {
-                    Console.WriteLine("  --igdb-id <id> and --type companies|companies-enrichment|games|platforms|platforms-enrichment are required.");
+                    Console.WriteLine("  --igdb-id <id> and --type companies|companies-enrichment|games|games-enrichment|platforms|platforms-enrichment are required.");
 
                     return 1;
                 }
@@ -354,6 +391,20 @@ class Program
                 break;
             }
 
+            case "games-enrichment":
+            {
+                IgdbGame entity = await context.IgdbGames.FirstOrDefaultAsync(g => g.IgdbId == igdbId);
+
+                if(entity != null)
+                {
+                    entity.EnrichmentApplied      = false;
+                    entity.EnrichedOn             = null;
+                    entity.ScreenshotImageIdsJson = null;
+                }
+
+                break;
+            }
+
             case "games":
             {
                 IgdbGame entity = await context.IgdbGames.FirstOrDefaultAsync(g => g.IgdbId == igdbId);
@@ -417,9 +468,11 @@ class Program
                                match-games                  Match mirrored games against Software
                                enrich-companies              Fill empty Company fields from matched IGDB data (resumable)
                                enrich-platforms               Download missing SoftwarePlatform logos from matched IGDB data (resumable)
+                               enrich-games                    Fill age ratings, franchise, companies, description, videos, releases,
+                                                                 similar games from matched IGDB data (resumable)
                                stats                        Print match status counts
                                review-ambiguous --type <companies|games|platforms> [--limit N]
-                               reset --igdb-id <id> --type <companies|companies-enrichment|games|platforms|platforms-enrichment>
+                               reset --igdb-id <id> --type <companies|companies-enrichment|games|games-enrichment|platforms|platforms-enrichment>
 
                              Options:
                                --batch-size N   Mirror one batch of up to N rows (default Import:BatchSize).
