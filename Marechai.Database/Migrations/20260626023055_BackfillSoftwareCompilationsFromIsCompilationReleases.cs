@@ -10,13 +10,40 @@ namespace Marechai.Database.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            // MySQL/MariaDB DDL is not transactional. If a previous run timed out partway through
+            // this migration, some schema/data changes may already be committed even though
+            // __EFMigrationsHistory was never updated. Every step below is therefore written to be
+            // safe on re-entry so production can resume from a partial application.
+
             // Temporary join-key column, dropped again in RemoveIsCompilationFromSoftwareReleases
             // once every step below has re-pointed everything it needs to via it.
-            migrationBuilder.AddColumn<ulong>(
-                name: "LegacyReleaseId",
-                table: "SoftwareCompilations",
-                type: "bigint unsigned",
-                nullable: true);
+            migrationBuilder.Sql(
+                """
+                SET @col_exists = (SELECT COUNT(*) FROM information_schema.COLUMNS
+                    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'SoftwareCompilations' AND COLUMN_NAME = 'LegacyReleaseId');
+                SET @sql = IF(@col_exists = 0,
+                    'ALTER TABLE `SoftwareCompilations` ADD COLUMN `LegacyReleaseId` bigint unsigned NULL',
+                    'SELECT 1');
+                PREPARE stmt FROM @sql;
+                EXECUTE stmt;
+                DEALLOCATE PREPARE stmt;
+                """);
+
+            // The backfill joins SoftwareCompilations by LegacyReleaseId several times; without an
+            // index MariaDB scans the full table repeatedly and the cover update can exceed the
+            // default 30 s command timeout on large datasets.
+            migrationBuilder.Sql(
+                """
+                SET @idx_exists = (SELECT COUNT(*) FROM information_schema.STATISTICS
+                    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'SoftwareCompilations'
+                      AND INDEX_NAME = 'IX_SoftwareCompilations_LegacyReleaseId');
+                SET @sql = IF(@idx_exists = 0,
+                    'CREATE INDEX `IX_SoftwareCompilations_LegacyReleaseId` ON `SoftwareCompilations` (`LegacyReleaseId`)',
+                    'SELECT 1');
+                PREPARE stmt FROM @sql;
+                EXECUTE stmt;
+                DEALLOCATE PREPARE stmt;
+                """);
 
             // 1. One SoftwareCompilations row per legacy IsCompilation=1 release (1:1 — merging
             //    same-compilation regional releases is a manual curation task, not automated here).
@@ -25,7 +52,8 @@ namespace Marechai.Database.Migrations
                 INSERT INTO SoftwareCompilations (Name, RelationshipType, LegacyReleaseId, CreatedOn, UpdatedOn)
                 SELECT COALESCE(NULLIF(r.Title, ''), 'Compilation'), 0, r.Id, NOW(6), NOW(6)
                 FROM SoftwareReleases r
-                WHERE r.IsCompilation = 1;
+                LEFT JOIN SoftwareCompilations comp ON comp.LegacyReleaseId = r.Id
+                WHERE r.IsCompilation = 1 AND comp.Id IS NULL;
                 """);
 
             // 2. Where the release had no Title, build a name from its included software/version
@@ -61,7 +89,8 @@ namespace Marechai.Database.Migrations
                 UPDATE SoftwareReleases r
                 JOIN SoftwareCompilations comp ON comp.LegacyReleaseId = r.Id
                 SET r.SoftwareCompilationId = comp.Id
-                WHERE r.IsCompilation = 1;
+                WHERE r.IsCompilation = 1
+                  AND (r.SoftwareCompilationId IS NULL OR r.SoftwareCompilationId <> comp.Id);
                 """);
 
             // 4. Re-point covers that were anchored to a compilation release. Keep SoftwareReleaseId
@@ -72,7 +101,8 @@ namespace Marechai.Database.Migrations
                 JOIN SoftwareReleases r ON sc.SoftwareReleaseId = r.Id
                 JOIN SoftwareCompilations comp ON comp.LegacyReleaseId = r.Id
                 SET sc.SoftwareCompilationId = comp.Id
-                WHERE r.IsCompilation = 1;
+                WHERE r.IsCompilation = 1
+                  AND (sc.SoftwareCompilationId IS NULL OR sc.SoftwareCompilationId <> comp.Id);
                 """);
 
             // 5. Copy the old release-keyed junction rows into the new compilation-keyed tables.
@@ -81,7 +111,10 @@ namespace Marechai.Database.Migrations
                 INSERT INTO SoftwareBySoftwareCompilation (SoftwareCompilationId, SoftwareId)
                 SELECT comp.Id, j.SoftwareId
                 FROM SoftwareBySoftwareRelease j
-                JOIN SoftwareCompilations comp ON comp.LegacyReleaseId = j.ReleaseId;
+                JOIN SoftwareCompilations comp ON comp.LegacyReleaseId = j.ReleaseId
+                LEFT JOIN SoftwareBySoftwareCompilation existing
+                       ON existing.SoftwareCompilationId = comp.Id AND existing.SoftwareId = j.SoftwareId
+                WHERE existing.SoftwareCompilationId IS NULL;
                 """);
 
             migrationBuilder.Sql(
@@ -89,7 +122,10 @@ namespace Marechai.Database.Migrations
                 INSERT INTO SoftwareVersionBySoftwareCompilation (SoftwareCompilationId, SoftwareVersionId)
                 SELECT comp.Id, j.SoftwareVersionId
                 FROM SoftwareVersionBySoftwareRelease j
-                JOIN SoftwareCompilations comp ON comp.LegacyReleaseId = j.ReleaseId;
+                JOIN SoftwareCompilations comp ON comp.LegacyReleaseId = j.ReleaseId
+                LEFT JOIN SoftwareVersionBySoftwareCompilation existing
+                       ON existing.SoftwareCompilationId = comp.Id AND existing.SoftwareVersionId = j.SoftwareVersionId
+                WHERE existing.SoftwareCompilationId IS NULL;
                 """);
         }
 
@@ -131,9 +167,30 @@ namespace Marechai.Database.Migrations
                 DELETE FROM SoftwareCompilations WHERE LegacyReleaseId IS NOT NULL;
                 """);
 
-            migrationBuilder.DropColumn(
-                name: "LegacyReleaseId",
-                table: "SoftwareCompilations");
+            migrationBuilder.Sql(
+                """
+                SET @idx_exists = (SELECT COUNT(*) FROM information_schema.STATISTICS
+                    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'SoftwareCompilations'
+                      AND INDEX_NAME = 'IX_SoftwareCompilations_LegacyReleaseId');
+                SET @sql = IF(@idx_exists > 0,
+                    'DROP INDEX `IX_SoftwareCompilations_LegacyReleaseId` ON `SoftwareCompilations`',
+                    'SELECT 1');
+                PREPARE stmt FROM @sql;
+                EXECUTE stmt;
+                DEALLOCATE PREPARE stmt;
+                """);
+
+            migrationBuilder.Sql(
+                """
+                SET @col_exists = (SELECT COUNT(*) FROM information_schema.COLUMNS
+                    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'SoftwareCompilations' AND COLUMN_NAME = 'LegacyReleaseId');
+                SET @sql = IF(@col_exists > 0,
+                    'ALTER TABLE `SoftwareCompilations` DROP COLUMN `LegacyReleaseId`',
+                    'SELECT 1');
+                PREPARE stmt FROM @sql;
+                EXECUTE stmt;
+                DEALLOCATE PREPARE stmt;
+                """);
         }
     }
 }

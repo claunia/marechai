@@ -596,6 +596,15 @@ file class Program
                 start = DateTime.Now;
                 Console.WriteLine("\e[31;1mUpdating database with Entity Framework...\e[0m");
                 MarechaiContext context = services.GetRequiredService<MarechaiContext>();
+
+                int migrationTimeoutSeconds = 1800;
+
+                if(int.TryParse(builder.Configuration["EntityFramework:MigrationCommandTimeoutSeconds"],
+                                out int configuredMigrationTimeoutSeconds) &&
+                   configuredMigrationTimeoutSeconds > 0)
+                    migrationTimeoutSeconds = configuredMigrationTimeoutSeconds;
+
+                context.Database.SetCommandTimeout(TimeSpan.FromSeconds(migrationTimeoutSeconds));
                 context.Database.Migrate();
                 end = DateTime.Now;
 

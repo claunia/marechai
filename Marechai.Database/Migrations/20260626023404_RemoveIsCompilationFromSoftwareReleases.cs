@@ -16,22 +16,57 @@ namespace Marechai.Database.Migrations
             // outright rather than leave a dangling, unreachable release row.
             migrationBuilder.Sql(
                 """
-                DELETE FROM SoftwareReleases WHERE IsCompilation = 1 AND SoftwareCompilationId IS NULL;
+                DELETE FROM SoftwareReleases
+                WHERE EXISTS (
+                    SELECT 1
+                    FROM information_schema.COLUMNS
+                    WHERE TABLE_SCHEMA = DATABASE()
+                      AND TABLE_NAME = 'SoftwareReleases'
+                      AND COLUMN_NAME = 'IsCompilation'
+                )
+                  AND IsCompilation = 1
+                  AND SoftwareCompilationId IS NULL;
                 """);
 
-            migrationBuilder.DropColumn(
-                name: "LegacyReleaseId",
-                table: "SoftwareCompilations");
+            migrationBuilder.Sql(
+                """
+                SET @idx_exists = (SELECT COUNT(*) FROM information_schema.STATISTICS
+                    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'SoftwareCompilations'
+                      AND INDEX_NAME = 'IX_SoftwareCompilations_LegacyReleaseId');
+                SET @sql = IF(@idx_exists > 0,
+                    'DROP INDEX `IX_SoftwareCompilations_LegacyReleaseId` ON `SoftwareCompilations`',
+                    'SELECT 1');
+                PREPARE stmt FROM @sql;
+                EXECUTE stmt;
+                DEALLOCATE PREPARE stmt;
+                """);
 
-            migrationBuilder.DropTable(
-                name: "SoftwareBySoftwareRelease");
+            migrationBuilder.Sql(
+                """
+                SET @col_exists = (SELECT COUNT(*) FROM information_schema.COLUMNS
+                    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'SoftwareCompilations' AND COLUMN_NAME = 'LegacyReleaseId');
+                SET @sql = IF(@col_exists > 0,
+                    'ALTER TABLE `SoftwareCompilations` DROP COLUMN `LegacyReleaseId`',
+                    'SELECT 1');
+                PREPARE stmt FROM @sql;
+                EXECUTE stmt;
+                DEALLOCATE PREPARE stmt;
+                """);
 
-            migrationBuilder.DropTable(
-                name: "SoftwareVersionBySoftwareRelease");
+            migrationBuilder.Sql("DROP TABLE IF EXISTS `SoftwareBySoftwareRelease`;");
+            migrationBuilder.Sql("DROP TABLE IF EXISTS `SoftwareVersionBySoftwareRelease`;");
 
-            migrationBuilder.DropColumn(
-                name: "IsCompilation",
-                table: "SoftwareReleases");
+            migrationBuilder.Sql(
+                """
+                SET @col_exists = (SELECT COUNT(*) FROM information_schema.COLUMNS
+                    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'SoftwareReleases' AND COLUMN_NAME = 'IsCompilation');
+                SET @sql = IF(@col_exists > 0,
+                    'ALTER TABLE `SoftwareReleases` DROP COLUMN `IsCompilation`',
+                    'SELECT 1');
+                PREPARE stmt FROM @sql;
+                EXECUTE stmt;
+                DEALLOCATE PREPARE stmt;
+                """);
         }
 
         /// <inheritdoc />
