@@ -222,6 +222,10 @@
         <value>Gestion des plateformes logicielles</value>
         <comment>Software platform management admin link</comment>
     </data>
+    <data name="External Site Management" xml:space="preserve">
+        <value>Gestion des sites externes</value>
+        <comment>External site management admin link</comment>
+    </data>
     <data name="Software Release Management" xml:space="preserve">
         <value>Gestion des publications de logiciels</value>
         <comment>Software release management admin link</comment>

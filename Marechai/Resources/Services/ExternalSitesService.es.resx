@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:schema id="root">
+        <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+        <xs:element name="root" ns1:IsDataSet="true">
+            <xs:complexType>
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element name="metadata">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0" />
+                            </xs:sequence>
+                            <xs:attribute name="name" use="required" type="xsd:string" />
+                            <xs:attribute name="type" type="xsd:string" />
+                            <xs:attribute name="mimetype" type="xsd:string" />
+                            <xs:attribute ref="xml:space" />
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="assembly">
+                        <xs:complexType>
+                            <xs:attribute name="alias" type="xsd:string" />
+                            <xs:attribute name="name" type="xsd:string" />
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="data">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
+                            </xs:sequence>
+                            <xs:attribute name="name" type="xsd:string" use="required" ns1:Ordinal="1" />
+                            <xs:attribute name="type" type="xsd:string" ns1:Ordinal="3" />
+                            <xs:attribute name="mimetype" type="xsd:string" ns1:Ordinal="4" />
+                            <xs:attribute ref="xml:space" />
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="resheader">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                            </xs:sequence>
+                            <xs:attribute name="name" type="xsd:string" use="required" />
+                        </xs:complexType>
+                    </xs:element>
+                </xs:choice>
+            </xs:complexType>
+        </xs:element>
+    </xs:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="External Site Management" xml:space="preserve">
+        <value>Gestión de sitios externos</value>
+    </data>
+    <data name="Manage external cataloging websites (e.g., MobyGames, IGDB)." xml:space="preserve">
+        <value>Gestionar sitios web externos de catalogación (ej. MobyGames, IGDB).</value>
+    </data>
+    <data name="Add Site" xml:space="preserve">
+        <value>Añadir sitio</value>
+    </data>
+    <data name="Edit Site" xml:space="preserve">
+        <value>Editar sitio</value>
+    </data>
+    <data name="Delete Site" xml:space="preserve">
+        <value>Eliminar sitio</value>
+    </data>
+    <data name="Site created successfully." xml:space="preserve">
+        <value>Sitio creado correctamente.</value>
+    </data>
+    <data name="Site updated successfully." xml:space="preserve">
+        <value>Sitio actualizado correctamente.</value>
+    </data>
+    <data name="Site deleted successfully." xml:space="preserve">
+        <value>Sitio eliminado correctamente.</value>
+    </data>
+    <data name="Are you sure you want to delete site '{0}'? This action cannot be undone." xml:space="preserve">
+        <value>¿Está seguro de que desea eliminar el sitio '{0}'? Esta acción no se puede deshacer.</value>
+    </data>
+    <data name="URL Template" xml:space="preserve">
+        <value>Plantilla de URL</value>
+    </data>
+    <data name="Name" xml:space="preserve">
+        <value>Nombre</value>
+    </data>
+    <data name="Name is required." xml:space="preserve">
+        <value>El nombre es obligatorio.</value>
+    </data>
+    <data name="Actions" xml:space="preserve">
+        <value>Acciones</value>
+    </data>
+    <data name="Edit" xml:space="preserve">
+        <value>Editar</value>
+    </data>
+    <data name="Delete" xml:space="preserve">
+        <value>Eliminar</value>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Cancelar</value>
+    </data>
+    <data name="Save" xml:space="preserve">
+        <value>Guardar</value>
+    </data>
+</root>

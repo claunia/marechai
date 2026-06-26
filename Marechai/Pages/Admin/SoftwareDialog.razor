@@ -204,6 +204,45 @@
                 }
             </MudTabPanel>
 
+            @* Tab - External IDs (edit mode only — the Software row must already exist
+                before an external id can be registered against it). *@
+            @if(!IsNew)
+            {
+                <MudTabPanel Text="@L["External IDs"]" Icon="@Icons.Material.Filled.Link">
+                    @foreach(SoftwareExternalIdDto e in _externalIdRows ?? new())
+                    {
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText>@e.ExternalSiteName: @e.ExternalId</MudText>
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                           OnClick="@(() => RemoveExternalId(e))"/>
+                        </MudStack>
+                    }
+
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-2">
+                        <MudSelect T="ExternalSiteDto" @bind-Value="_selectedExternalSite" Label="@L["Site"]"
+                                   Variant="Variant.Outlined" Style="flex: 1;" ToStringFunc="@(s => s?.Name)">
+                            @foreach(ExternalSiteDto s in _allExternalSites ?? new())
+                            {
+                                <MudSelectItem T="ExternalSiteDto" Value="@s">@s.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                        <MudTextField @bind-Value="_newExternalId"
+                                      Label="@L["ID"]"
+                                      Variant="Variant.Outlined"
+                                      Style="flex: 1;"/>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
+                                   OnClick="AddExternalIdClick"
+                                   Disabled="@(_selectedExternalSite is null || string.IsNullOrWhiteSpace(_newExternalId))">@L["Add"]</MudButton>
+                    </MudStack>
+
+                    @if(!string.IsNullOrWhiteSpace(_externalIdMessage))
+                    {
+                        <MudAlert Severity="@_externalIdMessageSeverity" Class="mt-2" ShowCloseIcon="true"
+                                  CloseIconClicked="() => _externalIdMessage = null">@_externalIdMessage</MudAlert>
+                    }
+                </MudTabPanel>
+            }
+
             @* Tab 3 - Company Roles (available in BOTH create and edit modes; create-mode
                 adds are buffered in _pendingCompanyAdds and flushed by the parent admin
                 page after CreateAsync returns the new software id, mirroring the Genres tab). *@
@@ -353,6 +392,14 @@
     /// </summary>
     sealed record PendingAlternativeTitleAdd(string Title, string Comment);
 
+    // ── External IDs tab state (edit mode only) ──
+    List<SoftwareExternalIdDto> _externalIdRows;
+    List<ExternalSiteDto>       _allExternalSites;
+    ExternalSiteDto              _selectedExternalSite;
+    string                       _newExternalId;
+    string                       _externalIdMessage;
+    Severity                     _externalIdMessageSeverity;
+
     [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
 
     [Parameter] public bool IsNew { get; set; }
@@ -367,6 +414,7 @@
     [Parameter] public Marechai.Data.SoftwareKind Kind { get; set; }
 
     [Inject] SoftwareService SoftwareService { get; set; } = null!;
+    [Inject] ExternalSitesService ExternalSitesService { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -422,6 +470,12 @@
         _alternativeTitleRows = IsNew
                                      ? new List<SoftwareAlternativeTitleDto>()
                                      : await SoftwareService.GetAlternativeTitlesAsync(SoftwareId);
+
+        if(!IsNew)
+        {
+            _allExternalSites = await ExternalSitesService.GetAllAsync();
+            _externalIdRows   = await SoftwareService.GetExternalIdsAsync(SoftwareId);
+        }
     }
 
     async Task<IEnumerable<SoftwareFamilyDto>> SearchFamilies(string value, CancellationToken ct)
@@ -762,6 +816,46 @@
     {
         _pendingAlternativeTitleAdds.Remove(p);
         _alternativeTitleMessage = null;
+    }
+
+    async Task AddExternalIdClick()
+    {
+        if(_selectedExternalSite?.Id is null || string.IsNullOrWhiteSpace(_newExternalId)) return;
+
+        (bool ok, SoftwareExternalIdDto _, string err) =
+            await SoftwareService.AddExternalIdAsync((ulong)SoftwareId, _selectedExternalSite.Id.Value,
+                                                       _newExternalId.Trim());
+
+        if(ok)
+        {
+            _externalIdRows     = await SoftwareService.GetExternalIdsAsync(SoftwareId);
+            _selectedExternalSite = null;
+            _newExternalId         = null;
+            _externalIdMessage     = null;
+        }
+        else
+        {
+            _externalIdMessage         = err ?? L["Failed to add external id."];
+            _externalIdMessageSeverity = Severity.Error;
+        }
+    }
+
+    async Task RemoveExternalId(SoftwareExternalIdDto e)
+    {
+        if(!e.Id.HasValue) return;
+
+        (bool ok, string err) = await SoftwareService.RemoveExternalIdAsync(e.Id.Value);
+
+        if(ok)
+        {
+            _externalIdRows = await SoftwareService.GetExternalIdsAsync(SoftwareId);
+            _externalIdMessage = null;
+        }
+        else
+        {
+            _externalIdMessage         = err ?? L["Failed to remove external id."];
+            _externalIdMessageSeverity = Severity.Error;
+        }
     }
 
     void Submit()

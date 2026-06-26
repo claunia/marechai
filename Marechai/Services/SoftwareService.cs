@@ -280,6 +280,62 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
+    public async Task<List<SoftwareExternalIdDto>> GetExternalIdsAsync(int softwareId)
+    {
+        try
+        {
+            List<SoftwareExternalIdDto> ids = await client.Software[softwareId].ExternalIds.GetAsync();
+
+            return ids ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(bool succeeded, SoftwareExternalIdDto dto, string error)> AddExternalIdAsync(
+        ulong softwareId, long externalSiteId, string externalId)
+    {
+        try
+        {
+            SoftwareExternalIdDto created = await client.Software.ExternalIds.PostAsync(new SoftwareExternalIdDto
+            {
+                SoftwareId     = (int)softwareId,
+                ExternalSiteId = externalSiteId,
+                ExternalId     = externalId
+            });
+
+            return (true, created, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, null, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (false, null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string error)> RemoveExternalIdAsync(long id)
+    {
+        try
+        {
+            await client.Software.ExternalIds[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
     // ── Picker methods for admin ──
 
     public async Task<List<SoftwareRoleDto>> GetSoftwareRolesAsync()

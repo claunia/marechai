@@ -583,6 +583,21 @@
     <data name="Alternative Titles" xml:space="preserve">
         <value>Titoli alternativi</value>
     </data>
+    <data name="External IDs" xml:space="preserve">
+        <value>ID esterni</value>
+    </data>
+    <data name="Site" xml:space="preserve">
+        <value>Sito</value>
+    </data>
+    <data name="ID" xml:space="preserve">
+        <value>ID</value>
+    </data>
+    <data name="Failed to add external id." xml:space="preserve">
+        <value>Impossibile aggiungere l'ID esterno.</value>
+    </data>
+    <data name="Failed to remove external id." xml:space="preserve">
+        <value>Impossibile rimuovere l'ID esterno.</value>
+    </data>
     <data name="Comment" xml:space="preserve">
         <value>Commento</value>
     </data>

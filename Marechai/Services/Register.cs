@@ -69,6 +69,7 @@ public static class Register
         services.AddScoped<SoftwareService>();
         services.AddScoped<SoftwareFamiliesService>();
         services.AddScoped<SoftwarePlatformsService>();
+        services.AddScoped<ExternalSitesService>();
         services.AddScoped<SoftwareAttributesService>();
         services.AddScoped<SoftwareVersionsService>();
         services.AddScoped<SoftwareReleasesService>();

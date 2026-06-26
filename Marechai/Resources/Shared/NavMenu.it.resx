@@ -222,6 +222,10 @@
         <value>Gestione piattaforme software</value>
         <comment>Software Platform Management</comment>
     </data>
+    <data name="External Site Management" xml:space="preserve">
+        <value>Gestione siti esterni</value>
+        <comment>External Site Management</comment>
+    </data>
     <data name="Software Release Management" xml:space="preserve">
         <value>Gestione pubblicazioni software</value>
         <comment>Software Release Management</comment>

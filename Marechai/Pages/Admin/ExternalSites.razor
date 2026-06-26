@@ -1,0 +1,58 @@
+@page "/admin/external-sites"
+@attribute [Authorize(Roles = "Admin, UberAdmin")]
+@using Marechai.ApiClient.Models
+@using Marechai.Services
+@inject ExternalSitesService ExternalSitesService
+@inject IStringLocalizer<ExternalSitesService> L
+@inject IDialogService DialogService
+
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #546e7a 0%, #90a4ae 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Filled.Public" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Style="color: white;">@L["External Site Management"]</MudText>
+    </MudStack>
+    <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);" Class="mt-2">@L["Manage external cataloging websites (e.g., MobyGames, IGDB)."]</MudText>
+</MudPaper>
+
+@if(!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+}
+
+@if(!string.IsNullOrWhiteSpace(_successMessage))
+{
+    <MudAlert Severity="Severity.Success" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _successMessage = null">@_successMessage</MudAlert>
+}
+
+@if(_isLoading)
+{
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+    </div>
+    return;
+}
+
+<MudPaper Elevation="2" Class="rounded-lg">
+    <MudToolBar Dense="true">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="OpenAddDialog">@L["Add Site"]</MudButton>
+        <MudSpacer/>
+        <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadDataAsync"/>
+    </MudToolBar>
+
+    <MudDataGrid Items="_sites" Dense="true" Hover="true" Striped="true" Filterable="true">
+        <Columns>
+            <PropertyColumn Property="x => x.Name" Title="@L["Name"]"/>
+            <PropertyColumn Property="x => x.UrlTemplate" Title="@L["URL Template"]"/>
+            <TemplateColumn Title="@L["Actions"]" Sortable="false" Filterable="false">
+                <CellTemplate>
+                    <MudStack Row="true" Spacing="1">
+                        <MudTooltip Text="@L["Edit"]"><MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditDialog(context.Item)"/></MudTooltip>
+
+                        <MudTooltip Text="@L["Delete"]"><MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDelete(context.Item)"/></MudTooltip>
+
+                    </MudStack>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+</MudPaper>

@@ -1,0 +1,54 @@
+@using Marechai.Services
+
+@inject IStringLocalizer<ExternalSitesService> L
+
+<MudDialog>
+    <DialogContent>
+        <MudTextField @bind-Value="Name"
+                      Label="@L["Name"]"
+                      Variant="Variant.Outlined"
+                      Required="true"
+                      RequiredError="@L["Name is required."]"
+                      Class="mb-4"/>
+
+        <MudTextField @bind-Value="UrlTemplate"
+                      Label="@L["URL Template"]"
+                      Placeholder="https://example.com/game/{id}"
+                      Variant="Variant.Outlined"
+                      Class="mb-4"/>
+
+        @if(!string.IsNullOrWhiteSpace(_validationError))
+        {
+            <MudAlert Severity="Severity.Error" Class="mt-2">@_validationError</MudAlert>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit">@L["Save"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    string _validationError;
+
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter] public bool   IsNew       { get; set; }
+    [Parameter] public long   Id          { get; set; }
+    [Parameter] public string Name        { get; set; } = string.Empty;
+    [Parameter] public string UrlTemplate { get; set; }
+
+    void Cancel() => MudDialog.Cancel();
+
+    void Submit()
+    {
+        if(string.IsNullOrWhiteSpace(Name))
+        {
+            _validationError = L["Name is required."];
+
+            return;
+        }
+
+        MudDialog.Close(DialogResult.Ok(new ExternalSiteDialogResult { Name = Name, UrlTemplate = UrlTemplate }));
+    }
+}
