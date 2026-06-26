@@ -197,6 +197,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<SoftwareAlternativeTitleCommentTranslation> SoftwareAlternativeTitleCommentTranslations { get; set; }
     public virtual DbSet<ExternalSite>                        ExternalSites                        { get; set; }
     public virtual DbSet<SoftwareExternalId>                  SoftwareExternalIds                  { get; set; }
+    public virtual DbSet<SoftwareSimilarTo>                   SoftwareSimilarTo                    { get; set; }
     public virtual DbSet<SoundByMachine>                      SoundByMachine                      { get; set; }
     public virtual DbSet<SoundSynth>                          SoundSynths                         { get; set; }
     public virtual DbSet<StandaloneFile>                      StandaloneFiles                     { get; set; }
@@ -2622,6 +2623,25 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .HasForeignKey(e => e.ExternalSiteId)
                   .HasConstraintName("fk_software_external_ids_external_site")
                   .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<SoftwareSimilarTo>(entity =>
+        {
+            entity.HasKey(x => new { x.SoftwareId, x.SimilarSoftwareId });
+
+            entity.HasIndex(e => e.SimilarSoftwareId).HasDatabaseName("idx_software_similar_to_similar_software");
+
+            entity.HasOne(x => x.Software)
+                  .WithMany(s => s.SimilarToLeft)
+                  .HasForeignKey(x => x.SoftwareId)
+                  .HasConstraintName("fk_software_similar_to_software")
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(x => x.SimilarSoftware)
+                  .WithMany(s => s.SimilarToRight)
+                  .HasForeignKey(x => x.SimilarSoftwareId)
+                  .HasConstraintName("fk_software_similar_to_similar_software")
+                  .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<SoftwareAlternativeTitleCommentTranslation>(entity =>

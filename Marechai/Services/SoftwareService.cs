@@ -336,6 +336,62 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
+    public async Task<List<SoftwareSimilarToDto>> GetSimilarSoftwareAsync(int softwareId)
+    {
+        try
+        {
+            List<SoftwareSimilarToDto> similar = await client.Software[softwareId].Similar.GetAsync();
+
+            return similar ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(bool succeeded, SoftwareSimilarToDto dto, string error)> AddSimilarSoftwareAsync(
+        ulong softwareId, ulong similarSoftwareId)
+    {
+        try
+        {
+            SoftwareSimilarToDto created = await client.Software.SimilarTo.PostAsync(new SoftwareSimilarToDto
+            {
+                SoftwareId        = (int)softwareId,
+                SimilarSoftwareId = (int)similarSoftwareId
+            });
+
+            return (true, created, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, null, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (false, null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string error)> RemoveSimilarSoftwareAsync(ulong softwareId,
+        ulong similarSoftwareId)
+    {
+        try
+        {
+            await client.Software.SimilarTo[(int)softwareId][(int)similarSoftwareId].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
     // ── Picker methods for admin ──
 
     public async Task<List<SoftwareRoleDto>> GetSoftwareRolesAsync()

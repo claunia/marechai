@@ -2590,6 +2590,28 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                 })
                .ToListAsync();
 
+    [HttpGet("/software/{softwareId:ulong}/similar")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public Task<List<SoftwareSimilarToDto>> GetSimilarSoftwareAsync(ulong softwareId) =>
+        context.SoftwareSimilarTo
+               .Where(e => e.SoftwareId == softwareId || e.SimilarSoftwareId == softwareId)
+               .Select(e => e.SoftwareId == softwareId
+                                ? new SoftwareSimilarToDto
+                                {
+                                    SoftwareId          = softwareId,
+                                    SimilarSoftwareId   = e.SimilarSoftwareId,
+                                    SimilarSoftwareName = e.SimilarSoftware.Name
+                                }
+                                : new SoftwareSimilarToDto
+                                {
+                                    SoftwareId          = softwareId,
+                                    SimilarSoftwareId   = e.SoftwareId,
+                                    SimilarSoftwareName = e.Software.Name
+                                })
+               .OrderBy(e => e.SimilarSoftwareName)
+               .ToListAsync();
+
     [HttpGet("/software/{softwareId:ulong}/attributes")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]

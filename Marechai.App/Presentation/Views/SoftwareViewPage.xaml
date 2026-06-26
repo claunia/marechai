@@ -290,6 +290,48 @@
                         </Border>
                     </StackPanel>
 
+                    <!-- Similar Software -->
+                    <StackPanel Visibility="{Binding ShowSimilarSoftware}"
+                                Spacing="12">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=SimilarSoftwareHeader}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <ItemsControl ItemsSource="{Binding SimilarSoftware}"
+                                      HorizontalAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="4" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Padding="0"
+                                            Margin="0"
+                                            HorizontalContentAlignment="Stretch"
+                                            HorizontalAlignment="Stretch"
+                                            Command="{Binding DataContext.NavigateToSimilarSoftwareCommand, ElementName=PageRoot}"
+                                            CommandParameter="{Binding}"
+                                            Background="Transparent"
+                                            BorderThickness="0">
+                                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                BorderThickness="1"
+                                                CornerRadius="8"
+                                                Padding="16,8"
+                                                HorizontalAlignment="Stretch">
+                                            <TextBlock Text="{Binding SimilarSoftwareName}"
+                                                       FontSize="14"
+                                                       Foreground="{ThemeResource TextControlForeground}" />
+                                        </Border>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
                     <!-- Companies -->
                     <StackPanel Visibility="{Binding ShowCompanies}"
                                 Spacing="12">

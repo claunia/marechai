@@ -216,6 +216,40 @@
                                                 </ItemsRepeater.ItemTemplate>
                                             </ItemsRepeater>
                                         </StackPanel>
+
+                                        <!-- Similar Software (edit only) -->
+                                        <StackPanel Visibility="{Binding IsEditingExisting, Converter={StaticResource BoolToVisibilityConverter}}" Spacing="8">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SimilarSoftwareHeader}" FontSize="14" FontWeight="SemiBold" Margin="0,8,0,0" />
+                                            <AutoSuggestBox PlaceholderText="{Binding Source={StaticResource Strings}, Path=SimilarSoftwareSearchLabel}"
+                                                            Text="{Binding SimilarSoftwareSearchText, Mode=TwoWay}" QueryIcon="Find"
+                                                            x:Name="SimilarSoftwareFilterBox" TextChanged="SimilarSoftwareFilterBox_TextChanged" />
+                                            <Grid ColumnSpacing="4">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <ComboBox Grid.Column="0" ItemsSource="{Binding SimilarSoftwareSuggestions}"
+                                                          SelectedItem="{Binding SelectedSimilarSoftwareToAdd, Mode=TwoWay}" DisplayMemberPath="Name"
+                                                          PlaceholderText="{Binding Source={StaticResource Strings}, Path=SimilarSoftwareHeader}" HorizontalAlignment="Stretch" />
+                                                <Button Grid.Column="1" Content="+" Command="{Binding AddSimilarSoftwareCommand}" VerticalAlignment="Bottom" Padding="10,6" />
+                                            </Grid>
+                                            <ItemsRepeater ItemsSource="{Binding SimilarSoftware}">
+                                                <ItemsRepeater.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Grid Margin="0,2" ColumnSpacing="8">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding SimilarSoftwareName}" VerticalAlignment="Center" />
+                                                            <Button Grid.Column="1" Content="{Binding Source={StaticResource Strings}, Path=DeleteButton}"
+                                                                    Command="{Binding DataContext.RemoveSimilarSoftwareCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
+                                                                    Foreground="{ThemeResource SystemErrorTextColor}" Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ItemsRepeater.ItemTemplate>
+                                            </ItemsRepeater>
+                                        </StackPanel>
                                     </StackPanel>
                                 </ScrollViewer>
 

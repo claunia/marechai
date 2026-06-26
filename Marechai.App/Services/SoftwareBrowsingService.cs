@@ -632,6 +632,24 @@ public class SoftwareBrowsingService
         }
     }
 
+    public async Task<List<SoftwareSimilarToDto>> GetSimilarSoftwareAsync(int softwareId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching similar software for software {SoftwareId} from API", softwareId);
+
+            List<SoftwareSimilarToDto> similar = await _apiClient.Software[softwareId].Similar.GetAsync();
+
+            return similar ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching similar software for software {SoftwareId} from API", softwareId);
+
+            return [];
+        }
+    }
+
     public async Task<List<SoftwareAttributeDto>> GetAttributesAsync(int softwareId)
     {
         try

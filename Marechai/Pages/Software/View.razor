@@ -510,6 +510,27 @@ else
 </MudCard>
 }
 
+@* ── Similar Software Card ── *@
+@if(_similarSoftware.Count > 0)
+{
+<MudCard Elevation="2" Class="mb-4 rounded-lg">
+    <MudCardContent>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+            <MudIcon Icon="@Icons.Material.Filled.Recommend" Color="Color.Primary"/>
+            <MudText Typo="Typo.h6">@L["Similar Software"]</MudText>
+        </MudStack>
+        <MudList T="SoftwareSimilarToDto" Dense="true">
+            @foreach(SoftwareSimilarToDto similar in _similarSoftware)
+            {
+                <MudListItem T="SoftwareSimilarToDto">
+                    <MudLink Href="@($"/software/{similar.SimilarSoftwareId}")">@similar.SimilarSoftwareName</MudLink>
+                </MudListItem>
+            }
+        </MudList>
+    </MudCardContent>
+</MudCard>
+}
+
 </MudTabPanel>
 
 @* ── SPECIFICATIONS TAB ── *@

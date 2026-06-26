@@ -197,6 +197,57 @@ public class SoftwareService
         }
     }
 
+    // --- Similar Software ---
+
+    public async Task<List<SoftwareSimilarToDto>> GetSimilarSoftwareAsync(int softwareId)
+    {
+        try
+        {
+            List<SoftwareSimilarToDto>? items = await _apiClient.Software[softwareId].Similar.GetAsync();
+
+            return items ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching similar software for software {SoftwareId}", softwareId);
+
+            return [];
+        }
+    }
+
+    public async Task<bool> AddSimilarSoftwareAsync(SoftwareSimilarToDto dto)
+    {
+        try
+        {
+            await _apiClient.Software.SimilarTo.PostAsync(dto);
+
+            return true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error adding similar software link");
+
+            return false;
+        }
+    }
+
+    public async Task<bool> RemoveSimilarSoftwareAsync(int softwareId, int similarSoftwareId)
+    {
+        try
+        {
+            await _apiClient.Software.SimilarTo[softwareId][similarSoftwareId].DeleteAsync();
+
+            return true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error removing similar software link between {SoftwareId} and {SimilarSoftwareId}",
+                              softwareId, similarSoftwareId);
+
+            return false;
+        }
+    }
+
     // --- Software Roles (lookup) ---
 
     public async Task<List<SoftwareRoleDto>> GetRolesAsync()

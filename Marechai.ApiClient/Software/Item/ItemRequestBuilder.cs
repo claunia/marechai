@@ -23,6 +23,7 @@ using Marechai.ApiClient.Software.Item.PromoArt;
 using Marechai.ApiClient.Software.Item.Rankings;
 using Marechai.ApiClient.Software.Item.Releases;
 using Marechai.ApiClient.Software.Item.Screenshots;
+using Marechai.ApiClient.Software.Item.Similar;
 using Marechai.ApiClient.Software.Item.UserRatings;
 using Marechai.ApiClient.Software.Item.UserReviews;
 using Marechai.ApiClient.Software.Item.Versions;
@@ -152,6 +153,11 @@ namespace Marechai.ApiClient.Software.Item
         public global::Marechai.ApiClient.Software.Item.Screenshots.ScreenshotsRequestBuilder Screenshots
         {
             get => new global::Marechai.ApiClient.Software.Item.Screenshots.ScreenshotsRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The similar property</summary>
+        public global::Marechai.ApiClient.Software.Item.Similar.SimilarRequestBuilder Similar
+        {
+            get => new global::Marechai.ApiClient.Software.Item.Similar.SimilarRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The userRatings property</summary>
         public global::Marechai.ApiClient.Software.Item.UserRatings.UserRatingsRequestBuilder UserRatings

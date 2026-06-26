@@ -63,6 +63,12 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
     [ObservableProperty] private ExternalSiteDto?                           _selectedExternalSiteToAdd;
     [ObservableProperty] private string                                     _externalIdValueToAdd = string.Empty;
 
+    // Similar software
+    [ObservableProperty] private ObservableCollection<SoftwareSimilarToDto> _similarSoftware = [];
+    [ObservableProperty] private SoftwareDto?                              _selectedSimilarSoftwareToAdd;
+    [ObservableProperty] private string                                    _similarSoftwareSearchText = string.Empty;
+    [ObservableProperty] private ObservableCollection<SoftwareDto>          _similarSoftwareSuggestions = [];
+
     private int?                        _editingId;
     private List<SoftwareDto>?          _allSoftware;
     private List<SoftwareFamilyDto>?    _allFamilies;
@@ -107,6 +113,8 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
         RemoveCompanyRoleByDisplayCommand = new AsyncRelayCommand<string>(RemoveCompanyRoleByDisplayAsync);
         AddExternalIdCommand        = new AsyncRelayCommand(AddExternalIdAsync);
         RemoveExternalIdCommand     = new AsyncRelayCommand<SoftwareExternalIdDto>(RemoveExternalIdAsync);
+        AddSimilarSoftwareCommand   = new AsyncRelayCommand(AddSimilarSoftwareAsync);
+        RemoveSimilarSoftwareCommand = new AsyncRelayCommand<SoftwareSimilarToDto>(RemoveSimilarSoftwareAsync);
         OpenVersionsCommand = new RelayCommand<SoftwareDto>(OpenVersions);
         OpenDescriptionCommand     = new AsyncRelayCommand<SoftwareDto>(OpenDescriptionAsync);
         SaveDescriptionCommand     = new AsyncRelayCommand(SaveDescriptionAsync);
@@ -128,6 +136,8 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand<string>        RemoveCompanyRoleByDisplayCommand { get; }
     public IAsyncRelayCommand                              AddExternalIdCommand    { get; }
     public IAsyncRelayCommand<SoftwareExternalIdDto>       RemoveExternalIdCommand { get; }
+    public IAsyncRelayCommand                              AddSimilarSoftwareCommand    { get; }
+    public IAsyncRelayCommand<SoftwareSimilarToDto>        RemoveSimilarSoftwareCommand { get; }
     public IRelayCommand<SoftwareDto>        OpenVersionsCommand { get; }
     public IAsyncRelayCommand<SoftwareDto>              OpenDescriptionCommand   { get; }
     public IAsyncRelayCommand                           SaveDescriptionCommand   { get; }
@@ -248,6 +258,7 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
 
         await LoadCompanyRolesAsync(item.Id.Value);
         await LoadExternalIdsAsync(item.Id.Value);
+        await LoadSimilarSoftwareAsync(item.Id.Value);
     }
 
     private async Task DeleteAsync(SoftwareDto? item)
@@ -446,6 +457,60 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
         await LoadExternalIdsAsync(_editingId.Value);
     }
 
+    // --- Similar software ---
+    private async Task LoadSimilarSoftwareAsync(int softwareId)
+    {
+        SimilarSoftware.Clear();
+        try
+        {
+            List<SoftwareSimilarToDto> items = await _service.GetSimilarSoftwareAsync(softwareId);
+            foreach(SoftwareSimilarToDto item in items) SimilarSoftware.Add(item);
+        }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading similar software for software {Id}", softwareId); }
+    }
+
+    public void UpdateSimilarSoftwareSuggestions(string query)
+    {
+        SimilarSoftwareSuggestions.Clear();
+        if(_allSoftware == null) return;
+
+        IEnumerable<SoftwareDto> source = _allSoftware.Where(
+            s => s.Id != _editingId &&
+                 SimilarSoftware.All(r => r.SimilarSoftwareId != s.Id));
+
+        if(!string.IsNullOrWhiteSpace(query))
+            source = source.Where(s => s.Name != null && s.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
+
+        foreach(SoftwareDto match in source.Take(50)) SimilarSoftwareSuggestions.Add(match);
+    }
+
+    private async Task AddSimilarSoftwareAsync()
+    {
+        if(_editingId == null || SelectedSimilarSoftwareToAdd?.Id == null) return;
+
+        try
+        {
+            var dto = new SoftwareSimilarToDto
+            {
+                SoftwareId        = _editingId.Value,
+                SimilarSoftwareId = SelectedSimilarSoftwareToAdd.Id.Value
+            };
+            await _service.AddSimilarSoftwareAsync(dto);
+            await LoadSimilarSoftwareAsync(_editingId.Value);
+            SelectedSimilarSoftwareToAdd = null;
+            SimilarSoftwareSearchText    = string.Empty;
+        }
+        catch(Exception ex) { _logger.LogError(ex, "Error adding similar software link"); }
+    }
+
+    private async Task RemoveSimilarSoftwareAsync(SoftwareSimilarToDto? item)
+    {
+        if(item?.SimilarSoftwareId == null || _editingId == null) return;
+
+        await _service.RemoveSimilarSoftwareAsync(_editingId.Value, item.SimilarSoftwareId.Value);
+        await LoadSimilarSoftwareAsync(_editingId.Value);
+    }
+
     private void ClearForm()
     {
         SoftwareName      = string.Empty;
@@ -461,6 +526,10 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
         ExternalIds.Clear();
         SelectedExternalSiteToAdd = null;
         ExternalIdValueToAdd      = string.Empty;
+        SimilarSoftware.Clear();
+        SelectedSimilarSoftwareToAdd = null;
+        SimilarSoftwareSearchText    = string.Empty;
+        SimilarSoftwareSuggestions.Clear();
         HasError = false; ErrorMessage = string.Empty;
     }
 

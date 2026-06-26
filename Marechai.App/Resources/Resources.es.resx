@@ -1995,6 +1995,8 @@
   <data name="ExternalIdsHeader" xml:space="preserve"><value>IDs externos</value></data>
   <data name="ExternalSiteLabel" xml:space="preserve"><value>Sitio</value></data>
   <data name="ExternalIdValueLabel" xml:space="preserve"><value>ID</value></data>
+  <data name="SimilarSoftwareHeader" xml:space="preserve"><value>Software similar</value></data>
+  <data name="SimilarSoftwareSearchLabel" xml:space="preserve"><value>Buscar software</value></data>
   <data name="FailedToUploadLogo" xml:space="preserve"><value>Error al subir el logo.</value></data>
   <data name="FailedToRemoveLogo" xml:space="preserve"><value>Error al eliminar el logo.</value></data>
   <data name="LogoLabel" xml:space="preserve"><value>Logo</value></data>

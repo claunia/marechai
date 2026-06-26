@@ -160,6 +160,10 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     public ObservableCollection<GenreTypeGroupItem>       GenreGroups         { get; } = [];
     public ObservableCollection<SpecPlatformGroupItem>    SpecGroups          { get; } = [];
     public ObservableCollection<RatingItem>               Ratings             { get; } = [];
+    public ObservableCollection<SoftwareSimilarToDto>     SimilarSoftware     { get; } = [];
+
+    [ObservableProperty]
+    private Visibility _showSimilarSoftware = Visibility.Collapsed;
 
     [ObservableProperty]
     private Visibility _showGenres = Visibility.Collapsed;
@@ -246,6 +250,22 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     }
 
     [RelayCommand]
+    public Task NavigateToSimilarSoftware(SoftwareSimilarToDto? similar)
+    {
+        if(similar?.SimilarSoftwareId is null) return Task.CompletedTask;
+
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.SoftwareId, similar.SimilarSoftwareId.Value },
+            { NavParamKeys.NavigationSource, nameof(SoftwareViewViewModel) }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(SoftwareViewPage), parameters);
+
+        return Task.CompletedTask;
+    }
+
+    [RelayCommand]
     public Task NavigateToRelease(ReleaseDisplayItem? release)
     {
         if(release is null) return Task.CompletedTask;
@@ -303,6 +323,14 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
             Kind              = (SoftwareKind)(software.Kind ?? 0);
             BaseSoftwareId    = software.BaseSoftwareId;
             BaseSoftware      = software.BaseSoftware;
+
+            // Load similar software.
+            SimilarSoftware.Clear();
+            List<SoftwareSimilarToDto> similar = await _browsingService.GetSimilarSoftwareAsync(softwareId);
+
+            foreach(SoftwareSimilarToDto s in similar) SimilarSoftware.Add(s);
+
+            ShowSimilarSoftware = SimilarSoftware.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
 
             // Load companies
             List<SoftwareCompanyRoleDto> companies = await _browsingService.GetCompaniesAsync(softwareId);

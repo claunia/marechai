@@ -74,6 +74,7 @@ public partial class View
     List<SoftwareVideoDto>                      _videos = [];
     SoftwareDto                                 _software;
     List<SoftwareDto>                           _addons = [];
+    List<SoftwareSimilarToDto>                  _similarSoftware = [];
     List<SoftwareVersionDto>                    _versions = [];
     List<SoftwareCriticReviewDto>               _criticReviews = [];
     CriticReviewSummaryDto                      _reviewSummary;
@@ -167,6 +168,7 @@ public partial class View
             // Phase 1 (header + Overview)
             Task<List<SoftwareGenreDto>>            genresTask        = Service.GetGenresAsync(Id);
             Task<List<SoftwareDto>>                 addonsTask        = Service.GetAddonsAsync(Id);
+            Task<List<SoftwareSimilarToDto>>        similarTask       = Service.GetSimilarSoftwareAsync(Id);
             Task<List<SoftwareCoverDto>>            coversTask        = Service.GetCoversBySoftwareAsync(Id);
             Task<MarechaiScoreDto>                  marechaiScoreTask = AuthService.GetMarechaiScoreAsync(Id);
             // Placements drive the per-software badge row directly under the Marechai score.
@@ -192,11 +194,12 @@ public partial class View
             Task<List<SoftwareUserReviewDto>>       userReviewsTask   = AuthService.GetUserReviewsAsync(Id);
 
             // ── Phase 1 await ──
-            await Task.WhenAll(genresTask, addonsTask, coversTask,
+            await Task.WhenAll(genresTask, addonsTask, similarTask, coversTask,
                                marechaiScoreTask, placementsTask, userSummaryTask, authStateTask, myRatingTask);
 
             _genres            = genresTask.Result;
             _addons            = addonsTask.Result;
+            _similarSoftware   = similarTask.Result;
             _covers            = coversTask.Result;
             _marechaiScore     = marechaiScoreTask.Result;
             _rankingPlacements = placementsTask.Result ?? [];

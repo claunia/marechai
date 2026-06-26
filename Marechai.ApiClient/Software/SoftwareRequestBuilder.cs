@@ -31,6 +31,7 @@ using Marechai.ApiClient.Software.Releases;
 using Marechai.ApiClient.Software.Requirements;
 using Marechai.ApiClient.Software.Roles;
 using Marechai.ApiClient.Software.Screenshots;
+using Marechai.ApiClient.Software.SimilarTo;
 using Marechai.ApiClient.Software.Specifications;
 using Marechai.ApiClient.Software.Versions;
 using Marechai.ApiClient.Software.Videos;
@@ -194,6 +195,11 @@ namespace Marechai.ApiClient.Software
         public global::Marechai.ApiClient.Software.Screenshots.ScreenshotsRequestBuilder Screenshots
         {
             get => new global::Marechai.ApiClient.Software.Screenshots.ScreenshotsRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The similarTo property</summary>
+        public global::Marechai.ApiClient.Software.SimilarTo.SimilarToRequestBuilder SimilarTo
+        {
+            get => new global::Marechai.ApiClient.Software.SimilarTo.SimilarToRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The specifications property</summary>
         public global::Marechai.ApiClient.Software.Specifications.SpecificationsRequestBuilder Specifications

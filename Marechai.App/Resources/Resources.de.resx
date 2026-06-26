@@ -1855,6 +1855,8 @@
   <data name="ExternalIdsHeader" xml:space="preserve"><value>Externe IDs</value></data>
   <data name="ExternalSiteLabel" xml:space="preserve"><value>Website</value></data>
   <data name="ExternalIdValueLabel" xml:space="preserve"><value>ID</value></data>
+  <data name="SimilarSoftwareHeader" xml:space="preserve"><value>Ähnliche Software</value></data>
+  <data name="SimilarSoftwareSearchLabel" xml:space="preserve"><value>Software suchen</value></data>
   <data name="FailedToUploadLogo" xml:space="preserve"><value>Logo konnte nicht hochgeladen werden.</value></data>
   <data name="FailedToRemoveLogo" xml:space="preserve"><value>Logo konnte nicht entfernt werden.</value></data>
   <data name="LogoLabel" xml:space="preserve"><value>Logo</value></data>

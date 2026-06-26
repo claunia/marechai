@@ -27,6 +27,8 @@ public class Software : BaseModel<ulong>
     public virtual ICollection<SoftwareDescription>         Descriptions        { get; set; }
     public virtual ICollection<SoftwareAlternativeTitle>    AlternativeTitles   { get; set; }
     public virtual ICollection<SoftwareExternalId>          ExternalIds         { get; set; }
+    public virtual ICollection<SoftwareSimilarTo>           SimilarToLeft       { get; set; }
+    public virtual ICollection<SoftwareSimilarTo>           SimilarToRight      { get; set; }
     public virtual ICollection<GenreBySoftware>             Genres              { get; set; }
     public virtual ICollection<PeopleBySoftware>            Credits             { get; set; }
     public virtual ICollection<SoftwareCriticReview>        CriticReviews       { get; set; }

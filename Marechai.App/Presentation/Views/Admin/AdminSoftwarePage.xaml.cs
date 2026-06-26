@@ -28,4 +28,10 @@ public sealed partial class AdminSoftwarePage : Page
         if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput && DataContext is AdminSoftwareViewModel vm)
             vm.UpdateFamilySuggestions(sender.Text);
     }
+
+    private void SimilarSoftwareFilterBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    {
+        if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput && DataContext is AdminSoftwareViewModel vm)
+            vm.UpdateSimilarSoftwareSuggestions(sender.Text);
+    }
 }

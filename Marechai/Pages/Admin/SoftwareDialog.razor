@@ -243,6 +243,44 @@
                 </MudTabPanel>
             }
 
+            @* Tab - Similar Software (edit mode only — the link is keyed on this
+                Software's id, which doesn't exist yet in create mode). *@
+            @if(!IsNew)
+            {
+                <MudTabPanel Text="@L["Similar Software"]" Icon="@Icons.Material.Filled.Recommend">
+                    @foreach(SoftwareSimilarToDto s in _similarSoftwareRows ?? new())
+                    {
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                            <MudText>@s.SimilarSoftwareName</MudText>
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                           OnClick="@(() => RemoveSimilarSoftware(s))"/>
+                        </MudStack>
+                    }
+
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-2">
+                        <MudAutocomplete T="SoftwareDto"
+                                         Label="@L["Similar software"]"
+                                         @bind-Value="_selectedSimilarSoftware"
+                                         SearchFunc="SearchSimilarSoftware"
+                                         ToStringFunc="@(s => s?.Name ?? string.Empty)"
+                                         Variant="Variant.Outlined"
+                                         Clearable="true"
+                                         MinCharacters="0"
+                                         MaxItems="50"
+                                         Style="flex: 1;"/>
+                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
+                                   OnClick="AddSimilarSoftwareClick"
+                                   Disabled="@(_selectedSimilarSoftware?.Id is null)">@L["Add"]</MudButton>
+                    </MudStack>
+
+                    @if(!string.IsNullOrWhiteSpace(_similarSoftwareMessage))
+                    {
+                        <MudAlert Severity="@_similarSoftwareMessageSeverity" Class="mt-2" ShowCloseIcon="true"
+                                  CloseIconClicked="() => _similarSoftwareMessage = null">@_similarSoftwareMessage</MudAlert>
+                    }
+                </MudTabPanel>
+            }
+
             @* Tab 3 - Company Roles (available in BOTH create and edit modes; create-mode
                 adds are buffered in _pendingCompanyAdds and flushed by the parent admin
                 page after CreateAsync returns the new software id, mirroring the Genres tab). *@
@@ -400,6 +438,12 @@
     string                       _externalIdMessage;
     Severity                     _externalIdMessageSeverity;
 
+    // ── Similar Software tab state (edit mode only) ──
+    List<SoftwareSimilarToDto> _similarSoftwareRows;
+    SoftwareDto                 _selectedSimilarSoftware;
+    string                      _similarSoftwareMessage;
+    Severity                    _similarSoftwareMessageSeverity;
+
     [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
 
     [Parameter] public bool IsNew { get; set; }
@@ -475,6 +519,7 @@
         {
             _allExternalSites = await ExternalSitesService.GetAllAsync();
             _externalIdRows   = await SoftwareService.GetExternalIdsAsync(SoftwareId);
+            _similarSoftwareRows = await SoftwareService.GetSimilarSoftwareAsync(SoftwareId);
         }
     }
 
@@ -496,6 +541,19 @@
 
         // Exclude current software from results to prevent self-reference.
         if(!IsNew && SoftwareId > 0) results = results.Where(s => s.Id != SoftwareId).ToList();
+
+        return RankByRelevance(value, results, s => s.Name);
+    }
+
+    async Task<IEnumerable<SoftwareDto>> SearchSimilarSoftware(string value, CancellationToken ct)
+    {
+        // See SearchPredecessors for the picker-vs-search rationale.
+        List<SoftwareDto> results = await SoftwareService.SearchSoftwareForPickerAsync(value, 50, ct);
+
+        // Exclude current software and already-linked rows.
+        results = results.Where(s => s.Id != SoftwareId &&
+                                      (_similarSoftwareRows is null ||
+                                       _similarSoftwareRows.All(r => (int?)r.SimilarSoftwareId != s.Id))).ToList();
 
         return RankByRelevance(value, results, s => s.Name);
     }
@@ -855,6 +913,45 @@
         {
             _externalIdMessage         = err ?? L["Failed to remove external id."];
             _externalIdMessageSeverity = Severity.Error;
+        }
+    }
+
+    async Task AddSimilarSoftwareClick()
+    {
+        if(_selectedSimilarSoftware?.Id is null) return;
+
+        (bool ok, SoftwareSimilarToDto _, string err) =
+            await SoftwareService.AddSimilarSoftwareAsync((ulong)SoftwareId, (ulong)_selectedSimilarSoftware.Id.Value);
+
+        if(ok)
+        {
+            _similarSoftwareRows    = await SoftwareService.GetSimilarSoftwareAsync(SoftwareId);
+            _selectedSimilarSoftware = null;
+            _similarSoftwareMessage  = null;
+        }
+        else
+        {
+            _similarSoftwareMessage         = err ?? L["Failed to add similar software."];
+            _similarSoftwareMessageSeverity = Severity.Error;
+        }
+    }
+
+    async Task RemoveSimilarSoftware(SoftwareSimilarToDto s)
+    {
+        if(!s.SimilarSoftwareId.HasValue) return;
+
+        (bool ok, string err) =
+            await SoftwareService.RemoveSimilarSoftwareAsync((ulong)SoftwareId, (ulong)s.SimilarSoftwareId.Value);
+
+        if(ok)
+        {
+            _similarSoftwareRows   = await SoftwareService.GetSimilarSoftwareAsync(SoftwareId);
+            _similarSoftwareMessage = null;
+        }
+        else
+        {
+            _similarSoftwareMessage         = err ?? L["Failed to remove similar software."];
+            _similarSoftwareMessageSeverity = Severity.Error;
         }
     }
 
