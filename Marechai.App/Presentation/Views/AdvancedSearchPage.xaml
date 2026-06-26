@@ -1,0 +1,274 @@
+<?xml version="1.0"
+      encoding="utf-8"?>
+
+<Page x:Class="Marechai.App.Presentation.Views.AdvancedSearchPage"
+      x:Name="PageRoot"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:utu="using:Uno.Toolkit.UI"
+      NavigationCacheMode="Required"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid utu:SafeArea.Insets="VisibleBounds">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <utu:NavigationBar Grid.Row="0"
+                           Content="{Binding Source={StaticResource Strings}, Path=AdvancedSearchPage_Title}">
+            <utu:NavigationBar.MainCommand>
+                <AppBarButton Label="{Binding Source={StaticResource Strings}, Path=BackButton}"
+                              Icon="Back"
+                              Command="{Binding GoBackCommand}"
+                              AutomationProperties.Name="Go back" />
+            </utu:NavigationBar.MainCommand>
+        </utu:NavigationBar>
+
+        <ScrollViewer Grid.Row="1"
+                      x:Name="ContentScrollViewer"
+                      ViewChanged="OnScrollViewerViewChanged">
+            <StackPanel Padding="16"
+                        Spacing="16">
+
+                <!-- Filter Panel -->
+                <StackPanel Spacing="12">
+
+                    <TextBox Header="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_QueryLabel}"
+                             Text="{Binding Query, Mode=TwoWay}" />
+
+                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_EntityTypesLabel}"
+                               FontWeight="SemiBold" />
+                    <ItemsRepeater ItemsSource="{Binding EntityTypes}">
+                        <ItemsRepeater.Layout>
+                            <UniformGridLayout MinItemWidth="160"
+                                              MinItemHeight="36" />
+                        </ItemsRepeater.Layout>
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox Content="{Binding Label}"
+                                          IsChecked="{Binding IsSelected, Mode=TwoWay}" />
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
+                    </ItemsRepeater>
+
+                    <Grid ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <NumberBox Grid.Column="0"
+                                   Header="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_YearFromLabel}"
+                                   Value="{Binding YearFrom, Mode=TwoWay}"
+                                   SpinButtonPlacementMode="Compact" />
+                        <NumberBox Grid.Column="1"
+                                   Header="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_YearToLabel}"
+                                   Value="{Binding YearTo, Mode=TwoWay}"
+                                   SpinButtonPlacementMode="Compact" />
+                    </Grid>
+
+                    <ComboBox Header="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_YearKnownLabel}"
+                              SelectedIndex="{Binding YearKnownIndex, Mode=TwoWay}"
+                              HorizontalAlignment="Stretch">
+                        <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_AnyOption}" />
+                        <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_YesOption}" />
+                        <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_NoOption}" />
+                    </ComboBox>
+
+                    <ComboBox Header="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_CountryLabel}"
+                              ItemsSource="{Binding Countries}"
+                              SelectedItem="{Binding SelectedCountry, Mode=TwoWay}"
+                              DisplayMemberPath="Name"
+                              HorizontalAlignment="Stretch" />
+
+                    <ComboBox Header="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_CountryKnownLabel}"
+                              SelectedIndex="{Binding CountryKnownIndex, Mode=TwoWay}"
+                              HorizontalAlignment="Stretch">
+                        <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_AnyOption}" />
+                        <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_YesOption}" />
+                        <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_NoOption}" />
+                    </ComboBox>
+
+                    <AutoSuggestBox Header="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_CompanyLabel}"
+                                    Text="{Binding CompanySearchText, Mode=TwoWay}"
+                                    ItemsSource="{Binding CompanySuggestions}"
+                                    SuggestionChosen="OnCompanySuggestionChosen">
+                        <AutoSuggestBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding DisplayName}" />
+                            </DataTemplate>
+                        </AutoSuggestBox.ItemTemplate>
+                    </AutoSuggestBox>
+
+                    <TextBox Header="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_LetterLabel}"
+                             Text="{Binding Letter, Mode=TwoWay}"
+                             MaxLength="1" />
+
+                    <ComboBox Header="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_SoftwareKindLabel}"
+                              SelectedIndex="{Binding SoftwareKindIndex, Mode=TwoWay}"
+                              HorizontalAlignment="Stretch">
+                        <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareAnyKindLabel}" />
+                        <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsSoftwareLabel}" />
+                        <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsOSLabel}" />
+                        <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsGameLabel}" />
+                        <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsDlcLabel}" />
+                        <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsSystemSoftwareLabel}" />
+                        <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsApplicationLabel}" />
+                        <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsDevelopmentSoftwareLabel}" />
+                        <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsServerSoftwareLabel}" />
+                        <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsMiddlewareLabel}" />
+                        <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsFirmwareLabel}" />
+                        <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=SoftwareIsEmbeddedSoftwareLabel}" />
+                    </ComboBox>
+
+                    <AutoSuggestBox Header="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_IncludesSoftwareLabel}"
+                                    Text="{Binding IncludesSoftwareSearchText, Mode=TwoWay}"
+                                    ItemsSource="{Binding IncludesSoftwareSuggestions}"
+                                    SuggestionChosen="OnIncludesSoftwareSuggestionChosen">
+                        <AutoSuggestBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding DisplayName}" />
+                            </DataTemplate>
+                        </AutoSuggestBox.ItemTemplate>
+                    </AutoSuggestBox>
+
+                    <TextBox Header="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_ContainsLabel}"
+                             Text="{Binding Contains, Mode=TwoWay}" />
+
+                    <TextBox Header="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_NotContainsLabel}"
+                             Text="{Binding NotContains, Mode=TwoWay}" />
+
+                    <CheckBox Content="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_ExactMatchLabel}"
+                              IsChecked="{Binding ExactMatch, Mode=TwoWay}" />
+
+                    <ComboBox Header="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_HasImageLabel}"
+                              SelectedIndex="{Binding HasImageIndex, Mode=TwoWay}"
+                              HorizontalAlignment="Stretch">
+                        <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_AnyOption}" />
+                        <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_YesOption}" />
+                        <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_NoOption}" />
+                    </ComboBox>
+
+                    <ComboBox Header="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_InCollectionLabel}"
+                              SelectedIndex="{Binding InCollectionIndex, Mode=TwoWay}"
+                              HorizontalAlignment="Stretch"
+                              Visibility="{Binding IsAuthenticated}">
+                        <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_AnyOption}" />
+                        <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_YesOption}" />
+                        <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_NoOption}" />
+                    </ComboBox>
+
+                    <ComboBox Header="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_SortLabel}"
+                              SelectedIndex="{Binding SortIndex, Mode=TwoWay}"
+                              HorizontalAlignment="Stretch">
+                        <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_SortRelevance}" />
+                        <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_SortNameAsc}" />
+                        <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_SortNameDesc}" />
+                        <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_SortYearAsc}" />
+                        <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_SortYearDesc}" />
+                    </ComboBox>
+
+                    <StackPanel Orientation="Horizontal"
+                                Spacing="12">
+                        <Button Content="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_SearchButton}"
+                                Command="{Binding SearchCommand}"
+                                Style="{ThemeResource AccentButtonStyle}" />
+                        <Button Content="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_ClearButton}"
+                                Command="{Binding ClearFiltersCommand}" />
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Loading -->
+                <StackPanel Visibility="{Binding IsLoading}"
+                            HorizontalAlignment="Center"
+                            Padding="32"
+                            Spacing="16">
+                    <ProgressRing IsActive="True"
+                                  IsIndeterminate="True"
+                                  Height="48"
+                                  Width="48" />
+                </StackPanel>
+
+                <!-- Error -->
+                <StackPanel Visibility="{Binding HasError}"
+                            Padding="16"
+                            Background="{ThemeResource SystemErrorBackgroundColor}"
+                            CornerRadius="8"
+                            Spacing="8">
+                    <TextBlock Text="{Binding ErrorMessage}"
+                               Foreground="{ThemeResource SystemErrorTextForegroundColor}"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+
+                <!-- No results -->
+                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=AdvancedSearch_NoResults}"
+                           HorizontalAlignment="Center"
+                           Opacity="0.6"
+                           Visibility="{Binding HasSearched}" />
+
+                <!-- Results grouped by entity type -->
+                <ItemsRepeater ItemsSource="{Binding ResultGroups}">
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Spacing="4"
+                                        Margin="0,0,0,16">
+                                <StackPanel Orientation="Horizontal"
+                                            Spacing="8">
+                                    <TextBlock Text="{Binding DisplayName}"
+                                               FontWeight="SemiBold"
+                                               FontSize="16" />
+                                    <TextBlock Text="{Binding Count}"
+                                               Opacity="0.6" />
+                                </StackPanel>
+
+                                <ItemsRepeater ItemsSource="{Binding Items}">
+                                    <ItemsRepeater.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button HorizontalAlignment="Stretch"
+                                                    Command="{Binding DataContext.NavigateToResultCommand, ElementName=PageRoot}"
+                                                    CommandParameter="{Binding}">
+                                                <Grid ColumnSpacing="12">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <StackPanel Grid.Column="0"
+                                                                Spacing="2">
+                                                        <TextBlock Text="{Binding DisplayName}"
+                                                                   FontSize="14" />
+                                                        <TextBlock Text="{Binding AltName}"
+                                                                   FontSize="12"
+                                                                   Opacity="0.6"
+                                                                   Visibility="{Binding AltName}" />
+                                                    </StackPanel>
+
+                                                    <TextBlock Grid.Column="1"
+                                                               Text="{Binding Year}"
+                                                               Opacity="0.6"
+                                                               VerticalAlignment="Center" />
+                                                </Grid>
+                                            </Button>
+                                        </DataTemplate>
+                                    </ItemsRepeater.ItemTemplate>
+                                </ItemsRepeater>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                </ItemsRepeater>
+
+                <!-- Loading more -->
+                <StackPanel Visibility="{Binding IsLoadingNextPage}"
+                            HorizontalAlignment="Center"
+                            Padding="16">
+                    <ProgressRing IsActive="True"
+                                  IsIndeterminate="True"
+                                  Height="32"
+                                  Width="32" />
+                </StackPanel>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

@@ -39,14 +39,46 @@
 
         <!-- Header -->
         <utu:NavigationBar Grid.Row="0"
-                           Grid.Column="1"
-                           Content="{Binding Title}">
+                           Grid.Column="1">
             <utu:NavigationBar.MainCommand>
                 <AppBarButton Icon="GlobalNavigationButton"
                               Command="{Binding ToggleSidebarCommand}"
                               Label="Toggle Sidebar"
                               AutomationProperties.Name="Toggle sidebar visibility" />
             </utu:NavigationBar.MainCommand>
+            <utu:NavigationBar.Content>
+                <Grid ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*"
+                                          MaxWidth="480" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0"
+                               Text="{Binding Title}"
+                               VerticalAlignment="Center" />
+
+                    <AutoSuggestBox x:Name="GlobalSearchBox"
+                                    Grid.Column="1"
+                                    VerticalAlignment="Center"
+                                    PlaceholderText="{Binding Source={StaticResource Strings}, Path=GlobalSearchBox_Placeholder}"
+                                    Text="{Binding GlobalSearchQuery, Mode=TwoWay}"
+                                    ItemsSource="{Binding GlobalSearchSuggestions}"
+                                    QuerySubmitted="OnGlobalSearchQuerySubmitted"
+                                    SuggestionChosen="OnGlobalSearchSuggestionChosen">
+                        <AutoSuggestBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal"
+                                            Spacing="8">
+                                    <TextBlock Text="{Binding DisplayName}" />
+                                    <TextBlock Text="{Binding Year}"
+                                               Opacity="0.6" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </AutoSuggestBox.ItemTemplate>
+                    </AutoSuggestBox>
+                </Grid>
+            </utu:NavigationBar.Content>
         </utu:NavigationBar>
 
         <!-- Content Region for Navigation -->

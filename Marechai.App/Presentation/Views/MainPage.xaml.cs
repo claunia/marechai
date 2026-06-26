@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using Marechai.ApiClient.Models;
 using Marechai.App.Presentation.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -94,5 +95,22 @@ public sealed partial class MainPage : Page
 
             ((INotifyPropertyChanged)vm).PropertyChanged += _sidebarPropertyChangedHandler;
         }
+    }
+
+    private void OnGlobalSearchSuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+    {
+        if(DataContext is not MainViewModel viewModel) return;
+
+        if(args.SelectedItem is SearchResultDto result) viewModel.NavigateToSearchResultCommand.Execute(result);
+    }
+
+    private void OnGlobalSearchQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+    {
+        if(DataContext is not MainViewModel viewModel) return;
+
+        if(args.ChosenSuggestion is SearchResultDto result)
+            viewModel.NavigateToSearchResultCommand.Execute(result);
+        else
+            viewModel.SubmitGlobalSearchCommand.Execute(null);
     }
 }

@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Marechai.ApiClient.Models;
 using Marechai.App.Navigation;
 using Marechai.App.Presentation.Views;
 using Marechai.App.Presentation.Views.Admin;
@@ -18,6 +20,7 @@ public partial class MainViewModel : ObservableObject
     private readonly IAuthenticationService _authService;
     private readonly IJwtService            _jwtService;
     private readonly IStringLocalizer       _localizer;
+    private readonly SearchService          _searchService;
     private readonly IRegionManager         _regionManager;
     private readonly ITokenService          _tokenService;
     [ObservableProperty]
@@ -29,9 +32,16 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private string _loginLogoutButtonText = "";
 
+    [ObservableProperty]
+    private string _globalSearchQuery = "";
+
+    [ObservableProperty]
+    private ObservableCollection<SearchResultDto> _globalSearchSuggestions = [];
+
     // Sidebar localized labels
     public string SidebarTitleText               => _localizer["SidebarTitle"];
     public string NewsButtonText                 => _localizer["NewsButton"];
+    public string AdvancedSearchButtonText        => _localizer["AdvancedSearchButton"];
     public string BooksButtonText                => _localizer["BooksButton"];
     public string CompaniesButtonText            => _localizer["CompaniesButton"];
     public string ComputersButtonText            => _localizer["ComputersButton"];
@@ -80,7 +90,7 @@ public partial class MainViewModel : ObservableObject
     private bool _sidebarContentVisible = true;
 
     public MainViewModel(IStringLocalizer localizer, IOptions<AppConfig> appInfo, IRegionManager regionManager,
-                         NewsViewModel newsViewModel,
+                         NewsViewModel newsViewModel, SearchService searchService,
                          IAuthenticationService authService, IJwtService jwtService, ITokenService tokenService)
     {
         _regionManager = regionManager;
@@ -88,6 +98,7 @@ public partial class MainViewModel : ObservableObject
         _authService   = authService;
         _jwtService    = jwtService;
         _tokenService  = tokenService;
+        _searchService = searchService;
         NewsViewModel  = newsViewModel;
         Title          = localizer["ApplicationName"];
         if(appInfo?.Value?.Environment != null) Title += $" - {appInfo.Value.Environment}";
@@ -130,10 +141,13 @@ public partial class MainViewModel : ObservableObject
         NavigateToAdminSoftwareFamiliesCommand              = new RelayCommand(() => NavigateTo(nameof(AdminSoftwareFamiliesPage)));
         NavigateToAdminWwpcImportsCommand                   = new RelayCommand(() => NavigateTo(nameof(AdminWwpcImportsPage)));
         NavigateToSettingsCommand                 = new RelayCommand(() => NavigateTo(nameof(SettingsPage)));
+        NavigateToAdvancedSearchCommand            = new RelayCommand(() => NavigateToAdvancedSearch(null));
         LoginLogoutCommand                        = new RelayCommand(HandleLoginLogout);
         ToggleSidebarCommand                      = new RelayCommand(() => IsSidebarOpen = !IsSidebarOpen);
         SwitchToAdminSidebarCommand               = new RelayCommand(() => IsAdminSidebarActive = true);
         SwitchToMainSidebarCommand                = new RelayCommand(() => IsAdminSidebarActive = false);
+        NavigateToSearchResultCommand              = new RelayCommand<SearchResultDto>(NavigateToSearchResult);
+        SubmitGlobalSearchCommand                  = new RelayCommand(() => NavigateToAdvancedSearch(GlobalSearchQuery));
 
         // Subscribe to authentication events
         _authService.LoggedOut += OnLoggedOut;
@@ -184,10 +198,13 @@ public partial class MainViewModel : ObservableObject
     public ICommand NavigateToAdminSoftwareFamiliesCommand    { get; }
     public ICommand NavigateToAdminWwpcImportsCommand         { get; }
     public ICommand NavigateToSettingsCommand                 { get; }
+    public ICommand NavigateToAdvancedSearchCommand           { get; }
     public ICommand LoginLogoutCommand                        { get; }
     public ICommand ToggleSidebarCommand                      { get; }
     public ICommand SwitchToAdminSidebarCommand               { get; }
     public ICommand SwitchToMainSidebarCommand                { get; }
+    public ICommand NavigateToSearchResultCommand              { get; }
+    public ICommand SubmitGlobalSearchCommand                  { get; }
 
     private async void UpdateLoginLogoutButtonText()
     {
@@ -261,5 +278,43 @@ public partial class MainViewModel : ObservableObject
     private void NavigateTo(string viewName)
     {
         _regionManager.RequestNavigate(RegionNames.Content, viewName);
+    }
+
+    partial void OnGlobalSearchQueryChanged(string value)
+    {
+        _ = UpdateGlobalSearchSuggestionsAsync(value);
+    }
+
+    private async Task UpdateGlobalSearchSuggestionsAsync(string query)
+    {
+        string trimmed = query?.Trim() ?? string.Empty;
+
+        if(trimmed.Length < 3)
+        {
+            GlobalSearchSuggestions = [];
+
+            return;
+        }
+
+        List<SearchResultDto> results = await _searchService.AutocompleteAsync(trimmed);
+        GlobalSearchSuggestions = new ObservableCollection<SearchResultDto>(results);
+    }
+
+    private void NavigateToSearchResult(SearchResultDto? result)
+    {
+        if(result is null) return;
+
+        SearchResultNavigator.NavigateTo(_regionManager, result);
+        GlobalSearchQuery = string.Empty;
+    }
+
+    private void NavigateToAdvancedSearch(string? query)
+    {
+        var parameters = new NavigationParameters();
+
+        if(!string.IsNullOrWhiteSpace(query)) parameters.Add(NavParamKeys.SearchQuery, query);
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(AdvancedSearchPage), parameters);
+        GlobalSearchQuery = string.Empty;
     }
 }

@@ -25,4 +25,5 @@ public static class NavParamKeys
     public const string PersonId            = "PersonId";
     public const string ScreenshotId        = "ScreenshotId";
     public const string WwpcImportId        = "WwpcImportId";
+    public const string SearchQuery         = "SearchQuery";
 }

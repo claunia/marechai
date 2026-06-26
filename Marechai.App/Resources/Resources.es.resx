@@ -665,6 +665,99 @@
   <data name="CompaniesSearchBox_Placeholder" xml:space="preserve">
     <value>Buscar empresas...</value>
   </data>
+  <data name="GlobalSearchBox_Placeholder" xml:space="preserve">
+    <value>Buscar en todo...</value>
+  </data>
+  <data name="AdvancedSearchButton" xml:space="preserve">
+    <value>Búsqueda avanzada</value>
+  </data>
+  <data name="AdvancedSearchPage_Title" xml:space="preserve">
+    <value>Búsqueda avanzada</value>
+  </data>
+  <data name="AdvancedSearch_QueryLabel" xml:space="preserve">
+    <value>Texto de búsqueda</value>
+  </data>
+  <data name="AdvancedSearch_EntityTypesLabel" xml:space="preserve">
+    <value>Tipos de entidad</value>
+  </data>
+  <data name="AdvancedSearch_YearFromLabel" xml:space="preserve">
+    <value>Año desde</value>
+  </data>
+  <data name="AdvancedSearch_YearToLabel" xml:space="preserve">
+    <value>Año hasta</value>
+  </data>
+  <data name="AdvancedSearch_YearKnownLabel" xml:space="preserve">
+    <value>Año conocido</value>
+  </data>
+  <data name="AdvancedSearch_CountryLabel" xml:space="preserve">
+    <value>País</value>
+  </data>
+  <data name="AdvancedSearch_CountryKnownLabel" xml:space="preserve">
+    <value>País conocido</value>
+  </data>
+  <data name="AdvancedSearch_CompanyLabel" xml:space="preserve">
+    <value>Fabricado por empresa</value>
+  </data>
+  <data name="AdvancedSearch_LetterLabel" xml:space="preserve">
+    <value>Letra inicial</value>
+  </data>
+  <data name="AdvancedSearch_SoftwareKindLabel" xml:space="preserve">
+    <value>Tipo de software</value>
+  </data>
+  <data name="AdvancedSearch_IncludesSoftwareLabel" xml:space="preserve">
+    <value>La compilación incluye software</value>
+  </data>
+  <data name="AdvancedSearch_ContainsLabel" xml:space="preserve">
+    <value>Contiene</value>
+  </data>
+  <data name="AdvancedSearch_NotContainsLabel" xml:space="preserve">
+    <value>No contiene</value>
+  </data>
+  <data name="AdvancedSearch_ExactMatchLabel" xml:space="preserve">
+    <value>Coincidencia exacta</value>
+  </data>
+  <data name="AdvancedSearch_HasImageLabel" xml:space="preserve">
+    <value>Tiene imagen</value>
+  </data>
+  <data name="AdvancedSearch_InCollectionLabel" xml:space="preserve">
+    <value>En mi colección</value>
+  </data>
+  <data name="AdvancedSearch_SortLabel" xml:space="preserve">
+    <value>Ordenar por</value>
+  </data>
+  <data name="AdvancedSearch_SearchButton" xml:space="preserve">
+    <value>Buscar</value>
+  </data>
+  <data name="AdvancedSearch_ClearButton" xml:space="preserve">
+    <value>Limpiar filtros</value>
+  </data>
+  <data name="AdvancedSearch_NoResults" xml:space="preserve">
+    <value>No se encontraron resultados</value>
+  </data>
+  <data name="AdvancedSearch_AnyOption" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="AdvancedSearch_YesOption" xml:space="preserve">
+    <value>Sí</value>
+  </data>
+  <data name="AdvancedSearch_NoOption" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="AdvancedSearch_SortRelevance" xml:space="preserve">
+    <value>Relevancia</value>
+  </data>
+  <data name="AdvancedSearch_SortNameAsc" xml:space="preserve">
+    <value>Nombre (A-Z)</value>
+  </data>
+  <data name="AdvancedSearch_SortNameDesc" xml:space="preserve">
+    <value>Nombre (Z-A)</value>
+  </data>
+  <data name="AdvancedSearch_SortYearAsc" xml:space="preserve">
+    <value>Año (más antiguo primero)</value>
+  </data>
+  <data name="AdvancedSearch_SortYearDesc" xml:space="preserve">
+    <value>Año (más reciente primero)</value>
+  </data>
   <data name="LoadingText" xml:space="preserve">
     <value>Cargando...</value>
   </data>

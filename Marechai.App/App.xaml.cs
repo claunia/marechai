@@ -171,6 +171,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<ImageSourceFactory>(
             () => new ImageSourceFactory(DispatcherQueue.GetForCurrentThread()));
         containerRegistry.RegisterSingleton<NewsService>();
+        containerRegistry.RegisterSingleton<SearchService>();
         containerRegistry.RegisterSingleton<ComputersService>();
         containerRegistry.RegisterSingleton<ConsolesService>();
         containerRegistry.RegisterSingleton<SmartphonesService>();
@@ -283,6 +284,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<DeleteAccountPage, DeleteAccountViewModel>();
         containerRegistry.RegisterForNavigation<DeletionPendingPage, DeletionPendingViewModel>();
         containerRegistry.RegisterForNavigation<NewsPage, NewsViewModel>();
+        containerRegistry.RegisterForNavigation<AdvancedSearchPage, AdvancedSearchViewModel>();
         containerRegistry.RegisterForNavigation<ComputersPage, ComputersViewModel>();
         containerRegistry.RegisterForNavigation<ComputersListPage, ComputersListViewModel>();
         containerRegistry.RegisterForNavigation<ConsolesPage, ConsolesViewModel>();
