@@ -60,16 +60,16 @@ namespace Marechai.ApiClient.Models
 #endif
         /// <summary>The predecessor_id property</summary>
         public int? PredecessorId { get; set; }
-        /// <summary>The successor property</summary>
+        /// <summary>The relationship_type property</summary>
+        public int? RelationshipType { get; set; }
+        /// <summary>The successors property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? Successor { get; set; }
+        public List<global::Marechai.ApiClient.Models.SoftwareSuccessorDto>? Successors { get; set; }
 #nullable restore
 #else
-        public string Successor { get; set; }
+        public List<global::Marechai.ApiClient.Models.SoftwareSuccessorDto> Successors { get; set; }
 #endif
-        /// <summary>The successor_id property</summary>
-        public int? SuccessorId { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.ApiClient.Models.SoftwareDto"/> and sets the default values.
         /// </summary>
@@ -106,8 +106,8 @@ namespace Marechai.ApiClient.Models
                 { "name", n => { Name = n.GetStringValue(); } },
                 { "predecessor", n => { Predecessor = n.GetStringValue(); } },
                 { "predecessor_id", n => { PredecessorId = n.GetIntValue(); } },
-                { "successor", n => { Successor = n.GetStringValue(); } },
-                { "successor_id", n => { SuccessorId = n.GetIntValue(); } },
+                { "relationship_type", n => { RelationshipType = n.GetIntValue(); } },
+                { "successors", n => { Successors = n.GetCollectionOfObjectValues<global::Marechai.ApiClient.Models.SoftwareSuccessorDto>(global::Marechai.ApiClient.Models.SoftwareSuccessorDto.CreateFromDiscriminatorValue)?.AsList(); } },
             };
         }
         /// <summary>
@@ -128,8 +128,8 @@ namespace Marechai.ApiClient.Models
             writer.WriteStringValue("name", Name);
             writer.WriteStringValue("predecessor", Predecessor);
             writer.WriteIntValue("predecessor_id", PredecessorId);
-            writer.WriteStringValue("successor", Successor);
-            writer.WriteIntValue("successor_id", SuccessorId);
+            writer.WriteIntValue("relationship_type", RelationshipType);
+            writer.WriteCollectionOfObjectValues<global::Marechai.ApiClient.Models.SoftwareSuccessorDto>("successors", Successors);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

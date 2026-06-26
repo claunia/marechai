@@ -941,6 +941,21 @@
     <value>Wir haben keine Beschreibung in deiner Sprache, du könntest mitwirken, indem du die unten gezeigte englische Beschreibung übersetzt</value>
   </data>
     <data name="Predecessor" xml:space="preserve"><value>Vorgänger</value></data>
+    <data name="Relationship to predecessor" xml:space="preserve"><value>Beziehung zum Vorgänger</value></data>
+    <data name="Sequel" xml:space="preserve"><value>Fortsetzung</value></data>
+    <data name="Fork" xml:space="preserve"><value>Abspaltung</value></data>
+    <data name="Remake" xml:space="preserve"><value>Remake</value></data>
+    <data name="Remaster" xml:space="preserve"><value>Remaster</value></data>
+    <data name="Port" xml:space="preserve"><value>Portierung</value></data>
+    <data name="Sequels" xml:space="preserve"><value>Fortsetzungen</value></data>
+    <data name="Forks" xml:space="preserve"><value>Abspaltungen</value></data>
+    <data name="Remakes" xml:space="preserve"><value>Remakes</value></data>
+    <data name="Remasters" xml:space="preserve"><value>Remasters</value></data>
+    <data name="Ports" xml:space="preserve"><value>Portierungen</value></data>
+    <data name="Forked from" xml:space="preserve"><value>Abgespalten von</value></data>
+    <data name="Remake of" xml:space="preserve"><value>Remake von</value></data>
+    <data name="Remaster of" xml:space="preserve"><value>Remaster von</value></data>
+    <data name="Port of" xml:space="preserve"><value>Portierung von</value></data>
     <data name="Base software" xml:space="preserve"><value>Basissoftware</value></data>
     <data name="Kind" xml:space="preserve"><value>Art</value></data>
     <data name="Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently." xml:space="preserve"><value>Bearbeite unten beliebige Felder oder Beziehungen. Nur deine Änderungen werden zur Überprüfung gesendet; ein Administrator kann jede einzeln annehmen oder ablehnen.</value></data>

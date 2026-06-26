@@ -23,38 +23,16 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Marechai.Data.Dtos;
 
-public class SoftwareDto : BaseDto<ulong>
+public class SoftwareSuccessorDto
 {
+    [JsonPropertyName("id")]
+    public ulong Id { get; set; }
     [JsonPropertyName("name")]
-    [Required]
-    public required string Name { get; set; }
-    [JsonPropertyName("family_id")]
-    public ulong? FamilyId { get; set; }
-    [JsonPropertyName("family")]
-    public string? Family { get; set; }
-    [JsonPropertyName("predecessor_id")]
-    public ulong? PredecessorId { get; set; }
-    [JsonPropertyName("predecessor")]
-    public string? Predecessor { get; set; }
+    public string Name { get; set; }
     [JsonPropertyName("relationship_type")]
     public SoftwareRelationshipType RelationshipType { get; set; }
-    [JsonPropertyName("successors")]
-    public List<SoftwareSuccessorDto> Successors { get; set; } = [];
-    [JsonPropertyName("kind")]
-    public SoftwareKind Kind { get; set; }
-    [JsonPropertyName("base_software_id")]
-    public ulong? BaseSoftwareId { get; set; }
-    [JsonPropertyName("base_software")]
-    public string? BaseSoftware { get; set; }
-    [JsonPropertyName("is_compilation")]
-    public bool IsCompilation { get; set; }
-    [JsonPropertyName("front_cover_id")]
-    public Guid? FrontCoverId { get; set; }
 }

@@ -12,6 +12,7 @@ public class Software : BaseModel<ulong>
     public virtual SoftwareFamily                   Family            { get; set; }
     public         ulong?                           PredecessorId     { get; set; }
     public virtual Software                         Predecessor       { get; set; }
+    public         SoftwareRelationshipType         RelationshipType  { get; set; } = SoftwareRelationshipType.Sequel;
     public virtual ICollection<Software>            Successors        { get; set; }
     public         SoftwareKind                     Kind              { get; set; }
     public         ulong?                           BaseSoftwareId    { get; set; }

@@ -874,6 +874,21 @@
     <data name="Predecessor" xml:space="preserve">
         <value>Voorganger</value>
     </data>
+    <data name="Relationship to predecessor" xml:space="preserve"><value>Relatie met voorganger</value></data>
+    <data name="Sequel" xml:space="preserve"><value>Vervolg</value></data>
+    <data name="Fork" xml:space="preserve"><value>Fork</value></data>
+    <data name="Remake" xml:space="preserve"><value>Remake</value></data>
+    <data name="Remaster" xml:space="preserve"><value>Remaster</value></data>
+    <data name="Port" xml:space="preserve"><value>Port</value></data>
+    <data name="Sequels" xml:space="preserve"><value>Vervolgen</value></data>
+    <data name="Forks" xml:space="preserve"><value>Forks</value></data>
+    <data name="Remakes" xml:space="preserve"><value>Remakes</value></data>
+    <data name="Remasters" xml:space="preserve"><value>Remasters</value></data>
+    <data name="Ports" xml:space="preserve"><value>Ports</value></data>
+    <data name="Forked from" xml:space="preserve"><value>Fork van</value></data>
+    <data name="Remake of" xml:space="preserve"><value>Remake van</value></data>
+    <data name="Remaster of" xml:space="preserve"><value>Remaster van</value></data>
+    <data name="Port of" xml:space="preserve"><value>Port van</value></data>
     <data name="Prehistoric" xml:space="preserve">
         <value>Prehistoric</value>
     </data>

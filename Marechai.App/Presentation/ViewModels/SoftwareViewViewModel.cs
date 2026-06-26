@@ -298,8 +298,8 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
             Family            = software.Family;
             PredecessorId     = software.PredecessorId;
             Predecessor       = software.Predecessor;
-            SuccessorId       = software.SuccessorId;
-            Successor         = software.Successor;
+            SuccessorId       = software.Successors?.FirstOrDefault()?.Id;
+            Successor         = software.Successors?.FirstOrDefault()?.Name;
             Kind              = (SoftwareKind)(software.Kind ?? 0);
             BaseSoftwareId    = software.BaseSoftwareId;
             BaseSoftware      = software.BaseSoftware;

@@ -941,6 +941,21 @@
     <value>Nous n'avons pas de description dans votre langue, vous pourriez collaborer en traduisant la description anglaise que nous affichons ci-dessous</value>
   </data>
     <data name="Predecessor" xml:space="preserve"><value>Prédécesseur</value></data>
+    <data name="Relationship to predecessor" xml:space="preserve"><value>Relation avec le prédécesseur</value></data>
+    <data name="Sequel" xml:space="preserve"><value>Suite</value></data>
+    <data name="Fork" xml:space="preserve"><value>Bifurcation</value></data>
+    <data name="Remake" xml:space="preserve"><value>Remake</value></data>
+    <data name="Remaster" xml:space="preserve"><value>Remasterisation</value></data>
+    <data name="Port" xml:space="preserve"><value>Portage</value></data>
+    <data name="Sequels" xml:space="preserve"><value>Suites</value></data>
+    <data name="Forks" xml:space="preserve"><value>Bifurcations</value></data>
+    <data name="Remakes" xml:space="preserve"><value>Remakes</value></data>
+    <data name="Remasters" xml:space="preserve"><value>Remasterisations</value></data>
+    <data name="Ports" xml:space="preserve"><value>Portages</value></data>
+    <data name="Forked from" xml:space="preserve"><value>Bifurqué de</value></data>
+    <data name="Remake of" xml:space="preserve"><value>Remake de</value></data>
+    <data name="Remaster of" xml:space="preserve"><value>Remasterisation de</value></data>
+    <data name="Port of" xml:space="preserve"><value>Portage de</value></data>
     <data name="Base software" xml:space="preserve"><value>Logiciel de base</value></data>
     <data name="Kind" xml:space="preserve"><value>Type</value></data>
     <data name="Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently." xml:space="preserve"><value>Modifiez n'importe quel champ ou relation ci-dessous. Seules vos modifications seront soumises à examen ; un administrateur peut accepter ou refuser chacune indépendamment.</value></data>

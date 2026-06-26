@@ -658,6 +658,24 @@ public partial class View
         _     => iso639_3
     };
 
+    string PredecessorLabel(SoftwareRelationshipType type) => type switch
+    {
+        SoftwareRelationshipType.Fork     => L["Forked from"],
+        SoftwareRelationshipType.Remake   => L["Remake of"],
+        SoftwareRelationshipType.Remaster => L["Remaster of"],
+        SoftwareRelationshipType.Port     => L["Port of"],
+        _                                 => L["Predecessor"]
+    };
+
+    string SuccessorGroupLabel(SoftwareRelationshipType type) => type switch
+    {
+        SoftwareRelationshipType.Fork     => L["Forks"],
+        SoftwareRelationshipType.Remake   => L["Remakes"],
+        SoftwareRelationshipType.Remaster => L["Remasters"],
+        SoftwareRelationshipType.Port     => L["Ports"],
+        _                                 => L["Sequels"]
+    };
+
     /// <summary>
     ///     Opens the dedicated SoftwareSuggestionDialog for editing the General Information
     ///     of this software (5 scalar fields + Genres junction). Captures the route

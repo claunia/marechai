@@ -420,15 +420,20 @@ else
             @if(_software.PredecessorId is not null && !string.IsNullOrEmpty(_software.Predecessor))
             {
                 <tr>
-                    <td style="width: 33%; text-align: right; padding-left: 2em;"><strong>@L["Predecessor"]</strong></td>
+                    <td style="width: 33%; text-align: right; padding-left: 2em;"><strong>@PredecessorLabel((Marechai.Data.SoftwareRelationshipType)(_software.RelationshipType ?? 0))</strong></td>
                     <td style="padding-left: 2em;"><MudLink Href="@($"/software/{_software.PredecessorId}")">@_software.Predecessor</MudLink></td>
                 </tr>
             }
-            @if(_software.SuccessorId is not null && !string.IsNullOrEmpty(_software.Successor))
+            @foreach(var successorGroup in (_software.Successors ?? []).GroupBy(s => (Marechai.Data.SoftwareRelationshipType)(s.RelationshipType ?? 0)))
             {
                 <tr>
-                    <td style="width: 33%; text-align: right; padding-left: 2em;"><strong>@L["Successor"]</strong></td>
-                    <td style="padding-left: 2em;"><MudLink Href="@($"/software/{_software.SuccessorId}")">@_software.Successor</MudLink></td>
+                    <td style="width: 33%; text-align: right; padding-left: 2em; vertical-align: top;"><strong>@SuccessorGroupLabel(successorGroup.Key)</strong></td>
+                    <td style="padding-left: 2em;">
+                        @foreach(var successor in successorGroup)
+                        {
+                            <div><MudLink Href="@($"/software/{successor.Id}")">@successor.Name</MudLink></div>
+                        }
+                    </td>
                 </tr>
             }
             <tr>

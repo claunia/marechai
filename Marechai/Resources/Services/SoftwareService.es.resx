@@ -899,6 +899,21 @@
     <value>No tenemos una descripción en tu idioma, podrías colaborar traduciendo la descripción en inglés que mostramos a continuación</value>
   </data>
     <data name="Predecessor" xml:space="preserve"><value>Predecesor</value></data>
+    <data name="Relationship to predecessor" xml:space="preserve"><value>Relación con el predecesor</value></data>
+    <data name="Sequel" xml:space="preserve"><value>Secuela</value></data>
+    <data name="Fork" xml:space="preserve"><value>Bifurcación</value></data>
+    <data name="Remake" xml:space="preserve"><value>Remake</value></data>
+    <data name="Remaster" xml:space="preserve"><value>Remasterización</value></data>
+    <data name="Port" xml:space="preserve"><value>Adaptación</value></data>
+    <data name="Sequels" xml:space="preserve"><value>Secuelas</value></data>
+    <data name="Forks" xml:space="preserve"><value>Bifurcaciones</value></data>
+    <data name="Remakes" xml:space="preserve"><value>Remakes</value></data>
+    <data name="Remasters" xml:space="preserve"><value>Remasterizaciones</value></data>
+    <data name="Ports" xml:space="preserve"><value>Adaptaciones</value></data>
+    <data name="Forked from" xml:space="preserve"><value>Bifurcado de</value></data>
+    <data name="Remake of" xml:space="preserve"><value>Remake de</value></data>
+    <data name="Remaster of" xml:space="preserve"><value>Remasterización de</value></data>
+    <data name="Port of" xml:space="preserve"><value>Adaptación de</value></data>
     <data name="Base software" xml:space="preserve"><value>Software base</value></data>
     <data name="Kind" xml:space="preserve"><value>Tipo</value></data>
     <data name="Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently." xml:space="preserve"><value>Edita cualquier campo o relación abajo. Solo se enviarán tus cambios para revisión; un administrador puede aceptarlos o rechazarlos uno por uno.</value></data>

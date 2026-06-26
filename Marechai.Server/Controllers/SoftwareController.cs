@@ -1450,14 +1450,16 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                                                                Family            = s.Family.Name,
                                                                PredecessorId     = s.PredecessorId,
                                                                Predecessor       = s.Predecessor.Name,
-                                                               SuccessorId = context.Softwares
-                                                                                    .Where(x => x.PredecessorId == s.Id)
-                                                                                    .Select(x => (ulong?)x.Id)
-                                                                                    .FirstOrDefault(),
-                                                               Successor = context.Softwares
-                                                                                  .Where(x => x.PredecessorId == s.Id)
-                                                                                  .Select(x => x.Name)
-                                                                                  .FirstOrDefault(),
+                                                               RelationshipType  = s.RelationshipType,
+                                                               Successors = context.Softwares
+                                                                                   .Where(x => x.PredecessorId == s.Id)
+                                                                                   .Select(x => new SoftwareSuccessorDto
+                                                                                    {
+                                                                                        Id               = x.Id,
+                                                                                        Name             = x.Name,
+                                                                                        RelationshipType = x.RelationshipType
+                                                                                    })
+                                                                                   .ToList(),
                                                                Kind              = s.Kind,
                                                                BaseSoftwareId    = s.BaseSoftwareId,
                                                                BaseSoftware      = s.BaseSoftware.Name
@@ -1482,6 +1484,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
         model.Name              = dto.Name;
         model.FamilyId          = dto.FamilyId;
         model.PredecessorId     = dto.PredecessorId;
+        model.RelationshipType  = dto.RelationshipType;
         model.Kind              = dto.Kind;
         model.BaseSoftwareId    = dto.BaseSoftwareId;
 
@@ -1520,6 +1523,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
             Name              = dto.Name,
             FamilyId          = dto.FamilyId,
             PredecessorId     = dto.PredecessorId,
+            RelationshipType  = dto.RelationshipType,
             Kind              = dto.Kind,
             BaseSoftwareId    = dto.BaseSoftwareId
         };
@@ -1971,7 +1975,10 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
             // 9b. Transfer predecessor: if target has no predecessor but source does, adopt it
             if(target.PredecessorId is null && source.PredecessorId is not null)
-                target.PredecessorId = source.PredecessorId;
+            {
+                target.PredecessorId    = source.PredecessorId;
+                target.RelationshipType = source.RelationshipType;
+            }
 
             // 9c. Re-point any software that had source as predecessor to target
             List<Software> successorsOfSource =

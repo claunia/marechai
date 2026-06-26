@@ -857,6 +857,21 @@
     <value>Non abbiamo una descrizione nella tua lingua, potresti collaborare traducendo la descrizione inglese che mostriamo qui sotto</value>
   </data>
     <data name="Predecessor" xml:space="preserve"><value>Predecessore</value></data>
+    <data name="Relationship to predecessor" xml:space="preserve"><value>Relazione con il predecessore</value></data>
+    <data name="Sequel" xml:space="preserve"><value>Sequel</value></data>
+    <data name="Fork" xml:space="preserve"><value>Fork</value></data>
+    <data name="Remake" xml:space="preserve"><value>Remake</value></data>
+    <data name="Remaster" xml:space="preserve"><value>Remaster</value></data>
+    <data name="Port" xml:space="preserve"><value>Conversione</value></data>
+    <data name="Sequels" xml:space="preserve"><value>Sequel</value></data>
+    <data name="Forks" xml:space="preserve"><value>Fork</value></data>
+    <data name="Remakes" xml:space="preserve"><value>Remake</value></data>
+    <data name="Remasters" xml:space="preserve"><value>Remaster</value></data>
+    <data name="Ports" xml:space="preserve"><value>Conversioni</value></data>
+    <data name="Forked from" xml:space="preserve"><value>Fork di</value></data>
+    <data name="Remake of" xml:space="preserve"><value>Remake di</value></data>
+    <data name="Remaster of" xml:space="preserve"><value>Remaster di</value></data>
+    <data name="Port of" xml:space="preserve"><value>Conversione di</value></data>
     <data name="Base software" xml:space="preserve"><value>Software di base</value></data>
     <data name="Kind" xml:space="preserve"><value>Tipo</value></data>
     <data name="Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently." xml:space="preserve"><value>Modifica qualsiasi campo o relazione qui sotto. Solo le tue modifiche saranno inviate per la revisione; un amministratore può accettarle o rifiutarle una per una.</value></data>

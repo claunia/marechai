@@ -37,6 +37,19 @@
                                  MaxItems="50"
                                  Class="mb-4"/>
 
+                <MudSelect T="Marechai.Data.SoftwareRelationshipType"
+                           @bind-Value="RelationshipType"
+                           Label="@L["Relationship to predecessor"]"
+                           Variant="Variant.Outlined"
+                           Disabled="@(_selectedPredecessor is null)"
+                           Class="mb-4">
+                    <MudSelectItem T="Marechai.Data.SoftwareRelationshipType" Value="Marechai.Data.SoftwareRelationshipType.Sequel">@L["Sequel"]</MudSelectItem>
+                    <MudSelectItem T="Marechai.Data.SoftwareRelationshipType" Value="Marechai.Data.SoftwareRelationshipType.Fork">@L["Fork"]</MudSelectItem>
+                    <MudSelectItem T="Marechai.Data.SoftwareRelationshipType" Value="Marechai.Data.SoftwareRelationshipType.Remake">@L["Remake"]</MudSelectItem>
+                    <MudSelectItem T="Marechai.Data.SoftwareRelationshipType" Value="Marechai.Data.SoftwareRelationshipType.Remaster">@L["Remaster"]</MudSelectItem>
+                    <MudSelectItem T="Marechai.Data.SoftwareRelationshipType" Value="Marechai.Data.SoftwareRelationshipType.Port">@L["Port"]</MudSelectItem>
+                </MudSelect>
+
                 <MudSelect T="Marechai.Data.SoftwareKind" @bind-Value="Kind" Label="@L["Kind"]" Variant="Variant.Outlined" Class="mb-4">
                     <MudSelectItem T="Marechai.Data.SoftwareKind" Value="Marechai.Data.SoftwareKind.Software">@L["Software"]</MudSelectItem>
                     <MudSelectItem T="Marechai.Data.SoftwareKind" Value="Marechai.Data.SoftwareKind.OperatingSystem">@L["Operating System"]</MudSelectItem>
@@ -271,6 +284,7 @@
     [Parameter] public int? FamilyId { get; set; }
     [Parameter] public int? PredecessorId { get; set; }
     [Parameter] public string PredecessorName { get; set; }
+    [Parameter] public Marechai.Data.SoftwareRelationshipType RelationshipType { get; set; }
     [Parameter] public int? BaseSoftwareId { get; set; }
     [Parameter] public string BaseSoftwareName { get; set; }
     [Parameter] public Marechai.Data.SoftwareKind Kind { get; set; }
@@ -615,6 +629,7 @@
             Name              = Name,
             FamilyId          = _selectedFamily?.Id,
             PredecessorId     = _selectedPredecessor?.Id,
+            RelationshipType  = RelationshipType,
             BaseSoftwareId    = _selectedBaseSoftware?.Id,
             Kind              = Kind,
             PendingGenreIds   = _pendingGenreAdds.Select(p => p.GenreId).ToList(),

@@ -680,6 +680,21 @@
     <value>We do not have a description in your language, you could collaborate by translating the English description we show below</value>
   </data>
     <data name="Predecessor" xml:space="preserve"><value>Predecessor</value></data>
+    <data name="Relationship to predecessor" xml:space="preserve"><value>Relationship to predecessor</value></data>
+    <data name="Sequel" xml:space="preserve"><value>Sequel</value></data>
+    <data name="Fork" xml:space="preserve"><value>Fork</value></data>
+    <data name="Remake" xml:space="preserve"><value>Remake</value></data>
+    <data name="Remaster" xml:space="preserve"><value>Remaster</value></data>
+    <data name="Port" xml:space="preserve"><value>Port</value></data>
+    <data name="Sequels" xml:space="preserve"><value>Sequels</value></data>
+    <data name="Forks" xml:space="preserve"><value>Forks</value></data>
+    <data name="Remakes" xml:space="preserve"><value>Remakes</value></data>
+    <data name="Remasters" xml:space="preserve"><value>Remasters</value></data>
+    <data name="Ports" xml:space="preserve"><value>Ports</value></data>
+    <data name="Forked from" xml:space="preserve"><value>Forked from</value></data>
+    <data name="Remake of" xml:space="preserve"><value>Remake of</value></data>
+    <data name="Remaster of" xml:space="preserve"><value>Remaster of</value></data>
+    <data name="Port of" xml:space="preserve"><value>Port of</value></data>
     <data name="Base software" xml:space="preserve"><value>Base software</value></data>
     <data name="Kind" xml:space="preserve"><value>Kind</value></data>
     <data name="Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently." xml:space="preserve"><value>Edit any field or junction below. Only your changes will be sent for review; an administrator can accept or reject each one independently.</value></data>

@@ -856,6 +856,20 @@ public enum SoftwareRequirementType : byte
     ExpansionOf = 3
 }
 
+public enum SoftwareRelationshipType : byte
+{
+    [Display(Name = "Sequel")]
+    Sequel   = 0,
+    [Display(Name = "Fork")]
+    Fork     = 1,
+    [Display(Name = "Remake")]
+    Remake   = 2,
+    [Display(Name = "Remaster")]
+    Remaster = 3,
+    [Display(Name = "Port")]
+    Port     = 4
+}
+
 public enum ProductCodeIssuer : byte
 {
     Microsoft      = 0,

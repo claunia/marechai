@@ -106,6 +106,7 @@ public partial class Software
                 Name              = data.Name,
                 FamilyId          = data.FamilyId,
                 PredecessorId     = data.PredecessorId,
+                RelationshipType  = (int)data.RelationshipType,
                 BaseSoftwareId    = data.BaseSoftwareId,
                 Kind              = (int)data.Kind
             };
@@ -191,6 +192,7 @@ public partial class Software
             { x => x.FamilyId, full.FamilyId },
             { x => x.PredecessorId, full.PredecessorId },
             { x => x.PredecessorName, full.Predecessor },
+            { x => x.RelationshipType, (Marechai.Data.SoftwareRelationshipType)(full.RelationshipType ?? 0) },
             { x => x.BaseSoftwareId, full.BaseSoftwareId },
             { x => x.BaseSoftwareName, full.BaseSoftware },
             { x => x.Kind, (Marechai.Data.SoftwareKind)(full.Kind ?? 0) }
@@ -213,6 +215,7 @@ public partial class Software
                 Name              = data.Name,
                 FamilyId          = data.FamilyId,
                 PredecessorId     = data.PredecessorId,
+                RelationshipType  = (int)data.RelationshipType,
                 BaseSoftwareId    = data.BaseSoftwareId,
                 Kind              = (int)data.Kind
             };
