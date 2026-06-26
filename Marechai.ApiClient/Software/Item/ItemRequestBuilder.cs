@@ -2,6 +2,7 @@
 #pragma warning disable CS0618
 using Marechai.ApiClient.Models;
 using Marechai.ApiClient.Software.Item.Addons;
+using Marechai.ApiClient.Software.Item.AlternativeTitles;
 using Marechai.ApiClient.Software.Item.Attributes;
 using Marechai.ApiClient.Software.Item.BaseSoftware;
 using Marechai.ApiClient.Software.Item.Companies;
@@ -45,6 +46,11 @@ namespace Marechai.ApiClient.Software.Item
         public global::Marechai.ApiClient.Software.Item.Addons.AddonsRequestBuilder Addons
         {
             get => new global::Marechai.ApiClient.Software.Item.Addons.AddonsRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The alternativeTitles property</summary>
+        public global::Marechai.ApiClient.Software.Item.AlternativeTitles.AlternativeTitlesRequestBuilder AlternativeTitles
+        {
+            get => new global::Marechai.ApiClient.Software.Item.AlternativeTitles.AlternativeTitlesRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The attributes property</summary>
         public global::Marechai.ApiClient.Software.Item.Attributes.AttributesRequestBuilder Attributes

@@ -99,6 +99,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<Forbidden>                           Forbidden                           { get; set; }
     public virtual DbSet<Gpu>                                 Gpus                                { get; set; }
     public virtual DbSet<GpusByMachine>                       GpusByMachine                       { get; set; }
+    public virtual DbSet<IgdbAlternativeName>                 IgdbAlternativeNames                { get; set; }
     public virtual DbSet<IgdbCompany>                         IgdbCompanies                       { get; set; }
     public virtual DbSet<IgdbGame>                            IgdbGames                           { get; set; }
     public virtual DbSet<IgdbGameType>                        IgdbGameTypes                       { get; set; }
@@ -190,6 +191,8 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<SoftwarePromoArtGroup>              SoftwarePromoArtGroups               { get; set; }
     public virtual DbSet<SoftwarePromoArtGroupTranslation>   SoftwarePromoArtGroupTranslations    { get; set; }
     public virtual DbSet<SoftwareDescription>                  SoftwareDescriptions                 { get; set; }
+    public virtual DbSet<SoftwareAlternativeTitle>              SoftwareAlternativeTitles            { get; set; }
+    public virtual DbSet<SoftwareAlternativeTitleCommentTranslation> SoftwareAlternativeTitleCommentTranslations { get; set; }
     public virtual DbSet<SoundByMachine>                      SoundByMachine                      { get; set; }
     public virtual DbSet<SoundSynth>                          SoundSynths                         { get; set; }
     public virtual DbSet<StandaloneFile>                      StandaloneFiles                     { get; set; }
@@ -2501,6 +2504,32 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .HasConstraintName("fk_software_descriptions_language");
         });
 
+        modelBuilder.Entity<SoftwareAlternativeTitle>(entity =>
+        {
+            entity.HasIndex(e => e.SoftwareId).HasDatabaseName("idx_software_alternative_titles_software");
+
+            entity.HasOne(e => e.Software)
+                  .WithMany(s => s.AlternativeTitles)
+                  .HasForeignKey(e => e.SoftwareId)
+                  .HasConstraintName("fk_software_alternative_titles_software")
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<SoftwareAlternativeTitleCommentTranslation>(entity =>
+        {
+            entity.HasIndex(e => new { e.CommentText, e.LanguageCode })
+                  .IsUnique()
+                  .HasDatabaseName("idx_software_alternative_title_comment_translations_text_language");
+
+            entity.HasIndex(e => e.CommentText)
+                  .HasDatabaseName("idx_software_alternative_title_comment_translations_text");
+
+            entity.HasOne(e => e.Language)
+                  .WithMany()
+                  .HasForeignKey(e => e.LanguageCode)
+                  .HasConstraintName("fk_software_alternative_title_comment_translations_language");
+        });
+
         modelBuilder.Entity<SoftwareVersion>(entity =>
         {
             entity.HasIndex(x => x.VersionString);
@@ -3008,6 +3037,12 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
             entity.HasIndex(e => e.IgdbId).IsUnique();
             entity.HasIndex(e => e.GameIgdbId);
             entity.HasIndex(e => e.CompanyIgdbId);
+        });
+
+        modelBuilder.Entity<IgdbAlternativeName>(entity =>
+        {
+            entity.HasIndex(e => e.IgdbId).IsUnique();
+            entity.HasIndex(e => e.GameIgdbId);
         });
 
         modelBuilder.Entity<OldDosCategory>(entity =>

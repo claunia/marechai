@@ -142,6 +142,68 @@
                 }
             </MudTabPanel>
 
+            @* Tab - Alternative Titles (available in BOTH create and edit modes; create-mode
+                adds are buffered in _pendingAlternativeTitleAdds and flushed by the parent
+                admin page after CreateAsync returns the new software id, mirroring the
+                Genres tab). Each row stores a Title plus an optional English comment that
+                gets auto-translated by the background TranslationWorker. *@
+            <MudTabPanel Text="@L["Alternative Titles"]" Icon="@Icons.Material.Filled.Translate">
+                @* Existing rows (edit mode only — _alternativeTitleRows is empty in create mode). *@
+                @foreach(SoftwareAlternativeTitleDto t in _alternativeTitleRows ?? new())
+                {
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                        <MudText>
+                            @t.Title
+                            @if(!string.IsNullOrWhiteSpace(t.Comment))
+                            {
+                                <MudText Typo="Typo.caption" Class="ml-2">(@t.Comment)</MudText>
+                            }
+                        </MudText>
+                        @if(t.Id.HasValue)
+                        {
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+                                           OnClick="@(() => RemoveExistingAlternativeTitle(t))"/>
+                        }
+                    </MudStack>
+                }
+
+                @* Pending adds (create mode buffer). Bold "+ Title (Comment)" with a Remove button. *@
+                @foreach(PendingAlternativeTitleAdd p in _pendingAlternativeTitleAdds)
+                {
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-1">
+                        <MudText>
+                            <strong>+ @p.Title</strong>
+                            @if(!string.IsNullOrWhiteSpace(p.Comment))
+                            {
+                                <MudText Typo="Typo.caption" Class="ml-2">(@p.Comment)</MudText>
+                            }
+                        </MudText>
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Default"
+                                       OnClick="@(() => RemovePendingAlternativeTitle(p))"/>
+                    </MudStack>
+                }
+
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mt-2">
+                    <MudTextField @bind-Value="_newAlternativeTitle"
+                                  Label="@L["Title"]"
+                                  Variant="Variant.Outlined"
+                                  Style="flex: 1;"/>
+                    <MudTextField @bind-Value="_newAlternativeTitleComment"
+                                  Label="@L["Comment"]"
+                                  Variant="Variant.Outlined"
+                                  Style="flex: 1;"/>
+                    <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
+                               OnClick="AddAlternativeTitleClick"
+                               Disabled="@string.IsNullOrWhiteSpace(_newAlternativeTitle)">@L["Add"]</MudButton>
+                </MudStack>
+
+                @if(!string.IsNullOrWhiteSpace(_alternativeTitleMessage))
+                {
+                    <MudAlert Severity="@_alternativeTitleMessageSeverity" Class="mt-2" ShowCloseIcon="true"
+                              CloseIconClicked="() => _alternativeTitleMessage = null">@_alternativeTitleMessage</MudAlert>
+                }
+            </MudTabPanel>
+
             @* Tab 3 - Company Roles (available in BOTH create and edit modes; create-mode
                 adds are buffered in _pendingCompanyAdds and flushed by the parent admin
                 page after CreateAsync returns the new software id, mirroring the Genres tab). *@
@@ -276,6 +338,21 @@
     /// </summary>
     sealed record PendingGenreAdd(int GenreId, int Type, string Name);
 
+    // ── Alternative Titles tab state ──
+    List<SoftwareAlternativeTitleDto> _alternativeTitleRows; // existing rows (edit mode); empty in create.
+    List<PendingAlternativeTitleAdd>  _pendingAlternativeTitleAdds = new();
+    string                            _newAlternativeTitle;
+    string                            _newAlternativeTitleComment;
+    string                            _alternativeTitleMessage;
+    Severity                          _alternativeTitleMessageSeverity;
+
+    /// <summary>
+    ///     In-memory create-mode buffer for an alternative title that can't be POSTed yet
+    ///     because the parent Software row doesn't exist. Flushed by the parent admin page
+    ///     after CreateAsync returns the new id, mirroring the _pendingGenreAdds pattern.
+    /// </summary>
+    sealed record PendingAlternativeTitleAdd(string Title, string Comment);
+
     [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
 
     [Parameter] public bool IsNew { get; set; }
@@ -339,6 +416,12 @@
         _genreRows = IsNew
                          ? new List<SoftwareGenreDto>()
                          : await SoftwareService.GetGenresAsync(SoftwareId);
+
+        // _alternativeTitleRows is the edit-mode "currently stored" set; create-mode starts
+        // empty and is buffered via _pendingAlternativeTitleAdds.
+        _alternativeTitleRows = IsNew
+                                     ? new List<SoftwareAlternativeTitleDto>()
+                                     : await SoftwareService.GetAlternativeTitlesAsync(SoftwareId);
     }
 
     async Task<IEnumerable<SoftwareFamilyDto>> SearchFamilies(string value, CancellationToken ct)
@@ -616,6 +699,71 @@
         _genreMessage = null;
     }
 
+    // ───────────────────── Alternative Titles tab handlers ─────────────────────
+
+    async Task AddAlternativeTitleClick()
+    {
+        if(string.IsNullOrWhiteSpace(_newAlternativeTitle)) return;
+
+        string title   = _newAlternativeTitle.Trim();
+        string comment = string.IsNullOrWhiteSpace(_newAlternativeTitleComment)
+                             ? null
+                             : _newAlternativeTitleComment.Trim();
+
+        if(IsNew)
+        {
+            // Create mode: buffer in memory, parent admin page flushes after CreateAsync.
+            _pendingAlternativeTitleAdds.Add(new PendingAlternativeTitleAdd(title, comment));
+            _newAlternativeTitle        = null;
+            _newAlternativeTitleComment = null;
+            _alternativeTitleMessage    = null;
+            return;
+        }
+
+        // Edit mode: persist immediately.
+        (bool ok, SoftwareAlternativeTitleDto _, string err) =
+            await SoftwareService.AddAlternativeTitleAsync((ulong)SoftwareId, title, comment);
+
+        if(ok)
+        {
+            _alternativeTitleRows       = await SoftwareService.GetAlternativeTitlesAsync(SoftwareId);
+            _newAlternativeTitle        = null;
+            _newAlternativeTitleComment = null;
+            _alternativeTitleMessage    = null;
+        }
+        else
+        {
+            _alternativeTitleMessage         = err ?? L["Failed to add alternative title."];
+            _alternativeTitleMessageSeverity = Severity.Error;
+        }
+    }
+
+    async Task RemoveExistingAlternativeTitle(SoftwareAlternativeTitleDto t)
+    {
+        if(!t.Id.HasValue) return;
+
+        // Existing rows only appear in EDIT mode (create mode has _alternativeTitleRows
+        // empty), so this always hits the server.
+        (bool ok, string err) = await SoftwareService.RemoveAlternativeTitleAsync(t.Id.Value);
+
+        if(ok)
+        {
+            _alternativeTitleRows    = await SoftwareService.GetAlternativeTitlesAsync(SoftwareId);
+            _alternativeTitleMessage = null;
+        }
+        else
+        {
+            _alternativeTitleMessage         = err ?? L["Failed to remove alternative title."];
+            _alternativeTitleMessageSeverity = Severity.Error;
+        }
+    }
+
+    void RemovePendingAlternativeTitle(PendingAlternativeTitleAdd p)
+    {
+        _pendingAlternativeTitleAdds.Remove(p);
+        _alternativeTitleMessage = null;
+    }
+
     void Submit()
     {
         if(string.IsNullOrWhiteSpace(Name))
@@ -635,7 +783,10 @@
             PendingGenreIds   = _pendingGenreAdds.Select(p => p.GenreId).ToList(),
             PendingCompanyRoles = _pendingCompanyAdds
                                   .Select(p => new PendingCompanyRole(p.CompanyId, p.RoleId))
-                                  .ToList()
+                                  .ToList(),
+            PendingAlternativeTitles = _pendingAlternativeTitleAdds
+                                        .Select(p => new PendingAlternativeTitle(p.Title, p.Comment))
+                                        .ToList()
         }));
     }
 }

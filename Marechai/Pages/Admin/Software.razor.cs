@@ -162,6 +162,28 @@ public partial class Software
                     }
                 }
 
+                // Flush alternative titles queued in the dialog. Same partial-failure
+                // semantics as the genre/company flushes above.
+                if(data.PendingAlternativeTitles is { Count: > 0 })
+                {
+                    var altTitleErrors = new List<string>();
+                    foreach(PendingAlternativeTitle pending in data.PendingAlternativeTitles)
+                    {
+                        (bool atOk, _, string atErr) =
+                            await SoftwareService.AddAlternativeTitleAsync((ulong)id.Value, pending.Title,
+                                pending.Comment);
+                        if(!atOk && !string.IsNullOrWhiteSpace(atErr)) altTitleErrors.Add(atErr);
+                    }
+
+                    if(altTitleErrors.Count > 0)
+                    {
+                        string joined = string.Join("\n", altTitleErrors);
+                        _errorMessage = string.IsNullOrWhiteSpace(_errorMessage)
+                                            ? joined
+                                            : _errorMessage + "\n" + joined;
+                    }
+                }
+
                 _successMessage = L["Software created successfully."];
                 await _dataGrid.ReloadServerData();
             }

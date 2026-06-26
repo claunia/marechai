@@ -227,6 +227,59 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
+    /// <summary>
+    ///     Creates a new <see cref="SoftwareAlternativeTitleDto" /> for a Software. Returns the
+    ///     server-assigned id on success so the caller can render/remove the new row without a
+    ///     full reload.
+    /// </summary>
+    public async Task<(bool succeeded, SoftwareAlternativeTitleDto dto, string error)> AddAlternativeTitleAsync(
+        ulong softwareId, string title, string comment)
+    {
+        try
+        {
+            // Kiota widens uint64 wire fields to int? (no unsigned formats in OpenAPI), so cast.
+            // Real Software ids fit comfortably below int.MaxValue.
+            SoftwareAlternativeTitleDto created = await client.Software.AlternativeTitles.PostAsync(
+                new SoftwareAlternativeTitleDto
+                {
+                    SoftwareId = (int)softwareId,
+                    Title      = title,
+                    Comment    = comment
+                });
+
+            return (true, created, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, null, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (false, null, ex.Message);
+        }
+    }
+
+    /// <summary>
+    ///     Removes a <see cref="SoftwareAlternativeTitleDto" /> by id.
+    /// </summary>
+    public async Task<(bool succeeded, string error)> RemoveAlternativeTitleAsync(long id)
+    {
+        try
+        {
+            await client.Software.AlternativeTitles[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
     // ── Picker methods for admin ──
 
     public async Task<List<SoftwareRoleDto>> GetSoftwareRolesAsync()
@@ -1306,6 +1359,26 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
             });
 
             return genres ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<SoftwareAlternativeTitleDto>> GetAlternativeTitlesAsync(int softwareId)
+    {
+        try
+        {
+            string lang = UiLanguage.GetIso639_3();
+
+            List<SoftwareAlternativeTitleDto> titles =
+                await client.Software[softwareId].AlternativeTitles.GetAsync(config =>
+                {
+                    config.QueryParameters.Lang = lang;
+                });
+
+            return titles ?? [];
         }
         catch
         {

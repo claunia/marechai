@@ -419,6 +419,15 @@ file class Program
         builder.Services.AddSingleton<Marechai.Translation.ITranslationProvider,
                                       PeopleBySoftwareRoleTranslationProvider>();
 
+        // Software alternative title comment translation provider — flat string-pool
+        // translation table keyed by the canonical English comment text. NO in-memory cache;
+        // read endpoints project the localized comment via a correlated sub-query against
+        // SoftwareAlternativeTitleCommentTranslations with English fallback. Multiple
+        // alternative titles sharing the same comment (e.g. "Japanese title") reuse a single
+        // translation row per language.
+        builder.Services.AddSingleton<Marechai.Translation.ITranslationProvider,
+                                      SoftwareAlternativeTitleCommentTranslationProvider>();
+
         // Software screenshot caption translation provider — FK-link translation table keyed by
         // SoftwareScreenshot.Id (Guid). NO in-memory cache; read endpoints project the localized
         // caption via a correlated sub-query against SoftwareScreenshotCaptionTranslations with

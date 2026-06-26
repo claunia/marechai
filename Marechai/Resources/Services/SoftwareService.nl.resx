@@ -541,6 +541,12 @@
     <data name="Genres" xml:space="preserve">
         <value>Genres</value>
     </data>
+    <data name="Alternative Titles" xml:space="preserve">
+        <value>Alternatieve titels</value>
+    </data>
+    <data name="Comment" xml:space="preserve">
+        <value>Opmerking</value>
+    </data>
     <data name="Golf" xml:space="preserve">
         <value>Golf</value>
     </data>
@@ -1542,6 +1548,12 @@
     </data>
     <data name="Failed to remove genre." xml:space="preserve">
         <value>Genre verwijderen mislukt.</value>
+    </data>
+    <data name="Failed to add alternative title." xml:space="preserve">
+        <value>Alternatieve titel toevoegen mislukt.</value>
+    </data>
+    <data name="Failed to remove alternative title." xml:space="preserve">
+        <value>Alternatieve titel verwijderen mislukt.</value>
     </data>
     <data name="Cutscenes" xml:space="preserve">
         <value>Tussenfilmpjes</value>

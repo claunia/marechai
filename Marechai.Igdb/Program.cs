@@ -124,6 +124,20 @@ class Program
                 break;
             }
 
+            case "mirror-alternative-names":
+            {
+                IgdbHttpClient client = RequireClient();
+
+                if(client == null)
+                    return 1;
+
+                var service = new IgdbAlternativeNameMirrorService(factory, client);
+                int total = await service.RunAsync(batchSize, dryRun);
+                Console.WriteLine($"\nDone. Mirrored {total} alternative names.");
+
+                break;
+            }
+
             case "match-platforms":
             {
                 var matcher = new PlatformMatcher(factory);
@@ -345,6 +359,7 @@ class Program
                                mirror-companies           Pull IGDB /companies (resumable)
                                mirror-games               Pull IGDB /games (resumable)
                                mirror-involved-companies  Pull IGDB /involved_companies (resumable)
+                               mirror-alternative-names  Pull IGDB /alternative_names (resumable)
                                match-platforms             Match mirrored platforms against SoftwarePlatform
                                match-companies              Match mirrored companies against Company
                                match-games                  Match mirrored games against Software

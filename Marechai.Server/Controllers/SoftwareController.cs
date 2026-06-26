@@ -2535,6 +2535,49 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
         return genres;
     }
 
+    [HttpGet("/software/{softwareId:ulong}/alternative-titles")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public Task<List<SoftwareAlternativeTitleDto>> GetAlternativeTitlesAsync(ulong softwareId,
+        [FromQuery] string lang = null)
+    {
+        string langCode  = LanguageResolver.Resolve(HttpContext, lang);
+        bool   isEnglish = string.Equals(langCode, "eng", StringComparison.Ordinal);
+
+        IQueryable<SoftwareAlternativeTitle> source = context.SoftwareAlternativeTitles
+                                                              .Where(t => t.SoftwareId == softwareId)
+                                                              .OrderBy(t => t.Id);
+
+        // English fast-path: skip the correlated translation sub-query entirely. Comment and
+        // CanonicalComment are identical in this case.
+        if(isEnglish)
+            return source.Select(t => new SoftwareAlternativeTitleDto
+                          {
+                              Id               = t.Id,
+                              SoftwareId       = t.SoftwareId,
+                              Title            = t.Title,
+                              Comment          = t.Comment,
+                              CanonicalComment = t.Comment
+                          })
+                         .ToListAsync();
+
+        return source.Select(t => new SoftwareAlternativeTitleDto
+                      {
+                          Id         = t.Id,
+                          SoftwareId = t.SoftwareId,
+                          Title      = t.Title,
+                          Comment = t.Comment == null
+                                        ? null
+                                        : (context.SoftwareAlternativeTitleCommentTranslations
+                                                  .Where(c => c.CommentText  == t.Comment &&
+                                                              c.LanguageCode == langCode)
+                                                  .Select(c => c.Translation)
+                                                  .FirstOrDefault() ?? t.Comment),
+                          CanonicalComment = t.Comment
+                      })
+                     .ToListAsync();
+    }
+
     [HttpGet("/software/{softwareId:ulong}/attributes")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]

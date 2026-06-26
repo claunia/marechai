@@ -664,6 +664,12 @@
     <data name="Genres" xml:space="preserve">
         <value>Genres</value>
     </data>
+    <data name="Alternative Titles" xml:space="preserve">
+        <value>Titres alternatifs</value>
+    </data>
+    <data name="Comment" xml:space="preserve">
+        <value>Commentaire</value>
+    </data>
     <data name="Genre" xml:space="preserve">
         <value>Genre</value>
     </data>
@@ -1233,6 +1239,12 @@
     </data>
     <data name="Failed to remove genre." xml:space="preserve">
         <value>Échec de la suppression du genre.</value>
+    </data>
+    <data name="Failed to add alternative title." xml:space="preserve">
+        <value>Échec de l'ajout du titre alternatif.</value>
+    </data>
+    <data name="Failed to remove alternative title." xml:space="preserve">
+        <value>Échec de la suppression du titre alternatif.</value>
     </data>
     <data name="Software Duplicates" xml:space="preserve">
         <value>Logiciels en double</value>

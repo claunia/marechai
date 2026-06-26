@@ -2,6 +2,7 @@
 #pragma warning disable CS0618
 using Marechai.ApiClient.Models;
 using Marechai.ApiClient.Software.Admin;
+using Marechai.ApiClient.Software.AlternativeTitles;
 using Marechai.ApiClient.Software.Attributes;
 using Marechai.ApiClient.Software.Barcodes;
 using Marechai.ApiClient.Software.ByGenre;
@@ -52,6 +53,11 @@ namespace Marechai.ApiClient.Software
         public global::Marechai.ApiClient.Software.Admin.AdminRequestBuilder Admin
         {
             get => new global::Marechai.ApiClient.Software.Admin.AdminRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The alternativeTitles property</summary>
+        public global::Marechai.ApiClient.Software.AlternativeTitles.AlternativeTitlesRequestBuilder AlternativeTitles
+        {
+            get => new global::Marechai.ApiClient.Software.AlternativeTitles.AlternativeTitlesRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The attributes property</summary>
         public global::Marechai.ApiClient.Software.Attributes.AttributesRequestBuilder Attributes

@@ -30,6 +30,14 @@ public sealed class SoftwareDialogResult
     ///     company under a different role is a distinct pair.
     /// </summary>
     public List<PendingCompanyRole> PendingCompanyRoles { get; set; } = [];
+
+    /// <summary>
+    ///     Alternative titles queued during CREATE-mode editing of <see cref="SoftwareDialog" />.
+    ///     Empty in EDIT mode (the dialog persists Add/Remove immediately to the server). The
+    ///     parent admin page flushes these via <c>SoftwareService.AddAlternativeTitleAsync</c>
+    ///     after <c>CreateAsync</c> returns the new software id.
+    /// </summary>
+    public List<PendingAlternativeTitle> PendingAlternativeTitles { get; set; } = [];
 }
 
 /// <summary>
@@ -37,3 +45,8 @@ public sealed class SoftwareDialogResult
 ///     <paramref name="RoleId" /> is the 3-char ASCII role code (e.g. "dev", "pub").
 /// </summary>
 public sealed record PendingCompanyRole(int CompanyId, string RoleId);
+
+/// <summary>
+///     Buffered alternative-title pick from the admin "New Software" dialog.
+/// </summary>
+public sealed record PendingAlternativeTitle(string Title, string Comment);
