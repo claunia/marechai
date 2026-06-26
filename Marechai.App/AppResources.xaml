@@ -14,5 +14,8 @@
     <local:RolesListConverter x:Key="RolesListConverter" />
     <local:LocalizeConverter x:Key="Localize" />
     <local:DateOnlyConverter x:Key="DateOnlyConverter" />
+    <local:CountToVisibilityConverter x:Key="CountToVisibilityConverter" />
+    <local:NullableToVisibilityConverter x:Key="NullableToVisibilityConverter" />
+    <local:BoolToInfoBarSeverityConverter x:Key="BoolToInfoBarSeverityConverter" />
 
 </ResourceDictionary>

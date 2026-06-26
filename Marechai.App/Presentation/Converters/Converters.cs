@@ -1,6 +1,7 @@
 using System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Marechai.App.Presentation.Converters;
 
@@ -116,6 +117,47 @@ public class DateOnlyConverter : IValueConverter
             DateTimeOffset dto => dto.DateTime.ToString("d"),
             _                 => string.Empty
         };
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language) =>
+        throw new NotImplementedException();
+}
+
+/// <summary>
+///     Converts counts greater than zero to Visible, otherwise Collapsed.
+/// </summary>
+public class CountToVisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language) =>
+        value switch
+        {
+            int count   when count > 0 => Visibility.Visible,
+            long count  when count > 0 => Visibility.Visible,
+            _                          => Visibility.Collapsed
+        };
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language) =>
+        throw new NotImplementedException();
+}
+
+/// <summary>
+///     Converts nullable values to Visible when they have a value, otherwise Collapsed.
+/// </summary>
+public class NullableToVisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language) =>
+        value != null ? Visibility.Visible : Visibility.Collapsed;
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language) =>
+        throw new NotImplementedException();
+}
+
+/// <summary>
+///     Maps success/failure booleans to InfoBar severity.
+/// </summary>
+public class BoolToInfoBarSeverityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language) =>
+        value is true ? InfoBarSeverity.Success : InfoBarSeverity.Error;
 
     public object ConvertBack(object value, Type targetType, object parameter, string language) =>
         throw new NotImplementedException();

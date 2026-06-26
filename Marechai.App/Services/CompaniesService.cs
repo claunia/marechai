@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Companies;
 using Marechai.ApiClient.Companies.Count;
+using Marechai.ApiClient.Models;
 
 namespace Marechai.App.Services;
 
@@ -125,6 +126,20 @@ public class CompaniesService
         catch(Exception ex)
         {
             _logger.LogError(ex, "Error fetching company {CompanyId} from API", companyId);
+
+            return null;
+        }
+    }
+
+    public async Task<int?> CreateAsync(CompanyDto dto)
+    {
+        try
+        {
+            return await _apiClient.Companies.PostAsync(dto);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error creating company");
 
             return null;
         }

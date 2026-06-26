@@ -193,6 +193,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<SoftwareVersionsService>();
         containerRegistry.RegisterSingleton<SoftwareReleasesService>();
         containerRegistry.RegisterSingleton<SoftwareBrowsingService>();
+        containerRegistry.RegisterSingleton<WwpcImportsService>();
         containerRegistry.RegisterSingleton<IComputersListFilterContext, ComputersListFilterContext>();
         containerRegistry.RegisterSingleton<IConsolesListFilterContext, ConsolesListFilterContext>();
         containerRegistry.RegisterSingleton<ISmartphonesListFilterContext, SmartphonesListFilterContext>();
@@ -269,6 +270,8 @@ public partial class App : PrismApplication
         containerRegistry.Register<AdminSoftwareVersionsViewModel>();
         containerRegistry.Register<AdminSoftwareReleasesViewModel>();
         containerRegistry.Register<AdminSoftwareScreenshotsViewModel>();
+        containerRegistry.Register<AdminWwpcImportsViewModel>();
+        containerRegistry.Register<AdminWwpcImportReviewViewModel>();
         containerRegistry.Register<ScreenshotDetailViewModel>();
 
         // Register views for navigation
@@ -337,6 +340,8 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<AdminSoftwareVersionsPage, AdminSoftwareVersionsViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoftwareReleasesPage, AdminSoftwareReleasesViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoftwareScreenshotsPage, AdminSoftwareScreenshotsViewModel>();
+        containerRegistry.RegisterForNavigation<AdminWwpcImportsPage, AdminWwpcImportsViewModel>();
+        containerRegistry.RegisterForNavigation<AdminWwpcImportReviewPage, AdminWwpcImportReviewViewModel>();
         containerRegistry.RegisterForNavigation<ScreenshotDetailPage, ScreenshotDetailViewModel>();
     }
 

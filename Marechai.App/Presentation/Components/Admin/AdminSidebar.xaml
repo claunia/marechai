@@ -321,6 +321,17 @@
                         Foreground="{StaticResource AdminSidebarForeground}"
                         BorderThickness="0"
                         CornerRadius="0" />
+
+                <Button Content="{Binding WwpcImportsManagementButtonText}"
+                        Command="{Binding NavigateToAdminWwpcImportsCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{StaticResource AdminSidebarForeground}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
             </StackPanel>
         </ScrollViewer>
 

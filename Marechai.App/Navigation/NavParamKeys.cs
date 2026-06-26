@@ -24,4 +24,5 @@ public static class NavParamKeys
     public const string SoftwareReleaseId   = "SoftwareReleaseId";
     public const string PersonId            = "PersonId";
     public const string ScreenshotId        = "ScreenshotId";
+    public const string WwpcImportId        = "WwpcImportId";
 }

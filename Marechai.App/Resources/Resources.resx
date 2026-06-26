@@ -2578,4 +2578,80 @@
   <data name="DeletionPendingPage.CancelFailed" xml:space="preserve"><value>Could not cancel the deletion. Please try again.</value></data>
   <data name="DeletionPendingPage.DownloadFailed" xml:space="preserve"><value>Could not generate your data export.</value></data>
   <data name="DeletionPendingPage.DownloadSaved" xml:space="preserve"><value>Data export saved.</value></data>
+  <data name="WwpcImportsManagementButton" xml:space="preserve"><value>WinWorldPC imports</value></data>
+  <data name="WwpcImportsTitle" xml:space="preserve"><value>WinWorldPC imports</value></data>
+  <data name="WwpcImportsSubtitle" xml:space="preserve"><value>Review pending software pulled from winworldpc.com after the enrichment passes.</value></data>
+  <data name="WwpcImportsStatusTitle" xml:space="preserve"><value>Queue update</value></data>
+  <data name="WwpcReviewTitle" xml:space="preserve"><value>Review WinWorldPC import</value></data>
+  <data name="WwpcReviewStatusTitle" xml:space="preserve"><value>Review update</value></data>
+  <data name="WwpcSectionLabel" xml:space="preserve"><value>Section</value></data>
+  <data name="WwpcHasErrorLabel" xml:space="preserve"><value>Has enrichment error</value></data>
+  <data name="WwpcVersionsColumn" xml:space="preserve"><value>Versions</value></data>
+  <data name="WwpcScreenshotsColumn" xml:space="preserve"><value>Screenshots</value></data>
+  <data name="WwpcCrawledColumn" xml:space="preserve"><value>Crawled</value></data>
+  <data name="WwpcReviewButton" xml:space="preserve"><value>Review</value></data>
+  <data name="WwpcDuplicateButton" xml:space="preserve"><value>Duplicate</value></data>
+  <data name="WwpcRejectButton" xml:space="preserve"><value>Reject</value></data>
+  <data name="WwpcOpenSourceButton" xml:space="preserve"><value>Open source</value></data>
+  <data name="WwpcRawDescriptionHeader" xml:space="preserve"><value>Raw description from WinWorldPC</value></data>
+  <data name="WwpcMuseumDescriptionLabel" xml:space="preserve"><value>Museum-grade English description</value></data>
+  <data name="WwpcPossibleMatchesTitle" xml:space="preserve"><value>Possible existing matches</value></data>
+  <data name="WwpcMergeButton" xml:space="preserve"><value>Merge into this</value></data>
+  <data name="WwpcMergeModeTitle" xml:space="preserve"><value>Merging into existing software</value></data>
+  <data name="WwpcSwitchBackButton" xml:space="preserve"><value>Switch back to create new</value></data>
+  <data name="WwpcVendorSectionTitle" xml:space="preserve"><value>Vendor / developer</value></data>
+  <data name="WwpcCompanySearchLabel" xml:space="preserve"><value>Search companies</value></data>
+  <data name="WwpcSelectCompanyLabel" xml:space="preserve"><value>Select company</value></data>
+  <data name="WwpcCreateCompanyButton" xml:space="preserve"><value>Create new company</value></data>
+  <data name="WwpcNewCompanyNameLabel" xml:space="preserve"><value>New company name</value></data>
+  <data name="WwpcGenresSectionTitle" xml:space="preserve"><value>Categories</value></data>
+  <data name="WwpcGenreSearchLabel" xml:space="preserve"><value>Search categories</value></data>
+  <data name="WwpcSelectGenreLabel" xml:space="preserve"><value>Select category</value></data>
+  <data name="WwpcAddGenreButton" xml:space="preserve"><value>Add category</value></data>
+  <data name="WwpcVersionsSectionTitle" xml:space="preserve"><value>Versions</value></data>
+  <data name="WwpcEnableAllButton" xml:space="preserve"><value>Enable all</value></data>
+  <data name="WwpcDisableAllButton" xml:space="preserve"><value>Disable all</value></data>
+  <data name="WwpcIncludeColumn" xml:space="preserve"><value>Include</value></data>
+  <data name="WwpcMajorReleaseColumn" xml:space="preserve"><value>Major release</value></data>
+  <data name="WwpcVersionOverrideColumn" xml:space="preserve"><value>Version override</value></data>
+  <data name="WwpcArchitectureColumn" xml:space="preserve"><value>Architecture</value></data>
+  <data name="WwpcMediaColumn" xml:space="preserve"><value>Media</value></data>
+  <data name="WwpcExistingVersionColumn" xml:space="preserve"><value>Link to existing version</value></data>
+  <data name="WwpcScreenshotsSectionTitle" xml:space="preserve"><value>Screenshots</value></data>
+  <data name="WwpcPlatformSearchLabel" xml:space="preserve"><value>Search platforms</value></data>
+  <data name="WwpcBulkPlatformLabel" xml:space="preserve"><value>Bulk platform</value></data>
+  <data name="WwpcApplyBulkPlatformButton" xml:space="preserve"><value>Apply bulk platform</value></data>
+  <data name="WwpcSourceColumn" xml:space="preserve"><value>Source</value></data>
+  <data name="WwpcSkipButton" xml:space="preserve"><value>Skip</value></data>
+  <data name="WwpcAcceptButton" xml:space="preserve"><value>Accept</value></data>
+  <data name="WwpcReleaseDateLabel" xml:space="preserve"><value>Release date</value></data>
+  <data name="WwpcUserInterfaceLabel" xml:space="preserve"><value>User interface</value></data>
+  <data name="WwpcExactMatchTitle" xml:space="preserve"><value>Existing software with the same normalized name found</value></data>
+  <data name="WwpcExactMatchMessage" xml:space="preserve"><value>At least one exact normalized match exists. Merge is usually safer than creating a duplicate.</value></data>
+  <data name="WwpcStatusReadyOrSkipped" xml:space="preserve"><value>Ready or skipped</value></data>
+  <data name="WwpcStatusReadyForReview" xml:space="preserve"><value>Ready for review</value></data>
+  <data name="WwpcStatusSkipped" xml:space="preserve"><value>Skipped</value></data>
+  <data name="WwpcStatusAccepted" xml:space="preserve"><value>Accepted</value></data>
+  <data name="WwpcStatusDiscarded" xml:space="preserve"><value>Discarded</value></data>
+  <data name="WwpcStatusCrawled" xml:space="preserve"><value>Crawled</value></data>
+  <data name="WwpcStatusDescribed" xml:space="preserve"><value>Described</value></data>
+  <data name="WwpcStatusCategorized" xml:space="preserve"><value>Categorized</value></data>
+  <data name="WwpcProductTypeApplication" xml:space="preserve"><value>Application</value></data>
+  <data name="WwpcProductTypeDevTool" xml:space="preserve"><value>DevTool</value></data>
+  <data name="WwpcProductTypeSystem" xml:space="preserve"><value>System</value></data>
+  <data name="FailedToLoadWwpcImports" xml:space="preserve"><value>Failed to load WinWorldPC imports.</value></data>
+  <data name="RejectedWwpcImportMessage" xml:space="preserve"><value>Rejected '{0}'.</value></data>
+  <data name="FailedToRejectWwpcImport" xml:space="preserve"><value>Failed to reject the WinWorldPC import.</value></data>
+  <data name="DuplicatedWwpcImportMessage" xml:space="preserve"><value>Duplicated '{0}' as import #{1}.</value></data>
+  <data name="FailedToDuplicateWwpcImport" xml:space="preserve"><value>Failed to duplicate the WinWorldPC import.</value></data>
+  <data name="WwpcDuplicateNameRequired" xml:space="preserve"><value>A duplicate name is required.</value></data>
+  <data name="FailedToLoadWwpcImportDetail" xml:space="preserve"><value>Failed to load the WinWorldPC import detail.</value></data>
+  <data name="FailedToCreateCompany" xml:space="preserve"><value>Failed to create the company.</value></data>
+  <data name="CreatedCompanyMessage" xml:space="preserve"><value>Created company '{0}'.</value></data>
+  <data name="AcceptedWwpcImportMessage" xml:space="preserve"><value>Promoted to software #{0} ({1} versions, {2} screenshots, {3} descriptions, {4} genres).</value></data>
+  <data name="FailedToAcceptWwpcImport" xml:space="preserve"><value>Failed to accept the WinWorldPC import.</value></data>
+  <data name="SkippedWwpcImportMessage" xml:space="preserve"><value>Skipped the WinWorldPC import.</value></data>
+  <data name="FailedToSkipWwpcImport" xml:space="preserve"><value>Failed to skip the WinWorldPC import.</value></data>
+  <data name="DiscardedWwpcImportMessage" xml:space="preserve"><value>Discarded the WinWorldPC import.</value></data>
+  <data name="FailedToDiscardWwpcImport" xml:space="preserve"><value>Failed to discard the WinWorldPC import.</value></data>
 </root>
