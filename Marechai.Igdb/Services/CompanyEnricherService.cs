@@ -13,8 +13,6 @@ namespace Marechai.Igdb.Services;
 
 public class CompanyEnricherService
 {
-    const string LogoCdnUrlTemplate = "https://images.igdb.com/igdb/image/upload/t_original/{0}.jpg";
-
     readonly IDbContextFactory<MarechaiContext> _contextFactory;
     readonly string                              _logoCachePath;
     readonly HttpClient                          _httpClient;
@@ -171,16 +169,18 @@ public class CompanyEnricherService
 
         string destination = Path.Combine(_logoCachePath, $"{companyId}.jpg");
 
-        try
+        byte[] bytes = await IgdbImageDownloader.DownloadBestAsync(_httpClient, imageId,
+                                                                     IgdbImageDownloader.LogoSizeCandidates);
+
+        if(bytes == null)
         {
-            byte[] bytes = await _httpClient.GetByteArrayAsync(string.Format(LogoCdnUrlTemplate, imageId));
-            await File.WriteAllBytesAsync(destination, bytes);
-            Console.WriteLine($"  [{igdbId}] Logo cached to {destination}.");
+            Console.WriteLine($"  [{igdbId}] Failed to download logo: no candidate size succeeded.");
+
+            return;
         }
-        catch(HttpRequestException e)
-        {
-            Console.WriteLine($"  [{igdbId}] Failed to download logo: {e.Message}.");
-        }
+
+        await File.WriteAllBytesAsync(destination, bytes);
+        Console.WriteLine($"  [{igdbId}] Logo cached to {destination}.");
     }
 
     static string FirstWebsite(string websitesJson)

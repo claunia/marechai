@@ -19,4 +19,11 @@ public class IgdbPlatform : BaseModel<int>
     public DateTime? MatchedOn { get; set; }
 
     public ulong? SoftwarePlatformId { get; set; }
+
+    [StringLength(64)]
+    public string LogoImageId { get; set; }
+
+    public bool EnrichmentApplied { get; set; }
+
+    public DateTime? EnrichedOn { get; set; }
 }

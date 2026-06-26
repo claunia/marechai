@@ -50,7 +50,7 @@ public class PlatformMirrorService
 
     async Task<int> FetchAndUpsertPageAsync(int offset, int pageSize, bool dryRun)
     {
-        string query = new ApicalypseQueryBuilder().Fields("id,name")
+        string query = new ApicalypseQueryBuilder().Fields("id,name,platform_logo.image_id")
                                                      .Sort("id asc")
                                                      .Limit(pageSize)
                                                      .Offset(offset)
@@ -76,6 +76,11 @@ public class PlatformMirrorService
                 int    igdbId = element.GetProperty("id").GetInt32();
                 string name   = element.GetProperty("name").GetString();
 
+                string logoImageId = element.TryGetProperty("platform_logo", out JsonElement logo) &&
+                                      logo.TryGetProperty("image_id", out JsonElement imageId)
+                                          ? imageId.GetString()
+                                          : null;
+
                 var existing = await context.IgdbPlatforms.FirstOrDefaultAsync(p => p.Id == igdbId);
 
                 if(existing == null)
@@ -84,12 +89,14 @@ public class PlatformMirrorService
                     {
                         Id          = igdbId,
                         Name        = name,
-                        MatchStatus = IgdbMatchStatus.Pending
+                        MatchStatus = IgdbMatchStatus.Pending,
+                        LogoImageId = logoImageId
                     });
                 }
                 else
                 {
-                    existing.Name = name;
+                    existing.Name        = name;
+                    existing.LogoImageId = logoImageId;
                 }
             }
 
