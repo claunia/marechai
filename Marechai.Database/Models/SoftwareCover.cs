@@ -31,13 +31,17 @@ namespace Marechai.Database.Models;
 
 public class SoftwareCover : BaseModel<Guid>
 {
-    // Nullable: a cover attached to a compilation release (which bundles several Software
-    // entries with no single owner) is anchored by SoftwareReleaseId alone instead.
+    // Nullable: a cover is anchored by exactly one of SoftwareId, SoftwareReleaseId, or
+    // SoftwareCompilationId, depending on whether it belongs to a piece of Software, a
+    // specific SoftwareRelease, or a SoftwareCompilation (which has no single owning release).
     public         ulong?   SoftwareId { get;              set; }
     public virtual Software Software { get; set; }
 
     public ulong? SoftwareReleaseId { get;              set; }
     public virtual SoftwareRelease Release { get; set; }
+
+    public         ulong?               SoftwareCompilationId { get; set; }
+    public virtual SoftwareCompilation  SoftwareCompilation   { get; set; }
 
     [StringLength(64)]
     public string GroupId { get; set; }

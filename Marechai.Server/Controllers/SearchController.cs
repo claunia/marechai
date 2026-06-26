@@ -168,11 +168,11 @@ public class SearchController(MarechaiContext context, FuzzySearchService fuzzy)
         if(req.IncludesSoftwareId.HasValue)
         {
             ulong wantedSwId = (ulong)req.IncludesSoftwareId.Value;
-            // For each compilation row (EntityType=13), EntityId is the SoftwareRelease.Id (cast to long).
-            // Match when the compilation contains the wanted software via SoftwareBySoftwareRelease.
-            IQueryable<long> compilationIdsContaining = context.SoftwareBySoftwareRelease
+            // For each compilation row (EntityType=13), EntityId is the SoftwareCompilation.Id (cast to long).
+            // Match when the compilation contains the wanted software via SoftwareBySoftwareCompilation.
+            IQueryable<long> compilationIdsContaining = context.SoftwareBySoftwareCompilation
                                                                .Where(s => s.SoftwareId == wantedSwId)
-                                                               .Select(s => (long)s.ReleaseId);
+                                                               .Select(s => (long)s.SoftwareCompilationId);
             baseQ = baseQ.Where(e => (byte)e.EntityType == 13 && compilationIdsContaining.Contains(e.EntityId));
         }
         if(!string.IsNullOrWhiteSpace(req.Letter))
@@ -256,9 +256,9 @@ public class SearchController(MarechaiContext context, FuzzySearchService fuzzy)
             if(req.IncludesSoftwareId.HasValue)
             {
                 ulong wantedSwId = (ulong)req.IncludesSoftwareId.Value;
-                HashSet<long> compIds = (await context.SoftwareBySoftwareRelease
+                HashSet<long> compIds = (await context.SoftwareBySoftwareCompilation
                                                       .Where(s => s.SoftwareId == wantedSwId)
-                                                      .Select(s => (long)s.ReleaseId)
+                                                      .Select(s => (long)s.SoftwareCompilationId)
                                                       .ToListAsync()).ToHashSet();
                 ftFiltered = ftFiltered.Where(e => (byte)e.EntityType == 13 && compIds.Contains(e.EntityId));
             }

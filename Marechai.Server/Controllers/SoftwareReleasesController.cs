@@ -98,9 +98,10 @@ public class SoftwareReleasesController(MarechaiContext                   contex
                      {
                          Id                = r.Id,
                          Title             = r.Title,
-                         IsCompilation     = r.IsCompilation,
                          SoftwareId        = r.SoftwareId,
                          Software          = r.Software.Name,
+                         SoftwareCompilationId = r.SoftwareCompilationId,
+                         SoftwareCompilation   = r.SoftwareCompilation.Name,
                          SoftwareVersionId = r.SoftwareVersionId,
                          SoftwareVersion   = r.SoftwareVersion.VersionString,
                          PlatformId        = r.PlatformId,
@@ -165,9 +166,10 @@ public class SoftwareReleasesController(MarechaiContext                   contex
                      {
                          Id                = r.Id,
                          Title             = r.Title,
-                         IsCompilation     = r.IsCompilation,
                          SoftwareId        = r.SoftwareId,
                          Software          = r.Software.Name,
+                         SoftwareCompilationId = r.SoftwareCompilationId,
+                         SoftwareCompilation   = r.SoftwareCompilation.Name,
                          SoftwareVersionId = r.SoftwareVersionId,
                          SoftwareVersion   = r.SoftwareVersion.VersionString,
                          PlatformId        = r.PlatformId,
@@ -199,7 +201,7 @@ public class SoftwareReleasesController(MarechaiContext                   contex
     public Task<int> GetReleasesCountBySoftwareAsync(ulong softwareId, [FromQuery] string search = null)
     {
         IQueryable<SoftwareRelease> query = context.SoftwareReleases
-                                                   .Where(r => r.SoftwareId == softwareId && !r.IsCompilation);
+                                                   .Where(r => r.SoftwareId == softwareId);
 
         if(!string.IsNullOrWhiteSpace(search))
             query = query.Where(r => (r.Title != null && r.Title.Contains(search)) ||
@@ -218,7 +220,7 @@ public class SoftwareReleasesController(MarechaiContext                   contex
                                                              [FromQuery] string  search = null)
     {
         IQueryable<SoftwareRelease> query = context.SoftwareReleases
-                                                   .Where(r => r.SoftwareId == softwareId && !r.IsCompilation);
+                                                   .Where(r => r.SoftwareId == softwareId);
 
         if(!string.IsNullOrWhiteSpace(search))
             query = query.Where(r => (r.Title != null && r.Title.Contains(search)) ||
@@ -235,9 +237,10 @@ public class SoftwareReleasesController(MarechaiContext                   contex
                      {
                          Id                = r.Id,
                          Title             = r.Title,
-                         IsCompilation     = r.IsCompilation,
                          SoftwareId        = r.SoftwareId,
                          Software          = r.Software.Name,
+                         SoftwareCompilationId = r.SoftwareCompilationId,
+                         SoftwareCompilation   = r.SoftwareCompilation.Name,
                          SoftwareVersionId = r.SoftwareVersionId,
                          SoftwareVersion   = r.SoftwareVersion.VersionString,
                          PlatformId        = r.PlatformId,
@@ -271,9 +274,10 @@ public class SoftwareReleasesController(MarechaiContext                   contex
                                                                   {
                                                                       Id                = r.Id,
                                                                       Title             = r.Title,
-                                                                      IsCompilation     = r.IsCompilation,
                                                                       SoftwareId        = r.SoftwareId,
                                                                       Software          = r.Software.Name,
+                                                                      SoftwareCompilationId = r.SoftwareCompilationId,
+                                                                      SoftwareCompilation   = r.SoftwareCompilation.Name,
                                                                       SoftwareVersionId = r.SoftwareVersionId,
                                                                       SoftwareVersion   = r.SoftwareVersion.VersionString,
                                                                       PlatformId        = r.PlatformId,
@@ -360,9 +364,10 @@ public class SoftwareReleasesController(MarechaiContext                   contex
 
         if(model is null) return NotFound();
 
-        // Enforce mutual exclusivity: cannot change IsCompilation after creation
-        if(model.IsCompilation != dto.IsCompilation)
-            return Problem(detail: "Cannot change a release between single-release and compilation modes.", statusCode: StatusCodes.Status400BadRequest);
+        // Cannot move a release between Software, SoftwareCompilation, or a different
+        // SoftwareCompilation after creation
+        if(model.SoftwareCompilationId != dto.SoftwareCompilationId)
+            return Problem(detail: "Cannot change the compilation associated with a release.", statusCode: StatusCodes.Status400BadRequest);
 
         // Cannot change SoftwareId after creation
         if(model.SoftwareId != dto.SoftwareId)
@@ -404,9 +409,9 @@ public class SoftwareReleasesController(MarechaiContext                   contex
         var model = new SoftwareRelease
         {
             Title             = dto.Title,
-            IsCompilation     = dto.IsCompilation,
-            SoftwareId        = dto.IsCompilation ? null : dto.SoftwareId,
-            SoftwareVersionId = dto.IsCompilation ? null : dto.SoftwareVersionId,
+            SoftwareCompilationId = dto.SoftwareCompilationId,
+            SoftwareId        = dto.SoftwareCompilationId.HasValue ? null : dto.SoftwareId,
+            SoftwareVersionId = dto.SoftwareCompilationId.HasValue ? null : dto.SoftwareVersionId,
             PlatformId        = dto.PlatformId,
             PublisherId       = dto.PublisherId,
             ReleaseDate       = dto.ReleaseDate,
@@ -460,120 +465,22 @@ public class SoftwareReleasesController(MarechaiContext                   contex
         return Ok();
     }
 
-    // --- Compilation junction endpoints ---
-
-    [HttpGet("{releaseId:ulong}/versions")]
-    [AllowAnonymous]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public Task<List<SoftwareVersionBySoftwareReleaseDto>> GetIncludedVersionsAsync(ulong releaseId) =>
-        context.SoftwareVersionBySoftwareRelease
-               .Where(x => x.ReleaseId == releaseId)
-               .OrderBy(x => x.SoftwareVersion.Software.Name)
-               .ThenBy(x => x.SoftwareVersion.VersionString)
-               .Select(x => new SoftwareVersionBySoftwareReleaseDto
-                {
-                    ReleaseId         = x.ReleaseId,
-                    SoftwareVersionId = x.SoftwareVersionId,
-                    SoftwareVersion   = x.SoftwareVersion.VersionString,
-                    SoftwareName      = x.SoftwareVersion.Software.Name
-                })
-               .ToListAsync();
-
-    [HttpPost("{releaseId:ulong}/versions")]
-    [Authorize(Roles = "Admin,UberAdmin")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> AddIncludedVersionAsync(ulong releaseId,
-                                                            [FromBody] SoftwareVersionBySoftwareReleaseDto dto)
-    {
-        string userId = User.FindFirstValue(ClaimTypes.Sid);
-
-        if(userId is null) return Unauthorized();
-
-        SoftwareRelease release = await context.SoftwareReleases.FindAsync(releaseId);
-
-        if(release is null) return NotFound();
-
-        if(!release.IsCompilation)
-            return Problem(detail: "Cannot add included versions to a non-compilation release.", statusCode: StatusCodes.Status400BadRequest);
-
-        // Ensure this is a versioned compilation (not a versionless one)
-        bool hasIncludedSoftware = await context.SoftwareBySoftwareRelease
-                                                .AnyAsync(x => x.ReleaseId == releaseId);
-
-        if(hasIncludedSoftware)
-            return Problem(detail: "Cannot add included versions to a versionless compilation. Use included software instead.", statusCode: StatusCodes.Status400BadRequest);
-
-        bool exists = await context.SoftwareVersionBySoftwareRelease
-                                   .AnyAsync(x => x.ReleaseId         == releaseId
-                                               && x.SoftwareVersionId == dto.SoftwareVersionId);
-
-        if(exists) return Problem(detail: "This version is already included in the release.", statusCode: StatusCodes.Status400BadRequest);
-
-        bool versionExists = await context.SoftwareVersions.AnyAsync(v => v.Id == dto.SoftwareVersionId);
-
-        if(!versionExists) return Problem(detail: "The specified software version does not exist.", statusCode: StatusCodes.Status400BadRequest);
-
-        await context.SoftwareVersionBySoftwareRelease.AddAsync(new SoftwareVersionBySoftwareRelease
-        {
-            ReleaseId         = releaseId,
-            SoftwareVersionId = dto.SoftwareVersionId
-        });
-
-        await context.SaveChangesWithUserAsync(userId);
-
-        return Ok();
-    }
-
-    [HttpDelete("{releaseId:ulong}/versions/{versionId:ulong}")]
-    [Authorize(Roles = "Admin,UberAdmin")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> RemoveIncludedVersionAsync(ulong releaseId, ulong versionId)
-    {
-        string userId = User.FindFirstValue(ClaimTypes.Sid);
-
-        if(userId is null) return Unauthorized();
-
-        SoftwareRelease release = await context.SoftwareReleases.FindAsync(releaseId);
-
-        if(release is null) return NotFound();
-
-        if(!release.IsCompilation)
-            return Problem(detail: "Cannot remove included versions from a non-compilation release.", statusCode: StatusCodes.Status400BadRequest);
-
-        SoftwareVersionBySoftwareRelease entry =
-            await context.SoftwareVersionBySoftwareRelease
-                         .FirstOrDefaultAsync(x => x.ReleaseId         == releaseId
-                                                && x.SoftwareVersionId == versionId);
-
-        if(entry is null) return NotFound();
-
-        context.SoftwareVersionBySoftwareRelease.Remove(entry);
-        await context.SaveChangesWithUserAsync(userId);
-
-        return Ok();
-    }
-
     // --- Compilation listing endpoints ---
 
     [HttpGet("compilations")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public Task<List<SoftwareReleaseDto>> GetCompilationsAsync() => context.SoftwareReleases
-       .Where(r => r.IsCompilation)
+       .Where(r => r.SoftwareCompilationId != null)
        .OrderBy(r => r.Title)
        .Select(r => new SoftwareReleaseDto
         {
             Id                = r.Id,
             Title             = r.Title,
-            IsCompilation     = r.IsCompilation,
             SoftwareId        = r.SoftwareId,
             Software          = r.Software.Name,
+            SoftwareCompilationId = r.SoftwareCompilationId,
+            SoftwareCompilation   = r.SoftwareCompilation.Name,
             SoftwareVersionId = r.SoftwareVersionId,
             PlatformId        = r.PlatformId,
             Platform          = r.Platform.Name,
@@ -604,18 +511,22 @@ public class SoftwareReleasesController(MarechaiContext                   contex
         // the projection's Where clause instead of materializing IDs first and then
         // running a separate Contains(...) query.
         context.SoftwareReleases
-               .Where(r => context.SoftwareVersionBySoftwareRelease
-                                  .Any(x => x.ReleaseId == r.Id && x.SoftwareVersion.SoftwareId == softwareId) ||
-                           context.SoftwareBySoftwareRelease
-                                  .Any(x => x.ReleaseId == r.Id && x.SoftwareId == softwareId))
+               .Where(r => r.SoftwareCompilationId != null &&
+                           (context.SoftwareVersionBySoftwareCompilation
+                                   .Any(x => x.SoftwareCompilationId == r.SoftwareCompilationId &&
+                                             x.SoftwareVersion.SoftwareId == softwareId) ||
+                            context.SoftwareBySoftwareCompilation
+                                   .Any(x => x.SoftwareCompilationId == r.SoftwareCompilationId &&
+                                             x.SoftwareId == softwareId)))
                .OrderBy(r => r.Title)
                .Select(r => new SoftwareReleaseDto
                 {
                     Id                = r.Id,
                     Title             = r.Title,
-                    IsCompilation     = r.IsCompilation,
                     SoftwareId        = r.SoftwareId,
                     Software          = r.Software.Name,
+                    SoftwareCompilationId = r.SoftwareCompilationId,
+                    SoftwareCompilation   = r.SoftwareCompilation.Name,
                     SoftwareVersionId = r.SoftwareVersionId,
                     PlatformId        = r.PlatformId,
                     Platform          = r.Platform.Name,
@@ -640,103 +551,6 @@ public class SoftwareReleasesController(MarechaiContext                   contex
                 })
                .ToListAsync();
 
-    // --- Versionless compilation junction endpoints ---
-
-    [HttpGet("{releaseId:ulong}/software")]
-    [AllowAnonymous]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public Task<List<SoftwareBySoftwareReleaseDto>> GetIncludedSoftwareAsync(ulong releaseId) =>
-        context.SoftwareBySoftwareRelease
-               .Where(x => x.ReleaseId == releaseId)
-               .OrderBy(x => x.Software.Name)
-               .Select(x => new SoftwareBySoftwareReleaseDto
-                {
-                    ReleaseId    = x.ReleaseId,
-                    SoftwareId   = x.SoftwareId,
-                    SoftwareName = x.Software.Name
-                })
-               .ToListAsync();
-
-    [HttpPost("{releaseId:ulong}/software")]
-    [Authorize(Roles = "Admin,UberAdmin")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> AddIncludedSoftwareAsync(ulong releaseId,
-                                                             [FromBody] SoftwareBySoftwareReleaseDto dto)
-    {
-        string userId = User.FindFirstValue(ClaimTypes.Sid);
-
-        if(userId is null) return Unauthorized();
-
-        SoftwareRelease release = await context.SoftwareReleases.FindAsync(releaseId);
-
-        if(release is null) return NotFound();
-
-        if(!release.IsCompilation)
-            return Problem(detail: "Cannot add included software to a non-compilation release.", statusCode: StatusCodes.Status400BadRequest);
-
-        // Ensure this is a versionless compilation (not a versioned one)
-        bool hasIncludedVersions = await context.SoftwareVersionBySoftwareRelease
-                                                .AnyAsync(x => x.ReleaseId == releaseId);
-
-        if(hasIncludedVersions)
-            return Problem(detail: "Cannot add included software to a versioned compilation. Use included versions instead.", statusCode: StatusCodes.Status400BadRequest);
-
-        bool exists = await context.SoftwareBySoftwareRelease
-                                   .AnyAsync(x => x.ReleaseId   == releaseId
-                                               && x.SoftwareId  == dto.SoftwareId);
-
-        if(exists) return Problem(detail: "This software is already included in the release.", statusCode: StatusCodes.Status400BadRequest);
-
-        bool softwareExists = await context.Softwares.AnyAsync(s => s.Id == dto.SoftwareId);
-
-        if(!softwareExists) return Problem(detail: "The specified software does not exist.", statusCode: StatusCodes.Status400BadRequest);
-
-        await context.SoftwareBySoftwareRelease.AddAsync(new SoftwareBySoftwareRelease
-        {
-            ReleaseId  = releaseId,
-            SoftwareId = dto.SoftwareId
-        });
-
-        await context.SaveChangesWithUserAsync(userId);
-
-        return Ok();
-    }
-
-    [HttpDelete("{releaseId:ulong}/software/{softwareId:ulong}")]
-    [Authorize(Roles = "Admin,UberAdmin")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> RemoveIncludedSoftwareAsync(ulong releaseId, ulong softwareId)
-    {
-        string userId = User.FindFirstValue(ClaimTypes.Sid);
-
-        if(userId is null) return Unauthorized();
-
-        SoftwareRelease release = await context.SoftwareReleases.FindAsync(releaseId);
-
-        if(release is null) return NotFound();
-
-        if(!release.IsCompilation)
-            return Problem(detail: "Cannot remove included software from a non-compilation release.", statusCode: StatusCodes.Status400BadRequest);
-
-        SoftwareBySoftwareRelease entry =
-            await context.SoftwareBySoftwareRelease
-                         .FirstOrDefaultAsync(x => x.ReleaseId  == releaseId
-                                                && x.SoftwareId == softwareId);
-
-        if(entry is null) return NotFound();
-
-        context.SoftwareBySoftwareRelease.Remove(entry);
-        await context.SaveChangesWithUserAsync(userId);
-
-        return Ok();
-    }
-
     async Task<string> BuildSoftwareReleaseNewsNameAsync(SoftwareRelease model)
     {
         string baseName;
@@ -755,28 +569,17 @@ public class SoftwareReleasesController(MarechaiContext                   contex
                 baseName = "";
         }
         // Versionless single release: build from software name
-        else if(!model.IsCompilation && model.SoftwareId is not null)
+        else if(model.SoftwareCompilationId is null && model.SoftwareId is not null)
         {
             Software software = await context.Softwares.FindAsync(model.SoftwareId);
             baseName = software?.Name ?? "";
         }
-        // Compilation: build from included versions or software
+        // Compilation release: use the umbrella compilation's name
         else
         {
-            List<string> versionNames = await context.SoftwareVersionBySoftwareRelease
-                                                     .Where(x => x.ReleaseId == model.Id)
-                                                     .OrderBy(x => x.SoftwareVersion.Software.Name)
-                                                     .Select(x => $"{x.SoftwareVersion.Software.Name} {x.SoftwareVersion.VersionString}")
-                                                     .ToListAsync();
-
-            List<string> softwareNames = await context.SoftwareBySoftwareRelease
-                                                      .Where(x => x.ReleaseId == model.Id)
-                                                      .OrderBy(x => x.Software.Name)
-                                                      .Select(x => x.Software.Name)
-                                                      .ToListAsync();
-
-            List<string> allNames = versionNames.Concat(softwareNames).ToList();
-            baseName = allNames.Count > 0 ? string.Join(" + ", allNames) : "Compilation";
+            SoftwareCompilation compilation = await context.SoftwareCompilations
+                                                            .FindAsync(model.SoftwareCompilationId);
+            baseName = compilation?.Name ?? "Compilation";
         }
 
         // The game's name always takes precedence; the release's own Title, if set, is a qualifier.

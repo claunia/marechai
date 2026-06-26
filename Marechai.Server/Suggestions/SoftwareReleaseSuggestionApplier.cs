@@ -237,11 +237,10 @@ internal static class SoftwareReleaseSuggestionApplier
 
         var r = new SoftwareRelease
         {
-            SoftwareId    = softwareId,
-            PublisherId   = publisherId.Value,
-            Title         = title.Trim(),
-            PlatformId    = platformId.Value,
-            IsCompilation = false
+            SoftwareId  = softwareId,
+            PublisherId = publisherId.Value,
+            Title       = title.Trim(),
+            PlatformId  = platformId.Value
         };
         applied.Add(FieldSoftwareId);
         applied.Add(FieldPublisherId);

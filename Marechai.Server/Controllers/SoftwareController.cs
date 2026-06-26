@@ -107,10 +107,10 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                                       .Distinct()
                                       .ToList();
 
-        List<ulong> compilationReleaseIds = list.Where(d => d.IsCompilation)
-                                                .Select(d => d.Id)
-                                                .Distinct()
-                                                .ToList();
+        List<ulong> compilationIds = list.Where(d => d.IsCompilation)
+                                         .Select(d => d.Id)
+                                         .Distinct()
+                                         .ToList();
 
         var softwareCovers = new Dictionary<ulong, Guid>();
 
@@ -136,22 +136,22 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
         var compilationCovers = new Dictionary<ulong, Guid>();
 
-        if(compilationReleaseIds.Count > 0)
+        if(compilationIds.Count > 0)
         {
-            // Compilation rows carry the SoftwareRelease.Id as their dto Id, so look up
-            // covers directly via SoftwareCovers.SoftwareReleaseId (single indexed column).
+            // Compilation rows carry the SoftwareCompilation.Id as their dto Id, so look up
+            // covers directly via SoftwareCovers.SoftwareCompilationId (single indexed column).
             var rows = await context.SoftwareCovers
                                     .Where(sc => sc.Type == SoftwareCoverType.Front &&
-                                                 sc.SoftwareReleaseId.HasValue &&
-                                                 compilationReleaseIds.Contains(sc.SoftwareReleaseId.Value))
+                                                 sc.SoftwareCompilationId.HasValue &&
+                                                 compilationIds.Contains(sc.SoftwareCompilationId.Value))
                                     .Select(sc => new
                                      {
-                                         ReleaseId = sc.SoftwareReleaseId.Value,
-                                         CoverId   = sc.Id
+                                         CompilationId = sc.SoftwareCompilationId.Value,
+                                         CoverId       = sc.Id
                                      })
                                     .ToListAsync(ct);
 
-            foreach(IGrouping<ulong, Guid> g in rows.GroupBy(x => x.ReleaseId, x => x.CoverId))
+            foreach(IGrouping<ulong, Guid> g in rows.GroupBy(x => x.CompilationId, x => x.CoverId))
                 compilationCovers[g.Key] = g.Min();
         }
 
@@ -216,7 +216,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
             int softwareTotal     = await baseQuery.CountAsync();
             int compilationsTotal = includeCompilations
-                                        ? await context.SoftwareReleases.CountAsync(r => r.IsCompilation)
+                                        ? await context.SoftwareCompilations.CountAsync()
                                         : 0;
 
             int total = softwareTotal + compilationsTotal;
@@ -234,8 +234,8 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
         if(!includeCompilations) return softwareCount;
 
-        IQueryable<SoftwareRelease> compQuery =
-            context.SoftwareReleases.Where(r => r.IsCompilation && r.Title.Contains(search));
+        IQueryable<SoftwareCompilation> compQuery =
+            context.SoftwareCompilations.Where(c => c.Name.Contains(search));
 
         int compilationCount = await compQuery.CountAsync();
 
@@ -345,12 +345,12 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
         if(!ShouldIncludeCompilations(kind)) return softwareQuery;
 
-        IQueryable<SoftwareDto> compilationsQuery = context.SoftwareReleases
-           .Where(r => r.IsCompilation && EF.Functions.Like(r.Title, $"{c}%"))
-           .Select(r => new SoftwareDto
+        IQueryable<SoftwareDto> compilationsQuery = context.SoftwareCompilations
+           .Where(comp => EF.Functions.Like(comp.Name, $"{c}%"))
+           .Select(comp => new SoftwareDto
             {
-                Id            = r.Id,
-                Name          = r.Title,
+                Id            = comp.Id,
+                Name          = comp.Name,
                 FamilyId      = null,
                 Family        = null,
                 Kind          = default,
@@ -416,14 +416,12 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
         if(!ShouldIncludeCompilations(kind)) return softwareQuery;
 
-        IQueryable<SoftwareDto> compilationsQuery = context.SoftwareReleases
-           .Where(r => r.IsCompilation &&
-                        r.ReleaseDate != null &&
-                        r.ReleaseDate.Value.Year == year)
-           .Select(r => new SoftwareDto
+        IQueryable<SoftwareDto> compilationsQuery = context.SoftwareCompilations
+           .Where(comp => comp.Releases.Any(r => r.ReleaseDate != null && r.ReleaseDate.Value.Year == year))
+           .Select(comp => new SoftwareDto
             {
-                Id            = r.Id,
-                Name          = r.Title,
+                Id            = comp.Id,
+                Name          = comp.Name,
                 FamilyId      = null,
                 Family        = null,
                 Kind          = default,
@@ -487,12 +485,12 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
         if(!ShouldIncludeCompilations(kind)) return softwareQuery;
 
-        IQueryable<SoftwareDto> compilationsQuery = context.SoftwareReleases
-           .Where(r => r.IsCompilation && r.PlatformId == platformId)
-           .Select(r => new SoftwareDto
+        IQueryable<SoftwareDto> compilationsQuery = context.SoftwareCompilations
+           .Where(comp => comp.Releases.Any(r => r.PlatformId == platformId))
+           .Select(comp => new SoftwareDto
             {
-                Id            = r.Id,
-                Name          = r.Title,
+                Id            = comp.Id,
+                Name          = comp.Name,
                 FamilyId      = null,
                 Family        = null,
                 Kind          = default,
@@ -640,15 +638,15 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
         if(!ShouldIncludeCompilations(kind)) return softwareQuery;
 
-        IQueryable<SoftwareRelease> baseCompQuery = context.SoftwareReleases.Where(r => r.IsCompilation);
+        IQueryable<SoftwareCompilation> baseCompQuery = context.SoftwareCompilations;
 
         if(!string.IsNullOrWhiteSpace(search))
-            baseCompQuery = baseCompQuery.Where(r => r.Title.Contains(search));
+            baseCompQuery = baseCompQuery.Where(comp => comp.Name.Contains(search));
 
-        IQueryable<SoftwareDto> compilationsQuery = baseCompQuery.Select(r => new SoftwareDto
+        IQueryable<SoftwareDto> compilationsQuery = baseCompQuery.Select(comp => new SoftwareDto
         {
-            Id            = r.Id,
-            Name          = r.Title,
+            Id            = comp.Id,
+            Name          = comp.Name,
             FamilyId      = null,
             Family        = null,
             Kind          = default,
@@ -1682,19 +1680,19 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
             sourceCredits.Count(c => targetCreditKeys.Contains((c.PersonId, c.Role.ToLowerInvariant())));
 
         // Count compilation references and duplicates
-        List<ulong> sourceCompilationReleaseIds = await context.SoftwareBySoftwareRelease
-                                                               .Where(s => s.SoftwareId == sourceId)
-                                                               .Select(s => s.ReleaseId)
-                                                               .ToListAsync();
+        List<ulong> sourceCompilationIds = await context.SoftwareBySoftwareCompilation
+                                                        .Where(s => s.SoftwareId == sourceId)
+                                                        .Select(s => s.SoftwareCompilationId)
+                                                        .ToListAsync();
 
-        HashSet<ulong> targetCompilationReleaseIds = (await context.SoftwareBySoftwareRelease
-                                                                   .Where(s => s.SoftwareId == targetId)
-                                                                   .Select(s => s.ReleaseId)
-                                                                   .ToListAsync())
+        HashSet<ulong> targetCompilationIds = (await context.SoftwareBySoftwareCompilation
+                                                            .Where(s => s.SoftwareId == targetId)
+                                                            .Select(s => s.SoftwareCompilationId)
+                                                            .ToListAsync())
            .ToHashSet();
 
         int compilationDuplicates =
-            sourceCompilationReleaseIds.Count(rid => targetCompilationReleaseIds.Contains(rid));
+            sourceCompilationIds.Count(rid => targetCompilationIds.Contains(rid));
 
         // Count promo art
         int promoArtCount = await context.SoftwarePromoArt.CountAsync(p => p.SoftwareId == sourceId);
@@ -1733,7 +1731,7 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
             GenresDuplicates               = genresDuplicates,
             CreditsTotal                   = sourceCredits.Count,
             CreditsDuplicates              = creditsDuplicates,
-            CompilationReferencesTotal     = sourceCompilationReleaseIds.Count,
+            CompilationReferencesTotal     = sourceCompilationIds.Count,
             CompilationReferencesDuplicates = compilationDuplicates,
             PromoArtCount                  = promoArtCount,
             VideosTotal                    = sourceVideos.Count,
@@ -1922,29 +1920,29 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                 }
             }
 
-            // 8. Merge SoftwareBySoftwareRelease compilation references (composite PK — must remove+add)
-            List<SoftwareBySoftwareRelease> sourceCompilationRefs =
-                await context.SoftwareBySoftwareRelease.Where(s => s.SoftwareId == sourceId).ToListAsync();
+            // 8. Merge SoftwareBySoftwareCompilation compilation references (composite PK — must remove+add)
+            List<SoftwareBySoftwareCompilation> sourceCompilationRefs =
+                await context.SoftwareBySoftwareCompilation.Where(s => s.SoftwareId == sourceId).ToListAsync();
 
-            HashSet<ulong> targetCompilationReleaseIds = (await context.SoftwareBySoftwareRelease
-                                                                       .Where(s => s.SoftwareId == targetId)
-                                                                       .Select(s => s.ReleaseId)
-                                                                       .ToListAsync())
+            HashSet<ulong> targetCompilationIds = (await context.SoftwareBySoftwareCompilation
+                                                                .Where(s => s.SoftwareId == targetId)
+                                                                .Select(s => s.SoftwareCompilationId)
+                                                                .ToListAsync())
                .ToHashSet();
 
-            foreach(SoftwareBySoftwareRelease compRef in sourceCompilationRefs)
+            foreach(SoftwareBySoftwareCompilation compRef in sourceCompilationRefs)
             {
-                context.SoftwareBySoftwareRelease.Remove(compRef);
+                context.SoftwareBySoftwareCompilation.Remove(compRef);
 
-                if(!targetCompilationReleaseIds.Contains(compRef.ReleaseId))
+                if(!targetCompilationIds.Contains(compRef.SoftwareCompilationId))
                 {
-                    context.SoftwareBySoftwareRelease.Add(new SoftwareBySoftwareRelease
+                    context.SoftwareBySoftwareCompilation.Add(new SoftwareBySoftwareCompilation
                     {
-                        ReleaseId  = compRef.ReleaseId,
-                        SoftwareId = targetId
+                        SoftwareCompilationId = compRef.SoftwareCompilationId,
+                        SoftwareId            = targetId
                     });
 
-                    targetCompilationReleaseIds.Add(compRef.ReleaseId);
+                    targetCompilationIds.Add(compRef.SoftwareCompilationId);
                 }
             }
 
@@ -2331,14 +2329,13 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
         if(!ShouldIncludeCompilations(kind)) return softwareQuery;
 
-        IQueryable<SoftwareDto> compilationsQuery = context.SoftwareReleases
-           .Where(r => r.IsCompilation &&
-                       (r.IncludedSoftware.Any(s => s.Software.Genres.Any(g => g.GenreId == genreId)) ||
-                        r.IncludedVersions.Any(v => v.SoftwareVersion.Software.Genres.Any(g => g.GenreId == genreId))))
-           .Select(r => new SoftwareDto
+        IQueryable<SoftwareDto> compilationsQuery = context.SoftwareCompilations
+           .Where(comp => comp.IncludedSoftware.Any(s => s.Software.Genres.Any(g => g.GenreId == genreId)) ||
+                          comp.IncludedVersions.Any(v => v.SoftwareVersion.Software.Genres.Any(g => g.GenreId == genreId)))
+           .Select(comp => new SoftwareDto
             {
-                Id            = r.Id,
-                Name          = r.Title,
+                Id            = comp.Id,
+                Name          = comp.Name,
                 FamilyId      = null,
                 Family        = null,
                 Kind          = default,
@@ -2477,15 +2474,14 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
 
         if(!ShouldIncludeCompilations(kind)) return softwareQuery;
 
-        IQueryable<SoftwareDto> compilationsQuery = context.SoftwareReleases
-           .Where(r => r.IsCompilation &&
-                        r.Attributes.Any(a => a.Category == "Spec" &&
-                                              a.Key   == key       &&
-                                              a.Value == value))
-           .Select(r => new SoftwareDto
+        IQueryable<SoftwareDto> compilationsQuery = context.SoftwareCompilations
+           .Where(comp => comp.Releases.Any(r => r.Attributes.Any(a => a.Category == "Spec" &&
+                                                                        a.Key   == key       &&
+                                                                        a.Value == value)))
+           .Select(comp => new SoftwareDto
             {
-                Id            = r.Id,
-                Name          = r.Title,
+                Id            = comp.Id,
+                Name          = comp.Name,
                 FamilyId      = null,
                 Family        = null,
                 Kind          = default,

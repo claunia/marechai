@@ -22,5 +22,8 @@ public class MobyGamesImportState : BaseModel<long>
 
     public ulong? SoftwareId { get; set; }
 
+    public         ulong?               SoftwareCompilationId { get; set; }
+    public virtual SoftwareCompilation  SoftwareCompilation   { get; set; }
+
     public int? MobyNumericId { get; set; }
 }

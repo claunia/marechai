@@ -2,10 +2,10 @@ using System.Text.Json.Serialization;
 
 namespace Marechai.Data.Dtos;
 
-public class SoftwareBySoftwareReleaseDto
+public class SoftwareBySoftwareCompilationDto
 {
-    [JsonPropertyName("release_id")]
-    public ulong ReleaseId { get; set; }
+    [JsonPropertyName("software_compilation_id")]
+    public ulong SoftwareCompilationId { get; set; }
     [JsonPropertyName("software_id")]
     public ulong SoftwareId { get; set; }
     [JsonPropertyName("software_name")]

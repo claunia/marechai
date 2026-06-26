@@ -175,8 +175,10 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<MinimumGpuBySoftwareRelease>        MinimumGpuBySoftwareRelease         { get; set; }
     public virtual DbSet<RecommendedGpuBySoftwareRelease>    RecommendedGpuBySoftwareRelease     { get; set; }
     public virtual DbSet<SoundSynthBySoftwareRelease>        SoundSynthBySoftwareRelease         { get; set; }
-    public virtual DbSet<SoftwareVersionBySoftwareRelease>   SoftwareVersionBySoftwareRelease    { get; set; }
-    public virtual DbSet<SoftwareBySoftwareRelease>          SoftwareBySoftwareRelease           { get; set; }
+    public virtual DbSet<SoftwareCompilation>                 SoftwareCompilations                { get; set; }
+    public virtual DbSet<SoftwareVersionBySoftwareCompilation> SoftwareVersionBySoftwareCompilation { get; set; }
+    public virtual DbSet<SoftwareBySoftwareCompilation>       SoftwareBySoftwareCompilation        { get; set; }
+    public virtual DbSet<SoftwareCompilationBySoftwareCompilation> SoftwareCompilationBySoftwareCompilation { get; set; }
     public virtual DbSet<UnM49>                              UnM49                               { get; set; }
     public virtual DbSet<UnM49BySoftwareRelease>             UnM49BySoftwareRelease              { get; set; }
     public virtual DbSet<LanguageBySoftwareRelease>          LanguageBySoftwareRelease            { get; set; }
@@ -2488,6 +2490,85 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .OnDelete(DeleteBehavior.SetNull);
         });
 
+        modelBuilder.Entity<SoftwareCompilation>(entity =>
+        {
+            entity.HasIndex(x => x.Name);
+
+            entity.HasOne(x => x.Software)
+                  .WithMany()
+                  .HasForeignKey(x => x.SoftwareId)
+                  .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(x => x.Machine)
+                  .WithMany()
+                  .HasForeignKey(x => x.MachineId)
+                  .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasIndex(x => x.PredecessorId);
+
+            entity.HasOne(x => x.Predecessor)
+                  .WithMany(x => x.Successors)
+                  .HasForeignKey(x => x.PredecessorId)
+                  .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<SoftwareBySoftwareCompilation>(entity =>
+        {
+            entity.HasKey(x => new
+            {
+                x.SoftwareCompilationId,
+                x.SoftwareId
+            });
+
+            entity.HasOne(x => x.SoftwareCompilation)
+                  .WithMany(x => x.IncludedSoftware)
+                  .HasForeignKey(x => x.SoftwareCompilationId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(x => x.Software)
+                  .WithMany(x => x.CompilationMemberships)
+                  .HasForeignKey(x => x.SoftwareId)
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<SoftwareVersionBySoftwareCompilation>(entity =>
+        {
+            entity.HasKey(x => new
+            {
+                x.SoftwareCompilationId,
+                x.SoftwareVersionId
+            });
+
+            entity.HasOne(x => x.SoftwareCompilation)
+                  .WithMany(x => x.IncludedVersions)
+                  .HasForeignKey(x => x.SoftwareCompilationId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(x => x.SoftwareVersion)
+                  .WithMany(x => x.CompilationMemberships)
+                  .HasForeignKey(x => x.SoftwareVersionId)
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<SoftwareCompilationBySoftwareCompilation>(entity =>
+        {
+            entity.HasKey(x => new
+            {
+                x.ParentCompilationId,
+                x.ChildCompilationId
+            });
+
+            entity.HasOne(x => x.ParentCompilation)
+                  .WithMany(x => x.IncludedCompilations)
+                  .HasForeignKey(x => x.ParentCompilationId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(x => x.ChildCompilation)
+                  .WithMany(x => x.ContainingCompilations)
+                  .HasForeignKey(x => x.ChildCompilationId)
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
+
         modelBuilder.Entity<SoftwareDescription>(entity =>
         {
             entity.HasIndex(e => e.Text).IsFullText();
@@ -2600,6 +2681,12 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .IsRequired(false)
                   .OnDelete(DeleteBehavior.Restrict);
 
+            entity.HasOne(x => x.SoftwareCompilation)
+                  .WithMany(x => x.Releases)
+                  .HasForeignKey(x => x.SoftwareCompilationId)
+                  .IsRequired(false)
+                  .OnDelete(DeleteBehavior.Restrict);
+
             entity.HasOne(x => x.Platform)
                   .WithMany(x => x.SoftwareReleases)
                   .HasForeignKey(x => x.PlatformId)
@@ -2615,6 +2702,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
         {
             entity.HasIndex(x => x.SoftwareReleaseId);
             entity.HasIndex(x => x.SoftwareId);
+            entity.HasIndex(x => x.SoftwareCompilationId);
             entity.HasIndex(x => x.GroupId);
 
             // Type-leading composite for the FrontCoverId backfill query
@@ -2636,6 +2724,12 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .HasForeignKey(x => x.SoftwareReleaseId)
                   .IsRequired(false)
                   .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(x => x.SoftwareCompilation)
+                  .WithMany(x => x.Covers)
+                  .HasForeignKey(x => x.SoftwareCompilationId)
+                  .IsRequired(false)
+                  .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<UnM49>(entity =>
@@ -2823,43 +2917,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .HasForeignKey(x => x.SoundSynthId);
         });
 
-        modelBuilder.Entity<SoftwareVersionBySoftwareRelease>(entity =>
-        {
-            entity.HasKey(x => new
-            {
-                x.ReleaseId,
-                x.SoftwareVersionId
-            });
-
-            entity.HasOne(x => x.Release)
-                  .WithMany(x => x.IncludedVersions)
-                  .HasForeignKey(x => x.ReleaseId)
-                  .OnDelete(DeleteBehavior.Cascade);
-
-            entity.HasOne(x => x.SoftwareVersion)
-                  .WithMany(x => x.CompilationReleases)
-                  .HasForeignKey(x => x.SoftwareVersionId)
-                  .OnDelete(DeleteBehavior.Restrict);
-        });
-
-        modelBuilder.Entity<SoftwareBySoftwareRelease>(entity =>
-        {
-            entity.HasKey(x => new
-            {
-                x.ReleaseId,
-                x.SoftwareId
-            });
-
-            entity.HasOne(x => x.Release)
-                  .WithMany(x => x.IncludedSoftware)
-                  .HasForeignKey(x => x.ReleaseId)
-                  .OnDelete(DeleteBehavior.Cascade);
-
-            entity.HasOne(x => x.Software)
-                  .WithMany(x => x.CompilationReleases)
-                  .HasForeignKey(x => x.SoftwareId)
-                  .OnDelete(DeleteBehavior.Restrict);
-        });
 
         modelBuilder.Entity<CollectedBook>(entity =>
         {
@@ -2999,6 +3056,11 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
         {
             entity.HasIndex(e => e.MobyGameId).IsUnique();
             entity.HasIndex(e => e.Status);
+
+            entity.HasOne(e => e.SoftwareCompilation)
+                  .WithMany()
+                  .HasForeignKey(e => e.SoftwareCompilationId)
+                  .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<IgdbPlatform>(entity =>

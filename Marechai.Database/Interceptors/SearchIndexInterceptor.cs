@@ -153,7 +153,7 @@ public sealed class SearchIndexInterceptor : SaveChangesInterceptor
             SoundSynth s       => UpsertSoundSynth(ctx, s),
             Person pe          => UpsertPerson(ctx, pe),
             Software sw        => UpsertSoftware(ctx, sw),
-            SoftwareRelease sr => UpsertSoftwareRelease(ctx, sr),
+            SoftwareCompilation sc => UpsertSoftwareCompilation(ctx, sc),
             _                  => false
         };
     }
@@ -183,10 +183,10 @@ public sealed class SearchIndexInterceptor : SaveChangesInterceptor
                 return isDelete ? new PendingSync(SearchEntityType.Person, pe.Id, true) : new PendingSync(pe);
             case Software sw:
                 return isDelete ? new PendingSync(SearchEntityType.Software, (long)sw.Id, true) : new PendingSync(sw);
-            case SoftwareRelease sr:
+            case SoftwareCompilation sc:
                 return isDelete
-                           ? new PendingSync(SearchEntityType.SoftwareCompilation, (long)sr.Id, true)
-                           : new PendingSync(sr);
+                           ? new PendingSync(SearchEntityType.SoftwareCompilation, (long)sc.Id, true)
+                           : new PendingSync(sc);
         }
 
         return null;
@@ -276,25 +276,12 @@ public sealed class SearchIndexInterceptor : SaveChangesInterceptor
         return true;
     }
 
-    static bool UpsertSoftwareRelease(MarechaiContext ctx, SoftwareRelease sr)
+    static bool UpsertSoftwareCompilation(MarechaiContext ctx, SoftwareCompilation sc)
     {
-        // Only compilations get their own search-entry; non-compilation releases are reachable via
-        // the parent Software (already indexed) and would otherwise create huge duplicate noise.
-        if(!sr.IsCompilation)
-        {
-            // Drop any stale entry left over from when this release WAS a compilation.
-            long srId = (long)sr.Id;
-            SearchEntry stale = ctx.SearchEntries.FirstOrDefault(e =>
-                                                                     e.EntityType == SearchEntityType.SoftwareCompilation &&
-                                                                     e.EntityId   == srId);
-            if(stale != null) { ctx.SearchEntries.Remove(stale); return true; }
-            return false;
-        }
-
-        bool hasImg = ctx.SoftwareCovers.Any(c => c.SoftwareReleaseId == sr.Id);
+        bool hasImg = ctx.SoftwareCovers.Any(c => c.SoftwareCompilationId == sc.Id);
         // Compilations are always games per project policy.
-        SearchIndexUpdater.Upsert(ctx, SearchEntityType.SoftwareCompilation, (long)sr.Id, sr.Title, null,
-                                  SearchIndexUpdater.YearOf(sr.ReleaseDate), null, sr.PublisherId, hasImg,
+        SearchIndexUpdater.Upsert(ctx, SearchEntityType.SoftwareCompilation, (long)sc.Id, sc.Name, null,
+                                  null, null, null, hasImg,
                                   (byte)Marechai.Data.SoftwareKind.Game);
         return true;
     }
