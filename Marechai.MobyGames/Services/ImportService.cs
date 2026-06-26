@@ -1116,33 +1116,39 @@ public class ImportService
 
         try
         {
-            // Creation phase: create compilation releases (no Software record)
+            // Creation phase: create the independent SoftwareCompilation entity, then its
+            // releases (no Software record on the releases themselves).
+            var newCompilation = new SoftwareCompilation { Name = game.Name };
+            context.SoftwareCompilations.Add(newCompilation);
+            await context.SaveChangesAsync();
+            ulong newCompilationId = newCompilation.Id;
+
             List<SoftwareRelease> createdReleases;
 
             if(game.Releases.Count > 0)
-                createdReleases = await ImportCompilationReleasesAsync(context, game, game.Name);
+                createdReleases = await ImportCompilationReleasesAsync(context, game, newCompilationId, game.Name);
             else
-                createdReleases = await ImportBasicCompilationReleaseAsync(context, game, game.Name);
+                createdReleases = await ImportBasicCompilationReleaseAsync(context, game, newCompilationId, game.Name);
 
             if(createdReleases.Count == 0)
             {
                 Console.WriteLine("    WARNING: No releases created for compilation.");
+                context.SoftwareCompilations.Remove(newCompilation);
+                await context.SaveChangesAsync();
                 await _stateService.MarkFailedAsync(game.MobyGameId, "No releases created", batchNumber);
 
                 return;
             }
 
-            // Add SoftwareBySoftwareRelease junction entries
-            foreach(var release in createdReleases)
+            // Contained software belongs to the compilation itself (shared across all of its
+            // releases), not to any one release.
+            foreach(ulong containedId in containedSoftwareIds)
             {
-                foreach(ulong containedId in containedSoftwareIds)
+                context.SoftwareBySoftwareCompilation.Add(new SoftwareBySoftwareCompilation
                 {
-                    context.SoftwareBySoftwareRelease.Add(new SoftwareBySoftwareRelease
-                    {
-                        ReleaseId  = release.Id,
-                        SoftwareId = containedId
-                    });
-                }
+                    SoftwareCompilationId = newCompilationId,
+                    SoftwareId            = containedId
+                });
             }
 
             await context.SaveChangesAsync();
@@ -1165,24 +1171,24 @@ public class ImportService
 
                 foreach(var release in existingReleases)
                 {
-                    release.IsCompilation = true;
-                    release.Title         = game.Name;
-                    release.SoftwareId    = null;
+                    release.SoftwareCompilationId = newCompilationId;
+                    release.Title                 = game.Name;
+                    release.SoftwareId             = null;
+                }
 
-                    // Add junction entries for contained games
-                    foreach(ulong containedId in containedSoftwareIds)
+                // Add junction entries for contained games (compilation-level, not per-release)
+                foreach(ulong containedId in containedSoftwareIds)
+                {
+                    bool junctionExists = await context.SoftwareBySoftwareCompilation
+                        .AnyAsync(j => j.SoftwareCompilationId == newCompilationId && j.SoftwareId == containedId);
+
+                    if(!junctionExists)
                     {
-                        bool junctionExists = await context.SoftwareBySoftwareRelease
-                            .AnyAsync(j => j.ReleaseId == release.Id && j.SoftwareId == containedId);
-
-                        if(!junctionExists)
+                        context.SoftwareBySoftwareCompilation.Add(new SoftwareBySoftwareCompilation
                         {
-                            context.SoftwareBySoftwareRelease.Add(new SoftwareBySoftwareRelease
-                            {
-                                ReleaseId  = release.Id,
-                                SoftwareId = containedId
-                            });
-                        }
+                            SoftwareCompilationId = newCompilationId,
+                            SoftwareId            = containedId
+                        });
                     }
                 }
 
@@ -1213,8 +1219,10 @@ public class ImportService
                 Console.WriteLine($"    Cleaned up orphaned Software ID: {orphan.Id}");
             }
 
-            // Mark as imported with no SoftwareId (compilations don't have a Software record)
-            await _stateService.MarkImportedAsync(game.MobyGameId, batchNumber, null);
+            // Mark as imported with no SoftwareId — compilations are tracked via SoftwareCompilationId
+            // instead, so that re-encountering this slug as a sub-item of another compilation resolves.
+            await _stateService.MarkImportedAsync(game.MobyGameId, batchNumber, null,
+                                                  softwareCompilationId: newCompilationId);
 
             compilationCreated = true;
 
@@ -1299,21 +1307,21 @@ public class ImportService
                                    HashSet<(ulong, int, string)> addedCompanyRoles)
     {
         await ImportReleasesInternalAsync(context, software?.Id, game, addedCompanyRoles,
-                                          false, null);
+                                          null, null);
     }
 
     async Task<List<SoftwareRelease>> ImportCompilationReleasesAsync(
-        MarechaiContext context, ParsedGame game, string compilationTitle)
+        MarechaiContext context, ParsedGame game, ulong softwareCompilationId, string compilationTitle)
     {
         return await ImportReleasesInternalAsync(context, null, game,
                                                  new HashSet<(ulong, int, string)>(),
-                                                 true, compilationTitle);
+                                                 softwareCompilationId, compilationTitle);
     }
 
     async Task<List<SoftwareRelease>> ImportReleasesInternalAsync(
         MarechaiContext context, ulong? softwareId, ParsedGame game,
         HashSet<(ulong, int, string)> addedCompanyRoles,
-        bool isCompilation, string compilationTitle)
+        ulong? softwareCompilationId, string compilationTitle)
     {
         var addedProductCodes = new HashSet<(ProductCodeIssuer, string)>();
         var addedBarcodes     = new HashSet<string>();
@@ -1337,13 +1345,13 @@ public class ImportService
 
                 var dbRelease = new SoftwareRelease
                 {
-                    SoftwareId           = isCompilation ? null : softwareId,
-                    PlatformId           = platform?.Id,
-                    PublisherId          = publisher.Id,
-                    ReleaseDate          = releaseDate,
-                    ReleaseDatePrecision = precision,
-                    IsCompilation        = isCompilation,
-                    Title                = isCompilation ? compilationTitle : release.Comments
+                    SoftwareId            = softwareCompilationId is not null ? null : softwareId,
+                    PlatformId            = platform?.Id,
+                    PublisherId           = publisher.Id,
+                    ReleaseDate           = releaseDate,
+                    ReleaseDatePrecision  = precision,
+                    SoftwareCompilationId = softwareCompilationId,
+                    Title                 = softwareCompilationId is not null ? compilationTitle : release.Comments
                 };
 
                 context.SoftwareReleases.Add(dbRelease);
@@ -1586,18 +1594,18 @@ public class ImportService
 
     async Task ImportBasicReleaseAsync(MarechaiContext context, Software software, ParsedGame game)
     {
-        await ImportBasicReleaseInternalAsync(context, software?.Id, game, false, null);
+        await ImportBasicReleaseInternalAsync(context, software?.Id, game, null, null);
     }
 
     async Task<List<SoftwareRelease>> ImportBasicCompilationReleaseAsync(
-        MarechaiContext context, ParsedGame game, string compilationTitle)
+        MarechaiContext context, ParsedGame game, ulong softwareCompilationId, string compilationTitle)
     {
-        return await ImportBasicReleaseInternalAsync(context, null, game, true, compilationTitle);
+        return await ImportBasicReleaseInternalAsync(context, null, game, softwareCompilationId, compilationTitle);
     }
 
     async Task<List<SoftwareRelease>> ImportBasicReleaseInternalAsync(
         MarechaiContext context, ulong? softwareId, ParsedGame game,
-        bool isCompilation, string compilationTitle)
+        ulong? softwareCompilationId, string compilationTitle)
     {
         // Create one release per platform from Main tab data
         var (publisher, _) = await _companyMatcher.MatchOrCreateAsync(game.Publishers.FirstOrDefault());
@@ -1613,13 +1621,13 @@ public class ImportService
 
             var dbRelease = new SoftwareRelease
             {
-                SoftwareId           = isCompilation ? null : softwareId,
-                PlatformId           = platform?.Id,
-                PublisherId          = publisher.Id,
-                ReleaseDate          = releaseDate,
-                ReleaseDatePrecision = precision,
-                IsCompilation        = isCompilation,
-                Title                = isCompilation ? compilationTitle : null
+                SoftwareId            = softwareCompilationId is not null ? null : softwareId,
+                PlatformId            = platform?.Id,
+                PublisherId           = publisher.Id,
+                ReleaseDate           = releaseDate,
+                ReleaseDatePrecision  = precision,
+                SoftwareCompilationId = softwareCompilationId,
+                Title                 = softwareCompilationId is not null ? compilationTitle : null
             };
 
             context.SoftwareReleases.Add(dbRelease);

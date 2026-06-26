@@ -6,7 +6,7 @@ namespace Marechai.Pages.Admin;
 public sealed class SoftwareReleaseDialogResult
 {
     public string       Title                { get; set; }
-    public bool         IsCompilation        { get; set; }
+    public int?         SoftwareCompilationId { get; set; }
     public int?         SoftwareId           { get; set; }
     public int?         SoftwareVersionId    { get; set; }
     public int?         PlatformId           { get; set; }

@@ -94,21 +94,11 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     [ObservableProperty] private string _soundSynthSearchText = string.Empty;
     [ObservableProperty] private ObservableCollection<SoundSynthDto> _soundSynthSuggestions = [];
 
-    // Compilation support
+    // Compilation support: a release may belong to a SoftwareCompilation, but
+    // compilation membership (included software/versions) is managed on the
+    // compilation itself, not on individual releases.
     [ObservableProperty] private string _title = string.Empty;
     [ObservableProperty] private bool _isCompilation;
-    [ObservableProperty] private ObservableCollection<SoftwareVersionBySoftwareReleaseDto> _includedVersions = [];
-    [ObservableProperty] private ObservableCollection<string> _includedVersionDisplays = [];
-    [ObservableProperty] private SoftwareVersionDto? _selectedIncludedVersion;
-    [ObservableProperty] private string _includedVersionSearchText = string.Empty;
-    [ObservableProperty] private ObservableCollection<SoftwareVersionDto> _includedVersionSuggestions = [];
-
-    // Versionless compilation support
-    [ObservableProperty] private ObservableCollection<SoftwareBySoftwareReleaseDto> _includedSoftware = [];
-    [ObservableProperty] private ObservableCollection<string> _includedSoftwareDisplays = [];
-    [ObservableProperty] private SoftwareDto? _selectedIncludedSoftware;
-    [ObservableProperty] private string _includedSoftwareSearchText = string.Empty;
-    [ObservableProperty] private ObservableCollection<SoftwareDto> _includedSoftwareSuggestions = [];
 
     // Software picker for single releases
     [ObservableProperty] private SoftwareDto? _selectedSoftware;
@@ -117,6 +107,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     private List<SoftwareDto>? _allSoftware;
 
     private int? _editingId;
+    private int? _editingCompilationId;
     private List<SoftwareReleaseDto>? _allReleases;
     private List<SoftwareVersionDto>? _allVersions;
     private List<SoftwarePlatformDto>? _allPlatforms;
@@ -161,8 +152,6 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         RemoveRecommendedGpuCommand = new AsyncRelayCommand<string>(RemoveRecommendedGpuByDisplayAsync);
         AddSoundSynthCommand       = new AsyncRelayCommand(AddSoundSynthAsync);
         RemoveSoundSynthCommand    = new AsyncRelayCommand<string>(RemoveSoundSynthByDisplayAsync);
-        AddIncludedVersionCommand    = new AsyncRelayCommand(AddIncludedVersionAsync);
-        RemoveIncludedVersionCommand = new AsyncRelayCommand<string>(RemoveIncludedVersionByDisplayAsync);
         AddRegionCommand             = new AsyncRelayCommand(AddRegionAsync);
         RemoveRegionCommand          = new AsyncRelayCommand<string>(RemoveRegionByDisplayAsync);
         AddLanguageCommand           = new AsyncRelayCommand(AddLanguageAsync);
@@ -188,8 +177,6 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     public IAsyncRelayCommand<string> RemoveRecommendedGpuCommand { get; }
     public IAsyncRelayCommand         AddSoundSynthCommand        { get; }
     public IAsyncRelayCommand<string> RemoveSoundSynthCommand     { get; }
-    public IAsyncRelayCommand         AddIncludedVersionCommand   { get; }
-    public IAsyncRelayCommand<string> RemoveIncludedVersionCommand { get; }
     public IAsyncRelayCommand         AddRegionCommand             { get; }
     public IAsyncRelayCommand<string> RemoveRegionCommand          { get; }
     public IAsyncRelayCommand         AddLanguageCommand           { get; }
@@ -311,7 +298,8 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         ReleaseDate       = item.ReleaseDate;
         ReleaseDatePrecision = item.ReleaseDatePrecision ?? 0;
         Title             = item.Title ?? string.Empty;
-        IsCompilation     = item.IsCompilation == true;
+        IsCompilation     = item.SoftwareCompilationId is not null;
+        _editingCompilationId = item.SoftwareCompilationId;
 
         // Version picker
         if(item.SoftwareVersionId.HasValue && _allVersions != null)
@@ -373,12 +361,6 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
             await LoadSoundSynthsAsync(item.Id.Value);
             await LoadReleaseRegionsAsync(item.Id.Value);
             await LoadReleaseLanguagesAsync(item.Id.Value);
-
-            if(IsCompilation)
-            {
-                await LoadIncludedVersionsAsync(item.Id.Value);
-                await LoadIncludedSoftwareAsync(item.Id.Value);
-            }
         }
     }
 
@@ -406,7 +388,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
             var dto = new SoftwareReleaseDto
             {
                 Title             = string.IsNullOrWhiteSpace(Title) ? null : Title,
-                IsCompilation     = IsCompilation,
+                SoftwareCompilationId = IsCompilation ? _editingCompilationId : null,
                 SoftwareId        = IsCompilation ? null : SelectedSoftware?.Id,
                 SoftwareVersionId = IsCompilation ? null : SelectedVersion?.Id,
                 PlatformId        = SelectedPlatform?.Id,
@@ -994,178 +976,10 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         SoundSynthSearchText = string.Empty;
         Title                = string.Empty;
         IsCompilation        = false;
-        IncludedVersions.Clear();
-        IncludedVersionDisplays.Clear();
-        SelectedIncludedVersion   = null;
-        IncludedVersionSearchText = string.Empty;
-        IncludedSoftware.Clear();
-        IncludedSoftwareDisplays.Clear();
-        SelectedIncludedSoftware   = null;
-        IncludedSoftwareSearchText = string.Empty;
+        _editingCompilationId = null;
         SelectedSoftware           = null;
         SoftwareSearchText         = string.Empty;
         HasError = false; ErrorMessage = string.Empty;
-    }
-
-    // ── Included Version management (compilations only) ──
-
-    public void UpdateIncludedVersionSuggestions(string query)
-    {
-        IncludedVersionSuggestions.Clear();
-        if(_allVersions == null) return;
-        IEnumerable<SoftwareVersionDto> source = _allVersions;
-        if(!string.IsNullOrWhiteSpace(query))
-            source = source.Where(v =>
-                (v.VersionString != null && v.VersionString.Contains(query, StringComparison.OrdinalIgnoreCase)) ||
-                (v.Software != null && v.Software.Contains(query, StringComparison.OrdinalIgnoreCase)));
-        foreach(SoftwareVersionDto match in source) IncludedVersionSuggestions.Add(match);
-    }
-
-    private async Task LoadIncludedVersionsAsync(int releaseId)
-    {
-        IncludedVersions.Clear();
-        IncludedVersionDisplays.Clear();
-
-        try
-        {
-            List<SoftwareVersionBySoftwareReleaseDto> items = await _service.GetIncludedVersionsAsync(releaseId);
-
-            foreach(SoftwareVersionBySoftwareReleaseDto item in items)
-            {
-                IncludedVersions.Add(item);
-                IncludedVersionDisplays.Add($"{item.SoftwareName} — {item.SoftwareVersion}");
-            }
-        }
-        catch(Exception ex)
-        {
-            _logger.LogError(ex, "Error loading included versions for release {ReleaseId}", releaseId);
-        }
-    }
-
-    private async Task AddIncludedVersionAsync()
-    {
-        if(SelectedIncludedVersion?.Id == null || _editingId == null) return;
-
-        try
-        {
-            var dto = new SoftwareVersionBySoftwareReleaseDto
-            {
-                ReleaseId         = _editingId.Value,
-                SoftwareVersionId = SelectedIncludedVersion.Id
-            };
-
-            await _service.AddIncludedVersionAsync(dto);
-            await LoadIncludedVersionsAsync(_editingId.Value);
-            SelectedIncludedVersion   = null;
-            IncludedVersionSearchText = string.Empty;
-        }
-        catch(Exception ex)
-        {
-            _logger.LogError(ex, "Error adding included version");
-            ErrorMessage = _localizer["FailedToAddIncludedVersion"];
-            HasError = true;
-        }
-    }
-
-    private async Task RemoveIncludedVersionByDisplayAsync(string? display)
-    {
-        if(display == null || _editingId == null) return;
-        int idx = IncludedVersionDisplays.IndexOf(display);
-        if(idx < 0 || idx >= IncludedVersions.Count) return;
-
-        SoftwareVersionBySoftwareReleaseDto iv = IncludedVersions[idx];
-
-        try
-        {
-            await _service.RemoveIncludedVersionAsync(_editingId.Value, (int)(iv.SoftwareVersionId ?? 0));
-            await LoadIncludedVersionsAsync(_editingId.Value);
-        }
-        catch(Exception ex)
-        {
-            _logger.LogError(ex, "Error removing included version");
-            ErrorMessage = _localizer["FailedToRemoveIncludedVersion"];
-            HasError = true;
-        }
-    }
-
-    // --- Versionless compilation included software ---
-
-    private async Task LoadIncludedSoftwareAsync(int releaseId)
-    {
-        IncludedSoftware.Clear();
-        IncludedSoftwareDisplays.Clear();
-
-        try
-        {
-            List<SoftwareBySoftwareReleaseDto> items = await _service.GetIncludedSoftwareAsync(releaseId);
-
-            foreach(SoftwareBySoftwareReleaseDto item in items)
-            {
-                IncludedSoftware.Add(item);
-                IncludedSoftwareDisplays.Add(item.SoftwareName ?? string.Empty);
-            }
-        }
-        catch(Exception ex)
-        {
-            _logger.LogError(ex, "Error loading included software for release {ReleaseId}", releaseId);
-        }
-    }
-
-    private async Task AddIncludedSoftwareAsync()
-    {
-        if(SelectedIncludedSoftware?.Id == null || _editingId == null) return;
-
-        try
-        {
-            var dto = new SoftwareBySoftwareReleaseDto
-            {
-                ReleaseId  = _editingId.Value,
-                SoftwareId = SelectedIncludedSoftware.Id
-            };
-
-            await _service.AddIncludedSoftwareAsync(dto);
-            await LoadIncludedSoftwareAsync(_editingId.Value);
-            SelectedIncludedSoftware   = null;
-            IncludedSoftwareSearchText = string.Empty;
-        }
-        catch(Exception ex)
-        {
-            _logger.LogError(ex, "Error adding included software");
-            ErrorMessage = _localizer["FailedToAddIncludedSoftware"];
-            HasError = true;
-        }
-    }
-
-    private async Task RemoveIncludedSoftwareByDisplayAsync(string? display)
-    {
-        if(display == null || _editingId == null) return;
-        int idx = IncludedSoftwareDisplays.IndexOf(display);
-        if(idx < 0 || idx >= IncludedSoftware.Count) return;
-
-        SoftwareBySoftwareReleaseDto sw = IncludedSoftware[idx];
-
-        try
-        {
-            await _service.RemoveIncludedSoftwareAsync(_editingId.Value, (int)(sw.SoftwareId ?? 0));
-            await LoadIncludedSoftwareAsync(_editingId.Value);
-        }
-        catch(Exception ex)
-        {
-            _logger.LogError(ex, "Error removing included software");
-            ErrorMessage = _localizer["FailedToRemoveIncludedSoftware"];
-            HasError = true;
-        }
-    }
-
-    private void UpdateIncludedSoftwareSuggestions(string query)
-    {
-        IncludedSoftwareSuggestions.Clear();
-        if(_allSoftware == null) return;
-        IEnumerable<SoftwareDto> source = _allSoftware;
-        if(!string.IsNullOrWhiteSpace(query))
-            source = source.Where(s =>
-                s.Name != null && s.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
-        foreach(SoftwareDto match in source) IncludedSoftwareSuggestions.Add(match);
     }
 
     private void UpdateSoftwareSuggestions(string query)

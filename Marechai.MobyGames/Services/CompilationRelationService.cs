@@ -183,11 +183,13 @@ public class CompilationRelationService
                 var containedSoftwareIds = new List<ulong>();
                 var unresolvedSlugs      = new List<string>();
 
+                var containedCompilationIds = new List<ulong>();
+
                 foreach(string gameSlug in gameSlugs)
                 {
-                    ulong? softwareId = await ResolveGameSlugAsync(context, gameSlug, dryRun);
+                    SlugResolution resolution = await ResolveGameSlugAsync(context, gameSlug, dryRun);
 
-                    if(softwareId is null)
+                    if(!resolution.IsResolved)
                     {
                         Console.WriteLine($"    WARNING: Cannot resolve '{gameSlug}'.");
                         unresolvedSlugs.Add(gameSlug);
@@ -195,14 +197,22 @@ public class CompilationRelationService
                         continue;
                     }
 
-                    containedSoftwareIds.Add(softwareId.Value);
-                    Console.WriteLine($"    Resolved '{gameSlug}' → Software ID: {softwareId}");
+                    if(resolution.SoftwareCompilationId is not null)
+                    {
+                        containedCompilationIds.Add(resolution.SoftwareCompilationId.Value);
+                        Console.WriteLine($"    Resolved '{gameSlug}' → SoftwareCompilation ID: {resolution.SoftwareCompilationId}");
+                    }
+                    else
+                    {
+                        containedSoftwareIds.Add(resolution.SoftwareId!.Value);
+                        Console.WriteLine($"    Resolved '{gameSlug}' → Software ID: {resolution.SoftwareId}");
+                    }
                 }
 
                 bool hasUnresolved      = unresolvedSlugs.Count > 0 || unresolvable.Count > 0;
                 bool compilationCreated = false;
 
-                if(containedSoftwareIds.Count == 0)
+                if(containedSoftwareIds.Count == 0 && containedCompilationIds.Count == 0)
                 {
                     Console.WriteLine("    FAILED: No contained games could be resolved; compilation not created.");
 
@@ -223,7 +233,8 @@ public class CompilationRelationService
                 // Conversion phase
                 if(dryRun)
                 {
-                    Console.WriteLine($"    Would convert to compilation with {containedSoftwareIds.Count} game(s)" +
+                    Console.WriteLine($"    Would convert to compilation with {containedSoftwareIds.Count} game(s) " +
+                                      $"and {containedCompilationIds.Count} sub-compilation(s)" +
                                       (hasUnresolved
                                            ? $" and send admin report ({unresolvedSlugs.Count} unresolved slug(s), " +
                                              $"{unresolvable.Count} unresolvable anchor(s))"
@@ -250,37 +261,67 @@ public class CompilationRelationService
                         continue;
                     }
 
-                    // Convert each release to a compilation release
+                    // Create the independent SoftwareCompilation entity backing these releases.
+                    // Save immediately so its Id is assigned before it's referenced below.
+                    var newCompilation = new SoftwareCompilation { Name = compilation.Name };
+                    context.SoftwareCompilations.Add(newCompilation);
+                    await context.SaveChangesAsync();
+                    ulong newCompilationId = newCompilation.Id;
+
+                    // Re-point each release at the new compilation instead of flagging it.
                     foreach(var release in releases)
                     {
-                        release.IsCompilation = true;
-                        release.Title         = compilation.Name;
-                        release.SoftwareId    = null;
+                        release.SoftwareCompilationId = newCompilationId;
+                        release.Title                 = compilation.Name;
+                        release.SoftwareId             = null;
+                    }
 
-                        // Add junction entries for contained games
-                        foreach(ulong containedId in containedSoftwareIds)
+                    // Contained software/versions belong to the compilation itself (shared across
+                    // all of its releases), not to any one release.
+                    foreach(ulong containedId in containedSoftwareIds)
+                    {
+                        bool junctionExists = await context.SoftwareBySoftwareCompilation
+                            .AnyAsync(j => j.SoftwareCompilationId == newCompilationId && j.SoftwareId == containedId);
+
+                        if(!junctionExists)
                         {
-                            bool junctionExists = await context.SoftwareBySoftwareRelease
-                                .AnyAsync(j => j.ReleaseId == release.Id && j.SoftwareId == containedId);
-
-                            if(!junctionExists)
+                            context.SoftwareBySoftwareCompilation.Add(new SoftwareBySoftwareCompilation
                             {
-                                context.SoftwareBySoftwareRelease.Add(new SoftwareBySoftwareRelease
-                                {
-                                    ReleaseId  = release.Id,
-                                    SoftwareId = containedId
-                                });
-                            }
+                                SoftwareCompilationId = newCompilationId,
+                                SoftwareId            = containedId
+                            });
                         }
                     }
 
-                    // Update import state: clear SoftwareId (compilation has no Software).
+                    // Contained sub-compilations: a slug previously converted into its own
+                    // SoftwareCompilation is linked as a nested member rather than dropped.
+                    foreach(ulong containedCompilationId in containedCompilationIds)
+                    {
+                        bool junctionExists = await context.SoftwareCompilationBySoftwareCompilation
+                            .AnyAsync(j => j.ParentCompilationId == newCompilationId &&
+                                          j.ChildCompilationId == containedCompilationId);
+
+                        if(!junctionExists)
+                        {
+                            context.SoftwareCompilationBySoftwareCompilation.Add(new SoftwareCompilationBySoftwareCompilation
+                            {
+                                ParentCompilationId = newCompilationId,
+                                ChildCompilationId  = containedCompilationId
+                            });
+                        }
+                    }
+
+                    // Update import state: record the new compilation pointer instead of just
+                    // nulling SoftwareId. This is the fix for the long-standing bug where a slug
+                    // converted into a compilation had no replacement pointer, so re-encountering
+                    // it as a sub-item of another compilation could never resolve.
                     // LEGITIMATE null-out: this is one of only two places allowed to clear
                     // MobyGamesImportState.SoftwareId. It is paired with the Softwares.Remove(compilation)
                     // call below, so the slug<->Software invariant holds (the Software is going away).
                     // See MarkFailedAsync / MarkRejectedAsync in StateService.cs which intentionally
                     // preserve SoftwareId on every other path.
-                    importState.SoftwareId = null;
+                    importState.SoftwareId             = null;
+                    importState.SoftwareCompilationId = newCompilationId;
 
                     // Save before deleting the Software (SoftwareRelease FK is Restrict, but we already nulled it)
                     await context.SaveChangesAsync();
@@ -296,24 +337,24 @@ public class CompilationRelationService
 
                     context.SoftwareCompanyRoles.RemoveRange(companyRoles);
 
-                    // SoftwareBySoftwareRelease.SoftwareId \u2192 Softwares.Id is also Restrict (no
+                    // SoftwareBySoftwareCompilation.SoftwareId \u2192 Softwares.Id is also Restrict (no
                     // cascade). When THIS Software is itself listed as a contained game in some
-                    // OTHER compilation's release (parent compilation), those junction rows
-                    // block the delete. Drop them with a warning so the operator knows the
-                    // parent compilation lost a member and can re-resolve it later.
-                    var inboundJunctions = await context.SoftwareBySoftwareRelease
+                    // OTHER compilation (parent compilation), those junction rows block the delete.
+                    // Drop them with a warning so the operator knows the parent compilation lost a
+                    // member and can re-resolve it later.
+                    var inboundJunctions = await context.SoftwareBySoftwareCompilation
                         .Where(j => j.SoftwareId == compilation.Id)
                         .ToListAsync();
 
                     if(inboundJunctions.Count > 0)
                     {
-                        var parentReleaseIds = inboundJunctions.Select(j => j.ReleaseId).Distinct().ToList();
+                        var parentCompilationIds = inboundJunctions.Select(j => j.SoftwareCompilationId).Distinct().ToList();
                         Console.WriteLine($"    \e[33mWarning: {inboundJunctions.Count} parent-compilation junction(s) " +
-                                          $"referenced this Software (parent release IDs: " +
-                                          $"{string.Join(", ", parentReleaseIds)}); dropping them so the " +
+                                          $"referenced this Software (parent compilation IDs: " +
+                                          $"{string.Join(", ", parentCompilationIds)}); dropping them so the " +
                                           $"Software delete can proceed. Parent compilation(s) will lose a member " +
                                           $"until re-resolved.\e[0m");
-                        context.SoftwareBySoftwareRelease.RemoveRange(inboundJunctions);
+                        context.SoftwareBySoftwareCompilation.RemoveRange(inboundJunctions);
                     }
 
                     context.Softwares.Remove(compilation);
@@ -323,8 +364,9 @@ public class CompilationRelationService
 
                     if(hasUnresolved)
                     {
-                        Console.WriteLine($"    Converted {releases.Count} release(s) to PARTIAL compilation, " +
-                                          $"linked {containedSoftwareIds.Count} game(s), " +
+                        Console.WriteLine($"    Converted {releases.Count} release(s) to PARTIAL compilation " +
+                                          $"(ID {newCompilationId}), linked {containedSoftwareIds.Count} game(s) " +
+                                          $"and {containedCompilationIds.Count} sub-compilation(s), " +
                                           $"{unresolvedSlugs.Count} unresolved slug(s), " +
                                           $"{unresolvable.Count} unresolvable anchor(s), " +
                                           $"deleted orphaned Software ID {compilation.Id}");
@@ -333,8 +375,9 @@ public class CompilationRelationService
                     }
                     else
                     {
-                        Console.WriteLine($"    Converted {releases.Count} release(s) to compilation, " +
-                                          $"linked {containedSoftwareIds.Count} game(s), " +
+                        Console.WriteLine($"    Converted {releases.Count} release(s) to compilation " +
+                                          $"(ID {newCompilationId}), linked {containedSoftwareIds.Count} game(s) " +
+                                          $"and {containedCompilationIds.Count} sub-compilation(s), " +
                                           $"deleted orphaned Software ID {compilation.Id}");
 
                         converted++;
@@ -377,13 +420,29 @@ public class CompilationRelationService
     }
 
     /// <summary>
-    ///     Resolves a MobyGames game slug to a Software ID using local database only.
-    ///     Tries all slug variants (with/without leading dash) in MobyGamesImportState,
-    ///     then attempts to import from mobygames_raw if not found.
+    ///     The result of resolving a MobyGames game slug to a local entity. At most one of
+    ///     <see cref="SoftwareId"/> / <see cref="SoftwareCompilationId"/> is set; both null means
+    ///     unresolved.
     /// </summary>
-    async Task<ulong?> ResolveGameSlugAsync(MarechaiContext context, string slug, bool dryRun)
+    readonly record struct SlugResolution(ulong? SoftwareId, ulong? SoftwareCompilationId)
     {
-        if(string.IsNullOrWhiteSpace(slug)) return null;
+        public bool IsResolved => SoftwareId is not null || SoftwareCompilationId is not null;
+
+        public static readonly SlugResolution Unresolved = new(null, null);
+    }
+
+    /// <summary>
+    ///     Resolves a MobyGames game slug to a local Software or SoftwareCompilation using the
+    ///     local database only. Tries all slug variants (with/without leading dash) in
+    ///     MobyGamesImportState, then attempts to import from mobygames_raw if not found.
+    ///     A slug that was previously converted into a compilation has its
+    ///     MobyGamesImportState.SoftwareCompilationId pointer set instead of SoftwareId — this is
+    ///     checked first so re-encountering that slug as a sub-item of another compilation
+    ///     resolves to the existing compilation instead of failing.
+    /// </summary>
+    async Task<SlugResolution> ResolveGameSlugAsync(MarechaiContext context, string slug, bool dryRun)
+    {
+        if(string.IsNullOrWhiteSpace(slug)) return SlugResolution.Unresolved;
 
         string trimmed = slug.TrimStart('-');
 
@@ -396,10 +455,12 @@ public class CompilationRelationService
                 .FirstOrDefaultAsync(s => s.MobyGameId == trySlug &&
                                           s.Status == MobyGamesImportStatus.Imported);
 
-            if(state?.SoftwareId is not null) return state.SoftwareId;
+            if(state?.SoftwareCompilationId is not null) return new SlugResolution(null, state.SoftwareCompilationId);
+            if(state?.SoftwareId is not null) return new SlugResolution(state.SoftwareId, null);
         }
 
-        // Try importing from mobygames_raw
+        // Try importing from mobygames_raw. Fresh imports are never pre-converted, so this
+        // always yields a Software (never a SoftwareCompilation).
         foreach(string trySlug in slugsToTry.Distinct())
         {
             var rows = await _sourceDb.GetRowsForGameAsync(trySlug);
@@ -410,7 +471,7 @@ public class CompilationRelationService
                 {
                     Console.Write($" [dry-run: would import '{trySlug}']");
 
-                    return 0; // placeholder for dry-run
+                    return new SlugResolution(0, null); // placeholder for dry-run
                 }
 
                 Console.Write($"      Importing '{trySlug}' from mobygames_raw...");
@@ -420,13 +481,13 @@ public class CompilationRelationService
                 {
                     Console.WriteLine($" OK (ID: {importedId})");
 
-                    return importedId;
+                    return new SlugResolution(importedId, null);
                 }
 
                 Console.WriteLine(" failed");
             }
         }
 
-        return null;
+        return SlugResolution.Unresolved;
     }
 }

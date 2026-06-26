@@ -520,23 +520,6 @@ public class SoftwareBrowsingService
         }
     }
 
-    public async Task<List<SoftwareVersionBySoftwareReleaseDto>> GetIncludedVersionsAsync(int releaseId)
-    {
-        try
-        {
-            List<SoftwareVersionBySoftwareReleaseDto> versions =
-                await _apiClient.Software.Releases[releaseId].Versions.GetAsync();
-
-            return versions ?? [];
-        }
-        catch(Exception ex)
-        {
-            _logger.LogError(ex, "Error fetching included versions for release {ReleaseId}", releaseId);
-
-            return [];
-        }
-    }
-
     public async Task<List<SoftwareReleaseDto>> GetCompilationsForSoftwareAsync(int softwareId)
     {
         try
@@ -566,23 +549,6 @@ public class SoftwareBrowsingService
         catch(Exception ex)
         {
             _logger.LogError(ex, "Error fetching releases for software {SoftwareId}", softwareId);
-
-            return [];
-        }
-    }
-
-    public async Task<List<SoftwareBySoftwareReleaseDto>> GetIncludedSoftwareAsync(int releaseId)
-    {
-        try
-        {
-            List<SoftwareBySoftwareReleaseDto> software =
-                await _apiClient.Software.Releases[releaseId].Software.GetAsync();
-
-            return software ?? [];
-        }
-        catch(Exception ex)
-        {
-            _logger.LogError(ex, "Error fetching included software for release {ReleaseId}", releaseId);
 
             return [];
         }

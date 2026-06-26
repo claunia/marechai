@@ -50,6 +50,7 @@ using Marechai.ApiClient.Search;
 using Marechai.ApiClient.Sitemap;
 using Marechai.ApiClient.Smartphones;
 using Marechai.ApiClient.Software;
+using Marechai.ApiClient.SoftwareCompilations;
 using Marechai.ApiClient.SoftwarePlatformsByMachine;
 using Marechai.ApiClient.SoundSynths;
 using Marechai.ApiClient.SoundSynthsByMachine;
@@ -326,6 +327,11 @@ namespace Marechai.ApiClient
         public global::Marechai.ApiClient.Software.SoftwareRequestBuilder Software
         {
             get => new global::Marechai.ApiClient.Software.SoftwareRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The softwareCompilations property</summary>
+        public global::Marechai.ApiClient.SoftwareCompilations.SoftwareCompilationsRequestBuilder SoftwareCompilations
+        {
+            get => new global::Marechai.ApiClient.SoftwareCompilations.SoftwareCompilationsRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The softwarePlatformsByMachine property</summary>
         public global::Marechai.ApiClient.SoftwarePlatformsByMachine.SoftwarePlatformsByMachineRequestBuilder SoftwarePlatformsByMachine

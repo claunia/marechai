@@ -763,7 +763,7 @@ else
                 {
                     <MudListItem T="SoftwareReleaseDto" Href="@($"/software/release/{release.Id}")" Icon="@Icons.Material.Filled.NewReleases">
                         <div class="d-flex flex-wrap align-center gap-2">
-                            @if(!string.IsNullOrEmpty(release.Title) && release.IsCompilation != true)
+                            @if(!string.IsNullOrEmpty(release.Title) && release.SoftwareCompilationId is null)
                             {
                                 <MudText Typo="Typo.body2" Style="font-style: italic;">@release.Title</MudText>
                             }

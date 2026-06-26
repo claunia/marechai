@@ -256,17 +256,16 @@ public class OrphanCleanupService
                      .ExecuteUpdateAsync(s => s.SetProperty(m => m.SoftwareId, _ => twinId));
 
         // ====================================================================
-        // 7. SoftwareBySoftwareRelease — composite PK (SoftwareId, ReleaseId).
+        // 7. SoftwareBySoftwareCompilation — composite PK (SoftwareId, SoftwareCompilationId).
         // ====================================================================
-        // Step 1 already cascade-deleted rows pointing at deleted orphan releases.
-        // Remaining rows have SoftwareId=orphanId pointing at twin/third-party releases.
-        await context.SoftwareBySoftwareRelease
+        // Remaining rows have SoftwareId=orphanId pointing at twin/third-party compilations.
+        await context.SoftwareBySoftwareCompilation
                      .Where(j => j.SoftwareId == orphanId &&
-                                 context.SoftwareBySoftwareRelease.Any(t => t.SoftwareId == twinId &&
-                                                                            t.ReleaseId  == j.ReleaseId))
+                                 context.SoftwareBySoftwareCompilation.Any(t => t.SoftwareId == twinId &&
+                                                                                t.SoftwareCompilationId == j.SoftwareCompilationId))
                      .ExecuteDeleteAsync();
 
-        await context.SoftwareBySoftwareRelease.Where(j => j.SoftwareId == orphanId)
+        await context.SoftwareBySoftwareCompilation.Where(j => j.SoftwareId == orphanId)
                      .ExecuteUpdateAsync(s => s.SetProperty(j => j.SoftwareId, _ => twinId));
 
         // ====================================================================

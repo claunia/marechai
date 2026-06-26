@@ -199,7 +199,7 @@ public class SpecsReparseService
 
                     List<SoftwareRelease> matches = await context.SoftwareReleases
                                                                  .Include(r => r.Attributes)
-                                                                 .Where(r => r.IsCompilation && r.Title == title)
+                                                                 .Where(r => r.SoftwareCompilationId != null && r.Title == title)
                                                                  .ToListAsync();
 
                     if(matches.Count == 0)

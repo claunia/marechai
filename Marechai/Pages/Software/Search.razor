@@ -127,7 +127,7 @@
     <div id="@_scrollerId" style="height: calc(100dvh - 280px); min-height: 360px; overflow-y: auto;">
         <MudList T="SoftwareDto" Dense="true">
             <Virtualize Items="_software" Context="sw" ItemSize="100">
-            <MudListItem T="SoftwareDto" Href="@(sw.IsCompilation == true ? $"/software/release/{sw.Id}" : $"/software/{sw.Id}")">
+            <MudListItem T="SoftwareDto" Href="@(sw.IsCompilation == true ? $"/software-compilation/{sw.Id}" : $"/software/{sw.Id}")">
                 <div class="d-flex align-center gap-3">
                     @if(sw.FrontCoverId.HasValue)
                     {

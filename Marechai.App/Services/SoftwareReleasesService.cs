@@ -364,63 +364,6 @@ public class SoftwareReleasesService
         }
     }
 
-    // ── Compilation junction methods ──
-
-    public async Task<List<SoftwareVersionBySoftwareReleaseDto>> GetIncludedVersionsAsync(int releaseId)
-    {
-        try
-        {
-            List<SoftwareVersionBySoftwareReleaseDto>? versions =
-                await _apiClient.Software.Releases[releaseId].Versions.GetAsync();
-
-            return versions ?? [];
-        }
-        catch(Exception ex)
-        {
-            _logger.LogError(ex, "Error loading included versions for release {ReleaseId}", releaseId);
-
-            return [];
-        }
-    }
-
-    public async Task AddIncludedVersionAsync(SoftwareVersionBySoftwareReleaseDto dto)
-    {
-        await _apiClient.Software.Releases[(int)(dto.ReleaseId ?? 0)].Versions.PostAsync(dto);
-    }
-
-    public async Task RemoveIncludedVersionAsync(int releaseId, int versionId)
-    {
-        await _apiClient.Software.Releases[releaseId].Versions[versionId].DeleteAsync();
-    }
-
-    // --- Versionless Compilation Junction ---
-
-    public async Task<List<SoftwareBySoftwareReleaseDto>> GetIncludedSoftwareAsync(int releaseId)
-    {
-        try
-        {
-            List<SoftwareBySoftwareReleaseDto>? software =
-                await _apiClient.Software.Releases[releaseId].Software.GetAsync();
-
-            return software ?? [];
-        }
-        catch(Exception ex)
-        {
-            _logger.LogError(ex, "Error loading included software for release {ReleaseId}", releaseId);
-
-            return [];
-        }
-    }
-
-    public async Task AddIncludedSoftwareAsync(SoftwareBySoftwareReleaseDto dto)
-    {
-        await _apiClient.Software.Releases[(int)(dto.ReleaseId ?? 0)].Software.PostAsync(dto);
-    }
-
-    public async Task RemoveIncludedSoftwareAsync(int releaseId, int softwareId)
-    {
-        await _apiClient.Software.Releases[releaseId].Software[softwareId].DeleteAsync();
-    }
 
     // --- By Software ---
 

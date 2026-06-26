@@ -535,7 +535,7 @@
                                        ? CurrentDto.Software
                                        : $"{CurrentDto.Software} {CurrentDto.SoftwareVersion}")
                                 : null;
-            if(CurrentDto.IsCompilation == true)
+            if(CurrentDto.SoftwareCompilationId is not null)
                 parent = string.IsNullOrEmpty(parent) ? L["Compilation"] : $"{parent} ({L["Compilation"]})";
             _parentLabel = parent;
         }

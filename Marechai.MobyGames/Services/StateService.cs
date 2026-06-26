@@ -76,7 +76,7 @@ public class StateService
     }
 
     public async Task MarkImportedAsync(string mobyGameId, int batchNumber, ulong? softwareId,
-                                        int? mobyNumericId = null)
+                                        int? mobyNumericId = null, ulong? softwareCompilationId = null)
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
 
@@ -85,22 +85,24 @@ public class StateService
 
         if(existing != null)
         {
-            existing.Status        = MobyGamesImportStatus.Imported;
-            existing.ProcessedOn   = DateTime.UtcNow;
-            existing.BatchNumber   = batchNumber;
-            existing.SoftwareId    = softwareId;
-            existing.MobyNumericId = mobyNumericId ?? existing.MobyNumericId;
+            existing.Status                = MobyGamesImportStatus.Imported;
+            existing.ProcessedOn           = DateTime.UtcNow;
+            existing.BatchNumber           = batchNumber;
+            existing.SoftwareId            = softwareId;
+            existing.SoftwareCompilationId = softwareCompilationId;
+            existing.MobyNumericId         = mobyNumericId ?? existing.MobyNumericId;
         }
         else
         {
             context.MobyGamesImportStates.Add(new MobyGamesImportState
             {
-                MobyGameId     = mobyGameId,
-                Status         = MobyGamesImportStatus.Imported,
-                ProcessedOn    = DateTime.UtcNow,
-                BatchNumber    = batchNumber,
-                SoftwareId     = softwareId,
-                MobyNumericId  = mobyNumericId
+                MobyGameId            = mobyGameId,
+                Status                = MobyGamesImportStatus.Imported,
+                ProcessedOn           = DateTime.UtcNow,
+                BatchNumber           = batchNumber,
+                SoftwareId            = softwareId,
+                SoftwareCompilationId = softwareCompilationId,
+                MobyNumericId         = mobyNumericId
             });
         }
 

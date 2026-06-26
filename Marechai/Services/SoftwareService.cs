@@ -1721,21 +1721,6 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
         }
     }
 
-    public async Task<List<SoftwareVersionBySoftwareReleaseDto>> GetIncludedVersionsAsync(int releaseId)
-    {
-        try
-        {
-            List<SoftwareVersionBySoftwareReleaseDto> versions =
-                await client.Software.Releases[releaseId].Versions.GetAsync();
-
-            return versions ?? [];
-        }
-        catch
-        {
-            return [];
-        }
-    }
-
     public async Task<List<SoftwareReleaseDto>> GetCompilationsForSoftwareAsync(int softwareId)
     {
         try
@@ -1757,21 +1742,6 @@ public class SoftwareService(Marechai.ApiClient.Client client, IRequestAdapter r
             List<SoftwareReleaseDto> releases = await client.Software[softwareId].Releases.GetAsync();
 
             return releases ?? [];
-        }
-        catch
-        {
-            return [];
-        }
-    }
-
-    public async Task<List<SoftwareBySoftwareReleaseDto>> GetIncludedSoftwareAsync(int releaseId)
-    {
-        try
-        {
-            List<SoftwareBySoftwareReleaseDto> software =
-                await client.Software.Releases[releaseId].Software.GetAsync();
-
-            return software ?? [];
         }
         catch
         {

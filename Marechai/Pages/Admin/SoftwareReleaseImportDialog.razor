@@ -31,6 +31,7 @@
 @inject SoftwareReleasesService SoftwareReleasesService
 @inject SoftwareService SoftwareService
 @inject SoftwarePlatformsService SoftwarePlatformsService
+@inject SoftwareCompilationsService SoftwareCompilationsService
 @inject IStringLocalizer<SoftwareReleasesService> L
 @inject IJSRuntime JsRuntime
 
@@ -909,16 +910,40 @@
                 }
             }
 
+            // Create the backing compilation if this row is a compilation
+            int? compilationId = null;
+
+            if(row.IsCompilation == true)
+            {
+                string compName = !string.IsNullOrWhiteSpace(row.Title) ? row.Title.Trim() : L["Compilation"];
+                var compDto = new SoftwareCompilationDto { Name = compName };
+                (bool compSucceeded, int? newCompId, string compError) = await SoftwareCompilationsService.CreateAsync(compDto);
+
+                if(compSucceeded)
+                {
+                    compilationId = newCompId;
+                }
+                else
+                {
+                    _failedCount++;
+                    row.ImportError = string.Format(L["Failed to create compilation '{0}': {1}"], compName, compError ?? L["Unknown error"]);
+                    _importRows.Add(row);
+                    await UpdateProgress();
+
+                    continue;
+                }
+            }
+
             // Build the release DTO
             var dto = new SoftwareReleaseDto
             {
-                Title                = row.Title,
-                IsCompilation        = row.IsCompilation ?? false,
-                SoftwareId           = row.IsCompilation == true ? null : softwareId,
-                PlatformId           = platformId,
-                PublisherId          = row.SelectedPublisher?.Id,
-                ReleaseDatePrecision = row.ReleaseDatePrecision,
-                ReleaseDate          = row.ReleaseDate.HasValue ? new DateTimeOffset(row.ReleaseDate.Value) : null
+                Title                 = row.Title,
+                SoftwareCompilationId = compilationId,
+                SoftwareId            = row.IsCompilation == true ? null : softwareId,
+                PlatformId            = platformId,
+                PublisherId           = row.SelectedPublisher?.Id,
+                ReleaseDatePrecision  = row.ReleaseDatePrecision,
+                ReleaseDate           = row.ReleaseDate.HasValue ? new DateTimeOffset(row.ReleaseDate.Value) : null
             };
 
             (int? id, string error) = await SoftwareReleasesService.CreateAsync(dto);

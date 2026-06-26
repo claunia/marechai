@@ -16,8 +16,6 @@ namespace Marechai.ApiClient.Models
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The id property</summary>
         public int? Id { get; set; }
-        /// <summary>The is_compilation property</summary>
-        public bool? IsCompilation { get; set; }
         /// <summary>The languages property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -66,6 +64,16 @@ namespace Marechai.ApiClient.Models
 #else
         public string Software { get; set; }
 #endif
+        /// <summary>The software_compilation property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? SoftwareCompilation { get; set; }
+#nullable restore
+#else
+        public string SoftwareCompilation { get; set; }
+#endif
+        /// <summary>The software_compilation_id property</summary>
+        public int? SoftwareCompilationId { get; set; }
         /// <summary>The software_id property</summary>
         public int? SoftwareId { get; set; }
         /// <summary>The software_version property</summary>
@@ -112,7 +120,6 @@ namespace Marechai.ApiClient.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "id", n => { Id = n.GetIntValue(); } },
-                { "is_compilation", n => { IsCompilation = n.GetBoolValue(); } },
                 { "languages", n => { Languages = n.GetCollectionOfObjectValues<global::Marechai.ApiClient.Models.LanguageBySoftwareReleaseDto>(global::Marechai.ApiClient.Models.LanguageBySoftwareReleaseDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "platform", n => { Platform = n.GetStringValue(); } },
                 { "platform_id", n => { PlatformId = n.GetIntValue(); } },
@@ -122,6 +129,8 @@ namespace Marechai.ApiClient.Models
                 { "release_date", n => { ReleaseDate = n.GetDateTimeOffsetValue(); } },
                 { "release_date_precision", n => { ReleaseDatePrecision = n.GetIntValue(); } },
                 { "software", n => { Software = n.GetStringValue(); } },
+                { "software_compilation", n => { SoftwareCompilation = n.GetStringValue(); } },
+                { "software_compilation_id", n => { SoftwareCompilationId = n.GetIntValue(); } },
                 { "software_id", n => { SoftwareId = n.GetIntValue(); } },
                 { "software_version", n => { SoftwareVersion = n.GetStringValue(); } },
                 { "software_version_id", n => { SoftwareVersionId = n.GetIntValue(); } },
@@ -136,7 +145,6 @@ namespace Marechai.ApiClient.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteIntValue("id", Id);
-            writer.WriteBoolValue("is_compilation", IsCompilation);
             writer.WriteCollectionOfObjectValues<global::Marechai.ApiClient.Models.LanguageBySoftwareReleaseDto>("languages", Languages);
             writer.WriteStringValue("platform", Platform);
             writer.WriteIntValue("platform_id", PlatformId);
@@ -146,6 +154,8 @@ namespace Marechai.ApiClient.Models
             writer.WriteDateTimeOffsetValue("release_date", ReleaseDate);
             writer.WriteIntValue("release_date_precision", ReleaseDatePrecision);
             writer.WriteStringValue("software", Software);
+            writer.WriteStringValue("software_compilation", SoftwareCompilation);
+            writer.WriteIntValue("software_compilation_id", SoftwareCompilationId);
             writer.WriteIntValue("software_id", SoftwareId);
             writer.WriteStringValue("software_version", SoftwareVersion);
             writer.WriteIntValue("software_version_id", SoftwareVersionId);

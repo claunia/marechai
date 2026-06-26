@@ -1,0 +1,132 @@
+@page "/software-compilation/{Id:int}"
+@using Marechai.ApiClient.Models
+@using Marechai.Services
+@inject SoftwareCompilationsService Service
+@inject IStringLocalizer<SoftwareCompilationsService> L
+@inject ApiAssetUrlProvider AssetUrls
+
+@if(_loaded && _compilation is null)
+{
+    <MudAlert Severity="Severity.Warning">@L["Compilation not found."]</MudAlert>
+}
+else if(_compilation is not null)
+{
+    <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #6a1b9a 0%, #ab47bc 100%); border-radius: 16px;">
+        <MudStack AlignItems="AlignItems.Center" Spacing="3">
+            @if(_frontCoverId.HasValue)
+            {
+                <picture>
+                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/avif/4k/@(_frontCoverId).avif" type="image/avif">
+                    <source srcset="@(AssetUrls.BaseUrl)/assets/photos/software-covers/webp/4k/@(_frontCoverId).webp" type="image/webp">
+                    <img alt="@_compilation.Name"
+                         src="@(AssetUrls.BaseUrl)/assets/photos/software-covers/jpeg/4k/@(_frontCoverId).jpg"
+                         style="max-height: 256px; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);"/>
+                </picture>
+            }
+            else
+            {
+                <MudIcon Icon="@Icons.Material.Filled.Collections" Size="Size.Large" Style="color: white;"/>
+            }
+            <MudText Typo="Typo.h4" Align="Align.Center" Style="color: white; font-weight: 700;">@_compilation.Name</MudText>
+            <MudChip T="string" Variant="Variant.Filled" Size="Size.Small" Style="background-color: #9C27B0; color: white;">@L["Compilation"]</MudChip>
+        </MudStack>
+    </MudPaper>
+
+    @if(!string.IsNullOrEmpty(_compilation.Software) || !string.IsNullOrEmpty(_compilation.Machine))
+    {
+        <MudCard Elevation="2" Class="mb-4 rounded-lg">
+            <MudCardContent>
+                <MudText Typo="Typo.h6" Class="mb-2">@L["Bundled with"]</MudText>
+                @if(!string.IsNullOrEmpty(_compilation.Software))
+                {
+                    <MudLink Href="@($"/software/{_compilation.SoftwareId}")">@_compilation.Software</MudLink>
+                }
+                @if(!string.IsNullOrEmpty(_compilation.Machine))
+                {
+                    <MudLink Href="@($"/machine/{_compilation.MachineId}")">@_compilation.Machine</MudLink>
+                }
+            </MudCardContent>
+        </MudCard>
+    }
+
+    @if(_releases is { Count: > 0 })
+    {
+        <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+            <MudExpansionPanel>
+                <TitleContent>
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                        <MudIcon Icon="@Icons.Material.Filled.NewReleases" Color="Color.Primary"/>
+                        <MudText Typo="Typo.h6">@L["Releases"]</MudText>
+                        <MudChip T="string" Size="Size.Small" Color="Color.Success">@_releases.Count</MudChip>
+                    </MudStack>
+                </TitleContent>
+                <ChildContent>
+                    <MudList T="SoftwareReleaseDto" Dense="true">
+                        @foreach(SoftwareReleaseDto release in _releases)
+                        {
+                            <MudListItem T="SoftwareReleaseDto" Href="@($"/software/release/{release.Id}")" Icon="@Icons.Material.Filled.NewReleases">
+                                <MudText>
+                                    @(release.Platform ?? L["Unknown platform"])
+                                    @if(release.ReleaseDate is not null)
+                                    {
+                                        <MudText Typo="Typo.caption" Color="Color.Secondary" Class="ml-2">@release.ReleaseDate.Value.ToString("yyyy-MM-dd")</MudText>
+                                    }
+                                </MudText>
+                            </MudListItem>
+                        }
+                    </MudList>
+                </ChildContent>
+            </MudExpansionPanel>
+        </MudExpansionPanels>
+    }
+
+    @if((_includedSoftware is { Count: > 0 }) || (_includedVersions is { Count: > 0 }) || (_includedCompilations is { Count: > 0 }))
+    {
+        <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+            <MudExpansionPanel>
+                <TitleContent>
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                        <MudIcon Icon="@Icons.Material.Filled.LibraryBooks" Color="Color.Primary"/>
+                        <MudText Typo="Typo.h6">@L["Included Software"]</MudText>
+                        <MudChip T="string" Size="Size.Small" Color="Color.Success">@(_includedSoftware.Count + _includedVersions.Count + _includedCompilations.Count)</MudChip>
+                    </MudStack>
+                </TitleContent>
+                <ChildContent>
+                    @if(_includedVersions is { Count: > 0 })
+                    {
+                        <MudList T="SoftwareVersionBySoftwareCompilationDto" Dense="true">
+                            @foreach(SoftwareVersionBySoftwareCompilationDto iv in _includedVersions)
+                            {
+                                <MudListItem T="SoftwareVersionBySoftwareCompilationDto" Icon="@Icons.Material.Filled.Apps">
+                                    <MudText>@iv.SoftwareName — @iv.SoftwareVersion</MudText>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    }
+                    @if(_includedSoftware is { Count: > 0 })
+                    {
+                        <MudList T="SoftwareBySoftwareCompilationDto" Dense="true">
+                            @foreach(SoftwareBySoftwareCompilationDto sw in _includedSoftware)
+                            {
+                                <MudListItem T="SoftwareBySoftwareCompilationDto" Icon="@Icons.Material.Filled.Apps">
+                                    <MudText>@sw.SoftwareName</MudText>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    }
+                    @if(_includedCompilations is { Count: > 0 })
+                    {
+                        <MudList T="SoftwareCompilationDto" Dense="true">
+                            @foreach(SoftwareCompilationDto sc in _includedCompilations)
+                            {
+                                <MudListItem T="SoftwareCompilationDto" Href="@($"/software-compilation/{sc.Id}")" Icon="@Icons.Material.Filled.Collections">
+                                    <MudText>@sc.Name</MudText>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    }
+                </ChildContent>
+            </MudExpansionPanel>
+        </MudExpansionPanels>
+    }
+}

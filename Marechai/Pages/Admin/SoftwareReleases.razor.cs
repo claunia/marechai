@@ -135,13 +135,10 @@ public partial class SoftwareReleases
 
     async Task OpenAddDialog()
     {
-        bool isCompilation = !_isVersionContext && !_isSoftwareContext;
-
         DialogParameters<SoftwareReleaseDialog> parameters = new()
         {
             { x => x.IsNew, true },
             { x => x.ParentVersionId, VersionId },
-            { x => x.IsCompilation, isCompilation },
             { x => x.LockSoftwareSelection, _isSoftwareContext || _isVersionContext },
             { x => x.SoftwareName, _parentSoftwareName },
             { x => x.SoftwareId, _isSoftwareContext ? SoftwareId : (_isVersionContext ? _parentSoftwareId : null) },
@@ -163,7 +160,7 @@ public partial class SoftwareReleases
             var dto = new SoftwareReleaseDto
             {
                 Title             = data.Title,
-                IsCompilation     = data.IsCompilation,
+                SoftwareCompilationId = data.SoftwareCompilationId,
                 SoftwareId        = data.SoftwareId,
                 SoftwareVersionId = data.SoftwareVersionId,
                 PlatformId        = data.PlatformId,
@@ -248,7 +245,8 @@ public partial class SoftwareReleases
             { x => x.ReleaseId, full.Id ?? 0 },
             { x => x.ParentVersionId, VersionId },
             { x => x.Title, full.Title },
-            { x => x.IsCompilation, full.IsCompilation == true },
+            { x => x.SoftwareCompilationId, full.SoftwareCompilationId },
+            { x => x.SoftwareCompilationName, full.SoftwareCompilation },
             { x => x.LockSoftwareSelection, _isSoftwareContext || _isVersionContext },
             { x => x.SoftwareName, _parentSoftwareName ?? full.Software },
             { x => x.SoftwareId, full.SoftwareId },
@@ -275,7 +273,7 @@ public partial class SoftwareReleases
             {
                 Id                = full.Id,
                 Title             = data.Title,
-                IsCompilation     = data.IsCompilation,
+                SoftwareCompilationId = full.SoftwareCompilationId,
                 SoftwareId        = full.SoftwareId,
                 SoftwareVersionId = data.SoftwareVersionId,
                 PlatformId        = data.PlatformId,

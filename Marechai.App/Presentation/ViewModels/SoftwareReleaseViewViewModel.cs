@@ -93,9 +93,6 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
     private Visibility _showCompanies = Visibility.Collapsed;
 
     [ObservableProperty]
-    private Visibility _showIncludedVersions = Visibility.Collapsed;
-
-    [ObservableProperty]
     private bool _isCompilation;
 
     public SoftwareReleaseViewViewModel(ILogger<SoftwareReleaseViewViewModel> logger,
@@ -112,7 +109,6 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
     public ObservableCollection<string> Barcodes         { get; } = [];
     public ObservableCollection<string> ProductCodes     { get; } = [];
     public ObservableCollection<string> Companies        { get; } = [];
-    public ObservableCollection<string> IncludedVersions { get; } = [];
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => false;
 
@@ -161,7 +157,6 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
             Barcodes.Clear();
             ProductCodes.Clear();
             Companies.Clear();
-            IncludedVersions.Clear();
 
             SoftwareReleaseDto? release = await _browsingService.GetReleaseByIdAsync(releaseId);
 
@@ -188,26 +183,13 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
                 ReleaseDateDisplay = (release.ReleaseDatePrecision ?? 0) == 2 ? $"{release.ReleaseDate.Value.Year}" : (release.ReleaseDatePrecision ?? 0) == 1 ? release.ReleaseDate.Value.ToString("MMMM yyyy") : release.ReleaseDate.Value.DateTime.ToString("MMMM d, yyyy");
 
             // Determine if this is a compilation
-            IsCompilation = release.IsCompilation == true;
+            IsCompilation = release.SoftwareCompilationId is not null;
 
             if(IsCompilation)
             {
-                // Compilation: use Title or fallback
+                // Compilation: use Title or fallback. Included software/versions are
+                // managed and displayed on the compilation's own page, not here.
                 ReleaseTitle = release.Title ?? _localizer["Compilation"];
-
-                // Load included versions (versioned compilations)
-                List<SoftwareVersionBySoftwareReleaseDto> includedVersions =
-                    await _browsingService.GetIncludedVersionsAsync(releaseId);
-
-                foreach(SoftwareVersionBySoftwareReleaseDto iv in includedVersions)
-                    IncludedVersions.Add($"{iv.SoftwareName} — {iv.SoftwareVersion}");
-
-                // Load included software (versionless compilations)
-                List<SoftwareBySoftwareReleaseDto> includedSoftware =
-                    await _browsingService.GetIncludedSoftwareAsync(releaseId);
-
-                foreach(SoftwareBySoftwareReleaseDto sw in includedSoftware)
-                    IncludedVersions.Add(sw.SoftwareName ?? string.Empty);
             }
             else
             {
@@ -277,7 +259,6 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
         ShowBarcodes    = Barcodes.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowProductCodes = ProductCodes.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowCompanies   = Companies.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
-        ShowIncludedVersions = IncludedVersions.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private async Task LoadAllCompaniesAsync(SoftwareReleaseDto release)

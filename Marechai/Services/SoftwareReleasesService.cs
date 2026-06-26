@@ -535,59 +535,6 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client, Reference
         }
     }
 
-    // ── Compilation junction methods ──
-
-    public async Task<List<SoftwareVersionBySoftwareReleaseDto>> GetIncludedVersionsAsync(int releaseId)
-    {
-        try
-        {
-            List<SoftwareVersionBySoftwareReleaseDto> versions =
-                await client.Software.Releases[releaseId].Versions.GetAsync();
-
-            return versions ?? [];
-        }
-        catch
-        {
-            return [];
-        }
-    }
-
-    public async Task<(bool succeeded, string error)> AddIncludedVersionAsync(SoftwareVersionBySoftwareReleaseDto dto)
-    {
-        try
-        {
-            await client.Software.Releases[(int)(dto.ReleaseId ?? 0)].Versions.PostAsync(dto);
-
-            return (true, null);
-        }
-        catch(ApiException ex)
-            {
-                return (false, ExtractDetail(ex));
-        }
-        catch(Exception ex)
-        {
-            return (false, ex.Message);
-        }
-    }
-
-    public async Task<(bool succeeded, string error)> RemoveIncludedVersionAsync(int releaseId, int versionId)
-    {
-        try
-        {
-            await client.Software.Releases[releaseId].Versions[versionId].DeleteAsync();
-
-            return (true, null);
-        }
-        catch(ApiException ex)
-            {
-                return (false, ExtractDetail(ex));
-        }
-        catch(Exception ex)
-        {
-            return (false, ex.Message);
-        }
-    }
-
     public async Task<List<SoftwareVersionDto>> GetAllSoftwareVersionsForPickerAsync()
     {
         try
@@ -745,59 +692,6 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client, Reference
         catch
         {
             return 0;
-        }
-    }
-
-    // ── Versionless compilation junction methods ──
-
-    public async Task<List<SoftwareBySoftwareReleaseDto>> GetIncludedSoftwareAsync(int releaseId)
-    {
-        try
-        {
-            List<SoftwareBySoftwareReleaseDto> software =
-                await client.Software.Releases[releaseId].Software.GetAsync();
-
-            return software ?? [];
-        }
-        catch
-        {
-            return [];
-        }
-    }
-
-    public async Task<(bool succeeded, string error)> AddIncludedSoftwareAsync(SoftwareBySoftwareReleaseDto dto)
-    {
-        try
-        {
-            await client.Software.Releases[(int)(dto.ReleaseId ?? 0)].Software.PostAsync(dto);
-
-            return (true, null);
-        }
-        catch(ApiException ex)
-            {
-                return (false, ExtractDetail(ex));
-        }
-        catch(Exception ex)
-        {
-            return (false, ex.Message);
-        }
-    }
-
-    public async Task<(bool succeeded, string error)> RemoveIncludedSoftwareAsync(int releaseId, int softwareId)
-    {
-        try
-        {
-            await client.Software.Releases[releaseId].Software[softwareId].DeleteAsync();
-
-            return (true, null);
-        }
-        catch(ApiException ex)
-            {
-                return (false, ExtractDetail(ex));
-        }
-        catch(Exception ex)
-        {
-            return (false, ex.Message);
         }
     }
 

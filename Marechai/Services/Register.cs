@@ -72,6 +72,7 @@ public static class Register
         services.AddScoped<SoftwareAttributesService>();
         services.AddScoped<SoftwareVersionsService>();
         services.AddScoped<SoftwareReleasesService>();
+        services.AddScoped<SoftwareCompilationsService>();
         services.AddScoped<SmartphonesService>();
         services.AddScoped<PdasService>();
         services.AddScoped<TabletsService>();
