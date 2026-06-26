@@ -110,6 +110,20 @@ class Program
                 break;
             }
 
+            case "backfill-game-slugs":
+            {
+                IgdbHttpClient client = RequireClient();
+
+                if(client == null)
+                    return 1;
+
+                var service = new GameMirrorService(factory, client);
+                int total = await service.BackfillSlugsAsync(batchSize, dryRun);
+                Console.WriteLine($"\nDone. Backfilled {total} game slugs.");
+
+                break;
+            }
+
             case "mirror-involved-companies":
             {
                 IgdbHttpClient client = RequireClient();
@@ -395,6 +409,7 @@ class Program
                                mirror-game-types          Pull IGDB /game_types
                                mirror-companies           Pull IGDB /companies (resumable)
                                mirror-games               Pull IGDB /games (resumable)
+                               backfill-game-slugs       Fill in Slug for games mirrored before it was tracked (resumable)
                                mirror-involved-companies  Pull IGDB /involved_companies (resumable)
                                mirror-alternative-names  Pull IGDB /alternative_names (resumable)
                                match-platforms             Match mirrored platforms against SoftwarePlatform

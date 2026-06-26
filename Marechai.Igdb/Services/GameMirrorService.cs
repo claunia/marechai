@@ -61,7 +61,7 @@ public class GameMirrorService
                                                                    bool dryRun)
     {
         string query = new ApicalypseQueryBuilder()
-                      .Fields("id,name,game_type,parent_game,version_parent,platforms")
+                      .Fields("id,name,slug,game_type,parent_game,version_parent,platforms")
                       .Where($"id > {afterId}")
                       .Sort("id asc")
                       .Limit(pageSize)
@@ -88,6 +88,10 @@ public class GameMirrorService
                 long   igdbId = element.GetProperty("id").GetInt64();
                 string name   = element.GetProperty("name").GetString();
 
+                string slug = element.TryGetProperty("slug", out var sl) && sl.ValueKind == JsonValueKind.String
+                                  ? sl.GetString()
+                                  : null;
+
                 int? gameTypeId = element.TryGetProperty("game_type", out var gt) && gt.ValueKind == JsonValueKind.Number
                                        ? gt.GetInt32()
                                        : null;
@@ -111,6 +115,7 @@ public class GameMirrorService
                 {
                     IgdbId          = igdbId,
                     Name            = name,
+                    Slug            = slug,
                     GameTypeId      = gameTypeId,
                     ParentGameId    = parentGameId,
                     VersionParentId = versionParentId,
@@ -133,5 +138,56 @@ public class GameMirrorService
         Console.WriteLine($"  Mirrored batch {batchNumber}: {count} games (up to IGDB id {lastId}).");
 
         return (count, lastId);
+    }
+
+    /// <summary>Fills in <see cref="IgdbGame.Slug" /> for rows mirrored before the field was tracked.
+    /// Run repeatedly (e.g. via a CLI loop) until it reports 0 remaining.</summary>
+    public async Task<int> BackfillSlugsAsync(int batchSize, bool dryRun)
+    {
+        int pageSize = Math.Min(batchSize <= 0 ? IgdbMaxPageSize : batchSize, IgdbMaxPageSize);
+
+        await using var context = await _contextFactory.CreateDbContextAsync();
+
+        List<long> ids = await context.IgdbGames.Where(g => g.Slug == null)
+                                       .OrderBy(g => g.IgdbId)
+                                       .Select(g => g.IgdbId)
+                                       .Take(pageSize)
+                                       .ToListAsync();
+
+        if(ids.Count == 0)
+        {
+            Console.WriteLine("  No games left needing a slug backfill.");
+
+            return 0;
+        }
+
+        string query = new ApicalypseQueryBuilder()
+                      .Fields("id,slug")
+                      .Where($"id = ({string.Join(",", ids)})")
+                      .Limit(pageSize)
+                      .Build();
+
+        using JsonDocument doc = await _client.QueryAsync("games", query);
+
+        var slugsById = doc.RootElement.EnumerateArray()
+                            .ToDictionary(e => e.GetProperty("id").GetInt64(),
+                                          e => e.TryGetProperty("slug", out var sl) &&
+                                               sl.ValueKind == JsonValueKind.String
+                                                   ? sl.GetString()
+                                                   : null);
+
+        if(!dryRun)
+        {
+            List<IgdbGame> games = await context.IgdbGames.Where(g => ids.Contains(g.IgdbId)).ToListAsync();
+
+            foreach(IgdbGame game in games)
+                game.Slug = slugsById.GetValueOrDefault(game.IgdbId) ?? string.Empty;
+
+            await context.SaveChangesAsync();
+        }
+
+        Console.WriteLine($"  Backfilled slugs for {ids.Count} games.");
+
+        return ids.Count;
     }
 }

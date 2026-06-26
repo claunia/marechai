@@ -13,6 +13,7 @@ using Marechai.ApiClient.Software.Item.Credits;
 using Marechai.ApiClient.Software.Item.CriticReviews;
 using Marechai.ApiClient.Software.Item.Description;
 using Marechai.ApiClient.Software.Item.Descriptions;
+using Marechai.ApiClient.Software.Item.ExternalIds;
 using Marechai.ApiClient.Software.Item.Genres;
 using Marechai.ApiClient.Software.Item.MarechaiScore;
 using Marechai.ApiClient.Software.Item.Merge;
@@ -101,6 +102,11 @@ namespace Marechai.ApiClient.Software.Item
         public global::Marechai.ApiClient.Software.Item.Descriptions.DescriptionsRequestBuilder Descriptions
         {
             get => new global::Marechai.ApiClient.Software.Item.Descriptions.DescriptionsRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The externalIds property</summary>
+        public global::Marechai.ApiClient.Software.Item.ExternalIds.ExternalIdsRequestBuilder ExternalIds
+        {
+            get => new global::Marechai.ApiClient.Software.Item.ExternalIds.ExternalIdsRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The genres property</summary>
         public global::Marechai.ApiClient.Software.Item.Genres.GenresRequestBuilder Genres

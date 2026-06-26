@@ -11,6 +11,7 @@ using Marechai.ApiClient.Countries;
 using Marechai.ApiClient.Currencies;
 using Marechai.ApiClient.Documents;
 using Marechai.ApiClient.Dumps;
+using Marechai.ApiClient.ExternalSites;
 using Marechai.ApiClient.Gpus;
 using Marechai.ApiClient.InstructionSetExtensions;
 using Marechai.ApiClient.InstructionSetExtensionsByProcessor;
@@ -132,6 +133,11 @@ namespace Marechai.ApiClient
         public global::Marechai.ApiClient.Dumps.DumpsRequestBuilder Dumps
         {
             get => new global::Marechai.ApiClient.Dumps.DumpsRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The externalSites property</summary>
+        public global::Marechai.ApiClient.ExternalSites.ExternalSitesRequestBuilder ExternalSites
+        {
+            get => new global::Marechai.ApiClient.ExternalSites.ExternalSitesRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The gpus property</summary>
         public global::Marechai.ApiClient.Gpus.GpusRequestBuilder Gpus

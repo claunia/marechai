@@ -72,7 +72,45 @@ public class StateService
             });
         }
 
+        await UpsertExternalIdAsync(context, mobyGameId, mobyNumericId ?? existing?.MobyNumericId, softwareId);
+
         await context.SaveChangesAsync();
+    }
+
+    /// <summary>
+    ///     Mirrors the (site, id) -&gt; Software link into the generic <see cref="SoftwareExternalId" />
+    ///     table alongside the MobyGames-specific state row above. Prefers MobyGames' numeric id (stable,
+    ///     always resolvable to a URL); falls back to the slug when the numeric id isn't known yet. If a
+    ///     row already exists under the slug and the numeric id later becomes available, it is upgraded
+    ///     in place rather than left stale. Caller's context/SaveChanges is reused.
+    /// </summary>
+    static async Task UpsertExternalIdAsync(MarechaiContext context, string mobyGameId, int? mobyNumericId,
+                                             ulong softwareId)
+    {
+        long? siteId = (await context.ExternalSites.FirstOrDefaultAsync(s => s.Name == "MobyGames"))?.Id;
+
+        if(siteId is null)
+            return;
+
+        string externalId = mobyNumericId?.ToString() ?? mobyGameId;
+
+        var existingExternalId =
+            await context.SoftwareExternalIds.FirstOrDefaultAsync(e => e.ExternalSiteId == siteId.Value &&
+                                                                        (e.ExternalId == externalId ||
+                                                                         e.ExternalId == mobyGameId));
+
+        if(existingExternalId != null)
+        {
+            existingExternalId.SoftwareId = softwareId;
+            existingExternalId.ExternalId = externalId;
+        }
+        else
+            context.SoftwareExternalIds.Add(new SoftwareExternalId
+            {
+                SoftwareId     = softwareId,
+                ExternalSiteId = siteId.Value,
+                ExternalId     = externalId
+            });
     }
 
     public async Task MarkImportedAsync(string mobyGameId, int batchNumber, ulong? softwareId,
@@ -105,6 +143,10 @@ public class StateService
                 MobyNumericId         = mobyNumericId
             });
         }
+
+        if(softwareId.HasValue)
+            await UpsertExternalIdAsync(context, mobyGameId, mobyNumericId ?? existing?.MobyNumericId,
+                                         softwareId.Value);
 
         await context.SaveChangesAsync();
     }

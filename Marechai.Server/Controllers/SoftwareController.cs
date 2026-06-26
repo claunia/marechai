@@ -2574,6 +2574,22 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                      .ToListAsync();
     }
 
+    [HttpGet("/software/{softwareId:ulong}/external-ids")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public Task<List<SoftwareExternalIdDto>> GetExternalIdsAsync(ulong softwareId) =>
+        context.SoftwareExternalIds.Where(e => e.SoftwareId == softwareId)
+               .OrderBy(e => e.Id)
+               .Select(e => new SoftwareExternalIdDto
+                {
+                    Id               = e.Id,
+                    SoftwareId       = e.SoftwareId,
+                    ExternalSiteId   = e.ExternalSiteId,
+                    ExternalSiteName = e.ExternalSite.Name,
+                    ExternalId       = e.ExternalId
+                })
+               .ToListAsync();
+
     [HttpGet("/software/{softwareId:ulong}/attributes")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]

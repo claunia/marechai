@@ -82,6 +82,20 @@ public class GameMatcher
                                  .OrderBy(g => g.ParentGameId.HasValue || g.VersionParentId.HasValue ? 1 : 0)
                                  .ToList();
 
+        long? igdbSiteId = dryRun
+                                ? null
+                                : (await context.ExternalSites.FirstOrDefaultAsync(s => s.Name == "IGDB"))?.Id;
+
+        HashSet<(long siteId, string externalId)> existingExternalIds = dryRun || igdbSiteId is null
+                                                                              ? []
+                                                                              : (await context.SoftwareExternalIds
+                                                                                  .Where(e => e.ExternalSiteId ==
+                                                                                      igdbSiteId.Value)
+                                                                                  .Select(e => e.ExternalId)
+                                                                                  .ToListAsync()).Select(
+                                                                                  id => (igdbSiteId.Value, id))
+                                                                             .ToHashSet();
+
         int matched     = 0;
         int needsReview = 0;
         int noMatch     = 0;
@@ -105,6 +119,21 @@ public class GameMatcher
                     igdbGame.MatchType   = result.matchType;
                     igdbGame.MatchScore  = result.score;
                     igdbGame.MatchedOn   = DateTime.UtcNow;
+
+                    if(igdbSiteId.HasValue)
+                    {
+                        string externalId = string.IsNullOrEmpty(igdbGame.Slug)
+                                                 ? igdbGame.IgdbId.ToString()
+                                                 : igdbGame.Slug;
+
+                        if(existingExternalIds.Add((igdbSiteId.Value, externalId)))
+                            context.SoftwareExternalIds.Add(new SoftwareExternalId
+                            {
+                                SoftwareId     = result.softwareId.Value,
+                                ExternalSiteId = igdbSiteId.Value,
+                                ExternalId     = externalId
+                            });
+                    }
                 }
                 else if(result.candidates is { Count: > 0 })
                 {

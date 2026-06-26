@@ -13,6 +13,12 @@ public class IgdbGame : BaseModel<long>
     [StringLength(255)]
     public string Name { get; set; }
 
+    /// <summary>IGDB's URL-safe <c>slug</c> field, used to build a working public link
+    /// (<c>https://www.igdb.com/games/{slug}</c>); the numeric <see cref="IgdbId" /> alone cannot be
+    /// resolved to a working IGDB URL.</summary>
+    [StringLength(255)]
+    public string Slug { get; set; }
+
     /// <summary>
     ///     FK to <see cref="IgdbGameType" />, IGDB's <c>game_type</c> field. This is itself a lookup entity on
     ///     IGDB's side (<c>/game_types</c>), not a fixed enum. <c>category</c> is deprecated by IGDB and must not

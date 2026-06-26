@@ -195,6 +195,8 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<SoftwareDescription>                  SoftwareDescriptions                 { get; set; }
     public virtual DbSet<SoftwareAlternativeTitle>              SoftwareAlternativeTitles            { get; set; }
     public virtual DbSet<SoftwareAlternativeTitleCommentTranslation> SoftwareAlternativeTitleCommentTranslations { get; set; }
+    public virtual DbSet<ExternalSite>                        ExternalSites                        { get; set; }
+    public virtual DbSet<SoftwareExternalId>                  SoftwareExternalIds                  { get; set; }
     public virtual DbSet<SoundByMachine>                      SoundByMachine                      { get; set; }
     public virtual DbSet<SoundSynth>                          SoundSynths                         { get; set; }
     public virtual DbSet<StandaloneFile>                      StandaloneFiles                     { get; set; }
@@ -2593,6 +2595,32 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .WithMany(s => s.AlternativeTitles)
                   .HasForeignKey(e => e.SoftwareId)
                   .HasConstraintName("fk_software_alternative_titles_software")
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<ExternalSite>(entity =>
+        {
+            entity.HasIndex(e => e.Name).IsUnique().HasDatabaseName("idx_external_sites_name");
+        });
+
+        modelBuilder.Entity<SoftwareExternalId>(entity =>
+        {
+            entity.HasIndex(e => new { e.ExternalSiteId, e.ExternalId })
+                  .IsUnique()
+                  .HasDatabaseName("idx_software_external_ids_site_external_id");
+
+            entity.HasIndex(e => e.SoftwareId).HasDatabaseName("idx_software_external_ids_software");
+
+            entity.HasOne(e => e.Software)
+                  .WithMany(s => s.ExternalIds)
+                  .HasForeignKey(e => e.SoftwareId)
+                  .HasConstraintName("fk_software_external_ids_software")
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.ExternalSite)
+                  .WithMany(s => s.SoftwareExternalIds)
+                  .HasForeignKey(e => e.ExternalSiteId)
+                  .HasConstraintName("fk_software_external_ids_external_site")
                   .OnDelete(DeleteBehavior.Cascade);
         });
 
