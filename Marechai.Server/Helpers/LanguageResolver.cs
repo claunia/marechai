@@ -82,7 +82,6 @@ public static class LanguageResolver
                 "de" => "deu",
                 "fr" => "fra",
                 "it" => "ita",
-                "nl" => "nld",
                 "pt" => "por",
                 _    => null
             };

@@ -76,8 +76,6 @@ public sealed class DescriptionTranslationWorker(TranslationService             
             "*(ceci est une traduction automatique\u00a0; vous pouvez nous aider en signalant des erreurs ou en proposant une meilleure traduction)*",
         ["ita"] =
             "*(questa è una traduzione automatica; puoi aiutarci segnalando errori o contribuendo con una traduzione migliore)*",
-        ["nld"] =
-            "*(dit is een automatische vertaling; je kunt ons helpen door fouten te melden of mee te werken aan een betere vertaling)*",
         ["lat"] =
             "*(haec versio automatica est; nos adiuvare potes errores reperiendo aut meliorem versionem conferendo)*",
         ["por"] =

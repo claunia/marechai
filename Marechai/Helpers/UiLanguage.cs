@@ -58,7 +58,6 @@ public static class UiLanguage
         "de" => "deu",
         "fr" => "fra",
         "it" => "ita",
-        "nl" => "nld",
         "pt" => "por",
         _    => "eng"
     };

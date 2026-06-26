@@ -690,7 +690,6 @@ public class SoftwareBrowsingService
             "de" => "deu",
             "fr" => "fra",
             "it" => "ita",
-            "nl" => "nld",
             "la" => "lat",
             "pt" => "por",
             _    => "eng"

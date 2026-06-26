@@ -67,7 +67,6 @@ public static class SeoMeta
         "de" => "de_DE",
         "fr" => "fr_FR",
         "it" => "it_IT",
-        "nl" => "nl_NL",
         "la" => "la_VA",
         "pt" => "pt_BR",
         _    => "en_US"
