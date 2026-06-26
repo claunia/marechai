@@ -20,6 +20,7 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
     private readonly SoftwareService                    _service;
     private readonly Client                              _apiClient;
     private readonly SoftwareFamiliesService            _familiesService;
+    private readonly ExternalSitesService               _externalSitesService;
     private readonly IJwtService                        _jwtService;
     private readonly IStringLocalizer                   _localizer;
     private readonly ILogger<AdminSoftwareViewModel>    _logger;
@@ -56,10 +57,17 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
     [ObservableProperty] private SoftwareRoleDto?                            _selectedRoleToAdd;
     [ObservableProperty] private ObservableCollection<SoftwareRoleDto>        _roles = [];
 
+    // External ids
+    [ObservableProperty] private ObservableCollection<SoftwareExternalIdDto> _externalIds = [];
+    [ObservableProperty] private ObservableCollection<ExternalSiteDto>       _externalSites = [];
+    [ObservableProperty] private ExternalSiteDto?                           _selectedExternalSiteToAdd;
+    [ObservableProperty] private string                                     _externalIdValueToAdd = string.Empty;
+
     private int?                        _editingId;
     private List<SoftwareDto>?          _allSoftware;
     private List<SoftwareFamilyDto>?    _allFamilies;
     private List<CompanyDto>?           _allCompanies;
+    private List<ExternalSiteDto>?      _allExternalSites;
 
     // Description editing
     [ObservableProperty] private bool                                             _isEditingDescription;
@@ -72,20 +80,22 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
     public AdminSoftwareViewModel(SoftwareService                   service,
                                   Client                             apiClient,
                                   SoftwareFamiliesService           familiesService,
+                                  ExternalSitesService              externalSitesService,
                                   IJwtService                       jwtService,
                                   ITokenService                     tokenService,
                                   ILogger<AdminSoftwareViewModel>   logger,
                                   IStringLocalizer                  localizer,
                                   IRegionManager                    regionManager)
     {
-        _service         = service;
-        _apiClient       = apiClient;
-        _familiesService = familiesService;
-        _jwtService      = jwtService;
-        _tokenService    = tokenService;
-        _logger          = logger;
-        _localizer       = localizer;
-        _regionManager   = regionManager;
+        _service              = service;
+        _apiClient             = apiClient;
+        _familiesService       = familiesService;
+        _externalSitesService  = externalSitesService;
+        _jwtService            = jwtService;
+        _tokenService          = tokenService;
+        _logger                = logger;
+        _localizer             = localizer;
+        _regionManager         = regionManager;
 
         LoadCommand         = new AsyncRelayCommand(LoadAsync);
         OpenAddCommand      = new RelayCommand(OpenAdd);
@@ -95,6 +105,8 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
         CancelEditCommand   = new RelayCommand(CancelEdit);
         AddCompanyRoleCommand       = new AsyncRelayCommand(AddCompanyRoleAsync);
         RemoveCompanyRoleByDisplayCommand = new AsyncRelayCommand<string>(RemoveCompanyRoleByDisplayAsync);
+        AddExternalIdCommand        = new AsyncRelayCommand(AddExternalIdAsync);
+        RemoveExternalIdCommand     = new AsyncRelayCommand<SoftwareExternalIdDto>(RemoveExternalIdAsync);
         OpenVersionsCommand = new RelayCommand<SoftwareDto>(OpenVersions);
         OpenDescriptionCommand     = new AsyncRelayCommand<SoftwareDto>(OpenDescriptionAsync);
         SaveDescriptionCommand     = new AsyncRelayCommand(SaveDescriptionAsync);
@@ -114,6 +126,8 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
     public IRelayCommand                     CancelEditCommand { get; }
     public IAsyncRelayCommand                AddCompanyRoleCommand { get; }
     public IAsyncRelayCommand<string>        RemoveCompanyRoleByDisplayCommand { get; }
+    public IAsyncRelayCommand                              AddExternalIdCommand    { get; }
+    public IAsyncRelayCommand<SoftwareExternalIdDto>       RemoveExternalIdCommand { get; }
     public IRelayCommand<SoftwareDto>        OpenVersionsCommand { get; }
     public IAsyncRelayCommand<SoftwareDto>              OpenDescriptionCommand   { get; }
     public IAsyncRelayCommand                           SaveDescriptionCommand   { get; }
@@ -183,6 +197,14 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
             foreach(SoftwareRoleDto r in rolesResponse) Roles.Add(r);
         }
         catch(Exception ex) { _logger.LogError(ex, "Error loading software roles"); }
+
+        try
+        {
+            _allExternalSites = await _externalSitesService.GetAllAsync();
+            ExternalSites.Clear();
+            foreach(ExternalSiteDto s in _allExternalSites) ExternalSites.Add(s);
+        }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading external sites for picker"); }
     }
 
     private void OpenAdd()
@@ -225,6 +247,7 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
         IsEditing = true;
 
         await LoadCompanyRolesAsync(item.Id.Value);
+        await LoadExternalIdsAsync(item.Id.Value);
     }
 
     private async Task DeleteAsync(SoftwareDto? item)
@@ -382,6 +405,47 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
         }
     }
 
+    // --- External ids ---
+    private async Task LoadExternalIdsAsync(int softwareId)
+    {
+        ExternalIds.Clear();
+        try
+        {
+            List<SoftwareExternalIdDto> items = await _service.GetExternalIdsAsync(softwareId);
+            foreach(SoftwareExternalIdDto item in items) ExternalIds.Add(item);
+        }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading external ids for software {Id}", softwareId); }
+    }
+
+    private async Task AddExternalIdAsync()
+    {
+        if(_editingId == null || SelectedExternalSiteToAdd?.Id == null ||
+           string.IsNullOrWhiteSpace(ExternalIdValueToAdd)) return;
+
+        try
+        {
+            var dto = new SoftwareExternalIdDto
+            {
+                SoftwareId     = _editingId.Value,
+                ExternalSiteId = SelectedExternalSiteToAdd.Id.Value,
+                ExternalId     = ExternalIdValueToAdd.Trim()
+            };
+            await _service.AddExternalIdAsync(dto);
+            await LoadExternalIdsAsync(_editingId.Value);
+            SelectedExternalSiteToAdd = null;
+            ExternalIdValueToAdd      = string.Empty;
+        }
+        catch(Exception ex) { _logger.LogError(ex, "Error adding external id to software"); }
+    }
+
+    private async Task RemoveExternalIdAsync(SoftwareExternalIdDto? item)
+    {
+        if(item?.Id == null || _editingId == null) return;
+
+        await _service.RemoveExternalIdAsync(item.Id.Value);
+        await LoadExternalIdsAsync(_editingId.Value);
+    }
+
     private void ClearForm()
     {
         SoftwareName      = string.Empty;
@@ -394,6 +458,9 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
         SelectedCompanyToAdd = null;
         CompanySearchText = string.Empty;
         SelectedRoleToAdd = null;
+        ExternalIds.Clear();
+        SelectedExternalSiteToAdd = null;
+        ExternalIdValueToAdd      = string.Empty;
         HasError = false; ErrorMessage = string.Empty;
     }
 

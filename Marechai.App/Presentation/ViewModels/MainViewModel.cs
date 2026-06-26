@@ -64,6 +64,7 @@ public partial class MainViewModel : ObservableObject
     public string SoftwareReleaseManagementButtonText    => _localizer["SoftwareReleaseManagementButton"];
     public string SoftwareScreenshotManagementButtonText => _localizer["SoftwareScreenshotManagementButton"];
     public string SoftwarePlatformManagementButtonText => _localizer["SoftwarePlatformManagementButton"];
+    public string ExternalSiteManagementButtonText     => _localizer["ExternalSiteManagementButton"];
     public string SoftwareFamilyManagementButtonText  => _localizer["SoftwareFamilyManagementButton"];
     public string SettingsButtonText             => _localizer["SettingsButton"];
     public string AdminSidebarTitleText          => _localizer["AdminSidebarTitle"];
@@ -124,6 +125,7 @@ public partial class MainViewModel : ObservableObject
         NavigateToAdminSoftwareReleasesCommand              = new RelayCommand(() => NavigateTo(nameof(AdminSoftwareReleasesPage)));
         NavigateToAdminSoftwareScreenshotsCommand             = new RelayCommand(() => NavigateTo(nameof(AdminSoftwareScreenshotsPage)));
         NavigateToAdminSoftwarePlatformsCommand             = new RelayCommand(() => NavigateTo(nameof(AdminSoftwarePlatformsPage)));
+        NavigateToAdminExternalSitesCommand                 = new RelayCommand(() => NavigateTo(nameof(AdminExternalSitesPage)));
         NavigateToAdminSoftwareFamiliesCommand              = new RelayCommand(() => NavigateTo(nameof(AdminSoftwareFamiliesPage)));
         NavigateToSettingsCommand                 = new RelayCommand(() => NavigateTo(nameof(SettingsPage)));
         LoginLogoutCommand                        = new RelayCommand(HandleLoginLogout);
@@ -176,6 +178,7 @@ public partial class MainViewModel : ObservableObject
     public ICommand NavigateToAdminSoftwareReleasesCommand    { get; }
     public ICommand NavigateToAdminSoftwareScreenshotsCommand { get; }
     public ICommand NavigateToAdminSoftwarePlatformsCommand   { get; }
+    public ICommand NavigateToAdminExternalSitesCommand       { get; }
     public ICommand NavigateToAdminSoftwareFamiliesCommand    { get; }
     public ICommand NavigateToSettingsCommand                 { get; }
     public ICommand LoginLogoutCommand                        { get; }

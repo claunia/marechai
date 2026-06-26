@@ -177,6 +177,45 @@
                                                 </ItemsRepeater.ItemTemplate>
                                             </ItemsRepeater>
                                         </StackPanel>
+
+                                        <!-- External IDs (edit only) -->
+                                        <StackPanel Visibility="{Binding IsEditingExisting, Converter={StaticResource BoolToVisibilityConverter}}" Spacing="8">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ExternalIdsHeader}" FontSize="14" FontWeight="SemiBold" Margin="0,8,0,0" />
+                                            <Grid ColumnSpacing="4">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <ComboBox Grid.Column="0" ItemsSource="{Binding ExternalSites}"
+                                                          SelectedItem="{Binding SelectedExternalSiteToAdd, Mode=TwoWay}" DisplayMemberPath="Name"
+                                                          PlaceholderText="{Binding Source={StaticResource Strings}, Path=ExternalSiteLabel}" HorizontalAlignment="Stretch" />
+                                                <TextBox Grid.Column="1"
+                                                         Text="{Binding ExternalIdValueToAdd, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                         PlaceholderText="{Binding Source={StaticResource Strings}, Path=ExternalIdValueLabel}" />
+                                                <Button Grid.Column="2" Content="+" Command="{Binding AddExternalIdCommand}" VerticalAlignment="Bottom" Padding="10,6" />
+                                            </Grid>
+                                            <ItemsRepeater ItemsSource="{Binding ExternalIds}">
+                                                <ItemsRepeater.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Grid Margin="0,2" ColumnSpacing="8">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" VerticalAlignment="Center">
+                                                                <Run Text="{Binding ExternalSiteName}" />
+                                                                <Run Text=": " />
+                                                                <Run Text="{Binding ExternalId}" />
+                                                            </TextBlock>
+                                                            <Button Grid.Column="1" Content="{Binding Source={StaticResource Strings}, Path=DeleteButton}"
+                                                                    Command="{Binding DataContext.RemoveExternalIdCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
+                                                                    Foreground="{ThemeResource SystemErrorTextColor}" Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ItemsRepeater.ItemTemplate>
+                                            </ItemsRepeater>
+                                        </StackPanel>
                                     </StackPanel>
                                 </ScrollViewer>
 

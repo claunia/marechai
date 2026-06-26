@@ -1943,6 +1943,22 @@
   <data name="FailedToLoadSoftwarePlatforms" xml:space="preserve"><value>Échec du chargement des plateformes logicielles.</value></data>
   <data name="FailedToDeleteSoftwarePlatform" xml:space="preserve"><value>Échec de la suppression de la plateforme logicielle.</value></data>
   <data name="FailedToSaveSoftwarePlatform" xml:space="preserve"><value>Échec de l'enregistrement de la plateforme logicielle.</value></data>
+  <data name="ExternalSiteManagementTitle" xml:space="preserve"><value>Gestion des sites externes</value></data>
+  <data name="ExternalSiteManagementSubtitle" xml:space="preserve"><value>Gérer les sites web externes de catalogage (ex. MobyGames, IGDB)</value></data>
+  <data name="ExternalSiteMgmtAccessDeniedTitle" xml:space="preserve"><value>Accès refusé</value></data>
+  <data name="ExternalSiteMgmtAccessDeniedMessage" xml:space="preserve"><value>Vous devez disposer de privilèges d'administrateur pour gérer les sites externes.</value></data>
+  <data name="ExternalSiteSearchPlaceholder" xml:space="preserve"><value>Rechercher des sites...</value></data>
+  <data name="AddExternalSiteButton" xml:space="preserve"><value>Ajouter un site</value></data>
+  <data name="ExternalSiteManagementButton" xml:space="preserve"><value>Sites externes</value></data>
+  <data name="AddExternalSiteDialog_Title" xml:space="preserve"><value>Ajouter un site externe</value></data>
+  <data name="EditExternalSiteDialog_Title" xml:space="preserve"><value>Modifier le site externe</value></data>
+  <data name="FailedToLoadExternalSites" xml:space="preserve"><value>Échec du chargement des sites externes.</value></data>
+  <data name="FailedToDeleteExternalSite" xml:space="preserve"><value>Échec de la suppression du site externe.</value></data>
+  <data name="FailedToSaveExternalSite" xml:space="preserve"><value>Échec de l'enregistrement du site externe.</value></data>
+  <data name="UrlTemplateLabel" xml:space="preserve"><value>Modèle d'URL</value></data>
+  <data name="ExternalIdsHeader" xml:space="preserve"><value>IDs externes</value></data>
+  <data name="ExternalSiteLabel" xml:space="preserve"><value>Site</value></data>
+  <data name="ExternalIdValueLabel" xml:space="preserve"><value>ID</value></data>
   <data name="FailedToUploadLogo" xml:space="preserve"><value>Échec du téléchargement du logo.</value></data>
   <data name="FailedToRemoveLogo" xml:space="preserve"><value>Échec de la suppression du logo.</value></data>
   <data name="LogoLabel" xml:space="preserve"><value>Logo</value></data>

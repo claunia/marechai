@@ -298,6 +298,18 @@
                         BorderThickness="0"
                         CornerRadius="0" />
 
+                <!-- External Site Management -->
+                <Button Content="{Binding ExternalSiteManagementButtonText}"
+                        Command="{Binding NavigateToAdminExternalSitesCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{StaticResource AdminSidebarForeground}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
+
                 <!-- Software Family Management -->
                 <Button Content="{Binding SoftwareFamilyManagementButtonText}"
                         Command="{Binding NavigateToAdminSoftwareFamiliesCommand}"

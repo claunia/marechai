@@ -147,6 +147,56 @@ public class SoftwareService
         }
     }
 
+    // --- External Ids ---
+
+    public async Task<List<SoftwareExternalIdDto>> GetExternalIdsAsync(int softwareId)
+    {
+        try
+        {
+            List<SoftwareExternalIdDto>? items = await _apiClient.Software[softwareId].ExternalIds.GetAsync();
+
+            return items ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching external ids for software {SoftwareId}", softwareId);
+
+            return [];
+        }
+    }
+
+    public async Task<bool> AddExternalIdAsync(SoftwareExternalIdDto dto)
+    {
+        try
+        {
+            await _apiClient.Software.ExternalIds.PostAsync(dto);
+
+            return true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error adding external id to software");
+
+            return false;
+        }
+    }
+
+    public async Task<bool> RemoveExternalIdAsync(long id)
+    {
+        try
+        {
+            await _apiClient.Software.ExternalIds[id].DeleteAsync();
+
+            return true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error removing external id {Id} from software", id);
+
+            return false;
+        }
+    }
+
     // --- Software Roles (lookup) ---
 
     public async Task<List<SoftwareRoleDto>> GetRolesAsync()

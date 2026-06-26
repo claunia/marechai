@@ -2302,6 +2302,22 @@
   <data name="FailedToLoadSoftwarePlatforms" xml:space="preserve"><value>Failed to load software platforms.</value></data>
   <data name="FailedToDeleteSoftwarePlatform" xml:space="preserve"><value>Failed to delete software platform.</value></data>
   <data name="FailedToSaveSoftwarePlatform" xml:space="preserve"><value>Failed to save software platform.</value></data>
+  <data name="ExternalSiteManagementTitle" xml:space="preserve"><value>External Site Management</value></data>
+  <data name="ExternalSiteManagementSubtitle" xml:space="preserve"><value>Manage external cataloging websites (e.g., MobyGames, IGDB)</value></data>
+  <data name="ExternalSiteMgmtAccessDeniedTitle" xml:space="preserve"><value>Access Denied</value></data>
+  <data name="ExternalSiteMgmtAccessDeniedMessage" xml:space="preserve"><value>You need administrator privileges to manage external sites.</value></data>
+  <data name="ExternalSiteSearchPlaceholder" xml:space="preserve"><value>Search sites...</value></data>
+  <data name="AddExternalSiteButton" xml:space="preserve"><value>Add Site</value></data>
+  <data name="ExternalSiteManagementButton" xml:space="preserve"><value>External Sites</value></data>
+  <data name="AddExternalSiteDialog_Title" xml:space="preserve"><value>Add External Site</value></data>
+  <data name="EditExternalSiteDialog_Title" xml:space="preserve"><value>Edit External Site</value></data>
+  <data name="FailedToLoadExternalSites" xml:space="preserve"><value>Failed to load external sites.</value></data>
+  <data name="FailedToDeleteExternalSite" xml:space="preserve"><value>Failed to delete external site.</value></data>
+  <data name="FailedToSaveExternalSite" xml:space="preserve"><value>Failed to save external site.</value></data>
+  <data name="UrlTemplateLabel" xml:space="preserve"><value>URL Template</value></data>
+  <data name="ExternalIdsHeader" xml:space="preserve"><value>External IDs</value></data>
+  <data name="ExternalSiteLabel" xml:space="preserve"><value>Site</value></data>
+  <data name="ExternalIdValueLabel" xml:space="preserve"><value>ID</value></data>
   <data name="FailedToUploadLogo" xml:space="preserve"><value>Failed to upload logo.</value></data>
   <data name="FailedToRemoveLogo" xml:space="preserve"><value>Failed to remove logo.</value></data>
   <data name="LogoLabel" xml:space="preserve"><value>Logo</value></data>
