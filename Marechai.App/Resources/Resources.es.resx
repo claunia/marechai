@@ -2647,6 +2647,12 @@
   <data name="CriticReviewsUnscored" xml:space="preserve"><value>Sin puntuación</value></data>
   <data name="CriticReviewsFullReviewLink" xml:space="preserve"><value>Reseña completa</value></data>
   <data name="CriticReviewsOverallFormat" xml:space="preserve"><value>General: {0:F0}% ({1} reseñas)</value></data>
+  <data name="UserReviewsLabel" xml:space="preserve"><value>Reseñas de usuarios</value></data>
+  <data name="UserReviewsAnonymous" xml:space="preserve"><value>Anónimo</value></data>
+  <data name="UserReviewsTheGood" xml:space="preserve"><value>Lo bueno</value></data>
+  <data name="UserReviewsTheBad" xml:space="preserve"><value>Lo malo</value></data>
+  <data name="UserReviewsTheUgly" xml:space="preserve"><value>Lo feo</value></data>
+  <data name="UserReviewsOverallFormat" xml:space="preserve"><value>General: {0:F1}/5 ({1} reseñas)</value></data>
   <data name="PromoArt" xml:space="preserve"><value>Arte promocional</value></data>
   <data name="OtherPromoArt" xml:space="preserve"><value>Otro (arte promocional)</value></data>
   <data name="NoPromoArtForThisMachineYet" xml:space="preserve"><value>Todavía no hay arte promocional para esta máquina.</value></data>

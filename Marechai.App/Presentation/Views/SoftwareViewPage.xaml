@@ -1176,6 +1176,154 @@
                         </ItemsControl>
                     </StackPanel>
 
+                    <!-- User Reviews -->
+                    <StackPanel Visibility="{Binding ShowUserReviews}"
+                                Spacing="12">
+                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=UserReviewsLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="8"
+                                    Visibility="{Binding UserReviewsOverallText, Converter={StaticResource StringToVisibilityConverter}}">
+                            <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                                    CornerRadius="12"
+                                    Padding="10,4">
+                                <TextBlock Text="{Binding UserReviewsOverallText}"
+                                           FontSize="12"
+                                           FontWeight="SemiBold" />
+                            </Border>
+                        </StackPanel>
+
+                        <ItemsControl ItemsSource="{Binding UserReviews}"
+                                      HorizontalAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="0"
+                                                HorizontalAlignment="Stretch" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="8"
+                                            Padding="16,12"
+                                            Margin="0,0,0,8">
+                                        <StackPanel Spacing="6">
+                                            <Grid ColumnSpacing="8">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <Grid Grid.Column="0"
+                                                      Width="28"
+                                                      Height="28"
+                                                      CornerRadius="14"
+                                                      Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                                                      Visibility="{Binding ShowReviewerName, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                    <TextBlock Text="{Binding InitialLetter}"
+                                                               FontSize="12"
+                                                               FontWeight="SemiBold"
+                                                               HorizontalAlignment="Center"
+                                                               VerticalAlignment="Center" />
+                                                    <Image Source="{Binding AvatarUrl}"
+                                                           Visibility="{Binding HasAvatar, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                           Stretch="UniformToFill" />
+                                                </Grid>
+
+                                                <StackPanel Grid.Column="1"
+                                                            Orientation="Horizontal"
+                                                            Spacing="8">
+                                                    <TextBlock Text="{Binding DisplayName}"
+                                                               FontSize="13"
+                                                               FontWeight="SemiBold"
+                                                               Visibility="{Binding ShowReviewerName, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=UserReviewsAnonymous}"
+                                                               FontSize="13"
+                                                               FontStyle="Italic"
+                                                               Foreground="{ThemeResource SystemBaseMediumColor}"
+                                                               Visibility="{Binding ShowReviewerName, Converter={StaticResource InvertBoolToVisibilityConverter}}" />
+                                                    <TextBlock Text="{Binding RatingText}"
+                                                               FontSize="12"
+                                                               Foreground="{ThemeResource SystemAccentColor}"
+                                                               Visibility="{Binding HasRating, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                                </StackPanel>
+
+                                                <TextBlock Grid.Column="2"
+                                                           Text="{Binding FormattedDate}"
+                                                           FontSize="11"
+                                                           Foreground="{ThemeResource SystemBaseMediumColor}"
+                                                           VerticalAlignment="Top"
+                                                           Visibility="{Binding HasFormattedDate, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                            </Grid>
+
+                                            <StackPanel Spacing="2"
+                                                        Visibility="{Binding HasTheGood, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=UserReviewsTheGood}"
+                                                           FontSize="11"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="SeaGreen" />
+                                                <TextBlock Text="{Binding TheGood}"
+                                                           FontSize="12"
+                                                           TextWrapping="WrapWholeWords" />
+                                            </StackPanel>
+
+                                            <StackPanel Spacing="2"
+                                                        Visibility="{Binding HasTheBad, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=UserReviewsTheBad}"
+                                                           FontSize="11"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="IndianRed" />
+                                                <TextBlock Text="{Binding TheBad}"
+                                                           FontSize="12"
+                                                           TextWrapping="WrapWholeWords" />
+                                            </StackPanel>
+
+                                            <StackPanel Spacing="2"
+                                                        Visibility="{Binding HasTheUgly, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=UserReviewsTheUgly}"
+                                                           FontSize="11"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="DarkOrange" />
+                                                <TextBlock Text="{Binding TheUgly}"
+                                                           FontSize="12"
+                                                           TextWrapping="WrapWholeWords" />
+                                            </StackPanel>
+
+                                            <StackPanel Orientation="Horizontal"
+                                                        Spacing="16">
+                                                <StackPanel Orientation="Horizontal"
+                                                            Spacing="4">
+                                                    <FontIcon Glyph="&#xE8E1;"
+                                                              FontSize="12"
+                                                              Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                                    <TextBlock Text="{Binding ThumbsUp}"
+                                                               FontSize="11"
+                                                               Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal"
+                                                            Spacing="4">
+                                                    <FontIcon Glyph="&#xE8E0;"
+                                                              FontSize="12"
+                                                              Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                                    <TextBlock Text="{Binding ThumbsDown}"
+                                                               FontSize="11"
+                                                               Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
                 </StackPanel>
             </ScrollViewer>
 

@@ -3014,6 +3014,12 @@
   <data name="CriticReviewsUnscored" xml:space="preserve"><value>Unscored</value></data>
   <data name="CriticReviewsFullReviewLink" xml:space="preserve"><value>Full Review</value></data>
   <data name="CriticReviewsOverallFormat" xml:space="preserve"><value>Overall: {0:F0}% ({1} reviews)</value></data>
+  <data name="UserReviewsLabel" xml:space="preserve"><value>User Reviews</value></data>
+  <data name="UserReviewsAnonymous" xml:space="preserve"><value>Anonymous</value></data>
+  <data name="UserReviewsTheGood" xml:space="preserve"><value>The Good</value></data>
+  <data name="UserReviewsTheBad" xml:space="preserve"><value>The Bad</value></data>
+  <data name="UserReviewsTheUgly" xml:space="preserve"><value>The Ugly</value></data>
+  <data name="UserReviewsOverallFormat" xml:space="preserve"><value>Overall: {0:F1}/5 ({1} reviews)</value></data>
   <data name="PromoArt" xml:space="preserve"><value>Promo Art</value></data>
   <data name="OtherPromoArt" xml:space="preserve"><value>Other (promo art)</value></data>
   <data name="NoPromoArtForThisMachineYet" xml:space="preserve"><value>No promo art for this machine yet.</value></data>

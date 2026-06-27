@@ -78,6 +78,44 @@ public class SoftwareBrowsingService
         }
     }
 
+    public async Task<List<SoftwareUserReviewDto>> GetUserReviewsBySoftwareAsync(int softwareId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching user reviews for software {SoftwareId}", softwareId);
+
+            List<SoftwareUserReviewDto>? reviews = await _apiClient.Software[softwareId].UserReviews.GetAsync();
+
+            _logger.LogInformation("Successfully fetched {Count} user reviews for software {SoftwareId}",
+                                    reviews?.Count ?? 0,
+                                    softwareId);
+
+            return reviews ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching user reviews for software {SoftwareId}", softwareId);
+
+            return [];
+        }
+    }
+
+    public async Task<UserReviewSummaryDto?> GetUserReviewSummaryBySoftwareAsync(int softwareId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching user review summary for software {SoftwareId}", softwareId);
+
+            return await _apiClient.Software[softwareId].UserRatings.Summary.GetAsync();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching user review summary for software {SoftwareId}", softwareId);
+
+            return null;
+        }
+    }
+
     public async Task<int> GetSoftwareCountAsync()
     {
         try

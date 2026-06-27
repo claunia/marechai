@@ -146,6 +146,12 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     private string? _criticReviewsOverallText;
 
     [ObservableProperty]
+    private Visibility _showUserReviews = Visibility.Collapsed;
+
+    [ObservableProperty]
+    private string? _userReviewsOverallText;
+
+    [ObservableProperty]
     private Visibility _showCredits = Visibility.Collapsed;
 
     [ObservableProperty]
@@ -187,6 +193,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     public ObservableCollection<MachineVideoDisplayItem>  Videos              { get; } = [];
     public ObservableCollection<CriticReviewDisplayItem>  CriticReviews       { get; } = [];
     public ObservableCollection<string>                   CriticReviewsByPlatform { get; } = [];
+    public ObservableCollection<UserReviewDisplayItem>    UserReviews         { get; } = [];
 
     public int  PromoArtCount => PromoArtGroups.Sum(group => group.Items.Count);
     public bool HasPromoArt   => PromoArtCount > 0;
@@ -525,6 +532,9 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
             // Load critic reviews
             await LoadCriticReviewsAsync(softwareId);
 
+            // Load user reviews
+            await LoadUserReviewsAsync(softwareId);
+
             // Load localized description
             try
             {
@@ -818,6 +828,48 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
         }
     }
 
+    private async Task LoadUserReviewsAsync(int softwareId)
+    {
+        try
+        {
+            UserReviews.Clear();
+            UserReviewsOverallText = null;
+
+            List<SoftwareUserReviewDto> reviewList = await _browsingService.GetUserReviewsBySoftwareAsync(softwareId);
+
+            foreach(SoftwareUserReviewDto review in reviewList)
+            {
+                UserReviews.Add(new UserReviewDisplayItem
+                {
+                    DisplayName   = review.DisplayName,
+                    UserName      = review.UserName,
+                    AvatarUrl     = review.AvatarUrl,
+                    IsAnonymous   = review.IsAnonymous ?? false,
+                    Rating        = review.Rating,
+                    TheGood       = review.TheGood,
+                    TheBad        = review.TheBad,
+                    TheUgly       = review.TheUgly,
+                    ThumbsUp      = review.ThumbsUp ?? 0,
+                    ThumbsDown    = review.ThumbsDown ?? 0,
+                    FormattedDate = review.CreatedOn?.DateTime.ToString("yyyy-MM-dd") ?? string.Empty
+                });
+            }
+
+            UserReviewSummaryDto? summary = await _browsingService.GetUserReviewSummaryBySoftwareAsync(softwareId);
+
+            if(summary?.AverageRating is not null)
+            {
+                UserReviewsOverallText = string.Format(_localizer["UserReviewsOverallFormat"],
+                                                         summary.AverageRating.Value,
+                                                         summary.TotalReviews ?? 0);
+            }
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading user reviews for software {SoftwareId}", softwareId);
+        }
+    }
+
     private static string FormatReviewDate(SoftwareCriticReviewDto review)
     {
         if(!review.ReviewDate.HasValue) return string.Empty;
@@ -951,6 +1003,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
         ShowPromoArt    = PromoArtGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowVideos      = Videos.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowCriticReviews = CriticReviews.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+        ShowUserReviews   = UserReviews.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowCredits     = CreditGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowDescription = HasDescription ? Visibility.Visible : Visibility.Collapsed;
 
