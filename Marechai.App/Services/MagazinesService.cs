@@ -100,6 +100,54 @@ public class MagazinesService
         }
     }
 
+    public async Task<List<int?>> GetIssueYearsAsync(long magazineId)
+    {
+        try
+        {
+            List<int?>? years = await _apiClient.Magazines[magazineId].IssueYears.GetAsync();
+
+            return years ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching issue years for magazine {Id}", magazineId);
+
+            return [];
+        }
+    }
+
+    public async Task<List<MagazineIssueDto>> GetIssuesByYearAsync(long magazineId, int year)
+    {
+        try
+        {
+            List<MagazineIssueDto>? issues = await _apiClient.Magazines[magazineId].Issues.ByYear[year].GetAsync();
+
+            return issues ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching issues for magazine {Id} year {Year}", magazineId, year);
+
+            return [];
+        }
+    }
+
+    public async Task<List<MagazineIssueDto>> GetIssuesNoYearAsync(long magazineId)
+    {
+        try
+        {
+            List<MagazineIssueDto>? issues = await _apiClient.Magazines[magazineId].Issues.NoYear.GetAsync();
+
+            return issues ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching no-year issues for magazine {Id}", magazineId);
+
+            return [];
+        }
+    }
+
     public async Task<MagazineIssueFullDto?> GetIssueFullAsync(long issueId)
     {
         try

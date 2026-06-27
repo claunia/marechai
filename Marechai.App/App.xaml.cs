@@ -243,6 +243,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<MagazinesListViewModel>();
         containerRegistry.Register<MagazineViewViewModel>();
         containerRegistry.Register<MagazineIssueViewViewModel>();
+        containerRegistry.Register<MagazineIssuesByYearViewModel>();
         containerRegistry.Register<PeopleViewModel>();
         containerRegistry.Register<PeopleListViewModel>();
         containerRegistry.Register<PersonViewViewModel>();
@@ -322,6 +323,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<MagazinesListPage, MagazinesListViewModel>();
         containerRegistry.RegisterForNavigation<MagazineViewPage, MagazineViewViewModel>();
         containerRegistry.RegisterForNavigation<MagazineIssueViewPage, MagazineIssueViewViewModel>();
+        containerRegistry.RegisterForNavigation<MagazineIssuesByYearPage, MagazineIssuesByYearViewModel>();
         containerRegistry.RegisterForNavigation<PeoplePage, PeopleViewModel>();
         containerRegistry.RegisterForNavigation<PeopleListPage, PeopleListViewModel>();
         containerRegistry.RegisterForNavigation<PersonViewPage, PersonViewViewModel>();

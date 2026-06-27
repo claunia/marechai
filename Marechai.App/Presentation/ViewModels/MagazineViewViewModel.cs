@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Marechai.App.Navigation;
+using Marechai.App.Presentation.Models;
 using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
 using Microsoft.UI.Xaml;
@@ -79,6 +80,11 @@ public partial class MagazineViewViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private Visibility _showMachineFamilies = Visibility.Collapsed;
 
+    [ObservableProperty]
+    private Visibility _showIssues = Visibility.Collapsed;
+
+    private long _magazineId;
+
     public MagazineViewViewModel(ILogger<MagazineViewViewModel> logger,            IRegionManager    regionManager,
                                  MagazinesService              magazinesService,  IStringLocalizer  localizer)
     {
@@ -88,10 +94,28 @@ public partial class MagazineViewViewModel : ObservableObject, IRegionAware
         _localizer        = localizer;
     }
 
-    public ObservableCollection<string> People          { get; } = [];
-    public ObservableCollection<string> Companies       { get; } = [];
-    public ObservableCollection<string> Machines        { get; } = [];
-    public ObservableCollection<string> MachineFamilies { get; } = [];
+    public ObservableCollection<string>                 People          { get; } = [];
+    public ObservableCollection<string>                 Companies       { get; } = [];
+    public ObservableCollection<string>                 Machines        { get; } = [];
+    public ObservableCollection<string>                 MachineFamilies { get; } = [];
+    public ObservableCollection<MagazineIssueYearChip>  IssueYears      { get; } = [];
+
+    [RelayCommand]
+    public Task NavigateToYear(MagazineIssueYearChip? chip)
+    {
+        if(chip is null) return Task.CompletedTask;
+
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.MagazineId, _magazineId },
+            { NavParamKeys.Year, chip.Value },
+            { NavParamKeys.NavigationSource, nameof(MagazineViewViewModel) }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(MagazineIssuesByYearPage), parameters);
+
+        return Task.CompletedTask;
+    }
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => false;
 
@@ -146,6 +170,9 @@ public partial class MagazineViewViewModel : ObservableObject, IRegionAware
             Companies.Clear();
             Machines.Clear();
             MachineFamilies.Clear();
+            IssueYears.Clear();
+
+            _magazineId = magazineId;
 
             MagazineDto? magazine = await _magazinesService.GetMagazineAsync(magazineId);
 
@@ -207,6 +234,14 @@ public partial class MagazineViewViewModel : ObservableObject, IRegionAware
             foreach(MagazineByMachineFamilyDto family in families)
                 MachineFamilies.Add(family.MachineFamily ?? string.Empty);
 
+            // Load issue years
+            List<int?> issueYears = await _magazinesService.GetIssueYearsAsync(magazineId);
+
+            foreach(int? year in issueYears)
+                IssueYears.Add(year.HasValue
+                                   ? new MagazineIssueYearChip { Display = year.Value.ToString(), Value = year.Value.ToString() }
+                                   : new MagazineIssueYearChip { Display = _localizer["Others"], Value = "others" });
+
             UpdateVisibilities();
             IsDataLoaded = true;
             IsLoading    = false;
@@ -231,5 +266,6 @@ public partial class MagazineViewViewModel : ObservableObject, IRegionAware
         ShowCompanies        = Companies.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowMachines         = Machines.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowMachineFamilies  = MachineFamilies.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+        ShowIssues           = IssueYears.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 }

@@ -2334,6 +2334,13 @@
   <data name="MagazineIssueMachinesLabel" xml:space="preserve"><value>Máquinas relacionadas</value></data>
   <data name="MagazineIssueMachineFamiliesLabel" xml:space="preserve"><value>Familias de máquinas relacionadas</value></data>
   <data name="MagazineIssueSoftwareLabel" xml:space="preserve"><value>Software relacionado</value></data>
+  <data name="MagazineIssuesLabel" xml:space="preserve"><value>Números</value></data>
+  <data name="MagazineIssuesByYearIssuesLabel" xml:space="preserve"><value>números</value></data>
+  <data name="Others" xml:space="preserve"><value>Otros</value></data>
+  <data name="Showing issues published in {0}" xml:space="preserve"><value>Mostrando números publicados en {0}</value></data>
+  <data name="Showing issues with no recorded publication year" xml:space="preserve"><value>Mostrando números sin año de publicación registrado</value></data>
+  <data name="No issues found for this year" xml:space="preserve"><value>No se encontraron números para este año</value></data>
+  <data name="Failed to load issues. Please try again later." xml:space="preserve"><value>No se pudieron cargar los números. Inténtelo de nuevo más tarde.</value></data>
   <data name="Magazine issue not found" xml:space="preserve"><value>Edición de revista no encontrada</value></data>
   <data name="Add to Collection" xml:space="preserve"><value>Añadir a la colección</value></data>
   <data name="In Collection" xml:space="preserve"><value>En la colección</value></data>

@@ -65,6 +65,17 @@
                             <TextBlock Text="{Binding SynopsisText}" FontSize="14" Foreground="{ThemeResource TextControlForeground}" TextWrapping="Wrap" />
                         </Border>
                     </StackPanel>
+                    <!-- Issues by Year -->
+                    <StackPanel Visibility="{Binding ShowIssues}" Spacing="12">
+                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=MagazineIssuesLabel}" FontSize="14" FontWeight="SemiBold" Foreground="{ThemeResource TextControlForeground}" />
+                        <ItemsRepeater ItemsSource="{Binding IssueYears}" Layout="{StaticResource IssueYearsGridLayout}">
+                            <ItemsRepeater.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Content="{Binding Display}" Command="{Binding DataContext.NavigateToYearCommand, ElementName=PageRoot}" CommandParameter="{Binding}" Style="{StaticResource IssueYearChipButtonStyle}" />
+                                </DataTemplate>
+                            </ItemsRepeater.ItemTemplate>
+                        </ItemsRepeater>
+                    </StackPanel>
                     <!-- People -->
                     <StackPanel Visibility="{Binding ShowPeople}" Spacing="12">
                         <TextBlock Text="{Binding Source={StaticResource Strings}, Path=MagazineAuthorsLabel}" FontSize="14" FontWeight="SemiBold" Foreground="{ThemeResource TextControlForeground}" />
@@ -101,4 +112,18 @@
             </ScrollViewer>
         </Grid>
     </Grid>
+    <Page.Resources>
+        <Style x:Key="IssueYearChipButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource SystemAccentColor}" />
+            <Setter Property="Foreground" Value="{ThemeResource SystemAccentColor}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="16" />
+            <Setter Property="Padding" Value="14,8" />
+            <Setter Property="Margin" Value="4" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+        <UniformGridLayout x:Key="IssueYearsGridLayout" ItemsStretch="Uniform" MinItemWidth="64" MinItemHeight="40" MinRowSpacing="4" MinColumnSpacing="4" />
+    </Page.Resources>
 </Page>
