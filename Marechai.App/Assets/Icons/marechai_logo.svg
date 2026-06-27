@@ -1,0 +1,48 @@
+<svg width="320" height="80" viewBox="0 0 320 80" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Colors -->
+    <linearGradient id="mc-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3F8CFF"/>
+      <stop offset="100%" stop-color="#7C3BFF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background (optional, remove if you want transparent) -->
+  <!-- <rect x="0" y="0" width="320" height="80" rx="12" fill="#050814"/> -->
+
+  <!-- Icon: abstract "graph of artifacts" inside a rounded square -->
+  <g transform="translate(16,16)">
+    <rect x="0" y="0" width="48" height="48" rx="12" fill="#050814"/>
+    <!-- Nodes -->
+    <circle cx="14" cy="16" r="4" fill="#3F8CFF"/>
+    <circle cx="34" cy="14" r="4" fill="#7C3BFF"/>
+    <circle cx="18" cy="34" r="4" fill="#4CE0C6"/>
+    <circle cx="36" cy="32" r="4" fill="#FFD166"/>
+    <!-- Edges -->
+    <line x1="14" y1="16" x2="34" y2="14" stroke="url(#mc-accent)" stroke-width="2" stroke-linecap="round"/>
+    <line x1="14" y1="16" x2="18" y2="34" stroke="#4CE0C6" stroke-width="2" stroke-linecap="round"/>
+    <line x1="34" y1="14" x2="36" y2="32" stroke="#FFD166" stroke-width="2" stroke-linecap="round"/>
+    <line x1="18" y1="34" x2="36" y2="32" stroke="#7C3BFF" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+  <!-- Wordmark -->
+  <g transform="translate(80,26)">
+    <!-- "Marechai" text -->
+    <text x="0" y="18"
+          font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+          font-size="24"
+          font-weight="600"
+          letter-spacing="0.04em"
+          fill="#050814">
+      Marechai
+    </text>
+    <!-- Tagline -->
+    <text x="2" y="38"
+          font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+          font-size="7"
+          letter-spacing="0.04em"
+          fill="#5A6475">
+      Master Repository of Computing History Artifacts Information
+    </text>
+  </g>
+</svg>

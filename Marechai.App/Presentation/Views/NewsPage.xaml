@@ -6,6 +6,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:loc="using:Marechai.App.Presentation.Converters"
       xmlns:utu="using:Uno.Toolkit.UI"
+      xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
       NavigationCacheMode="Required"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -25,8 +26,7 @@
                             Margin="0,0,0,16"
                             Background="{ThemeResource SystemAccentColorBrush}">
                         <StackPanel Spacing="12">
-                            <Image Source="ms-appx:///Assets/Icons/icon_foreground.svg"
-                                   Width="60"
+                            <Image Source="ms-appx:///Assets/Icons/marechai_logo.svg"
                                    Height="60"
                                    HorizontalAlignment="Left" />
                             <TextBlock
@@ -39,8 +39,9 @@
                                        FontSize="14"
                                        Foreground="White"
                                        TextWrapping="Wrap" />
-                            <StackPanel Orientation="Horizontal"
-                                        Spacing="8">
+                            <controls:WrapPanel Orientation="Horizontal"
+                                                HorizontalSpacing="8"
+                                                VerticalSpacing="8">
                                 <Button
                                         Content="{Binding Source={StaticResource Strings}, Path=BrowseComputersChip}"
                                         Command="{Binding NavigateToComputersCommand}"
@@ -57,9 +58,10 @@
                                         Content="{Binding Source={StaticResource Strings}, Path=AboutThisSiteChip}"
                                         Command="{Binding NavigateToAboutCommand}"
                                         CornerRadius="16" />
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal"
-                                        Spacing="8">
+                            </controls:WrapPanel>
+                            <controls:WrapPanel Orientation="Horizontal"
+                                                HorizontalSpacing="8"
+                                                VerticalSpacing="8">
                                 <Button
                                         Content="{Binding Source={StaticResource Strings}, Path=LearnMoreButton}"
                                         Command="{Binding NavigateToAboutCommand}"
@@ -68,7 +70,7 @@
                                         Content="{Binding Source={StaticResource Strings}, Path=SignUpToContributeButton}"
                                         Command="{Binding NavigateToSignUpCommand}"
                                         Visibility="{Binding IsAuthenticated, Converter={StaticResource InvertBoolToVisibilityConverter}}" />
-                            </StackPanel>
+                            </controls:WrapPanel>
                         </StackPanel>
                     </Border>
 

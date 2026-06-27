@@ -162,6 +162,16 @@ public class LocalizedStrings
     public string VoicesText => _l["VoicesText"];
     public string WebsiteText => _l["WebsiteText"];
 
+    // News page welcome hero
+    public string WelcomeHeroTitle => _l["WelcomeHeroTitle"];
+    public string WelcomeHeroLead => _l["WelcomeHeroLead"];
+    public string BrowseComputersChip => _l["BrowseComputersChip"];
+    public string BrowseConsolesChip => _l["BrowseConsolesChip"];
+    public string BrowseSoftwareChip => _l["BrowseSoftwareChip"];
+    public string AboutThisSiteChip => _l["AboutThisSiteChip"];
+    public string LearnMoreButton => _l["LearnMoreButton"];
+    public string SignUpToContributeButton => _l["SignUpToContributeButton"];
+
     // Company management
     public string CompanyManagementTitle => _l["CompanyManagementTitle"];
     public string CompanyManagementSubtitle => _l["CompanyManagementSubtitle"];
