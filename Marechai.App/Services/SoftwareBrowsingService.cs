@@ -18,6 +18,28 @@ public class SoftwareBrowsingService
         _logger    = logger;
     }
 
+    public async Task<List<SoftwareVideoDto>> GetVideosBySoftwareAsync(int softwareId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching videos for software {SoftwareId}", softwareId);
+
+            List<SoftwareVideoDto>? videos = await _apiClient.Software[softwareId].Videos.GetAsync();
+
+            _logger.LogInformation("Successfully fetched {Count} videos for software {SoftwareId}",
+                                    videos?.Count ?? 0,
+                                    softwareId);
+
+            return videos ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching videos for software {SoftwareId}", softwareId);
+
+            return [];
+        }
+    }
+
     public async Task<int> GetSoftwareCountAsync()
     {
         try

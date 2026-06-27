@@ -165,6 +165,8 @@ public class LocalizedStrings
     public string UserMgmtAccessDeniedInfoBar_Title => _l["UserMgmtAccessDeniedInfoBar_Title"];
     public string UsernameColumn_Header => _l["UsernameColumn_Header"];
     public string VoicesText => _l["VoicesText"];
+    public string VideosLabel => _l["VideosLabel"];
+    public string OpenVideoButton => _l["OpenVideoButton"];
     public string WebsiteText => _l["WebsiteText"];
 
     // News page welcome hero

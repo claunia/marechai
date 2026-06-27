@@ -17,6 +17,7 @@ using Marechai.App.Services;
 using Marechai.App.Services.Caching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
+using Windows.System;
 
 namespace Marechai.App.Presentation.ViewModels;
 
@@ -136,6 +137,9 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     private Visibility _showPromoArt = Visibility.Collapsed;
 
     [ObservableProperty]
+    private Visibility _showVideos = Visibility.Collapsed;
+
+    [ObservableProperty]
     private Visibility _showCredits = Visibility.Collapsed;
 
     [ObservableProperty]
@@ -174,6 +178,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     public ObservableCollection<ScreenshotPlatformGroup>  ScreenshotGroups    { get; } = [];
     public ObservableCollection<CoverGroupItem>           CoverGroups         { get; } = [];
     public ObservableCollection<SoftwarePromoArtGroupDisplayItem> PromoArtGroups { get; } = [];
+    public ObservableCollection<MachineVideoDisplayItem>  Videos              { get; } = [];
 
     public int  PromoArtCount => PromoArtGroups.Sum(group => group.Items.Count);
     public bool HasPromoArt   => PromoArtCount > 0;
@@ -506,6 +511,9 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
             // Load screenshots
             await LoadScreenshotsAsync(softwareId);
 
+            // Load videos
+            await LoadVideosAsync(softwareId);
+
             // Load localized description
             try
             {
@@ -695,6 +703,59 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
         }
     }
 
+    private async Task LoadVideosAsync(int softwareId)
+    {
+        try
+        {
+            Videos.Clear();
+
+            List<SoftwareVideoDto> videoList = await _browsingService.GetVideosBySoftwareAsync(softwareId);
+
+            foreach(SoftwareVideoDto video in videoList)
+            {
+                if(string.IsNullOrWhiteSpace(video.VideoId)) continue;
+
+                string provider = string.IsNullOrWhiteSpace(video.Provider)
+                                      ? _localizer["Video"]
+                                      : video.Provider;
+
+                bool isYouTube = string.Equals(provider, "YouTube", StringComparison.OrdinalIgnoreCase);
+
+                Videos.Add(new MachineVideoDisplayItem
+                {
+                    Title = string.IsNullOrWhiteSpace(video.Title)
+                                ? _localizer["Video"]
+                                : video.Title,
+                    Provider = provider,
+                    VideoId = video.VideoId,
+                    ThumbnailUrl = isYouTube
+                                       ? $"https://img.youtube.com/vi/{video.VideoId}/hqdefault.jpg"
+                                       : null,
+                    LaunchUri = new Uri($"https://www.youtube.com/watch?v={Uri.EscapeDataString(video.VideoId)}")
+                });
+            }
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading videos for software {SoftwareId}", softwareId);
+        }
+    }
+
+    [RelayCommand]
+    public async Task OpenVideo(MachineVideoDisplayItem? video)
+    {
+        if(video?.LaunchUri is null) return;
+
+        try
+        {
+            await Launcher.LaunchUriAsync(video.LaunchUri);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error launching video {VideoId}", video.VideoId);
+        }
+    }
+
     private static string GetCoverGroupLabel(SoftwareCoverDto cover)
     {
         if(!string.IsNullOrWhiteSpace(cover.ReleaseTitle))
@@ -798,6 +859,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
         ShowScreenshots = ScreenshotGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowCovers      = CoverGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowPromoArt    = PromoArtGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+        ShowVideos      = Videos.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowCredits     = CreditGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowDescription = HasDescription ? Visibility.Visible : Visibility.Collapsed;
 
