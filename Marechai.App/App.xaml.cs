@@ -204,6 +204,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<SoftwareReleasesService>();
         containerRegistry.RegisterSingleton<SoftwareCompilationsService>();
         containerRegistry.RegisterSingleton<SoftwareBrowsingService>();
+        containerRegistry.RegisterSingleton<ProfileService>();
         containerRegistry.RegisterSingleton<WwpcImportsService>();
         containerRegistry.RegisterSingleton<IComputersListFilterContext, ComputersListFilterContext>();
         containerRegistry.RegisterSingleton<IConsolesListFilterContext, ConsolesListFilterContext>();
@@ -289,6 +290,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<SoftwareViewViewModel>();
         containerRegistry.Register<SoftwareReleaseViewViewModel>();
         containerRegistry.Register<SoftwareCompilationViewViewModel>();
+        containerRegistry.Register<ProfileViewModel>();
         containerRegistry.Register<AdminSoftwareViewModel>();
         containerRegistry.Register<AdminSoftwareFamiliesViewModel>();
         containerRegistry.Register<AdminSoftwarePlatformsViewModel>();
@@ -375,6 +377,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<SoftwareViewPage, SoftwareViewViewModel>();
         containerRegistry.RegisterForNavigation<SoftwareReleaseViewPage, SoftwareReleaseViewViewModel>();
         containerRegistry.RegisterForNavigation<SoftwareCompilationViewPage, SoftwareCompilationViewViewModel>();
+        containerRegistry.RegisterForNavigation<ProfilePage, ProfileViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoftwarePage, AdminSoftwareViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoftwareFamiliesPage, AdminSoftwareFamiliesViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoftwarePlatformsPage, AdminSoftwarePlatformsViewModel>();

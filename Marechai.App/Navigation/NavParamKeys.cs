@@ -34,4 +34,5 @@ public static class NavParamKeys
     public const string SearchQuery         = "SearchQuery";
     public const string MachineFamilyId     = "MachineFamilyId";
     public const string Year                = "Year";
+    public const string ProfileUsername     = "ProfileUsername";
 }

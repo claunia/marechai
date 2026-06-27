@@ -2613,4 +2613,17 @@
   <data name="LoadingPromoArtText" xml:space="preserve"><value>Chargement du visuel promotionnel...</value></data>
   <data name="PromoArtNotFound" xml:space="preserve"><value>Visuel promotionnel introuvable</value></data>
   <data name="FailedToLoadPromoArtImage" xml:space="preserve"><value>Impossible de charger l'image promotionnelle</value></data>
+  <data name="ProfileErrorInfoBar_Title" xml:space="preserve"><value>Impossible de charger le profil</value></data>
+  <data name="UserNotFoundText" xml:space="preserve"><value>Utilisateur non trouvé.</value></data>
+  <data name="ProfileCollaboratorBadgeText" xml:space="preserve"><value>Collaborateur</value></data>
+  <data name="ProfileAboutLabel" xml:space="preserve"><value>À propos</value></data>
+  <data name="ProfileLinksLabel" xml:space="preserve"><value>Liens</value></data>
+  <data name="ProfileBooksLabel" xml:space="preserve"><value>Livres</value></data>
+  <data name="ProfileDocumentsLabel" xml:space="preserve"><value>Documents</value></data>
+  <data name="ProfileMagazineIssuesLabel" xml:space="preserve"><value>Numéros de magazine</value></data>
+  <data name="ProfileComputersLabel" xml:space="preserve"><value>Ordinateurs</value></data>
+  <data name="ProfileConsolesLabel" xml:space="preserve"><value>Consoles</value></data>
+  <data name="ProfileSmartphonesLabel" xml:space="preserve"><value>Smartphones</value></data>
+  <data name="ProfileSoftwareLabel" xml:space="preserve"><value>Logiciels</value></data>
+  <data name="ProfileReviewsLabel" xml:space="preserve"><value>Avis</value></data>
 </root>

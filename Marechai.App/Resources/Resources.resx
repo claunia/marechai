@@ -3016,4 +3016,17 @@
   <data name="LoadingPromoArtText" xml:space="preserve"><value>Loading promo art...</value></data>
   <data name="PromoArtNotFound" xml:space="preserve"><value>Promo art not found</value></data>
   <data name="FailedToLoadPromoArtImage" xml:space="preserve"><value>Failed to load promo art image</value></data>
+  <data name="ProfileErrorInfoBar_Title" xml:space="preserve"><value>Unable to Load Profile</value></data>
+  <data name="UserNotFoundText" xml:space="preserve"><value>User not found.</value></data>
+  <data name="ProfileCollaboratorBadgeText" xml:space="preserve"><value>Collaborator</value></data>
+  <data name="ProfileAboutLabel" xml:space="preserve"><value>About</value></data>
+  <data name="ProfileLinksLabel" xml:space="preserve"><value>Links</value></data>
+  <data name="ProfileBooksLabel" xml:space="preserve"><value>Books</value></data>
+  <data name="ProfileDocumentsLabel" xml:space="preserve"><value>Documents</value></data>
+  <data name="ProfileMagazineIssuesLabel" xml:space="preserve"><value>Magazine Issues</value></data>
+  <data name="ProfileComputersLabel" xml:space="preserve"><value>Computers</value></data>
+  <data name="ProfileConsolesLabel" xml:space="preserve"><value>Consoles</value></data>
+  <data name="ProfileSmartphonesLabel" xml:space="preserve"><value>Smartphones</value></data>
+  <data name="ProfileSoftwareLabel" xml:space="preserve"><value>Software</value></data>
+  <data name="ProfileReviewsLabel" xml:space="preserve"><value>Reviews</value></data>
 </root>

@@ -1,0 +1,520 @@
+<?xml version="1.0"
+      encoding="utf-8"?>
+
+<Page x:Class="Marechai.App.Presentation.Views.ProfilePage"
+      x:Name="PageRoot"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      NavigationCacheMode="Disabled"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid RowSpacing="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" /> <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header with Back Button -->
+        <Grid Grid.Row="0"
+              Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+              BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+              BorderThickness="0,0,0,1"
+              Padding="12,12,16,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" /> <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    Command="{Binding GoBackCommand}"
+                    Style="{ThemeResource AlternateButtonStyle}"
+                    ToolTipService.ToolTip="Go back"
+                    Padding="8"
+                    MinWidth="44"
+                    MinHeight="44"
+                    VerticalAlignment="Center">
+                <FontIcon Glyph="&#xE72B;"
+                          FontSize="16" />
+            </Button>
+
+            <StackPanel Grid.Column="1"
+                        Margin="12,0,0,0"
+                        VerticalAlignment="Center">
+                <TextBlock Text="{Binding DisplayName}"
+                           FontSize="20"
+                           FontWeight="SemiBold"
+                           Foreground="{ThemeResource TextControlForeground}"
+                           TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+        </Grid>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1">
+
+            <!-- Loading State -->
+            <StackPanel Visibility="{Binding IsLoading}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Padding="32"
+                        Spacing="16">
+                <ProgressRing IsActive="True"
+                              IsIndeterminate="True"
+                              Height="64"
+                              Width="64"
+                              Foreground="{ThemeResource SystemAccentColor}" />
+                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=LoadingText}"
+                           FontSize="14"
+                           TextAlignment="Center"
+                           Foreground="{ThemeResource SystemBaseMediumColor}" />
+            </StackPanel>
+
+            <!-- Error State -->
+            <StackPanel Visibility="{Binding HasError}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Padding="24"
+                        Spacing="16"
+                        MaxWidth="400">
+                <InfoBar IsOpen="True"
+                         Severity="Warning"
+                         Title="{Binding Source={StaticResource Strings}, Path=ProfileErrorInfoBar_Title}"
+                         Message="{Binding ErrorMessage}"
+                         IsClosable="False" />
+                <Button Content="{Binding Source={StaticResource Strings}, Path=RetryButton}"
+                        Command="{Binding LoadDataCommand}"
+                        HorizontalAlignment="Center"
+                        Style="{ThemeResource AccentButtonStyle}" />
+            </StackPanel>
+
+            <!-- Profile Content -->
+            <ScrollViewer Visibility="{Binding IsDataLoaded}"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Padding="16"
+                            Spacing="24"
+                            MaxWidth="700"
+                            HorizontalAlignment="Stretch">
+
+                    <!-- Hero -->
+                    <StackPanel HorizontalAlignment="Center"
+                                Spacing="8">
+                        <Grid Width="96"
+                              Height="96"
+                              CornerRadius="48"
+                              Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                            <FontIcon Glyph="&#xE77B;"
+                                      FontSize="48"
+                                      Foreground="{ThemeResource SystemBaseMediumColor}"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center" />
+                            <Image Source="{Binding AvatarUrl}"
+                                   Visibility="{Binding ShowAvatar}"
+                                   Stretch="UniformToFill" />
+                        </Grid>
+                        <TextBlock Text="{Binding DisplayName}"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <TextBlock Text="{Binding UserName}"
+                                   FontSize="14"
+                                   HorizontalAlignment="Center"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ProfileCollaboratorBadgeText}"
+                                   Visibility="{Binding ShowCollaboratorBadge}"
+                                   FontSize="12"
+                                   HorizontalAlignment="Center"
+                                   Foreground="{ThemeResource SystemAccentColor}" />
+                        <TextBlock Text="{Binding Location}"
+                                   Visibility="{Binding ShowLocation}"
+                                   FontSize="13"
+                                   HorizontalAlignment="Center"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+
+                        <!-- Summary Chips -->
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="8"
+                                    HorizontalAlignment="Center"
+                                    Visibility="{Binding ShowSummaryChips}">
+                            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="12"
+                                    Padding="10,4"
+                                    Visibility="{Binding ShowBooks}">
+                                <TextBlock FontSize="12">
+                                    <Run Text="{Binding BookCount}" /> <Run Text="{Binding Source={StaticResource Strings}, Path=ProfileBooksLabel}" />
+                                </TextBlock>
+                            </Border>
+                            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="12"
+                                    Padding="10,4"
+                                    Visibility="{Binding ShowDocuments}">
+                                <TextBlock FontSize="12">
+                                    <Run Text="{Binding DocumentCount}" /> <Run Text="{Binding Source={StaticResource Strings}, Path=ProfileDocumentsLabel}" />
+                                </TextBlock>
+                            </Border>
+                            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="12"
+                                    Padding="10,4"
+                                    Visibility="{Binding ShowMagazineIssues}">
+                                <TextBlock FontSize="12">
+                                    <Run Text="{Binding MagazineIssueCount}" /> <Run Text="{Binding Source={StaticResource Strings}, Path=ProfileMagazineIssuesLabel}" />
+                                </TextBlock>
+                            </Border>
+                            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="12"
+                                    Padding="10,4"
+                                    Visibility="{Binding ShowComputers}">
+                                <TextBlock FontSize="12">
+                                    <Run Text="{Binding ComputerCount}" /> <Run Text="{Binding Source={StaticResource Strings}, Path=ProfileComputersLabel}" />
+                                </TextBlock>
+                            </Border>
+                            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="12"
+                                    Padding="10,4"
+                                    Visibility="{Binding ShowConsoles}">
+                                <TextBlock FontSize="12">
+                                    <Run Text="{Binding ConsoleCount}" /> <Run Text="{Binding Source={StaticResource Strings}, Path=ProfileConsolesLabel}" />
+                                </TextBlock>
+                            </Border>
+                            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="12"
+                                    Padding="10,4"
+                                    Visibility="{Binding ShowSoftwareReleases}">
+                                <TextBlock FontSize="12">
+                                    <Run Text="{Binding SoftwareReleaseCount}" /> <Run Text="{Binding Source={StaticResource Strings}, Path=ProfileSoftwareLabel}" />
+                                </TextBlock>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Bio -->
+                    <StackPanel Visibility="{Binding ShowBio}"
+                                Spacing="8">
+                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ProfileAboutLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="16,12">
+                            <TextBlock Text="{Binding Bio}"
+                                       FontSize="14"
+                                       TextWrapping="Wrap"
+                                       Foreground="{ThemeResource TextControlForeground}" />
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Links -->
+                    <StackPanel Visibility="{Binding ShowLinks}"
+                                Spacing="8">
+                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ProfileLinksLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <StackPanel Spacing="4">
+                            <HyperlinkButton Content="{Binding Website}"
+                                             NavigateUri="{Binding Website}"
+                                             Visibility="{Binding Website, Converter={StaticResource StringToVisibilityConverter}}" />
+                            <TextBlock Text="{Binding GitHub}"
+                                       Visibility="{Binding GitHub, Converter={StaticResource StringToVisibilityConverter}}"
+                                       FontSize="14"
+                                       Foreground="{ThemeResource TextControlForeground}" />
+                            <TextBlock Text="{Binding Twitter}"
+                                       Visibility="{Binding Twitter, Converter={StaticResource StringToVisibilityConverter}}"
+                                       FontSize="14"
+                                       Foreground="{ThemeResource TextControlForeground}" />
+                            <TextBlock Text="{Binding Mastodon}"
+                                       Visibility="{Binding Mastodon, Converter={StaticResource StringToVisibilityConverter}}"
+                                       FontSize="14"
+                                       Foreground="{ThemeResource TextControlForeground}" />
+                            <TextBlock Text="{Binding Facebook}"
+                                       Visibility="{Binding Facebook, Converter={StaticResource StringToVisibilityConverter}}"
+                                       FontSize="14"
+                                       Foreground="{ThemeResource TextControlForeground}" />
+                            <TextBlock Text="{Binding LinkedIn}"
+                                       Visibility="{Binding LinkedIn, Converter={StaticResource StringToVisibilityConverter}}"
+                                       FontSize="14"
+                                       Foreground="{ThemeResource TextControlForeground}" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Books -->
+                    <StackPanel Visibility="{Binding ShowBooks}"
+                                Spacing="8">
+                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ProfileBooksLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <ItemsControl ItemsSource="{Binding Books}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="4" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Command="{Binding DataContext.NavigateToBookCommand, ElementName=PageRoot}"
+                                            CommandParameter="{Binding}"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Left"
+                                            Style="{ThemeResource AlternateButtonStyle}">
+                                        <TextBlock Text="{Binding Title}"
+                                                   FontSize="14"
+                                                   TextWrapping="Wrap" />
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <!-- Documents -->
+                    <StackPanel Visibility="{Binding ShowDocuments}"
+                                Spacing="8">
+                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ProfileDocumentsLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <ItemsControl ItemsSource="{Binding Documents}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="4" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Command="{Binding DataContext.NavigateToDocumentCommand, ElementName=PageRoot}"
+                                            CommandParameter="{Binding}"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Left"
+                                            Style="{ThemeResource AlternateButtonStyle}">
+                                        <TextBlock Text="{Binding Title}"
+                                                   FontSize="14"
+                                                   TextWrapping="Wrap" />
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <!-- Magazine Issues -->
+                    <StackPanel Visibility="{Binding ShowMagazineIssues}"
+                                Spacing="8">
+                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ProfileMagazineIssuesLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <ItemsControl ItemsSource="{Binding MagazineIssues}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="4" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Command="{Binding DataContext.NavigateToMagazineIssueCommand, ElementName=PageRoot}"
+                                            CommandParameter="{Binding}"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Left"
+                                            Style="{ThemeResource AlternateButtonStyle}">
+                                        <TextBlock Text="{Binding Caption}"
+                                                   FontSize="14"
+                                                   TextWrapping="Wrap" />
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <!-- Computers -->
+                    <StackPanel Visibility="{Binding ShowComputers}"
+                                Spacing="8">
+                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ProfileComputersLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <ItemsControl ItemsSource="{Binding Computers}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="4" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Command="{Binding DataContext.NavigateToMachineCommand, ElementName=PageRoot}"
+                                            CommandParameter="{Binding}"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Left"
+                                            Style="{ThemeResource AlternateButtonStyle}">
+                                        <TextBlock Text="{Binding Name}"
+                                                   FontSize="14"
+                                                   TextWrapping="Wrap" />
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <!-- Consoles -->
+                    <StackPanel Visibility="{Binding ShowConsoles}"
+                                Spacing="8">
+                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ProfileConsolesLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <ItemsControl ItemsSource="{Binding Consoles}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="4" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Command="{Binding DataContext.NavigateToMachineCommand, ElementName=PageRoot}"
+                                            CommandParameter="{Binding}"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Left"
+                                            Style="{ThemeResource AlternateButtonStyle}">
+                                        <TextBlock Text="{Binding Name}"
+                                                   FontSize="14"
+                                                   TextWrapping="Wrap" />
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <!-- Smartphones -->
+                    <StackPanel Visibility="{Binding ShowSmartphones}"
+                                Spacing="8">
+                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ProfileSmartphonesLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <ItemsControl ItemsSource="{Binding Smartphones}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="4" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Command="{Binding DataContext.NavigateToMachineCommand, ElementName=PageRoot}"
+                                            CommandParameter="{Binding}"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Left"
+                                            Style="{ThemeResource AlternateButtonStyle}">
+                                        <TextBlock Text="{Binding Name}"
+                                                   FontSize="14"
+                                                   TextWrapping="Wrap" />
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <!-- Software Releases -->
+                    <StackPanel Visibility="{Binding ShowSoftwareReleases}"
+                                Spacing="8">
+                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ProfileSoftwareLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <ItemsControl ItemsSource="{Binding SoftwareReleases}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="4" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Command="{Binding DataContext.NavigateToSoftwareReleaseCommand, ElementName=PageRoot}"
+                                            CommandParameter="{Binding}"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Left"
+                                            Style="{ThemeResource AlternateButtonStyle}">
+                                        <TextBlock Text="{Binding SoftwareName}"
+                                                   FontSize="14"
+                                                   TextWrapping="Wrap" />
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <!-- Reviews -->
+                    <StackPanel Visibility="{Binding ShowReviews}"
+                                Spacing="8">
+                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ProfileReviewsLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <ItemsControl ItemsSource="{Binding Reviews}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="8" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="8"
+                                            Padding="16,12">
+                                        <StackPanel Spacing="4">
+                                            <Button Command="{Binding DataContext.NavigateToReviewSoftwareCommand, ElementName=PageRoot}"
+                                                    CommandParameter="{Binding}"
+                                                    HorizontalAlignment="Left"
+                                                    HorizontalContentAlignment="Left"
+                                                    Style="{ThemeResource AlternateButtonStyle}">
+                                                <TextBlock Text="{Binding SoftwareName}"
+                                                           FontWeight="SemiBold"
+                                                           FontSize="14" />
+                                            </Button>
+                                            <TextBlock Text="{Binding Rating}"
+                                                       FontSize="12"
+                                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding TheGood}"
+                                                       FontSize="13"
+                                                       TextWrapping="Wrap" />
+                                            <TextBlock Text="{Binding TheBad}"
+                                                       FontSize="13"
+                                                       TextWrapping="Wrap" />
+                                            <TextBlock Text="{Binding TheUgly}"
+                                                       FontSize="13"
+                                                       TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                </StackPanel>
+            </ScrollViewer>
+
+        </Grid>
+
+    </Grid>
+
+</Page>

@@ -2509,4 +2509,17 @@
   <data name="LoadingPromoArtText" xml:space="preserve"><value>Werbegrafik wird geladen...</value></data>
   <data name="PromoArtNotFound" xml:space="preserve"><value>Werbegrafik nicht gefunden</value></data>
   <data name="FailedToLoadPromoArtImage" xml:space="preserve"><value>Das Werbegrafikbild konnte nicht geladen werden</value></data>
+  <data name="ProfileErrorInfoBar_Title" xml:space="preserve"><value>Profil konnte nicht geladen werden</value></data>
+  <data name="UserNotFoundText" xml:space="preserve"><value>Benutzer nicht gefunden.</value></data>
+  <data name="ProfileCollaboratorBadgeText" xml:space="preserve"><value>Mitarbeiter</value></data>
+  <data name="ProfileAboutLabel" xml:space="preserve"><value>Über</value></data>
+  <data name="ProfileLinksLabel" xml:space="preserve"><value>Links</value></data>
+  <data name="ProfileBooksLabel" xml:space="preserve"><value>Bücher</value></data>
+  <data name="ProfileDocumentsLabel" xml:space="preserve"><value>Dokumente</value></data>
+  <data name="ProfileMagazineIssuesLabel" xml:space="preserve"><value>Zeitschriftenausgaben</value></data>
+  <data name="ProfileComputersLabel" xml:space="preserve"><value>Computer</value></data>
+  <data name="ProfileConsolesLabel" xml:space="preserve"><value>Konsolen</value></data>
+  <data name="ProfileSmartphonesLabel" xml:space="preserve"><value>Smartphones</value></data>
+  <data name="ProfileSoftwareLabel" xml:space="preserve"><value>Software</value></data>
+  <data name="ProfileReviewsLabel" xml:space="preserve"><value>Bewertungen</value></data>
 </root>
