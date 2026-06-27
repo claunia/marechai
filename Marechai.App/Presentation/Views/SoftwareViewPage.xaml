@@ -1044,6 +1044,138 @@
                         </ItemsControl>
                     </StackPanel>
 
+                    <!-- Critic Reviews -->
+                    <StackPanel Visibility="{Binding ShowCriticReviews}"
+                                Spacing="12">
+                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=CriticReviewsLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="8"
+                                    Visibility="{Binding CriticReviewsOverallText, Converter={StaticResource StringToVisibilityConverter}}">
+                            <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                                    CornerRadius="12"
+                                    Padding="10,4">
+                                <TextBlock Text="{Binding CriticReviewsOverallText}"
+                                           FontSize="12"
+                                           FontWeight="SemiBold" />
+                            </Border>
+                        </StackPanel>
+
+                        <ItemsControl ItemsSource="{Binding CriticReviewsByPlatform}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"
+                                                Spacing="8" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                                            CornerRadius="12"
+                                            Padding="10,4">
+                                        <TextBlock Text="{Binding}"
+                                                   FontSize="11" />
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <ItemsControl ItemsSource="{Binding CriticReviews}"
+                                      HorizontalAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="0"
+                                                HorizontalAlignment="Stretch" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="8"
+                                            Padding="16,12"
+                                            Margin="0,0,0,8">
+                                        <StackPanel Spacing="6">
+                                            <Grid ColumnSpacing="12">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <StackPanel Grid.Column="0"
+                                                            Spacing="2">
+                                                    <TextBlock Text="{Binding MagazineTitle}"
+                                                               FontSize="14"
+                                                               FontWeight="SemiBold"
+                                                               TextWrapping="WrapWholeWords" />
+                                                    <StackPanel Orientation="Horizontal"
+                                                                Spacing="8">
+                                                        <TextBlock Text="{Binding PlatformName}"
+                                                                   FontSize="11"
+                                                                   Foreground="{ThemeResource SystemBaseMediumColor}"
+                                                                   Visibility="{Binding HasPlatformName, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                                        <TextBlock Text="{Binding FormattedDate}"
+                                                                   FontSize="11"
+                                                                   Foreground="{ThemeResource SystemBaseMediumColor}"
+                                                                   Visibility="{Binding HasFormattedDate, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                                    </StackPanel>
+                                                </StackPanel>
+
+                                                <Border Grid.Column="1"
+                                                        Background="{Binding ScoreBrush}"
+                                                        CornerRadius="10"
+                                                        Padding="8,3"
+                                                        VerticalAlignment="Top"
+                                                        Visibility="{Binding HasScore, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                    <TextBlock Text="{Binding ScoreText}"
+                                                               FontSize="12"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="White" />
+                                                </Border>
+
+                                                <TextBlock Grid.Column="1"
+                                                           Text="{Binding Source={StaticResource Strings}, Path=CriticReviewsUnscored}"
+                                                           FontSize="11"
+                                                           VerticalAlignment="Top"
+                                                           Foreground="{ThemeResource SystemBaseMediumColor}"
+                                                           Visibility="{Binding HasScore, Converter={StaticResource InvertBoolToVisibilityConverter}}" />
+                                            </Grid>
+
+                                            <TextBlock Text="{Binding OriginalScoreText}"
+                                                       FontSize="11"
+                                                       Foreground="{ThemeResource SystemBaseMediumColor}"
+                                                       Visibility="{Binding HasOriginalScore, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                                            <TextBlock Text="{Binding ReviewText}"
+                                                       FontSize="12"
+                                                       TextWrapping="WrapWholeWords"
+                                                       MaxLines="4"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       Visibility="{Binding HasReviewText, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                                            <Button Padding="0"
+                                                    Background="Transparent"
+                                                    BorderThickness="0"
+                                                    HorizontalAlignment="Left"
+                                                    Command="{Binding DataContext.OpenCriticReviewCommand, ElementName=PageRoot}"
+                                                    CommandParameter="{Binding}"
+                                                    Visibility="{Binding HasReviewUrl, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=CriticReviewsFullReviewLink}"
+                                                           FontSize="12"
+                                                           Foreground="{ThemeResource SystemAccentColor}" />
+                                            </Button>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
                 </StackPanel>
             </ScrollViewer>
 

@@ -40,6 +40,44 @@ public class SoftwareBrowsingService
         }
     }
 
+    public async Task<List<SoftwareCriticReviewDto>> GetCriticReviewsBySoftwareAsync(int softwareId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching critic reviews for software {SoftwareId}", softwareId);
+
+            List<SoftwareCriticReviewDto>? reviews = await _apiClient.Software[softwareId].CriticReviews.GetAsync();
+
+            _logger.LogInformation("Successfully fetched {Count} critic reviews for software {SoftwareId}",
+                                    reviews?.Count ?? 0,
+                                    softwareId);
+
+            return reviews ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching critic reviews for software {SoftwareId}", softwareId);
+
+            return [];
+        }
+    }
+
+    public async Task<CriticReviewSummaryDto?> GetCriticReviewSummaryBySoftwareAsync(int softwareId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching critic review summary for software {SoftwareId}", softwareId);
+
+            return await _apiClient.Software[softwareId].CriticReviews.Summary.GetAsync();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching critic review summary for software {SoftwareId}", softwareId);
+
+            return null;
+        }
+    }
+
     public async Task<int> GetSoftwareCountAsync()
     {
         try

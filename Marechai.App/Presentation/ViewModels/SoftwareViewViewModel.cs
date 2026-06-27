@@ -140,6 +140,12 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     private Visibility _showVideos = Visibility.Collapsed;
 
     [ObservableProperty]
+    private Visibility _showCriticReviews = Visibility.Collapsed;
+
+    [ObservableProperty]
+    private string? _criticReviewsOverallText;
+
+    [ObservableProperty]
     private Visibility _showCredits = Visibility.Collapsed;
 
     [ObservableProperty]
@@ -179,6 +185,8 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     public ObservableCollection<CoverGroupItem>           CoverGroups         { get; } = [];
     public ObservableCollection<SoftwarePromoArtGroupDisplayItem> PromoArtGroups { get; } = [];
     public ObservableCollection<MachineVideoDisplayItem>  Videos              { get; } = [];
+    public ObservableCollection<CriticReviewDisplayItem>  CriticReviews       { get; } = [];
+    public ObservableCollection<string>                   CriticReviewsByPlatform { get; } = [];
 
     public int  PromoArtCount => PromoArtGroups.Sum(group => group.Items.Count);
     public bool HasPromoArt   => PromoArtCount > 0;
@@ -514,6 +522,9 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
             // Load videos
             await LoadVideosAsync(softwareId);
 
+            // Load critic reviews
+            await LoadCriticReviewsAsync(softwareId);
+
             // Load localized description
             try
             {
@@ -756,6 +767,85 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
         }
     }
 
+    private async Task LoadCriticReviewsAsync(int softwareId)
+    {
+        try
+        {
+            CriticReviews.Clear();
+            CriticReviewsByPlatform.Clear();
+            CriticReviewsOverallText = null;
+
+            List<SoftwareCriticReviewDto> reviewList = await _browsingService.GetCriticReviewsBySoftwareAsync(softwareId);
+
+            foreach(SoftwareCriticReviewDto review in reviewList)
+            {
+                CriticReviews.Add(new CriticReviewDisplayItem
+                {
+                    MagazineTitle        = review.MagazineTitle ?? string.Empty,
+                    PlatformName         = review.PlatformName,
+                    NormalizedScore      = review.NormalizedScore,
+                    OriginalScore        = review.OriginalScore,
+                    OriginalScoreMaximum = review.OriginalScoreMaximum,
+                    ReviewText           = review.ReviewText,
+                    FormattedDate        = FormatReviewDate(review),
+                    ReviewUrl            = review.ReviewUrl
+                });
+            }
+
+            CriticReviewSummaryDto? summary = await _browsingService.GetCriticReviewSummaryBySoftwareAsync(softwareId);
+
+            if(summary?.AverageScore is not null)
+            {
+                CriticReviewsOverallText = string.Format(_localizer["CriticReviewsOverallFormat"],
+                                                           summary.AverageScore.Value,
+                                                           summary.TotalReviews ?? 0);
+            }
+
+            if(summary?.ByPlatform is not null)
+            {
+                foreach(PlatformReviewSummaryDto plat in summary.ByPlatform)
+                {
+                    if(!plat.AverageScore.HasValue) continue;
+
+                    CriticReviewsByPlatform.Add(
+                        $"{plat.PlatformName ?? "?"}: {plat.AverageScore:F0}% ({plat.ReviewCount})");
+                }
+            }
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading critic reviews for software {SoftwareId}", softwareId);
+        }
+    }
+
+    private static string FormatReviewDate(SoftwareCriticReviewDto review)
+    {
+        if(!review.ReviewDate.HasValue) return string.Empty;
+
+        return review.ReviewDatePrecision switch
+        {
+            (int)DatePrecision.Full      => review.ReviewDate.Value.ToString("yyyy-MM-dd"),
+            (int)DatePrecision.MonthYear => review.ReviewDate.Value.ToString("yyyy-MM"),
+            (int)DatePrecision.YearOnly  => review.ReviewDate.Value.ToString("yyyy"),
+            _                            => review.ReviewDate.Value.ToString("yyyy-MM-dd")
+        };
+    }
+
+    [RelayCommand]
+    public async Task OpenCriticReview(CriticReviewDisplayItem? review)
+    {
+        if(string.IsNullOrWhiteSpace(review?.ReviewUrl)) return;
+
+        try
+        {
+            await Launcher.LaunchUriAsync(new Uri(review.ReviewUrl));
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error launching critic review url {ReviewUrl}", review.ReviewUrl);
+        }
+    }
+
     private static string GetCoverGroupLabel(SoftwareCoverDto cover)
     {
         if(!string.IsNullOrWhiteSpace(cover.ReleaseTitle))
@@ -860,6 +950,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
         ShowCovers      = CoverGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowPromoArt    = PromoArtGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowVideos      = Videos.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+        ShowCriticReviews = CriticReviews.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowCredits     = CreditGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowDescription = HasDescription ? Visibility.Visible : Visibility.Collapsed;
 

@@ -2503,6 +2503,10 @@
   <data name="VideosLabel" xml:space="preserve"><value>Vídeos</value></data>
   <data name="OpenVideoButton" xml:space="preserve"><value>Abrir</value></data>
   <data name="Video" xml:space="preserve"><value>Vídeo</value></data>
+  <data name="CriticReviewsLabel" xml:space="preserve"><value>Críticas</value></data>
+  <data name="CriticReviewsUnscored" xml:space="preserve"><value>Sem nota</value></data>
+  <data name="CriticReviewsFullReviewLink" xml:space="preserve"><value>Análise completa</value></data>
+  <data name="CriticReviewsOverallFormat" xml:space="preserve"><value>Geral: {0:F0}% ({1} avaliações)</value></data>
   <data name="PromoArt" xml:space="preserve"><value>Arte promocional</value></data>
   <data name="OtherPromoArt" xml:space="preserve"><value>Outro (arte promocional)</value></data>
   <data name="NoPromoArtForThisMachineYet" xml:space="preserve"><value>Ainda não há arte promocional para esta máquina.</value></data>
