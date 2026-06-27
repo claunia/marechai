@@ -116,6 +116,48 @@ public class SoftwareBrowsingService
         }
     }
 
+    public async Task<bool> VoteUserReviewAsync(int softwareId, long reviewId, bool isUpvote)
+    {
+        try
+        {
+            _logger.LogInformation("Voting on review {ReviewId} for software {SoftwareId}: upvote={IsUpvote}",
+                                   reviewId, softwareId, isUpvote);
+
+            await _apiClient.Software[softwareId].UserReviews[reviewId].Vote.PostAsync(
+                new SoftwareUserReviewVoteDto { IsUpvote = isUpvote });
+
+            return true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error voting on review {ReviewId} for software {SoftwareId}", reviewId, softwareId);
+
+            return false;
+        }
+    }
+
+    public async Task<bool> RemoveUserReviewVoteAsync(int softwareId, long reviewId)
+    {
+        try
+        {
+            _logger.LogInformation("Removing vote on review {ReviewId} for software {SoftwareId}",
+                                   reviewId, softwareId);
+
+            await _apiClient.Software[softwareId].UserReviews[reviewId].Vote.DeleteAsync();
+
+            return true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex,
+                             "Error removing vote on review {ReviewId} for software {SoftwareId}",
+                             reviewId,
+                             softwareId);
+
+            return false;
+        }
+    }
+
     public async Task<int> GetSoftwareCountAsync()
     {
         try

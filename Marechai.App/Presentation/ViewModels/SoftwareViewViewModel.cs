@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Marechai.ApiClient.Models;
@@ -14,6 +15,7 @@ using Marechai.App.Navigation;
 using Marechai.Data;
 using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
+using Marechai.App.Services.Authentication;
 using Marechai.App.Services.Caching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
@@ -24,7 +26,10 @@ namespace Marechai.App.Presentation.ViewModels;
 [Bindable]
 public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
 {
-    private readonly SoftwareBrowsingService        _browsingService;
+    private readonly SoftwareBrowsingService         _browsingService;
+    private readonly AuthService                     _authService;
+    private readonly ITokenService                   _tokenService;
+    private readonly IJwtService                     _jwtService;
     private readonly SoftwareScreenshotCache         _screenshotCache;
     private readonly SoftwareCoverCache              _coverCache;
     private readonly SoftwarePromoArtCache           _promoArtCache;
@@ -36,6 +41,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
 
     private string? _navigationSource;
     private int     _currentSoftwareId;
+    private string? _currentUserId;
 
     [ObservableProperty]
     private string _softwareName = string.Empty;
@@ -152,6 +158,9 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     private string? _userReviewsOverallText;
 
     [ObservableProperty]
+    private bool _isAuthenticated;
+
+    [ObservableProperty]
     private Visibility _showCredits = Visibility.Collapsed;
 
     [ObservableProperty]
@@ -168,14 +177,19 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     }
 
     public SoftwareViewViewModel(ILogger<SoftwareViewViewModel> logger,          IRegionManager regionManager,
-                                 SoftwareBrowsingService        browsingService, IStringLocalizer localizer,
-                                 SoftwareScreenshotCache        screenshotCache, SoftwareCoverCache coverCache,
-                                 SoftwarePromoArtCache           promoArtCache,   SoftwarePromoArtService promoArtService,
+                                 SoftwareBrowsingService         browsingService, AuthService authService,
+                                 ITokenService                   tokenService,    IJwtService jwtService,
+                                 IStringLocalizer                localizer,       SoftwareScreenshotCache screenshotCache,
+                                 SoftwareCoverCache              coverCache,      SoftwarePromoArtCache promoArtCache,
+                                 SoftwarePromoArtService         promoArtService,
                                  ImageSourceFactory              imageSourceFactory)
     {
         _logger             = logger;
         _regionManager      = regionManager;
         _browsingService    = browsingService;
+        _authService        = authService;
+        _tokenService       = tokenService;
+        _jwtService         = jwtService;
         _localizer          = localizer;
         _screenshotCache    = screenshotCache;
         _coverCache         = coverCache;
@@ -533,6 +547,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
             await LoadCriticReviewsAsync(softwareId);
 
             // Load user reviews
+            await RefreshReviewVotingContextAsync();
             await LoadUserReviewsAsync(softwareId);
 
             // Load localized description
@@ -841,6 +856,8 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
             {
                 UserReviews.Add(new UserReviewDisplayItem
                 {
+                    ReviewId      = review.Id ?? 0,
+                    UserId        = review.UserId,
                     DisplayName   = review.DisplayName,
                     UserName      = review.UserName,
                     AvatarUrl     = review.AvatarUrl,
@@ -851,6 +868,10 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
                     TheUgly       = review.TheUgly,
                     ThumbsUp      = review.ThumbsUp ?? 0,
                     ThumbsDown    = review.ThumbsDown ?? 0,
+                    CurrentUserVote = review.CurrentUserVote,
+                    CanVote       = IsAuthenticated &&
+                                    !string.IsNullOrWhiteSpace(_currentUserId) &&
+                                    !string.Equals(review.UserId, _currentUserId, StringComparison.Ordinal),
                     FormattedDate = review.CreatedOn?.DateTime.ToString("yyyy-MM-dd") ?? string.Empty
                 });
             }
@@ -868,6 +889,51 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
         {
             _logger.LogError(ex, "Error loading user reviews for software {SoftwareId}", softwareId);
         }
+    }
+
+    async Task RefreshReviewVotingContextAsync()
+    {
+        try
+        {
+            IsAuthenticated = await _authService.IsAuthenticated(CancellationToken.None);
+
+            if(!IsAuthenticated)
+            {
+                _currentUserId = null;
+
+                return;
+            }
+
+            string token = _tokenService.GetToken();
+            _currentUserId = string.IsNullOrWhiteSpace(token) ? null : _jwtService.GetUserId(token);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error refreshing review voting context");
+            IsAuthenticated = false;
+            _currentUserId  = null;
+        }
+    }
+
+    [RelayCommand]
+    public Task UpvoteReview(UserReviewDisplayItem? review) => VoteReviewAsync(review, true);
+
+    [RelayCommand]
+    public Task DownvoteReview(UserReviewDisplayItem? review) => VoteReviewAsync(review, false);
+
+    async Task VoteReviewAsync(UserReviewDisplayItem? review, bool isUpvote)
+    {
+        if(review is null || review.ReviewId <= 0 || !review.CanVote) return;
+
+        bool succeeded = review.CurrentUserVote == isUpvote
+                             ? await _browsingService.RemoveUserReviewVoteAsync(_currentSoftwareId, review.ReviewId)
+                             : await _browsingService.VoteUserReviewAsync(_currentSoftwareId, review.ReviewId, isUpvote);
+
+        if(!succeeded) return;
+
+        await RefreshReviewVotingContextAsync();
+        await LoadUserReviewsAsync(_currentSoftwareId);
+        UpdateVisibilities();
     }
 
     private static string FormatReviewDate(SoftwareCriticReviewDto review)

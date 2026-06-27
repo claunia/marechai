@@ -1300,21 +1300,41 @@
                                                         Spacing="16">
                                                 <StackPanel Orientation="Horizontal"
                                                             Spacing="4">
-                                                    <FontIcon Glyph="&#xE8E1;"
-                                                              FontSize="12"
-                                                              Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                                    <Button Command="{Binding DataContext.UpvoteReviewCommand, ElementName=PageRoot}"
+                                                            CommandParameter="{Binding}"
+                                                            IsEnabled="{Binding CanVote}"
+                                                            Opacity="{Binding UpvoteOpacity}"
+                                                            Padding="4"
+                                                            MinWidth="0"
+                                                            Background="Transparent"
+                                                            BorderThickness="0">
+                                                        <FontIcon Glyph="&#xE8E1;"
+                                                                  FontSize="12"
+                                                                  Foreground="SeaGreen" />
+                                                    </Button>
                                                     <TextBlock Text="{Binding ThumbsUp}"
                                                                FontSize="11"
-                                                               Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                                               Foreground="{ThemeResource SystemBaseMediumColor}"
+                                                               VerticalAlignment="Center" />
                                                 </StackPanel>
                                                 <StackPanel Orientation="Horizontal"
                                                             Spacing="4">
-                                                    <FontIcon Glyph="&#xE8E0;"
-                                                              FontSize="12"
-                                                              Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                                    <Button Command="{Binding DataContext.DownvoteReviewCommand, ElementName=PageRoot}"
+                                                            CommandParameter="{Binding}"
+                                                            IsEnabled="{Binding CanVote}"
+                                                            Opacity="{Binding DownvoteOpacity}"
+                                                            Padding="4"
+                                                            MinWidth="0"
+                                                            Background="Transparent"
+                                                            BorderThickness="0">
+                                                        <FontIcon Glyph="&#xE8E0;"
+                                                                  FontSize="12"
+                                                                  Foreground="IndianRed" />
+                                                    </Button>
                                                     <TextBlock Text="{Binding ThumbsDown}"
                                                                FontSize="11"
-                                                               Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                                               Foreground="{ThemeResource SystemBaseMediumColor}"
+                                                               VerticalAlignment="Center" />
                                                 </StackPanel>
                                             </StackPanel>
                                         </StackPanel>
