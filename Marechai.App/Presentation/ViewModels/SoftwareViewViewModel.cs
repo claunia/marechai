@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Marechai.ApiClient.Models;
 using Marechai.App.Models;
+using Marechai.App.Presentation.Models;
 using Marechai.App.Navigation;
 using Marechai.Data;
 using Marechai.App.Presentation.Views;
@@ -25,6 +26,8 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     private readonly SoftwareBrowsingService        _browsingService;
     private readonly SoftwareScreenshotCache         _screenshotCache;
     private readonly SoftwareCoverCache              _coverCache;
+    private readonly SoftwarePromoArtCache           _promoArtCache;
+    private readonly SoftwarePromoArtService         _promoArtService;
     private readonly ImageSourceFactory              _imageSourceFactory;
     private readonly IStringLocalizer               _localizer;
     private readonly ILogger<SoftwareViewViewModel> _logger;
@@ -130,6 +133,9 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     private Visibility _showCovers = Visibility.Collapsed;
 
     [ObservableProperty]
+    private Visibility _showPromoArt = Visibility.Collapsed;
+
+    [ObservableProperty]
     private Visibility _showCredits = Visibility.Collapsed;
 
     [ObservableProperty]
@@ -148,6 +154,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     public SoftwareViewViewModel(ILogger<SoftwareViewViewModel> logger,          IRegionManager regionManager,
                                  SoftwareBrowsingService        browsingService, IStringLocalizer localizer,
                                  SoftwareScreenshotCache        screenshotCache, SoftwareCoverCache coverCache,
+                                 SoftwarePromoArtCache           promoArtCache,   SoftwarePromoArtService promoArtService,
                                  ImageSourceFactory              imageSourceFactory)
     {
         _logger             = logger;
@@ -156,6 +163,8 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
         _localizer          = localizer;
         _screenshotCache    = screenshotCache;
         _coverCache         = coverCache;
+        _promoArtCache      = promoArtCache;
+        _promoArtService    = promoArtService;
         _imageSourceFactory = imageSourceFactory;
     }
 
@@ -164,6 +173,10 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     public ObservableCollection<ReleaseDisplayItem>       Releases            { get; } = [];
     public ObservableCollection<ScreenshotPlatformGroup>  ScreenshotGroups    { get; } = [];
     public ObservableCollection<CoverGroupItem>           CoverGroups         { get; } = [];
+    public ObservableCollection<SoftwarePromoArtGroupDisplayItem> PromoArtGroups { get; } = [];
+
+    public int  PromoArtCount => PromoArtGroups.Sum(group => group.Items.Count);
+    public bool HasPromoArt   => PromoArtCount > 0;
     public ObservableCollection<CreditGroupDisplayItem>   CreditGroups        { get; } = [];
     public ObservableCollection<GenreTypeGroupItem>       GenreGroups         { get; } = [];
     public ObservableCollection<SpecPlatformGroupItem>    SpecGroups          { get; } = [];
@@ -487,6 +500,9 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
             // Load covers
             await LoadCoversAsync(softwareId);
 
+            // Load promo art
+            await LoadPromoArtAsync(softwareId);
+
             // Load screenshots
             await LoadScreenshotsAsync(softwareId);
 
@@ -608,6 +624,77 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
         }
     }
 
+    [RelayCommand]
+    public Task ViewPromoArtDetails(Guid promoArtId)
+    {
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.SoftwarePromoArtId, promoArtId }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(SoftwarePromoArtDetailPage), parameters);
+
+        return Task.CompletedTask;
+    }
+
+    private async Task LoadPromoArtAsync(int softwareId)
+    {
+        try
+        {
+            PromoArtGroups.Clear();
+
+            List<SoftwarePromoArtDto> promoArtList = await _promoArtService.GetPromoArtBySoftwareAsync(softwareId);
+            string                    otherGroup   = _localizer["OtherPromoArt"];
+
+            foreach(var group in promoArtList.GroupBy(item => string.IsNullOrWhiteSpace(item.GroupName)
+                                                                  ? otherGroup
+                                                                  : item.GroupName!)
+                                              .OrderBy(group => group.Key, StringComparer.CurrentCultureIgnoreCase))
+            {
+                var displayGroup = new SoftwarePromoArtGroupDisplayItem
+                {
+                    GroupName = group.Key
+                };
+
+                foreach(SoftwarePromoArtDto promoArt in group)
+                {
+                    if(!promoArt.Id.HasValue) continue;
+
+                    var promoArtItem = new SoftwarePromoArtDisplayItem
+                    {
+                        PromoArtId = promoArt.Id.Value,
+                        GroupName  = group.Key,
+                        Caption    = promoArt.Caption ?? string.Empty
+                    };
+
+                    _ = LoadPromoArtThumbnailAsync(promoArtItem);
+
+                    displayGroup.Items.Add(promoArtItem);
+                }
+
+                if(displayGroup.Items.Count > 0)
+                    PromoArtGroups.Add(displayGroup);
+            }
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading promo art for software {SoftwareId}", softwareId);
+        }
+    }
+
+    private async Task LoadPromoArtThumbnailAsync(SoftwarePromoArtDisplayItem promoArtItem)
+    {
+        try
+        {
+            Stream stream = await _promoArtCache.GetThumbnailAsync(promoArtItem.PromoArtId);
+            promoArtItem.ThumbnailImageSource = await _imageSourceFactory.CreateBitmapImageSourceAsync(stream);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading promo art thumbnail {PromoArtId}", promoArtItem.PromoArtId);
+        }
+    }
+
     private static string GetCoverGroupLabel(SoftwareCoverDto cover)
     {
         if(!string.IsNullOrWhiteSpace(cover.ReleaseTitle))
@@ -710,8 +797,12 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
         ShowBaseSoftware  = BaseSoftwareId is not null && !string.IsNullOrEmpty(BaseSoftware) ? Visibility.Visible : Visibility.Collapsed;
         ShowScreenshots = ScreenshotGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowCovers      = CoverGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+        ShowPromoArt    = PromoArtGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowCredits     = CreditGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowDescription = HasDescription ? Visibility.Visible : Visibility.Collapsed;
+
+        OnPropertyChanged(nameof(PromoArtCount));
+        OnPropertyChanged(nameof(HasPromoArt));
     }
 
     private static string GetIso639CodeFromCulture()

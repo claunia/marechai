@@ -171,6 +171,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<MagazineIssueCoverCache>();
         containerRegistry.RegisterSingleton<SoftwareScreenshotCache>();
         containerRegistry.RegisterSingleton<SoftwareCoverCache>();
+        containerRegistry.RegisterSingleton<SoftwarePromoArtCache>();
         containerRegistry.RegisterSingleton<ImageSourceFactory>(
             () => new ImageSourceFactory(DispatcherQueue.GetForCurrentThread()));
         containerRegistry.RegisterSingleton<NewsService>();
@@ -186,6 +187,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<CompanyLogosService>();
         containerRegistry.RegisterSingleton<MachinePhotosService>();
         containerRegistry.RegisterSingleton<MachinePromoArtService>();
+        containerRegistry.RegisterSingleton<SoftwarePromoArtService>();
         containerRegistry.RegisterSingleton<LicensesService>();
         containerRegistry.RegisterSingleton<GpusService>();
         containerRegistry.RegisterSingleton<ProcessorsService>();
@@ -254,6 +256,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<MachineViewViewModel>();
         containerRegistry.Register<PhotoDetailViewModel>();
         containerRegistry.Register<MachinePromoArtDetailViewModel>();
+        containerRegistry.Register<SoftwarePromoArtDetailViewModel>();
         containerRegistry.Register<GpusListViewModel>();
         containerRegistry.Register<GpuDetailViewModel>();
         containerRegistry.Register<GpuPhotoDetailViewModel>();
@@ -383,6 +386,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<AdminWwpcImportReviewPage, AdminWwpcImportReviewViewModel>();
         containerRegistry.RegisterForNavigation<ScreenshotDetailPage, ScreenshotDetailViewModel>();
         containerRegistry.RegisterForNavigation<CoverDetailPage, CoverDetailViewModel>();
+        containerRegistry.RegisterForNavigation<SoftwarePromoArtDetailPage, SoftwarePromoArtDetailViewModel>();
     }
 
     protected override async void OnInitialized()
