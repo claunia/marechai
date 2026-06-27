@@ -15,11 +15,65 @@
             <ScrollViewer>
                 <Grid Padding="16">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" /> <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" /> <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
+                    <!-- Welcome Hero Section -->
+                    <Border Grid.Row="0"
+                            CornerRadius="16"
+                            Padding="24"
+                            Margin="0,0,0,16"
+                            Background="{ThemeResource SystemAccentColorBrush}">
+                        <StackPanel Spacing="12">
+                            <Image Source="ms-appx:///Assets/Icons/icon_foreground.svg"
+                                   Width="60"
+                                   Height="60"
+                                   HorizontalAlignment="Left" />
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=WelcomeHeroTitle}"
+                                       FontSize="28"
+                                       FontWeight="Bold"
+                                       Foreground="White" />
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=WelcomeHeroLead}"
+                                       FontSize="14"
+                                       Foreground="White"
+                                       TextWrapping="Wrap" />
+                            <StackPanel Orientation="Horizontal"
+                                        Spacing="8">
+                                <Button
+                                        Content="{Binding Source={StaticResource Strings}, Path=BrowseComputersChip}"
+                                        Command="{Binding NavigateToComputersCommand}"
+                                        CornerRadius="16" />
+                                <Button
+                                        Content="{Binding Source={StaticResource Strings}, Path=BrowseConsolesChip}"
+                                        Command="{Binding NavigateToConsolesCommand}"
+                                        CornerRadius="16" />
+                                <Button
+                                        Content="{Binding Source={StaticResource Strings}, Path=BrowseSoftwareChip}"
+                                        Command="{Binding NavigateToSoftwareCommand}"
+                                        CornerRadius="16" />
+                                <Button
+                                        Content="{Binding Source={StaticResource Strings}, Path=AboutThisSiteChip}"
+                                        Command="{Binding NavigateToAboutCommand}"
+                                        CornerRadius="16" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal"
+                                        Spacing="8">
+                                <Button
+                                        Content="{Binding Source={StaticResource Strings}, Path=LearnMoreButton}"
+                                        Command="{Binding NavigateToAboutCommand}"
+                                        Style="{ThemeResource AccentButtonStyle}" />
+                                <Button
+                                        Content="{Binding Source={StaticResource Strings}, Path=SignUpToContributeButton}"
+                                        Command="{Binding NavigateToSignUpCommand}"
+                                        Visibility="{Binding IsAuthenticated, Converter={StaticResource InvertBoolToVisibilityConverter}}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
                     <!-- News Title Section -->
-                    <StackPanel Grid.Row="0"
+                    <StackPanel Grid.Row="1"
                                 Margin="0,0,0,16">
                         <TextBlock
                                    Text="{Binding Source={StaticResource Strings}, Path=LatestNewsTitle}"
@@ -35,7 +89,7 @@
                     </StackPanel>
 
                     <!-- Loading State -->
-                    <StackPanel Grid.Row="2"
+                    <StackPanel Grid.Row="3"
                                 Visibility="{Binding IsLoading}"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
@@ -54,7 +108,7 @@
                     </StackPanel>
 
                     <!-- Error State -->
-                    <StackPanel Grid.Row="2"
+                    <StackPanel Grid.Row="3"
                                 Visibility="{Binding HasError}"
                                 VerticalAlignment="Center"
                                 Spacing="16"
@@ -72,7 +126,7 @@
                     </StackPanel>
 
                     <!-- News Feed -->
-                    <ItemsControl Grid.Row="2"
+                    <ItemsControl Grid.Row="3"
                                   ItemsSource="{Binding NewsList}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>

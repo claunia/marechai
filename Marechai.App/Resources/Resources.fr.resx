@@ -1097,6 +1097,30 @@
   <data name="PhotosLabel" xml:space="preserve">
     <value>Photos</value>
   </data>
+  <data name="WelcomeHeroTitle" xml:space="preserve">
+    <value>Bienvenue sur Marechai</value>
+  </data>
+  <data name="WelcomeHeroLead" xml:space="preserve">
+    <value>Marechai est une archive en constante évolution du patrimoine informatique. Parcourez et enrichissez un catalogue soigné d’ordinateurs, consoles, smartphones, tablettes, PDA, livres, magazines, documents, logiciels, GPU, processeurs et synthétiseurs sonores, ainsi que les personnes et entreprises qui les ont créés.</value>
+  </data>
+  <data name="BrowseComputersChip" xml:space="preserve">
+    <value>Parcourir les ordinateurs</value>
+  </data>
+  <data name="BrowseConsolesChip" xml:space="preserve">
+    <value>Parcourir les consoles</value>
+  </data>
+  <data name="BrowseSoftwareChip" xml:space="preserve">
+    <value>Parcourir les logiciels</value>
+  </data>
+  <data name="AboutThisSiteChip" xml:space="preserve">
+    <value>À propos</value>
+  </data>
+  <data name="LearnMoreButton" xml:space="preserve">
+    <value>En savoir plus</value>
+  </data>
+  <data name="SignUpToContributeButton" xml:space="preserve">
+    <value>S’inscrire pour contribuer</value>
+  </data>
   <data name="LatestNewsTitle" xml:space="preserve">
     <value>Dernières Actualités</value>
   </data>

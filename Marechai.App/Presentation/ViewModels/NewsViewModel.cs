@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.App.Navigation;
 using Marechai.App.Presentation.Models;
 using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
 using Marechai.Data;
+using Uno.Extensions.Authentication;
 
 namespace Marechai.App.Presentation.ViewModels;
 
@@ -63,10 +65,11 @@ public class NewsItemViewModel
 
 public partial class NewsViewModel : ObservableObject
 {
-    private readonly IStringLocalizer       _localizer;
-    private readonly ILogger<NewsViewModel> _logger;
-    private readonly IRegionManager         _regionManager;
-    private readonly NewsService            _newsService;
+    private readonly IStringLocalizer        _localizer;
+    private readonly ILogger<NewsViewModel>  _logger;
+    private readonly IRegionManager          _regionManager;
+    private readonly NewsService             _newsService;
+    private readonly IAuthenticationService  _authService;
 
     [ObservableProperty]
     private string _errorMessage = string.Empty;
@@ -78,19 +81,43 @@ public partial class NewsViewModel : ObservableObject
     private bool _isLoading;
 
     [ObservableProperty]
+    private bool _isAuthenticated;
+
+    [ObservableProperty]
     private ObservableCollection<NewsItemViewModel> _newsList = [];
 
     public NewsViewModel(NewsService newsService, IStringLocalizer localizer, ILogger<NewsViewModel> logger,
-                         IRegionManager regionManager)
+                         IRegionManager regionManager, IAuthenticationService authService)
     {
         _newsService   = newsService;
         _localizer     = localizer;
         _logger        = logger;
         _regionManager = regionManager;
+        _authService   = authService;
         LoadNews       = new AsyncRelayCommand(LoadNewsAsync);
+
+        _ = UpdateAuthenticationStateAsync();
     }
 
     public IAsyncRelayCommand LoadNews { get; }
+
+    private async Task UpdateAuthenticationStateAsync() =>
+        IsAuthenticated = await _authService.IsAuthenticated(CancellationToken.None);
+
+    [RelayCommand]
+    private void NavigateToComputers() => _regionManager.RequestNavigate(RegionNames.Content, nameof(ComputersPage));
+
+    [RelayCommand]
+    private void NavigateToConsoles() => _regionManager.RequestNavigate(RegionNames.Content, nameof(ConsolesPage));
+
+    [RelayCommand]
+    private void NavigateToSoftware() => _regionManager.RequestNavigate(RegionNames.Content, nameof(SoftwarePage));
+
+    [RelayCommand]
+    private void NavigateToAbout() => _regionManager.RequestNavigate(RegionNames.Content, nameof(SettingsPage));
+
+    [RelayCommand]
+    private void NavigateToSignUp() => _regionManager.RequestNavigate(RegionNames.Content, nameof(RegisterPage));
 
     [RelayCommand]
     private async Task NavigateToNewsItem(NewsDto news)
