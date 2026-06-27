@@ -100,6 +100,68 @@ public class MagazinesService
         }
     }
 
+    public async Task<MagazineIssueFullDto?> GetIssueFullAsync(long issueId)
+    {
+        try
+        {
+            return await _apiClient.Magazines.Issues[issueId].Full.GetAsync();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching full issue {Id}", issueId);
+
+            return null;
+        }
+    }
+
+    public async Task<bool> IsMagazineIssueCollectedAsync(long issueId)
+    {
+        try
+        {
+            bool? result = await _apiClient.Auth.Me.Collection.MagazineIssues[issueId].GetAsync();
+
+            return result ?? false;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error checking collection state for issue {Id}", issueId);
+
+            return false;
+        }
+    }
+
+    public async Task<bool> AddMagazineIssueToCollectionAsync(long issueId)
+    {
+        try
+        {
+            await _apiClient.Auth.Me.Collection.MagazineIssues[issueId].PostAsync();
+
+            return true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error adding issue {Id} to collection", issueId);
+
+            return false;
+        }
+    }
+
+    public async Task<bool> RemoveMagazineIssueFromCollectionAsync(long issueId)
+    {
+        try
+        {
+            await _apiClient.Auth.Me.Collection.MagazineIssues[issueId].DeleteAsync();
+
+            return true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error removing issue {Id} from collection", issueId);
+
+            return false;
+        }
+    }
+
     public async Task<DocumentSynopsisDto?> GetMagazineSynopsisAsync(long magazineId)
     {
         try

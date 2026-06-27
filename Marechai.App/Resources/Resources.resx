@@ -2646,6 +2646,20 @@
   <data name="MagazineCompaniesLabel" xml:space="preserve"><value>Publishers &amp; Companies</value></data>
   <data name="MagazineMachinesLabel" xml:space="preserve"><value>Related Machines</value></data>
   <data name="MagazineMachineFamiliesLabel" xml:space="preserve"><value>Related Machine Families</value></data>
+  <data name="MagazineIssueNativeCaptionLabel" xml:space="preserve"><value>Native Caption</value></data>
+  <data name="MagazineIssueMagazineLabel" xml:space="preserve"><value>Magazine</value></data>
+  <data name="MagazineIssueNumberLabel" xml:space="preserve"><value>Issue Number</value></data>
+  <data name="MagazineIssuePublishedLabel" xml:space="preserve"><value>Published</value></data>
+  <data name="MagazineIssuePagesLabel" xml:space="preserve"><value>Pages</value></data>
+  <data name="MagazineIssueProductCodeLabel" xml:space="preserve"><value>Product Code</value></data>
+  <data name="MagazineIssueInternetArchiveLabel" xml:space="preserve"><value>Internet Archive</value></data>
+  <data name="MagazineIssuePeopleLabel" xml:space="preserve"><value>Contributors</value></data>
+  <data name="MagazineIssueMachinesLabel" xml:space="preserve"><value>Related Machines</value></data>
+  <data name="MagazineIssueMachineFamiliesLabel" xml:space="preserve"><value>Related Machine Families</value></data>
+  <data name="MagazineIssueSoftwareLabel" xml:space="preserve"><value>Related Software</value></data>
+  <data name="Magazine issue not found" xml:space="preserve"><value>Magazine issue not found</value></data>
+  <data name="Add to Collection" xml:space="preserve"><value>Add to Collection</value></data>
+  <data name="In Collection" xml:space="preserve"><value>In Collection</value></data>
   <data name="Magazines" xml:space="preserve"><value>Magazines</value></data>
   <data name="Magazines in the database" xml:space="preserve"><value>Magazines in the database</value></data>
   <data name="No magazines found" xml:space="preserve"><value>No magazines found</value></data>

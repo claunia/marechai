@@ -1,0 +1,383 @@
+<?xml version="1.0"
+      encoding="utf-8"?>
+
+<Page x:Class="Marechai.App.Presentation.Views.MagazineIssueViewPage"
+      x:Name="PageRoot"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      NavigationCacheMode="Disabled"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid RowSpacing="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" /> <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header with Back Button -->
+        <Grid Grid.Row="0"
+              Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+              BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+              BorderThickness="0,0,0,1"
+              Padding="12,12,16,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" /> <ColumnDefinition Width="*" /> <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    Command="{Binding GoBackCommand}"
+                    Style="{ThemeResource AlternateButtonStyle}"
+                    ToolTipService.ToolTip="Go back"
+                    Padding="8"
+                    MinWidth="44"
+                    MinHeight="44"
+                    VerticalAlignment="Center">
+                <FontIcon Glyph="&#xE72B;"
+                          FontSize="16" />
+            </Button>
+
+            <StackPanel Grid.Column="1"
+                        Margin="12,0,0,0"
+                        VerticalAlignment="Center">
+                <TextBlock Text="{Binding Caption}"
+                           FontSize="20"
+                           FontWeight="SemiBold"
+                           Foreground="{ThemeResource TextControlForeground}"
+                           TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+
+            <Button Grid.Column="2"
+                    Visibility="{Binding ShowCollectionButton}"
+                    Content="{Binding CollectionButtonText}"
+                    Command="{Binding ToggleCollectionCommand}"
+                    Style="{ThemeResource AccentButtonStyle}"
+                    VerticalAlignment="Center" />
+        </Grid>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1">
+
+            <!-- Loading State -->
+            <StackPanel Visibility="{Binding IsLoading}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Padding="32"
+                        Spacing="16">
+                <ProgressRing IsActive="True"
+                              IsIndeterminate="True"
+                              Height="64"
+                              Width="64"
+                              Foreground="{ThemeResource SystemAccentColor}" />
+                <TextBlock
+                           Text="{Binding Source={StaticResource Strings}, Path=LoadingText}"
+                           FontSize="14"
+                           TextAlignment="Center"
+                           Foreground="{ThemeResource SystemBaseMediumColor}" />
+            </StackPanel>
+
+            <!-- Error State -->
+            <StackPanel Visibility="{Binding HasError}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Padding="24"
+                        Spacing="16"
+                        MaxWidth="400">
+                <InfoBar IsOpen="True"
+                         Severity="Error"
+                         Title="{Binding Source={StaticResource Strings}, Path=MagazinesErrorInfoBar_Title}"
+                         Message="{Binding ErrorMessage}"
+                         IsClosable="False" />
+                <Button
+                        Content="{Binding Source={StaticResource Strings}, Path=RetryButton}"
+                        Command="{Binding LoadDataCommand}"
+                        HorizontalAlignment="Center"
+                        Style="{ThemeResource AccentButtonStyle}" />
+            </StackPanel>
+
+            <!-- Issue Details -->
+            <ScrollViewer Visibility="{Binding IsDataLoaded}"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Padding="16"
+                            Spacing="24">
+
+                    <!-- Cover Image or Placeholder -->
+                    <Grid HorizontalAlignment="Center"
+                          MaxWidth="300"
+                          MaxHeight="400">
+                        <FontIcon Glyph="&#xE8A5;"
+                                  FontFamily="Segoe MDL2 Assets"
+                                  FontSize="96"
+                                  Foreground="{ThemeResource SystemBaseMediumColor}"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center" />
+                        <Image Source="{Binding CoverImageSource}"
+                               Stretch="Uniform"
+                               MaxWidth="300"
+                               MaxHeight="400" />
+                    </Grid>
+
+                    <!-- Native Caption -->
+                    <StackPanel Visibility="{Binding ShowNativeCaption}"
+                                Spacing="8">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=MagazineIssueNativeCaptionLabel}"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="16,12">
+                            <TextBlock Text="{Binding NativeCaption}"
+                                       FontSize="16"
+                                       Foreground="{ThemeResource TextControlForeground}"
+                                       TextWrapping="Wrap" />
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Magazine Link -->
+                    <StackPanel Visibility="{Binding ShowMagazineLink}"
+                                Spacing="8">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=MagazineIssueMagazineLabel}"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                        <HyperlinkButton Content="{Binding MagazineTitle}"
+                                         Command="{Binding NavigateToMagazineCommand}"
+                                         FontSize="14" />
+                    </StackPanel>
+
+                    <!-- Issue Number, Published, Pages, Product Code -->
+                    <Grid ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" /> <ColumnDefinition Width="*" /> <ColumnDefinition Width="*" /> <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0"
+                                    Visibility="{Binding ShowIssueNumber}"
+                                    Spacing="8">
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=MagazineIssueNumberLabel}"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="16,12">
+                                <TextBlock Text="{Binding IssueNumber}"
+                                           FontSize="14"
+                                           Foreground="{ThemeResource TextControlForeground}" />
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1"
+                                    Visibility="{Binding ShowPublished}"
+                                    Spacing="8">
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=MagazineIssuePublishedLabel}"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="16,12">
+                                <TextBlock Text="{Binding PublishedDisplay}"
+                                           FontSize="14"
+                                           Foreground="{ThemeResource TextControlForeground}" />
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2"
+                                    Visibility="{Binding ShowPages}"
+                                    Spacing="8">
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=MagazineIssuePagesLabel}"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="16,12">
+                                <TextBlock Text="{Binding Pages}"
+                                           FontSize="14"
+                                           Foreground="{ThemeResource TextControlForeground}" />
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="3"
+                                    Visibility="{Binding ShowProductCode}"
+                                    Spacing="8">
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=MagazineIssueProductCodeLabel}"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="16,12">
+                                <TextBlock Text="{Binding ProductCode}"
+                                           FontSize="14"
+                                           Foreground="{ThemeResource TextControlForeground}" />
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Internet Archive Link -->
+                    <StackPanel Visibility="{Binding ShowInternetArchiveLink}"
+                                Spacing="8">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=MagazineIssueInternetArchiveLabel}"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                        <HyperlinkButton Content="{Binding InternetArchiveUrl}"
+                                         NavigateUri="{Binding InternetArchiveUrl}"
+                                         FontSize="14" />
+                    </StackPanel>
+
+                    <!-- People / Contributors -->
+                    <StackPanel Visibility="{Binding ShowPeople}"
+                                Spacing="12">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=MagazineIssuePeopleLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <ItemsControl ItemsSource="{Binding People}"
+                                      HorizontalAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="4" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="8"
+                                            Padding="16,8">
+                                        <TextBlock Text="{Binding}"
+                                                   FontSize="14"
+                                                   Foreground="{ThemeResource TextControlForeground}" />
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <!-- Machines -->
+                    <StackPanel Visibility="{Binding ShowMachines}"
+                                Spacing="12">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=MagazineIssueMachinesLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <ItemsControl ItemsSource="{Binding Machines}"
+                                      HorizontalAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="4" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="8"
+                                            Padding="16,8">
+                                        <TextBlock Text="{Binding}"
+                                                   FontSize="14"
+                                                   Foreground="{ThemeResource TextControlForeground}" />
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <!-- Machine Families -->
+                    <StackPanel Visibility="{Binding ShowMachineFamilies}"
+                                Spacing="12">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=MagazineIssueMachineFamiliesLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <ItemsControl ItemsSource="{Binding MachineFamilies}"
+                                      HorizontalAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="4" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="8"
+                                            Padding="16,8">
+                                        <TextBlock Text="{Binding}"
+                                                   FontSize="14"
+                                                   Foreground="{ThemeResource TextControlForeground}" />
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <!-- Software -->
+                    <StackPanel Visibility="{Binding ShowSoftware}"
+                                Spacing="12">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=MagazineIssueSoftwareLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <ItemsControl ItemsSource="{Binding Software}"
+                                      HorizontalAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="4" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="8"
+                                            Padding="16,8">
+                                        <TextBlock Text="{Binding}"
+                                                   FontSize="14"
+                                                   Foreground="{ThemeResource TextControlForeground}" />
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                </StackPanel>
+            </ScrollViewer>
+
+        </Grid>
+
+    </Grid>
+
+</Page>

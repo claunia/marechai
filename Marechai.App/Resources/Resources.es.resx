@@ -2323,6 +2323,20 @@
   <data name="MagazineCompaniesLabel" xml:space="preserve"><value>Editoriales y empresas</value></data>
   <data name="MagazineMachinesLabel" xml:space="preserve"><value>Máquinas relacionadas</value></data>
   <data name="MagazineMachineFamiliesLabel" xml:space="preserve"><value>Familias de máquinas relacionadas</value></data>
+  <data name="MagazineIssueNativeCaptionLabel" xml:space="preserve"><value>Título original</value></data>
+  <data name="MagazineIssueMagazineLabel" xml:space="preserve"><value>Revista</value></data>
+  <data name="MagazineIssueNumberLabel" xml:space="preserve"><value>Número de edición</value></data>
+  <data name="MagazineIssuePublishedLabel" xml:space="preserve"><value>Publicado</value></data>
+  <data name="MagazineIssuePagesLabel" xml:space="preserve"><value>Páginas</value></data>
+  <data name="MagazineIssueProductCodeLabel" xml:space="preserve"><value>Código de producto</value></data>
+  <data name="MagazineIssueInternetArchiveLabel" xml:space="preserve"><value>Internet Archive</value></data>
+  <data name="MagazineIssuePeopleLabel" xml:space="preserve"><value>Colaboradores</value></data>
+  <data name="MagazineIssueMachinesLabel" xml:space="preserve"><value>Máquinas relacionadas</value></data>
+  <data name="MagazineIssueMachineFamiliesLabel" xml:space="preserve"><value>Familias de máquinas relacionadas</value></data>
+  <data name="MagazineIssueSoftwareLabel" xml:space="preserve"><value>Software relacionado</value></data>
+  <data name="Magazine issue not found" xml:space="preserve"><value>Edición de revista no encontrada</value></data>
+  <data name="Add to Collection" xml:space="preserve"><value>Añadir a la colección</value></data>
+  <data name="In Collection" xml:space="preserve"><value>En la colección</value></data>
   <data name="Magazines" xml:space="preserve"><value>Revistas</value></data>
   <data name="Magazines in the database" xml:space="preserve"><value>Revistas en la base de datos</value></data>
   <data name="No magazines found" xml:space="preserve"><value>No se encontraron revistas</value></data>

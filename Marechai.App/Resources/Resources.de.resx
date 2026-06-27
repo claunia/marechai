@@ -2183,6 +2183,20 @@
   <data name="MagazineCompaniesLabel" xml:space="preserve"><value>Verlage und Unternehmen</value></data>
   <data name="MagazineMachinesLabel" xml:space="preserve"><value>Zugehörige Maschinen</value></data>
   <data name="MagazineMachineFamiliesLabel" xml:space="preserve"><value>Zugehörige Maschinenfamilien</value></data>
+  <data name="MagazineIssueNativeCaptionLabel" xml:space="preserve"><value>Originaltitel</value></data>
+  <data name="MagazineIssueMagazineLabel" xml:space="preserve"><value>Zeitschrift</value></data>
+  <data name="MagazineIssueNumberLabel" xml:space="preserve"><value>Ausgabennummer</value></data>
+  <data name="MagazineIssuePublishedLabel" xml:space="preserve"><value>Veröffentlicht</value></data>
+  <data name="MagazineIssuePagesLabel" xml:space="preserve"><value>Seiten</value></data>
+  <data name="MagazineIssueProductCodeLabel" xml:space="preserve"><value>Produktcode</value></data>
+  <data name="MagazineIssueInternetArchiveLabel" xml:space="preserve"><value>Internet Archive</value></data>
+  <data name="MagazineIssuePeopleLabel" xml:space="preserve"><value>Mitwirkende</value></data>
+  <data name="MagazineIssueMachinesLabel" xml:space="preserve"><value>Zugehörige Maschinen</value></data>
+  <data name="MagazineIssueMachineFamiliesLabel" xml:space="preserve"><value>Zugehörige Maschinenfamilien</value></data>
+  <data name="MagazineIssueSoftwareLabel" xml:space="preserve"><value>Zugehörige Software</value></data>
+  <data name="Magazine issue not found" xml:space="preserve"><value>Zeitschriftenausgabe nicht gefunden</value></data>
+  <data name="Add to Collection" xml:space="preserve"><value>Zur Sammlung hinzufügen</value></data>
+  <data name="In Collection" xml:space="preserve"><value>In der Sammlung</value></data>
   <data name="Magazines" xml:space="preserve"><value>Zeitschriften</value></data>
   <data name="Magazines in the database" xml:space="preserve"><value>Zeitschriften in der Datenbank</value></data>
   <data name="No magazines found" xml:space="preserve"><value>Keine Zeitschriften gefunden</value></data>

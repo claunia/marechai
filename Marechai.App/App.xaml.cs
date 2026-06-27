@@ -167,6 +167,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<ProcessorPhotoCache>();
         containerRegistry.RegisterSingleton<SoundSynthPhotoCache>();
         containerRegistry.RegisterSingleton<BookCoverCache>();
+        containerRegistry.RegisterSingleton<MagazineIssueCoverCache>();
         containerRegistry.RegisterSingleton<SoftwareScreenshotCache>();
         containerRegistry.RegisterSingleton<ImageSourceFactory>(
             () => new ImageSourceFactory(DispatcherQueue.GetForCurrentThread()));
@@ -241,6 +242,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<MagazinesViewModel>();
         containerRegistry.Register<MagazinesListViewModel>();
         containerRegistry.Register<MagazineViewViewModel>();
+        containerRegistry.Register<MagazineIssueViewViewModel>();
         containerRegistry.Register<PeopleViewModel>();
         containerRegistry.Register<PeopleListViewModel>();
         containerRegistry.Register<PersonViewViewModel>();
@@ -319,6 +321,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<MagazinesPage, MagazinesViewModel>();
         containerRegistry.RegisterForNavigation<MagazinesListPage, MagazinesListViewModel>();
         containerRegistry.RegisterForNavigation<MagazineViewPage, MagazineViewViewModel>();
+        containerRegistry.RegisterForNavigation<MagazineIssueViewPage, MagazineIssueViewViewModel>();
         containerRegistry.RegisterForNavigation<PeoplePage, PeopleViewModel>();
         containerRegistry.RegisterForNavigation<PeopleListPage, PeopleListViewModel>();
         containerRegistry.RegisterForNavigation<PersonViewPage, PersonViewViewModel>();

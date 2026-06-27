@@ -658,6 +658,17 @@ public class LocalizedStrings
     public string MagazineCompaniesLabel => _l["MagazineCompaniesLabel"];
     public string MagazineMachinesLabel => _l["MagazineMachinesLabel"];
     public string MagazineMachineFamiliesLabel => _l["MagazineMachineFamiliesLabel"];
+    public string MagazineIssueNativeCaptionLabel => _l["MagazineIssueNativeCaptionLabel"];
+    public string MagazineIssueMagazineLabel => _l["MagazineIssueMagazineLabel"];
+    public string MagazineIssueNumberLabel => _l["MagazineIssueNumberLabel"];
+    public string MagazineIssuePublishedLabel => _l["MagazineIssuePublishedLabel"];
+    public string MagazineIssuePagesLabel => _l["MagazineIssuePagesLabel"];
+    public string MagazineIssueProductCodeLabel => _l["MagazineIssueProductCodeLabel"];
+    public string MagazineIssueInternetArchiveLabel => _l["MagazineIssueInternetArchiveLabel"];
+    public string MagazineIssuePeopleLabel => _l["MagazineIssuePeopleLabel"];
+    public string MagazineIssueMachinesLabel => _l["MagazineIssueMachinesLabel"];
+    public string MagazineIssueMachineFamiliesLabel => _l["MagazineIssueMachineFamiliesLabel"];
+    public string MagazineIssueSoftwareLabel => _l["MagazineIssueSoftwareLabel"];
 
     // People user-facing pages
     public string AllPeopleButton => _l["AllPeopleButton"];
