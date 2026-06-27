@@ -2356,6 +2356,8 @@
   <data name="ZoomInLabel" xml:space="preserve"><value>Zoom In</value></data>
   <data name="ZoomOutLabel" xml:space="preserve"><value>Zoom Out</value></data>
   <data name="ZoomResetLabel" xml:space="preserve"><value>Reset Zoom</value></data>
+  <data name="CoversLabel" xml:space="preserve"><value>Capas</value></data>
+  <data name="LoadingCoverText" xml:space="preserve"><value>Carregando capa...</value></data>
   <data name="General" xml:space="preserve"><value>General</value></data>
   <data name="SelectSoftwareRequired" xml:space="preserve"><value>Please select a software first</value></data>
   <data name="FailedToLoadScreenshots" xml:space="preserve"><value>Failed to load screenshots</value></data>

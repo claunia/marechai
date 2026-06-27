@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Marechai.ApiClient.Models;
+using Marechai.App.Models;
 using Marechai.App.Navigation;
 using Marechai.Data;
 using Marechai.App.Presentation.Views;
@@ -23,6 +24,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
 {
     private readonly SoftwareBrowsingService        _browsingService;
     private readonly SoftwareScreenshotCache         _screenshotCache;
+    private readonly SoftwareCoverCache              _coverCache;
     private readonly ImageSourceFactory              _imageSourceFactory;
     private readonly IStringLocalizer               _localizer;
     private readonly ILogger<SoftwareViewViewModel> _logger;
@@ -125,6 +127,9 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     private Visibility _showScreenshots = Visibility.Collapsed;
 
     [ObservableProperty]
+    private Visibility _showCovers = Visibility.Collapsed;
+
+    [ObservableProperty]
     private Visibility _showCredits = Visibility.Collapsed;
 
     [ObservableProperty]
@@ -142,13 +147,15 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
 
     public SoftwareViewViewModel(ILogger<SoftwareViewViewModel> logger,          IRegionManager regionManager,
                                  SoftwareBrowsingService        browsingService, IStringLocalizer localizer,
-                                 SoftwareScreenshotCache        screenshotCache, ImageSourceFactory imageSourceFactory)
+                                 SoftwareScreenshotCache        screenshotCache, SoftwareCoverCache coverCache,
+                                 ImageSourceFactory              imageSourceFactory)
     {
         _logger             = logger;
         _regionManager      = regionManager;
         _browsingService    = browsingService;
         _localizer          = localizer;
         _screenshotCache    = screenshotCache;
+        _coverCache         = coverCache;
         _imageSourceFactory = imageSourceFactory;
     }
 
@@ -156,6 +163,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     public ObservableCollection<VersionDisplayItem>       Versions            { get; } = [];
     public ObservableCollection<ReleaseDisplayItem>       Releases            { get; } = [];
     public ObservableCollection<ScreenshotPlatformGroup>  ScreenshotGroups    { get; } = [];
+    public ObservableCollection<CoverGroupItem>           CoverGroups         { get; } = [];
     public ObservableCollection<CreditGroupDisplayItem>   CreditGroups        { get; } = [];
     public ObservableCollection<GenreTypeGroupItem>       GenreGroups         { get; } = [];
     public ObservableCollection<SpecPlatformGroupItem>    SpecGroups          { get; } = [];
@@ -476,6 +484,9 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
                 Releases.Add(releaseItem);
             }
 
+            // Load covers
+            await LoadCoversAsync(softwareId);
+
             // Load screenshots
             await LoadScreenshotsAsync(softwareId);
 
@@ -517,6 +528,100 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
         _regionManager.RequestNavigate(RegionNames.Content, nameof(ScreenshotDetailPage), parameters);
 
         return Task.CompletedTask;
+    }
+
+    [RelayCommand]
+    public Task ViewCover(CoverDisplayItem? item)
+    {
+        if(item is null) return Task.CompletedTask;
+
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.CoverId, item.Id },
+            { NavParamKeys.SoftwareName, SoftwareName }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(CoverDetailPage), parameters);
+
+        return Task.CompletedTask;
+    }
+
+    private async Task LoadCoversAsync(int softwareId)
+    {
+        try
+        {
+            CoverGroups.Clear();
+
+            List<SoftwareCoverDto> covers = await _browsingService.GetCoversAsync(softwareId);
+
+            if(covers.Count == 0) return;
+
+            var byGroup = new Dictionary<string, List<CoverDisplayItem>>();
+
+            foreach(SoftwareCoverDto cover in covers)
+            {
+                if(cover.Id is null) continue;
+
+                string groupKey = GetCoverGroupLabel(cover);
+
+                if(!byGroup.ContainsKey(groupKey))
+                    byGroup[groupKey] = [];
+
+                var item = new CoverDisplayItem
+                {
+                    Id       = cover.Id.Value,
+                    TypeName = cover.TypeName,
+                    Caption  = cover.Caption
+                };
+
+                byGroup[groupKey].Add(item);
+                _ = LoadCoverThumbnailAsync(item);
+            }
+
+            foreach(KeyValuePair<string, List<CoverDisplayItem>> kvp in byGroup.OrderBy(k => k.Key))
+            {
+                var group = new CoverGroupItem
+                {
+                    GroupLabel = kvp.Key,
+                    Covers     = new ObservableCollection<CoverDisplayItem>(kvp.Value)
+                };
+
+                CoverGroups.Add(group);
+            }
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading covers for software {SoftwareId}", softwareId);
+        }
+    }
+
+    private async Task LoadCoverThumbnailAsync(CoverDisplayItem item)
+    {
+        try
+        {
+            Stream stream = await _coverCache.GetThumbnailAsync(item.Id);
+            item.ThumbnailSource = await _imageSourceFactory.CreateBitmapImageSourceAsync(stream);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading cover thumbnail {Id}", item.Id);
+        }
+    }
+
+    private static string GetCoverGroupLabel(SoftwareCoverDto cover)
+    {
+        if(!string.IsNullOrWhiteSpace(cover.ReleaseTitle))
+            return cover.ReleaseTitle;
+
+        List<string> parts = [];
+
+        if(!string.IsNullOrWhiteSpace(cover.PlatformName))
+            parts.Add(cover.PlatformName);
+
+        if(!string.IsNullOrWhiteSpace(cover.RegionNames))
+            parts.Add(cover.RegionNames);
+
+        return parts.Count > 0 ? string.Join(" - ", parts) : "Unknown";
     }
 
     private async Task LoadScreenshotsAsync(int softwareId)
@@ -604,6 +709,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
         ShowEmbeddedSoftwareBadge    = Kind == SoftwareKind.EmbeddedSoftware ? Visibility.Visible : Visibility.Collapsed;
         ShowBaseSoftware  = BaseSoftwareId is not null && !string.IsNullOrEmpty(BaseSoftware) ? Visibility.Visible : Visibility.Collapsed;
         ShowScreenshots = ScreenshotGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+        ShowCovers      = CoverGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowCredits     = CreditGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowDescription = HasDescription ? Visibility.Visible : Visibility.Collapsed;
     }
@@ -630,6 +736,13 @@ public class ScreenshotPlatformGroup
 {
     public string                                           PlatformName { get; set; } = string.Empty;
     public ObservableCollection<ScreenshotDisplayItem> Screenshots  { get; set; } = [];
+}
+
+[Bindable]
+public class CoverGroupItem
+{
+    public string                               GroupLabel { get; set; } = string.Empty;
+    public ObservableCollection<CoverDisplayItem> Covers     { get; set; } = [];
 }
 
 [Bindable]

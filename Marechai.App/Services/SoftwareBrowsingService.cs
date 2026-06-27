@@ -520,6 +520,46 @@ public class SoftwareBrowsingService
         }
     }
 
+    public async Task<List<SoftwareCoverDto>> GetCoversAsync(int softwareId)
+    {
+        try
+        {
+            string lang = GetIso639CodeFromCulture();
+
+            List<SoftwareCoverDto> covers = await _apiClient.Software[softwareId].Covers.GetAsync(config =>
+            {
+                config.QueryParameters.Lang = lang;
+            });
+
+            return covers ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching covers for software {SoftwareId}", softwareId);
+
+            return [];
+        }
+    }
+
+    public async Task<SoftwareCoverDto> GetCoverByIdAsync(Guid coverId)
+    {
+        try
+        {
+            string lang = GetIso639CodeFromCulture();
+
+            return await _apiClient.Software.Covers[coverId.ToString()].GetAsync(config =>
+            {
+                config.QueryParameters.Lang = lang;
+            });
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching cover {CoverId}", coverId);
+
+            return null;
+        }
+    }
+
     public async Task<List<SoftwareReleaseDto>> GetCompilationsForSoftwareAsync(int softwareId)
     {
         try

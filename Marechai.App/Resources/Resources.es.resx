@@ -2496,6 +2496,8 @@
   <data name="ZoomInLabel" xml:space="preserve"><value>Acercar</value></data>
   <data name="ZoomOutLabel" xml:space="preserve"><value>Alejar</value></data>
   <data name="ZoomResetLabel" xml:space="preserve"><value>Restablecer zoom</value></data>
+  <data name="CoversLabel" xml:space="preserve"><value>Portadas</value></data>
+  <data name="LoadingCoverText" xml:space="preserve"><value>Cargando portada...</value></data>
   <data name="General" xml:space="preserve"><value>General</value></data>
   <data name="SelectSoftwareRequired" xml:space="preserve"><value>Por favor seleccione un software primero</value></data>
   <data name="FailedToLoadScreenshots" xml:space="preserve"><value>Error al cargar capturas de pantalla</value></data>

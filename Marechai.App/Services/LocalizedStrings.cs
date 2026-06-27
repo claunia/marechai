@@ -746,6 +746,8 @@ public class LocalizedStrings
     public string ZoomInLabel => _l["ZoomInLabel"];
     public string ZoomOutLabel => _l["ZoomOutLabel"];
     public string ZoomResetLabel => _l["ZoomResetLabel"];
+    public string CoversLabel => _l["CoversLabel"];
+    public string LoadingCoverText => _l["LoadingCoverText"];
 
     // WinWorldPC imports
     public string WwpcImportsTitle => _l["WwpcImportsTitle"];

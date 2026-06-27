@@ -670,6 +670,85 @@
                         </ItemsControl>
                     </StackPanel>
 
+                    <!-- Covers -->
+                    <StackPanel Visibility="{Binding ShowCovers}"
+                                Spacing="12">
+                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=CoversLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+
+                        <ItemsControl ItemsSource="{Binding CoverGroups}"
+                                      HorizontalAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="16" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Spacing="8">
+                                        <!-- Release group header -->
+                                        <TextBlock Text="{Binding GroupLabel}"
+                                                   FontSize="13"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+
+                                        <!-- Cover thumbnails grid -->
+                                        <ItemsRepeater ItemsSource="{Binding Covers}">
+                                            <ItemsRepeater.Layout>
+                                                <UniformGridLayout MinItemWidth="200"
+                                                                   MinItemHeight="180"
+                                                                   MinColumnSpacing="12"
+                                                                   MinRowSpacing="12"
+                                                                   ItemsStretch="Fill" />
+                                            </ItemsRepeater.Layout>
+                                            <ItemsRepeater.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Padding="0"
+                                                            Margin="0"
+                                                            HorizontalContentAlignment="Stretch"
+                                                            VerticalContentAlignment="Stretch"
+                                                            HorizontalAlignment="Stretch"
+                                                            Command="{Binding DataContext.ViewCoverCommand, ElementName=PageRoot}"
+                                                            CommandParameter="{Binding}"
+                                                            Background="Transparent"
+                                                            BorderThickness="0">
+                                                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                                BorderThickness="1"
+                                                                CornerRadius="8"
+                                                                Padding="8">
+                                                            <StackPanel Spacing="4">
+                                                                <Image Source="{Binding ThumbnailSource}"
+                                                                       Stretch="Uniform"
+                                                                       MaxHeight="140"
+                                                                       HorizontalAlignment="Center" />
+                                                                <TextBlock Text="{Binding TypeName}"
+                                                                           FontSize="12"
+                                                                           FontWeight="SemiBold"
+                                                                           Foreground="{ThemeResource SystemAccentColor}"
+                                                                           HorizontalAlignment="Center"
+                                                                           TextTrimming="CharacterEllipsis" />
+                                                                <TextBlock Text="{Binding Caption}"
+                                                                           FontSize="11"
+                                                                           Foreground="{ThemeResource SystemBaseMediumColor}"
+                                                                           HorizontalAlignment="Center"
+                                                                           TextTrimming="CharacterEllipsis"
+                                                                           Visibility="{Binding Caption, Converter={StaticResource NullToVisibilityConverter}}" />
+                                                            </StackPanel>
+                                                        </Border>
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsRepeater.ItemTemplate>
+                                        </ItemsRepeater>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
                     <!-- Screenshots -->
                     <StackPanel Visibility="{Binding ShowScreenshots}"
                                 Spacing="12">

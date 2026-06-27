@@ -170,6 +170,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<BookCoverCache>();
         containerRegistry.RegisterSingleton<MagazineIssueCoverCache>();
         containerRegistry.RegisterSingleton<SoftwareScreenshotCache>();
+        containerRegistry.RegisterSingleton<SoftwareCoverCache>();
         containerRegistry.RegisterSingleton<ImageSourceFactory>(
             () => new ImageSourceFactory(DispatcherQueue.GetForCurrentThread()));
         containerRegistry.RegisterSingleton<NewsService>();
@@ -295,6 +296,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<AdminWwpcImportsViewModel>();
         containerRegistry.Register<AdminWwpcImportReviewViewModel>();
         containerRegistry.Register<ScreenshotDetailViewModel>();
+        containerRegistry.Register<CoverDetailViewModel>();
 
         // Register views for navigation
         containerRegistry.RegisterForNavigation<MainPage, MainViewModel>();
@@ -380,6 +382,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<AdminWwpcImportsPage, AdminWwpcImportsViewModel>();
         containerRegistry.RegisterForNavigation<AdminWwpcImportReviewPage, AdminWwpcImportReviewViewModel>();
         containerRegistry.RegisterForNavigation<ScreenshotDetailPage, ScreenshotDetailViewModel>();
+        containerRegistry.RegisterForNavigation<CoverDetailPage, CoverDetailViewModel>();
     }
 
     protected override async void OnInitialized()
