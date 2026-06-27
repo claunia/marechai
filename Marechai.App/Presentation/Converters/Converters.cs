@@ -18,6 +18,18 @@ public class ObjectToVisibilityConverter : IValueConverter
 }
 
 /// <summary>
+///     Converts null object to Visible visibility
+/// </summary>
+public class InverseObjectToVisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language) =>
+        value == null ? Visibility.Visible : Visibility.Collapsed;
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language) =>
+        throw new NotImplementedException();
+}
+
+/// <summary>
 ///     Converts empty/null string to Collapsed visibility
 /// </summary>
 public class StringToVisibilityConverter : IValueConverter

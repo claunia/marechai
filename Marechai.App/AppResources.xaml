@@ -4,6 +4,7 @@
                     xmlns:local="using:Marechai.App.Presentation.Converters">
 
     <local:ObjectToVisibilityConverter x:Key="ObjectToVisibilityConverter" />
+    <local:InverseObjectToVisibilityConverter x:Key="InverseObjectToVisibilityConverter" />
     <local:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
     <local:ZeroToVisibilityConverter x:Key="ZeroToVisibilityConverter" />
     <local:InvertBoolConverter x:Key="InvertBoolConverter" />

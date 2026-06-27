@@ -672,6 +672,135 @@
                         </ItemsControl>
                     </StackPanel>
 
+                    <!-- Promo Art -->
+                    <StackPanel Spacing="12">
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="8"
+                                    VerticalAlignment="Center">
+                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PromoArt}"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource TextControlForeground}" />
+                            <TextBlock Text="{Binding PromoArtCount}"
+                                       FontSize="12"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}"
+                                       Visibility="{Binding HasPromoArt, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        </StackPanel>
+
+                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="16,12"
+                                Visibility="{Binding HasPromoArt, Converter={StaticResource InvertBoolToVisibilityConverter}}">
+                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=NoPromoArtForThisMachineYet}"
+                                       FontSize="13"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}"
+                                       TextWrapping="Wrap" />
+                        </Border>
+
+                        <ItemsControl ItemsSource="{Binding PromoArtGroups}"
+                                      Visibility="{Binding HasPromoArt, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="16" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Spacing="10">
+                                        <TextBlock Text="{Binding GroupName}"
+                                                   FontSize="13"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{ThemeResource TextControlForeground}" />
+                                        <ItemsControl ItemsSource="{Binding Items}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel Orientation="Vertical"
+                                                                Spacing="10" />
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Padding="0"
+                                                            Background="Transparent"
+                                                            BorderThickness="0"
+                                                            HorizontalContentAlignment="Stretch"
+                                                            HorizontalAlignment="Stretch"
+                                                            Command="{Binding DataContext.ViewPromoArtDetailsCommand, ElementName=PageRoot}"
+                                                            CommandParameter="{Binding PromoArtId}">
+                                                        <Button.Template>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Grid HorizontalAlignment="Stretch">
+                                                                    <Border x:Name="PromoArtShadowBorder"
+                                                                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                                            BorderThickness="1"
+                                                                            CornerRadius="8"
+                                                                            Padding="12"
+                                                                            Translation="0, 0, 4">
+                                                                        <Border.Shadow>
+                                                                            <ThemeShadow />
+                                                                        </Border.Shadow>
+
+                                                                        <StackPanel Spacing="10">
+                                                                            <Grid Height="220"
+                                                                                  Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
+                                                                                <Image Source="{Binding ThumbnailImageSource}"
+                                                                                       Stretch="Uniform"
+                                                                                       HorizontalAlignment="Center"
+                                                                                       VerticalAlignment="Center"
+                                                                                       Visibility="{Binding ThumbnailImageSource, Converter={StaticResource ObjectToVisibilityConverter}}" />
+                                                                                <FontIcon Glyph="&#xE91B;"
+                                                                                          FontSize="28"
+                                                                                          Foreground="{ThemeResource SystemAccentColor}"
+                                                                                          HorizontalAlignment="Center"
+                                                                                          VerticalAlignment="Center"
+                                                                                          Visibility="{Binding ThumbnailImageSource, Converter={StaticResource InverseObjectToVisibilityConverter}}" />
+                                                                            </Grid>
+                                                                            <TextBlock Text="{Binding Caption}"
+                                                                                       FontSize="12"
+                                                                                       Foreground="{ThemeResource SystemBaseMediumColor}"
+                                                                                       TextWrapping="Wrap"
+                                                                                       Visibility="{Binding HasCaption, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                                                        </StackPanel>
+                                                                    </Border>
+
+                                                                    <VisualStateManager.VisualStateGroups>
+                                                                        <VisualStateGroup x:Name="CommonStates">
+                                                                            <VisualState x:Name="Normal" />
+                                                                            <VisualState x:Name="PointerOver">
+                                                                                <VisualState.Setters>
+                                                                                    <Setter Target="PromoArtShadowBorder.Background"
+                                                                                            Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                                                                                    <Setter Target="PromoArtShadowBorder.Translation"
+                                                                                            Value="0, -2, 8" />
+                                                                                </VisualState.Setters>
+                                                                            </VisualState>
+                                                                            <VisualState x:Name="Pressed">
+                                                                                <VisualState.Setters>
+                                                                                    <Setter Target="PromoArtShadowBorder.Background"
+                                                                                            Value="{ThemeResource CardBackgroundFillColorTertiaryBrush}" />
+                                                                                    <Setter Target="PromoArtShadowBorder.Translation"
+                                                                                            Value="0, 0, 2" />
+                                                                                </VisualState.Setters>
+                                                                            </VisualState>
+                                                                        </VisualStateGroup>
+                                                                    </VisualStateManager.VisualStateGroups>
+                                                                </Grid>
+                                                            </ControlTemplate>
+                                                        </Button.Template>
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
                     <!-- Photos Carousel (Last element before spacing) -->
                     <StackPanel Visibility="{Binding ShowPhotos}"
                                 Spacing="12">

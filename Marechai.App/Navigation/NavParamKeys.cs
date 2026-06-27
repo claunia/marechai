@@ -8,6 +8,7 @@ public static class NavParamKeys
     public const string ProcessorId      = "ProcessorId";
     public const string SoundSynthId     = "SoundSynthId";
     public const string PhotoId          = "PhotoId";
+    public const string MachinePromoArtId = "MachinePromoArtId";
     public const string CompanyName     = "CompanyName";
     public const string MachineName     = "MachineName";
     public const string NavigationSource = "NavigationSource";

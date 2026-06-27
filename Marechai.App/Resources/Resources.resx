@@ -2996,4 +2996,10 @@
   <data name="VideosLabel" xml:space="preserve"><value>Videos</value></data>
   <data name="OpenVideoButton" xml:space="preserve"><value>Open</value></data>
   <data name="Video" xml:space="preserve"><value>Video</value></data>
+  <data name="PromoArt" xml:space="preserve"><value>Promo Art</value></data>
+  <data name="OtherPromoArt" xml:space="preserve"><value>Other (promo art)</value></data>
+  <data name="NoPromoArtForThisMachineYet" xml:space="preserve"><value>No promo art for this machine yet.</value></data>
+  <data name="LoadingPromoArtText" xml:space="preserve"><value>Loading promo art...</value></data>
+  <data name="PromoArtNotFound" xml:space="preserve"><value>Promo art not found</value></data>
+  <data name="FailedToLoadPromoArtImage" xml:space="preserve"><value>Failed to load promo art image</value></data>
 </root>

@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.System;
 using Windows.Storage.Streams;
@@ -53,6 +54,8 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
     private readonly ImageSourceFactory            _imageSourceFactory;
     private readonly IStringLocalizer              _localizer;
     private readonly ILogger<MachineViewViewModel> _logger;
+    private readonly MachinePromoArtCache          _machinePromoArtCache;
+    private readonly MachinePromoArtService        _machinePromoArtService;
     private readonly IRegionManager                _regionManager;
     private readonly MachinePhotoCache             _photoCache;
     [ObservableProperty]
@@ -119,6 +122,9 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
     private Visibility _showPhotos = Visibility.Collapsed;
 
     [ObservableProperty]
+    private Visibility _showPromoArt = Visibility.Collapsed;
+
+    [ObservableProperty]
     private Visibility _showProcessors = Visibility.Collapsed;
 
     [ObservableProperty]
@@ -149,7 +155,8 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
     public MachineViewViewModel(ILogger<MachineViewViewModel> logger,             IRegionManager     regionManager,
                                 ComputersService              computersService,   MachinePhotoCache  photoCache,
                                 IStringLocalizer              localizer,          ImageSourceFactory imageSourceFactory,
-                                IConfiguration                configuration)
+                                IConfiguration                configuration,      MachinePromoArtService machinePromoArtService,
+                                MachinePromoArtCache          machinePromoArtCache)
     {
         _logger             = logger;
         _regionManager      = regionManager;
@@ -158,6 +165,8 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
         _localizer          = localizer;
         _imageSourceFactory = imageSourceFactory;
         _configuration      = configuration;
+        _machinePromoArtService = machinePromoArtService;
+        _machinePromoArtCache   = machinePromoArtCache;
     }
 
     public ObservableCollection<ProcessorDisplayItem>        Processors        { get; } = [];
@@ -168,6 +177,10 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
     public ObservableCollection<SoftwareListItem>            Software          { get; } = [];
     public ObservableCollection<MachineVideoDisplayItem>     Videos            { get; } = [];
     public ObservableCollection<PhotoCarouselDisplayItem>    Photos            { get; } = [];
+    public ObservableCollection<MachinePromoArtGroupDisplayItem> PromoArtGroups { get; } = [];
+
+    public int PromoArtCount => PromoArtGroups.Sum(group => group.Items.Count);
+    public bool HasPromoArt => PromoArtCount > 0;
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
 
@@ -281,6 +294,20 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
     }
 
     [RelayCommand]
+    public Task ViewPromoArtDetails(Guid promoArtId)
+    {
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.MachinePromoArtId, promoArtId }
+        };
+
+        _logger.LogInformation("Navigating to promo art details for {PromoArtId}", promoArtId);
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(MachinePromoArtDetailPage), parameters);
+
+        return Task.CompletedTask;
+    }
+
+    [RelayCommand]
     public Task NavigateToSoftware(SoftwareListItem? sw)
     {
         if(sw is null) return Task.CompletedTask;
@@ -375,6 +402,7 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
             Software.Clear();
             Videos.Clear();
             Photos.Clear();
+            PromoArtGroups.Clear();
 
             _logger.LogInformation("Loading machine {MachineId}", machineId);
             _currentMachineId = machineId;
@@ -565,6 +593,40 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
                 });
             }
 
+            // Populate promo art
+            List<MachinePromoArtDto> promoArtList = await _machinePromoArtService.GetPromoArtByMachineAsync(machineId);
+            string                   otherGroup   = _localizer["OtherPromoArt"];
+
+            foreach(var group in promoArtList.GroupBy(item => string.IsNullOrWhiteSpace(item.GroupName)
+                                                                  ? otherGroup
+                                                                  : item.GroupName!)
+                                              .OrderBy(group => group.Key, StringComparer.CurrentCultureIgnoreCase))
+            {
+                var displayGroup = new MachinePromoArtGroupDisplayItem
+                {
+                    GroupName = group.Key
+                };
+
+                foreach(MachinePromoArtDto promoArt in group)
+                {
+                    if(!promoArt.Id.HasValue) continue;
+
+                    var promoArtItem = new MachinePromoArtDisplayItem
+                    {
+                        PromoArtId = promoArt.Id.Value,
+                        GroupName  = group.Key,
+                        Caption    = promoArt.Caption ?? string.Empty
+                    };
+
+                    _ = LoadPromoArtThumbnailAsync(promoArtItem);
+
+                    displayGroup.Items.Add(promoArtItem);
+                }
+
+                if(displayGroup.Items.Count > 0)
+                    PromoArtGroups.Add(displayGroup);
+            }
+
             // Load localized description
             try
             {
@@ -630,7 +692,10 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
         ShowSoftware          = Software.Count          > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowVideos            = Videos.Count            > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowPhotos            = Photos.Count            > 0 ? Visibility.Visible : Visibility.Collapsed;
+        ShowPromoArt          = PromoArtGroups.Count    > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowDescription       = HasDescription ? Visibility.Visible : Visibility.Collapsed;
+        OnPropertyChanged(nameof(PromoArtCount));
+        OnPropertyChanged(nameof(HasPromoArt));
     }
 
     private async Task LoadPhotoThumbnailAsync(PhotoCarouselDisplayItem photoItem)
@@ -644,6 +709,20 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
         catch(Exception ex)
         {
             _logger.LogError(ex, "Error loading photo thumbnail {PhotoId}", photoItem.PhotoId);
+        }
+    }
+
+    async Task LoadPromoArtThumbnailAsync(MachinePromoArtDisplayItem promoArtItem)
+    {
+        try
+        {
+            Stream stream = await _machinePromoArtCache.GetThumbnailAsync(promoArtItem.PromoArtId);
+
+            promoArtItem.ThumbnailImageSource = await _imageSourceFactory.CreateBitmapImageSourceAsync(stream);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading promo art thumbnail {PromoArtId}", promoArtItem.PromoArtId);
         }
     }
 

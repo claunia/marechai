@@ -63,6 +63,7 @@ public class LocalizedStrings
     public string LinksText => _l["LinksText"];
     public string LoadingNewsText => _l["LoadingNewsText"];
     public string LoadingPhotoText => _l["LoadingPhotoText"];
+    public string LoadingPromoArtText => _l["LoadingPromoArtText"];
     public string LoadingProcessorsText => _l["LoadingProcessorsText"];
     public string LoadingText => _l["LoadingText"];
     public string LoginPage_EmailLabel => _l["LoginPage_EmailLabel"];
@@ -796,4 +797,9 @@ public class LocalizedStrings
     public string WwpcUserInterfaceLabel => _l["WwpcUserInterfaceLabel"];
     public string WwpcExactMatchTitle => _l["WwpcExactMatchTitle"];
     public string WwpcExactMatchMessage => _l["WwpcExactMatchMessage"];
+    public string PromoArt => _l["PromoArt"];
+    public string OtherPromoArt => _l["OtherPromoArt"];
+    public string NoPromoArtForThisMachineYet => _l["NoPromoArtForThisMachineYet"];
+    public string PromoArtNotFound => _l["PromoArtNotFound"];
+    public string FailedToLoadPromoArtImage => _l["FailedToLoadPromoArtImage"];
 }

@@ -163,6 +163,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<FlagCache>();
         containerRegistry.RegisterSingleton<CompanyLogoCache>();
         containerRegistry.RegisterSingleton<MachinePhotoCache>();
+        containerRegistry.RegisterSingleton<MachinePromoArtCache>();
         containerRegistry.RegisterSingleton<GpuPhotoCache>();
         containerRegistry.RegisterSingleton<ProcessorPhotoCache>();
         containerRegistry.RegisterSingleton<SoundSynthPhotoCache>();
@@ -183,6 +184,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<MachineFamiliesService>();
         containerRegistry.RegisterSingleton<CompanyLogosService>();
         containerRegistry.RegisterSingleton<MachinePhotosService>();
+        containerRegistry.RegisterSingleton<MachinePromoArtService>();
         containerRegistry.RegisterSingleton<LicensesService>();
         containerRegistry.RegisterSingleton<GpusService>();
         containerRegistry.RegisterSingleton<ProcessorsService>();
@@ -250,6 +252,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<PersonViewViewModel>();
         containerRegistry.Register<MachineViewViewModel>();
         containerRegistry.Register<PhotoDetailViewModel>();
+        containerRegistry.Register<MachinePromoArtDetailViewModel>();
         containerRegistry.Register<GpusListViewModel>();
         containerRegistry.Register<GpuDetailViewModel>();
         containerRegistry.Register<GpuPhotoDetailViewModel>();
@@ -333,6 +336,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<PersonViewPage, PersonViewViewModel>();
         containerRegistry.RegisterForNavigation<MachineViewPage, MachineViewViewModel>();
         containerRegistry.RegisterForNavigation<PhotoDetailPage, PhotoDetailViewModel>();
+        containerRegistry.RegisterForNavigation<MachinePromoArtDetailPage, MachinePromoArtDetailViewModel>();
         containerRegistry.RegisterForNavigation<GpuListPage, GpusListViewModel>();
         containerRegistry.RegisterForNavigation<GpuDetailPage, GpuDetailViewModel>();
         containerRegistry.RegisterForNavigation<GpuPhotoDetailPage, GpuPhotoDetailViewModel>();
