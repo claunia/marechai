@@ -177,4 +177,31 @@ public class ProcessorsService
             return null;
         }
     }
+
+    /// <summary>
+    ///     Fetches public videos for a processor
+    /// </summary>
+    public async Task<List<ProcessorVideoDto>> GetVideosByProcessorAsync(int processorId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching videos for Processor {ProcessorId}", processorId);
+
+            List<ProcessorVideoDto>? videos = await _apiClient.Processors[processorId].Videos.GetAsync();
+
+            if(videos == null) return [];
+
+            _logger.LogInformation("Successfully fetched {Count} videos for Processor {ProcessorId}",
+                                   videos.Count,
+                                   processorId);
+
+            return videos;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogWarning(ex, "Error fetching videos for Processor {ProcessorId}", processorId);
+
+            return [];
+        }
+    }
 }
