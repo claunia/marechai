@@ -80,6 +80,9 @@
   <data name="SmartphonesButton" xml:space="preserve">
     <value>Smartphones</value>
   </data>
+  <data name="PdasButton" xml:space="preserve">
+    <value>PDA</value>
+  </data>
   <data name="DocumentsButton" xml:space="preserve">
     <value>Documents</value>
   </data>
@@ -403,6 +406,48 @@
   </data>
   <data name="Consoles in the database" xml:space="preserve">
     <value>Consoles dans la base de données</value>
+  </data>
+  <data name="Pdas" xml:space="preserve">
+    <value>PDA</value>
+  </data>
+  <data name="Pdas in the database" xml:space="preserve">
+    <value>PDA dans la base de données</value>
+  </data>
+  <data name="No pdas found" xml:space="preserve">
+    <value>Aucun PDA trouvé</value>
+  </data>
+  <data name="Failed to load pdas data. Please try again later." xml:space="preserve">
+    <value>Impossible de charger les données des PDA. Veuillez réessayer plus tard.</value>
+  </data>
+  <data name="All Pdas" xml:space="preserve">
+    <value>Tous les PDA</value>
+  </data>
+  <data name="Browsing all pdas in the database" xml:space="preserve">
+    <value>Parcourir tous les PDA de la base de données</value>
+  </data>
+  <data name="Pdas Starting with" xml:space="preserve">
+    <value>PDA commençant par</value>
+  </data>
+  <data name="Showing pdas that start with" xml:space="preserve">
+    <value>Affichage des PDA commençant par</value>
+  </data>
+  <data name="Pdas from" xml:space="preserve">
+    <value>PDA de</value>
+  </data>
+  <data name="Showing pdas released in" xml:space="preserve">
+    <value>Affichage des PDA sortis en</value>
+  </data>
+  <data name="Prototype Pdas" xml:space="preserve">
+    <value>PDA prototypes</value>
+  </data>
+  <data name="Showing prototype pdas" xml:space="preserve">
+    <value>Affichage des PDA prototypes</value>
+  </data>
+  <data name="No pdas found for this filter" xml:space="preserve">
+    <value>Aucun PDA trouvé pour ce filtre</value>
+  </data>
+  <data name="Failed to load pdas. Please try again later." xml:space="preserve">
+    <value>Impossible de charger les PDA. Veuillez réessayer plus tard.</value>
   </data>
   <data name="Failed to load consoles data. Please try again later." xml:space="preserve">
     <value>Échec du chargement des données de consoles. Veuillez réessayer plus tard.</value>
@@ -838,6 +883,24 @@
   </data>
   <data name="ConsolesSearchBox_Placeholder" xml:space="preserve">
     <value>Rechercher des consoles...</value>
+  </data>
+  <data name="PdasText" xml:space="preserve">
+    <value>PDA</value>
+  </data>
+  <data name="PdasFilterBox_Placeholder" xml:space="preserve">
+    <value>Filtrer les PDA...</value>
+  </data>
+  <data name="PdasErrorInfoBar_Title" xml:space="preserve">
+    <value>Impossible de charger les PDA</value>
+  </data>
+  <data name="PdasLabel" xml:space="preserve">
+    <value>PDA</value>
+  </data>
+  <data name="AllPdasButton" xml:space="preserve">
+    <value>Tous les PDA</value>
+  </data>
+  <data name="PdasSearchBox_Placeholder" xml:space="preserve">
+    <value>Rechercher des PDA...</value>
   </data>
   <data name="ManufacturerText" xml:space="preserve">
     <value>Fabricant</value>

@@ -47,6 +47,7 @@ public partial class MainViewModel : ObservableObject
     public string ComputersButtonText            => _localizer["ComputersButton"];
     public string ConsolesButtonText             => _localizer["ConsolesButton"];
     public string SmartphonesButtonText           => _localizer["SmartphonesButton"];
+    public string PdasButtonText                  => _localizer["PdasButton"];
     public string DocumentsButtonText            => _localizer["DocumentsButton"];
     public string DumpsButtonText                => _localizer["DumpsButton"];
     public string GpuButtonText                  => _localizer["GraphicalProcessingUnitsButton"];
@@ -110,6 +111,7 @@ public partial class MainViewModel : ObservableObject
         NavigateToComputersCommand                = new RelayCommand(() => NavigateTo(nameof(ComputersPage)));
         NavigateToConsolesCommand                 = new RelayCommand(() => NavigateTo(nameof(ConsolesPage)));
         NavigateToSmartphonesCommand              = new RelayCommand(() => NavigateTo(nameof(SmartphonesPage)));
+        NavigateToPdasCommand                      = new RelayCommand(() => NavigateTo(nameof(PdasPage)));
         NavigateToDocumentsCommand                = new RelayCommand(() => NavigateTo(nameof(DocumentsPage)));
         NavigateToDumpsCommand                    = new RelayCommand(() => NavigateTo("dumps"));
         NavigateToGraphicalProcessingUnitsCommand = new RelayCommand(() => NavigateTo(nameof(GpuListPage)));
@@ -167,6 +169,7 @@ public partial class MainViewModel : ObservableObject
     public ICommand NavigateToComputersCommand                { get; }
     public ICommand NavigateToConsolesCommand                 { get; }
     public ICommand NavigateToSmartphonesCommand              { get; }
+    public ICommand NavigateToPdasCommand                     { get; }
     public ICommand NavigateToDocumentsCommand                { get; }
     public ICommand NavigateToDumpsCommand                    { get; }
     public ICommand NavigateToGraphicalProcessingUnitsCommand { get; }

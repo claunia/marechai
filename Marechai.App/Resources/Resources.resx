@@ -80,6 +80,9 @@
   <data name="SmartphonesButton" xml:space="preserve">
     <value>Smartphones</value>
   </data>
+  <data name="PdasButton" xml:space="preserve">
+    <value>PDAs</value>
+  </data>
   <data name="DocumentsButton" xml:space="preserve">
     <value>Documents</value>
   </data>
@@ -502,6 +505,48 @@
   </data>
   <data name="Consoles in the database" xml:space="preserve">
     <value>Consoles in the database</value>
+  </data>
+  <data name="Pdas" xml:space="preserve">
+    <value>PDAs</value>
+  </data>
+  <data name="Pdas in the database" xml:space="preserve">
+    <value>PDAs in the database</value>
+  </data>
+  <data name="No pdas found" xml:space="preserve">
+    <value>No PDAs found</value>
+  </data>
+  <data name="Failed to load pdas data. Please try again later." xml:space="preserve">
+    <value>Failed to load PDAs data. Please try again later.</value>
+  </data>
+  <data name="All Pdas" xml:space="preserve">
+    <value>All PDAs</value>
+  </data>
+  <data name="Browsing all pdas in the database" xml:space="preserve">
+    <value>Browsing all PDAs in the database</value>
+  </data>
+  <data name="Pdas Starting with" xml:space="preserve">
+    <value>PDAs Starting with</value>
+  </data>
+  <data name="Showing pdas that start with" xml:space="preserve">
+    <value>Showing PDAs that start with</value>
+  </data>
+  <data name="Pdas from" xml:space="preserve">
+    <value>PDAs from</value>
+  </data>
+  <data name="Showing pdas released in" xml:space="preserve">
+    <value>Showing PDAs released in</value>
+  </data>
+  <data name="Prototype Pdas" xml:space="preserve">
+    <value>Prototype PDAs</value>
+  </data>
+  <data name="Showing prototype pdas" xml:space="preserve">
+    <value>Showing prototype PDAs</value>
+  </data>
+  <data name="No pdas found for this filter" xml:space="preserve">
+    <value>No PDAs found for this filter</value>
+  </data>
+  <data name="Failed to load pdas. Please try again later." xml:space="preserve">
+    <value>Failed to load PDAs. Please try again later.</value>
   </data>
   <data name="Failed to load consoles data. Please try again later." xml:space="preserve">
     <value>Failed to load consoles data. Please try again later.</value>
@@ -946,6 +991,24 @@
   </data>
   <data name="ConsolesSearchBox_Placeholder" xml:space="preserve">
     <value>Search consoles...</value>
+  </data>
+  <data name="PdasText" xml:space="preserve">
+    <value>PDAs</value>
+  </data>
+  <data name="PdasFilterBox_Placeholder" xml:space="preserve">
+    <value>Filter PDAs...</value>
+  </data>
+  <data name="PdasErrorInfoBar_Title" xml:space="preserve">
+    <value>Unable to Load PDAs</value>
+  </data>
+  <data name="PdasLabel" xml:space="preserve">
+    <value>PDAs</value>
+  </data>
+  <data name="AllPdasButton" xml:space="preserve">
+    <value>All PDAs</value>
+  </data>
+  <data name="PdasSearchBox_Placeholder" xml:space="preserve">
+    <value>Search PDAs...</value>
   </data>
   <data name="SmartphonesSearchBox_Placeholder" xml:space="preserve">
     <value>Search smartphones...</value>
