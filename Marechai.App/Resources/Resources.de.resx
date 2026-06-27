@@ -2351,7 +2351,11 @@
   <data name="FailedToDeleteScreenshot" xml:space="preserve"><value>Failed to delete screenshot</value></data>
   <data name="FailedToSaveScreenshot" xml:space="preserve"><value>Failed to save screenshot</value></data>
   <data name="Compilation" xml:space="preserve"><value>Zusammenstellung</value></data>
+  <data name="Compilation not found" xml:space="preserve"><value>Zusammenstellung nicht gefunden</value></data>
   <data name="IncludedSoftware" xml:space="preserve"><value>Enthaltene Software</value></data>
+  <data name="Bundled with" xml:space="preserve"><value>Gebündelt mit</value></data>
+  <data name="Releases" xml:space="preserve"><value>Veröffentlichungen</value></data>
+  <data name="Unknown platform" xml:space="preserve"><value>Unbekannte Plattform</value></data>
   <data name="FailedToAddIncludedVersion" xml:space="preserve"><value>Fehler beim Hinzufügen der enthaltenen Version</value></data>
   <data name="FailedToRemoveIncludedVersion" xml:space="preserve"><value>Fehler beim Entfernen der enthaltenen Version</value></data>
   <data name="SoftwareIsRequired" xml:space="preserve"><value>Softwareauswahl ist für Nicht-Kompilationsveröffentlichungen erforderlich.</value></data>

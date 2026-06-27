@@ -24,6 +24,7 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
     private readonly ILogger<SoftwareReleaseViewViewModel> _logger;
     private readonly IRegionManager                        _regionManager;
 
+    private int _sourceCompilationId;
     private int _sourceSoftwareId;
 
     [ObservableProperty]
@@ -92,9 +93,6 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
     [ObservableProperty]
     private Visibility _showCompanies = Visibility.Collapsed;
 
-    [ObservableProperty]
-    private bool _isCompilation;
-
     public SoftwareReleaseViewViewModel(ILogger<SoftwareReleaseViewViewModel> logger,
                                         IRegionManager                        regionManager,
                                         SoftwareBrowsingService               browsingService,
@@ -119,6 +117,10 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
         if(navigationContext.Parameters.TryGetValue<int>(NavParamKeys.SoftwareId, out int softwareId))
             _sourceSoftwareId = softwareId;
 
+        if(navigationContext.Parameters.TryGetValue<int>(NavParamKeys.SourceSoftwareCompilationId,
+                                                         out int sourceCompilationId))
+            _sourceCompilationId = sourceCompilationId;
+
         if(navigationContext.Parameters.TryGetValue<int>(NavParamKeys.SoftwareReleaseId, out int releaseId))
             _ = LoadReleaseAsync(releaseId);
     }
@@ -126,6 +128,27 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
     [RelayCommand]
     public Task GoBack()
     {
+        if(_sourceCompilationId > 0)
+        {
+            var compilationParameters = new NavigationParameters
+            {
+                { NavParamKeys.SoftwareCompilationId, _sourceCompilationId },
+                { NavParamKeys.NavigationSource, nameof(SoftwareReleaseViewViewModel) }
+            };
+
+            _regionManager.RequestNavigate(RegionNames.Content, nameof(SoftwareCompilationViewPage),
+                                           compilationParameters);
+
+            return Task.CompletedTask;
+        }
+
+        if(_sourceSoftwareId <= 0)
+        {
+            _regionManager.RequestNavigate(RegionNames.Content, nameof(SoftwarePage));
+
+            return Task.CompletedTask;
+        }
+
         var parameters = new NavigationParameters
         {
             { NavParamKeys.SoftwareId, _sourceSoftwareId },
@@ -182,42 +205,26 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
             if(release.ReleaseDate.HasValue)
                 ReleaseDateDisplay = (release.ReleaseDatePrecision ?? 0) == 2 ? $"{release.ReleaseDate.Value.Year}" : (release.ReleaseDatePrecision ?? 0) == 1 ? release.ReleaseDate.Value.ToString("MMMM yyyy") : release.ReleaseDate.Value.DateTime.ToString("MMMM d, yyyy");
 
-            // Determine if this is a compilation
-            IsCompilation = release.SoftwareCompilationId is not null;
-
-            if(IsCompilation)
+            if(!string.IsNullOrEmpty(VersionString))
             {
-                // Compilation: use Title or fallback. Included software/versions are
-                // managed and displayed on the compilation's own page, not here.
-                ReleaseTitle = release.Title ?? _localizer["Compilation"];
+                ReleaseTitle = VersionString;
             }
             else
             {
-                // Single release: build title from version string or software name
-                if(!string.IsNullOrEmpty(VersionString))
-                {
-                    ReleaseTitle = VersionString;
-                }
-                else
-                {
-                    // Versionless single release: use software name from DTO
-                    ReleaseTitle = release.Software ?? _localizer["Software Release"];
-                }
+                ReleaseTitle = release.Software ?? _localizer["Software Release"];
+            }
 
-                // Show Title if set
-                if(!string.IsNullOrEmpty(release.Title))
-                    Title = release.Title;
+            if(!string.IsNullOrEmpty(release.Title))
+                Title = release.Title;
 
-                // Load software name for display
-                if(!string.IsNullOrEmpty(release.Software))
-                {
-                    SoftwareName = release.Software;
-                }
-                else if(_sourceSoftwareId > 0)
-                {
-                    SoftwareDto? software = await _browsingService.GetSoftwareByIdAsync(_sourceSoftwareId);
-                    SoftwareName = software?.Name;
-                }
+            if(!string.IsNullOrEmpty(release.Software))
+            {
+                SoftwareName = release.Software;
+            }
+            else if(_sourceSoftwareId > 0)
+            {
+                SoftwareDto? software = await _browsingService.GetSoftwareByIdAsync(_sourceSoftwareId);
+                SoftwareName = software?.Name;
             }
 
             // Load barcodes

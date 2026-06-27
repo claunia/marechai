@@ -312,11 +312,11 @@ public partial class SoftwareListViewModel : ObservableObject, IRegionAware
         {
             var releaseParameters = new NavigationParameters
             {
-                { NavParamKeys.SoftwareReleaseId, sw.Id },
+                { NavParamKeys.SoftwareCompilationId, sw.Id },
                 { NavParamKeys.NavigationSource, nameof(SoftwareListViewModel) }
             };
 
-            _regionManager.RequestNavigate(RegionNames.Content, nameof(SoftwareReleaseViewPage), releaseParameters);
+            _regionManager.RequestNavigate(RegionNames.Content, nameof(SoftwareCompilationViewPage), releaseParameters);
 
             return Task.CompletedTask;
         }

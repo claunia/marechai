@@ -714,6 +714,12 @@ public class LocalizedStrings
     public string SoftwareReleaseDateLabel => _l["SoftwareReleaseDateLabel"];
     public string SoftwareBarcodesLabel => _l["SoftwareBarcodesLabel"];
     public string SoftwareProductCodesLabel => _l["SoftwareProductCodesLabel"];
+    public string Compilation => _l["Compilation"];
+    public string BundledWith => _l["Bundled with"];
+    public string Releases => _l["Releases"];
+    public string IncludedSoftware => _l["IncludedSoftware"];
+    public string UnknownPlatform => _l["Unknown platform"];
+    public string CompilationNotFound => _l["Compilation not found"];
 
     // Software Release Junction Labels
     public string BarcodeCodeLabel => _l["BarcodeCodeLabel"];

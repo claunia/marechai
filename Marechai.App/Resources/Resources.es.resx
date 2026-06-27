@@ -2491,7 +2491,11 @@
   <data name="FailedToDeleteScreenshot" xml:space="preserve"><value>Error al eliminar captura de pantalla</value></data>
   <data name="FailedToSaveScreenshot" xml:space="preserve"><value>Error al guardar captura de pantalla</value></data>
   <data name="Compilation" xml:space="preserve"><value>Compilación</value></data>
+  <data name="Compilation not found" xml:space="preserve"><value>Compilación no encontrada</value></data>
   <data name="IncludedSoftware" xml:space="preserve"><value>Software incluido</value></data>
+  <data name="Bundled with" xml:space="preserve"><value>Incluido con</value></data>
+  <data name="Releases" xml:space="preserve"><value>Publicaciones</value></data>
+  <data name="Unknown platform" xml:space="preserve"><value>Plataforma desconocida</value></data>
   <data name="FailedToAddIncludedVersion" xml:space="preserve"><value>Error al añadir versión incluida</value></data>
   <data name="FailedToRemoveIncludedVersion" xml:space="preserve"><value>Error al eliminar versión incluida</value></data>
   <data name="SoftwareIsRequired" xml:space="preserve"><value>La selección de software es requerida para lanzamientos no compilación.</value></data>

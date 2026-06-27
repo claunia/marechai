@@ -23,6 +23,8 @@ public static class NavParamKeys
     public const string SoftwareVersionId   = "SoftwareVersionId";
     public const string SoftwareVersionName = "SoftwareVersionName";
     public const string SoftwareReleaseId   = "SoftwareReleaseId";
+    public const string SoftwareCompilationId = "SoftwareCompilationId";
+    public const string SourceSoftwareCompilationId = "SourceSoftwareCompilationId";
     public const string PersonId            = "PersonId";
     public const string ScreenshotId        = "ScreenshotId";
     public const string WwpcImportId        = "WwpcImportId";

@@ -64,7 +64,7 @@ public static class SearchResultNavigator
 
                 break;
             case 13: // SoftwareCompilation
-                Navigate(regionManager, nameof(SoftwareReleaseViewPage), NavParamKeys.SoftwareReleaseId,
+                Navigate(regionManager, nameof(SoftwareCompilationViewPage), NavParamKeys.SoftwareCompilationId,
                         (int)entityId);
 
                 break;
