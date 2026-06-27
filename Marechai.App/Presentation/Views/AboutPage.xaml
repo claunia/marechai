@@ -9,20 +9,24 @@
       NavigationCacheMode="Required"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid utu:SafeArea.Insets="VisibleBounds" Margin="16">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+    <Grid utu:SafeArea.Insets="VisibleBounds">
+        <ScrollViewer Padding="16">
+            <StackPanel Spacing="16">
 
-        <!-- Header -->
-        <TextBlock Grid.Row="0"
-                   Text="{Binding Source={StaticResource Strings}, Path=AboutPage_Title}"
-                   Style="{ThemeResource TitleTextBlockStyle}"
-                   Margin="0,0,0,16" />
+                <!-- Header -->
+                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=AboutPage_Title}"
+                           Style="{ThemeResource TitleTextBlockStyle}" />
 
-        <!-- Content -->
-        <WebView2 x:Name="ContentWebView"
-                  Grid.Row="1" />
+                <TextBlock x:Name="HeaderTitleText"
+                           FontSize="24"
+                           FontWeight="Bold"
+                           Margin="0,0,0,8" />
+
+                <!-- Sections are populated in code-behind (headers + rich-text bodies) -->
+                <StackPanel x:Name="SectionsPanel"
+                            Spacing="16" />
+
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Page>

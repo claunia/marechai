@@ -11,6 +11,7 @@ public class LocalizedStrings
     private readonly IStringLocalizer _l;
 
     public LocalizedStrings(IStringLocalizer localizer) => _l = localizer;
+    public string AboutPage_Title => _l["AboutPage_Title"];
     public string ActionsColumn => _l["ActionsColumn_Header"];
     public string AddressText => _l["AddressText"];
     public string AddUserButton => _l["AddUserButton_Label"];
