@@ -64,6 +64,9 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
     private string _errorMessage = string.Empty;
 
     [ObservableProperty]
+    private int? _familyId;
+
+    [ObservableProperty]
     private string? _familyName;
 
     [ObservableProperty]
@@ -87,6 +90,7 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private string? _modelName;
     private string? _navigationSource;
+    private int     _currentMachineId;
     private int     _sourceCompanyId;
     private int     _sourceGpuId;
     private int     _sourceProcessorId;
@@ -287,6 +291,23 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
         return Task.CompletedTask;
     }
 
+    [RelayCommand]
+    public Task NavigateToFamily()
+    {
+        if(!FamilyId.HasValue) return Task.CompletedTask;
+
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.MachineFamilyId, FamilyId.Value },
+            { NavParamKeys.MachineId, _currentMachineId },
+            { NavParamKeys.NavigationSource, nameof(MachineViewViewModel) }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(MachineFamilyViewPage), parameters);
+
+        return Task.CompletedTask;
+    }
+
     /// <summary>
     ///     Sets the navigation source context from navigation parameters.
     /// </summary>
@@ -335,6 +356,7 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
             Photos.Clear();
 
             _logger.LogInformation("Loading machine {MachineId}", machineId);
+            _currentMachineId = machineId;
 
             // Fetch machine data from API
             MachineDto? machine = await _computersService.GetMachineByIdAsync(machineId);
@@ -351,6 +373,7 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
             // Populate basic information
             MachineName = machine.Name    ?? string.Empty;
             CompanyName = machine.Company ?? string.Empty;
+            FamilyId    = machine.FamilyId;
             FamilyName  = machine.FamilyName;
             ModelName   = machine.Model;
 

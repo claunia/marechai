@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page x:Class="Marechai.App.Presentation.Views.MachineFamilyViewPage"
+      x:Name="PageRoot"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:utu="using:Uno.Toolkit.UI"
+      NavigationCacheMode="Required"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid utu:SafeArea.Insets="VisibleBounds">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <utu:NavigationBar Grid.Row="0"
+                           Content="{Binding Path=Title}"
+                           MainCommandMode="Action">
+            <utu:NavigationBar.MainCommand>
+                <AppBarButton Label="{Binding Source={StaticResource Strings}, Path=BackButton}" Icon="Back"
+                              Command="{Binding GoBackCommand}"
+                              AutomationProperties.Name="Go back" />
+            </utu:NavigationBar.MainCommand>
+        </utu:NavigationBar>
+
+        <!-- Content -->
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Padding="16"
+                        Spacing="16">
+
+                <!-- Loading State -->
+                <StackPanel Visibility="{Binding IsLoading}"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Padding="32"
+                            Spacing="16">
+                    <ProgressRing IsActive="True"
+                                  IsIndeterminate="True"
+                                  Height="48"
+                                  Width="48" />
+                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=LoadingText}"
+                               TextAlignment="Center"
+                               FontSize="14" />
+                </StackPanel>
+
+                <!-- Error State -->
+                <StackPanel Visibility="{Binding HasError}"
+                            Padding="16"
+                            Background="{ThemeResource SystemErrorBackgroundColor}"
+                            CornerRadius="8"
+                            Spacing="8">
+                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ErrorText}"
+                               FontWeight="Bold"
+                               Foreground="{ThemeResource SystemErrorTextForegroundColor}" />
+                    <TextBlock Text="{Binding ErrorMessage}"
+                               Foreground="{ThemeResource SystemErrorTextForegroundColor}"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+
+                <!-- Family Details -->
+                <StackPanel Visibility="{Binding IsDataLoaded}"
+                            Spacing="16">
+
+                    <!-- Header card with gradient, mirrors the Blazor family page -->
+                    <Border CornerRadius="16"
+                            Padding="24">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#7e57c2" Offset="0" />
+                                <GradientStop Color="#42a5f5" Offset="1" />
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="{Binding FamilyName}"
+                                       FontSize="22"
+                                       FontWeight="Bold"
+                                       Foreground="White"
+                                       TextWrapping="Wrap" />
+
+                            <!-- Company as a link -->
+                            <HyperlinkButton Visibility="{Binding ShowCompanyLink, Converter={StaticResource BoolToVisibilityConverter}}"
+                                             Command="{Binding NavigateToCompanyCommand}"
+                                             Padding="0"
+                                             HorizontalAlignment="Left">
+                                <TextBlock Text="{Binding CompanyName}"
+                                           FontSize="16"
+                                           Foreground="White"
+                                           TextWrapping="Wrap" />
+                            </HyperlinkButton>
+
+                            <!-- Company as plain text (no company link available) -->
+                            <TextBlock Visibility="{Binding ShowCompanyLink, Converter={StaticResource InvertBoolToVisibilityConverter}}"
+                                       Text="{Binding CompanyName}"
+                                       FontSize="16"
+                                       Foreground="White"
+                                       Opacity="0.85"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Machine count -->
+                    <StackPanel Orientation="Horizontal"
+                                Visibility="{Binding ShowMachines, Converter={StaticResource BoolToVisibilityConverter}}"
+                                Spacing="8">
+                        <TextBlock Text="{Binding Machines.Count}"
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   Foreground="{ThemeResource SystemAccentColor}" />
+                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=MachinesFoundInFamilyText}"
+                                   FontSize="14"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                    </StackPanel>
+
+                    <!-- Machines List -->
+                    <StackPanel Visibility="{Binding ShowMachines, Converter={StaticResource BoolToVisibilityConverter}}"
+                                Spacing="8">
+                        <ItemsRepeater ItemsSource="{Binding Machines}"
+                                       Margin="0">
+                            <ItemsRepeater.Layout>
+                                <StackLayout Spacing="4" />
+                            </ItemsRepeater.Layout>
+                            <ItemsRepeater.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Command="{Binding DataContext.NavigateToMachineCommand, ElementName=PageRoot}"
+                                            CommandParameter="{Binding}"
+                                            Padding="12,8"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Left">
+                                        <TextBlock Text="{Binding Name}"
+                                                   FontSize="14"
+                                                   TextWrapping="Wrap" />
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsRepeater.ItemTemplate>
+                        </ItemsRepeater>
+                    </StackPanel>
+
+                    <!-- Empty State -->
+                    <StackPanel Visibility="{Binding ShowEmptyMachines, Converter={StaticResource BoolToVisibilityConverter}}"
+                                Padding="16"
+                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                CornerRadius="8">
+                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=NoMachinesInFamilyText}"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+
+                </StackPanel>
+
+            </StackPanel>
+        </ScrollViewer>
+
+    </Grid>
+
+</Page>

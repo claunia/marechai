@@ -1076,6 +1076,18 @@
   <data name="ModelLabel" xml:space="preserve">
     <value>Modelo</value>
   </data>
+  <data name="Machine Family" xml:space="preserve">
+    <value>Familia de Máquinas</value>
+  </data>
+  <data name="Machine family not found in database" xml:space="preserve">
+    <value>Familia de máquinas no encontrada en la base de datos</value>
+  </data>
+  <data name="MachinesFoundInFamilyText" xml:space="preserve">
+    <value>máquinas encontradas en esta familia.</value>
+  </data>
+  <data name="NoMachinesInFamilyText" xml:space="preserve">
+    <value>No hay máquinas en esta familia.</value>
+  </data>
   <data name="ProcessorsLabel" xml:space="preserve">
     <value>Procesadores</value>
   </data>

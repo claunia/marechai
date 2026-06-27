@@ -157,10 +157,14 @@
                                     BorderThickness="1"
                                     CornerRadius="8"
                                     Padding="16,12">
-                                <TextBlock Text="{Binding FamilyName}"
-                                           FontSize="14"
-                                           Foreground="{ThemeResource TextControlForeground}"
-                                           TextTrimming="CharacterEllipsis" />
+                                <HyperlinkButton Command="{Binding NavigateToFamilyCommand}"
+                                                 Padding="0"
+                                                 HorizontalAlignment="Left"
+                                                 HorizontalContentAlignment="Left">
+                                    <TextBlock Text="{Binding FamilyName}"
+                                               FontSize="14"
+                                               TextTrimming="CharacterEllipsis" />
+                                </HyperlinkButton>
                             </Border>
                         </StackPanel>
 

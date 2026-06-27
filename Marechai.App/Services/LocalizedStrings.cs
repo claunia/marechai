@@ -48,6 +48,8 @@ public class LocalizedStrings
     public string ErrorTitleText => _l["ErrorTitleText"];
     public string FacebookText => _l["FacebookText"];
     public string FamilyLabel => _l["FamilyLabel"];
+    public string MachinesFoundInFamilyText => _l["MachinesFoundInFamilyText"];
+    public string NoMachinesInFamilyText => _l["NoMachinesInFamilyText"];
     public string FoundedText => _l["FoundedText"];
     public string FrequencyText => _l["FrequencyText"];
     public string GpuErrorInfoBar_Title => _l["GpuErrorInfoBar_Title"];

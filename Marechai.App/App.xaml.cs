@@ -179,6 +179,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<TabletsService>();
         containerRegistry.RegisterSingleton<CompaniesService>();
         containerRegistry.RegisterSingleton<CompanyDetailService>();
+        containerRegistry.RegisterSingleton<MachineFamiliesService>();
         containerRegistry.RegisterSingleton<CompanyLogosService>();
         containerRegistry.RegisterSingleton<MachinePhotosService>();
         containerRegistry.RegisterSingleton<LicensesService>();
@@ -230,6 +231,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<TabletsListViewModel>();
         containerRegistry.Register<CompaniesViewModel>();
         containerRegistry.Register<CompanyDetailViewModel>();
+        containerRegistry.Register<MachineFamilyViewViewModel>();
         containerRegistry.Register<BooksViewModel>();
         containerRegistry.Register<BooksListViewModel>();
         containerRegistry.Register<BookViewViewModel>();
@@ -307,6 +309,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<TabletsListPage, TabletsListViewModel>();
         containerRegistry.RegisterForNavigation<CompaniesPage, CompaniesViewModel>();
         containerRegistry.RegisterForNavigation<CompanyDetailPage, CompanyDetailViewModel>();
+        containerRegistry.RegisterForNavigation<MachineFamilyViewPage, MachineFamilyViewViewModel>();
         containerRegistry.RegisterForNavigation<BooksPage, BooksViewModel>();
         containerRegistry.RegisterForNavigation<BooksListPage, BooksListViewModel>();
         containerRegistry.RegisterForNavigation<BookViewPage, BookViewViewModel>();
