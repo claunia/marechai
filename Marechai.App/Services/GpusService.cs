@@ -184,6 +184,34 @@ public class GpusService
     }
 
     /// <summary>
+    ///     Fetches full photo details for a GPU photo
+    /// </summary>
+    public async Task<GpuPhotoDto> GetGpuPhotoDetailsAsync(Guid photoId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching GPU photo {PhotoId} from API", photoId);
+
+            GpuPhotoDto photo = await _apiClient.Gpus.Photos[photoId].GetAsync();
+
+            if(photo == null)
+            {
+                _logger.LogWarning("GPU photo {PhotoId} not found", photoId);
+
+                return null;
+            }
+
+            return photo;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching GPU photo {PhotoId} from API", photoId);
+
+            return null;
+        }
+    }
+
+    /// <summary>
     ///     Fetches photo IDs for a GPU
     /// </summary>
     public async Task<List<Guid>> GetGpuPhotosAsync(int gpuId)

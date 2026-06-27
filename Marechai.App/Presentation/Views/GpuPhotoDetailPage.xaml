@@ -1,0 +1,614 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Page x:Class="Marechai.App.Presentation.Views.GpuPhotoDetailPage"
+      x:Name="PageRoot"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:loc="using:Marechai.App.Presentation.Converters"
+      xmlns:utu="using:Uno.Toolkit.UI"
+      NavigationCacheMode="Disabled"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid RowSpacing="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header with Back Button -->
+        <Grid Grid.Row="0"
+              Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+              BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+              BorderThickness="0,0,0,1"
+              Padding="12,12,16,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    Command="{Binding GoBackCommand}"
+                    Style="{ThemeResource AlternateButtonStyle}"
+                    ToolTipService.ToolTip="Go back"
+                    Padding="8"
+                    MinWidth="44"
+                    MinHeight="44"
+                    VerticalAlignment="Center">
+                <FontIcon Glyph="&#xE72B;" FontSize="16" />
+            </Button>
+
+            <StackPanel Grid.Column="1"
+                        Margin="12,0,0,0"
+                        VerticalAlignment="Center">
+                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=GpuPhotoDetailsTitle}"
+                           FontSize="20"
+                           FontWeight="SemiBold"
+                           TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+        </Grid>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1">
+
+            <!-- Loading State -->
+            <StackPanel Visibility="{Binding IsLoading}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Padding="32"
+                        Spacing="16">
+                <ProgressRing IsActive="{Binding IsLoading}"
+                              IsIndeterminate="True"
+                              Height="64"
+                              Width="64"
+                              Foreground="{ThemeResource SystemAccentColor}" />
+                <TextBlock
+                           Text="{Binding Source={StaticResource Strings}, Path=LoadingPhotoText}"
+                           FontSize="14"
+                           TextAlignment="Center" />
+            </StackPanel>
+
+            <!-- Error State -->
+            <StackPanel Visibility="{Binding ErrorOccurred}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Padding="24"
+                        Spacing="16"
+                        MaxWidth="400">
+                <InfoBar IsOpen="True"
+                         Severity="Error"
+                         Title="{Binding Source={StaticResource Strings}, Path=ErrorLoadingPhotoInfoBar_Title}"
+                         Message="{Binding ErrorMessage}"
+                         IsClosable="False" />
+            </StackPanel>
+
+            <!-- Responsive Layout -->
+            <utu:ResponsiveView Visibility="{Binding PhotoImageSource, Converter={StaticResource ObjectToVisibilityConverter}}">
+
+                <!-- Narrow Template -->
+                <utu:ResponsiveView.NarrowTemplate>
+                    <DataTemplate>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel Padding="16" Spacing="24">
+
+                                <!-- Photo with Zoom Controls -->
+                                <Grid>
+                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="8"
+                                            Padding="8"
+                                            MaxHeight="400"
+                                            MinHeight="250">
+                                        <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                                      VerticalScrollBarVisibility="Auto">
+                                            <Image Source="{Binding PhotoImageSource}"
+                                                   Stretch="Uniform"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center" />
+                                        </ScrollViewer>
+                                    </Border>
+
+                                    <!-- Zoom Controls -->
+                                    <StackPanel Orientation="Horizontal"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Bottom"
+                                                Margin="0,0,16,16"
+                                                Spacing="4"
+                                                Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}"
+                                                CornerRadius="4"
+                                                Padding="4">
+                                        <Button Click="ZoomIn_Click"
+                                                ToolTipService.ToolTip="Zoom In"
+                                                Style="{ThemeResource AlternateButtonStyle}"
+                                                Padding="6" MinWidth="36" MinHeight="36">
+                                            <FontIcon Glyph="&#xE8A3;" FontSize="14" />
+                                        </Button>
+                                        <Button Click="ZoomOut_Click"
+                                                ToolTipService.ToolTip="Zoom Out"
+                                                Style="{ThemeResource AlternateButtonStyle}"
+                                                Padding="6" MinWidth="36" MinHeight="36">
+                                            <FontIcon Glyph="&#xE71F;" FontSize="14" />
+                                        </Button>
+                                        <Button Click="ZoomReset_Click"
+                                                ToolTipService.ToolTip="Reset Zoom"
+                                                Style="{ThemeResource AlternateButtonStyle}"
+                                                Padding="6" MinWidth="36" MinHeight="36">
+                                            <FontIcon Glyph="&#xE9A6;" FontSize="14" />
+                                        </Button>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Metadata Sections -->
+                                <StackPanel Spacing="16">
+
+                                    <!-- GPU -->
+                                    <StackPanel Spacing="12">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoGpuLabel}" FontSize="14" FontWeight="SemiBold" />
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoGpuName, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoGpuNameLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <HyperlinkButton Content="{Binding PhotoGpuName}" Command="{Binding NavigateToGpuCommand}" FontSize="13" Padding="0" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoGpuCompanyName, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoGpuCompanyLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoGpuCompanyName}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- Camera -->
+                                    <StackPanel Spacing="12">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoCameraLabel}" FontSize="14" FontWeight="SemiBold" />
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoCameraManufacturer, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoCameraManufacturerLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoCameraManufacturer}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoCameraModel, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoCameraModelLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoCameraModel}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoLensModel, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoLensModelLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoLensModel}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoSoftwareUsed, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoSoftwareUsedLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoSoftwareUsed}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- Exposure Settings -->
+                                    <StackPanel Spacing="12">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoExposureSettingsLabel}" FontSize="14" FontWeight="SemiBold" />
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoAperture, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoApertureLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoAperture}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoExposureTime, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoExposureTimeLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoExposureTime}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoExposureMode, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoExposureModeLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoExposureMode}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoExposureProgram, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoExposureProgramLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoExposureProgram}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoIsoRating, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoIsoRatingLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoIsoRating}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- Flash & Light -->
+                                    <StackPanel Spacing="12">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoFlashAndLightLabel}" FontSize="14" FontWeight="SemiBold" />
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoFlash, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoFlashLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoFlash}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoLightSource, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoLightSourceLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoLightSource}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoMeteringMode, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoMeteringModeLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoMeteringMode}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoWhiteBalance, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoWhiteBalanceLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoWhiteBalance}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- Focal Length -->
+                                    <StackPanel Spacing="12">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoFocalLengthLabel}" FontSize="14" FontWeight="SemiBold" />
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoFocalLength, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoFocalLengthLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoFocalLength}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoFocalLengthEquivalent, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoFocalLengthEquivalentLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoFocalLengthEquivalent}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoDigitalZoomRatio, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoDigitalZoomLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoDigitalZoomRatio}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- Image Properties -->
+                                    <StackPanel Spacing="12">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoImagePropertiesLabel}" FontSize="14" FontWeight="SemiBold" />
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoColorSpace, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoColorSpaceLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoColorSpace}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoContrast, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoContrastLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoContrast}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoSaturation, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoSaturationLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoSaturation}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoSharpness, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoSharpnessLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoSharpness}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoOrientation, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoOrientationLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoOrientation}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoSceneCaptureType, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoSceneCaptureTypeLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoSceneCaptureType}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- Resolution -->
+                                    <StackPanel Spacing="12">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoResolutionLabel}" FontSize="14" FontWeight="SemiBold" />
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoHorizontalResolution, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoHorizontalResolutionLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoHorizontalResolution}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoVerticalResolution, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoVerticalResolutionLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoVerticalResolution}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoResolutionUnit, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoResolutionUnitLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoResolutionUnit}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- File & Metadata -->
+                                    <StackPanel Spacing="12">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoFileMetadataLabel}" FontSize="14" FontWeight="SemiBold" />
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoOriginalExtension, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoOriginalFormatLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoOriginalExtension}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoCreationDate, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoCreationDateLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoCreationDate}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoUploadDate, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoUploadDateLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoUploadDate}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoExifVersion, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoExifVersionLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoExifVersion}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoAuthor, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoAuthorLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoAuthor}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoLicenseName, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoLicenseNameLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoLicenseName}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoComments, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoCommentsLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoComments}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoSource, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoSourceLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoSource}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- Advanced -->
+                                    <StackPanel Spacing="12">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoAdvancedLabel}" FontSize="14" FontWeight="SemiBold" />
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoSensingMethod, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoSensingMethodLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoSensingMethod}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoSubjectDistanceRange, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoSubjectDistanceRangeLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoSubjectDistanceRange}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <Border Height="24" />
+                                </StackPanel>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </DataTemplate>
+                </utu:ResponsiveView.NarrowTemplate>
+
+                <!-- Wide Template -->
+                <utu:ResponsiveView.WideTemplate>
+                    <DataTemplate>
+                        <Grid Padding="16" ColumnSpacing="24">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="1*" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Photo on left with Zoom Controls -->
+                            <Grid Grid.Column="0">
+                                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="8"
+                                        Padding="8"
+                                        VerticalAlignment="Top"
+                                        MaxHeight="500">
+                                    <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                                  VerticalScrollBarVisibility="Auto">
+                                        <Image Source="{Binding PhotoImageSource}"
+                                               Stretch="Uniform"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center" />
+                                    </ScrollViewer>
+                                </Border>
+
+                                <!-- Zoom Controls -->
+                                <StackPanel Orientation="Horizontal"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Bottom"
+                                            Margin="0,0,16,16"
+                                            Spacing="4"
+                                            Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}"
+                                            CornerRadius="4"
+                                            Padding="4">
+                                    <Button Click="ZoomIn_Click"
+                                            ToolTipService.ToolTip="Zoom In"
+                                            Style="{ThemeResource AlternateButtonStyle}"
+                                            Padding="6" MinWidth="36" MinHeight="36">
+                                        <FontIcon Glyph="&#xE8A3;" FontSize="14" />
+                                    </Button>
+                                    <Button Click="ZoomOut_Click"
+                                            ToolTipService.ToolTip="Zoom Out"
+                                            Style="{ThemeResource AlternateButtonStyle}"
+                                            Padding="6" MinWidth="36" MinHeight="36">
+                                        <FontIcon Glyph="&#xE71F;" FontSize="14" />
+                                    </Button>
+                                    <Button Click="ZoomReset_Click"
+                                            ToolTipService.ToolTip="Reset Zoom"
+                                            Style="{ThemeResource AlternateButtonStyle}"
+                                            Padding="6" MinWidth="36" MinHeight="36">
+                                        <FontIcon Glyph="&#xE9A6;" FontSize="14" />
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Info on right -->
+                            <ScrollViewer Grid.Column="1"
+                                          VerticalScrollBarVisibility="Auto"
+                                          HorizontalScrollBarVisibility="Disabled">
+                                <StackPanel Spacing="16" Padding="8">
+                                    <!-- Same content as narrow template -->
+                                    <!-- GPU -->
+                                    <StackPanel Spacing="12">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoGpuLabel}" FontSize="14" FontWeight="SemiBold" />
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoGpuName, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoGpuNameLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <HyperlinkButton Content="{Binding PhotoGpuName}" Command="{Binding NavigateToGpuCommand}" FontSize="13" Padding="0" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoGpuCompanyName, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoGpuCompanyLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoGpuCompanyName}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- Camera -->
+                                    <StackPanel Spacing="12">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoCameraLabel}" FontSize="14" FontWeight="SemiBold" />
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoCameraManufacturer, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoCameraManufacturerLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoCameraManufacturer}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoCameraModel, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoCameraModelLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoCameraModel}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoLensModel, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoLensModelLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoLensModel}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoSoftwareUsed, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoSoftwareUsedLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoSoftwareUsed}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- Exposure Settings -->
+                                    <StackPanel Spacing="12">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoExposureSettingsLabel}" FontSize="14" FontWeight="SemiBold" />
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoAperture, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoApertureLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoAperture}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoExposureTime, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoExposureTimeLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoExposureTime}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoExposureMode, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoExposureModeLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoExposureMode}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoExposureProgram, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoExposureProgramLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoExposureProgram}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoIsoRating, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoIsoRatingLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoIsoRating}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- Flash & Light -->
+                                    <StackPanel Spacing="12">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoFlashAndLightLabel}" FontSize="14" FontWeight="SemiBold" />
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoFlash, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoFlashLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoFlash}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoLightSource, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoLightSourceLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoLightSource}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoMeteringMode, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoMeteringModeLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoMeteringMode}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoWhiteBalance, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoWhiteBalanceLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoWhiteBalance}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- Focal Length -->
+                                    <StackPanel Spacing="12">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoFocalLengthLabel}" FontSize="14" FontWeight="SemiBold" />
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoFocalLength, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoFocalLengthLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoFocalLength}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoFocalLengthEquivalent, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoFocalLengthEquivalentLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoFocalLengthEquivalent}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoDigitalZoomRatio, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoDigitalZoomLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoDigitalZoomRatio}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- Image Properties -->
+                                    <StackPanel Spacing="12">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoImagePropertiesLabel}" FontSize="14" FontWeight="SemiBold" />
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoColorSpace, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoColorSpaceLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoColorSpace}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoContrast, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoContrastLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoContrast}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoSaturation, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoSaturationLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoSaturation}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoSharpness, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoSharpnessLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoSharpness}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoOrientation, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoOrientationLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoOrientation}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoSceneCaptureType, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoSceneCaptureTypeLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoSceneCaptureType}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- Resolution -->
+                                    <StackPanel Spacing="12">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoResolutionLabel}" FontSize="14" FontWeight="SemiBold" />
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoHorizontalResolution, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoHorizontalResolutionLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoHorizontalResolution}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoVerticalResolution, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoVerticalResolutionLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoVerticalResolution}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoResolutionUnit, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoResolutionUnitLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoResolutionUnit}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- File & Metadata -->
+                                    <StackPanel Spacing="12">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoFileMetadataLabel}" FontSize="14" FontWeight="SemiBold" />
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoOriginalExtension, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoOriginalFormatLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoOriginalExtension}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoCreationDate, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoCreationDateLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoCreationDate}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoUploadDate, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoUploadDateLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoUploadDate}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoExifVersion, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoExifVersionLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoExifVersion}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoAuthor, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoAuthorLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoAuthor}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoLicenseName, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoLicenseNameLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoLicenseName}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoComments, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoCommentsLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoComments}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoSource, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoSourceLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoSource}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- Advanced -->
+                                    <StackPanel Spacing="12">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoAdvancedLabel}" FontSize="14" FontWeight="SemiBold" />
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoSensingMethod, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoSensingMethodLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoSensingMethod}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Spacing="4" Visibility="{Binding PhotoSubjectDistanceRange, Converter={StaticResource StringToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PhotoSubjectDistanceRangeLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding PhotoSubjectDistanceRange}" FontSize="13" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <Border Height="24" />
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Grid>
+                    </DataTemplate>
+                </utu:ResponsiveView.WideTemplate>
+
+            </utu:ResponsiveView>
+
+        </Grid>
+
+    </Grid>
+
+</Page>

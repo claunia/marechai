@@ -1160,6 +1160,18 @@
   <data name="PhotoMachineCompanyLabel" xml:space="preserve">
     <value>Empresa</value>
   </data>
+  <data name="GpuPhotoDetailsTitle" xml:space="preserve">
+    <value>Detalles de la foto de la GPU</value>
+  </data>
+  <data name="PhotoGpuLabel" xml:space="preserve">
+    <value>GPU</value>
+  </data>
+  <data name="PhotoGpuNameLabel" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="PhotoGpuCompanyLabel" xml:space="preserve">
+    <value>Empresa</value>
+  </data>
   <data name="PhotoCameraLabel" xml:space="preserve">
     <value>Cámara</value>
   </data>
