@@ -83,6 +83,9 @@
   <data name="PdasButton" xml:space="preserve">
     <value>PDAs</value>
   </data>
+  <data name="TabletsButton" xml:space="preserve">
+    <value>Tablets</value>
+  </data>
   <data name="DocumentsButton" xml:space="preserve">
     <value>Documentos</value>
   </data>
@@ -410,44 +413,86 @@
   <data name="Pdas" xml:space="preserve">
     <value>PDAs</value>
   </data>
+  <data name="Tablets" xml:space="preserve">
+    <value>Tablets</value>
+  </data>
   <data name="Pdas in the database" xml:space="preserve">
     <value>PDAs no banco de dados</value>
+  </data>
+  <data name="Tablets in the database" xml:space="preserve">
+    <value>Tablets no banco de dados</value>
   </data>
   <data name="No pdas found" xml:space="preserve">
     <value>Nenhum PDA encontrado</value>
   </data>
+  <data name="No tablets found" xml:space="preserve">
+    <value>Nenhum tablet encontrado</value>
+  </data>
   <data name="Failed to load pdas data. Please try again later." xml:space="preserve">
     <value>Falha ao carregar os dados dos PDAs. Tente novamente mais tarde.</value>
+  </data>
+  <data name="Failed to load tablets data. Please try again later." xml:space="preserve">
+    <value>Falha ao carregar os dados dos tablets. Tente novamente mais tarde.</value>
   </data>
   <data name="All Pdas" xml:space="preserve">
     <value>Todos os PDAs</value>
   </data>
+  <data name="All Tablets" xml:space="preserve">
+    <value>Todos os tablets</value>
+  </data>
   <data name="Browsing all pdas in the database" xml:space="preserve">
     <value>Navegando por todos os PDAs no banco de dados</value>
+  </data>
+  <data name="Browsing all tablets in the database" xml:space="preserve">
+    <value>Navegando por todos os tablets no banco de dados</value>
   </data>
   <data name="Pdas Starting with" xml:space="preserve">
     <value>PDAs começando com</value>
   </data>
+  <data name="Tablets Starting with" xml:space="preserve">
+    <value>Tablets começando com</value>
+  </data>
   <data name="Showing pdas that start with" xml:space="preserve">
     <value>Mostrando PDAs que começam com</value>
+  </data>
+  <data name="Showing tablets that start with" xml:space="preserve">
+    <value>Mostrando tablets que começam com</value>
   </data>
   <data name="Pdas from" xml:space="preserve">
     <value>PDAs de</value>
   </data>
+  <data name="Tablets from" xml:space="preserve">
+    <value>Tablets de</value>
+  </data>
   <data name="Showing pdas released in" xml:space="preserve">
     <value>Mostrando PDAs lançados em</value>
+  </data>
+  <data name="Showing tablets released in" xml:space="preserve">
+    <value>Mostrando tablets lançados em</value>
   </data>
   <data name="Prototype Pdas" xml:space="preserve">
     <value>PDAs protótipo</value>
   </data>
+  <data name="Prototype Tablets" xml:space="preserve">
+    <value>Tablets protótipo</value>
+  </data>
   <data name="Showing prototype pdas" xml:space="preserve">
     <value>Mostrando PDAs protótipo</value>
+  </data>
+  <data name="Showing prototype tablets" xml:space="preserve">
+    <value>Mostrando tablets protótipo</value>
   </data>
   <data name="No pdas found for this filter" xml:space="preserve">
     <value>Nenhum PDA encontrado para este filtro</value>
   </data>
+  <data name="No tablets found for this filter" xml:space="preserve">
+    <value>Nenhum tablet encontrado para este filtro</value>
+  </data>
   <data name="Failed to load pdas. Please try again later." xml:space="preserve">
     <value>Falha ao carregar os PDAs. Tente novamente mais tarde.</value>
+  </data>
+  <data name="Failed to load tablets. Please try again later." xml:space="preserve">
+    <value>Falha ao carregar os tablets. Tente novamente mais tarde.</value>
   </data>
   <data name="Failed to load consoles data. Please try again later." xml:space="preserve">
     <value>Falha ao carregar dados de consoles. Por favor, tente novamente mais tarde.</value>
@@ -887,20 +932,38 @@
   <data name="PdasText" xml:space="preserve">
     <value>PDAs</value>
   </data>
+  <data name="TabletsText" xml:space="preserve">
+    <value>Tablets</value>
+  </data>
   <data name="PdasFilterBox_Placeholder" xml:space="preserve">
     <value>Filtrar PDAs...</value>
+  </data>
+  <data name="TabletsFilterBox_Placeholder" xml:space="preserve">
+    <value>Filtrar tablets...</value>
   </data>
   <data name="PdasErrorInfoBar_Title" xml:space="preserve">
     <value>Não foi possível carregar os PDAs</value>
   </data>
+  <data name="TabletsErrorInfoBar_Title" xml:space="preserve">
+    <value>Não foi possível carregar os tablets</value>
+  </data>
   <data name="PdasLabel" xml:space="preserve">
     <value>PDAs</value>
+  </data>
+  <data name="TabletsLabel" xml:space="preserve">
+    <value>Tablets</value>
   </data>
   <data name="AllPdasButton" xml:space="preserve">
     <value>Todos os PDAs</value>
   </data>
+  <data name="AllTabletsButton" xml:space="preserve">
+    <value>Todos os tablets</value>
+  </data>
   <data name="PdasSearchBox_Placeholder" xml:space="preserve">
     <value>Pesquisar PDAs...</value>
+  </data>
+  <data name="TabletsSearchBox_Placeholder" xml:space="preserve">
+    <value>Pesquisar tablets...</value>
   </data>
   <data name="ManufacturerText" xml:space="preserve">
     <value>Fabricante</value>

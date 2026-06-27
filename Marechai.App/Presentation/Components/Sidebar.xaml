@@ -161,6 +161,18 @@
                         BorderThickness="0"
                         CornerRadius="0" />
 
+                <!-- Tablets -->
+                <Button Content="{Binding TabletsButtonText}"
+                        Command="{Binding NavigateToTabletsCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
+
                 <!-- Documents -->
                 <Button Content="{Binding DocumentsButtonText}"
                         Command="{Binding NavigateToDocumentsCommand}"

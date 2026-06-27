@@ -176,6 +176,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<ConsolesService>();
         containerRegistry.RegisterSingleton<SmartphonesService>();
         containerRegistry.RegisterSingleton<PdasService>();
+        containerRegistry.RegisterSingleton<TabletsService>();
         containerRegistry.RegisterSingleton<CompaniesService>();
         containerRegistry.RegisterSingleton<CompanyDetailService>();
         containerRegistry.RegisterSingleton<CompanyLogosService>();
@@ -200,6 +201,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<IConsolesListFilterContext, ConsolesListFilterContext>();
         containerRegistry.RegisterSingleton<ISmartphonesListFilterContext, SmartphonesListFilterContext>();
         containerRegistry.RegisterSingleton<IPdasListFilterContext, PdasListFilterContext>();
+        containerRegistry.RegisterSingleton<ITabletsListFilterContext, TabletsListFilterContext>();
         containerRegistry.RegisterSingleton<IBooksListFilterContext, BooksListFilterContext>();
         containerRegistry.RegisterSingleton<IDocumentsListFilterContext, DocumentsListFilterContext>();
         containerRegistry.RegisterSingleton<IMagazinesListFilterContext, MagazinesListFilterContext>();
@@ -224,6 +226,8 @@ public partial class App : PrismApplication
         containerRegistry.Register<SmartphonesListViewModel>();
         containerRegistry.Register<PdasViewModel>();
         containerRegistry.Register<PdasListViewModel>();
+        containerRegistry.Register<TabletsViewModel>();
+        containerRegistry.Register<TabletsListViewModel>();
         containerRegistry.Register<CompaniesViewModel>();
         containerRegistry.Register<CompanyDetailViewModel>();
         containerRegistry.Register<BooksViewModel>();
@@ -297,6 +301,8 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<SmartphonesListPage, SmartphonesListViewModel>();
         containerRegistry.RegisterForNavigation<PdasPage, PdasViewModel>();
         containerRegistry.RegisterForNavigation<PdasListPage, PdasListViewModel>();
+        containerRegistry.RegisterForNavigation<TabletsPage, TabletsViewModel>();
+        containerRegistry.RegisterForNavigation<TabletsListPage, TabletsListViewModel>();
         containerRegistry.RegisterForNavigation<CompaniesPage, CompaniesViewModel>();
         containerRegistry.RegisterForNavigation<CompanyDetailPage, CompanyDetailViewModel>();
         containerRegistry.RegisterForNavigation<BooksPage, BooksViewModel>();
