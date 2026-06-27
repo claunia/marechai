@@ -315,6 +315,18 @@
                         Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                         BorderThickness="0"
                         CornerRadius="0" />
+
+                <!-- About -->
+                <Button Content="{Binding AboutButtonText}"
+                        Command="{Binding NavigateToAboutCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
             </StackPanel>
         </Grid>
     </Grid>

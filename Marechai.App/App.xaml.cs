@@ -63,7 +63,7 @@ public partial class App : PrismApplication
     {
         _mainWindow = window;
 #if DEBUG
-        window.UseStudio();
+//        window.UseStudio();
 #endif
         window.SetWindowIcon();
     }
@@ -292,6 +292,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<DeleteAccountPage, DeleteAccountViewModel>();
         containerRegistry.RegisterForNavigation<DeletionPendingPage, DeletionPendingViewModel>();
         containerRegistry.RegisterForNavigation<NewsPage, NewsViewModel>();
+        containerRegistry.RegisterForNavigation<AboutPage, AboutViewModel>();
         containerRegistry.RegisterForNavigation<AdvancedSearchPage, AdvancedSearchViewModel>();
         containerRegistry.RegisterForNavigation<ComputersPage, ComputersViewModel>();
         containerRegistry.RegisterForNavigation<ComputersListPage, ComputersListViewModel>();

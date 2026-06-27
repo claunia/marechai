@@ -1,0 +1,28 @@
+<?xml version="1.0"
+      encoding="utf-8"?>
+
+<Page x:Class="Marechai.App.Presentation.Views.AboutPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:loc="using:Marechai.App.Presentation.Converters"
+      xmlns:utu="using:Uno.Toolkit.UI"
+      NavigationCacheMode="Required"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid utu:SafeArea.Insets="VisibleBounds" Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <TextBlock Grid.Row="0"
+                   Text="{Binding Source={StaticResource Strings}, Path=AboutPage_Title}"
+                   Style="{ThemeResource TitleTextBlockStyle}"
+                   Margin="0,0,0,16" />
+
+        <!-- Content -->
+        <WebView2 x:Name="ContentWebView"
+                  Grid.Row="1" />
+    </Grid>
+</Page>

@@ -114,7 +114,7 @@ public partial class NewsViewModel : ObservableObject
     private void NavigateToSoftware() => _regionManager.RequestNavigate(RegionNames.Content, nameof(SoftwarePage));
 
     [RelayCommand]
-    private void NavigateToAbout() => _regionManager.RequestNavigate(RegionNames.Content, nameof(SettingsPage));
+    private void NavigateToAbout() => _regionManager.RequestNavigate(RegionNames.Content, nameof(AboutPage));
 
     [RelayCommand]
     private void NavigateToSignUp() => _regionManager.RequestNavigate(RegionNames.Content, nameof(RegisterPage));

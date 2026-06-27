@@ -80,6 +80,7 @@ public partial class MainViewModel : ObservableObject
     public string SoftwareFamilyManagementButtonText  => _localizer["SoftwareFamilyManagementButton"];
     public string WwpcImportsManagementButtonText     => _localizer["WwpcImportsManagementButton"];
     public string SettingsButtonText             => _localizer["SettingsButton"];
+    public string AboutButtonText                => _localizer["AboutButton"];
     public string AdminSidebarTitleText          => _localizer["AdminSidebarTitle"];
     public string AdminSwitchButtonText          => _localizer["AdminSwitchButton"];
     public string BackToMainButtonText           => _localizer["BackToMainButton"];
@@ -145,6 +146,7 @@ public partial class MainViewModel : ObservableObject
         NavigateToAdminSoftwareFamiliesCommand              = new RelayCommand(() => NavigateTo(nameof(AdminSoftwareFamiliesPage)));
         NavigateToAdminWwpcImportsCommand                   = new RelayCommand(() => NavigateTo(nameof(AdminWwpcImportsPage)));
         NavigateToSettingsCommand                 = new RelayCommand(() => NavigateTo(nameof(SettingsPage)));
+        NavigateToAboutCommand                    = new RelayCommand(() => NavigateTo(nameof(AboutPage)));
         NavigateToAdvancedSearchCommand            = new RelayCommand(() => NavigateToAdvancedSearch(null));
         LoginLogoutCommand                        = new RelayCommand(HandleLoginLogout);
         ToggleSidebarCommand                      = new RelayCommand(() => IsSidebarOpen = !IsSidebarOpen);
@@ -204,6 +206,7 @@ public partial class MainViewModel : ObservableObject
     public ICommand NavigateToAdminSoftwareFamiliesCommand    { get; }
     public ICommand NavigateToAdminWwpcImportsCommand         { get; }
     public ICommand NavigateToSettingsCommand                 { get; }
+    public ICommand NavigateToAboutCommand                    { get; }
     public ICommand NavigateToAdvancedSearchCommand           { get; }
     public ICommand LoginLogoutCommand                        { get; }
     public ICommand ToggleSidebarCommand                      { get; }
