@@ -16,6 +16,7 @@ using Marechai.App.Services;
 using Marechai.App.Services.Caching;
 using Marechai.Data;
 using Microsoft.UI.Xaml;
+using Windows.System;
 
 namespace Marechai.App.Presentation.ViewModels;
 
@@ -77,7 +78,11 @@ public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private Visibility _showPhotos = Visibility.Collapsed;
 
+    [ObservableProperty]
+    private Visibility _showVideos = Visibility.Collapsed;
+
     public ObservableCollection<PhotoCarouselDisplayItem> Photos { get; } = [];
+    public ObservableCollection<MachineVideoDisplayItem>  Videos { get; } = [];
 
     /// <summary>
     ///     Gets whether a description is available
@@ -126,6 +131,7 @@ public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
         LoadData               = new AsyncRelayCommand(LoadDataAsync);
         GoBackCommand          = new AsyncRelayCommand(GoBackAsync);
         SelectMachineCommand   = new AsyncRelayCommand<int>(SelectMachineAsync);
+        OpenVideoCommand       = new AsyncRelayCommand<MachineVideoDisplayItem>(OpenVideoAsync);
         ComputersFilterCommand = new RelayCommand(() => FilterComputers());
         ConsolesFilterCommand  = new RelayCommand(() => FilterConsoles());
         SmartphonesFilterCommand = new RelayCommand(() => FilterSmartphones());
@@ -136,6 +142,7 @@ public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand LoadData               { get; }
     public ICommand           GoBackCommand          { get; }
     public IAsyncRelayCommand SelectMachineCommand   { get; }
+    public IAsyncRelayCommand OpenVideoCommand       { get; }
     public ICommand           ComputersFilterCommand { get; }
     public ICommand           ConsolesFilterCommand  { get; }
     public ICommand           SmartphonesFilterCommand { get; }
@@ -155,6 +162,14 @@ public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
             IsDataLoaded = false;
             Computers.Clear();
             Consoles.Clear();
+            Smartphones.Clear();
+            FilteredComputers.Clear();
+            FilteredConsoles.Clear();
+            FilteredSmartphones.Clear();
+            Photos.Clear();
+            Videos.Clear();
+            ShowPhotos = Visibility.Collapsed;
+            ShowVideos = Visibility.Collapsed;
 
             if(SoundSynthId <= 0)
             {
@@ -291,6 +306,35 @@ public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
 
             ShowPhotos = Photos.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
 
+            // Load videos
+            List<SoundSynthVideoDto> videoList = await _soundSynthsService.GetVideosBySoundSynthAsync(SoundSynthId);
+
+            foreach(SoundSynthVideoDto video in videoList)
+            {
+                if(string.IsNullOrWhiteSpace(video.VideoId)) continue;
+
+                string provider = string.IsNullOrWhiteSpace(video.Provider)
+                                      ? _localizer["Video"]
+                                      : video.Provider;
+
+                bool isYouTube = string.Equals(provider, "YouTube", StringComparison.OrdinalIgnoreCase);
+
+                Videos.Add(new MachineVideoDisplayItem
+                {
+                    Title = string.IsNullOrWhiteSpace(video.Title)
+                                ? _localizer["Video"]
+                                : video.Title,
+                    Provider = provider,
+                    VideoId = video.VideoId,
+                    ThumbnailUrl = isYouTube
+                                       ? $"https://img.youtube.com/vi/{video.VideoId}/hqdefault.jpg"
+                                       : null,
+                    LaunchUri = new Uri($"https://www.youtube.com/watch?v={Uri.EscapeDataString(video.VideoId)}")
+                });
+            }
+
+            ShowVideos = Videos.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+
             IsDataLoaded = true;
         }
         catch(Exception ex)
@@ -407,6 +451,20 @@ public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
         _regionManager.RequestNavigate(RegionNames.Content, nameof(MachineViewPage), parameters);
 
         return Task.CompletedTask;
+    }
+
+    private async Task OpenVideoAsync(MachineVideoDisplayItem? video)
+    {
+        if(video?.LaunchUri is null) return;
+
+        try
+        {
+            await Launcher.LaunchUriAsync(video.LaunchUri);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error launching video for Sound Synthesizer {SoundSynthId}", SoundSynthId);
+        }
     }
 
     /// <summary>

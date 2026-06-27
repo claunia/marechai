@@ -145,4 +145,31 @@ public class SoundSynthsService
             return null;
         }
     }
+
+    /// <summary>
+    ///     Fetches public videos for a sound synthesizer
+    /// </summary>
+    public async Task<List<SoundSynthVideoDto>> GetVideosBySoundSynthAsync(int soundSynthId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching videos for Sound Synthesizer {SoundSynthId}", soundSynthId);
+
+            List<SoundSynthVideoDto>? videos = await _apiClient.SoundSynths[soundSynthId].Videos.GetAsync();
+
+            if(videos == null) return [];
+
+            _logger.LogInformation("Successfully fetched {Count} videos for Sound Synthesizer {SoundSynthId}",
+                                   videos.Count,
+                                   soundSynthId);
+
+            return videos;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogWarning(ex, "Error fetching videos for Sound Synthesizer {SoundSynthId}", soundSynthId);
+
+            return [];
+        }
+    }
 }
