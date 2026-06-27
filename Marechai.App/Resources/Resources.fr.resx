@@ -1184,6 +1184,18 @@
   <data name="PhotoProcessorCompanyLabel" xml:space="preserve">
     <value>Entreprise</value>
   </data>
+  <data name="SoundSynthPhotoDetailsTitle" xml:space="preserve">
+    <value>Détails de la photo du synthétiseur de son</value>
+  </data>
+  <data name="PhotoSoundSynthLabel" xml:space="preserve">
+    <value>Synthétiseur de Son</value>
+  </data>
+  <data name="PhotoSoundSynthNameLabel" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="PhotoSoundSynthCompanyLabel" xml:space="preserve">
+    <value>Entreprise</value>
+  </data>
   <data name="PhotoCameraLabel" xml:space="preserve">
     <value>Appareil Photo</value>
   </data>

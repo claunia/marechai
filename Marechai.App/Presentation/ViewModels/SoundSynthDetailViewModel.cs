@@ -135,6 +135,7 @@ public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
         ComputersFilterCommand = new RelayCommand(() => FilterComputers());
         ConsolesFilterCommand  = new RelayCommand(() => FilterConsoles());
         SmartphonesFilterCommand = new RelayCommand(() => FilterSmartphones());
+        SelectPhotoCommand       = new AsyncRelayCommand<Guid>(SelectPhotoAsync);
 
         Title = _localizer["Sound Synthesizer Details"];
     }
@@ -146,6 +147,7 @@ public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
     public ICommand           ComputersFilterCommand { get; }
     public ICommand           ConsolesFilterCommand  { get; }
     public ICommand           SmartphonesFilterCommand { get; }
+    public IAsyncRelayCommand SelectPhotoCommand     { get; }
 
     public string Title { get; }
 
@@ -465,6 +467,24 @@ public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
         {
             _logger.LogError(ex, "Error launching video for Sound Synthesizer {SoundSynthId}", SoundSynthId);
         }
+    }
+
+    /// <summary>
+    ///     Navigates to the photo detail view
+    /// </summary>
+    private Task SelectPhotoAsync(Guid photoId)
+    {
+        if(photoId == Guid.Empty) return Task.CompletedTask;
+
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.PhotoId, photoId },
+            { NavParamKeys.NavigationSource, nameof(SoundSynthDetailViewModel) }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(SoundSynthPhotoDetailPage), parameters);
+
+        return Task.CompletedTask;
     }
 
     /// <summary>

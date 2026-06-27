@@ -261,6 +261,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<ProcessorPhotoDetailViewModel>();
         containerRegistry.Register<SoundSynthsListViewModel>();
         containerRegistry.Register<SoundSynthDetailViewModel>();
+        containerRegistry.Register<SoundSynthPhotoDetailViewModel>();
         containerRegistry.Register<SettingsViewModel>();
         containerRegistry.Register<UsersViewModel>();
         containerRegistry.Register<AdminCompaniesViewModel>();
@@ -345,6 +346,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<ProcessorPhotoDetailPage, ProcessorPhotoDetailViewModel>();
         containerRegistry.RegisterForNavigation<SoundSynthListPage, SoundSynthsListViewModel>();
         containerRegistry.RegisterForNavigation<SoundSynthDetailPage, SoundSynthDetailViewModel>();
+        containerRegistry.RegisterForNavigation<SoundSynthPhotoDetailPage, SoundSynthPhotoDetailViewModel>();
         containerRegistry.RegisterForNavigation<SettingsPage, SettingsViewModel>();
         containerRegistry.RegisterForNavigation<UsersPage, UsersViewModel>();
         containerRegistry.RegisterForNavigation<AdminCompaniesPage, AdminCompaniesViewModel>();

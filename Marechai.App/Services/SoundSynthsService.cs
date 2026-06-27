@@ -125,6 +125,34 @@ public class SoundSynthsService
     }
 
     /// <summary>
+    ///     Fetches full photo details for a Sound Synthesizer photo
+    /// </summary>
+    public async Task<SoundSynthPhotoDto?> GetSoundSynthPhotoDetailsAsync(Guid photoId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching Sound Synthesizer photo {PhotoId} from API", photoId);
+
+            SoundSynthPhotoDto? photo = await _apiClient.SoundSynths.Photos[photoId].GetAsync();
+
+            if(photo == null)
+            {
+                _logger.LogWarning("Sound Synthesizer photo {PhotoId} not found", photoId);
+
+                return null;
+            }
+
+            return photo;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching Sound Synthesizer photo {PhotoId} from API", photoId);
+
+            return null;
+        }
+    }
+
+    /// <summary>
     ///     Fetches a localized description for a sound synthesizer
     /// </summary>
     public async Task<SoundSynthDescriptionDto?> GetDescriptionAsync(int soundSynthId, string languageCode)
