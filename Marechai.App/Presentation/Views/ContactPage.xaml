@@ -1,0 +1,27 @@
+<?xml version="1.0"
+      encoding="utf-8"?>
+
+<Page x:Class="Marechai.App.Presentation.Views.ContactPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:loc="using:Marechai.App.Presentation.Converters"
+      xmlns:utu="using:Uno.Toolkit.UI"
+      NavigationCacheMode="Required"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid utu:SafeArea.Insets="VisibleBounds">
+        <ScrollViewer Padding="16">
+            <StackPanel Spacing="16">
+
+                <!-- Header -->
+                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ContactPage_Title}"
+                           Style="{ThemeResource TitleTextBlockStyle}" />
+
+                <!-- Content is populated in code-behind (contact card + about link) -->
+                <StackPanel x:Name="ContentPanel"
+                            Spacing="16" />
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

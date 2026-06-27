@@ -81,6 +81,7 @@ public partial class MainViewModel : ObservableObject
     public string WwpcImportsManagementButtonText     => _localizer["WwpcImportsManagementButton"];
     public string SettingsButtonText             => _localizer["SettingsButton"];
     public string AboutButtonText                => _localizer["AboutButton"];
+    public string ContactButtonText              => _localizer["ContactButton"];
     public string AdminSidebarTitleText          => _localizer["AdminSidebarTitle"];
     public string AdminSwitchButtonText          => _localizer["AdminSwitchButton"];
     public string BackToMainButtonText           => _localizer["BackToMainButton"];
@@ -147,6 +148,7 @@ public partial class MainViewModel : ObservableObject
         NavigateToAdminWwpcImportsCommand                   = new RelayCommand(() => NavigateTo(nameof(AdminWwpcImportsPage)));
         NavigateToSettingsCommand                 = new RelayCommand(() => NavigateTo(nameof(SettingsPage)));
         NavigateToAboutCommand                    = new RelayCommand(() => NavigateTo(nameof(AboutPage)));
+        NavigateToContactCommand                  = new RelayCommand(() => NavigateTo(nameof(ContactPage)));
         NavigateToAdvancedSearchCommand            = new RelayCommand(() => NavigateToAdvancedSearch(null));
         LoginLogoutCommand                        = new RelayCommand(HandleLoginLogout);
         ToggleSidebarCommand                      = new RelayCommand(() => IsSidebarOpen = !IsSidebarOpen);
@@ -207,6 +209,7 @@ public partial class MainViewModel : ObservableObject
     public ICommand NavigateToAdminWwpcImportsCommand         { get; }
     public ICommand NavigateToSettingsCommand                 { get; }
     public ICommand NavigateToAboutCommand                    { get; }
+    public ICommand NavigateToContactCommand                  { get; }
     public ICommand NavigateToAdvancedSearchCommand           { get; }
     public ICommand LoginLogoutCommand                        { get; }
     public ICommand ToggleSidebarCommand                      { get; }

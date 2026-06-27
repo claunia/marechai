@@ -327,6 +327,18 @@
                         Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                         BorderThickness="0"
                         CornerRadius="0" />
+
+                <!-- Contact -->
+                <Button Content="{Binding ContactButtonText}"
+                        Command="{Binding NavigateToContactCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
             </StackPanel>
         </Grid>
     </Grid>

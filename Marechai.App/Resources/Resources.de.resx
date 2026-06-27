@@ -2422,4 +2422,7 @@
   <data name="AboutPage_Contact_Body" xml:space="preserve"><value>Haben Sie eine Frage, Korrektur oder Material, das Sie beisteuern möchten? Wir freuen uns auf Ihre Nachricht.</value></data>
   <data name="AboutPage_Support" xml:space="preserve"><value>Support</value></data>
   <data name="AboutButton" xml:space="preserve"><value>Über</value></data>
+  <data name="ContactPage_Title" xml:space="preserve"><value>Kontakt</value></data>
+  <data name="ContactButton" xml:space="preserve"><value>Kontakt</value></data>
+  <data name="AboutMarechaiButton" xml:space="preserve"><value>Über Marechai</value></data>
 </root>

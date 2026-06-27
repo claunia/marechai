@@ -2526,4 +2526,7 @@
   <data name="AboutPage_Contact_Body" xml:space="preserve"><value>Vous avez une question, une correction ou du matériel à apporter ? Nous serions ravis de vous lire.</value></data>
   <data name="AboutPage_Support" xml:space="preserve"><value>Support</value></data>
   <data name="AboutButton" xml:space="preserve"><value>À propos</value></data>
+  <data name="ContactPage_Title" xml:space="preserve"><value>Contact</value></data>
+  <data name="ContactButton" xml:space="preserve"><value>Contact</value></data>
+  <data name="AboutMarechaiButton" xml:space="preserve"><value>À propos de Marechai</value></data>
 </root>

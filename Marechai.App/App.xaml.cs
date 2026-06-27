@@ -293,6 +293,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<DeletionPendingPage, DeletionPendingViewModel>();
         containerRegistry.RegisterForNavigation<NewsPage, NewsViewModel>();
         containerRegistry.RegisterForNavigation<AboutPage, AboutViewModel>();
+        containerRegistry.RegisterForNavigation<ContactPage, ContactViewModel>();
         containerRegistry.RegisterForNavigation<AdvancedSearchPage, AdvancedSearchViewModel>();
         containerRegistry.RegisterForNavigation<ComputersPage, ComputersViewModel>();
         containerRegistry.RegisterForNavigation<ComputersListPage, ComputersListViewModel>();

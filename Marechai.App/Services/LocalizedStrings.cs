@@ -31,6 +31,7 @@ public class LocalizedStrings
     public string ConsolesLabel => _l["ConsolesLabel"];
     public string ConsolesSearchBox_Placeholder => _l["ConsolesSearchBox_Placeholder"];
     public string ConsolesText => _l["ConsolesText"];
+    public string ContactPage_Title => _l["ContactPage_Title"];
     public string CoresText => _l["CoresText"];
     public string CountryText => _l["CountryText"];
     public string DeleteUserButton => _l["DeleteUserButton"];
