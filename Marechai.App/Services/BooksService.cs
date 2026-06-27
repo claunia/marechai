@@ -115,6 +115,54 @@ public class BooksService
         }
     }
 
+    public async Task<bool> IsBookCollectedAsync(long bookId)
+    {
+        try
+        {
+            bool? result = await _apiClient.Auth.Me.Collection.Books[bookId].GetAsync();
+
+            return result ?? false;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error checking collection state for book {Id}", bookId);
+
+            return false;
+        }
+    }
+
+    public async Task<bool> AddBookToCollectionAsync(long bookId)
+    {
+        try
+        {
+            await _apiClient.Auth.Me.Collection.Books[bookId].PostAsync();
+
+            return true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error adding book {Id} to collection", bookId);
+
+            return false;
+        }
+    }
+
+    public async Task<bool> RemoveBookFromCollectionAsync(long bookId)
+    {
+        try
+        {
+            await _apiClient.Auth.Me.Collection.Books[bookId].DeleteAsync();
+
+            return true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error removing book {Id} from collection", bookId);
+
+            return false;
+        }
+    }
+
     // --- CRUD ---
 
     public async Task<List<BookDto>> GetAllBooksAsync()

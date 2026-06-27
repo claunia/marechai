@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Marechai.App.Navigation;
@@ -13,6 +14,7 @@ using Marechai.App.Services.Caching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
+using Uno.Extensions.Authentication;
 
 namespace Marechai.App.Presentation.ViewModels;
 
@@ -22,6 +24,7 @@ public partial class BookViewViewModel : ObservableObject, IRegionAware
     private readonly BookCoverCache                _coverCache;
     private readonly BooksService                  _booksService;
     private readonly ImageSourceFactory            _imageSourceFactory;
+    private readonly IAuthenticationService        _authService;
     private readonly IStringLocalizer              _localizer;
     private readonly ILogger<BookViewViewModel>    _logger;
     private readonly IRegionManager                _regionManager;
@@ -84,6 +87,15 @@ public partial class BookViewViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private bool _isLoading;
 
+    [ObservableProperty]
+    private bool _isCollected;
+
+    [ObservableProperty]
+    private bool _isTogglingCollection;
+
+    [ObservableProperty]
+    private string _collectionButtonText = string.Empty;
+
     // Visibility flags
     [ObservableProperty]
     private Visibility _showNativeTitle = Visibility.Collapsed;
@@ -124,9 +136,13 @@ public partial class BookViewViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private Visibility _showSourceBook = Visibility.Collapsed;
 
+    [ObservableProperty]
+    private Visibility _showCollectionButton = Visibility.Collapsed;
+
     public BookViewViewModel(ILogger<BookViewViewModel> logger,           IRegionManager     regionManager,
                              BooksService              booksService,     BookCoverCache     coverCache,
-                             IStringLocalizer          localizer,        ImageSourceFactory imageSourceFactory)
+                             IStringLocalizer          localizer,        ImageSourceFactory imageSourceFactory,
+                             IAuthenticationService    authService)
     {
         _logger             = logger;
         _regionManager      = regionManager;
@@ -134,7 +150,11 @@ public partial class BookViewViewModel : ObservableObject, IRegionAware
         _coverCache         = coverCache;
         _localizer          = localizer;
         _imageSourceFactory = imageSourceFactory;
+        _authService        = authService;
     }
+
+    partial void OnIsCollectedChanged(bool value) =>
+        CollectionButtonText = value ? _localizer["In Collection"] : _localizer["Add to Collection"];
 
     public ObservableCollection<string> People          { get; } = [];
     public ObservableCollection<string> Companies       { get; } = [];
@@ -241,6 +261,28 @@ public partial class BookViewViewModel : ObservableObject, IRegionAware
         return Task.CompletedTask;
     }
 
+    [RelayCommand]
+    public async Task ToggleCollection()
+    {
+        if(IsTogglingCollection || _currentBookId == 0) return;
+
+        try
+        {
+            IsTogglingCollection = true;
+
+            bool success = IsCollected
+                               ? await _booksService.RemoveBookFromCollectionAsync(_currentBookId)
+                               : await _booksService.AddBookToCollectionAsync(_currentBookId);
+
+            if(success)
+                IsCollected = !IsCollected;
+        }
+        finally
+        {
+            IsTogglingCollection = false;
+        }
+    }
+
     public async Task LoadBookAsync(long bookId)
     {
         try
@@ -339,6 +381,15 @@ public partial class BookViewViewModel : ObservableObject, IRegionAware
                 BookDto? src = await _booksService.GetBookAsync(book.SourceId.Value);
                 SourceBookTitle = src?.Title;
             }
+
+            // Load collection state (authenticated users only)
+            bool isAuthenticated = await _authService.IsAuthenticated(CancellationToken.None);
+            ShowCollectionButton = isAuthenticated ? Visibility.Visible : Visibility.Collapsed;
+
+            if(isAuthenticated)
+                IsCollected = await _booksService.IsBookCollectedAsync(bookId);
+
+            CollectionButtonText = IsCollected ? _localizer["In Collection"] : _localizer["Add to Collection"];
 
             UpdateVisibilities();
             IsDataLoaded = true;
