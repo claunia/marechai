@@ -14,6 +14,7 @@ using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
 using Marechai.App.Services.Caching;
 using Microsoft.UI.Xaml;
+using Windows.System;
 
 namespace Marechai.App.Presentation.ViewModels;
 
@@ -81,7 +82,11 @@ public partial class GpuDetailViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private Visibility _showPhotos = Visibility.Collapsed;
 
+    [ObservableProperty]
+    private Visibility _showVideos = Visibility.Collapsed;
+
     public ObservableCollection<PhotoCarouselDisplayItem> Photos { get; } = [];
+    public ObservableCollection<MachineVideoDisplayItem>  Videos { get; } = [];
 
     /// <summary>
     ///     Gets whether a description is available
@@ -124,6 +129,7 @@ public partial class GpuDetailViewModel : ObservableObject, IRegionAware
         GoBackCommand          = new AsyncRelayCommand(GoBackAsync);
         SelectMachineCommand   = new AsyncRelayCommand<int>(SelectMachineAsync);
         SelectPhotoCommand     = new AsyncRelayCommand<Guid>(SelectPhotoAsync);
+        OpenVideoCommand       = new AsyncRelayCommand<MachineVideoDisplayItem>(OpenVideoAsync);
         ComputersFilterCommand = new RelayCommand(() => FilterComputers());
         ConsolesFilterCommand  = new RelayCommand(() => FilterConsoles());
         SmartphonesFilterCommand = new RelayCommand(() => FilterSmartphones());
@@ -134,6 +140,7 @@ public partial class GpuDetailViewModel : ObservableObject, IRegionAware
     public ICommand           GoBackCommand          { get; }
     public IAsyncRelayCommand SelectMachineCommand   { get; }
     public IAsyncRelayCommand SelectPhotoCommand     { get; }
+    public IAsyncRelayCommand OpenVideoCommand       { get; }
     public ICommand           ComputersFilterCommand { get; }
     public ICommand           ConsolesFilterCommand  { get; }
     public ICommand           SmartphonesFilterCommand { get; }
@@ -154,6 +161,14 @@ public partial class GpuDetailViewModel : ObservableObject, IRegionAware
             Resolutions.Clear();
             Computers.Clear();
             Consoles.Clear();
+            Smartphones.Clear();
+            FilteredComputers.Clear();
+            FilteredConsoles.Clear();
+            FilteredSmartphones.Clear();
+            Photos.Clear();
+            Videos.Clear();
+            ShowPhotos = Visibility.Collapsed;
+            ShowVideos = Visibility.Collapsed;
 
             if(GpuId <= 0)
             {
@@ -333,6 +348,35 @@ public partial class GpuDetailViewModel : ObservableObject, IRegionAware
 
             ShowPhotos = Photos.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
 
+            // Load videos
+            List<GpuVideoDto> videoList = await _gpusService.GetVideosByGpuAsync(GpuId);
+
+            foreach(GpuVideoDto video in videoList)
+            {
+                if(string.IsNullOrWhiteSpace(video.VideoId)) continue;
+
+                string provider = string.IsNullOrWhiteSpace(video.Provider)
+                                      ? _localizer["Video"]
+                                      : video.Provider;
+
+                bool isYouTube = string.Equals(provider, "YouTube", StringComparison.OrdinalIgnoreCase);
+
+                Videos.Add(new MachineVideoDisplayItem
+                {
+                    Title = string.IsNullOrWhiteSpace(video.Title)
+                                ? _localizer["Video"]
+                                : video.Title,
+                    Provider = provider,
+                    VideoId = video.VideoId,
+                    ThumbnailUrl = isYouTube
+                                       ? $"https://img.youtube.com/vi/{video.VideoId}/hqdefault.jpg"
+                                       : null,
+                    LaunchUri = new Uri($"https://www.youtube.com/watch?v={Uri.EscapeDataString(video.VideoId)}")
+                });
+            }
+
+            ShowVideos = Videos.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+
             IsDataLoaded = true;
         }
         catch(Exception ex)
@@ -467,6 +511,20 @@ public partial class GpuDetailViewModel : ObservableObject, IRegionAware
         _regionManager.RequestNavigate(RegionNames.Content, nameof(GpuPhotoDetailPage), parameters);
 
         return Task.CompletedTask;
+    }
+
+    private async Task OpenVideoAsync(MachineVideoDisplayItem? video)
+    {
+        if(video?.LaunchUri is null) return;
+
+        try
+        {
+            await Launcher.LaunchUriAsync(video.LaunchUri);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error launching video for GPU {GpuId}", GpuId);
+        }
     }
 
     /// <summary>

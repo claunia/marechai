@@ -235,4 +235,29 @@ public class GpusService
             return [];
         }
     }
+
+    /// <summary>
+    ///     Fetches public videos for a GPU
+    /// </summary>
+    public async Task<List<GpuVideoDto>> GetVideosByGpuAsync(int gpuId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching videos for GPU {GpuId}", gpuId);
+
+            List<GpuVideoDto> videos = await _apiClient.Gpus[gpuId].Videos.GetAsync();
+
+            if(videos == null) return [];
+
+            _logger.LogInformation("Successfully fetched {Count} videos for GPU {GpuId}", videos.Count, gpuId);
+
+            return videos;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogWarning(ex, "Error fetching videos for GPU {GpuId}", gpuId);
+
+            return [];
+        }
+    }
 }
