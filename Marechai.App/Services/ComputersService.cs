@@ -313,6 +313,27 @@ public class ComputersService
     }
 
     /// <summary>
+    ///     Fetches linked videos for a machine from the API
+    /// </summary>
+    public async Task<List<MachineVideoDto>> GetVideosByMachineAsync(int machineId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching videos for machine {MachineId} from API", machineId);
+
+            List<MachineVideoDto> videos = await _apiClient.Machines[machineId].Videos.GetAsync();
+
+            return videos ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching videos for machine {MachineId} from API", machineId);
+
+            return [];
+        }
+    }
+
+    /// <summary>
     ///     Fetches a localized description for a machine
     /// </summary>
     public async Task<MachineDescriptionDto> GetDescriptionAsync(int machineId, string languageCode)

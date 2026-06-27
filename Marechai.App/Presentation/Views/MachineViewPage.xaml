@@ -538,6 +538,140 @@
                         </ItemsControl>
                     </StackPanel>
 
+                    <!-- Videos -->
+                    <StackPanel Visibility="{Binding ShowVideos}"
+                                Spacing="12">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=VideosLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <ItemsControl ItemsSource="{Binding Videos}"
+                                      HorizontalAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="0"
+                                                HorizontalAlignment="Stretch" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Padding="0"
+                                            Margin="0,0,0,8"
+                                            MinHeight="92"
+                                            HorizontalContentAlignment="Stretch"
+                                            VerticalContentAlignment="Stretch"
+                                            HorizontalAlignment="Stretch"
+                                            Command="{Binding DataContext.OpenVideoCommand, ElementName=PageRoot}"
+                                            CommandParameter="{Binding}"
+                                            Background="Transparent"
+                                            BorderThickness="0">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Grid MinHeight="92"
+                                                      HorizontalAlignment="Stretch"
+                                                      VerticalAlignment="Stretch">
+                                                    <Border x:Name="VideoShadowBorder"
+                                                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                            BorderThickness="1"
+                                                            CornerRadius="8"
+                                                            Padding="16,12"
+                                                            Translation="0, 0, 4"
+                                                            VerticalAlignment="Stretch">
+                                                        <Border.Shadow>
+                                                            <ThemeShadow />
+                                                        </Border.Shadow>
+
+                                                        <Grid ColumnSpacing="16">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="120" />
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                            </Grid.ColumnDefinitions>
+
+                                                            <Grid Grid.Column="0"
+                                                                  Height="68"
+                                                                  CornerRadius="6"
+                                                                  Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                                                                  VerticalAlignment="Center">
+                                                                <Image Source="{Binding ThumbnailUrl}"
+                                                                       Stretch="UniformToFill"
+                                                                       Visibility="{Binding HasThumbnail, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                                                <FontIcon Glyph="&#xE768;"
+                                                                          FontSize="26"
+                                                                          Foreground="{ThemeResource SystemAccentColor}"
+                                                                          HorizontalAlignment="Center"
+                                                                          VerticalAlignment="Center"
+                                                                          Visibility="{Binding HasThumbnail, Converter={StaticResource InvertBoolToVisibilityConverter}}" />
+                                                            </Grid>
+
+                                                            <StackPanel Grid.Column="1"
+                                                                        Spacing="4"
+                                                                        VerticalAlignment="Center"
+                                                                        HorizontalAlignment="Stretch">
+                                                                <TextBlock Text="{Binding DisplayTitle}"
+                                                                           FontSize="15"
+                                                                           FontWeight="SemiBold"
+                                                                           Foreground="{ThemeResource TextControlForeground}"
+                                                                           TextWrapping="WrapWholeWords"
+                                                                           MaxLines="2"
+                                                                           TextTrimming="CharacterEllipsis" />
+                                                                <TextBlock Text="{Binding Provider}"
+                                                                           FontSize="12"
+                                                                           Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                                                <TextBlock Text="{Binding VideoId}"
+                                                                           FontSize="11"
+                                                                           Foreground="{ThemeResource SystemBaseMediumColor}"
+                                                                           TextTrimming="CharacterEllipsis" />
+                                                            </StackPanel>
+
+                                                            <StackPanel Grid.Column="2"
+                                                                        Spacing="6"
+                                                                        VerticalAlignment="Center">
+                                                                <FontIcon Glyph="&#xE8A7;"
+                                                                          FontSize="18"
+                                                                          HorizontalAlignment="Center"
+                                                                          Foreground="{ThemeResource SystemAccentColor}" />
+                                                                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=OpenVideoButton}"
+                                                                           FontSize="11"
+                                                                           Foreground="{ThemeResource SystemAccentColor}"
+                                                                           HorizontalAlignment="Center" />
+                                                            </StackPanel>
+                                                        </Grid>
+                                                    </Border>
+
+                                                    <VisualStateManager.VisualStateGroups>
+                                                        <VisualStateGroup x:Name="CommonStates">
+                                                            <VisualState x:Name="Normal" />
+                                                            <VisualState x:Name="PointerOver">
+                                                                <VisualState.Setters>
+                                                                    <Setter Target="VideoShadowBorder.Background"
+                                                                            Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                                                                    <Setter Target="VideoShadowBorder.Translation"
+                                                                            Value="0, -2, 8" />
+                                                                </VisualState.Setters>
+                                                            </VisualState>
+                                                            <VisualState x:Name="Pressed">
+                                                                <VisualState.Setters>
+                                                                    <Setter Target="VideoShadowBorder.Background"
+                                                                            Value="{ThemeResource CardBackgroundFillColorTertiaryBrush}" />
+                                                                    <Setter Target="VideoShadowBorder.Translation"
+                                                                            Value="0, 0, 2" />
+                                                                </VisualState.Setters>
+                                                            </VisualState>
+                                                        </VisualStateGroup>
+                                                    </VisualStateManager.VisualStateGroups>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
                     <!-- Photos Carousel (Last element before spacing) -->
                     <StackPanel Visibility="{Binding ShowPhotos}"
                                 Spacing="12">

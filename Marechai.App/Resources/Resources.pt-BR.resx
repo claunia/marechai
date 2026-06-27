@@ -2486,4 +2486,7 @@
   <data name="ContactPage_Title" xml:space="preserve"><value>Contato</value></data>
   <data name="ContactButton" xml:space="preserve"><value>Contato</value></data>
   <data name="AboutMarechaiButton" xml:space="preserve"><value>Sobre o Marechai</value></data>
+  <data name="VideosLabel" xml:space="preserve"><value>Vídeos</value></data>
+  <data name="OpenVideoButton" xml:space="preserve"><value>Abrir</value></data>
+  <data name="Video" xml:space="preserve"><value>Vídeo</value></data>
 </root>

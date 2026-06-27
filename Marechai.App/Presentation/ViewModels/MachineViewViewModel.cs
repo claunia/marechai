@@ -31,6 +31,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
+using Windows.System;
 using Windows.Storage.Streams;
 using Humanizer;
 using Marechai.App.Navigation;
@@ -132,6 +133,9 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private Visibility _showDescription = Visibility.Collapsed;
 
+    [ObservableProperty]
+    private Visibility _showVideos = Visibility.Collapsed;
+
     /// <summary>
     ///     Gets whether a description is available
     /// </summary>
@@ -162,6 +166,7 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
     public ObservableCollection<SoundSynthesizerDisplayItem> SoundSynthesizers { get; } = [];
     public ObservableCollection<StorageDisplayItem>          Storage           { get; } = [];
     public ObservableCollection<SoftwareListItem>            Software          { get; } = [];
+    public ObservableCollection<MachineVideoDisplayItem>     Videos            { get; } = [];
     public ObservableCollection<PhotoCarouselDisplayItem>    Photos            { get; } = [];
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
@@ -308,6 +313,21 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
         return Task.CompletedTask;
     }
 
+    [RelayCommand]
+    public async Task OpenVideo(MachineVideoDisplayItem? video)
+    {
+        if(video?.LaunchUri is null) return;
+
+        try
+        {
+            await Launcher.LaunchUriAsync(video.LaunchUri);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error launching video for machine {MachineId}", _currentMachineId);
+        }
+    }
+
     /// <summary>
     ///     Sets the navigation source context from navigation parameters.
     /// </summary>
@@ -353,6 +373,7 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
             SoundSynthesizers.Clear();
             Storage.Clear();
             Software.Clear();
+            Videos.Clear();
             Photos.Clear();
 
             _logger.LogInformation("Loading machine {MachineId}", machineId);
@@ -517,6 +538,33 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
                 });
             }
 
+            // Populate videos
+            List<MachineVideoDto> videoList = await _computersService.GetVideosByMachineAsync(machineId);
+
+            foreach(MachineVideoDto video in videoList)
+            {
+                if(string.IsNullOrWhiteSpace(video.VideoId)) continue;
+
+                string provider = string.IsNullOrWhiteSpace(video.Provider)
+                                      ? _localizer["Video"]
+                                      : video.Provider;
+
+                bool isYouTube = string.Equals(provider, "YouTube", StringComparison.OrdinalIgnoreCase);
+
+                Videos.Add(new MachineVideoDisplayItem
+                {
+                    Title = string.IsNullOrWhiteSpace(video.Title)
+                                ? _localizer["Video"]
+                                : video.Title,
+                    Provider = provider,
+                    VideoId = video.VideoId,
+                    ThumbnailUrl = isYouTube
+                                       ? $"https://img.youtube.com/vi/{video.VideoId}/hqdefault.jpg"
+                                       : null,
+                    LaunchUri = new Uri($"https://www.youtube.com/watch?v={Uri.EscapeDataString(video.VideoId)}")
+                });
+            }
+
             // Load localized description
             try
             {
@@ -580,6 +628,7 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
         ShowSoundSynthesizers = SoundSynthesizers.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowStorage           = Storage.Count           > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowSoftware          = Software.Count          > 0 ? Visibility.Visible : Visibility.Collapsed;
+        ShowVideos            = Videos.Count            > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowPhotos            = Photos.Count            > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowDescription       = HasDescription ? Visibility.Visible : Visibility.Collapsed;
     }
