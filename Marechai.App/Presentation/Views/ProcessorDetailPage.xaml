@@ -264,16 +264,20 @@
                                         HorizontalAlignment="Stretch">
                             <controls:Carousel.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                          HorizontalAlignment="Center"
-                                          VerticalAlignment="Center">
+                                    <Button Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                            BorderThickness="0"
+                                            Padding="0"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Command="{Binding ElementName=PageRoot, Path=DataContext.SelectPhotoCommand}"
+                                            CommandParameter="{Binding PhotoId}">
                                         <Image Source="{Binding ThumbnailImageSource}"
                                                Stretch="Uniform"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
                                                MaxWidth="256"
                                                MaxHeight="256" />
-                                    </Grid>
+                                    </Button>
                                 </DataTemplate>
                             </controls:Carousel.ItemTemplate>
                         </controls:Carousel>

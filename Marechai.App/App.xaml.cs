@@ -254,6 +254,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<GpuPhotoDetailViewModel>();
         containerRegistry.Register<ProcessorsListViewModel>();
         containerRegistry.Register<ProcessorDetailViewModel>();
+        containerRegistry.Register<ProcessorPhotoDetailViewModel>();
         containerRegistry.Register<SoundSynthsListViewModel>();
         containerRegistry.Register<SoundSynthDetailViewModel>();
         containerRegistry.Register<SettingsViewModel>();
@@ -335,6 +336,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<GpuPhotoDetailPage, GpuPhotoDetailViewModel>();
         containerRegistry.RegisterForNavigation<ProcessorListPage, ProcessorsListViewModel>();
         containerRegistry.RegisterForNavigation<ProcessorDetailPage, ProcessorDetailViewModel>();
+        containerRegistry.RegisterForNavigation<ProcessorPhotoDetailPage, ProcessorPhotoDetailViewModel>();
         containerRegistry.RegisterForNavigation<SoundSynthListPage, SoundSynthsListViewModel>();
         containerRegistry.RegisterForNavigation<SoundSynthDetailPage, SoundSynthDetailViewModel>();
         containerRegistry.RegisterForNavigation<SettingsPage, SettingsViewModel>();

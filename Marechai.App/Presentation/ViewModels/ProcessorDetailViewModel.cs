@@ -122,6 +122,7 @@ public partial class ProcessorDetailViewModel : ObservableObject, IRegionAware
         LoadData               = new AsyncRelayCommand(LoadDataAsync);
         GoBackCommand          = new AsyncRelayCommand(GoBackAsync);
         SelectMachineCommand   = new AsyncRelayCommand<int>(SelectMachineAsync);
+        SelectPhotoCommand     = new AsyncRelayCommand<Guid>(SelectPhotoAsync);
         ComputersFilterCommand = new RelayCommand(() => FilterComputers());
         ConsolesFilterCommand  = new RelayCommand(() => FilterConsoles());
         SmartphonesFilterCommand = new RelayCommand(() => FilterSmartphones());
@@ -131,6 +132,7 @@ public partial class ProcessorDetailViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand LoadData               { get; }
     public ICommand           GoBackCommand          { get; }
     public IAsyncRelayCommand SelectMachineCommand   { get; }
+    public IAsyncRelayCommand SelectPhotoCommand     { get; }
     public ICommand           ComputersFilterCommand { get; }
     public ICommand           ConsolesFilterCommand  { get; }
     public ICommand           SmartphonesFilterCommand { get; }
@@ -395,6 +397,24 @@ public partial class ProcessorDetailViewModel : ObservableObject, IRegionAware
         };
 
         _regionManager.RequestNavigate(RegionNames.Content, nameof(MachineViewPage), parameters);
+
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    ///     Navigates to the photo detail view
+    /// </summary>
+    private Task SelectPhotoAsync(Guid photoId)
+    {
+        if(photoId == Guid.Empty) return Task.CompletedTask;
+
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.PhotoId, photoId },
+            { NavParamKeys.NavigationSource, nameof(ProcessorDetailViewModel) }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(ProcessorPhotoDetailPage), parameters);
 
         return Task.CompletedTask;
     }

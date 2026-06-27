@@ -149,4 +149,32 @@ public class ProcessorsService
             return [];
         }
     }
+
+    /// <summary>
+    ///     Fetches full photo details for a Processor photo
+    /// </summary>
+    public async Task<ProcessorPhotoDto> GetProcessorPhotoDetailsAsync(Guid photoId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching Processor photo {PhotoId} from API", photoId);
+
+            ProcessorPhotoDto photo = await _apiClient.Processors.Photos[photoId].GetAsync();
+
+            if(photo == null)
+            {
+                _logger.LogWarning("Processor photo {PhotoId} not found", photoId);
+
+                return null;
+            }
+
+            return photo;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching Processor photo {PhotoId} from API", photoId);
+
+            return null;
+        }
+    }
 }
