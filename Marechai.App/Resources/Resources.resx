@@ -3020,6 +3020,18 @@
   <data name="UserReviewsTheBad" xml:space="preserve"><value>The Bad</value></data>
   <data name="UserReviewsTheUgly" xml:space="preserve"><value>The Ugly</value></data>
   <data name="UserReviewsOverallFormat" xml:space="preserve"><value>Overall: {0:F1}/5 ({1} reviews)</value></data>
+  <data name="NoUserReviewsYetText" xml:space="preserve"><value>No reviews yet.</value></data>
+  <data name="WriteReviewButton" xml:space="preserve"><value>Write Review</value></data>
+  <data name="EditReviewButton" xml:space="preserve"><value>Edit Review</value></data>
+  <data name="WriteReviewDialogTitle" xml:space="preserve"><value>Write Review</value></data>
+  <data name="EditReviewDialogTitle" xml:space="preserve"><value>Edit Review</value></data>
+  <data name="ReviewRatingLabel" xml:space="preserve"><value>Your Rating</value></data>
+  <data name="ReviewDraftNoRating" xml:space="preserve"><value>No rating</value></data>
+  <data name="ReviewClearRatingButton" xml:space="preserve"><value>Clear</value></data>
+  <data name="ReviewAnonymousLabel" xml:space="preserve"><value>Post as anonymous</value></data>
+  <data name="ReviewCreatedSuccess" xml:space="preserve"><value>Review submitted successfully.</value></data>
+  <data name="ReviewUpdatedSuccess" xml:space="preserve"><value>Review updated successfully.</value></data>
+  <data name="ReviewSaveFailed" xml:space="preserve"><value>Failed to save review.</value></data>
   <data name="PromoArt" xml:space="preserve"><value>Promo Art</value></data>
   <data name="OtherPromoArt" xml:space="preserve"><value>Other (promo art)</value></data>
   <data name="NoPromoArtForThisMachineYet" xml:space="preserve"><value>No promo art for this machine yet.</value></data>

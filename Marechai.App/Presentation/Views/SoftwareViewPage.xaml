@@ -1179,10 +1179,31 @@
                     <!-- User Reviews -->
                     <StackPanel Visibility="{Binding ShowUserReviews}"
                                 Spacing="12">
-                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=UserReviewsLabel}"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <Grid ColumnSpacing="12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0"
+                                       Text="{Binding Source={StaticResource Strings}, Path=UserReviewsLabel}"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource TextControlForeground}"
+                                       VerticalAlignment="Center" />
+
+                            <Button Grid.Column="1"
+                                    Content="{Binding ReviewActionLabel}"
+                                    Click="OpenReviewDialog_Click"
+                                    Style="{ThemeResource AccentButtonStyle}"
+                                    Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        </Grid>
+
+                        <InfoBar IsOpen="{Binding HasReviewFeedbackMessage, Mode=OneWay}"
+                                 Severity="{Binding ReviewFeedbackSeverity}"
+                                 Message="{Binding ReviewFeedbackMessage}"
+                                 IsClosable="True"
+                                 CloseButtonClick="ReviewFeedback_CloseButtonClick" />
 
                         <StackPanel Orientation="Horizontal"
                                     Spacing="8"
@@ -1195,6 +1216,11 @@
                                            FontWeight="SemiBold" />
                             </Border>
                         </StackPanel>
+
+                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=NoUserReviewsYetText}"
+                                   FontSize="12"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}"
+                                   Visibility="{Binding UserReviews.Count, Converter={StaticResource ZeroToVisibilityConverter}}" />
 
                         <ItemsControl ItemsSource="{Binding UserReviews}"
                                       HorizontalAlignment="Stretch">

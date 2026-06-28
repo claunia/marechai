@@ -18,6 +18,7 @@ using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
 using Marechai.App.Services.Caching;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 using Windows.System;
 
@@ -42,6 +43,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     private string? _navigationSource;
     private int     _currentSoftwareId;
     private string? _currentUserId;
+    private SoftwareUserReviewDto? _myReview;
 
     [ObservableProperty]
     private string _softwareName = string.Empty;
@@ -161,6 +163,36 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     private bool _isAuthenticated;
 
     [ObservableProperty]
+    private float _currentUserRating;
+
+    [ObservableProperty]
+    private string? _reviewFeedbackMessage;
+
+    [ObservableProperty]
+    private InfoBarSeverity _reviewFeedbackSeverity = InfoBarSeverity.Informational;
+
+    [ObservableProperty]
+    private string _reviewDraftTheGood = string.Empty;
+
+    [ObservableProperty]
+    private string _reviewDraftTheBad = string.Empty;
+
+    [ObservableProperty]
+    private string _reviewDraftTheUgly = string.Empty;
+
+    [ObservableProperty]
+    private bool _reviewDraftIsAnonymous;
+
+    [ObservableProperty]
+    private double _reviewDraftRating;
+
+    [ObservableProperty]
+    private bool _isSubmittingReviewDraft;
+
+    [ObservableProperty]
+    private string? _reviewDraftErrorMessage;
+
+    [ObservableProperty]
     private Visibility _showCredits = Visibility.Collapsed;
 
     [ObservableProperty]
@@ -208,6 +240,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     public ObservableCollection<CriticReviewDisplayItem>  CriticReviews       { get; } = [];
     public ObservableCollection<string>                   CriticReviewsByPlatform { get; } = [];
     public ObservableCollection<UserReviewDisplayItem>    UserReviews         { get; } = [];
+    public ObservableCollection<ReviewRatingStarItem>     ReviewRatingStars   { get; } = [];
 
     public int  PromoArtCount => PromoArtGroups.Sum(group => group.Items.Count);
     public bool HasPromoArt   => PromoArtCount > 0;
@@ -230,6 +263,16 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     private Visibility _showRatings = Visibility.Collapsed;
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => false;
+
+    public bool HasReviewFeedbackMessage => !string.IsNullOrWhiteSpace(ReviewFeedbackMessage);
+    public bool HasReviewDraftError      => !string.IsNullOrWhiteSpace(ReviewDraftErrorMessage);
+    public bool HasCurrentUserReview     => _myReview is not null;
+    public string ReviewActionLabel      => _myReview is not null ? _localizer["EditReviewButton"] : _localizer["WriteReviewButton"];
+    public string ReviewDialogTitle      => _myReview is not null ? _localizer["EditReviewDialogTitle"] : _localizer["WriteReviewDialogTitle"];
+    public string ReviewSaveButtonText   => _localizer["SaveButton"];
+    public string ReviewCancelButtonText => _localizer["CancelButton"];
+    public string ReviewDraftRatingText  => ReviewDraftRating > 0 ? $"{ReviewDraftRating:F1}/5" : _localizer["ReviewDraftNoRating"];
+    public bool CanSubmitReviewDraft     => !IsSubmittingReviewDraft;
 
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
 
@@ -548,6 +591,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
 
             // Load user reviews
             await RefreshReviewVotingContextAsync();
+            await RefreshCurrentUserRatingAsync(softwareId);
             await LoadUserReviewsAsync(softwareId);
 
             // Load localized description
@@ -876,6 +920,10 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
                 });
             }
 
+            _myReview = reviewList.FirstOrDefault(review => !string.IsNullOrWhiteSpace(_currentUserId) &&
+                                                            string.Equals(review.UserId, _currentUserId,
+                                                                          StringComparison.Ordinal));
+
             UserReviewSummaryDto? summary = await _browsingService.GetUserReviewSummaryBySoftwareAsync(softwareId);
 
             if(summary?.AverageRating is not null)
@@ -884,6 +932,10 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
                                                          summary.AverageRating.Value,
                                                          summary.TotalReviews ?? 0);
             }
+
+            OnPropertyChanged(nameof(HasCurrentUserReview));
+            OnPropertyChanged(nameof(ReviewActionLabel));
+            OnPropertyChanged(nameof(ReviewDialogTitle));
         }
         catch(Exception ex)
         {
@@ -913,6 +965,129 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
             IsAuthenticated = false;
             _currentUserId  = null;
         }
+    }
+
+    async Task RefreshCurrentUserRatingAsync(int softwareId)
+    {
+        if(!IsAuthenticated)
+        {
+            CurrentUserRating = 0;
+
+            return;
+        }
+
+        try
+        {
+            SoftwareUserRatingDto? myRating = await _browsingService.GetMyUserRatingAsync(softwareId);
+            CurrentUserRating = myRating?.Rating ?? 0;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error refreshing current user rating for software {SoftwareId}", softwareId);
+            CurrentUserRating = 0;
+        }
+    }
+
+    public void PrepareReviewDraft()
+    {
+        ReviewDraftTheGood      = _myReview?.TheGood ?? string.Empty;
+        ReviewDraftTheBad       = _myReview?.TheBad ?? string.Empty;
+        ReviewDraftTheUgly      = _myReview?.TheUgly ?? string.Empty;
+        ReviewDraftIsAnonymous  = _myReview?.IsAnonymous ?? false;
+        ReviewDraftRating       = _myReview?.Rating ?? CurrentUserRating;
+        ReviewDraftErrorMessage = null;
+        RebuildReviewRatingStars();
+    }
+
+    public async Task<bool> SubmitReviewDraftAsync()
+    {
+        ReviewDraftErrorMessage = null;
+        IsSubmittingReviewDraft = true;
+
+        try
+        {
+            var dto = new SoftwareUserReviewDto
+            {
+                TheGood     = string.IsNullOrWhiteSpace(ReviewDraftTheGood) ? null : ReviewDraftTheGood.Trim(),
+                TheBad      = string.IsNullOrWhiteSpace(ReviewDraftTheBad) ? null : ReviewDraftTheBad.Trim(),
+                TheUgly     = string.IsNullOrWhiteSpace(ReviewDraftTheUgly) ? null : ReviewDraftTheUgly.Trim(),
+                IsAnonymous = ReviewDraftIsAnonymous,
+                Rating      = ReviewDraftRating > 0 ? (float?)ReviewDraftRating : null
+            };
+
+            if(_myReview is not null && _myReview.Id is > 0)
+            {
+                var update = await _browsingService.UpdateUserReviewAsync(_currentSoftwareId, _myReview.Id.Value, dto);
+
+                if(!update.Succeeded)
+                {
+                    ReviewDraftErrorMessage = update.ErrorMessage ?? _localizer["ReviewSaveFailed"];
+
+                    return false;
+                }
+
+                SetReviewFeedback(_localizer["ReviewUpdatedSuccess"], InfoBarSeverity.Success);
+            }
+            else
+            {
+                var create = await _browsingService.CreateUserReviewAsync(_currentSoftwareId, dto);
+
+                if(create.Review is null)
+                {
+                    ReviewDraftErrorMessage = create.ErrorMessage ?? _localizer["ReviewSaveFailed"];
+
+                    return false;
+                }
+
+                SetReviewFeedback(_localizer["ReviewCreatedSuccess"], InfoBarSeverity.Success);
+            }
+
+            await RefreshReviewAuthoringStateAsync();
+
+            return true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error submitting review draft for software {SoftwareId}", _currentSoftwareId);
+            ReviewDraftErrorMessage = ex.Message;
+
+            return false;
+        }
+        finally
+        {
+            IsSubmittingReviewDraft = false;
+        }
+    }
+
+    public async Task RefreshReviewAuthoringStateAsync()
+    {
+        await RefreshReviewVotingContextAsync();
+        await RefreshCurrentUserRatingAsync(_currentSoftwareId);
+        await LoadUserReviewsAsync(_currentSoftwareId);
+        UpdateVisibilities();
+    }
+
+    void SetReviewFeedback(string message, InfoBarSeverity severity)
+    {
+        ReviewFeedbackMessage  = message;
+        ReviewFeedbackSeverity = severity;
+    }
+
+    [RelayCommand]
+    public void ClearReviewFeedback() => ReviewFeedbackMessage = null;
+
+    [RelayCommand]
+    public void SetReviewDraftRating(double rating)
+    {
+        ReviewDraftRating = rating;
+        ReviewDraftErrorMessage = null;
+    }
+
+    [RelayCommand]
+    public void ClearReviewDraftRating()
+    {
+        ReviewDraftRating = 0;
+        ReviewDraftErrorMessage = null;
     }
 
     [RelayCommand]
@@ -1069,7 +1244,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
         ShowPromoArt    = PromoArtGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowVideos      = Videos.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowCriticReviews = CriticReviews.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
-        ShowUserReviews   = UserReviews.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+        ShowUserReviews   = Visibility.Visible;
         ShowCredits     = CreditGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowDescription = HasDescription ? Visibility.Visible : Visibility.Collapsed;
 
@@ -1091,6 +1266,46 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
             "pt" => "por",
             _    => "eng"
         };
+    }
+
+    partial void OnReviewFeedbackMessageChanged(string? value)
+    {
+        OnPropertyChanged(nameof(HasReviewFeedbackMessage));
+    }
+
+    partial void OnReviewDraftErrorMessageChanged(string? value)
+    {
+        OnPropertyChanged(nameof(HasReviewDraftError));
+    }
+
+    partial void OnReviewDraftRatingChanged(double value)
+    {
+        RebuildReviewRatingStars();
+        OnPropertyChanged(nameof(ReviewDraftRatingText));
+    }
+
+    partial void OnIsSubmittingReviewDraftChanged(bool value)
+    {
+        OnPropertyChanged(nameof(CanSubmitReviewDraft));
+    }
+
+    void RebuildReviewRatingStars()
+    {
+        ReviewRatingStars.Clear();
+
+        for(int i = 1; i <= 5; i++)
+        {
+            double fill = Math.Clamp(ReviewDraftRating - (i - 1), 0d, 1d);
+
+            ReviewRatingStars.Add(new ReviewRatingStarItem
+            {
+                LeftValue = i - 0.5d,
+                RightValue = i,
+                IsFilled = fill >= 1d,
+                IsHalfFilled = fill >= 0.5d && fill < 1d,
+                IsEmpty = fill < 0.5d
+            });
+        }
     }
 }
 
@@ -1163,4 +1378,14 @@ public class RatingItem
     public string System       { get; set; } = string.Empty;
     public string Rating       { get; set; } = string.Empty;
     public string PlatformName { get; set; } = string.Empty;
+}
+
+[Bindable]
+public class ReviewRatingStarItem : ObservableObject
+{
+    public double LeftValue { get; set; }
+    public double RightValue { get; set; }
+    public bool IsFilled { get; set; }
+    public bool IsHalfFilled { get; set; }
+    public bool IsEmpty { get; set; }
 }

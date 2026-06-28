@@ -236,6 +236,10 @@ public class LocalizedStrings
     public string OngoingText => _l["OngoingText"];
     public string SaveButton => _l["SaveButton"];
     public string CancelButton => _l["CancelButton"];
+    public string NoUserReviewsYetText => _l["NoUserReviewsYetText"];
+    public string ReviewRatingLabel => _l["ReviewRatingLabel"];
+    public string ReviewClearRatingButton => _l["ReviewClearRatingButton"];
+    public string ReviewAnonymousLabel => _l["ReviewAnonymousLabel"];
 
     // GPU management
     public string GpuManagementTitle => _l["GpuManagementTitle"];

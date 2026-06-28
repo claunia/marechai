@@ -1,9 +1,12 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Marechai.Data;
+using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.App.Services;
 
@@ -113,6 +116,93 @@ public class SoftwareBrowsingService
             _logger.LogError(ex, "Error fetching user review summary for software {SoftwareId}", softwareId);
 
             return null;
+        }
+    }
+
+    public async Task<SoftwareUserRatingDto?> GetMyUserRatingAsync(int softwareId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching current user rating for software {SoftwareId}", softwareId);
+
+            return await _apiClient.Software[softwareId].UserRatings.Me.GetAsync();
+        }
+        catch(ApiException ex) when (ex.ResponseStatusCode == 204)
+        {
+            _logger.LogInformation("No current user rating found for software {SoftwareId}", softwareId);
+
+            return null;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching current user rating for software {SoftwareId}", softwareId);
+
+            return null;
+        }
+    }
+
+    public async Task<(SoftwareUserReviewDto? Review, string? ErrorMessage)> CreateUserReviewAsync(
+        int softwareId, SoftwareUserReviewDto review)
+    {
+        try
+        {
+            _logger.LogInformation("Creating user review for software {SoftwareId}", softwareId);
+
+            return (await _apiClient.Software[softwareId].UserReviews.PostAsync(review), null);
+        }
+        catch(ProblemDetails ex)
+        {
+            _logger.LogError(ex, "Problem creating user review for software {SoftwareId}", softwareId);
+
+            return (null, ex.Detail ?? ex.Title ?? ex.Message);
+        }
+        catch(ApiException ex)
+        {
+            _logger.LogError(ex, "API error creating user review for software {SoftwareId}", softwareId);
+
+            return (null, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error creating user review for software {SoftwareId}", softwareId);
+
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool Succeeded, string? ErrorMessage)> UpdateUserReviewAsync(
+        int softwareId, long reviewId, SoftwareUserReviewDto review)
+    {
+        try
+        {
+            _logger.LogInformation("Updating user review {ReviewId} for software {SoftwareId}", reviewId, softwareId);
+
+            await _apiClient.Software[softwareId].UserReviews[reviewId].PutAsync(review);
+
+            return (true, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            _logger.LogError(ex,
+                             "Problem updating user review {ReviewId} for software {SoftwareId}",
+                             reviewId,
+                             softwareId);
+
+            return (false, ex.Detail ?? ex.Title ?? ex.Message);
+        }
+        catch(ApiException ex)
+        {
+            _logger.LogError(ex, "API error updating user review {ReviewId} for software {SoftwareId}",
+                             reviewId, softwareId);
+
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error updating user review {ReviewId} for software {SoftwareId}",
+                             reviewId, softwareId);
+
+            return (false, ex.Message);
         }
     }
 
