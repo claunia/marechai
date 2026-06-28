@@ -431,6 +431,55 @@ public class DocumentsService
         }
     }
 
+    // --- Collection ---
+    public async Task<bool> IsDocumentCollectedAsync(long documentId)
+    {
+        try
+        {
+            bool? result = await _apiClient.Auth.Me.Collection.Documents[documentId].GetAsync();
+
+            return result ?? false;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error checking collection state for document {Id}", documentId);
+
+            return false;
+        }
+    }
+
+    public async Task<bool> AddDocumentToCollectionAsync(long documentId)
+    {
+        try
+        {
+            await _apiClient.Auth.Me.Collection.Documents[documentId].PostAsync();
+
+            return true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error adding document {Id} to collection", documentId);
+
+            return false;
+        }
+    }
+
+    public async Task<bool> RemoveDocumentFromCollectionAsync(long documentId)
+    {
+        try
+        {
+            await _apiClient.Auth.Me.Collection.Documents[documentId].DeleteAsync();
+
+            return true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error removing document {Id} from collection", documentId);
+
+            return false;
+        }
+    }
+
     // --- Document Roles ---
     public async Task<List<DocumentRoleDto>> GetDocumentRolesAsync()
     {

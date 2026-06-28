@@ -20,7 +20,7 @@
               BorderThickness="0,0,0,1"
               Padding="12,12,16,12">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" /> <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" /> <ColumnDefinition Width="*" /> <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <Button Grid.Column="0"
@@ -38,6 +38,13 @@
                            Foreground="{ThemeResource TextControlForeground}"
                            TextTrimming="CharacterEllipsis" />
             </StackPanel>
+
+            <Button Grid.Column="2"
+                    Visibility="{Binding ShowCollectionButton}"
+                    Content="{Binding CollectionButtonText}"
+                    Command="{Binding ToggleCollectionCommand}"
+                    Style="{ThemeResource AccentButtonStyle}"
+                    VerticalAlignment="Center" />
         </Grid>
 
         <Grid Grid.Row="1">

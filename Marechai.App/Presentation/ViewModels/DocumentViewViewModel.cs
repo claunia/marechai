@@ -3,12 +3,14 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.App.Navigation;
 using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
+using Uno.Extensions.Authentication;
 
 namespace Marechai.App.Presentation.ViewModels;
 
@@ -16,11 +18,13 @@ namespace Marechai.App.Presentation.ViewModels;
 public partial class DocumentViewViewModel : ObservableObject, IRegionAware
 {
     private readonly DocumentsService                _documentsService;
+    private readonly IAuthenticationService          _authService;
     private readonly IStringLocalizer                _localizer;
     private readonly ILogger<DocumentViewViewModel>  _logger;
     private readonly IRegionManager                  _regionManager;
 
     private string? _navigationSource;
+    private long    _currentDocumentId;
 
     [ObservableProperty]
     private string _documentTitle = string.Empty;
@@ -73,14 +77,31 @@ public partial class DocumentViewViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private Visibility _showMachineFamilies = Visibility.Collapsed;
 
+    [ObservableProperty]
+    private bool _isCollected;
+
+    [ObservableProperty]
+    private bool _isTogglingCollection;
+
+    [ObservableProperty]
+    private string _collectionButtonText = string.Empty;
+
+    [ObservableProperty]
+    private Visibility _showCollectionButton = Visibility.Collapsed;
+
     public DocumentViewViewModel(ILogger<DocumentViewViewModel> logger,           IRegionManager    regionManager,
-                                 DocumentsService              documentsService, IStringLocalizer  localizer)
+                                 DocumentsService              documentsService, IAuthenticationService authService,
+                                 IStringLocalizer              localizer)
     {
         _logger           = logger;
         _regionManager    = regionManager;
         _documentsService = documentsService;
+        _authService      = authService;
         _localizer        = localizer;
     }
+
+    partial void OnIsCollectedChanged(bool value) =>
+        CollectionButtonText = value ? _localizer["In Collection"] : _localizer["Add to Collection"];
 
     public ObservableCollection<string> People          { get; } = [];
     public ObservableCollection<string> Companies       { get; } = [];
@@ -97,7 +118,10 @@ public partial class DocumentViewViewModel : ObservableObject, IRegionAware
             _navigationSource = source;
 
         if(navigationContext.Parameters.TryGetValue<long>(NavParamKeys.DocumentId, out long documentId))
+        {
+            _currentDocumentId = documentId;
             _ = LoadDocumentAsync(documentId);
+        }
     }
 
     [RelayCommand]
@@ -126,6 +150,28 @@ public partial class DocumentViewViewModel : ObservableObject, IRegionAware
         ErrorMessage = string.Empty;
 
         return Task.CompletedTask;
+    }
+
+    [RelayCommand]
+    public async Task ToggleCollection()
+    {
+        if(IsTogglingCollection || _currentDocumentId == 0) return;
+
+        try
+        {
+            IsTogglingCollection = true;
+
+            bool success = IsCollected
+                               ? await _documentsService.RemoveDocumentFromCollectionAsync(_currentDocumentId)
+                               : await _documentsService.AddDocumentToCollectionAsync(_currentDocumentId);
+
+            if(success)
+                IsCollected = !IsCollected;
+        }
+        finally
+        {
+            IsTogglingCollection = false;
+        }
     }
 
     public async Task LoadDocumentAsync(long documentId)
@@ -199,6 +245,15 @@ public partial class DocumentViewViewModel : ObservableObject, IRegionAware
 
             foreach(DocumentByMachineFamilyDto family in families)
                 MachineFamilies.Add(family.MachineFamily ?? string.Empty);
+
+            // Load collection state (authenticated users only)
+            bool isAuthenticated = await _authService.IsAuthenticated(CancellationToken.None);
+            ShowCollectionButton = isAuthenticated ? Visibility.Visible : Visibility.Collapsed;
+
+            if(isAuthenticated)
+                IsCollected = await _documentsService.IsDocumentCollectedAsync(documentId);
+
+            CollectionButtonText = IsCollected ? _localizer["In Collection"] : _localizer["Add to Collection"];
 
             UpdateVisibilities();
             IsDataLoaded = true;
