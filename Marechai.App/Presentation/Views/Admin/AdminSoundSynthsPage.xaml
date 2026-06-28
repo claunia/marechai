@@ -65,6 +65,9 @@
                                                     <Button Content="{Binding Source={StaticResource Strings}, Path=EditSoundSynthButton}"
                                                             Command="{Binding DataContext.OpenEditCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
                                                             Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
+                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=PhotosButton}"
+                                                            Command="{Binding DataContext.OpenPhotosCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
+                                                            Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
                                                     <Button Content="{Binding Source={StaticResource Strings}, Path=DeleteSoundSynthButton}"
                                                             Command="{Binding DataContext.DeleteCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
                                                             Foreground="{ThemeResource SystemErrorTextColor}" Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />

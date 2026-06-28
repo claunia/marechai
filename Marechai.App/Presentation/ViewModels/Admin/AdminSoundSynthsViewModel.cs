@@ -6,6 +6,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Humanizer;
+using Marechai.App.Navigation;
+using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services.Authentication;
 using Marechai.Data;
 
@@ -17,6 +19,7 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
     private readonly IJwtService                          _jwtService;
     private readonly IStringLocalizer                     _localizer;
     private readonly ILogger<AdminSoundSynthsViewModel>   _logger;
+    private readonly IRegionManager                       _regionManager;
     private readonly ITokenService                        _tokenService;
 
     [ObservableProperty] private ObservableCollection<SoundSynthDto> _soundSynths = [];
@@ -68,20 +71,23 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
                                      IJwtService                          jwtService,
                                      ITokenService                        tokenService,
                                      ILogger<AdminSoundSynthsViewModel>   logger,
-                                     IStringLocalizer                     localizer)
+                                     IStringLocalizer                     localizer,
+                                     IRegionManager                       regionManager)
     {
         _apiClient    = apiClient;
         _jwtService   = jwtService;
         _tokenService = tokenService;
         _logger       = logger;
         _localizer    = localizer;
+        _regionManager = regionManager;
 
-        LoadItemsCommand  = new AsyncRelayCommand(LoadItemsAsync);
-        OpenAddCommand    = new RelayCommand(OpenAdd);
-        OpenEditCommand   = new RelayCommand<SoundSynthDto>(OpenEdit);
-        DeleteCommand     = new AsyncRelayCommand<SoundSynthDto>(DeleteAsync);
-        SaveCommand       = new AsyncRelayCommand(SaveAsync);
-        CancelEditCommand = new RelayCommand(CancelEdit);
+        LoadItemsCommand   = new AsyncRelayCommand(LoadItemsAsync);
+        OpenAddCommand     = new RelayCommand(OpenAdd);
+        OpenEditCommand    = new RelayCommand<SoundSynthDto>(OpenEdit);
+        OpenPhotosCommand  = new RelayCommand<SoundSynthDto>(OpenPhotos);
+        DeleteCommand      = new AsyncRelayCommand<SoundSynthDto>(DeleteAsync);
+        SaveCommand        = new AsyncRelayCommand(SaveAsync);
+        CancelEditCommand  = new RelayCommand(CancelEdit);
 
         CheckAdminRole();
     }
@@ -89,6 +95,7 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand                LoadItemsCommand  { get; }
     public IRelayCommand                     OpenAddCommand    { get; }
     public IRelayCommand<SoundSynthDto>       OpenEditCommand   { get; }
+    public IRelayCommand<SoundSynthDto>       OpenPhotosCommand { get; }
     public IAsyncRelayCommand<SoundSynthDto>  DeleteCommand     { get; }
     public IAsyncRelayCommand                SaveCommand       { get; }
     public IRelayCommand                     CancelEditCommand { get; }
@@ -182,6 +189,19 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
             ErrorMessage = _localizer["FailedToLoadSoundSynths"];
             HasError     = true;
         }
+    }
+
+    private void OpenPhotos(SoundSynthDto? item)
+    {
+        if(item?.Id == null) return;
+
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.SoundSynthId, item.Id.Value },
+            { NavParamKeys.SoundSynthName, item.Name ?? string.Empty }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminSoundSynthPhotosPage), parameters);
     }
 
     private async Task DeleteAsync(SoundSynthDto? item)

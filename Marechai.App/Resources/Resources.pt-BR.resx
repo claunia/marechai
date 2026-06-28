@@ -1990,6 +1990,37 @@
   <data name="ProcessorPhotosQueuedCardStatus" xml:space="preserve"><value>Na fila para processamento</value></data>
   <data name="ProcessorPhotosSucceededCardStatus" xml:space="preserve"><value>Enviada com sucesso</value></data>
   <data name="ProcessorPhotosFailedCardStatus" xml:space="preserve"><value>Falha no envio</value></data>
+  <data name="SoundSynthPhotosTitle" xml:space="preserve"><value>Fotos do sintetizador</value></data>
+  <data name="SoundSynthPhotosSubtitle" xml:space="preserve"><value>Visualizar, enviar e gerenciar fotos de sintetizadores</value></data>
+  <data name="SoundSynthPhotosMgmtAccessDeniedTitle" xml:space="preserve"><value>Acesso negado</value></data>
+  <data name="SoundSynthPhotosMgmtAccessDeniedMessage" xml:space="preserve"><value>Você deve ser Administrador para gerenciar fotos de sintetizadores.</value></data>
+  <data name="SoundSynthPhotosBatchSectionTitle" xml:space="preserve"><value>Envio em lote</value></data>
+  <data name="SoundSynthPhotosBatchSectionSubtitle" xml:space="preserve"><value>Prepare até 25 fotos de sintetizadores, atribua uma licença compartilhada ao lote e, se desejar, defina uma URL de origem para cada foto.</value></data>
+  <data name="SoundSynthPhotosAddImagesButton" xml:space="preserve"><value>Adicionar imagens</value></data>
+  <data name="SoundSynthPhotosClearStagedButton" xml:space="preserve"><value>Limpar preparação</value></data>
+  <data name="SoundSynthPhotosSubmitBatchButton" xml:space="preserve"><value>Enviar fotos</value></data>
+  <data name="SoundSynthPhotosNoImagesStaged" xml:space="preserve"><value>Ainda não há imagens preparadas. Adicione uma ou mais fotos para iniciar um envio em lote.</value></data>
+  <data name="SoundSynthPhotosPreviewUnavailable" xml:space="preserve"><value>Visualização indisponível</value></data>
+  <data name="SoundSynthPhotosProcessingTitle" xml:space="preserve"><value>Processando envio</value></data>
+  <data name="SoundSynthPhotosBatchProgressText" xml:space="preserve"><value>{0} de {1} fotos preparadas foram processadas.</value></data>
+  <data name="SoundSynthPhotosPickerCanceled" xml:space="preserve"><value>Nenhum arquivo foi selecionado.</value></data>
+  <data name="SoundSynthPhotosSelectionTrimmed" xml:space="preserve"><value>Apenas os primeiros {0} arquivos foram preparados, porque um lote pode conter no máximo {1} fotos.</value></data>
+  <data name="SoundSynthPhotosMaxImagesReached" xml:space="preserve"><value>Você já atingiu o máximo de {0} fotos preparadas.</value></data>
+  <data name="SoundSynthPhotosUnsupportedFormat" xml:space="preserve"><value>{0} usa um formato de imagem não suportado.</value></data>
+  <data name="SoundSynthPhotosFileTooLarge" xml:space="preserve"><value>{0} excede o limite de envio de 50 MB.</value></data>
+  <data name="SoundSynthPhotosBatchNotReady" xml:space="preserve"><value>Selecione uma licença e aguarde o término do envio de todas as fotos preparadas antes de enviar o lote.</value></data>
+  <data name="SoundSynthPhotosCommitFailed" xml:space="preserve"><value>Falha ao enviar o lote preparado.</value></data>
+  <data name="SoundSynthPhotosPollingFailed" xml:space="preserve"><value>Não foi possível recuperar o progresso do envio do lote preparado.</value></data>
+  <data name="SoundSynthPhotosBatchFinished" xml:space="preserve"><value>Lote concluído. {0} foto(s) foram enviadas com sucesso e {1} falharam.</value></data>
+  <data name="SoundSynthPhotosFailedToRemoveStaged" xml:space="preserve"><value>Falha ao remover a foto preparada.</value></data>
+  <data name="SoundSynthPhotosUploadingCardStatus" xml:space="preserve"><value>Enviando para a área temporária...</value></data>
+  <data name="SoundSynthPhotosReadyCardStatus" xml:space="preserve"><value>Pronta para envio</value></data>
+  <data name="SoundSynthPhotosFileRejectedStatus" xml:space="preserve"><value>Preparação falhou</value></data>
+  <data name="SoundSynthPhotosCommittingCardStatus" xml:space="preserve"><value>Enviando lote...</value></data>
+  <data name="SoundSynthPhotosProcessingCardStatus" xml:space="preserve"><value>Processando no servidor...</value></data>
+  <data name="SoundSynthPhotosQueuedCardStatus" xml:space="preserve"><value>Na fila para processamento</value></data>
+  <data name="SoundSynthPhotosSucceededCardStatus" xml:space="preserve"><value>Enviada com sucesso</value></data>
+  <data name="SoundSynthPhotosFailedCardStatus" xml:space="preserve"><value>Falha no envio</value></data>
   <data name="SelectLicenseLabel" xml:space="preserve"><value>Selecione uma licença...</value></data>
   <data name="SelectLicenseRequired" xml:space="preserve"><value>Selecione uma licença antes de enviar.</value></data>
   <data name="PhotoSourceLabel" xml:space="preserve"><value>URL de origem (opcional)</value></data>

@@ -188,6 +188,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<MachinePhotosService>();
         containerRegistry.RegisterSingleton<GpuPhotosService>();
         containerRegistry.RegisterSingleton<ProcessorPhotosService>();
+        containerRegistry.RegisterSingleton<SoundSynthPhotosService>();
         containerRegistry.RegisterSingleton<MachinePromoArtService>();
         containerRegistry.RegisterSingleton<SoftwarePromoArtService>();
         containerRegistry.RegisterSingleton<LicensesService>();
@@ -291,6 +292,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<AdminInstructionSetExtensionsViewModel>();
         containerRegistry.Register<AdminResolutionsViewModel>();
         containerRegistry.Register<AdminSoundSynthsViewModel>();
+        containerRegistry.Register<AdminSoundSynthPhotosViewModel>();
         containerRegistry.Register<AdminScreensViewModel>();
         containerRegistry.Register<AdminMachinesViewModel>();
         containerRegistry.Register<AdminMachineFamiliesViewModel>();
@@ -393,6 +395,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<AdminInstructionSetExtensionsPage, AdminInstructionSetExtensionsViewModel>();
         containerRegistry.RegisterForNavigation<AdminResolutionsPage, AdminResolutionsViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoundSynthsPage, AdminSoundSynthsViewModel>();
+        containerRegistry.RegisterForNavigation<AdminSoundSynthPhotosPage, AdminSoundSynthPhotosViewModel>();
         containerRegistry.RegisterForNavigation<AdminScreensPage, AdminScreensViewModel>();
         containerRegistry.RegisterForNavigation<AdminMachinesPage, AdminMachinesViewModel>();
         containerRegistry.RegisterForNavigation<AdminMachineFamiliesPage, AdminMachineFamiliesViewModel>();

@@ -2451,6 +2451,37 @@
   <data name="ProcessorPhotosQueuedCardStatus" xml:space="preserve"><value>Queued for processing</value></data>
   <data name="ProcessorPhotosSucceededCardStatus" xml:space="preserve"><value>Uploaded successfully</value></data>
   <data name="ProcessorPhotosFailedCardStatus" xml:space="preserve"><value>Upload failed</value></data>
+  <data name="SoundSynthPhotosTitle" xml:space="preserve"><value>Sound Synth Photos</value></data>
+  <data name="SoundSynthPhotosSubtitle" xml:space="preserve"><value>View, upload, and manage sound synth photos</value></data>
+  <data name="SoundSynthPhotosMgmtAccessDeniedTitle" xml:space="preserve"><value>Access Denied</value></data>
+  <data name="SoundSynthPhotosMgmtAccessDeniedMessage" xml:space="preserve"><value>You must be an Administrator to manage sound synth photos.</value></data>
+  <data name="SoundSynthPhotosBatchSectionTitle" xml:space="preserve"><value>Batch Upload</value></data>
+  <data name="SoundSynthPhotosBatchSectionSubtitle" xml:space="preserve"><value>Stage up to 25 sound synth photos, assign one license to the batch, and optionally set a source URL per photo.</value></data>
+  <data name="SoundSynthPhotosAddImagesButton" xml:space="preserve"><value>Add Images</value></data>
+  <data name="SoundSynthPhotosClearStagedButton" xml:space="preserve"><value>Clear Staged</value></data>
+  <data name="SoundSynthPhotosSubmitBatchButton" xml:space="preserve"><value>Upload Photos</value></data>
+  <data name="SoundSynthPhotosNoImagesStaged" xml:space="preserve"><value>No images staged yet. Add one or more photos to start a batch upload.</value></data>
+  <data name="SoundSynthPhotosPreviewUnavailable" xml:space="preserve"><value>Preview unavailable</value></data>
+  <data name="SoundSynthPhotosProcessingTitle" xml:space="preserve"><value>Processing Upload</value></data>
+  <data name="SoundSynthPhotosBatchProgressText" xml:space="preserve"><value>Processed {0} of {1} staged photos.</value></data>
+  <data name="SoundSynthPhotosPickerCanceled" xml:space="preserve"><value>No files were selected.</value></data>
+  <data name="SoundSynthPhotosSelectionTrimmed" xml:space="preserve"><value>Only the first {0} files were staged because a batch can hold at most {1} photos.</value></data>
+  <data name="SoundSynthPhotosMaxImagesReached" xml:space="preserve"><value>You already have the maximum of {0} staged photos.</value></data>
+  <data name="SoundSynthPhotosUnsupportedFormat" xml:space="preserve"><value>{0} uses an unsupported image format.</value></data>
+  <data name="SoundSynthPhotosFileTooLarge" xml:space="preserve"><value>{0} exceeds the 50 MB upload limit.</value></data>
+  <data name="SoundSynthPhotosBatchNotReady" xml:space="preserve"><value>Select a license and wait for every staged photo to finish uploading before submitting the batch.</value></data>
+  <data name="SoundSynthPhotosCommitFailed" xml:space="preserve"><value>Failed to submit the staged batch.</value></data>
+  <data name="SoundSynthPhotosPollingFailed" xml:space="preserve"><value>Unable to retrieve upload progress for the staged batch.</value></data>
+  <data name="SoundSynthPhotosBatchFinished" xml:space="preserve"><value>Batch finished. {0} photo(s) succeeded and {1} failed.</value></data>
+  <data name="SoundSynthPhotosFailedToRemoveStaged" xml:space="preserve"><value>Failed to remove the staged photo.</value></data>
+  <data name="SoundSynthPhotosUploadingCardStatus" xml:space="preserve"><value>Uploading to staging...</value></data>
+  <data name="SoundSynthPhotosReadyCardStatus" xml:space="preserve"><value>Ready to submit</value></data>
+  <data name="SoundSynthPhotosFileRejectedStatus" xml:space="preserve"><value>Staging failed</value></data>
+  <data name="SoundSynthPhotosCommittingCardStatus" xml:space="preserve"><value>Submitting batch...</value></data>
+  <data name="SoundSynthPhotosProcessingCardStatus" xml:space="preserve"><value>Processing on server...</value></data>
+  <data name="SoundSynthPhotosQueuedCardStatus" xml:space="preserve"><value>Queued for processing</value></data>
+  <data name="SoundSynthPhotosSucceededCardStatus" xml:space="preserve"><value>Uploaded successfully</value></data>
+  <data name="SoundSynthPhotosFailedCardStatus" xml:space="preserve"><value>Upload failed</value></data>
   <data name="SelectLicenseLabel" xml:space="preserve"><value>Select a license...</value></data>
   <data name="SelectLicenseRequired" xml:space="preserve"><value>Please select a license before uploading.</value></data>
   <data name="PhotoSourceLabel" xml:space="preserve"><value>Source URL (optional)</value></data>
