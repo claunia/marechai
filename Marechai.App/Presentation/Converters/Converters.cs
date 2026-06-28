@@ -201,3 +201,15 @@ public class BoolToInfoBarSeverityConverter : IValueConverter
     public object ConvertBack(object value, Type targetType, object parameter, string language) =>
         throw new NotImplementedException();
 }
+
+/// <summary>
+///     Converts a non-empty string to true, null/empty to false.
+/// </summary>
+public class StringNotEmptyToBoolConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language) =>
+        !string.IsNullOrWhiteSpace(value as string);
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language) =>
+        throw new NotImplementedException();
+}

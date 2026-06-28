@@ -2704,4 +2704,15 @@
   <data name="By Setting" xml:space="preserve"><value>Por ambientación</value></data>
   <data name="By Category" xml:space="preserve"><value>Por categoría</value></data>
   <data name="By Platform" xml:space="preserve"><value>Por plataforma</value></data>
+  <data name="InvitationCodesManagementButton" xml:space="preserve"><value>Códigos de invitación</value></data>
+  <data name="InvitationCodesTitle" xml:space="preserve"><value>Códigos de invitación</value></data>
+  <data name="InvitationCodesSubtitle" xml:space="preserve"><value>Genere códigos de invitación de un solo uso para cuentas nuevas. Comparta cada código de forma privada con la persona que desea invitar; los códigos se consumen la primera vez que se usan.</value></data>
+  <data name="InvitationCodesGenerateButton" xml:space="preserve"><value>Generar código</value></data>
+  <data name="InvitationCodesShowUnusedOnly" xml:space="preserve"><value>Mostrar solo no usados</value></data>
+  <data name="InvitationCodesGeneratedBanner" xml:space="preserve"><value>Nuevo código de invitación generado y copiado al portapapeles</value></data>
+  <data name="InvitationCodesCopyButton" xml:space="preserve"><value>Copiar</value></data>
+  <data name="InvitationCodesStatusUsed" xml:space="preserve"><value>Usado</value></data>
+  <data name="InvitationCodesStatusUnused" xml:space="preserve"><value>No usado</value></data>
+  <data name="InvitationCodesRevokeButton" xml:space="preserve"><value>Revocar</value></data>
+  <data name="InvitationCodesFailedToLoad" xml:space="preserve"><value>No se pudieron cargar los códigos de invitación</value></data>
 </root>

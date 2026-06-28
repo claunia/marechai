@@ -274,6 +274,18 @@
                         BorderThickness="0"
                         CornerRadius="0" />
 
+                <!-- Invitation Codes -->
+                <Button Content="{Binding InvitationCodesManagementButtonText}"
+                        Command="{Binding NavigateToAdminInvitationCodesCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{StaticResource AdminSidebarForeground}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
+
                 <!-- Software Release Management -->
                 <Button Content="{Binding SoftwareReleaseManagementButtonText}"
                         Command="{Binding NavigateToAdminSoftwareReleasesCommand}"

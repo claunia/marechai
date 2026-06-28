@@ -19,5 +19,6 @@
     <local:NullableToVisibilityConverter x:Key="NullableToVisibilityConverter" />
     <local:BoolToInfoBarSeverityConverter x:Key="BoolToInfoBarSeverityConverter" />
     <local:MarechaiScoreToBrushConverter x:Key="MarechaiScoreToBrushConverter" />
+    <local:StringNotEmptyToBoolConverter x:Key="StringNotEmptyToBoolConverter" />
 
 </ResourceDictionary>

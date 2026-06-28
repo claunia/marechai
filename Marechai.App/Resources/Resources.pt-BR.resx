@@ -2564,4 +2564,15 @@
   <data name="By Setting" xml:space="preserve"><value>Por ambientação</value></data>
   <data name="By Category" xml:space="preserve"><value>Por categoria</value></data>
   <data name="By Platform" xml:space="preserve"><value>Por plataforma</value></data>
+  <data name="InvitationCodesManagementButton" xml:space="preserve"><value>Códigos de convite</value></data>
+  <data name="InvitationCodesTitle" xml:space="preserve"><value>Códigos de convite</value></data>
+  <data name="InvitationCodesSubtitle" xml:space="preserve"><value>Gere códigos de convite de uso único para novas contas. Compartilhe cada código de forma privada com a pessoa que deseja convidar; os códigos são consumidos na primeira utilização.</value></data>
+  <data name="InvitationCodesGenerateButton" xml:space="preserve"><value>Gerar código</value></data>
+  <data name="InvitationCodesShowUnusedOnly" xml:space="preserve"><value>Mostrar apenas não usados</value></data>
+  <data name="InvitationCodesGeneratedBanner" xml:space="preserve"><value>Novo código de convite gerado e copiado para a área de transferência</value></data>
+  <data name="InvitationCodesCopyButton" xml:space="preserve"><value>Copiar</value></data>
+  <data name="InvitationCodesStatusUsed" xml:space="preserve"><value>Usado</value></data>
+  <data name="InvitationCodesStatusUnused" xml:space="preserve"><value>Não usado</value></data>
+  <data name="InvitationCodesRevokeButton" xml:space="preserve"><value>Revogar</value></data>
+  <data name="InvitationCodesFailedToLoad" xml:space="preserve"><value>Não foi possível carregar os códigos de convite</value></data>
 </root>

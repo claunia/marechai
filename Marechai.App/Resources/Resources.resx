@@ -3094,4 +3094,15 @@
   <data name="By Setting" xml:space="preserve"><value>By Setting</value></data>
   <data name="By Category" xml:space="preserve"><value>By Category</value></data>
   <data name="By Platform" xml:space="preserve"><value>By Platform</value></data>
+  <data name="InvitationCodesManagementButton" xml:space="preserve"><value>Invitation Codes</value></data>
+  <data name="InvitationCodesTitle" xml:space="preserve"><value>Invitation Codes</value></data>
+  <data name="InvitationCodesSubtitle" xml:space="preserve"><value>Generate single-use invitation codes for new accounts. Share each code privately with the person you intend to invite — codes are consumed the first time they are used.</value></data>
+  <data name="InvitationCodesGenerateButton" xml:space="preserve"><value>Generate code</value></data>
+  <data name="InvitationCodesShowUnusedOnly" xml:space="preserve"><value>Show unused only</value></data>
+  <data name="InvitationCodesGeneratedBanner" xml:space="preserve"><value>New invitation code generated and copied to your clipboard</value></data>
+  <data name="InvitationCodesCopyButton" xml:space="preserve"><value>Copy</value></data>
+  <data name="InvitationCodesStatusUsed" xml:space="preserve"><value>Used</value></data>
+  <data name="InvitationCodesStatusUnused" xml:space="preserve"><value>Unused</value></data>
+  <data name="InvitationCodesRevokeButton" xml:space="preserve"><value>Revoke</value></data>
+  <data name="InvitationCodesFailedToLoad" xml:space="preserve"><value>Could not load invitation codes</value></data>
 </root>

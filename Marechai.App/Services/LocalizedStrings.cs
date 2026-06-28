@@ -846,4 +846,17 @@ public class LocalizedStrings
     public string NoPromoArtForThisMachineYet => _l["NoPromoArtForThisMachineYet"];
     public string PromoArtNotFound => _l["PromoArtNotFound"];
     public string FailedToLoadPromoArtImage => _l["FailedToLoadPromoArtImage"];
+
+    // Invitation codes management
+    public string InvitationCodesManagementButton => _l["InvitationCodesManagementButton"];
+    public string InvitationCodesTitle => _l["InvitationCodesTitle"];
+    public string InvitationCodesSubtitle => _l["InvitationCodesSubtitle"];
+    public string InvitationCodesGenerateButton => _l["InvitationCodesGenerateButton"];
+    public string InvitationCodesShowUnusedOnly => _l["InvitationCodesShowUnusedOnly"];
+    public string InvitationCodesGeneratedBanner => _l["InvitationCodesGeneratedBanner"];
+    public string InvitationCodesCopyButton => _l["InvitationCodesCopyButton"];
+    public string InvitationCodesStatusUsed => _l["InvitationCodesStatusUsed"];
+    public string InvitationCodesStatusUnused => _l["InvitationCodesStatusUnused"];
+    public string InvitationCodesRevokeButton => _l["InvitationCodesRevokeButton"];
+    public string InvitationCodesFailedToLoad => _l["InvitationCodesFailedToLoad"];
 }

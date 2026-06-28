@@ -2668,4 +2668,15 @@
   <data name="By Setting" xml:space="preserve"><value>Par univers</value></data>
   <data name="By Category" xml:space="preserve"><value>Par catégorie</value></data>
   <data name="By Platform" xml:space="preserve"><value>Par plateforme</value></data>
+  <data name="InvitationCodesManagementButton" xml:space="preserve"><value>Codes d'invitation</value></data>
+  <data name="InvitationCodesTitle" xml:space="preserve"><value>Codes d'invitation</value></data>
+  <data name="InvitationCodesSubtitle" xml:space="preserve"><value>Générez des codes d'invitation à usage unique pour les nouveaux comptes. Partagez chaque code en privé avec la personne que vous souhaitez inviter ; les codes sont consommés dès leur première utilisation.</value></data>
+  <data name="InvitationCodesGenerateButton" xml:space="preserve"><value>Générer un code</value></data>
+  <data name="InvitationCodesShowUnusedOnly" xml:space="preserve"><value>Afficher uniquement les non utilisés</value></data>
+  <data name="InvitationCodesGeneratedBanner" xml:space="preserve"><value>Nouveau code d'invitation généré et copié dans le presse-papiers</value></data>
+  <data name="InvitationCodesCopyButton" xml:space="preserve"><value>Copier</value></data>
+  <data name="InvitationCodesStatusUsed" xml:space="preserve"><value>Utilisé</value></data>
+  <data name="InvitationCodesStatusUnused" xml:space="preserve"><value>Non utilisé</value></data>
+  <data name="InvitationCodesRevokeButton" xml:space="preserve"><value>Révoquer</value></data>
+  <data name="InvitationCodesFailedToLoad" xml:space="preserve"><value>Impossible de charger les codes d'invitation</value></data>
 </root>
