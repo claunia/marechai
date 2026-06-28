@@ -59,6 +59,7 @@ public partial class MainViewModel : ObservableObject
     public string PeopleButtonText               => _localizer["PeopleButton"];
     public string ProcessorsButtonText           => _localizer["ProcessorsButton"];
     public string SoftwareButtonText             => _localizer["SoftwareButton"];
+    public string RankingsButtonText             => _localizer["RankingsButton"];
     public string SoundSynthesizersButtonText    => _localizer["SoundSynthesizersButton"];
     public string MessagesButtonText             => "Messages";
     public string UserManagementButtonText       => _localizer["UserManagementButton"];
@@ -136,6 +137,7 @@ public partial class MainViewModel : ObservableObject
         NavigateToPeopleCommand                   = new RelayCommand(() => NavigateTo(nameof(PeoplePage)));
         NavigateToProcessorsCommand               = new RelayCommand(() => NavigateTo(nameof(ProcessorListPage)));
         NavigateToSoftwareCommand                 = new RelayCommand(() => NavigateTo(nameof(SoftwarePage)));
+        NavigateToRankingsCommand                  = new RelayCommand(() => NavigateTo(nameof(SoftwareRankingsPage)));
         NavigateToSoundSynthesizersCommand        = new RelayCommand(() => NavigateTo(nameof(SoundSynthListPage)));
         NavigateToMessagesCommand                 = new RelayCommand(() => NavigateTo(nameof(MessagesPage)));
         NavigateToUsersCommand                    = new RelayCommand(() => NavigateTo(nameof(UsersPage)));
@@ -204,6 +206,7 @@ public partial class MainViewModel : ObservableObject
     public ICommand NavigateToPeopleCommand                   { get; }
     public ICommand NavigateToProcessorsCommand               { get; }
     public ICommand NavigateToSoftwareCommand                 { get; }
+    public ICommand NavigateToRankingsCommand                  { get; }
     public ICommand NavigateToSoundSynthesizersCommand        { get; }
     public ICommand NavigateToMessagesCommand                 { get; }
     public ICommand NavigateToUsersCommand                    { get; }

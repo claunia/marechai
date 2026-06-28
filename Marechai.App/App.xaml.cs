@@ -297,6 +297,8 @@ public partial class App : PrismApplication
         containerRegistry.Register<SoftwareViewViewModel>();
         containerRegistry.Register<SoftwareReleaseViewViewModel>();
         containerRegistry.Register<SoftwareCompilationViewViewModel>();
+        containerRegistry.Register<SoftwareRankingsViewModel>();
+        containerRegistry.Register<SoftwareRankingDetailViewModel>();
         containerRegistry.Register<ProfileViewModel>();
         containerRegistry.Register<AdminSoftwareViewModel>();
         containerRegistry.Register<AdminSoftwareFamiliesViewModel>();
@@ -389,6 +391,8 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<SoftwareViewPage, SoftwareViewViewModel>();
         containerRegistry.RegisterForNavigation<SoftwareReleaseViewPage, SoftwareReleaseViewViewModel>();
         containerRegistry.RegisterForNavigation<SoftwareCompilationViewPage, SoftwareCompilationViewViewModel>();
+        containerRegistry.RegisterForNavigation<SoftwareRankingsPage, SoftwareRankingsViewModel>();
+        containerRegistry.RegisterForNavigation<SoftwareRankingDetailPage, SoftwareRankingDetailViewModel>();
         containerRegistry.RegisterForNavigation<ProfilePage, ProfileViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoftwarePage, AdminSoftwareViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoftwareFamiliesPage, AdminSoftwareFamiliesViewModel>();

@@ -18,5 +18,6 @@
     <local:CountToVisibilityConverter x:Key="CountToVisibilityConverter" />
     <local:NullableToVisibilityConverter x:Key="NullableToVisibilityConverter" />
     <local:BoolToInfoBarSeverityConverter x:Key="BoolToInfoBarSeverityConverter" />
+    <local:MarechaiScoreToBrushConverter x:Key="MarechaiScoreToBrushConverter" />
 
 </ResourceDictionary>

@@ -107,6 +107,9 @@
   <data name="SoftwareButton" xml:space="preserve">
     <value>Software</value>
   </data>
+  <data name="RankingsButton" xml:space="preserve">
+    <value>Rankings</value>
+  </data>
   <data name="SoundSynthesizersButton" xml:space="preserve">
     <value>Sound Synthesizers</value>
   </data>
@@ -3076,4 +3079,19 @@
   <data name="ChangePasswordPage.Error.Mismatch" xml:space="preserve"><value>Passwords do not match.</value></data>
   <data name="ChangePasswordPage.Error.Generic" xml:space="preserve"><value>Failed to change password.</value></data>
   <data name="ChangePasswordPage.Success" xml:space="preserve"><value>Password changed successfully.</value></data>
+  <data name="RankingsTitle" xml:space="preserve"><value>Rankings</value></data>
+  <data name="Top250SoftwareLabel" xml:space="preserve"><value>Top 250 Software of All Time</value></data>
+  <data name="NoRankedSoftwareLabel" xml:space="preserve"><value>No ranked software yet.</value></data>
+  <data name="CriticReviewsCountLabel" xml:space="preserve"><value>critic reviews</value></data>
+  <data name="UserRatingsCountLabel" xml:space="preserve"><value>user ratings</value></data>
+  <data name="No rankings found" xml:space="preserve"><value>No rankings found</value></data>
+  <data name="Rankings are being computed" xml:space="preserve"><value>Rankings are being computed</value></data>
+  <data name="Last computed: {0}" xml:space="preserve"><value>Last computed: {0}</value></data>
+  <data name="Failed to load rankings. Please try again later." xml:space="preserve"><value>Failed to load rankings. Please try again later.</value></data>
+  <data name="Failed to load ranking. Please try again later." xml:space="preserve"><value>Failed to load ranking. Please try again later.</value></data>
+  <data name="By Gameplay" xml:space="preserve"><value>By Gameplay</value></data>
+  <data name="By Genre" xml:space="preserve"><value>By Genre</value></data>
+  <data name="By Setting" xml:space="preserve"><value>By Setting</value></data>
+  <data name="By Category" xml:space="preserve"><value>By Category</value></data>
+  <data name="By Platform" xml:space="preserve"><value>By Platform</value></data>
 </root>

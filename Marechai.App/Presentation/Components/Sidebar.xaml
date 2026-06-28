@@ -257,6 +257,18 @@
                         BorderThickness="0"
                         CornerRadius="0" />
 
+                <!-- Software Rankings -->
+                <Button Content="{Binding RankingsButtonText}"
+                        Command="{Binding NavigateToRankingsCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
+
                 <!-- Sound Synthesizers -->
                 <Button Content="{Binding SoundSynthesizersButtonText}"
                         Command="{Binding NavigateToSoundSynthesizersCommand}"

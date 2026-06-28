@@ -723,6 +723,11 @@ public class LocalizedStrings
 
     // Software user-facing pages
     public string AllSoftwareButton => _l["AllSoftwareButton"];
+    public string RankingsTitle => _l["RankingsTitle"];
+    public string Top250SoftwareLabel => _l["Top250SoftwareLabel"];
+    public string NoRankedSoftwareLabel => _l["NoRankedSoftwareLabel"];
+    public string CriticReviewsCountLabel => _l["CriticReviewsCountLabel"];
+    public string UserRatingsCountLabel => _l["UserRatingsCountLabel"];
     public string SoftwareLabel => _l["SoftwareLabel"];
     public string SoftwareErrorInfoBar_Title => _l["SoftwareErrorInfoBar_Title"];
     public string SoftwareFamilyLabel => _l["SoftwareFamilyLabel"];

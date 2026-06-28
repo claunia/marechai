@@ -164,6 +164,33 @@ public class NullableToVisibilityConverter : IValueConverter
 }
 
 /// <summary>
+///     Maps a 0-10 Marechai score to a themed brush (>=8 success, >=6 info, >=4 warning, otherwise neutral).
+/// </summary>
+public class MarechaiScoreToBrushConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        double? score = value switch
+        {
+            double d => d,
+            float f  => f,
+            _        => null
+        };
+
+        return score switch
+        {
+            >= 8 => new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Green),
+            >= 6 => new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.DodgerBlue),
+            >= 4 => new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Orange),
+            _    => new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Gray)
+        };
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language) =>
+        throw new NotImplementedException();
+}
+
+/// <summary>
 ///     Maps success/failure booleans to InfoBar severity.
 /// </summary>
 public class BoolToInfoBarSeverityConverter : IValueConverter

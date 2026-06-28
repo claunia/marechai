@@ -107,6 +107,9 @@
   <data name="SoftwareButton" xml:space="preserve">
     <value>Software</value>
   </data>
+  <data name="RankingsButton" xml:space="preserve">
+    <value>Clasificaciones</value>
+  </data>
   <data name="SoundSynthesizersButton" xml:space="preserve">
     <value>Sintetizadores de Sonido</value>
   </data>
@@ -2686,4 +2689,19 @@
   <data name="ChangePasswordPage.Error.Mismatch" xml:space="preserve"><value>Las contraseñas no coinciden.</value></data>
   <data name="ChangePasswordPage.Error.Generic" xml:space="preserve"><value>No se pudo cambiar la contraseña.</value></data>
   <data name="ChangePasswordPage.Success" xml:space="preserve"><value>Contraseña cambiada correctamente.</value></data>
+  <data name="RankingsTitle" xml:space="preserve"><value>Clasificaciones</value></data>
+  <data name="Top250SoftwareLabel" xml:space="preserve"><value>Los 250 mejores programas de todos los tiempos</value></data>
+  <data name="NoRankedSoftwareLabel" xml:space="preserve"><value>Todavía no hay software clasificado.</value></data>
+  <data name="CriticReviewsCountLabel" xml:space="preserve"><value>reseñas de críticos</value></data>
+  <data name="UserRatingsCountLabel" xml:space="preserve"><value>valoraciones de usuarios</value></data>
+  <data name="No rankings found" xml:space="preserve"><value>No se encontraron clasificaciones</value></data>
+  <data name="Rankings are being computed" xml:space="preserve"><value>Las clasificaciones se están calculando</value></data>
+  <data name="Last computed: {0}" xml:space="preserve"><value>Última actualización: {0}</value></data>
+  <data name="Failed to load rankings. Please try again later." xml:space="preserve"><value>No se pudieron cargar las clasificaciones. Inténtelo de nuevo más tarde.</value></data>
+  <data name="Failed to load ranking. Please try again later." xml:space="preserve"><value>No se pudo cargar la clasificación. Inténtelo de nuevo más tarde.</value></data>
+  <data name="By Gameplay" xml:space="preserve"><value>Por jugabilidad</value></data>
+  <data name="By Genre" xml:space="preserve"><value>Por género</value></data>
+  <data name="By Setting" xml:space="preserve"><value>Por ambientación</value></data>
+  <data name="By Category" xml:space="preserve"><value>Por categoría</value></data>
+  <data name="By Platform" xml:space="preserve"><value>Por plataforma</value></data>
 </root>

@@ -1,0 +1,190 @@
+<?xml version="1.0"
+      encoding="utf-8"?>
+
+<Page x:Class="Marechai.App.Presentation.Views.SoftwareRankingsPage"
+      x:Name="PageRoot"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:loc="using:Marechai.App.Presentation.Converters"
+      NavigationCacheMode="Required"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid RowSpacing="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" /> <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header with Back Button and Title -->
+        <Grid Grid.Row="0"
+              Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+              BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+              BorderThickness="0,0,0,1"
+              Padding="16,12,16,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" /> <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    Command="{Binding GoBackCommand}"
+                    Style="{ThemeResource AlternateButtonStyle}"
+                    ToolTipService.ToolTip="Go back"
+                    Padding="8"
+                    MinWidth="44"
+                    MinHeight="44"
+                    VerticalAlignment="Center">
+                <FontIcon Glyph="&#xE72B;"
+                          FontSize="16" />
+            </Button>
+
+            <StackPanel Grid.Column="1"
+                        Margin="16,0,0,0"
+                        VerticalAlignment="Center">
+                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=RankingsTitle}"
+                           FontSize="20"
+                           FontWeight="SemiBold"
+                           Foreground="{ThemeResource TextControlForeground}" />
+                <TextBlock Text="{Binding StatusText}"
+                           FontSize="12"
+                           Foreground="{ThemeResource SystemBaseMediumColor}"
+                           Margin="0,4,0,0"
+                           Visibility="{Binding StatusText, Converter={StaticResource StringToVisibilityConverter}}" />
+            </StackPanel>
+        </Grid>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1">
+
+            <!-- Loading State -->
+            <StackPanel Visibility="{Binding IsLoading}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Padding="32"
+                        Spacing="16">
+                <ProgressRing IsActive="True"
+                              IsIndeterminate="True"
+                              Height="64"
+                              Width="64"
+                              Foreground="{ThemeResource SystemAccentColor}" />
+                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=LoadingText}"
+                           FontSize="14"
+                           TextAlignment="Center"
+                           Foreground="{ThemeResource SystemBaseMediumColor}" />
+            </StackPanel>
+
+            <!-- Error State -->
+            <StackPanel Visibility="{Binding HasError}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Padding="24"
+                        Spacing="16"
+                        MaxWidth="400">
+                <InfoBar IsOpen="True"
+                         Severity="Error"
+                         Title="{Binding Source={StaticResource Strings}, Path=SoftwareErrorInfoBar_Title}"
+                         Message="{Binding ErrorMessage}"
+                         IsClosable="False" />
+                <Button Content="{Binding Source={StaticResource Strings}, Path=RetryButton}"
+                        Command="{Binding LoadData}"
+                        HorizontalAlignment="Center"
+                        Style="{ThemeResource AccentButtonStyle}" />
+            </StackPanel>
+
+            <!-- Rankings -->
+            <Grid Visibility="{Binding IsDataLoaded}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Padding="16"
+                                Spacing="24">
+
+                        <!-- Overall / Top 250 -->
+                        <Button Padding="16,12"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                Command="{Binding NavigateToRankingCommand}"
+                                CommandParameter="{Binding OverallRanking}"
+                                Visibility="{Binding OverallRanking, Converter={StaticResource NullToVisibilityConverter}}"
+                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8">
+                            <StackPanel Orientation="Horizontal"
+                                        Spacing="12">
+                                <FontIcon Glyph="&#xE735;"
+                                          FontSize="22"
+                                          Foreground="{ThemeResource SystemAccentColor}" />
+                                <StackPanel Spacing="2">
+                                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=Top250SoftwareLabel}"
+                                               FontSize="16"
+                                               FontWeight="SemiBold" />
+                                    <TextBlock Text="{Binding OverallRanking.EntryCount}"
+                                               FontSize="12"
+                                               Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Grouped dimensions -->
+                        <ItemsControl ItemsSource="{Binding RankingGroups}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="16" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Spacing="8">
+                                        <TextBlock Text="{Binding Title}"
+                                                   FontSize="16"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                        <ItemsControl ItemsSource="{Binding Entries}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel Orientation="Vertical"
+                                                                Spacing="6" />
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Padding="12,8"
+                                                            HorizontalAlignment="Stretch"
+                                                            HorizontalContentAlignment="Left"
+                                                            Command="{Binding DataContext.NavigateToRankingCommand, ElementName=PageRoot}"
+                                                            CommandParameter="{Binding}"
+                                                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                            BorderThickness="1"
+                                                            CornerRadius="6">
+                                                        <Grid ColumnSpacing="8">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0"
+                                                                       Text="{Binding DimensionName}"
+                                                                       FontSize="14"
+                                                                       TextTrimming="CharacterEllipsis" />
+                                                            <TextBlock Grid.Column="1"
+                                                                       Text="{Binding EntryCount}"
+                                                                       FontSize="12"
+                                                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                                        </Grid>
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+
+        </Grid>
+
+    </Grid>
+
+</Page>

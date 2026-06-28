@@ -46,6 +46,9 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     private SoftwareUserReviewDto? _myReview;
 
     [ObservableProperty]
+    private ObservableCollection<SoftwareRankingPlacementDto> _rankingPlacements = [];
+
+    [ObservableProperty]
     private string _softwareName = string.Empty;
 
     [ObservableProperty]
@@ -651,6 +654,9 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
                 _logger.LogError("Failed to load software description: {Exception}", ex.Message);
             }
 
+            // Load ranking placements
+            await LoadRankingPlacementsAsync(softwareId);
+
             UpdateVisibilities();
             IsDataLoaded = true;
             IsLoading    = false;
@@ -662,6 +668,39 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
             ErrorMessage = ex.Message;
             IsLoading    = false;
         }
+    }
+
+    private async Task LoadRankingPlacementsAsync(int softwareId)
+    {
+        try
+        {
+            List<SoftwareRankingPlacementDto> placements =
+                await _browsingService.GetRankingPlacementsAsync(softwareId);
+
+            RankingPlacements.Clear();
+
+            foreach(SoftwareRankingPlacementDto placement in placements) RankingPlacements.Add(placement);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading ranking placements for software {SoftwareId}", softwareId);
+        }
+    }
+
+    [RelayCommand]
+    public Task NavigateToRanking(SoftwareRankingPlacementDto? placement)
+    {
+        if(placement?.RankingId is null) return Task.CompletedTask;
+
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.RankingId, placement.RankingId.Value },
+            { NavParamKeys.NavigationSource, nameof(SoftwareViewViewModel) }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(SoftwareRankingDetailPage), parameters);
+
+        return Task.CompletedTask;
     }
 
     [RelayCommand]

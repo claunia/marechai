@@ -983,6 +983,69 @@ public class SoftwareBrowsingService
         }
     }
 
+    public async Task<RankingIndexResponseDto?> GetRankingsIndexAsync()
+    {
+        try
+        {
+            string lang = GetIso639CodeFromCulture();
+
+            _logger.LogInformation("Fetching rankings index");
+
+            return await _apiClient.Software.Rankings.Index.GetAsync(config =>
+            {
+                config.QueryParameters.Lang = lang;
+            });
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching rankings index");
+
+            return null;
+        }
+    }
+
+    public async Task<List<SoftwareRankingDto>> GetRankingAsync(int rankingId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching ranking {RankingId}", rankingId);
+
+            List<SoftwareRankingDto>? entries = await _apiClient.Software.Rankings[rankingId].GetAsync();
+
+            return entries ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching ranking {RankingId}", rankingId);
+
+            return [];
+        }
+    }
+
+    public async Task<List<SoftwareRankingPlacementDto>> GetRankingPlacementsAsync(int softwareId)
+    {
+        try
+        {
+            string lang = GetIso639CodeFromCulture();
+
+            _logger.LogInformation("Fetching ranking placements for software {SoftwareId}", softwareId);
+
+            List<SoftwareRankingPlacementDto>? placements = await _apiClient.Software[softwareId].Rankings.GetAsync(
+                config =>
+                {
+                    config.QueryParameters.Lang = lang;
+                });
+
+            return placements ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching ranking placements for software {SoftwareId}", softwareId);
+
+            return [];
+        }
+    }
+
     private static string GetIso639CodeFromCulture()
     {
         string twoLetter = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;

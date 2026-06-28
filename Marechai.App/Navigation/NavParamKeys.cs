@@ -30,6 +30,7 @@ public static class NavParamKeys
     public const string ScreenshotId        = "ScreenshotId";
     public const string CoverId             = "CoverId";
     public const string SoftwarePromoArtId  = "SoftwarePromoArtId";
+    public const string RankingId           = "RankingId";
     public const string WwpcImportId        = "WwpcImportId";
     public const string SearchQuery         = "SearchQuery";
     public const string MachineFamilyId     = "MachineFamilyId";

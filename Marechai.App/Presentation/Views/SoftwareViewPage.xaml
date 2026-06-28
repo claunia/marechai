@@ -198,6 +198,40 @@
                         </Border>
                     </StackPanel>
 
+                    <!-- Ranking Placements -->
+                    <ItemsControl ItemsSource="{Binding RankingPlacements}"
+                                  Visibility="{Binding RankingPlacements.Count, Converter={StaticResource CountToVisibilityConverter}}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"
+                                            Spacing="8" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Padding="10,4"
+                                        Command="{Binding DataContext.NavigateToRankingCommand, ElementName=PageRoot}"
+                                        CommandParameter="{Binding}"
+                                        Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="12">
+                                    <StackPanel Orientation="Horizontal"
+                                                Spacing="6">
+                                        <FontIcon Glyph="&#xE735;"
+                                                  FontSize="12"
+                                                  Foreground="{ThemeResource SystemAccentColor}" />
+                                        <TextBlock FontSize="12">
+                                            <Run Text="#" />
+                                            <Run Text="{Binding Rank}" />
+                                            <Run Text="{Binding DimensionName}" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
                     <!-- Description -->
                     <StackPanel Visibility="{Binding ShowDescription}"
                                 Spacing="8">
