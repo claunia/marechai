@@ -3062,4 +3062,18 @@
   <data name="ProfileSmartphonesLabel" xml:space="preserve"><value>Smartphones</value></data>
   <data name="ProfileSoftwareLabel" xml:space="preserve"><value>Software</value></data>
   <data name="ProfileReviewsLabel" xml:space="preserve"><value>Reviews</value></data>
+  <data name="SettingsPage_ChangePasswordButton" xml:space="preserve"><value>Change password</value></data>
+  <data name="ChangePasswordPage_Title" xml:space="preserve"><value>Change password</value></data>
+  <data name="ChangePasswordPage_CurrentPasswordLabel" xml:space="preserve"><value>Current password</value></data>
+  <data name="ChangePasswordPage_NewPasswordLabel" xml:space="preserve"><value>New password</value></data>
+  <data name="ChangePasswordPage_ConfirmPasswordLabel" xml:space="preserve"><value>Confirm new password</value></data>
+  <data name="ChangePasswordPage_HelperText" xml:space="preserve"><value>Minimum 6 characters</value></data>
+  <data name="ChangePasswordPage_SubmitButton" xml:space="preserve"><value>Change password</value></data>
+  <data name="ChangePasswordPage_BackLink" xml:space="preserve"><value>Back to settings</value></data>
+  <data name="ChangePasswordPage.Error.CurrentPasswordRequired" xml:space="preserve"><value>Current password is required.</value></data>
+  <data name="ChangePasswordPage.Error.NewPasswordRequired" xml:space="preserve"><value>New password is required.</value></data>
+  <data name="ChangePasswordPage.Error.TooShort" xml:space="preserve"><value>New password must be at least 6 characters.</value></data>
+  <data name="ChangePasswordPage.Error.Mismatch" xml:space="preserve"><value>Passwords do not match.</value></data>
+  <data name="ChangePasswordPage.Error.Generic" xml:space="preserve"><value>Failed to change password.</value></data>
+  <data name="ChangePasswordPage.Success" xml:space="preserve"><value>Password changed successfully.</value></data>
 </root>

@@ -318,6 +318,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<RegisterPage, RegisterViewModel>();
         containerRegistry.RegisterForNavigation<ResendConfirmationPage, ResendConfirmationViewModel>();
         containerRegistry.RegisterForNavigation<DeleteAccountPage, DeleteAccountViewModel>();
+        containerRegistry.RegisterForNavigation<ChangePasswordPage, ChangePasswordViewModel>();
         containerRegistry.RegisterForNavigation<DeletionPendingPage, DeletionPendingViewModel>();
         containerRegistry.RegisterForNavigation<NewsPage, NewsViewModel>();
         containerRegistry.RegisterForNavigation<AboutPage, AboutViewModel>();

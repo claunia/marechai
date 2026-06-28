@@ -128,6 +128,11 @@
                         <TextBlock Text="{Binding SecurityMessage}" Foreground="#92400E" TextWrapping="Wrap"/>
                     </Border>
 
+                    <!-- Change password -->
+                    <Button Content="{Binding Source={StaticResource Strings}, Path=SettingsPage_ChangePasswordButton}"
+                            Command="{Binding ChangePasswordCommand}"
+                            HorizontalAlignment="Left" />
+
                     <!-- Authenticator section -->
                     <StackPanel Spacing="8">
                         <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SettingsPage_AuthenticatorTitle}"

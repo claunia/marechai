@@ -2672,4 +2672,18 @@
   <data name="ProfileSmartphonesLabel" xml:space="preserve"><value>Teléfonos inteligentes</value></data>
   <data name="ProfileSoftwareLabel" xml:space="preserve"><value>Software</value></data>
   <data name="ProfileReviewsLabel" xml:space="preserve"><value>Reseñas</value></data>
+  <data name="SettingsPage_ChangePasswordButton" xml:space="preserve"><value>Cambiar contraseña</value></data>
+  <data name="ChangePasswordPage_Title" xml:space="preserve"><value>Cambiar contraseña</value></data>
+  <data name="ChangePasswordPage_CurrentPasswordLabel" xml:space="preserve"><value>Contraseña actual</value></data>
+  <data name="ChangePasswordPage_NewPasswordLabel" xml:space="preserve"><value>Nueva contraseña</value></data>
+  <data name="ChangePasswordPage_ConfirmPasswordLabel" xml:space="preserve"><value>Confirmar nueva contraseña</value></data>
+  <data name="ChangePasswordPage_HelperText" xml:space="preserve"><value>Mínimo 6 caracteres</value></data>
+  <data name="ChangePasswordPage_SubmitButton" xml:space="preserve"><value>Cambiar contraseña</value></data>
+  <data name="ChangePasswordPage_BackLink" xml:space="preserve"><value>Volver a configuración</value></data>
+  <data name="ChangePasswordPage.Error.CurrentPasswordRequired" xml:space="preserve"><value>La contraseña actual es obligatoria.</value></data>
+  <data name="ChangePasswordPage.Error.NewPasswordRequired" xml:space="preserve"><value>La nueva contraseña es obligatoria.</value></data>
+  <data name="ChangePasswordPage.Error.TooShort" xml:space="preserve"><value>La nueva contraseña debe tener al menos 6 caracteres.</value></data>
+  <data name="ChangePasswordPage.Error.Mismatch" xml:space="preserve"><value>Las contraseñas no coinciden.</value></data>
+  <data name="ChangePasswordPage.Error.Generic" xml:space="preserve"><value>No se pudo cambiar la contraseña.</value></data>
+  <data name="ChangePasswordPage.Success" xml:space="preserve"><value>Contraseña cambiada correctamente.</value></data>
 </root>

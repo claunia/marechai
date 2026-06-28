@@ -2636,4 +2636,18 @@
   <data name="ProfileSmartphonesLabel" xml:space="preserve"><value>Smartphones</value></data>
   <data name="ProfileSoftwareLabel" xml:space="preserve"><value>Logiciels</value></data>
   <data name="ProfileReviewsLabel" xml:space="preserve"><value>Avis</value></data>
+  <data name="SettingsPage_ChangePasswordButton" xml:space="preserve"><value>Changer le mot de passe</value></data>
+  <data name="ChangePasswordPage_Title" xml:space="preserve"><value>Changer le mot de passe</value></data>
+  <data name="ChangePasswordPage_CurrentPasswordLabel" xml:space="preserve"><value>Mot de passe actuel</value></data>
+  <data name="ChangePasswordPage_NewPasswordLabel" xml:space="preserve"><value>Nouveau mot de passe</value></data>
+  <data name="ChangePasswordPage_ConfirmPasswordLabel" xml:space="preserve"><value>Confirmer le nouveau mot de passe</value></data>
+  <data name="ChangePasswordPage_HelperText" xml:space="preserve"><value>Minimum 6 caractères</value></data>
+  <data name="ChangePasswordPage_SubmitButton" xml:space="preserve"><value>Changer le mot de passe</value></data>
+  <data name="ChangePasswordPage_BackLink" xml:space="preserve"><value>Retour aux paramètres</value></data>
+  <data name="ChangePasswordPage.Error.CurrentPasswordRequired" xml:space="preserve"><value>Le mot de passe actuel est requis.</value></data>
+  <data name="ChangePasswordPage.Error.NewPasswordRequired" xml:space="preserve"><value>Le nouveau mot de passe est requis.</value></data>
+  <data name="ChangePasswordPage.Error.TooShort" xml:space="preserve"><value>Le nouveau mot de passe doit comporter au moins 6 caractères.</value></data>
+  <data name="ChangePasswordPage.Error.Mismatch" xml:space="preserve"><value>Les mots de passe ne correspondent pas.</value></data>
+  <data name="ChangePasswordPage.Error.Generic" xml:space="preserve"><value>Impossible de changer le mot de passe.</value></data>
+  <data name="ChangePasswordPage.Success" xml:space="preserve"><value>Mot de passe changé avec succès.</value></data>
 </root>

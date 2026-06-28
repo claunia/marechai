@@ -4,7 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Marechai.App.Navigation;
 using Marechai.App.Presentation.Models;
+using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -18,6 +20,7 @@ public partial class SettingsViewModel : ObservableObject
     private readonly AuthService? _authService;
     private readonly IColorThemeService _colorThemeService;
     private readonly IStringLocalizer   _localizer;
+    private readonly IRegionManager     _regionManager;
     private readonly TwoFactorService?  _twoFactorService;
     private readonly ITokenService?     _tokenService;
     private          IThemeService     _themeService;
@@ -67,12 +70,14 @@ public partial class SettingsViewModel : ObservableObject
 
     public SettingsViewModel(IStringLocalizer   localizer,
                              IColorThemeService colorThemeService,
+                             IRegionManager     regionManager,
                              TwoFactorService?  twoFactorService = null,
                              ITokenService?     tokenService     = null,
                              AuthService?       authService      = null)
     {
         _localizer         = localizer;
         _colorThemeService = colorThemeService;
+        _regionManager     = regionManager;
         _twoFactorService  = twoFactorService;
         _tokenService      = tokenService;
         _authService       = authService;
@@ -273,6 +278,9 @@ public partial class SettingsViewModel : ObservableObject
         EmailTwoFactorEnabled  = status.EmailEnabled           ?? false;
         RecoveryCodesRemaining = status.RecoveryCodesRemaining ?? 0;
     }
+
+    [RelayCommand]
+    private void ChangePassword() => _regionManager.RequestNavigate(RegionNames.Content, nameof(ChangePasswordPage));
 
     [RelayCommand]
     private async Task StartAuthenticatorSetupAsync()

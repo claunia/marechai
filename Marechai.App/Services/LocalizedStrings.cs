@@ -20,6 +20,13 @@ public class LocalizedStrings
     public string BackButton => _l["BackButton_Label"];
     public string BrowseByLetterText => _l["BrowseByLetterText"];
     public string ChangePasswordButton => _l["ChangePasswordButton"];
+    public string ChangePasswordPage_Title => _l["ChangePasswordPage_Title"];
+    public string ChangePasswordPage_CurrentPasswordLabel => _l["ChangePasswordPage_CurrentPasswordLabel"];
+    public string ChangePasswordPage_NewPasswordLabel => _l["ChangePasswordPage_NewPasswordLabel"];
+    public string ChangePasswordPage_ConfirmPasswordLabel => _l["ChangePasswordPage_ConfirmPasswordLabel"];
+    public string ChangePasswordPage_HelperText => _l["ChangePasswordPage_HelperText"];
+    public string ChangePasswordPage_SubmitButton => _l["ChangePasswordPage_SubmitButton"];
+    public string ChangePasswordPage_BackLink => _l["ChangePasswordPage_BackLink"];
     public string CompaniesSearchBox_Placeholder => _l["CompaniesSearchBox_Placeholder"];
     public string ComputersErrorInfoBar_Title => _l["ComputersErrorInfoBar_Title"];
     public string ComputersFilterBox_Placeholder => _l["ComputersFilterBox_Placeholder"];
@@ -158,6 +165,7 @@ public class LocalizedStrings
     public string RolesColumn_Header => _l["RolesColumn_Header"];
     public string SettingsPage_AboutSection_Header => _l["SettingsPage_AboutSection_Header"];
     public string SettingsPage_BrightnessThemeSelector_Header => _l["SettingsPage_BrightnessThemeSelector_Header"];
+    public string SettingsPage_ChangePasswordButton => _l["SettingsPage_ChangePasswordButton"];
     public string SettingsPage_ColorThemeSelector_Header => _l["SettingsPage_ColorThemeSelector_Header"];
     public string SettingsPage_ThemeSection_Description => _l["SettingsPage_ThemeSection_Description"];
     public string SettingsPage_ThemeSection_Header => _l["SettingsPage_ThemeSection_Header"];

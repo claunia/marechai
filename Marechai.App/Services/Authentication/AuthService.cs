@@ -357,6 +357,29 @@ public sealed class AuthService
         }
     }
 
+    public async Task<(bool Succeeded, string ErrorMessage)> ChangePasswordAsync(string currentPassword,
+        string newPassword)
+    {
+        try
+        {
+            await client.Auth.ChangePassword.PostAsync(new ChangeOwnPasswordRequest
+            {
+                CurrentPassword = currentPassword,
+                NewPassword     = newPassword
+            });
+
+            return (true, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            return (false, ex.Detail ?? ex.Title ?? "Could not change password.");
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
     public async Task<(bool Succeeded, string ErrorMessage)> ConfirmAccountDeletionAsync(string token)
     {
         try
