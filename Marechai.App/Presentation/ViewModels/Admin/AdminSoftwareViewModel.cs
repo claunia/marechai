@@ -116,6 +116,7 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
         AddSimilarSoftwareCommand   = new AsyncRelayCommand(AddSimilarSoftwareAsync);
         RemoveSimilarSoftwareCommand = new AsyncRelayCommand<SoftwareSimilarToDto>(RemoveSimilarSoftwareAsync);
         OpenVersionsCommand = new RelayCommand<SoftwareDto>(OpenVersions);
+        OpenPromoArtCommand = new RelayCommand<SoftwareDto>(OpenPromoArt);
         OpenDescriptionCommand     = new AsyncRelayCommand<SoftwareDto>(OpenDescriptionAsync);
         SaveDescriptionCommand     = new AsyncRelayCommand(SaveDescriptionAsync);
         CancelDescriptionCommand   = new RelayCommand(CancelDescription);
@@ -139,6 +140,7 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand                              AddSimilarSoftwareCommand    { get; }
     public IAsyncRelayCommand<SoftwareSimilarToDto>        RemoveSimilarSoftwareCommand { get; }
     public IRelayCommand<SoftwareDto>        OpenVersionsCommand { get; }
+    public IRelayCommand<SoftwareDto>        OpenPromoArtCommand { get; }
     public IAsyncRelayCommand<SoftwareDto>              OpenDescriptionCommand   { get; }
     public IAsyncRelayCommand                           SaveDescriptionCommand   { get; }
     public IRelayCommand                                CancelDescriptionCommand { get; }
@@ -334,6 +336,17 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
             { NavParamKeys.SoftwareName, item.Name ?? string.Empty }
         };
         _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminSoftwareVersionsPage), parameters);
+    }
+
+    private void OpenPromoArt(SoftwareDto? item)
+    {
+        if(item?.Id == null) return;
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.SoftwareId, item.Id.Value },
+            { NavParamKeys.SoftwareName, item.Name ?? string.Empty }
+        };
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminSoftwarePromoArtPage), parameters);
     }
 
     public void ApplyFilter()

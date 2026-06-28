@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Marechai.ApiClient.Software.PromoArt.Upload;
 
 namespace Marechai.App.Services;
 
@@ -54,6 +55,83 @@ public sealed class SoftwarePromoArtService
         {
             _logger.LogError(ex, "Error fetching promo art details for {PromoArtId}", promoArtId);
             return null;
+        }
+    }
+
+    public async Task<List<SoftwarePromoArtGroupDto>> GetGroupsAsync()
+    {
+        try
+        {
+            string lang = GetIso639CodeFromCulture();
+
+            List<SoftwarePromoArtGroupDto>? groups = await _apiClient.Software.PromoArt.Groups.GetAsync(config =>
+            {
+                config.QueryParameters.Lang = lang;
+            });
+
+            return groups ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching promo art groups");
+            return [];
+        }
+    }
+
+    public async Task<SoftwarePromoArtDto?> UploadPromoArtAsync(int softwareId, byte[] fileBytes, string groupName, string? caption)
+    {
+        try
+        {
+            var body = new UploadPostRequestBody
+            {
+                SoftwareId = softwareId,
+                File       = fileBytes,
+                GroupName  = groupName,
+                Caption    = caption
+            };
+
+            return await _apiClient.Software.PromoArt.Upload.PostAsync(body);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error uploading promo art for software {SoftwareId}", softwareId);
+            return null;
+        }
+    }
+
+    public async Task<bool> UpdatePromoArtAsync(Guid id, string? groupName, string? caption)
+    {
+        try
+        {
+            var body = new UpdateSoftwarePromoArtRequest
+            {
+                GroupName = groupName,
+                Caption   = caption
+            };
+
+            await _apiClient.Software.PromoArt[id].PutAsync(body);
+
+            return true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error updating promo art {PromoArtId}", id);
+            return false;
+        }
+    }
+
+    public async Task<bool> DeletePromoArtAsync(Guid id)
+    {
+        try
+        {
+            await _apiClient.Software.PromoArt[id].DeleteAsync();
+
+            return true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting promo art {PromoArtId}", id);
+            return false;
         }
     }
 

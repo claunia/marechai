@@ -87,6 +87,9 @@
                                                     <Button Content="{Binding Source={StaticResource Strings}, Path=VersionsButton}"
                                                             Command="{Binding DataContext.OpenVersionsCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
                                                             Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
+                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=PromoArtButton}"
+                                                            Command="{Binding DataContext.OpenPromoArtCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
+                                                            Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
                                                     <Button Content="{Binding Source={StaticResource Strings}, Path=DescriptionButton}"
                                                             Command="{Binding DataContext.OpenDescriptionCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
                                                             Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />

@@ -3562,4 +3562,20 @@
   <data name="MachinePromoArtUploadedSuccessfully" xml:space="preserve"><value>Promo art uploaded successfully.</value></data>
   <data name="MachinePromoArtUpdatedSuccessfully" xml:space="preserve"><value>Promo art updated successfully.</value></data>
   <data name="MachinePromoArtDeletedSuccessfully" xml:space="preserve"><value>Promo art deleted successfully.</value></data>
+  <data name="SoftwarePromoArtTitle" xml:space="preserve"><value>Software Promo Art</value></data>
+  <data name="SoftwarePromoArtSubtitle" xml:space="preserve"><value>Upload, review and manage promo art for this software</value></data>
+  <data name="SoftwarePromoArtMgmtAccessDeniedTitle" xml:space="preserve"><value>Access Denied</value></data>
+  <data name="SoftwarePromoArtMgmtAccessDeniedMessage" xml:space="preserve"><value>You must be an Administrator to manage software promo art.</value></data>
+  <data name="SoftwarePromoArtUploadSectionTitle" xml:space="preserve"><value>Upload Promo Art</value></data>
+  <data name="SoftwarePromoArtGroupLabel" xml:space="preserve"><value>Group</value></data>
+  <data name="SoftwarePromoArtCaptionLabel" xml:space="preserve"><value>Caption</value></data>
+  <data name="SoftwarePromoArtUploadButton" xml:space="preserve"><value>Select File &amp; Upload</value></data>
+  <data name="SoftwarePromoArtEmptyMessage" xml:space="preserve"><value>No promo art has been uploaded for this software yet.</value></data>
+  <data name="SoftwarePromoArtLoadFailed" xml:space="preserve"><value>Unable to load software promo art.</value></data>
+  <data name="SoftwarePromoArtUploadFailed" xml:space="preserve"><value>Unable to upload software promo art.</value></data>
+  <data name="SoftwarePromoArtUpdateFailed" xml:space="preserve"><value>Unable to update software promo art.</value></data>
+  <data name="SoftwarePromoArtDeleteFailed" xml:space="preserve"><value>Unable to delete software promo art.</value></data>
+  <data name="SoftwarePromoArtUploadedSuccessfully" xml:space="preserve"><value>Promo art uploaded successfully.</value></data>
+  <data name="SoftwarePromoArtUpdatedSuccessfully" xml:space="preserve"><value>Promo art updated successfully.</value></data>
+  <data name="SoftwarePromoArtDeletedSuccessfully" xml:space="preserve"><value>Promo art deleted successfully.</value></data>
 </root>

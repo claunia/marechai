@@ -327,6 +327,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<AdminSoftwareReleasesViewModel>();
         containerRegistry.Register<AdminSoftwareScreenshotsViewModel>();
         containerRegistry.Register<AdminSoftwareCoversViewModel>();
+        containerRegistry.Register<AdminSoftwarePromoArtViewModel>();
         containerRegistry.Register<AdminWwpcImportsViewModel>();
         containerRegistry.Register<AdminWwpcImportReviewViewModel>();
         containerRegistry.Register<AdminOldDosImportsViewModel>();
@@ -437,6 +438,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<AdminSoftwareReleasesPage, AdminSoftwareReleasesViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoftwareScreenshotsPage, AdminSoftwareScreenshotsViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoftwareCoversPage, AdminSoftwareCoversViewModel>();
+        containerRegistry.RegisterForNavigation<AdminSoftwarePromoArtPage, AdminSoftwarePromoArtViewModel>();
         containerRegistry.RegisterForNavigation<AdminWwpcImportsPage, AdminWwpcImportsViewModel>();
         containerRegistry.RegisterForNavigation<AdminWwpcImportReviewPage, AdminWwpcImportReviewViewModel>();
         containerRegistry.RegisterForNavigation<AdminOldDosImportsPage, AdminOldDosImportsViewModel>();

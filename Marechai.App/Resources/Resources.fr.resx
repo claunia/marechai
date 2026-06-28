@@ -3157,4 +3157,20 @@
   <data name="MachinePromoArtUploadedSuccessfully" xml:space="preserve"><value>Visuel promotionnel téléversé avec succès.</value></data>
   <data name="MachinePromoArtUpdatedSuccessfully" xml:space="preserve"><value>Visuel promotionnel mis à jour avec succès.</value></data>
   <data name="MachinePromoArtDeletedSuccessfully" xml:space="preserve"><value>Visuel promotionnel supprimé avec succès.</value></data>
+  <data name="SoftwarePromoArtTitle" xml:space="preserve"><value>Visuels promotionnels du logiciel</value></data>
+  <data name="SoftwarePromoArtSubtitle" xml:space="preserve"><value>Téléverser, vérifier et gérer les visuels promotionnels de ce logiciel</value></data>
+  <data name="SoftwarePromoArtMgmtAccessDeniedTitle" xml:space="preserve"><value>Accès refusé</value></data>
+  <data name="SoftwarePromoArtMgmtAccessDeniedMessage" xml:space="preserve"><value>Vous devez être Administrateur pour gérer les visuels promotionnels des logiciels.</value></data>
+  <data name="SoftwarePromoArtUploadSectionTitle" xml:space="preserve"><value>Téléverser un visuel promotionnel</value></data>
+  <data name="SoftwarePromoArtGroupLabel" xml:space="preserve"><value>Groupe</value></data>
+  <data name="SoftwarePromoArtCaptionLabel" xml:space="preserve"><value>Légende</value></data>
+  <data name="SoftwarePromoArtUploadButton" xml:space="preserve"><value>Sélectionner un fichier et téléverser</value></data>
+  <data name="SoftwarePromoArtEmptyMessage" xml:space="preserve"><value>Aucun visuel promotionnel n'a encore été téléversé pour ce logiciel.</value></data>
+  <data name="SoftwarePromoArtLoadFailed" xml:space="preserve"><value>Impossible de charger les visuels promotionnels du logiciel.</value></data>
+  <data name="SoftwarePromoArtUploadFailed" xml:space="preserve"><value>Impossible de téléverser le visuel promotionnel du logiciel.</value></data>
+  <data name="SoftwarePromoArtUpdateFailed" xml:space="preserve"><value>Impossible de mettre à jour le visuel promotionnel du logiciel.</value></data>
+  <data name="SoftwarePromoArtDeleteFailed" xml:space="preserve"><value>Impossible de supprimer le visuel promotionnel du logiciel.</value></data>
+  <data name="SoftwarePromoArtUploadedSuccessfully" xml:space="preserve"><value>Visuel promotionnel téléversé avec succès.</value></data>
+  <data name="SoftwarePromoArtUpdatedSuccessfully" xml:space="preserve"><value>Visuel promotionnel mis à jour avec succès.</value></data>
+  <data name="SoftwarePromoArtDeletedSuccessfully" xml:space="preserve"><value>Visuel promotionnel supprimé avec succès.</value></data>
 </root>

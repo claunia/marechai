@@ -3053,4 +3053,20 @@
   <data name="MachinePromoArtUploadedSuccessfully" xml:space="preserve"><value>Werbegrafik erfolgreich hochgeladen.</value></data>
   <data name="MachinePromoArtUpdatedSuccessfully" xml:space="preserve"><value>Werbegrafik erfolgreich aktualisiert.</value></data>
   <data name="MachinePromoArtDeletedSuccessfully" xml:space="preserve"><value>Werbegrafik erfolgreich gelöscht.</value></data>
+  <data name="SoftwarePromoArtTitle" xml:space="preserve"><value>Werbegrafik der Software</value></data>
+  <data name="SoftwarePromoArtSubtitle" xml:space="preserve"><value>Werbegrafik für diese Software hochladen, prüfen und verwalten</value></data>
+  <data name="SoftwarePromoArtMgmtAccessDeniedTitle" xml:space="preserve"><value>Zugriff verweigert</value></data>
+  <data name="SoftwarePromoArtMgmtAccessDeniedMessage" xml:space="preserve"><value>Sie müssen Administrator sein, um Werbegrafik von Software zu verwalten.</value></data>
+  <data name="SoftwarePromoArtUploadSectionTitle" xml:space="preserve"><value>Werbegrafik hochladen</value></data>
+  <data name="SoftwarePromoArtGroupLabel" xml:space="preserve"><value>Gruppe</value></data>
+  <data name="SoftwarePromoArtCaptionLabel" xml:space="preserve"><value>Beschriftung</value></data>
+  <data name="SoftwarePromoArtUploadButton" xml:space="preserve"><value>Datei auswählen &amp; hochladen</value></data>
+  <data name="SoftwarePromoArtEmptyMessage" xml:space="preserve"><value>Für diese Software wurde noch keine Werbegrafik hochgeladen.</value></data>
+  <data name="SoftwarePromoArtLoadFailed" xml:space="preserve"><value>Werbegrafik der Software konnte nicht geladen werden.</value></data>
+  <data name="SoftwarePromoArtUploadFailed" xml:space="preserve"><value>Werbegrafik der Software konnte nicht hochgeladen werden.</value></data>
+  <data name="SoftwarePromoArtUpdateFailed" xml:space="preserve"><value>Werbegrafik der Software konnte nicht aktualisiert werden.</value></data>
+  <data name="SoftwarePromoArtDeleteFailed" xml:space="preserve"><value>Werbegrafik der Software konnte nicht gelöscht werden.</value></data>
+  <data name="SoftwarePromoArtUploadedSuccessfully" xml:space="preserve"><value>Werbegrafik erfolgreich hochgeladen.</value></data>
+  <data name="SoftwarePromoArtUpdatedSuccessfully" xml:space="preserve"><value>Werbegrafik erfolgreich aktualisiert.</value></data>
+  <data name="SoftwarePromoArtDeletedSuccessfully" xml:space="preserve"><value>Werbegrafik erfolgreich gelöscht.</value></data>
 </root>

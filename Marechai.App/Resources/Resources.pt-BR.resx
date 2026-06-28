@@ -3053,4 +3053,20 @@
   <data name="MachinePromoArtUploadedSuccessfully" xml:space="preserve"><value>Material promocional enviado com sucesso.</value></data>
   <data name="MachinePromoArtUpdatedSuccessfully" xml:space="preserve"><value>Material promocional atualizado com sucesso.</value></data>
   <data name="MachinePromoArtDeletedSuccessfully" xml:space="preserve"><value>Material promocional excluído com sucesso.</value></data>
+  <data name="SoftwarePromoArtTitle" xml:space="preserve"><value>Material promocional do software</value></data>
+  <data name="SoftwarePromoArtSubtitle" xml:space="preserve"><value>Envie, revise e gerencie o material promocional deste software</value></data>
+  <data name="SoftwarePromoArtMgmtAccessDeniedTitle" xml:space="preserve"><value>Acesso negado</value></data>
+  <data name="SoftwarePromoArtMgmtAccessDeniedMessage" xml:space="preserve"><value>Você precisa ser Administrador para gerenciar o material promocional de software.</value></data>
+  <data name="SoftwarePromoArtUploadSectionTitle" xml:space="preserve"><value>Enviar material promocional</value></data>
+  <data name="SoftwarePromoArtGroupLabel" xml:space="preserve"><value>Grupo</value></data>
+  <data name="SoftwarePromoArtCaptionLabel" xml:space="preserve"><value>Legenda</value></data>
+  <data name="SoftwarePromoArtUploadButton" xml:space="preserve"><value>Selecionar arquivo e enviar</value></data>
+  <data name="SoftwarePromoArtEmptyMessage" xml:space="preserve"><value>Ainda não foi enviado material promocional para este software.</value></data>
+  <data name="SoftwarePromoArtLoadFailed" xml:space="preserve"><value>Não foi possível carregar o material promocional do software.</value></data>
+  <data name="SoftwarePromoArtUploadFailed" xml:space="preserve"><value>Não foi possível enviar o material promocional do software.</value></data>
+  <data name="SoftwarePromoArtUpdateFailed" xml:space="preserve"><value>Não foi possível atualizar o material promocional do software.</value></data>
+  <data name="SoftwarePromoArtDeleteFailed" xml:space="preserve"><value>Não foi possível excluir o material promocional do software.</value></data>
+  <data name="SoftwarePromoArtUploadedSuccessfully" xml:space="preserve"><value>Material promocional enviado com sucesso.</value></data>
+  <data name="SoftwarePromoArtUpdatedSuccessfully" xml:space="preserve"><value>Material promocional atualizado com sucesso.</value></data>
+  <data name="SoftwarePromoArtDeletedSuccessfully" xml:space="preserve"><value>Material promocional excluído com sucesso.</value></data>
 </root>
