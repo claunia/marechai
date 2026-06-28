@@ -3032,6 +3032,17 @@
   <data name="ReviewCreatedSuccess" xml:space="preserve"><value>Review submitted successfully.</value></data>
   <data name="ReviewUpdatedSuccess" xml:space="preserve"><value>Review updated successfully.</value></data>
   <data name="ReviewSaveFailed" xml:space="preserve"><value>Failed to save review.</value></data>
+  <data name="ReportReviewButton" xml:space="preserve"><value>Report</value></data>
+  <data name="ReportReviewDialogTitle" xml:space="preserve"><value>Report Review</value></data>
+  <data name="ReasonLabel" xml:space="preserve"><value>Reason</value></data>
+  <data name="ExplanationOptionalLabel" xml:space="preserve"><value>Explanation (optional)</value></data>
+  <data name="SubmitReportButton" xml:space="preserve"><value>Submit Report</value></data>
+  <data name="ReportSubmittedSuccess" xml:space="preserve"><value>Report submitted. Thank you.</value></data>
+  <data name="ReviewReportSubmissionFailed" xml:space="preserve"><value>Failed to submit report.</value></data>
+  <data name="Spam" xml:space="preserve"><value>Spam</value></data>
+  <data name="Offensive" xml:space="preserve"><value>Offensive</value></data>
+  <data name="Misleading" xml:space="preserve"><value>Misleading</value></data>
+  <data name="OffTopic" xml:space="preserve"><value>Off-topic</value></data>
   <data name="PromoArt" xml:space="preserve"><value>Promo Art</value></data>
   <data name="OtherPromoArt" xml:space="preserve"><value>Other (promo art)</value></data>
   <data name="NoPromoArtForThisMachineYet" xml:space="preserve"><value>No promo art for this machine yet.</value></data>

@@ -240,6 +240,16 @@ public class LocalizedStrings
     public string ReviewRatingLabel => _l["ReviewRatingLabel"];
     public string ReviewClearRatingButton => _l["ReviewClearRatingButton"];
     public string ReviewAnonymousLabel => _l["ReviewAnonymousLabel"];
+    public string ReportReviewButton => _l["ReportReviewButton"];
+    public string ReportReviewDialogTitle => _l["ReportReviewDialogTitle"];
+    public string ReasonLabel => _l["ReasonLabel"];
+    public string ExplanationOptionalLabel => _l["ExplanationOptionalLabel"];
+    public string SubmitReportButton => _l["SubmitReportButton"];
+    public string ReportSubmittedSuccess => _l["ReportSubmittedSuccess"];
+    public string Spam => _l["Spam"];
+    public string Offensive => _l["Offensive"];
+    public string Misleading => _l["Misleading"];
+    public string OffTopic => _l["OffTopic"];
 
     // GPU management
     public string GpuManagementTitle => _l["GpuManagementTitle"];

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<UserControl x:Class="Marechai.App.Presentation.Views.ReportReviewEditorControl"
+             x:Name="RootControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Spacing="12"
+                    MinWidth="420"
+                    MaxWidth="520">
+            <InfoBar IsOpen="{Binding HasReviewReportDraftError, Mode=OneWay}"
+                     Severity="Error"
+                     Message="{Binding ReviewReportDraftErrorMessage}"
+                     IsClosable="False" />
+
+            <ComboBox Header="{Binding Source={StaticResource Strings}, Path=ReasonLabel}"
+                      ItemsSource="{Binding ReviewReportReasons}"
+                      SelectedValue="{Binding ReviewReportReason, Mode=TwoWay}"
+                      SelectedValuePath="Value"
+                      DisplayMemberPath="Label" />
+
+            <TextBox Header="{Binding Source={StaticResource Strings}, Path=ExplanationOptionalLabel}"
+                     Text="{Binding ReviewReportExplanation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"
+                     MinHeight="96"
+                     MaxLength="2048" />
+        </StackPanel>
+    </ScrollViewer>
+
+</UserControl>

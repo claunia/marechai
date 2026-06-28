@@ -248,6 +248,40 @@ public class SoftwareBrowsingService
         }
     }
 
+    public async Task<(bool Succeeded, string? ErrorMessage)> ReportUserReviewAsync(
+        int softwareId, long reviewId, CreateReviewReportRequest request)
+    {
+        try
+        {
+            _logger.LogInformation("Reporting review {ReviewId} for software {SoftwareId}", reviewId, softwareId);
+
+            await _apiClient.Software[softwareId].UserReviews[reviewId].Report.PostAsync(request);
+
+            return (true, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            _logger.LogError(ex, "Problem reporting review {ReviewId} for software {SoftwareId}", reviewId,
+                             softwareId);
+
+            return (false, ex.Detail ?? ex.Title ?? ex.Message);
+        }
+        catch(ApiException ex)
+        {
+            _logger.LogError(ex, "API error reporting review {ReviewId} for software {SoftwareId}", reviewId,
+                             softwareId);
+
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error reporting review {ReviewId} for software {SoftwareId}", reviewId,
+                             softwareId);
+
+            return (false, ex.Message);
+        }
+    }
+
     public async Task<int> GetSoftwareCountAsync()
     {
         try

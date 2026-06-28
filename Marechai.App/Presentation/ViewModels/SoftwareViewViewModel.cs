@@ -193,6 +193,18 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     private string? _reviewDraftErrorMessage;
 
     [ObservableProperty]
+    private ReviewReportReason _reviewReportReason = ReviewReportReason.Spam;
+
+    [ObservableProperty]
+    private string _reviewReportExplanation = string.Empty;
+
+    [ObservableProperty]
+    private bool _isSubmittingReviewReport;
+
+    [ObservableProperty]
+    private string? _reviewReportDraftErrorMessage;
+
+    [ObservableProperty]
     private Visibility _showCredits = Visibility.Collapsed;
 
     [ObservableProperty]
@@ -228,6 +240,32 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
         _promoArtCache      = promoArtCache;
         _promoArtService    = promoArtService;
         _imageSourceFactory = imageSourceFactory;
+
+        ReviewReportReasons.Add(new ReviewReportReasonOption
+        {
+            Value = ReviewReportReason.Spam,
+            Label = _localizer["Spam"]
+        });
+        ReviewReportReasons.Add(new ReviewReportReasonOption
+        {
+            Value = ReviewReportReason.Offensive,
+            Label = _localizer["Offensive"]
+        });
+        ReviewReportReasons.Add(new ReviewReportReasonOption
+        {
+            Value = ReviewReportReason.Misleading,
+            Label = _localizer["Misleading"]
+        });
+        ReviewReportReasons.Add(new ReviewReportReasonOption
+        {
+            Value = ReviewReportReason.OffTopic,
+            Label = _localizer["OffTopic"]
+        });
+        ReviewReportReasons.Add(new ReviewReportReasonOption
+        {
+            Value = ReviewReportReason.Other,
+            Label = _localizer["Other"]
+        });
     }
 
     public ObservableCollection<string>                   Companies           { get; } = [];
@@ -266,6 +304,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
 
     public bool HasReviewFeedbackMessage => !string.IsNullOrWhiteSpace(ReviewFeedbackMessage);
     public bool HasReviewDraftError      => !string.IsNullOrWhiteSpace(ReviewDraftErrorMessage);
+    public bool HasReviewReportDraftError => !string.IsNullOrWhiteSpace(ReviewReportDraftErrorMessage);
     public bool HasCurrentUserReview     => _myReview is not null;
     public string ReviewActionLabel      => _myReview is not null ? _localizer["EditReviewButton"] : _localizer["WriteReviewButton"];
     public string ReviewDialogTitle      => _myReview is not null ? _localizer["EditReviewDialogTitle"] : _localizer["WriteReviewDialogTitle"];
@@ -273,6 +312,12 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     public string ReviewCancelButtonText => _localizer["CancelButton"];
     public string ReviewDraftRatingText  => ReviewDraftRating > 0 ? $"{ReviewDraftRating:F1}/5" : _localizer["ReviewDraftNoRating"];
     public bool CanSubmitReviewDraft     => !IsSubmittingReviewDraft;
+    public string ReportReviewDialogTitle => _localizer["ReportReviewDialogTitle"];
+    public string ReportReviewSubmitButtonText => _localizer["SubmitReportButton"];
+    public bool CanSubmitReviewReportDraft => !IsSubmittingReviewReport;
+    public ObservableCollection<ReviewReportReasonOption> ReviewReportReasons { get; } = [];
+
+    private UserReviewDisplayItem? _selectedReviewForReport;
 
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
 
@@ -900,23 +945,26 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
             {
                 UserReviews.Add(new UserReviewDisplayItem
                 {
-                    ReviewId      = review.Id ?? 0,
-                    UserId        = review.UserId,
-                    DisplayName   = review.DisplayName,
-                    UserName      = review.UserName,
-                    AvatarUrl     = review.AvatarUrl,
-                    IsAnonymous   = review.IsAnonymous ?? false,
-                    Rating        = review.Rating,
-                    TheGood       = review.TheGood,
-                    TheBad        = review.TheBad,
-                    TheUgly       = review.TheUgly,
-                    ThumbsUp      = review.ThumbsUp ?? 0,
-                    ThumbsDown    = review.ThumbsDown ?? 0,
+                    ReviewId        = review.Id ?? 0,
+                    UserId          = review.UserId,
+                    DisplayName     = review.DisplayName,
+                    UserName        = review.UserName,
+                    AvatarUrl       = review.AvatarUrl,
+                    IsAnonymous     = review.IsAnonymous ?? false,
+                    Rating          = review.Rating,
+                    TheGood         = review.TheGood,
+                    TheBad          = review.TheBad,
+                    TheUgly         = review.TheUgly,
+                    ThumbsUp        = review.ThumbsUp ?? 0,
+                    ThumbsDown      = review.ThumbsDown ?? 0,
                     CurrentUserVote = review.CurrentUserVote,
-                    CanVote       = IsAuthenticated &&
-                                    !string.IsNullOrWhiteSpace(_currentUserId) &&
-                                    !string.Equals(review.UserId, _currentUserId, StringComparison.Ordinal),
-                    FormattedDate = review.CreatedOn?.DateTime.ToString("yyyy-MM-dd") ?? string.Empty
+                    CanVote         = IsAuthenticated &&
+                                      !string.IsNullOrWhiteSpace(_currentUserId) &&
+                                      !string.Equals(review.UserId, _currentUserId, StringComparison.Ordinal),
+                    CanReport       = IsAuthenticated &&
+                                      !string.IsNullOrWhiteSpace(_currentUserId) &&
+                                      !string.Equals(review.UserId, _currentUserId, StringComparison.Ordinal),
+                    FormattedDate   = review.CreatedOn?.DateTime.ToString("yyyy-MM-dd") ?? string.Empty
                 });
             }
 
@@ -1065,6 +1113,65 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
         await RefreshCurrentUserRatingAsync(_currentSoftwareId);
         await LoadUserReviewsAsync(_currentSoftwareId);
         UpdateVisibilities();
+    }
+
+    public void PrepareReviewReportDraft(UserReviewDisplayItem? review)
+    {
+        _selectedReviewForReport     = review;
+        ReviewReportReason           = ReviewReportReason.Spam;
+        ReviewReportExplanation      = string.Empty;
+        ReviewReportDraftErrorMessage = null;
+    }
+
+    public async Task<bool> SubmitReviewReportDraftAsync()
+    {
+        ReviewReportDraftErrorMessage = null;
+        IsSubmittingReviewReport      = true;
+
+        try
+        {
+            if(_selectedReviewForReport is null || _selectedReviewForReport.ReviewId <= 0)
+            {
+                ReviewReportDraftErrorMessage = _localizer["ReviewReportSubmissionFailed"];
+
+                return false;
+            }
+
+            var request = new CreateReviewReportRequest
+            {
+                Reason = (int?)ReviewReportReason,
+                Explanation = string.IsNullOrWhiteSpace(ReviewReportExplanation)
+                                  ? null
+                                  : ReviewReportExplanation.Trim()
+            };
+
+            var result = await _browsingService.ReportUserReviewAsync(_currentSoftwareId,
+                                                                      _selectedReviewForReport.ReviewId,
+                                                                      request);
+
+            if(!result.Succeeded)
+            {
+                ReviewReportDraftErrorMessage = result.ErrorMessage ?? _localizer["ReviewReportSubmissionFailed"];
+
+                return false;
+            }
+
+            SetReviewFeedback(_localizer["ReportSubmittedSuccess"], InfoBarSeverity.Success);
+            await RefreshReviewAuthoringStateAsync();
+
+            return true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error reporting review for software {SoftwareId}", _currentSoftwareId);
+            ReviewReportDraftErrorMessage = ex.Message;
+
+            return false;
+        }
+        finally
+        {
+            IsSubmittingReviewReport = false;
+        }
     }
 
     void SetReviewFeedback(string message, InfoBarSeverity severity)
@@ -1278,6 +1385,11 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
         OnPropertyChanged(nameof(HasReviewDraftError));
     }
 
+    partial void OnReviewReportDraftErrorMessageChanged(string? value)
+    {
+        OnPropertyChanged(nameof(HasReviewReportDraftError));
+    }
+
     partial void OnReviewDraftRatingChanged(double value)
     {
         RebuildReviewRatingStars();
@@ -1287,6 +1399,11 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     partial void OnIsSubmittingReviewDraftChanged(bool value)
     {
         OnPropertyChanged(nameof(CanSubmitReviewDraft));
+    }
+
+    partial void OnIsSubmittingReviewReportChanged(bool value)
+    {
+        OnPropertyChanged(nameof(CanSubmitReviewReportDraft));
     }
 
     void RebuildReviewRatingStars()
@@ -1388,4 +1505,10 @@ public class ReviewRatingStarItem : ObservableObject
     public bool IsFilled { get; set; }
     public bool IsHalfFilled { get; set; }
     public bool IsEmpty { get; set; }
+}
+
+public sealed class ReviewReportReasonOption
+{
+    public ReviewReportReason Value { get; set; }
+    public string Label { get; set; } = string.Empty;
 }

@@ -18,6 +18,7 @@ public sealed class UserReviewDisplayItem
     public int ThumbsDown { get; set; }
     public bool? CurrentUserVote { get; set; }
     public bool CanVote { get; set; }
+    public bool CanReport { get; set; }
     public string FormattedDate { get; set; } = string.Empty;
 
     public bool HasAvatar => !IsAnonymous && !string.IsNullOrWhiteSpace(AvatarUrl);

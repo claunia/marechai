@@ -1362,6 +1362,14 @@
                                                                Foreground="{ThemeResource SystemBaseMediumColor}"
                                                                VerticalAlignment="Center" />
                                                 </StackPanel>
+                                                <Button Content="{Binding Source={StaticResource Strings}, Path=ReportReviewButton}"
+                                                        Click="OpenReportReviewDialog_Click"
+                                                        Visibility="{Binding CanReport, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                        IsEnabled="{Binding CanReport}"
+                                                        Style="{ThemeResource AlternateButtonStyle}"
+                                                        Padding="8,2"
+                                                        MinWidth="0"
+                                                        FontSize="11" />
                                             </StackPanel>
                                         </StackPanel>
                                     </Border>
