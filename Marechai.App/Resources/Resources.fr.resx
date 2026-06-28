@@ -2076,6 +2076,27 @@
   <data name="ProcessorVideosLinkedSuccessfully" xml:space="preserve"><value>Vidéo liée avec succès.</value></data>
   <data name="ProcessorVideosUpdatedSuccessfully" xml:space="preserve"><value>Vidéo mise à jour avec succès.</value></data>
   <data name="ProcessorVideosDeletedSuccessfully" xml:space="preserve"><value>Vidéo supprimée avec succès.</value></data>
+  <data name="SoundSynthVideosTitle" xml:space="preserve"><value>Vidéos de synthétiseur sonore</value></data>
+  <data name="SoundSynthVideosSubtitle" xml:space="preserve"><value>Lier, vérifier et gérer les vidéos de synthétiseurs sonores</value></data>
+  <data name="SoundSynthVideosMgmtAccessDeniedTitle" xml:space="preserve"><value>Accès refusé</value></data>
+  <data name="SoundSynthVideosMgmtAccessDeniedMessage" xml:space="preserve"><value>Vous devez être Administrateur pour gérer les vidéos de synthétiseurs sonores.</value></data>
+  <data name="SoundSynthVideosLinkSectionTitle" xml:space="preserve"><value>Lier une vidéo</value></data>
+  <data name="SoundSynthVideosLinkSectionSubtitle" xml:space="preserve"><value>Ajoutez un nouveau lien vidéo pour ce synthétiseur sonore à l'aide d'une URL YouTube, d'un identifiant vidéo YouTube ou d'une paire personnalisée fournisseur/identifiant vidéo.</value></data>
+  <data name="SoundSynthVideosUrlInputLabel" xml:space="preserve"><value>URL YouTube ou identifiant vidéo</value></data>
+  <data name="SoundSynthVideosDetectedIdLabel" xml:space="preserve"><value>Identifiant vidéo détecté</value></data>
+  <data name="SoundSynthVideosAdvancedSectionTitle" xml:space="preserve"><value>Avancé</value></data>
+  <data name="SoundSynthVideosManualIdLabel" xml:space="preserve"><value>Identifiant vidéo manuel</value></data>
+  <data name="SoundSynthVideosManualIdHelpText" xml:space="preserve"><value>Utilisez ceci lorsque l'URL ne peut pas être analysée ou lorsque vous liez un fournisseur autre que YouTube.</value></data>
+  <data name="SoundSynthVideosLinkButton" xml:space="preserve"><value>Lier la vidéo</value></data>
+  <data name="SoundSynthVideosEmptyMessage" xml:space="preserve"><value>Aucune vidéo n'est encore liée à ce synthétiseur sonore.</value></data>
+  <data name="SoundSynthVideosLoadFailed" xml:space="preserve"><value>Impossible de charger les vidéos du synthétiseur sonore.</value></data>
+  <data name="SoundSynthVideosLinkFailed" xml:space="preserve"><value>Impossible de lier la vidéo du synthétiseur sonore.</value></data>
+  <data name="SoundSynthVideosUpdateFailed" xml:space="preserve"><value>Impossible de mettre à jour la vidéo du synthétiseur sonore.</value></data>
+  <data name="SoundSynthVideosDeleteFailed" xml:space="preserve"><value>Impossible de supprimer la vidéo du synthétiseur sonore.</value></data>
+  <data name="SoundSynthVideosOpenFailed" xml:space="preserve"><value>Impossible d'ouvrir la vidéo du synthétiseur sonore.</value></data>
+  <data name="SoundSynthVideosLinkedSuccessfully" xml:space="preserve"><value>Vidéo liée avec succès.</value></data>
+  <data name="SoundSynthVideosUpdatedSuccessfully" xml:space="preserve"><value>Vidéo mise à jour avec succès.</value></data>
+  <data name="SoundSynthVideosDeletedSuccessfully" xml:space="preserve"><value>Vidéo supprimée avec succès.</value></data>
   <data name="GpuPhotosMgmtAccessDeniedTitle" xml:space="preserve"><value>Accès refusé</value></data>
   <data name="GpuPhotosMgmtAccessDeniedMessage" xml:space="preserve"><value>Vous devez être Administrateur pour gérer les photos de GPU.</value></data>
   <data name="GpuPhotosBatchSectionTitle" xml:space="preserve"><value>Téléversement par lot</value></data>

@@ -2433,6 +2433,27 @@
   <data name="ProcessorVideosLinkedSuccessfully" xml:space="preserve"><value>Video linked successfully.</value></data>
   <data name="ProcessorVideosUpdatedSuccessfully" xml:space="preserve"><value>Video updated successfully.</value></data>
   <data name="ProcessorVideosDeletedSuccessfully" xml:space="preserve"><value>Video deleted successfully.</value></data>
+  <data name="SoundSynthVideosTitle" xml:space="preserve"><value>Sound Synth Videos</value></data>
+  <data name="SoundSynthVideosSubtitle" xml:space="preserve"><value>Link, review, and manage sound synth videos</value></data>
+  <data name="SoundSynthVideosMgmtAccessDeniedTitle" xml:space="preserve"><value>Admin access required</value></data>
+  <data name="SoundSynthVideosMgmtAccessDeniedMessage" xml:space="preserve"><value>You must be an administrator to manage sound synth videos.</value></data>
+  <data name="SoundSynthVideosLinkSectionTitle" xml:space="preserve"><value>Link Video</value></data>
+  <data name="SoundSynthVideosLinkSectionSubtitle" xml:space="preserve"><value>Add a new video link for this sound synth using a YouTube URL, a YouTube video ID, or a custom provider/video ID pair.</value></data>
+  <data name="SoundSynthVideosUrlInputLabel" xml:space="preserve"><value>YouTube URL or Video ID</value></data>
+  <data name="SoundSynthVideosDetectedIdLabel" xml:space="preserve"><value>Detected Video ID</value></data>
+  <data name="SoundSynthVideosAdvancedSectionTitle" xml:space="preserve"><value>Advanced</value></data>
+  <data name="SoundSynthVideosManualIdLabel" xml:space="preserve"><value>Manual Video ID</value></data>
+  <data name="SoundSynthVideosManualIdHelpText" xml:space="preserve"><value>Use this when the URL cannot be parsed or when you are linking a non-YouTube provider.</value></data>
+  <data name="SoundSynthVideosLinkButton" xml:space="preserve"><value>Link Video</value></data>
+  <data name="SoundSynthVideosEmptyMessage" xml:space="preserve"><value>No videos are linked to this sound synth yet.</value></data>
+  <data name="SoundSynthVideosLoadFailed" xml:space="preserve"><value>Failed to load sound synth videos.</value></data>
+  <data name="SoundSynthVideosLinkFailed" xml:space="preserve"><value>Failed to link sound synth video.</value></data>
+  <data name="SoundSynthVideosUpdateFailed" xml:space="preserve"><value>Failed to update sound synth video.</value></data>
+  <data name="SoundSynthVideosDeleteFailed" xml:space="preserve"><value>Failed to delete sound synth video.</value></data>
+  <data name="SoundSynthVideosOpenFailed" xml:space="preserve"><value>Failed to open sound synth video.</value></data>
+  <data name="SoundSynthVideosLinkedSuccessfully" xml:space="preserve"><value>Video linked successfully.</value></data>
+  <data name="SoundSynthVideosUpdatedSuccessfully" xml:space="preserve"><value>Video updated successfully.</value></data>
+  <data name="SoundSynthVideosDeletedSuccessfully" xml:space="preserve"><value>Video deleted successfully.</value></data>
   <data name="GpuPhotosMgmtAccessDeniedTitle" xml:space="preserve"><value>Access Denied</value></data>
   <data name="GpuPhotosMgmtAccessDeniedMessage" xml:space="preserve"><value>You must be an Administrator to manage GPU photos.</value></data>
   <data name="GpuPhotosBatchSectionTitle" xml:space="preserve"><value>Batch Upload</value></data>

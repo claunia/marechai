@@ -295,6 +295,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<AdminResolutionsViewModel>();
         containerRegistry.Register<AdminSoundSynthsViewModel>();
         containerRegistry.Register<AdminSoundSynthPhotosViewModel>();
+        containerRegistry.Register<AdminSoundSynthVideosViewModel>();
         containerRegistry.Register<AdminScreensViewModel>();
         containerRegistry.Register<AdminMachinesViewModel>();
         containerRegistry.Register<AdminMachineFamiliesViewModel>();
@@ -400,6 +401,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<AdminResolutionsPage, AdminResolutionsViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoundSynthsPage, AdminSoundSynthsViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoundSynthPhotosPage, AdminSoundSynthPhotosViewModel>();
+        containerRegistry.RegisterForNavigation<AdminSoundSynthVideosPage, AdminSoundSynthVideosViewModel>();
         containerRegistry.RegisterForNavigation<AdminScreensPage, AdminScreensViewModel>();
         containerRegistry.RegisterForNavigation<AdminMachinesPage, AdminMachinesViewModel>();
         containerRegistry.RegisterForNavigation<AdminMachineFamiliesPage, AdminMachineFamiliesViewModel>();

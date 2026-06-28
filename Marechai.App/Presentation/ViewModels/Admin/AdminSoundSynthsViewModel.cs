@@ -85,6 +85,7 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
         OpenAddCommand     = new RelayCommand(OpenAdd);
         OpenEditCommand    = new RelayCommand<SoundSynthDto>(OpenEdit);
         OpenPhotosCommand  = new RelayCommand<SoundSynthDto>(OpenPhotos);
+        OpenVideosCommand  = new RelayCommand<SoundSynthDto>(OpenVideos);
         DeleteCommand      = new AsyncRelayCommand<SoundSynthDto>(DeleteAsync);
         SaveCommand        = new AsyncRelayCommand(SaveAsync);
         CancelEditCommand  = new RelayCommand(CancelEdit);
@@ -96,6 +97,7 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
     public IRelayCommand                     OpenAddCommand    { get; }
     public IRelayCommand<SoundSynthDto>       OpenEditCommand   { get; }
     public IRelayCommand<SoundSynthDto>       OpenPhotosCommand { get; }
+    public IRelayCommand<SoundSynthDto>       OpenVideosCommand { get; }
     public IAsyncRelayCommand<SoundSynthDto>  DeleteCommand     { get; }
     public IAsyncRelayCommand                SaveCommand       { get; }
     public IRelayCommand                     CancelEditCommand { get; }
@@ -202,6 +204,19 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
         };
 
         _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminSoundSynthPhotosPage), parameters);
+    }
+
+    private void OpenVideos(SoundSynthDto? item)
+    {
+        if(item?.Id == null) return;
+
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.SoundSynthId, item.Id.Value },
+            { NavParamKeys.SoundSynthName, item.Name ?? string.Empty }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminSoundSynthVideosPage), parameters);
     }
 
     private async Task DeleteAsync(SoundSynthDto? item)

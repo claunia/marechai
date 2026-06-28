@@ -1972,6 +1972,27 @@
   <data name="ProcessorVideosLinkedSuccessfully" xml:space="preserve"><value>Video erfolgreich verknüpft.</value></data>
   <data name="ProcessorVideosUpdatedSuccessfully" xml:space="preserve"><value>Video erfolgreich aktualisiert.</value></data>
   <data name="ProcessorVideosDeletedSuccessfully" xml:space="preserve"><value>Video erfolgreich gelöscht.</value></data>
+  <data name="SoundSynthVideosTitle" xml:space="preserve"><value>Klangsynthesizer-Videos</value></data>
+  <data name="SoundSynthVideosSubtitle" xml:space="preserve"><value>Klangsynthesizer-Videos verknüpfen, prüfen und verwalten</value></data>
+  <data name="SoundSynthVideosMgmtAccessDeniedTitle" xml:space="preserve"><value>Zugriff verweigert</value></data>
+  <data name="SoundSynthVideosMgmtAccessDeniedMessage" xml:space="preserve"><value>Sie müssen Administrator sein, um Klangsynthesizer-Videos zu verwalten.</value></data>
+  <data name="SoundSynthVideosLinkSectionTitle" xml:space="preserve"><value>Video verknüpfen</value></data>
+  <data name="SoundSynthVideosLinkSectionSubtitle" xml:space="preserve"><value>Fügen Sie für diesen Klangsynthesizer einen neuen Videolink mit einer YouTube-URL, einer YouTube-Video-ID oder einem benutzerdefinierten Anbieter-/Video-ID-Paar hinzu.</value></data>
+  <data name="SoundSynthVideosUrlInputLabel" xml:space="preserve"><value>YouTube-URL oder Video-ID</value></data>
+  <data name="SoundSynthVideosDetectedIdLabel" xml:space="preserve"><value>Erkannte Video-ID</value></data>
+  <data name="SoundSynthVideosAdvancedSectionTitle" xml:space="preserve"><value>Erweitert</value></data>
+  <data name="SoundSynthVideosManualIdLabel" xml:space="preserve"><value>Manuelle Video-ID</value></data>
+  <data name="SoundSynthVideosManualIdHelpText" xml:space="preserve"><value>Verwenden Sie dies, wenn die URL nicht analysiert werden kann oder wenn Sie einen Nicht-YouTube-Anbieter verknüpfen.</value></data>
+  <data name="SoundSynthVideosLinkButton" xml:space="preserve"><value>Video verknüpfen</value></data>
+  <data name="SoundSynthVideosEmptyMessage" xml:space="preserve"><value>Diesem Klangsynthesizer sind noch keine Videos zugeordnet.</value></data>
+  <data name="SoundSynthVideosLoadFailed" xml:space="preserve"><value>Klangsynthesizer-Videos konnten nicht geladen werden.</value></data>
+  <data name="SoundSynthVideosLinkFailed" xml:space="preserve"><value>Klangsynthesizer-Video konnte nicht verknüpft werden.</value></data>
+  <data name="SoundSynthVideosUpdateFailed" xml:space="preserve"><value>Klangsynthesizer-Video konnte nicht aktualisiert werden.</value></data>
+  <data name="SoundSynthVideosDeleteFailed" xml:space="preserve"><value>Klangsynthesizer-Video konnte nicht gelöscht werden.</value></data>
+  <data name="SoundSynthVideosOpenFailed" xml:space="preserve"><value>Klangsynthesizer-Video konnte nicht geöffnet werden.</value></data>
+  <data name="SoundSynthVideosLinkedSuccessfully" xml:space="preserve"><value>Video erfolgreich verknüpft.</value></data>
+  <data name="SoundSynthVideosUpdatedSuccessfully" xml:space="preserve"><value>Video erfolgreich aktualisiert.</value></data>
+  <data name="SoundSynthVideosDeletedSuccessfully" xml:space="preserve"><value>Video erfolgreich gelöscht.</value></data>
   <data name="GpuPhotosMgmtAccessDeniedTitle" xml:space="preserve"><value>Zugriff verweigert</value></data>
   <data name="GpuPhotosMgmtAccessDeniedMessage" xml:space="preserve"><value>Sie müssen Administrator sein, um GPU-Fotos zu verwalten.</value></data>
   <data name="GpuPhotosBatchSectionTitle" xml:space="preserve"><value>Stapel-Upload</value></data>

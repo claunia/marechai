@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.ApiClient.Models;
+using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.App.Services;
 
@@ -199,5 +201,109 @@ public class SoundSynthsService
 
             return [];
         }
+    }
+
+    /// <summary>
+    ///     Creates a new video link for a sound synthesizer.
+    /// </summary>
+    public async Task<(SoundSynthVideoDto? dto, string? error)> CreateVideoAsync(int soundSynthId, string provider,
+                                                                                  string videoId, string? title)
+    {
+        try
+        {
+            _logger.LogInformation("Creating video link for Sound Synthesizer {SoundSynthId}", soundSynthId);
+
+            SoundSynthVideoDto? dto = await _apiClient.SoundSynths[soundSynthId]
+                                                      .Videos
+                                                      .PostAsync(new CreateSoundSynthVideoRequest
+                                                       {
+                                                           Provider = provider,
+                                                           VideoId  = videoId,
+                                                           Title    = title
+                                                       });
+
+            return (dto, null);
+        }
+        catch(ApiException ex)
+        {
+            _logger.LogWarning(ex, "API error creating sound synth video for {SoundSynthId}", soundSynthId);
+
+            return (null, ExtractDetail(ex));
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error creating sound synth video for {SoundSynthId}", soundSynthId);
+
+            return (null, ex.Message);
+        }
+    }
+
+    /// <summary>
+    ///     Updates a sound synthesizer video title.
+    /// </summary>
+    public async Task<(bool succeeded, string? error)> UpdateVideoTitleAsync(long id, string? title)
+    {
+        try
+        {
+            _logger.LogInformation("Updating sound synth video {VideoId}", id);
+
+            await _apiClient.SoundSynths.Videos[id]
+                            .PutAsync(new UpdateSoundSynthVideoRequest
+                             {
+                                 Title = title
+                             });
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            _logger.LogWarning(ex, "API error updating sound synth video {VideoId}", id);
+
+            return (false, ExtractDetail(ex));
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error updating sound synth video {VideoId}", id);
+
+            return (false, ex.Message);
+        }
+    }
+
+    /// <summary>
+    ///     Deletes a sound synthesizer video.
+    /// </summary>
+    public async Task<(bool succeeded, string? error)> DeleteVideoAsync(long id)
+    {
+        try
+        {
+            _logger.LogInformation("Deleting sound synth video {VideoId}", id);
+
+            await _apiClient.SoundSynths.Videos[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            _logger.LogWarning(ex, "API error deleting sound synth video {VideoId}", id);
+
+            return (false, ExtractDetail(ex));
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting sound synth video {VideoId}", id);
+
+            return (false, ex.Message);
+        }
+    }
+
+    static string? ExtractDetail(ApiException exception)
+    {
+        if(exception is ProblemDetails problemDetails)
+        {
+            if(!string.IsNullOrWhiteSpace(problemDetails.Detail)) return problemDetails.Detail;
+            if(!string.IsNullOrWhiteSpace(problemDetails.Title)) return problemDetails.Title;
+        }
+
+        return string.IsNullOrWhiteSpace(exception.Message) ? "Unknown error" : exception.Message;
     }
 }

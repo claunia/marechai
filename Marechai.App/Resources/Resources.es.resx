@@ -2112,6 +2112,27 @@
   <data name="ProcessorVideosLinkedSuccessfully" xml:space="preserve"><value>Vídeo enlazado correctamente.</value></data>
   <data name="ProcessorVideosUpdatedSuccessfully" xml:space="preserve"><value>Vídeo actualizado correctamente.</value></data>
   <data name="ProcessorVideosDeletedSuccessfully" xml:space="preserve"><value>Vídeo eliminado correctamente.</value></data>
+  <data name="SoundSynthVideosTitle" xml:space="preserve"><value>Vídeos del sintetizador de sonido</value></data>
+  <data name="SoundSynthVideosSubtitle" xml:space="preserve"><value>Enlazar, revisar y gestionar vídeos del sintetizador de sonido</value></data>
+  <data name="SoundSynthVideosMgmtAccessDeniedTitle" xml:space="preserve"><value>Acceso denegado</value></data>
+  <data name="SoundSynthVideosMgmtAccessDeniedMessage" xml:space="preserve"><value>Debe ser Administrador para gestionar vídeos de sintetizadores de sonido.</value></data>
+  <data name="SoundSynthVideosLinkSectionTitle" xml:space="preserve"><value>Enlazar vídeo</value></data>
+  <data name="SoundSynthVideosLinkSectionSubtitle" xml:space="preserve"><value>Añada un nuevo enlace de vídeo para este sintetizador de sonido mediante una URL de YouTube, un ID de vídeo de YouTube o un par personalizado de proveedor/ID de vídeo.</value></data>
+  <data name="SoundSynthVideosUrlInputLabel" xml:space="preserve"><value>URL de YouTube o ID de vídeo</value></data>
+  <data name="SoundSynthVideosDetectedIdLabel" xml:space="preserve"><value>ID de vídeo detectado</value></data>
+  <data name="SoundSynthVideosAdvancedSectionTitle" xml:space="preserve"><value>Opciones avanzadas</value></data>
+  <data name="SoundSynthVideosManualIdLabel" xml:space="preserve"><value>ID de vídeo manual</value></data>
+  <data name="SoundSynthVideosManualIdHelpText" xml:space="preserve"><value>Úselo cuando no se pueda analizar la URL o cuando quiera enlazar un proveedor distinto de YouTube.</value></data>
+  <data name="SoundSynthVideosLinkButton" xml:space="preserve"><value>Enlazar vídeo</value></data>
+  <data name="SoundSynthVideosEmptyMessage" xml:space="preserve"><value>Todavía no hay vídeos vinculados a este sintetizador de sonido.</value></data>
+  <data name="SoundSynthVideosLoadFailed" xml:space="preserve"><value>No se pudieron cargar los vídeos del sintetizador de sonido.</value></data>
+  <data name="SoundSynthVideosLinkFailed" xml:space="preserve"><value>No se pudo enlazar el vídeo del sintetizador de sonido.</value></data>
+  <data name="SoundSynthVideosUpdateFailed" xml:space="preserve"><value>No se pudo actualizar el vídeo del sintetizador de sonido.</value></data>
+  <data name="SoundSynthVideosDeleteFailed" xml:space="preserve"><value>No se pudo eliminar el vídeo del sintetizador de sonido.</value></data>
+  <data name="SoundSynthVideosOpenFailed" xml:space="preserve"><value>No se pudo abrir el vídeo del sintetizador de sonido.</value></data>
+  <data name="SoundSynthVideosLinkedSuccessfully" xml:space="preserve"><value>Vídeo enlazado correctamente.</value></data>
+  <data name="SoundSynthVideosUpdatedSuccessfully" xml:space="preserve"><value>Vídeo actualizado correctamente.</value></data>
+  <data name="SoundSynthVideosDeletedSuccessfully" xml:space="preserve"><value>Vídeo eliminado correctamente.</value></data>
   <data name="GpuPhotosMgmtAccessDeniedTitle" xml:space="preserve"><value>Acceso denegado</value></data>
   <data name="GpuPhotosMgmtAccessDeniedMessage" xml:space="preserve"><value>Debe ser Administrador para gestionar fotos de GPU.</value></data>
   <data name="GpuPhotosBatchSectionTitle" xml:space="preserve"><value>Carga por lotes</value></data>
