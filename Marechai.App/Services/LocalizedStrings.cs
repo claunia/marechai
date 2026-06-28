@@ -877,4 +877,22 @@ public class LocalizedStrings
     public string ReviewReportsActionsColumn => _l["ReviewReportsActionsColumn"];
     public string ReviewReportsResolveButton => _l["ReviewReportsResolveButton"];
     public string ReviewReportsDeleteButton => _l["ReviewReportsDeleteButton"];
+
+    // Message reports management
+    public string MessageReportsTitle => _l["MessageReportsTitle"];
+    public string MessageReportsSubtitle => _l["MessageReportsSubtitle"];
+    public string MessageReportsShowResolved => _l["MessageReportsShowResolved"];
+    public string MessageReportsAccessDeniedTitle => _l["MessageReportsAccessDeniedTitle"];
+    public string MessageReportsAccessDeniedMessage => _l["MessageReportsAccessDeniedMessage"];
+    public string MessageReportsFailedToLoad => _l["MessageReportsFailedToLoad"];
+    public string MessageReportsReporterColumn => _l["MessageReportsReporterColumn"];
+    public string MessageReportsReasonColumn => _l["MessageReportsReasonColumn"];
+    public string MessageReportsExplanationColumn => _l["MessageReportsExplanationColumn"];
+    public string MessageReportsStatusColumn => _l["MessageReportsStatusColumn"];
+    public string MessageReportsDateColumn => _l["MessageReportsDateColumn"];
+    public string MessageReportsActionsColumn => _l["MessageReportsActionsColumn"];
+    public string MessageReportsViewThreadButton => _l["MessageReportsViewThreadButton"];
+    public string MessageReportsResolveButton => _l["MessageReportsResolveButton"];
+    public string MessageReportsPreviousButton => _l["MessageReportsPreviousButton"];
+    public string MessageReportsNextButton => _l["MessageReportsNextButton"];
 }

@@ -11,6 +11,7 @@ using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
 using Marechai.Data;
+using Microsoft.Extensions.Localization;
 using Microsoft.UI.Xaml.Data;
 
 namespace Marechai.App.Presentation.ViewModels.Admin;
@@ -21,6 +22,7 @@ public partial class AdminMessageReportsViewModel : ObservableObject, IRegionAwa
     const int PageSize = 25;
 
     readonly IJwtService _jwtService;
+    readonly IStringLocalizer _localizer;
     readonly IRegionManager _regionManager;
     readonly ILogger<AdminMessageReportsViewModel> _logger;
     readonly MessagingService _messagingService;
@@ -38,17 +40,32 @@ public partial class AdminMessageReportsViewModel : ObservableObject, IRegionAwa
     public ObservableCollection<MessageReportListItem> Reports { get; } = [];
 
     public AdminMessageReportsViewModel(MessagingService messagingService, IRegionManager regionManager,
-        ILogger<AdminMessageReportsViewModel> logger, ITokenService tokenService, IJwtService jwtService)
+        ILogger<AdminMessageReportsViewModel> logger, ITokenService tokenService, IJwtService jwtService,
+        IStringLocalizer localizer)
     {
         _messagingService = messagingService;
         _regionManager    = regionManager;
         _logger           = logger;
         _tokenService     = tokenService;
         _jwtService       = jwtService;
+        _localizer        = localizer;
     }
 
     public bool CanGoPrevious => CurrentPage > 1;
     public bool CanGoNext => CurrentPage * PageSize < TotalCount;
+
+    public string PaginationText
+    {
+        get
+        {
+            if(TotalCount == 0) return string.Empty;
+
+            int rangeStart = (CurrentPage - 1) * PageSize + 1;
+            int rangeEnd   = Math.Min(CurrentPage * PageSize, TotalCount);
+
+            return string.Format(_localizer["MessageReportsPaginationFormat"], rangeStart, rangeEnd, TotalCount);
+        }
+    }
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
@@ -104,7 +121,7 @@ public partial class AdminMessageReportsViewModel : ObservableObject, IRegionAwa
         if(!succeeded)
         {
             HasError     = true;
-            ErrorMessage = error ?? "Failed to resolve report.";
+            ErrorMessage = error ?? _localizer["MessageReportsFailedToResolve"];
             return;
         }
 
@@ -140,14 +157,17 @@ public partial class AdminMessageReportsViewModel : ObservableObject, IRegionAwa
             foreach(MessageReportDto report in reports)
                 Reports.Add(new MessageReportListItem
                 {
-                    Id           = report.Id ?? 0,
-                    ConversationId = report.ConversationId,
-                    Reporter     = report.Reporter?.DisplayName ?? "(deleted)",
-                    ReasonText   = FormatReason(report.Reason),
-                    Explanation  = report.Explanation ?? string.Empty,
-                    CreatedOnText = report.CreatedOn?.LocalDateTime.ToString("yyyy-MM-dd HH:mm") ?? string.Empty,
-                    StatusText   = report.IsResolved == true ? "Resolved" : "Pending",
-                    IsResolved   = report.IsResolved == true
+                    Id              = report.Id ?? 0,
+                    ConversationId  = report.ConversationId,
+                    HasConversation = report.ConversationId.HasValue,
+                    Reporter        = report.Reporter?.DisplayName ?? "(deleted)",
+                    ReasonText      = FormatReason(report.Reason),
+                    Explanation     = report.Explanation ?? string.Empty,
+                    CreatedOnText   = report.CreatedOn?.LocalDateTime.ToString("yyyy-MM-dd HH:mm") ?? string.Empty,
+                    StatusText = report.IsResolved == true
+                        ? _localizer["MessageReportsStatusResolved"]
+                        : _localizer["MessageReportsStatusPending"],
+                    IsResolved = report.IsResolved == true
                 });
 
             IsDataLoaded = !HasError;
@@ -163,6 +183,7 @@ public partial class AdminMessageReportsViewModel : ObservableObject, IRegionAwa
             IsLoading = false;
             OnPropertyChanged(nameof(CanGoPrevious));
             OnPropertyChanged(nameof(CanGoNext));
+            OnPropertyChanged(nameof(PaginationText));
         }
     }
 
@@ -174,12 +195,12 @@ public partial class AdminMessageReportsViewModel : ObservableObject, IRegionAwa
             string.Equals(r, "UberAdmin", StringComparison.OrdinalIgnoreCase));
     }
 
-    static string FormatReason(int? code) => code switch
+    string FormatReason(int? code) => code switch
     {
-        (int)ReviewReportReason.Spam       => "Spam",
-        (int)ReviewReportReason.Offensive  => "Offensive",
-        (int)ReviewReportReason.Misleading => "Misleading",
-        (int)ReviewReportReason.OffTopic   => "Off-topic",
-        _                                  => "Other"
+        (int)ReviewReportReason.Spam       => _localizer["MessageReportsReasonSpam"],
+        (int)ReviewReportReason.Offensive  => _localizer["MessageReportsReasonOffensive"],
+        (int)ReviewReportReason.Misleading => _localizer["MessageReportsReasonMisleading"],
+        (int)ReviewReportReason.OffTopic   => _localizer["MessageReportsReasonOffTopic"],
+        _                                  => _localizer["MessageReportsReasonOther"]
     };
 }

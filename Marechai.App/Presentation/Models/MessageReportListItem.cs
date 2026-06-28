@@ -12,4 +12,5 @@ public sealed class MessageReportListItem
     public string CreatedOnText { get; init; } = string.Empty;
     public string StatusText { get; init; } = string.Empty;
     public bool IsResolved { get; init; }
+    public bool HasConversation { get; init; }
 }

@@ -2704,4 +2704,29 @@
   <data name="ReviewReportsReasonMisleading" xml:space="preserve"><value>Trompeur</value></data>
   <data name="ReviewReportsReasonOffTopic" xml:space="preserve"><value>Hors sujet</value></data>
   <data name="ReviewReportsReasonOther" xml:space="preserve"><value>Autre</value></data>
+  <data name="MessageReportsTitle" xml:space="preserve"><value>Signalements de messages</value></data>
+  <data name="MessageReportsSubtitle" xml:space="preserve"><value>Examinez les signalements déposés par les utilisateurs concernant des messages privés. Résolvez un signalement une fois traité, ou ouvrez la conversation pour l'examiner.</value></data>
+  <data name="MessageReportsShowResolved" xml:space="preserve"><value>Afficher les résolus</value></data>
+  <data name="MessageReportsAccessDeniedTitle" xml:space="preserve"><value>Accès refusé</value></data>
+  <data name="MessageReportsAccessDeniedMessage" xml:space="preserve"><value>Vous devez être administrateur pour gérer les signalements de messages.</value></data>
+  <data name="MessageReportsFailedToLoad" xml:space="preserve"><value>Impossible de charger les signalements de messages</value></data>
+  <data name="MessageReportsReporterColumn" xml:space="preserve"><value>Signalé par</value></data>
+  <data name="MessageReportsReasonColumn" xml:space="preserve"><value>Motif</value></data>
+  <data name="MessageReportsExplanationColumn" xml:space="preserve"><value>Explication</value></data>
+  <data name="MessageReportsStatusColumn" xml:space="preserve"><value>Statut</value></data>
+  <data name="MessageReportsDateColumn" xml:space="preserve"><value>Date</value></data>
+  <data name="MessageReportsActionsColumn" xml:space="preserve"><value>Actions</value></data>
+  <data name="MessageReportsViewThreadButton" xml:space="preserve"><value>Voir la conversation</value></data>
+  <data name="MessageReportsResolveButton" xml:space="preserve"><value>Résoudre</value></data>
+  <data name="MessageReportsFailedToResolve" xml:space="preserve"><value>Impossible de résoudre le signalement.</value></data>
+  <data name="MessageReportsStatusResolved" xml:space="preserve"><value>Résolu</value></data>
+  <data name="MessageReportsStatusPending" xml:space="preserve"><value>En attente</value></data>
+  <data name="MessageReportsReasonSpam" xml:space="preserve"><value>Spam</value></data>
+  <data name="MessageReportsReasonOffensive" xml:space="preserve"><value>Offensant</value></data>
+  <data name="MessageReportsReasonMisleading" xml:space="preserve"><value>Trompeur</value></data>
+  <data name="MessageReportsReasonOffTopic" xml:space="preserve"><value>Hors sujet</value></data>
+  <data name="MessageReportsReasonOther" xml:space="preserve"><value>Autre</value></data>
+  <data name="MessageReportsPaginationFormat" xml:space="preserve"><value>Affichage de {0}–{1} sur {2}</value></data>
+  <data name="MessageReportsPreviousButton" xml:space="preserve"><value>Précédent</value></data>
+  <data name="MessageReportsNextButton" xml:space="preserve"><value>Suivant</value></data>
 </root>

@@ -2740,4 +2740,29 @@
   <data name="ReviewReportsReasonMisleading" xml:space="preserve"><value>Engañoso</value></data>
   <data name="ReviewReportsReasonOffTopic" xml:space="preserve"><value>Fuera de tema</value></data>
   <data name="ReviewReportsReasonOther" xml:space="preserve"><value>Otro</value></data>
+  <data name="MessageReportsTitle" xml:space="preserve"><value>Reportes de mensajes</value></data>
+  <data name="MessageReportsSubtitle" xml:space="preserve"><value>Revise los reportes de los usuarios sobre mensajes privados. Resuelva un reporte una vez atendido, o abra la conversación para investigarlo.</value></data>
+  <data name="MessageReportsShowResolved" xml:space="preserve"><value>Mostrar resueltos</value></data>
+  <data name="MessageReportsAccessDeniedTitle" xml:space="preserve"><value>Acceso denegado</value></data>
+  <data name="MessageReportsAccessDeniedMessage" xml:space="preserve"><value>Debe ser administrador para gestionar los reportes de mensajes.</value></data>
+  <data name="MessageReportsFailedToLoad" xml:space="preserve"><value>No se pudieron cargar los reportes de mensajes</value></data>
+  <data name="MessageReportsReporterColumn" xml:space="preserve"><value>Reportado por</value></data>
+  <data name="MessageReportsReasonColumn" xml:space="preserve"><value>Motivo</value></data>
+  <data name="MessageReportsExplanationColumn" xml:space="preserve"><value>Explicación</value></data>
+  <data name="MessageReportsStatusColumn" xml:space="preserve"><value>Estado</value></data>
+  <data name="MessageReportsDateColumn" xml:space="preserve"><value>Fecha</value></data>
+  <data name="MessageReportsActionsColumn" xml:space="preserve"><value>Acciones</value></data>
+  <data name="MessageReportsViewThreadButton" xml:space="preserve"><value>Ver conversación</value></data>
+  <data name="MessageReportsResolveButton" xml:space="preserve"><value>Resolver</value></data>
+  <data name="MessageReportsFailedToResolve" xml:space="preserve"><value>No se pudo resolver el reporte.</value></data>
+  <data name="MessageReportsStatusResolved" xml:space="preserve"><value>Resuelto</value></data>
+  <data name="MessageReportsStatusPending" xml:space="preserve"><value>Pendiente</value></data>
+  <data name="MessageReportsReasonSpam" xml:space="preserve"><value>Spam</value></data>
+  <data name="MessageReportsReasonOffensive" xml:space="preserve"><value>Ofensivo</value></data>
+  <data name="MessageReportsReasonMisleading" xml:space="preserve"><value>Engañoso</value></data>
+  <data name="MessageReportsReasonOffTopic" xml:space="preserve"><value>Fuera de tema</value></data>
+  <data name="MessageReportsReasonOther" xml:space="preserve"><value>Otro</value></data>
+  <data name="MessageReportsPaginationFormat" xml:space="preserve"><value>Mostrando {0}–{1} de {2}</value></data>
+  <data name="MessageReportsPreviousButton" xml:space="preserve"><value>Anterior</value></data>
+  <data name="MessageReportsNextButton" xml:space="preserve"><value>Siguiente</value></data>
 </root>
