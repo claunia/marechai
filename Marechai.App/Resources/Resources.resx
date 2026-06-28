@@ -2638,6 +2638,48 @@
   <data name="UploadingCoverLabel" xml:space="preserve"><value>Uploading cover...</value></data>
   <data name="FailedToUploadCover" xml:space="preserve"><value>Failed to upload cover.</value></data>
   <data name="FailedToDeleteCover" xml:space="preserve"><value>Failed to delete cover.</value></data>
+  <data name="SoftwareCoversTitle" xml:space="preserve"><value>Software Covers</value></data>
+  <data name="SoftwareCoversSubtitle" xml:space="preserve"><value>View, upload, and manage cover images for this release</value></data>
+  <data name="SoftwareCoversBatchSectionTitle" xml:space="preserve"><value>Batch Upload</value></data>
+  <data name="SoftwareCoversBatchSectionSubtitle" xml:space="preserve"><value>Stage up to 25 cover images, set a type and optional caption per image, then submit the batch.</value></data>
+  <data name="SoftwareCoversAddImagesButton" xml:space="preserve"><value>Add Images</value></data>
+  <data name="SoftwareCoversClearStagedButton" xml:space="preserve"><value>Clear Staged</value></data>
+  <data name="SoftwareCoversSubmitBatchButton" xml:space="preserve"><value>Upload Covers</value></data>
+  <data name="SoftwareCoversNoImagesStaged" xml:space="preserve"><value>No images staged yet. Add one or more covers to start a batch upload.</value></data>
+  <data name="SoftwareCoversPreviewUnavailable" xml:space="preserve"><value>Preview unavailable</value></data>
+  <data name="SoftwareCoversProcessingTitle" xml:space="preserve"><value>Processing Upload</value></data>
+  <data name="SoftwareCoversBatchProgressText" xml:space="preserve"><value>Processed {0} of {1} staged covers.</value></data>
+  <data name="SoftwareCoversPickerCanceled" xml:space="preserve"><value>No files were selected.</value></data>
+  <data name="SoftwareCoversSelectionTrimmed" xml:space="preserve"><value>Only the first {0} files were staged because a batch can hold at most {1} covers.</value></data>
+  <data name="SoftwareCoversMaxImagesReached" xml:space="preserve"><value>You already have the maximum of {0} staged covers.</value></data>
+  <data name="SoftwareCoversUnsupportedFormat" xml:space="preserve"><value>{0} uses an unsupported image format.</value></data>
+  <data name="SoftwareCoversFileTooLarge" xml:space="preserve"><value>{0} exceeds the 50 MB upload limit.</value></data>
+  <data name="SoftwareCoversBatchNotReady" xml:space="preserve"><value>Wait for every staged cover to finish uploading before submitting the batch.</value></data>
+  <data name="SoftwareCoversCommitFailed" xml:space="preserve"><value>Failed to submit the staged batch.</value></data>
+  <data name="SoftwareCoversPollingFailed" xml:space="preserve"><value>Unable to retrieve upload progress for the staged batch.</value></data>
+  <data name="SoftwareCoversBatchFinished" xml:space="preserve"><value>Batch finished. {0} cover(s) succeeded and {1} failed.</value></data>
+  <data name="SoftwareCoversFailedToRemoveStaged" xml:space="preserve"><value>Failed to remove the staged cover.</value></data>
+  <data name="SoftwareCoversUploadingCardStatus" xml:space="preserve"><value>Uploading to staging...</value></data>
+  <data name="SoftwareCoversReadyCardStatus" xml:space="preserve"><value>Ready to submit</value></data>
+  <data name="SoftwareCoversFileRejectedStatus" xml:space="preserve"><value>Staging failed</value></data>
+  <data name="SoftwareCoversCommittingCardStatus" xml:space="preserve"><value>Submitting batch...</value></data>
+  <data name="SoftwareCoversProcessingCardStatus" xml:space="preserve"><value>Processing on server...</value></data>
+  <data name="SoftwareCoversQueuedCardStatus" xml:space="preserve"><value>Queued for processing</value></data>
+  <data name="SoftwareCoversSucceededCardStatus" xml:space="preserve"><value>Uploaded successfully</value></data>
+  <data name="SoftwareCoversFailedCardStatus" xml:space="preserve"><value>Upload failed</value></data>
+  <data name="FailedToLoadCovers" xml:space="preserve"><value>Failed to load covers.</value></data>
+  <data name="FailedToSaveCover" xml:space="preserve"><value>Failed to save the cover.</value></data>
+  <data name="CoverTypeLabel" xml:space="preserve"><value>Cover type</value></data>
+  <data name="EditCoverLabel" xml:space="preserve"><value>Edit Cover</value></data>
+  <data name="SoftwareCoverManagementButton" xml:space="preserve"><value>Covers</value></data>
+  <data name="SoftwareCoverType_Front" xml:space="preserve"><value>Front Cover</value></data>
+  <data name="SoftwareCoverType_Back" xml:space="preserve"><value>Back Cover</value></data>
+  <data name="SoftwareCoverType_InsideFront" xml:space="preserve"><value>Inside Cover (Front)</value></data>
+  <data name="SoftwareCoverType_InsideBack" xml:space="preserve"><value>Inside Cover (Back)</value></data>
+  <data name="SoftwareCoverType_Media" xml:space="preserve"><value>Media</value></data>
+  <data name="SoftwareCoverType_Spine" xml:space="preserve"><value>Spine</value></data>
+  <data name="SoftwareCoverType_Manual" xml:space="preserve"><value>Manual</value></data>
+  <data name="SoftwareCoverType_Other" xml:space="preserve"><value>Other</value></data>
   <data name="DocumentManagementTitle" xml:space="preserve"><value>Document Management</value></data>
   <data name="DocumentManagementSubtitle" xml:space="preserve"><value>Manage documents in the database</value></data>
   <data name="DocumentMgmtAccessDeniedTitle" xml:space="preserve"><value>Access Denied</value></data>

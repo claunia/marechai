@@ -2302,6 +2302,48 @@
   <data name="UploadingCoverLabel" xml:space="preserve"><value>Téléchargement de la couverture...</value></data>
   <data name="FailedToUploadCover" xml:space="preserve"><value>Échec du téléchargement de la couverture.</value></data>
   <data name="FailedToDeleteCover" xml:space="preserve"><value>Échec de la suppression de la couverture.</value></data>
+  <data name="SoftwareCoversTitle" xml:space="preserve"><value>Pochettes de logiciels</value></data>
+  <data name="SoftwareCoversSubtitle" xml:space="preserve"><value>Afficher, téléverser et gérer les images de pochette de cette édition</value></data>
+  <data name="SoftwareCoversBatchSectionTitle" xml:space="preserve"><value>Téléversement par lot</value></data>
+  <data name="SoftwareCoversBatchSectionSubtitle" xml:space="preserve"><value>Préparez jusqu'à 25 images de pochette, définissez un type et une légende facultative par image, puis envoyez le lot.</value></data>
+  <data name="SoftwareCoversAddImagesButton" xml:space="preserve"><value>Ajouter des images</value></data>
+  <data name="SoftwareCoversClearStagedButton" xml:space="preserve"><value>Effacer la préparation</value></data>
+  <data name="SoftwareCoversSubmitBatchButton" xml:space="preserve"><value>Téléverser les pochettes</value></data>
+  <data name="SoftwareCoversNoImagesStaged" xml:space="preserve"><value>Aucune image préparée pour le moment. Ajoutez une ou plusieurs pochettes pour démarrer un téléversement par lot.</value></data>
+  <data name="SoftwareCoversPreviewUnavailable" xml:space="preserve"><value>Aperçu indisponible</value></data>
+  <data name="SoftwareCoversProcessingTitle" xml:space="preserve"><value>Traitement du téléversement</value></data>
+  <data name="SoftwareCoversBatchProgressText" xml:space="preserve"><value>{0} sur {1} pochettes préparées traitées.</value></data>
+  <data name="SoftwareCoversPickerCanceled" xml:space="preserve"><value>Aucun fichier sélectionné.</value></data>
+  <data name="SoftwareCoversSelectionTrimmed" xml:space="preserve"><value>Seuls les {0} premiers fichiers ont été préparés, car un lot peut contenir au maximum {1} pochettes.</value></data>
+  <data name="SoftwareCoversMaxImagesReached" xml:space="preserve"><value>Vous avez déjà atteint le maximum de {0} pochettes préparées.</value></data>
+  <data name="SoftwareCoversUnsupportedFormat" xml:space="preserve"><value>{0} utilise un format d'image non pris en charge.</value></data>
+  <data name="SoftwareCoversFileTooLarge" xml:space="preserve"><value>{0} dépasse la limite de téléversement de 50 Mo.</value></data>
+  <data name="SoftwareCoversBatchNotReady" xml:space="preserve"><value>Attendez que chaque pochette préparée ait fini d'être téléversée avant d'envoyer le lot.</value></data>
+  <data name="SoftwareCoversCommitFailed" xml:space="preserve"><value>Échec de l'envoi du lot préparé.</value></data>
+  <data name="SoftwareCoversPollingFailed" xml:space="preserve"><value>Impossible de récupérer la progression du téléversement du lot préparé.</value></data>
+  <data name="SoftwareCoversBatchFinished" xml:space="preserve"><value>Lot terminé. {0} pochette(s) réussie(s) et {1} échouée(s).</value></data>
+  <data name="SoftwareCoversFailedToRemoveStaged" xml:space="preserve"><value>Échec de la suppression de la pochette préparée.</value></data>
+  <data name="SoftwareCoversUploadingCardStatus" xml:space="preserve"><value>Téléversement en préparation...</value></data>
+  <data name="SoftwareCoversReadyCardStatus" xml:space="preserve"><value>Prêt à envoyer</value></data>
+  <data name="SoftwareCoversFileRejectedStatus" xml:space="preserve"><value>Échec de la préparation</value></data>
+  <data name="SoftwareCoversCommittingCardStatus" xml:space="preserve"><value>Envoi du lot...</value></data>
+  <data name="SoftwareCoversProcessingCardStatus" xml:space="preserve"><value>Traitement sur le serveur...</value></data>
+  <data name="SoftwareCoversQueuedCardStatus" xml:space="preserve"><value>En file d'attente</value></data>
+  <data name="SoftwareCoversSucceededCardStatus" xml:space="preserve"><value>Téléversé avec succès</value></data>
+  <data name="SoftwareCoversFailedCardStatus" xml:space="preserve"><value>Échec du téléversement</value></data>
+  <data name="FailedToLoadCovers" xml:space="preserve"><value>Échec du chargement des pochettes.</value></data>
+  <data name="FailedToSaveCover" xml:space="preserve"><value>Échec de l'enregistrement de la pochette.</value></data>
+  <data name="CoverTypeLabel" xml:space="preserve"><value>Type de pochette</value></data>
+  <data name="EditCoverLabel" xml:space="preserve"><value>Modifier la pochette</value></data>
+  <data name="SoftwareCoverManagementButton" xml:space="preserve"><value>Pochettes</value></data>
+  <data name="SoftwareCoverType_Front" xml:space="preserve"><value>Pochette avant</value></data>
+  <data name="SoftwareCoverType_Back" xml:space="preserve"><value>Pochette arrière</value></data>
+  <data name="SoftwareCoverType_InsideFront" xml:space="preserve"><value>Intérieur (avant)</value></data>
+  <data name="SoftwareCoverType_InsideBack" xml:space="preserve"><value>Intérieur (arrière)</value></data>
+  <data name="SoftwareCoverType_Media" xml:space="preserve"><value>Support</value></data>
+  <data name="SoftwareCoverType_Spine" xml:space="preserve"><value>Tranche</value></data>
+  <data name="SoftwareCoverType_Manual" xml:space="preserve"><value>Manuel</value></data>
+  <data name="SoftwareCoverType_Other" xml:space="preserve"><value>Autre</value></data>
   <data name="DocumentManagementTitle" xml:space="preserve"><value>Gestion des Documents</value></data>
   <data name="DocumentManagementSubtitle" xml:space="preserve"><value>Gérer les documents dans la base de données</value></data>
   <data name="DocumentMgmtAccessDeniedTitle" xml:space="preserve"><value>Accès Refusé</value></data>

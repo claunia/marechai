@@ -2338,6 +2338,48 @@
   <data name="UploadingCoverLabel" xml:space="preserve"><value>Subiendo portada...</value></data>
   <data name="FailedToUploadCover" xml:space="preserve"><value>Error al subir la portada.</value></data>
   <data name="FailedToDeleteCover" xml:space="preserve"><value>Error al eliminar la portada.</value></data>
+  <data name="SoftwareCoversTitle" xml:space="preserve"><value>Portadas de Software</value></data>
+  <data name="SoftwareCoversSubtitle" xml:space="preserve"><value>Ver, subir y gestionar las imágenes de portada de esta edición</value></data>
+  <data name="SoftwareCoversBatchSectionTitle" xml:space="preserve"><value>Carga por lotes</value></data>
+  <data name="SoftwareCoversBatchSectionSubtitle" xml:space="preserve"><value>Prepare hasta 25 imágenes de portada, establezca un tipo y un subtítulo opcional por imagen, y luego envíe el lote.</value></data>
+  <data name="SoftwareCoversAddImagesButton" xml:space="preserve"><value>Añadir imágenes</value></data>
+  <data name="SoftwareCoversClearStagedButton" xml:space="preserve"><value>Borrar preparadas</value></data>
+  <data name="SoftwareCoversSubmitBatchButton" xml:space="preserve"><value>Subir portadas</value></data>
+  <data name="SoftwareCoversNoImagesStaged" xml:space="preserve"><value>Aún no hay imágenes preparadas. Añada una o más portadas para iniciar una carga por lotes.</value></data>
+  <data name="SoftwareCoversPreviewUnavailable" xml:space="preserve"><value>Vista previa no disponible</value></data>
+  <data name="SoftwareCoversProcessingTitle" xml:space="preserve"><value>Procesando carga</value></data>
+  <data name="SoftwareCoversBatchProgressText" xml:space="preserve"><value>Procesadas {0} de {1} portadas preparadas.</value></data>
+  <data name="SoftwareCoversPickerCanceled" xml:space="preserve"><value>No se seleccionó ningún archivo.</value></data>
+  <data name="SoftwareCoversSelectionTrimmed" xml:space="preserve"><value>Solo se prepararon los primeros {0} archivos porque un lote admite como máximo {1} portadas.</value></data>
+  <data name="SoftwareCoversMaxImagesReached" xml:space="preserve"><value>Ya tiene el máximo de {0} portadas preparadas.</value></data>
+  <data name="SoftwareCoversUnsupportedFormat" xml:space="preserve"><value>{0} usa un formato de imagen no admitido.</value></data>
+  <data name="SoftwareCoversFileTooLarge" xml:space="preserve"><value>{0} supera el límite de carga de 50 MB.</value></data>
+  <data name="SoftwareCoversBatchNotReady" xml:space="preserve"><value>Espere a que todas las portadas preparadas terminen de subirse antes de enviar el lote.</value></data>
+  <data name="SoftwareCoversCommitFailed" xml:space="preserve"><value>No se pudo enviar el lote preparado.</value></data>
+  <data name="SoftwareCoversPollingFailed" xml:space="preserve"><value>No se pudo obtener el progreso de carga del lote preparado.</value></data>
+  <data name="SoftwareCoversBatchFinished" xml:space="preserve"><value>Lote finalizado. {0} portada(s) correctas y {1} fallidas.</value></data>
+  <data name="SoftwareCoversFailedToRemoveStaged" xml:space="preserve"><value>No se pudo eliminar la portada preparada.</value></data>
+  <data name="SoftwareCoversUploadingCardStatus" xml:space="preserve"><value>Subiendo a preparación...</value></data>
+  <data name="SoftwareCoversReadyCardStatus" xml:space="preserve"><value>Lista para enviar</value></data>
+  <data name="SoftwareCoversFileRejectedStatus" xml:space="preserve"><value>Error en la preparación</value></data>
+  <data name="SoftwareCoversCommittingCardStatus" xml:space="preserve"><value>Enviando lote...</value></data>
+  <data name="SoftwareCoversProcessingCardStatus" xml:space="preserve"><value>Procesando en el servidor...</value></data>
+  <data name="SoftwareCoversQueuedCardStatus" xml:space="preserve"><value>En cola para procesar</value></data>
+  <data name="SoftwareCoversSucceededCardStatus" xml:space="preserve"><value>Subida correctamente</value></data>
+  <data name="SoftwareCoversFailedCardStatus" xml:space="preserve"><value>Error al subir</value></data>
+  <data name="FailedToLoadCovers" xml:space="preserve"><value>Error al cargar las portadas.</value></data>
+  <data name="FailedToSaveCover" xml:space="preserve"><value>Error al guardar la portada.</value></data>
+  <data name="CoverTypeLabel" xml:space="preserve"><value>Tipo de portada</value></data>
+  <data name="EditCoverLabel" xml:space="preserve"><value>Editar portada</value></data>
+  <data name="SoftwareCoverManagementButton" xml:space="preserve"><value>Portadas</value></data>
+  <data name="SoftwareCoverType_Front" xml:space="preserve"><value>Portada frontal</value></data>
+  <data name="SoftwareCoverType_Back" xml:space="preserve"><value>Contraportada</value></data>
+  <data name="SoftwareCoverType_InsideFront" xml:space="preserve"><value>Interior (frontal)</value></data>
+  <data name="SoftwareCoverType_InsideBack" xml:space="preserve"><value>Interior (posterior)</value></data>
+  <data name="SoftwareCoverType_Media" xml:space="preserve"><value>Soporte</value></data>
+  <data name="SoftwareCoverType_Spine" xml:space="preserve"><value>Lomo</value></data>
+  <data name="SoftwareCoverType_Manual" xml:space="preserve"><value>Manual</value></data>
+  <data name="SoftwareCoverType_Other" xml:space="preserve"><value>Otro</value></data>
   <data name="DocumentManagementTitle" xml:space="preserve"><value>Gestión de Documentos</value></data>
   <data name="DocumentManagementSubtitle" xml:space="preserve"><value>Gestionar documentos en la base de datos</value></data>
   <data name="DocumentMgmtAccessDeniedTitle" xml:space="preserve"><value>Acceso Denegado</value></data>

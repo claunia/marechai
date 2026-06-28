@@ -2198,6 +2198,48 @@
   <data name="UploadingCoverLabel" xml:space="preserve"><value>Enviando capa...</value></data>
   <data name="FailedToUploadCover" xml:space="preserve"><value>Falha ao enviar a capa.</value></data>
   <data name="FailedToDeleteCover" xml:space="preserve"><value>Falha ao excluir a capa.</value></data>
+  <data name="SoftwareCoversTitle" xml:space="preserve"><value>Capas de Software</value></data>
+  <data name="SoftwareCoversSubtitle" xml:space="preserve"><value>Ver, enviar e gerenciar as imagens de capa desta edição</value></data>
+  <data name="SoftwareCoversBatchSectionTitle" xml:space="preserve"><value>Envio em lote</value></data>
+  <data name="SoftwareCoversBatchSectionSubtitle" xml:space="preserve"><value>Prepare até 25 imagens de capa, defina um tipo e uma legenda opcional por imagem e envie o lote.</value></data>
+  <data name="SoftwareCoversAddImagesButton" xml:space="preserve"><value>Adicionar imagens</value></data>
+  <data name="SoftwareCoversClearStagedButton" xml:space="preserve"><value>Limpar preparadas</value></data>
+  <data name="SoftwareCoversSubmitBatchButton" xml:space="preserve"><value>Enviar capas</value></data>
+  <data name="SoftwareCoversNoImagesStaged" xml:space="preserve"><value>Nenhuma imagem preparada ainda. Adicione uma ou mais capas para iniciar um envio em lote.</value></data>
+  <data name="SoftwareCoversPreviewUnavailable" xml:space="preserve"><value>Pré-visualização indisponível</value></data>
+  <data name="SoftwareCoversProcessingTitle" xml:space="preserve"><value>Processando envio</value></data>
+  <data name="SoftwareCoversBatchProgressText" xml:space="preserve"><value>Processadas {0} de {1} capas preparadas.</value></data>
+  <data name="SoftwareCoversPickerCanceled" xml:space="preserve"><value>Nenhum arquivo foi selecionado.</value></data>
+  <data name="SoftwareCoversSelectionTrimmed" xml:space="preserve"><value>Somente os primeiros {0} arquivos foram preparados, pois um lote pode conter no máximo {1} capas.</value></data>
+  <data name="SoftwareCoversMaxImagesReached" xml:space="preserve"><value>Você já tem o máximo de {0} capas preparadas.</value></data>
+  <data name="SoftwareCoversUnsupportedFormat" xml:space="preserve"><value>{0} usa um formato de imagem não suportado.</value></data>
+  <data name="SoftwareCoversFileTooLarge" xml:space="preserve"><value>{0} excede o limite de envio de 50 MB.</value></data>
+  <data name="SoftwareCoversBatchNotReady" xml:space="preserve"><value>Espere até que todas as capas preparadas terminem de ser enviadas antes de enviar o lote.</value></data>
+  <data name="SoftwareCoversCommitFailed" xml:space="preserve"><value>Falha ao enviar o lote preparado.</value></data>
+  <data name="SoftwareCoversPollingFailed" xml:space="preserve"><value>Não foi possível obter o progresso de envio do lote preparado.</value></data>
+  <data name="SoftwareCoversBatchFinished" xml:space="preserve"><value>Lote concluído. {0} capa(s) com sucesso e {1} com falha.</value></data>
+  <data name="SoftwareCoversFailedToRemoveStaged" xml:space="preserve"><value>Falha ao remover a capa preparada.</value></data>
+  <data name="SoftwareCoversUploadingCardStatus" xml:space="preserve"><value>Enviando para preparação...</value></data>
+  <data name="SoftwareCoversReadyCardStatus" xml:space="preserve"><value>Pronta para enviar</value></data>
+  <data name="SoftwareCoversFileRejectedStatus" xml:space="preserve"><value>Falha na preparação</value></data>
+  <data name="SoftwareCoversCommittingCardStatus" xml:space="preserve"><value>Enviando lote...</value></data>
+  <data name="SoftwareCoversProcessingCardStatus" xml:space="preserve"><value>Processando no servidor...</value></data>
+  <data name="SoftwareCoversQueuedCardStatus" xml:space="preserve"><value>Na fila para processamento</value></data>
+  <data name="SoftwareCoversSucceededCardStatus" xml:space="preserve"><value>Enviada com sucesso</value></data>
+  <data name="SoftwareCoversFailedCardStatus" xml:space="preserve"><value>Falha no envio</value></data>
+  <data name="FailedToLoadCovers" xml:space="preserve"><value>Falha ao carregar as capas.</value></data>
+  <data name="FailedToSaveCover" xml:space="preserve"><value>Falha ao salvar a capa.</value></data>
+  <data name="CoverTypeLabel" xml:space="preserve"><value>Tipo de capa</value></data>
+  <data name="EditCoverLabel" xml:space="preserve"><value>Editar capa</value></data>
+  <data name="SoftwareCoverManagementButton" xml:space="preserve"><value>Capas</value></data>
+  <data name="SoftwareCoverType_Front" xml:space="preserve"><value>Capa frontal</value></data>
+  <data name="SoftwareCoverType_Back" xml:space="preserve"><value>Contracapa</value></data>
+  <data name="SoftwareCoverType_InsideFront" xml:space="preserve"><value>Interior (frontal)</value></data>
+  <data name="SoftwareCoverType_InsideBack" xml:space="preserve"><value>Interior (posterior)</value></data>
+  <data name="SoftwareCoverType_Media" xml:space="preserve"><value>Mídia</value></data>
+  <data name="SoftwareCoverType_Spine" xml:space="preserve"><value>Lombada</value></data>
+  <data name="SoftwareCoverType_Manual" xml:space="preserve"><value>Manual</value></data>
+  <data name="SoftwareCoverType_Other" xml:space="preserve"><value>Outro</value></data>
   <data name="DocumentManagementTitle" xml:space="preserve"><value>Gerenciamento de Documentos</value></data>
   <data name="DocumentManagementSubtitle" xml:space="preserve"><value>Gerenciar documentos no banco de dados</value></data>
   <data name="DocumentMgmtAccessDeniedTitle" xml:space="preserve"><value>Acesso Negado</value></data>

@@ -7,6 +7,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Humanizer;
 using Marechai.ApiClient.Models;
+using Marechai.App.Navigation;
+using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
 using Marechai.Data;
@@ -23,6 +25,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     private readonly IStringLocalizer                            _localizer;
     private readonly ILogger<AdminSoftwareReleasesViewModel>     _logger;
     private readonly ITokenService                               _tokenService;
+    private readonly IRegionManager                               _regionManager;
 
     [ObservableProperty] private ObservableCollection<SoftwareReleaseDto> _releases = [];
     [ObservableProperty] private ObservableCollection<SoftwareReleaseDto> _filteredReleases = [];
@@ -124,8 +127,10 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
                                           IJwtService                              jwtService,
                                           ITokenService                            tokenService,
                                           ILogger<AdminSoftwareReleasesViewModel>  logger,
-                                          IStringLocalizer                         localizer)
+                                          IStringLocalizer                         localizer,
+                                          IRegionManager                           regionManager)
     {
+        _regionManager    = regionManager;
         _service          = service;
         _versionsService  = versionsService;
         _platformsService = platformsService;
@@ -138,6 +143,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         LoadCommand       = new AsyncRelayCommand(LoadAsync);
         OpenAddCommand    = new RelayCommand(OpenAdd);
         OpenEditCommand   = new RelayCommand<SoftwareReleaseDto>(OpenEdit);
+        OpenCoversCommand = new RelayCommand<SoftwareReleaseDto>(OpenCovers);
         DeleteCommand     = new AsyncRelayCommand<SoftwareReleaseDto>(DeleteAsync);
         SaveCommand       = new AsyncRelayCommand(SaveAsync);
         CancelEditCommand = new RelayCommand(CancelEdit);
@@ -163,6 +169,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     public IAsyncRelayCommand                        LoadCommand       { get; }
     public IRelayCommand                             OpenAddCommand    { get; }
     public IRelayCommand<SoftwareReleaseDto>         OpenEditCommand   { get; }
+    public IRelayCommand<SoftwareReleaseDto>         OpenCoversCommand { get; }
     public IAsyncRelayCommand<SoftwareReleaseDto>    DeleteCommand     { get; }
     public IAsyncRelayCommand                        SaveCommand       { get; }
     public IRelayCommand                             CancelEditCommand { get; }
@@ -286,6 +293,19 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         UpdateRecommendedGpuSuggestions(string.Empty);
         UpdateSoundSynthSuggestions(string.Empty);
         IsEditing = true;
+    }
+
+    void OpenCovers(SoftwareReleaseDto? item)
+    {
+        if(item?.Id == null) return;
+
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.SoftwareReleaseId, item.Id.Value },
+            { NavParamKeys.SoftwareReleaseTitle, item.Title ?? string.Empty }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminSoftwareCoversPage), parameters);
     }
 
     private async void OpenEdit(SoftwareReleaseDto? item)

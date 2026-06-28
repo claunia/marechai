@@ -73,7 +73,7 @@ public sealed class SoftwareCoverCache
     {
         var    filename = $"{coverId}.webp";
         string baseUrl  = _configuration.GetSection("ApiClient:Url").Value;
-        string url      = baseUrl + $"/assets/photos/software-covers/webp/4k/{filename}";
+        string url      = baseUrl + $"/assets/photos/software-covers/thumbs/webp/4k/{filename}";
 
         using var                 httpClient = new HttpClient();
         using HttpResponseMessage response   = await httpClient.GetAsync(url);

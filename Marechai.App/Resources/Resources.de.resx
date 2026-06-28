@@ -2198,6 +2198,48 @@
   <data name="UploadingCoverLabel" xml:space="preserve"><value>Titelbild wird hochgeladen...</value></data>
   <data name="FailedToUploadCover" xml:space="preserve"><value>Titelbild konnte nicht hochgeladen werden.</value></data>
   <data name="FailedToDeleteCover" xml:space="preserve"><value>Titelbild konnte nicht gelöscht werden.</value></data>
+  <data name="SoftwareCoversTitle" xml:space="preserve"><value>Software-Titelbilder</value></data>
+  <data name="SoftwareCoversSubtitle" xml:space="preserve"><value>Titelbilder für diese Veröffentlichung anzeigen, hochladen und verwalten</value></data>
+  <data name="SoftwareCoversBatchSectionTitle" xml:space="preserve"><value>Stapel-Upload</value></data>
+  <data name="SoftwareCoversBatchSectionSubtitle" xml:space="preserve"><value>Stellen Sie bis zu 25 Titelbilder bereit, legen Sie pro Bild einen Typ und optional eine Bildunterschrift fest und senden Sie den Stapel ab.</value></data>
+  <data name="SoftwareCoversAddImagesButton" xml:space="preserve"><value>Bilder hinzufügen</value></data>
+  <data name="SoftwareCoversClearStagedButton" xml:space="preserve"><value>Bereitgestellte löschen</value></data>
+  <data name="SoftwareCoversSubmitBatchButton" xml:space="preserve"><value>Titelbilder hochladen</value></data>
+  <data name="SoftwareCoversNoImagesStaged" xml:space="preserve"><value>Noch keine Bilder bereitgestellt. Fügen Sie ein oder mehrere Titelbilder hinzu, um einen Stapel-Upload zu starten.</value></data>
+  <data name="SoftwareCoversPreviewUnavailable" xml:space="preserve"><value>Vorschau nicht verfügbar</value></data>
+  <data name="SoftwareCoversProcessingTitle" xml:space="preserve"><value>Upload wird verarbeitet</value></data>
+  <data name="SoftwareCoversBatchProgressText" xml:space="preserve"><value>{0} von {1} bereitgestellten Titelbildern verarbeitet.</value></data>
+  <data name="SoftwareCoversPickerCanceled" xml:space="preserve"><value>Es wurden keine Dateien ausgewählt.</value></data>
+  <data name="SoftwareCoversSelectionTrimmed" xml:space="preserve"><value>Es wurden nur die ersten {0} Dateien bereitgestellt, da ein Stapel höchstens {1} Titelbilder enthalten kann.</value></data>
+  <data name="SoftwareCoversMaxImagesReached" xml:space="preserve"><value>Sie haben bereits das Maximum von {0} bereitgestellten Titelbildern erreicht.</value></data>
+  <data name="SoftwareCoversUnsupportedFormat" xml:space="preserve"><value>{0} verwendet ein nicht unterstütztes Bildformat.</value></data>
+  <data name="SoftwareCoversFileTooLarge" xml:space="preserve"><value>{0} überschreitet das Upload-Limit von 50 MB.</value></data>
+  <data name="SoftwareCoversBatchNotReady" xml:space="preserve"><value>Warten Sie, bis jedes bereitgestellte Titelbild hochgeladen wurde, bevor Sie den Stapel absenden.</value></data>
+  <data name="SoftwareCoversCommitFailed" xml:space="preserve"><value>Der bereitgestellte Stapel konnte nicht übermittelt werden.</value></data>
+  <data name="SoftwareCoversPollingFailed" xml:space="preserve"><value>Der Upload-Fortschritt für den bereitgestellten Stapel konnte nicht abgerufen werden.</value></data>
+  <data name="SoftwareCoversBatchFinished" xml:space="preserve"><value>Stapel abgeschlossen. {0} Titelbild(er) erfolgreich, {1} fehlgeschlagen.</value></data>
+  <data name="SoftwareCoversFailedToRemoveStaged" xml:space="preserve"><value>Das bereitgestellte Titelbild konnte nicht entfernt werden.</value></data>
+  <data name="SoftwareCoversUploadingCardStatus" xml:space="preserve"><value>Wird bereitgestellt...</value></data>
+  <data name="SoftwareCoversReadyCardStatus" xml:space="preserve"><value>Bereit zum Absenden</value></data>
+  <data name="SoftwareCoversFileRejectedStatus" xml:space="preserve"><value>Bereitstellung fehlgeschlagen</value></data>
+  <data name="SoftwareCoversCommittingCardStatus" xml:space="preserve"><value>Stapel wird übermittelt...</value></data>
+  <data name="SoftwareCoversProcessingCardStatus" xml:space="preserve"><value>Wird auf dem Server verarbeitet...</value></data>
+  <data name="SoftwareCoversQueuedCardStatus" xml:space="preserve"><value>In Warteschlange</value></data>
+  <data name="SoftwareCoversSucceededCardStatus" xml:space="preserve"><value>Erfolgreich hochgeladen</value></data>
+  <data name="SoftwareCoversFailedCardStatus" xml:space="preserve"><value>Upload fehlgeschlagen</value></data>
+  <data name="FailedToLoadCovers" xml:space="preserve"><value>Titelbilder konnten nicht geladen werden.</value></data>
+  <data name="FailedToSaveCover" xml:space="preserve"><value>Titelbild konnte nicht gespeichert werden.</value></data>
+  <data name="CoverTypeLabel" xml:space="preserve"><value>Titelbildtyp</value></data>
+  <data name="EditCoverLabel" xml:space="preserve"><value>Titelbild bearbeiten</value></data>
+  <data name="SoftwareCoverManagementButton" xml:space="preserve"><value>Titelbilder</value></data>
+  <data name="SoftwareCoverType_Front" xml:space="preserve"><value>Vorderseite</value></data>
+  <data name="SoftwareCoverType_Back" xml:space="preserve"><value>Rückseite</value></data>
+  <data name="SoftwareCoverType_InsideFront" xml:space="preserve"><value>Innenseite (vorne)</value></data>
+  <data name="SoftwareCoverType_InsideBack" xml:space="preserve"><value>Innenseite (hinten)</value></data>
+  <data name="SoftwareCoverType_Media" xml:space="preserve"><value>Datenträger</value></data>
+  <data name="SoftwareCoverType_Spine" xml:space="preserve"><value>Buchrücken</value></data>
+  <data name="SoftwareCoverType_Manual" xml:space="preserve"><value>Handbuch</value></data>
+  <data name="SoftwareCoverType_Other" xml:space="preserve"><value>Sonstiges</value></data>
   <data name="DocumentManagementTitle" xml:space="preserve"><value>Dokumentenverwaltung</value></data>
   <data name="DocumentManagementSubtitle" xml:space="preserve"><value>Dokumente in der Datenbank verwalten</value></data>
   <data name="DocumentMgmtAccessDeniedTitle" xml:space="preserve"><value>Zugriff verweigert</value></data>
