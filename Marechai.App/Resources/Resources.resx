@@ -3041,6 +3041,34 @@
   <data name="SoftwareScreenshotManagementButton" xml:space="preserve"><value>Software Screenshots</value></data>
   <data name="SoftwareScreenshotsTitle" xml:space="preserve"><value>Software Screenshots</value></data>
   <data name="SoftwareScreenshotsSubtitle" xml:space="preserve"><value>Manage screenshots for software</value></data>
+  <data name="SoftwareScreenshotsBatchSectionTitle" xml:space="preserve"><value>Batch Upload</value></data>
+  <data name="SoftwareScreenshotsBatchSectionSubtitle" xml:space="preserve"><value>Stage up to 25 screenshots, set an optional caption per image and a shared group name, then submit the batch.</value></data>
+  <data name="SoftwareScreenshotsAddImagesButton" xml:space="preserve"><value>Add Images</value></data>
+  <data name="SoftwareScreenshotsClearStagedButton" xml:space="preserve"><value>Clear Staged</value></data>
+  <data name="SoftwareScreenshotsSubmitBatchButton" xml:space="preserve"><value>Upload Screenshots</value></data>
+  <data name="SoftwareScreenshotsNoImagesStaged" xml:space="preserve"><value>No images staged yet. Add one or more screenshots to start a batch upload.</value></data>
+  <data name="SoftwareScreenshotsPreviewUnavailable" xml:space="preserve"><value>Preview unavailable</value></data>
+  <data name="SoftwareScreenshotsProcessingTitle" xml:space="preserve"><value>Processing Upload</value></data>
+  <data name="SoftwareScreenshotsBatchProgressText" xml:space="preserve"><value>Processed {0} of {1} staged screenshots.</value></data>
+  <data name="SoftwareScreenshotsPickerCanceled" xml:space="preserve"><value>No files were selected.</value></data>
+  <data name="SoftwareScreenshotsSelectionTrimmed" xml:space="preserve"><value>Only the first {0} files were staged because a batch can hold at most {1} screenshots.</value></data>
+  <data name="SoftwareScreenshotsMaxImagesReached" xml:space="preserve"><value>You already have the maximum of {0} staged screenshots.</value></data>
+  <data name="SoftwareScreenshotsUnsupportedFormat" xml:space="preserve"><value>{0} uses an unsupported image format.</value></data>
+  <data name="SoftwareScreenshotsFileTooLarge" xml:space="preserve"><value>{0} exceeds the 50 MB upload limit.</value></data>
+  <data name="SoftwareScreenshotsBatchNotReady" xml:space="preserve"><value>Wait for every staged screenshot to finish uploading before submitting the batch.</value></data>
+  <data name="SoftwareScreenshotsCommitFailed" xml:space="preserve"><value>Failed to submit the staged batch.</value></data>
+  <data name="SoftwareScreenshotsPollingFailed" xml:space="preserve"><value>Unable to retrieve upload progress for the staged batch.</value></data>
+  <data name="SoftwareScreenshotsBatchFinished" xml:space="preserve"><value>Batch finished. {0} screenshot(s) succeeded and {1} failed.</value></data>
+  <data name="SoftwareScreenshotsFailedToRemoveStaged" xml:space="preserve"><value>Failed to remove the staged screenshot.</value></data>
+  <data name="SoftwareScreenshotsUploadingCardStatus" xml:space="preserve"><value>Uploading to staging...</value></data>
+  <data name="SoftwareScreenshotsReadyCardStatus" xml:space="preserve"><value>Ready to submit</value></data>
+  <data name="SoftwareScreenshotsFileRejectedStatus" xml:space="preserve"><value>Staging failed</value></data>
+  <data name="SoftwareScreenshotsCommittingCardStatus" xml:space="preserve"><value>Submitting batch...</value></data>
+  <data name="SoftwareScreenshotsProcessingCardStatus" xml:space="preserve"><value>Processing on server...</value></data>
+  <data name="SoftwareScreenshotsQueuedCardStatus" xml:space="preserve"><value>Queued for processing</value></data>
+  <data name="SoftwareScreenshotsSucceededCardStatus" xml:space="preserve"><value>Uploaded successfully</value></data>
+  <data name="SoftwareScreenshotsFailedCardStatus" xml:space="preserve"><value>Upload failed</value></data>
+  <data name="GroupNameLabel" xml:space="preserve"><value>Group name</value></data>
   <data name="UploadScreenshotLabel" xml:space="preserve"><value>Upload Screenshot</value></data>
   <data name="UploadScreenshotButton" xml:space="preserve"><value>Upload Screenshot</value></data>
   <data name="UploadingScreenshotText" xml:space="preserve"><value>Uploading screenshot...</value></data>

@@ -2699,6 +2699,34 @@
   <data name="SoftwareScreenshotManagementButton" xml:space="preserve"><value>Software Screenshots</value></data>
   <data name="SoftwareScreenshotsTitle" xml:space="preserve"><value>Software Screenshots</value></data>
   <data name="SoftwareScreenshotsSubtitle" xml:space="preserve"><value>Manage screenshots for software</value></data>
+  <data name="SoftwareScreenshotsBatchSectionTitle" xml:space="preserve"><value>Téléversement par lot</value></data>
+  <data name="SoftwareScreenshotsBatchSectionSubtitle" xml:space="preserve"><value>Préparez jusqu'à 25 captures d'écran, définissez une légende facultative par image et un nom de groupe partagé, puis envoyez le lot.</value></data>
+  <data name="SoftwareScreenshotsAddImagesButton" xml:space="preserve"><value>Ajouter des images</value></data>
+  <data name="SoftwareScreenshotsClearStagedButton" xml:space="preserve"><value>Effacer la préparation</value></data>
+  <data name="SoftwareScreenshotsSubmitBatchButton" xml:space="preserve"><value>Téléverser les captures</value></data>
+  <data name="SoftwareScreenshotsNoImagesStaged" xml:space="preserve"><value>Aucune image préparée pour le moment. Ajoutez une ou plusieurs captures d'écran pour démarrer un téléversement par lot.</value></data>
+  <data name="SoftwareScreenshotsPreviewUnavailable" xml:space="preserve"><value>Aperçu indisponible</value></data>
+  <data name="SoftwareScreenshotsProcessingTitle" xml:space="preserve"><value>Traitement du téléversement</value></data>
+  <data name="SoftwareScreenshotsBatchProgressText" xml:space="preserve"><value>{0} sur {1} captures préparées traitées.</value></data>
+  <data name="SoftwareScreenshotsPickerCanceled" xml:space="preserve"><value>Aucun fichier sélectionné.</value></data>
+  <data name="SoftwareScreenshotsSelectionTrimmed" xml:space="preserve"><value>Seuls les {0} premiers fichiers ont été préparés, car un lot peut contenir au maximum {1} captures.</value></data>
+  <data name="SoftwareScreenshotsMaxImagesReached" xml:space="preserve"><value>Vous avez déjà atteint le maximum de {0} captures préparées.</value></data>
+  <data name="SoftwareScreenshotsUnsupportedFormat" xml:space="preserve"><value>{0} utilise un format d'image non pris en charge.</value></data>
+  <data name="SoftwareScreenshotsFileTooLarge" xml:space="preserve"><value>{0} dépasse la limite de téléversement de 50 Mo.</value></data>
+  <data name="SoftwareScreenshotsBatchNotReady" xml:space="preserve"><value>Attendez que chaque capture préparée ait fini d'être téléversée avant d'envoyer le lot.</value></data>
+  <data name="SoftwareScreenshotsCommitFailed" xml:space="preserve"><value>Échec de l'envoi du lot préparé.</value></data>
+  <data name="SoftwareScreenshotsPollingFailed" xml:space="preserve"><value>Impossible de récupérer la progression du téléversement du lot préparé.</value></data>
+  <data name="SoftwareScreenshotsBatchFinished" xml:space="preserve"><value>Lot terminé. {0} capture(s) réussie(s) et {1} échouée(s).</value></data>
+  <data name="SoftwareScreenshotsFailedToRemoveStaged" xml:space="preserve"><value>Échec de la suppression de la capture préparée.</value></data>
+  <data name="SoftwareScreenshotsUploadingCardStatus" xml:space="preserve"><value>Téléversement en préparation...</value></data>
+  <data name="SoftwareScreenshotsReadyCardStatus" xml:space="preserve"><value>Prêt à envoyer</value></data>
+  <data name="SoftwareScreenshotsFileRejectedStatus" xml:space="preserve"><value>Échec de la préparation</value></data>
+  <data name="SoftwareScreenshotsCommittingCardStatus" xml:space="preserve"><value>Envoi du lot...</value></data>
+  <data name="SoftwareScreenshotsProcessingCardStatus" xml:space="preserve"><value>Traitement sur le serveur...</value></data>
+  <data name="SoftwareScreenshotsQueuedCardStatus" xml:space="preserve"><value>En file d'attente</value></data>
+  <data name="SoftwareScreenshotsSucceededCardStatus" xml:space="preserve"><value>Téléversé avec succès</value></data>
+  <data name="SoftwareScreenshotsFailedCardStatus" xml:space="preserve"><value>Échec du téléversement</value></data>
+  <data name="GroupNameLabel" xml:space="preserve"><value>Nom du groupe</value></data>
   <data name="UploadScreenshotLabel" xml:space="preserve"><value>Upload Screenshot</value></data>
   <data name="UploadScreenshotButton" xml:space="preserve"><value>Upload Screenshot</value></data>
   <data name="UploadingScreenshotText" xml:space="preserve"><value>Uploading screenshot...</value></data>

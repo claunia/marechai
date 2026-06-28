@@ -2735,6 +2735,34 @@
   <data name="SoftwareScreenshotManagementButton" xml:space="preserve"><value>Capturas de pantalla</value></data>
   <data name="SoftwareScreenshotsTitle" xml:space="preserve"><value>Capturas de pantalla de software</value></data>
   <data name="SoftwareScreenshotsSubtitle" xml:space="preserve"><value>Gestionar capturas de pantalla de software</value></data>
+  <data name="SoftwareScreenshotsBatchSectionTitle" xml:space="preserve"><value>Carga por lotes</value></data>
+  <data name="SoftwareScreenshotsBatchSectionSubtitle" xml:space="preserve"><value>Prepare hasta 25 capturas de pantalla, establezca un subtítulo opcional por imagen y un nombre de grupo compartido, y luego envíe el lote.</value></data>
+  <data name="SoftwareScreenshotsAddImagesButton" xml:space="preserve"><value>Añadir imágenes</value></data>
+  <data name="SoftwareScreenshotsClearStagedButton" xml:space="preserve"><value>Borrar preparadas</value></data>
+  <data name="SoftwareScreenshotsSubmitBatchButton" xml:space="preserve"><value>Subir capturas</value></data>
+  <data name="SoftwareScreenshotsNoImagesStaged" xml:space="preserve"><value>Aún no hay imágenes preparadas. Añada una o más capturas de pantalla para iniciar una carga por lotes.</value></data>
+  <data name="SoftwareScreenshotsPreviewUnavailable" xml:space="preserve"><value>Vista previa no disponible</value></data>
+  <data name="SoftwareScreenshotsProcessingTitle" xml:space="preserve"><value>Procesando carga</value></data>
+  <data name="SoftwareScreenshotsBatchProgressText" xml:space="preserve"><value>Procesadas {0} de {1} capturas preparadas.</value></data>
+  <data name="SoftwareScreenshotsPickerCanceled" xml:space="preserve"><value>No se seleccionó ningún archivo.</value></data>
+  <data name="SoftwareScreenshotsSelectionTrimmed" xml:space="preserve"><value>Solo se prepararon los primeros {0} archivos porque un lote admite como máximo {1} capturas.</value></data>
+  <data name="SoftwareScreenshotsMaxImagesReached" xml:space="preserve"><value>Ya tiene el máximo de {0} capturas preparadas.</value></data>
+  <data name="SoftwareScreenshotsUnsupportedFormat" xml:space="preserve"><value>{0} usa un formato de imagen no admitido.</value></data>
+  <data name="SoftwareScreenshotsFileTooLarge" xml:space="preserve"><value>{0} supera el límite de carga de 50 MB.</value></data>
+  <data name="SoftwareScreenshotsBatchNotReady" xml:space="preserve"><value>Espere a que todas las capturas preparadas terminen de subirse antes de enviar el lote.</value></data>
+  <data name="SoftwareScreenshotsCommitFailed" xml:space="preserve"><value>No se pudo enviar el lote preparado.</value></data>
+  <data name="SoftwareScreenshotsPollingFailed" xml:space="preserve"><value>No se pudo obtener el progreso de carga del lote preparado.</value></data>
+  <data name="SoftwareScreenshotsBatchFinished" xml:space="preserve"><value>Lote finalizado. {0} captura(s) correctas y {1} fallidas.</value></data>
+  <data name="SoftwareScreenshotsFailedToRemoveStaged" xml:space="preserve"><value>No se pudo eliminar la captura preparada.</value></data>
+  <data name="SoftwareScreenshotsUploadingCardStatus" xml:space="preserve"><value>Subiendo a preparación...</value></data>
+  <data name="SoftwareScreenshotsReadyCardStatus" xml:space="preserve"><value>Lista para enviar</value></data>
+  <data name="SoftwareScreenshotsFileRejectedStatus" xml:space="preserve"><value>Error en la preparación</value></data>
+  <data name="SoftwareScreenshotsCommittingCardStatus" xml:space="preserve"><value>Enviando lote...</value></data>
+  <data name="SoftwareScreenshotsProcessingCardStatus" xml:space="preserve"><value>Procesando en el servidor...</value></data>
+  <data name="SoftwareScreenshotsQueuedCardStatus" xml:space="preserve"><value>En cola para procesar</value></data>
+  <data name="SoftwareScreenshotsSucceededCardStatus" xml:space="preserve"><value>Subida correctamente</value></data>
+  <data name="SoftwareScreenshotsFailedCardStatus" xml:space="preserve"><value>Error al subir</value></data>
+  <data name="GroupNameLabel" xml:space="preserve"><value>Nombre del grupo</value></data>
   <data name="UploadScreenshotLabel" xml:space="preserve"><value>Subir captura de pantalla</value></data>
   <data name="UploadScreenshotButton" xml:space="preserve"><value>Subir captura</value></data>
   <data name="UploadingScreenshotText" xml:space="preserve"><value>Subiendo captura de pantalla...</value></data>

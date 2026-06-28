@@ -2595,6 +2595,34 @@
   <data name="SoftwareScreenshotManagementButton" xml:space="preserve"><value>Software Screenshots</value></data>
   <data name="SoftwareScreenshotsTitle" xml:space="preserve"><value>Software Screenshots</value></data>
   <data name="SoftwareScreenshotsSubtitle" xml:space="preserve"><value>Manage screenshots for software</value></data>
+  <data name="SoftwareScreenshotsBatchSectionTitle" xml:space="preserve"><value>Stapel-Upload</value></data>
+  <data name="SoftwareScreenshotsBatchSectionSubtitle" xml:space="preserve"><value>Stellen Sie bis zu 25 Screenshots bereit, legen Sie optional eine Bildunterschrift pro Bild und einen gemeinsamen Gruppennamen fest und senden Sie den Stapel ab.</value></data>
+  <data name="SoftwareScreenshotsAddImagesButton" xml:space="preserve"><value>Bilder hinzufügen</value></data>
+  <data name="SoftwareScreenshotsClearStagedButton" xml:space="preserve"><value>Bereitgestellte löschen</value></data>
+  <data name="SoftwareScreenshotsSubmitBatchButton" xml:space="preserve"><value>Screenshots hochladen</value></data>
+  <data name="SoftwareScreenshotsNoImagesStaged" xml:space="preserve"><value>Noch keine Bilder bereitgestellt. Fügen Sie ein oder mehrere Screenshots hinzu, um einen Stapel-Upload zu starten.</value></data>
+  <data name="SoftwareScreenshotsPreviewUnavailable" xml:space="preserve"><value>Vorschau nicht verfügbar</value></data>
+  <data name="SoftwareScreenshotsProcessingTitle" xml:space="preserve"><value>Upload wird verarbeitet</value></data>
+  <data name="SoftwareScreenshotsBatchProgressText" xml:space="preserve"><value>{0} von {1} bereitgestellten Screenshots verarbeitet.</value></data>
+  <data name="SoftwareScreenshotsPickerCanceled" xml:space="preserve"><value>Es wurden keine Dateien ausgewählt.</value></data>
+  <data name="SoftwareScreenshotsSelectionTrimmed" xml:space="preserve"><value>Es wurden nur die ersten {0} Dateien bereitgestellt, da ein Stapel höchstens {1} Screenshots enthalten kann.</value></data>
+  <data name="SoftwareScreenshotsMaxImagesReached" xml:space="preserve"><value>Sie haben bereits das Maximum von {0} bereitgestellten Screenshots erreicht.</value></data>
+  <data name="SoftwareScreenshotsUnsupportedFormat" xml:space="preserve"><value>{0} verwendet ein nicht unterstütztes Bildformat.</value></data>
+  <data name="SoftwareScreenshotsFileTooLarge" xml:space="preserve"><value>{0} überschreitet das Upload-Limit von 50 MB.</value></data>
+  <data name="SoftwareScreenshotsBatchNotReady" xml:space="preserve"><value>Warten Sie, bis jeder bereitgestellte Screenshot hochgeladen wurde, bevor Sie den Stapel absenden.</value></data>
+  <data name="SoftwareScreenshotsCommitFailed" xml:space="preserve"><value>Der bereitgestellte Stapel konnte nicht übermittelt werden.</value></data>
+  <data name="SoftwareScreenshotsPollingFailed" xml:space="preserve"><value>Der Upload-Fortschritt für den bereitgestellten Stapel konnte nicht abgerufen werden.</value></data>
+  <data name="SoftwareScreenshotsBatchFinished" xml:space="preserve"><value>Stapel abgeschlossen. {0} Screenshot(s) erfolgreich, {1} fehlgeschlagen.</value></data>
+  <data name="SoftwareScreenshotsFailedToRemoveStaged" xml:space="preserve"><value>Der bereitgestellte Screenshot konnte nicht entfernt werden.</value></data>
+  <data name="SoftwareScreenshotsUploadingCardStatus" xml:space="preserve"><value>Wird bereitgestellt...</value></data>
+  <data name="SoftwareScreenshotsReadyCardStatus" xml:space="preserve"><value>Bereit zum Absenden</value></data>
+  <data name="SoftwareScreenshotsFileRejectedStatus" xml:space="preserve"><value>Bereitstellung fehlgeschlagen</value></data>
+  <data name="SoftwareScreenshotsCommittingCardStatus" xml:space="preserve"><value>Stapel wird übermittelt...</value></data>
+  <data name="SoftwareScreenshotsProcessingCardStatus" xml:space="preserve"><value>Wird auf dem Server verarbeitet...</value></data>
+  <data name="SoftwareScreenshotsQueuedCardStatus" xml:space="preserve"><value>In Warteschlange</value></data>
+  <data name="SoftwareScreenshotsSucceededCardStatus" xml:space="preserve"><value>Erfolgreich hochgeladen</value></data>
+  <data name="SoftwareScreenshotsFailedCardStatus" xml:space="preserve"><value>Upload fehlgeschlagen</value></data>
+  <data name="GroupNameLabel" xml:space="preserve"><value>Gruppenname</value></data>
   <data name="UploadScreenshotLabel" xml:space="preserve"><value>Upload Screenshot</value></data>
   <data name="UploadScreenshotButton" xml:space="preserve"><value>Upload Screenshot</value></data>
   <data name="UploadingScreenshotText" xml:space="preserve"><value>Uploading screenshot...</value></data>

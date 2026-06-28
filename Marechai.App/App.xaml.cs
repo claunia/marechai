@@ -190,6 +190,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<ProcessorPhotosService>();
         containerRegistry.RegisterSingleton<SoundSynthPhotosService>();
         containerRegistry.RegisterSingleton<SoftwareCoversService>();
+        containerRegistry.RegisterSingleton<SoftwareScreenshotsService>();
         containerRegistry.RegisterSingleton<MachinePromoArtService>();
         containerRegistry.RegisterSingleton<SoftwarePromoArtService>();
         containerRegistry.RegisterSingleton<LicensesService>();

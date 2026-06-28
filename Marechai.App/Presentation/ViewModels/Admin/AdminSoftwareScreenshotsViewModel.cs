@@ -3,26 +3,44 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using BatchJobState = Marechai.Data.Dtos.BatchJobState;
+using AdminSoftwareScreenshotBatchCommitItemDto = Marechai.ApiClient.Models.AdminSoftwareScreenshotBatchCommitItemDto;
+using AdminSoftwareScreenshotBatchCommitRequestDto = Marechai.ApiClient.Models.AdminSoftwareScreenshotBatchCommitRequestDto;
+using AdminSoftwareScreenshotBatchJobItemResultDto = Marechai.ApiClient.Models.AdminSoftwareScreenshotBatchJobItemResultDto;
+using AdminSoftwareScreenshotBatchJobStatusDto = Marechai.ApiClient.Models.AdminSoftwareScreenshotBatchJobStatusDto;
+using AdminPendingSoftwareScreenshotUploadDto = Marechai.ApiClient.Models.AdminPendingSoftwareScreenshotUploadDto;
 using Marechai.App.Navigation;
+using Marechai.App.Presentation.Models;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
 using Marechai.App.Services.Caching;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Marechai.App.Presentation.ViewModels.Admin;
 
 public partial class AdminSoftwareScreenshotsViewModel : ObservableObject, IRegionAware
 {
-    readonly Client          _apiClient;
-    readonly SoftwareScreenshotCache _screenshotCache;
-    readonly ImageSourceFactory      _imageSourceFactory;
-    readonly IJwtService             _jwtService;
-    readonly ITokenService           _tokenService;
-    readonly IStringLocalizer        _localizer;
+    const int  MaxImages        = 25;
+    const long MaxFileSizeBytes = 50 * 1024 * 1024;
+
+    static readonly HashSet<string> _allowedExtensions =
+    [
+        ".jpg", ".jpeg", ".png", ".webp", ".avif", ".bmp", ".tif", ".tiff"
+    ];
+
+    readonly Client                                    _apiClient;
+    readonly SoftwareScreenshotsService                 _screenshotsService;
+    readonly SoftwareScreenshotCache                    _screenshotCache;
+    readonly ImageSourceFactory                         _imageSourceFactory;
+    readonly IJwtService                                _jwtService;
+    readonly ITokenService                              _tokenService;
+    readonly IStringLocalizer                           _localizer;
     readonly ILogger<AdminSoftwareScreenshotsViewModel> _logger;
-    readonly IRegionManager          _regionManager;
+    readonly IRegionManager                              _regionManager;
 
     List<SoftwareScreenshotDto>? _allScreenshots;
     List<SoftwareDto>?           _allSoftware;
@@ -31,6 +49,9 @@ public partial class AdminSoftwareScreenshotsViewModel : ObservableObject, IRegi
 
     [ObservableProperty]
     private ObservableCollection<ScreenshotGridItem> _screenshots = [];
+
+    [ObservableProperty]
+    private ObservableCollection<AdminSoftwareScreenshotStagedItem> _stagedScreenshots = [];
 
     [ObservableProperty]
     private ScreenshotGridItem? _selectedScreenshot;
@@ -54,10 +75,40 @@ public partial class AdminSoftwareScreenshotsViewModel : ObservableObject, IRegi
     private bool _isUploading;
 
     [ObservableProperty]
+    private bool _isBatchCommitting;
+
+    [ObservableProperty]
     private bool _isEditingExisting;
 
     [ObservableProperty]
     private bool _isEditing;
+
+    [ObservableProperty]
+    private bool _hasStatusMessage;
+
+    [ObservableProperty]
+    private string _statusMessage = string.Empty;
+
+    [ObservableProperty]
+    private InfoBarSeverity _statusSeverity = InfoBarSeverity.Informational;
+
+    [ObservableProperty]
+    private int _batchProcessed;
+
+    [ObservableProperty]
+    private int _batchTotal;
+
+    [ObservableProperty]
+    private Guid? _currentPendingId;
+
+    [ObservableProperty]
+    private bool _showBatchProgress;
+
+    [ObservableProperty]
+    private bool _showBatchSummary;
+
+    [ObservableProperty]
+    private string _canonicalGroupName = string.Empty;
 
     // Edit panel fields
     [ObservableProperty]
@@ -93,16 +144,18 @@ public partial class AdminSoftwareScreenshotsViewModel : ObservableObject, IRegi
     [ObservableProperty]
     private string _versionSearchText = string.Empty;
 
-    public AdminSoftwareScreenshotsViewModel(Client                                    apiClient,
-                                              SoftwareScreenshotCache                      screenshotCache,
-                                              ImageSourceFactory                           imageSourceFactory,
-                                              IJwtService                                  jwtService,
-                                              ITokenService                                tokenService,
-                                              IStringLocalizer                             localizer,
-                                              ILogger<AdminSoftwareScreenshotsViewModel>   logger,
-                                              IRegionManager                               regionManager)
+    public AdminSoftwareScreenshotsViewModel(Client                                      apiClient,
+                                              SoftwareScreenshotsService                  screenshotsService,
+                                              SoftwareScreenshotCache                     screenshotCache,
+                                              ImageSourceFactory                          imageSourceFactory,
+                                              IJwtService                                 jwtService,
+                                              ITokenService                               tokenService,
+                                              IStringLocalizer                            localizer,
+                                              ILogger<AdminSoftwareScreenshotsViewModel>  logger,
+                                              IRegionManager                              regionManager)
     {
         _apiClient          = apiClient;
+        _screenshotsService = screenshotsService;
         _screenshotCache    = screenshotCache;
         _imageSourceFactory = imageSourceFactory;
         _jwtService         = jwtService;
@@ -111,30 +164,57 @@ public partial class AdminSoftwareScreenshotsViewModel : ObservableObject, IRegi
         _logger             = logger;
         _regionManager      = regionManager;
 
-        LoadCommand              = new AsyncRelayCommand(LoadAsync);
-        UploadScreenshotCommand  = new AsyncRelayCommand(UploadScreenshotAsync);
-        DeleteScreenshotCommand  = new AsyncRelayCommand<ScreenshotGridItem>(DeleteScreenshotAsync);
-        ViewScreenshotCommand    = new RelayCommand<ScreenshotGridItem>(ViewScreenshot);
-        OpenEditCommand          = new RelayCommand<ScreenshotGridItem>(OpenEdit);
-        SaveEditCommand          = new AsyncRelayCommand(SaveEditAsync);
-        CancelEditCommand        = new RelayCommand(CancelEdit);
-        GoBackCommand            = new RelayCommand(GoBack);
+        LoadCommand                   = new AsyncRelayCommand(LoadAsync);
+        AddScreenshotsCommand         = new AsyncRelayCommand(AddScreenshotsAsync);
+        SubmitBatchCommand            = new AsyncRelayCommand(SubmitBatchAsync);
+        ClearStagedScreenshotsCommand = new AsyncRelayCommand(ClearStagedScreenshotsAsync);
+        RemoveStagedScreenshotCommand = new AsyncRelayCommand<AdminSoftwareScreenshotStagedItem>(RemoveStagedScreenshotAsync);
+        DeleteScreenshotCommand       = new AsyncRelayCommand<ScreenshotGridItem>(DeleteScreenshotAsync);
+        ViewScreenshotCommand         = new RelayCommand<ScreenshotGridItem>(ViewScreenshot);
+        OpenEditCommand               = new RelayCommand<ScreenshotGridItem>(OpenEdit);
+        SaveEditCommand               = new AsyncRelayCommand(SaveEditAsync);
+        CancelEditCommand             = new RelayCommand(CancelEdit);
+        GoBackCommand                 = new RelayCommand(GoBack);
 
         CheckAdminRole();
     }
 
-    public IAsyncRelayCommand                    LoadCommand             { get; }
-    public IAsyncRelayCommand                    UploadScreenshotCommand { get; }
-    public IAsyncRelayCommand<ScreenshotGridItem> DeleteScreenshotCommand { get; }
-    public IRelayCommand<ScreenshotGridItem>     ViewScreenshotCommand   { get; }
-    public IRelayCommand<ScreenshotGridItem>     OpenEditCommand         { get; }
-    public IAsyncRelayCommand                    SaveEditCommand         { get; }
-    public IRelayCommand                         CancelEditCommand       { get; }
-    public IRelayCommand                         GoBackCommand           { get; }
+    public IAsyncRelayCommand                              LoadCommand                   { get; }
+    public IAsyncRelayCommand                              AddScreenshotsCommand         { get; }
+    public IAsyncRelayCommand                              SubmitBatchCommand            { get; }
+    public IAsyncRelayCommand                              ClearStagedScreenshotsCommand { get; }
+    public IAsyncRelayCommand<AdminSoftwareScreenshotStagedItem> RemoveStagedScreenshotCommand { get; }
+    public IAsyncRelayCommand<ScreenshotGridItem>           DeleteScreenshotCommand       { get; }
+    public IRelayCommand<ScreenshotGridItem>                ViewScreenshotCommand         { get; }
+    public IRelayCommand<ScreenshotGridItem>                OpenEditCommand               { get; }
+    public IAsyncRelayCommand                               SaveEditCommand               { get; }
+    public IRelayCommand                                    CancelEditCommand             { get; }
+    public IRelayCommand                                    GoBackCommand                 { get; }
+
+    public bool HasStagedScreenshots => StagedScreenshots.Count > 0;
+    public bool CanAddMoreScreenshots => !IsUploading && SelectedSoftware is not null && StagedScreenshots.Count < MaxImages;
+    public bool CanSubmitBatch => StagedScreenshots.Count > 0 &&
+                                  !IsUploading &&
+                                  !IsBatchCommitting &&
+                                  StagedScreenshots.All(s => s.IsReady);
+    public bool CanClearStaged => HasStagedScreenshots && !IsBatchCommitting && !IsUploading;
+    public bool HasBatchProgressText => ShowBatchProgress && BatchTotal > 0;
+    public double BatchProgressPercent => BatchTotal <= 0 ? 0 : Math.Min(100, BatchProcessed * 100.0 / BatchTotal);
+    public string BatchProgressText => string.Format(_localizer["SoftwareScreenshotsBatchProgressText"], BatchProcessed, BatchTotal);
+
+    partial void OnIsUploadingChanged(bool value) => NotifyUploadStateChanged();
+    partial void OnIsBatchCommittingChanged(bool value) => NotifyUploadStateChanged();
+    partial void OnBatchProcessedChanged(int value) => NotifyBatchProgressChanged();
+    partial void OnBatchTotalChanged(int value) => NotifyBatchProgressChanged();
+    partial void OnShowBatchProgressChanged(bool value) => OnPropertyChanged(nameof(HasBatchProgressText));
+    partial void OnSelectedSoftwareChanged(SoftwareDto? value) => OnPropertyChanged(nameof(CanAddMoreScreenshots));
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => false;
 
-    public void OnNavigatedFrom(NavigationContext navigationContext) { }
+    public void OnNavigatedFrom(NavigationContext navigationContext)
+    {
+        _ = ClearStagedScreenshotsAsync();
+    }
 
     public void OnNavigatedTo(NavigationContext navigationContext)
     {
@@ -244,23 +324,33 @@ public partial class AdminSoftwareScreenshotsViewModel : ObservableObject, IRegi
         }
     }
 
-    async Task UploadScreenshotAsync()
+    async Task AddScreenshotsAsync()
     {
-        if(SelectedSoftware is null)
-        {
-            ErrorMessage = _localizer["SelectSoftwareRequired"];
-            HasError     = true;
-
-            return;
-        }
-
         try
         {
+            ClearStatusMessage();
+
+            if(SelectedSoftware is null)
+            {
+                SetStatusMessage(_localizer["SelectSoftwareRequired"], InfoBarSeverity.Warning);
+
+                return;
+            }
+
+            if(StagedScreenshots.Count >= MaxImages)
+            {
+                SetStatusMessage(string.Format(_localizer["SoftwareScreenshotsMaxImagesReached"], MaxImages),
+                                 InfoBarSeverity.Warning);
+
+                return;
+            }
+
             var picker = new Windows.Storage.Pickers.FileOpenPicker();
             picker.FileTypeFilter.Add(".jpg");
             picker.FileTypeFilter.Add(".jpeg");
             picker.FileTypeFilter.Add(".png");
             picker.FileTypeFilter.Add(".webp");
+            picker.FileTypeFilter.Add(".avif");
             picker.FileTypeFilter.Add(".tiff");
             picker.FileTypeFilter.Add(".tif");
             picker.FileTypeFilter.Add(".bmp");
@@ -270,42 +360,351 @@ public partial class AdminSoftwareScreenshotsViewModel : ObservableObject, IRegi
             WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
 #endif
 
-            Windows.Storage.StorageFile? file = await picker.PickSingleFileAsync();
+            IReadOnlyList<Windows.Storage.StorageFile>? files = await picker.PickMultipleFilesAsync();
 
-            if(file == null) return;
+            if(files == null || files.Count == 0)
+            {
+                SetStatusMessage(_localizer["SoftwareScreenshotsPickerCanceled"], InfoBarSeverity.Informational);
 
-            IsUploading = true;
-            HasError    = false;
+                return;
+            }
+
+            int availableSlots = MaxImages - StagedScreenshots.Count;
+
+            if(files.Count > availableSlots)
+            {
+                SetStatusMessage(string.Format(_localizer["SoftwareScreenshotsSelectionTrimmed"], availableSlots, MaxImages),
+                                 InfoBarSeverity.Warning);
+            }
+
+            foreach(Windows.Storage.StorageFile file in files.Take(availableSlots))
+                await StageFileAsync(file);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error selecting screenshots");
+            SetStatusMessage(_localizer["FailedToUploadScreenshot"], InfoBarSeverity.Error);
+        }
+    }
+
+    async Task StageFileAsync(Windows.Storage.StorageFile file)
+    {
+        string extension = Path.GetExtension(file.Name).ToLowerInvariant();
+
+        if(!_allowedExtensions.Contains(extension))
+        {
+            SetStatusMessage(string.Format(_localizer["SoftwareScreenshotsUnsupportedFormat"], file.Name),
+                             InfoBarSeverity.Warning);
+
+            return;
+        }
+
+        var item = new AdminSoftwareScreenshotStagedItem
+        {
+            FileName       = file.Name,
+            FileSizeText   = string.Empty,
+            DimensionsText = string.Empty,
+            Status         = AdminMachinePhotoStageStatus.Uploading,
+            StatusText     = _localizer["SoftwareScreenshotsUploadingCardStatus"],
+            UploadPercent  = 0
+        };
+
+        AddStagedScreenshot(item);
+
+        try
+        {
+            Windows.Storage.FileProperties.BasicProperties properties = await file.GetBasicPropertiesAsync();
+
+            if((long)properties.Size > MaxFileSizeBytes)
+            {
+                item.FileSizeText  = FormatBytes((long)properties.Size);
+                item.Status        = AdminMachinePhotoStageStatus.Error;
+                item.StatusText    = _localizer["SoftwareScreenshotsFileRejectedStatus"];
+                item.ErrorText     = string.Format(_localizer["SoftwareScreenshotsFileTooLarge"], file.Name);
+                item.UploadPercent = 0;
+
+                return;
+            }
+
+            item.FileSizeText = FormatBytes((long)properties.Size);
 
             using Stream stream = await file.OpenStreamForReadAsync();
             using var ms = new MemoryStream();
             await stream.CopyToAsync(ms);
             byte[] fileBytes = ms.ToArray();
 
-            var body = new Marechai.ApiClient.Software.Screenshots.Upload.UploadPostRequestBody
+            item.UploadPercent = 35;
+
+            (AdminPendingSoftwareScreenshotUploadDto? result, string? error) =
+                await _screenshotsService.StageAdminPendingScreenshotAsync((int)(SelectedSoftware!.Id ?? 0), fileBytes, file.Name, file.ContentType);
+
+            if(result == null)
             {
-                File       = fileBytes,
-                SoftwareId = (int?)(SelectedSoftware.Id ?? 0),
-                SoftwarePlatformId = SelectedPlatform is not null ? (int?)(SelectedPlatform.Id ?? 0) : null,
-                SoftwareVersionId  = SelectedVersion is not null ? (int?)(SelectedVersion.Id ?? 0) : null,
-                Caption = string.IsNullOrWhiteSpace(EditCaption) ? null : EditCaption
-            };
+                item.Status        = AdminMachinePhotoStageStatus.Error;
+                item.StatusText    = _localizer["SoftwareScreenshotsFileRejectedStatus"];
+                item.ErrorText     = string.IsNullOrWhiteSpace(error) ? _localizer["FailedToUploadScreenshot"] : error;
+                item.UploadPercent = 0;
 
-            await _apiClient.Software.Screenshots.Upload.PostAsync(body);
+                return;
+            }
 
-            EditCaption = string.Empty;
-            await LoadAsync();
+            item.PendingId            = result.Id;
+            item.FileSizeText         = FormatBytes(result.SizeBytes is > 0 ? result.SizeBytes.Value : (long)properties.Size);
+            item.DimensionsText       = result.Width is > 0 && result.Height is > 0 ? $"{result.Width} x {result.Height}" : string.Empty;
+            item.ThumbnailImageSource = await CreateImageSourceFromDataUrlAsync(result.ThumbnailBase64);
+            item.Status               = AdminMachinePhotoStageStatus.Ready;
+            item.StatusText           = _localizer["SoftwareScreenshotsReadyCardStatus"];
+            item.UploadPercent        = 100;
+            item.ErrorText            = string.Empty;
         }
         catch(Exception ex)
         {
-            _logger.LogError(ex, "Error uploading screenshot");
-            ErrorMessage = _localizer["FailedToUploadScreenshot"];
-            HasError     = true;
+            _logger.LogError(ex, "Error staging screenshot {FileName}", file.Name);
+            item.Status        = AdminMachinePhotoStageStatus.Error;
+            item.StatusText    = _localizer["SoftwareScreenshotsFileRejectedStatus"];
+            item.ErrorText     = _localizer["FailedToUploadScreenshot"];
+            item.UploadPercent = 0;
+        }
+    }
+
+    async Task SubmitBatchAsync()
+    {
+        ClearStatusMessage();
+
+        if(!CanSubmitBatch || SelectedSoftware is null)
+        {
+            SetStatusMessage(_localizer["SoftwareScreenshotsBatchNotReady"], InfoBarSeverity.Warning);
+
+            return;
+        }
+
+        List<AdminSoftwareScreenshotStagedItem> readyItems =
+            StagedScreenshots.Where(s => s.IsReady && s.PendingId.HasValue).ToList();
+
+        if(readyItems.Count == 0)
+        {
+            SetStatusMessage(_localizer["SoftwareScreenshotsBatchNotReady"], InfoBarSeverity.Warning);
+
+            return;
+        }
+
+        try
+        {
+            IsUploading       = true;
+            IsBatchCommitting = true;
+            ShowBatchSummary  = false;
+            ShowBatchProgress = true;
+            BatchProcessed    = 0;
+            BatchTotal        = readyItems.Count;
+            CurrentPendingId  = null;
+
+            foreach(AdminSoftwareScreenshotStagedItem item in readyItems)
+            {
+                item.Status        = AdminMachinePhotoStageStatus.Committing;
+                item.StatusText    = _localizer["SoftwareScreenshotsCommittingCardStatus"];
+                item.UploadPercent = 0;
+                item.ErrorText     = string.Empty;
+            }
+
+            var request = new AdminSoftwareScreenshotBatchCommitRequestDto
+            {
+                SoftwareId         = (int)(SelectedSoftware.Id ?? 0),
+                SoftwarePlatformId = SelectedPlatform is not null ? (int?)(SelectedPlatform.Id ?? 0) : null,
+                SoftwareVersionId  = SelectedVersion is not null ? (int?)(SelectedVersion.Id ?? 0) : null,
+                CanonicalGroupName = string.IsNullOrWhiteSpace(CanonicalGroupName) ? null : CanonicalGroupName,
+                Items = readyItems.Select(item => new AdminSoftwareScreenshotBatchCommitItemDto
+                {
+                    PendingId = item.PendingId ?? Guid.Empty,
+                    Caption   = string.IsNullOrWhiteSpace(item.Caption) ? null : item.Caption
+                }).ToList()
+            };
+
+            (AdminSoftwareScreenshotBatchJobStatusDto? result, string? error) =
+                await _screenshotsService.CommitAdminBatchAsync(request);
+
+            if(result == null)
+            {
+                foreach(AdminSoftwareScreenshotStagedItem item in readyItems)
+                {
+                    item.Status        = AdminMachinePhotoStageStatus.Ready;
+                    item.StatusText    = _localizer["SoftwareScreenshotsReadyCardStatus"];
+                    item.ErrorText     = string.Empty;
+                    item.UploadPercent = 100;
+                }
+
+                SetStatusMessage(string.IsNullOrWhiteSpace(error) ? _localizer["SoftwareScreenshotsCommitFailed"] : error,
+                                 InfoBarSeverity.Error);
+
+                ShowBatchProgress = false;
+
+                return;
+            }
+
+            AdminSoftwareScreenshotBatchJobStatusDto? finalStatus =
+                result.JobId.HasValue ? await PollBatchUntilCompleteAsync(result.JobId.Value) : null;
+
+            if(finalStatus == null)
+            {
+                SetStatusMessage(_localizer["SoftwareScreenshotsPollingFailed"], InfoBarSeverity.Error);
+
+                return;
+            }
+
+            ApplyBatchStatus(finalStatus);
+
+            List<AdminSoftwareScreenshotBatchJobItemResultDto> finalResults = finalStatus.Results ?? [];
+            int succeeded = finalResults.Count(r => r.Succeeded ?? false);
+            int failed    = finalResults.Count(r => !(r.Succeeded ?? false));
+
+            SetStatusMessage(string.Format(_localizer["SoftwareScreenshotsBatchFinished"], succeeded, failed),
+                             failed == 0 ? InfoBarSeverity.Success : InfoBarSeverity.Warning);
+
+            ShowBatchSummary = true;
+            HasStatusMessage = false;
+
+            foreach(AdminSoftwareScreenshotStagedItem item in StagedScreenshots)
+                item.PendingId = null;
+
+            if(succeeded > 0)
+                await LoadAsync();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error committing screenshot batch");
+            SetStatusMessage(_localizer["SoftwareScreenshotsCommitFailed"], InfoBarSeverity.Error);
         }
         finally
         {
-            IsUploading = false;
+            IsUploading       = false;
+            IsBatchCommitting = false;
+            CurrentPendingId  = null;
+            ShowBatchProgress = false;
+            NotifyUploadStateChanged();
         }
+    }
+
+    async Task<AdminSoftwareScreenshotBatchJobStatusDto?> PollBatchUntilCompleteAsync(Guid jobId)
+    {
+        while(true)
+        {
+            AdminSoftwareScreenshotBatchJobStatusDto? status = await _screenshotsService.GetAdminBatchStatusAsync(jobId);
+
+            if(status == null)
+                return null;
+
+            ApplyBatchStatus(status);
+
+            BatchJobState state = (BatchJobState)(status.State ?? 0);
+
+            if(state is BatchJobState.Completed or BatchJobState.Failed)
+                return status;
+
+            await Task.Delay(750);
+        }
+    }
+
+    void ApplyBatchStatus(AdminSoftwareScreenshotBatchJobStatusDto status)
+    {
+        BatchProcessed   = status.Processed ?? 0;
+        BatchTotal       = status.Total ?? 0;
+        CurrentPendingId = status.CurrentPendingId;
+
+        Dictionary<Guid, AdminSoftwareScreenshotBatchJobItemResultDto> resultMap = (status.Results ?? [])
+                                                                  .Where(r => r.PendingId.HasValue &&
+                                                                              r.PendingId.Value != Guid.Empty)
+                                                                  .ToDictionary(r => r.PendingId!.Value, r => r);
+
+        foreach(AdminSoftwareScreenshotStagedItem item in StagedScreenshots)
+        {
+            if(item.PendingId is not Guid pendingId)
+                continue;
+
+            if(resultMap.TryGetValue(pendingId, out AdminSoftwareScreenshotBatchJobItemResultDto? result))
+            {
+                if(result.Succeeded ?? false)
+                {
+                    item.Status        = AdminMachinePhotoStageStatus.Succeeded;
+                    item.StatusText    = _localizer["SoftwareScreenshotsSucceededCardStatus"];
+                    item.ErrorText     = string.Empty;
+                    item.UploadPercent = 100;
+                }
+                else
+                {
+                    item.Status        = AdminMachinePhotoStageStatus.Failed;
+                    item.StatusText    = _localizer["SoftwareScreenshotsFailedCardStatus"];
+                    item.ErrorText     = string.IsNullOrWhiteSpace(result.Error) ? _localizer["SoftwareScreenshotsCommitFailed"] : result.Error;
+                    item.UploadPercent = 100;
+                }
+            }
+            else if(status.CurrentPendingId.HasValue && status.CurrentPendingId.Value == pendingId)
+            {
+                item.Status        = AdminMachinePhotoStageStatus.Committing;
+                item.StatusText    = _localizer["SoftwareScreenshotsProcessingCardStatus"];
+                item.UploadPercent = 50;
+                item.ErrorText     = string.Empty;
+            }
+            else if(item.Status == AdminMachinePhotoStageStatus.Committing)
+            {
+                item.StatusText = _localizer["SoftwareScreenshotsQueuedCardStatus"];
+            }
+        }
+    }
+
+    async Task RemoveStagedScreenshotAsync(AdminSoftwareScreenshotStagedItem? item)
+    {
+        if(item == null || item.Status == AdminMachinePhotoStageStatus.Committing)
+            return;
+
+        try
+        {
+            if(item.PendingId.HasValue && !item.IsTerminal)
+            {
+                bool deleted = await _screenshotsService.DeleteAdminPendingScreenshotAsync(item.PendingId.Value);
+
+                if(!deleted)
+                {
+                    SetStatusMessage(_localizer["SoftwareScreenshotsFailedToRemoveStaged"], InfoBarSeverity.Warning);
+
+                    return;
+                }
+            }
+
+            RemoveStagedScreenshot(item);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error removing staged screenshot {ClientId}", item.ClientId);
+            SetStatusMessage(_localizer["SoftwareScreenshotsFailedToRemoveStaged"], InfoBarSeverity.Warning);
+        }
+    }
+
+    async Task ClearStagedScreenshotsAsync()
+    {
+        List<AdminSoftwareScreenshotStagedItem> items = StagedScreenshots.ToList();
+
+        foreach(AdminSoftwareScreenshotStagedItem item in items)
+        {
+            if(item.PendingId.HasValue && !item.IsTerminal)
+            {
+                try
+                {
+                    await _screenshotsService.DeleteAdminPendingScreenshotAsync(item.PendingId.Value);
+                }
+                catch(Exception ex)
+                {
+                    _logger.LogDebug(ex, "Best-effort cleanup failed for staged screenshot {PendingId}",
+                                     item.PendingId.Value);
+                }
+            }
+
+            RemoveStagedScreenshot(item);
+        }
+
+        ShowBatchProgress = false;
+        ShowBatchSummary  = false;
+        BatchProcessed    = 0;
+        BatchTotal        = 0;
+        CurrentPendingId  = null;
     }
 
     async Task DeleteScreenshotAsync(ScreenshotGridItem? item)
@@ -493,6 +892,85 @@ public partial class AdminSoftwareScreenshotsViewModel : ObservableObject, IRegi
     }
 
     void GoBack() => _regionManager.Regions[RegionNames.Content].NavigationService.Journal.GoBack();
+
+    async Task<Microsoft.UI.Xaml.Media.ImageSource?> CreateImageSourceFromDataUrlAsync(string? dataUrl)
+    {
+        if(string.IsNullOrWhiteSpace(dataUrl))
+            return null;
+
+        int commaIndex = dataUrl.IndexOf(',');
+
+        if(commaIndex < 0 || commaIndex == dataUrl.Length - 1)
+            return null;
+
+        byte[] bytes = Convert.FromBase64String(dataUrl[(commaIndex + 1)..]);
+        await using var stream = new MemoryStream(bytes);
+
+        return await _imageSourceFactory.CreateBitmapImageSourceAsync(stream);
+    }
+
+    void AddStagedScreenshot(AdminSoftwareScreenshotStagedItem item)
+    {
+        item.PropertyChanged += OnStagedScreenshotPropertyChanged;
+        StagedScreenshots.Add(item);
+        NotifyUploadStateChanged();
+    }
+
+    void RemoveStagedScreenshot(AdminSoftwareScreenshotStagedItem item)
+    {
+        item.PropertyChanged -= OnStagedScreenshotPropertyChanged;
+        StagedScreenshots.Remove(item);
+        NotifyUploadStateChanged();
+    }
+
+    void OnStagedScreenshotPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if(e.PropertyName is nameof(AdminSoftwareScreenshotStagedItem.Status) or nameof(AdminSoftwareScreenshotStagedItem.PendingId))
+            NotifyUploadStateChanged();
+    }
+
+    void NotifyUploadStateChanged()
+    {
+        OnPropertyChanged(nameof(HasStagedScreenshots));
+        OnPropertyChanged(nameof(CanAddMoreScreenshots));
+        OnPropertyChanged(nameof(CanSubmitBatch));
+        OnPropertyChanged(nameof(CanClearStaged));
+    }
+
+    void NotifyBatchProgressChanged()
+    {
+        OnPropertyChanged(nameof(BatchProgressPercent));
+        OnPropertyChanged(nameof(BatchProgressText));
+        OnPropertyChanged(nameof(HasBatchProgressText));
+    }
+
+    void SetStatusMessage(string message, InfoBarSeverity severity)
+    {
+        StatusMessage    = message;
+        StatusSeverity   = severity;
+        HasStatusMessage = !string.IsNullOrWhiteSpace(message);
+    }
+
+    void ClearStatusMessage()
+    {
+        StatusMessage    = string.Empty;
+        HasStatusMessage = false;
+    }
+
+    static string FormatBytes(long bytes)
+    {
+        string[] units = ["B", "KB", "MB", "GB"];
+        double size = bytes;
+        int unit = 0;
+
+        while(size >= 1024 && unit < units.Length - 1)
+        {
+            size /= 1024;
+            unit++;
+        }
+
+        return unit == 0 ? $"{size:0} {units[unit]}" : $"{size:0.0} {units[unit]}";
+    }
 }
 
 public partial class ScreenshotGridItem : ObservableObject
